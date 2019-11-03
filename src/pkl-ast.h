@@ -55,6 +55,7 @@ enum pkl_ast_code
   PKL_AST_FUNCALL,
   PKL_AST_FUNCALL_ARG,
   PKL_AST_VAR,
+  PKL_AST_GCD,
   /* Types.  */
   PKL_AST_TYPE,
   PKL_AST_STRUCT_TYPE_FIELD,

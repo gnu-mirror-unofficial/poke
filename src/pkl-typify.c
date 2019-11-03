@@ -44,11 +44,6 @@
 #include "pkl-pass.h"
 #include "pkl-typify.h"
 
-/* Roll out our own GCD from gnulib.  */
-#define WORD_T uint64_t
-#define GCD pkl_typify_gcd
-#include <gcd.c>
-
 #define PKL_TYPIFY_PAYLOAD ((pkl_typify_payload) PKL_PASS_PAYLOAD)
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
@@ -435,13 +430,13 @@ TYPIFY_BIN (band);
       {                                                                 \
         pkl_ast_node unit_type_1 = PKL_AST_TYPE_O_UNIT (t1);            \
         pkl_ast_node unit_type_2 = PKL_AST_TYPE_O_UNIT (t2);            \
-        uint64_t t1_unit = PKL_AST_INTEGER_VALUE (unit_type_1);         \
-        uint64_t t2_unit = PKL_AST_INTEGER_VALUE (unit_type_2);         \
         pkl_ast_node unit_type                                          \
           = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);           \
                                                                         \
-        pkl_ast_node unit = pkl_ast_make_integer (PKL_PASS_AST,         \
-                                                  pkl_typify_gcd (t1_unit, t2_unit)); \
+        pkl_ast_node unit = pkl_ast_make_binary_exp (PKL_PASS_AST,      \
+                                                     PKL_AST_OP_GCD,    \
+                                                     unit_type_1, unit_type_2); \
+                                                                        \
         PKL_AST_LOC (unit) = PKL_AST_LOC (exp);                         \
         PKL_AST_LOC (unit_type) = PKL_AST_LOC (exp);                    \
         PKL_AST_TYPE (unit) = ASTREF (unit_type);                       \
@@ -486,12 +481,9 @@ TYPIFY_BIN (mod);
     unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);       \
     PKL_AST_LOC (unit_type) = PKL_AST_LOC (exp);                        \
                                                                         \
-    assert (PKL_AST_CODE (unit_type_1) == PKL_AST_INTEGER);             \
-    assert (PKL_AST_CODE (unit_type_2) == PKL_AST_INTEGER);             \
-                                                                        \
-    unit = pkl_ast_make_integer (PKL_PASS_AST,                          \
-                                 pkl_typify_gcd (PKL_AST_INTEGER_VALUE (unit_type_1), \
-                                                 PKL_AST_INTEGER_VALUE (unit_type_2))); \
+    unit = pkl_ast_make_binary_exp (PKL_PASS_AST,                       \
+                                    PKL_AST_OP_GCD,                     \
+                                    unit_type_1, unit_type_2);          \
                                                                         \
     PKL_AST_LOC (unit) = PKL_AST_LOC (exp);                             \
     PKL_AST_TYPE (unit) = ASTREF (unit_type);                           \

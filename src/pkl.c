@@ -161,12 +161,14 @@ rest_of_compilation (pkl_compiler compiler,
   };
 
   void *middleend_payloads[]
-    = { &trans4_payload,
+    = { &fold_payload,
+        &trans4_payload,
         &analf_payload,
   };
 
   struct pkl_phase *middleend_phases[]
-    = { &pkl_phase_trans4,
+    = { &pkl_phase_fold,
+        &pkl_phase_trans4,
         &pkl_phase_analf,
         NULL
   };
@@ -220,7 +222,9 @@ rest_of_compilation (pkl_compiler compiler,
                     middleend_phases, middleend_payloads, PKL_PASS_F_TYPES))
     goto error;
 
-  if (trans4_payload.errors > 0)
+  if (trans4_payload.errors > 0
+      || fold_payload.errors > 0
+      || analf_payload.errors > 0)
     goto error;
 
   /* XXX */

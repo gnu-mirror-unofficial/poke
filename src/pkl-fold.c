@@ -29,6 +29,11 @@
 #include "pkl-pass.h"
 #include "pkl-fold.h"
 
+/* Roll out our own GCD from gnulib.  */
+#define WORD_T uint64_t
+#define GCD gcd
+#include <gcd.c>
+
 #define PKL_FOLD_PAYLOAD ((pkl_fold_payload) PKL_PASS_PAYLOAD)
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
@@ -117,6 +122,9 @@ EMUL_III (le) { return op1 <= op2; }
 EMUL_UUU (ge) { return op1 >= op2; }
 EMUL_III (ge) { return op1 >= op2; }
 
+EMUL_UUU (gcd) { return gcd (op1, op2); }
+EMUL_III (gcd) { assert (0); return 0; }
+
 EMUL_UUU (sl) { return op1 << op2; }
 EMUL_III (sl) { return op1 << op2; } /* XXX support 1c */
 EMUL_UUU (sr) { return op1 >> op2; }
@@ -200,6 +208,7 @@ EMUL_III (modo) { return op1 % op2; }
           && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)           \
         {                                                               \
           pkl_ast_node new;                                             \
+          pkl_ast_node type_base_type = PKL_AST_TYPE_O_BASE_TYPE (type); \
           pkl_ast_node op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);  \
           pkl_ast_node op1_unit = PKL_AST_OFFSET_UNIT (op1);            \
           pkl_ast_node op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);  \
@@ -222,7 +231,7 @@ EMUL_III (modo) { return op1 % op2; }
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (op1_type))                         \
+          if (PKL_AST_TYPE_I_SIGNED (type_base_type))                   \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -279,7 +288,7 @@ EMUL_III (modo) { return op1 % op2; }
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (op1_type))                         \
+          if (PKL_AST_TYPE_I_SIGNED (type_base_type))                   \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -289,6 +298,7 @@ EMUL_III (modo) { return op1 % op2; }
           /* Convert bits to the result unit.  */                       \
           assert (PKL_AST_INTEGER_VALUE (type_unit) != 0);              \
           result = result / PKL_AST_INTEGER_VALUE (type_unit);          \
+          printf ("RESULT: %lu\n", result);                             \
                                                                         \
           magnitude = pkl_ast_make_integer (PKL_PASS_AST, result);      \
           PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);           \
@@ -540,6 +550,12 @@ PKL_PHASE_HANDLER_BIN_RELA (ge);
 PKL_PHASE_HANDLER_BIN_ARITH (add);
 PKL_PHASE_HANDLER_BIN_ARITH (sub);
 
+PKL_PHASE_BEGIN_HANDLER (pkl_fold_gcd)
+{
+  OP_BINARY_III (gcd);
+}
+PKL_PHASE_END_HANDLER
+
 PKL_PHASE_BEGIN_HANDLER (pkl_fold_mul)
 {
   OP_BINARY_III (mul);
@@ -739,6 +755,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
         = (PKL_AST_INTEGER_VALUE (magnitude)
            /  PKL_AST_INTEGER_VALUE (unit));
 
+      
       new = pkl_ast_make_offset (PKL_PASS_AST,
                                  magnitude, unit);
     }
@@ -767,7 +784,7 @@ struct pkl_phase pkl_phase_fold =
    ENTRY (EQ, eq), ENTRY (NE, ne), ENTRY (SL, sl),
    ENTRY (SR, sr), ENTRY (ADD, add), ENTRY (SUB, sub),
    ENTRY (MUL, mul), ENTRY (DIV, div), ENTRY (CEILDIV, cdiv),
-   ENTRY (MOD, mod),
+   ENTRY (MOD, mod), ENTRY (GCD, gcd),
    ENTRY (LT, lt), ENTRY (GT, gt), ENTRY (LE, le),
    ENTRY (GE, ge),
    ENTRY (BCONC, bconc),

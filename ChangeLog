@@ -1,3 +1,18 @@
+2019-11-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-fold.c: Define pkl_fold_gcd using gnulib's <gcd.c.>
+	(EMUL_UUU): Define for gcd.
+	(pkl_fold_gcd): Define handler.
+	(pkl_phase_fold): Register handler.
+
+	* src/pkl-ops.def: Define PKL_AST_OP_GCD.
+	* src/pkl-typify.c (CASE_OFFSET): Use pkl_ast_make_binary_exp and
+	do not assume the unit types are integers.
+	(CASE_OFFSET): Likewise.
+
+	* src/pkl.c (rest_of_compilation): Run a constant folding phase at
+	the beginning of the middle end pass.
+
 2019-12-01 John Darrington <john@darrington.wattle.id.au>
 
 	* bootstrap.conf: Remove "system"
