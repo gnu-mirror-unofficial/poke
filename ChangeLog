@@ -1,3 +1,15 @@
+2019-11-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-hserver.h: New file.
+	* src/pk-hserver.c: Likewise.
+	* src/poke.c: Initialize and finalize the hyperlinks server.
+	* configure.ac: Add support for --enable-hserver and set the
+	HSERVER automake conditional.
+	* src/Makefile.am (poke_SOURCES): Add pk-hserver.h and
+	pk-hserver.c.
+	(poke_LDADD): Link with pthreads if the server is enabled.
+	* HACKING (Appendix: The Source Tree): list server files.
+
 2019-11-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* bootstrap.conf (gnulib_modules): Import the socket, bind and

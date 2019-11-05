@@ -32,6 +32,10 @@
 #endif
 #include <locale.h>
 
+#ifdef HAVE_HSERVER
+#  include "pk-hserver.h"
+#endif
+
 #include "ios.h"
 #include "pk-cmd.h"
 #include "pkl.h"
@@ -208,6 +212,9 @@ Perpetrated by Jose E. Marchesi.\n"));
 static void
 finalize ()
 {
+#ifdef HAVE_HSERVER
+  pk_hserver_shutdown ();
+#endif
   ios_shutdown ();
   pk_cmd_shutdown ();
   pkl_free (poke_compiler);
@@ -406,6 +413,11 @@ initialize (int argc, char *argv[])
 
   /* Initialize the IO subsystem.  Ditto.  */
   ios_init ();
+
+#ifdef HAVE_HSERVER
+  /* Initialize and start the terminal hyperlinks server.  */
+  pk_hserver_init ();
+#endif
 }
 
 static void
