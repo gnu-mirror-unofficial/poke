@@ -1349,6 +1349,9 @@ Infrastructure for writing poke commands
 Terminal stuff
   ``src/pk-term.h``, ``src/pk-term.c``
 
+REPL
+  ``src/pk-repl.h, ``src/pk-repl.c``
+
 Terminal Hyperlinks Server
   ``src/pk-hserver.h``, ``src/pk-hserver.c``
 
