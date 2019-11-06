@@ -92,11 +92,25 @@ read_from_client (int filedes)
     return -1;
   else
     {
-      pk_puts (buffer);
-      buffer[nbytes-2] = '\0';
-      pk_cmd_exec (buffer);
-      pk_puts ("(poke) ");
-      pk_term_flush ();
+      //      int point, end;
+
+      /* XXX: exec command.  insert command.  silent command.  */
+
+      if (1 /* exec command */)
+        {
+          pk_puts (buffer);
+          buffer[nbytes-2] = '\0';
+          pk_cmd_exec (buffer);
+          pk_puts ("(poke) ");
+          pk_term_flush ();
+        }
+      else /* insert command */
+        {
+          buffer[nbytes-2] = '\0';
+          rl_insert_text (buffer);
+          rl_redisplay ();          
+        }
+
       return 0;
     }
 }

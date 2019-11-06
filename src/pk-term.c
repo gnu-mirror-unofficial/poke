@@ -145,3 +145,12 @@ pk_term_end_hyperlink (void)
   styled_ostream_set_hyperlink (poke_ostream, NULL, NULL);
 #endif
 }
+
+int
+pk_term_color_p (void)
+{
+  return (color_mode == color_yes
+          || (color_mode == color_tty
+              && isatty (STDOUT_FILENO)
+              && getenv ("NO_COLOR") == NULL));
+}

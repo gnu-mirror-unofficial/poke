@@ -27,6 +27,10 @@
 void pk_term_init (int argc, char *argv[]);
 void pk_term_shutdown (void);
 
+/* Return 1 if the terminal supports colors/hyperlinks.  Return 0
+   otherwise.  */
+extern int pk_term_color_p (void);
+
 /* Flush the terminal output.  */
 extern void pk_term_flush (void);
 

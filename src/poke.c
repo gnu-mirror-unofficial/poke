@@ -213,7 +213,7 @@ static void
 finalize ()
 {
 #ifdef HAVE_HSERVER
-  if (poke_interactive_p && !poke_quiet_p)
+  if (pk_term_color_p ())
     pk_hserver_shutdown ();
 #endif
   ios_shutdown ();
@@ -409,7 +409,7 @@ initialize (int argc, char *argv[])
 
 #ifdef HAVE_HSERVER
   /* Initialize and start the terminal hyperlinks server.  */
-  if (poke_interactive_p && !poke_quiet_p)
+  if (pk_term_color_p ())
     pk_hserver_init ();
 #endif
 }
