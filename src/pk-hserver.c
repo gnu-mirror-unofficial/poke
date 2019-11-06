@@ -92,23 +92,35 @@ read_from_client (int filedes)
     return -1;
   else
     {
-      //      int point, end;
-
-      /* XXX: exec command.  insert command.  silent command.  */
-
-      if (1 /* exec command */)
+      char *cmd = buffer + 1;
+      
+      switch (buffer[0])
         {
-          pk_puts (buffer);
+        case 'e':
+          /* Command 'execute'.  */
+          rl_save_prompt ();
+          rl_clear_message ();
+          pk_puts (cmd);
           buffer[nbytes-2] = '\0';
-          pk_cmd_exec (buffer);
-          pk_puts ("(poke) ");
+          pk_cmd_exec (cmd);
+          //          pk_puts ("(poke) ");
           pk_term_flush ();
-        }
-      else /* insert command */
-        {
+          rl_restore_prompt ();
+          rl_forced_update_display ();
+          break;
+        case 'i':
+          /* Command 'insert'.  */
           buffer[nbytes-2] = '\0';
-          rl_insert_text (buffer);
-          rl_redisplay ();          
+          rl_insert_text (cmd);
+          rl_redisplay ();
+          break;
+        case 's':
+          /* Command 'silent'.  */
+          assert (0);
+          break;
+        default:
+          /* Invalid command: ignore.  */
+          break;
         }
 
       return 0;
