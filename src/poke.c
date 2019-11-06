@@ -26,10 +26,6 @@
 #define _(str) dgettext (PACKAGE, str)
 #include <unistd.h>
 #include <string.h>
-#include "readline.h"
-#if defined HAVE_READLINE_HISTORY_H
-# include <readline/history.h>
-#endif
 #include <locale.h>
 
 #ifdef HAVE_HSERVER
@@ -40,7 +36,7 @@
 #include "pk-cmd.h"
 #include "pkl.h"
 #include "pvm.h"
-#include "pk-term.h"
+#include "pk-repl.h"
 #include "poke.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
@@ -318,47 +314,6 @@ parse_args (int argc, char *argv[])
 }
 
 static void
-repl ()
-{
-  if (!poke_quiet_p)
-    {
-      pk_print_version ();
-      pk_puts ("\n");
-      pk_puts (_("For help, type \".help\".\n"));
-      pk_puts (_("Type \".exit\" to leave the program.\n"));
-    }
-
-  while (!poke_exit_p)
-    {
-      int ret;
-      char *line;
-
-      pk_term_flush ();
-      line = readline ("(poke) ");
-      if (line == NULL)
-        {
-          /* EOF in stdin (probably Ctrl-D).  */
-          pk_puts ("\n");
-          break;
-        }
-
-      /* Ignore empty lines.  */
-      if (*line == '\0')
-        continue;
-
-#if defined HAVE_READLINE_HISTORY_H
-      if (line && *line)
-        add_history (line);
-#endif
-
-      ret = pk_cmd_exec (line);
-      if (!ret)
-        /* Avoid gcc warning here.  */ ;
-      free (line);
-    }
-}
-
-static void
 initialize (int argc, char *argv[])
 {
   /* This is used by the `progname' gnulib module.  */
@@ -456,7 +411,7 @@ main (int argc, char *argv[])
 
   /* Enter the REPL.  */
   if (poke_interactive_p)
-    repl ();
+    pk_repl ();
 
   /* Cleanup.  */
   finalize ();

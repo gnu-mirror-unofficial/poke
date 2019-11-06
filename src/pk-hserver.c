@@ -30,10 +30,10 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include "readline.h"
 #include <pk-cmd.h>
 #include <pk-hserver.h>
 #include <pk-term.h>
+#include <pk-repl.h>
 
 /* The app:// protocol defines a maximum length of messages of two
    kilobytes.  */
@@ -97,22 +97,23 @@ read_from_client (int filedes)
       switch (buffer[0])
         {
         case 'e':
-          /* Command 'execute'.  */
-          rl_save_prompt ();
-          rl_clear_message ();
-          pk_puts (cmd);
-          buffer[nbytes-2] = '\0';
-          pk_cmd_exec (cmd);
-          //          pk_puts ("(poke) ");
-          pk_term_flush ();
-          rl_restore_prompt ();
-          rl_forced_update_display ();
-          break;
+          {
+            /* Command 'execute'.  */
+            pthread_mutex_lock (&hserver_mutex);
+            pk_repl_display_begin ();
+            pk_puts (cmd);
+            buffer[nbytes-2] = '\0';
+            pk_cmd_exec (cmd);
+            pk_repl_display_end ();
+            pthread_mutex_unlock (&hserver_mutex);
+            break;
+          }
         case 'i':
           /* Command 'insert'.  */
           buffer[nbytes-2] = '\0';
-          rl_insert_text (cmd);
-          rl_redisplay ();
+          pthread_mutex_lock (&hserver_mutex);
+          pk_repl_insert (cmd);
+          pthread_mutex_unlock (&hserver_mutex);
           break;
         case 's':
           /* Command 'silent'.  */

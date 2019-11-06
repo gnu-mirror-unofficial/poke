@@ -1,3 +1,11 @@
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-repl.h: New file.
+	* src/pk-repl.c: Likewise.
+	* src/Makefile.am (poke_SOURCES): Add pk-repl.h and pk-repl.c.
+	* src/poke.c (repl): Remove function.
+	(main): Call pk_repl instead of repl.
+
 2019-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-hserver.h: New file.
