@@ -132,28 +132,50 @@ static void
 print_info_file (ios io, void *data)
 {
   int *i = (int *) data;
-  pk_printf ("%s#%d\t%s\t0x%08jx#b\t",
+  pk_printf ("%s#%d\t%s\t",
              io == ios_cur () ? "* " : "  ",
              (*i)++,
-             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ",
-             ios_tell (io));
+             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ");
 
 #if HAVE_HSERVER
-  char *cmd;
-  char *hyperlink;
+  {
+    char *cmd;
+    char *hyperlink;
+    
+    asprintf (&cmd, "0x%x#b", ios_tell (io));
+    hyperlink = pk_hserver_make_hyperlink ('i', cmd);
+    free (cmd);
+    
+    pk_term_hyperlink (hyperlink, NULL);
+    pk_printf ("0x%08jx#b", ios_tell (io));
+    pk_term_end_hyperlink ();
+    
+    free (hyperlink);
+  }
+#else
+  pk_printf ("0x%08jx#b", ios_tell (io));
+#endif
+  pk_puts ("\t");
 
-  asprintf (&cmd, ".file #%d", *i - 1);
-  hyperlink = pk_hserver_make_hyperlink ('e', cmd);
-  free (cmd);
-
-  pk_term_hyperlink (hyperlink, NULL);
-  pk_puts (ios_handler (io));
-  pk_term_end_hyperlink ();
-  
-  free (hyperlink);
+#if HAVE_HSERVER
+  {
+    char *cmd;
+    char *hyperlink;
+    
+    asprintf (&cmd, ".file #%d", *i - 1);
+    hyperlink = pk_hserver_make_hyperlink ('e', cmd);
+    free (cmd);
+    
+    pk_term_hyperlink (hyperlink, NULL);
+    pk_puts (ios_handler (io));
+    pk_term_end_hyperlink ();
+    
+    free (hyperlink);
+  }
 #else
   pk_puts (ios_handler (io));
 #endif
+  
   pk_puts ("\n");
 }
 
