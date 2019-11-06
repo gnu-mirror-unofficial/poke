@@ -30,11 +30,10 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include "readline.h"
+#include <pk-cmd.h>
 #include <pk-hserver.h>
-
-/* The port number to use.  This is arbitrarily set to 6093, which
-   sort of resemble "poke" in h4k3r silly parlance ;) */
-#define PORT 6093
+#include <pk-term.h>
 
 /* The app:// protocol defines a maximum length of messages of two
    kilobytes.  */
@@ -46,7 +45,7 @@ pthread_t hserver_thread;
 /* hserver_finish is used to tell the server threads to terminate.  It
    is protected with a mutex.  */
 int hserver_finish;
-pthread_mutex_t hserver_finish_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t hserver_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static int
 make_socket (uint16_t port)
@@ -93,8 +92,11 @@ read_from_client (int filedes)
     return -1;
   else
     {
-      /* Data read. */
-      fprintf (stderr, "Server: got message: `%s'\n", buffer);
+      pk_puts (buffer);
+      buffer[nbytes-2] = '\0';
+      pk_cmd_exec (buffer);
+      pk_puts ("(poke) ");
+      pk_term_flush ();
       return 0;
     }
 }
@@ -109,24 +111,28 @@ hserver_thread_worker (void *data)
   socklen_t size;
 
   /* Create the socket and set it up to accept connections. */
-  sock = make_socket (PORT);
+  sock = make_socket (1234);
   if (listen (sock, 1) < 0)
     {
       perror ("listen");
       exit (EXIT_FAILURE);
     }
 
+  /* XXX */
+  //  size = sizeof (clientname);
+  //  getsockname (sock, &clientname, &size);
+  //  printf ("SOCKET: %d\n", clientname.sin_port);
+
+  
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
   while (1)
     {
-      struct timeval timeout = { 0, 500 };
-      
-      /* Block until input arrives on one or more active sockets, but
-         use a timeout to give the thread the chance to check for
-         hserver_finish. */
+      struct timeval timeout = { 0, 200000 };
+
+      /* Block until input arrives on one or more active sockets.  */
       read_fd_set = active_fd_set;
       if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout) < 0)
         {
@@ -151,10 +157,6 @@ hserver_thread_worker (void *data)
                     perror ("accept");
                     exit (EXIT_FAILURE);
                   }
-                fprintf (stderr,
-                         "Server: connect from host %s, port %hd.\n",
-                         inet_ntoa (clientname.sin_addr),
-                         ntohs (clientname.sin_port));
                 FD_SET (new, &active_fd_set);
               }
             else
@@ -168,16 +170,16 @@ hserver_thread_worker (void *data)
               }
           }
 
-      pthread_mutex_lock (&hserver_finish_mutex);
+      pthread_mutex_lock (&hserver_mutex);
       if (hserver_finish)
         {
-          pthread_mutex_unlock (&hserver_finish_mutex);
+          pthread_mutex_unlock (&hserver_mutex);
           pthread_exit (NULL);
         }
-      pthread_mutex_unlock (&hserver_finish_mutex);
-
+      pthread_mutex_unlock (&hserver_mutex);
     }
 }
+
 
 void
 pk_hserver_init ()
@@ -203,9 +205,9 @@ pk_hserver_shutdown ()
   int ret;
   void *res;
 
-  pthread_mutex_lock (&hserver_finish_mutex);
+  pthread_mutex_lock (&hserver_mutex);
   hserver_finish = 1;
-  pthread_mutex_unlock (&hserver_finish_mutex);
+  pthread_mutex_unlock (&hserver_mutex);
 
   ret = pthread_join (hserver_thread, &res);
   if (ret != 0)

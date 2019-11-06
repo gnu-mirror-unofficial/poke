@@ -213,7 +213,8 @@ static void
 finalize ()
 {
 #ifdef HAVE_HSERVER
-  pk_hserver_shutdown ();
+  if (poke_interactive_p && !poke_quiet_p)
+    pk_hserver_shutdown ();
 #endif
   ios_shutdown ();
   pk_cmd_shutdown ();
@@ -332,14 +333,6 @@ repl ()
       int ret;
       char *line;
 
-#if 0
-      /* This doesn't work well because readline's edition commands
-         make use of the lenght of the prompt, i.e. the prompt string
-         is expected to be passed to readline().  */
-      pk_term_class ("prompt");
-      pk_puts ("(poke) ");
-      pk_term_end_class ("prompt");
-#endif
       pk_term_flush ();
       line = readline ("(poke) ");
       if (line == NULL)
@@ -416,7 +409,8 @@ initialize (int argc, char *argv[])
 
 #ifdef HAVE_HSERVER
   /* Initialize and start the terminal hyperlinks server.  */
-  pk_hserver_init ();
+  if (poke_interactive_p && !poke_quiet_p)
+    pk_hserver_init ();
 #endif
 }
 

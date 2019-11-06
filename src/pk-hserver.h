@@ -25,6 +25,4 @@
 void pk_hserver_init (void);
 void pk_hserver_shutdown (void);
 
-
-
 #endif /* PK_HSERVER_H */
