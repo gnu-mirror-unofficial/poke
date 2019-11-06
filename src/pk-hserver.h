@@ -25,4 +25,14 @@
 void pk_hserver_init (void);
 void pk_hserver_shutdown (void);
 
+/* Get a new token.  */
+int pk_hserver_get_token (void);
+
+/* Return the port number where the server is listening.  This
+   function shall be called after pk_hserver_init.  */
+int pk_hserver_port (void);
+
+/* Build hyperlinks.  */
+char *pk_hserver_make_hyperlink (char type, const char *cmd);
+
 #endif /* PK_HSERVER_H */

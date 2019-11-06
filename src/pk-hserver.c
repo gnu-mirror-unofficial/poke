@@ -35,17 +35,46 @@
 #include <pk-term.h>
 #include <pk-repl.h>
 
+#define STREQ(a, b) (strcmp (a, b) == 0)
+
 /* The app:// protocol defines a maximum length of messages of two
    kilobytes.  */
 #define MAXMSG 2048
 
 /* Thread that runs the server.  */
-pthread_t hserver_thread;
+static pthread_t hserver_thread;
+
+/* Socket used by the worker thread.  */
+static int hserver_socket;
+
+/* Port where the server listens for connections.  */
+static int hserver_port = 0;
+static char hserver_port_str[128];
 
 /* hserver_finish is used to tell the server threads to terminate.  It
    is protected with a mutex.  */
-int hserver_finish;
-pthread_mutex_t hserver_mutex = PTHREAD_MUTEX_INITIALIZER;
+static int hserver_finish;
+static pthread_mutex_t hserver_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+/* The server maintains a table with tokens.  Each hyperlink uses its
+   own unique token, which is included in the payload and checked upon
+   connection.  */
+
+#define NUM_TOKENS 2014
+int hserver_tokens[NUM_TOKENS];
+
+int
+pk_hserver_get_token (void)
+{
+  int token;
+
+  do
+    token = rand () % NUM_TOKENS;
+  while (hserver_tokens[token]);
+
+  hserver_tokens[token] = 1;
+  return token;
+}
 
 static int
 make_socket (uint16_t port)
@@ -75,6 +104,23 @@ make_socket (uint16_t port)
 }
 
 static int
+parse_int (char **p, int *number)
+{
+  long int li;
+  char *end;
+
+  errno = 0;
+  li = strtoll (*p, &end, 0);
+  if ((errno != 0 && li == 0)
+      || end == *p)
+    return 0;
+
+  *number = li;
+  *p = end;
+  return 1;
+}
+
+static int
 read_from_client (int filedes)
 {
   char buffer[MAXMSG];
@@ -92,35 +138,58 @@ read_from_client (int filedes)
     return -1;
   else
     {
-      char *cmd = buffer + 1;
+      int token;
+      char cmd;
+      char *p = buffer;
+
+      /* Remove the newline at the end.  */
+      buffer[nbytes-2] = '\0';
       
-      switch (buffer[0])
+      /* The format of the payload is:
+         [0-9]+/{e,i}/.*  */
+
+      /* Get the token and check it.  */
+      if (!parse_int (&p, &token))
+        {
+          printf ("PARSING INT\n");
+          return 0;
+        }
+        
+      if (!hserver_tokens[token])
+        return 0;
+      
+      if (*p != '/')
+        return 0;
+      p++;
+
+      cmd = *p;
+      if (cmd != 'i' && cmd != 'e')
+        return 0;
+      p++;
+
+      if (*p != '/')
+        return 0;
+      p++;
+      
+      switch (cmd)
         {
         case 'e':
-          {
-            /* Command 'execute'.  */
-            pthread_mutex_lock (&hserver_mutex);
-            pk_repl_display_begin ();
-            pk_puts (cmd);
-            buffer[nbytes-2] = '\0';
-            pk_cmd_exec (cmd);
-            pk_repl_display_end ();
-            pthread_mutex_unlock (&hserver_mutex);
-            break;
-          }
-        case 'i':
-          /* Command 'insert'.  */
-          buffer[nbytes-2] = '\0';
+          /* Command 'execute'.  */
           pthread_mutex_lock (&hserver_mutex);
-          pk_repl_insert (cmd);
+          pk_repl_display_begin ();
+          pk_puts (p);
+          pk_puts ("\n");
+          pk_cmd_exec (p);
+          pk_repl_display_end ();
           pthread_mutex_unlock (&hserver_mutex);
           break;
-        case 's':
-          /* Command 'silent'.  */
-          assert (0);
+        case 'i':
+          /* Command 'insert'.  */
+          pthread_mutex_lock (&hserver_mutex);
+          pk_repl_insert (p);
+          pthread_mutex_unlock (&hserver_mutex);
           break;
         default:
-          /* Invalid command: ignore.  */
           break;
         }
 
@@ -131,29 +200,14 @@ read_from_client (int filedes)
 static void *
 hserver_thread_worker (void *data)
 {
-  int sock;
   fd_set active_fd_set, read_fd_set;
   int i;
   struct sockaddr_in clientname;
   socklen_t size;
 
-  /* Create the socket and set it up to accept connections. */
-  sock = make_socket (1234);
-  if (listen (sock, 1) < 0)
-    {
-      perror ("listen");
-      exit (EXIT_FAILURE);
-    }
-
-  /* XXX */
-  //  size = sizeof (clientname);
-  //  getsockname (sock, &clientname, &size);
-  //  printf ("SOCKET: %d\n", clientname.sin_port);
-
-  
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set);
-  FD_SET (sock, &active_fd_set);
+  FD_SET (hserver_socket, &active_fd_set);
 
   while (1)
     {
@@ -171,12 +225,12 @@ hserver_thread_worker (void *data)
       for (i = 0; i < FD_SETSIZE; ++i)
         if (FD_ISSET (i, &read_fd_set))
           {
-            if (i == sock)
+            if (i == hserver_socket)
               {
                 /* Connection request on original socket. */
                 int new;
                 size = sizeof (clientname);
-                new = accept (sock,
+                new = accept (hserver_socket,
                               (struct sockaddr *) &clientname,
                               &size);
                 if (new < 0)
@@ -207,17 +261,43 @@ hserver_thread_worker (void *data)
     }
 }
 
-
 void
 pk_hserver_init ()
 {
   int ret;
-  
+  int i;
+  struct sockaddr_in clientname;
+  socklen_t size;
+
+  for (i = 0; i < NUM_TOKENS; ++i)
+    hserver_tokens[i] = 0;
+
+  /* Create the socket and set it up to accept connections. */
+  hserver_socket = make_socket (hserver_port);
+  if (listen (hserver_socket, 1) < 0)
+    {
+      perror ("listen");
+      exit (EXIT_FAILURE);
+    }
+
+  /* Get a suitable ephemeral port and initialize hserver_port and
+     hserver_port_str.  These will be used until the server shuts
+     down.  */
+  size = sizeof (clientname);
+  if (getsockname (hserver_socket, &clientname, &size) != 0)
+    {
+      perror ("getsockname");
+      exit (EXIT_FAILURE);
+    }
+  hserver_port = ntohs (clientname.sin_port);
+  sprintf (hserver_port_str, "%d", hserver_port);
+
   hserver_finish = 0;
   ret = pthread_create (&hserver_thread,
                         NULL /* attr */,
                         hserver_thread_worker,
                         NULL);
+
   if (ret != 0)
     {
       errno = ret;
@@ -243,4 +323,57 @@ pk_hserver_shutdown ()
       perror ("pthread_join");
       exit (EXIT_FAILURE);
     }
+}
+
+char *
+pk_hserver_make_hyperlink (char type,
+                           const char *cmd)
+{
+  int token;
+  char *str, token_str[128], type_str[2];
+  char hostname[128];
+  
+  assert (type == 'i' || type == 'e');
+  type_str[0] = type;
+  type_str[1] = '\0';
+
+  /* XXX: check for maximum length 2048.  */
+  token = pk_hserver_get_token ();
+  sprintf (token_str, "%d", token);
+  
+  if (gethostname (hostname, 128) != 0)
+    {
+      perror ("gethostname");
+      exit (EXIT_FAILURE);
+    }
+
+  str = xmalloc (strlen ("app://")
+                 + strlen (hostname)
+                 + 1 /* ':' */
+                 + strlen (hserver_port_str)
+                 + 1 /* '/' */
+                 + strlen (token_str)
+                 + 1 /* '/' */
+                 + 1 /* type */
+                 + 1 /* '/' */
+                 + strlen (cmd)
+                 + 1 /* '0' */);
+  strcpy (str, "app://");
+  strcat (str, hostname);
+  strcat (str, ":");
+  strcat (str, hserver_port_str);
+  strcat (str, "/");
+  strcat (str, token_str);
+  strcat (str, "/");
+  strcat (str, type_str);
+  strcat (str, "/");
+  strcat (str, cmd);
+
+  return str;
+}
+
+int
+pk_hserver_port (void)
+{
+  return hserver_port;
 }
