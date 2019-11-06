@@ -1,5 +1,10 @@
 2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-file.c (print_info_file): Use terminal hyperlinks if
+	available.
+
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-hserver.c (pk_hserver_get_token): New function.
 	(pk_hserver_make_hyperlink): Likewise.
 	(pk_hserver_port): New function.

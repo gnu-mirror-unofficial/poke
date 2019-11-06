@@ -25,6 +25,9 @@
 #include "ios.h"
 #include "poke.h"
 #include "pk-cmd.h"
+#if HAVE_HSERVER
+#  include "pk-hserver.h"
+#endif
 
 static int
 pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -129,11 +132,29 @@ static void
 print_info_file (ios io, void *data)
 {
   int *i = (int *) data;
-  pk_printf ("%s#%d\t%s\t0x%08jx#b\t%s\n",
+  pk_printf ("%s#%d\t%s\t0x%08jx#b\t",
              io == ios_cur () ? "* " : "  ",
              (*i)++,
              ios_mode (io) & IOS_M_RDWR ? "rw" : "r ",
-             ios_tell (io), ios_handler (io));
+             ios_tell (io));
+
+#if HAVE_HSERVER
+  char *cmd;
+  char *hyperlink;
+
+  asprintf (&cmd, ".file #%d", *i - 1);
+  hyperlink = pk_hserver_make_hyperlink ('e', cmd);
+  free (cmd);
+
+  pk_term_hyperlink (hyperlink, NULL);
+  pk_puts (ios_handler (io));
+  pk_term_end_hyperlink ();
+  
+  free (hyperlink);
+#else
+  pk_puts (ios_handler (io));
+#endif
+  pk_puts ("\n");
 }
 
 static int
