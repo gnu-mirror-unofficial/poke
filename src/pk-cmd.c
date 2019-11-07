@@ -51,6 +51,7 @@ extern struct pk_cmd help_cmd; /* pk-help.c */
 extern struct pk_cmd vm_cmd; /* pk-vm.c  */
 extern struct pk_cmd print_cmd; /* pk-print.c */
 extern struct pk_cmd set_cmd; /* pk-set.c */
+extern struct pk_cmd editor_cmd; /* pk-editor.c */
 
 struct pk_cmd null_cmd =
   {NULL, NULL, NULL, 0, NULL, NULL};
@@ -67,6 +68,7 @@ static struct pk_cmd *cmds[] =
     &vm_cmd,
     &print_cmd,
     &set_cmd,
+    &editor_cmd,
     &null_cmd
   };
 

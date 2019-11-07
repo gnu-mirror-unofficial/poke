@@ -1,3 +1,11 @@
+2019-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import `system' gnulib module.
+	* src/pk-editor.c: New file.
+	* src/pk-cmd.c (editor_cmd): New extern.
+	(cmds): Add editor_cmd.
+	* src/Makefile.am (poke_SOURCES): Add pk_editor.c.
+
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/bpf.pk (BPF_Insn_Opcode._print): Simply using the `in'
