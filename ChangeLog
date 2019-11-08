@@ -1,3 +1,20 @@
+2019-11-08  Michael Drüing <michael@drueing.de>
+
+	* src/std.pk (atoi): New function.
+	* testsuite/poke.std/atoi-1.pk: New test.
+	* testsuite/poke.std/atoi-2.pk: Likewise.
+	* testsuite/poke.std/atoi-3.pk: Likewise.
+	* testsuite/poke.std/atoi-4.pk: Likewise.
+	* testsuite/poke.std/atoi-5.pk: Likewise.
+	* testsuite/poke.std/atoi-6.pk: Likewise.
+	* testsuite/poke.std/atoi-7.pk: Likewise.
+	* testsuite/poke.std/atoi-8.pk: Likewise.
+	* testsuite/poke.std/atoi-9.pk: Likewise.
+	* testsuite/poke.std/atoi-10.pk: Likewise.
+	* testsuite/poke.std/atoi-11.pk: Likewise.
+	* testsuite/poke.std/atoi-12.pk: Likewise.
+	* testsuite/poke.std/atoi-13.pk: Likewise.
+
 2019-11-08  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* HACKING (Writing poke Tests): New section.
