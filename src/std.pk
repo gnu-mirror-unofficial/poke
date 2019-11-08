@@ -16,10 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* XXX: use the std:: namespace for all the definitions in this file.  */
-
-/* Standard integral types.  */
-/* XXX: these types should be immutable.  */
+/* Standard Integral Types.  */
 
 deftype bit = uint<1>;
 deftype nibble = uint<4>;
@@ -43,13 +40,12 @@ deftype short = int16;
 deftype ulong = uint64;
 deftype long = int64;
 
+/* Standard Offset Types.  */
+
 deftype off64 = offset<int64,b>;
 deftype uoff64 = offset<uint64,b>;
 
-/* Having a NULL value which is compatible with C is useful.  */
-defvar NULL = 0#B;
-
-/* String related routines.  */
+/* Conversion Functions.  */
 
 defun catos = (char[] chars) string:
   {
@@ -64,115 +60,41 @@ defun catos = (char[] chars) string:
    return s;
   }
 
-defun substr = (string s, int f, int t = s'length - 1) string:
+/* Convert string to number */
+
+defun atoi = (string s, int b = 10) long:
   {
-   return s[f:t];
-  }
+    defvar result = 0;
 
-defun strstr = (string s1, string s2) long:
-  {
-   defvar i = 0UL;
-
-   if (s1'length == 0)
-     return 0;
-   if (s1'length > s2'length)
-     return -1;
-
-   while (i < s2'length - s1'length + 1)
-     {
-       if (s2[i:i + s1'length - 1] == s1)
-         return i;
-
-       i = i + 1;
-     }
-
-   return -1;
-  }
-
-defun format = (string fmt, args...) string:
-  {
-   defvar fi = 0;
-   defvar res = "";
-   defvar narg = 0;
-
-   defun tohex = (uint<64> n) string:
-   {
-    defvar hex = "";
-
-    while (n != 0)
+    defun htoi = (char c) int:
       {
-        defvar remainder = (n % 16) as char;
-
-        if (remainder < 10)
-          hex = (remainder + '0') as string + hex;
-        else
-          hex = (remainder + '7') as string + hex;
-
-        n = n / 16;
+        if (c >= '0' && c <= '9') return c - '0';
+        if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+        if (c >= 'A' && c <= 'F') return c - 'A' + 10;
       }
 
-    return hex;
-   }
+    defun valid = (char c, int b) int:
+      {
+        if (b <= 10) return (c >= '0') && (c <= '0' + b - 1);
+        if (b == 16) return ((c >= '0') && (c <= '9')) ||
+         ((c >= 'a') && (c <= 'f')) || ((c >= 'A') && (c <= 'F'));
+      }
 
-   defun tooct = (uint<64> n) string:
-   {
-    return "012";
-   }
+    if (!(b in [2, 8, 10, 16]))
+      raise E_generic;
 
-   defun tobin = (uint<64> n) string:
-   {
-    return "100";
-   }
+    for (c in s)
+    {
+      if (!valid(c, b))
+        return result;
 
-   defun todec = (int<64> n) string:
-   {
-    return "10";
-   }
+      result = result * b + htoi(c);
+    }
 
-   defun toudec = (uint<64> n) string:
-   {
-    return "-10";
-   }
-
-   while (fi < fmt'length)
-     {
-       if (fmt[fi] == '%'
-           && fi < fmt'length - 1)
-         {
-           /* Process %-sequence:
-
-              %{i,u}BITS{x,o,b,d,u}  */
-
-           if (fmt[fi + 1] == 'x')
-             res = res + tohex (args[narg] as uint<64>);
-           else if (fmt[fi + 1] == 'o')
-             res = res + tooct (args[narg] as uint<64>);
-           else if (fmt[fi + 1] == 'b')
-             res = res + tobin (args[narg] as uint<64>);
-           else if (fmt[fi + 1] == 'd')
-             res = res + todec (args[narg] as int<64>);
-           else if (fmt[fi + 1] == 'u')
-             res = res + toudec (args[narg] as uint<64>);
-           else
-             {
-               print "format: unrecognized %" + fmt[fi + 1] as string + "\n";
-               raise E_generic; /* XXX use E_inval ? */
-             }
-
-           narg = narg + 1;
-           fi = fi + 2;
-         }
-       else
-         {
-          res = res + fmt[fi] as string;
-          fi = fi + 1;
-         }
-     }
-
-   return res;
+    return result;
   }
 
-/* Quicksort.  */
+/* Sorting Functions.  */
 
 deftype Comparator = (any,any)int;
 
@@ -216,37 +138,6 @@ defun qsort = (any[] array, Comparator cmp_f,
    }
 }
 
-/* Convert string to number */
+/* Miscellanea.  */
 
-defun atoi = (string s, int b = 10) long:
-  {
-    defvar result = 0;
-
-    defun htoi = (char c) int:
-      {
-        if (c >= '0' && c <= '9') return c - '0';
-        if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-        if (c >= 'A' && c <= 'F') return c - 'A' + 10;
-      }
-
-    defun valid = (char c, int b) int:
-      {
-        if (b <= 10) return (c >= '0') && (c <= '0' + b - 1);
-        if (b == 16) return ((c >= '0') && (c <= '9')) ||
-         ((c >= 'a') && (c <= 'f')) || ((c >= 'A') && (c <= 'F'));
-      }
-
-    if (!(b in [2, 8, 10, 16]))
-      raise E_generic;
-
-    for (c in s)
-    {
-      if (!valid(c, b))
-        return result;
-
-      result = result * b + htoi(c);
-    }
-
-    return result;
-  }
-
+defvar NULL = 0#B;

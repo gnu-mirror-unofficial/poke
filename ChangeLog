@@ -1,3 +1,11 @@
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/std.pk (substr): Remove.
+	(strstr): Likewise.
+	(format): Likewise.
+	* testsuite/poke.std/substr.pk: Remove test.
+	* testsuite/poke.std/strstr.pk: Likewise.
+
 2019-11-08  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* doc/poke.texi (Standard Integral Types): New chapter.
