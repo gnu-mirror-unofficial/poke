@@ -2850,7 +2850,7 @@ The Poke standard library provides the following functions to do
 useful conversions.
 
 @menu
-* catos::		converting characters arrys into string.
+* catos::		converting characters arrays into string.
 * atoi::		converting strings to integers.
 @end menu
 
