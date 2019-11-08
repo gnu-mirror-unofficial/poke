@@ -52,51 +52,56 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        4.1  Writing C
        4.2  Writing Poke
        4.3  Writing RAS
-     5  Deciding on What to Work on
-     6  Submitting a Patch
-     7  Maintenance
-     8  Poke Architecture
-     9  The Poke Compiler
-       9.1  Compiler Overview
-       9.2  The bison Parser in pkl-tab.y
-       9.3  The AST
-       9.4  Compiler Passes and Phases
-         9.4.1  Naming Conventions for Phases
-         9.4.2  Naming Conventions for Handlers
-         9.4.3  Transformation Phases
-         9.4.4  Analysis Phases
-         9.4.5  Type System Phases
-         9.4.6  Middle End Handlers should be Re-executable
-       9.5  The Type System
-         9.5.1  Type Expressions
-       9.6  Adding Compiler Built-Ins
-    10  The Poke Virtual Machine
-      10.1  Exception Handling
-      10.2  Offsets and bit-offsets in the PVM
-    11  Memory Management
-      11.1  Using ASTREF
-      11.2  Using ASTDEREF
-      11.3  PVM values in PVM routines
-      11.4  PVM values in AST nodes
-    12  Terminal Handling
-      12.1  pk-term
-      12.2  Styling Classes
-      12.3  Debugging Styling
-    13  Debugging Poke
-      13.1  Building with Debugging support
-      13.2  Using GDB extensions
-      13.3  Valgrind and Poke
-      13.4  Debugging PVM Assembly Code
-    14  Future Developments
-    15  Appendix: The Source Tree
-      15.1  The Compiler
-      15.2  The Poke Virtual Machine
-      15.3  The IO Subsystem
-      15.4  Poke Program
-      15.5  Pickles and Libraries
-      15.6  Test Suite
-      15.7  Documentation
-      15.8  Other Stuff
+     5  Writing Tests
+       5.1  Naming Tests
+       5.2  Always set obase
+       5.3  Put each test in its own file
+       5.4  dg-output may require a newline
+     6  Deciding on What to Work on
+     7  Submitting a Patch
+     8  Maintenance
+     9  Poke Architecture
+    10  The Poke Compiler
+      10.1  Compiler Overview
+      10.2  The bison Parser in pkl-tab.y
+      10.3  The AST
+      10.4  Compiler Passes and Phases
+        10.4.1  Naming Conventions for Phases
+        10.4.2  Naming Conventions for Handlers
+        10.4.3  Transformation Phases
+        10.4.4  Analysis Phases
+        10.4.5  Type System Phases
+        10.4.6  Middle End Handlers should be Re-executable
+      10.5  The Type System
+        10.5.1  Type Expressions
+      10.6  Adding Compiler Built-Ins
+    11  The Poke Virtual Machine
+      11.1  Exception Handling
+      11.2  Offsets and bit-offsets in the PVM
+    12  Memory Management
+      12.1  Using ASTREF
+      12.2  Using ASTDEREF
+      12.3  PVM values in PVM routines
+      12.4  PVM values in AST nodes
+    13  Terminal Handling
+      13.1  pk-term
+      13.2  Styling Classes
+      13.3  Debugging Styling
+    14  Debugging Poke
+      14.1  Building with Debugging support
+      14.2  Using GDB extensions
+      14.3  Valgrind and Poke
+      14.4  Debugging PVM Assembly Code
+    15  Future Developments
+    16  Appendix: The Source Tree
+      16.1  The Compiler
+      16.2  The Poke Virtual Machine
+      16.3  The IO Subsystem
+      16.4  Poke Program
+      16.5  Pickles and Libraries
+      16.6  Test Suite
+      16.7  Documentation
+      16.8  Other Stuff
 
 
 Nomenclature
@@ -331,8 +336,8 @@ Writing RAS
 We recommend to use the Emacs mode in ``etc/poke-ras-mode.el`` to
 write ``.pks`` files.
 
-Writing poke Tests
-------------------
+Writing Tests
+-------------
 
 The poke testsuites live in the ``testsuite/`` subdirectory.  This
 section contains useful hints for adding tests there.
