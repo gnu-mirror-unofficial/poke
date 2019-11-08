@@ -60,8 +60,6 @@ defun catos = (char[] chars) string:
    return s;
   }
 
-/* Convert string to number */
-
 defun atoi = (string s, int b = 10) long:
   {
     defvar result = 0;
