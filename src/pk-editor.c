@@ -18,6 +18,7 @@
 
 #include <config.h>
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <tmpdir.h>
 
@@ -29,6 +30,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char *editor, *cmdline;
   char tmpfile[1024];
   int des, ret;
+  FILE *f;
   
   /* editor */
   assert (argc == 0);
@@ -59,7 +61,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   asprintf (&cmdline, "%s %s", editor, tmpfile);
 
   /* Start command.  */
-  if ((ret = system (cmdline)) == -1)
+  if ((ret = system (cmdline)) != 0)
     {
       pk_term_class ("error");
       pk_puts ("error: ");
@@ -68,17 +70,51 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  /* If the editor returned success, read the contents of the file,
-     turn newlines into spaces and insert the resulting string in the
-     repl, replacing it's current contents (the .editor command
-     invokation.)  */
-  if (ret == 0)
+  /* If the editor returned success and a file got created, read the
+     contents of the file, turn newlines into spaces and execute
+     it.  */
+  if (ret == 0
+      && (f = fopen (tmpfile, "r")) != NULL)
     {
+      char *newline = NULL;
+      size_t size, i = 0;
+      int c;
 
+#define STEP 128
+      for (size = STEP; (c = fgetc (f)) != EOF; i++)
+        {
+          if (i % STEP == 0)
+            {
+              newline = realloc (newline, size);
+              size = size + 128;
+            }
+          if (c == '\n')
+            c = ' ';
+
+          newline[i] = c;
+        }
+      newline[i] = '\0';
+#undef STEP
+      fclose (f);
+
+      if (newline && *newline != '\0')
+        {
+          pk_puts ("(poke) ");
+          pk_puts (newline);
+          pk_puts ("\n");
+          pk_cmd_exec (newline);
+        }
     }
 
   /* Remove the temporary file.  */
-  /* XXX */
+  if (unlink (tmpfile) != 0)
+    {
+      pk_term_class ("error");
+      pk_puts ("error: ");
+      pk_term_end_class ("error");
+      pk_printf ("removing temporary file %s\n", tmpfile);
+      return 0;      
+    }
   
   return 1;
 }

@@ -1,3 +1,12 @@
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import the module unlink from
+	gnulib.
+	* src/pk-editor.c (pk_cmd_editor): Open result file and extract
+	the new line from it.
+	Remove the temporary file.
+	* doc/poke.texi (.editor): New chapter.
+
 2019-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* bootstrap.conf (gnulib_modules): Import `system' gnulib module.
