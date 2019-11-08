@@ -86,6 +86,8 @@ The Poke Language
 * Strings::			Working with null-terminated strings.
 * Arrays::			Working with homogeneous collections.
 * Structs::			Working with heterogeneous collections.
+* Conditionals::		Conditional statements.
+* Loops::			Statements to iterate on conditions.
 * Endianness::			Byte ordering.
 * Mapping::			Accessing the IO space.
 * Exception Handling::		Dealing with exceptional conditions.
@@ -2094,6 +2096,97 @@ XXX
 @section Struct Attributes
 
 XXX
+
+@node Conditionals
+@chapter Conditionals
+
+
+Poke provides several conditional statements, which are discussed in
+the sections below.
+
+@menu
+* if-else::			Simple conditionals.
+@end menu
+
+@node if-else
+@section if-else
+
+The @code{if-else} statement has the form:
+
+@example
+if @var{exp} @var{if_stmt} [else @var{else_stmt}]
+@end example
+
+Where @var{exp} is an expression that should evaluate to a boolean
+value (i.e. to an integer), @var{if_stmt} is a sentence that will be
+executed if @var{exp} holds true, and @var{else_stmt} is a sentence
+that will be executed if @var{exp} holds false.  The @code{else} part
+of the sentence is optional.
+
+@node Loops
+@chapter Loops
+
+Poke supports several iteration statements, which are discussed in the
+sections below.
+
+@menu
+* while::		Iterate while a condition holds true.
+* for-in::		Iterate over the elements of a container.
+@end menu
+
+@node while
+@section while
+
+The @code{while} statement has this form:
+
+@example
+while (@var{exp}) @var{stmt}
+@end example
+
+Where @var{exp} is an expression that should evaluate to a boolean
+(i.e. to an integer) and @var{stmt} is an statement that will be
+executed until @var{exp} holds false.
+
+It is possible to leave the loop from within @var{stmt} using the
+@code{break} statement.  Example:
+
+@example
+while (1)
+@{
+  [...]
+  if (exit_loop)
+    break;
+@}
+@end example
+
+@node for-in
+@section for-in
+
+The @code{for-in} statement has this form:
+
+@example
+for (@var{formal} in @var{container} [where @var{exp}]) @var{stmt}
+@end example
+
+Where, in each iteration, the name @var{formal} will be associated
+with consecutive values of @var{container}, which shall be an
+expression evaluating to an array or a string.  @var{formal} is
+available in @var{stmt}, which is the sentence executed in each
+iteration.
+
+If the @var{where} part is specified, then only iteration in which
+@var{exp} holds true are processed.  @var{formal} can be referred in
+@var{exp}.  Note that this doesn't mean the loop will stop after
+processing the first ``not selected'' element.  See the following
+example:
+
+@example
+(poke) for (c in [1,2,3,4] where c % 2) printf " %v", c
+ 1 3
+@end example
+
+It is possible to leave the loop from within @var{stmt} using the
+@code{break} statement.
 
 @node Endianness
 @chapter Endianness

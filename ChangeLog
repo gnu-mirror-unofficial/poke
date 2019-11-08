@@ -1,5 +1,13 @@
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Conditionals): New chapter.
+	(if-else): New section.
+	(Loops): New chapter.
+	(while): New section.
+	(for-in): Likewise.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Exception Handling): New chapter.
 	(Exceptions): New section.
 	(try-catch): Likewise.
