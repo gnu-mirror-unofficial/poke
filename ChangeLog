@@ -1,5 +1,12 @@
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-repl.c (banner): New function.
+	(pk_repl): Call banner.
+	(pk_repl_display_begin): Use rl_prompt instead of a literal
+	string.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/std.pk (catos): Stop at the first null character '\0'.
 	* testsuite/poke.std/catos-3.pk: New test.
 

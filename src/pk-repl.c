@@ -32,8 +32,8 @@
 #  include "pk-hserver.h"
 #endif
 
-void
-pk_repl (void)
+static void
+banner (void)
 {
   if (!poke_quiet_p)
     {
@@ -64,6 +64,12 @@ pk_repl (void)
       pk_puts (_("Type \".exit\" to leave the program.\n"));
     }
 
+}
+
+void
+pk_repl (void)
+{
+  banner ();
   while (!poke_exit_p)
     {
       int ret;
@@ -107,7 +113,7 @@ pk_repl_display_begin (void)
   rl_save_prompt ();
   rl_clear_message ();
 
-  pk_puts ("(poke) ");
+  pk_puts (rl_prompt);
 }
 
 void
