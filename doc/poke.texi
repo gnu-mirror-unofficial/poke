@@ -86,12 +86,15 @@ The Poke Language
 * Strings::			NULL-terminated strings.
 * Arrays::			Homogeneous collections.
 * Structs::			Heterogeneous collections.
+* Assignments::			Changing the value of variables.
+* Compound Statements::		Sequences of statements.
 * Conditionals::		Conditional statements.
 * Loops::			Statements to iterate on conditions.
+* Expression Statements::	Using expressions for their side-effects.
 * Endianness::			Byte ordering.
 * Mapping::			Accessing the IO space.
 * Exception Handling::		Dealing with exceptional conditions.
-* Output::			Printing from Poke programs.
+* Printing::			Output in Poke programs.
 
 The Standard Library
 * Standard Integral Types::	int, long and the like.
@@ -2097,6 +2100,55 @@ XXX
 
 XXX
 
+@node Assignments
+@chapter Assignments
+
+The assignment statement has the form:
+
+@example
+@var{lvalue} = @var{exp};
+@end example
+
+Where @var{lvalue} is either a variable, a field reference or an index
+reference.  It updates the value of the corresponding referred entity,
+to @var{exp}.  The type of @var{exp} should match the type of the
+referred entity.
+
+Examples:
+
+@example
+(poke) foo = 10
+(poke) packet.length = 4
+(poke) packet.data = [1,2,3,4]
+(poke) packet.data[2] = 666
+@end example
+
+@node Compound Statements
+@chapter Compound Statements
+
+Compound statements have the form:
+
+@example
+@{ @var{stmt...} @}
+@end example
+
+Where @var{stmt...} is a list of statements, which can be themselves
+compound statements.  Compound statements are primarily used to
+sequence instructions like:
+
+@example
+@{
+  do_a;
+  do_b;
+  do_c;
+@}
+@end example
+
+A compound statement introduces a new lexical scope.  Declarations in
+the compound statements are local to that statement.
+
+Finally, compound statements can be empty: @code{@{ @}}.
+
 @node Conditionals
 @chapter Conditionals
 
@@ -2122,6 +2174,7 @@ value (i.e. to an integer), @var{if_stmt} is a sentence that will be
 executed if @var{exp} holds true, and @var{else_stmt} is a sentence
 that will be executed if @var{exp} holds false.  The @code{else} part
 of the sentence is optional.
+
 
 @node Loops
 @chapter Loops
@@ -2187,6 +2240,24 @@ example:
 
 It is possible to leave the loop from within @var{stmt} using the
 @code{break} statement.
+
+
+@node Expression Statements
+@chapter Expression Statements
+
+Poke is one of these languages where there is a clear separation
+between @dfn{expressions} and @dfn{statements}.  However, it is often
+useful to use an expression in the place of an statement, in order to
+benefit from its side effects.
+
+For that purpose Poke allows you to expressions as statements using
+the following syntax:
+
+@example
+@var{exp};
+@end example
+
+The value computed by the expression will be discarded.
 
 @node Endianness
 @chapter Endianness
@@ -2868,14 +2939,14 @@ However, it is also useful to explicitly raise exceptions.  The
 @code{raise} statement can be used for that purpose.  It's syntax is:
 
 @example
-raise @var{exception}
+raise @var{exception};
 @end example
 
 Where @var{exception} is an integer.  This integer can be any number,
 but most often is one of the @code{E_*} codes defined in Poke.
 
-@node Output
-@chapter Output
+@node Printing
+@chapter Printing
 
 Poke programs can print text to the standard output in two ways:
 simple unformatted output, and formatted output.
