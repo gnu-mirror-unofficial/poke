@@ -55,7 +55,11 @@ defun catos = (char[] chars) string:
    defvar s = "";
 
    for (c in chars)
-     s = s + c as string;
+     {
+       if (c == '\0')
+         return s;
+       s = s + c as string;
+     }
    return s;
   }
 

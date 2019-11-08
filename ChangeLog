@@ -1,5 +1,10 @@
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/std.pk (catos): Stop at the first null character '\0'.
+	* testsuite/poke.std/catos-3.pk: New test.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Import the module unlink from
 	gnulib.
 	* src/pk-editor.c (pk_cmd_editor): Open result file and extract
