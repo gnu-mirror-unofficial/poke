@@ -81,11 +81,11 @@ Configuration
 * Styling::			Changing the appearance of poke's output.
 
 The Poke Language
-* Integers::			Working with whole numbers.
-* Offsets::			Working with memory sizes.
-* Strings::			Working with null-terminated strings.
-* Arrays::			Working with homogeneous collections.
-* Structs::			Working with heterogeneous collections.
+* Integers::			Whole numbers.
+* Offsets::			Memory sizes and offsets.
+* Strings::			NULL-terminated strings.
+* Arrays::			Homogeneous collections.
+* Structs::			Heterogeneous collections.
 * Conditionals::		Conditional statements.
 * Loops::			Statements to iterate on conditions.
 * Endianness::			Byte ordering.
