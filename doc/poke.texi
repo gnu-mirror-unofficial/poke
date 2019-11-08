@@ -2498,6 +2498,7 @@ perhaps the most important concept in Poke.
 * Mapping Simple Types::	Mapping integers, offsets and strings.
 * Mapping Structs::		Mapping collections of fields.
 * Mapping Arrays::		Mapping sequences of things.
+* Unmapping::			From mapped values to regular values.
 @end menu
 
 @node The Map Operator
@@ -2845,6 +2846,28 @@ don't want the mapping bounds of @code{relocs} to be tied to
 
 Since simple values (such as the size above) are not mapped, this
 trick works as intended.
+
+@node Unmapping
+@section Unmapping
+@cindex unmap, operator
+
+The unary @code{unmap} operator has the form:
+
+@example
+unmap @var{value}
+@end example
+
+It gets any value and produces the same value, making it not mapped in
+case it is a mapped value.
+
+This is useful when we want to read a data structure from the IO space
+(say, and array of integers) and then use it for storage without
+changing the underlying IO space.  We would do something like:
+
+@example
+(poke) defvar a = unmap (int[1] @@ 10#B)
+(poke) a[2] = 100
+@end example
 
 @node Exception Handling
 @chapter Exception Handling
