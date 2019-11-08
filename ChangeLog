@@ -1,3 +1,56 @@
+2019-11-09  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* testsuite/poke.map/maps-int-01.pk: New test.
+	* testsuite/poke.map/maps-int-02.pk: Likewise.
+	* testsuite/poke.map/maps-int-03.pk: Likewise.
+	* testsuite/poke.map/maps-int-04.pk: Likewise.
+	* testsuite/poke.map/maps-int-05.pk: Likewise.
+	* testsuite/poke.map/maps-int-06.pk: Likewise.
+	* testsuite/poke.map/maps-int-07.pk: Likewise.
+	* testsuite/poke.map/maps-int-08.pk: Likewise.
+	* testsuite/poke.map/maps-int-09.pk: Likewise.
+	* testsuite/poke.map/maps-int-10.pk: Likewise.
+	* testsuite/poke.map/maps-int-11.pk: Likewise.
+	* testsuite/poke.map/maps-int-12.pk: Likewise.
+	* testsuite/poke.map/maps-int-13.pk: Likewise.
+	* testsuite/poke.map/maps-int-14.pk: Likewise.
+	* testsuite/poke.map/maps-int-15.pk: Likewise.
+	* testsuite/poke.map/maps-int-16.pk: Likewise.
+	* testsuite/poke.map/maps-int-17.pk: Likewise.
+	* testsuite/poke.map/maps-int-18.pk: Likewise.
+	* testsuite/poke.map/maps-int-19.pk: Likewise.
+	* testsuite/poke.map/maps-int-20.pk: Likewise.
+	* testsuite/poke.map/maps-int-21.pk: Likewise.
+	* testsuite/poke.map/maps-int-22.pk: Likewise.
+	* testsuite/poke.map/maps-int-23.pk: Likewise.
+	* testsuite/poke.map/maps-int-24.pk: Likewise.
+	* testsuite/poke.map/maps-int-25.pk: Likewise.
+	* testsuite/poke.map/maps-int-26.pk: Likewise.
+	* testsuite/poke.map/maps-int-27.pk: Likewise.
+	* testsuite/poke.map/maps-int-28.pk: Likewise.
+	* testsuite/poke.map/maps-int-29.pk: Likewise.
+	* testsuite/poke.map/maps-int-30.pk: Likewise.
+	* testsuite/poke.map/maps-int-31.pk: Likewise.
+	* testsuite/poke.map/maps-int-32.pk: Likewise.
+	* testsuite/poke.map/maps-int-33.pk: Likewise.
+	* testsuite/poke.map/maps-int-34.pk: Likewise.
+	* testsuite/poke.map/maps-int-35.pk: Likewise.
+	* testsuite/poke.map/maps-int-36.pk: Likewise.
+	* testsuite/poke.map/maps-int-37.pk: Likewise.
+	* testsuite/poke.map/maps-int-38.pk: Likewise.
+	* testsuite/poke.map/maps-int-39.pk: Likewise.
+	* testsuite/poke.map/maps-int-40.pk: Likewise.
+	* testsuite/poke.map/maps-int-41.pk: Likewise.
+	* testsuite/poke.map/maps-int-42.pk: Likewise.
+	* testsuite/poke.map/maps-int-43.pk: Likewise.
+	* testsuite/poke.map/maps-int-44.pk: Likewise.
+	* testsuite/poke.map/maps-int-45.pk: Likewise.
+	* testsuite/poke.map/maps-int-46.pk: Likewise.
+	* testsuite/poke.map/maps-int-47.pk: Likewise.
+	* testsuite/poke.map/maps-int-48.pk: Likewise.
+	* testsuite/poke.map/maps-int-49.pk: Likewise.
+	* testsuite/poke.map/maps-int-50.pk: Likewise.
+
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Unmapping): New section.
