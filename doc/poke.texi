@@ -80,7 +80,7 @@ Configuration
 * pokerc::			User's initialization file.
 * Styling::			Changing the appearance of poke's output.
 
-The Language
+The Poke Language
 * Integers::			Working with whole numbers.
 * Offsets::			Working with memory sizes.
 * Strings::			Working with null-terminated strings.
@@ -88,6 +88,7 @@ The Language
 * Structs::			Working with heterogeneous collections.
 * Endianness::			Byte ordering.
 * Mapping::			Accessing the IO space.
+* Exception Handling::		Dealing with exceptional conditions.
 * Output::			Printing from Poke programs.
 
 The Standard Library
@@ -2671,6 +2672,114 @@ don't want the mapping bounds of @code{relocs} to be tied to
 
 Since simple values (such as the size above) are not mapped, this
 trick works as intended.
+
+@node Exception Handling
+@chapter Exception Handling
+
+Sometimes an error or some other unexpected situation arises.  Poke
+provides an exceptions mechanism to deal with these situations.
+
+@menu
+* Exceptions::		List of supported exception types.
+* try-catch::		Catching exceptions in programs.
+* raise::		Raising exceptions in programs.
+@end menu
+
+@node Exceptions
+@section Exceptions
+
+Exceptions in Poke are just integers.  However, the following values
+have specific meanings:
+
+@table @code
+@item E_generic
+Generic error.
+@item E_out_of_bounds
+Out of bounds exception.  This can be raised when accessing
+containers, like arrays and strings.
+@item E_eof
+End of file exception.  This can be raised when mapping in the IO
+space.
+@item E_elem
+Invalid element exception.  This is can be raised when accessing union
+fields that do not exist.
+@item E_constraint
+Constraint violation exception.  This is raised when a constraint
+exception fails while mapping or constructing a struct.
+@item E_conv
+Conversion exception.  This can be raised while casting values.
+@item E_map_bounds
+Out of map bounds exception.  This can be raised while modifying a
+mapped value in a way it would violate its declared boundary (like the
+size of a mapped array.)
+@item E_map
+No map exception.  This is raised when trying to map a not mapped
+value.
+@item E_div_by_zero
+Division by zero exception.
+@item E_no_ios
+No IOS exception.  This is raised when the IO space is accessed but
+there is no IO space.
+@item E_no_return
+No return exception.  This is raised when the end of a void function
+is reached.
+@item E_io
+Generic IO exception.
+@end table
+
+@node try-catch
+@section try-catch
+
+The @code{try-catch} statement provides a way to catch exceptions and
+handle them.
+
+The simplest form of the statement is:
+
+@example
+try @var{stmt} catch @var{compound_stmt}
+@end example
+
+Where @var{stmt} is any statement and @var{compound_stmt} is a
+compound statement.  @var{stmt} is executed.  If during its execution
+an exception is raised, then @var{compound_stmt} gets executed.
+
+The second form of the statement allows to catch just one type of
+exceptions:
+
+@example
+try @var{stmt} catch if @var{exp} @var{compound_stmt}
+@end example
+
+Where @var{exp} is an expression that should evaluate to an integer.
+This integer is interpreted as an exception type.  The handler
+@var{compound_stmt} will only be executed if that specific exception
+is catched.  Any other exception will be re-raised.
+
+The third form of the statement is the most generic:
+
+@example
+try @var{stmt} catch (Exception @var{formal}) @var{compound_stmt}
+@end example
+
+Where @var{formal} is a formal argument that contains the exception
+type when @var{compound_stmt} is executed.
+
+@node raise
+@section raise
+
+In previous sections we saw how exceptions are usually the
+side-product of performing certain operations.  For example, a
+division by zero.
+
+However, it is also useful to explicitly raise exceptions.  The
+@code{raise} statement can be used for that purpose.  It's syntax is:
+
+@example
+raise @var{exception}
+@end example
+
+Where @var{exception} is an integer.  This integer can be any number,
+but most often is one of the @code{E_*} codes defined in Poke.
 
 @node Output
 @chapter Output
