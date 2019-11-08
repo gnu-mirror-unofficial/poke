@@ -90,6 +90,12 @@ The Language
 * Mapping::			Accessing the IO space.
 * Output::			Printing from Poke programs.
 
+The Standard Library
+* Standard Integral Types::	int, long and the like.
+* Standard Offset Types::	off64 and the like.
+* Conversion Functions::	catos, atoi, etc.
+* Sorting Functions::		qsort.
+
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
 
@@ -2786,6 +2792,150 @@ Name: Jose Age: 39
 @section Pretty Printers
 
 XXX
+
+@node Standard Integral Types
+@chapter Standard Integral Types
+
+The Poke standard library provides the following standard integral
+types.
+
+@table @code
+@item bit
+1-bit unsigned integer.
+@item nibble
+8-bit unsigned integer.
+@item uint8
+@itemx byte
+@itemx char
+8-bit unsigned integer.
+@item uint16
+@itemx ushort
+16-bit unsigned integer.
+@item uint32
+@itemx uint
+32-bit unsigned integer.
+@item uint64
+@itemx ulong
+64-bit unsigned integer.
+@item int8
+8-bit signed integer.
+@item int16
+@itemx short
+16-bit signed integer.
+@item int32
+@item int
+32-bit signed integer.
+@item int64
+@item long
+64-bit signed integer.
+@end table
+
+@node Standard Offset Types
+@chapter Standard Offset Types
+
+The Poke standard library provides the following standard offset
+types.
+
+@table @code
+@item off64
+64-bit signed offset in bits.
+@item uoff64
+64-bit unsigned offset in bits.
+@end table
+
+@node Conversion Functions
+@chapter Conversion Functions
+
+The Poke standard library provides the following functions to do
+useful conversions.
+
+@menu
+* catos::		converting characters arrys into string.
+* atoi::		converting strings to integers.
+@end menu
+
+@node catos
+@section catos
+
+It is often useful to convert arrays of characters into strings.  The
+standard function @code{catos} provides the following interface:
+
+@example
+defun catos = (char[] @var{chars}) string: @{ ... @}
+@end example
+
+It builds a string containing the characters in @var{chars}, and
+returns it.  Examples:
+
+@example
+(poke) catos (['a','b','c'])
+"abc"
+(poke) catos (['\0'])
+""
+@end example
+
+Note that if the passed array contains a @code{NULL} character
+@code{'\0'} then no further characters are processed.  For example:
+
+@example
+(poke) catos (['f','o','o','\0','b','a','r'])
+"foo"
+@end example
+
+@node atoi
+@section atoi
+
+The standard function @code{atoi} provides the following interface:
+
+@example
+defun atoi = (string @var{str}, int @var{base} = 10) long: @{ ... @}
+@end example
+
+It parses a signed integral number in the given @var{base} in the
+string @var{str} and returns it as a signed 64-bit integer.
+
+The accepted values for @var{base} are @code{2}, @code{8}, @code{10}
+(the default) and @code{16}.  If any other base is requested an
+@code{E_generic} exception is raised.
+
+Note that atoi allows for extra information to be stored in @var{str}
+after the parsed integer.  Thus, this works:
+
+@example
+(poke) atoi ("10foo")
+10L
+@end example
+
+@node Sorting Functions
+@chapter Sorting Functions
+
+@menu
+* qsort::		Sorting arrays with quicksort.
+@end menu
+
+@node qsort
+@section qsort
+
+The standard function @code{qsort} has the following prototype:
+
+@example
+defun qsort = (any[] @var{array}, Comparator @var{cmp_f},
+               long @var{left} = 0,
+               long @var{right} = array'length - 1) void: @{ ... @}
+@end example
+
+Where @var{array} is the array to sort, @var{cmp_f} is a comparator
+function, @var{left} is the index of the first array element to
+include in the sorting, and @var{right} is the index of the last array
+element to include in the sorting.  Both @var{left} and @var{right}
+are optional, and the default is to cover the whole array.
+
+The comparator function @var{cmp_f} should have the following
+prototype:
+
+@example
+deftype Comparator = (any,any):int;
+@end example
 
 @node Writing Commands
 @chapter Writing Commands

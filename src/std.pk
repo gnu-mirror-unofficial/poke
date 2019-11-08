@@ -44,6 +44,7 @@ deftype ulong = uint64;
 deftype long = int64;
 
 deftype off64 = offset<int64,b>;
+deftype uoff64 = offset<uint64,b>;
 
 /* Having a NULL value which is compatible with C is useful.  */
 defvar NULL = 0#B;

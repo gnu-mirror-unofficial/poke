@@ -1,3 +1,13 @@
+2019-11-08  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* doc/poke.texi (Standard Integral Types): New chapter.
+	(Standard Offset Types): Likewise.
+	(Coversion Functions): Likewise.
+	(catos): New section.
+	(atoi): Likewise.
+	(Sorting Functions): New chapter.
+	(qsort): New section.
+
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-repl.c (banner): New function.
