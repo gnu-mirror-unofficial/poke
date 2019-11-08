@@ -1381,6 +1381,7 @@ stmt:
         	{
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
+                  PKL_AST_LOC ($$) = @$;
                 }
         | IF '(' expression ')' stmt %prec THEN
                 {

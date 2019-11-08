@@ -2109,9 +2109,16 @@ The assignment statement has the form:
 @var{lvalue} = @var{exp};
 @end example
 
-Where @var{lvalue} is either a variable, a field reference or an index
-reference.  It updates the value of the corresponding referred entity,
-to @var{exp}.  The type of @var{exp} should match the type of the
+Where @var{lvalue} is either:
+
+@itemize @bullet
+@item A variable.
+@item A field reference like @code{foo.bar}.
+@item An index reference like @code{foo[30]}
+@item A map of a simple type, like @code{int @@ 0#B}.
+@end itemize
+
+In all cases, the type of @var{exp} should match the type of the
 referred entity.
 
 Examples:
@@ -2121,6 +2128,8 @@ Examples:
 (poke) packet.length = 4
 (poke) packet.data = [1,2,3,4]
 (poke) packet.data[2] = 666
+(poke) int @ 23#B = 23
+(poke) string @ str.offset = "foo"
 @end example
 
 @node Compound Statements

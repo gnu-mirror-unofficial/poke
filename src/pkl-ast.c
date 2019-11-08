@@ -2144,6 +2144,7 @@ pkl_ast_lvalue_p (pkl_ast_node node)
     {
     case PKL_AST_VAR:
     case PKL_AST_STRUCT_REF:
+    case PKL_AST_MAP:
       break;
     case PKL_AST_INDEXER:
       {
@@ -2158,9 +2159,6 @@ pkl_ast_lvalue_p (pkl_ast_node node)
           && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 0))
           && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 1)))
         break;
-      // XXX
-      //    case PKL_AST_MAP:
-      //      break;
     default:
       return 0;
       break;

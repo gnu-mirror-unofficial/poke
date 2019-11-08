@@ -1,5 +1,18 @@
 2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y (stmt): Set location of assignments to maps.
+	* src/pkl-ast.c (pkl_ast_lvalue_p): Allow maps in lvalues.
+	* src/pkl-typify.c (pkl_typify1_ps_ass_stmt): The type of a map in
+	an l-value shall be simple.
+	* src/pkl-gen.c (pkl_gen_pr_ass_stmt): Handle maps in l-values.
+	* doc/poke.texi (Assignments): Document maps in l-values.
+	* testsuite/poke.pkl/ass-map-diag-1.pk: New test.
+	* testsuite/poke.pkl/ass-map-diag-2.pk: Likewise.
+	* testsuite/poke.map/ass-map-1.pk: Likewise.
+	* testsuite/poke.map/ass-map-2.pk: Likewise.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Conditionals): New chapter.
 	(if-else): New section.
 	(Loops): New chapter.

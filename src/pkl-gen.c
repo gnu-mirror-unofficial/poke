@@ -548,6 +548,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The struct
                                                     value.  */
       break;
+    case PKL_AST_MAP:
+      /* Stack: VAL OFF */
+
+      /* The map at the l-value is guaranteed to be of a simple type,
+         i.e. of types whose values cannot be mapped (integers,
+         offsets, strings, etc).  The strategy here is simple: we just
+         generate a writer for the type.  */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF VAL */
+      PKL_GEN_PAYLOAD->in_writer = 1;
+      PKL_PASS_SUBPASS (PKL_AST_TYPE (lvalue));
+      PKL_GEN_PAYLOAD->in_writer = 0;
+      break;
     default:
       break;
     }
@@ -1392,18 +1405,28 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
 {
   pkl_ast_node map = PKL_PASS_NODE;
-  pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
   pkl_ast_node map_offset = PKL_AST_MAP_OFFSET (map);
 
-  /* Push the offset of the map.  */
-  /* XXX converted to a bit-offset in an ulong<64>.  */
-  /* XXX here we can assume the offset is offset<ulong<64>,b> as per
-     promo.  */
-  PKL_PASS_SUBPASS (map_offset);
-
-  PKL_GEN_PAYLOAD->in_mapper = 1;
-  PKL_PASS_SUBPASS (map_type);
-  PKL_GEN_PAYLOAD->in_mapper = 0;
+  if (PKL_PASS_PARENT == NULL && PKL_GEN_PAYLOAD->in_lvalue)
+    {
+      /* This is an l-value in an assignment.  Generate code for the
+         offset, which is expected by the ass_stmt PS handler.  */
+      PKL_PASS_SUBPASS (map_offset);
+    }
+  else
+    {
+      pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
+      
+      /* Push the offset of the map.  */
+      /* XXX converted to a bit-offset in an ulong<64>.  */
+      /* XXX here we can assume the offset is offset<ulong<64>,b> as per
+         promo.  */
+      PKL_PASS_SUBPASS (map_offset);
+      
+      PKL_GEN_PAYLOAD->in_mapper = 1;
+      PKL_PASS_SUBPASS (map_type);
+      PKL_GEN_PAYLOAD->in_mapper = 0;
+    }
 
   PKL_PASS_BREAK;
 }
