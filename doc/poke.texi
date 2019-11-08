@@ -74,7 +74,7 @@ Dot-Commands
 * .exit::			Exiting poke :(
 
 Commands
-* dump::			Inspecting crude binary.
+* dump::			Binary dumps.
 
 Configuration
 * pokerc::			User's initialization file.
