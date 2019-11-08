@@ -105,10 +105,10 @@ deftype BTF_Type =
 
     union
     {
-      uint<32> size : (info.kind == BTF_KIND_INT
-                       || info.kind == BTF_KIND_ENUM
-                       || info.kind == BTF_KIND_STRUCT
-                       || info.kind == BTF_KIND_UNION);
+      uint<32> size : (info.kind in [BTF_KIND_INT,
+                                     BTF_KIND_ENUM,
+                                     BTF_KIND_STRUCT,
+                                     BTF_KIND_UNION]);
       BTF_Type_Id type;
     } attrs;
 

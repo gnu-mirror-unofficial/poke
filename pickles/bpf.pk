@@ -33,9 +33,9 @@ defvar BPF_INSN_CLASS_ALU64 = 0b111;
 
 defun bpf_class_is_alujmp = (uint<3> class) int:
   {
-   return (class == BPF_INSN_CLASS_ALU
-           || class == BPF_INSN_CLASS_ALU64
-           || class == BPF_INSN_CLASS_JMP);
+   return (class in [BPF_INSN_CLASS_ALU,
+                     BPF_INSN_CLASS_ALU64,
+                     BPF_INSN_CLASS_JMP]);
   }
 
 /* ALU instructions operation codes.  */
@@ -158,8 +158,7 @@ deftype BPF_Insn_Opcode =
         defun _print = void:
           {
            print "#<";
-           if (class == BPF_INSN_CLASS_ALU
-               || class == BPF_INSN_CLASS_ALU64)
+           if (class in [BPF_INSN_CLASS_ALU, BPF_INSN_CLASS_ALU64])
              printf "%<insn-mnemonic:%s%>", bpf_alu_opcodes[code];
            else
              printf "%<insn-mnemonic:%s%>", bpf_jmp_opcodes[code];
