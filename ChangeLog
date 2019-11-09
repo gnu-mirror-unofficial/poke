@@ -1,5 +1,10 @@
 2019-11-09  John Darrington  <john@darrington.wattle.id.au>
 
+	* src/pk-editor.c (pk_cmd_editor): Use xrealloc instead of
+	realloc.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
 	* src/pk-editor.c (pk_cmd_editor): Fix memory leak.
 
 2019-11-09  Jose E. Marchesi  <jemarch@gnu.org>

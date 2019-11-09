@@ -87,7 +87,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         {
           if (i % STEP == 0)
             {
-              newline = realloc (newline, size);
+              newline = xrealloc (newline, size);
               size = size + 128;
             }
           if (c == '\n')
