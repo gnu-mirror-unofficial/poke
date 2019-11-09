@@ -419,7 +419,7 @@ integrated upstream, please keep the following points in mind:
 - Please include a GNU-style ChangeLog in the patch description, but
   do not include it in the thunks.  This is to ease reviewers to apply
   your patch for testing.  Of course, include the thunk in the final
-  push!  (We will get rid of manually ChangeLog entries soon.)
+  push!  (We will get rid of manual ChangeLog entries soon.)
 
 - Make sure to run ``make syntax-check`` before submitting the patch,
   and fix any reported problem.  Note that the maintainer reviewing
