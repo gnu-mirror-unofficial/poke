@@ -661,7 +661,7 @@ The type of a numeric literal is the smallest signed integer capable
 of holding it, starting with 32 bits, in steps of powers of two and up
 to 64 bits.@footnote{Rationale: the width of a C ``int'' is 32 bits in
 most currently used architectures, and binary data formats are usually
-modeled after C.}
+modelled after C.}
 
 So, for example, the value @code{2} has type @code{int<32>}, but the
 value @code{0xffff_ffff} has type @code{int<64>}, because it is out of
@@ -799,7 +799,7 @@ or sign-extension is performed depending on the signedness of the
 operand.
 
 The semantics of the sign-extension operation depends on the
-signedness of the value being connverted, and on the currently
+signedness of the value being converted, and on the currently
 selected encoding for negative numbers.
 
 When using two's complement encoding, converting a signed value will
@@ -982,7 +982,7 @@ similar to C structs, I was determined to not continue with the poke
 implementation until I had described as many as binary formats in my
 language as possible.  That, I reckoned, was the only way to make sure
 the implemented language would be expressive, complete and useful
-enough to fulfill my requirements.
+enough to fulfil my requirements.
 
 The first formats I implemented using my immature little language
 included ELF, FLV, MP3, BSON... all of them describing structures
@@ -990,7 +990,7 @@ based on whole bytes.  Even when they try to be compact, it is always
 by packing bit-fields in elements that are, invariably, sized as a
 multiple of bytes.  Consequently, the language I was evolving became
 byte oriented as well.  No doubt also influenced by my C inheritance,
-I would think of bitfields either as a sort of second class citizen,
+I would think of bit-fields either as a sort of second class citizen,
 or as mere results of shifting and masking.
 
 This worked well.  The language evolved to be able to express many
@@ -1057,7 +1057,7 @@ bit-fields, masking and shifting, all based on byte-oriented
 containers and boundaries, would never provide the slickness I wanted
 for my editor.  I mean, just use C and get done with it.
 
-This pissed me off.  Undoubtely other formats and protocols would be
+This pissed me off.  Undoubtedly other formats and protocols would be
 impacted in a similar way.  Even when most formats are byte oriented,
 what am I supposed to tell to the people hacking bit-oriented stuff?
 ``Sorry pal, this is not supported, this program is not for you''?  No
@@ -1150,7 +1150,7 @@ a#B
 
 In the offset syntax units are specified as @code{#@var{foo}}, where
 @var{FOO} is the name of the unit.  Poke provides the following list
-of hardcoded unit names:
+of hard coded unit names:
 
 @table @code
 @item b
@@ -1809,7 +1809,7 @@ means that for simple types, copies of the elements are done:
 [1,2,3]
 @end example
 
-However, for comples types like arrays and structs, the values are
+However, for complex types like arrays and structs, the values are
 shared:
 
 @example
