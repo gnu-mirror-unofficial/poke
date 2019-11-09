@@ -67,8 +67,10 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       pk_puts ("error: ");
       pk_term_end_class ("error");
       pk_puts ("executing editor.\n");
+      free (cmdline);
       return 0;
     }
+  free (cmdline);
 
   /* If the editor returned success and a file got created, read the
      contents of the file, turn newlines into spaces and execute
