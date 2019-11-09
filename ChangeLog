@@ -1,3 +1,9 @@
+2019-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Make libreadline a hard requirement.
+	* HACKING (readline): Document that now a full implementation of
+	readline is required.
+
 2019-11-09  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* testsuite/poke.map/maps-int-01.pk: New test.

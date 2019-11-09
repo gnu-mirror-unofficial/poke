@@ -96,15 +96,15 @@ AC_OUTPUT
 
 dnl Report warnings
 
-if test "x$gl_cv_lib_readline" = "xno"; then
-   echo "warning: an usable libreadline was not found in the system."
-   echo "warning: poke will use a dummy replacement with no edition "
-   echo "warning: capabilities."
-fi
-
 if test "x$HAVE_LIBTEXTSTYLE" = "xno"; then
    echo "warning: libtextstyle was not found in the system."
    echo "warning: poke's output won't be styled."
+fi
+
+dnl Report errors
+
+if test "x$gl_cv_lib_readline" = "xno"; then
+   AC_ERROR("can't find an usable libreadline.  Please install one")
 fi
 
 dnl End of configure.ac
