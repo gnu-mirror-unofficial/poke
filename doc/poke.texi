@@ -86,7 +86,7 @@ The Poke Language
 * Strings::			NULL-terminated strings.
 * Arrays::			Homogeneous collections.
 * Structs::			Heterogeneous collections.
-* The isa Operator::		Testing for types of values.
+* Types::			Declaring types.
 * Assignments::			Changing the value of variables.
 * Compound Statements::		Sequences of statements.
 * Conditionals::		Conditional statements.
@@ -2102,8 +2102,77 @@ XXX
 
 XXX
 
+@node Types
+@chapter Types
+
+@menu
+* deftype::			Naming types.
+* The any Type::		Polymorphism.
+* The isa Operator::		Testing for types of values.
+@end menu
+
+@node deftype
+@section deftype
+
+The @code{deftype} directive allows to declare named types.  The
+syntax is:
+
+@example
+deftype @var{name} = @var{type};
+@end example
+
+Where @var{name} is the name of the new type, and @var{type} is either
+a type specifier or the name of some other type.
+
+The supported type specifiers are:
+
+@table @code
+@item int<@var{n}>, uint<@var{n}>
+Integral types. @xref{Integer Types}.
+@item string
+The string type.  @xref{String Types}.
+@item @var{type}[@var{boundary}]
+Array types.  @xref{Array Types}.
+@item struct @{ ... @}
+Struct types.  @xref{Struct Types}.
+@item (@var{type},...)@var{type}:
+Function types.  @xref{Function Types}.
+@item any
+The @code{any} type is used to implement polymorphism.  @xref{The any Type}.
+@end table
+
+@node The any Type
+@section The any Type
+
+Poke supports polymorphism with the @code{any} type.  This type is
+used in contexts where a value of any type is allowed.  For example,
+this is how you would declare a function that prints the size of any
+given value:
+
+@example
+defun print_size = (any value) void:
+@{
+  printf "%v\n", any'size;
+@}
+@end example
+
+The rules for handling @code{any} values are simple:
+@itemize @minus
+@item Everything coerces to @code{any}.
+@item Nothing coerces from @code{any}.
+@end itemize
+
+This means that using any operator that require certain types with
+@code{any} values will fail: you have to cast them first.  Example:
+
+@example
+(poke) defun foo = (any v) int: @{ return v as int; @}
+@end example
+
+Arrays of @code{any}, @code{any[]}, are also supported:
+
 @node The isa Operator
-@chapter The isa Operator
+@section The isa Operator
 
 The binary operator @code{isa} allows to check for the type of a given
 value:
