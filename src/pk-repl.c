@@ -33,6 +33,7 @@
 #endif
 
 #include <signal.h>
+#include <unistd.h>
 
 static void
 banner (void)
@@ -90,6 +91,24 @@ pk_repl (void)
   sigemptyset (&sa.sa_mask);
   sigaction (SIGINT, &sa, 0);
 
+#if defined HAVE_READLINE_HISTORY_H
+  char *poke_history = NULL;
+  /* Load the user's history file ~/.poke_history, if it exists
+     in the HOME directory.  */
+  char *homedir = getenv ("HOME");
+
+  if (homedir != NULL)
+    {
+      poke_history = xmalloc (strlen (homedir)
+			      + strlen ("/.poke_history") + 1);
+      strcpy (poke_history, homedir);
+      strcat (poke_history, "/.poke_history");
+
+      if (access (poke_history, R_OK) == 0)
+	read_history (poke_history);
+    }
+#endif
+
   while (!poke_exit_p)
     {
       int ret;
@@ -118,6 +137,10 @@ pk_repl (void)
         /* Avoid gcc warning here.  */ ;
       free (line);
     }
+#if defined HAVE_READLINE_HISTORY_H
+  if (poke_history)
+    write_history (poke_history);
+#endif
 }
 
 static int saved_point;

@@ -230,6 +230,17 @@ poke will examine the command, notify the user if there is some error
 condition, process the line and maybe displaying something in the
 terminal.
 
+Repeatedly typing complex commands can be tiresome.
+To help you, poke uses the readline library
+@xref{Top,,,rluserman,GNU Readline Library}.
+This provides shortcuts and simple keystrokes to repeat
+previous commands with or without modification, fast selection of
+filenames and entries from other multiple choice contexts, and
+navigation within a command and among previous commands.
+When the REPL starts, the history of your previous sessions
+are loaded from the file @file{.poke_history} located in your home
+directory (if it exists).
+
 There are several kinds of lines that can be provided in the REPL:
 
 @itemize @bullet
