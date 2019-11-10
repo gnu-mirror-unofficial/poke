@@ -1,5 +1,14 @@
 2019-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Functions): New chapter.
+	(Function Declarations): New section.
+	(Optional Arguments): Likewise.
+	(Variadic Functions): Likewise.
+	(Calling Functions): Likewise.
+	(Function Types): Likewise.
+
+2019-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (Write After Approval): Add John Darrington.
 
 2019-11-09  John Darrington  <john@darrington.wattle.id.au>

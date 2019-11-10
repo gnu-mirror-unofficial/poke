@@ -91,6 +91,7 @@ The Poke Language
 * Conditionals::		Conditional statements.
 * Loops::			Statements to iterate on conditions.
 * Expression Statements::	Using expressions for their side-effects.
+* Functions::			Procedural abstraction.
 * Endianness::			Byte ordering.
 * Mapping::			Accessing the IO space.
 * Exception Handling::		Dealing with exceptional conditions.
@@ -2267,6 +2268,185 @@ the following syntax:
 @end example
 
 The value computed by the expression will be discarded.
+
+@node Functions
+@chapter Functions
+
+@c XXX closures
+
+@menu
+* Function Declarations::	Writing functions.
+* Optional Arguments::		Default values for arguments.
+* Variadic Functions::		Functions taking any number of arguments.
+* Calling Functions::		Invoking functions.
+* Function Types::		Useful for defining interfaces.
+@end menu
+
+@node Function Declarations
+@section Function Declarations
+
+A function is declared using the following syntax:
+
+@example
+defun @var{name} = [(@var{formal},...)] @var{ret_type}:
+@{
+   ... body ...
+@}
+@end example
+
+Where @var{name} is the name of the function, which uses the same
+namespace than variables and types and @var{ret_type} is the type of
+the value returned by the function.  If the function returns no value
+then it is @code{void}.
+
+Each @var{formal} argument has the form:
+
+@example
+@var{type} @var{name} [= @var{exp}]
+@end example
+
+Where @var{type} is the type of the formal, @var{name} its name, and
+@var{exp} is an optional expression that will be used to initialize
+the argument in case it is not specified when the function is called.
+
+The last formal argument can take the form @code{@var{name}...},
+meaning the function is variadic.  @xref{Variadic Functions}.
+
+If the function takes no arguments, it is possible to omit the list of
+arguments entirely:
+
+@example
+defun hello = void: @{ print "Hello!\n"; @}
+@end example
+
+The @code{return} statement is used to return values in functions that
+return a value.  Example:
+
+@example
+defun gcd = (uint<64> a, uint<64> b) uint<64>:
+  @{
+   if (b == 0)
+     return a;
+   else
+     return gcd (b, a % b);
+  @}
+@end example
+
+Note that reaching the end of a non-void function will trigger a
+run-time error.
+
+@node Optional Arguments
+@section Optional Arguments
+
+Optional function arguments are specified like:
+
+@example
+defun atoi = (string s, int b = 10) long: @{ ... @}
+@end example
+
+Which means that if the base argument is not specified when passed to
+@code{atoi} then it is initialized to 10.
+
+Optional arguments should not appear before any non-optional argument
+in function declarations.  The following is not valid Poke:
+
+@example
+defun foo = (int i = 10, int j) int: @{ return i + j; @}
+@end example
+
+Note that arguments declared before an optional argument can be used
+in its initialization expression.  This is valid Poke:
+
+@example
+defun foo = (int n, int[n] array = init_array (n)) void: @{ ... @}
+@end example
+
+@node Variadic Functions
+@section Variadic Functions
+
+Functions getting an arbitrary number of arguments are denoted like
+this:
+
+@example
+defun printf (string fmt, args...) void: @{ ... @}
+@end example
+
+The variadic argument shall be the last argument in the function, and
+it is of type @code{any[]}.
+
+@node Calling Functions
+@section Calling Functions
+
+To call a function, write its name followed by the arguments in
+parenthesis.  Examples:
+
+@example
+foo (1,2,3)
+bar ()
+@end example
+
+If the function takes no arguments then it is not necessary to write
+the empty list of arguments.  Therefore the following two calls are
+equivalent:
+
+@example
+bar ()
+bar
+@end example
+
+There is an alternate syntax that can only be used in an
+expression-as-statement context.  This alternate syntax is:
+
+@example
+@var{function_name} :@var{arg1} @var{val1}...
+@end example
+
+Where @var{arg1} is the name of an argument and @var{val1} the value
+to pass for that argument.  This is useful to use functions as
+commands in the REPL:
+
+@example
+(poke) dump :from 12#B :size 16#B :ascii 0
+@end example
+
+Note that the named arguments can appear in any order.  The following
+two calls are equivalent:
+
+@example
+dump :from 12#B :size 16#B
+dump :size 16#B :from 12#B
+@end example
+
+@node Function Types
+@section Function Types
+
+Function types are denoted like:
+
+@example
+(@var{type},...)@var{ret_type}:
+@end example
+
+Where @var{type} are the types of the arguments and @var{ret_type} is
+the type of the value returned by the function.
+
+Optional arguments are marked with a @code{?} after the type.  For
+example, the type of the @code{atoi} function with declaration:
+
+@example
+defun atoi = (string s, int b = 10) long: @{ ... @}
+@end example
+
+is @code{(string,int?)long:}.
+
+If the function has variadic arguments, the position of the variadic
+argument in the function type specifier contains @code{...}.  For
+example, the type of a @code{printf} function with declaration:
+
+@example
+defun printf (string fmt, args...) void: @{ ... @}
+@end example
+
+is @code{(string,...)void:}.
 
 @node Endianness
 @chapter Endianness
