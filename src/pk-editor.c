@@ -78,11 +78,11 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   if (ret == 0
       && (f = fopen (tmpfile, "r")) != NULL)
     {
-      char *newline = NULL;
+#define STEP 128
+      char *newline = xmalloc (STEP);
       size_t size, i = 0;
       int c;
 
-#define STEP 128
       for (size = STEP; (c = fgetc (f)) != EOF; i++)
         {
           if (i % STEP == 0)

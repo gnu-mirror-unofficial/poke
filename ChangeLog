@@ -1,3 +1,9 @@
+Don't crash if editor produced an empty file.
+
+2019-11-11 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-editor.c (pk_cmd_editor): Initialize newline
+
 2019-11-11 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-repl.c (pk_repl): Use ~/.poke_history to persist repl
