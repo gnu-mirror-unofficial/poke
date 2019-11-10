@@ -1,3 +1,7 @@
+2019-11-11 John Darrington <john@darrington.wattle.id.au>
+
+        * doc/poke.texi (The REPL): Fix typo
+
 2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-print.c: Remove.

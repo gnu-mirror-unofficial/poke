@@ -216,7 +216,7 @@ way.  This chapter documents both possibilities.
 @node The REPL
 @section The REPL
 
-If poke is invoked with an interactive TTY connected in the standard
+If poke is invoked with an interactive TTY connected to the standard
 input, it greets the user with a welcome message, licensing
 information and such, and finally a prompt that looks like:
 
