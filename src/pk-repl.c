@@ -32,6 +32,8 @@
 #  include "pk-hserver.h"
 #endif
 
+#include <signal.h>
+
 static void
 banner (void)
 {
@@ -66,10 +68,28 @@ banner (void)
 
 }
 
+static void
+poke_sigint_handler (int status)
+{
+  fputs (_("Quit"), rl_outstream);
+  fputs ("\n", rl_outstream);
+  rl_on_new_line ();
+  rl_replace_line ("", 0);
+  rl_redisplay ();
+}
+
 void
 pk_repl (void)
 {
   banner ();
+
+  /* Arrange for the current line to be cancelled on SIGINT.  */
+  struct sigaction sa;
+  sa.sa_handler = poke_sigint_handler;
+  sa.sa_flags = 0;
+  sigemptyset (&sa.sa_mask);
+  sigaction (SIGINT, &sa, 0);
+
   while (!poke_exit_p)
     {
       int ret;

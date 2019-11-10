@@ -1,5 +1,11 @@
 2019-11-09  John Darrington  <john@darrington.wattle.id.au>
 
+	* src/pk-repl.c: Include signa.h.
+	(poke_sigint_handler): New function.
+	(pk_repl): Install signal handler for SIGINT.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
 	* src/ras: Correct punctuation in default error message.
 
 2019-11-09  John Darrington  <john@darrington.wattle.id.au>
