@@ -1,3 +1,7 @@
+2019-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Write After Approval): Add John Darrington.
+
 2019-11-09  John Darrington  <john@darrington.wattle.id.au>
 
 	* src/pk-repl.c: Include signa.h.
