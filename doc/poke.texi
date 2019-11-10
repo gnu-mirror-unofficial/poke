@@ -86,6 +86,7 @@ The Poke Language
 * Strings::			NULL-terminated strings.
 * Arrays::			Homogeneous collections.
 * Structs::			Heterogeneous collections.
+* The isa Operator::		Testing for types of values.
 * Assignments::			Changing the value of variables.
 * Compound Statements::		Sequences of statements.
 * Conditionals::		Conditional statements.
@@ -2100,6 +2101,24 @@ XXX
 @section Struct Attributes
 
 XXX
+
+@node The isa Operator
+@chapter The isa Operator
+
+The binary operator @code{isa} allows to check for the type of a given
+value:
+
+@example
+(poke) 10 isa int
+1
+(poke) "foo" isa string
+1
+(poke) (Packet @ 0#B) isa Packet
+1
+(poke) 2 as int<3> isa uint<4>
+0
+@end example
+
 
 @node Assignments
 @chapter Assignments
