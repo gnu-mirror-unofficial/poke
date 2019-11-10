@@ -823,5 +823,5 @@ BEGIN {
 ## Catch-all centinel rule
 
 {
-    error(FNR ": excuse me, what is this crap")
+    error(FNR ": Excuse me: What is this crap?")
 }

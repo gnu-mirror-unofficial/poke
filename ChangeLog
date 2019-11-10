@@ -1,5 +1,9 @@
 2019-11-09  John Darrington  <john@darrington.wattle.id.au>
 
+	* src/ras: Correct punctuation in default error message.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
 	* src/pk-editor.c (pk_cmd_editor): Use xrealloc instead of
 	realloc.
 
