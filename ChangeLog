@@ -7,8 +7,6 @@
 	* testsuite/poke.pkl/strings-3.pk: Likewise.
 	* doc/poke.texi (String Literals): Document \".
 
-Don't crash if editor produced an empty file.
-
 2019-11-11 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-editor.c (pk_cmd_editor): Initialize newline
