@@ -377,12 +377,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
           break;
         case PKL_AST_BUILTIN_GET_ENDIAN:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHEND);
+          /* Fallthrough.  */
+        case PKL_AST_BUILTIN_GET_IOS:
+          if (comp_stmt_builtin == PKL_AST_BUILTIN_GET_ENDIAN)
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHEND);
+          else
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHIOS);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
           break;
         case PKL_AST_BUILTIN_SET_ENDIAN:
+          /* Fallthrough.  */
+        case PKL_AST_BUILTIN_SET_IOS:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPEND);
+          if (comp_stmt_builtin == PKL_AST_BUILTIN_SET_ENDIAN)
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPEND);
+          else
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPIOS);
           /* Always return `true' to facilitate using set_endian in
              struct constraint expressions.  */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (1, 32));

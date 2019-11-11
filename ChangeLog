@@ -1,5 +1,22 @@
 2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h (PKL_AST_BUILTIN_GET_IOS): Define.
+	(PKL_AST_BUILTIN_SET_IOS): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle get_ios and set_ios
+	builtins.
+	* src/pkl-insn.def: Define instructions PKL_INSN_PUSHIOS and
+	PKL_INSN_POPIOS.
+	* src/pvm.jitter (pushios): New instruction.
+	(popios): Likewise.
+	* src/pkl-rt.pk (get_ios): New function.
+	(set_ios): Likewise.
+	* src/pkl-lex.l: Rules for __PKL_BUILTIN_GET_IOS__ and
+	__PKL_BUILTIN_SET_IOS__.
+	* src/pkl-tab.y: Define tokens BUILTIN_GET_IOS and
+	BUILTIN_SET_IOS.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_make_map): Get an `ios' argument.
 	(pkl_ast_node_free): Handle the map ios.
 	(pkl_ast_print_1): Likewise.

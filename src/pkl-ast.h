@@ -1210,6 +1210,8 @@ pkl_ast_node pkl_ast_make_var (pkl_ast ast,
 #define PKL_AST_BUILTIN_RAND 2
 #define PKL_AST_BUILTIN_GET_ENDIAN 3
 #define PKL_AST_BUILTIN_SET_ENDIAN 4
+#define PKL_AST_BUILTIN_GET_IOS 5
+#define PKL_AST_BUILTIN_SET_IOS 6
 
 struct pkl_ast_comp_stmt
 {

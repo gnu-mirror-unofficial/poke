@@ -197,6 +197,8 @@ D [0-9]
 "__PKL_BUILTIN_RAND__" { return BUILTIN_RAND; }
 "__PKL_BUILTIN_GET_ENDIAN__" { return BUILTIN_GET_ENDIAN; }
 "__PKL_BUILTIN_SET_ENDIAN__" { return BUILTIN_SET_ENDIAN; }
+"__PKL_BUILTIN_GET_IOS__" { return BUILTIN_GET_IOS; }
+"__PKL_BUILTIN_SET_IOS__" { return BUILTIN_SET_IOS; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

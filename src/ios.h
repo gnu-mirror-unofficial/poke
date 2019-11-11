@@ -158,6 +158,10 @@ ios ios_search (const char *handler);
 
 ios ios_get (int n);
 
+/* Return the ID of the given IO space.  */
+
+int ios_get_order (ios io);
+
 /* Map over all the open IO spaces executing a handler.  */
 
 typedef void (*ios_map_fn) (ios io, void *data);

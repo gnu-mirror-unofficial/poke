@@ -274,6 +274,18 @@ ios_get (int n)
   return io;
 }
 
+int
+ios_get_order (ios io)
+{
+  ios tmp;
+  int i = 0;
+
+  for (i = 0, tmp = io_list; tmp != io; tmp = tmp->next, ++i)
+    ;
+  
+  return i;
+}
+
 void
 ios_map (ios_map_fn cb, void *data)
 {

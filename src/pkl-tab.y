@@ -240,7 +240,8 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token PRINTF
 %token UNMAP
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
-
+%token BUILTIN_GET_IOS BUILTIN_SET_IOS
+ 
 /* ATTRIBUTE operator.  */
 
 %token <ast> ATTR
@@ -1352,6 +1353,8 @@ builtin:
 	  BUILTIN_RAND		{ $$ = PKL_AST_BUILTIN_RAND; }
 	| BUILTIN_GET_ENDIAN	{ $$ = PKL_AST_BUILTIN_GET_ENDIAN; }
 	| BUILTIN_SET_ENDIAN	{ $$ = PKL_AST_BUILTIN_SET_ENDIAN; }
+        | BUILTIN_GET_IOS       { $$ = PKL_AST_BUILTIN_GET_IOS; }
+        | BUILTIN_SET_IOS       { $$ = PKL_AST_BUILTIN_SET_IOS; }
 	;
 
 stmt_decl_list:
