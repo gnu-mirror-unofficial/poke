@@ -66,7 +66,8 @@ Using poke
 
 Dot-Commands
 * .load::                       Loading pickles.
-* .file::			Opening and closing IO spaces.
+* .file::			Opening and selecting IO spaces.
+* .close::			Closing IO spaces.
 * .editor::			Using an external editor for input.
 * .info::			Getting information about open files, etc.
 * .set::			Querying and setting global options.
@@ -445,6 +446,18 @@ use it to switch back to that file:
 (poke) .file #1
 The current file is now `foo.o'.
 @end example
+
+@node .close
+@chapter .close
+
+The @command{.close} command closes the selected IO space.  The syntax
+is:
+
+@example
+.close @var{#tag}
+@end example
+
+Where @var{#tag} is a tag identifying an open IO stream.
 
 @node .editor
 @chapter .editor
