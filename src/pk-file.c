@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
+#include <errno.h>
 
 #include "ios.h"
 #include "poke.h"
@@ -59,7 +60,8 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
       if (access (arg_str, R_OK) != 0)
         {
-          pk_printf (_("%s: file cannot be read\n"), arg_str);
+          char *why = strerror (errno);
+          pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
           return 0;
         }
 
@@ -187,7 +189,10 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 
  no_file:
-  pk_printf (_("%s: file cannot be read\n"), arg);
+  {
+   char *why = strerror (errno);
+   pk_printf (_("%s: file cannot be read: %s\n"), arg, why);
+  }
  error:
   free (filename);
   return 0;
