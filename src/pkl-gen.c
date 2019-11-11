@@ -2656,7 +2656,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
       break;
     case PKL_AST_ATTR_ALIGNMENT:
       /* XXX writeme */
+      assert (0);
+      break;
     case PKL_AST_ATTR_OFFSET:
+      /* Fallthrough.  */
+    case PKL_AST_ATTR_IOS:
       switch (PKL_AST_TYPE_CODE (operand_type))
         {
         case PKL_TYPE_ARRAY:
@@ -2664,7 +2668,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           {
             jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
+            if (attr == PKL_AST_ATTR_OFFSET)
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
+            else
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,

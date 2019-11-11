@@ -1279,13 +1279,16 @@ pkl_ast_make_isa (pkl_ast ast,
 
 pkl_ast_node
 pkl_ast_make_map (pkl_ast ast,
-                  pkl_ast_node type, pkl_ast_node offset)
+                  pkl_ast_node type,
+                  pkl_ast_node ios,
+                  pkl_ast_node offset)
 {
   pkl_ast_node map = pkl_ast_make_node (ast, PKL_AST_MAP);
 
   assert (type && offset);
 
   PKL_AST_MAP_TYPE (map) = ASTREF (type);
+  PKL_AST_MAP_IOS (map) = ASTREF (ios);
   PKL_AST_MAP_OFFSET (map) = ASTREF (offset);
 
   return map;
@@ -1831,6 +1834,7 @@ pkl_ast_node_free (pkl_ast_node ast)
     case PKL_AST_MAP:
 
       pkl_ast_node_free (PKL_AST_MAP_TYPE (ast));
+      pkl_ast_node_free (PKL_AST_MAP_IOS (ast));
       pkl_ast_node_free (PKL_AST_MAP_OFFSET (ast));
       break;
 
@@ -2575,6 +2579,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_COMMON_FIELDS;
       PRINT_AST_SUBAST (type, TYPE);
       PRINT_AST_SUBAST (map_type, MAP_TYPE);
+      PRINT_AST_SUBAST (ios, MAP_IOS);
       PRINT_AST_SUBAST (offset, MAP_OFFSET);
       break;
 

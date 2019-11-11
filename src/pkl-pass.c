@@ -364,6 +364,8 @@ pkl_do_pass_1 (pkl_compiler compiler,
 
       break;
     case PKL_AST_MAP:
+      if (PKL_AST_MAP_IOS (node))
+        PKL_PASS (PKL_AST_MAP_IOS (node));
       PKL_PASS (PKL_AST_MAP_OFFSET (node));
       PKL_PASS (PKL_AST_MAP_TYPE (node));
 

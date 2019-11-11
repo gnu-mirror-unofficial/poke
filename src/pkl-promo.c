@@ -1218,12 +1218,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_func_arg)
 PKL_PHASE_END_HANDLER
 
 /* The offsets in maps should be promoted to offset<uint<64>,b>.  This
-   is expected by the code generator and the run-time.  */
+   is expected by the code generator and the run-time.
+
+   Also the IOS identifier in a map operator should be promoted to an
+   32-bit signed integer.  */
+
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
 {
   pkl_ast_node map = PKL_PASS_NODE;
   pkl_ast_node map_offset = PKL_AST_MAP_OFFSET (map);
+  pkl_ast_node map_ios = PKL_AST_MAP_IOS (map);
   int restart;
 
   if (!promote_offset (PKL_PASS_AST,
@@ -1235,6 +1240,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
                "couldn't promote offset of map #%" PRIu64,
                PKL_AST_UID (map));
       PKL_PASS_ERROR;
+    }
+
+  if (map_ios)
+    {
+      int lrestart;
+      
+      if (!promote_integral (PKL_PASS_AST,
+                             32, 1,
+                             &PKL_AST_MAP_IOS (map),
+                             &lrestart))
+      PKL_PASS_ERROR;
+
+      restart |= lrestart;
     }
 
   PKL_PASS_RESTART = restart;

@@ -94,6 +94,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   size_t nbytes = sizeof (struct pvm_array_elem) * PVM_VAL_ULONG (nelem);
   size_t i;
 
+  arr->ios = PVM_NULL;
   arr->offset = PVM_NULL;
   arr->elems_bound = PVM_NULL;
   arr->size_bound = PVM_NULL;
@@ -124,6 +125,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
   size_t nmethodbytes
     = sizeof (struct pvm_struct_method) * PVM_VAL_ULONG (nmethods);
 
+  sct->ios = PVM_NULL;
   sct->offset = PVM_NULL;
   sct->mapper = PVM_NULL;
   sct->writer = PVM_NULL;

@@ -1436,7 +1436,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_array)
 PKL_PHASE_END_HANDLER
 
 /* The type of a map is the type of the mapped value.  The expression
-   in a map should be an offset.  */
+   in a map should be an offset.
+
+   If present, the expression evaluating to the IOS of a map should be
+   an integer.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 {
@@ -1444,6 +1447,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
   pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
   pkl_ast_node map_offset = PKL_AST_MAP_OFFSET (map);
   pkl_ast_node map_offset_type = PKL_AST_TYPE (map_offset);
+  pkl_ast_node map_ios = PKL_AST_MAP_IOS (map);
 
   if (PKL_AST_TYPE_CODE (map_offset_type) != PKL_TYPE_OFFSET)
     {
@@ -1451,6 +1455,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
                  "expected offset");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
+    }
+
+  if (map_ios)
+    {
+      pkl_ast_node map_ios_type = PKL_AST_TYPE (map_ios);
+
+      if (PKL_AST_TYPE_CODE (map_ios_type) != PKL_TYPE_INTEGRAL)
+        {
+          PKL_ERROR (PKL_AST_LOC (map_ios), "expected integer expression");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
     }
 
   PKL_AST_TYPE (map) = ASTREF (map_type);
@@ -1941,6 +1957,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       break;
     case PKL_AST_ATTR_MAPPED:
       /* The type of 'mapped is a boolean, int<32>  */
+      exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
+      PKL_AST_TYPE (exp) = ASTREF (exp_type);
+      break;
+    case PKL_AST_ATTR_IOS:
+      /* The type of 'mapped is an IOS descriptor, int<32>  */
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;

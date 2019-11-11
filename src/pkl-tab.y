@@ -637,12 +637,16 @@ bconc:
 ;
 
 map:
-          simple_type_specifier '@' expression
+          simple_type_specifier '@' expression %prec THEN
                 {
-                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, $3);
+                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, NULL, $3);
                     PKL_AST_LOC ($$) = @$;
                 }
-
+	| simple_type_specifier '@' expression ':' expression %prec ELSE
+         	{
+                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, $3, $5);
+                    PKL_AST_LOC ($$) = @$;
+                }
 ;
 
 unary_operator:

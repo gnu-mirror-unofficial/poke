@@ -247,6 +247,9 @@ PKL_DEF_INSN (PKL_INSN_SMODI, "", "smodi")
 PKL_DEF_INSN (PKL_INSN_MGETO, "", "mgeto")
 PKL_DEF_INSN (PKL_INSN_MSETO, "", "mseto")
 
+PKL_DEF_INSN (PKL_INSN_MGETIOS, "", "mgetios")
+PKL_DEF_INSN (PKL_INSN_MSETIOS, "", "msetios")
+
 PKL_DEF_INSN (PKL_INSN_MGETM, "", "mgetm")
 PKL_DEF_INSN (PKL_INSN_MSETM, "", "msetm")
 

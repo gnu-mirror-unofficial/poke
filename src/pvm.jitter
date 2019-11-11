@@ -2135,6 +2135,20 @@ instruction mseto () # ( VAL OFF -- VAL )
   end
 end
 
+instruction mgetios () # ( VAL -- VAL INT )
+  code
+    JITTER_PUSH_STACK (PVM_VAL_IOS (JITTER_TOP_STACK ()));
+  end
+end
+
+instruction msetios () # ( VAL INT -- VAL )
+  code
+    PVM_VAL_SET_IOS (JITTER_UNDER_TOP_STACK (),
+                     JITTER_TOP_STACK ());
+    JITTER_DROP_STACK ();
+  end
+end
+
 instruction mgetm () # ( VAL -- VAL CLS )
   code
      JITTER_PUSH_STACK (PVM_VAL_MAPPER (JITTER_TOP_STACK ()));

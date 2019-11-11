@@ -1,3 +1,36 @@
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_make_map): Get an `ios' argument.
+	(pkl_ast_node_free): Handle the map ios.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-ast.h (struct pkl_ast_map): New attribute `ios'.
+	* src/pkl-tab.y (map): Add ternary variant of the operator.
+	* src/pkl-pass.c (pkl_do_pass_1): Visit the ios node of maps.
+	* src/pkl-typify.c (pkl_typify1_ps_map): Check whether the IOS
+	expression evaluates to an integral value.
+	(pkl_typify1_ps_attr): The type of the 'io attribute is an
+	int<32>.
+	* src/pkl-promo.c (pkl_promo_ps_map): Promote the ios argument to
+	the map operator.
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Generate code for the 'ios
+	attribute.
+	* src/pkl-attrs.def: Define PKL_AST_ATTR_IOS.
+	* src/pkl-insn.def: New instructions mgetio and msetio.
+	* src/pvm.jitter (mgetio): New instruction.
+	(msetio): Likewise.
+	* testsuite/poke.pkl/map-ios-diag-1.pk: New test.
+	* testsuite/poke.pkl/map-ios-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-diag-2.pk: Likewise.
+	* src/pvm-val.h (PVM_VAL_IO): Define.
+	(PVM_VAL_SET_IO): Likewise.
+	(PVM_VAL_ARR_IO): Likewise.
+	(PVM_VAL_SCT_IO): Likewise.
+	(struct pvm_struct): New field io.
+	(struct pvm_array): Likewise.
+	* src/pvm-val.c (pvm_make_array): Initialize io.
+	(pvm_make_struct): Likewise.
+
 2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-lex.l: Handle token UNTIL.
