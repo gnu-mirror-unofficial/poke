@@ -34,6 +34,187 @@
 
 #include <signal.h>
 #include <unistd.h>
+#include <ctype.h>
+
+extern struct pk_cmd *cmds[];
+extern struct pk_cmd *set_cmds[];
+extern struct pk_cmd null_cmd;
+
+static void
+count_io_spaces (ios io, void *data)
+{
+  int *i = (int *) data;
+  if (i == NULL)
+    return;
+  (*i)++;
+}
+
+static char *
+close_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  static int n_ids = 0;
+  if (state == 0)
+    {
+      idx = 0;
+      n_ids = 0;
+      ios_map (count_io_spaces, &n_ids);
+    }
+  else
+    ++idx;
+
+  int len  = strlen (x);
+  while (1)
+    {
+      if (idx >= n_ids)
+	break;
+      char buf[16];
+      snprintf (buf, 16, "#%d", idx);
+
+      int match = strncmp (buf, x, len);
+      if (match != 0)
+	{
+	  idx++;
+	  continue;
+	}
+
+      return strdup (buf);
+    }
+
+  return NULL;
+}
+
+static char *
+null_completion_function (const char *x, int state)
+{
+  return NULL;
+}
+
+static char *
+poke_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  if (state == 0)
+    idx = 0;
+  else
+    ++idx;
+
+  int len = strlen (x);
+  while (1)
+    {
+      struct pk_cmd **c = cmds + idx;
+
+      if (*c == &null_cmd)
+	break;
+
+      char *name = xmalloc (strlen ( (*c)->name) + 1);
+      strcpy (name, ".");
+      strcat (name, (*c)->name);
+
+      int match = strncmp (name, x, len);
+      if (match != 0)
+	{
+	  free (name);
+	  idx++;
+	  continue;
+	}
+      return name;
+    }
+
+  return NULL;
+}
+
+
+static char *
+set_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  if (state == 0)
+    idx = 0;
+  else
+    ++idx;
+
+  int len = strlen (x);
+  while (1)
+    {
+      struct pk_cmd **c = set_cmds + idx;
+
+      if (*c == &null_cmd)
+	break;
+
+      char *name = xmalloc (strlen ( (*c)->name) + 1);
+      strcpy (name, (*c)->name);
+
+      int match = strncmp (name, x, len);
+      if (match != 0)
+	{
+	  free (name);
+	  idx++;
+	  continue;
+	}
+      return name;
+    }
+
+  return NULL;
+}
+
+//#define DIAG(msg) do {printf ("%s\n", msg); } while (0)
+#define DIAG(msg)
+
+static int
+foo_getc (FILE *stream)
+{
+  char *line_to_point = xmalloc (rl_point + 1);
+  int end = rl_point ? rl_point - 1 : 0;
+  strncpy (line_to_point, rl_line_buffer, end);
+  line_to_point[end] = '\0';
+
+  char *tok = strtok (line_to_point, "\t ");
+
+  if (tok)
+    DIAG (tok);
+  else
+    DIAG ("null");
+  if (tok == NULL)
+    {
+      rl_completion_entry_function = poke_completion_function;
+      DIAG ("CEF POKE");
+    }
+  else if (0 == strcmp (".load", tok))
+    {
+      rl_completion_entry_function = rl_filename_completion_function;
+      DIAG ("CEF FILENAEM");
+    }
+  else if (0 == strcmp (".file", tok))
+    {
+      rl_completion_entry_function = rl_filename_completion_function;
+      DIAG ("CEF FILENAEM");
+    }
+  else if (0 == strcmp (".editor", tok))
+    {
+      rl_completion_entry_function = null_completion_function;
+      DIAG ("NULL CLOSE");
+    }
+  else if (0 == strcmp (".set", tok))
+    {
+      rl_completion_entry_function = set_completion_function;
+      DIAG ("NULL CLOSE");
+    }
+  else if (0 == strcmp (".close", tok))
+    {
+      rl_completion_entry_function = close_completion_function;
+      DIAG ("CEF CLOSE");
+    }
+  else
+    {
+      rl_completion_entry_function = poke_completion_function;
+      DIAG ("CEF POKE.");
+    }
+  free (line_to_point);
+
+  return rl_getc (stream);
+}
+
 
 static void
 banner (void)
@@ -61,7 +242,7 @@ banner (void)
         pk_puts ("\".\n");
         free (help_hyperlink);
       }
-#else 
+#else
       pk_puts (_("For help, type \".help\".\n"));
 #endif
       pk_puts (_("Type \".exit\" to leave the program.\n"));
@@ -108,6 +289,7 @@ pk_repl (void)
 	read_history (poke_history);
     }
 #endif
+  rl_getc_function = foo_getc;
 
   while (!poke_exit_p)
     {
@@ -115,6 +297,7 @@ pk_repl (void)
       char *line;
 
       pk_term_flush ();
+      rl_completion_entry_function = poke_completion_function;
       line = readline ("(poke) ");
       if (line == NULL)
         {
