@@ -1,5 +1,32 @@
 2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-print.c: Remove.
+	* src/pk-cmd.c (print_cmd): Likewise.
+	(cmds): Remove print_cmd.
+	* src/Makefile.am (poke_SOURCES): Remove pk-print.c
+	* testsuite/poke.map/maps-simple-1.pk: New test.
+	* testsuite/poke.map/maps-simple-8.pk: Likewise.
+	* testsuite/poke.map/maps-simple-7.pk: Likewise.
+	* testsuite/poke.map/maps-simple-6.pk: Likewise.
+	* testsuite/poke.map/maps-simple-5.pk: Likewise.
+	* testsuite/poke.map/maps-simple-4.pk: Likewise.
+	* testsuite/poke.map/maps-simple-3.pk: Likewise.
+	* testsuite/poke.map/maps-simple-2.pk: Likewise.
+	* testsuite/poke.pkl/sl-1.pk: Do not use .print.
+	* testsuite/poke.map/maps-arrays-10.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-9.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-8.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-7.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-6.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-1.pk: Likewise.
+	* testsuite/poke.map/valmaps-arrays.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-4.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-3.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-2.pk: Likewise.
+	* testsuite/poke.map/trimmed-map.pk: Likewise.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (.file): Add note about blank characters trimming
 	from paths.
 
