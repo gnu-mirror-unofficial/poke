@@ -732,6 +732,7 @@ pvm_print_val (pvm_val val, int base, int flags)
             case '\n': printable_size += 2; break;
             case '\t': printable_size += 2; break;
             case '\\': printable_size += 2; break;
+            case '\"': printable_size += 2; break;
             default: printable_size += 1; break;
             }
         }
@@ -755,6 +756,11 @@ pvm_print_val (pvm_val val, int base, int flags)
             case '\\':
               str_printable[j] = '\\';
               str_printable[j+1] = '\\';
+              j += 2;
+              break;
+            case '"':
+              str_printable[j] = '\\';
+              str_printable[j+1] = '\"';
               j += 2;
               break;
             default:

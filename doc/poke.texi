@@ -1470,6 +1470,8 @@ Denotes a new line character.
 Denotes an horizontal tab.
 @item \\
 Denotes a backlash @code{\} character.
+@item \"
+Denotes a double-quote @code{"} character.
 @end table
 
 @node String Types

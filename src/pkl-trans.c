@@ -481,6 +481,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
             case '\\':
             case 'n':
             case 't':
+            case '"':
               string_length++;
               break;
             default:
@@ -507,6 +508,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
             case '\\': new_string_pointer[i] = '\\'; break;
             case 'n':  new_string_pointer[i] = '\n'; break;
             case 't':  new_string_pointer[i] = '\t'; break;
+            case '"':  new_string_pointer[i] = '"'; break;
             default:
               assert (0);
             }

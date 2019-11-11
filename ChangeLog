@@ -1,3 +1,12 @@
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-trans.c (pkl_trans1_ps_string): Handle \".
+	* src/pvm-val.c (pvm_print_val): Likewise.
+	* testsuite/poke.pkl/strings-1.pk: New test.
+	* testsuite/poke.pkl/strings-2.pk: Likewise.
+	* testsuite/poke.pkl/strings-3.pk: Likewise.
+	* doc/poke.texi (String Literals): Document \".
+
 Don't crash if editor produced an empty file.
 
 2019-11-11 John Darrington <john@darrington.wattle.id.au>
