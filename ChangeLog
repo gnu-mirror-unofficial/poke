@@ -1,5 +1,10 @@
 2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (.file): Add note about blank characters trimming
+	from paths.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-cmd.c (pk_cmd_exec_1): Do not include trailing blanks in
 	tag arguments.
 
