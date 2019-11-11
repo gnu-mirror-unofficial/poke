@@ -429,10 +429,11 @@ Where @var{path} is a path to a file to open (which can be relative to
 poke's current working directory or absolute) and @var{tag} is a tag
 of the form @code{#NUMBER} that identifies a previously open file.
 
-Note that white spaces are trimmed before and after @var{path}.  This
-means it is not possible to open files whose names contain leading or
-trailing blanks.  For these rare cases, please open the file
-specifying it in the poke command line.
+Tilde expansion is performed in @var{path}, much like its done in the
+shell.  This means you can include special characters like @code{~}
+(which will expand to your home directory) delimit the filename with
+@code{"} in case it includes leading or trailing blank characters,
+etc.
 
 When a new file is opened, it becomes the current IO space.  On that
 point on, every map executed in the REPL or while loading a Poke
