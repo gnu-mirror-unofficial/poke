@@ -1,5 +1,10 @@
 2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-cmd.c (pk_cmd_exec_1): Do not include trailing blanks in
+	tag arguments.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (The isa Operator): New chapter.
 
 2019-11-10  Jose E. Marchesi  <jemarch@gnu.org>

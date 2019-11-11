@@ -417,7 +417,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                       && pk_atoi (&p, &(argv[argc].val.tag))
                       && argv[argc].val.tag >= 0)
                     {
-                      if (*p == ',' || *p == '\0')
+                      if (*p == ',' || *p == '\0' || isblank (*p))
                         {
                           argv[argc].type = PK_CMD_ARG_TAG;
                           match = 1;
