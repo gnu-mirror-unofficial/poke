@@ -24,7 +24,7 @@ load_lib dg.exp
 # where the dg-* element appears in the source file.
 
 set poke_commands {}
-set poke_data_file {}
+set poke_data_files {}
 
 # Append the specified command to `poke_commands'.  The commands added
 # this way will be executed in order by the poke invocation.
@@ -62,43 +62,56 @@ proc dg-require { args } {
 }
                
 # Create a temporary data file containing the data specified as an
-# argument, with a random name.  The incoming data is encoded in
-# a Tcl list, like in:
+# argument, with either a random name or a given name.  The incoming
+# data is encoded in a Tcl list, like in:
 #
-# dg-data {c*} {0x00 0x01 0x02 0x03 0x0a 0xf3 0xb5}
+# dg-data {c*} {0x00 0x01 0x02 0x03 0x0a 0xf3 0xb5} [filename]
 #
 # The first argument to dg-data is the format argument expected by the
 # binary(3tcl) Tcl command.  This should be flexible enough for most
 # purposes.
 #
 # Note that it is possible for a single test to specify several
-# dg-data.  Commands acting on IOS will opeate on the most recent
-# dg-data.
+# dg-data.  Commands acting on IOS will operate on the most recent
+# dg-data stored in a random file.
+#
+# Note that named data files are not opened automatically.
 
 proc dg-data { args } {
     global poke_commands
-    global poke_data_file
+    global poke_data_files
     global objdir
 
-    if { [llength $args] != 3 } {
-        error "[linex $args 0]: invalid arguments"
+    set basename {}
+    
+    if { [llength $args] != 3 && [llength $args] != 4 } {
+        error "[lindex $args 0]: invalid arguments"
     }
     set format [lindex $args 1]
     set bytes [lindex $args 2]
 
-    # Write the data to a temporary file.
-    set output_file ${objdir}/[pid].data
+    if { [llength $args] == 4 } {
+        set basename [lindex $args 3]
+    } else {
+        set basename [pid].data
+    }
+    
+    # Write the data to the file.
+    set output_file ${objdir}/${basename}
     set fd [open $output_file w]
     fconfigure $fd -translation binary
     puts -nonewline $fd [binary format $format $bytes]
     close $fd
 
     # Append commands to open the file in poke and make it the current
-    # IOS.
-    set poke_commands \
-        "$poke_commands -c [exec printf %q ".file $output_file"]"
+    # IOS.  But only if the file is not named.  Named data files are
+    # intended to be opened explicitly as part of the test procedure.
+    if { [llength $args] < 4 } {
+        set poke_commands \
+            "$poke_commands -c [exec printf %q ".file $output_file"]"
+    }
 
-    set poke_data_file $output_file
+    lappend poke_data_files $output_file
 }
 
 # We set LC_ALL and LANG to C so that we get the same error messages
@@ -155,9 +168,9 @@ proc poke-dg-test { prog do_what extra_tool_flags } {
 #
 # This function is invoked by dg-finish.
 proc poke_finish {} {
-    global poke_data_file
+    global poke_data_files
 
-    if {!($poke_data_file eq {})} {
-        file delete $poke_data_file
+    foreach f $poke_data_files {
+        file delete $poke_data_files
     }
 }

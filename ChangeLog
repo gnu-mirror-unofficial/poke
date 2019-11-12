@@ -1,3 +1,16 @@
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/lib/poke-dg.exp (dg-data): Accept a file name
+	argument.
+	(poke_finish): poke_data_files is now a list.
+	* testsuite/poke.map/maps-ios-1.pk: New test.
+	* testsuite/poke.map/maps-ios-2.pk: Likewise.
+	* testsuite/poke.map/maps-ios-3.pk: Likewise.
+	* testsuite/poke.map/maps-ios-4.pk: Likewise.
+	* testsuite/poke.map/maps-ios-5.pk: Likewise.
+	* testsuite/poke.map/maps-ios-6.pk: Likewise.
+	* testsuite/poke.map/maps-ios-7.pk: Likewise.
+
 2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pvm.jitter (peeks): Take an IOS argument.

@@ -1464,10 +1464,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
       /* This is an l-value in an assignment.  Generate code for the
          offset, which is expected by the ass_stmt PS handler.  */
       if (map_ios)
-        PKL_PASS_SUBPASS (map_ios);
+        {
+          PKL_GEN_PAYLOAD->in_lvalue = 0;
+          PKL_PASS_SUBPASS (map_ios);
+          PKL_GEN_PAYLOAD->in_lvalue = 1;
+        }
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-        
+
       PKL_PASS_SUBPASS (map_offset);
     }
   else
