@@ -1,5 +1,34 @@
 2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm.jitter (peeks): Take an IOS argument.
+	(PVM_PEEK): Likewise.
+	(PVM_POKE): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_map): Pass the IO argument to the
+	mappers.
+	(pkl_gen_ps_type_integral): Take an IOS argument for mappers and
+	writers.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_pr_type_offset): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	(pkl_gen_pr_ass_stmt): Pass IOS to the l-value map.
+	* src/pkl-gen.pks (array_mapper): Likewise.
+	(array_writer): Likewise.
+	(struct_mapper): Likewise.
+	(struct_field_mapper): Likewise.
+	(op_unmap): Set ios to null.
+	* src/pkl-asm.pks (write): Pass the mapped object's IOS to the
+	writer.
+	(remap): Pass the mapped object's IOS to the mapper.
+	* src/pkl-tab.y (struct_type_specifier): Register 3 dummies in the
+	compile-time lexical environment to reflect lexical changes in
+	struct_mapper.
+	* testsuite/poke.map/maps-strings-1.pk: New test.
+	* testsuite/poke.map/maps-offsets-1.pk: Likewise.
+	* testsuite/poke.map/maps-offsets-2.pk: Likewise.
+
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios.c (struct ios): New field `id'.
 	(ios_next_id): New static variable.
 	(ios_open): Return the id of the opened ios.

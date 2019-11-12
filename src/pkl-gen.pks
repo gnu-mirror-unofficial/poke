@@ -30,13 +30,15 @@
         msetm
         push null
         msetw
+        push null
+        msetios
         .end
 
 ;;; RAS_FUNCTION_ARRAY_MAPPER
-;;; ( OFF EBOUND SBOUND -- ARR )
+;;; ( IOS OFF EBOUND SBOUND -- ARR )
 ;;;
 ;;; Assemble a function that maps an array value at the given offset
-;;; OFF, with mapping attributes EBOUND and SBOUND.
+;;; OFF in the IO space IOS, with mapping attributes EBOUND and SBOUND.
 ;;;
 ;;; If both EBOUND and SBOUND are null, then perform an unbounded map,
 ;;; i.e. read array elements from IO until EOF.  XXX: what about empty
@@ -64,6 +66,7 @@
         regvar $sbound           ; Argument
         regvar $ebound           ; Argument
         regvar $off              ; Argument
+        regvar $ios              ; Argument
         ;; Determine the offset of the array, in bits, and put it in a
         ;; local.
         pushvar $off            ; OFF
@@ -149,6 +152,8 @@
         pushe .eof
         push PVM_E_CONSTRAINT
         pushe .constraint_error
+        pushvar $ios            ; ... EOFF EOFF IOS
+        swap                    ; ... EOFF IOS EOFF
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
         pope
         pope
@@ -455,7 +460,7 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_WRITER
-;;; ( OFF VAL -- )
+;;; ( IOS OFF VAL -- )
 ;;;
 ;;; Assemble a function that pokes a mapped array value to it's mapped
 ;;; offset in the current IOS.
@@ -468,6 +473,7 @@
         pushf
         regvar $value           ; Argument
         drop                    ; The offset is not used.
+        regvar $ios             ; Argument
         push ulong<64>0         ; 0UL
         regvar $idx             ; _
      .while
@@ -487,6 +493,8 @@
         arefo                   ; VAL ARRAY I EOFF
         nip2                    ; VAL EOFF
         swap                    ; EOFF VAL
+        pushvar $ios            ; EOFF VAL IOS
+        nrot                    ; IOS EOFF VAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
         .c PKL_GEN_PAYLOAD->in_writer = 0;
@@ -630,7 +638,7 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_MAPPER
-;;; ( OFF SOFF -- OFF STR VAL NOFF )
+;;; ( IOS OFF SOFF -- OFF STR VAL NOFF )
 ;;;
 ;;; Map a struct field from the current IOS.
 ;;; SOFF is the offset of the beginning of the struct.
@@ -643,8 +651,9 @@
 
         .macro struct_field_mapper
         ;; Increase OFF by the label, if the field has one.
-        .e handle_struct_field_label     ; OFF
-        dup                             ; OFF OFF
+        .e handle_struct_field_label    ; IOS OFF
+        dup                             ; IOS OFF OFF
+        nrot                            ; OFF IOS OFF
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
@@ -671,7 +680,7 @@
         .end
 
 ;;; RAS_FUNCTION_STRUCT_MAPPER
-;;; ( OFF EBOUND SBOUND -- SCT )
+;;; ( IOS OFF EBOUND SBOUND -- SCT )
 ;;;
 ;;; Assemble a function that maps a struct value at the given offset
 ;;; OFF.
@@ -704,6 +713,7 @@
         drop                    ; sbound
         drop                    ; ebound
         regvar $off
+        regvar $ios
         push ulong<64>0
         regvar $nfield
         pushvar $off            ; OFF
@@ -726,7 +736,9 @@
         push PVM_E_CONSTRAINT
         pushe .alternative_failed
  .c   }
-        pushvar $off             ; ...[EOFF ENAME EVAL] NEOFF OFF
+        pushvar $ios             ; ...[EOFF ENAME EVAL] NEOFF IOS
+        swap                     ; ...[EOFF ENAME EVAL] IOS NEOFF
+        pushvar $off             ; ...[EOFF ENAME EVAL] IOS NEOFF OFF
         .e struct_field_mapper   ; ...[EOFF ENAME EVAL] NEOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
@@ -774,8 +786,8 @@
  .c       i++;
  .c     continue;
  .c   }
-        ;; The lexical address of this method is 0,B where B is 2 +
-        ;; element order.  This 2 should be updated if the lexical
+        ;; The lexical address of this method is 0,B where B is 3 +
+        ;; element order.  This 3 should be updated if the lexical
         ;; structure of this function changes.
         ;;
         ;; XXX note that here we really want to duplicate the
@@ -784,7 +796,7 @@
         ;; Sounds good.
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
  .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (PKL_AST_DECL_NAME (field))));
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 2 + i);
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 3 + i);
  .c     nmethod++;
  .c     i++;
  .c }

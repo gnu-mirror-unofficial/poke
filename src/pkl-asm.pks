@@ -49,15 +49,17 @@
         swap                    ; WCLS VAL
         mgetm                   ; WCLS VAL MCLS
         swap                    ; WCLS MCLS VAL
-        mgeto                   ; WCLS MCLS VAL OFF
-        swap                    ; WCLS MCLS OFF VAL
-        mgetsel                 ; WCLS MCLS OFF VAL EBOUND
-        swap                    ; WCLS MCLS OFF EBOUND VAL
-        mgetsiz                 ; WCLS MCLS OFF EBOUND VAL SBOUND
-        swap                    ; WCLS MCLS OFF EBOUND SBOUND VAL
-        mgetm                   ; WCLS MCLS OFF EBOUND SBOUND VAL MCLS
-        swap                    ; WCLS MCLS OFF EBOUND SBOUND MCLS VAL
-        drop                    ; WCLS MCLS OFF EBOUND SBOUND MCLS
+        mgetios                 ; WCLS MCLS VAL IOS
+        swap                    ; WLCS MCLS IOS VAL
+        mgeto                   ; WCLS MCLS IOS VAL OFF
+        swap                    ; WCLS MCLS IOS OFF VAL
+        mgetsel                 ; WCLS MCLS IOS OFF VAL EBOUND
+        swap                    ; WCLS MCLS IOS OFF EBOUND VAL
+        mgetsiz                 ; WCLS MCLS IOS OFF EBOUND VAL SBOUND
+        swap                    ; WCLS MCLS IOS OFF EBOUND SBOUND VAL
+        mgetm                   ; WCLS MCLS IOS OFF EBOUND SBOUND VAL MCLS
+        swap                    ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS VAL
+        drop                    ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS
         call                    ; WCLS MCLS NVAL
         swap                    ; WCLS NVAL MCLS
         msetm                   ; WCLS NVAL
@@ -79,10 +81,12 @@
         ;; The write should be done only if the value has a writer.
         mgetw                   ; VAL VAL WCLS
         bn .label
-        swap                    ; VAL WCLS VAL
-        mgeto                   ; VAL WCLS VAL OFF
-        swap                    ; VAL WCLS OFF VAL
-        rot                     ; VAL OFF VAL WCLS
+        tor                     ; VAL VAL [WCLS]
+        mgeto                   ; VAL VAL OFF [WCLS]
+        swap                    ; VAL OFF VAL [WCLS]
+        mgetios                 ; VAL OFF VAL IOS [WCLS]
+        nrot                    ; VAL IOS OFF VAL [WCLS]
+        fromr                   ; VAL IOS OFF VAL WCLS
         call                    ; VAL null
         push null               ; VAL null null
 .label:

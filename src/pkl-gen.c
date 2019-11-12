@@ -569,14 +569,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
                                                     value.  */
       break;
     case PKL_AST_MAP:
-      /* Stack: VAL OFF */
+      /* Stack: VAL IOS OFF */
 
       /* The map at the l-value is guaranteed to be of a simple type,
          i.e. of types whose values cannot be mapped (integers,
          offsets, strings, etc).  The strategy here is simple: we just
          generate a writer for the type.  */
 
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* IOS OFF VAL */
       PKL_GEN_PAYLOAD->in_writer = 1;
       PKL_PASS_SUBPASS (PKL_AST_TYPE (lvalue));
       PKL_GEN_PAYLOAD->in_writer = 0;
@@ -1272,12 +1272,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
 {
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: OFF VAL */
+      /* Stack: IOS OFF VAL */
       /* The offset to poke is stored in the TOS.  Replace the offset
          at the TOS with the magnitude of the offset and let the
          BASE_TYPE handler to tackle it.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* OFF VAL VMAG */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* OFF VMAG */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS OFF VAL VMAG */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS OFF VMAG */
     }
 }
 PKL_PHASE_END_HANDLER
@@ -1293,13 +1293,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_offset)
   /* Note that in_writer is handled in the pre-order handler, and not
      here.  */
 
-  /* XXX handle mapper (peek the offset magnitude) and the writer
-     (poke the offset magnitude).  */
-
   if (PKL_GEN_PAYLOAD->in_mapper)
-    /* Stack: OFF */
-    /* XXX wtf */
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
+    {
+      /* Note the value in the stack is the mapped value from
+         traversing the BASE_TYPE with in_maapper = 1 */
+      /* Stack: VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
+    }
   else if (PKL_GEN_PAYLOAD->in_valmapper)
     {
       /* Stack: VAL NVAL OFF */
@@ -1448,6 +1448,7 @@ PKL_PHASE_END_HANDLER
 
 /*
  * MAP
+ * | [MAP_IOS]
  * | MAP_OFFSET
  * | MAP_TYPE
  */
@@ -1456,17 +1457,30 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
 {
   pkl_ast_node map = PKL_PASS_NODE;
   pkl_ast_node map_offset = PKL_AST_MAP_OFFSET (map);
+  pkl_ast_node map_ios = PKL_AST_MAP_IOS (map);
 
   if (PKL_PASS_PARENT == NULL && PKL_GEN_PAYLOAD->in_lvalue)
     {
       /* This is an l-value in an assignment.  Generate code for the
          offset, which is expected by the ass_stmt PS handler.  */
+      if (map_ios)
+        PKL_PASS_SUBPASS (map_ios);
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+        
       PKL_PASS_SUBPASS (map_offset);
     }
   else
     {
       pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
       
+      /* Push the IOS of the map.  */
+      if (map_ios)
+        PKL_PASS_SUBPASS (map_ios);
+      else
+        /* PVM_NULL means use the current IO space, if any.  */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+
       /* Push the offset of the map.  */
       /* XXX converted to a bit-offset in an ulong<64>.  */
       /* XXX here we can assume the offset is offset<ulong<64>,b> as per
@@ -1755,12 +1769,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
      check for in_mapper.  */
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: OFF VAL */
+      /* Stack: IOS OFF VAL */
       /* XXX turn OFF to bit-offset  */
-      pkl_asm_insn (pasm, PKL_INSN_SWAP); /* VAL OFF */
-      pkl_asm_insn (pasm, PKL_INSN_OGETM); /* VAL OFF OFFM */
-      pkl_asm_insn (pasm, PKL_INSN_NIP); /* VAL OFFM */
-      pkl_asm_insn (pasm, PKL_INSN_SWAP); /* OFFM VAL */
+      pkl_asm_insn (pasm, PKL_INSN_SWAP); /* IOS VAL OFF */
+      pkl_asm_insn (pasm, PKL_INSN_OGETM); /* IOS VAL OFF OFFM */
+      pkl_asm_insn (pasm, PKL_INSN_NIP); /* IOS VAL OFFM */
+      pkl_asm_insn (pasm, PKL_INSN_SWAP); /* IOS OFFM VAL */
       switch (PKL_GEN_PAYLOAD->endian)
         {
         case PKL_AST_ENDIAN_DFL:
@@ -1780,10 +1794,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
     }
   else if (PKL_GEN_PAYLOAD->in_mapper)
     {
-      /* Stack: OFF */
+      /* Stack: IOS OFF */
       /* XXX turn OFF to bit-offset */
-      pkl_asm_insn (pasm, PKL_INSN_OGETM); /* OFF OFFM */
-      pkl_asm_insn (pasm, PKL_INSN_NIP); /* OFFM */
+      pkl_asm_insn (pasm, PKL_INSN_OGETM); /* IOS OFF OFFM */
+      pkl_asm_insn (pasm, PKL_INSN_NIP); /* IOS OFFM */
       switch (PKL_GEN_PAYLOAD->endian)
         {
         case PKL_AST_ENDIAN_DFL:
@@ -1864,13 +1878,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
      check for in_mapper.  */
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: OFF ARR */
+      /* Stack: IOS OFF ARR */
       /* XXX: handle exceptions from the writer.  */
       /* Note that we don't use the offset, because it should be the
          same than the mapped offset in the array.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The array.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The offset. */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The ios.  */
 
       PKL_PASS_BREAK;
     }
@@ -1924,10 +1939,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
         }
       else
         {
+          /* Make a copy of the IOS.  We will need to install it in
+             the resulting value later.  */
+                                                     /* IOS OFF */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF IOS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);  /* OFF IOS IOS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* IOS IOS OFF */
+          
           if (array_type_mapper != PVM_NULL)
             {
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                            array_type_mapper); /* OFF CLS */
+                            array_type_mapper); /* IOS IOS OFF CLS */
             }
           else
             {
@@ -1940,12 +1962,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
               /* Complete the mapper closure with the current
                  environment.  */
               /* OFF */
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* OFF CLS */
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* OFF CLS */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* IOS IOS OFF CLS */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* IOS IOS OFF CLS */
             }
 
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);                  /* OFF CLS CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);                 /* CLS OFF CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);              /* IOS IOS OFF [CLS] */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ATR);              /* IOS IOS OFF CLS [CLS] */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);             /* IOS CLS IOS OFF [CLS] */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);            /* IOS CLS IOS OFF CLS */
 
           /* Build the arguments and call the mapper to get a mapped
              array value.  Whether the mapping is bounded, and exactly
@@ -1963,9 +1987,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
             }
           else
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-                                                         /* CLS OFF CLS EBOUND */
+                                                         /* IOS CLS IOS OFF CLS EBOUND */
 
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* CLS OFF EBOUND CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* IOS CLS IOS OFF EBOUND CLS */
 
           if (array_type_bound
               && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
@@ -1979,14 +2003,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
             }
           else
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-                                                         /* CLS OFF EBOUND CLS SBOUND */
+                                                      /* IOS CLS IOS OFF EBOUND CLS SBOUND */
 
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* CLS OFF EBOUND SBOUND CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);     /* CLS VAL */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS CLS IOS OFF EBOUND SBOUND CLS */
+          /* XXX */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);  /* IOS CLS VAL */
 
           /* Install the mapper into the value.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* VAL CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM); /* VAL */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS VAL CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM); /* IOS VAL */
+
+          /* Install the IOS into the value.  */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);    /* VAL IOS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETIOS); /* VAL */
         }
 
       if (array_type_writer != PVM_NULL)
@@ -2080,20 +2109,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
 
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: OFF STR */
+      /* Stack: IOS OFF STR */
       /* XXX turn OFF to bit-offset  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* STR OFF */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* STR OFF OFFM */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* STR OFFM */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFFM STR */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS STR OFF */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS STR OFF OFFM */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS STR OFFM */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS OFFM STR */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POKES);
     }
   else if (PKL_GEN_PAYLOAD->in_mapper)
     {
-      /* Stack: OFF */
+      /* Stack: IOS OFF */
       /* XXX turn OFF to bit-offset */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* OFF OFFM */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* OFFM */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS OFF OFFM */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS OFFM */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEEKS);
     }
   else if (PKL_GEN_PAYLOAD->in_valmapper)
@@ -2120,7 +2149,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
 
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: OFF SCT */
+      /* Stack: IOS OFF SCT */
       /* XXX: handle exceptions from the writer.  */
 
       /* Note that we don't use the offset, because it should be the
@@ -2128,11 +2157,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The struct.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The offset. */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The IOS.  */
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_PAYLOAD->in_mapper)
     {
-      /* Stack: OFF */
+      /* Stack: IOS OFF */
       pkl_ast_node type_struct = PKL_PASS_NODE;
       pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (type_struct);
       pkl_ast_node field;
@@ -2140,10 +2170,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       pvm_val type_struct_mapper = PKL_AST_TYPE_S_MAPPER (type_struct);
       pvm_val type_struct_writer = PKL_AST_TYPE_S_WRITER (type_struct);
 
+      /* Make a copy of the IOS.  We will need to install it in the
+         resulting value later.  */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);  /* OFF IOS IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* IOS IOS OFF */
+
       if (type_struct_mapper != PVM_NULL)
         {
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        type_struct_mapper); /* OFF CLS */
+                        type_struct_mapper); /* IOS IOS OFF CLS */
         }
       else
         {
@@ -2152,26 +2189,30 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
           pvm_val mapper_closure;
 
           RAS_FUNCTION_STRUCT_MAPPER (mapper_closure);
-                                                                     /* OFF */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* OFF CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* OFF CLS */
+                                                                     /* IOS IOS OFF */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* IOS IOS OFF CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* IOS IOS OFF CLS */
         }
 
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);                  /* OFF CLS CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);                 /* CLS OFF CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);                  /* IOS IOS OFF [CLS] */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ATR);                  /* IOS IOS OFF CLS [CLS] */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);                 /* IOS CLS IOS OFF [CLS] */
 
       /* Build the arguments and call the mapper to get a struct
          value.  For structs, both EBOUND and SBOUND are always
          null.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);                 /* CLS OFF */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);      /* CLS OFF EBOUND */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);      /* CLS OFF EBOUND SBOUND */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);               /* CLS OFF EBOUND SBOUND CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);                /* CLS VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* IOS CLS IOS OFF EBOUND [CLS] */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* IOS CLS IOS OFF EBOUND SBOUND [CLS]*/
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);          /* IOS CLS IOS OFF EBOUND SBOUND CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);           /* IOS CLS VAL */
 
       /* Install the mapper into the value.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);                /* VAL CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM);               /* VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);           /* IOS VAL CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM);          /* IOS VAL */
+
+      /* Install the ios into the value.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);           /* VAL IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETIOS);        /* VAL */
 
       if (type_struct_writer != PVM_NULL)
         {
