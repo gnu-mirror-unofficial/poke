@@ -93,6 +93,8 @@
 
 /* The following struct implements an instance of an IO space.
 
+   IS is an unique integer identifying the IO space.
+
    HANDLER is a copy of the handler string used to open the space.
 
    DEV is the device operated by the IO space.
@@ -105,6 +107,7 @@
 
 struct ios
 {
+  int id;
   char *handler;
   void *dev;
   struct ios_dev_if *dev_if;
@@ -112,6 +115,10 @@ struct ios
 
   struct ios *next;
 };
+
+/* Next available IOS id.  */
+
+static int ios_next_id = 0;
 
 /* List of IO spaces, and pointer to the current one.  */
 
@@ -151,6 +158,7 @@ ios_open (const char *handler)
 
   /* Allocate and initialize the new IO space.  */
   io = xmalloc (sizeof (struct ios));
+  io->id = ios_next_id++;
   io->next = NULL;
   io->handler = xstrdup (handler);
 
@@ -179,14 +187,14 @@ ios_open (const char *handler)
 
   cur_io = io;
 
-  return 1;
+  return io->id;
 
  error:
   if (io)
     free (io->handler);
   free (io);
 
-  return 0;
+  return IOS_ERROR;
 }
 
 void
@@ -255,6 +263,18 @@ ios_search (const char *handler)
 
   for (io = io_list; io; io = io->next)
     if (STREQ (io->handler, handler))
+      break;
+
+  return io;
+}
+
+ios
+ios_search_by_id (int id)
+{
+  ios io;
+
+  for (io = io_list; io; io = io->next)
+    if (io->id == id)
       break;
 
   return io;

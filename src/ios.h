@@ -108,7 +108,7 @@ typedef int64_t ios_off;
 
 /* Open an IO space using a handler and make it the current space.
    Return IOS_ERROR if there is an error opening the space (such as an
-   unrecognized handler), IOS_OK otherwise.  */
+   unrecognized handler), the ID of the new IOS otherwise.  */
 
 int ios_open (const char *handler);
 
@@ -152,6 +152,11 @@ void ios_set_cur (ios io);
    such space exists.  */
 
 ios ios_search (const char *handler);
+
+/* Return the IO space having the given ID.  Return NULL if no such
+   space exists.  */
+
+ios ios_search_by_id (int id);
 
 /* Return the Nth IO space.  If N is negative or bigger than the
    number of IO spaces which are currently opened, return NULL.  */

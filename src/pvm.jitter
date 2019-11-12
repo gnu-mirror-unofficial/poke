@@ -600,7 +600,7 @@ instruction open () # ( STR -- INT )
      int ret = ios_open (filename);
 
      if (ret == IOS_ERROR)
-       PVM_RAISE (PVM_E_IO); /* XXX */
+       PVM_RAISE (PVM_E_IO);
        
      JITTER_TOP_STACK () = pvm_make_int (ret, 32);
   end
@@ -609,10 +609,10 @@ end
 instruction close () # ( INT -- )
   code
      int io_id = PVM_VAL_INT (JITTER_TOP_STACK ());
-     ios io = ios_get (io_id);
+     ios io = ios_search_by_id (io_id);
 
      if (io == NULL)
-        PVM_RAISE (PVM_E_IO); /* XXX */
+        PVM_RAISE (PVM_E_IO);
 
      ios_close (io);
   end
