@@ -60,6 +60,33 @@ defun catos = (char[] chars) string:
    return s;
   }
 
+  /* Return S with leading whitespace omitted.  */
+defun ltrim = (string s) string:
+  {
+    defvar result = "";
+    for (c in s)
+      {
+	if ((c != ' ' && c != '\t') || result != "")
+	  result = result + c as string;
+      }
+    return result;
+  }
+
+  /* Return S with trailing whitespace omitted.  */
+defun rtrim = (string s) string:
+  {
+    defvar result = "";
+    defvar i = s'length;
+    while (i > 0)
+    {
+      defvar c = s[i - 1];
+      if ((c != ' ' && c != '\t') || result != "")
+        result = c as string + result;
+      i = i - 1;
+    }
+    return result;
+  }
+
 defun atoi = (string s, int b = 10) long:
   {
     defvar result = 0;

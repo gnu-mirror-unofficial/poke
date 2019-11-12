@@ -103,6 +103,7 @@ The Standard Library
 * Standard Integral Types::	int, long and the like.
 * Standard Offset Types::	off64 and the like.
 * Conversion Functions::	catos, atoi, etc.
+* String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
 
 Hacking poke
@@ -1439,6 +1440,9 @@ Always 0 for offsets.  See mapping.
 Poke supports a notion of @dfn{strings} which is very similar to the C
 programming language: a string value is a sequence of characters that
 is terminated by the so-called @dfn{null character}.
+
+The standard library provides functions which process strings.
+@xref{String Functions}.
 
 @menu
 * String Literals::		Writing string values.
@@ -3510,6 +3514,39 @@ after the parsed integer.  Thus, this works:
 (poke) atoi ("10foo")
 10L
 @end example
+
+@node String Functions
+@chapter String Functions
+
+The Poke standard library provides the following functions to do
+work on strings:
+
+@menu
+* ltrim::		Remove leading whitespace.
+* rtrim::		Remove trailing whitespace.
+@end menu
+
+@node ltrim
+@section ltrim
+
+The standard function @code{ltrim} provides the following interface:
+
+@example
+defun ltrim = (string s) string: @{ ... @}
+@end example
+
+It returns a copy of the input string @code{s} with any leading whitespace removed.
+
+@node rtrim
+@section rtrim
+
+The standard function @code{rtrim} provides the following interface:
+
+@example
+defun rtrim = (string s) string: @{ ... @}
+@end example
+
+It returns a copy of the input string @code{s} with any trailing whitespace removed.
 
 @node Sorting Functions
 @chapter Sorting Functions

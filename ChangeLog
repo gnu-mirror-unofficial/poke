@@ -1,5 +1,13 @@
 2019-11-12 John Darrington <john@darrington.wattle.id.au>
 
+	* src/std.pk (ltrim): New function.
+	* src/std.pk (rtrim): New function.
+	* doc/poke.texi (String Functions): New chapter.
+	* testsuite/poke.std/ltrim.pk: New file.
+	* testsuite/poke.std/rtrim.pk: New file.
+
+2019-11-12 John Darrington <john@darrington.wattle.id.au>
+
         * src/pk-file.c (pk_cmd_file): Use strerror for reason.
         (pk_cmd_load_file): ditto.
 
