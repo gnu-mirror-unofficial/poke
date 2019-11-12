@@ -50,6 +50,19 @@
 #include <pkl-tab.h>
 #include "pk-cmd.h"
 
+
+#define YY_FATAL_ERROR(msg)                             \
+  do                                                    \
+    {                                                   \
+     YYLTYPE *loc = yyget_lloc (yyscanner);             \
+     YY_EXTRA_TYPE extra = yyget_extra (yyscanner);     \
+     pkl_ice (extra->ast, *loc, "%s", msg);             \
+     abort ();                                          \
+     /* kludge to avoid compiler warning */             \
+     void *x = yy_fatal_error; x = x;                   \
+    }                                                   \
+  while (0)
+
 #define YY_USER_ACTION                                  \
   do                                                    \
     {                                                   \

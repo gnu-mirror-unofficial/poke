@@ -1,5 +1,9 @@
 2019-11-12 John Darrington <john@darrington.wattle.id.au>
 
+	* src/pkl-lex.l (YYFATAL_ERROR): Redefine
+
+2019-11-12 John Darrington <john@darrington.wattle.id.au>
+
 	* src/std.pk (ltrim): New function.
 	* src/std.pk (rtrim): New function.
 	* doc/poke.texi (String Functions): New chapter.
