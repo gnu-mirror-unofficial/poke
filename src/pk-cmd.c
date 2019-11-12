@@ -55,7 +55,7 @@ extern struct pk_cmd editor_cmd; /* pk-editor.c */
 struct pk_cmd null_cmd =
   {NULL, NULL, NULL, 0, NULL, NULL};
 
-struct pk_cmd *cmds[] =
+static struct pk_cmd *cmds[] =
   {
     &file_cmd,
     &exit_cmd,
