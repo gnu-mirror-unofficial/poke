@@ -221,6 +221,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token ELSE
 %token IF
 %token WHILE
+%token UNTIL
 %token FOR
 %token IN
 %token WHERE
@@ -1532,6 +1533,12 @@ stmt:
                   /* Pop the frame introduced by `pushlevel'
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
+                }
+        | TRY stmt UNTIL expression
+        	{
+                  $$ = pkl_ast_make_try_until_stmt (pkl_parser->ast,
+                                                    $2, $4);
+                  PKL_AST_LOC ($$) = @$;
                 }
 	| RAISE ';'
         	{

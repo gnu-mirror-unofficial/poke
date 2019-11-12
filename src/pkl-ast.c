@@ -1480,6 +1480,23 @@ pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp)
   return exp_stmt;
 }
 
+/* Build and return an AST node for a try-until statement.  */
+
+pkl_ast_node
+pkl_ast_make_try_until_stmt (pkl_ast ast, pkl_ast_node code,
+                             pkl_ast_node exp)
+{
+  pkl_ast_node try_until_stmt = pkl_ast_make_node (ast,
+                                                   PKL_AST_TRY_UNTIL_STMT);
+
+  assert (code && exp);
+
+  PKL_AST_TRY_UNTIL_STMT_CODE (try_until_stmt) = ASTREF (code);
+  PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt) = ASTREF (exp);
+
+  return try_until_stmt;
+}
+
 /* Build and return an AST node for a try-catch statement.  */
 
 pkl_ast_node
@@ -1897,6 +1914,12 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_TRY_CATCH_STMT_EXP (ast));
       break;
 
+    case PKL_AST_TRY_UNTIL_STMT:
+
+      pkl_ast_node_free (PKL_AST_TRY_UNTIL_STMT_CODE (ast));
+      pkl_ast_node_free (PKL_AST_TRY_UNTIL_STMT_EXP (ast));
+      break;
+
     case PKL_AST_PRINT_STMT_ARG:
       free (PKL_AST_PRINT_STMT_ARG_SUFFIX (ast));
       free (PKL_AST_PRINT_STMT_ARG_BEGIN_SC (ast));
@@ -2035,6 +2058,11 @@ pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
                                PKL_AST_TRY_CATCH_STMT_HANDLER (stmt),
                                nframes);
       break;
+    case PKL_AST_TRY_UNTIL_STMT:
+      pkl_ast_finish_breaks_1 (entity,
+                               PKL_AST_TRY_CATCH_STMT_CODE (stmt),
+                               nframes);
+      break;
     case PKL_AST_DECL:
     case PKL_AST_RETURN_STMT:
     case PKL_AST_LOOP_STMT:
@@ -2112,6 +2140,11 @@ pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
                                 nframes, ndrops);
       pkl_ast_finish_returns_1 (function,
                                 PKL_AST_TRY_CATCH_STMT_HANDLER (stmt),
+                                nframes, ndrops);
+      break;
+    case PKL_AST_TRY_UNTIL_STMT:
+      pkl_ast_finish_returns_1 (function,
+                                PKL_AST_TRY_UNTIL_STMT_CODE (stmt),
                                 nframes, ndrops);
       break;
     case PKL_AST_DECL:
@@ -2640,6 +2673,14 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (try_catch_stmt_exp, TRY_CATCH_STMT_EXP);
       break;
 
+    case PKL_AST_TRY_UNTIL_STMT:
+      IPRINTF ("TRY_UNTIL_STMT::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_SUBAST (try_until_stmt_code, TRY_UNTIL_STMT_CODE);
+      PRINT_AST_SUBAST (try_until_stmt_exp, TRY_UNTIL_STMT_EXP);
+      break;
+      
     case PKL_AST_PRINT_STMT_ARG:
       IPRINTF ("PRINT_STMT_ARG::\n");
       PRINT_COMMON_FIELDS;

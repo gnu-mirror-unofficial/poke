@@ -3182,6 +3182,7 @@ provides an exceptions mechanism to deal with these situations.
 @menu
 * Exceptions::		List of supported exception types.
 * try-catch::		Catching exceptions in programs.
+* try-until::		Running code until some exception occurs.
 * raise::		Raising exceptions in programs.
 @end menu
 
@@ -3263,6 +3264,34 @@ try @var{stmt} catch (Exception @var{formal}) @var{compound_stmt}
 
 Where @var{formal} is a formal argument that contains the exception
 type when @var{compound_stmt} is executed.
+
+@node try-until
+@section try-until
+
+The @code{try-until} statement allows to execute instructions until
+some exception is catched.  The syntax is:
+
+@example
+try @var{stmt} until @var{exp}
+@end example
+
+Where @var{stmt} is the statement that will be executed repeteadly
+until some exception is raised.  If the raised exception has type
+@var{exp} then execution continues normally.  @var{exp} should be an
+expression that evaluates to a signed integer.
+
+This statement is particularly useful for mapping IO spaces until an
+@code{eof} condition occurs.  For example, this is how we would
+compute with every integer in the current IO space:
+
+@example
+defvar o = 0#B;
+try
+@{
+  compute (int @ o);
+  o = o + 1#B;
+@} until E_eof;
+@end example
 
 @node raise
 @section raise

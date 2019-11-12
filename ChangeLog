@@ -1,3 +1,25 @@
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-lex.l: Handle token UNTIL.
+	* src/pkl-tab.y (UNTIL): New token.
+	* src/pkl-ast.h (PKL_AST_TRY_UNTIL_STMT_CODE): Define.
+	(PKL_AST_TRY_UNTIL_STMT_EXP): Likewise.
+	(struct pkl_ast_try_until_stmt): New struct.
+	* src/pkl-ast.c (pkl_ast_make_try_until_stmt): New function.
+	(pkl_ast_node_free): Handle try-until AST nodes.
+	(pkl_ast_finish_breaks_1): Likewise.
+	(pkl_ast_finish_returns_1): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_try_until_stmt): New handler.
+	* src/pkl-promo.c (pkl_promo_ps_try_until_stmt): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_try_until_stmt): New handler.
+	* doc/poke.texi (try-until): New section.
+	* testsuite/poke.pkl/try-until-diag-1.pk: New test.
+	* testsuite/poke.pkl/try-until-1.pk: Likewise.
+	* testsuite/poke.pkl/try-until-2.pk: Likewise.
+	* testsuite/poke.pkl/try-until-3.pk: Likewise.
+
 2019-11-12 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pkl-lex.l (YYFATAL_ERROR): Redefine

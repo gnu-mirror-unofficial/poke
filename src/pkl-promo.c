@@ -794,6 +794,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_raise_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* Exception numbers in try-until statements should be ints.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_try_until_stmt)
+{
+  pkl_ast_node try_until_stmt = PKL_PASS_NODE;
+  pkl_ast_node exp = PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt);
+  int restart;
+
+  if (!promote_integral (PKL_PASS_AST, 32, 1,
+                         &PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt),
+                         &restart))
+    {
+      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+               "couldn't promote exception number to int<32>");
+      PKL_PASS_ERROR;
+    }
+
+  PKL_PASS_RESTART = restart;
+}
+PKL_PHASE_END_HANDLER
+
 /* Exception numbers in try-catch-if statements should be ints.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_try_catch_stmt)
@@ -1386,6 +1407,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY_INITIALIZER, pkl_promo_ps_array_initializer),
    PKL_PHASE_PS_HANDLER (PKL_AST_RAISE_STMT, pkl_promo_ps_raise_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_TRY_CATCH_STMT, pkl_promo_ps_try_catch_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_TRY_UNTIL_STMT, pkl_promo_ps_try_until_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL, pkl_promo_ps_funcall),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_promo_ps_ass_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_promo_ps_return_stmt),

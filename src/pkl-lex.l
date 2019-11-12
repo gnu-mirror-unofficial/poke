@@ -170,6 +170,7 @@ D [0-9]
 "union"		{ return UNION; }
 "else"		{ return ELSE; }
 "while"		{ return WHILE; }
+"until"		{ return UNTIL; }
 "for"		{ return FOR; }
 "in"		{ return IN; }
 "where"		{ return WHERE; }

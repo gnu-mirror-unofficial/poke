@@ -76,6 +76,7 @@ enum pkl_ast_code
   PKL_AST_RETURN_STMT,
   PKL_AST_EXP_STMT,
   PKL_AST_TRY_CATCH_STMT,
+  PKL_AST_TRY_UNTIL_STMT,
   PKL_AST_PRINT_STMT,
   PKL_AST_BREAK_STMT,
   PKL_AST_RAISE_STMT,
@@ -1370,6 +1371,28 @@ struct pkl_ast_exp_stmt
 
 pkl_ast_node pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp);
 
+/* PKL_AST_TRY_UNTIL_STMT nodes represent try-until statements.
+
+   CODE is a statement.
+   
+   EXP is an expression that should evaluate to a 32-bit signed
+   integer.  CODE will be executed repeteadly until the given
+   exception type is catched, or some other exception is raised.  */
+
+#define PKL_AST_TRY_UNTIL_STMT_CODE(AST) ((AST)->try_until_stmt.code)
+#define PKL_AST_TRY_UNTIL_STMT_EXP(AST) ((AST)->try_until_stmt.exp)
+
+struct pkl_ast_try_until_stmt
+{
+  struct pkl_ast_common common;
+
+  union pkl_ast_node *code;
+  union pkl_ast_node *exp;
+};
+
+pkl_ast_node pkl_ast_make_try_until_stmt (pkl_ast ast,
+                                          pkl_ast_node code, pkl_ast_node exp);
+
 /* PKL_AST_TRY_CATCH_STMT nodes represent try-catch statements, which
    are used in order to support exception handlers.
 
@@ -1578,6 +1601,7 @@ union pkl_ast_node
   struct pkl_ast_return_stmt return_stmt;
   struct pkl_ast_exp_stmt exp_stmt;
   struct pkl_ast_try_catch_stmt try_catch_stmt;
+  struct pkl_ast_try_until_stmt try_until_stmt;
   struct pkl_ast_break_stmt break_stmt;
   struct pkl_ast_raise_stmt raise_stmt;
   struct pkl_ast_print_stmt print_stmt;

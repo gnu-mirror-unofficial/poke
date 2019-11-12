@@ -489,6 +489,10 @@ pkl_do_pass_1 (pkl_compiler compiler,
       if (PKL_AST_TRY_CATCH_STMT_EXP (node))
         PKL_PASS (PKL_AST_TRY_CATCH_STMT_EXP (node));
       break;
+    case PKL_AST_TRY_UNTIL_STMT:
+      PKL_PASS (PKL_AST_TRY_UNTIL_STMT_CODE (node));
+      PKL_PASS (PKL_AST_TRY_UNTIL_STMT_EXP (node));
+      break;
     case PKL_AST_RAISE_STMT:
       if (PKL_AST_RAISE_STMT_EXP (node))
         PKL_PASS (PKL_AST_RAISE_STMT_EXP (node));

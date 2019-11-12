@@ -1,0 +1,19 @@
+/* { dg-do run } */
+
+defun foo = void:
+  {
+   defvar x = 0;
+
+   try
+   {
+     if (x == 5)
+       raise 777;
+     printf "%v\n", x;
+     x = x + 1;
+   }
+   until 666;
+  }
+
+/* { dg-command { try foo; catch { print "catched\n"; } } } */
+/* { dg-output "catched" } */
+
