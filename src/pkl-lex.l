@@ -42,8 +42,6 @@
 #include <ctype.h>
 #include <xalloc.h>
 #include <assert.h>
-#include <gettext.h>
-#define _(str) gettext (str)
 #include "pkl-ast.h"
 #include "pkl-env.h"
 #include "pkl-parser.h"
@@ -51,15 +49,6 @@
 #define YYDEBUG 1
 #include <pkl-tab.h>
 #include "pk-cmd.h"
-
-#define YY_FATAL_ERROR(msg)                              \
-  do \
-  { \
-    pk_term_class ("error");                             \
-    pk_printf (_("Fatal error: %s"), msg);               \
-    pk_term_end_class ("error");                         \
-    pk_puts ("\n");                                      \
-  } while (0);
 
 #define YY_USER_ACTION                                  \
   do                                                    \
