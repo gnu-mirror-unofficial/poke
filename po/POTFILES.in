@@ -26,6 +26,7 @@ src/ios.c
 src/ios-dev-file.c
 src/pk-cmd.c
 src/pk-def.c
+src/pk-editor.c
 src/pk-file.c
 src/pk-help.c
 src/pk-info.c
@@ -42,8 +43,9 @@ src/pkl-promo.c
 src/pkl-trans.c
 src/pkl-typify.c
 src/pk-misc.c
-src/pk-print.c
+src/pk-repl.c
 src/pk-set.c
+src/pk-term.c
 src/pk-vm.c
 src/poke.c
 src/pvm-alloc.c
