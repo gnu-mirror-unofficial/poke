@@ -590,6 +590,34 @@ instruction popend () # ( INT -- )
   end
 end
 
+
+
+## IOS related instructions
+
+instruction open () # ( STR -- INT )
+  code
+     char *filename = PVM_VAL_STR (JITTER_TOP_STACK ());
+     int ret = ios_open (filename);
+
+     if (ret == IOS_ERROR)
+       PVM_RAISE (PVM_E_IO); /* XXX */
+       
+     JITTER_TOP_STACK () = pvm_make_int (ret, 32);
+  end
+end
+
+instruction close () # ( INT -- )
+  code
+     int io_id = PVM_VAL_INT (JITTER_TOP_STACK ());
+     ios io = ios_get (io_id);
+
+     if (io == NULL)
+        PVM_RAISE (PVM_E_IO); /* XXX */
+
+     ios_close (io);
+  end
+end
+
 instruction pushios () # ( -- INT )
   code
     ios cur_io = ios_cur ();

@@ -1,3 +1,21 @@
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.h (PKL_AST_BUILTIN_OPEN): Define.
+	(PKL_AST_BUILTIN_CLOSE): Likewise.
+	* src/pkl-tab.y (builtin): Handle BUILTIN_OPEN and BUILTIN_CLOSE.
+	(BUILTIN_OPEN): New token.
+	(BUILTIN_CLOSE): Likewise.
+	* src/pkl-lex.l: Add __PKL_BUILTIN_OPEN__ and
+	__PKL_BUILTIN_CLOSE__.
+	* src/pkl-rt.pk (open): Define.
+	(close): Likewise.
+	* src/pkl-insn.def (open): New instruction.
+	(close): Likewise.
+	* src/pvm.jitter (open): New instruction.
+	(close): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle
+	PKL_AST_BUILTIN_OPEN and PKL_AST_BUILTIN_CLOSE.
+
 2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-ast.h (PKL_AST_BUILTIN_GET_IOS): Define.

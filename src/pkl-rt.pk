@@ -38,6 +38,8 @@ defun get_endian = int<32>: __PKL_BUILTIN_GET_ENDIAN__;
 defun set_endian = (int<32> endian) int<32>: __PKL_BUILTIN_SET_ENDIAN__;
 defun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
 defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
+defun open = (string path) int<32>: __PKL_BUILTIN_OPEN__;
+defun close = (int<32> fd) void: __PKL_BUILTIN_CLOSE__;
 
 defvar ENDIAN_LITTLE = 0;
 defvar ENDIAN_BIG = 1;

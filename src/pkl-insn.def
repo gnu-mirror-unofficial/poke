@@ -367,14 +367,19 @@ PKL_DEF_INSN (PKL_INSN_PUSHE, "l", "pushe")
 PKL_DEF_INSN (PKL_INSN_POPE, "", "pope")
 PKL_DEF_INSN (PKL_INSN_RAISE, "", "raise")
 
+/* IOS related instructions.  */
+
+PKL_DEF_INSN (PKL_INSN_PUSHIOS, "", "pushios")
+PKL_DEF_INSN (PKL_INSN_POPIOS, "", "popios")
+PKL_DEF_INSN (PKL_INSN_OPEN, "", "open")
+PKL_DEF_INSN (PKL_INSN_CLOSE, "", "close")
+
 /* VM instructions.  */
 
 PKL_DEF_INSN (PKL_INSN_CANARY, "", "canary")
 PKL_DEF_INSN (PKL_INSN_EXIT, "", "exit")
 PKL_DEF_INSN (PKL_INSN_PUSHEND, "", "pushend")
 PKL_DEF_INSN (PKL_INSN_POPEND, "",  "popend")
-PKL_DEF_INSN (PKL_INSN_PUSHIOS, "", "pushios")
-PKL_DEF_INSN (PKL_INSN_POPIOS, "", "popios")
 
 /* The only purpose of PKL_INSN_MACRO is to mark the beginning of
    macro instructions.  It should _not_ be passed to
