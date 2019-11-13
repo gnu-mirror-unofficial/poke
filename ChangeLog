@@ -1,5 +1,14 @@
 2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (IO Spaces): New section.
+	(open): New subsection.
+	(close): Likewise.
+	(get_ios): Likewise.
+	(set_ios): Likewise.
+	(The Map Operator): Update to cover the ternary map operator.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke-dg.exp (dg-data): Accept a file name
 	argument.
 	(poke_finish): poke_data_files is now a list.

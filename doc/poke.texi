@@ -95,7 +95,7 @@ The Poke Language
 * Expression Statements::	Using expressions for their side-effects.
 * Functions::			Procedural abstraction.
 * Endianness::			Byte ordering.
-* Mapping::			Accessing the IO space.
+* Mapping::			Accessing IO spaces.
 * Exception Handling::		Dealing with exceptional conditions.
 * Printing::			Output in Poke programs.
 
@@ -2793,17 +2793,109 @@ expressions.
 @node Mapping
 @chapter Mapping
 
-The purpose of poke is to edit an ``IO space'', which is the file or
-device being edited.  This is achieved by mapping values.  Mapping is
-perhaps the most important concept in Poke.
+The purpose of poke is to edit @dfn{IO spaces}, which are the files or
+devices, or memory areas being edited.  This is achieved by mapping
+values.  Mapping is perhaps the most important concept in Poke.
 
 @menu
+* IO Spaces::			The underlying entities being edited.
 * The Map Operator::		The @@ operator.
 * Mapping Simple Types::	Mapping integers, offsets and strings.
 * Mapping Structs::		Mapping collections of fields.
 * Mapping Arrays::		Mapping sequences of things.
 * Unmapping::			From mapped values to regular values.
 @end menu
+
+@node IO Spaces
+@section IO Spaces
+
+GNU poke supports the abstract notion of @dfn{IO space}, which is an
+addressable space of Poke objects: integers, strings, arrays, structs,
+etc.  This underlying storage for the IO spaces (which we call @dfn{IO
+devices}) can be heterogeneous: from a file your filesystem to the
+memory of some process.
+
+@menu
+* open::			Creating IO spaces.
+* close::			Destroying IO spaces.
+* get_ios::			Getting the current IO space.
+* set_ios::			Setting the current IO space.
+@end menu
+
+@node open
+@subsection open
+
+The @code{open} builtin allows to create new IO spaces, by opening an
+IO device.  It has the following prototype:
+
+@example
+defun open = (string @var{handler}) int<32>: @{ ... @}
+@end example
+
+Where @var{handler} is a string identifying the IO device that will
+serve the IO space.  This handler can be:
+
+@table @code
+@item file://path/to/file
+@itemx /path/to/file
+An either absolute or relative path to a file.  Both syntaxes are allowed.
+@item pid://[0-9]+
+The process ID of some process.
+@end table
+
+The @code{open} builtin returns a signed 32-bit integer.  This number
+will identify the just opened IOS until it gets closed.
+
+If there is a problem opening the specified IO device then @code{open}
+will raise an @code{E_no_ios} exception.
+
+@node close
+@subsection close
+
+The @code{close} builtin allows to destroy IO spaces, closing the
+underlying IO device.  The prototype is:
+
+@example
+defun close = (int<32> @var{ios}) void: @{ ... @}
+@end example
+
+Where @var{ios} is some previously created IO space.  All pending data
+is written to the underlying IO device.
+
+If the IO space specified to @code{close} doesn't exist then an
+@code{E_no_ios} exception is raised.
+
+@node get_ios
+@subsection get_ios
+
+GNU poke maintains a @dfn{current IO space}, which is the last created
+IO space (this includes IO spaces opened and selected using a
+dot-command).  The builtin @code{get_ios} returns this space.  It has
+the following prototype:
+
+@example
+defun get_ios = int<32>: @{ ... @}
+@end example
+
+If there is no IO space, @code{get_ios} will raise the @code{E_no_ios}
+exception.
+
+@node set_ios
+@subsection set_ios
+
+The @code{set_ios} builtin allows to set a specific IO space as the
+new current IO space.  It has the following prototype:
+
+@example
+defun set_ios = (int<32> @var{ios}) int<32>: @{ ... @}
+@end example
+
+Where @var{ios} is the IO space that will become the current IO
+space.  If the IO space specified to @code{set_ios} doesn't exist,
+@code{E_no_ios} will be raised.
+
+Note that @code{set_ios} always returns @code{1}.  This is to ease its
+usage in struct fields constraint expressions.
 
 @node The Map Operator
 @section The Map Operator
@@ -2817,15 +2909,21 @@ are boxed, and they need to store various meta-data.
 
 Regardless of the internal representation, we say these values live
 ``in memory''.  Now, it is also possible to ``map'' a value to some
-area in the underlying IO space.  This is done with the map operator
-@code{@@}, that has the following syntax:
+area in some underlying IO space.  This is done with the map operator
+@code{@@}, which has two alternate syntax:
 
 @example
 @var{type} @@ @var{offset}
+@var{type} @@ @var{ios} : @var{offset}
 @end example
 
-The map operator creates a new value using the data located at the
-offset @var{offset} in the IO space.  If there is no IO space, an
+The ternary version creates a new value using the data located at the
+offset @var{offset} in the specified IO space @var{ios}, which shall
+be an expression evaluating to a signed 32-bit integer.
+
+The binary version uses the current IO space.
+
+If there is no IO space, or the specified IO space doesn't exist, an
 @code{E_no_ios} exception is raised:
 
 @example

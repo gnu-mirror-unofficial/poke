@@ -634,7 +634,7 @@ instruction pushios () # ( -- INT )
     ios cur_io = ios_cur ();
 
     if (cur_io == NULL)
-       PVM_RAISE (PVM_E_IO);
+       PVM_RAISE (PVM_E_NO_IOS);
     JITTER_PUSH_STACK (pvm_make_int (ios_get_order (cur_io),
                                      32));
   end
@@ -645,7 +645,7 @@ instruction popios () # ( INT -- )
     ios io = ios_get (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_IO);
+      PVM_RAISE (PVM_E_NO_IOS);
     ios_set_cur (io);
     JITTER_DROP_STACK ();
   end
