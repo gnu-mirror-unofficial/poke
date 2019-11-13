@@ -193,7 +193,7 @@ ftp://ftp.gnu.org/gnu.
 Dejagnu
 ~~~~~~~
 
-The poke testsuite uses DejaGNU.  Please install it if you indent to
+The poke testsuite uses DejaGNU.  Please install it if you intend to
 run the tests.  If you want to hack poke, you definitely want to run
 the tests :)
 
@@ -246,7 +246,7 @@ libtextstyle
 
 GNU poke uses libtextstyle in order to provide styled output.  If the
 library is not found, then a dummy version of it from gnulib is used
-instead... that does not any styling!
+instead... that does not do any styling!
 
 At the moment libtextstyle lives in a subdirectory of GNU gettext.
 See http://www.gnu.org/s/gettext for more information.

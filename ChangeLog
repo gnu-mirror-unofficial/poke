@@ -1,5 +1,10 @@
 2019-11-13 John Darrington <john@darrington.wattle.id.au>
 
+	* HACKING (Dejagnu): Fix typo.
+	(libtextstyle): Fix typo.
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-repl.c (pk_repl): Remove superfluous tests of the
 	variable "line".
 
