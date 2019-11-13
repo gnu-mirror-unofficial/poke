@@ -295,15 +295,9 @@ ios_get (int n)
 }
 
 int
-ios_get_order (ios io)
+ios_get_id (ios io)
 {
-  ios tmp;
-  int i = 0;
-
-  for (i = 0, tmp = io_list; tmp != io; tmp = tmp->next, ++i)
-    ;
-  
-  return i;
+  return io->id;
 }
 
 void

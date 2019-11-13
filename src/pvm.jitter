@@ -635,14 +635,13 @@ instruction pushios () # ( -- INT )
 
     if (cur_io == NULL)
        PVM_RAISE (PVM_E_NO_IOS);
-    JITTER_PUSH_STACK (pvm_make_int (ios_get_order (cur_io),
-                                     32));
+    JITTER_PUSH_STACK (pvm_make_int (ios_get_id (cur_io), 32));
   end
 end
 
 instruction popios () # ( INT -- )
   code
-    ios io = ios_get (PVM_VAL_INT (JITTER_TOP_STACK ()));
+    ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
       PVM_RAISE (PVM_E_NO_IOS);

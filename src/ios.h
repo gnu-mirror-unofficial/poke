@@ -165,7 +165,7 @@ ios ios_get (int n);
 
 /* Return the ID of the given IO space.  */
 
-int ios_get_order (ios io);
+int ios_get_id (ios io);
 
 /* Map over all the open IO spaces executing a handler.  */
 
