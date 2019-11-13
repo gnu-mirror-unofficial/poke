@@ -3287,7 +3287,10 @@ provides an exceptions mechanism to deal with these situations.
 @node Exceptions
 @section Exceptions
 
-Exceptions in Poke are just integers.  However, the following values
+Exceptions in Poke are just integers.  You can use values @code{255}
+and higher for your own exceptions.
+
+The range @code{0..254} is reserved for poke, and the following values
 have specific meanings:
 
 @table @code
