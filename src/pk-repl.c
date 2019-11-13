@@ -128,8 +128,7 @@ pk_repl (void)
         continue;
 
 #if defined HAVE_READLINE_HISTORY_H
-      if (line && *line)
-        add_history (line);
+      add_history (line);
 #endif
 
       ret = pk_cmd_exec (line);

@@ -1,5 +1,10 @@
 2019-11-13 John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-repl.c (pk_repl): Remove superfluous tests of the
+	variable "line".
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
 	* src/poke.c (pk_print_version): Update translatable strings.
 
 2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
