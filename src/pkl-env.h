@@ -122,4 +122,17 @@ void pkl_env_map_decls (pkl_env env,
 
 pkl_env pkl_env_dup_toplevel (pkl_env env);
 
+
+struct pkl_ast_node_iter
+{
+  int bucket;        /* The bucket in which this node resides.  */
+  pkl_ast_node node; /* A pointer to the node itself.  */
+};
+
+
+void pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter);
+void pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter);
+bool pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter);
+
+
 #endif /* !PKL_ENV_H  */

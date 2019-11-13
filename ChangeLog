@@ -1,5 +1,16 @@
 2019-11-13 John Darrington <john@darrington.wattle.id.au>
 
+	* src/pkl-env.h (pkl_ast_node_iter): New struct.
+	(pkl_env_iter_begin): New declaration.
+	(pkl_env_iter_next): New declaration.
+	(pkl_env_iter_end): New declaration.
+	* src/pkl-env.c (pkl_env_iter_begin): New function.
+	(pkl_env_iter_next): New function.
+	(pkl_env_iter_end): New function.
+	(pkl_env_map_decls): Use them to implement this function.
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-cmd.c (cmds): Rename to dot_cmds.
 	(pk_cmd_init): Deal with the consequences.
 

@@ -229,23 +229,53 @@ pkl_env_toplevel_p (pkl_env env)
 }
 
 void
+pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter)
+{
+  iter->bucket = 0;
+  iter->node = env->hash_table[iter->bucket];
+  while (iter->node == NULL)
+    {
+      iter->bucket++;
+      if (iter->bucket >= HASH_TABLE_SIZE)
+	break;
+      iter->node = env->hash_table[iter->bucket];
+    }
+}
+
+void
+pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter)
+{
+  assert (iter->node != NULL);
+
+  iter->node = PKL_AST_CHAIN2 (iter->node);
+  while (iter->node == NULL)
+    {
+      iter->bucket++;
+      if (iter->bucket >= HASH_TABLE_SIZE)
+	break;
+      iter->node = env->hash_table[iter->bucket];
+    }
+}
+
+bool
+pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter)
+{
+  return iter->bucket >= HASH_TABLE_SIZE;
+}
+
+void
 pkl_env_map_decls (pkl_env env,
                    int what,
                    pkl_map_decl_fn cb,
                    void *data)
 {
-  int i;
-
-  for (i = 0; i < HASH_TABLE_SIZE; ++i)
+  struct pkl_ast_node_iter iter;
+  for (pkl_env_iter_begin (env, &iter); !pkl_env_iter_end (env, &iter);
+       pkl_env_iter_next (env, &iter))
     {
-      pkl_ast_node t = env->hash_table[i];
-
-      for (; t; t = PKL_AST_CHAIN2 (t))
-        {
-          if ((what == PKL_AST_DECL_KIND_ANY
-               || what == PKL_AST_DECL_KIND (t)))
-            cb (t, data);
-        }
+      if ((what == PKL_AST_DECL_KIND_ANY
+	   || what == PKL_AST_DECL_KIND (iter.node)))
+	cb (iter.node, data);
     }
 }
 
