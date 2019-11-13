@@ -108,4 +108,8 @@ void pk_cmd_init (void);
 
 void pk_cmd_shutdown (void);
 
+char *pk_cmd_get_next_match (int *idx, const char *x, size_t len);
+
+struct pk_cmd *pk_cmd_find (const char *cmdname);
+
 #endif /* ! PK_H_CMD */

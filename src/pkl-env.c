@@ -307,3 +307,32 @@ pkl_env_dup_toplevel (pkl_env env)
 
   return new;
 }
+
+
+/*  Return the name of the next decl that is currently
+    in context of ENV and matches NAME,LEN.  ITER is an iterator
+    into the set of matches.  Returns the name of the next
+    command in the set, or NULL if there are no more.
+    The returned value must be freed by the caller.  */
+char *
+pkl_env_get_next_matching_decl (pkl_env env, struct pkl_ast_node_iter *iter,
+				const char *name, size_t len)
+{
+  /* "Normal" commands.  */
+  for (;;)
+    {
+      if (pkl_env_iter_end (env, iter))
+	break;
+
+      pkl_ast_node decl_name = PKL_AST_DECL_NAME (iter->node);
+      const char *cmdname = PKL_AST_IDENTIFIER_POINTER (decl_name);
+      if (0 != strncmp (cmdname, name, len))
+	{
+	  pkl_env_iter_next (env, iter);
+          continue;
+	}
+      return  strdup (cmdname);
+    }
+  return NULL;
+}
+

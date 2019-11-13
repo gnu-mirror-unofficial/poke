@@ -784,3 +784,52 @@ pk_cmd_shutdown (void)
   pk_trie_free (vm_disas_trie);
   pk_trie_free (set_trie);
 }
+
+
+/*  Return the name of the next command that matches X,LEN.  IDX is  a
+    pointer to in integer used  to index into the set of matches.
+    Returns the name of the next command in the set, or NULL if there
+    are no more. The returned value must be freed by the caller.  */
+char *
+pk_cmd_get_next_match (int *idx, const char *x, size_t len)
+{
+  /* Dot commands */
+  for (;;)
+    {
+      struct pk_cmd **c = dot_cmds + *idx;
+      if (*c == &null_cmd)
+	break;
+
+      char *name = xmalloc (strlen ((*c)->name) + 1);
+      strcpy (name, ".");
+      strcat (name, (*c)->name);
+      if (0 !=  strncmp (name, x, len))
+	{
+	  free (name);
+	  (*idx)++;
+	  continue;
+	}
+      return name;
+    }
+  return NULL;
+}
+
+
+/* Search for a command which matches cmdname.
+ Returns NULL if no such command exists.  */
+struct pk_cmd *
+pk_cmd_find (const char *cmdname)
+{
+  if (cmdname != NULL)
+    {
+      struct pk_cmd **c;
+      for (c = dot_cmds; *c != &null_cmd; ++c)
+	{
+	  /* Check if the command name matches.
+	     +1 to skip the leading '.' */
+	  if (0 == strcmp ((*c)->name, cmdname + 1))
+	    return *c;
+	}
+    }
+  return NULL;
+}
