@@ -121,5 +121,11 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static char *
+null_completion_function (const char *x, int state)
+{
+  return NULL;
+}
+
 struct pk_cmd editor_cmd =
-  {"editor", "", "", 0, NULL, pk_cmd_editor, ".editor"};
+  {"editor", "", "", 0, NULL, pk_cmd_editor, ".editor", null_completion_function};

@@ -784,3 +784,51 @@ pk_cmd_shutdown (void)
   pk_trie_free (vm_disas_trie);
   pk_trie_free (set_trie);
 }
+
+
+/* Return the next "dot command" name which matches X,LEN
+   or NULL if there are no more.  IDX is an index variable
+   which determines the state in the set of commands.  */
+char *
+dot_command_completer_next (int *idx, const char *x, size_t len)
+{
+  /* Dot commands */
+  for (;;)
+    {
+      struct pk_cmd **c = dot_cmds + *idx;
+      if (*c == &null_cmd)
+	break;
+
+      char *name = xmalloc (strlen ( (*c)->name) + 1);
+      strcpy (name, ".");
+      strcat (name, (*c)->name);
+      if (0 !=  strncmp (name, x, len))
+	{
+	  free (name);
+	  (*idx)++;
+	  continue;
+	}
+      return name;
+    }
+  return NULL;
+}
+
+
+/* Search for a dot command which matches cmdname.  */
+completer_t
+find_matching_dot_cmd (const char *cmdname)
+{
+  if (cmdname != NULL)
+    {
+      struct pk_cmd **c;
+      for (c = dot_cmds; *c != &null_cmd; ++c)
+	{
+	  /* Check if the command name matches.
+	     +1 to skip the leading . */
+	  if (0 == strcmp ((*c)->name, cmdname + 1))
+	    if ((*c)->completer)
+	      return (*c)->completer;
+	}
+    }
+  return NULL;
+}
