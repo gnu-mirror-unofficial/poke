@@ -302,9 +302,9 @@ PKL_DEF_INSN (PKL_INSN_BNZLU, "l", "bnzlu")
 /* IO instructions.  */
 
 PKL_DEF_INSN (PKL_INSN_PEEKI, "nnn", "peeki")
-PKL_DEF_INSN (PKL_INSN_PEEKIU, "nnn", "peekiu")
+PKL_DEF_INSN (PKL_INSN_PEEKIU, "nn", "peekiu")
 PKL_DEF_INSN (PKL_INSN_PEEKL, "nnn", "peekl")
-PKL_DEF_INSN (PKL_INSN_PEEKLU, "nnn", "peeklu")
+PKL_DEF_INSN (PKL_INSN_PEEKLU, "nn", "peeklu")
 
 PKL_DEF_INSN (PKL_INSN_PEEKDI, "n", "peekdi")
 PKL_DEF_INSN (PKL_INSN_PEEKDIU, "n", "peekdiu")
@@ -314,9 +314,9 @@ PKL_DEF_INSN (PKL_INSN_PEEKDLU, "n", "peekdlu")
 PKL_DEF_INSN (PKL_INSN_PEEKS, "", "peeks")
 
 PKL_DEF_INSN (PKL_INSN_POKEI, "nnn", "pokei")
-PKL_DEF_INSN (PKL_INSN_POKEIU, "nnn", "pokeiu")
+PKL_DEF_INSN (PKL_INSN_POKEIU, "nn", "pokeiu")
 PKL_DEF_INSN (PKL_INSN_POKEL, "nnn", "pokel")
-PKL_DEF_INSN (PKL_INSN_POKELU, "nnn", "pokelu")
+PKL_DEF_INSN (PKL_INSN_POKELU, "nn", "pokelu")
 
 PKL_DEF_INSN (PKL_INSN_POKEDI, "n", "pokedi")
 PKL_DEF_INSN (PKL_INSN_POKEDIU, "n", "pokediu")
