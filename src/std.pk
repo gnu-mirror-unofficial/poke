@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Standard Integral Types.  */
+/*** Standard Integral Types.  */
 
 deftype bit = uint<1>;
 deftype nibble = uint<4>;
@@ -40,12 +40,12 @@ deftype short = int16;
 deftype ulong = uint64;
 deftype long = int64;
 
-/* Standard Offset Types.  */
+/*** Standard Offset Types.  */
 
 deftype off64 = offset<int64,b>;
 deftype uoff64 = offset<uint64,b>;
 
-/* Conversion Functions.  */
+/*** Conversion Functions.  */
 
 defun catos = (char[] chars) string:
   {
@@ -58,33 +58,6 @@ defun catos = (char[] chars) string:
        s = s + c as string;
      }
    return s;
-  }
-
-  /* Return S with leading whitespace omitted.  */
-defun ltrim = (string s) string:
-  {
-    defvar result = "";
-    for (c in s)
-      {
-	if ((c != ' ' && c != '\t') || result != "")
-	  result = result + c as string;
-      }
-    return result;
-  }
-
-  /* Return S with trailing whitespace omitted.  */
-defun rtrim = (string s) string:
-  {
-    defvar result = "";
-    defvar i = s'length;
-    while (i > 0)
-    {
-      defvar c = s[i - 1];
-      if ((c != ' ' && c != '\t') || result != "")
-        result = c as string + result;
-      i = i - 1;
-    }
-    return result;
   }
 
 defun atoi = (string s, int b = 10) long:
@@ -119,7 +92,36 @@ defun atoi = (string s, int b = 10) long:
     return result;
   }
 
-/* Sorting Functions.  */
+/*** String functions.  */
+
+/* Return S with leading whitespace omitted.  */
+defun ltrim = (string s) string:
+  {
+    defvar result = "";
+    for (c in s)
+      {
+	if ((c != ' ' && c != '\t') || result != "")
+	  result = result + c as string;
+      }
+    return result;
+  }
+
+/* Return S with trailing whitespace omitted.  */
+defun rtrim = (string s) string:
+  {
+    defvar result = "";
+    defvar i = s'length;
+    while (i > 0)
+    {
+      defvar c = s[i - 1];
+      if ((c != ' ' && c != '\t') || result != "")
+        result = c as string + result;
+      i = i - 1;
+    }
+    return result;
+  }
+
+/*** Sorting Functions.  */
 
 deftype Comparator = (any,any)int;
 
@@ -163,6 +165,6 @@ defun qsort = (any[] array, Comparator cmp_f,
    }
 }
 
-/* Miscellanea.  */
+/*** Miscellanea.  */
 
 defvar NULL = 0#B;
