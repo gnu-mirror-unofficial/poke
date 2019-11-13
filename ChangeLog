@@ -1,3 +1,7 @@
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Installing Obvious Changes): Fix typo
+
 2019-11-13 John Darrington <john@darrington.wattle.id.au>
 
 	* HACKING (Dejagnu): Fix typo.

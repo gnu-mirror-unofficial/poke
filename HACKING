@@ -172,7 +172,7 @@ Anyone having write access to the git repository is allowed to push
 obvious changes to non-personal branches.  The "obvious" category
 includes typos in comments, renaming of variables, etc.
 
-If you commit and push a non-obvious change, you are still required to
+If you commit and push an obvious change, you are still required to
 send an email to the mailing list stating you installed the change.
 Please include a suggestive tag in your email's subject, something
 like ``[COMMITTED]``.  Also, make sure to include the patch itself.
