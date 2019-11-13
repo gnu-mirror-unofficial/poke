@@ -1543,7 +1543,7 @@ stmt:
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-        | TRY stmt UNTIL expression
+        | TRY stmt UNTIL expression ';'
         	{
                   $$ = pkl_ast_make_try_until_stmt (pkl_parser->ast,
                                                     $2, $4);

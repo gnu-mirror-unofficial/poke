@@ -1,5 +1,10 @@
 2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y: Add missing trailing ';' in the try-until syntax
+	rule.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Exceptions): Document the ranges of exceptions.
 
 2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
