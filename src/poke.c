@@ -165,7 +165,7 @@ Report bugs to: %s\n"), PACKAGE_BUGREPORT);
           PACKAGE_PACKAGER_BUG_REPORTS);
 #endif
   pk_printf (_("%s home page: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
-  pk_puts (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"));
+  pk_printf (_("General help using GNU software: %s\n"), "<http://www.gnu.org/gethelp/>");
 }
 
 void
@@ -187,8 +187,8 @@ pk_print_version ()
      year comes around.  */
   pk_term_class ("copyright");
   pk_printf (_("\
-Copyright (C) %s Jose E. Marchesi.\n\
-License GPLv3+: GNU GPL version 3 or later"), "2019");
+%s (C) %s Jose E. Marchesi.\n\
+License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019");
   pk_term_hyperlink ("http://gnu.org/licenses/gpl.html", NULL);
   pk_puts (" <http://gnu.org/licenses/gpl.html>");
   pk_term_end_hyperlink ();
