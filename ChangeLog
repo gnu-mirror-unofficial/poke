@@ -1,5 +1,10 @@
 2019-11-13 John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-cmd.h (completer_t): New typedef.
+	(pk_cmd) [completer]: New member;
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
 	* src/pkl-env.h (pkl_ast_node_iter): New struct.
 	(pkl_env_iter_begin): New declaration.
 	(pkl_env_iter_next): New declaration.

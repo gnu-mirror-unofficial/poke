@@ -63,6 +63,12 @@ typedef int (*pk_cmd_fn) (int argc, struct pk_cmd_arg argv[], uint64_t uflags);
 #define PK_CMD_F_REQ_IO 0x1  /* Command requires an IO space.  */
 #define PK_CMD_F_REQ_W  0x2  /* Command requires a writable IO space.  */
 
+/* This is the same as rl_compentry_func_t from readline.h
+   Unfortunately #including readline.h here causes bad things
+   to happen, because it defines lots of macros conflicting
+   with ones used elsewhere.  */
+typedef char* (*completer_t) (const char *, int);
+
 struct pk_cmd
 {
   /* Name of the command.  It is a NULL-terminated string composed by
@@ -80,6 +86,9 @@ struct pk_cmd
   pk_cmd_fn handler;
   /* Usage message.  */
   const char *usage;
+  /* The completion generator which generates arguments/operands
+     for this command.  */
+  completer_t completer;
 };
 
 /* Parse STR and execute a command.  */
