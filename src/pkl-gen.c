@@ -2828,50 +2828,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_in)
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AIS, container_type);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
-
-#if 0
-  /* XXX optimize for arrays having a known, small number of
-     elements.  */
-
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (0, 32));
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-
-  pkl_asm_for (PKL_GEN_ASM,
-               PKL_AST_TYPE_CODE (container_type),
-               NULL /* condition */);
-  {
-    PKL_PASS_SUBPASS (container);
-  }
-  pkl_asm_for_where (PKL_GEN_ASM);
-  {
-    /* No condition.  */
-  }
-  pkl_asm_for_loop (PKL_GEN_ASM);
-  {
-    jitter_label label_continue = pkl_asm_fresh_label (PKL_GEN_ASM);
-
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-    PKL_PASS_SUBPASS (elem);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_EQ, elem_type);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
-
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OR);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
-
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label_continue);
-
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, pkl_asm_break_label (PKL_GEN_ASM));
-
-    pkl_asm_label (PKL_GEN_ASM, label_continue);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-  }
-  pkl_asm_for_endloop (PKL_GEN_ASM);
-
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
-#endif
 }
 PKL_PHASE_END_HANDLER
 
