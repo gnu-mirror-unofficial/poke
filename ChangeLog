@@ -1,3 +1,8 @@
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (cmds): Rename to dot_cmds.
+	(pk_cmd_init): Deal with the consequences.
+
 2019-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* man/Makefile.am: New file.

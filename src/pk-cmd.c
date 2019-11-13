@@ -55,7 +55,7 @@ extern struct pk_cmd editor_cmd; /* pk-editor.c */
 struct pk_cmd null_cmd =
   {NULL, NULL, NULL, 0, NULL, NULL};
 
-static struct pk_cmd *cmds[] =
+static struct pk_cmd *dot_cmds[] =
   {
     &file_cmd,
     &exit_cmd,
@@ -744,7 +744,7 @@ pk_cmd_exec_script (const char *filename)
 void
 pk_cmd_init (void)
 {
-  cmds_trie = pk_trie_from_cmds (cmds);
+  cmds_trie = pk_trie_from_cmds (dot_cmds);
   info_trie = pk_trie_from_cmds (info_cmds);
   help_trie = pk_trie_from_cmds (help_cmds);
   vm_trie = pk_trie_from_cmds (vm_cmds);
