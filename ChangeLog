@@ -1,5 +1,12 @@
 2019-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* man/Makefile.am: New file.
+	* Makefile.am (SUBDIRS): Add the man directory.
+	* doc/poke.texi (pokerc): New chapter.
+	* configure.ac: Initialize HELP2MAN.
+
+2019-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-insn.def: peeklu, peekiu, pokelu and pokeiu get two
 	arguments, not three.
 	* testsuite/poke.pkl/struct-types-endian-1.pk: New test.

@@ -616,7 +616,26 @@ XXX
 @node pokerc
 @chapter pokerc
 
-XXX
+Upon invocation poke will read and execute the commands of the file
+@file{~/.pokerc} if it exists in the user's home directory.  This can
+be disabling passing @code{-q} or @code{--no-init-file} in the command
+line.
+
+The @file{.pokerc} file contains commands, not Poke code.  This means
+it gets read line by line, and commands cannot occupy more than one
+line.
+
+Example of initialization file:
+
+@example
+# My poke configuration.
+.set endian host
+.set obase 16
+.set pretty-print yes
+.load ~/.poke.d/mypickles.pk
+@end example
+
+Lines starting with @code{#} are ignored as comments.
 
 @node Styling
 @chapter Styling

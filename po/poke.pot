@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU poke 0.1-beta\n"
 "Report-Msgid-Bugs-To: poke-devel@nongnu.org\n"
-"POT-Creation-Date: 2019-11-12 11:28+0100\n"
+"POT-Creation-Date: 2019-11-14 00:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -189,13 +189,14 @@ msgid "%s home page: <%s>\n"
 msgstr ""
 
 #: src/poke.c:168
-msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+#, c-format
+msgid "General help using GNU software: %s\n"
 msgstr ""
 
 #: src/poke.c:189
 #, c-format
 msgid ""
-"Copyright (C) %s Jose E. Marchesi.\n"
+"%s (C) %s Jose E. Marchesi.\n"
 "License GPLv3+: GNU GPL version 3 or later"
 msgstr ""
 
