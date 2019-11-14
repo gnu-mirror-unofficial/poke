@@ -716,7 +716,7 @@ The type of a numeric literal is the smallest signed integer capable
 of holding it, starting with 32 bits, in steps of powers of two and up
 to 64 bits.@footnote{Rationale: the width of a C ``int'' is 32 bits in
 most currently used architectures, and binary data formats are usually
-modelled after C.}
+modeled after C.}
 
 So, for example, the value @code{2} has type @code{int<32>}, but the
 value @code{0xffff_ffff} has type @code{int<64>}, because it is out of
@@ -726,7 +726,7 @@ A set of suffixes can be used to construct integer literals of certain
 types explicitly.  @code{L} or @code{l} is for 64-bit integers.
 @code{H} or @code{h} is for 16-bit integers (also known as
 @dfn{halves}), @code{B} or @code{b} is for 8-bit integers (also known
-as @dfn{bytes}) and @code{n} or @code{N} is for 4-bit integers (algo
+as @dfn{bytes}) and @code{n} or @code{N} is for 4-bit integers (also
 known as @dfn{nibbles}).
 
 Thus, @code{10L} is a 64-bit integer with value
@@ -1037,7 +1037,7 @@ similar to C structs, I was determined to not continue with the poke
 implementation until I had described as many as binary formats in my
 language as possible.  That, I reckoned, was the only way to make sure
 the implemented language would be expressive, complete and useful
-enough to fulfil my requirements.
+enough to fulfill my requirements.
 
 The first formats I implemented using my immature little language
 included ELF, FLV, MP3, BSON... all of them describing structures
@@ -1234,7 +1234,7 @@ express offsets in any arbitrary unit, as disparate as it may seem:
 8#1
 @end example
 
-Thats it, 17 units of 3 bits each, zero units of 12 bits each,
+That's it, 17 units of 3 bits each, zero units of 12 bits each,
 and eight units of 1 bit each.
 
 But then, why stopping there?  Poking is all about defining data
@@ -2993,7 +2993,7 @@ Packet @{i=0x464c457f,l=0x10102L@}
 
 A very important idea on Poke mapping is that it should be possible to
 manipulate mapped and non-mapped values in a transparent way.  For
-example, consider the quicksort implementation in poke's standard
+example, consider the quick sort implementation in poke's standard
 library.  The prototype is:
 
 @example
@@ -3377,7 +3377,7 @@ try @var{stmt} catch if @var{exp} @var{compound_stmt}
 Where @var{exp} is an expression that should evaluate to an integer.
 This integer is interpreted as an exception type.  The handler
 @var{compound_stmt} will only be executed if that specific exception
-is catched.  Any other exception will be re-raised.
+is caught.  Any other exception will be re-raised.
 
 The third form of the statement is the most generic:
 
@@ -3392,13 +3392,13 @@ type when @var{compound_stmt} is executed.
 @section try-until
 
 The @code{try-until} statement allows to execute instructions until
-some exception is catched.  The syntax is:
+some exception is caught.  The syntax is:
 
 @example
 try @var{stmt} until @var{exp}
 @end example
 
-Where @var{stmt} is the statement that will be executed repeteadly
+Where @var{stmt} is the statement that will be executed repeatedly
 until some exception is raised.  If the raised exception has type
 @var{exp} then execution continues normally.  @var{exp} should be an
 expression that evaluates to a signed integer.
@@ -3765,3 +3765,24 @@ XXX
 @printindex cp
 
 @bye
+
+@c  LocalWords:  texinfo setfilename texi settitle Pokist afourpaper
+@c  LocalWords:  dircategory direntry titlepage vskip filll ifnottex
+@c  LocalWords:  insertcopying vm pokerc Structs Endianness catos dfn
+@c  LocalWords:  atoi qsort cindex pokeish bitpatterns noindent samp
+@c  LocalWords:  itemx html init REPL TTY rluserman defun printf PVM
+@c  LocalWords:  stdin subcommands disassembler ascii POKEDATADIR FLV
+@c  LocalWords:  endian endianness obase expr Booleans uint Bitwise
+@c  LocalWords:  emph signedness unary boolean ceil bitwise structs
+@c  LocalWords:  BSON deftype struct dstart IETF BFINAL BTYPE BitData
+@c  LocalWords:  sizeof kilobits Pokish B'size B'magnitude B'unit UB
+@c  LocalWords:  b'magnitude b'unit fUB unhandled defvar CTF isa str
+@c  LocalWords:  polymorphism lvalue stmt Variadic ret namespace gcd
+@c  LocalWords:  variadic args PDP programmatically PKL eBPF dst src
+@c  LocalWords:  BPF Insn Regs le ident ei ELFDATA LSB ELFDAT MSB ios
+@c  LocalWords:  Ehdr ELFDATANONE osabi abiversion nident Unmapping
+@c  LocalWords:  filesystem Comparator cmp relocations DIEs nelems
+@c  LocalWords:  EOF Rela Addr Xword Sxword Shdr addr addralign fmt
+@c  LocalWords:  entsize relocs adoleces libtextstyle classname css
+@c  LocalWords:  ushort ulong uoff abc ltrim whitespace rtrim fdl
+@c  LocalWords:  quicksort array'length comparator printindex
