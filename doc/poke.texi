@@ -273,7 +273,7 @@ Packet @{i=1179403647,j=65794L@}
 @end example
 
 When a statement is executed in the REPL no result is printed, but of
-course the statement can print on it's own:
+course the statement can print on its own:
 
 @example
 (poke) defun do_foo = void: @{@}
@@ -1792,7 +1792,7 @@ Packet @{size=0x0UB,payload=[]@}
 So, as we have seen, Poke's way of handling boundaries in array types
 allows data structures to adjust to the particular data they contain,
 so usual in binary formats.  This is an important feature, that gives
-Poke part of it's feel and magic.
+Poke part of its feel and magic.
 
 @node Array Indexing
 @section Array Indexing
@@ -3421,7 +3421,7 @@ side-product of performing certain operations.  For example, a
 division by zero.
 
 However, it is also useful to explicitly raise exceptions.  The
-@code{raise} statement can be used for that purpose.  It's syntax is:
+@code{raise} statement can be used for that purpose.  Its syntax is:
 
 @example
 raise @var{exception};
