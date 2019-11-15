@@ -108,8 +108,4 @@ void pk_cmd_init (void);
 
 void pk_cmd_shutdown (void);
 
-char *dot_command_completer_next (int *idx, const char *x, size_t len);
-
-completer_t find_matching_dot_cmd (const char *cmdname);
-
 #endif /* ! PK_H_CMD */

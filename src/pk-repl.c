@@ -35,65 +35,6 @@
 #include <signal.h>
 #include <unistd.h>
 
-extern struct pk_cmd null_cmd;
-
-static char *
-poke_completion_function (const char *x, int state)
-{
-  static int idx = 0;
-  static struct pkl_ast_node_iter iter;
-  pkl_env env = pkl_get_env (poke_compiler);
-  if (state == 0)
-    {
-      pkl_env_iter_begin (env, &iter);
-      idx = 0;
-    }
-  else
-    {
-      if (pkl_env_iter_end (env, &iter))
-	idx++;
-      else
-	pkl_env_iter_next (env, &iter);
-    }
-
-  size_t len = strlen (x);
-  char *function_name;
-  function_name = get_next_matching_cmd (env, &iter, x, len);
-  if (function_name)
-    return function_name;
-
-  function_name = dot_command_completer_next (&idx, x, len);
-  if (function_name)
-    return function_name;
-
-  return NULL;
-}
-
-/* Readline's getc callback.
-   Use this function to update the completer which
-   should be used.
-*/
-static int
-poke_getc (FILE *stream)
-{
-  char *line_to_point = xmalloc (rl_point + 1);
-  int end = rl_point ? rl_point - 1 : 0;
-  strncpy (line_to_point, rl_line_buffer, end);
-  line_to_point[end] = '\0';
-
-  char *tok = strtok (line_to_point, "\t ");
-  if (rl_completion_entry_function == poke_completion_function)
-    {
-      rl_compentry_func_t *cf =  find_matching_dot_cmd (tok);
-      if (cf)
-	rl_completion_entry_function = cf;
-    }
-  free (line_to_point);
-
-  return rl_getc (stream);
-}
-
-
 static void
 banner (void)
 {
@@ -120,7 +61,7 @@ banner (void)
         pk_puts ("\".\n");
         free (help_hyperlink);
       }
-#else
+#else 
       pk_puts (_("For help, type \".help\".\n"));
 #endif
       pk_puts (_("Type \".exit\" to leave the program.\n"));
@@ -167,7 +108,6 @@ pk_repl (void)
 	read_history (poke_history);
     }
 #endif
-  rl_getc_function = poke_getc;
 
   while (!poke_exit_p)
     {
@@ -175,7 +115,6 @@ pk_repl (void)
       char *line;
 
       pk_term_flush ();
-      rl_completion_entry_function = poke_completion_function;
       line = readline ("(poke) ");
       if (line == NULL)
         {

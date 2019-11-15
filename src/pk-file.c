@@ -22,57 +22,10 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #include <errno.h>
-#include <readline.h>
 
 #include "ios.h"
 #include "poke.h"
 #include "pk-cmd.h"
-
-static void
-count_io_spaces (ios io, void *data)
-{
-  int *i = (int *) data;
-  if (i == NULL)
-    return;
-  (*i)++;
-}
-
-static char *
-close_completion_function (const char *x, int state)
-{
-  static int idx = 0;
-  static int n_ids = 0;
-  if (state == 0)
-    {
-      idx = 0;
-      n_ids = 0;
-      ios_map (count_io_spaces, &n_ids);
-    }
-  else
-    ++idx;
-
-  int len  = strlen (x);
-  while (1)
-    {
-      if (idx >= n_ids)
-	break;
-      char buf[16];
-      snprintf (buf, 16, "#%d", idx);
-
-      int match = strncmp (buf, x, len);
-      if (match != 0)
-	{
-	  idx++;
-	  continue;
-	}
-
-      return strdup (buf);
-    }
-
-  return NULL;
-}
-
-
 
 static int
 pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -246,13 +199,13 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 struct pk_cmd file_cmd =
-  {"file", "tf", "", 0, NULL, pk_cmd_file, "file (FILENAME|#ID)", rl_filename_completion_function};
+  {"file", "tf", "", 0, NULL, pk_cmd_file, "file (FILENAME|#ID)"};
 
 struct pk_cmd close_cmd =
-  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", close_completion_function};
+  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]"};
 
 struct pk_cmd info_files_cmd =
   {"files", "", "", 0, NULL, pk_cmd_info_files, "info files"};
 
 struct pk_cmd load_cmd =
-  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME", rl_filename_completion_function};
+  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME"};
