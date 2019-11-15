@@ -1,5 +1,12 @@
 2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y: New tokens UU_LINE_UU and UU_FILE_UU.
+	* src/pkl-lex.l: Rules for __FILE__ and for __LINE__.
+	* testsuite/poke.pkl/uu-line-1.pk: New test.
+	* testsuite/poke.pkl/uu-file-1.pk: Likewise.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* man/Makefile.am (poke.1): Go back to depend on the source file
 	to avoid distcheck to fail.  This time, make sure the executable
 	exists before invoking help2man.

@@ -165,6 +165,28 @@ D [0-9]
 
 "//"[^\n]*	{ /* Partial-line comment.  */ }
 
+"__LINE__"	{
+  pkl_ast_node type
+    = pkl_ast_make_integral_type (yyextra->ast, 64, 0);
+  yylval->ast = pkl_ast_make_integer (yyextra->ast,
+                                      yylloc->first_line);
+  PKL_AST_TYPE (yylval->ast) = ASTREF (type);
+
+  return INTEGER;
+}
+                       
+"__FILE__"	{
+  pkl_ast_node type
+    = pkl_ast_make_string_type (yyextra->ast);
+
+  yylval->ast = pkl_ast_make_string (yyextra->ast,
+                                     yyextra->filename
+                                     ? yyextra->filename
+                                     : "<stdin>");
+  PKL_AST_TYPE (yylval->ast) = ASTREF (type);
+  return STR;
+ }
+
 "pinned"	{ return PINNED; }
 "struct"	{ return STRUCT; }
 "union"		{ return UNION; }
