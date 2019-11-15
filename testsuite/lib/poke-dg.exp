@@ -49,7 +49,7 @@ proc dg-command { args } {
 # Require a certain capability.
 
 set skip_test 0;
-               
+
 proc dg-require { args } {
 
     upvar dg-do-what do-what
@@ -60,7 +60,7 @@ proc dg-require { args } {
         set do-what [list [lindex do-what 0] N P]
     }
 }
-               
+
 # Create a temporary data file containing the data specified as an
 # argument, with either a random name or a given name.  The incoming
 # data is encoded in a Tcl list, like in:
@@ -83,7 +83,7 @@ proc dg-data { args } {
     global objdir
 
     set basename {}
-    
+
     if { [llength $args] != 3 && [llength $args] != 4 } {
         error "[lindex $args 0]: invalid arguments"
     }
@@ -95,7 +95,7 @@ proc dg-data { args } {
     } else {
         set basename [pid].data
     }
-    
+
     # Write the data to the file.
     set output_file ${objdir}/${basename}
     set fd [open $output_file w]

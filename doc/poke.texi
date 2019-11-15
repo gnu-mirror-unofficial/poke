@@ -1944,7 +1944,7 @@ They contain heterogeneous collections of values.
 * Pinned Structs::		Fix the offset of fields.
 * Unions::			Dealing with conditional data.
 * Declarations in Structs::	Declaring stuff within a struct.
-* Methods::			Declaring functions within a struct.	
+* Methods::			Declaring functions within a struct.
 * Struct Attributes::		Accessing properties of struct values.
 @end menu
 
@@ -2831,7 +2831,7 @@ values.  Mapping is perhaps the most important concept in Poke.
 GNU poke supports the abstract notion of @dfn{IO space}, which is an
 addressable space of Poke objects: integers, strings, arrays, structs,
 etc.  This underlying storage for the IO spaces (which we call @dfn{IO
-devices}) can be heterogeneous: from a file your filesystem to the
+devices}) can be heterogeneous: from a file your file system to the
 memory of some process.
 
 @menu

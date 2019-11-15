@@ -3,4 +3,3 @@
 /* { dg-command { .set obase 10 } } */
 /* { dg-command { atoi("deadbeef", 16) } } */
 /* { dg-output "-559038737L" } */
-

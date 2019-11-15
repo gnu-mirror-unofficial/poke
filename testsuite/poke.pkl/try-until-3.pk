@@ -16,4 +16,3 @@ defun foo = void:
 
 /* { dg-command { try foo; catch { print "catched\n"; } } } */
 /* { dg-output "catched" } */
-

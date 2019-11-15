@@ -1477,7 +1477,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
   else
     {
       pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
-      
+
       /* Push the IOS of the map.  */
       if (map_ios)
         PKL_PASS_SUBPASS (map_ios);
@@ -1490,7 +1490,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
       /* XXX here we can assume the offset is offset<ulong<64>,b> as per
          promo.  */
       PKL_PASS_SUBPASS (map_offset);
-      
+
       PKL_GEN_PAYLOAD->in_mapper = 1;
       PKL_PASS_SUBPASS (map_type);
       PKL_GEN_PAYLOAD->in_mapper = 0;
@@ -1949,7 +1949,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF IOS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);  /* OFF IOS IOS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* IOS IOS OFF */
-          
+
           if (array_type_mapper != PVM_NULL)
             {
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,

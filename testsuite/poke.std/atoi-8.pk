@@ -3,4 +3,3 @@
 /* { dg-command { .set obase 10 } } */
 /* { dg-command { atoi("1777", 8) } } */
 /* { dg-output "1023L" } */
-

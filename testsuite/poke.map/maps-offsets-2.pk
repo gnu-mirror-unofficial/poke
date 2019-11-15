@@ -5,4 +5,3 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { offset<int,b> @ 4#B } } */
 /* { dg-output "0x89abcdef#b" } */
-

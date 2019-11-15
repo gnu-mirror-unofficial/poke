@@ -33,4 +33,4 @@ common_mandeps = $(top_srcdir)/configure.ac
 
 poke.1: $(top_builddir)/src/poke $(common_mandeps)
 	POKEDATADIR=$(abs_top_srcdir)/src $(HELP2MAN) -p poke --name="The GNU extensible binary editor" \
-		$< -o $@
+		$(top_builddir)/src/poke -o $@

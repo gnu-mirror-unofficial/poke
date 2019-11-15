@@ -1300,7 +1300,7 @@ expected %s got %s",
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
-  
+
 #if 0
   if (PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_FUNCTION)
     {

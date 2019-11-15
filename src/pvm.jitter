@@ -612,7 +612,7 @@ instruction open () # ( STR -- INT )
 
      if (ret == IOS_ERROR)
        PVM_RAISE (PVM_E_IO);
-       
+
      JITTER_TOP_STACK () = pvm_make_int (ret, 32);
   end
 end
@@ -2621,7 +2621,7 @@ instruction peeks ()
       io = ios_cur ();
     else
       io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
-      
+
     if (io == NULL)
       PVM_RAISE (PVM_E_NO_IOS);
 

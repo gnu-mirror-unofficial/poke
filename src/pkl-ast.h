@@ -1385,7 +1385,7 @@ pkl_ast_node pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp);
 /* PKL_AST_TRY_UNTIL_STMT nodes represent try-until statements.
 
    CODE is a statement.
-   
+
    EXP is an expression that should evaluate to a 32-bit signed
    integer.  CODE will be executed repeteadly until the given
    exception type is catched, or some other exception is raised.  */

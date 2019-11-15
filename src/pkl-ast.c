@@ -2685,7 +2685,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (try_until_stmt_code, TRY_UNTIL_STMT_CODE);
       PRINT_AST_SUBAST (try_until_stmt_exp, TRY_UNTIL_STMT_EXP);
       break;
-      
+
     case PKL_AST_PRINT_STMT_ARG:
       IPRINTF ("PRINT_STMT_ARG::\n");
       PRINT_COMMON_FIELDS;

@@ -2,4 +2,3 @@
 
 /* { dg-command {"foo\"bar"} } */
 /* { dg-output {"foo\\"bar"} } */
-

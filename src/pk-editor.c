@@ -31,7 +31,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char tmpfile[1024];
   int des, ret;
   FILE *f;
-  
+
   /* editor */
   assert (argc == 0);
 
@@ -115,9 +115,9 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       pk_puts ("error: ");
       pk_term_end_class ("error");
       pk_printf ("removing temporary file %s\n", tmpfile);
-      return 0;      
+      return 0;
     }
-  
+
   return 1;
 }
 

@@ -6,5 +6,3 @@
 /* { dg-command {byte @ 2#B = 0xab} } */
 /* { dg-command {byte @ 2#B} } */
 /* { dg-output "0xabUB" } */
-
-

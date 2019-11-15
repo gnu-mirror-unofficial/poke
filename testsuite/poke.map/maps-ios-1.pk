@@ -11,4 +11,3 @@
 /* { dg-output "0x66UB" } */
 /* { dg-command { byte @ bar:1#B } } */
 /* { dg-output "\n0x88UB" } */
-

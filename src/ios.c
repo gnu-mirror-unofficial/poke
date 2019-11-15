@@ -93,7 +93,7 @@
 
 /* The following struct implements an instance of an IO space.
 
-   IS is an unique integer identifying the IO space.
+   `IS' is an unique integer identifying the IO space.
 
    HANDLER is a copy of the handler string used to open the space.
 

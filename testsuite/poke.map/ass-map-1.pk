@@ -4,4 +4,3 @@
 /* { dg-command {offset<byte,B> @ 2#B = 16#b} } */
 /* { dg-command {offset<byte,B> @ 2#B} } */
 /* { dg-output "2UB#B" } */
-

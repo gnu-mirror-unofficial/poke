@@ -4,4 +4,3 @@
 /* { dg-command { .set obase 16 } } */
 /* { dg-command { offset<byte,B> @ 0#B } } */
 /* { dg-output "0x51UB#B" } */
-

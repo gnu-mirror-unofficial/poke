@@ -241,7 +241,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token UNMAP
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
- 
+
 /* ATTRIBUTE operator.  */
 
 %token <ast> ATTR

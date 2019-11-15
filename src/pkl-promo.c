@@ -1245,7 +1245,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
   if (map_ios)
     {
       int lrestart;
-      
+
       if (!promote_integral (PKL_PASS_AST,
                              32, 1,
                              &PKL_AST_MAP_IOS (map),
