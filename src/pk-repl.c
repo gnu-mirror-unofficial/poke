@@ -61,7 +61,7 @@ banner (void)
         pk_puts ("\".\n");
         free (help_hyperlink);
       }
-#else 
+#else
       pk_puts (_("For help, type \".help\".\n"));
 #endif
       pk_puts (_("Type \".exit\" to leave the program.\n"));
