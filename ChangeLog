@@ -1,5 +1,11 @@
 2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* man/Makefile.am (poke.1): Go back to depend on the source file
+	to avoid distcheck to fail.  This time, make sure the executable
+	exists before invoking help2man.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/leb128.pk: Remove trailing blanks.
 	* testsuite/lib/poke-dg.exp: Likewise.
 	* src/pvm.jitter: Likeise.
