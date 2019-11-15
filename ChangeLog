@@ -1,5 +1,9 @@
 2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (__LINE__ and __FILE__): New chapter.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks: Fix handling of sboundm.
 	* testsuite/poke.map/maps-arrays-16.pk: New test.
 

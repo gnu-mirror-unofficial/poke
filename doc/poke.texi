@@ -99,6 +99,9 @@ The Poke Language
 * Exception Handling::		Dealing with exceptional conditions.
 * Printing::			Output in Poke programs.
 
+Debugging Poke Programs
+* __LINE__ and __FILE__::	Error locations in traces.
+
 The Standard Library
 * Standard Integral Types::	int, long and the like.
 * Standard Offset Types::	off64 and the like.
@@ -3550,6 +3553,23 @@ Name: Jose Age: 39
 @section Pretty Printers
 
 XXX
+
+@node __LINE__ and __FILE__
+@chapter __LINE__ and __FILE__
+
+When printing traces it is often useful to include a description of
+the location of the trace.  The poke compiler provides two builtins
+for this purpose.
+
+@table @code
+@item __LINE__
+Expands to an unsigned 64-bit integer containing the current line of
+the program being compiled.
+@item __FILE__
+Expands to a string with the name of the file currently being compiled.  If the
+program is read from the standard input (like in the REPL) then this
+is @code{"<stdin>"}.
+@end table
 
 @node Standard Integral Types
 @chapter Standard Integral Types
