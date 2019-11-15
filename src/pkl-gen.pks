@@ -67,6 +67,8 @@
         regvar $ebound           ; Argument
         regvar $off              ; Argument
         regvar $ios              ; Argument
+        push null
+        regvar $sboundm          ; Local
         ;; Determine the offset of the array, in bits, and put it in a
         ;; local.
         pushvar $off            ; OFF
@@ -96,7 +98,7 @@
         drop                    ; OFF SOBUNDM SBOUNDU
         mullu                   ; OFF SBOUNDM SBOUNDU (SBOUNDM*SBOUNDU)
         nip2                    ; OFF (SBOUNDM*SBOUNDU)
-        regvar $sboundm         ; OFF
+        popvar $sboundm         ; OFF
         push null               ; OFF null
 .after_sbound_conv:
         drop                    ; OFF

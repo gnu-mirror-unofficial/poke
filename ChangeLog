@@ -1,5 +1,10 @@
 2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks: Fix handling of sboundm.
+	* testsuite/poke.map/maps-arrays-16.pk: New test.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-tab.y: New tokens UU_LINE_UU and UU_FILE_UU.
 	* src/pkl-lex.l: Rules for __FILE__ and for __LINE__.
 	* testsuite/poke.pkl/uu-line-1.pk: New test.
