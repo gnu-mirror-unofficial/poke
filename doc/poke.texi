@@ -441,7 +441,7 @@ Where @var{path} is a path to a file to open (which can be relative to
 poke's current working directory or absolute) and @var{tag} is a tag
 of the form @code{#NUMBER} that identifies a previously open file.
 
-Tilde expansion is performed in @var{path}, much like it's done in the
+Tilde expansion is performed in @var{path}, much like its done in the
 shell.  This means you can include special characters like @code{~}
 (which will expand to your home directory) delimit the filename with
 @code{"} in case it includes leading or trailing blank characters,
