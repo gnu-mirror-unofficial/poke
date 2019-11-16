@@ -83,7 +83,7 @@ defun _pkl_exception_handler = (Exception exception) void:
    else if (exception == E_elem)
      print "invalid element";
    else if (exception == E_constraint)
-     print "constraint violated";
+     print "constraint violation";
    else if (exception == E_conv)
      print "conversion error";
    else if (exception == E_map_bounds)
