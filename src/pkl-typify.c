@@ -2205,7 +2205,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
 }
 PKL_PHASE_END_HANDLER
 
-/* Static array indexes should be bigger than 0.  */
+/* Static array indexes should be non-negative.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type_array)
 {
@@ -2218,10 +2218,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type_array)
 
       if (PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_INTEGRAL
           && PKL_AST_CODE (bound) == PKL_AST_INTEGER
-          && ((int64_t) PKL_AST_INTEGER_VALUE (bound)) <= 0)
+          && ((int64_t) PKL_AST_INTEGER_VALUE (bound)) < 0)
         {
           PKL_ERROR (PKL_AST_LOC (bound),
-                     "array dimentions should be > 0");
+                     "array dimensions may not be negative");
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
