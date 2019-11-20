@@ -1,3 +1,11 @@
+2019-11-19 John Darrington <john@darrington.wattle.id.au>
+
+        * src/pk-dump.pk (print_ascii): New function. (print_hex) New function.
+        (print_data): Deal properly with EOF and data not ending on 16#B boundary.
+        * testsuite/poke.cmd/dump-5.pk: New file.
+        * testsuite/poke.cmd/dump-6.pk: New file.
+        * testsuite/poke.cmd/dump-7.pk: New file.
+
 2019-11-17 John Darrington <john@darrington.wattle.id.au>
 
 	* doc/poke.texi (Standard Integral Types): Correct size of nibble.

@@ -42,71 +42,92 @@ defun dump = (off64 from = pk_dump_offset,
               off64 group_by = pk_dump_group_by,
               int ruler = pk_dump_ruler,
               int ascii = pk_dump_ascii) void:
+{
+  defun print_ruler = void:
   {
-   defun print_ruler = void:
-     {
-      defvar o = 0#B;
+    defvar o = 0#B;
 
-      printf "%<dump-ruler:76543210 %>";
-      for (s in ["00", "11", "22", "33", "44", "55", "66",
-                 "77", "88", "99", "aa", "bb", "cc", "dd",
-                 "ee", "ff"])
-        {
-          if (o % group_by == 0#B)
-            printf "%<dump-ruler: %>";
-          printf "%<dump-ruler:%s%>", s;
-          o = o + 1#B;
-        }
-       if (ascii)
-         printf "%<dump-ruler:  0123456789ABCDEF%>";
-       print "\n";
-     }
-
-   defun print_data = (off64 offset, off64 top, off64 step) void:
-     {
-      while (offset < top)
-        {
-         printf ("%<dump-address:%u32x:%>", offset / #B);
-
-         defvar o = 0#B;
-         while (o < step && offset + o < top)
-           {
-             if (o % group_by == 0#B)
-               print " ";
-             printf ("%u8x", int<8> @ (offset + o));
-             o = o + 1#B;
-           }
-         if (ascii)
-	   {
-	     print("  ");
-	     o = 0#B;
-	     while (o < step && offset + o < top)
-	       {
-	         defvar v = int<8> @ (offset + o);
-	         if (v < ' ' || v > '~')
-	           printf "%<dump-ascii:%c%>", '.';
-	         else
-	           printf "%<dump-ascii:%c%>", v;
-	         o = o + 1#B;
-	       }
-	   }
-         print "\n";
-
-         offset = offset + step;
-       }
-     }
-
-   /* The `dump' command is byte-oriented.  Both the base offset and
-      the size of the dump are truncated to bytes.  Hence the casts
-      below.  */
-   defvar offset = from as offset<uint<64>,B>;
-   defvar top = (from + size) as offset<uint<64>,B>;
-
-   if (ruler)
-     print_ruler;
-
-   try print_data :offset offset :top top :step 16#B;
-   catch if E_eof { print "\n"; }
-
-   pk_dump_offset = from;
+    printf "%<dump-ruler:76543210 %>";
+    for (s in ["00", "11", "22", "33", "44", "55", "66",
+	       "77", "88", "99", "aa", "bb", "cc", "dd",
+	       "ee", "ff"])
+      {
+	if (o % group_by == 0#B)
+	  printf "%<dump-ruler: %>";
+	printf "%<dump-ruler:%s%>", s;
+	o = o + 1#B;
+      }
+    if (ascii)
+      printf "%<dump-ruler:  0123456789ABCDEF%>";
+    print "\n";
   }
+
+  defun print_ascii = (off64 offset, off64 top, off64 step) void:
+  {
+    print("  ");
+    defvar o = 0#B;
+    while (o < step && offset + o < top)
+      {
+	defvar v = byte @ (offset + o);
+	if (v < ' ' || v > '~')
+	  printf "%<dump-ascii:%c%>", '.';
+	else
+	  printf "%<dump-ascii:%c%>", v;
+	o = o + 1#B;
+      }
+  }
+
+  defun print_hex = (char c, off64 o) void:
+  {
+    if (o % group_by == 0#B)
+      print " ";
+    printf ("%u8x", c);
+  }
+
+  defun print_data = (off64 offset, off64 top, off64 step) void:
+  {
+    while (offset < top)
+      {
+	printf ("%<dump-address:%u32x:%>", offset / #B);
+
+	defvar o = 0#B;
+	try
+	{
+	  while (o < step && offset + o < top)
+	    {
+	      print_hex (byte @ (offset + o), o);
+	      o = o + 1#B;
+	    }
+	}
+	catch if E_eof {}
+	if (ascii)
+	  {
+	    while (o < step && ((offset + o) % 16#B) != 0#B)
+	      {
+		if (o % group_by == 0#B)
+		  print " ";
+		print ("  ");
+		o = o + 1#B;
+	      }
+	    print_ascii (offset, top, step);
+	  }
+	print "\n";
+
+	offset = offset + step;
+      }
+  }
+
+  /* The `dump' command is byte-oriented.  Both the base offset and
+     the size of the dump are truncated to bytes.  Hence the casts
+     below.  */
+  defvar offset = from as offset<uint<64>,B>;
+  defvar top = (from + size) as offset<uint<64>,B>;
+
+  if (ruler)
+    print_ruler;
+
+  try print_data :offset offset :top top :step 16#B;
+  catch if E_eof { print "\n"; }
+
+  pk_dump_offset = from;
+}
