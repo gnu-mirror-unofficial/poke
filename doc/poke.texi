@@ -3625,7 +3625,7 @@ types.
 @item bit
 1-bit unsigned integer.
 @item nibble
-8-bit unsigned integer.
+4-bit unsigned integer.
 @item uint8
 @itemx byte
 @itemx char
