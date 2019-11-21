@@ -2054,7 +2054,51 @@ struct @{i=100,l=200L@}
 @node Field Constraints
 @section Field Constraints
 
-XXX
+It is common for struct fields to be constrained to their values to
+satisfy some conditions.  Obvious examples are magic numbers, and
+specification-derived constraints.
+
+In Poke you can specify a field's constraint using the following
+syntax:
+
+@example
+@var{field_type} @var{field_name} : @var{expression} ;
+@end example
+
+Where @var{expression} is an arbitrary Poke expression, that should
+evaluate to an integer value.  The result is interpreted as a boolean.
+
+As an example, this is how the ELF magic number is checked for:
+
+@example
+deftype Ctf_Preamble =
+  struct
+  @{
+    uint<16> ctp_magic : ctp_magic == CTF_MAGIC;
+    byte ctp_version;
+    byte ctp_flags;
+  @};
+@end example
+
+The constraint expression will often include the field where it is
+installed, but that's no mandatory.
+
+Field constraints play an important role in mapping.  On one side,
+a map will fail if there is some constraint that fails.  On the other,
+they guide the mapping of unbounded arrays.  @xref{Mapping Arrays}.
+
+Another common usage of constraint expressions is to alter the global
+state after decoding a field.  For example, this is how mapping an ELF
+header sets the current endianness, depending on the value of
+@code{ei_data}:
+
+@example
+byte ei_data : ei_data == ELFDATA2LSB       \
+               ? set_endian (ENDIAN_LITTLE) \
+               : set_endian (BIG);
+@end example
+
+Note that @code{set_endian} always returns @code{1}.
 
 @node Field Labels
 @section Field Labels

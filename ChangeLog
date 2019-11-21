@@ -1,3 +1,7 @@
+2019-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Field Constraints): New section.
+
 2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (__LINE__ and __FILE__): New chapter.
