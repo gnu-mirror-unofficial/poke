@@ -1,5 +1,9 @@
 2019-11-19 John Darrington <john@darrington.wattle.id.au>
 
+	* doc/poke.texi: Add indeces.
+
+2019-11-19 John Darrington <john@darrington.wattle.id.au>
+
         * src/pk-dump.pk (print_ascii): New function. (print_hex) New function.
         (print_data): Deal properly with EOF and data not ending on 16#B boundary.
         * testsuite/poke.cmd/dump-5.pk: New file.

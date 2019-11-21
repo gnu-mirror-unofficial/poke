@@ -65,14 +65,14 @@ Using poke
 * Commanding poke::		Interactive and non-interactive usage.
 
 Dot-Commands
-* .load::                       Loading pickles.
-* .file::			Opening and selecting IO spaces.
-* .close::			Closing IO spaces.
-* .editor::			Using an external editor for input.
-* .info::			Getting information about open files, etc.
-* .set::			Querying and setting global options.
-* .vm::				Poke Virtual Machine services.
-* .exit::			Exiting poke :(
+* load command::  		Loading pickles.
+* file command::		Opening and selecting IO spaces.
+* close command::		Closing IO spaces.
+* editor command::		Using an external editor for input.
+* info command::		Getting information about open files, etc.
+* set command::			Querying and setting global options.
+* vm command::			Poke Virtual Machine services.
+* exit command::		Exiting poke :(
 
 Commands
 * dump::			Binary dumps.
@@ -126,7 +126,9 @@ XXX
 
 @node Nomenclature
 @chapter Nomenclature
-@cindex poke, Poke, pickle
+@cindex poke
+@cindex Poke
+@cindex pickle
 
 GNU poke is a new program and it introduces many a new concept.  It is
 a good idea to clarify how we call things in the poke community.
@@ -148,7 +150,7 @@ poke.  When they talk about ``Poke programmers'' they refer to the
 people who write programs using the Poke programming language.
 
 Finally, a @dfn{pickle} is a Poke source file containing definitions
-of types, variables, functions, etc, that conceptually apply to some
+of types, variables, functions, @i{etc}, that conceptually apply to some
 definite domain.  For example, @file{elf.pk} is a pickle that provides
 facilities to poke ELF object files.  Pickles are not necessarily
 related to file formats: a set of functions to work with bit patterns,
@@ -159,7 +161,7 @@ We hope this helps to clarify things.
 
 @node Invoking poke
 @chapter Invoking poke
-
+@cindex invoking
 Synopsis:
 
 @example
@@ -186,6 +188,7 @@ specified, and they are executed in the given order.
 Load @var{file} as a poke script.  Any number of @samp{-s} options may
 be specified, and they are loaded in the given order.
 @item --color=@var{how}
+@cindex styled output
 Whether to use styled output, and how.  Valid options for @var{how}
 are @samp{yes}, @samp{no}, @samp{auto}, @samp{html} and @samp{test}.
 @item --style=@var{file}
@@ -194,6 +197,7 @@ default style.
 @item -q
 @itemx --no-init-file
 Do not load the @file{~/.pokerc} init file.
+@cindex @file{.pokerc}
 @item --quiet
 Be as terse as possible.
 @item --help
@@ -219,21 +223,22 @@ way.  This chapter documents both possibilities.
 
 @node The REPL
 @section The REPL
-
+@cindex REPL
 If poke is invoked with an interactive TTY connected to the standard
-input, it greets the user with a welcome message, licensing
+input, it greets you with a welcome message, licensing
 information and such, and finally a prompt that looks like:
 
 @example
 (poke)
 @end example
 
-At this point, the program is ready to be commanded.  The user is
+At this point, the program is ready to be commanded.  You are
 expected to introduce a line and press @key{enter}.  At that point
-poke will examine the command, notify the user if there is some error
+poke will examine the command, notify you if there is some error
 condition, process the line and maybe displaying something in the
 terminal.
 
+@cindex readline
 Repeatedly typing complex commands can be tiresome.
 To help you, poke uses the readline library
 @xref{Top,,,rluserman,GNU Readline Library}.
@@ -241,6 +246,7 @@ This provides shortcuts and simple keystrokes to repeat
 previous commands with or without modification, fast selection of
 filenames and entries from other multiple choice contexts, and
 navigation within a command and among previous commands.
+@cindex history, session history
 When the REPL starts, the history of your previous sessions
 are loaded from the file @file{.poke_history} located in your home
 directory (if it exists).
@@ -264,8 +270,8 @@ Both Poke expressions and statements can be introduced at the REPL.
 When a trailing semicolon is required, it can be omitted.
 
 When an expression is evaluated, the result of the expression is
-printed back to the user.  For example:
-
+printed back to you.  For example:
+@cindex expresssions
 @example
 (poke) 23
 23
@@ -275,6 +281,7 @@ printed back to the user.  For example:
 Packet @{i=1179403647,j=65794L@}
 @end example
 
+@cindex statements
 When a statement is executed in the REPL no result is printed, but of
 course the statement can print on its own:
 
@@ -287,7 +294,8 @@ elem 2
 elem 3
 @end example
 
-If there is an error compiling the line, the user is notified with a
+@cindex errors
+If there is an error compiling the line, you are notified with a
 nice error message, showing the location of the error.  For example:
 
 @example
@@ -306,7 +314,7 @@ sub-commands and passing arguments and flags, and normal commands,
 which are written in Poke.
 
 @subsection Dot-Commands
-
+@cindex dot-commands
 Dot-commands are so called because their name start with the dot
 character (@code{.}).  They can feature subcommands.  Example:
 
@@ -323,6 +331,7 @@ be shortened to prefixes.  The commands above can also be written as:
 (poke) .vm dis w int[] @@ 0#B
 @end example
 
+@cindex flags
 Some commands also get flags, which are one-letter indicators that can
 be appended to the command name (including subcommands) after a slash
 character (@code{/}).  For example, the @command{.vm} disassembler
@@ -338,7 +347,7 @@ If a dot-command accepts more than one argument, they are separated
 using comma characters (@code{,}).  Spaces are generally ignored.
 
 @subsection Commands
-
+@cindex commands
 Regular poke commands are written in Poke and use different
 conventions.  The name of commands follow the same rules than normal
 Poke identifiers, and do not start with a dot character.
@@ -358,6 +367,7 @@ An example is the @command{dump} command:
 00000070: 0000 0000 0000 0000 7900 0000 0000 0000  ........y.......
 @end example
 
+@cindex arguments
 After the name of the command, arguments can be specified by name,
 like this:
 
@@ -390,7 +400,7 @@ in poke shall be implemented as regular commands.
 
 @node Scripts
 @section Scripts
-
+@cindex scripts
 Files containing one poke command per line (which, as we saw above can
 include Poke statements and expressions) can be loaded at startup
 using the @code{-s} command line option.
@@ -399,7 +409,7 @@ The @file{~/.pokerc} startup file is also a poke script.
 
 @node Shebang
 @section Shebang
-
+@cindex shebang, @code{#!}
 Following the example of Guile Scheme, the Poke syntax includes
 support for multi-line comments using the @code{#!} and @code{!#}
 delimiters.  This, along with the @code{-L} command line option,
@@ -413,8 +423,8 @@ if they were normal programs.  Example of a script:
 print "Hello world!\n";
 @end example
 
-@node .load
-@chapter .load
+@node load command
+@chapter @code{.load}
 
 The @command{.load} command loads a file containing Poke code and
 compiles and executes it.  These files usually have the extension
@@ -430,9 +440,10 @@ poke program before it gets installed in its final location.
 
 If an absolute path is provided, it is used as-is.
 
-@node .file
-@chapter .file
-
+@node file command
+@chapter @code{.file}
+@cindex opening files
+@cindex IO space
 The @command{.file} command opens a new IO space backed by a file, or
 switches to a previously opened file.  The syntax is:
 
@@ -440,6 +451,7 @@ switches to a previously opened file.  The syntax is:
 .file @var{path}|@var{#tag}
 @end example
 
+@cindex tags, file ID tags
 Where @var{path} is a path to a file to open (which can be relative to
 poke's current working directory or absolute) and @var{tag} is a tag
 of the form @code{#NUMBER} that identifies a previously open file.
@@ -448,7 +460,7 @@ Tilde expansion is performed in @var{path}, much like it's done in the
 shell.  This means you can include special characters like @code{~}
 (which will expand to your home directory) delimit the filename with
 @code{"} in case it includes leading or trailing blank characters,
-etc.
+@i{etc}.
 
 When a new file is opened, it becomes the current IO space.  On that
 point on, every map executed in the REPL or while loading a Poke
@@ -459,6 +471,7 @@ program will operate on that IO space:
 The current file is now `foo.o'.
 @end example
 
+@cindex tags, file ID tags
 A list of open files, and their corresponding tags, can be obtained
 using the @command{.info files} command.  Once a tag is known, you can
 use it to switch back to that file:
@@ -468,9 +481,10 @@ use it to switch back to that file:
 The current file is now `foo.o'.
 @end example
 
-@node .close
-@chapter .close
+@node close command
+@chapter @code{.close}
 
+@cindex IO space
 The @command{.close} command closes the selected IO space.  The syntax
 is:
 
@@ -480,11 +494,11 @@ is:
 
 Where @var{#tag} is a tag identifying an open IO stream.
 
-@node .editor
-@chapter .editor
-
+@node editor command
+@chapter @code{.editor}
+@cindex editor
 The @command{.editor} command (usually abbreviated as @command{.edit})
-invokes an external editor on a temporary file.  The user can then
+invokes an external text editor on a temporary file.  You can then
 put contents on that file, save it and exit the editor.  At that point
 poke will read the file contents, turn them into a single line and
 execute them in the repl.
@@ -492,8 +506,8 @@ execute them in the repl.
 The editor used is identified by the @code{EDITOR} environment
 variable.
 
-@node .info
-@chapter .info
+@node info command
+@chapter @code{.info}
 
 The @command{.info} command provides information about several kinds
 of entities.  The recognized sub commands are:
@@ -509,6 +523,7 @@ Display a list of open files.
   #1	r       0x00000000#b	foo.o
 @end example
 
+@cindex IO space
 The file acting as the current IO space is marked with an asterisk
 character @code{*} at the beginning of the file.  The mode in which
 the file is open is also specified.  The @code{Id} field is the tag of
@@ -525,6 +540,7 @@ The current file is now `foo.o'.
 @end example
 
 @item .info variable
+@cindex variables
 Shows a list of defined variables along with their current values and
 the location where the variables were defined.
 @item .info function
@@ -532,9 +548,10 @@ Shows a list of defined functions along with their prototypes and the
 location where the functions were defined.
 @end table
 
-@node .set
-@chapter .set
+@node set command
+@chapter @code{.set}
 
+@cindex global settings
 The @command{.set} command allows to inspect and set the value of
 global settings.  The syntax is:
 
@@ -551,39 +568,45 @@ The following settings can be handled with @command{.set}:
 
 @table @code
 @item endian
+@cindex endianness
 Byte endianness that will be used when mapping the IO space.  Valid
 values are @code{big}, @code{little} and @code{host}.  The default
 endianness is big endian.
 @item obase
+@cindex base, of displayed values
 Numeric base to be used when displaying values in the REPL and in
 @code{printf} statements using the @code{%v} format tag.  Valid values
 are @code{2}, @code{8}, @code{10} and @code{16}.  Default value is
 @code{10}.
 @item pretty-print
+@cindex pretty printing
 Flag indicating whether pretty-printers shall be used when printing
 values in the REPL and in @code{printf} statements using the @code{%v}
 format tag.  Valid values are @code{yes} and @code{no}.  Default value
 is @code{no}.
 @item error-on-warning
+@cindex errors
+@cindex warnings
 Flag indicating whether handling compilation warnings as errors.
 Default value is @code{no}.
 @end table
 
-@node .vm
-@chapter .vm
+@node vm command
+@chapter @code{.vm}
 
+@cindex virtual machine
 The Poke Virtual Machine (PVM) executes the programs that are the
 result of the compilation of what you write in the REPL or the pickles
 you load.  The @command{.vm} command provides sub-commands to interact
 with the PVM.
 
 @menu
-* .vm disassemble::		PVM and native disassembler.
+* @:.vm disassemble::		PVM and native disassembler.
 @end menu
 
-@node .vm disassemble
-@section .vm disassemble
-
+@node @:.vm disassemble
+@section @code{.vm disassemble}
+@cindex disassembler
 The @command{.vm disassemble} command provides access to the PVM
 disassembler.  It supports the following subcommands:
 
@@ -605,22 +628,23 @@ The disassembler will provide a PVM disassembly by default, but it can
 be passed the flag @command{/n} to do a native disassembly instead in
 whatever architecture running poke.
 
-@node .exit
-@chapter .exit
-
+@node exit command
+@chapter @code{.exit}
+@cindex quitting
+@cindex exit
 The @code{.exit} command exits poke.
 
 @node dump
-@chapter dump
+@chapter @code{dump}
 @cindex dump
 
 XXX
 
 @node pokerc
-@chapter pokerc
-
+@chapter @file{.pokerc}
+@cindex @file{.pokerc}
 Upon invocation poke will read and execute the commands of the file
-@file{~/.pokerc} if it exists in the user's home directory.  This can
+@file{~/.pokerc} if it exists in your home directory.  This can
 be disabling passing @code{-q} or @code{--no-init-file} in the command
 line.
 
@@ -642,6 +666,7 @@ Lines starting with @code{#} are ignored as comments.
 
 @node Styling
 @chapter Styling
+@cindex styled output
 
 XXX
 
@@ -673,16 +698,19 @@ of bits and a rich set of accompanying operators.
 
 @node Integer Literals
 @section Integer Literals
-
+@cindex integer literals
 Integers literals can be expressed in several numeration bases.
 
+@cindex decimal
 @emph{Decimal numbers} use the usual syntax @code{[1-9][0-9]*}.  For
 example, @code{2345}.
 
+@cindex octal
 @emph{Octal numbers} are expressed using a prefix @code{0o} (or
 @code{0O}) followed by one or more digits in the range @code{[0-7]}.
 Examples are @code{0o0}, @code{0o100} and @code{0o777}.
 
+@cindex hexadecimal
 @emph{Hexadecimal numbers} are expressed using a prefix @code{0x} (or
 @code{0X}) followed by one or more hexadecimal digits in the range
 @code{[0-f]}.  Examples are @code{0x0} and @code{0xfe00ffff}.  Note
@@ -690,6 +718,7 @@ that both the @code{x} in the prefix and the letters in the
 hexadecimal number are case insensitive.  Thus, @code{0XdeadBEEF} is a
 valid (but ugly as hell) literal.
 
+@cindex binary
 @emph{Binary numbers} are expressed using a prefix @code{0b} (or
 @code{0B}) followed by one or more binary digits in the range
 @code{[0-1]}.  Examples of binary literals are @code{0b0} and
@@ -697,10 +726,11 @@ valid (but ugly as hell) literal.
 
 Negative numbers, of any numeration base, are constructed using the
 minus operator as explained below.  Therefore the minus symbol
-@code{-} in negative numbers is no part of the literal themselves.
+@code{-} in negative numbers is not part of the literal themselves.
 
 @subsection The digits separator @code{_}
-
+@cindex digits separator
+@cindex separator, digits separator
 The character @code{_} can appear anywhere in a numeric literal other
 than leading them.  It is ignored, and its purpose is to make it
 easier for programmers to read them:
@@ -711,7 +741,9 @@ easier for programmers to read them:
 @end example
 
 @subsection Types of integer literals
-
+@cindex integer literals
+@cindex size of variables
+@cindex bitsize
 The type of a numeric literal is the smallest signed integer capable
 of holding it, starting with 32 bits, in steps of powers of two and up
 to 64 bits.@footnote{Rationale: the width of a C ``int'' is 32 bits in
@@ -734,6 +766,7 @@ Thus, @code{10L} is a 64-bit integer with value
 value @code{0x000A} and @code{10b} is a 8-bit integer with value
 @code{0x0A}.
 
+@cindex signedness
 Similarly, the signed or unsigned attribute of an integer can be
 explicitly specified using the suffix @code{u} or @code{U} (the
 default are signed types).  For example @code{0xffff_ffffU} has type
@@ -747,11 +780,12 @@ with no ambiguity.
 
 @node Characters
 @section Characters
-
+@cindex characters
 8-bit unsigned integers can use an alternative literal notation that
 is useful when working with @emph{ASCII character codes}.  Printable
 character codes can be denoted with @code{'c'}.
 
+@cindex escape sequence
 Non-printable characters can be expressed using escape-sequences.  The
 allowed sequences are:
 
@@ -778,7 +812,7 @@ The type of a character literal is always @code{char}, aka
 
 @node Booleans
 @section Booleans
-
+@cindex boolean values
 Like in C, truth values in Poke are encoded using integers.  Zero
 (@code{0}) denotes the logical value ``false'', and any integer other
 than zero denotes the logical value ``true''.
@@ -829,7 +863,7 @@ parameters.  Not even constant expressions.  Thus, things like
 
 @node Casting Integers
 @section Casting Integers
-
+@cindex casts
 The right-associative unary operator cast @code{as} can be used to
 derive a new integer value having a different type from an existing
 value.
@@ -853,6 +887,7 @@ If the new type is wider than the existing type, either zero-extension
 or sign-extension is performed depending on the signedness of the
 operand.
 
+@cindex signedness
 The semantics of the sign-extension operation depends on the
 signedness of the value being converted, and on the currently
 selected encoding for negative numbers.
@@ -881,6 +916,7 @@ regardless of the signedness of the target type. Thus:
 @node Relational Operators
 @section Relational Operators
 
+@cindex comparison
 The following binary relational operators are supported on integer
 values, in descending precedence order:
 
@@ -898,7 +934,7 @@ These operators resolve in boolean values encoded as 32-bit integers:
 
 @node Arithmetic Operators
 @section Arithmetic Operators
-
+@cindex arithmetic
 The following left-associative binary arithmetic operators are
 supported, in descending precedence order:
 
@@ -908,6 +944,8 @@ ceil-division @code{/^} and modulus @code{%}.
 @item Addition @code{+} and subtraction @code{-}.
 @end itemize
 
+@cindex signedness
+@cindex sign promotion
 In all the binary arithmetic operations automatic promotions
 (coercions) are performed in the operands as needed.  The rules are:
 
@@ -924,20 +962,27 @@ supported:
 
 @itemize
 @item Unary minus @code{-} and unary plus @code{+}.
+@cindex minus
 @end itemize
 
 @node Bitwise Operators
 @section Bitwise Operators
-
+@cindex bitwise operators
 The following left-associative bitwise binary operators are supported,
 in descending precedence order:
 
 @itemize
 @item Bitwise shift left @code{<<.} and bitwise shift right @code{.>>}.
+@cindex shifting
 @item Bitwise AND @code{&}.
+@cindex AND
 @item Bitwise exclusive OR @code{^}.
+@cindex exclusive OR
 @item Bitwise inclusive OR @code{|}.
+@cindex inclusive OR
+@cindex OR
 @item Bitwise concatenation @code{::}.
+@cindex concatenation, bitwise
 @end itemize
 
 Bitwise concatenation works with any integral type, of any bit length.
@@ -946,11 +991,12 @@ The following right-associative unary bitwise operators are supported:
 
 @itemize
 @item Bitwise complement @code{~}.
+@cindex complement
 @end itemize
 
 @node Boolean Operators
 @section Boolean Operators
-
+@cindex boolean operators
 The following left-associative, short-circuited binary logical
 operators are supported, in descending precedence order:
 
@@ -963,10 +1009,12 @@ The following right-associative unary logical operators are supported:
 
 @itemize
 @item Logical negation @code{!}.
+@cindex negation
 @end itemize
 
 @node Integer Attributes
 @section Integer Attributes
+@cindex attributes, integer attributes
 
 The following attributes are defined for integer values.
 
@@ -985,6 +1033,7 @@ includes the terminating null.  Examples:
 @end example
 
 @item signed
+@cindex signedness
 Gives 1 if the value is a signed integer, 0 otherwise.  Examples:
 
 @example
@@ -1000,7 +1049,8 @@ Always 0 for integers.  See mapping.
 
 @node Offsets
 @chapter Offsets
-@cindex offset, united values
+@cindex offset
+@cindex united values
 
 Poke uses united values to handle offsets and data sizes.  This is a
 very central concept in poke.
@@ -1040,7 +1090,7 @@ the implemented language would be expressive, complete and useful
 enough to fulfill my requirements.
 
 The first formats I implemented using my immature little language
-included ELF, FLV, MP3, BSON... all of them describing structures
+included ELF, FLV, MP3, BSON@dots{} of them describing structures
 based on whole bytes.  Even when they try to be compact, it is always
 by packing bit-fields in elements that are, invariably, sized as a
 multiple of bytes.  Consequently, the language I was evolving became
@@ -1070,9 +1120,10 @@ the data stored, in bytes, and then the data itself.  This data,
 however, doesn't start right after @code{dstart}: it starts at
 @code{dstart}, which is expressed as an offset, in bytes, since the
 beginning of the Data.  I conceived struct field labels to be any
-expression evaluating to an integer, which would be... bytes,
+expression evaluating to an integer, which would be@dots{}, bytes
 obviously.
 
+@cindex deflate
 Then, one day, it was the turn for IETF RFC1951, which is the
 specification of the DEFLATE algorithm and associated file format.  Oh
 dear.  Near the beginning of the spec document it can be read:
@@ -1140,7 +1191,7 @@ deftype BitData =
   @};
 @end example
 
-Yeah... exactly.  The @key{*} and @key{8}> keys in the keyboards of
+Yeah@dots{} exactly.  The @key{*} and @key{8}> keys in the keyboards of
 the poke users would wear out very fast, not to mention their patience
 as well.  Also, should I provide both @code{sizeof} and
 @code{bitsizeof} operators?  Nasty.
@@ -1152,8 +1203,9 @@ resigned myself to make GNU poke byte oriented, and to provide as many
 facilities for operating on bit-fields as possible.
 
 @noindent
-Fortunately, I have smart friends...
+Fortunately, I have smart friends@dots{}
 
+@cindex rabbit herd
 During one of the Rabbit Herd's Hacking
 Weekends@footnote{@url{http://www.jemarch.net/rhhw}} I shared my
 frustration and struggle with the other rabbits, and we came to
@@ -1207,6 +1259,8 @@ In the offset syntax units are specified as @code{#@var{foo}}, where
 @var{FOO} is the name of the unit.  Poke provides the following list
 of hard coded unit names:
 
+@cindex units
+
 @table @code
 @item b
 bits.
@@ -1238,7 +1292,7 @@ That's it, 17 units of 3 bits each, zero units of 12 bits each,
 and eight units of 1 bit each.
 
 But then, why stopping there?  Poking is all about defining data
-structures and operating on them... so why not using these structures
+structures and operating on them@dots{} so why not using these structures
 as units as well?  Consider the following struct:
 
 @example
@@ -1256,6 +1310,7 @@ unit in offsets?  Sure it is:
 The above is the size occupied by 23 packets.  Any type whose size is
 known at compile time can be specified as an offset unit.
 
+@cindex ELF
 Expressing offsets as united values also relieves the programmer from
 doing many explicit unit conversions: poke can do them for you.
 Consider for example an ELF section header.  One of its fields is the
@@ -1265,9 +1320,9 @@ size of the described section, in bytes:
 deftype Elf64_Shdr =
   struct
   @{
-   ...
+   @dots{}
    offset<Elf64_Xword,B> sh_size;
-   ...
+   @dots{}
   @};
 @end example
 
@@ -1308,7 +1363,7 @@ denoted with a Poke type @code{Packet} has type
 
 @node Casting Offsets
 @section Casting Offsets
-
+@cindex casts
 The right-associative unary operator cast @code{as} can be used to
 derive a new offset value having a different type from an existing
 value.
@@ -1332,11 +1387,12 @@ in:
 
 @node Offset Operations
 @section Offset Operations
-
+@cindex offset algebra
 Poke supports a little algebra for offsets.
 
 @subsection Addition and subtraction
-
+@cindex addition
+@cindex subtraction
 The addition or subtraction of two offsets results in another offset.
 Examples:
 
@@ -1351,7 +1407,7 @@ The unit of the result is the greatest common divisor of the units of
 the operands.
 
 @subsection Multiplication by a scalar
-
+@cindex multiplication
 Multiplying an offset by a magnitude gives you another offset.
 Examples:
 
@@ -1370,7 +1426,7 @@ since computer memory is linear, and therefore it wouldn't make any
 sense to have units like @code{#B@sup{2}}.
 
 @subsection Division
-
+@cindex division
 Dividing two offsets gives you a magnitude.  Examples:
 
 @example
@@ -1402,7 +1458,7 @@ semantics than the ceil-division for integers:
 @end example
 
 @subsection Modulus
-
+@cindex modulus
 The modulus of two offsets gives you another offset with the expected
 semantics.  Examples:
 
@@ -1418,7 +1474,7 @@ the operands.
 
 @node Offset Attributes
 @section Offset Attributes
-
+@cindex attributes, offset
 The following attributes are defined for offset values.
 
 @table @code
@@ -1507,11 +1563,11 @@ Every string value in Poke is of type @code{string}.
 
 @node String Indexing
 @section String Indexing
-
+@cindex indexing, into strings
 Poke supports accessing the characters in a string using the array
 indexing notation.  The indexes are in the @code{[0,@var{n}]} range,
 where @var{n} is the length of the string minus one.  Note the length
-doesn't include the null character, i.e. it is not possible to access
+doesn't include the null character, @i{i.e.} it is not possible to access
 the terminating null.  Examples:
 
 @example
@@ -1521,6 +1577,7 @@ the terminating null.  Examples:
 0x6fUB
 @end example
 
+@cindex exceptions
 If the passed index is less than zero or it is too big, an
 @code{E_out_of_bounds} exception is raised:
 
@@ -1533,7 +1590,7 @@ unhandled out of bounds exception
 
 @node String Concatenation
 @section String Concatenation
-
+@cindex concatenation, strings
 Strings can be concatenated using the @code{+} operator.  This works
 like this:
 
@@ -1565,7 +1622,7 @@ indexing:
 
 @node String Attributes
 @section String Attributes
-
+@cindex attributes, string attributes
 The following attributes are defined for string values.
 
 @table @code
@@ -1615,7 +1672,7 @@ Arrays are homogeneous collections of values.
 Array literals are constructed using the following syntax:
 
 @example
-[@var{exp},@var{exp}...]
+[@var{exp},@var{exp}@dots{}]
 @end example
 
 Where @var{exp} is an arbitrary expression.
@@ -1638,6 +1695,7 @@ a compilation-time error if evaluated, are:
 Array literals must contain at least one element.  Accordingly,
 @code{[]} is not a valid array literal.
 
+@cindex matrices
 This is how a @code{3x3} matrix could be constructed using an array of
 arrays:
 
@@ -1671,14 +1729,14 @@ integer value.  For example, @code{int[2]}.  Finally, arrays can be
 an offset value.  For example, @code{int[8#B]}.
 
 @subsection Writing unbounded array literals
-
+@cindex unbounded arrays
 The type of an array literal is always bounded by number of elements.
 For example, the type of @code{[1,2,3]} is @code{int[3]}.  If what we
 want is an unbounded array literal we can obtain it with a case like
 @code{[1,2,3] as int[]}.
 
 @subsection Array boundaries and closures
-
+@cindex closures
 Poke arrays are rather peculiar.  One of their seemingly bizarre
 characteristics is the fact that the expressions calculating their
 boundaries (when they are bounded) evaluate in their own lexical
@@ -1708,10 +1766,10 @@ As expected, we get an array of four integers.  Very good,
 obviously the boundary expression @code{N*2} got evaluated
 when defining the type @code{List}, and the result of the
 evaluation was @code{4}, right?.  Typical semantics like in my
-garden variety programming language... right?  Right?!?
+garden variety programming language@dots{}?  Right?!?
 
 Well, not really.  Let's modify the value of @code{N} and map
-a @code{List} again...
+a @code{List} again@dots{}
 
 @example
 (poke) N = 1
@@ -1720,7 +1778,7 @@ a @code{List} again...
 @end example
 
 
-Yes, The boundary of the array type changed... come on, this is Poke,
+Yes, The boundary of the array type changed@dots{} on, this is Poke,
 was you @strong{really} expecting something typical? ;)
 
 What happens is that at type definition time the lexical environment
@@ -1799,6 +1857,7 @@ Poke part of its feel and magic.
 
 @node Array Indexing
 @section Array Indexing
+@cindex indexing, into arrays
 
 Arrays are indexed using the usual notation, providing an index
 enclosed between square brackets with @code{[} and @code{]}:
@@ -1813,6 +1872,7 @@ enclosed between square brackets with @code{[} and @code{]}:
 The index should be an expression that evaluates to an integer value,
 and it is promoted to an unsigned 64-bit integer when needed.
 
+@cindex exceptions
 The valid range for the index is @code{[0,@var{n}]} where @var{n} is
 the number of elements stored in the array minus one.  If the passed
 integer is out of that range, an @code{E_out_of_bounds} exception is
@@ -1898,7 +1958,7 @@ element is stored in an array.  Examples:
 
 @node Array Attributes
 @section Array Attributes
-
+@cindex attributes, array attributes
 The following attributes are defined for array values.
 
 @table @code
@@ -1957,7 +2017,7 @@ They contain heterogeneous collections of values.
 A struct literal is written like:
 
 @example
-struct @{ [[@var{field_name}=]@var{exp},]... @}
+struct @{ [[@var{field_name}=]@var{exp},]@dots{} @}
 @end example
 
 The contents of the struct literal is a possibly empty set of fields.
@@ -2053,7 +2113,7 @@ struct @{i=100,l=200L@}
 
 @node Field Constraints
 @section Field Constraints
-
+@cindex constraints
 It is common for struct fields to be constrained to their values to
 satisfy some conditions.  Obvious examples are magic numbers, and
 specification-derived constraints.
@@ -2067,7 +2127,7 @@ syntax:
 
 Where @var{expression} is an arbitrary Poke expression, that should
 evaluate to an integer value.  The result is interpreted as a boolean.
-
+@cindex ELF
 As an example, this is how the ELF magic number is checked for:
 
 @example
@@ -2163,7 +2223,7 @@ The resulting struct has fields @code{st_info}, @code{st_bind} and
 
 @node Pinned Structs
 @section Pinned Structs
-
+@cindex pinned structs
 Pinned structs is a convenient way to write struct types where the
 offset of all its fields is zero.  They are equivalent to C unions.
 
@@ -2186,7 +2246,7 @@ deftype Ctf_Stype_V1 =
 
 @node Unions
 @section Unions
-
+@cindex unions
 XXX
 
 @node Declarations in Structs
@@ -2201,11 +2261,12 @@ XXX
 
 @node Struct Attributes
 @section Struct Attributes
-
+@cindex attributes, struct attributes
 XXX
 
 @node Types
 @chapter Types
+@cindex types
 
 @menu
 * deftype::			Naming types.
@@ -2214,8 +2275,8 @@ XXX
 @end menu
 
 @node deftype
-@section deftype
-
+@section @code{deftype}
+@cindex deftype
 The @code{deftype} directive allows to declare named types.  The
 syntax is:
 
@@ -2235,17 +2296,19 @@ Integral types. @xref{Integer Types}.
 The string type.  @xref{String Types}.
 @item @var{type}[@var{boundary}]
 Array types.  @xref{Array Types}.
-@item struct @{ ... @}
+@item struct @{ @dots{} @}
 Struct types.  @xref{Struct Types}.
-@item (@var{type},...)@var{type}:
+@item (@var{type},@dots{})@var{type}:
 Function types.  @xref{Function Types}.
 @item any
 The @code{any} type is used to implement polymorphism.  @xref{The any Type}.
+@cindex any, the @code{any} type
 @end table
 
 @node The any Type
-@section The any Type
-
+@section The @code{any} Type
+@cindex any, the @code{any} type
+@cindex polymorphism
 Poke supports polymorphism with the @code{any} type.  This type is
 used in contexts where a value of any type is allowed.  For example,
 this is how you would declare a function that prints the size of any
@@ -2274,8 +2337,8 @@ This means that using any operator that require certain types with
 Arrays of @code{any}, @code{any[]}, are also supported:
 
 @node The isa Operator
-@section The isa Operator
-
+@section The @code{isa} Operator
+@cindex isa operator
 The binary operator @code{isa} allows to check for the type of a given
 value:
 
@@ -2293,7 +2356,7 @@ value:
 
 @node Assignments
 @chapter Assignments
-
+@cindex assignment
 The assignment statement has the form:
 
 @example
@@ -2325,14 +2388,15 @@ Examples:
 
 @node Compound Statements
 @chapter Compound Statements
-
+@cindex compound statements
+@cindex statements, compound statements
 Compound statements have the form:
 
 @example
-@{ @var{stmt...} @}
+@{ @var{stmt@dots{}} @}
 @end example
 
-Where @var{stmt...} is a list of statements, which can be themselves
+Where @var{stmt@dots{}} is a list of statements, which can be themselves
 compound statements.  Compound statements are primarily used to
 sequence instructions like:
 
@@ -2361,8 +2425,8 @@ the sections below.
 @end menu
 
 @node if-else
-@section if-else
-
+@section @code{if-else}
+@cindex conditional statements
 The @code{if-else} statement has the form:
 
 @example
@@ -2370,7 +2434,7 @@ if @var{exp} @var{if_stmt} [else @var{else_stmt}]
 @end example
 
 Where @var{exp} is an expression that should evaluate to a boolean
-value (i.e. to an integer), @var{if_stmt} is a sentence that will be
+value (@i{i.e.} to an integer), @var{if_stmt} is a sentence that will be
 executed if @var{exp} holds true, and @var{else_stmt} is a sentence
 that will be executed if @var{exp} holds false.  The @code{else} part
 of the sentence is optional.
@@ -2378,7 +2442,8 @@ of the sentence is optional.
 
 @node Loops
 @chapter Loops
-
+@cindex loops
+@cindex flow control
 Poke supports several iteration statements, which are discussed in the
 sections below.
 
@@ -2388,8 +2453,8 @@ sections below.
 @end menu
 
 @node while
-@section while
-
+@section @code{while}
+@cindex @code{while}
 The @code{while} statement has this form:
 
 @example
@@ -2397,7 +2462,7 @@ while (@var{exp}) @var{stmt}
 @end example
 
 Where @var{exp} is an expression that should evaluate to a boolean
-(i.e. to an integer) and @var{stmt} is an statement that will be
+(@i{i.e.} to an integer) and @var{stmt} is an statement that will be
 executed until @var{exp} holds false.
 
 It is possible to leave the loop from within @var{stmt} using the
@@ -2406,15 +2471,15 @@ It is possible to leave the loop from within @var{stmt} using the
 @example
 while (1)
 @{
-  [...]
+  [@dots{}]
   if (exit_loop)
     break;
 @}
 @end example
 
 @node for-in
-@section for-in
-
+@section @code{for-in}
+@cindex @code{for-in}
 The @code{for-in} statement has this form:
 
 @example
@@ -2445,6 +2510,7 @@ It is possible to leave the loop from within @var{stmt} using the
 @node Expression Statements
 @chapter Expression Statements
 
+@cindex side effects
 Poke is one of these languages where there is a clear separation
 between @dfn{expressions} and @dfn{statements}.  However, it is often
 useful to use an expression in the place of an statement, in order to
@@ -2461,7 +2527,7 @@ The value computed by the expression will be discarded.
 
 @node Functions
 @chapter Functions
-
+@cindex functions
 @c XXX closures
 
 @menu
@@ -2474,13 +2540,14 @@ The value computed by the expression will be discarded.
 
 @node Function Declarations
 @section Function Declarations
-
+@cindex declarations, function declarations
 A function is declared using the following syntax:
+@cindex defun
 
 @example
-defun @var{name} = [(@var{formal},...)] @var{ret_type}:
+defun @var{name} = [(@var{formal},@dots{})] @var{ret_type}:
 @{
-   ... body ...
+   @dots{} body @dots{}
 @}
 @end example
 
@@ -2499,7 +2566,7 @@ Where @var{type} is the type of the formal, @var{name} its name, and
 @var{exp} is an optional expression that will be used to initialize
 the argument in case it is not specified when the function is called.
 
-The last formal argument can take the form @code{@var{name}...},
+The last formal argument can take the form @code{@var{name}@dots{}},
 meaning the function is variadic.  @xref{Variadic Functions}.
 
 If the function takes no arguments, it is possible to omit the list of
@@ -2527,11 +2594,11 @@ run-time error.
 
 @node Optional Arguments
 @section Optional Arguments
-
+@cindex arguments
 Optional function arguments are specified like:
 
 @example
-defun atoi = (string s, int b = 10) long: @{ ... @}
+defun atoi = (string s, int b = 10) long: @{ @dots{} @}
 @end example
 
 Which means that if the base argument is not specified when passed to
@@ -2548,17 +2615,17 @@ Note that arguments declared before an optional argument can be used
 in its initialization expression.  This is valid Poke:
 
 @example
-defun foo = (int n, int[n] array = init_array (n)) void: @{ ... @}
+defun foo = (int n, int[n] array = init_array (n)) void: @{ @dots{} @}
 @end example
 
 @node Variadic Functions
 @section Variadic Functions
-
+@cindex variadic functions
 Functions getting an arbitrary number of arguments are denoted like
 this:
 
 @example
-defun printf (string fmt, args...) void: @{ ... @}
+defun printf (string fmt, args@dots{}) void: @{ @dots{} @}
 @end example
 
 The variadic argument shall be the last argument in the function, and
@@ -2566,7 +2633,7 @@ it is of type @code{any[]}.
 
 @node Calling Functions
 @section Calling Functions
-
+@cindex calling, function calls
 To call a function, write its name followed by the arguments in
 parenthesis.  Examples:
 
@@ -2588,13 +2655,14 @@ There is an alternate syntax that can only be used in an
 expression-as-statement context.  This alternate syntax is:
 
 @example
-@var{function_name} :@var{arg1} @var{val1}...
+@var{function_name} :@var{arg1} @var{val1}@dots{}
 @end example
 
 Where @var{arg1} is the name of an argument and @var{val1} the value
 to pass for that argument.  This is useful to use functions as
 commands in the REPL:
 
+@cindex dump
 @example
 (poke) dump :from 12#B :size 16#B :ascii 0
 @end example
@@ -2609,11 +2677,12 @@ dump :size 16#B :from 12#B
 
 @node Function Types
 @section Function Types
-
+@cindex function types
+@cindex types, function types
 Function types are denoted like:
 
 @example
-(@var{type},...)@var{ret_type}:
+(@var{type},@dots{})@var{ret_type}:
 @end example
 
 Where @var{type} are the types of the arguments and @var{ret_type} is
@@ -2623,24 +2692,24 @@ Optional arguments are marked with a @code{?} after the type.  For
 example, the type of the @code{atoi} function with declaration:
 
 @example
-defun atoi = (string s, int b = 10) long: @{ ... @}
+defun atoi = (string s, int b = 10) long: @{ @dots{} @}
 @end example
 
 is @code{(string,int?)long:}.
 
 If the function has variadic arguments, the position of the variadic
-argument in the function type specifier contains @code{...}.  For
+argument in the function type specifier contains @code{@dots{}}.  For
 example, the type of a @code{printf} function with declaration:
 
 @example
-defun printf (string fmt, args...) void: @{ ... @}
+defun printf (string fmt, args@dots{}) void: @{ @dots{} @}
 @end example
 
-is @code{(string,...)void:}.
+is @code{(string,@dots{})void:}.
 
 @node Endianness
 @chapter Endianness
-@cindex endian, endianness
+@cindex endianness
 
 Byte endianness is an important aspect of encoding data.  As a good
 binary editor poke provides support for both little and big endian,
@@ -2649,14 +2718,14 @@ endian.  Endianness control is integrated in the Poke language, and is
 designed to be easily used in type descriptions.
 
 @menu
-* .set endian::			dot-command to get and set the endianness.
+* set endian::			dot-command to get and set the endianness.
 * Endian in Fields::		setting the endianness of struct fields.
 * Endian built-ins::		changing endianness programmatically.
 @end menu
 
-@node .set endian
-@section .set endian
-@cindex commands
+@node set endian
+@section @code{.set endian}
+@cindex endianness
 
 GNU poke maintains a global variable that holds the current
 endianness.  This is the endianness that will be used when mapping
@@ -2714,14 +2783,15 @@ like:
 defvar ENDIAN_LITTLE = 0;
 defvar ENDIAN_BIG = 1;
 
-defun get_endian = int: @{ ... @}
-defun set_endian = (int endian) int: @{ ... @}
+defun get_endian = int: @{ @dots{} @}
+defun set_endian = (int endian) int: @{ @dots{} @}
 @end example
 
 Accessing the current endianness programmatically is especially useful
 in situations where the data being poked features a different
 structure, depending on the endianness.
 
+@cindex eBPF
 A good (or bad) example of this is the way registers are encoded in
 eBPF instructions.  eBPF is the in-kernel virtual machine of Linux,
 and features an ISA with ten general-purpose registers.  eBPF
@@ -2810,7 +2880,7 @@ Changing the current endianness in constraint expressions is useful
 when dealing with binary formats that specify the endianness of the
 data that follows using some sort of tag.  This is the case of ELF,
 for example.
-
+@cindex ELF
 The first few bytes in an ELF header conform what is known as the
 @code{e_ident}.  One of these bytes is called @code{ei_data} and its
 value specifies the endianness of the data stored in the ELF file.
@@ -2827,7 +2897,7 @@ defun elf_endian = (int endian) byte:
      return ELFDAT2MSB;
  @}
 
-[...]
+[@dots{}]
 
 deftype Elf64_Ehdr =
   struct
@@ -2848,17 +2918,17 @@ deftype Elf64_Ehdr =
       offset<byte,B> ei_nident;
     @} e_ident;
 
-    [...]
+    [@dots{}]
   @};
 @end example
 
-Note how @code{set_endian} returns an integer value...  it is always
+Note how @code{set_endian} returns an integer value@dots{}  it is always
 @code{1}. This is to facilitate its usage in fields constraint
 expressions.
 
 @node Mapping
 @chapter Mapping
-
+@cindex mapping
 The purpose of poke is to edit @dfn{IO spaces}, which are the files or
 devices, or memory areas being edited.  This is achieved by mapping
 values.  Mapping is perhaps the most important concept in Poke.
@@ -2874,10 +2944,11 @@ values.  Mapping is perhaps the most important concept in Poke.
 
 @node IO Spaces
 @section IO Spaces
+@cindex IO space
 
 GNU poke supports the abstract notion of @dfn{IO space}, which is an
 addressable space of Poke objects: integers, strings, arrays, structs,
-etc.  This underlying storage for the IO spaces (which we call @dfn{IO
+@i{etc}.  This underlying storage for the IO spaces (which we call @dfn{IO
 devices}) can be heterogeneous: from a file your file system to the
 memory of some process.
 
@@ -2889,13 +2960,14 @@ memory of some process.
 @end menu
 
 @node open
-@subsection open
-
+@subsection @code{open}
+@cindex opening files
+@cindex IO space
 The @code{open} builtin allows to create new IO spaces, by opening an
 IO device.  It has the following prototype:
 
 @example
-defun open = (string @var{handler}) int<32>: @{ ... @}
+defun open = (string @var{handler}) int<32>: @{ @dots{} @}
 @end example
 
 Where @var{handler} is a string identifying the IO device that will
@@ -2916,13 +2988,13 @@ If there is a problem opening the specified IO device then @code{open}
 will raise an @code{E_no_ios} exception.
 
 @node close
-@subsection close
+@subsection @code{close}
 
 The @code{close} builtin allows to destroy IO spaces, closing the
 underlying IO device.  The prototype is:
 
 @example
-defun close = (int<32> @var{ios}) void: @{ ... @}
+defun close = (int<32> @var{ios}) void: @{ @dots{} @}
 @end example
 
 Where @var{ios} is some previously created IO space.  All pending data
@@ -2932,7 +3004,7 @@ If the IO space specified to @code{close} doesn't exist then an
 @code{E_no_ios} exception is raised.
 
 @node get_ios
-@subsection get_ios
+@subsection @code{get_ios}
 
 GNU poke maintains a @dfn{current IO space}, which is the last created
 IO space (this includes IO spaces opened and selected using a
@@ -2940,20 +3012,20 @@ dot-command).  The builtin @code{get_ios} returns this space.  It has
 the following prototype:
 
 @example
-defun get_ios = int<32>: @{ ... @}
+defun get_ios = int<32>: @{ @dots{} @}
 @end example
 
 If there is no IO space, @code{get_ios} will raise the @code{E_no_ios}
 exception.
 
 @node set_ios
-@subsection set_ios
+@subsection @code{set_ios}
 
 The @code{set_ios} builtin allows to set a specific IO space as the
 new current IO space.  It has the following prototype:
 
 @example
-defun set_ios = (int<32> @var{ios}) int<32>: @{ ... @}
+defun set_ios = (int<32> @var{ios}) int<32>: @{ @dots{} @}
 @end example
 
 Where @var{ios} is the IO space that will become the current IO
@@ -2965,7 +3037,7 @@ usage in struct fields constraint expressions.
 
 @node The Map Operator
 @section The Map Operator
-
+@cindex mapping
 Poke values reside in memory, and their in-memory representation is
 not visible from Poke programs.  For example, @code{32} is a 32-bit
 signed integer value, and it happens to not be boxed in the Poke
@@ -3064,15 +3136,15 @@ defun qsort = (any[] array, Comparator cmp_f,
 00000000: 0000 0000 0001 0102 7f45 4c46
 @end example
 
-Similarly, the user can write functions that operate on abstract
+Similarly, you can write functions that operate on abstract
 entities and data structures such as ELF relocations and sections,
-DWARF DIEs, etc, and the same code will work with non mapped and
+DWARF DIEs, @i{etc}, and the same code will work with non mapped and
 mapped values.
 
 @node Mapping Simple Types
 @section Mapping Simple Types
 
-Simple values (i.e. integers, offsets, strings) cannot be mapped.
+Simple values (@i{i.e.} integers, offsets, strings) cannot be mapped.
 Therefore, if the type specified in the map is a simple type, the
 resulting value will be a regular non-mapped value.  Examples:
 
@@ -3095,7 +3167,6 @@ Arrays can be mapped in IO space in three different ways, depending on
 the characteristics of the type provided to the mapping operator.
 
 @subsection Array maps bounded by number of elements
-
 When an array type bounded by number of elements is used in a mapping
 operation, the resulting mapped array is also bounded by number of
 elements.
@@ -3180,7 +3251,7 @@ previous section, like this:
 
 @example
 (poke) Elf64_Rela[sh_size / 1#Elf64_Rela]
-[... relocs ...]
+[@dots{} relocs @dots{}]
 @end example
 
 However, this approach adoleces from two problems.  First, it doesn't
@@ -3192,7 +3263,7 @@ example, think about a section containing @code{NULL} terminated
 strings: you can't know the number of strings contained in the section
 until you actually read it.
 
-Another problem is when the data in the header is corrupted.  Using
+Another problem is when the data in the header is corrupt.  Using
 the mapping bounded by number of elements, we wouldn't realize it.  It
 would be good if the tool would tell us whether the specified size
 actually holds an exact number of the requested elements.
@@ -3206,7 +3277,7 @@ containing all the relocations in the section, we simply write:
 
 @example
 (poke) Elf64_Rela[ehdr.sh_size] @@ ehdr.sh_offset
-[... relocs ...]
+[@dots{} relocs @dots{}]
 @end example
 
 The strictness mentioned above is important.  GNU poke will complain
@@ -3249,7 +3320,7 @@ deftype Block =
   struct
   @{
      byte magic[2] : magic[0] == 'B' && magic[1] == 'K';
-     ... other data ...
+     @dots{} other data @dots{}
   @};
 @end example
 
@@ -3257,7 +3328,7 @@ we can map the blocks using an unbounded array map:
 
 @example
 (poke) Block[] @@ 0#B
-[ ... blocks ... ]
+[ @dots{} blocks @dots{} ]
 @end example
 
 If the blocks extend up to the end of the IO space, that many blocks
@@ -3317,7 +3388,7 @@ trick works as intended.
 
 @node Unmapping
 @section Unmapping
-@cindex unmap, operator
+@cindex unmap
 
 The unary @code{unmap} operator has the form:
 
@@ -3339,6 +3410,7 @@ changing the underlying IO space.  We would do something like:
 
 @node Exception Handling
 @chapter Exception Handling
+@cindex exceptions
 
 Sometimes an error or some other unexpected situation arises.  Poke
 provides an exceptions mechanism to deal with these situations.
@@ -3396,8 +3468,8 @@ Generic IO exception.
 @end table
 
 @node try-catch
-@section try-catch
-
+@section @code{try-catch}
+@cindex try-catch
 The @code{try-catch} statement provides a way to catch exceptions and
 handle them.
 
@@ -3433,8 +3505,8 @@ Where @var{formal} is a formal argument that contains the exception
 type when @var{compound_stmt} is executed.
 
 @node try-until
-@section try-until
-
+@section @code{try-until}
+@cindex try-until
 The @code{try-until} statement allows to execute instructions until
 some exception is caught.  The syntax is:
 
@@ -3461,8 +3533,8 @@ try
 @end example
 
 @node raise
-@section raise
-
+@section @code{raise}
+@cindex @code{raise}
 In previous sections we saw how exceptions are usually the
 side-product of performing certain operations.  For example, a
 division by zero.
@@ -3490,8 +3562,9 @@ simple unformatted output, and formatted output.
 @end menu
 
 @node print
-@section print
-@cindex print, output
+@section @code{print}
+@cindex @code{print}
+@cindex output
 
 The @code{print} statement prints the given string to the standard
 output.  @code{print} outputs text strings verbatim.  It can be
@@ -3507,22 +3580,23 @@ cases where the information to print out doesn't require any kind of
 formatting and styling.
 
 @node printf
-@section printf
-@cindex printf, formatted output, stylized output
+@section @code{printf}
+@cindex @code{printf}
+@cindex formatted output
 
 The @code{printf} statement gets a format string and, optionally, a
 list of values to print.  It can be invoked using two alternative
 syntaxes, which are equivalent:
 
 @example
-printf (@var{fmt}[, @var{value}...])
-printf @var{fmt}[, @var{value}...]
+printf (@var{fmt}[, @var{value}@dots{}])
+printf @var{fmt}[, @var{value}@dots{}]
 @end example
 
 The format string @var{fmt} is printed verbatim to the standard
 output, but for @dfn{format tags} which start with @code{%}.  These
 format tags are interpreted especially.
-
+@cindex tags, format tags
 Most of the format tags ``consume'' one of the specified values.
 Every value in the list shall be described by a tag, or the compiler
 will signal an error.  Likewise, values without a corresponding
@@ -3536,12 +3610,16 @@ Print the argument as a signed integer of size @var{bits}.  The last
 letter determines how the argument is printed.
 @table @code
 @item d
+@cindex decimal
 Print the integer in decimal.
 @item x
+@cindex hexadecimal
 Print the integer in hexadecimal.
 @item o
+@cindex octal
 Print the integer in octal.
 @item b
+@cindex binary
 Print the integer in binary.
 @item c
 Print the integer as an ASCII character.  This only works with 8 bit
@@ -3559,9 +3637,10 @@ similar to the @code{write} operation available in many Lisp systems.
 This tag is mainly intended to be used in pretty-printers.
 @end table
 
+@cindex styled output
 The following format tags do not consume arguments.  They support
 emitting styled text using the libtextstyle approach of having styling
-classes that user can customize in a @file{.css} file.
+classes that you can customize in a @file{.css} file.
 
 @table @code
 @item %<@var{classname}:
@@ -3595,21 +3674,24 @@ Name: Jose Age: 39
 
 @node Pretty Printers
 @section Pretty Printers
-
+@cindex pretty printing
 XXX
 
 @node __LINE__ and __FILE__
-@chapter __LINE__ and __FILE__
-
+@chapter @code{__LINE__} and @code{__FILE__}
+@cindex location
+@cindex tracing
 When printing traces it is often useful to include a description of
 the location of the trace.  The poke compiler provides two builtins
 for this purpose.
 
 @table @code
 @item __LINE__
+@cindex line number
 Expands to an unsigned 64-bit integer containing the current line of
 the program being compiled.
 @item __FILE__
+@cindex file name
 Expands to a string with the name of the file currently being compiled.  If the
 program is read from the standard input (like in the REPL) then this
 is @code{"<stdin>"}.
@@ -3617,7 +3699,8 @@ is @code{"<stdin>"}.
 
 @node Standard Integral Types
 @chapter Standard Integral Types
-
+@cindex integral types
+@cindex types, integral types
 The Poke standard library provides the following standard integral
 types.
 
@@ -3654,6 +3737,8 @@ types.
 
 @node Standard Offset Types
 @chapter Standard Offset Types
+@cindex offset types
+@cindex types, offset types
 
 The Poke standard library provides the following standard offset
 types.
@@ -3667,7 +3752,7 @@ types.
 
 @node Conversion Functions
 @chapter Conversion Functions
-
+@cindex conversion functions
 The Poke standard library provides the following functions to do
 useful conversions.
 
@@ -3677,13 +3762,14 @@ useful conversions.
 @end menu
 
 @node catos
-@section catos
-
+@section @code{catos}
+@cindex @code{catos}
+@cindex converting, arrays to strings
 It is often useful to convert arrays of characters into strings.  The
 standard function @code{catos} provides the following interface:
 
 @example
-defun catos = (char[] @var{chars}) string: @{ ... @}
+defun catos = (char[] @var{chars}) string: @{ @dots{} @}
 @end example
 
 It builds a string containing the characters in @var{chars}, and
@@ -3705,17 +3791,19 @@ Note that if the passed array contains a @code{NULL} character
 @end example
 
 @node atoi
-@section atoi
-
+@section @code{atoi}
+@cindex @code{atoi}
+@cindex converting, strings to integers
 The standard function @code{atoi} provides the following interface:
 
 @example
-defun atoi = (string @var{str}, int @var{base} = 10) long: @{ ... @}
+defun atoi = (string @var{str}, int @var{base} = 10) long: @{ @dots{} @}
 @end example
 
 It parses a signed integral number in the given @var{base} in the
 string @var{str} and returns it as a signed 64-bit integer.
 
+@cindex base, argument in @command{atoi}
 The accepted values for @var{base} are @code{2}, @code{8}, @code{10}
 (the default) and @code{16}.  If any other base is requested an
 @code{E_generic} exception is raised.
@@ -3730,7 +3818,7 @@ after the parsed integer.  Thus, this works:
 
 @node String Functions
 @chapter String Functions
-
+@cindex string functions
 The Poke standard library provides the following functions to do
 work on strings:
 
@@ -3740,43 +3828,46 @@ work on strings:
 @end menu
 
 @node ltrim
-@section ltrim
-
+@section @code{ltrim}
+@cindex @code{ltrim}
+@cindex whitespace, trimming
 The standard function @code{ltrim} provides the following interface:
 
 @example
-defun ltrim = (string s) string: @{ ... @}
+defun ltrim = (string s) string: @{ @dots{} @}
 @end example
 
 It returns a copy of the input string @code{s} with any leading whitespace removed.
 
 @node rtrim
-@section rtrim
-
+@section @code{rtrim}
+@cindex @code{rtrim}
+@cindex whitespace, trimming
 The standard function @code{rtrim} provides the following interface:
 
 @example
-defun rtrim = (string s) string: @{ ... @}
+defun rtrim = (string s) string: @{ @dots{} @}
 @end example
 
 It returns a copy of the input string @code{s} with any trailing whitespace removed.
 
 @node Sorting Functions
 @chapter Sorting Functions
-
+@cindex sorting
 @menu
 * qsort::		Sorting arrays with quicksort.
 @end menu
 
 @node qsort
-@section qsort
-
+@section @code{qsort}
+@cindex @code{qsort}
+@cindex quick sort
 The standard function @code{qsort} has the following prototype:
 
 @example
 defun qsort = (any[] @var{array}, Comparator @var{cmp_f},
                long @var{left} = 0,
-               long @var{right} = array'length - 1) void: @{ ... @}
+               long @var{right} = array'length - 1) void: @{ @dots{} @}
 @end example
 
 Where @var{array} is the array to sort, @var{cmp_f} is a comparator
