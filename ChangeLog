@@ -1,3 +1,7 @@
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (dump): Numerous minor changes.
+
 2019-12-01 Luca Saiu <positron@gnu.org>
 
 	* src/pkl-insn.def (PKL_INSN_TUCK): Define new instruction.

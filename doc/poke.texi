@@ -65,11 +65,11 @@ Using poke
 * Commanding poke::		Interactive and non-interactive usage.
 
 Dot-Commands
-* load command::  		Loading pickles.
+* load command::		Loading pickles.
 * file command::		Opening and selecting IO spaces.
 * close command::		Closing IO spaces.
 * editor command::		Using an external editor for input.
-* info command::		Getting information about open files, etc.
+* info command::		Getting information about open files, @i{etc}.
 * set command::			Querying and setting global options.
 * vm command::			Poke Virtual Machine services.
 * exit command::		Exiting poke :(
@@ -350,7 +350,7 @@ using comma characters (@code{,}).  Spaces are generally ignored.
 @subsection Commands
 @cindex commands
 Regular poke commands are written in Poke and use different
-conventions.  The name of commands follow the same rules than normal
+conventions.  The name of commands follow the same rules as normal
 Poke identifiers, and do not start with a dot character.
 
 An example is the @command{dump} command:
@@ -416,7 +416,7 @@ The @file{~/.pokerc} startup file is also a poke script.
 Following the example of Guile Scheme, the Poke syntax includes
 support for multi-line comments using the @code{#!} and @code{!#}
 delimiters.  This, along with the @code{-L} command line option,
-allows to write Poke scripts and execute them in the command line like
+allows you to write Poke scripts and execute them in the command line like
 if they were normal programs.  Example of a script:
 
 @example
@@ -428,6 +428,7 @@ print "Hello world!\n";
 
 @node load command
 @chapter @code{.load}
+@cindex @code{.load}
 
 The @command{.load} command loads a file containing Poke code and
 compiles and executes it.  These files usually have the extension
@@ -445,6 +446,7 @@ If an absolute path is provided, it is used as-is.
 
 @node file command
 @chapter @code{.file}
+@cindex @code{.file}
 @cindex opening files
 @cindex IO space
 The @command{.file} command opens a new IO space backed by a file, or
@@ -486,6 +488,7 @@ The current file is now `foo.o'.
 
 @node close command
 @chapter @code{.close}
+@cindex @code{.close}
 
 @cindex IO space
 The @command{.close} command closes the selected IO space.  The syntax
@@ -499,6 +502,7 @@ Where @var{#tag} is a tag identifying an open IO stream.
 
 @node editor command
 @chapter @code{.editor}
+@cindex @code{.editor}
 @cindex editor
 The @command{.editor} command (usually abbreviated as @command{.edit})
 invokes an external text editor on a temporary file.  You can then
@@ -511,6 +515,7 @@ variable.
 
 @node info command
 @chapter @code{.info}
+@cindex @code{.info}
 
 The @command{.info} command provides information about several kinds
 of entities.  The recognized sub commands are:
@@ -553,9 +558,10 @@ location where the functions were defined.
 
 @node set command
 @chapter @code{.set}
+@cindex @code{.set}
 
 @cindex global settings
-The @command{.set} command allows to inspect and set the value of
+The @command{.set} command allows you to inspect and set the value of
 global settings.  The syntax is:
 
 @example
@@ -596,6 +602,7 @@ Default value is @code{no}.
 
 @node vm command
 @chapter @code{.vm}
+@cindex @code{.vm}
 
 @cindex virtual machine
 The Poke Virtual Machine (PVM) executes the programs that are the
@@ -633,9 +640,18 @@ whatever architecture running poke.
 
 @node exit command
 @chapter @code{.exit}
+@cindex @code{.exit}
 @cindex quitting
-@cindex exit
-The @code{.exit} command exits poke.
+@cindex @code{exit}
+The @code{.exit} command exits poke.  The syntax is:
+
+@example
+.exit [@var{status}]
+@end example
+
+@noindent
+Poke will terminate, returning the exit status @var{status}.
+If @var{status} is omitted, then the exit status zero will be returned.
 
 @node dump
 @chapter @command{dump}
@@ -770,7 +786,7 @@ will not need to explicitly pass them when you call the function.
 @cindex @file{.pokerc}
 Upon invocation poke will read and execute the commands of the file
 @file{~/.pokerc} if it exists in your home directory.  This can
-be disabling passing @code{-q} or @code{--no-init-file} in the command
+be disabled by passing @code{-q} or @code{--no-init-file} in the command
 line.
 
 The @file{.pokerc} file contains commands, not Poke code.  This means
@@ -856,9 +872,9 @@ minus operator as explained below.  Therefore the minus symbol
 @subsection The digits separator @code{_}
 @cindex digits separator
 @cindex separator, digits separator
-The character @code{_} can appear anywhere in a numeric literal other
-than leading them.  It is ignored, and its purpose is to make it
-easier for programmers to read them:
+The character @code{_} can appear anywhere in a numeric literal
+except as the first character.  It is ignored, and its purpose is to
+make it easier for programmers to read them:
 
 @example
 0xf000_0000_0000_0000
@@ -897,7 +913,7 @@ explicitly specified using the suffix @code{u} or @code{U} (the
 default are signed types).  For example @code{0xffff_ffffU} has type
 @code{uint<32>} and @code{0ub} has type @code{uint<8>}.  It is possible
 to combine width-indicating suffixes with signedness suffixes:
-@code{10UL} denotes the same literal than @code{10LU}.
+@code{10UL} denotes the same literal as @code{10LU}.
 
 The above rules guarantee that it is always possible to determine the
 width and signedness of an integer constant just by looking at it,
@@ -1168,7 +1184,7 @@ Gives 1 if the value is a signed integer, 0 otherwise.  Examples:
 0
 @end example
 @item mapped
-Always 0 for integers.  See mapping.
+Always 0 for integers.  (@pxref{Mapping}).
 @end table
 
 
@@ -1361,6 +1377,8 @@ to denote offsets in the file you are editing):
 1024#Kb
 @end example
 
+@cindex magnitude
+@cindex kilobytes
 The offsets above denote twelve bytes, seven bits and one thousand
 twenty four kilobytes, respectively.  The unit can be separated from
 the magnitude by blank characters, so you can write the following
@@ -1392,15 +1410,20 @@ bits.
 @item B
 bytes.
 @item Kb
+@cindex kilobits
 kilo bits (1024 bits.)
 @item KB
+@cindex kilobytes
 Kilo bytes (1024 bytes.)
 @item Mb
+@cindex megabits
 Mega bits.
 @item MB
+@cindex megabytes
 Mega bytes.
 @item Gb
-Mega bits.
+@cindex gigabits
+Giga bits.
 @end table
 
 However, it is also possible to express units in multiples of the base
@@ -1461,6 +1484,7 @@ shdr.sh_size = 10#Elf64_Rela;
 @noindent
 Instead of doing the conversion to bytes explicitly.
 
+@cindex magnitude
 If the magnitude of an offset is 1 then it is allowed to omit it
 entirely.  To denote one kilobyte, for example, we can write
 @code{#KB}.
@@ -1479,6 +1503,7 @@ The unit specification should be one of the unit identifiers that are
 allowed in offset literals (see above) or the name of a Poke type
 whose size is known as compile time.
 
+@cindex kilobits
 Let's see some examples.  A signed 32-bit offset expressed in bytes
 has type @code{offset<int<32>,B>}.  An unsigned 12-bit offset
 expressed in kilobits has type @code{offset<uint<12>,Kb>}.  Finally, a
@@ -1501,6 +1526,7 @@ units bytes:
 (int<12>) 128#B
 @end example
 
+@cindex magnitude
 The same rules governing conversion of integers apply for the
 magnitude part.  Depending on the unit, there can be truncation, like
 in:
@@ -1543,7 +1569,7 @@ Examples:
 0#MB
 @end example
 
-The unit of the result is the same than the unit of the offset
+The unit of the result is the same as the unit of the offset
 operand.
 
 Note that multiplying two offsets is not supported.  This makes sense,
@@ -1565,6 +1591,7 @@ Dividing offsets is the Pokish way of converting memory magnitudes
 between different units: just use units like you do when doing physics
 or working with units in other contexts.
 
+@cindex kilobits
 For example, using the syntactic trick of omitting the magnitude (in
 which case it is assumed to be 1) it is very natural to write
 something like the following to convert from kilobits to bytes:
@@ -1575,7 +1602,7 @@ something like the following to convert from kilobits to bytes:
 @end example
 
 There is also a ceil-division operator for offsets, with the same
-semantics than the ceil-division for integers:
+semantics as the ceil-division for integers:
 
 @example
 (poke) 10#B /^ 3#B
@@ -1632,7 +1659,7 @@ Examples:
 1UL
 @end example
 @item mapped
-Always 0 for offsets.  See mapping.
+Always 0 for offsets.  (@pxref{Mapping}).
 @end table
 
 
@@ -1773,7 +1800,7 @@ includes the terminating null.  Examples:
 8UL#b
 @end example
 @item mapped
-Always 0 for strings.  See mapping.
+Always 0 for strings.  (@pxref{Mapping}).
 @end table
 
 @node Arrays
@@ -1830,11 +1857,11 @@ arrays:
 
 It is possible to refer to specific elements when constructing array
 literals.  For example, @code{[1,2,3,.[3] = 4]} denotes the same
-array than @code{[1,2,3,4]}.
+array as @code{[1,2,3,4]}.
 
 This allows creating arrays without having to specify all its
 elements.  Unspecified elements have the next specified value.  For
-example, @code{[.[2] = 2]} denotes the same array than
+example, @code{[.[2] = 2]} denotes the same array as
 @code{[2,2,2]}.
 
 Note that an array element can be referenced more than once.  When
@@ -2014,7 +2041,7 @@ unhandled out of bounds exception
 @section Array Trimming
 
 Indexing is used to fetch elements from arrays.  Another operation,
-called @dfn{trimming}, allows to extract a subset of the array, as
+called @dfn{trimming}, allows you to extract a subset of the array, as
 another array.
 
 Trims use the following notation, where a range is specified between
@@ -2266,7 +2293,7 @@ deftype Ctf_Preamble =
 @end example
 
 The constraint expression will often include the field where it is
-installed, but that's no mandatory.
+installed, but that's not mandatory.
 
 Field constraints play an important role in mapping.  On one side,
 a map will fail if there is some constraint that fails.  On the other,
@@ -2401,8 +2428,8 @@ XXX
 
 @node deftype
 @section @code{deftype}
-@cindex deftype
-The @code{deftype} directive allows to declare named types.  The
+@cindex @code{deftype}
+The @code{deftype} directive allows you to declare named types.  The
 syntax is:
 
 @example
@@ -2464,7 +2491,7 @@ Arrays of @code{any}, @code{any[]}, are also supported:
 @node The isa Operator
 @section The @code{isa} Operator
 @cindex isa operator
-The binary operator @code{isa} allows to check for the type of a given
+The binary operator @code{isa} allows you to check for the type of a given
 value:
 
 @example
@@ -2590,6 +2617,7 @@ Where @var{exp} is an expression that should evaluate to a boolean
 (@i{i.e.} to an integer) and @var{stmt} is an statement that will be
 executed until @var{exp} holds false.
 
+@cindex @code{break}
 It is possible to leave the loop from within @var{stmt} using the
 @code{break} statement.  Example:
 
@@ -2628,6 +2656,7 @@ example:
  1 3
 @end example
 
+@cindex @code{break}
 It is possible to leave the loop from within @var{stmt} using the
 @code{break} statement.
 
@@ -2667,7 +2696,7 @@ The value computed by the expression will be discarded.
 @section Function Declarations
 @cindex declarations, function declarations
 A function is declared using the following syntax:
-@cindex defun
+@cindex @code{defun}
 
 @example
 defun @var{name} = [(@var{formal},@dots{})] @var{ret_type}:
@@ -2677,7 +2706,7 @@ defun @var{name} = [(@var{formal},@dots{})] @var{ret_type}:
 @end example
 
 Where @var{name} is the name of the function, which uses the same
-namespace than variables and types and @var{ret_type} is the type of
+namespace as variables and types and @var{ret_type} is the type of
 the value returned by the function.  If the function returns no value
 then it is @code{void}.
 
@@ -2873,7 +2902,7 @@ The current endianness can be obtained like this:
 little
 @end example
 
-We can easily see how changing The current endianness indeed impacts
+We can easily see how changing the current endianness indeed impacts
 the way integers are mapped:
 
 @example
@@ -3088,7 +3117,7 @@ memory of some process.
 @subsection @code{open}
 @cindex opening files
 @cindex IO space
-The @code{open} builtin allows to create new IO spaces, by opening an
+The @code{open} builtin allows you to create new IO spaces, by opening an
 IO device.  It has the following prototype:
 
 @example
@@ -3114,8 +3143,9 @@ will raise an @code{E_no_ios} exception.
 
 @node close
 @subsection @code{close}
+@cindex @code{close}
 
-The @code{close} builtin allows to destroy IO spaces, closing the
+The @code{close} builtin allows you to destroy IO spaces, closing the
 underlying IO device.  The prototype is:
 
 @example
@@ -3130,6 +3160,7 @@ If the IO space specified to @code{close} doesn't exist then an
 
 @node get_ios
 @subsection @code{get_ios}
+@cindex @code{get_ios}
 
 GNU poke maintains a @dfn{current IO space}, which is the last created
 IO space (this includes IO spaces opened and selected using a
@@ -3145,8 +3176,9 @@ exception.
 
 @node set_ios
 @subsection @code{set_ios}
+@cindex @code{set_ios}
 
-The @code{set_ios} builtin allows to set a specific IO space as the
+The @code{set_ios} builtin allows you to set a specific IO space as the
 new current IO space.  It has the following prototype:
 
 @example
@@ -3394,7 +3426,7 @@ would be good if the tool would tell us whether the specified size
 actually holds an exact number of the requested elements.
 
 A mapping bound by size is what we need.  Fortunately, as we saw when
-discussing array types, Poke allows to specify an offset instead of an
+discussing array types, Poke allows you to specify an offset instead of an
 integral value, in the array type specification.  The right amount of
 entities (in this case relocations) to strictly satisfy the provided
 size will be mapped in the IO space.  So, in order to obtain an array
@@ -3525,7 +3557,7 @@ It gets any value and produces the same value, making it not mapped in
 case it is a mapped value.
 
 This is useful when we want to read a data structure from the IO space
-(say, and array of integers) and then use it for storage without
+(say, an array of integers) and then use it for storage without
 changing the underlying IO space.  We would do something like:
 
 @example
@@ -3594,7 +3626,7 @@ Generic IO exception.
 
 @node try-catch
 @section @code{try-catch}
-@cindex try-catch
+@cindex @code{try-catch}
 The @code{try-catch} statement provides a way to catch exceptions and
 handle them.
 
@@ -3608,7 +3640,7 @@ Where @var{stmt} is any statement and @var{compound_stmt} is a
 compound statement.  @var{stmt} is executed.  If during its execution
 an exception is raised, then @var{compound_stmt} gets executed.
 
-The second form of the statement allows to catch just one type of
+The second form of the statement allows you to catch just one type of
 exceptions:
 
 @example
@@ -3631,8 +3663,8 @@ type when @var{compound_stmt} is executed.
 
 @node try-until
 @section @code{try-until}
-@cindex try-until
-The @code{try-until} statement allows to execute instructions until
+@cindex @code{try-until}
+The @code{try-until} statement allows you to execute instructions until
 some exception is caught.  The syntax is:
 
 @example
@@ -3751,7 +3783,7 @@ Print the integer as an ASCII character.  This only works with 8 bit
 integers.
 @end table
 @item %u
-Same than @code{%s}, but for unsigned integers.
+Same as @code{%s}, but for unsigned integers.
 @item %c
 A shorter way to write @code{%u8c}.
 @item %v
@@ -3804,6 +3836,8 @@ XXX
 
 @node __LINE__ and __FILE__
 @chapter @code{__LINE__} and @code{__FILE__}
+@cindex @code{__FILE__}
+@cindex @code{__LINE__}
 @cindex location
 @cindex tracing
 When printing traces it is often useful to include a description of
@@ -4062,7 +4096,7 @@ XXX
 @c  LocalWords:  variadic args PDP programmatically PKL eBPF dst src
 @c  LocalWords:  BPF Insn Regs le ident ei ELFDATA LSB ELFDAT MSB ios
 @c  LocalWords:  Ehdr ELFDATANONE osabi abiversion nident Unmapping
-@c  LocalWords:  filesystem Comparator cmp relocations DIEs nelems
+@c  LocalWords:  Comparator cmp relocations DIEs nelems
 @c  LocalWords:  EOF Rela Addr Xword Sxword Shdr addr addralign fmt
 @c  LocalWords:  entsize relocs adoleces libtextstyle classname css
 @c  LocalWords:  ushort ulong uoff abc ltrim whitespace rtrim fdl
