@@ -163,6 +163,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_first_operand)
 }
 PKL_PHASE_END_HANDLER
 
+/* The unmap operator shall be applied to a type that is suitable to
+   be mapped.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_unmap)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node type = PKL_AST_TYPE (PKL_AST_EXP_OPERAND (exp, 0));
+
+  if (!pkl_ast_type_mappable_p (type))
+    {
+      PKL_ERROR (PKL_AST_LOC (PKL_AST_EXP_OPERAND (exp, 0)),
+                 "specified value cannot be mapped");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  PKL_AST_TYPE (exp) = ASTREF (type);
+}
+PKL_PHASE_END_HANDLER
+
 /* The type of an ISA operation is a boolean.  Also, many ISA can be
    determined at compile-time.  */
 
@@ -2193,7 +2213,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NEG, pkl_typify1_ps_first_operand),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POS, pkl_typify1_ps_first_operand),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BNOT, pkl_typify1_ps_first_operand),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_UNMAP, pkl_typify1_ps_first_operand),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_UNMAP, pkl_typify1_ps_op_unmap),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_typify1_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_typify1_ps_op_in),
 

@@ -899,7 +899,8 @@ pkl_ast_type_is_complete (pkl_ast_node type)
     case PKL_TYPE_OFFSET:
       complete = PKL_AST_TYPE_COMPLETE_YES;
       break;
-      /* String types are never complete.  */
+      /* String and function types are never complete.  */
+    case PKL_TYPE_FUNCTION:
     case PKL_TYPE_STRING:
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;

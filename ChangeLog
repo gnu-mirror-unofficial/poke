@@ -1,5 +1,11 @@
 2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_type_is_complete): Handle function types.
+	* src/pkl-typify.c (pkl_typify1_ps_op_unmap): New handler.
+	* testsuite/poke.pkl/unmap-diag-1.pk: New test.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_type_is_complete): Fix handling of
 	structs.
 
