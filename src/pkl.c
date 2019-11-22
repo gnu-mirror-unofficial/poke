@@ -737,7 +737,7 @@ pkl_ice (pkl_ast ast,
   pk_printf ("Important information has been dumped in %s.\n",
              tmpfile);
   /* XXX hyperlink */
-  pk_puts ("Please attach it to a bug report and send it to bug-poke@gnu.org.\n");
+  pk_puts ("Please attach it to a bug report and send it to poke-devel@nongnu.org.\n");
 }
 
 int
