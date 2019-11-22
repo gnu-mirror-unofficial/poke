@@ -897,13 +897,32 @@ pkl_ast_type_is_complete (pkl_ast_node type)
       /* Integral, offset and struct types are always complete.  */
     case PKL_TYPE_INTEGRAL:
     case PKL_TYPE_OFFSET:
-    case PKL_TYPE_STRUCT:
       complete = PKL_AST_TYPE_COMPLETE_YES;
       break;
       /* String types are never complete.  */
     case PKL_TYPE_STRING:
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;
+      /* Struct types are complete if their fields are also of
+         complete types.  */
+    case PKL_TYPE_STRUCT:
+      {
+        pkl_ast_node elem;
+
+        complete = PKL_AST_TYPE_COMPLETE_YES;
+        for (elem = PKL_AST_TYPE_S_ELEMS (type);
+             elem;
+             elem = PKL_AST_CHAIN (elem))
+          {
+            if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
+                && !pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem)))
+              {
+                complete = PKL_AST_TYPE_COMPLETE_NO;
+                break;
+              }
+          }
+        break;
+      }
       /* Array types are complete if the number of elements in the
          array are specified and it is a literal expression.  */
     case PKL_TYPE_ARRAY:

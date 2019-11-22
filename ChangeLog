@@ -1,5 +1,10 @@
 2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_type_is_complete): Fix handling of
+	structs.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_type_mappable_p): New function.
 	* src/pkl-typify.c (pkl_typify1_ps_map): Check for types that
 	cannot be mapped and error about it.
