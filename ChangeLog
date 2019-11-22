@@ -1,4 +1,9 @@
 2019-11-24 John Darrington <john@darrington.wattle.id.au>
+            * src/pk-file (pk_file_readable): New function.
+            (pk_cmd_load_file): Use it to check files before
+            opening.
+
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-term.c: Remove unnecessary #include <sys/stat.h>
 

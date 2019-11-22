@@ -18,6 +18,8 @@
 
 #include <config.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
@@ -199,6 +201,46 @@ pk_cmd_info_files (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+
+/* Returns zero iff FILENAME is the name
+   of an entry in the filesystem which :
+   * is not a directory;
+   * is readable; AND
+   * exists.
+   If it satisfies the above, the function returns NULL.
+   Otherwise, returns a pointer to a statically allocated
+   error message describing how the file doesn't satisfy
+   the conditions.  */
+static char *
+pk_file_readable (const char *filename)
+{
+  static char errmsg[4096];
+  struct stat statbuf;
+  if (0 != stat (filename, &statbuf))
+    {
+      char *why = strerror (errno);
+      snprintf (errmsg, 4096, _("Cannot stat %s: %s\n"), filename, why);
+      return errmsg;
+    }
+
+  if (S_ISDIR (statbuf.st_mode))
+    {
+      snprintf (errmsg, 4096, _("%s is a directory\n"), filename);
+      return errmsg;
+    }
+
+  if (access (filename, R_OK) != 0)
+    {
+      char *why = strerror (errno);
+      snprintf (errmsg, 4096, _("%s: file cannot be read: %s\n"),
+		filename, why);
+      return errmsg;
+    }
+
+  return 0;
+}
+
+
 static int
 pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -210,7 +252,9 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 1);
   arg = PK_CMD_ARG_STR (argv[0]);
 
-  if (access (arg, R_OK) == 0)
+  char *emsg = NULL;
+
+  if ((emsg = pk_file_readable (arg)) == NULL)
     filename = xstrdup (arg);
   else if (arg[0] != '/')
     {
@@ -222,7 +266,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       strcat (filename, "/");
       strcat (filename, arg);
 
-      if (access (filename, R_OK) != 0)
+      if ((emsg = pk_file_readable (arg)) == NULL)
         goto no_file;
     }
   else
@@ -236,10 +280,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 
  no_file:
-  {
-   char *why = strerror (errno);
-   pk_printf (_("%s: file cannot be read: %s\n"), arg, why);
-  }
+  pk_puts (emsg);
  error:
   free (filename);
   return 0;
