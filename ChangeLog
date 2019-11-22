@@ -1,5 +1,18 @@
 2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_type_mappable_p): New function.
+	* src/pkl-typify.c (pkl_typify1_ps_map): Check for types that
+	cannot be mapped and error about it.
+	* testsuite/poke.pkl/map-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-1.pk: New test.
+	* testsuite/poke.pkl/map-diag-7.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-6.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-4.pk: Likewise.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/struct-types-diag-8.pk: Rewrite.
 
 2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>

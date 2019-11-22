@@ -845,6 +845,43 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
   return res;
 }
 
+/* Return 1 if the given TYPE can be mapped in IO.  0 otherwise.  */
+
+int
+pkl_ast_type_mappable_p (pkl_ast_node type)
+{
+  switch (PKL_AST_TYPE_CODE (type))
+    {
+    case PKL_TYPE_INTEGRAL:
+    case PKL_TYPE_STRING:
+    case PKL_TYPE_OFFSET:
+      return 1;
+    case PKL_TYPE_ARRAY:
+      return pkl_ast_type_mappable_p (PKL_AST_TYPE_A_ETYPE (type));
+      break;
+    case PKL_TYPE_STRUCT:
+      {
+        pkl_ast_node elem;
+
+        for (elem = PKL_AST_TYPE_S_ELEMS (type);
+             elem;
+             elem = PKL_AST_CHAIN (elem))
+          {
+            if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
+                && !pkl_ast_type_mappable_p (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem)))
+              return 0;
+          }
+
+        return 1;
+        break;
+      }
+    default:
+      break;
+    }
+
+  return 0;
+}
+
 /* Return PKL_AST_TYPE_COMPLETE_YES if the given TYPE is a complete
    type.  Return PKL_AST_TYPE_COMPLETE_NO otherwise.  This function
    assumes that the children of TYPE have correct completeness

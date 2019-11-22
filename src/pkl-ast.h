@@ -927,6 +927,7 @@ int pkl_ast_type_is_complete (pkl_ast_node type);
 void pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name);
 char *pkl_type_str (pkl_ast_node type, int use_given_name);
 int pkl_ast_func_all_optargs (pkl_ast_node type);
+int pkl_ast_type_mappable_p (pkl_ast_node type);
 
 /* PKL_AST_DECL nodes represent the declaration of a named entity:
    function, type, variable....

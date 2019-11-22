@@ -1439,7 +1439,9 @@ PKL_PHASE_END_HANDLER
    in a map should be an offset.
 
    If present, the expression evaluating to the IOS of a map should be
-   an integer.  */
+   an integer.
+
+   Not every time is mappeable.  Check for this here.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 {
@@ -1449,6 +1451,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
   pkl_ast_node map_offset_type = PKL_AST_TYPE (map_offset);
   pkl_ast_node map_ios = PKL_AST_MAP_IOS (map);
 
+  if (!pkl_ast_type_mappable_p (map_type))
+    {
+      PKL_ERROR (PKL_AST_LOC (map_type),
+                 "specified type cannot be mapped");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+  
   if (PKL_AST_TYPE_CODE (map_offset_type) != PKL_TYPE_OFFSET)
     {
       PKL_ERROR (PKL_AST_LOC (map_offset),
