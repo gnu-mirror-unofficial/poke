@@ -988,7 +988,7 @@ offset_type_specifier:
                     PKL_AST_LOC ($4) = @4;
                     PKL_AST_LOC ($$) = @$;
                 }
-        | OFFSETCONSTR simple_type_specifier ',' type_specifier '>'
+        | OFFSETCONSTR simple_type_specifier ',' simple_type_specifier '>'
                 {
                     $$ = pkl_ast_make_offset_type (pkl_parser->ast,
                                                    $2, $4);

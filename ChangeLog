@@ -1,3 +1,8 @@
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (offset_type_specifier): Allow simple types only
+	for the offset unit.
+
 2019-11-19 John Darrington <john@darrington.wattle.id.au>
 
 	* doc/poke.texi: Add indeces.
