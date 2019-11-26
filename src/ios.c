@@ -31,11 +31,12 @@
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
-#define IOS_GET_C_ERR_CHCK(c, io)	\
-{					\
-  (c) = io->dev_if->get_c ((io)->dev); 	\
-  if ((c) == IOD_EOF)			\
-    return IOS_EIOFF;			\
+#define IOS_GET_C_ERR_CHCK(c, io)               \
+  {                                             \
+  int ret = io->dev_if->get_c ((io)->dev); 	\
+  if (ret == IOD_EOF)                           \
+    return IOS_EIOFF;                           \
+  (c) = ret;                                    \
 }
 
 #define IOS_READ_INTO_CHARRAY_1BYTE(charray)		\
