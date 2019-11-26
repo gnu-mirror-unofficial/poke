@@ -44,6 +44,12 @@ void pvm_alloc_remove_gc_roots (void *pointer, size_t nelems);
 
 void *pvm_alloc (size_t size);
 
+/* Reallocate the given pointer to occupy SIZE bytes and return a
+   pointer to the allocated memory.  SIZE has the same semantics as in
+   realloc(3).  On error, return NULL.  */
+
+void *pvm_realloc (void *ptr, size_t size);
+
 /* Allocate a pvm_cls struct and return a pointer to the allocated
    memory.  This type-specific allocator is needed because the GC
    needs additional information to free these structs.  */

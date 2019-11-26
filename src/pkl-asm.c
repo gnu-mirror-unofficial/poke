@@ -108,7 +108,7 @@ struct pkl_asm_level
    prologue.  */
 
 #define PKL_ASM_LEVEL(PASM) ((PASM)->level)
-#define PKL_AST_MAX_POINTERS 1024
+#define PKL_AST_MAX_POINTERS 16
 
 struct pkl_asm
 {
@@ -1040,8 +1040,7 @@ pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
   pasm->error_label = jitter_fresh_label (routine);
   pasm->routine = routine;
 
-  pasm->pointers = pvm_alloc (sizeof (void*) * PKL_AST_MAX_POINTERS);
-  memset (pasm->pointers, 0, sizeof (void*) * PKL_AST_MAX_POINTERS);
+  pasm->pointers = NULL;
   pasm->next_pointer = 0;
 
   if (prologue)
@@ -1155,7 +1154,17 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
       /* Collect VAL if it is a pointer, i.e. a boxed value.  */
       if (PVM_VAL_BOXED_P (val))
         {
-          assert (pasm->next_pointer < PKL_AST_MAX_POINTERS);
+          if (pasm->next_pointer % PKL_AST_MAX_POINTERS == 0)
+            {
+              size_t size
+                = ((pasm->next_pointer + PKL_AST_MAX_POINTERS)
+                   * sizeof (void*));
+
+              pasm->pointers = pvm_realloc (pasm->pointers, size);
+              assert (pasm->pointers != NULL);
+              memset (pasm->pointers + pasm->next_pointer, 0,
+                      PKL_AST_MAX_POINTERS * sizeof (void*));
+            }
           pasm->pointers[pasm->next_pointer++] = PVM_VAL_BOX (val);
         }
 

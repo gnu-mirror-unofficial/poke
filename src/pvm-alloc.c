@@ -26,6 +26,12 @@ pvm_alloc (size_t size)
   return GC_MALLOC (size);
 }
 
+void *
+pvm_realloc (void *ptr, size_t size)
+{
+  return GC_REALLOC (ptr, size);
+}
+
 char *
 pvm_alloc_strdup (const char *string)
 {
