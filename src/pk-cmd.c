@@ -814,7 +814,7 @@ pk_cmd_find (const char *cmdname)
 	{
 	  /* Check if the command name matches.
 	     +1 to skip the leading '.' */
-	  if (0 == strcmp ((*c)->name, cmdname + 1))
+	  if (STREQ ((*c)->name, cmdname + 1))
 	    return *c;
 	}
     }
