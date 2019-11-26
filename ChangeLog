@@ -1,5 +1,10 @@
 2019-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke-dg.exp (poke-dg-test): Pass -q to poke to
+	avoid reading ~/.pokerc.
+
+2019-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios.c (IOS_GET_C_ERR_CHCK): Make sure to check get_c return
 	value as an int before casting it.
 	* src/ios-dev-file.c (ios_dev_file_getc): Do not rely on EOF ==
