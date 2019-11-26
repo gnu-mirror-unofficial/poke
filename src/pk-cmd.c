@@ -667,7 +667,6 @@ pk_cmd_exec (char *str)
 int
 pk_cmd_exec_script (const char *filename)
 {
-  int is_eof;
   FILE *fd = fopen (filename, "r");
 
   if (fd == NULL)
@@ -680,39 +679,25 @@ pk_cmd_exec_script (const char *filename)
      starting with the '#' character are comments, and ignored.
      Likewise, empty lines are also ignored.  */
 
-  is_eof = 0;
+  char *line = NULL;
+  size_t line_len = 0;
   while (1)
     {
-      size_t i;
       int ret;
-#define MAX_LINE 1025
-      char line[MAX_LINE]; /* XXX: yes this sucks.  */
-
-      if (is_eof)
-        break;
 
       /* Read a line from the file.  */
-      i = 0;
-      while (1)
-        {
-          int c = fgetc (fd);
+      errno = 0;
+      ssize_t n = getline (&line, &line_len, fd);
 
-          assert (i < MAX_LINE);
+      if (n == -1)
+	{
+	  if (errno != 0)
+	    perror (filename);
+	  break;
+	}
 
-          if (c == EOF)
-            {
-              line[i] = '\0';
-              is_eof = 1;
-              break;
-            }
-          else if ((char)c == '\n')
-            {
-              line[i] = '\0';
-              break;
-            }
-          else
-            line[i++] = (char)c;
-        }
+      if (line[n - 1] == '\n')
+	line[n - 1] = '\0';
 
       /* If the line is empty, or it starts with '#', or it contains
          just blank characters, just ignore it.  */
@@ -733,10 +718,12 @@ pk_cmd_exec_script (const char *filename)
         goto error;
     }
 
+  free (line);
   fclose (fd);
   return 0;
 
  error:
+  free (line);
   fclose (fd);
   return 1;
 }
