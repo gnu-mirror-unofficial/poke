@@ -1,3 +1,8 @@
+2019-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter (quake): New instruction.
+	(rot-swap-to-quake): New rewrite rule.
+
 2019-11-24 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-cmd.c (pk_cmd_exec_script): Use getline instead
