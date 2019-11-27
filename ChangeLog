@@ -1,3 +1,8 @@
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
+
+        * src/std.pk (crc32): New function.
+        * doc/poke.texi (CRC Functions): New node.
+
 2019-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pvm.jitter (quake): New instruction.

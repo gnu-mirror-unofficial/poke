@@ -108,6 +108,7 @@ The Standard Library
 * Conversion Functions::	catos, atoi, etc.
 * String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
+* CRC Functions::               Cyclic Redundancy Checksums.
 
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
@@ -3882,6 +3883,27 @@ prototype:
 @example
 deftype Comparator = (any,any):int;
 @end example
+
+@node CRC Functions
+@chapter CRC Functions
+@cindex CRC
+@cindex checksum
+
+Many file formats use checksums of one sort or another.
+Therefore you may want to write such a checksum or verify
+a checksum in a constrained field. @xref{Field Constraints}.
+
+Some formats use simple additive checksums.  Another common checksum
+is the Cyclic Redundancy Checksum (CRC).  The standard function
+@code{crc32} calculates the 32 bit CRC defined by ISO-3309.
+
+@example
+defun crc32 = (byte[] @var{buf}) uint<32>: @{ @dots{} @}
+@end example
+
+@noindent
+This function returns the 32 bit CRC for the data contained in the
+array @var{buf}.
 
 @node Writing Commands
 @chapter Writing Commands
