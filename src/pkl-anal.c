@@ -334,6 +334,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_break_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* Every return statement should be associated with a containing
+   function.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_return_stmt)
+{
+  pkl_ast_node return_stmt = PKL_PASS_NODE;
+
+  if (PKL_AST_RETURN_STMT_FUNCTION (return_stmt) == NULL)
+    {
+      PKL_ERROR (PKL_AST_LOC (return_stmt),
+                 "`return' statement without containing function");
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_anal1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
@@ -342,6 +359,7 @@ struct pkl_phase pkl_phase_anal1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_BREAK_STMT, pkl_anal1_ps_break_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL, pkl_anal1_ps_funcall),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_anal1_ps_func),
+   PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_anal1_ps_return_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),
