@@ -111,7 +111,9 @@ proc dg-data { args } {
             "$poke_commands -c [exec printf %q ".file $output_file"]"
     }
 
-    lappend poke_data_files $output_file
+    if { [lsearch -exact $poke_data_files $output_file] == -1} {
+        lappend poke_data_files $output_file
+    }
 }
 
 # We set LC_ALL and LANG to C so that we get the same error messages
@@ -171,6 +173,6 @@ proc poke_finish {} {
     global poke_data_files
 
     foreach f $poke_data_files {
-        file delete $poke_data_files
+        file delete -force $f
     }
 }

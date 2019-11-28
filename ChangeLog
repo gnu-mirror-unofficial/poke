@@ -1,5 +1,11 @@
 2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke-dg.exp (dg-data): Avoid appending duplicated
+	file names to poke_data_files.
+	(poke_finish): Fix deleting the temporary files.
+
+2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm.jitter: Add ios_write_string to the list of wrapped
 	functions.
 	(pokes): Implement instruction.
