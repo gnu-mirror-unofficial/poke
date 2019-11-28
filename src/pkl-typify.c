@@ -2159,6 +2159,23 @@ expected %s, got %s",
 }
 PKL_PHASE_END_HANDLER
 
+/* The base type in an offset type shall be an integral type.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_offset)
+{
+  pkl_ast_node offset_type = PKL_PASS_NODE;
+  pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (offset_type);
+
+  if (PKL_AST_TYPE_CODE (base_type) != PKL_TYPE_INTEGRAL)
+    {
+      PKL_ERROR (PKL_AST_LOC (base_type),
+                 "base type of offset types shall be integral");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_typify1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
@@ -2219,6 +2236,7 @@ struct pkl_phase pkl_phase_typify1 =
 
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_typify1_ps_type_integral),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_typify1_ps_type_array),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_typify1_ps_type_offset),
   };
 
 

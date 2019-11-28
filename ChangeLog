@@ -1,3 +1,10 @@
+2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_type_offset): New handler.
+	(pkl_phase_typify1): Register it.
+	* testsuite/poke.pkl/offset-type-diag-1.pk: New test.
+	* testsuite/poke.pkl/offset-type-diag-2.pk: Likewise.
+
 2019-11-24 John Darrington <john@darrington.wattle.id.au>
 
         * src/std.pk (crc32): New function.
