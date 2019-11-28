@@ -1175,6 +1175,19 @@ int
 ios_write_string (ios io, ios_off offset, int flags,
                   const char *value)
 {
-  /* XXX: writeme.  */
+  const char *p;
+  
+  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
+      == -1)
+    return IOS_EIOFF;
+
+  p = value;
+  do
+    {
+      if (io->dev_if->put_c (io->dev, *p) == IOD_EOF)
+        return IOS_EIOFF;
+    }
+  while (*(p++) != '\0');
+
   return IOS_OK;
 }
