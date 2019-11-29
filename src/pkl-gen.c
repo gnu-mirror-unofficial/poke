@@ -1483,8 +1483,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
   else
     {
       pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
-      pkl_ast_node map_offset_magnitude
-        = PKL_AST_OFFSET_MAGNITUDE (map_offset);
+      pkl_ast_node map_offset_magnitude = NULL;
 
       /* Push the IOS of the map.  */
       if (map_ios)
@@ -1499,7 +1498,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
 
          But optimize for offsets whose magnitude is an integer node,
          transforming to bit offsets at compile time.  */
-      if (PKL_AST_CODE (map_offset_magnitude) == PKL_AST_INTEGER)
+      if (PKL_AST_CODE (map_offset) == PKL_AST_OFFSET)
+        map_offset_magnitude = PKL_AST_OFFSET_MAGNITUDE (map_offset);
+          
+      if (map_offset_magnitude
+          && PKL_AST_CODE (map_offset_magnitude) == PKL_AST_INTEGER)
         {
           uint64_t magnitude
             = PKL_AST_INTEGER_VALUE (map_offset_magnitude);

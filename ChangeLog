@@ -1,5 +1,10 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_pr_map): Fix bug in optimization.
+	* testsuite/poke.pkl/map-offset-expr-1.pk: New test.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-asm.pks (atrim): Fix calculation of the resulting mapped
 	array offset.
 	* testsuite/poke.map/maps-trims-1.pk: New test.
