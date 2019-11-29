@@ -20,7 +20,6 @@
 
 #include <string.h>
 #include <unistd.h> /* For isatty */
-#include <sys/stat.h> /* For stat and stabuf */
 #include <textstyle.h>
 
 #include "poke.h" /* For poke_ostream.  */

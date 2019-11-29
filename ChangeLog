@@ -1,3 +1,7 @@
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-term.c: Remove unnecessary #include <sys/stat.h>
+
 2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/lib/poke-dg.exp (dg-data): Avoid appending duplicated
