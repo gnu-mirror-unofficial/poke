@@ -1276,6 +1276,15 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
 {
+  if (PKL_GEN_PAYLOAD->in_writer)
+    {
+      /* Stack: IOS BOFF VAL */
+      /* The offset to poke is stored in the TOS.  Replace the offset
+         at the TOS with the magnitude of the offset and let the
+         BASE_TYPE handler to tackle it.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS BOFF VAL VMAG */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS BOFF VMAG */
+    }
 }
 PKL_PHASE_END_HANDLER
 
