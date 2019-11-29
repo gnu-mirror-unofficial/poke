@@ -1,5 +1,10 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (array_mapper): Use bit-offsets for the array
+	offsets and for sbound.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.c (pkl_gen_pr_map): Convert map argument to
 	bit-offset.
 	(pkl_gen_pr_ass_stmt): Likewise.

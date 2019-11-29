@@ -35,10 +35,11 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_MAPPER
-;;; ( IOS OFF EBOUND SBOUND -- ARR )
+;;; ( IOS BOFF EBOUND SBOUND -- ARR )
 ;;;
-;;; Assemble a function that maps an array value at the given offset
-;;; OFF in the IO space IOS, with mapping attributes EBOUND and SBOUND.
+;;; Assemble a function that maps an array value at the given
+;;; bit-offset BOFF in the IO space IOS, with mapping attributes
+;;; EBOUND and SBOUND.
 ;;;
 ;;; If both EBOUND and SBOUND are null, then perform an unbounded map,
 ;;; i.e. read array elements from IO until EOF.  XXX: what about empty
@@ -49,8 +50,8 @@
 ;;; amount of elements are read, then raise PVM_E_MAP_BOUNDS.
 ;;;
 ;;; Otherwise, if SBOUND is not null, then perform a map bounded by the
-;;; given size (an offset), i.e. read array elements from IO until the
-;;; total size of the array is exactly SBOUND.  If SBOUND is exceeded,
+;;; given size (a bit-offset), i.e. read array elements from IO until
+;;; the total size of the array is exactly SBOUND.  If SBOUND is exceeded,
 ;;; then raise PVM_E_MAP_BOUNDS.
 ;;;
 ;;; Only one of EBOUND or SBOUND simultanously are supported.
@@ -65,43 +66,16 @@
         pushf
         regvar $sbound           ; Argument
         regvar $ebound           ; Argument
-        regvar $off              ; Argument
+        regvar $boff             ; Argument
         regvar $ios              ; Argument
-        push null
-        regvar $sboundm          ; Local
-        ;; Determine the offset of the array, in bits, and put it in a
-        ;; local.
-        pushvar $off            ; OFF
-        ogetm		        ; OFF OMAG
-        swap                    ; OMAG OFF
-        ogetu                   ; OMAG OFF OUNIT
-        rot                     ; OFF OUNIT OMAG
-        mullu                   ; OFF OUNIT OMAG (OUNIT*OMAG)
-        nip2                    ; OFF (OUNIT*OMAG)
-        regvar $eomag           ; OFF
+        ;; Initialize the bit-offset of the elements in a local.
+        pushvar $boff           ; BOFF
+        dup                     ; BOFF BOFF
+        regvar $eboff           ; BOFF
         ;; Initialize the element index to 0UL, and put it
         ;; in a local.
-        push ulong<64>0         ; OFF 0UL
-        regvar $eidx            ; OFF
-        ;; Save the offset in bits of the beginning of the array in a
-        ;; local.
-        pushvar $eomag          ; OFF EOMAG
-        regvar $aomag           ; OFF
-        ;; If it is not null, transform the SBOUND from an offset to a
-        ;; magnitude in bits.
-        pushvar $sbound         ; OFF SBOUND
-        bn .after_sbound_conv
-        ogetm                   ; OFF SBOUND SBOUNDM
-        swap                    ; OFF SBOUNDM SBOUND
-        ogetu                   ; OFF SBOUNDM SBOUND SBOUNDU
-        swap                    ; OFF SBOUNDM SBOUNDU SBOUND
-        drop                    ; OFF SOBUNDM SBOUNDU
-        mullu                   ; OFF SBOUNDM SBOUNDU (SBOUNDM*SBOUNDU)
-        nip2                    ; OFF (SBOUNDM*SBOUNDU)
-        popvar $sboundm         ; OFF
-        push null               ; OFF null
-.after_sbound_conv:
-        drop                    ; OFF
+        push ulong<64>0         ; BOFF 0UL
+        regvar $eidx            ; BOFF
         ;; Build the type of the new mapped array.  Note that we use
         ;; the bounds passed to the mapper instead of just subpassing
         ;; in array_type.  This is because this mapper should work for
@@ -130,14 +104,14 @@
         ba .end_loop_on
 .loop_on_sbound:
         drop                    ; OFF ATYPE
-        pushvar $sboundm        ; OFF ATYPE SBOUNDM
+        pushvar $sbound         ; OFF ATYPE SBOUND
         bn .loop_unbounded
-        pushvar $aomag          ; OFF ATYPE SBOUNDM AOMAG
-        addlu                   ; OFF ATYPE SBOUNDM AOMAG (SBOUNDM+AOMAG)
-        nip2                    ; OFF ATYPE (SBOUNDM+AOMAG)
-        pushvar $eomag          ; OFF ATYPE (SBOUNDM+AOMAG) EOMAG
-        gtlu                    ; OFF ATYPE (SBOUNDM+AOMAG) EOMAG ((SBOUNDM+AOMAG)>EOMAG)
-        nip2                    ; OFF ATYPE ((SBOUNDM+AOMAG)>EOMAG)
+        pushvar $boff           ; OFF ATYPE SBOUND BOFF
+        addlu                   ; OFF ATYPE SBOUND BOFF (SBOUND+BOFF)
+        nip2                    ; OFF ATYPE (SBOUND+BOFF)
+        pushvar $eboff          ; OFF ATYPE (SBOUND+BOFF) EBOFF
+        gtlu                    ; OFF ATYPE (SBOUND+BOFF) EBOFF ((SBOUND+BOFF)>EBOFF)
+        nip2                    ; OFF ATYPE ((SBOUND+BOFF)>EBOFF)
         ba .end_loop_on
 .loop_unbounded:
         drop                    ; OFF ATYPE
@@ -145,41 +119,35 @@
 .end_loop_on:
         .loop
                                 ; OFF ATYPE
-        ;; Mount the Ith element triplet: [EOFF EIDX EVAL]
-        pushvar $eomag          ; ... EOMAG
-        push ulong<64>1         ; ... EOMAG EOUNIT
-        mko                     ; ... EOFF
-        dup                     ; ... EOFF EOFF
+        ;; Mount the Ith element triplet: [EBOFF EIDX EVAL]
+        pushvar $eboff          ; ... EBOFF
+        dup                     ; ... EBOFF EBOFF
         push PVM_E_EOF
         pushe .eof
         push PVM_E_CONSTRAINT
         pushe .constraint_error
-        pushvar $ios            ; ... EOFF EOFF IOS
-        swap                    ; ... EOFF IOS EOFF
+        pushvar $ios            ; ... EBOFF EBOFF IOS
+        swap                    ; ... EBOFF IOS EBOFF
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
         pope
         pope
         ;; Update the current offset with the size of the value just
         ;; peeked.
-        siz                     ; ... EOFF EVAL ESIZ
-        rot                     ; ... EVAL ESIZ EOFF
-        ogetm                   ; ... EVAL ESIZ EOFF EOMAG
-        rot                     ; ... EVAL EOFF EOMAG ESIZ
-        ogetm                   ; ... EVAL EOFF EOMAG ESIZ ESIGMAG
-        rot                     ; ... EVAL EOFF ESIZ ESIGMAG EOMAG
-        addlu                   ; ... EVAL EOFF ESIZ ESIGMAG EOMAG (ESIGMAG+EOMAG)
-        popvar $eomag           ; ... EVAL EOFF ESIZ ESIGMAG EOMAG
-        drop                    ; ... EVAL EOFF ESIZ ESIGMAG
-        drop                    ; ... EVAL EOFF ESIZ
-        drop                    ; ... EVAL EOFF
-        pushvar $eidx           ; ... EVAL EOFF EIDX
-        rot                     ; ... EOFF EIDX EVAL
+        siz                     ; ... EBOFF EVAL ESIZ
+        quake                   ; ... EVAL EBOFF ESIZ
+        ogetm                   ; ... EVAL EBOFF ESIZ ESIZMAG
+        nip                     ; ... EVAL EBOFF ESIZMAG
+        addlu                   ; ... EVAL EBOFF ESIZMAG (EBOFF+ESIZMAG)
+        popvar $eboff           ; ... EVAL EBOFF ESIZMAG
+        drop                    ; ... EVAL EBOFF
+        pushvar $eidx           ; ... EVAL EBOFF EIDX
+        rot                     ; ... EBOFF EIDX EVAL
         ;; Increase the current index and process the next element.
-        pushvar $eidx           ; ... EOFF EIDX EVAL EIDX
-        push ulong<64>1         ; ... EOFF EIDX EVAL EIDX 1UL
-        addlu                   ; ... EOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
-        nip2                    ; ... EOFF EIDX EVAL (EIDX+1UL)
-        popvar $eidx            ; ... EOFF EIDX EVAL
+        pushvar $eidx           ; ... EBOFF EIDX EVAL EIDX
+        push ulong<64>1         ; ... EBOFF EIDX EVAL EIDX 1UL
+        addlu                   ; ... EBOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
+        nip2                    ; ... EBOFF EIDX EVAL (EIDX+1UL)
+        popvar $eidx            ; ... EBOFF EIDX EVAL
         .endloop
         push null
         ba .mountarray
@@ -220,16 +188,16 @@
         push PVM_E_EOF
         raise
 .mountarray:
-        drop                   ; OFF ATYPE [EOFF EIDX EVAL]...
-        pushvar $eidx          ; OFF ATYPE [EOFF EIDX EVAL]... NELEM
-        dup                    ; OFF ATYPE [EOFF EIDX EVAL]... NELEM NINITIALIZER
+        drop                   ; BOFF ATYPE [EBOFF EIDX EVAL]...
+        pushvar $eidx          ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM
+        dup                    ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM NINITIALIZER
         mka                    ; ARRAY
         ;; Check that the resulting array satisfies the mapping's
         ;; bounds (number of elements and total size.)
         pushvar $ebound        ; ARRAY EBOUND
         bnn .check_ebound
         drop                   ; ARRAY
-        pushvar $sboundm       ; ARRAY SBOUNDM
+        pushvar $sbound        ; ARRAY SBOUND
         bnn .check_sbound
         drop
         ba .bounds_ok
@@ -244,18 +212,18 @@
         drop                   ; ARRAY
         ba .bounds_ok
 .check_sbound:
-        swap                   ; SBOUNDM ARRAY
-        siz                    ; SBOUNDM ARRAY OFF
-        ogetm                  ; SBOUNDM ARRAY OFF OFFM
-        swap                   ; SBOUNDM ARRAY OFFM OFF
-        ogetu                  ; SBOUNDM ARRAY OFFM OFF OFFU
-        nip                    ; SBOUNDM ARRAY OFFM OFFU
-        mullu                  ; SBOUNDM ARRAY OFFM OFFU (OFFM*OFFU)
-        nip2                   ; SBOUNDM ARRAY (OFFM*OFFU)
-        rot                    ; ARRAY (OFFM*OFFU) SBOUNDM
-        sublu                  ; ARRAY (OFFM*OFFU) SBOUNDM ((OFFM*OFFU)-SBOUND)
+        swap                   ; SBOUND ARRAY
+        siz                    ; SBOUND ARRAY OFF
+        ogetm                  ; SBOUND ARRAY OFF OFFM
+        swap                   ; SBOUND ARRAY OFFM OFF
+        ogetu                  ; SBOUND ARRAY OFFM OFF OFFU
+        nip                    ; SBOUND ARRAY OFFM OFFU
+        mullu                  ; SBOUND ARRAY OFFM OFFU (OFFM*OFFU)
+        nip2                   ; SBOUND ARRAY (OFFM*OFFU)
+        rot                    ; ARRAY (OFFM*OFFU) SBOUND
+        sublu                  ; ARRAY (OFFM*OFFU) SBOUND ((OFFM*OFFU)-SBOUND)
         bnzlu .bounds_fail
-        drop                   ; ARRAY (OFFU*OFFM) SBOUNDM
+        drop                   ; ARRAY (OFFU*OFFM) SBOUND
         drop                   ; ARRAY (OFFU*OFFM)
         drop                   ; ARRAY
 .bounds_ok:

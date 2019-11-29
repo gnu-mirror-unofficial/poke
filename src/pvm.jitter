@@ -1907,7 +1907,7 @@ end
 
 ## Array instructions.
 
-# ( OFF TYP [OFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
+# ( BOFF TYP [BOFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
 instruction mka ()
   code
     size_t i;
