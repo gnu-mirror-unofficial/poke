@@ -816,13 +816,10 @@ instruction note (?n pvm_literal_printer)
   end
 end
 
-instruction siz () # ( VAL -- VAL OFF )
+instruction siz () # ( VAL -- VAL ULONG )
   code
     uint64_t size = pvm_sizeof (JITTER_TOP_STACK ());
-    pvm_val unit = pvm_make_ulong (1, 64);
-    pvm_val offset = pvm_make_offset (pvm_make_ulong (size, 64), unit);
-
-    JITTER_PUSH_STACK (offset);
+    JITTER_PUSH_STACK (pvm_make_ulong (size, 64));
   end
 end
 

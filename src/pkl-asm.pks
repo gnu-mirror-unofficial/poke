@@ -473,14 +473,12 @@
 
         .macro array_conv_siz #bounder
         siz                     ; ARR SIZ
-        ogetm                   ; ARR SIZ SIZM
-        nip                     ; ARR SIZM
-        push #bounder           ; ARR SIZM CLS
-        call                    ; ARR SIZM BOUND
-        .e ogetmn               ; ARR SIZM BOUND BOUNDM
-        rot                     ; ARR BOUND BOUNDM SIZM
-        eqlu                    ; ARR BOUND BOUNDM SIZM (BOUNDM==SIZM)
-        nip2                    ; ARR BOUND (BOUNDM==SIZM)
+        push #bounder           ; ARR SIZ CLS
+        call                    ; ARR SIZ BOUND
+        .e ogetmn               ; ARR SIZ BOUND BOUNDM
+        rot                     ; ARR BOUND BOUNDM SIZ
+        eqlu                    ; ARR BOUND BOUNDM SIZ (BOUNDM==SIZ)
+        nip2                    ; ARR BOUND (BOUNDM==SIZ)
         bnzi .bound_ok
         push PVM_E_CONV
         raise

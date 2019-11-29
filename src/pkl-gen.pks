@@ -135,10 +135,8 @@
         ;; peeked.
         siz                     ; ... EBOFF EVAL ESIZ
         quake                   ; ... EVAL EBOFF ESIZ
-        ogetm                   ; ... EVAL EBOFF ESIZ ESIZMAG
-        nip                     ; ... EVAL EBOFF ESIZMAG
-        addlu                   ; ... EVAL EBOFF ESIZMAG (EBOFF+ESIZMAG)
-        popvar $eboff           ; ... EVAL EBOFF ESIZMAG
+        addlu                   ; ... EVAL EBOFF ESIZ (EBOFF+ESIZ)
+        popvar $eboff           ; ... EVAL EBOFF ESIZ
         drop                    ; ... EVAL EBOFF
         pushvar $eidx           ; ... EVAL EBOFF EIDX
         rot                     ; ... EBOFF EIDX EVAL
@@ -213,15 +211,9 @@
         ba .bounds_ok
 .check_sbound:
         swap                   ; SBOUND ARRAY
-        siz                    ; SBOUND ARRAY OFF
-        ogetm                  ; SBOUND ARRAY OFF OFFM
-        swap                   ; SBOUND ARRAY OFFM OFF
-        ogetu                  ; SBOUND ARRAY OFFM OFF OFFU
-        nip                    ; SBOUND ARRAY OFFM OFFU
-        mullu                  ; SBOUND ARRAY OFFM OFFU (OFFM*OFFU)
-        nip2                   ; SBOUND ARRAY (OFFM*OFFU)
-        rot                    ; ARRAY (OFFM*OFFU) SBOUND
-        sublu                  ; ARRAY (OFFM*OFFU) SBOUND ((OFFM*OFFU)-SBOUND)
+        siz                    ; SBOUND ARRAY SIZ
+        rot                    ; ARRAY SIZ SBOUND
+        sublu                  ; ARRAY SIZ SBOUND (SIZ-SBOUND)
         bnzlu .bounds_fail
         drop                   ; ARRAY (OFFU*OFFM) SBOUND
         drop                   ; ARRAY (OFFU*OFFM)
@@ -336,10 +328,8 @@
         ;; peeked.
         siz                     ; ... EBOFF EVAL ESIZ
         quake                   ; ... EVAL EBOFF ESIZ
-        ogetm                   ; ... EVAL EBOFF ESIZ ESIZMAG
-        nip                     ; ... EVAL EBOFF ESIZMAG
-        addlu                   ; ... EVAL EBOFF ESIZMAG (EBOFF+ESIZMAG)
-        popvar $eboff           ; ... EVAL EBOFF ESIZMAG
+        addlu                   ; ... EVAL EBOFF ESIZ (EBOFF+ESIZ)
+        popvar $eboff           ; ... EVAL EBOFF ESIZ
         drop                    ; ... EVAL EBOFF
         pushvar $eidx           ; ... EVAL EBOFF EIDX
         rot                     ; ... EBOFF EIDX EVAL
@@ -361,15 +351,9 @@
         ba .sbound_ok
 .check_sbound:
         swap                    ; SBOUND ARRAY
-        siz                     ; SBOUND ARRAY OFF
-        ogetm                   ; SBOUND ARRAY OFF OFFM
-        swap                    ; SBOUND ARRAY OFFM OFF
-        ogetu                   ; SBOUND ARRAY OFFM OFF OFFU
-        nip                     ; SBOUND ARRAY OFFM OFFU
-        mullu                   ; SBOUND ARRAY OFFM OFFU (OFFM*OFFU)
-        nip2                    ; SBOUND ARRAY (OFFM*OFFU)
-        rot                     ; ARRAY (OFFM*OFFU) SBOUND
-        sublu                   ; ARRAY (OFFM*OFFU) SBOUND ((OFFM*OFFU)-SBOUND)
+        siz                     ; SBOUND ARRAY SIZ
+        rot                     ; ARRAY SIZ SBOUND
+        sublu                   ; ARRAY SIZ SBOUND (SIZ-SBOUND)
         bnzlu .bounds_fail
         drop                    ; ARRAY (OFFU*OFFM) SBOUND
         drop                    ; ARRAY (OFFU*OFFM)
@@ -467,25 +451,6 @@
         return
         .end
 
-;;; RAS_MACRO_OFF_PLUS_SIZEOF
-;;; ( VAL BOFF -- VAL BOFF NBOFF )
-;;;
-;;; Given a value and a bit-offset in the stack, provide a bit-offset whose
-;;; value is BOFF + sizeof(VAL).
-;;;
-;;; XXX: remove when siz returns a bit-offset.
-
-        .macro off_plus_sizeof
-        swap                   ; BOFF VAL
-        siz                    ; BOFF VAL ESIZ
-        rot                    ; VAL ESIZ BOFF
-        swap                   ; VAL BOFF ESIZ
-        ogetm                  ; VAL BOFF ESIZ ESIZM
-        nip                    ; VAL BOFF ESIZM
-        addlu                  ; VAL BOFF ESIZM (BOFF+ESIZM)
-        nip                    ; VAL BOFF (BOFF+ESIZM)
-        .end
-
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL
 ;;; ( BOFF SBOFF - BOFF )
 ;;;
@@ -581,7 +546,12 @@
         ;; Calculate the offset marking the end of the field, which is
         ;; the field's offset plus it's size.
         rot                    ; STR VAL BOFF
-        .e off_plus_sizeof     ; STR VAL BOFF NBOFF
+        swap                   ; STR BOFF VAL
+        siz                    ; STR BOFF VAL SIZ
+        rot                    ; STR VAL SIZ BOFF
+        swap                   ; STR VAL BOFF SIZ
+        addlu
+        nip                    ; STR VAL BOFF (BOFF+SIZ)
         tor                    ; STR VAL BOFF
         nrot                   ; BOFF STR VAL
         fromr                  ; BOFF STR VAL NBOFF

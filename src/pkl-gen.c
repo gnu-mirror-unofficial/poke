@@ -2698,6 +2698,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
         }
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SIZ);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_ulong (1, 64));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
       /* XXX up-unit to the highest possible power of 2.  */
       break;

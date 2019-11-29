@@ -1,5 +1,16 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm.jitter (siz): Modify to generate a bit-offset in an
+	ulong<64> instead of an offset.
+	* src/pkl-gen.pks (off_plus_sizeof): Remove.
+	(array_mapper): Adapt accordingly.
+	(array_valmapper): Likewise.
+	(struct_field_mapper): Likewise.
+	* src/pkl-asm.pks (array_conv_siz): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Likewise.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (array_valmapper): Adapt to bit-offsets.
 
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
