@@ -250,8 +250,8 @@ typedef struct pvm_array *pvm_array;
    how to obtain these values.
 
    OFFSET is an ulong<64> value holding the bit offset of the element,
-   relative to the array's offset, if the array is mapped.  If the
-   array is not mapped then this is PVM_NULL.
+   relative to the begginnig of the IO space.  If the array is not
+   mapped then this is PVM_NULL.
 
    VALUE is the value contained in the element.  If the array is
    mapped this is the cached value, which is returned by `aref'.  */
