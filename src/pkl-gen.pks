@@ -433,7 +433,7 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_WRITER
-;;; ( IOS OFF VAL -- )
+;;; ( IOS BOFF VAL -- )
 ;;;
 ;;; Assemble a function that pokes a mapped array value to it's mapped
 ;;; offset in the current IOS.
@@ -445,7 +445,7 @@
         prolog
         pushf
         regvar $value           ; Argument
-        drop                    ; The offset is not used.
+        drop                    ; The bit-offset is not used.
         regvar $ios             ; Argument
         push ulong<64>0         ; 0UL
         regvar $idx             ; _
@@ -463,10 +463,10 @@
         pushvar $idx            ; ARRAY I
         aref                    ; ARRAY I VAL
         nrot                    ; VAL ARRAY I
-        arefo                   ; VAL ARRAY I EOFF
-        nip2                    ; VAL EOFF
-        swap                    ; EOFF VAL
-        pushvar $ios            ; EOFF VAL IOS
+        arefo                   ; VAL ARRAY I EBOFF
+        nip2                    ; VAL EBOFF
+        swap                    ; EBOFF VAL
+        pushvar $ios            ; EBOFF VAL IOS
         nrot                    ; IOS EOFF VAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
@@ -856,8 +856,8 @@
         drop                    ; SCT I
         srefi                   ; SCT I EVAL
         nrot                    ; EVAL SCT I
-        srefio                  ; EVAL SCT I EOFF
-        nip2                    ; EVAL EOFF
+        srefio                  ; EVAL SCT I EBOFF
+        nip2                    ; EVAL EBOFF
         swap                    ; EOFF EVAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
@@ -871,7 +871,7 @@
         .end
 
 ;;; RAS_FUNCTION_STRUCT_WRITER
-;;; ( OFF VAL -- )
+;;; ( BOFF VAL -- )
 ;;;
 ;;; Assemble a function that pokes a mapped struct value to it's mapped
 ;;; offset in the current IOS.
@@ -889,7 +889,7 @@
         prolog
         pushf
         regvar $sct
-        drop                    ; OFF is not used.
+        drop                    ; BOFF is not used.
 .c { uint64_t i;
  .c for (i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {

@@ -1,5 +1,11 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_writer): Adapt to bit-offsets.
+	(struct_field_writer): Likewise.
+	(array_writer): Likewise.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (struct_mapper): Use bit-offsets for the struct
 	offsets.
 	(struct_field_mapper): Likewise.
