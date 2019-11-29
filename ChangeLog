@@ -1,5 +1,15 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_pr_map): Convert map argument to
+	bit-offset.
+	(pkl_gen_pr_ass_stmt): Likewise.
+	(pkl_gen_pr_type_offset): Do not convert to bit-offset.
+	(pkl_gen_ps_type_integral): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	* src/pvm.jitter: Remove invalid rot-swap-to-quake rewrite.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm.jitter: Update comments to reflect that peek/poke
 	instructions get bit-offsets, not regular offsets.
 

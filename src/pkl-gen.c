@@ -576,7 +576,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
          offsets, strings, etc).  The strategy here is simple: we just
          generate a writer for the type.  */
 
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* IOS OFF VAL */
+      /* Convert the offset to a bit-offset.  The offset is guaranteed
+         to be ulong<64> with unit bits, as per promo.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* IOS BOFF VAL */
+
       PKL_GEN_PAYLOAD->in_writer = 1;
       PKL_PASS_SUBPASS (PKL_AST_TYPE (lvalue));
       PKL_GEN_PAYLOAD->in_writer = 0;
@@ -1270,15 +1276,6 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
 {
-  if (PKL_GEN_PAYLOAD->in_writer)
-    {
-      /* Stack: IOS OFF VAL */
-      /* The offset to poke is stored in the TOS.  Replace the offset
-         at the TOS with the magnitude of the offset and let the
-         BASE_TYPE handler to tackle it.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS OFF VAL VMAG */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS OFF VMAG */
-    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -1477,6 +1474,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
   else
     {
       pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
+      pkl_ast_node map_offset_magnitude
+        = PKL_AST_OFFSET_MAGNITUDE (map_offset);
 
       /* Push the IOS of the map.  */
       if (map_ios)
@@ -1485,11 +1484,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
         /* PVM_NULL means use the current IO space, if any.  */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
-      /* Push the offset of the map.  */
-      /* XXX converted to a bit-offset in an ulong<64>.  */
-      /* XXX here we can assume the offset is offset<ulong<64>,b> as per
-         promo.  */
-      PKL_PASS_SUBPASS (map_offset);
+      /* Push the offset of the map and convert to a bit-offset.  Note
+         that the offset is guaranteed to be an ulong<64> with unit
+         bits, as per promo.
+
+         But optimize for offsets whose magnitude is an integer node,
+         transforming to bit offsets at compile time.  */
+      if (PKL_AST_CODE (map_offset_magnitude) == PKL_AST_INTEGER)
+        {
+          uint64_t magnitude
+            = PKL_AST_INTEGER_VALUE (map_offset_magnitude);
+
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (magnitude, 64));
+        }
+      else
+        {
+          PKL_PASS_SUBPASS (map_offset);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+        }
 
       PKL_GEN_PAYLOAD->in_mapper = 1;
       PKL_PASS_SUBPASS (map_type);
@@ -1773,12 +1787,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
      check for in_mapper.  */
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: IOS OFF VAL */
-      /* XXX turn OFF to bit-offset  */
-      pkl_asm_insn (pasm, PKL_INSN_SWAP); /* IOS VAL OFF */
-      pkl_asm_insn (pasm, PKL_INSN_OGETM); /* IOS VAL OFF OFFM */
-      pkl_asm_insn (pasm, PKL_INSN_NIP); /* IOS VAL OFFM */
-      pkl_asm_insn (pasm, PKL_INSN_SWAP); /* IOS OFFM VAL */
+      /* Stack: IOS BOFF VAL */
       switch (PKL_GEN_PAYLOAD->endian)
         {
         case PKL_AST_ENDIAN_DFL:
@@ -1798,10 +1807,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
     }
   else if (PKL_GEN_PAYLOAD->in_mapper)
     {
-      /* Stack: IOS OFF */
-      /* XXX turn OFF to bit-offset */
-      pkl_asm_insn (pasm, PKL_INSN_OGETM); /* IOS OFF OFFM */
-      pkl_asm_insn (pasm, PKL_INSN_NIP); /* IOS OFFM */
+      /* Stack: IOS BOFF */
       switch (PKL_GEN_PAYLOAD->endian)
         {
         case PKL_AST_ENDIAN_DFL:
@@ -1821,7 +1827,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
     }
   else if (PKL_GEN_PAYLOAD->in_valmapper)
     {
-      /* Stack: VAL NVAL OFF */
+      /* Stack: VAL NVAL BOFF */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* NVAL */
     }
@@ -2113,25 +2119,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
 
   if (PKL_GEN_PAYLOAD->in_writer)
     {
-      /* Stack: IOS OFF STR */
-      /* XXX turn OFF to bit-offset  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS STR OFF */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS STR OFF OFFM */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS STR OFFM */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS OFFM STR */
+      /* Stack: IOS BOFF STR */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POKES);
     }
   else if (PKL_GEN_PAYLOAD->in_mapper)
     {
-      /* Stack: IOS OFF */
-      /* XXX turn OFF to bit-offset */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS OFF OFFM */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS OFFM */
+      /* Stack: IOS BOFF */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEEKS);
     }
   else if (PKL_GEN_PAYLOAD->in_valmapper)
     {
-      /* Stack: VAL NVAL OFF */
+      /* Stack: VAL NVAL BOFF */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
     }
