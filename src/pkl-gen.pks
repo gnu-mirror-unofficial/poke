@@ -513,41 +513,30 @@
         .end
 
 ;;; RAS_MACRO_OFF_PLUS_SIZEOF
-;;; ( VAL OFF -- VAL OFF NOFF )
+;;; ( VAL BOFF -- VAL BOFF NBOFF )
 ;;;
-;;; Given a value and an offset in the stack, provide an offset whose
-;;; value is OFF + sizeof(VAL).
+;;; Given a value and a bit-offset in the stack, provide a bit-offset whose
+;;; value is BOFF + sizeof(VAL).
 ;;;
-;;; XXX this can be greatly simplified if it can be assumed OFF
-;;; is of type offset<uint<64>,b>.
+;;; XXX: remove when siz returns a bit-offset.
 
         .macro off_plus_sizeof
-        swap                   ; OFF VAL
-        siz                    ; OFF VAL ESIZ
-        rot                    ; VAL ESIZ OFF
-        swap                   ; VAL OFF ESIZ
-        ogetm                  ; VAL OFF ESIZ ESIZM
-        nip                    ; VAL OFF ESIZM
-        swap                   ; VAL ESIZM OFF
-        ogetm                  ; VAL ESIZM OFF OFFM
-        swap                   ; VAL ESIZM OFFM OFF
-        ogetu                  ; VAL ESIZM OFFM OFF OFFU
-        rot                    ; VAL ESIZM OFF OFFU OFFM
-        mullu
-        nip2                   ; VAL ESIZM OFF (OFFU*OFFM)
-        rot                    ; VAL OFF (OFFU*OFFM) ESIZM
-        addlu
-        nip2                   ; VAL OFF (OFFU*OFFM+ESIZM)
-        push ulong<64>1        ; VAL OFF (OFFU*OFFM+ESIZM) 1UL
-        mko                    ; VAL OFF NOFF
+        swap                   ; BOFF VAL
+        siz                    ; BOFF VAL ESIZ
+        rot                    ; VAL ESIZ BOFF
+        swap                   ; VAL BOFF ESIZ
+        ogetm                  ; VAL BOFF ESIZ ESIZM
+        nip                    ; VAL BOFF ESIZM
+        addlu                  ; VAL BOFF ESIZM (BOFF+ESIZM)
+        nip                    ; VAL BOFF (BOFF+ESIZM)
         .end
 
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL
-;;; ( OFF SOFF - OFF )
+;;; ( BOFF SBOFF - BOFF )
 ;;;
 ;;; Given a struct type element, it's offset and the offset of the struct
-;;; on the stack, increase the offset by the element's label, in case
-;;; it exists.
+;;; on the stack, increase the bit-offset by the element's label, in
+;;; case it exists.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -556,31 +545,22 @@
 
         .macro handle_struct_field_label
    .c if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field) == NULL)
-        drop                    ; OFF
+        drop                    ; BOFF
    .c else
    .c {
-        nip                     ; SOFF
+        nip                     ; SBOFF
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
-                                ; SOFF LOFF
-        ogetm                   ; SOFF LOFF LOFFM
-        swap                    ; SOFF LOFFM LOFF
-        ogetu                   ; SOFF LOFFM LOFF LOFFU
-        nip                     ; SOFF LOFFM LOFFU
+                                ; SBOFF LOFF
+        ogetm                   ; SBOFF LOFF LOFFM
+        swap                    ; SBOFF LOFFM LOFF
+        ogetu                   ; SBOFF LOFFM LOFF LOFFU
+        nip                     ; SBOFF LOFFM LOFFU
         mullu
-        nip2                    ; SOFF (LOFFM*LOFFU)
-        swap                    ; (LOFFM*LOFFU) SOFF
-        ogetm                   ; (LOFFM*LOFFU) SOFF SOFFM
-        swap                    ; (LOFFM*LOFFU) SOFFM SOFF
-        ogetu                   ; (LOFFM*LOFFU) SOFFM SOFF SOFFU
-        nip                     ; (LOFFM*LOFFU) SOFFM SOFFU
-        mullu
-        nip2                    ; (LOFFM*LOFFU) (SOFFM*SOFFU)
+        nip2                    ; SBOFF (LOFFM*LOFFU)
         addlu
-        nip2                    ; (LOFFM*LOFFU+SOFFM*SOFFU)
-        push ulong<64>1         ; (LOFFM*LOFFU+SOFFM*SOFFU) 1UL
-        mko                     ; OFF
+        nip2                    ; (SBOFF+LOFFM*LOFFU)
    .c }
         .end
 
@@ -611,11 +591,11 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_MAPPER
-;;; ( IOS OFF SOFF -- OFF STR VAL NOFF )
+;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Map a struct field from the current IOS.
-;;; SOFF is the offset of the beginning of the struct.
-;;; NOFF is the offset marking the end of this field.
+;;; SBOFF is the bit-offset of the beginning of the struct.
+;;; NBOFF is the bit-offset marking the end of this field.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -624,36 +604,36 @@
 
         .macro struct_field_mapper
         ;; Increase OFF by the label, if the field has one.
-        .e handle_struct_field_label    ; IOS OFF
-        dup                             ; IOS OFF OFF
-        nrot                            ; OFF IOS OFF
+        .e handle_struct_field_label    ; IOS BOFF
+        dup                             ; IOS BOFF BOFF
+        nrot                            ; BOFF IOS BOFF
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
         .c PKL_GEN_PAYLOAD->endian = endian; }
-                                	; OFF VAL
-        dup                             ; OFF VAL VAL
-        regvar $val                     ; OFF VAL
+                                	; BOFF VAL
+        dup                             ; BOFF VAL VAL
+        regvar $val                     ; BOFF VAL
    .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (field) == NULL)
         push null
    .c else
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (field));
-                                	; OFF VAL STR
-        swap                            ; OFF STR VAL
+                                	; BOFF VAL STR
+        swap                            ; BOFF STR VAL
         ;; Evaluate the field's constraint and raise
         ;; an exception if not satisfied.
         .e check_struct_field_constraint
         ;; Calculate the offset marking the end of the field, which is
         ;; the field's offset plus it's size.
-        rot                    ; STR VAL OFF
-        .e off_plus_sizeof     ; STR VAL OFF NOFF
-        tor                    ; STR VAL OFF
-        nrot                   ; OFF STR VAL
-        fromr                  ; OFF STR VAL NOFF
+        rot                    ; STR VAL BOFF
+        .e off_plus_sizeof     ; STR VAL BOFF NBOFF
+        tor                    ; STR VAL BOFF
+        nrot                   ; BOFF STR VAL
+        fromr                  ; BOFF STR VAL NBOFF
         .end
 
 ;;; RAS_FUNCTION_STRUCT_MAPPER
-;;; ( IOS OFF EBOUND SBOUND -- SCT )
+;;; ( IOS BOFF EBOUND SBOUND -- SCT )
 ;;;
 ;;; Assemble a function that maps a struct value at the given offset
 ;;; OFF.
@@ -661,7 +641,7 @@
 ;;; Both EBOUND and SBOUND are always null, and not used, i.e. struct maps
 ;;; are not bounded by either number of fields or size.
 ;;;
-;;; OFF should be of type offset<uint<64>,*>.
+;;; BOFF should be of type uint<64>.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -685,12 +665,12 @@
         pushf
         drop                    ; sbound
         drop                    ; ebound
-        regvar $off
+        regvar $boff
         regvar $ios
         push ulong<64>0
         regvar $nfield
-        pushvar $off            ; OFF
-        dup                     ; OFF OFF
+        pushvar $boff           ; BOFF
+        dup                     ; BOFF BOFF
         ;; Iterate over the elements of the struct type.
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
@@ -709,33 +689,33 @@
         push PVM_E_CONSTRAINT
         pushe .alternative_failed
  .c   }
-        pushvar $ios             ; ...[EOFF ENAME EVAL] NEOFF IOS
-        swap                     ; ...[EOFF ENAME EVAL] IOS NEOFF
-        pushvar $off             ; ...[EOFF ENAME EVAL] IOS NEOFF OFF
-        .e struct_field_mapper   ; ...[EOFF ENAME EVAL] NEOFF
+        pushvar $ios             ; ...[EBOFF ENAME EVAL] NEOFF IOS
+        swap                     ; ...[EBOFF ENAME EVAL] IOS NEOFF
+        pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEOFF OFF
+        .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         pope
  .c   }
-        ;; If the struct is pinned, replace NEOFF with OFF
+        ;; If the struct is pinned, replace NEBOFF with BOFF
  .c   if (PKL_AST_TYPE_S_PINNED (type_struct))
  .c   {
         drop
-        pushvar $off            ; ...[EOFF ENAME EVAL] OFF
+        pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
  .c   }
         ;; Increase the number of fields.
-        pushvar $nfield         ; ...[EOFF ENAME EVAL] NEOFF NFIELD
-        push ulong<64>1         ; ...[EOFF ENAME EVAL] NEOFF NFIELD 1UL
+        pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD
+        push ulong<64>1         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD 1UL
         addl
-        nip2                    ; ...[EOFF ENAME EVAL] NEOFF (NFIELD+1UL)
-        popvar $nfield          ; ...[EOFF ENAME EVAL] NEOFF
+        nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
+        popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         ;; Union field successfully mapped.  We are done.
         ba .union_fields_done
 .alternative_failed:
         ;; Drop the exception number and try next alternative.
-        drop                    ; ...[EOFF ENAME EVAL] NEOFF
+        drop                    ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c }
  .c if (PKL_AST_TYPE_S_UNION (type_struct))
@@ -745,7 +725,7 @@
         raise
  .c }
 .union_fields_done:
-        drop  			; ...[EOFF ENAME EVAL]
+        drop  			; ...[EBOFF ENAME EVAL]
         ;; Ok, at this point all the struct field triplets are
         ;; in the stack.
         ;; Iterate over the methods of the struct type.
@@ -777,12 +757,12 @@
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (nmethod, 64));
  .c }
         ;;  Push the number of fields
-        pushvar $nfield         ; OFF [OFF STR VAL]... NFIELD
+        pushvar $nfield         ; BOFF [EBOFF STR VAL]... NFIELD
         ;; Finally, push the struct type and call mksct.
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
         .c PKL_PASS_SUBPASS (type_struct);
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
-                                ; OFF [OFF STR VAL]... NFIELD TYP
+                                ; BOFF [EBOFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
         popf 1
         return

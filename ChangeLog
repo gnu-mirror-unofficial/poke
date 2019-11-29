@@ -1,5 +1,13 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_mapper): Use bit-offsets for the struct
+	offsets.
+	(struct_field_mapper): Likewise.
+	(handle_struct_field_label): Likewise.
+	(off_plus_sizeof): Likewise.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (array_mapper): Use bit-offsets for the array
 	offsets and for sbound.
 

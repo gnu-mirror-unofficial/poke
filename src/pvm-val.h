@@ -275,8 +275,9 @@ pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
    IO is an int<32> value that identifies the IO space where the value
    is mapped.  If the structure is not mapped then this is PVM_NULL.
 
-   OFFSET is the offset in the current IO space where the structure is
-   mapped.  If the structure is not mapped then this is PVM_NULL.
+   OFFSET is an ulong<64> value holding the bit offset of in the IO
+   space where the structure is mapped.  If the structure is not
+   mapped then this is PVM_NULL.
 
    TYPE is the type of the struct.  This includes the types of the
    struct fields.
@@ -318,8 +319,9 @@ struct pvm_struct
 /* Struct fields hold the data of the fields, and/or information on
    how to obtain these values.
 
-   OFFSET is the offset, relative to the beginning of the struct,
-   where the struct field resides when stored.
+   OFFSET is an ulong<64> value containing the the bit-offset,
+   relative to the beginning of the struct, where the struct field
+   resides when stored.
 
    NAME is a string containing the name of the struct field.  This
    name should be unique in the struct.
