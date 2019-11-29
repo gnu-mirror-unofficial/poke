@@ -429,8 +429,7 @@ pvm_sizeof (pvm_val val)
       if (sct_offset == PVM_NULL)
         sct_offset_bits = 0;
       else
-        sct_offset_bits = (PVM_VAL_ULONG (PVM_VAL_OFF_MAGNITUDE (sct_offset))
-                           * PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (sct_offset)));
+        sct_offset_bits = PVM_VAL_ULONG (sct_offset);
 
       nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
 
@@ -446,8 +445,7 @@ pvm_sizeof (pvm_val val)
             size += elem_size_bits;
           else
             {
-              elem_offset_bits = ((PVM_VAL_ULONG (PVM_VAL_OFF_MAGNITUDE (elem_offset))
-                                   * PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (elem_offset))));
+              elem_offset_bits = PVM_VAL_ULONG (elem_offset);
 
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
               size = MAX (size, elem_offset_bits - sct_offset_bits + elem_size_bits);
