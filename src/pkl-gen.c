@@ -2745,7 +2745,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
             jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
             if (attr == PKL_AST_ATTR_OFFSET)
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
+              {
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                              pvm_make_ulong (1, 64));
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
+              }
             else
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);

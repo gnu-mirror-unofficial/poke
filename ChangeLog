@@ -1,5 +1,10 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Convert the value returned
+	by mgeto to an offset value.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm-val.c (pvm_sizeof): Struct fields now store bit-offsets
 	instead of offsets.
 
