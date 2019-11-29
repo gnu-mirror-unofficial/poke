@@ -229,7 +229,7 @@ late-header-c
   io, offset, 0, bits, endian, value
 
 /* Integral peek instructions.
-   ( IOS OFF -- VAL )  */
+   ( IOS BOFF -- VAL )  */
 #define PVM_PEEK(TYPE,IOTYPE,NENC,ENDIAN,BITS,IOARGS)                        \
   do                                                                         \
    {                                                                         \
@@ -265,7 +265,7 @@ late-header-c
    } while (0)
 
 /* Integral poke instructions.
-   ( IOS OFF VAL -- )  */
+   ( IOS BOFF VAL -- )  */
 #define PVM_POKE(TYPE,IOTYPE,NENC,ENDIAN,BITS,IOARGS)                        \
   do                                                                         \
    {                                                                         \
@@ -2452,7 +2452,7 @@ instruction write () # ( VAL -- VAL )
 end
 
 # peeki NENC,ENDIAN,BITS
-# ( IOS OFF -- INT )
+# ( IOS BOFF -- INT )
 
 instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2462,7 +2462,7 @@ instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # peekiu ENDIAN,BITS
-# ( IOS OFF -- UINT )
+# ( IOS BOFF -- UINT )
 
 instruction peekiu (?n endian_printer,?n bits_printer)
   code
@@ -2472,7 +2472,7 @@ instruction peekiu (?n endian_printer,?n bits_printer)
 end
 
 # peekl NENC,ENDIAN,BITS
-# ( IOS OFF -- LONG )
+# ( IOS BOFF -- LONG )
 
 instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2482,7 +2482,7 @@ instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # peeklu ENDIAN,BITS
-# ( IOS OFF -- ULONG )
+# ( IOS BOFF -- ULONG )
 
 instruction peeklu (?n endian_printer,?n bits_printer)
   code
@@ -2492,7 +2492,7 @@ instruction peeklu (?n endian_printer,?n bits_printer)
 end
 
 # peekdi BITS
-# ( IOS OFF -- INT )
+# ( IOS BOFF -- INT )
 
 instruction peekdi (?n bits_printer)
   code
@@ -2502,7 +2502,7 @@ instruction peekdi (?n bits_printer)
 end
 
 # peekdiu BITS
-# ( IOS OFF -- UINT )
+# ( IOS BOFF -- UINT )
 
 instruction peekdiu (?n bits_printer)
   code
@@ -2512,7 +2512,7 @@ instruction peekdiu (?n bits_printer)
 end
 
 # peekdl BITS
-# ( IOS OFF -- LONG )
+# ( IOS BOFF -- LONG )
 
 instruction peekdl (?n bits_printer)
   code
@@ -2522,7 +2522,7 @@ instruction peekdl (?n bits_printer)
 end
 
 # peekdlu BITS
-# ( IOS OFF -- ULONG )
+# ( IOS BOFF -- ULONG )
 
 instruction peekdlu (?n bits_printer)
   code
@@ -2532,7 +2532,7 @@ instruction peekdlu (?n bits_printer)
 end
 
 # pokei NENC,ENDIAN,BITS
-# ( IOS OFF INT -- )
+# ( IOS BOFF INT -- )
 
 instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2542,7 +2542,7 @@ instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # pokeiu ENDIAN,BITS
-# ( IOS OFF UINT -- )
+# ( IOS BOFF UINT -- )
 
 instruction pokeiu (?n endian_printer,?n bits_printer)
   code
@@ -2552,7 +2552,7 @@ instruction pokeiu (?n endian_printer,?n bits_printer)
 end
 
 # pokel NENC,ENDIAN,BITS
-# ( IOS OFF LONG -- )
+# ( IOS BOFF LONG -- )
 
 instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2562,7 +2562,7 @@ instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # pokelu ENDIAN,BITS
-# ( IOS OFF ULONG -- )
+# ( IOS BOFF ULONG -- )
 
 instruction pokelu (?n endian_printer,?n bits_printer)
   code
@@ -2572,7 +2572,7 @@ instruction pokelu (?n endian_printer,?n bits_printer)
 end
 
 # pokedi BITS
-# ( IOS OFF INT -- )
+# ( IOS BOFF INT -- )
 
 instruction pokedi (?n bits_printer)
   code
@@ -2582,7 +2582,7 @@ instruction pokedi (?n bits_printer)
 end
 
 # pokediu BITS
-# ( IOS OFF UINT -- )
+# ( IOS BOFF UINT -- )
 
 instruction pokediu (?n bits_printer)
   code
@@ -2592,7 +2592,7 @@ instruction pokediu (?n bits_printer)
 end
 
 # pokedl BITS
-# ( IOS OFF LONG -- )
+# ( IOS BOFF LONG -- )
 
 instruction pokedl (?n bits_printer)
   code
@@ -2602,7 +2602,7 @@ instruction pokedl (?n bits_printer)
 end
 
 # pokedlu BITS
-# ( IOS OFF ULONG -- )
+# ( IOS BOFF ULONG -- )
 
 instruction pokedlu (?n bits_printer)
   code
@@ -2612,7 +2612,7 @@ instruction pokedlu (?n bits_printer)
 end
 
 # peeks
-# ( IOS OFF -- STR )
+# ( IOS BOFF -- STR )
 
 instruction peeks ()
   code
@@ -2646,7 +2646,7 @@ instruction peeks ()
 end
 
 # pokes
-# ( IOS OFF STR -- )
+# ( IOS BOFF STR -- )
 
 instruction pokes ()
   code
