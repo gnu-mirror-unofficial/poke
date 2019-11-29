@@ -388,47 +388,40 @@
         ;; bounded by number of elements, regardless of the
         ;; characteristics of the mapping of the trimmed array.
         pushvar $array          ; TARR ARR
-        mgeto                   ; TARR ARR OFFSET
+        mgeto                   ; TARR ARR BOFFSET
         bn .notmapped
         ;; Calculate the new offset.
-        swap                    ; TARR OFFSET ARR
-        pushvar $from           ; TARR OFFSET ARR FROM
-        arefo                   ; TARR OFFSET ARR FROM OFF(FROM)
-        nip                     ; TARR OFFSET ARR OFF(FROM)
-        rot                     ; TARR ARR OFF(FROM) OFFSET
-        .e ogetmn               ; TARR ARR OFF(FROM) OFFSET OFFSETM
-        nip
-        swap                    ; TARR ARR OFFSETM OFF(FROM)
-        .e ogetmn
-        nip                     ; TARR ARR OFFSETM OFFM(FROM)
+        swap                    ; TARR BOFFSET ARR
+        pushvar $from           ; TARR BOFFSET ARR FROM
+        arefo                   ; TARR BOFFSET ARR FROM BOFF(FROM)
+        nip                     ; TARR BOFFSET ARR BOFF(FROM)
+        rot                     ; TARR ARR BOFF(FROM) BOFFSET
         addlu
-        nip2                    ; TARR ARR NOFFSETM
-        push ulong<64>1
-        mko                     ; TARR ARR OFFSET
-        rot                     ; ARR OFFSET TARR
+        nip2                    ; TARR ARR BOFFSET
+        rot                     ; ARR BOFFSET TARR
         regvar $tarr
         ;; Calculate the new EBOUND.
-        swap                    ; OFFSET ARR
-        mgetm                   ; OFFSET ARR MAPPER
-        swap                    ; OFFSET MAPPER ARR
-        mgetw                   ; OFFSET MAPPER ARR WRITER
-        nip                     ; OFFSET MAPPER WRITER
+        swap                    ; BOFFSET ARR
+        mgetm                   ; BOFFSET ARR MAPPER
+        swap                    ; BOFFSET MAPPER ARR
+        mgetw                   ; BOFFSET MAPPER ARR WRITER
+        nip                     ; BOFFSET MAPPER WRITER
         pushvar $to
-        pushvar $from           ; OFFSET MAPPER WRITER TO FROM
+        pushvar $from           ; BOFFSET MAPPER WRITER TO FROM
         sublu
-        nip2                    ; OFFSET MAPPER WRITER (TO-FROM)
+        nip2                    ; BOFFSET MAPPER WRITER (TO-FROM)
         push ulong<64>1
         addlu
-        nip2                    ; OFFSET MAPPER WRITER (TO-FROM+1UL)
+        nip2                    ; BOFFSET MAPPER WRITER (TO-FROM+1UL)
         ;; Install mapper, writer, offset and ebound.
-        pushvar $tarr           ; OFFSET MAPPER WRITER (TO-FROM+!UL) TARR
-        swap                    ; OFFSET MAPPER WRITER TARR (TO-FROM+!UL)
-        msetsel                 ; OFFSET MAPPER WRITER TARR
-        swap                    ; OFFSET MAPPER TARR WRITER
-        msetw                   ; OFFSET MAPPER TARR
-        swap                    ; OFFSET TARR MAPPER
-        msetm                   ; OFFSET TARR
-        swap                    ; TARR OFFSET
+        pushvar $tarr           ; BOFFSET MAPPER WRITER (TO-FROM+!UL) TARR
+        swap                    ; BOFFSET MAPPER WRITER TARR (TO-FROM+!UL)
+        msetsel                 ; BOFFSET MAPPER WRITER TARR
+        swap                    ; BOFFSET MAPPER TARR WRITER
+        msetw                   ; BOFFSET MAPPER TARR
+        swap                    ; BOFFSET TARR MAPPER
+        msetm                   ; BOFFSET TARR
+        swap                    ; TARR BOFFSET
         mseto                   ; TARR
         ;; Remap!!
         remap
