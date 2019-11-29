@@ -2010,6 +2010,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
               PKL_GEN_PAYLOAD->in_mapper = 0;
               PKL_PASS_SUBPASS (array_type_bound);
               PKL_GEN_PAYLOAD->in_mapper = 1;
+
+              /* Convert to bit-offset.  */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
             }
           else
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
