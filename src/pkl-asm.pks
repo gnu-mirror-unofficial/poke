@@ -381,7 +381,7 @@
         ;; If the trimmed array is mapped then the resulting array
         ;; is mapped as well, with the following attributes:
         ;;
-        ;;   OFFSET = original OFFSET + OFF(FROM)
+        ;;   OFFSET = original OFFSET + (OFF(FROM) - original OFFSET)
         ;;   EBOUND = TO - FROM + 1
         ;;
         ;; The mapping of the resulting array is always
@@ -396,6 +396,11 @@
         arefo                   ; TARR BOFFSET ARR FROM BOFF(FROM)
         nip                     ; TARR BOFFSET ARR BOFF(FROM)
         rot                     ; TARR ARR BOFF(FROM) BOFFSET
+        dup                     ; TARR ARR BOFF(FROM) BOFFSET BOFFSET
+        rot                     ; TARR ARR BOFFSET BOFFSET BOFF(FROM)
+        swap                    ; TARR ARR BOFFSET BOFF(FROM) BOFFSET
+        sublu
+        nip2                    ; TARR ARR BOFFSET (BOFF(FROM)-BOFFSET)
         addlu
         nip2                    ; TARR ARR BOFFSET
         rot                     ; ARR BOFFSET TARR

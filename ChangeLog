@@ -1,5 +1,11 @@
 2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-asm.pks (atrim): Fix calculation of the resulting mapped
+	array offset.
+	* testsuite/poke.map/maps-trims-1.pk: New test.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm.jitter (siz): Modify to generate a bit-offset in an
 	ulong<64> instead of an offset.
 	* src/pkl-gen.pks (off_plus_sizeof): Remove.
