@@ -1,5 +1,9 @@
 2019-12-01 John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk_dump.pk (dump): New parameter cluster_by
+
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
 	* doc/poke.texi (dump): Document the dump command.
 
 2019-11-30 John Darrington <john@darrington.wattle.id.au>
