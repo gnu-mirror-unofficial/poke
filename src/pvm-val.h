@@ -319,7 +319,7 @@ struct pvm_struct
 /* Struct fields hold the data of the fields, and/or information on
    how to obtain these values.
 
-   OFFSET is an ulong<64> value containing the the bit-offset,
+   OFFSET is an ulong<64> value containing the bit-offset,
    relative to the beginning of the struct, where the struct field
    resides when stored.
 

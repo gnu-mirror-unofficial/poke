@@ -335,4 +335,3 @@ pkl_env_get_next_matching_decl (pkl_env env, struct pkl_ast_node_iter *iter,
     }
   return NULL;
 }
-

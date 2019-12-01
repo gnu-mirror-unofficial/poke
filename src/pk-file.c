@@ -203,7 +203,7 @@ pk_cmd_info_files (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
 
 /* Returns zero iff FILENAME is the name
-   of an entry in the filesystem which :
+   of an entry in the file system which :
    * is not a directory;
    * is readable; AND
    * exists.
