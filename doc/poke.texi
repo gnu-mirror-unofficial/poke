@@ -379,6 +379,8 @@ like this:
 00000000: 7f45 4c46 0201 0100                      .ELF....
 @end example
 
+The @command{dump} command is discussed in greater detail
+below (@pxref{dump}).
 The order of arguments is irrelevant in principle:
 
 @example
@@ -636,10 +638,132 @@ whatever architecture running poke.
 The @code{.exit} command exits poke.
 
 @node dump
-@chapter @code{dump}
-@cindex dump
+@chapter @command{dump}
+@cindex @command{dump}
 
-XXX
+At the most basic level, memory can be examined byte by byte.
+To do this, use the @command{dump} command.
+This command has the following prototype:
+
+@example
+defun dump = (off64 from = pk_dump_offset,
+              off64 size = pk_dump_size,
+              off64 group_by = pk_dump_group_by,
+              int cluster_by = pk_dump_cluster_by,
+              int ruler = pk_dump_ruler,
+              int ascii = pk_dump_ascii) void:
+@end example
+
+@noindent
+All arguments are optional, which means the simplest use of the command is
+to simply type @command{dump}:
+
+@example
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 9b07 5a61 4783 f306 4897 f37c fe39 4cd3  ..ZaG...H..|.9L.
+00000010: b6a2 a578 8d82 7b7f 2076 374c 3eab 7150  ...x..@{. v7L>.qP
+00000020: 31df 8ecb 3d33 ee12 429b 2e13 670d 948e  1...=3..B...g...
+00000030: 86f1 2228 ae07 d95c 9884 cf0a d1a8 072e  .."(...\........
+00000040: f93c 5368 9617 6c96 3d61 7b92 9038 a93b  .<Sh..l.=a@{..8.;
+00000050: 3b0d f8c9 efbd a959 88d0 e523 fd3b b029  ;......Y...#.;.)
+00000060: e2eb 51d5 cb5b 5ba9 b890 9d7a 2746 72ad  ..Q..[[....z'Fr.
+00000070: 6cbd 6e27 1c7f a554 8d2e 77f9 315a 4415  l.n'...T..w.1ZD.
+@end example
+
+
+@noindent
+The first row is the @dfn{ruler} which serves as a heading for each
+subsequent row.   On the left hand side is the offset of the io space
+under examination.   The centre block displays the hexadecimal
+representation of each byte, and on the right hand side is their ascii
+representation.   If a byte is not representable in ascii, then the
+byte will be displayed as a dot.
+
+
+@menu
+* Information @command{dump} shows::         Changing what @command{dump} shows.
+* Presentation options for @command{dump}::  Changing how @command{dump} shows it.
+@end menu
+
+@node Information @command{dump} shows
+@section Information @command{dump} shows
+
+By default @command{dump} displays 128 bytes of memory starting at offset 0#B.
+You can change the quantity and starting offset by using the @code{size}
+and @code{from} arguments.  For example:
+
+@example
+(poke) dump :from 0x10#B :size 0x40#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000010: b6a2 a578 8d82 7b7f 2076 374c 3eab 7150  ...x..@{. v7L>.qP
+00000020: 31df 8ecb 3d33 ee12 429b 2e13 670d 948e  1...=3..B...g...
+00000030: 86f1 2228 ae07 d95c 9884 cf0a d1a8 072e  .."(...\........
+00000040: f93c 5368 9617 6c96 3d61 7b92 9038 a93b  .<Sh..l.=a@{..8.;
+@end example
+
+@noindent
+Note that both the @code{size} and @code{from} arguments are offsets.
+As such, both must be specified using @code{#} and an appropriate unit.
+(@pxref{Offset Literals}).
+
+The other arguments change the appearance of the dump.
+If the @code{ruler} argument is zero, then the ruler will be omitted:
+
+@example
+(poke) dump :ruler 0 :size 0x40#B
+00000000: b1fd 1608 2346 759c 46a6 aa94 6fcd 846a  ....#Fu.F...o..j
+00000010: e39f 473f 3247 415f 174d a32b ed89 a435  ..G?2GA_.M.+...5
+00000020: d2c6 2c52 bc82 e0a7 e767 31ea 84de 41e5  ..,R.....g1...A.
+00000030: 2add 2869 e9c2 226b e222 8c74 4b94 af24  *.(i.."k.".tK..$
+@end example
+
+To omit the ascii
+representation of the memory, call @command{dump} with the @code{ascii}
+argument set to zero:
+
+@example
+(poke) dump :ruler 0 :size 0x40#B :ascii 0
+00000000: 4393 85e7 0b0c 3921 5a26 39ec 2f5f 5f15
+00000010: cc46 e6f3 d50f 6ae6 8988 d50e f8c4 d1c6
+00000020: 5a2f 7c3e 490b 18d8 d867 4b6f 2549 1f6c
+00000030: 34a9 a0d7 24d2 e9ac 9240 8247 10cb 4ba1
+@end example
+
+@node  Presentation options for @command{dump}
+@section Presentation options for @command{dump}
+
+By default, the hexadecimal display shows two bytes grouped together,
+and then a space.   You can alter this behaviour using the @code{group_by}
+parameter.
+
+@example
+(poke) dump :ascii 0 :size 0x40#B :group_by 4#B
+00000000: 68f19a63 df2a8886 c466631c a7fdd5c7  h..c.*...fc.....
+00000010: 3075746a 0adb03ca f5b1ff14 6166fa07  0utj........af..
+00000020: 0dd3cfbd 8eff46a2 4152a81d 471beddf  ......F.AR..G...
+00000030: a0501cae 8bfcec6f 7a4f5701 45ba9fc3  .P.....ozOW.E...
+@end example
+
+Another parameter is the @code{cluster_by} argument.
+By setting @code{cluster_by} to @var{n}, this
+causes @command{dump} to display an additional space after the @var{n}th
+group has been displayed, and also in the corresponding position in
+the ascii display:
+
+@example
+(poke) dump :size 0x40#B :group_by 2#B :cluster_by 4
+76543210  0011 2233 4455 6677  8899 aabb ccdd eeff  01234567 89ABCDEF
+00000000: 91b8 540d d4dc 49ae  3320 ba7d efd1 16ab  ..T...I. 3 .@}....
+00000010: b1a8 5ea0 5846 8bea  f741 3f80 42bc 201f  ..^.XF.. .A?.B. .
+00000020: 6e5e fa50 23fb f16a  d380 be8c fc98 d195  n^.P#..j ........
+00000030: 7bbf fa3e 3fc2 43a4  2a1e 9763 2bd6 5d24  @{..>?.C. *..c+.]$
+@end example
+
+If you have a personal preference on how memory dumps should appear,
+you can set the relevant @code{pk_dump_*} variables.   These
+global variables serve as the defaults for @command{dump}, so this way, you
+will not need to explicitly pass them when you call the function.
 
 @node pokerc
 @chapter @file{.pokerc}
