@@ -58,8 +58,7 @@
         mgetsiz                 ; WCLS MCLS IOS OFF EBOUND VAL SBOUND
         swap                    ; WCLS MCLS IOS OFF EBOUND SBOUND VAL
         mgetm                   ; WCLS MCLS IOS OFF EBOUND SBOUND VAL MCLS
-        swap                    ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS VAL
-        drop                    ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS
+        nip                     ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS
         call                    ; WCLS MCLS NVAL
         swap                    ; WCLS NVAL MCLS
         msetm                   ; WCLS NVAL
@@ -88,7 +87,7 @@
         nrot                    ; VAL IOS OFF VAL [WCLS]
         fromr                   ; VAL IOS OFF VAL WCLS
         call                    ; VAL null
-        push null               ; VAL null null
+        dup                     ; VAL null null
 .label:
         drop                    ; VAL (VAL|null)
         drop                    ; VAL
@@ -184,10 +183,9 @@
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
         rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
         add @base_type
-        nip2                    ; OFF1 OFF2 (OFF1M+OFF2M)
-        push #unit              ; OFF1 OFF2 (OFF1M+OFF2M) UNIT
+        nip2                    ; OFF1 OFF2 (OFF2M+OFF1M)
+        push #unit              ; OFF1 OFF2 (OFF2M+OFF1M) UNIT
         mko                     ; OFF1 OFF2 OFFR
         .end
 
@@ -208,8 +206,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         sub @base_type
         nip2                    ; OFF1 OFF2 (OFF1M+OFF2M)
         push #unit              ; OFF1 OFF2 (OFF1M+OFF2M) UNIT
@@ -236,8 +233,7 @@
         nip2                    ; OFF (OFFM*VAL)
         swap                    ; (OFFM*VAL) OFF
         ogetu                   ; (OFFM*VAL) OFF UNIT
-        rot                     ; OFF UNIT (OFFM*VAL)
-        swap                    ; OFF (OFFM*VAL) UNIT
+        quake                   ; OFF (OFFM*VAL) UNIT
         mko                     ; OFF OFFR
         fromr                   ; OFF OFFR VAL
         swap                    ; OFF VAL OFFR
@@ -259,8 +255,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         div @base_type
         nip2                    ; OFF1 OFF2 (OFF1M/OFF2M)
         .end
@@ -283,8 +278,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         mod @base_type
         nip2                    ; OFF1 OFF2 (OFF1M%OFF2M)
         push #unit              ; OFF1 OFF2 (OFF1M%OFF2M) UNIT
@@ -354,8 +348,7 @@
         rot                     ; ... NULL IDX EVAL ARR
         drop                    ; ... NULL IDX EVAL
         pushvar $from           ; ... NULL IDX EVAL FROM
-        rot                     ; ... NULL EVAL FROM IDX
-        swap                    ; ... NULL EVAL IDX FROM
+        quake                   ; ... NULL EVAL IDX FROM
         sublu
         nip2                    ; ... NULL EVAL (IDX-FROM)
         swap                    ; ... NULL (IDX-FROM) EVAL
@@ -397,8 +390,7 @@
         nip                     ; TARR BOFFSET ARR BOFF(FROM)
         rot                     ; TARR ARR BOFF(FROM) BOFFSET
         dup                     ; TARR ARR BOFF(FROM) BOFFSET BOFFSET
-        rot                     ; TARR ARR BOFFSET BOFFSET BOFF(FROM)
-        swap                    ; TARR ARR BOFFSET BOFF(FROM) BOFFSET
+        quake                   ; TARR ARR BOFFSET BOFF(FROM) BOFFSET
         sublu
         nip2                    ; TARR ARR BOFFSET (BOFF(FROM)-BOFFSET)
         addlu
@@ -531,8 +523,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         cdiv @type
         nip2                    ; OFF1 OFF2 (OFF1M/^OFF2M)
         .end
@@ -581,17 +572,15 @@
         push ulong<64>1
         addlu                   ; SEL ELEM VAL IDX 1UL (IDX+1UL) [ARR NRES]
         nip2                    ; SEL ELEM VAL NIDX [ARR NRES]
-        rot                     ; SEL VAL NIDX ELEM [ARR NRES]
-        drop                    ; SEL VAL NIDX [ARR NREGS]
-        nrot                    ; NIDX SEL VAL [ARR NREGS]
-        swap                    ; NIDX VAL SEL [ARR NRES]
-        rot                     ; VAL SEL NIDX [ARR NRES]
+        tor                     ; SEL ELEM VAL [ARR NRES NIDX]
+        nip                     ; SEL VAL [ARR NRES NIDX]
+        swap                    ; VAL SEL [ARR NRES NIDX]
+        fromr                   ; VAL SEL NIDX [ARR NRES]
         ba .loop
 .foundit:
         tor                     ; SEL ELEM VAL IDX [ARR NRES]
-        rot                     ; SEL VAL IDX ELEM [ARR NRES]
-        drop                    ; SEL VAL IDX [ARR NRES]
-        tor                     ; SEL VAL [ARR NRES IDX]
+        tor                     ; SEL ELEM VAL [ARR NRES IDX]
+        nip                     ; SEL VAL [ARR NRES IDX]
         swap                    ; VAL SEL [ARR NRES IDX]
         fromr                   ; VAL SEL IDX [ARR NRES]
         dup                     ; VAL SEL IDX IDX [ARR NRES]
@@ -621,10 +610,9 @@
 ;;;   AST node with the type of the result.
 
         .macro bconc #op2_type_size @op1_type @op2_type @res_type
-        dup                       ; OP1 OP2 OP2
-        rot                       ; OP2 OP2 OP1
-        dup                       ; OP2 OP2 OP1 OP1
-        rot                       ; OP2 OP1 OP1 OP2
+        tuck                      ; OP2 OP1 OP2
+        over                      ; OP2 OP1 OP2 OP1
+        swap                      ; OP2 OP1 OP1 OP2
         ;; Convert the second operand to the result type.
         nton @op2_type, @res_type ; ... OP1 OP2 OP2C
         nip                       ; ... OP1 OP2C

@@ -545,11 +545,9 @@
         .e check_struct_field_constraint
         ;; Calculate the offset marking the end of the field, which is
         ;; the field's offset plus it's size.
-        rot                    ; STR VAL BOFF
-        swap                   ; STR BOFF VAL
+        quake                  ; STR BOFF VAL
         siz                    ; STR BOFF VAL SIZ
-        rot                    ; STR VAL SIZ BOFF
-        swap                   ; STR VAL BOFF SIZ
+        quake                  ; STR VAL BOFF SIZ
         addlu
         nip                    ; STR VAL BOFF (BOFF+SIZ)
         tor                    ; STR VAL BOFF

@@ -1,3 +1,18 @@
+2019-12-01 Luca Saiu <positron@gnu.org>
+
+	* src/pkl-insn.def (PKL_INSN_TUCK): Define new instruction.
+	* src/pvm.jitter (rot, nrot): Simplify definition using Jitter
+	macro.
+	(tuck): New instruction.
+	(revn): Add specialized arguments.  Use unsigned JITTER_ARGU0 to
+	catch bugs more easily.
+	(swap-over-to-tuck): New rewrite rule.
+	(rot-swap-to-quake): Re-introduce deleted rewrite rule, which was
+	actually correct.
+	* pkl-asm.pks (remap, write, addo, subo, mulo, divo, modo, atrim)
+	(cdivo, ais, bconc): Simplify and optimize using new instructions.
+	* src/pkl-gen.pks (struct_field_mapper): Likewise.
+	
 2019-12-01 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk_dump.pk (dump): New parameter cluster_by

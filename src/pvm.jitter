@@ -950,31 +950,19 @@ end
 
 instruction rot () # ( A B C -- B C A )
   code
-   pvm_val a, b, c;
-
-   c = JITTER_TOP_STACK ();
-   JITTER_DROP_STACK ();
-   b = JITTER_TOP_STACK ();
-   a = JITTER_UNDER_TOP_STACK ();
-
-   JITTER_UNDER_TOP_STACK () = b;
-   JITTER_TOP_STACK () = c;
-   JITTER_PUSH_STACK (a);
+    JITTER_ROT_STACK ();
   end
 end
 
 instruction nrot () # ( A B C -- C A B )
   code
-   pvm_val a, b, c;
+    JITTER_MROT_STACK ();
+  end
+end
 
-   c = JITTER_TOP_STACK ();
-   JITTER_DROP_STACK ();
-   b = JITTER_TOP_STACK ();
-   a = JITTER_UNDER_TOP_STACK ();
-
-   JITTER_UNDER_TOP_STACK () = c;
-   JITTER_TOP_STACK () = a;
-   JITTER_PUSH_STACK (b);
+instruction tuck () #  ( A B -- B A B )
+  code
+    JITTER_TUCK_STACK ();
   end
 end
 
@@ -1033,9 +1021,9 @@ instruction sel () # ( VAL -- VAL ULONG )
   end
 end
 
-instruction revn (?n popf_printer) # ( VAL{N} -- VAL{N} )
+instruction revn (?n 3 4 popf_printer) # ( VAL{N} -- VAL{N} )
   code
-    JITTER_REVERSE_STACK (JITTER_ARGN0);
+    JITTER_REVERSE_STACK (JITTER_ARGU0);
   end
 end
 
@@ -2768,3 +2756,14 @@ into
   drop4
 end
 
+rule swap-over-to-tuck rewrite
+  swap; over
+into
+  tuck
+end
+
+rule rot-swap-to-quake rewrite
+  rot; swap
+into
+  quake
+end
