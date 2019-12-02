@@ -1,3 +1,7 @@
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* bootstrap.conf: Remove "system"
+
 2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-gen.c (pkl_gen_pr_type_array): Do not calculate the
