@@ -1,3 +1,18 @@
+2019-12-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf.pk (Elf64_Sym): New type.
+	(STB_LOCAL): New variable.
+	(STB_GLOBAL): Likewise.
+	(STB_WEAK): Likewise.
+	(STB_LOOS): Likewise.
+	(STB_HIOS): Likewise.
+	(STB_LOPROC): Likewise.
+	(STB_HIPROC): Likewise.
+	(STV_DEFAULT): Likewise.
+	(STV_INTERNAL): Likewise.
+	(STV_HIDDEN): Likewise.
+	(STV_PROTECTED): Likewise.
+
 2019-12-01 John Darrington <john@darrington.wattle.id.au>
 
 	* doc/poke.texi (dump): Numerous minor changes.

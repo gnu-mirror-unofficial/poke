@@ -48,6 +48,40 @@ deftype Elf64_Rela =
     Elf64_Sxword r_addend;
   };
 
+defvar STB_LOCAL = 0;
+defvar STB_GLOBAL = 1;
+defvar STB_WEAK = 2;
+defvar STB_LOOS = 10;
+defvar STB_HIOS = 12;
+defvar STB_LOPROC = 13;
+defvar STB_HIPROC = 15;
+
+defvar STV_DEFAULT = 0;
+defvar STV_INTERNAL = 1;
+defvar STV_HIDDEN = 2;
+defvar STV_PROTECTED = 3;
+
+deftype Elf64_Sym =
+  struct
+  {
+    Elf_Word st_name;
+    struct
+    {
+      uint<4> st_bind;
+      uint<4> st_type;
+    } st_info;
+
+    uint<8> st_other;
+    defun st_visibility = uint<3>:
+      {
+       return st_other & 0x3;
+      }
+
+    Elf_Half st_shndx;
+    Elf64_Addr st_value;
+    Elf64_Xword st_size;
+  };
+
 deftype Elf64_Shdr =
   struct
   {
