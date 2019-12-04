@@ -1,5 +1,12 @@
 2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-trans.c (pkl_phase_transl): Install
+	pkl_transl_{pr,ps}_map handlers for struct type fields.
+	(pkl_transl_pr_type_struct): Only break the pass when into a map.
+	* testsuite/poke.map/maps-arrays-17.pk: New test.
+
+2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_if_stmt): New handler.
 	(pkl_phase_typify1): Install it.
 	* testsuite/poke.pkl/if-diag-1.pk: New test.
