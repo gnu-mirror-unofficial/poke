@@ -2176,6 +2176,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_offset)
 }
 PKL_PHASE_END_HANDLER
 
+/* The expression in an `if' statement should evaluate to an integral
+   type, as it is expected by the code generator.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_if_stmt)
+{
+  pkl_ast_node if_stmt = PKL_PASS_NODE;
+  pkl_ast_node exp = PKL_AST_IF_STMT_EXP (if_stmt);
+  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
+
+  if (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL)
+    {
+      PKL_ERROR (PKL_AST_LOC (exp),
+                 "expected boolean expression");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_typify1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
@@ -2204,6 +2223,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_TRY_UNTIL_STMT, pkl_typify1_ps_try_until_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_typify1_ps_struct_type_field),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_typify1_ps_return_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_IF_STMT, pkl_typify1_ps_if_stmt),
 
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_typify1_ps_op_sizeof),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_typify1_ps_op_not),

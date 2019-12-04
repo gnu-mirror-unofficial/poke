@@ -1,3 +1,11 @@
+2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_if_stmt): New handler.
+	(pkl_phase_typify1): Install it.
+	* testsuite/poke.pkl/if-diag-1.pk: New test.
+	* testsuite/poke.pkl/if-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/if-diag-3.pk: Likewise.
+
 2019-12-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf.pk (Elf64_Sym): New type.
