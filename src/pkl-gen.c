@@ -2091,7 +2091,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       /* Generating a PVM array type.  */
 
       pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (PKL_PASS_NODE);
-      pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (PKL_PASS_NODE);
 
       /* XXX this is replicating the logic in pkl_gen_pr_type.  */
       if (PKL_PASS_PARENT)
@@ -2109,14 +2108,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
         }
 
       PKL_PASS_SUBPASS (etype);
-      if (bound)
-        /* XXX compile a closure with the code in `bound' and call it
-           to get the value.  Install the closure in the AST node so
-           subsequent references to the type have access to it.  */
-        PKL_PASS_SUBPASS (bound);
-      else
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
+      /* XXX at the moment the run-time bound in array types is unused
+         so we just push null here.  If it is ever used, this will be
+         problematic because due to the additional lexical level
+         introduced by array mappers subpassing on bound here will
+         result on invalid variable accesses.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYA);
 
       PKL_PASS_BREAK;

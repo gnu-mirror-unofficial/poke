@@ -1,5 +1,11 @@
 2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Do not calculate the
+	array bound when building array types.
+	* testsuite/poke.map/maps-arrays-18.pk: New test.
+
+2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-trans.c (pkl_phase_transl): Install
 	pkl_transl_{pr,ps}_map handlers for struct type fields.
 	(pkl_transl_pr_type_struct): Only break the pass when into a map.
