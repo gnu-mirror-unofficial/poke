@@ -129,7 +129,7 @@ defun dump = (off64 from = pk_dump_offset,
 	catch if E_eof {}
 	if (ascii)
 	  {
-	    while (o < step /*&& ((offset + o) % 16#B) != 0#B*/)
+	    while (o < step && ((offset + o) % 16#B) != 0#B)
 	      {
 		if (o % group_by == 0#B)
 		  print " ";
