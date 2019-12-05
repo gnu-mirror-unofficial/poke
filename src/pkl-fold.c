@@ -159,6 +159,8 @@ EMUL_UUU (mulo) { return op1 * op2; }
 EMUL_III (mulo) { return op1 * op2; }
 EMUL_UUU (divo) { return op1 / op2; }
 EMUL_III (divo) { return op1 / op2; }
+EMUL_UUU (cdivo) { return (op1 - 1 + op2) / op2; }
+EMUL_III (cdivo) { return (op1 - 1 + op2) / op2; }
 EMUL_UUU (modo) { return op1 % op2; }
 EMUL_III (modo) { return op1 % op2; }
 
@@ -625,7 +627,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_cdiv)
     }
 
   OP_BINARY_III (cdiv);
-  //XXX  OP_BINARY_OOI (cdivo);
+  OP_BINARY_OOI (cdivo);
 
   PKL_PASS_DONE;
 

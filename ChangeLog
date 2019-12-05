@@ -1,5 +1,11 @@
 2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-fold.c: Define cdivo semantic routines for UUU and III
+	cases.
+	(pkl_fold_cdiv): Fold /^ operations on offsets.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/offset-arg-1.pk: New test.
 	* testsuite/poke.pkl/offset-arg-2.pk: Likewise.
 
