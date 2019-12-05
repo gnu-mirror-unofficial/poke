@@ -242,6 +242,38 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   pkl_ast_node exp = PKL_AST_CAST_EXP (cast);
   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
+  /* Casting to ANY is always forbidden.  But casting from ANY is
+     always allowed.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting a value to `any' is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ANY)
+    goto done;
+  
+  /* Casting from offset to offset is allowed, but not any other cast
+     involving offsets.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
+      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_OFFSET)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting an offset value to a non-offset type is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_OFFSET
+      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_OFFSET)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting a non-offset value to an offset type is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
 
   /* Casting from or to a function type is forbidden.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
@@ -260,18 +292,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
-  /* Casting to ANY is always forbidden.  But casting from ANY is
-     always allowed.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)
+  /* Casting from a struct type is forbidden.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT)
     {
       PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a value to `any' is not allowed");
+                 "casting a value to a struct type is not allowed");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
 
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ANY)
-    goto done;
+  /* Casting a struct value is forbidden.  */
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting a struct value to any other type is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
 
   /* Only characters (uint<8>) can be casted to string.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRING
@@ -285,6 +322,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
                  "invalid cast to string\nexpected uint<8>, got %s",
                  found_type);
       free (found_type);
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  /* String values can't be casted to anything.  */
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRING)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting a string value to any other type is not allowed");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

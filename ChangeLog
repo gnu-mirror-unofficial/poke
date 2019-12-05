@@ -1,5 +1,15 @@
 2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Detect invalid casts,
+	and diagnose them.
+	* testsuite/poke.pkl/cast-struct-diag-1.pk: New test.
+	* testsuite/poke.pkl/cast-offsets-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/cast-offsets-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-str-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-2.pk: Likewise.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-fold.c: Define cdivo semantic routines for UUU and III
 	cases.
 	(pkl_fold_cdiv): Fold /^ operations on offsets.
