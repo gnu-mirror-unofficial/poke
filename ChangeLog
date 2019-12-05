@@ -1,5 +1,10 @@
 2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/offset-arg-1.pk: New test.
+	* testsuite/poke.pkl/offset-arg-2.pk: Likewise.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-fold.c: Define pkl_fold_gcd using gnulib's <gcd.c.>
 	(EMUL_UUU): Define for gcd.
 	(pkl_fold_gcd): Define handler.
