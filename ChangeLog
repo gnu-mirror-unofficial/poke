@@ -1,5 +1,10 @@
 2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-insn.def: New instruction ASETO.
+	* src/pvm.jitter (aseto): Define.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_cast): Detect invalid casts,
 	and diagnose them.
 	* testsuite/poke.pkl/cast-struct-diag-1.pk: New test.

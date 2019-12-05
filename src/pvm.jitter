@@ -1977,6 +1977,25 @@ instruction aset () # ( ARR ULONG VAL -- ARR )
   end
 end
 
+instruction aseto () # ( ARR ULONG BOFF -- ARR )
+  code
+    uint64_t idx;
+    pvm_val boff;
+    pvm_val arr;
+
+    boff = JITTER_TOP_STACK ();
+    idx = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    arr = JITTER_TOP_STACK ();
+
+    if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+
+    PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;    
+  end
+end
+
 instruction aref () # ( ARR ULONG -- ARR ULONG VAL )
   code
     pvm_val array = JITTER_UNDER_TOP_STACK ();
