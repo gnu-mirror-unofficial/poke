@@ -1607,7 +1607,6 @@ pkl_asm_catch (pkl_asm pasm)
   assert (pasm->level->current_env == PKL_ASM_ENV_TRY);
 
   pkl_asm_insn (pasm, PKL_INSN_POPE);
-  /* XXX pkl_asm_note (pasm, "POP-REGISTERS"); */
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label2);
   pvm_routine_append_label (pasm->routine, pasm->level->label1);
 

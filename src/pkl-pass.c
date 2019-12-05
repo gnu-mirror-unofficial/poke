@@ -522,7 +522,6 @@ pkl_do_pass_1 (pkl_compiler compiler,
       break;
     default:
       /* Unknown node code.  This kills the poke :'( */
-      /* printf ("XXX: %d\n", PKL_AST_CODE (node)); */
       assert (0);
     }
 
