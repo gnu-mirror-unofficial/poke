@@ -208,18 +208,23 @@ EMUL_III (modo) { return op1 % op2; }
           && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)           \
         {                                                               \
           pkl_ast_node new;                                             \
-          pkl_ast_node type_base_type = PKL_AST_TYPE_O_BASE_TYPE (type); \
-          pkl_ast_node op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);  \
-          pkl_ast_node op1_unit = PKL_AST_OFFSET_UNIT (op1);            \
-          pkl_ast_node op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);  \
-          pkl_ast_node op2_unit = PKL_AST_OFFSET_UNIT (op2);            \
+          pkl_ast_node op1_magnitude, op1_unit;                         \
+          pkl_ast_node op2_magnitude, op2_unit;                         \
           uint64_t result;                                              \
           uint64_t op1_magnitude_bits;                                  \
           uint64_t op2_magnitude_bits;                                  \
                                                                         \
           if (PKL_AST_CODE (op1) != PKL_AST_OFFSET                      \
-              || PKL_AST_CODE (op2) != PKL_AST_OFFSET                   \
-              || PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER        \
+              || PKL_AST_CODE (op2) != PKL_AST_OFFSET)                  \
+            /* We cannot fold this expression.  */                      \
+            PKL_PASS_DONE;                                              \
+                                                                        \
+          op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);               \
+          op1_unit = PKL_AST_OFFSET_UNIT (op1);                         \
+          op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);               \
+          op2_unit = PKL_AST_OFFSET_UNIT (op2);                         \
+                                                                        \
+          if (PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER           \
               || PKL_AST_CODE (op1_unit) != PKL_AST_INTEGER             \
               || PKL_AST_CODE (op2_magnitude) != PKL_AST_INTEGER        \
               || PKL_AST_CODE (op2_unit) != PKL_AST_INTEGER)            \
@@ -231,7 +236,7 @@ EMUL_III (modo) { return op1 % op2; }
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (type_base_type))                   \
+          if (PKL_AST_TYPE_I_SIGNED (type))                             \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -265,23 +270,30 @@ EMUL_III (modo) { return op1 % op2; }
           pkl_ast_node new;                                             \
           pkl_ast_node type_base_type = PKL_AST_TYPE_O_BASE_TYPE (type);\
           pkl_ast_node type_unit = PKL_AST_TYPE_O_UNIT (type);          \
-          pkl_ast_node op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);  \
-          pkl_ast_node op1_unit = PKL_AST_OFFSET_UNIT (op1);            \
-          pkl_ast_node op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);  \
-          pkl_ast_node op2_unit = PKL_AST_OFFSET_UNIT (op2);            \
+          pkl_ast_node op1_magnitude, op1_unit;                         \
+          pkl_ast_node op2_magnitude, op2_unit;                         \
           pkl_ast_node magnitude;                                       \
           uint64_t result;                                              \
           uint64_t op1_magnitude_bits;                                  \
           uint64_t op2_magnitude_bits;                                  \
                                                                         \
           if (PKL_AST_CODE (op1) != PKL_AST_OFFSET                      \
-              || PKL_AST_CODE (op2) != PKL_AST_OFFSET                   \
-              || PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER        \
+              || PKL_AST_CODE (op2) != PKL_AST_OFFSET)                  \
+            /* We cannot fold this expression.  */                      \
+            PKL_PASS_DONE;                                              \
+                                                                        \
+          op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);               \
+          op1_unit = PKL_AST_OFFSET_UNIT (op1);                         \
+          op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);               \
+          op2_unit = PKL_AST_OFFSET_UNIT (op2);                         \
+                                                                        \
+          if (PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER           \
               || PKL_AST_CODE (op1_unit) != PKL_AST_INTEGER             \
               || PKL_AST_CODE (op2_magnitude) != PKL_AST_INTEGER        \
               || PKL_AST_CODE (op2_unit) != PKL_AST_INTEGER)            \
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
+                                                                        \
                                                                         \
           op1_magnitude_bits = (PKL_AST_INTEGER_VALUE (op1_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op1_unit));    \
@@ -298,7 +310,6 @@ EMUL_III (modo) { return op1 % op2; }
           /* Convert bits to the result unit.  */                       \
           assert (PKL_AST_INTEGER_VALUE (type_unit) != 0);              \
           result = result / PKL_AST_INTEGER_VALUE (type_unit);          \
-          printf ("RESULT: %lu\n", result);                             \
                                                                         \
           magnitude = pkl_ast_make_integer (PKL_PASS_AST, result);      \
           PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);           \
@@ -614,7 +625,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_cdiv)
     }
 
   OP_BINARY_III (cdiv);
-  //XXX  OP_BINARY_OOI (divo);
+  //XXX  OP_BINARY_OOI (cdivo);
 
   PKL_PASS_DONE;
 
@@ -707,7 +718,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
   pkl_ast_node to_type = PKL_AST_CAST_TYPE (cast);
 
   pkl_ast_node new = NULL;
-
+  
   if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_INTEGRAL
       && PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_INTEGRAL
       && PKL_AST_CODE (exp) == PKL_AST_INTEGER)
@@ -724,13 +735,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
       pkl_ast_node to_unit = PKL_AST_TYPE_O_UNIT (to_type);
       pkl_ast_node from_base_type = PKL_AST_TYPE_O_BASE_TYPE (from_type);
       pkl_ast_node to_base_type = PKL_AST_TYPE_O_BASE_TYPE (to_type);
-
+      
       if (PKL_AST_CODE (magnitude) != PKL_AST_INTEGER
           || PKL_AST_CODE (unit) != PKL_AST_INTEGER
           || PKL_AST_CODE (to_unit) != PKL_AST_INTEGER)
         /* We can't fold this cast.  */
         PKL_PASS_DONE;
 
+      //      printf ("FOLDING CAST FROM UNIT %lu TO UNIT %lu\n",
+      //              PKL_AST_INTEGER_VALUE (unit),
+      //              PKL_AST_INTEGER_VALUE (to_unit));
+      
       /* Transform magnitude to bits.  */
       PKL_AST_INTEGER_VALUE (magnitude)
         = (PKL_AST_INTEGER_VALUE (magnitude) *

@@ -1,17 +1,45 @@
-2019-11-03  Jose E. Marchesi  <jemarch@gnu.org>
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-fold.c: Define pkl_fold_gcd using gnulib's <gcd.c.>
 	(EMUL_UUU): Define for gcd.
 	(pkl_fold_gcd): Define handler.
 	(pkl_phase_fold): Register handler.
+	(OP_BINARY_OOI): Make sure operands are offsets
+	before accessing their magnitude/units.
+	(OP_BINARY_OOO): Likewise.
+	(OP_BINARY_OOI): Fix handling of base_type.
 
+	* src/pkl-promo.c (promote_offset): Support non-integer units.
+	(pkl_promo_ps_op_div): Adjust to new API.
+	(pkl_promo_ps_op_add_sub_mod): Likewise.
+	(pkl_promo_ps_op_mul): Likewise.
+	(pkl_promo_ps_op_rela): Likewise.
+	(pkl_promo_ps_type_array): Likewise.
+	(pkl_promo_ps_ass_stmt): Likewise.
+	(pkl_promo_ps_funcall): Likewise.
+	(pkl_promo_ps_return_stmt): Likewise.
+	(pkl_promo_ps_func_arg): Likewise.
+	(pkl_promo_ps_map): Likewise.
+	(pkl_promo_ps_struct_type_field): Likewise.
+	(pkl_promo_ps_op_in): Likewise.
 	* src/pkl-ops.def: Define PKL_AST_OP_GCD.
 	* src/pkl-typify.c (CASE_OFFSET): Use pkl_ast_make_binary_exp and
-	do not assume the unit types are integers.
+	do not assume the unit types are integers, but avoid superfluous
+	casts whenever possible.
 	(CASE_OFFSET): Likewise.
-
 	* src/pkl.c (rest_of_compilation): Run a constant folding phase at
 	the beginning of the middle end pass.
+	* testsuite/poke.pkl/add-offsets-9.pk: New test.
+	* testsuite/poke.pkl/eq-offsets-6.pk: Likewise.
+	* testsuite/poke.pkl/eq-offsets-5.pk: Likewise.
+	* testsuite/poke.pkl/mod-offsets-4.pk: Likewise.
+	* testsuite/poke.pkl/mod-offsets-3.pk: Likewise.
+	* testsuite/poke.pkl/div-offsets-3.pk: Likewise.
+	* testsuite/poke.pkl/div-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/mul-offsets-9.pk: Likewise.
+	* testsuite/poke.pkl/sub-offsets-8.pk: Likewise.
+	* testsuite/poke.pkl/sub-offsets-7.pk: Likewise.
+	* testsuite/poke.pkl/add-offsets-10.pk: Likewise.
 
 2019-12-01 John Darrington <john@darrington.wattle.id.au>
 
