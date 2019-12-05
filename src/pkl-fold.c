@@ -742,10 +742,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
         /* We can't fold this cast.  */
         PKL_PASS_DONE;
 
-      //      printf ("FOLDING CAST FROM UNIT %lu TO UNIT %lu\n",
-      //              PKL_AST_INTEGER_VALUE (unit),
-      //              PKL_AST_INTEGER_VALUE (to_unit));
-      
       /* Transform magnitude to bits.  */
       PKL_AST_INTEGER_VALUE (magnitude)
         = (PKL_AST_INTEGER_VALUE (magnitude) *
