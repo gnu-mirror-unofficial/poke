@@ -720,12 +720,12 @@ pk_cmd_exec_script (const char *filename)
 
   free (line);
   fclose (fd);
-  return 0;
+  return 1;
 
  error:
   free (line);
   fclose (fd);
-  return 1;
+  return 0;
 }
 
 void

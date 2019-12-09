@@ -91,7 +91,8 @@ struct pk_cmd
   completer_t completer;
 };
 
-/* Parse STR and execute a command.  */
+/* Parse STR and execute a command.  Return 1 if the command was
+   executed successfully, 0 otherwise.  */
 
 int pk_cmd_exec (char *str);
 

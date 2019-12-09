@@ -1,3 +1,12 @@
+2019-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-cmd.h: Document the value returned by pk_cmd_exec.
+	* src/pk-cmd.c (pk_cmd_exec_script): Fix the value returned by the
+	function to match the function prototype documentation.
+	* src/poke.c (parse_args): Improve the check for the result value
+	of pk_cmd_exec_script.
+	(initialize_user): Likewise.
+
 2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl.c (pkl_ice): Use an hyperlink for the bug report

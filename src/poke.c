@@ -379,7 +379,7 @@ initialize_user ()
       if (access (pokerc, R_OK) == 0)
         {
           ret = pk_cmd_exec_script (pokerc);
-          if (ret == 1)
+          if (!ret)
             exit (EXIT_FAILURE);
         }
 
