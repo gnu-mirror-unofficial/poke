@@ -994,6 +994,14 @@ offset_type_specifier:
                                                    $2, $4);
                     PKL_AST_LOC ($$) = @$;
                 }
+        | OFFSETCONSTR simple_type_specifier ',' INTEGER '>'
+        	{
+                    $$ = pkl_ast_make_offset_type (pkl_parser->ast,
+                                                   $2, $4);
+                    PKL_AST_LOC (PKL_AST_TYPE ($4)) = @4;
+                    PKL_AST_LOC ($4) = @4;
+                    PKL_AST_LOC ($$) = @$;
+                }
 	;
 
 array_type_specifier:

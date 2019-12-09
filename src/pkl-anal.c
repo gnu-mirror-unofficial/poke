@@ -351,6 +351,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_return_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* If the unit in an offset type specifier is specified using an
+   integral constant, this constant should be bigger than zero.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_offset)
+{
+  pkl_ast_node offset_type = PKL_PASS_NODE;
+  pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (offset_type);
+
+  if (PKL_AST_CODE (unit) == PKL_AST_INTEGER
+      && PKL_AST_INTEGER_VALUE (unit) == 0)
+    {
+      PKL_ERROR (PKL_AST_LOC (unit),
+                 "the unit in offset types shall be bigger than zero");
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_anal1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
@@ -363,6 +382,7 @@ struct pkl_phase pkl_phase_anal1 =
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_anal1_ps_type_offset),
    PKL_PHASE_PS_DEFAULT_HANDLER (pkl_anal_ps_default),
   };
 

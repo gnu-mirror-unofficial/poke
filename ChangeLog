@@ -1,3 +1,14 @@
+2019-12-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (offset_type_specifier): Allow integer literals as
+	offset units.
+	* src/pkl-anal.c (pkl_anal1_ps_type_offset): New handler.
+	(pkl_phase_anal1): Install handler.
+	* testsuite/poke.pkl/casts-offsets-4.pk: New test.
+	* testsuite/poke.pkl/cast-offsets-diag-3.pk: Likewise.
+	* doc/poke.texi (Offset Types): Mention using integers as offset
+	type units.
+
 2019-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-cmd.h: Document the value returned by pk_cmd_exec.

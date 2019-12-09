@@ -1500,16 +1500,17 @@ The offset base type is the type of the magnitude part of the united
 value.  It can be any integer type, signed or unsigned, of any size.
 
 The unit specification should be one of the unit identifiers that are
-allowed in offset literals (see above) or the name of a Poke type
-whose size is known as compile time.
+allowed in offset literals (see above), a constant positive integer or
+the name of a Poke type whose size is known as compile time.
 
 @cindex kilobits
 Let's see some examples.  A signed 32-bit offset expressed in bytes
 has type @code{offset<int<32>,B>}.  An unsigned 12-bit offset
-expressed in kilobits has type @code{offset<uint<12>,Kb>}.  Finally, a
-signed 64-bit offset in units of ``packets'', where a packet is
-denoted with a Poke type @code{Packet} has type
-@code{offset<uint<64>,Packet>}.
+expressed in kilobits has type @code{offset<uint<12>,Kb>}.  The later
+type can also be written using an explicit integer unit like in
+@code{offset<uint<12>,1024>}.  Finally, a signed 64-bit offset in units
+of ``packets'', where a packet is denoted with a Poke type
+@code{Packet} has type @code{offset<uint<64>,Packet>}.
 
 @node Casting Offsets
 @section Casting Offsets
