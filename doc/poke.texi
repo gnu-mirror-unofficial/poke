@@ -1374,7 +1374,7 @@ to denote offsets in the file you are editing):
 @example
 12#B
 7#b
-1024#Kb
+1024#KB
 @end example
 
 @cindex magnitude
