@@ -579,9 +579,9 @@ TYPIFY_BIN (sub);
 
 TYPIFY_BIN (add);
 
-/* MUL accepts integral, string and offset operands.  We can't use
-   TYPIFY_BIN here because it relies on a different logic to determine
-   the result type.  */
+/* MUL accepts integral and offset operands.  We can't use TYPIFY_BIN
+   here because it relies on a different logic to determine the result
+   type.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
 {
@@ -642,7 +642,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
 
       switch (PKL_AST_TYPE_CODE (t1))
         {
-          CASE_STR
             CASE_INTEGRAL
         default:
           goto error;
