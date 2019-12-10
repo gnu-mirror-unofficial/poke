@@ -20,3 +20,6 @@
 
 /* { dg-command { '\t' } } */
 /* { dg-output "\n9UB" } */
+
+/* { dg-command { '\\' } } */
+/* { dg-output "\n92UB" } */

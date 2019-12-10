@@ -935,6 +935,8 @@ allowed sequences are:
 New-line character (ASCII 012).
 @item \t
 Tab character (ASCII 011).
+@item \\
+The backslash character.
 @item \[0-9][0-9]?[0-9]?
 Character whose ASCII code is the specified number, in octal.
 @end table
@@ -945,6 +947,7 @@ Examples:
 'o'
 '\n'
 '\t'
+'\\'
 '\0'
 @end example
 

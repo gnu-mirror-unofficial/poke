@@ -123,7 +123,7 @@ NEWLINE            \n
 BLANK              [ \t]
 LETTER             [a-zA-Z]
 FIELD_NAME         {LETTER}[a-zA-Z0-9_]*
-CHAR		   '(.|\\[nt]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
+CHAR		   '(.|\\[nt\\]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
 STRING             \"([^"]|\\(.|\n))*\"
 HEXCST		   0[xX][0-9a-fA-F][0-9a-fA-F_]*
 BINCST		   0[bB][01][01_]*
@@ -409,6 +409,9 @@ D [0-9]
             break;
           case 't':
             value = '\t';
+            break;
+          case '\\':
+            value = '\\';
             break;
           default:
             /* To avoid compiler warnings.  */
