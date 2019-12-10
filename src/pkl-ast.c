@@ -815,6 +815,10 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
             if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
               continue;
 
+            /* Struct fields with labels are not expected, as these
+               cannot appear in complete struct types.  */
+            assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
+            
             elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
             res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
                                            res,
@@ -905,7 +909,7 @@ pkl_ast_type_is_complete (pkl_ast_node type)
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;
       /* Struct types are complete if their fields are also of
-         complete types.  */
+         complete types and there are no labels.  */
     case PKL_TYPE_STRUCT:
       {
         pkl_ast_node elem;
@@ -916,7 +920,8 @@ pkl_ast_type_is_complete (pkl_ast_node type)
              elem = PKL_AST_CHAIN (elem))
           {
             if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
-                && !pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem)))
+                && (PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem)
+                    || !pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))))
               {
                 complete = PKL_AST_TYPE_COMPLETE_NO;
                 break;

@@ -1,3 +1,11 @@
+2019-12-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_type_is_complete): Struct types having
+	fields with labels are no complete types.
+	(pkl_ast_sizeof_type): Assert if a struct type with field labels
+	is not marked as complete.
+	* testsuite/poke.pkl/offsets-diag-1.pk: New test.
+
 2019-12-08 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pkl-lex. (CHAR): Accept \\ as a CHAR token.
