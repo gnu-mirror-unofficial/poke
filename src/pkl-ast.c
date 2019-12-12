@@ -974,7 +974,7 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
   if (use_given_name
       && PKL_AST_TYPE_NAME (type))
     {
-      fprintf (out,
+      fprintf (out, "%s",
                PKL_AST_IDENTIFIER_POINTER (PKL_AST_TYPE_NAME (type)));
       return;
     }
