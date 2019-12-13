@@ -787,9 +787,11 @@ pk_cmd_get_next_match (int *idx, const char *x, size_t len)
       if (*c == &null_cmd)
 	break;
 
-      char *name = xmalloc (strlen ((*c)->name) + 1);
-      strcpy (name, ".");
-      strcat (name, (*c)->name);
+      /* don't forget the null terminator of name */
+      const size_t name_len = strlen ((*c)->name);
+      char *name = xmalloc (name_len + 2);
+      name[0] = '.';
+      strncpy (name+1, (*c)->name, name_len + 1);
       if (0 !=  strncmp (name, x, len))
 	{
 	  free (name);
