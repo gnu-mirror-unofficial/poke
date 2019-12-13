@@ -1,5 +1,10 @@
 2019-12-13  Dan Čermák  <dan.cermak@posteo.net>
 
+	* src/pkl-env.c (hash_string): Avoid overflow of signed integers
+	in hash calculation.
+
+2019-12-13  Dan Čermák  <dan.cermak@posteo.net>
+
 	* src/pk-cmd.c (pk_cmd_get_next_match): Fix buffer overflow.
 
 2019-12-12  Dan Čermák  <dan.cermak@posteo.net>

@@ -60,7 +60,7 @@ hash_string (const char *name)
   len = strlen (name);
   hash = len;
   for (i = 0; i < len; i++)
-    hash = ((hash * 613) + (unsigned)(name[i]));
+    hash = ((hash * (size_t)613) + (unsigned)(name[i]));
 
 #define HASHBITS 30
   hash &= (1 << HASHBITS) - 1;
