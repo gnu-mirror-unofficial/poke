@@ -1342,11 +1342,6 @@ PKL_PHASE_END_HANDLER
    type of the l-value.
 
    Also, if the l-value is a map, its type should be a simple type.
-
-#if 0
-   Also, the type of the l-value cannot be a function: function
-   variables in poke can't be assigned new values.  XXX: or yes?
-#endif
 */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_ass_stmt)
@@ -1384,16 +1379,6 @@ expected %s got %s",
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
-
-#if 0
-  if (PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_FUNCTION)
-    {
-      PKL_ERROR (PKL_AST_LOC (ass_stmt),
-                 "l-value in assignment cannot be a function");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-#endif
 }
 PKL_PHASE_END_HANDLER
 

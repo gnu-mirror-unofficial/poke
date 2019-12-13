@@ -1,3 +1,9 @@
+2019-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_ass_stmt): Remove obsolete
+	check.
+	* testsuite/poke.pkl/ass-function-1.pk: New test.
+
 2019-12-13  Dan Čermák  <dan.cermak@posteo.net>
 
 	* src/pkl-env.c (hash_string): Avoid overflow of signed integers
