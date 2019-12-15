@@ -404,11 +404,50 @@ in poke shall be implemented as regular commands.
 @node Scripts
 @section Scripts
 @cindex scripts
-Files containing one poke command per line (which, as we saw above can
-include Poke statements and expressions) can be loaded at startup
-using the @code{-s} command line option.
+Script files contain poke commands.
+A poke command may be a dot command, a Poke statement or a Poke
+expression.
+Lines starting with @code{#} are comments will be ignored.   However a
+comment must start at the beginning of a line.  Here is an example
+of a script:
 
-The @file{~/.pokerc} startup file is also a poke script.
+@example
+# The following two lines are dot commands
+.load my-pickle.pk
+.set obase 16
+
+# The following line is a Poke statement
+dump :size 0x100#B :from 0x10#B
+
+# The following line is a Poke expression statement without any side effect.
+# Consequently it is valid, but rather useless.
+4 == 4
+@end example
+
+A script file contains commands, not Poke code.  This means
+it gets read line by line and commands cannot occupy
+more than one line.  Hence the following is a valid script:
+
+@example
+deftype foo = struct @{int this; int that;@}
+@end example
+
+@noindent
+but this is not valid as a script file (although it is a valid Poke command)
+and will provoke an error:
+
+@example
+deftype foo = struct
+@{
+ int this;
+ int that;
+@}
+@end example
+
+Script files can be loaded at startup using the @code{-s} command
+line option (@pxref{Invoking poke}).
+The @file{~/.pokerc} startup file is also an example of a poke
+script (@pxref{pokerc}).
 
 @node Shebang
 @section Shebang
@@ -789,10 +828,6 @@ Upon invocation poke will read and execute the commands of the file
 be disabled by passing @code{-q} or @code{--no-init-file} in the command
 line.
 
-The @file{.pokerc} file contains commands, not Poke code.  This means
-it gets read line by line, and commands cannot occupy more than one
-line.
-
 Example of initialization file:
 
 @example
@@ -800,10 +835,9 @@ Example of initialization file:
 .set endian host
 .set obase 16
 .set pretty-print yes
+pk_dump_cluster_by = 4
 .load ~/.poke.d/mypickles.pk
 @end example
-
-Lines starting with @code{#} are ignored as comments.
 
 @node Styling
 @chapter Styling

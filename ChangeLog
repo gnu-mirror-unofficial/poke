@@ -1,3 +1,8 @@
+2019-12-15 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (Scripts): Elaborate on what scripts are
+	(and what they are not).
+
 2019-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-typify.c (pkl_typify1_ps_ass_stmt): Remove obsolete
