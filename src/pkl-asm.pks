@@ -328,9 +328,9 @@
         ;; Boundaries are ok.  Build the trimmed array with a
         ;; subset of the elements of the array.
         typof                   ; ARR ATYP
-        tyagett                 ; ARR ATYP ETYP
-        push null               ; NULL ETYP
-        nip2                    ; ETYP
+        nip                     ; ATYP
+        push null               ; NULL
+        swap                    ; NULL ATYP
         pushvar $from
         regvar $idx
       .while
@@ -369,7 +369,7 @@
         push ulong<64>1         ; ... (TO-FROM) 1
         addlu
         nip2                    ; ... (TO-FROM+1)
-        dup                     ; NULL ETYP [NULL IDX VAL...] NELEM NINIT
+        dup                     ; NULL ATYP [NULL IDX VAL...] NELEM NINIT
         mka
         ;; If the trimmed array is mapped then the resulting array
         ;; is mapped as well, with the following attributes:
