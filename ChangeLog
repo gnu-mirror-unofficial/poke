@@ -1,3 +1,10 @@
+2019-12-16  Dan Čermák  <dan.cermak@cgc-instruments.com>
+
+	* src/pk-repl.c (pk_repl): fix memory leak of poke_history
+	* src/pk-cmd.c (pk_cmd_exec): fix memory leak of ecmd
+	* src/pk-cmd.c (pk_cmd_exec_1): fix memory leak of filename
+	* src/pk-cmd.c (null_cmd): properly initialize struct
+
 2019-12-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-asm.pks (atrim): The mka instruction expects the type of

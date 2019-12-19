@@ -52,8 +52,7 @@ extern struct pk_cmd vm_cmd; /* pk-vm.c  */
 extern struct pk_cmd set_cmd; /* pk-set.c */
 extern struct pk_cmd editor_cmd; /* pk-editor.c */
 
-struct pk_cmd null_cmd =
-  {NULL, NULL, NULL, 0, NULL, NULL};
+struct pk_cmd null_cmd = {};
 
 static struct pk_cmd *dot_cmds[] =
   {
@@ -248,6 +247,12 @@ pk_print_trie (int indent, struct pk_trie *trie)
 static int
 pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
 {
+#define GOTO_USAGE()                                                           \
+  do {                                                                         \
+    besilent = 0;                                                              \
+    ret = 0;                                                                   \
+    goto usage;                                                                \
+  } while (1)
   int ret = 1;
   size_t i;
   char cmd_name[MAX_CMD_NAME], *p;
@@ -317,7 +322,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
     {
       p = skip_blanks (p);
       if (*p == '\0')
-        goto usage;
+        GOTO_USAGE();
       return pk_cmd_exec_1 (p, *cmd->subtrie, cmd_name);
     }
 
@@ -474,7 +479,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                     *end = '\0';
 
                     if (filename[0] == '\0')
-                      goto usage;
+                      GOTO_USAGE();
 
                     switch (wordexp (filename, &exp_result, 0))
                       {
@@ -483,13 +488,13 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                       case WRDE_NOSPACE:
                         wordfree (&exp_result);
                       default:
-                        goto usage;
+                        GOTO_USAGE();
                       }
 
                     if (exp_result.we_wordc != 1)
                       {
                         wordfree (&exp_result);
-                        goto usage;
+                        GOTO_USAGE();
                       }
 
                     filename = xrealloc (filename,
@@ -522,7 +527,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
 
       /* Boo, could not find valid input for this argument.  */
       if (!match)
-        goto usage;
+        GOTO_USAGE();
 
       if (*p == ',')
         p++;
@@ -540,7 +545,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   /* Make sure there is no trailer contents in the input.  */
   p = skip_blanks (p);
   if (*p != '\0')
-    goto usage;
+    GOTO_USAGE();
 
   /* Process command flags.  */
   if (cmd->flags & PK_CMD_F_REQ_IO
@@ -564,6 +569,8 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   /* Call the command handler, passing the arguments.  */
   ret = (*cmd->handler) (argc, argv, uflags);
 
+  besilent = 1;
+  usage:
   /* Free arguments occupying memory.  */
   for (i = 0; i < argc; ++i)
     {
@@ -575,12 +582,11 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
         pvm_destroy_routine (argv[i].val.routine);
     }
 
-  return ret;
-
- usage:
   if (!besilent)
     pk_printf (_("Usage: %s\n"), cmd->usage);
-  return 0;
+
+  return ret;
+#undef GOTO_USAGE
 }
 
 extern struct pk_cmd *info_cmds[]; /* pk-info.c  */
@@ -616,6 +622,7 @@ pk_cmd_exec (char *str)
       char *ecmd, *end;
       pvm_val val;
       int what; /* 0 -> declaration, 1 -> statement */
+      int retval = 1;
 
       ecmd = xmalloc (strlen (cmd) + 2);
       strcpy (ecmd, cmd);
@@ -641,14 +648,18 @@ pk_cmd_exec (char *str)
       if (what == 0)
         {
           /* Declaration.  */
-          if (!pkl_compile_buffer (poke_compiler, ecmd, &end))
-            goto error;
+          if (!pkl_compile_buffer (poke_compiler, ecmd, &end)) {
+            retval = 0;
+            goto cleanup;
+          }
         }
       else
         {
           /* Statement.  */
-          if (!pkl_compile_statement (poke_compiler, ecmd, &end, &val))
-            goto error;
+          if (!pkl_compile_statement (poke_compiler, ecmd, &end, &val)) {
+            retval = 0;
+            goto cleanup;
+          }
 
           if (val != PVM_NULL)
             {
@@ -657,10 +668,9 @@ pk_cmd_exec (char *str)
             }
         }
 
-      return 1;
-
-    error:
-      return 0;
+    cleanup:
+      free(ecmd);
+      return retval;
     }
 }
 
