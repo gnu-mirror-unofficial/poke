@@ -109,6 +109,7 @@ The Standard Library
 * String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
+* Dates and Times::             Processing and displaying dates and times.
 
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
@@ -4100,6 +4101,60 @@ defun crc32 = (byte[] @var{buf}) uint<32>: @{ @dots{} @}
 @noindent
 This function returns the 32 bit CRC for the data contained in the
 array @var{buf}.
+
+@node Dates and Times
+@chapter Dates and Times
+@cindex date
+@cindex time
+@cindex @code{POSIX_Time32}
+
+Often a format encodes a date and time expressed as the number of seconds
+since midnight, January@tie{}1st 1970@.   You could map these
+simply as integers.  However, the standard library provides two
+types @code{POSIX_Time32} and @code{POSIX_Time64} which include
+pretty-printers (@pxref{Pretty Printers}) to
+display the date in a human readable format.
+The definition is:
+
+@example
+deftype POSIX_Time@var{size} = struct
+@{
+  uint<@var{size}>  seconds;
+
+  defun _print = void:
+  @{ @dots{} @}
+@}
+@end example
+
+@noindent
+where @var{size} is either 32 or 64@.
+When pretty printing is enabled, a mapped value of these types will
+display similar to
+
+@example
+#<2019-Dec-12 8:54:56>
+@end example
+
+@noindent
+whereas when pretty printing is not enabled, this example would be displayed as:
+
+@example
+POSIX_Time32 @{seconds=1576140896U@}
+@end example
+
+@noindent
+Note that timestamps of this type do not account for leap seconds and
+are agnostic towards timezone.
+
+@cindex @code{ptime}
+Occasionally you might wish to print an unmapped timestamp value in a
+human readable format.  To do this, you can use the @code{ptime} function,
+which is defined as follows:
+
+@example
+defun ptime = (uint<64> seconds) void:
+@{ @dots{} @}
+@end example
 
 @node Writing Commands
 @chapter Writing Commands

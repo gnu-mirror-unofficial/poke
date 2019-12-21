@@ -13,6 +13,12 @@
 
 2019-12-15 John Darrington <john@darrington.wattle.id.au>
 
+	* doc/poke.texi (Date and Time Functions): New chapter.
+	* src/std.pk (posix_time32): New type.
+	* testsuite/poke.std/time32.pk: New file.
+
+2019-12-15 John Darrington <john@darrington.wattle.id.au>
+
 	* doc/poke.texi (Scripts): Elaborate on what scripts are
 	(and what they are not).
 
