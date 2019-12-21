@@ -1,3 +1,7 @@
+2019-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/std.pk (days_in_month): Simplify the code a bit.
+
 2019-12-16  Dan Čermák  <dan.cermak@cgc-instruments.com>
 
 	* src/pk-repl.c (pk_repl): fix memory leak of poke_history

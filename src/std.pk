@@ -251,11 +251,8 @@ defun ptime = (uint<64> seconds) void:
 	}
 
       /* 30 days hath Sept, Apr, June & Nov ...  */
-      for (m in [8, 3, 5, 10])
-	{
-	  if (month == m)
-	    return 30;
-	}
+      if (month in [8, 3, 5, 10])
+        return 30;
 
       return 31;
     }
