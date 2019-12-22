@@ -111,6 +111,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         {
           char *why = strerror (errno);
           pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
+	  free (filename);
           return 0;
         }
 
@@ -121,10 +122,18 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         {
           printf (_("File %s already opened.  Use `file #N' to switch.\n"),
                   filename);
+	  free (filename);
           return 0;
         }
 
-      ios_open (filename);
+      errno = 0;
+      if (IOS_ERROR == ios_open (filename))
+	{
+	  pk_printf (_("Error opening %s: %s\n"), filename,
+		     strerror (errno));
+	  free (filename);
+	  return 0;
+	}
       free (filename);
     }
 

@@ -1,3 +1,8 @@
+2019-12-21 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-file.c (pk_cmd_file): Fix memory leaks and
+	check for failures on opening file.
+
 2019-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/std.pk (days_in_month): Simplify the code a bit.
