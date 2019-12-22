@@ -14,6 +14,11 @@
 	* src/pk-cmd.c (pk_cmd_exec_1): fix memory leak of filename
 	* src/pk-cmd.c (null_cmd): properly initialize struct
 
+2019-12-15 John Darrington <john@darrington.wattle.id.au>
+
+	*src/ios.c (ios_mask_last_byte) simplify
+	*src/ios.c (ios_mask_first_byte) simplify
+
 2019-12-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-asm.pks (atrim): The mka instruction expects the type of

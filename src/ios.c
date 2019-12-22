@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <assert.h>
+#include <limits.h>
 #define _(str) gettext (str)
 #include <streq.h>
 
@@ -310,72 +311,19 @@ ios_map (ios_map_fn cb, void *data)
     (*cb) (io, data);
 }
 
-inline static void
-ios_mask_first_byte(uint64_t *byte, int significant_bits)
+/* Set all except the lowest SIGNIFICANT_BITS of VALUE to zero.  */
+static inline void
+ios_mask_first_byte (uint64_t *value, int significant_bits)
 {
-  switch (significant_bits)
-    {
-    case 1:
-      *byte &= (char) 0x01;
-      return;
-    case 2:
-      *byte &= (char) 0x03;
-      return;
-    case 3:
-      *byte &= (char) 0x07;
-      return;
-    case 4:
-      *byte &= (char) 0x0f;
-      return;
-    case 5:
-      *byte &= (char) 0x1f;
-      return;
-    case 6:
-      *byte &= (char) 0x3f;
-      return;
-    case 7:
-      *byte &= (char) 0x7f;
-      return;
-    case 8:
-      return;
-    default:
-      assert (0);
-      return;
-    }
+  *value &= 0xFFU >> (CHAR_BIT - significant_bits);
 }
 
-inline static void
-ios_mask_last_byte(uint64_t *byte, int significant_bits)
+/* Set all except the highest SIGNIFICANT_BITS of the lowest
+   significant byte of VALUE to zero.  */
+static inline void
+ios_mask_last_byte (uint64_t *value, int significant_bits)
 {
-  switch (significant_bits)
-    {
-    case 1:
-      *byte &= (char) 0x80;
-      return;
-    case 2:
-      *byte &= (char) 0xc0;
-      return;
-    case 3:
-      *byte &= (char) 0xe0;
-      return;
-    case 4:
-      *byte &= (char) 0xf0;
-      return;
-    case 5:
-      *byte &= (char) 0xf8;
-      return;
-    case 6:
-      *byte &= (char) 0xfc;
-      return;
-    case 7:
-      *byte &= (char) 0xfe;
-      return;
-    case 8:
-      return;
-    default:
-      assert (0);
-      return;
-    }
+  *value &= 0xFFU << (CHAR_BIT - significant_bits);
 }
 
 static inline int
