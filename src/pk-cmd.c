@@ -257,7 +257,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   size_t i;
   char cmd_name[MAX_CMD_NAME], *p;
   struct pk_cmd *cmd;
-  int argc;
+  int argc = 0;
   struct pk_cmd_arg argv[8];
   uint64_t uflags;
   const char *a;
@@ -327,7 +327,6 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
     }
 
   /* Parse arguments.  */
-  argc = 0;
   a = cmd->arg_fmt;
   while (*a != '\0')
     {

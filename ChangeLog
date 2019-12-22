@@ -1,3 +1,8 @@
+2019-12-22 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (pk_cmd_exec_1): Properly initialise argc
+	instead of relying on subsequent assignment.
+
 2019-12-21 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-file.c (pk_cmd_file): Fix memory leaks and
