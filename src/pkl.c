@@ -690,7 +690,7 @@ pkl_ice (pkl_ast ast,
     int des;
     FILE *out;
 
-    if (((des = path_search (tmpfile, PATH_MAX, NULL, "poke", true)) == -1)
+    if (((des = path_search (tmpfile, 1024, NULL, "poke", true)) == -1)
         || ((des = mkstemp (tmpfile)) == -1))
       {
         pk_term_class ("error");

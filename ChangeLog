@@ -1,5 +1,9 @@
 2019-12-22 John Darrington <john@darrington.wattle.id.au>
 
+	* src/pkl.c (pkl_ast): Fix bugs dealing with path search.
+
+2019-12-22 John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-cmd.c (pk_cmd_exec_1): Properly initialise argc
 	instead of relying on subsequent assignment.
 
