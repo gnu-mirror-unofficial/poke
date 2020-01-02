@@ -134,7 +134,7 @@ XXX
 
 GNU poke is a new program and it introduces many a new concept.  It is
 a good idea to clarify how we call things in the poke community.
-Unless everyone uses the same nomenclature to refer to pokeish
+Unless everyone uses the same nomenclature to refer to pokish
 thingies, it is gonna get very confusing very soon!
 
 First of all we have @command{poke}, the program.  Since ``poke'' is a
@@ -362,7 +362,7 @@ An example is the @command{dump} command:
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
 00000010: 0100 f700 0100 0000 0000 0000 0000 0000  ................
 00000020: 0000 0000 0000 0000 8001 0000 0000 0000  ................
-00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@.....@.....
+00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@@.....@@.....
 00000040: 1800 0000 0000 0000 0000 0000 0000 0000  ................
 00000050: 7900 0000 0000 0000 b701 0000 9a02 0000  y...............
 00000060: 7b10 0000 0000 0000 1800 0000 0000 0000  @{...............
@@ -1539,12 +1539,12 @@ value.  It can be any integer type, signed or unsigned, of any size.
 
 The unit specification should be one of the unit identifiers that are
 allowed in offset literals (see above), a constant positive integer or
-the name of a Poke type whose size is known as compile time.
+the name of a Poke type whose size is known at compile time.
 
 @cindex kilobits
 Let's see some examples.  A signed 32-bit offset expressed in bytes
 has type @code{offset<int<32>,B>}.  An unsigned 12-bit offset
-expressed in kilobits has type @code{offset<uint<12>,Kb>}.  The later
+expressed in kilobits has type @code{offset<uint<12>,Kb>}.  The latter
 type can also be written using an explicit integer unit like in
 @code{offset<uint<12>,1024>}.  Finally, a signed 64-bit offset in units
 of ``packets'', where a packet is denoted with a Poke type
@@ -3234,6 +3234,7 @@ usage in struct fields constraint expressions.
 @node The Map Operator
 @section The Map Operator
 @cindex mapping
+
 Poke values reside in memory, and their in-memory representation is
 not visible from Poke programs.  For example, @code{32} is a 32-bit
 signed integer value, and it happens to not be boxed in the Poke
@@ -3241,6 +3242,7 @@ Virtual Machine.  Therefore, it occupies exactly 32-bit in the memory
 of the machine running poke.  Other values, like arrays for example,
 are boxed, and they need to store various meta-data.
 
+@cindex @code{@@}
 Regardless of the internal representation, we say these values live
 ``in memory''.  Now, it is also possible to ``map'' a value to some
 area in some underlying IO space.  This is done with the map operator
@@ -3822,7 +3824,7 @@ Print the integer as an ASCII character.  This only works with 8 bit
 integers.
 @end table
 @item %u
-Same as @code{%s}, but for unsigned integers.
+Same as @code{%i}, but for unsigned integers.
 @item %c
 A shorter way to write @code{%u8c}.
 @item %v
@@ -4177,7 +4179,7 @@ XXX
 @c  LocalWords:  texinfo setfilename texi settitle Pokist afourpaper
 @c  LocalWords:  dircategory direntry titlepage vskip filll ifnottex
 @c  LocalWords:  insertcopying vm pokerc Structs Endianness catos dfn
-@c  LocalWords:  atoi qsort cindex pokeish bitpatterns noindent samp
+@c  LocalWords:  atoi qsort cindex bitpatterns noindent samp
 @c  LocalWords:  itemx html init REPL TTY rluserman defun printf PVM
 @c  LocalWords:  stdin subcommands disassembler ascii POKEDATADIR FLV
 @c  LocalWords:  endian endianness obase expr Booleans uint Bitwise
