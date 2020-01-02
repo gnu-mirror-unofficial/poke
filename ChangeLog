@@ -1,5 +1,13 @@
 2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
 
+	* src/ios.c (IOS_PUT_C_ERR_CHCK): New macro.
+	(ios_write_int_fast): New function.
+	(ios_write_int_common): Likewise.
+	(ios_write_int): Rewrite.
+	(ios_write_uint): Rewrite.
+
+2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
+
 	* src/ios.c (ios_mask_first_byte): Replace this function with ...
 	(IOS_CHAR_GET_LSB): ... this macro.
 	(ios_mask_last_byte): Replace this function with ...

@@ -40,6 +40,13 @@
   (c) = ret;                                    \
 }
 
+#define IOS_PUT_C_ERR_CHCK(c, io)		\
+{						\
+  if (io->dev_if->put_c ((io)->dev, (char)(c))	\
+      == IOD_EOF)				\
+    return IOS_EIOBJ;				\
+}
+
 #define IOS_READ_INTO_CHARRAY_1BYTE(charray)		\
 {							\
   IOS_GET_C_ERR_CHCK((charray)[0], io);			\
@@ -906,6 +913,537 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
   return IOS_OK;
 }
 
+static inline int
+ios_write_int_fast (ios io, int flags,
+		    int bits,
+		    enum ios_endian endian,
+		    uint64_t value)
+{
+  switch (bits)
+    {
+    case 8:
+      IOS_PUT_C_ERR_CHCK(value, io);
+      return IOS_OK;
+
+    case 16:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    case 24:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    case 32:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    case 40:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    case 48:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    case 56:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    case 64:
+      if (endian == IOS_ENDIAN_LSB)
+	{
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 56, io);
+	}
+      else
+	{
+	  IOS_PUT_C_ERR_CHCK(value >> 56, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io);
+	}
+      return IOS_OK;
+
+    default:
+      assert (0);
+      break;
+    }
+}
+
+int
+ios_write_int_common (ios io, ios_off offset, int flags,
+		      int bits,
+		      enum ios_endian endian,
+		      uint64_t value)
+{
+  /* 64 bits might span at most 9 bytes.  */
+  uint64_t c[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+  /* Number of signifcant bits in the first byte.  */
+  int firstbyte_bits = 8 - (offset % 8);
+
+  /* (Total number of bytes that need to be read) - 1.  */
+  int bytes_minus1 = (bits - firstbyte_bits + 7) / 8;
+
+  /* Number of significant bits in the last byte.  */
+  int lastbyte_bits = (bits + (offset % 8)) % 8;
+  lastbyte_bits = lastbyte_bits == 0 ? 8 : lastbyte_bits;
+
+  switch (bytes_minus1)
+  {
+  case 0:
+    {
+      /* We are altering only a single byte.  */
+      uint64_t head, tail;
+      IOS_GET_C_ERR_CHCK(head, io);
+      tail = head;
+      IOS_CHAR_GET_MSB(&head, offset % 8);
+      IOS_CHAR_GET_LSB(&tail, 8 - lastbyte_bits);
+      /* We will write starting from offset / 8.  */
+      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+	return IOS_EIOFF;
+
+      /* Write the byte back without changing the surrounding bits.  */
+      c[0] = head | tail | (value << (8 - lastbyte_bits));
+      IOS_PUT_C_ERR_CHCK(c[0], io);
+      return IOS_OK;
+    }
+
+  case 1:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB && bits > 8)
+      {
+	/* Convert to the little endian format. For example a 12-bit-long
+	   number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	   with leading 0s.  */
+	value = ((value & 0xff) << (bits % 8))
+		| (value & 0xff00) >> 8;
+      }
+    c[0] |= value >> lastbyte_bits;
+    c[1] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    return IOS_OK;
+
+  case 2:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      if (bits <= 16)
+	value = ((value & 0xff) << (bits % 8))
+		| (value & 0xff00) >> 8;
+      else
+	value = ((value & 0xff) << (8 + bits % 8))
+		| (value & 0xff00) >> (8 - bits % 8)
+		| (value & 0xff0000) >> 16;
+    }
+    c[0] |= value >> (8 + lastbyte_bits);
+    c[1] = (value >> lastbyte_bits) & 0xff;
+    c[2] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    return IOS_OK;
+
+  case 3:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      if (bits <= 24)
+	value = ((value & 0xff) << (8 + bits % 8))
+		| (value & 0xff00) >> (8 - bits % 8)
+		| (value & 0xff0000) >> 16;
+      else
+	value = ((value & 0xff) << (16 + bits % 8))
+		| (value & 0xff00) << (bits % 8)
+		| (value & 0xff0000) >> (16 - bits % 8)
+		| (value & 0xff000000) >> 24;
+    }
+    c[0] |= value >> (16 + lastbyte_bits);
+    c[1] = (value >> (8 + lastbyte_bits)) & 0xff;
+    c[2] = (value >> lastbyte_bits) & 0xff;
+    c[3] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[3], io);
+    return IOS_OK;
+
+  case 4:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      if (bits <= 32)
+	value = ((value & 0xff) << (16 + bits % 8))
+		| (value & 0xff00) << (bits % 8)
+		| (value & 0xff0000) >> (16 - bits % 8)
+		| (value & 0xff000000) >> 24;
+      else
+	value = ((value & 0xff) << (24 + bits % 8))
+		| (value & 0xff00) << (8 + bits % 8)
+		| (value & 0xff0000) >> (8 - bits % 8)
+		| (value & 0xff000000) >> (24 - bits % 8)
+		| (value & 0xff00000000) >> 32;
+    }
+    c[0] |= value >> (24 + lastbyte_bits);
+    c[1] = (value >> (16 + lastbyte_bits)) & 0xff;
+    c[2] = (value >> (8 + lastbyte_bits)) & 0xff;
+    c[3] = (value >> lastbyte_bits) & 0xff;
+    c[4] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[3], io);
+    IOS_PUT_C_ERR_CHCK(c[4], io);
+    return IOS_OK;
+
+  case 5:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      if (bits <= 40)
+	value = ((value & 0xff) << (24 + bits % 8))
+		| (value & 0xff00) << (8 + bits % 8)
+		| (value & 0xff0000) >> (8 - bits % 8)
+		| (value & 0xff000000) >> (24 - bits % 8)
+		| (value & 0xff00000000) >> 32;
+      else
+	value = ((value & 0xff) << (32 + bits % 8))
+		| (value & 0xff00) << (16 + bits % 8)
+		| (value & 0xff0000) << (bits % 8)
+		| (value & 0xff000000) >> (16 - bits % 8)
+		| (value & 0xff00000000) >> (32 - bits % 8)
+		| (value & 0xff0000000000) >> 40;
+    }
+    c[0] |= value >> (32 + lastbyte_bits);
+    c[1] = (value >> (24 + lastbyte_bits)) & 0xff;
+    c[2] = (value >> (16 + lastbyte_bits)) & 0xff;
+    c[3] = (value >> (8 + lastbyte_bits)) & 0xff;
+    c[4] = (value >> lastbyte_bits) & 0xff;
+    c[5] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[3], io);
+    IOS_PUT_C_ERR_CHCK(c[4], io);
+    IOS_PUT_C_ERR_CHCK(c[5], io);
+    return IOS_OK;
+
+  case 6:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      if (bits <= 48)
+	value = ((value & 0xff) << (32 + bits % 8))
+		| (value & 0xff00) << (16 + bits % 8)
+		| (value & 0xff0000) << (bits % 8)
+		| (value & 0xff000000) >> (16 - bits % 8)
+		| (value & 0xff00000000) >> (32 - bits % 8)
+		| (value & 0xff0000000000) >> 40;
+      else
+	value = ((value & 0xff) << (40 + bits % 8))
+		| (value & 0xff00) << (24 + bits % 8)
+		| (value & 0xff0000) << (8 + bits % 8)
+		| (value & 0xff000000) >> (8 - bits % 8)
+		| (value & 0xff00000000) >> (24 - bits % 8)
+		| (value & 0xff0000000000) >> (40 - bits % 8)
+		| (value & 0xff000000000000) >> 48;
+    }
+    c[0] |= value >> (40 + lastbyte_bits);
+    c[1] = (value >> (32 + lastbyte_bits)) & 0xff;
+    c[2] = (value >> (24 + lastbyte_bits)) & 0xff;
+    c[3] = (value >> (16 + lastbyte_bits)) & 0xff;
+    c[4] = (value >> (8 + lastbyte_bits)) & 0xff;
+    c[5] = (value >> lastbyte_bits) & 0xff;
+    c[6] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[3], io);
+    IOS_PUT_C_ERR_CHCK(c[4], io);
+    IOS_PUT_C_ERR_CHCK(c[5], io);
+    IOS_PUT_C_ERR_CHCK(c[6], io);
+    return IOS_OK;
+
+  case 7:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      if (bits <= 56)
+	value = ((value & 0xff) << (40 + bits % 8))
+		| (value & 0xff00) << (24 + bits % 8)
+		| (value & 0xff0000) << (8 + bits % 8)
+		| (value & 0xff000000) >> (8 - bits % 8)
+		| (value & 0xff00000000) >> (24 - bits % 8)
+		| (value & 0xff0000000000) >> (40 - bits % 8)
+		| (value & 0xff000000000000) >> 48;
+      else
+	value = ((value & 0xff) << (48 + bits % 8))
+		| (value & 0xff00) << (32 + bits % 8)
+		| (value & 0xff0000) << (16 + bits % 8)
+		| (value & 0xff000000) << (bits % 8)
+		| (value & 0xff00000000) >> (16 - bits % 8)
+		| (value & 0xff0000000000) >> (32 - bits % 8)
+		| (value & 0xff000000000000) >> (48 - bits % 8)
+		| (value & 0xff00000000000000) >> 56;
+    }
+    c[0] |= value >> (48 + lastbyte_bits);
+    c[1] = (value >> (40 + lastbyte_bits)) & 0xff;
+    c[2] = (value >> (32 + lastbyte_bits)) & 0xff;
+    c[3] = (value >> (24 + lastbyte_bits)) & 0xff;
+    c[4] = (value >> (16 + lastbyte_bits)) & 0xff;
+    c[5] = (value >> (8 + lastbyte_bits)) & 0xff;
+    c[6] = (value >> lastbyte_bits) & 0xff;
+    c[7] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[3], io);
+    IOS_PUT_C_ERR_CHCK(c[4], io);
+    IOS_PUT_C_ERR_CHCK(c[5], io);
+    IOS_PUT_C_ERR_CHCK(c[6], io);
+    IOS_PUT_C_ERR_CHCK(c[7], io);
+    return IOS_OK;
+
+  case 8:
+    /* Correctly set the unmodified leading bits of the first byte.  */
+    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_CHAR_GET_MSB(&c[0], offset % 8);
+    /* Correctly set the unmodified trailing bits of the last byte.  */
+    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
+    /* We will write starting from offset / 8.  */
+    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+      return IOS_EIOFF;
+
+    if (endian == IOS_ENDIAN_LSB)
+    {
+      /* Convert to the little endian format. For example a 12-bit-long
+	 number's bits get reordered as 7-6-5-4-3-2-1-0-11-10-9-8
+	 with leading 0s.  */
+      value = ((value & 0xff) << (48 + bits % 8))
+	      | (value & 0xff00) << (32 + bits % 8)
+	      | (value & 0xff0000) << (16 + bits % 8)
+	      | (value & 0xff000000) << (bits % 8)
+	      | (value & 0xff00000000) >> (16 - bits % 8)
+	      | (value & 0xff0000000000) >> (32 - bits % 8)
+	      | (value & 0xff000000000000) >> (48 - bits % 8)
+	      | (value & 0xff00000000000000) >> 56;
+    }
+    c[0] |= value >> (56 + lastbyte_bits);
+    c[1] = (value >> (48 + lastbyte_bits)) & 0xff;
+    c[2] = (value >> (40 + lastbyte_bits)) & 0xff;
+    c[3] = (value >> (32 + lastbyte_bits)) & 0xff;
+    c[4] = (value >> (24 + lastbyte_bits)) & 0xff;
+    c[5] = (value >> (16 + lastbyte_bits)) & 0xff;
+    c[6] = (value >> (8 + lastbyte_bits)) & 0xff;
+    c[7] = (value >> lastbyte_bits) & 0xff;
+    c[8] |= (value << (8 - lastbyte_bits)) & 0xff;
+    IOS_PUT_C_ERR_CHCK(c[0], io);
+    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[3], io);
+    IOS_PUT_C_ERR_CHCK(c[4], io);
+    IOS_PUT_C_ERR_CHCK(c[5], io);
+    IOS_PUT_C_ERR_CHCK(c[6], io);
+    IOS_PUT_C_ERR_CHCK(c[7], io);
+    IOS_PUT_C_ERR_CHCK(c[8], io);
+    return IOS_OK;
+
+  default:
+    assert(0);
+  }
+}
+
 int
 ios_write_int (ios io, ios_off offset, int flags,
                int bits,
@@ -913,96 +1451,20 @@ ios_write_int (ios io, ios_off offset, int flags,
                enum ios_nenc nenc,
                int64_t value)
 {
-  if (offset % 8 == 0)
-    {
-      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
-          == -1)
-        return IOS_EIOFF;
+  /* We always need to start reading or writing from offset / 8  */
+  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+    return IOS_EIOFF;
 
-      switch (bits)
-        {
-        case 32:
-          {
-            int32_t c1, c2, c3, c4;
+  /* Fast track for byte-aligned 8x bits  */
+  if (offset % 8 == 0 && bits % 8 == 0)
+    return ios_write_int_fast (io, flags, bits, endian, value);
 
-            c1 = (value >> 24) & 0xff;
-            c2 = (value >> 16) & 0xff;
-            c3 = (value >> 8) & 0xff;
-            c4 = value & 0xff;
+  /* Shift the sign bit right.  */
+  int unused_bits = 64 - bits;
+  uint64_t uvalue = ((uint64_t) (value << unused_bits)) >> unused_bits;
 
-            if (io->dev_if->put_c (io->dev, c1)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c2)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c3)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c4)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            break;
-          }
-        case 64:
-          {
-            int32_t c1, c2, c3, c4, c5, c6, c7, c8;
-
-            c1 = (value >> 56) & 0xff;
-            c2 = (value >> 48) & 0xff;
-            c3 = (value >> 40) & 0xff;
-            c4 = (value >> 32) & 0xff;
-            c5 = (value >> 24) & 0xff;
-            c6 = (value >> 16) & 0xff;
-            c7 = (value >> 8) & 0xff;
-            c8 = value & 0xff;
-
-            if (io->dev_if->put_c (io->dev, c1)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c2)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c3)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c4)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c5)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c6)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c7)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c8)
-                == IOD_EOF)
-              return IOS_EIOFF;
-            break;
-          }
-        default:
-          assert (0);
-          break;
-        }
-    }
-  else
-    assert (0);
-
-  return IOS_OK;
+  /* Fall into the case for the unaligned and the sizes other than 8k.  */
+  return ios_write_int_common(io, offset, flags, bits, endian, uvalue);
 }
 
 int
@@ -1011,105 +1473,16 @@ ios_write_uint (ios io, ios_off offset, int flags,
                 enum ios_endian endian,
                 uint64_t value)
 {
-  /* XXX: writeme.  */
+  /* We always need to start reading or writing from offset / 8  */
+  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
+    return IOS_EIOFF;
 
+  /* Fast track for byte-aligned 8x bits  */
+  if (offset % 8 == 0 && bits % 8 == 0)
+    return ios_write_int_fast (io, flags, bits, endian, value);
 
-  if (offset % 8 == 0)
-    {
-      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
-          == -1)
-        return IOS_EIOFF;
-
-      switch (bits)
-        {
-        case 8:
-          if (io->dev_if->put_c (io->dev, (int) value)
-              == IOD_EOF)
-            return IOS_EIOBJ;
-          break;
-        case 32:
-          {
-            int32_t c1, c2, c3, c4;
-
-            c1 = (value >> 24) & 0xff;
-            c2 = (value >> 16) & 0xff;
-            c3 = (value >> 8) & 0xff;
-            c4 = value & 0xff;
-
-            if (io->dev_if->put_c (io->dev, c1)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c2)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c3)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c4)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            break;
-          }
-        case 64:
-          {
-            int32_t c1, c2, c3, c4, c5, c6, c7, c8;
-
-            c1 = (value >> 56) & 0xff;
-            c2 = (value >> 48) & 0xff;
-            c3 = (value >> 40) & 0xff;
-            c4 = (value >> 32) & 0xff;
-            c5 = (value >> 24) & 0xff;
-            c6 = (value >> 16) & 0xff;
-            c7 = (value >> 8) & 0xff;
-            c8 = value & 0xff;
-
-            if (io->dev_if->put_c (io->dev, c1)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c2)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c3)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c4)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c5)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c6)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c7)
-                == IOD_EOF)
-              return IOS_EIOFF;
-
-            if (io->dev_if->put_c (io->dev, c8)
-                == IOD_EOF)
-              return IOS_EIOFF;
-            break;
-          }
-        default:
-          assert (0);
-          break;
-        }
-    }
-  else
-    assert (0);
-
-
-  return IOS_OK;
+  /* Fall into the case for the unaligned and the sizes other than 8k.  */
+  return ios_write_int_common(io, offset, flags, bits, endian, value);
 }
 
 int
