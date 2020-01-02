@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+/* { dg-command { .file /etc/passwd } } */
+/* { dg-command { .file /dev/null } } */
+/* { dg-command { .info files } } */
+/* { dg-output "  Id    Mode    Position        Filename\n
+* #0    rw      0x00000000#b    file:///dev/null\n
+  #1    r       0x00000000#b    file:///etc/passwd\n" } */

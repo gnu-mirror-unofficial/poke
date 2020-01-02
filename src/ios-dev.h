@@ -81,4 +81,8 @@ struct ios_dev_if
      the character written as an int, or IOD_EOF on error.  */
 
   int (*put_c) (void *dev, int c);
+
+  /* Return the mode of the device, as it was opened.  */
+
+  int (*get_mode) (void *dev);
 };

@@ -125,6 +125,7 @@ void ios_close (ios io);
    are summarized in the IOS_M_* constants, also defined below.  */
 
 #define IOS_M_RDWR 1
+#define IOS_M_RDONLY 2
 
 int ios_mode (ios io);
 

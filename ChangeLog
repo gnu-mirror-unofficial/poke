@@ -1,3 +1,13 @@
+2019-12-29 John Darrington <john@darrington.wattle.id.au>
+
+	* src/ios-dev-file.c (ios_dev_file_open): Use a more reliable
+	method to determine the file's mode.
+	(ios_dev_file_get_mode): New function.
+	* src/ios-dev.h (struct ios_dev_if) [get_mode]: New member.
+	* src/ios.c (ios_mode): Use method from implementation.
+	* src/ios.h (IOS_M_RDONLY): New macro.
+	* testsuite/poke.cmd/file-mode.pk: New file.
+
 2019-12-22 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pkl.c (pkl_ast): Fix bugs dealing with path search.

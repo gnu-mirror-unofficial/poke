@@ -113,7 +113,6 @@ struct ios
   char *handler;
   void *dev;
   struct ios_dev_if *dev_if;
-  int mode;
 
   struct ios *next;
 };
@@ -230,7 +229,7 @@ ios_close (ios io)
 int
 ios_mode (ios io)
 {
-  return io->mode;
+  return io->dev_if->get_mode (io->dev);
 }
 
 ios_off
