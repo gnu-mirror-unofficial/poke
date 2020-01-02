@@ -1,3 +1,13 @@
+2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_mask_first_byte): Replace this function with ...
+	(IOS_CHAR_GET_LSB): ... this macro.
+	(ios_mask_last_byte): Replace this function with ...
+	(IOS_CHAR_GET_MSB): ... this macro.
+	(ios_read_int_common): Replace the calls to ios_mask_first_byte
+	and ios_mask_last_byte with IOS_CHAR_GET_LSB and
+	IOS_CHAR_GET_MSB, respectively.
+
 2019-12-29 John Darrington <john@darrington.wattle.id.au>
 
 	* src/ios-dev-file.c (ios_dev_file_open): Use a more reliable

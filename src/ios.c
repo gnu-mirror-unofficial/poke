@@ -311,19 +311,13 @@ ios_map (ios_map_fn cb, void *data)
 }
 
 /* Set all except the lowest SIGNIFICANT_BITS of VALUE to zero.  */
-static inline void
-ios_mask_first_byte (uint64_t *value, int significant_bits)
-{
-  *value &= 0xFFU >> (CHAR_BIT - significant_bits);
-}
+#define IOS_CHAR_GET_LSB(value, significant_bits)		\
+  (*(value) &= 0xFFU >> (CHAR_BIT - (significant_bits)))
 
 /* Set all except the highest SIGNIFICANT_BITS of the lowest
    significant byte of VALUE to zero.  */
-static inline void
-ios_mask_last_byte (uint64_t *value, int significant_bits)
-{
-  *value &= 0xFFU << (CHAR_BIT - significant_bits);
-}
+#define IOS_CHAR_GET_MSB(value, significant_bits)		\
+  (*(value) &= 0xFFU << (CHAR_BIT - (significant_bits)))
 
 static inline int
 ios_read_int_common (ios io, ios_off offset, int flags,
@@ -344,9 +338,9 @@ ios_read_int_common (ios io, ios_off offset, int flags,
   int lastbyte_bits = (bits + (offset % 8)) % 8;
   lastbyte_bits = lastbyte_bits == 0 ? 8 : lastbyte_bits;
 
-  /* Read the first byte and mask the unused bits.  */
+  /* Read the first byte and clear the unused bits.  */
   IOS_GET_C_ERR_CHCK(c[0], io);
-  ios_mask_first_byte(&c[0], firstbyte_bits);
+  IOS_CHAR_GET_LSB(&c[0], firstbyte_bits);
 
   switch (bytes_minus1)
   {
@@ -356,7 +350,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 1:
     IOS_READ_INTO_CHARRAY_1BYTE(c+1);
-    ios_mask_last_byte(&c[1], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[1], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if (bits <= 8)
@@ -387,7 +381,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 2:
     IOS_READ_INTO_CHARRAY_2BYTES(c+1);
-    ios_mask_last_byte(&c[2], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[2], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
@@ -424,7 +418,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 3:
     IOS_READ_INTO_CHARRAY_3BYTES(c+1);
-    ios_mask_last_byte(&c[3], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[3], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
@@ -462,7 +456,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 4:
     IOS_READ_INTO_CHARRAY_4BYTES(c+1);
-    ios_mask_last_byte(&c[4], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[4], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
@@ -502,7 +496,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 5:
     IOS_READ_INTO_CHARRAY_5BYTES(c+1);
-    ios_mask_last_byte(&c[5], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[5], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
@@ -542,7 +536,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 6:
     IOS_READ_INTO_CHARRAY_6BYTES(c+1);
-    ios_mask_last_byte(&c[6], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[6], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
@@ -584,7 +578,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 7:
     IOS_READ_INTO_CHARRAY_7BYTES(c+1);
-    ios_mask_last_byte(&c[7], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[7], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
@@ -627,7 +621,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 
   case 8:
     IOS_READ_INTO_CHARRAY_8BYTES(c+1);
-    ios_mask_last_byte(&c[8], lastbyte_bits);
+    IOS_CHAR_GET_MSB(&c[8], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	/* We have to shift to fill the least significant byte to get
