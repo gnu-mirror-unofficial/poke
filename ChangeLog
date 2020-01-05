@@ -1,3 +1,8 @@
+2020-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import module
+	`update-copyright'.
+
 2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
 
 	* testsuite/poke.map/maps-uint-write-01.pk: New test.
