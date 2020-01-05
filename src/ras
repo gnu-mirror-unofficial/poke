@@ -25,8 +25,9 @@
 # very much because it saves us a lot of work.  So please be gentle
 # and don't break it.
 #
-# This code is supposed to run well on any POSIX-compatible awk.
-# Please send us a patch if you find out it doesn't!
+# This code is supposed to run well on GNU awk, and other reasonably
+# modern AWK implementations.  In particular, it requires support for
+# gensub.
 
 ### Documentation
 

@@ -1,5 +1,10 @@
 2020-01-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/ras: Stop claiming posix compatibility both as the current
+	state and a goal.
+
+2020-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Import module
 	`update-copyright'.
 
