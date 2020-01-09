@@ -2,7 +2,7 @@
 @comment %**start of header
 @setfilename poke.info
 @include version.texi
-@settitle The Pokist Guide
+@settitle The Poke Book
 @afourpaper
 @comment %**end of header
 
