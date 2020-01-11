@@ -1,3 +1,9 @@
+2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Remove PKL_INSN_RETURN from
+	PKL_AST_BUILTIN_CLOSE which returns void.
+	* src/pvm.jitter (close): Add JITTER_DROP_STACK.
+
 2020-01-11 Egeyar Bagcioglu <egeyar@gmail.com>
 
 	* src/ios.c (ios_write_int_common): Add specifiers "static inline".
