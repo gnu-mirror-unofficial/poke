@@ -1064,7 +1064,7 @@ ios_write_int_fast (ios io, int flags,
     }
 }
 
-int
+static inline int
 ios_write_int_common (ios io, ios_off offset, int flags,
 		      int bits,
 		      enum ios_endian endian,

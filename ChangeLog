@@ -1,3 +1,7 @@
+2020-01-11 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_write_int_common): Add specifiers "static inline".
+
 2020-01-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/ras: Stop claiming posix compatibility both as the current
