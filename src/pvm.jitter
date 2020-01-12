@@ -609,7 +609,7 @@ end
 instruction open () # ( STR -- INT )
   code
      char *filename = PVM_VAL_STR (JITTER_TOP_STACK ());
-     int ret = ios_open (filename);
+     int ret = ios_open (filename, 0);
 
      if (ret == IOS_ERROR)
        PVM_RAISE (PVM_E_IO);

@@ -127,7 +127,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
 
       errno = 0;
-      if (IOS_ERROR == ios_open (filename))
+      if (IOS_ERROR == ios_open (filename, 1))
 	{
 	  pk_printf (_("Error opening %s: %s\n"), filename,
 		     strerror (errno));

@@ -8,7 +8,7 @@
 /* { dg-output "0" } */
 /* { dg-command { defvar bar = open ("bar.data") } } */
 /* { dg-command { get_ios } } */
-/* { dg-output "\n1" } */
-/* { dg-command { defvar ja = set_ios (foo) } } */
-/* { dg-command { get_ios } } */
 /* { dg-output "\n0" } */
+/* { dg-command { defvar ja = set_ios (bar) } } */
+/* { dg-command { get_ios } } */
+/* { dg-output "\n1" } */

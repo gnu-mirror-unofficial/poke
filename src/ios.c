@@ -159,7 +159,7 @@ ios_shutdown (void)
 }
 
 int
-ios_open (const char *handler)
+ios_open (const char *handler, int set_cur)
 {
   struct ios *io = NULL;
   struct ios_dev_if **dev_if = NULL;
@@ -193,7 +193,8 @@ ios_open (const char *handler)
   io->next = io_list;
   io_list = io;
 
-  cur_io = io;
+  if (!cur_io || set_cur == 1)
+    cur_io = io;
 
   return io->id;
 

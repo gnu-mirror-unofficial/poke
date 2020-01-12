@@ -1,5 +1,16 @@
 2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
 
+	* src/ios.c (ios_open): Add argument set_cur to control making
+	the newly opened IO space the current IO space.
+	* src/ios.h (ios_open): Add the new argument, set_cur.
+	* src/poke.c (parse_args): Call ios_open with set_cur 1.
+	* src/pk-file.c (pk_cmd_file): Likewise.
+	* src/pvm.jitter (instruction open): Call ios_open with set_cur 0.
+	* testsuite/poke.pkl/close-1.pk: Adjust.
+	* testsuite/poke.pkl/set-ios-1.pk: Likewise.
+
+2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
+
 	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Remove PKL_INSN_RETURN from
 	PKL_AST_BUILTIN_CLOSE which returns void.
 	* src/pvm.jitter (close): Add JITTER_DROP_STACK.
