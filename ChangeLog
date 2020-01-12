@@ -1,5 +1,10 @@
 2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-lex.l (CHAR): Allow '\r' as character literals.
+	* testsuite/poke.pkl/chars-2.pk: New file.
+
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios.c (ios_read_string): Fix detection of EOF.
 
 2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
