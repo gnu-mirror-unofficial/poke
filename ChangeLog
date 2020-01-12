@@ -1,3 +1,9 @@
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm-val.c (pvm_print_val): Fix printing of hexadecimal
+	values with odd widths.
+	* testsuite/poke.map/maps-uint-19.pk: Test for the above.
+
 2020-01-12 John Darrington <john@darrington.wattle.id.au>
 
 	* doc/poke.texi: Fixed various typos.

@@ -583,7 +583,7 @@ pvm_print_val (pvm_val val, int base, int flags)
       uint16_fmt = "0x%" PRIx32 "UH";
       uint8_fmt = "0x%" PRIx32 "UB";
       uint4_fmt = "0x%" PRIx32 "UN";
-      uint_fmt = "(uint<%d>) 0x%" PRIo32;
+      uint_fmt = "(uint<%d>) 0x%" PRIx32;
       break;
     case 2:
       /* This base doesn't use printf's formatting strings, but its
