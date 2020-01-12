@@ -904,7 +904,7 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
 
       c = io->dev_if->get_c (io->dev);
       if (c == IOD_EOF)
-        str[i] = '\0';
+        return IOS_EIOFF;
       else
         str[i] = (char) c;
     }

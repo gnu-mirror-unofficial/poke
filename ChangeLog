@@ -1,3 +1,7 @@
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios.c (ios_read_string): Fix detection of EOF.
+
 2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
 
 	* src/ios.c (ios_open): Add argument set_cur to control making
