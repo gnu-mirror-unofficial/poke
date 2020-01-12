@@ -160,11 +160,6 @@ ios ios_search (const char *handler);
 
 ios ios_search_by_id (int id);
 
-/* Return the Nth IO space.  If N is negative or bigger than the
-   number of IO spaces which are currently opened, return NULL.  */
-
-ios ios_get (int n);
-
 /* Return the ID of the given IO space.  */
 
 int ios_get_id (ios io);

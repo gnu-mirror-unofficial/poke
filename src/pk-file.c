@@ -91,7 +91,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       ios io;
 
       io_id = PK_CMD_ARG_TAG (argv[0]);
-      io = ios_get (io_id);
+      io = ios_search_by_id (io_id);
       if (io == NULL)
         {
           pk_printf (_("No such file #%d\n"), io_id);
@@ -159,7 +159,7 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     {
       int io_id = PK_CMD_ARG_TAG (argv[0]);
 
-      io = ios_get (io_id);
+      io = ios_search_by_id (io_id);
       if (io == NULL)
         {
           pk_printf (_("No such file #%d\n"), io_id);

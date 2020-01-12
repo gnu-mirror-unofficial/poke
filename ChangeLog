@@ -1,3 +1,12 @@
+2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_get): Remove.
+	* src/ios.h (ios_get): Likewise.
+	* src/pk-file.c (pk_cmd_file): Replace the bogus call to ios_get
+	with ios_search_by_id.
+	(pk_cmd_close): Replace the bogus call to ios_get with
+	ios_search_by_id.
+
 2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/chars-1.pk: New file.

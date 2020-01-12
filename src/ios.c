@@ -289,20 +289,6 @@ ios_search_by_id (int id)
   return io;
 }
 
-ios
-ios_get (int n)
-{
-  ios io;
-
-  if (n < 0)
-    return NULL;
-
-  for (io = io_list; io && n > 0; n--, io = io->next)
-    ;
-
-  return io;
-}
-
 int
 ios_get_id (ios io)
 {
