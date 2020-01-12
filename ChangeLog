@@ -1,5 +1,16 @@
 2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/chars-1.pk: New file.
+	* testsuite/poke.pkl/chars-8.pk: Likewise.
+	* testsuite/poke.pkl/chars-7.pk: Likewise.
+	* testsuite/poke.pkl/chars-6.pk: Likewise.
+	* testsuite/poke.pkl/chars-5.pk: Likewise.
+	* testsuite/poke.pkl/chars-4.pk: Likewise.
+	* testsuite/poke.pkl/chars-3.pk: Likewise.
+	* testsuite/poke.pkl/chars-9.pk: Renamed from chars.pk
+
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-lex.l (CHAR): Allow '\r' as character literals.
 	* testsuite/poke.pkl/chars-2.pk: New file.
 
