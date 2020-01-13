@@ -259,6 +259,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   pkl_ast_node exp = PKL_AST_CAST_EXP (cast);
   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
+  /* Casts to/from void are always forbidden.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_VOID)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting a value to `void' is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_VOID)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "casting `void' is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+  
   /* Casting to ANY is always forbidden.  But casting from ANY is
      always allowed.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)

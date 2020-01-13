@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+deftype Pac0et = struct { };
+
+defvar x=0 as  void ;  /* { dg-error "not allowed" } */
+
