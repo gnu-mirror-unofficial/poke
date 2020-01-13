@@ -152,12 +152,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_boolean)
 PKL_PHASE_END_HANDLER
 
 /* The type of an unary operation NEG, POS, BNOT, UNMAP is the type of
-   its single operand.  */
+   its single operand.
+
+   NEG, POS and BNOT are only valid on certain types.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_first_operand)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node type = PKL_AST_TYPE (PKL_AST_EXP_OPERAND (exp, 0));
+
+  if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_UNMAP)
+    {
+      switch (PKL_AST_TYPE_CODE (type))
+        {
+        case PKL_TYPE_INTEGRAL:
+        case PKL_TYPE_OFFSET:
+          break;
+        default:
+          PKL_ERROR (PKL_AST_LOC (exp),
+                     "invalid operand.  Expected integral or offset.");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
 
   PKL_AST_TYPE (exp) = ASTREF (type);
 }

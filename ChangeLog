@@ -1,5 +1,13 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_first_operand): Check the type
+	of the operand for NEG, POS and BNOT.
+	* testsuite/poke.pkl/neg-diag-1.pk: New test.
+	* testsuite/poke.pkl/bnot-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/pos-diag-1.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-insn.def (PKL_INSN_OSETM): Define.
 	* src/pvm.jitter (osetm): new instruction.
 	* src/pkl-gen.c (pkl_gen_ps_op_intexp): Adapt to offsets.
