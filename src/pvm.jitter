@@ -2177,6 +2177,14 @@ instruction ogetm () # ( OFF -- OFF (INT|LONG|UINT|ULONG) )
   end
 end
 
+instruction osetm () # ( OFF (INT|LONG|UINT|ULONG) -- OFF )
+  code
+   PVM_VAL_OFF_MAGNITUDE (JITTER_UNDER_TOP_STACK ())
+    =  JITTER_TOP_STACK ();
+   JITTER_DROP_STACK ();
+  end
+end
+
 instruction ogetu () # ( OFF -- OFF ULONG )
   code
     JITTER_PUSH_STACK (PVM_VAL_OFF_UNIT (JITTER_TOP_STACK ()));

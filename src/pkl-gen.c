@@ -2554,7 +2554,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_intexp)
   enum pkl_asm_insn insn;
 
   if (PKL_AST_EXP_CODE (node) == PKL_AST_OP_POS)
-    /* POS in integers is basically a nop.  */
+    /* POS in both integers and offsets is basically a nop.  */
     PKL_PASS_DONE;
 
   switch (PKL_AST_EXP_CODE (node))
@@ -2573,6 +2573,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_intexp)
 
   switch (PKL_AST_TYPE_CODE (type))
     {
+    case PKL_TYPE_OFFSET:
+      assert (insn == PKL_INSN_NEG || insn == PKL_INSN_BNOT);
     case PKL_TYPE_INTEGRAL:
       pkl_asm_insn (pasm, insn, type);
       pkl_asm_insn (pasm, PKL_INSN_NIP);

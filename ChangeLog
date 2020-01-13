@@ -1,5 +1,16 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-insn.def (PKL_INSN_OSETM): Define.
+	* src/pvm.jitter (osetm): new instruction.
+	* src/pkl-gen.c (pkl_gen_ps_op_intexp): Adapt to offsets.
+	* src/pkl-asm.c (pkl_asm_insn_intop): Likewise.
+	* testsuite/poke.pkl/neg-offsets-1.pk: New test.
+	* testsuite/poke.pkl/bnot-offsets-1.pk: Likewise.
+	* testsuite/poke.pkl/bnot-integers-1.pk: Renamed from bnot-1.pk
+	* testsuite/poke.pkl/bnot-integers-2.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_cast): Check casts from arrays.
 	* testsuite/poke.pkl/cast-array-diag-8.pk: New file.
 
