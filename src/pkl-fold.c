@@ -586,7 +586,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_div)
       && PKL_AST_INTEGER_VALUE (op2) == 0)
     goto divbyzero;
 
-  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET
+      && PKL_AST_CODE (op2) == PKL_AST_OFFSET)
     {
       pkl_ast_node magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);
 
@@ -617,7 +618,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_cdiv)
       && PKL_AST_INTEGER_VALUE (op2) == 0)
     goto divbyzero;
 
-  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET
+      && PKL_AST_CODE (op2) == PKL_AST_OFFSET)
     {
       pkl_ast_node magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);
 

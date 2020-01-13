@@ -1,5 +1,13 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-fold.c (pkl_fold_cdiv): Fix detection of division by zero
+	for offsets with implicit magnitudes.
+	(pkl_fold_div): Likewise.
+	* testsuite/poke.pkl/cdiv-offsets-3.pk: New file.
+	* testsuite/poke.pkl/div-offsets-4.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-fold.c (pkl_fold_mod): Fix detection of division by zero
 	for offsets with implicit magnitudes.
 	* testsuite/poke.pkl/mod-offsets-5.pk: New file.
