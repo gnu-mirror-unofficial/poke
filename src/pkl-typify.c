@@ -2152,8 +2152,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
     = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
 
   /* Function types cannot appear in the definition of a struct type
-     element.  */
-  if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_FUNCTION)
+     element.  Ditto for `any' and `void'.  */
+  if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_FUNCTION
+      || PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_ANY
+      || PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_VOID)
     {
       PKL_ERROR (PKL_AST_LOC (elem_type),
                  "invalid type in struct field");

@@ -1,5 +1,12 @@
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_struct_type_field): struct
+	fields cannot be of type `any' nor `void'.
+	* testsuite/poke.pkl/struct-types-diag-9.pk: New test.
+	* testsuite/poke.pkl/struct-types-diag-10.pk: Likewise.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-pass.h (PKL_PASS_SUBPASS): fix detection of error when
 	calling pkl_do_subpass.
 
