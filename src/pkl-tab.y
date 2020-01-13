@@ -183,15 +183,15 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
       switch (PKL_AST_CODE ($$))
         {
         case PKL_AST_COMP_STMT:
-          pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
+            /*          pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);*/
           break;
         case PKL_AST_TYPE:
           /*          if (PKL_AST_TYPE_CODE ($$) == PKL_TYPE_STRUCT)
                       pkl_parser->env = pkl_env_pop_frame (pkl_parser->env); */
           break;
         case PKL_AST_FUNC:
-          if (PKL_AST_FUNC_ARGS ($$))
-            pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
+            /*          if (PKL_AST_FUNC_ARGS ($$))
+                        pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);*/
           break;
         default:
           break;

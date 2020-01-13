@@ -1,5 +1,10 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y: Do not try to pop lexical frames in <ast>
+	destructors.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_cast): Casting to/from void is
 	not allowed.
 	* testsuite/poke.pkl/cast-void-diag-1.pk: New test.
