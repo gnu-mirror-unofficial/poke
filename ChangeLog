@@ -1,3 +1,11 @@
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_op_boolean): make sure the
+	arguments to relational operators are integral.
+	* testsuite/poke.pkl/and-diag-1.pk: New test.
+	* testsuite/poke.pkl/xor-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/or-diag-1.pk: Likewise.
+
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-tab.y: Do not try to pop lexical frames in <ast>

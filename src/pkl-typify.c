@@ -139,14 +139,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
 PKL_PHASE_END_HANDLER
 
 /* The type of a binary operation EQ, NE, LT, GT, LE, GE, AND, and OR
-   is a boolean encoded as a 32-bit signed integer type.  */
+   is a boolean encoded as a 32-bit signed integer type.
+
+   Also, arguments to boolean operators should be of integral
+   types.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_boolean)
 {
-  pkl_ast_node type
-    = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
-  PKL_AST_LOC (type) = PKL_AST_LOC (PKL_PASS_NODE);
+  pkl_ast_node type;
 
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
+
+
+  if (PKL_AST_TYPE_CODE (op1_type) != PKL_TYPE_INTEGRAL
+      || PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_INTEGRAL)
+    {
+      PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE),
+                 "logical operator requires integral arguments");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
+  PKL_AST_LOC (type) = PKL_AST_LOC (PKL_PASS_NODE);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
