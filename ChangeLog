@@ -1,5 +1,11 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-fold.c (pkl_fold_mod): Fix detection of division by zero
+	for offsets with implicit magnitudes.
+	* testsuite/poke.pkl/mod-offsets-5.pk: New file.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-anal.c (pkl_anal1_ps_offset): New handler.
 	(pkl_phase_anal1): Add handler.
 	* testsuite/poke.pkl/offset-type-diag-3.pk: New test.
