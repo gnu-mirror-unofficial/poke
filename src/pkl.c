@@ -684,8 +684,7 @@ pkl_ice (pkl_ast ast,
   va_list valist;
   char tmpfile[1024];
 
-  /* XXX: dump the AST plus additional details on the current state to
-     a temporary file.  */
+  if (!poke_quiet_p)
   {
     int des;
     FILE *out;
@@ -738,11 +737,14 @@ pkl_ice (pkl_ast ast,
     free (msg);
   }
   pk_puts ("\n");
-  pk_printf ("Important information has been dumped in %s.\n",
-             tmpfile);
-  pk_puts ("Please attach it to a bug report and send it to");
-  pk_term_hyperlink ("mailto:poke-devel@nongnu.org", NULL);
-  pk_puts (" poke-devel@nongnu.org");
+  if (!poke_quiet_p)
+    {
+      pk_printf ("Important information has been dumped in %s.\n",
+                 tmpfile);
+      pk_puts ("Please attach it to a bug report and send it to");
+      pk_term_hyperlink ("mailto:poke-devel@nongnu.org", NULL);
+      pk_puts (" poke-devel@nongnu.org");
+    }
   pk_term_end_hyperlink ();
   pk_puts (".\n");
 }
