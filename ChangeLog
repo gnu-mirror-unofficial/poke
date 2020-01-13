@@ -1,5 +1,10 @@
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-pass.h (PKL_PASS_SUBPASS): fix detection of error when
+	calling pkl_do_subpass.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl.c (pkl_ice): do not dump files in /etc if --quiet is
 	used in the command line.
 

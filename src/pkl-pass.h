@@ -205,12 +205,12 @@ typedef struct pkl_phase *pkl_phase;
 #define PKL_PASS_SUBPASS(NODE)                      \
   do                                                \
     {                                               \
-      if (pkl_do_subpass (PKL_PASS_COMPILER,        \
+      if (!pkl_do_subpass (PKL_PASS_COMPILER,       \
                           PKL_PASS_AST,             \
                           (NODE),                   \
                           _phases,                  \
                           _payloads,                \
-                          _flags) == 2)             \
+                          _flags))                  \
         PKL_PASS_ERROR;                             \
     }                                               \
   while (0)
