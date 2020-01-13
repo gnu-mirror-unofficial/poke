@@ -188,10 +188,9 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static void
 print_info_file (ios io, void *data)
 {
-  int *i = (int *) data;
   pk_printf ("%s#%d\t%s\t0x%08jx#b\t%s\n",
              io == ios_cur () ? "* " : "  ",
-             (*i)++,
+             ios_get_id (io),
              ios_mode (io) & IOS_M_RDWR ? "rw" : "r ",
              ios_tell (io), ios_handler (io));
 }
@@ -199,13 +198,10 @@ print_info_file (ios io, void *data)
 static int
 pk_cmd_info_files (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  int id;
-
   assert (argc == 0);
 
-  id = 0;
   pk_printf (_("  Id\tMode\tPosition\tFilename\n"));
-  ios_map (print_info_file, &id);
+  ios_map (print_info_file, NULL);
 
   return 1;
 }

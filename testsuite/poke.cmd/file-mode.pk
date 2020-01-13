@@ -3,6 +3,6 @@
 /* { dg-command { .file /etc/passwd } } */
 /* { dg-command { .file /dev/null } } */
 /* { dg-command { .info files } } */
-/* { dg-output "  Id    Mode    Position        Filename\n
-* #0    rw      0x00000000#b    file:///dev/null\n
-  #1    r       0x00000000#b    file:///etc/passwd\n" } */
+/* { dg-output "  Id\tMode\tPosition\tFilename" } */
+/* { dg-output {\n. #1\trw\t0x00000000#b\tfile:///dev/null} } */
+/* { dg-output {\n  #0\tr \t0x00000000#b\tfile:///etc/passwd} } */

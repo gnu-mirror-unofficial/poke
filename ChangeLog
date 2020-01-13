@@ -1,5 +1,11 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-file.c (print_info_file): Use the IO's id as tags.
+	(pk_cmd_info_files): Adapt accordingly.
+	* testsuite/poke.cmd/file-mode.pk: Adjust accordingly.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-lex.l: Ignore form feed characters.
 	* testsuite/poke.pkl/formfeedchar.pk: New file.
 	* doc/poke.texi (Comments): New chapter.
