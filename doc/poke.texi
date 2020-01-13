@@ -1476,7 +1476,8 @@ express offsets in any arbitrary unit, as disparate as it may seem:
 @end example
 
 That's it, 17 units of 3 bits each, zero units of 12 bits each,
-and eight units of 1 bit each.
+and eight units of 1 bit each.  Note that the unit should be bigger
+than 0.
 
 But then, why stopping there?  Poking is all about defining data
 structures and operating on them@dots{} so why not using these structures

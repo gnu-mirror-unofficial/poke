@@ -1,5 +1,14 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-anal.c (pkl_anal1_ps_offset): New handler.
+	(pkl_phase_anal1): Add handler.
+	* testsuite/poke.pkl/offset-type-diag-3.pk: New test.
+	* testsuite/poke.pkl/offsets-diag-2.pk: Likewise.
+	* doc/poke.texi (Offset Literals): Document that the unit of
+	offsets shall be bigger than 0.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* TODO: Several updates.
 
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
