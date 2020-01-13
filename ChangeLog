@@ -1,5 +1,10 @@
 2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Check casts from arrays.
+	* testsuite/poke.pkl/cast-array-diag-8.pk: New file.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-fold.c (pkl_fold_cdiv): Fix detection of division by zero
 	for offsets with implicit magnitudes.
 	(pkl_fold_div): Likewise.
