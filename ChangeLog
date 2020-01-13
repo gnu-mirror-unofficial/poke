@@ -1,3 +1,9 @@
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-lex.l: Ignore form feed characters.
+	* testsuite/poke.pkl/formfeedchar.pk: New file.
+	* doc/poke.texi (Comments): New chapter.
+
 2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pvm-val.c (pvm_print_val): Fix printing of hexadecimal

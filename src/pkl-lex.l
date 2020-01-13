@@ -152,6 +152,7 @@ D [0-9]
 
 {NEWLINE}	{ /* Ignore newlines.  */  }
 {BLANK}		{ /* Ignore whitespace.  */ }
+\f		{ /* Ignore form feed ^L characters.  */ }
 
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }

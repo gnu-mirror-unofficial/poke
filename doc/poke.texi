@@ -98,6 +98,7 @@ The Poke Language
 * Mapping::			Accessing IO spaces.
 * Exception Handling::		Dealing with exceptional conditions.
 * Printing::			Output in Poke programs.
+* Comments::			Documenting Poke programs.
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
@@ -3874,6 +3875,39 @@ Name: Jose Age: 39
 @section Pretty Printers
 @cindex pretty printing
 XXX
+
+@node Comments
+@chapter Comments
+
+There are several ways to document your Poke programs: comments of
+several types and support for separator characters.
+
+@menu
+* Multi-line comments::		C-like comments.
+* Single line comments::	C++-like comments.
+* Vertical separator::		Using form-feed characters.
+@end menu
+
+@node Multi-line comments
+@section Multi-line comments
+
+Poke supports C-like multi-line, comments, which is text enclosed
+between @code{/*} and @code{*/} sequences.  These comments cannot be
+nested.
+
+@node Single line comments
+@section Single line comments
+
+C++-like single line comments are supported.  Everything after the
+@code{//} sequence is interpreted as a comment, until the end of the
+line or the end of the file, whatever comes first.
+
+@node Vertical separator
+@section Vertical separator
+
+Poke ignores form feed characters (ASCII code 14, often visualized as
+^L).  In GNU software, this character is traditionally used to
+separate conceptually different entities in source files.
 
 @node __LINE__ and __FILE__
 @chapter @code{__LINE__} and @code{__FILE__}
