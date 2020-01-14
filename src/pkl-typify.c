@@ -989,6 +989,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
       PKL_PASS_ERROR;
     }
 
+  if (PKL_AST_TYPE_CODE (entity_type) != PKL_TYPE_ARRAY
+      && PKL_AST_TYPE_CODE (entity_type) != PKL_TYPE_STRING)
+    {
+      PKL_ERROR (PKL_AST_LOC (entity),
+                 "operator to [] must be an array or a string");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
   PKL_AST_TYPE (trimmer) = ASTREF (entity_type);
 }
 PKL_PHASE_END_HANDLER
@@ -1024,7 +1033,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_indexer)
       }
     default:
       PKL_ERROR (PKL_AST_LOC (container),
-                 "operator to [] must be an arry or a string");
+                 "operator to [] must be an array or a string");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

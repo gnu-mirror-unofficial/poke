@@ -1,5 +1,11 @@
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_trimmer): check that the
+	operator of a trimming operation is either an array or a string.
+	* testsuite/poke.pkl/trim-diag-5.pk: New test.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_struct_type_field): struct
 	fields cannot be of type `any' nor `void'.
 	* testsuite/poke.pkl/struct-types-diag-9.pk: New test.
