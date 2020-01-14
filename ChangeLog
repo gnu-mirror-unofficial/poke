@@ -1,6 +1,8 @@
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* HACKING (Using data files in tests): New section.
+	(Writing tests that depend on a certain capability): Likewise.
+	* testsuite/lib/poke-dg.exp (dg-require): Add a note.
 
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 

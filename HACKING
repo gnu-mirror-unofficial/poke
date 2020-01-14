@@ -57,6 +57,8 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        5.2  Always set obase
        5.3  Put each test in its own file
        5.4  dg-output may require a newline
+       5.5  Using data files in tests
+       5.6  Writing tests that depend on a certain capability
      6  Deciding on What to Work on
      7  Submitting a Patch
      8  Maintenance
@@ -426,6 +428,29 @@ which is the name of the temporary file to create::
 
 The file created by the last dg-data (be it anonymous or named) is the
 current IO space.
+
+Writing tests that depend on a certain capability
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes the presence of the functionality tested may be optional.
+An example is testing the support for styling, which depends on poke
+to be built with libtextstyle support.
+
+The dg-require directive can be used for this purpose.  For example,
+the following test will be skipped (with status UNSUPPORTED) if the
+capability ``libtextstyle`` is not found in poke::
+
+  /* { dg-do run } */
+  /* { dg-options "--color=html" } */
+  /* { dg-require libtextstyle } */
+  
+  /* { dg-command {printf "%<foo:%i32d%>", 10} } */
+  /* { dg-output "<span class=\"foo\">10</span>" } */
+
+The supported capabilities are:
+
+libtextstyle
+  poke is built with libtextstyle support.
 
 Deciding on What to Work on
 ---------------------------
