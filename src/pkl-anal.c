@@ -446,7 +446,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_offset)
   pkl_ast_node node = PKL_PASS_NODE;
   pkl_ast_node magnitude = PKL_AST_OFFSET_MAGNITUDE (node);
   pkl_ast_node magnitude_type = PKL_AST_TYPE (magnitude);
-  pkl_ast_node unit = PKL_AST_OFFSET_UNIT (node);
   pkl_ast_node type = PKL_AST_TYPE (node);
 
   if (PKL_AST_TYPE_CODE (magnitude_type)
