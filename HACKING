@@ -399,6 +399,34 @@ in a dg-run test file, please be aware you need to prefix all of them
   /* { dg-output "\nbar" } */
   /* { dg-output "\n baz" } */
 
+Using data files in tests
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If your test requires mapping data, the dg-data directive is what you
+need.  It has two forms.
+
+The first form looks like::
+
+  /* { dg-data {c*} {0x10 0x20 0x30 0x40 ...} } */
+
+This creates a temporary file (whose name is irrelevant) and makes it
+the current IO space at poke initialization time.  The test body, and
+dg-commands, can then map on it.
+
+However, sometimes you need to map on several files.  In this case,
+you can have several dg-data entries with an additional argument,
+which is the name of the temporary file to create::
+
+  /* { dg-data {c*} {0x01 0x02 ...} foo.data } */
+  /* { dg-data {c*} {0x11 0x12 ...} bar.data } */
+
+  [...]
+
+  /* { dg-command { defvar foo = open ("foo.data") } } */
+
+The file created by the last dg-data (be it anonymous or named) is the
+current IO space.
+
 Deciding on What to Work on
 ---------------------------
 

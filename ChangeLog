@@ -1,5 +1,13 @@
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING (Using data files in tests): New section.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* TODO: New task.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_trimmer): check that the
 	operator of a trimming operation is either an array or a string.
 	* testsuite/poke.pkl/trim-diag-5.pk: New test.

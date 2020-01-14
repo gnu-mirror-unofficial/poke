@@ -390,6 +390,14 @@ This task is about implementing constant folding of ``isa``
 operations.  This should be implemented as a handler in
 ``src/pkl-fold.c``.
 
+#A1 support %% in printf string literals
+----------------------------------------
+
+A new %-sequence shall be added to printf: %%.  This denotes a single
+% in the formatted output.  The right place where to hack this is the
+``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
+
+
 
 This file is part of GNU poke.
 
