@@ -1,3 +1,7 @@
+2020-01-16  Darshit Shah  <darnir@gnu.org>
+
+	* bootstrap.conf: Set --skip-po to be the default option.
+
 2020-01-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.map/maps-arrays-19.pk: Fix test logic.
