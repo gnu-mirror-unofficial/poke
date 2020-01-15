@@ -1,3 +1,7 @@
+2020-01-18 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pkl.c: Use std macro for bug report address.
+
 2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-anal.c (pkl_anal2_ps_offset): Remove unused local

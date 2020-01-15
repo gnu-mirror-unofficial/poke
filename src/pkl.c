@@ -742,8 +742,8 @@ pkl_ice (pkl_ast ast,
       pk_printf ("Important information has been dumped in %s.\n",
                  tmpfile);
       pk_puts ("Please attach it to a bug report and send it to");
-      pk_term_hyperlink ("mailto:poke-devel@nongnu.org", NULL);
-      pk_puts (" poke-devel@nongnu.org");
+      pk_term_hyperlink ("mailto:" PACKAGE_BUGREPORT, NULL);
+      pk_puts (" " PACKAGE_BUGREPORT);
     }
   pk_term_end_hyperlink ();
   pk_puts (".\n");
