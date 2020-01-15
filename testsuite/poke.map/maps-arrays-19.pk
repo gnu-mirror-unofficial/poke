@@ -1,7 +1,7 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x02 0x20 0x30 0x40  0x66 0x6f 0x6f 0x00   0x62 0x61 0x72 0x73} } */
 
-/* { dg-command { string[2] @ 4#B } } */
+/* { dg-command { string[1] @ 4#B } } */
 /* { dg-output  "\\\[\"foo\"\\\]" */
 
 /* { dg-command { string[] @ 4#B } } */

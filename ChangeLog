@@ -1,3 +1,7 @@
+2020-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.map/maps-arrays-19.pk: Fix test logic.
+
 2020-01-18 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pkl.c: Use std macro for bug report address.
