@@ -143,7 +143,7 @@ read_from_client (int filedes)
       char *p = buffer;
 
       /* Remove the newline at the end.  */
-      buffer[nbytes-2] = '\0';
+      buffer[nbytes-1] = '\0';
       
       /* The format of the payload is:
          [0-9]+/{e,i}/.*  */
