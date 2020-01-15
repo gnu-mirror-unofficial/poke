@@ -126,7 +126,7 @@ pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
   else
     assert (0);
 
-  yybuffer = pkl_tab__scan_string(buffer, parser->scanner);
+  yybuffer = pkl_tab__scan_string (buffer, parser->scanner);
 
   /* XXX */
   /* pkl_tab_debug = 1; */

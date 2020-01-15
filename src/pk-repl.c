@@ -197,8 +197,8 @@ pk_repl (void)
     }
 #if defined HAVE_READLINE_HISTORY_H
   if (poke_history) {
-    write_history(poke_history);
-    free(poke_history);
+    write_history (poke_history);
+    free (poke_history);
   }
 #endif
 }

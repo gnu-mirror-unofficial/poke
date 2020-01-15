@@ -65,7 +65,7 @@ pvm_alloc_initialize ()
 void
 pvm_alloc_finalize ()
 {
-  GC_gcollect();
+  GC_gcollect ();
 }
 
 void

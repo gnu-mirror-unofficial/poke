@@ -646,7 +646,7 @@ pkl_warning (pkl_compiler compiler,
       return;
     }
 
-  va_start(valist, fmt);
+  va_start (valist, fmt);
   vasprintf (&msg, fmt, valist);
   va_end (valist);
 

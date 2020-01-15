@@ -1427,7 +1427,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   default:
-    assert(0);
+    assert (0);
   }
 }
 
@@ -1451,7 +1451,7 @@ ios_write_int (ios io, ios_off offset, int flags,
   uint64_t uvalue = ((uint64_t) (value << unused_bits)) >> unused_bits;
 
   /* Fall into the case for the unaligned and the sizes other than 8k.  */
-  return ios_write_int_common(io, offset, flags, bits, endian, uvalue);
+  return ios_write_int_common (io, offset, flags, bits, endian, uvalue);
 }
 
 int
@@ -1469,7 +1469,7 @@ ios_write_uint (ios io, ios_off offset, int flags,
     return ios_write_int_fast (io, flags, bits, endian, value);
 
   /* Fall into the case for the unaligned and the sizes other than 8k.  */
-  return ios_write_int_common(io, offset, flags, bits, endian, value);
+  return ios_write_int_common (io, offset, flags, bits, endian, value);
 }
 
 int

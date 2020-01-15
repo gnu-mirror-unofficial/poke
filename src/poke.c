@@ -295,7 +295,7 @@ parse_args (int argc, char *argv[])
 
   if (optind < argc)
     {
-      print_help();
+      print_help ();
       goto exit_failure;
     }
 
