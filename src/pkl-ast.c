@@ -1,6 +1,6 @@
 /* pkl-ast.c - Abstract Syntax Tree for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -815,6 +815,10 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
             if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
               continue;
 
+            /* Struct fields with labels are not expected, as these
+               cannot appear in complete struct types.  */
+            assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
+            
             elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
             res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
                                            res,
@@ -845,6 +849,43 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
   return res;
 }
 
+/* Return 1 if the given TYPE can be mapped in IO.  0 otherwise.  */
+
+int
+pkl_ast_type_mappable_p (pkl_ast_node type)
+{
+  switch (PKL_AST_TYPE_CODE (type))
+    {
+    case PKL_TYPE_INTEGRAL:
+    case PKL_TYPE_STRING:
+    case PKL_TYPE_OFFSET:
+      return 1;
+    case PKL_TYPE_ARRAY:
+      return pkl_ast_type_mappable_p (PKL_AST_TYPE_A_ETYPE (type));
+      break;
+    case PKL_TYPE_STRUCT:
+      {
+        pkl_ast_node elem;
+
+        for (elem = PKL_AST_TYPE_S_ELEMS (type);
+             elem;
+             elem = PKL_AST_CHAIN (elem))
+          {
+            if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
+                && !pkl_ast_type_mappable_p (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem)))
+              return 0;
+          }
+
+        return 1;
+        break;
+      }
+    default:
+      break;
+    }
+
+  return 0;
+}
+
 /* Return PKL_AST_TYPE_COMPLETE_YES if the given TYPE is a complete
    type.  Return PKL_AST_TYPE_COMPLETE_NO otherwise.  This function
    assumes that the children of TYPE have correct completeness
@@ -860,13 +901,34 @@ pkl_ast_type_is_complete (pkl_ast_node type)
       /* Integral, offset and struct types are always complete.  */
     case PKL_TYPE_INTEGRAL:
     case PKL_TYPE_OFFSET:
-    case PKL_TYPE_STRUCT:
       complete = PKL_AST_TYPE_COMPLETE_YES;
       break;
-      /* String types are never complete.  */
+      /* String and function types are never complete.  */
+    case PKL_TYPE_FUNCTION:
     case PKL_TYPE_STRING:
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;
+      /* Struct types are complete if their fields are also of
+         complete types and there are no labels.  */
+    case PKL_TYPE_STRUCT:
+      {
+        pkl_ast_node elem;
+
+        complete = PKL_AST_TYPE_COMPLETE_YES;
+        for (elem = PKL_AST_TYPE_S_ELEMS (type);
+             elem;
+             elem = PKL_AST_CHAIN (elem))
+          {
+            if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
+                && (PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem)
+                    || !pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))))
+              {
+                complete = PKL_AST_TYPE_COMPLETE_NO;
+                break;
+              }
+          }
+        break;
+      }
       /* Array types are complete if the number of elements in the
          array are specified and it is a literal expression.  */
     case PKL_TYPE_ARRAY:
@@ -912,7 +974,7 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
   if (use_given_name
       && PKL_AST_TYPE_NAME (type))
     {
-      fprintf (out,
+      fprintf (out, "%s",
                PKL_AST_IDENTIFIER_POINTER (PKL_AST_TYPE_NAME (type)));
       return;
     }
@@ -1279,13 +1341,16 @@ pkl_ast_make_isa (pkl_ast ast,
 
 pkl_ast_node
 pkl_ast_make_map (pkl_ast ast,
-                  pkl_ast_node type, pkl_ast_node offset)
+                  pkl_ast_node type,
+                  pkl_ast_node ios,
+                  pkl_ast_node offset)
 {
   pkl_ast_node map = pkl_ast_make_node (ast, PKL_AST_MAP);
 
   assert (type && offset);
 
   PKL_AST_MAP_TYPE (map) = ASTREF (type);
+  PKL_AST_MAP_IOS (map) = ASTREF (ios);
   PKL_AST_MAP_OFFSET (map) = ASTREF (offset);
 
   return map;
@@ -1478,6 +1543,23 @@ pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp)
 
   PKL_AST_EXP_STMT_EXP (exp_stmt) = ASTREF (exp);
   return exp_stmt;
+}
+
+/* Build and return an AST node for a try-until statement.  */
+
+pkl_ast_node
+pkl_ast_make_try_until_stmt (pkl_ast ast, pkl_ast_node code,
+                             pkl_ast_node exp)
+{
+  pkl_ast_node try_until_stmt = pkl_ast_make_node (ast,
+                                                   PKL_AST_TRY_UNTIL_STMT);
+
+  assert (code && exp);
+
+  PKL_AST_TRY_UNTIL_STMT_CODE (try_until_stmt) = ASTREF (code);
+  PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt) = ASTREF (exp);
+
+  return try_until_stmt;
 }
 
 /* Build and return an AST node for a try-catch statement.  */
@@ -1814,6 +1896,7 @@ pkl_ast_node_free (pkl_ast_node ast)
     case PKL_AST_MAP:
 
       pkl_ast_node_free (PKL_AST_MAP_TYPE (ast));
+      pkl_ast_node_free (PKL_AST_MAP_IOS (ast));
       pkl_ast_node_free (PKL_AST_MAP_OFFSET (ast));
       break;
 
@@ -1895,6 +1978,12 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_TRY_CATCH_STMT_HANDLER (ast));
       pkl_ast_node_free (PKL_AST_TRY_CATCH_STMT_ARG (ast));
       pkl_ast_node_free (PKL_AST_TRY_CATCH_STMT_EXP (ast));
+      break;
+
+    case PKL_AST_TRY_UNTIL_STMT:
+
+      pkl_ast_node_free (PKL_AST_TRY_UNTIL_STMT_CODE (ast));
+      pkl_ast_node_free (PKL_AST_TRY_UNTIL_STMT_EXP (ast));
       break;
 
     case PKL_AST_PRINT_STMT_ARG:
@@ -2035,6 +2124,11 @@ pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
                                PKL_AST_TRY_CATCH_STMT_HANDLER (stmt),
                                nframes);
       break;
+    case PKL_AST_TRY_UNTIL_STMT:
+      pkl_ast_finish_breaks_1 (entity,
+                               PKL_AST_TRY_CATCH_STMT_CODE (stmt),
+                               nframes);
+      break;
     case PKL_AST_DECL:
     case PKL_AST_RETURN_STMT:
     case PKL_AST_LOOP_STMT:
@@ -2114,6 +2208,11 @@ pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
                                 PKL_AST_TRY_CATCH_STMT_HANDLER (stmt),
                                 nframes, ndrops);
       break;
+    case PKL_AST_TRY_UNTIL_STMT:
+      pkl_ast_finish_returns_1 (function,
+                                PKL_AST_TRY_UNTIL_STMT_CODE (stmt),
+                                nframes, ndrops);
+      break;
     case PKL_AST_DECL:
     case PKL_AST_EXP_STMT:
     case PKL_AST_ASS_STMT:
@@ -2144,6 +2243,7 @@ pkl_ast_lvalue_p (pkl_ast_node node)
     {
     case PKL_AST_VAR:
     case PKL_AST_STRUCT_REF:
+    case PKL_AST_MAP:
       break;
     case PKL_AST_INDEXER:
       {
@@ -2158,9 +2258,6 @@ pkl_ast_lvalue_p (pkl_ast_node node)
           && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 0))
           && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 1)))
         break;
-      // XXX
-      //    case PKL_AST_MAP:
-      //      break;
     default:
       return 0;
       break;
@@ -2544,6 +2641,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_COMMON_FIELDS;
       PRINT_AST_SUBAST (type, TYPE);
       PRINT_AST_SUBAST (map_type, MAP_TYPE);
+      PRINT_AST_SUBAST (ios, MAP_IOS);
       PRINT_AST_SUBAST (offset, MAP_OFFSET);
       break;
 
@@ -2640,6 +2738,14 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (try_catch_stmt_handler, TRY_CATCH_STMT_HANDLER);
       PRINT_AST_SUBAST (try_catch_stmt_arg, TRY_CATCH_STMT_ARG);
       PRINT_AST_SUBAST (try_catch_stmt_exp, TRY_CATCH_STMT_EXP);
+      break;
+
+    case PKL_AST_TRY_UNTIL_STMT:
+      IPRINTF ("TRY_UNTIL_STMT::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_SUBAST (try_until_stmt_code, TRY_UNTIL_STMT_CODE);
+      PRINT_AST_SUBAST (try_until_stmt_exp, TRY_UNTIL_STMT_EXP);
       break;
 
     case PKL_AST_PRINT_STMT_ARG:

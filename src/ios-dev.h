@@ -1,6 +1,6 @@
 /* ios-dev.h - IO devices interface.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,4 +81,8 @@ struct ios_dev_if
      the character written as an int, or IOD_EOF on error.  */
 
   int (*put_c) (void *dev, int c);
+
+  /* Return the mode of the device, as it was opened.  */
+
+  int (*get_mode) (void *dev);
 };

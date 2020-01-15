@@ -1,6 +1,6 @@
 /* pkl-pass.c - Support for compiler passes.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -364,6 +364,8 @@ pkl_do_pass_1 (pkl_compiler compiler,
 
       break;
     case PKL_AST_MAP:
+      if (PKL_AST_MAP_IOS (node))
+        PKL_PASS (PKL_AST_MAP_IOS (node));
       PKL_PASS (PKL_AST_MAP_OFFSET (node));
       PKL_PASS (PKL_AST_MAP_TYPE (node));
 
@@ -489,6 +491,10 @@ pkl_do_pass_1 (pkl_compiler compiler,
       if (PKL_AST_TRY_CATCH_STMT_EXP (node))
         PKL_PASS (PKL_AST_TRY_CATCH_STMT_EXP (node));
       break;
+    case PKL_AST_TRY_UNTIL_STMT:
+      PKL_PASS (PKL_AST_TRY_UNTIL_STMT_CODE (node));
+      PKL_PASS (PKL_AST_TRY_UNTIL_STMT_EXP (node));
+      break;
     case PKL_AST_RAISE_STMT:
       if (PKL_AST_RAISE_STMT_EXP (node))
         PKL_PASS (PKL_AST_RAISE_STMT_EXP (node));
@@ -516,7 +522,6 @@ pkl_do_pass_1 (pkl_compiler compiler,
       break;
     default:
       /* Unknown node code.  This kills the poke :'( */
-      /* printf ("XXX: %d\n", PKL_AST_CODE (node)); */
       assert (0);
     }
 

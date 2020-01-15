@@ -1,6 +1,6 @@
 # GNU poke
 
-# Copyright (C) 2019 Jose E. Marchesi
+# Copyright (C) 2019, 2020 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ poke_SOURCES = poke.c poke.h \
                pk-cmd.c pk-cmd.h \
                pk-file.c \
                pk-info.c pk-misc.c pk-help.c pk-vm.c \
-               pk-print.c pk-def.c pk-set.c \
+               pk-def.c pk-set.c pk-editor.c \
                pkl.h pkl.c \
                pkl-ast.h pkl-ast.c \
                pkl-env.h pkl-env.c \

@@ -5,7 +5,7 @@ GNU Poke - Hacking Notes
 Welcome, adventurous poker! This file contains useful information for
 you.
 
-Copyright (C) 2019 Jose E. Marchesi
+Copyright (C) 2019, 2020 Jose E. Marchesi
 
 This file is part of GNU poke.
 
@@ -52,51 +52,58 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        4.1  Writing C
        4.2  Writing Poke
        4.3  Writing RAS
-     5  Deciding on What to Work on
-     6  Submitting a Patch
-     7  Maintenance
-     8  Poke Architecture
-     9  The Poke Compiler
-       9.1  Compiler Overview
-       9.2  The bison Parser in pkl-tab.y
-       9.3  The AST
-       9.4  Compiler Passes and Phases
-         9.4.1  Naming Conventions for Phases
-         9.4.2  Naming Conventions for Handlers
-         9.4.3  Transformation Phases
-         9.4.4  Analysis Phases
-         9.4.5  Type System Phases
-         9.4.6  Middle End Handlers should be Re-executable
-       9.5  The Type System
-         9.5.1  Type Expressions
-       9.6  Adding Compiler Built-Ins
-    10  The Poke Virtual Machine
-      10.1  Exception Handling
-      10.2  Offsets and bit-offsets in the PVM
-    11  Memory Management
-      11.1  Using ASTREF
-      11.2  Using ASTDEREF
-      11.3  PVM values in PVM routines
-      11.4  PVM values in AST nodes
-    12  Terminal Handling
-      12.1  pk-term
-      12.2  Styling Classes
-      12.3  Debugging Styling
-    13  Debugging Poke
-      13.1  Building with Debugging support
-      13.2  Using GDB extensions
-      13.3  Valgrind and Poke
-      13.4  Debugging PVM Assembly Code
-    14  Future Developments
-    15  Appendix: The Source Tree
-      15.1  The Compiler
-      15.2  The Poke Virtual Machine
-      15.3  The IO Subsystem
-      15.4  Poke Program
-      15.5  Pickles and Libraries
-      15.6  Test Suite
-      15.7  Documentation
-      15.8  Other Stuff
+     5  Writing Tests
+       5.1  Naming Tests
+       5.2  Always set obase
+       5.3  Put each test in its own file
+       5.4  dg-output may require a newline
+       5.5  Using data files in tests
+       5.6  Writing tests that depend on a certain capability
+     6  Deciding on What to Work on
+     7  Submitting a Patch
+     8  Maintenance
+     9  Poke Architecture
+    10  The Poke Compiler
+      10.1  Compiler Overview
+      10.2  The bison Parser in pkl-tab.y
+      10.3  The AST
+      10.4  Compiler Passes and Phases
+        10.4.1  Naming Conventions for Phases
+        10.4.2  Naming Conventions for Handlers
+        10.4.3  Transformation Phases
+        10.4.4  Analysis Phases
+        10.4.5  Type System Phases
+        10.4.6  Middle End Handlers should be Re-executable
+      10.5  The Type System
+        10.5.1  Type Expressions
+      10.6  Adding Compiler Built-Ins
+    11  The Poke Virtual Machine
+      11.1  Exception Handling
+      11.2  Offsets and bit-offsets in the PVM
+    12  Memory Management
+      12.1  Using ASTREF
+      12.2  Using ASTDEREF
+      12.3  PVM values in PVM routines
+      12.4  PVM values in AST nodes
+    13  Terminal Handling
+      13.1  pk-term
+      13.2  Styling Classes
+      13.3  Debugging Styling
+    14  Debugging Poke
+      14.1  Building with Debugging support
+      14.2  Using GDB extensions
+      14.3  Valgrind and Poke
+      14.4  Debugging PVM Assembly Code
+    15  Future Developments
+    16  Appendix: The Source Tree
+      16.1  The Compiler
+      16.2  The Poke Virtual Machine
+      16.3  The IO Subsystem
+      16.4  Poke Program
+      16.5  Pickles and Libraries
+      16.6  Test Suite
+      16.7  Documentation
+      16.8  Other Stuff
 
 
 Nomenclature
@@ -136,7 +143,10 @@ install their changes after getting explicit approval from a global
 reviewer.
 
 Egeyar Bagcioglu	<egeyar@gmail.com>
+John Darrington		<jmd@gnu.org>
 Luca Saiu		<positron@gnu.org>
+Darshit Shah		<darnir@gnu.org>
+Dan Čermák		<dan.cermak@cgc-instruments.com>
 
 Personal Branches
 ~~~~~~~~~~~~~~~~~
@@ -165,7 +175,7 @@ Anyone having write access to the git repository is allowed to push
 obvious changes to non-personal branches.  The "obvious" category
 includes typos in comments, renaming of variables, etc.
 
-If you commit and push a non-obvious change, you are still required to
+If you commit and push an obvious change, you are still required to
 send an email to the mailing list stating you installed the change.
 Please include a suggestive tag in your email's subject, something
 like ``[COMMITTED]``.  Also, make sure to include the patch itself.
@@ -186,7 +196,7 @@ ftp://ftp.gnu.org/gnu.
 Dejagnu
 ~~~~~~~
 
-The poke testsuite uses DejaGNU.  Please install it if you indent to
+The poke testsuite uses DejaGNU.  Please install it if you intend to
 run the tests.  If you want to hack poke, you definitely want to run
 the tests :)
 
@@ -200,12 +210,10 @@ fine.
 readline
 ~~~~~~~~
 
-Poke uses libreadline in order to provide a nice line editor in the
-``(poke)`` prompt.  The ideal version of use is GNU readline.  Any
-recent version will suffice.
+Poke uses GNU libreadline in order to provide a nice line editor in
+the ``(poke)`` prompt.  Any recent version will suffice.
 
-However, in case you don't have libreadline installed, a minimum
-version from gnulib is used instead.
+In Debian or derivatives, install the ``libreadline-dev`` package.
 
 Boehm GC
 ~~~~~~~~
@@ -241,7 +249,7 @@ libtextstyle
 
 GNU poke uses libtextstyle in order to provide styled output.  If the
 library is not found, then a dummy version of it from gnulib is used
-instead... that does not any styling!
+instead... that does not do any styling!
 
 At the moment libtextstyle lives in a subdirectory of GNU gettext.
 See http://www.gnu.org/s/gettext for more information.
@@ -330,6 +338,120 @@ Writing RAS
 We recommend to use the Emacs mode in ``etc/poke-ras-mode.el`` to
 write ``.pks`` files.
 
+Writing Tests
+-------------
+
+The poke testsuites live in the ``testsuite/`` subdirectory.  This
+section contains useful hints for adding tests there.
+
+Naming Tests
+~~~~~~~~~~~~
+
+For testing a functionality ``foo``, name your test ``foo.pk`` or
+``foo-N.pk`` where ``N`` is a number.
+
+If the test is a ``do-compile`` whose compilation is expected to fail,
+name the test ``func-diag.pk`` or ``func-diag-N.pk``.  Here "diag"
+means diagnostic.
+
+Always set obase
+~~~~~~~~~~~~~~~~
+
+If your test relies on printing integer values in the REPL (or using
+the ``%v`` formatting tag in a ``printf``) please make sure to set an
+explicit output numerical base, like in::
+
+  /* { dg-command {.set obase 10} }  */
+
+This way, we won't have to change the tests if at some point we change
+the default obase.
+
+Put each test in its own file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are writing tests for a specific functionality, like for
+example a standard function ``foo``, it may seem logical to put all
+the tests in a single file ``foo.pk`` like::
+
+  /* { dg-do run } */
+
+  /* { dg-command {foo (1)} } */
+  /* { dg-output "expected result" } */
+  
+  /* { dg-command {foo (1)} } */
+  /* { dg-output "\nexpected result" } */
+
+  [... and so on ...]
+
+However, this is not a good idea.  If some of the "subtests" fail, it
+becomes difficult to determine which one is the culprit looking at the
+test log file.
+
+It is better to put each test in it's own file: ``foo-1.pk``,
+``foo-2.pk`` and so on.
+
+dg-output may require a newline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If despite the advise above you really need to put more than dg-output
+in a dg-run test file, please be aware you need to prefix all of them
+(but the first one) with a newline, like in::
+
+  /* { dg-output "foo" } */
+  /* { dg-output "\nbar" } */
+  /* { dg-output "\n baz" } */
+
+Using data files in tests
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If your test requires mapping data, the dg-data directive is what you
+need.  It has two forms.
+
+The first form looks like::
+
+  /* { dg-data {c*} {0x10 0x20 0x30 0x40 ...} } */
+
+This creates a temporary file (whose name is irrelevant) and makes it
+the current IO space at poke initialization time.  The test body, and
+dg-commands, can then map on it.
+
+However, sometimes you need to map on several files.  In this case,
+you can have several dg-data entries with an additional argument,
+which is the name of the temporary file to create::
+
+  /* { dg-data {c*} {0x01 0x02 ...} foo.data } */
+  /* { dg-data {c*} {0x11 0x12 ...} bar.data } */
+
+  [...]
+
+  /* { dg-command { defvar foo = open ("foo.data") } } */
+
+The file created by the last dg-data (be it anonymous or named) is the
+current IO space.
+
+Writing tests that depend on a certain capability
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes the presence of the functionality tested may be optional.
+An example is testing the support for styling, which depends on poke
+to be built with libtextstyle support.
+
+The dg-require directive can be used for this purpose.  For example,
+the following test will be skipped (with status UNSUPPORTED) if the
+capability ``libtextstyle`` is not found in poke::
+
+  /* { dg-do run } */
+  /* { dg-options "--color=html" } */
+  /* { dg-require libtextstyle } */
+  
+  /* { dg-command {printf "%<foo:%i32d%>", 10} } */
+  /* { dg-output "<span class=\"foo\">10</span>" } */
+
+The supported capabilities are:
+
+libtextstyle
+  poke is built with libtextstyle support.
+
 Deciding on What to Work on
 ---------------------------
 
@@ -352,7 +474,7 @@ integrated upstream, please keep the following points in mind:
 - Please include a GNU-style ChangeLog in the patch description, but
   do not include it in the thunks.  This is to ease reviewers to apply
   your patch for testing.  Of course, include the thunk in the final
-  push!  (We will get rid of manually ChangeLog entries soon.)
+  push!  (We will get rid of manual ChangeLog entries soon.)
 
 - Make sure to run ``make syntax-check`` before submitting the patch,
   and fix any reported problem.  Note that the maintainer reviewing
@@ -394,7 +516,7 @@ coverage
 
 refresh-po
   This target download the latest available translations from the
-  translationproject and installs them in the source tree.
+  translation project and installs them in the source tree.
 
 update-copyright
   Run this rule once per year (usually early in January) to update all
@@ -429,7 +551,7 @@ The Poke Compiler
 Compiler Overview
 ~~~~~~~~~~~~~~~~~
 
-This figure depicts the architecutre of the compiler::
+This figure depicts the architecture of the compiler::
   
       /--------\
       | source |
@@ -469,7 +591,7 @@ limitations in the LARL parser:
 - It annotates variables with their lexical addresses.
 - It links return statements with their containing functions.
 - It annotates return statements with he number of lexical frames they
-  should pop before exitting the function.
+  should pop before exiting the function.
 
 As we shall see below, any further analysis and transformations on the
 AST are performed by the compiler phases, which are implemented
@@ -681,7 +803,7 @@ A *struct type*
      element.  C1 is a poke expression evaluating to a boolean; it is
      the constraint associated to the element.   Of all these
      attributes, only T1 is mandatory.  PINNED is a boolean indicating
-     whether structs having this type are pinnned.
+     whether structs having this type are pinned.
 
 A *function type*
   Type expressions for functions are characterized by a type
@@ -862,8 +984,8 @@ In practice you will seldom find yourself in the need to use
 ``pkl_ast_node_free``.
 
 However, there are situations where ``ASTDEREF`` is necessary in order
-toavoid a memory leak.  For example, consider transformations like ``a
--> b`` to ``a -> x -> b``.  In that case, you sould use something
+to avoid a memory leak.  For example, consider transformations like ``a
+-> b`` to ``a -> x -> b``.  In that case, you should use something
 like::
 
   b = PKL_AST_KIND_WHAT (node);
@@ -908,7 +1030,7 @@ an entry point into the routine (as a Jittery VM ``program point``)::
 However, since ``routine`` is malloc-allocated, the GC can't traverse
 it.  Consequently, the references to contained boxed values won't be
 accounted for, and these values will be collected if there are no more
-refences to them!
+references to them!
 
 The solution, recommended by Luca Saiu, is to keep an array of
 pointers in the closure structure, containing the pointers to every
@@ -1133,7 +1255,7 @@ the PKL compiler, manage their own memory.
 Valgrind gets easily confused by the GCs tampering with the stack, and
 emits a lot of spurious warnings.  Fortunately it is possible to tell
 memcheck to omit these warnings: the file etc/boehm-gc.suppresions
-contains a list of suppresions.
+contains a list of suppressions.
 
 Invoke valgrind with ``--suppressions=etc/boehm-gc.suppressions``.
 
@@ -1144,10 +1266,10 @@ please use::
 
 
 Then process raw.log with the ``etc/parse-valgrind-suppressions.sh``
-script, wilcard the result as much as you can, and append the results
+script, wildcard the result as much as you can, and append the results
 to ``etc/boehm-gc.suppressions``.
 
-In order to run the testsuite with valgring, edit lib/poke-dg.exp and
+In order to run the testsuite with valgrind, edit ``lib/poke-dg.exp`` and
 uncomment the lines::
 
  set VALGRIND "valgrind --quiet \

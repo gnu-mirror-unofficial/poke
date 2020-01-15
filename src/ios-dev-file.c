@@ -1,6 +1,6 @@
 /* ios-dev-file.c - File IO devices.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <xalloc.h>
 #include <string.h>
 
+#include "ios.h"
 #include "ios-dev.h"
 
 /* State associated with a file device.  */
@@ -37,7 +38,7 @@ struct ios_dev_file
 {
   FILE *file;
   char *filename;
-  char *mode;
+  int   mode;
 };
 
 static int
@@ -50,22 +51,23 @@ ios_dev_file_handler_p (const char *handler)
 static void *
 ios_dev_file_open (const char *handler)
 {
-  const char *mode;
   struct ios_dev_file *fio;
   FILE *f;
+  int mode = IOS_M_RDWR;
 
   /* Skip the file:// part in the handler, if needed.  */
   if (strlen (handler) >= 7
       && strncmp (handler, "file://", 7) == 0)
     handler += 7;
 
-  /* Open the requested file.  The open mode is read-write if
-     possible.  Otherwise read-only.  */
-
-  mode =
-    access (handler, R_OK | W_OK) != 0 ? "rb" : "r+b";
-
-  f = fopen (handler, mode);
+  /* Open the requested file.  Try read-write initially.
+     If that fails, then try read-only. */
+  f = fopen (handler, "r+b");
+  if (!f)
+    {
+      f = fopen (handler, "rb");
+      mode = IOS_M_RDONLY;
+    }
   if (!f)
     {
       perror (handler);
@@ -75,7 +77,7 @@ ios_dev_file_open (const char *handler)
   fio = xmalloc (sizeof (struct ios_dev_file));
   fio->file = f;
   fio->filename = xstrdup (handler);
-  fio->mode = xstrdup (mode);
+  fio->mode = mode;
 
   return fio;
 }
@@ -88,18 +90,26 @@ ios_dev_file_close (void *iod)
   if (fclose (fio->file) != 0)
     perror (fio->filename);
   free (fio->filename);
-  free (fio->mode);
 
   return 1;
 }
+
+static int
+ios_dev_file_get_mode (void *iod)
+{
+  struct ios_dev_file *fio = iod;
+
+  return fio->mode;
+}
+
 
 static int
 ios_dev_file_getc (void *iod)
 {
   struct ios_dev_file *fio = iod;
   int ret = fgetc (fio->file);
-  //  printf ("0x%lu <- %d\n", ftello (fio->file), ret);
-  return ret;
+
+  return ret == EOF ? IOD_EOF : ret;
 }
 
 static int
@@ -145,4 +155,5 @@ struct ios_dev_if ios_dev_file =
    .seek = ios_dev_file_seek,
    .get_c = ios_dev_file_getc,
    .put_c = ios_dev_file_putc,
+   .get_mode = ios_dev_file_get_mode,
   };

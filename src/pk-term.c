@@ -1,6 +1,6 @@
 /* pk-cmd.c - terminal related stuff.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 #include <string.h>
 #include <unistd.h> /* For isatty */
-#include <sys/stat.h> /* For stat and stabuf */
 #include <textstyle.h>
 
 #include "poke.h" /* For poke_ostream.  */

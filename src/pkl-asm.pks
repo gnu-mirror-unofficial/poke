@@ -2,7 +2,7 @@
 ;;; pkl-asm.pks - Assembly routines for the Pkl macro-assembler
 ;;;
 
-;;; Copyright (C) 2019 Jose E. Marchesi
+;;; Copyright (C) 2019, 2020 Jose E. Marchesi
 
 ;;; This program is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -49,15 +49,16 @@
         swap                    ; WCLS VAL
         mgetm                   ; WCLS VAL MCLS
         swap                    ; WCLS MCLS VAL
-        mgeto                   ; WCLS MCLS VAL OFF
-        swap                    ; WCLS MCLS OFF VAL
-        mgetsel                 ; WCLS MCLS OFF VAL EBOUND
-        swap                    ; WCLS MCLS OFF EBOUND VAL
-        mgetsiz                 ; WCLS MCLS OFF EBOUND VAL SBOUND
-        swap                    ; WCLS MCLS OFF EBOUND SBOUND VAL
-        mgetm                   ; WCLS MCLS OFF EBOUND SBOUND VAL MCLS
-        swap                    ; WCLS MCLS OFF EBOUND SBOUND MCLS VAL
-        drop                    ; WCLS MCLS OFF EBOUND SBOUND MCLS
+        mgetios                 ; WCLS MCLS VAL IOS
+        swap                    ; WLCS MCLS IOS VAL
+        mgeto                   ; WCLS MCLS IOS VAL OFF
+        swap                    ; WCLS MCLS IOS OFF VAL
+        mgetsel                 ; WCLS MCLS IOS OFF VAL EBOUND
+        swap                    ; WCLS MCLS IOS OFF EBOUND VAL
+        mgetsiz                 ; WCLS MCLS IOS OFF EBOUND VAL SBOUND
+        swap                    ; WCLS MCLS IOS OFF EBOUND SBOUND VAL
+        mgetm                   ; WCLS MCLS IOS OFF EBOUND SBOUND VAL MCLS
+        nip                     ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS
         call                    ; WCLS MCLS NVAL
         swap                    ; WCLS NVAL MCLS
         msetm                   ; WCLS NVAL
@@ -79,12 +80,14 @@
         ;; The write should be done only if the value has a writer.
         mgetw                   ; VAL VAL WCLS
         bn .label
-        swap                    ; VAL WCLS VAL
-        mgeto                   ; VAL WCLS VAL OFF
-        swap                    ; VAL WCLS OFF VAL
-        rot                     ; VAL OFF VAL WCLS
+        tor                     ; VAL VAL [WCLS]
+        mgeto                   ; VAL VAL OFF [WCLS]
+        swap                    ; VAL OFF VAL [WCLS]
+        mgetios                 ; VAL OFF VAL IOS [WCLS]
+        nrot                    ; VAL IOS OFF VAL [WCLS]
+        fromr                   ; VAL IOS OFF VAL WCLS
         call                    ; VAL null
-        push null               ; VAL null null
+        dup                     ; VAL null null
 .label:
         drop                    ; VAL (VAL|null)
         drop                    ; VAL
@@ -180,10 +183,9 @@
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
         rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
         add @base_type
-        nip2                    ; OFF1 OFF2 (OFF1M+OFF2M)
-        push #unit              ; OFF1 OFF2 (OFF1M+OFF2M) UNIT
+        nip2                    ; OFF1 OFF2 (OFF2M+OFF1M)
+        push #unit              ; OFF1 OFF2 (OFF2M+OFF1M) UNIT
         mko                     ; OFF1 OFF2 OFFR
         .end
 
@@ -204,8 +206,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         sub @base_type
         nip2                    ; OFF1 OFF2 (OFF1M+OFF2M)
         push #unit              ; OFF1 OFF2 (OFF1M+OFF2M) UNIT
@@ -232,8 +233,7 @@
         nip2                    ; OFF (OFFM*VAL)
         swap                    ; (OFFM*VAL) OFF
         ogetu                   ; (OFFM*VAL) OFF UNIT
-        rot                     ; OFF UNIT (OFFM*VAL)
-        swap                    ; OFF (OFFM*VAL) UNIT
+        quake                   ; OFF (OFFM*VAL) UNIT
         mko                     ; OFF OFFR
         fromr                   ; OFF OFFR VAL
         swap                    ; OFF VAL OFFR
@@ -255,8 +255,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         div @base_type
         nip2                    ; OFF1 OFF2 (OFF1M/OFF2M)
         .end
@@ -279,8 +278,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         mod @base_type
         nip2                    ; OFF1 OFF2 (OFF1M%OFF2M)
         push #unit              ; OFF1 OFF2 (OFF1M%OFF2M) UNIT
@@ -330,9 +328,9 @@
         ;; Boundaries are ok.  Build the trimmed array with a
         ;; subset of the elements of the array.
         typof                   ; ARR ATYP
-        tyagett                 ; ARR ATYP ETYP
-        push null               ; NULL ETYP
-        nip2                    ; ETYP
+        nip                     ; ATYP
+        push null               ; NULL
+        swap                    ; NULL ATYP
         pushvar $from
         regvar $idx
       .while
@@ -350,8 +348,7 @@
         rot                     ; ... NULL IDX EVAL ARR
         drop                    ; ... NULL IDX EVAL
         pushvar $from           ; ... NULL IDX EVAL FROM
-        rot                     ; ... NULL EVAL FROM IDX
-        swap                    ; ... NULL EVAL IDX FROM
+        quake                   ; ... NULL EVAL IDX FROM
         sublu
         nip2                    ; ... NULL EVAL (IDX-FROM)
         swap                    ; ... NULL (IDX-FROM) EVAL
@@ -372,59 +369,56 @@
         push ulong<64>1         ; ... (TO-FROM) 1
         addlu
         nip2                    ; ... (TO-FROM+1)
-        dup                     ; NULL ETYP [NULL IDX VAL...] NELEM NINIT
+        dup                     ; NULL ATYP [NULL IDX VAL...] NELEM NINIT
         mka
         ;; If the trimmed array is mapped then the resulting array
         ;; is mapped as well, with the following attributes:
         ;;
-        ;;   OFFSET = original OFFSET + OFF(FROM)
+        ;;   OFFSET = original OFFSET + (OFF(FROM) - original OFFSET)
         ;;   EBOUND = TO - FROM + 1
         ;;
         ;; The mapping of the resulting array is always
         ;; bounded by number of elements, regardless of the
         ;; characteristics of the mapping of the trimmed array.
         pushvar $array          ; TARR ARR
-        mgeto                   ; TARR ARR OFFSET
+        mgeto                   ; TARR ARR BOFFSET
         bn .notmapped
         ;; Calculate the new offset.
-        swap                    ; TARR OFFSET ARR
-        pushvar $from           ; TARR OFFSET ARR FROM
-        arefo                   ; TARR OFFSET ARR FROM OFF(FROM)
-        nip                     ; TARR OFFSET ARR OFF(FROM)
-        rot                     ; TARR ARR OFF(FROM) OFFSET
-        .e ogetmn               ; TARR ARR OFF(FROM) OFFSET OFFSETM
-        nip
-        swap                    ; TARR ARR OFFSETM OFF(FROM)
-        .e ogetmn
-        nip                     ; TARR ARR OFFSETM OFFM(FROM)
+        swap                    ; TARR BOFFSET ARR
+        pushvar $from           ; TARR BOFFSET ARR FROM
+        arefo                   ; TARR BOFFSET ARR FROM BOFF(FROM)
+        nip                     ; TARR BOFFSET ARR BOFF(FROM)
+        rot                     ; TARR ARR BOFF(FROM) BOFFSET
+        dup                     ; TARR ARR BOFF(FROM) BOFFSET BOFFSET
+        quake                   ; TARR ARR BOFFSET BOFF(FROM) BOFFSET
+        sublu
+        nip2                    ; TARR ARR BOFFSET (BOFF(FROM)-BOFFSET)
         addlu
-        nip2                    ; TARR ARR NOFFSETM
-        push ulong<64>1
-        mko                     ; TARR ARR OFFSET
-        rot                     ; ARR OFFSET TARR
+        nip2                    ; TARR ARR BOFFSET
+        rot                     ; ARR BOFFSET TARR
         regvar $tarr
         ;; Calculate the new EBOUND.
-        swap                    ; OFFSET ARR
-        mgetm                   ; OFFSET ARR MAPPER
-        swap                    ; OFFSET MAPPER ARR
-        mgetw                   ; OFFSET MAPPER ARR WRITER
-        nip                     ; OFFSET MAPPER WRITER
+        swap                    ; BOFFSET ARR
+        mgetm                   ; BOFFSET ARR MAPPER
+        swap                    ; BOFFSET MAPPER ARR
+        mgetw                   ; BOFFSET MAPPER ARR WRITER
+        nip                     ; BOFFSET MAPPER WRITER
         pushvar $to
-        pushvar $from           ; OFFSET MAPPER WRITER TO FROM
+        pushvar $from           ; BOFFSET MAPPER WRITER TO FROM
         sublu
-        nip2                    ; OFFSET MAPPER WRITER (TO-FROM)
+        nip2                    ; BOFFSET MAPPER WRITER (TO-FROM)
         push ulong<64>1
         addlu
-        nip2                    ; OFFSET MAPPER WRITER (TO-FROM+1UL)
+        nip2                    ; BOFFSET MAPPER WRITER (TO-FROM+1UL)
         ;; Install mapper, writer, offset and ebound.
-        pushvar $tarr           ; OFFSET MAPPER WRITER (TO-FROM+!UL) TARR
-        swap                    ; OFFSET MAPPER WRITER TARR (TO-FROM+!UL)
-        msetsel                 ; OFFSET MAPPER WRITER TARR
-        swap                    ; OFFSET MAPPER TARR WRITER
-        msetw                   ; OFFSET MAPPER TARR
-        swap                    ; OFFSET TARR MAPPER
-        msetm                   ; OFFSET TARR
-        swap                    ; TARR OFFSET
+        pushvar $tarr           ; BOFFSET MAPPER WRITER (TO-FROM+!UL) TARR
+        swap                    ; BOFFSET MAPPER WRITER TARR (TO-FROM+!UL)
+        msetsel                 ; BOFFSET MAPPER WRITER TARR
+        swap                    ; BOFFSET MAPPER TARR WRITER
+        msetw                   ; BOFFSET MAPPER TARR
+        swap                    ; BOFFSET TARR MAPPER
+        msetm                   ; BOFFSET TARR
+        swap                    ; TARR BOFFSET
         mseto                   ; TARR
         ;; Remap!!
         remap
@@ -476,14 +470,12 @@
 
         .macro array_conv_siz #bounder
         siz                     ; ARR SIZ
-        ogetm                   ; ARR SIZ SIZM
-        nip                     ; ARR SIZM
-        push #bounder           ; ARR SIZM CLS
-        call                    ; ARR SIZM BOUND
-        .e ogetmn               ; ARR SIZM BOUND BOUNDM
-        rot                     ; ARR BOUND BOUNDM SIZM
-        eqlu                    ; ARR BOUND BOUNDM SIZM (BOUNDM==SIZM)
-        nip2                    ; ARR BOUND (BOUNDM==SIZM)
+        push #bounder           ; ARR SIZ CLS
+        call                    ; ARR SIZ BOUND
+        .e ogetmn               ; ARR SIZ BOUND BOUNDM
+        rot                     ; ARR BOUND BOUNDM SIZ
+        eqlu                    ; ARR BOUND BOUNDM SIZ (BOUNDM==SIZ)
+        nip2                    ; ARR BOUND (BOUNDM==SIZ)
         bnzi .bound_ok
         push PVM_E_CONV
         raise
@@ -531,8 +523,7 @@
         ogetm                   ; OFF2 OFF1 OFF1M
         rot                     ; OFF1 OFF1M OFF2
         ogetm                   ; OFF1 OFF1M OFF2 OFF2M
-        rot                     ; OFF1 OFF2 OFF2M OFF1M
-        swap                    ; OFF1 OFF2 OFF1M OFF2M
+        quake                   ; OFF1 OFF2 OFF1M OFF2M
         cdiv @type
         nip2                    ; OFF1 OFF2 (OFF1M/^OFF2M)
         .end
@@ -581,17 +572,15 @@
         push ulong<64>1
         addlu                   ; SEL ELEM VAL IDX 1UL (IDX+1UL) [ARR NRES]
         nip2                    ; SEL ELEM VAL NIDX [ARR NRES]
-        rot                     ; SEL VAL NIDX ELEM [ARR NRES]
-        drop                    ; SEL VAL NIDX [ARR NREGS]
-        nrot                    ; NIDX SEL VAL [ARR NREGS]
-        swap                    ; NIDX VAL SEL [ARR NRES]
-        rot                     ; VAL SEL NIDX [ARR NRES]
+        tor                     ; SEL ELEM VAL [ARR NRES NIDX]
+        nip                     ; SEL VAL [ARR NRES NIDX]
+        swap                    ; VAL SEL [ARR NRES NIDX]
+        fromr                   ; VAL SEL NIDX [ARR NRES]
         ba .loop
 .foundit:
         tor                     ; SEL ELEM VAL IDX [ARR NRES]
-        rot                     ; SEL VAL IDX ELEM [ARR NRES]
-        drop                    ; SEL VAL IDX [ARR NRES]
-        tor                     ; SEL VAL [ARR NRES IDX]
+        tor                     ; SEL ELEM VAL [ARR NRES IDX]
+        nip                     ; SEL VAL [ARR NRES IDX]
         swap                    ; VAL SEL [ARR NRES IDX]
         fromr                   ; VAL SEL IDX [ARR NRES]
         dup                     ; VAL SEL IDX IDX [ARR NRES]
@@ -621,10 +610,9 @@
 ;;;   AST node with the type of the result.
 
         .macro bconc #op2_type_size @op1_type @op2_type @res_type
-        dup                       ; OP1 OP2 OP2
-        rot                       ; OP2 OP2 OP1
-        dup                       ; OP2 OP2 OP1 OP1
-        rot                       ; OP2 OP1 OP1 OP2
+        tuck                      ; OP2 OP1 OP2
+        over                      ; OP2 OP1 OP2 OP1
+        swap                      ; OP2 OP1 OP1 OP2
         ;; Convert the second operand to the result type.
         nton @op2_type, @res_type ; ... OP1 OP2 OP2C
         nip                       ; ... OP1 OP2C

@@ -1,6 +1,6 @@
 /* pkl-env.c - Compile-time lexical environments for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ hash_string (const char *name)
   len = strlen (name);
   hash = len;
   for (i = 0; i < len; i++)
-    hash = ((hash * 613) + (unsigned)(name[i]));
+    hash = ((hash * (size_t)613) + (unsigned)(name[i]));
 
 #define HASHBITS 30
   hash &= (1 << HASHBITS) - 1;
@@ -229,23 +229,53 @@ pkl_env_toplevel_p (pkl_env env)
 }
 
 void
+pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter)
+{
+  iter->bucket = 0;
+  iter->node = env->hash_table[iter->bucket];
+  while (iter->node == NULL)
+    {
+      iter->bucket++;
+      if (iter->bucket >= HASH_TABLE_SIZE)
+	break;
+      iter->node = env->hash_table[iter->bucket];
+    }
+}
+
+void
+pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter)
+{
+  assert (iter->node != NULL);
+
+  iter->node = PKL_AST_CHAIN2 (iter->node);
+  while (iter->node == NULL)
+    {
+      iter->bucket++;
+      if (iter->bucket >= HASH_TABLE_SIZE)
+	break;
+      iter->node = env->hash_table[iter->bucket];
+    }
+}
+
+bool
+pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter)
+{
+  return iter->bucket >= HASH_TABLE_SIZE;
+}
+
+void
 pkl_env_map_decls (pkl_env env,
                    int what,
                    pkl_map_decl_fn cb,
                    void *data)
 {
-  int i;
-
-  for (i = 0; i < HASH_TABLE_SIZE; ++i)
+  struct pkl_ast_node_iter iter;
+  for (pkl_env_iter_begin (env, &iter); !pkl_env_iter_end (env, &iter);
+       pkl_env_iter_next (env, &iter))
     {
-      pkl_ast_node t = env->hash_table[i];
-
-      for (; t; t = PKL_AST_CHAIN2 (t))
-        {
-          if ((what == PKL_AST_DECL_KIND_ANY
-               || what == PKL_AST_DECL_KIND (t)))
-            cb (t, data);
-        }
+      if ((what == PKL_AST_DECL_KIND_ANY
+	   || what == PKL_AST_DECL_KIND (iter.node)))
+	cb (iter.node, data);
     }
 }
 
@@ -254,10 +284,6 @@ pkl_env_dup_toplevel (pkl_env env)
 {
   pkl_env new;
   int i;
-
-  /* XXX: this should do a deep copy!  But it should not be necessary,
-     provided the destructor in the parser "rewinds" any created
-     frame.  */
 
   assert (pkl_env_toplevel_p (env));
 
@@ -276,4 +302,32 @@ pkl_env_dup_toplevel (pkl_env env)
   new->num_vars = env->num_vars;
 
   return new;
+}
+
+
+/*  Return the name of the next decl that is currently
+    in context of ENV and matches NAME,LEN.  ITER is an iterator
+    into the set of matches.  Returns the name of the next
+    command in the set, or NULL if there are no more.
+    The returned value must be freed by the caller.  */
+char *
+pkl_env_get_next_matching_decl (pkl_env env, struct pkl_ast_node_iter *iter,
+				const char *name, size_t len)
+{
+  /* "Normal" commands.  */
+  for (;;)
+    {
+      if (pkl_env_iter_end (env, iter))
+	break;
+
+      pkl_ast_node decl_name = PKL_AST_DECL_NAME (iter->node);
+      const char *cmdname = PKL_AST_IDENTIFIER_POINTER (decl_name);
+      if (0 != strncmp (cmdname, name, len))
+	{
+	  pkl_env_iter_next (env, iter);
+          continue;
+	}
+      return  strdup (cmdname);
+    }
+  return NULL;
 }

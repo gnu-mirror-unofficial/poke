@@ -1,6 +1,6 @@
 /* pvm-val.c - Values for the PVM.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +94,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   size_t nbytes = sizeof (struct pvm_array_elem) * PVM_VAL_ULONG (nelem);
   size_t i;
 
+  arr->ios = PVM_NULL;
   arr->offset = PVM_NULL;
   arr->elems_bound = PVM_NULL;
   arr->size_bound = PVM_NULL;
@@ -124,6 +125,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
   size_t nmethodbytes
     = sizeof (struct pvm_struct_method) * PVM_VAL_ULONG (nmethods);
 
+  sct->ios = PVM_NULL;
   sct->offset = PVM_NULL;
   sct->mapper = PVM_NULL;
   sct->writer = PVM_NULL;
@@ -427,8 +429,7 @@ pvm_sizeof (pvm_val val)
       if (sct_offset == PVM_NULL)
         sct_offset_bits = 0;
       else
-        sct_offset_bits = (PVM_VAL_ULONG (PVM_VAL_OFF_MAGNITUDE (sct_offset))
-                           * PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (sct_offset)));
+        sct_offset_bits = PVM_VAL_ULONG (sct_offset);
 
       nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
 
@@ -444,8 +445,7 @@ pvm_sizeof (pvm_val val)
             size += elem_size_bits;
           else
             {
-              elem_offset_bits = ((PVM_VAL_ULONG (PVM_VAL_OFF_MAGNITUDE (elem_offset))
-                                   * PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (elem_offset))));
+              elem_offset_bits = PVM_VAL_ULONG (elem_offset);
 
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
               size = MAX (size, elem_offset_bits - sct_offset_bits + elem_size_bits);
@@ -583,7 +583,7 @@ pvm_print_val (pvm_val val, int base, int flags)
       uint16_fmt = "0x%" PRIx32 "UH";
       uint8_fmt = "0x%" PRIx32 "UB";
       uint4_fmt = "0x%" PRIx32 "UN";
-      uint_fmt = "(uint<%d>) 0x%" PRIo32;
+      uint_fmt = "(uint<%d>) 0x%" PRIx32;
       break;
     case 2:
       /* This base doesn't use printf's formatting strings, but its
@@ -732,6 +732,7 @@ pvm_print_val (pvm_val val, int base, int flags)
             case '\n': printable_size += 2; break;
             case '\t': printable_size += 2; break;
             case '\\': printable_size += 2; break;
+            case '\"': printable_size += 2; break;
             default: printable_size += 1; break;
             }
         }
@@ -755,6 +756,11 @@ pvm_print_val (pvm_val val, int base, int flags)
             case '\\':
               str_printable[j] = '\\';
               str_printable[j+1] = '\\';
+              j += 2;
+              break;
+            case '"':
+              str_printable[j] = '\\';
+              str_printable[j+1] = '\"';
               j += 2;
               break;
             default:

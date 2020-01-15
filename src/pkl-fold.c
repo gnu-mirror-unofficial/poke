@@ -1,6 +1,6 @@
 /* pkl-fold.c - Constant folding phase for the poke compiler. */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,11 @@
 #include "pkl-ast.h"
 #include "pkl-pass.h"
 #include "pkl-fold.h"
+
+/* Roll out our own GCD from gnulib.  */
+#define WORD_T uint64_t
+#define GCD gcd
+#include <gcd.c>
 
 #define PKL_FOLD_PAYLOAD ((pkl_fold_payload) PKL_PASS_PAYLOAD)
 
@@ -117,6 +122,9 @@ EMUL_III (le) { return op1 <= op2; }
 EMUL_UUU (ge) { return op1 >= op2; }
 EMUL_III (ge) { return op1 >= op2; }
 
+EMUL_UUU (gcd) { return gcd (op1, op2); }
+EMUL_III (gcd) { assert (0); return 0; }
+
 EMUL_UUU (sl) { return op1 << op2; }
 EMUL_III (sl) { return op1 << op2; } /* XXX support 1c */
 EMUL_UUU (sr) { return op1 >> op2; }
@@ -151,6 +159,8 @@ EMUL_UUU (mulo) { return op1 * op2; }
 EMUL_III (mulo) { return op1 * op2; }
 EMUL_UUU (divo) { return op1 / op2; }
 EMUL_III (divo) { return op1 / op2; }
+EMUL_UUU (cdivo) { return (op1 - 1 + op2) / op2; }
+EMUL_III (cdivo) { return (op1 - 1 + op2) / op2; }
 EMUL_UUU (modo) { return op1 % op2; }
 EMUL_III (modo) { return op1 % op2; }
 
@@ -200,17 +210,23 @@ EMUL_III (modo) { return op1 % op2; }
           && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)           \
         {                                                               \
           pkl_ast_node new;                                             \
-          pkl_ast_node op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);  \
-          pkl_ast_node op1_unit = PKL_AST_OFFSET_UNIT (op1);            \
-          pkl_ast_node op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);  \
-          pkl_ast_node op2_unit = PKL_AST_OFFSET_UNIT (op2);            \
+          pkl_ast_node op1_magnitude, op1_unit;                         \
+          pkl_ast_node op2_magnitude, op2_unit;                         \
           uint64_t result;                                              \
           uint64_t op1_magnitude_bits;                                  \
           uint64_t op2_magnitude_bits;                                  \
                                                                         \
           if (PKL_AST_CODE (op1) != PKL_AST_OFFSET                      \
-              || PKL_AST_CODE (op2) != PKL_AST_OFFSET                   \
-              || PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER        \
+              || PKL_AST_CODE (op2) != PKL_AST_OFFSET)                  \
+            /* We cannot fold this expression.  */                      \
+            PKL_PASS_DONE;                                              \
+                                                                        \
+          op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);               \
+          op1_unit = PKL_AST_OFFSET_UNIT (op1);                         \
+          op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);               \
+          op2_unit = PKL_AST_OFFSET_UNIT (op2);                         \
+                                                                        \
+          if (PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER           \
               || PKL_AST_CODE (op1_unit) != PKL_AST_INTEGER             \
               || PKL_AST_CODE (op2_magnitude) != PKL_AST_INTEGER        \
               || PKL_AST_CODE (op2_unit) != PKL_AST_INTEGER)            \
@@ -222,7 +238,7 @@ EMUL_III (modo) { return op1 % op2; }
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (op1_type))                         \
+          if (PKL_AST_TYPE_I_SIGNED (type))                             \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -256,30 +272,37 @@ EMUL_III (modo) { return op1 % op2; }
           pkl_ast_node new;                                             \
           pkl_ast_node type_base_type = PKL_AST_TYPE_O_BASE_TYPE (type);\
           pkl_ast_node type_unit = PKL_AST_TYPE_O_UNIT (type);          \
-          pkl_ast_node op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);  \
-          pkl_ast_node op1_unit = PKL_AST_OFFSET_UNIT (op1);            \
-          pkl_ast_node op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);  \
-          pkl_ast_node op2_unit = PKL_AST_OFFSET_UNIT (op2);            \
+          pkl_ast_node op1_magnitude, op1_unit;                         \
+          pkl_ast_node op2_magnitude, op2_unit;                         \
           pkl_ast_node magnitude;                                       \
           uint64_t result;                                              \
           uint64_t op1_magnitude_bits;                                  \
           uint64_t op2_magnitude_bits;                                  \
                                                                         \
           if (PKL_AST_CODE (op1) != PKL_AST_OFFSET                      \
-              || PKL_AST_CODE (op2) != PKL_AST_OFFSET                   \
-              || PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER        \
+              || PKL_AST_CODE (op2) != PKL_AST_OFFSET)                  \
+            /* We cannot fold this expression.  */                      \
+            PKL_PASS_DONE;                                              \
+                                                                        \
+          op1_magnitude = PKL_AST_OFFSET_MAGNITUDE (op1);               \
+          op1_unit = PKL_AST_OFFSET_UNIT (op1);                         \
+          op2_magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);               \
+          op2_unit = PKL_AST_OFFSET_UNIT (op2);                         \
+                                                                        \
+          if (PKL_AST_CODE (op1_magnitude) != PKL_AST_INTEGER           \
               || PKL_AST_CODE (op1_unit) != PKL_AST_INTEGER             \
               || PKL_AST_CODE (op2_magnitude) != PKL_AST_INTEGER        \
               || PKL_AST_CODE (op2_unit) != PKL_AST_INTEGER)            \
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
                                                                         \
+                                                                        \
           op1_magnitude_bits = (PKL_AST_INTEGER_VALUE (op1_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op1_unit));    \
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (op1_type))                         \
+          if (PKL_AST_TYPE_I_SIGNED (type_base_type))                   \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -540,6 +563,12 @@ PKL_PHASE_HANDLER_BIN_RELA (ge);
 PKL_PHASE_HANDLER_BIN_ARITH (add);
 PKL_PHASE_HANDLER_BIN_ARITH (sub);
 
+PKL_PHASE_BEGIN_HANDLER (pkl_fold_gcd)
+{
+  OP_BINARY_III (gcd);
+}
+PKL_PHASE_END_HANDLER
+
 PKL_PHASE_BEGIN_HANDLER (pkl_fold_mul)
 {
   OP_BINARY_III (mul);
@@ -557,7 +586,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_div)
       && PKL_AST_INTEGER_VALUE (op2) == 0)
     goto divbyzero;
 
-  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET
+      && PKL_AST_CODE (op2) == PKL_AST_OFFSET)
     {
       pkl_ast_node magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);
 
@@ -588,7 +618,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_cdiv)
       && PKL_AST_INTEGER_VALUE (op2) == 0)
     goto divbyzero;
 
-  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET
+      && PKL_AST_CODE (op2) == PKL_AST_OFFSET)
     {
       pkl_ast_node magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);
 
@@ -598,7 +629,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_cdiv)
     }
 
   OP_BINARY_III (cdiv);
-  //XXX  OP_BINARY_OOI (divo);
+  OP_BINARY_OOI (cdivo);
 
   PKL_PASS_DONE;
 
@@ -620,7 +651,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_mod)
       && PKL_AST_INTEGER_VALUE (op2) == 0)
     goto divbyzero;
 
-  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET
+      && PKL_AST_CODE (op2) == PKL_AST_OFFSET)
     {
       pkl_ast_node magnitude = PKL_AST_OFFSET_MAGNITUDE (op2);
 
@@ -691,7 +723,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
   pkl_ast_node to_type = PKL_AST_CAST_TYPE (cast);
 
   pkl_ast_node new = NULL;
-
+  
   if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_INTEGRAL
       && PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_INTEGRAL
       && PKL_AST_CODE (exp) == PKL_AST_INTEGER)
@@ -708,7 +740,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
       pkl_ast_node to_unit = PKL_AST_TYPE_O_UNIT (to_type);
       pkl_ast_node from_base_type = PKL_AST_TYPE_O_BASE_TYPE (from_type);
       pkl_ast_node to_base_type = PKL_AST_TYPE_O_BASE_TYPE (to_type);
-
+      
       if (PKL_AST_CODE (magnitude) != PKL_AST_INTEGER
           || PKL_AST_CODE (unit) != PKL_AST_INTEGER
           || PKL_AST_CODE (to_unit) != PKL_AST_INTEGER)
@@ -739,6 +771,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
         = (PKL_AST_INTEGER_VALUE (magnitude)
            /  PKL_AST_INTEGER_VALUE (unit));
 
+      
       new = pkl_ast_make_offset (PKL_PASS_AST,
                                  magnitude, unit);
     }
@@ -767,7 +800,7 @@ struct pkl_phase pkl_phase_fold =
    ENTRY (EQ, eq), ENTRY (NE, ne), ENTRY (SL, sl),
    ENTRY (SR, sr), ENTRY (ADD, add), ENTRY (SUB, sub),
    ENTRY (MUL, mul), ENTRY (DIV, div), ENTRY (CEILDIV, cdiv),
-   ENTRY (MOD, mod),
+   ENTRY (MOD, mod), ENTRY (GCD, gcd),
    ENTRY (LT, lt), ENTRY (GT, gt), ENTRY (LE, le),
    ENTRY (GE, ge),
    ENTRY (BCONC, bconc),

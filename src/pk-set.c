@@ -1,6 +1,6 @@
 /* pk-set.c - Commands to show and set properties.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -307,7 +307,40 @@ struct pk_cmd *set_cmds[] =
    &null_cmd
   };
 
+static char *
+set_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  if (state == 0)
+    idx = 0;
+  else
+    ++idx;
+
+  int len = strlen (x);
+  while (1)
+    {
+      struct pk_cmd **c = set_cmds + idx;
+
+      if (*c == &null_cmd)
+	break;
+
+      char *name = xmalloc (strlen ( (*c)->name) + 1);
+      strcpy (name, (*c)->name);
+
+      int match = strncmp (name, x, len);
+      if (match != 0)
+	{
+	  free (name);
+	  idx++;
+	  continue;
+	}
+      return name;
+    }
+
+  return NULL;
+}
+
 struct pk_trie *set_trie;
 
 struct pk_cmd set_cmd =
-  {"set", "", "", 0, &set_trie, NULL, "set PROPERTY"};
+  {"set", "", "", 0, &set_trie, NULL, "set PROPERTY", set_completion_function};

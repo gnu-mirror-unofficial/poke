@@ -1,6 +1,6 @@
 /* pk-info.c - `info' command.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,5 +34,35 @@ struct pk_cmd *info_cmds[] =
 
 struct pk_trie *info_trie;
 
+static char *
+info_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  if (state == 0)
+    idx = 0;
+  else
+    ++idx;
+
+  size_t len = strlen (x);
+  while (1)
+    {
+      struct pk_cmd **c = info_cmds + idx;
+
+      if (*c == &null_cmd)
+	break;
+
+      if (0 != strncmp ((*c)->name, x, len))
+	{
+	  idx++;
+	  continue;
+	}
+      return strdup ((*c)->name);
+    }
+
+  return NULL;
+}
+
+
 struct pk_cmd info_cmd =
-  {"info", "", "", 0, &info_trie, NULL, "info (files|variable|type)"};
+  {"info", "", "", 0, &info_trie, NULL, "info (files|variable|function)",
+   info_completion_function};

@@ -1,6 +1,6 @@
 /* pkl-ast.h - Abstract Syntax Tree for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ enum pkl_ast_code
   PKL_AST_FUNCALL,
   PKL_AST_FUNCALL_ARG,
   PKL_AST_VAR,
+  PKL_AST_GCD,
   /* Types.  */
   PKL_AST_TYPE,
   PKL_AST_STRUCT_TYPE_FIELD,
@@ -76,6 +77,7 @@ enum pkl_ast_code
   PKL_AST_RETURN_STMT,
   PKL_AST_EXP_STMT,
   PKL_AST_TRY_CATCH_STMT,
+  PKL_AST_TRY_UNTIL_STMT,
   PKL_AST_PRINT_STMT,
   PKL_AST_BREAK_STMT,
   PKL_AST_RAISE_STMT,
@@ -926,6 +928,7 @@ int pkl_ast_type_is_complete (pkl_ast_node type);
 void pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name);
 char *pkl_type_str (pkl_ast_node type, int use_given_name);
 int pkl_ast_func_all_optargs (pkl_ast_node type);
+int pkl_ast_type_mappable_p (pkl_ast_node type);
 
 /* PKL_AST_DECL nodes represent the declaration of a named entity:
    function, type, variable....
@@ -1056,9 +1059,14 @@ pkl_ast_node pkl_ast_make_isa (pkl_ast ast,
 
    TYPE is the mapped type.
 
+   IOS is an expression that should evaluate to an integer, and
+   identifies the IOS where the map operation is performed.  If it is
+   NULL then the map is performed in the current IOS.
+
    OFFSET is the offset in IO space where the TYPE is mapped.  */
 
 #define PKL_AST_MAP_TYPE(AST) ((AST)->map.type)
+#define PKL_AST_MAP_IOS(AST) ((AST)->map.ios)
 #define PKL_AST_MAP_OFFSET(AST) ((AST)->map.offset)
 
 struct pkl_ast_map
@@ -1067,10 +1075,12 @@ struct pkl_ast_map
 
   union pkl_ast_node *type;
   union pkl_ast_node *offset;
+  union pkl_ast_node *ios;
 };
 
 pkl_ast_node pkl_ast_make_map (pkl_ast ast,
                                pkl_ast_node type,
+                               pkl_ast_node ios,
                                pkl_ast_node offset);
 
 /* PKL_AST_SCONS nodes represent struct constructors.
@@ -1202,6 +1212,10 @@ pkl_ast_node pkl_ast_make_var (pkl_ast ast,
 #define PKL_AST_BUILTIN_RAND 2
 #define PKL_AST_BUILTIN_GET_ENDIAN 3
 #define PKL_AST_BUILTIN_SET_ENDIAN 4
+#define PKL_AST_BUILTIN_GET_IOS 5
+#define PKL_AST_BUILTIN_SET_IOS 6
+#define PKL_AST_BUILTIN_OPEN 7
+#define PKL_AST_BUILTIN_CLOSE 8
 
 struct pkl_ast_comp_stmt
 {
@@ -1369,6 +1383,28 @@ struct pkl_ast_exp_stmt
 };
 
 pkl_ast_node pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp);
+
+/* PKL_AST_TRY_UNTIL_STMT nodes represent try-until statements.
+
+   CODE is a statement.
+
+   EXP is an expression that should evaluate to a 32-bit signed
+   integer.  CODE will be executed repeteadly until the given
+   exception type is catched, or some other exception is raised.  */
+
+#define PKL_AST_TRY_UNTIL_STMT_CODE(AST) ((AST)->try_until_stmt.code)
+#define PKL_AST_TRY_UNTIL_STMT_EXP(AST) ((AST)->try_until_stmt.exp)
+
+struct pkl_ast_try_until_stmt
+{
+  struct pkl_ast_common common;
+
+  union pkl_ast_node *code;
+  union pkl_ast_node *exp;
+};
+
+pkl_ast_node pkl_ast_make_try_until_stmt (pkl_ast ast,
+                                          pkl_ast_node code, pkl_ast_node exp);
 
 /* PKL_AST_TRY_CATCH_STMT nodes represent try-catch statements, which
    are used in order to support exception handlers.
@@ -1578,6 +1614,7 @@ union pkl_ast_node
   struct pkl_ast_return_stmt return_stmt;
   struct pkl_ast_exp_stmt exp_stmt;
   struct pkl_ast_try_catch_stmt try_catch_stmt;
+  struct pkl_ast_try_until_stmt try_until_stmt;
   struct pkl_ast_break_stmt break_stmt;
   struct pkl_ast_raise_stmt raise_stmt;
   struct pkl_ast_print_stmt print_stmt;

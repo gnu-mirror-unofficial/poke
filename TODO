@@ -2,7 +2,7 @@
 GNU Poke - TODO lists
 =====================
 
-Copyright (C) 2019 Jose E. Marchesi
+Copyright (C) 2019, 2020 Jose E. Marchesi
 See the end of the file for license conditions.
 
 NOTE: this file is not your typical abandoned TODO file that nobody
@@ -167,35 +167,25 @@ Then, the default exception handler ``_pkl_exception_handler`` in
 ``src/pkl-rt.pk`` shall be expanded to print the file, line and the
 column, if present.
 
-#M1 Endianness and negative encoding PVM instructions
------------------------------------------------------
+#M1 Negative encoding PVM instructions
+--------------------------------------
 
-At the moment the global endianness used by the ``peekd*`` and
+At the moment the global negative encoding used by the ``peekd*`` and
 ``poked*`` instructions is controlled by the user via the dot-command
 ``.set``, for example::
 
-  (poke) .set endian little
-  (poke) .set endian big
-  (poke) .set endian host
+  (poke) .set nenc 1c
+  (poke) .set nenc 2c
 
-Ditto for the negative encoding.
-  
-We need to be able to set the endianness programmatically from Poke
-programs.  As a first step, it is necessary to add a few instructions
-to the PVM to update the global endianness state.  Suggested
-instructions::
+We need to be able to set the negative encoding programmatically from
+Poke programs.  As a first step, it is necessary to add a few
+instructions to the PVM to update the global state.
+Suggested instructions::
 
-  popend             # ( ENDIANNESS  -- )
-  pushend ENDIANNESS # ( -- ENDIANNESS )
   popenc             # ( NENCODING -- )
   pushenc NENCODING  # ( -- NENCODING )
 
-Suitable encodings for ENDIANNESS and NENCODING in an int<32> are
-trivial::
-
-  0 - little endian
-  1 - big endian
-  2 - host endian
+A suitable encoding NENCODING in an int<32> is trivial::
 
   0 - 2's complement
   1 - 1's complement
@@ -272,16 +262,6 @@ EDIT: got a look at C++98 paper. It just doesn't mention signed types
 at all. So it's still undefined behavior.
 
 We can emit an error if E1 is signed and left-shifted (?).
-
-#L2! Support for wide-strings and wide-chars
---------------------------------------------
-
-Strings with UCS characters.  Similar than in C::
-
-  L"Hello there"
-  L'X'
-
-This requires changes in both compiler and PVM.
 
 #L2 Support bitwise operators for offsets
 -----------------------------------------
@@ -410,32 +390,13 @@ This task is about implementing constant folding of ``isa``
 operations.  This should be implemented as a handler in
 ``src/pkl-fold.c``.
 
-#A0 fix multi-line warning messages
------------------------------------
+#A1 support %% in printf string literals
+----------------------------------------
 
-The ``pkl_warning`` function in ``src/pkl.c`` can't handle multi-line
-warning messages properly.  It also has some duplication with
-``pkl_error``.  This task is about factorizing the multi-line handling
-code from ``pkl_error`` and reuse it in ``pkl_warning`` without code
-duplication.
+A new %-sequence shall be added to printf: %%.  This denotes a single
+% in the formatted output.  The right place where to hack this is the
+``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
 
-It would be nice to have some tests too.
-
-#B0 remove hard limit in PKL_AST_MAX_POINTERS
----------------------------------------------
-
-The macro-assembler keeps an array of pointers to PVM values
-references in the routine being assembled.  This is needed because the
-PVM routines (which are Jitter routines) are allocated using the
-system malloc, whereas the PVM values are allocated using the Boehm
-GC.  See HACKING for more information about this.
-
-The current implementation relies in a constant PKL_AST_MAX_POINTERS
-for the size of the array, which is therefore constant.  An assert in
-``pkl_asm_new`` makes sure the array is not overflown.
-
-The goal of this task is to remove the hard limit on the size of the
-array: it should be reallocated should more pointers be needed.
 
 
 This file is part of GNU poke.

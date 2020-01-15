@@ -1,6 +1,6 @@
 /* pkl-parser.c - Parser for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
   else
     assert (0);
 
-  yybuffer = pkl_tab__scan_string(buffer, parser->scanner);
+  yybuffer = pkl_tab__scan_string (buffer, parser->scanner);
 
   /* XXX */
   /* pkl_tab_debug = 1; */

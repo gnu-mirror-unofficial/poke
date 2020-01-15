@@ -1,6 +1,6 @@
 /* pvm-val.c - Memory allocator for the PVM.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,12 @@ void *
 pvm_alloc (size_t size)
 {
   return GC_MALLOC (size);
+}
+
+void *
+pvm_realloc (void *ptr, size_t size)
+{
+  return GC_REALLOC (ptr, size);
 }
 
 char *
@@ -59,7 +65,7 @@ pvm_alloc_initialize ()
 void
 pvm_alloc_finalize ()
 {
-  GC_gcollect();
+  GC_gcollect ();
 }
 
 void

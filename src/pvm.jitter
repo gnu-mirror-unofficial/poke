@@ -1,6 +1,6 @@
 ## Jitter specification for the GNU Poke Virtual Machine.
 
-## Copyright (C) 2019 Jose E. Marchesi
+## Copyright (C) 2019, 2020 Jose E. Marchesi
 ## Written by Jose E. Marchesi
 
 ## This program is free software: you can redistribute it and/or modify
@@ -68,6 +68,7 @@ wrapped-functions
   ios_read_int
   ios_read_uint
   ios_read_string
+  ios_write_string
   random
 end
 
@@ -228,7 +229,7 @@ late-header-c
   io, offset, 0, bits, endian, value
 
 /* Integral peek instructions.
-   ( OFF -- VAL )  */
+   ( IOS BOFF -- VAL )  */
 #define PVM_PEEK(TYPE,IOTYPE,NENC,ENDIAN,BITS,IOARGS)                        \
   do                                                                         \
    {                                                                         \
@@ -240,11 +241,17 @@ late-header-c
      ios io;                                                                 \
      ios_off offset;                                                         \
                                                                              \
-     if ((io = ios_cur ()) == NULL)                                          \
-        PVM_RAISE (PVM_E_NO_IOS);                                            \
-                                                                             \
      offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());                           \
                                                                              \
+     if (JITTER_UNDER_TOP_STACK () == PVM_NULL)                              \
+       io = ios_cur ();                                                      \
+     else                                                                    \
+       io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));      \
+                                                                             \
+     if (io == NULL)                                                         \
+       PVM_RAISE (PVM_E_NO_IOS);                                             \
+                                                                             \
+     JITTER_DROP_STACK ();                                                   \
      if ((ret = ios_read_##IOTYPE (IOARGS)) != IOS_OK)                       \
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
@@ -258,7 +265,7 @@ late-header-c
    } while (0)
 
 /* Integral poke instructions.
-   ( OFF VAL -- )  */
+   ( IOS BOFF VAL -- )  */
 #define PVM_POKE(TYPE,IOTYPE,NENC,ENDIAN,BITS,IOARGS)                        \
   do                                                                         \
    {                                                                         \
@@ -274,11 +281,16 @@ late-header-c
      JITTER_DROP_STACK ();                                                   \
      JITTER_DROP_STACK ();                                                   \
                                                                              \
-     if ((io = ios_cur ()) == NULL)                                          \
-        PVM_RAISE (PVM_E_NO_IOS);                                            \
+     if (JITTER_TOP_STACK () == PVM_NULL)                                    \
+       io = ios_cur ();                                                      \
+     else                                                                    \
+       io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));            \
+                                                                             \
+     if (io == NULL)                                                         \
+       PVM_RAISE (PVM_E_NO_IOS);                                             \
+     JITTER_DROP_STACK ();                                                   \
                                                                              \
      offset = PVM_VAL_ULONG (offset_val);                                    \
-                                                                             \
      if ((ret = ios_write_##IOTYPE (IOARGS)) != IOS_OK)                      \
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
@@ -592,6 +604,56 @@ end
 
 
 
+## IOS related instructions
+
+instruction open () # ( STR -- INT )
+  code
+     char *filename = PVM_VAL_STR (JITTER_TOP_STACK ());
+     int ret = ios_open (filename, 0);
+
+     if (ret == IOS_ERROR)
+       PVM_RAISE (PVM_E_IO);
+
+     JITTER_TOP_STACK () = pvm_make_int (ret, 32);
+  end
+end
+
+instruction close () # ( INT -- )
+  code
+    int io_id = PVM_VAL_INT (JITTER_TOP_STACK ());
+    ios io = ios_search_by_id (io_id);
+
+    if (io == NULL)
+      PVM_RAISE (PVM_E_IO);
+
+    ios_close (io);
+    JITTER_DROP_STACK ();
+  end
+end
+
+instruction pushios () # ( -- INT )
+  code
+    ios cur_io = ios_cur ();
+
+    if (cur_io == NULL)
+       PVM_RAISE (PVM_E_NO_IOS);
+    JITTER_PUSH_STACK (pvm_make_int (ios_get_id (cur_io), 32));
+  end
+end
+
+instruction popios () # ( INT -- )
+  code
+    ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
+
+    if (io == NULL)
+      PVM_RAISE (PVM_E_NO_IOS);
+    ios_set_cur (io);
+    JITTER_DROP_STACK ();
+  end
+end
+
+
+
 ## Function management instructions
 
 instruction call () # ARG1 ... ARGN CLOSURE -> RETVAL
@@ -755,13 +817,10 @@ instruction note (?n pvm_literal_printer)
   end
 end
 
-instruction siz () # ( VAL -- VAL OFF )
+instruction siz () # ( VAL -- VAL ULONG )
   code
     uint64_t size = pvm_sizeof (JITTER_TOP_STACK ());
-    pvm_val unit = pvm_make_ulong (1, 64);
-    pvm_val offset = pvm_make_offset (pvm_make_ulong (size, 64), unit);
-
-    JITTER_PUSH_STACK (offset);
+    JITTER_PUSH_STACK (pvm_make_ulong (size, 64));
   end
 end
 
@@ -884,33 +943,27 @@ instruction over () # ( A B -- A B A )
   end
 end
 
+instruction quake () #  ( A B C -- B A C )
+  code
+    JITTER_QUAKE_STACK ();
+  end
+end
+
 instruction rot () # ( A B C -- B C A )
   code
-   pvm_val a, b, c;
-
-   c = JITTER_TOP_STACK ();
-   JITTER_DROP_STACK ();
-   b = JITTER_TOP_STACK ();
-   a = JITTER_UNDER_TOP_STACK ();
-
-   JITTER_UNDER_TOP_STACK () = b;
-   JITTER_TOP_STACK () = c;
-   JITTER_PUSH_STACK (a);
+    JITTER_ROT_STACK ();
   end
 end
 
 instruction nrot () # ( A B C -- C A B )
   code
-   pvm_val a, b, c;
+    JITTER_MROT_STACK ();
+  end
+end
 
-   c = JITTER_TOP_STACK ();
-   JITTER_DROP_STACK ();
-   b = JITTER_TOP_STACK ();
-   a = JITTER_UNDER_TOP_STACK ();
-
-   JITTER_UNDER_TOP_STACK () = c;
-   JITTER_TOP_STACK () = a;
-   JITTER_PUSH_STACK (b);
+instruction tuck () #  ( A B -- B A B )
+  code
+    JITTER_TUCK_STACK ();
   end
 end
 
@@ -969,9 +1022,9 @@ instruction sel () # ( VAL -- VAL ULONG )
   end
 end
 
-instruction revn (?n popf_printer) # ( VAL{N} -- VAL{N} )
+instruction revn (?n 3 4 popf_printer) # ( VAL{N} -- VAL{N} )
   code
-    JITTER_REVERSE_STACK (JITTER_ARGN0);
+    JITTER_REVERSE_STACK (JITTER_ARGU0);
   end
 end
 
@@ -1840,7 +1893,7 @@ end
 
 ## Array instructions.
 
-# ( OFF TYP [OFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
+# ( BOFF TYP [BOFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
 instruction mka ()
   code
     size_t i;
@@ -1922,6 +1975,25 @@ instruction aset () # ( ARR ULONG VAL -- ARR )
       }
    else
      PVM_VAL_ARR_ELEM_VALUE (arr, idx) = val;
+  end
+end
+
+instruction aseto () # ( ARR ULONG BOFF -- ARR )
+  code
+    uint64_t idx;
+    pvm_val boff;
+    pvm_val arr;
+
+    boff = JITTER_TOP_STACK ();
+    idx = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    arr = JITTER_TOP_STACK ();
+
+    if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+
+    PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;    
   end
 end
 
@@ -2105,6 +2177,14 @@ instruction ogetm () # ( OFF -- OFF (INT|LONG|UINT|ULONG) )
   end
 end
 
+instruction osetm () # ( OFF (INT|LONG|UINT|ULONG) -- OFF )
+  code
+   PVM_VAL_OFF_MAGNITUDE (JITTER_UNDER_TOP_STACK ())
+    =  JITTER_TOP_STACK ();
+   JITTER_DROP_STACK ();
+  end
+end
+
 instruction ogetu () # ( OFF -- OFF ULONG )
   code
     JITTER_PUSH_STACK (PVM_VAL_OFF_UNIT (JITTER_TOP_STACK ()));
@@ -2131,6 +2211,20 @@ instruction mseto () # ( VAL OFF -- VAL )
   code
     PVM_VAL_SET_OFFSET (JITTER_UNDER_TOP_STACK (),
                         JITTER_TOP_STACK ());
+    JITTER_DROP_STACK ();
+  end
+end
+
+instruction mgetios () # ( VAL -- VAL INT )
+  code
+    JITTER_PUSH_STACK (PVM_VAL_IOS (JITTER_TOP_STACK ()));
+  end
+end
+
+instruction msetios () # ( VAL INT -- VAL )
+  code
+    PVM_VAL_SET_IOS (JITTER_UNDER_TOP_STACK (),
+                     JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
   end
 end
@@ -2327,7 +2421,6 @@ instruction mktysct () # ( [STRING TYP]... NLONG NAME -- TYP )
 
     for (i = 0; i < PVM_VAL_ULONG (nelem); ++i)
     {
-      /* XXX: check pvm_val types?  */
       enames[PVM_VAL_ULONG (nelem) - i - 1] = JITTER_UNDER_TOP_STACK ();
       etypes[PVM_VAL_ULONG (nelem) - i - 1] = JITTER_TOP_STACK ();
 
@@ -2372,7 +2465,7 @@ instruction write () # ( VAL -- VAL )
 end
 
 # peeki NENC,ENDIAN,BITS
-# ( OFF -- INT )
+# ( IOS BOFF -- INT )
 
 instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2382,7 +2475,7 @@ instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # peekiu ENDIAN,BITS
-# ( OFF -- UINT )
+# ( IOS BOFF -- UINT )
 
 instruction peekiu (?n endian_printer,?n bits_printer)
   code
@@ -2392,7 +2485,7 @@ instruction peekiu (?n endian_printer,?n bits_printer)
 end
 
 # peekl NENC,ENDIAN,BITS
-# ( OFF -- LONG )
+# ( IOS BOFF -- LONG )
 
 instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2402,7 +2495,7 @@ instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # peeklu ENDIAN,BITS
-# ( OFF -- ULONG )
+# ( IOS BOFF -- ULONG )
 
 instruction peeklu (?n endian_printer,?n bits_printer)
   code
@@ -2412,9 +2505,9 @@ instruction peeklu (?n endian_printer,?n bits_printer)
 end
 
 # peekdi BITS
-# ( OFF -- INT )
+# ( IOS BOFF -- INT )
 
-instruction peekdi (?n bits_printer) # XXX: avoid code duplication with peeki
+instruction peekdi (?n bits_printer)
   code
     PVM_PEEK (int, int, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_INT);
@@ -2422,9 +2515,9 @@ instruction peekdi (?n bits_printer) # XXX: avoid code duplication with peeki
 end
 
 # peekdiu BITS
-# ( OFF -- UINT )
+# ( IOS BOFF -- UINT )
 
-instruction peekdiu (?n bits_printer) # XXX avoid code duplication with peekiu
+instruction peekdiu (?n bits_printer)
   code
     PVM_PEEK (uint, uint, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_UINT);
@@ -2432,9 +2525,9 @@ instruction peekdiu (?n bits_printer) # XXX avoid code duplication with peekiu
 end
 
 # peekdl BITS
-# ( OFF -- LONG )
+# ( IOS BOFF -- LONG )
 
-instruction peekdl (?n bits_printer) # XXX avoid duplication with peekl
+instruction peekdl (?n bits_printer)
   code
     PVM_PEEK (long, int, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_INT);
@@ -2442,9 +2535,9 @@ instruction peekdl (?n bits_printer) # XXX avoid duplication with peekl
 end
 
 # peekdlu BITS
-# ( OFF -- ULONG )
+# ( IOS BOFF -- ULONG )
 
-instruction peekdlu (?n bits_printer) # XXX avoid code duplication with peeklu
+instruction peekdlu (?n bits_printer)
   code
     PVM_PEEK (ulong, uint, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_UINT);
@@ -2452,7 +2545,7 @@ instruction peekdlu (?n bits_printer) # XXX avoid code duplication with peeklu
 end
 
 # pokei NENC,ENDIAN,BITS
-# ( OFF INT -- )
+# ( IOS BOFF INT -- )
 
 instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2462,7 +2555,7 @@ instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # pokeiu ENDIAN,BITS
-# ( OFF UINT -- )
+# ( IOS BOFF UINT -- )
 
 instruction pokeiu (?n endian_printer,?n bits_printer)
   code
@@ -2472,7 +2565,7 @@ instruction pokeiu (?n endian_printer,?n bits_printer)
 end
 
 # pokel NENC,ENDIAN,BITS
-# ( OFF LONG -- )
+# ( IOS BOFF LONG -- )
 
 instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -2482,7 +2575,7 @@ instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
 end
 
 # pokelu ENDIAN,BITS
-# ( OFF ULONG -- )
+# ( IOS BOFF ULONG -- )
 
 instruction pokelu (?n endian_printer,?n bits_printer)
   code
@@ -2492,7 +2585,7 @@ instruction pokelu (?n endian_printer,?n bits_printer)
 end
 
 # pokedi BITS
-# ( OFF INT -- )
+# ( IOS BOFF INT -- )
 
 instruction pokedi (?n bits_printer)
   code
@@ -2502,7 +2595,7 @@ instruction pokedi (?n bits_printer)
 end
 
 # pokediu BITS
-# ( OFF UINT -- )
+# ( IOS BOFF UINT -- )
 
 instruction pokediu (?n bits_printer)
   code
@@ -2512,7 +2605,7 @@ instruction pokediu (?n bits_printer)
 end
 
 # pokedl BITS
-# ( OFF LONG -- )
+# ( IOS BOFF LONG -- )
 
 instruction pokedl (?n bits_printer)
   code
@@ -2522,7 +2615,7 @@ instruction pokedl (?n bits_printer)
 end
 
 # pokedlu BITS
-# ( OFF ULONG -- )
+# ( IOS BOFF ULONG -- )
 
 instruction pokedlu (?n bits_printer)
   code
@@ -2532,7 +2625,7 @@ instruction pokedlu (?n bits_printer)
 end
 
 # peeks
-# ( OFF -- STR )
+# ( IOS BOFF -- STR )
 
 instruction peeks ()
   code
@@ -2541,11 +2634,17 @@ instruction peeks ()
     char *ios_str;
     int ret;
 
-    if ((io = ios_cur ()) == NULL)
-        PVM_RAISE (PVM_E_NO_IOS);
-
     offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());
 
+    if (JITTER_UNDER_TOP_STACK () == PVM_NULL)
+      io = ios_cur ();
+    else
+      io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
+
+    if (io == NULL)
+      PVM_RAISE (PVM_E_NO_IOS);
+
+    JITTER_DROP_STACK ();
     if ((ret = ios_read_string (io, offset, 0 /* flags */, &ios_str)) != IOS_OK)
     {
       if (ret == IOS_EIOFF)
@@ -2559,10 +2658,37 @@ instruction peeks ()
   end
 end
 
+# pokes
+# ( IOS BOFF STR -- )
+
 instruction pokes ()
   code
-    /* XXX writeme */
-    assert (0);
+    ios io;
+    ios_off offset;
+    char *str;
+    int ret;
+
+    str = PVM_VAL_STR (JITTER_TOP_STACK ());
+    offset = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
+    JITTER_DROP_STACK();
+    JITTER_DROP_STACK();
+
+    if (JITTER_TOP_STACK () == PVM_NULL)
+      io = ios_cur ();
+    else
+      io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
+
+    if (io == NULL)
+      PVM_RAISE (PVM_E_NO_IOS);
+
+    JITTER_DROP_STACK ();
+    if ((ret = ios_write_string (io, offset, 0 /* flags */, str)) != IOS_OK)
+    {
+      if (ret == IOS_EIOFF)
+         PVM_RAISE (PVM_E_EOF);
+      else
+         PVM_RAISE (PVM_E_IO);
+    }    
   end
 end
 
@@ -2656,4 +2782,16 @@ rule drop3-drop-to-drop4 rewrite
   drop3; drop
 into
   drop4
+end
+
+rule swap-over-to-tuck rewrite
+  swap; over
+into
+  tuck
+end
+
+rule rot-swap-to-quake rewrite
+  rot; swap
+into
+  quake
 end

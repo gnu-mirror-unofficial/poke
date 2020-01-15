@@ -1,6 +1,6 @@
 /* pkl-env.h - Compile-time lexical environments for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,5 +121,21 @@ void pkl_env_map_decls (pkl_env env,
    environments.  */
 
 pkl_env pkl_env_dup_toplevel (pkl_env env);
+
+
+struct pkl_ast_node_iter
+{
+  int bucket;        /* The bucket in which this node resides.  */
+  pkl_ast_node node; /* A pointer to the node itself.  */
+};
+
+
+void pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter);
+void pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter);
+bool pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter);
+
+char *pkl_env_get_next_matching_decl (pkl_env env,
+				      struct pkl_ast_node_iter *iter,
+				      const char *name, size_t len);
 
 #endif /* !PKL_ENV_H  */

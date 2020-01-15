@@ -1,6 +1,6 @@
 /* pkl-tab.y - LALR(1) parser for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi.  */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi.  */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,16 +183,15 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
       switch (PKL_AST_CODE ($$))
         {
         case PKL_AST_COMP_STMT:
-          /* XXX: for comp_stmt, we should pop N-levels.  */
-          assert (0);
+            /*          pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);*/
           break;
         case PKL_AST_TYPE:
           /*          if (PKL_AST_TYPE_CODE ($$) == PKL_TYPE_STRUCT)
                       pkl_parser->env = pkl_env_pop_frame (pkl_parser->env); */
           break;
         case PKL_AST_FUNC:
-          if (PKL_AST_FUNC_ARGS ($$))
-            pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
+            /*          if (PKL_AST_FUNC_ARGS ($$))
+                        pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);*/
           break;
         default:
           break;
@@ -222,6 +221,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token ELSE
 %token IF
 %token WHILE
+%token UNTIL
 %token FOR
 %token IN
 %token WHERE
@@ -240,6 +240,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token PRINTF
 %token UNMAP
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
+%token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 
 /* ATTRIBUTE operator.  */
 
@@ -637,12 +638,16 @@ bconc:
 ;
 
 map:
-          simple_type_specifier '@' expression
+          simple_type_specifier '@' expression %prec THEN
                 {
-                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, $3);
+                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, NULL, $3);
                     PKL_AST_LOC ($$) = @$;
                 }
-
+	| simple_type_specifier '@' expression ':' expression %prec ELSE
+         	{
+                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, $3, $5);
+                    PKL_AST_LOC ($$) = @$;
+                }
 ;
 
 unary_operator:
@@ -983,10 +988,18 @@ offset_type_specifier:
                     PKL_AST_LOC ($4) = @4;
                     PKL_AST_LOC ($$) = @$;
                 }
-        | OFFSETCONSTR simple_type_specifier ',' type_specifier '>'
+        | OFFSETCONSTR simple_type_specifier ',' simple_type_specifier '>'
                 {
                     $$ = pkl_ast_make_offset_type (pkl_parser->ast,
                                                    $2, $4);
+                    PKL_AST_LOC ($$) = @$;
+                }
+        | OFFSETCONSTR simple_type_specifier ',' INTEGER '>'
+        	{
+                    $$ = pkl_ast_make_offset_type (pkl_parser->ast,
+                                                   $2, $4);
+                    PKL_AST_LOC (PKL_AST_TYPE ($4)) = @4;
+                    PKL_AST_LOC ($4) = @4;
                     PKL_AST_LOC ($$) = @$;
                 }
 	;
@@ -1080,7 +1093,7 @@ struct_type_specifier:
         	{
                   /* Register dummies for the locals used in
                      pkl-gen.pks:struct_mapper.  */
-                  pkl_register_dummies (pkl_parser, 2);
+                  pkl_register_dummies (pkl_parser, 3);
                 }
           struct_type_elem_list '}'
         	{
@@ -1348,6 +1361,10 @@ builtin:
 	  BUILTIN_RAND		{ $$ = PKL_AST_BUILTIN_RAND; }
 	| BUILTIN_GET_ENDIAN	{ $$ = PKL_AST_BUILTIN_GET_ENDIAN; }
 	| BUILTIN_SET_ENDIAN	{ $$ = PKL_AST_BUILTIN_SET_ENDIAN; }
+        | BUILTIN_GET_IOS       { $$ = PKL_AST_BUILTIN_GET_IOS; }
+        | BUILTIN_SET_IOS       { $$ = PKL_AST_BUILTIN_SET_IOS; }
+	| BUILTIN_OPEN		{ $$ = PKL_AST_BUILTIN_OPEN; }
+	| BUILTIN_CLOSE		{ $$ = PKL_AST_BUILTIN_CLOSE; }
 	;
 
 stmt_decl_list:
@@ -1382,6 +1399,7 @@ stmt:
         	{
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
+                  PKL_AST_LOC ($$) = @$;
                 }
         | IF '(' expression ')' stmt %prec THEN
                 {
@@ -1532,6 +1550,12 @@ stmt:
                   /* Pop the frame introduced by `pushlevel'
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
+                }
+        | TRY stmt UNTIL expression ';'
+        	{
+                  $$ = pkl_ast_make_try_until_stmt (pkl_parser->ast,
+                                                    $2, $4);
+                  PKL_AST_LOC ($$) = @$;
                 }
 	| RAISE ';'
         	{

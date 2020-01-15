@@ -1,6 +1,6 @@
 /* poke.c - Interactive editor for binary files.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include "pkl.h"
 #include "pvm.h"
 #include "pk-repl.h"
+#include "pk-term.h"
 #include "poke.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
@@ -164,7 +165,7 @@ Report bugs to: %s\n"), PACKAGE_BUGREPORT);
           PACKAGE_PACKAGER_BUG_REPORTS);
 #endif
   pk_printf (_("%s home page: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
-  pk_puts (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"));
+  pk_printf (_("General help using GNU software: %s\n"), "<http://www.gnu.org/gethelp/>");
 }
 
 void
@@ -186,8 +187,8 @@ pk_print_version ()
      year comes around.  */
   pk_term_class ("copyright");
   pk_printf (_("\
-Copyright (C) %s Jose E. Marchesi.\n\
-License GPLv3+: GNU GPL version 3 or later"), "2019");
+%s (C) %s Jose E. Marchesi.\n\
+License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019");
   pk_term_hyperlink ("http://gnu.org/licenses/gpl.html", NULL);
   pk_puts (" <http://gnu.org/licenses/gpl.html>");
   pk_term_end_hyperlink ();
@@ -290,7 +291,7 @@ parse_args (int argc, char *argv[])
 
   if (optind < argc)
     {
-      if (!ios_open (argv[optind++]))
+      if (ios_open (argv[optind++], 1) == IOS_ERROR)
         goto exit_failure;
 
       optind++;
@@ -298,7 +299,7 @@ parse_args (int argc, char *argv[])
 
   if (optind < argc)
     {
-      print_help();
+      print_help ();
       goto exit_failure;
     }
 
@@ -388,7 +389,7 @@ initialize_user ()
       if (access (pokerc, R_OK) == 0)
         {
           ret = pk_cmd_exec_script (pokerc);
-          if (ret == 1)
+          if (!ret)
             exit (EXIT_FAILURE);
         }
 

@@ -1,6 +1,6 @@
 /* pk-file.c - Commands for operating files.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,13 @@
 
 #include <config.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
+#include <errno.h>
+#include <readline.h>
 
 #include "ios.h"
 #include "poke.h"
@@ -28,6 +32,52 @@
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif
+
+static void
+count_io_spaces (ios io, void *data)
+{
+  int *i = (int *) data;
+  if (i == NULL)
+    return;
+  (*i)++;
+}
+
+static char *
+close_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  static int n_ids = 0;
+  if (state == 0)
+    {
+      idx = 0;
+      n_ids = 0;
+      ios_map (count_io_spaces, &n_ids);
+    }
+  else
+    ++idx;
+
+  int len  = strlen (x);
+  while (1)
+    {
+      if (idx >= n_ids)
+	break;
+      char buf[16];
+      snprintf (buf, 16, "#%d", idx);
+
+      int match = strncmp (buf, x, len);
+      if (match != 0)
+	{
+	  idx++;
+	  continue;
+	}
+
+      return strdup (buf);
+    }
+
+  return NULL;
+}
+
+
 
 static int
 pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -44,7 +94,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       ios io;
 
       io_id = PK_CMD_ARG_TAG (argv[0]);
-      io = ios_get (io_id);
+      io = ios_search_by_id (io_id);
       if (io == NULL)
         {
           pk_printf (_("No such file #%d\n"), io_id);
@@ -62,7 +112,9 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
       if (access (arg_str, R_OK) != 0)
         {
-          pk_printf (_("%s: file cannot be read\n"), arg_str);
+          char *why = strerror (errno);
+          pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
+	  free (filename);
           return 0;
         }
 
@@ -73,10 +125,18 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         {
           printf (_("File %s already opened.  Use `file #N' to switch.\n"),
                   filename);
+	  free (filename);
           return 0;
         }
 
-      ios_open (filename);
+      errno = 0;
+      if (IOS_ERROR == ios_open (filename, 1))
+	{
+	  pk_printf (_("Error opening %s: %s\n"), filename,
+		     strerror (errno));
+	  free (filename);
+	  return 0;
+	}
       free (filename);
     }
 
@@ -102,7 +162,7 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     {
       int io_id = PK_CMD_ARG_TAG (argv[0]);
 
-      io = ios_get (io_id);
+      io = ios_search_by_id (io_id);
       if (io == NULL)
         {
           pk_printf (_("No such file #%d\n"), io_id);
@@ -131,11 +191,11 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static void
 print_info_file (ios io, void *data)
 {
-  int *i = (int *) data;
-  pk_printf ("%s#%d\t%s\t",
+  pk_printf ("%s#%d\t%s\t0x%08jx#b\t%s\n",
              io == ios_cur () ? "* " : "  ",
-             (*i)++,
-             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ");
+             ios_get_id (io),
+             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ",
+             ios_tell (io), ios_handler (io));
 
 #if HAVE_HSERVER
   {
@@ -162,7 +222,7 @@ print_info_file (ios io, void *data)
     char *cmd;
     char *hyperlink;
     
-    asprintf (&cmd, ".file #%d", *i - 1);
+    asprintf (&cmd, ".file #%d", ios_tell (io));
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
     
@@ -182,16 +242,53 @@ print_info_file (ios io, void *data)
 static int
 pk_cmd_info_files (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  int id;
-
   assert (argc == 0);
 
-  id = 0;
   pk_printf (_("  Id\tMode\tPosition\tFilename\n"));
-  ios_map (print_info_file, &id);
+  ios_map (print_info_file, NULL);
 
   return 1;
 }
+
+
+/* Returns zero iff FILENAME is the name
+   of an entry in the file system which :
+   * is not a directory;
+   * is readable; AND
+   * exists.
+   If it satisfies the above, the function returns NULL.
+   Otherwise, returns a pointer to a statically allocated
+   error message describing how the file doesn't satisfy
+   the conditions.  */
+static char *
+pk_file_readable (const char *filename)
+{
+  static char errmsg[4096];
+  struct stat statbuf;
+  if (0 != stat (filename, &statbuf))
+    {
+      char *why = strerror (errno);
+      snprintf (errmsg, 4096, _("Cannot stat %s: %s\n"), filename, why);
+      return errmsg;
+    }
+
+  if (S_ISDIR (statbuf.st_mode))
+    {
+      snprintf (errmsg, 4096, _("%s is a directory\n"), filename);
+      return errmsg;
+    }
+
+  if (access (filename, R_OK) != 0)
+    {
+      char *why = strerror (errno);
+      snprintf (errmsg, 4096, _("%s: file cannot be read: %s\n"),
+		filename, why);
+      return errmsg;
+    }
+
+  return 0;
+}
+
 
 static int
 pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -204,7 +301,9 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 1);
   arg = PK_CMD_ARG_STR (argv[0]);
 
-  if (access (arg, R_OK) == 0)
+  char *emsg = NULL;
+
+  if ((emsg = pk_file_readable (arg)) == NULL)
     filename = xstrdup (arg);
   else if (arg[0] != '/')
     {
@@ -216,7 +315,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       strcat (filename, "/");
       strcat (filename, arg);
 
-      if (access (filename, R_OK) != 0)
+      if ((emsg = pk_file_readable (arg)) == NULL)
         goto no_file;
     }
   else
@@ -230,20 +329,20 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 
  no_file:
-  pk_printf (_("%s: file cannot be read\n"), arg);
+  pk_puts (emsg);
  error:
   free (filename);
   return 0;
 }
 
 struct pk_cmd file_cmd =
-  {"file", "tf", "", 0, NULL, pk_cmd_file, "file (FILENAME|#ID)"};
+  {"file", "tf", "", 0, NULL, pk_cmd_file, "file (FILENAME|#ID)", rl_filename_completion_function};
 
 struct pk_cmd close_cmd =
-  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]"};
+  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", close_completion_function};
 
 struct pk_cmd info_files_cmd =
   {"files", "", "", 0, NULL, pk_cmd_info_files, "info files"};
 
 struct pk_cmd load_cmd =
-  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME"};
+  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME", rl_filename_completion_function};

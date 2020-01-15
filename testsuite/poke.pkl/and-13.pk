@@ -5,4 +5,4 @@
 defvar zero = 0;
 
 /* { dg-command {  0 && 1/zero } } */
-/* { gd-output "0" } */
+/* { dg-output "0" } */

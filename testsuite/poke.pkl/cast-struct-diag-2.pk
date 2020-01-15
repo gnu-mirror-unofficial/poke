@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+defvar x = struct {} as int<32>; /* { dg-error "not allowed" } */

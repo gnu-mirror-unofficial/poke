@@ -1,6 +1,6 @@
 /* pkl-asm.c - Macro-assembler for the Poke Virtual Machine.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ struct pkl_asm_level
    prologue.  */
 
 #define PKL_ASM_LEVEL(PASM) ((PASM)->level)
-#define PKL_AST_MAX_POINTERS 1024
+#define PKL_AST_MAX_POINTERS 16
 
 struct pkl_asm
 {
@@ -621,99 +621,119 @@ pkl_asm_insn_poked (pkl_asm pasm, pkl_ast_node type)
    ( VAL VAL -- VAL VAL VAL )
 
    Generate code for performing negation, addition, subtraction,
-   multiplication, division, remainder and bit shift to integral
-   operands.  INSN identifies the operation to perform, and TYPE the
-   type of the operands and the result.  */
+   multiplication, division, remainder and bit shift to integral and
+   offset operands.  INSN identifies the operation to perform, and
+   TYPE the type of the operands and the result.  */
 
 static void
 pkl_asm_insn_intop (pkl_asm pasm,
                     enum pkl_asm_insn insn,
                     pkl_ast_node type)
 {
-  static int neg_table[2][2] = {{ PKL_INSN_NEGIU, PKL_INSN_NEGI },
-                                { PKL_INSN_NEGLU, PKL_INSN_NEGL }};
-
-  static int add_table[2][2] = {{ PKL_INSN_ADDIU, PKL_INSN_ADDI },
-                                { PKL_INSN_ADDLU, PKL_INSN_ADDL }};
-
-  static int sub_table[2][2] = {{ PKL_INSN_SUBIU, PKL_INSN_SUBI },
-                                { PKL_INSN_SUBLU, PKL_INSN_SUBL }};
-
-  static int mul_table[2][2] = {{ PKL_INSN_MULIU, PKL_INSN_MULI },
-                                { PKL_INSN_MULLU, PKL_INSN_MULL }};
-
-  static int div_table[2][2] = {{ PKL_INSN_DIVIU, PKL_INSN_DIVI },
-                                { PKL_INSN_DIVLU, PKL_INSN_DIVL }};
-
-  static int mod_table[2][2] = {{ PKL_INSN_MODIU, PKL_INSN_MODI },
-                                { PKL_INSN_MODLU, PKL_INSN_MODL }};
-
-  static int bnot_table[2][2] = {{ PKL_INSN_BNOTIU, PKL_INSN_BNOTI },
-                                 { PKL_INSN_BNOTLU, PKL_INSN_BNOTL }};
-
-  static int band_table[2][2] = {{ PKL_INSN_BANDIU, PKL_INSN_BANDI },
-                                 { PKL_INSN_BANDLU, PKL_INSN_BANDL }};
-
-  static int bor_table[2][2] = {{ PKL_INSN_BORIU, PKL_INSN_BORI },
-                                { PKL_INSN_BORLU, PKL_INSN_BORL }};
-
-  static int bxor_table[2][2] = {{ PKL_INSN_BXORIU, PKL_INSN_BXORI },
-                                 { PKL_INSN_BXORLU, PKL_INSN_BXORL }};
-
-  static int sl_table[2][2] = {{ PKL_INSN_SLIU, PKL_INSN_SLI },
-                               { PKL_INSN_SLLU, PKL_INSN_SLL }};
-
-  static int sr_table[2][2] = {{ PKL_INSN_SRIU, PKL_INSN_SRI },
-                               { PKL_INSN_SRLU, PKL_INSN_SRL }};
-
-  uint64_t size = PKL_AST_TYPE_I_SIZE (type);
-  int signed_p = PKL_AST_TYPE_I_SIGNED (type);
-  int tl = !!((size - 1) & ~0x1f);
-
-  switch (insn)
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
     {
-    case PKL_INSN_NEG:
-      pkl_asm_insn (pasm, neg_table[tl][signed_p]);
-      break;
-    case PKL_INSN_ADD:
-      pkl_asm_insn (pasm, add_table[tl][signed_p]);
-      break;
-    case PKL_INSN_SUB:
-      pkl_asm_insn (pasm, sub_table[tl][signed_p]);
-      break;
-    case PKL_INSN_MUL:
-      pkl_asm_insn (pasm, mul_table[tl][signed_p]);
-      break;
-    case PKL_INSN_DIV:
-    case PKL_INSN_MOD:
+      static int neg_table[2][2] = {{ PKL_INSN_NEGIU, PKL_INSN_NEGI },
+                                    { PKL_INSN_NEGLU, PKL_INSN_NEGL }};
 
-      if (insn == PKL_INSN_DIV)
-        pkl_asm_insn (pasm, div_table[tl][signed_p]);
-      else
-        pkl_asm_insn (pasm, mod_table[tl][signed_p]);
+      static int add_table[2][2] = {{ PKL_INSN_ADDIU, PKL_INSN_ADDI },
+                                    { PKL_INSN_ADDLU, PKL_INSN_ADDL }};
 
-      break;
-    case PKL_INSN_BNOT:
-      pkl_asm_insn (pasm, bnot_table[tl][signed_p]);
-      break;
-    case PKL_INSN_BAND:
-      pkl_asm_insn (pasm, band_table[tl][signed_p]);
-      break;
-    case PKL_INSN_BOR:
-      pkl_asm_insn (pasm, bor_table[tl][signed_p]);
-      break;
-    case PKL_INSN_BXOR:
-      pkl_asm_insn (pasm, bxor_table[tl][signed_p]);
-      break;
-    case PKL_INSN_SL:
-      pkl_asm_insn (pasm, sl_table[tl][signed_p]);
-      break;
-    case PKL_INSN_SR:
-      pkl_asm_insn (pasm, sr_table[tl][signed_p]);
-      break;
-    default:
-      assert (0);
+      static int sub_table[2][2] = {{ PKL_INSN_SUBIU, PKL_INSN_SUBI },
+                                    { PKL_INSN_SUBLU, PKL_INSN_SUBL }};
+
+      static int mul_table[2][2] = {{ PKL_INSN_MULIU, PKL_INSN_MULI },
+                                    { PKL_INSN_MULLU, PKL_INSN_MULL }};
+
+      static int div_table[2][2] = {{ PKL_INSN_DIVIU, PKL_INSN_DIVI },
+                                    { PKL_INSN_DIVLU, PKL_INSN_DIVL }};
+
+      static int mod_table[2][2] = {{ PKL_INSN_MODIU, PKL_INSN_MODI },
+                                    { PKL_INSN_MODLU, PKL_INSN_MODL }};
+
+      static int bnot_table[2][2] = {{ PKL_INSN_BNOTIU, PKL_INSN_BNOTI },
+                                     { PKL_INSN_BNOTLU, PKL_INSN_BNOTL }};
+
+      static int band_table[2][2] = {{ PKL_INSN_BANDIU, PKL_INSN_BANDI },
+                                     { PKL_INSN_BANDLU, PKL_INSN_BANDL }};
+
+      static int bor_table[2][2] = {{ PKL_INSN_BORIU, PKL_INSN_BORI },
+                                    { PKL_INSN_BORLU, PKL_INSN_BORL }};
+
+      static int bxor_table[2][2] = {{ PKL_INSN_BXORIU, PKL_INSN_BXORI },
+                                     { PKL_INSN_BXORLU, PKL_INSN_BXORL }};
+
+      static int sl_table[2][2] = {{ PKL_INSN_SLIU, PKL_INSN_SLI },
+                                   { PKL_INSN_SLLU, PKL_INSN_SLL }};
+
+      static int sr_table[2][2] = {{ PKL_INSN_SRIU, PKL_INSN_SRI },
+                                   { PKL_INSN_SRLU, PKL_INSN_SRL }};
+
+      uint64_t size = PKL_AST_TYPE_I_SIZE (type);
+      int signed_p = PKL_AST_TYPE_I_SIGNED (type);
+      int tl = !!((size - 1) & ~0x1f);
+
+      switch (insn)
+        {
+        case PKL_INSN_NEG:
+          pkl_asm_insn (pasm, neg_table[tl][signed_p]);
+          break;
+        case PKL_INSN_ADD:
+          pkl_asm_insn (pasm, add_table[tl][signed_p]);
+          break;
+        case PKL_INSN_SUB:
+          pkl_asm_insn (pasm, sub_table[tl][signed_p]);
+          break;
+        case PKL_INSN_MUL:
+          pkl_asm_insn (pasm, mul_table[tl][signed_p]);
+          break;
+        case PKL_INSN_DIV:
+        case PKL_INSN_MOD:
+
+          if (insn == PKL_INSN_DIV)
+            pkl_asm_insn (pasm, div_table[tl][signed_p]);
+          else
+            pkl_asm_insn (pasm, mod_table[tl][signed_p]);
+
+          break;
+        case PKL_INSN_BNOT:
+          pkl_asm_insn (pasm, bnot_table[tl][signed_p]);
+          break;
+        case PKL_INSN_BAND:
+          pkl_asm_insn (pasm, band_table[tl][signed_p]);
+          break;
+        case PKL_INSN_BOR:
+          pkl_asm_insn (pasm, bor_table[tl][signed_p]);
+          break;
+        case PKL_INSN_BXOR:
+          pkl_asm_insn (pasm, bxor_table[tl][signed_p]);
+          break;
+        case PKL_INSN_SL:
+          pkl_asm_insn (pasm, sl_table[tl][signed_p]);
+          break;
+        case PKL_INSN_SR:
+          pkl_asm_insn (pasm, sr_table[tl][signed_p]);
+          break;
+        default:
+          assert (0);
+        }
     }
+  else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET)
+    {
+      pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (type);
+
+      /* Only certain operations are valid on offsets.  */
+      assert (insn == PKL_INSN_NEG || insn == PKL_INSN_BNOT);
+
+      /* Get the magnitude of the offset, operate on it, and set it
+         back in the offset value.  The offset is in the stack.  */
+      pkl_asm_insn (pasm, PKL_INSN_DUP);          /* OFF OFF */
+      pkl_asm_insn (pasm, PKL_INSN_OGETM);        /* OFF OFF OMAG */
+      pkl_asm_insn_intop (pasm, insn, base_type); /* OFF OFF OMAG NOMAG */
+      pkl_asm_insn (pasm, PKL_INSN_NIP);          /* OFF OFF NOMAG */
+      pkl_asm_insn (pasm, PKL_INSN_OSETM);        /* OFF NOFF */
+    }
+  else
+    assert (0);
 }
 
 /*
@@ -1040,8 +1060,7 @@ pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
   pasm->error_label = jitter_fresh_label (routine);
   pasm->routine = routine;
 
-  pasm->pointers = pvm_alloc (sizeof (void*) * PKL_AST_MAX_POINTERS);
-  memset (pasm->pointers, 0, sizeof (void*) * PKL_AST_MAX_POINTERS);
+  pasm->pointers = NULL;
   pasm->next_pointer = 0;
 
   if (prologue)
@@ -1155,7 +1174,17 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
       /* Collect VAL if it is a pointer, i.e. a boxed value.  */
       if (PVM_VAL_BOXED_P (val))
         {
-          assert (pasm->next_pointer < PKL_AST_MAX_POINTERS);
+          if (pasm->next_pointer % PKL_AST_MAX_POINTERS == 0)
+            {
+              size_t size
+                = ((pasm->next_pointer + PKL_AST_MAX_POINTERS)
+                   * sizeof (void*));
+
+              pasm->pointers = pvm_realloc (pasm->pointers, size);
+              assert (pasm->pointers != NULL);
+              memset (pasm->pointers + pasm->next_pointer, 0,
+                      PKL_AST_MAX_POINTERS * sizeof (void*));
+            }
           pasm->pointers[pasm->next_pointer++] = PVM_VAL_BOX (val);
         }
 
@@ -1598,7 +1627,6 @@ pkl_asm_catch (pkl_asm pasm)
   assert (pasm->level->current_env == PKL_ASM_ENV_TRY);
 
   pkl_asm_insn (pasm, PKL_INSN_POPE);
-  /* XXX pkl_asm_note (pasm, "POP-REGISTERS"); */
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label2);
   pvm_routine_append_label (pasm->routine, pasm->level->label1);
 

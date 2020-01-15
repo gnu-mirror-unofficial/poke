@@ -1,6 +1,6 @@
 /* pk-cmd.c - Poke commands.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +49,12 @@ extern struct pk_cmd exit_cmd; /* pk-misc.c  */
 extern struct pk_cmd version_cmd; /* pk-misc.c */
 extern struct pk_cmd help_cmd; /* pk-help.c */
 extern struct pk_cmd vm_cmd; /* pk-vm.c  */
-extern struct pk_cmd print_cmd; /* pk-print.c */
 extern struct pk_cmd set_cmd; /* pk-set.c */
+extern struct pk_cmd editor_cmd; /* pk-editor.c */
 
-struct pk_cmd null_cmd =
-  {NULL, NULL, NULL, 0, NULL, NULL};
+struct pk_cmd null_cmd = {};
 
-static struct pk_cmd *cmds[] =
+static struct pk_cmd *dot_cmds[] =
   {
     &file_cmd,
     &exit_cmd,
@@ -65,8 +64,8 @@ static struct pk_cmd *cmds[] =
     &load_cmd,
     &help_cmd,
     &vm_cmd,
-    &print_cmd,
     &set_cmd,
+    &editor_cmd,
     &null_cmd
   };
 
@@ -248,11 +247,17 @@ pk_print_trie (int indent, struct pk_trie *trie)
 static int
 pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
 {
+#define GOTO_USAGE()                                                           \
+  do {                                                                         \
+    besilent = 0;                                                              \
+    ret = 0;                                                                   \
+    goto usage;                                                                \
+  } while (1)
   int ret = 1;
   size_t i;
   char cmd_name[MAX_CMD_NAME], *p;
   struct pk_cmd *cmd;
-  int argc;
+  int argc = 0;
   struct pk_cmd_arg argv[8];
   uint64_t uflags;
   const char *a;
@@ -317,12 +322,11 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
     {
       p = skip_blanks (p);
       if (*p == '\0')
-        goto usage;
+        GOTO_USAGE();
       return pk_cmd_exec_1 (p, *cmd->subtrie, cmd_name);
     }
 
   /* Parse arguments.  */
-  argc = 0;
   a = cmd->arg_fmt;
   while (*a != '\0')
     {
@@ -415,7 +419,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                       && pk_atoi (&p, &(argv[argc].val.tag))
                       && argv[argc].val.tag >= 0)
                     {
-                      if (*p == ',' || *p == '\0')
+                      if (*p == ',' || *p == '\0' || isblank (*p))
                         {
                           argv[argc].type = PK_CMD_ARG_TAG;
                           match = 1;
@@ -474,7 +478,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                     *end = '\0';
 
                     if (filename[0] == '\0')
-                      goto usage;
+                      GOTO_USAGE();
 
                     switch (wordexp (filename, &exp_result, 0))
                       {
@@ -483,13 +487,13 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                       case WRDE_NOSPACE:
                         wordfree (&exp_result);
                       default:
-                        goto usage;
+                        GOTO_USAGE();
                       }
 
                     if (exp_result.we_wordc != 1)
                       {
                         wordfree (&exp_result);
-                        goto usage;
+                        GOTO_USAGE();
                       }
 
                     filename = xrealloc (filename,
@@ -522,7 +526,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
 
       /* Boo, could not find valid input for this argument.  */
       if (!match)
-        goto usage;
+        GOTO_USAGE();
 
       if (*p == ',')
         p++;
@@ -540,7 +544,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   /* Make sure there is no trailer contents in the input.  */
   p = skip_blanks (p);
   if (*p != '\0')
-    goto usage;
+    GOTO_USAGE();
 
   /* Process command flags.  */
   if (cmd->flags & PK_CMD_F_REQ_IO
@@ -564,6 +568,8 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   /* Call the command handler, passing the arguments.  */
   ret = (*cmd->handler) (argc, argv, uflags);
 
+  besilent = 1;
+  usage:
   /* Free arguments occupying memory.  */
   for (i = 0; i < argc; ++i)
     {
@@ -575,12 +581,11 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
         pvm_destroy_routine (argv[i].val.routine);
     }
 
-  return ret;
-
- usage:
   if (!besilent)
     pk_printf (_("Usage: %s\n"), cmd->usage);
-  return 0;
+
+  return ret;
+#undef GOTO_USAGE
 }
 
 extern struct pk_cmd *info_cmds[]; /* pk-info.c  */
@@ -616,6 +621,7 @@ pk_cmd_exec (char *str)
       char *ecmd, *end;
       pvm_val val;
       int what; /* 0 -> declaration, 1 -> statement */
+      int retval = 1;
 
       ecmd = xmalloc (strlen (cmd) + 2);
       strcpy (ecmd, cmd);
@@ -641,14 +647,18 @@ pk_cmd_exec (char *str)
       if (what == 0)
         {
           /* Declaration.  */
-          if (!pkl_compile_buffer (poke_compiler, ecmd, &end))
-            goto error;
+          if (!pkl_compile_buffer (poke_compiler, ecmd, &end)) {
+            retval = 0;
+            goto cleanup;
+          }
         }
       else
         {
           /* Statement.  */
-          if (!pkl_compile_statement (poke_compiler, ecmd, &end, &val))
-            goto error;
+          if (!pkl_compile_statement (poke_compiler, ecmd, &end, &val)) {
+            retval = 0;
+            goto cleanup;
+          }
 
           if (val != PVM_NULL)
             {
@@ -657,17 +667,15 @@ pk_cmd_exec (char *str)
             }
         }
 
-      return 1;
-
-    error:
-      return 0;
+    cleanup:
+      free(ecmd);
+      return retval;
     }
 }
 
 int
 pk_cmd_exec_script (const char *filename)
 {
-  int is_eof;
   FILE *fd = fopen (filename, "r");
 
   if (fd == NULL)
@@ -680,39 +688,25 @@ pk_cmd_exec_script (const char *filename)
      starting with the '#' character are comments, and ignored.
      Likewise, empty lines are also ignored.  */
 
-  is_eof = 0;
+  char *line = NULL;
+  size_t line_len = 0;
   while (1)
     {
-      size_t i;
       int ret;
-#define MAX_LINE 1025
-      char line[MAX_LINE]; /* XXX: yes this sucks.  */
-
-      if (is_eof)
-        break;
 
       /* Read a line from the file.  */
-      i = 0;
-      while (1)
-        {
-          int c = fgetc (fd);
+      errno = 0;
+      ssize_t n = getline (&line, &line_len, fd);
 
-          assert (i < MAX_LINE);
+      if (n == -1)
+	{
+	  if (errno != 0)
+	    perror (filename);
+	  break;
+	}
 
-          if (c == EOF)
-            {
-              line[i] = '\0';
-              is_eof = 1;
-              break;
-            }
-          else if ((char)c == '\n')
-            {
-              line[i] = '\0';
-              break;
-            }
-          else
-            line[i++] = (char)c;
-        }
+      if (line[n - 1] == '\n')
+	line[n - 1] = '\0';
 
       /* If the line is empty, or it starts with '#', or it contains
          just blank characters, just ignore it.  */
@@ -733,18 +727,20 @@ pk_cmd_exec_script (const char *filename)
         goto error;
     }
 
-  fclose (fd);
-  return 0;
-
- error:
+  free (line);
   fclose (fd);
   return 1;
+
+ error:
+  free (line);
+  fclose (fd);
+  return 0;
 }
 
 void
 pk_cmd_init (void)
 {
-  cmds_trie = pk_trie_from_cmds (cmds);
+  cmds_trie = pk_trie_from_cmds (dot_cmds);
   info_trie = pk_trie_from_cmds (info_cmds);
   help_trie = pk_trie_from_cmds (help_cmds);
   vm_trie = pk_trie_from_cmds (vm_cmds);
@@ -783,4 +779,55 @@ pk_cmd_shutdown (void)
   pk_trie_free (vm_trie);
   pk_trie_free (vm_disas_trie);
   pk_trie_free (set_trie);
+}
+
+
+/*  Return the name of the next command that matches X,LEN.  IDX is  a
+    pointer to in integer used  to index into the set of matches.
+    Returns the name of the next command in the set, or NULL if there
+    are no more. The returned value must be freed by the caller.  */
+char *
+pk_cmd_get_next_match (int *idx, const char *x, size_t len)
+{
+  /* Dot commands */
+  for (;;)
+    {
+      struct pk_cmd **c = dot_cmds + *idx;
+      if (*c == &null_cmd)
+	break;
+
+      /* don't forget the null terminator of name */
+      const size_t name_len = strlen ((*c)->name);
+      char *name = xmalloc (name_len + 2);
+      name[0] = '.';
+      strncpy (name+1, (*c)->name, name_len + 1);
+      if (0 !=  strncmp (name, x, len))
+	{
+	  free (name);
+	  (*idx)++;
+	  continue;
+	}
+      return name;
+    }
+  return NULL;
+}
+
+
+/* Search for a command which matches cmdname.
+ Returns NULL if no such command exists.  */
+struct pk_cmd *
+pk_cmd_find (const char *cmdname)
+{
+  if (cmdname != NULL)
+    {
+      struct pk_cmd **c;
+      for (c = dot_cmds; *c != &null_cmd; ++c)
+	{
+	  /* Check if the command name matches.
+	     +1 to skip the leading '.' */
+	  if (STREQ ((*c)->name, cmdname + 1))
+	    return *c;
+	}
+    }
+  return NULL;
 }

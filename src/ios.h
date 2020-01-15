@@ -1,6 +1,6 @@
 /* ios.h - IO spaces for poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,11 +106,12 @@ typedef int64_t ios_off;
    The functions declared below are used to manage this
    collection.  */
 
-/* Open an IO space using a handler and make it the current space.
-   Return IOS_ERROR if there is an error opening the space (such as an
-   unrecognized handler), IOS_OK otherwise.  */
+/* Open an IO space using a handler and if set_cur is set to 1, make
+   the newly opened IO space the current space.  Return IOS_ERROR if
+   there is an error opening the space (such as an unrecognized
+   handler), the ID of the new IOS otherwise.  */
 
-int ios_open (const char *handler);
+int ios_open (const char *handler, int set_cur);
 
 /* Close the given IO space, freing all used resources and flushing
    the space cache associated with the space.  */
@@ -125,6 +126,7 @@ void ios_close (ios io);
    are summarized in the IOS_M_* constants, also defined below.  */
 
 #define IOS_M_RDWR 1
+#define IOS_M_RDONLY 2
 
 int ios_mode (ios io);
 
@@ -153,10 +155,14 @@ void ios_set_cur (ios io);
 
 ios ios_search (const char *handler);
 
-/* Return the Nth IO space.  If N is negative or bigger than the
-   number of IO spaces which are currently opened, return NULL.  */
+/* Return the IO space having the given ID.  Return NULL if no such
+   space exists.  */
 
-ios ios_get (int n);
+ios ios_search_by_id (int id);
+
+/* Return the ID of the given IO space.  */
+
+int ios_get_id (ios io);
 
 /* Map over all the open IO spaces executing a handler.  */
 

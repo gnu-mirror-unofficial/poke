@@ -3,7 +3,7 @@ dnl
 dnl Please process this file with autoconf to get a 'configure'
 dnl script.
 
-dnl Copyright (C) 2019 Jose E. Marchesi
+dnl Copyright (C) 2019, 2020 Jose E. Marchesi
 
 dnl This program is free software: you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -54,6 +54,17 @@ AC_CANONICAL_HOST
 canonical=$host
 
 gl_INIT
+
+# GNU help2man creates man pages from --help output; in many cases, this
+# is sufficient, and obviates the need to maintain man pages separately.
+# However, this means invoking executables, which we generally cannot do
+# when cross-compiling, so we test to avoid that (the variable
+# "cross_compiling" is set by AC_PROG_CC).
+if test $cross_compiling = no; then
+  AM_MISSING_PROG(HELP2MAN, help2man)
+else
+  HELP2MAN=:
+fi
 
 dnl i18n with gettext
 AM_GNU_GETTEXT_VERSION([0.19.8])
@@ -107,18 +118,13 @@ AC_CONFIG_FILES(Makefile
                 src/Makefile
                 pickles/Makefile
                 doc/Makefile
+                man/Makefile
                 po/Makefile.in
                 etc/Makefile
                 testsuite/Makefile)
 AC_OUTPUT
 
 dnl Report warnings
-
-if test "x$gl_cv_lib_readline" = "xno"; then
-   echo "warning: an usable libreadline was not found in the system."
-   echo "warning: poke will use a dummy replacement with no edition "
-   echo "warning: capabilities."
-fi
 
 if test "x$HAVE_LIBTEXTSTYLE" = "xno"; then
    echo "warning: libtextstyle was not found in the system."
@@ -129,6 +135,12 @@ if test "x$hserver_enabled" = "xno"; then
    echo "warning: building poke without terminal hyperlinks server support."
    echo "warning: install an hyperlinks-capable libtextstyle and use"
    echo "warning: --enable-hserver to activate it."
+fi
+
+dnl Report errors
+
+if test "x$gl_cv_lib_readline" = "xno"; then
+   AC_ERROR("can't find an usable libreadline.  Please install one")
 fi
 
 dnl End of configure.ac

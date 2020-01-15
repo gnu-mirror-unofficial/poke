@@ -1,6 +1,6 @@
 /* pkl-insn.def - Poke macro-assembler instructions.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +55,13 @@ PKL_DEF_INSN (PKL_INSN_DUP, "", "dup")
 PKL_DEF_INSN (PKL_INSN_OVER, "", "over")
 PKL_DEF_INSN (PKL_INSN_ROT, "", "rot")
 PKL_DEF_INSN (PKL_INSN_NROT, "", "nrot")
+PKL_DEF_INSN (PKL_INSN_TUCK, "", "tuck")
 PKL_DEF_INSN (PKL_INSN_SAVER, "r", "saver")
 PKL_DEF_INSN (PKL_INSN_RESTORER, "r", "restorer")
 PKL_DEF_INSN (PKL_INSN_TOR, "", "tor")
 PKL_DEF_INSN (PKL_INSN_FROMR, "", "fromr")
 PKL_DEF_INSN (PKL_INSN_ATR, "", "atr")
+PKL_DEF_INSN (PKL_INSN_QUAKE, "", "quake")
 
 PKL_DEF_INSN (PKL_INSN_REVN, "n", "revn")
 
@@ -218,6 +220,7 @@ PKL_DEF_INSN (PKL_INSN_SUBSTR, "", "substr")
 
 PKL_DEF_INSN (PKL_INSN_MKO, "", "mko")
 PKL_DEF_INSN (PKL_INSN_OGETM, "", "ogetm")
+PKL_DEF_INSN (PKL_INSN_OSETM, "", "osetm")
 PKL_DEF_INSN (PKL_INSN_OGETU, "", "ogetu")
 PKL_DEF_INSN (PKL_INSN_OGETBT, "", "ogetbt")
 
@@ -231,6 +234,7 @@ PKL_DEF_INSN (PKL_INSN_MKA, "", "mka")
 PKL_DEF_INSN (PKL_INSN_AREF, "", "aref")
 PKL_DEF_INSN (PKL_INSN_AREFO, "", "arefo")
 PKL_DEF_INSN (PKL_INSN_ASET, "", "aset")
+PKL_DEF_INSN (PKL_INSN_ASETO, "", "aseto")
 PKL_DEF_INSN (PKL_INSN_ASETTB, "", "asettb")
 
 /* Struct instructions.  */
@@ -246,6 +250,9 @@ PKL_DEF_INSN (PKL_INSN_SMODI, "", "smodi")
 
 PKL_DEF_INSN (PKL_INSN_MGETO, "", "mgeto")
 PKL_DEF_INSN (PKL_INSN_MSETO, "", "mseto")
+
+PKL_DEF_INSN (PKL_INSN_MGETIOS, "", "mgetios")
+PKL_DEF_INSN (PKL_INSN_MSETIOS, "", "msetios")
 
 PKL_DEF_INSN (PKL_INSN_MGETM, "", "mgetm")
 PKL_DEF_INSN (PKL_INSN_MSETM, "", "msetm")
@@ -299,9 +306,9 @@ PKL_DEF_INSN (PKL_INSN_BNZLU, "l", "bnzlu")
 /* IO instructions.  */
 
 PKL_DEF_INSN (PKL_INSN_PEEKI, "nnn", "peeki")
-PKL_DEF_INSN (PKL_INSN_PEEKIU, "nnn", "peekiu")
+PKL_DEF_INSN (PKL_INSN_PEEKIU, "nn", "peekiu")
 PKL_DEF_INSN (PKL_INSN_PEEKL, "nnn", "peekl")
-PKL_DEF_INSN (PKL_INSN_PEEKLU, "nnn", "peeklu")
+PKL_DEF_INSN (PKL_INSN_PEEKLU, "nn", "peeklu")
 
 PKL_DEF_INSN (PKL_INSN_PEEKDI, "n", "peekdi")
 PKL_DEF_INSN (PKL_INSN_PEEKDIU, "n", "peekdiu")
@@ -311,9 +318,9 @@ PKL_DEF_INSN (PKL_INSN_PEEKDLU, "n", "peekdlu")
 PKL_DEF_INSN (PKL_INSN_PEEKS, "", "peeks")
 
 PKL_DEF_INSN (PKL_INSN_POKEI, "nnn", "pokei")
-PKL_DEF_INSN (PKL_INSN_POKEIU, "nnn", "pokeiu")
+PKL_DEF_INSN (PKL_INSN_POKEIU, "nn", "pokeiu")
 PKL_DEF_INSN (PKL_INSN_POKEL, "nnn", "pokel")
-PKL_DEF_INSN (PKL_INSN_POKELU, "nnn", "pokelu")
+PKL_DEF_INSN (PKL_INSN_POKELU, "nn", "pokelu")
 
 PKL_DEF_INSN (PKL_INSN_POKEDI, "n", "pokedi")
 PKL_DEF_INSN (PKL_INSN_POKEDIU, "n", "pokediu")
@@ -363,6 +370,13 @@ PKL_DEF_INSN (PKL_INSN_RAND, "", "rand")
 PKL_DEF_INSN (PKL_INSN_PUSHE, "l", "pushe")
 PKL_DEF_INSN (PKL_INSN_POPE, "", "pope")
 PKL_DEF_INSN (PKL_INSN_RAISE, "", "raise")
+
+/* IOS related instructions.  */
+
+PKL_DEF_INSN (PKL_INSN_PUSHIOS, "", "pushios")
+PKL_DEF_INSN (PKL_INSN_POPIOS, "", "popios")
+PKL_DEF_INSN (PKL_INSN_OPEN, "", "open")
+PKL_DEF_INSN (PKL_INSN_CLOSE, "", "close")
 
 /* VM instructions.  */
 

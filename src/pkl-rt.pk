@@ -1,6 +1,6 @@
 /* pkl-rt.pkl - Run-time library for the poke compiler.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi.  */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi.  */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,10 @@ defvar false = 0;
 defun rand = int<32>: __PKL_BUILTIN_RAND__;
 defun get_endian = int<32>: __PKL_BUILTIN_GET_ENDIAN__;
 defun set_endian = (int<32> endian) int<32>: __PKL_BUILTIN_SET_ENDIAN__;
+defun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
+defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
+defun open = (string handler) int<32>: __PKL_BUILTIN_OPEN__;
+defun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
 
 defvar ENDIAN_LITTLE = 0;
 defvar ENDIAN_BIG = 1;
@@ -79,7 +83,7 @@ defun _pkl_exception_handler = (Exception exception) void:
    else if (exception == E_elem)
      print "invalid element";
    else if (exception == E_constraint)
-     print "constraint violated";
+     print "constraint violation";
    else if (exception == E_conv)
      print "conversion error";
    else if (exception == E_map_bounds)
@@ -93,7 +97,7 @@ defun _pkl_exception_handler = (Exception exception) void:
    else if (exception == E_no_return)
      print "no return";
    else if (exception == E_io)
-     print "generic IO exception";
+     print "generic IO";
    else
      print "generic";
 

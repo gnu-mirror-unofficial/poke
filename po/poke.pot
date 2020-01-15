@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU poke 0.1-beta\n"
-"Report-Msgid-Bugs-To: bug-gnu-utils@gnu.org\n"
-"POT-Creation-Date: 2019-10-02 11:20+0200\n"
+"Report-Msgid-Bugs-To: poke-devel@nongnu.org\n"
+"POT-Creation-Date: 2019-11-14 00:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,105 +17,150 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/pk-cmd.c:278
+#: src/pk-cmd.c:286
 #, c-format
 msgid "%s: command not found.\n"
 msgstr ""
 
-#: src/pk-cmd.c:299
+#: src/pk-cmd.c:307
 #, c-format
 msgid "%s: invalid flag `%c'\n"
 msgstr ""
 
-#: src/pk-cmd.c:540
+#: src/pk-cmd.c:549
 msgid "This command requires an IO space.  Use the `file' command."
 msgstr ""
 
-#: src/pk-cmd.c:550
+#: src/pk-cmd.c:559
 msgid "This command requires a writable IO space."
 msgstr ""
 
-#: src/pk-cmd.c:573
+#: src/pk-cmd.c:582
 #, c-format
 msgid "Usage: %s\n"
 msgstr ""
 
-#: src/pk-def.c:107
-#, c-format
+#: src/pk-def.c:109
 msgid "Name\t\tValue\t\t\tDeclared at\n"
 msgstr ""
 
-#: src/pk-file.c:47 src/pk-file.c:105
+#: src/pk-file.c:48 src/pk-file.c:107
 #, c-format
 msgid "No such file #%d\n"
 msgstr ""
 
-#: src/pk-file.c:62 src/pk-file.c:190
+#: src/pk-file.c:64 src/pk-file.c:194
 #, c-format
-msgid "%s: file cannot be read\n"
+msgid "%s: file cannot be read: %s\n"
 msgstr ""
 
-#: src/pk-file.c:71
+#: src/pk-file.c:73
 #, c-format
 msgid "File %s already opened.  Use `file #N' to switch.\n"
 msgstr ""
 
-#: src/pk-file.c:81 src/pk-file.c:120
+#: src/pk-file.c:83 src/pk-file.c:122
 #, c-format
 msgid "The current file is now `%s'.\n"
 msgstr ""
 
-#: src/pk-file.c:116
+#: src/pk-file.c:118
 msgid "No more IO spaces."
 msgstr ""
 
-#: src/pk-file.c:147
-#, c-format
+#: src/pk-file.c:149
 msgid "  Id\tMode\tPosition\tFilename\n"
 msgstr ""
 
-#: src/pkl.c:265 src/pkl.c:323 src/pkl.c:375 src/pkl.c:426
+#: src/pkl.c:272 src/pkl.c:330 src/pkl.c:376 src/pkl.c:427
 #, c-format
 msgid "out of memory\n"
 msgstr ""
 
-#: src/pk-print.c:57
-#, c-format
-msgid "print: only one of `x', `b' or `o' may be specified.\n"
+#: src/pkl-trans.c:794
+msgid "Base with more than 64 bits"
 msgstr ""
 
-#. TRANSLATORS: --help output, gnunity synopsis.
-#. no-wrap
-#: src/poke.c:109
+#: src/pkl-trans.c:808
+msgid "char format only makes sense with 8 bits"
+msgstr ""
+
+#: src/pkl-trans.c:813
+msgid "invalid base"
+msgstr ""
+
+#: src/pkl-trans.c:829
 #, c-format
+msgid "Expected decimal digit after %u"
+msgstr ""
+
+#: src/pkl-trans.c:852 src/pkl-trans.c:867 src/pkl-trans.c:937
+msgid "invalid format specifier"
+msgstr ""
+
+#: src/pkl-trans.c:879
+msgid "unpaired styling class"
+msgstr ""
+
+#: src/pkl-trans.c:963
+msgid "unclosed styling tag"
+msgstr ""
+
+#: src/pk-repl.c:57
+msgid "For help, type \""
+msgstr ""
+
+#: src/pk-repl.c:65
+msgid "For help, type \".help\".\n"
+msgstr ""
+
+#: src/pk-repl.c:67
+msgid "Type \".exit\" to leave the program.\n"
+msgstr ""
+
+#: src/pk-repl.c:75
+msgid "Quit"
+msgstr ""
+
+#. TRANSLATORS: --help output, GNU poke synopsis.
+#. no-wrap
+#: src/poke.c:116
 msgid "Usage: poke [OPTION]... [FILE]\n"
 msgstr ""
 
-#. TRANSLATORS: --help output, gnunity summary.
+#. TRANSLATORS: --help output, GNU poke summary.
 #. no-wrap
-#: src/poke.c:114
+#: src/poke.c:121
 msgid "Interactive editor for binary files.\n"
 msgstr ""
 
-#. TRANSLATORS: --help output, poke arguments.
+#. TRANSLATORS: --help output, GNU poke arguments.
 #. no-wrap
-#: src/poke.c:120
+#: src/poke.c:127
 msgid ""
 "  -l, --load=FILE                     load the given pickle at startup.\n"
+"  -L FILE                             load the given pickle and exit.\n"
 msgstr ""
 
-#. TRANSLATORS: --help output, poke arguments.
+#. TRANSLATORS: --help output, GNU poke arguments.
 #. no-wrap
-#: src/poke.c:128
+#: src/poke.c:135
 msgid ""
 "Commanding poke from the command line:\n"
 "  -c, --command=CMD                   execute the given command.\n"
 "  -s, --script=FILE                   execute commands from FILE.\n"
 msgstr ""
 
-#. TRANSLATORS: --help output, less used poke arguments.
+#: src/poke.c:141
+msgid ""
+"Styling text output:\n"
+"      --color=(yes|no|auto|html|test) emit styled output.\n"
+"      --style=STYLE_FILE              style file to use when styling.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, less used GNU poke arguments.
 #. no-wrap
-#: src/poke.c:137
+#: src/poke.c:149
 msgid ""
 "  -q, --no-init-file                  do not load an init file.\n"
 "      --quiet                         be as terse as possible.\n"
@@ -128,52 +173,42 @@ msgstr ""
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: src/poke.c:150
+#: src/poke.c:161
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
 
-#: src/poke.c:153
+#: src/poke.c:164
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr ""
 
-#: src/poke.c:156
+#: src/poke.c:167
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr ""
 
-#: src/poke.c:157
-msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+#: src/poke.c:168
+#, c-format
+msgid "General help using GNU software: %s\n"
 msgstr ""
 
-#: src/poke.c:176
+#: src/poke.c:189
 #, c-format
 msgid ""
-"Copyright (C) %s Jose E. Marchesi.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
-"html>.\n"
-"This is free software: you are free to change and redistribute it.\n"
-"There is NO WARRANTY, to the extent permitted by law.\n"
+"%s (C) %s Jose E. Marchesi.\n"
+"License GPLv3+: GNU GPL version 3 or later"
 msgstr ""
 
-#: src/poke.c:182
+#: src/poke.c:200
 #, c-format
 msgid ""
 "\n"
 "Powered by Jitter %s."
 msgstr ""
 
-#: src/poke.c:185
+#: src/poke.c:203
 msgid ""
 "\n"
-"Perpetrated by Jose E. Marchesi."
-msgstr ""
-
-#: src/poke.c:270
-msgid "For help, type \".help\"."
-msgstr ""
-
-#: src/poke.c:271
-msgid "Type \".exit\" to leave the program."
+"Perpetrated by Jose E. Marchesi.\n"
 msgstr ""

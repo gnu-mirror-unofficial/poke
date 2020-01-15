@@ -1,6 +1,6 @@
 /* pkl-lex.l - Lexer for Poke.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,19 @@
 #define YYDEBUG 1
 #include <pkl-tab.h>
 #include "pk-cmd.h"
+
+
+#define YY_FATAL_ERROR(msg)                             \
+  do                                                    \
+    {                                                   \
+     YYLTYPE *loc = yyget_lloc (yyscanner);             \
+     YY_EXTRA_TYPE extra = yyget_extra (yyscanner);     \
+     pkl_ice (extra->ast, *loc, "%s", msg);             \
+     abort ();                                          \
+     /* kludge to avoid compiler warning */             \
+     void *x = yy_fatal_error; x = x;                   \
+    }                                                   \
+  while (0)
 
 #define YY_USER_ACTION                                  \
   do                                                    \
@@ -110,7 +123,7 @@ NEWLINE            \n
 BLANK              [ \t]
 LETTER             [a-zA-Z]
 FIELD_NAME         {LETTER}[a-zA-Z0-9_]*
-CHAR		   '(.|\\[nt]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
+CHAR		   '(.|\\[ntr\\]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
 STRING             \"([^"]|\\(.|\n))*\"
 HEXCST		   0[xX][0-9a-fA-F][0-9a-fA-F_]*
 BINCST		   0[bB][01][01_]*
@@ -139,6 +152,7 @@ D [0-9]
 
 {NEWLINE}	{ /* Ignore newlines.  */  }
 {BLANK}		{ /* Ignore whitespace.  */ }
+\f		{ /* Ignore form feed ^L characters.  */ }
 
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
@@ -152,11 +166,34 @@ D [0-9]
 
 "//"[^\n]*	{ /* Partial-line comment.  */ }
 
+"__LINE__"	{
+  pkl_ast_node type
+    = pkl_ast_make_integral_type (yyextra->ast, 64, 0);
+  yylval->ast = pkl_ast_make_integer (yyextra->ast,
+                                      yylloc->first_line);
+  PKL_AST_TYPE (yylval->ast) = ASTREF (type);
+
+  return INTEGER;
+}
+                       
+"__FILE__"	{
+  pkl_ast_node type
+    = pkl_ast_make_string_type (yyextra->ast);
+
+  yylval->ast = pkl_ast_make_string (yyextra->ast,
+                                     yyextra->filename
+                                     ? yyextra->filename
+                                     : "<stdin>");
+  PKL_AST_TYPE (yylval->ast) = ASTREF (type);
+  return STR;
+ }
+
 "pinned"	{ return PINNED; }
 "struct"	{ return STRUCT; }
 "union"		{ return UNION; }
 "else"		{ return ELSE; }
 "while"		{ return WHILE; }
+"until"		{ return UNTIL; }
 "for"		{ return FOR; }
 "in"		{ return IN; }
 "where"		{ return WHERE; }
@@ -183,6 +220,10 @@ D [0-9]
 "__PKL_BUILTIN_RAND__" { return BUILTIN_RAND; }
 "__PKL_BUILTIN_GET_ENDIAN__" { return BUILTIN_GET_ENDIAN; }
 "__PKL_BUILTIN_SET_ENDIAN__" { return BUILTIN_SET_ENDIAN; }
+"__PKL_BUILTIN_GET_IOS__" { return BUILTIN_GET_IOS; }
+"__PKL_BUILTIN_SET_IOS__" { return BUILTIN_SET_IOS; }
+"__PKL_BUILTIN_OPEN__" { return BUILTIN_OPEN; }
+"__PKL_BUILTIN_CLOSE__" { return BUILTIN_CLOSE; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }
@@ -369,6 +410,12 @@ D [0-9]
             break;
           case 't':
             value = '\t';
+            break;
+          case 'r':
+            value = '\r';
+            break;
+          case '\\':
+            value = '\\';
             break;
           default:
             /* To avoid compiler warnings.  */

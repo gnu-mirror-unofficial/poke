@@ -1,6 +1,6 @@
 /* pk-cmd.h - Poke commands.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,12 @@ typedef int (*pk_cmd_fn) (int argc, struct pk_cmd_arg argv[], uint64_t uflags);
 #define PK_CMD_F_REQ_IO 0x1  /* Command requires an IO space.  */
 #define PK_CMD_F_REQ_W  0x2  /* Command requires a writable IO space.  */
 
+/* This is the same as rl_compentry_func_t from readline.h
+   Unfortunately #including readline.h here causes bad things
+   to happen, because it defines lots of macros conflicting
+   with ones used elsewhere.  */
+typedef char* (*completer_t) (const char *, int);
+
 struct pk_cmd
 {
   /* Name of the command.  It is a NULL-terminated string composed by
@@ -80,9 +86,13 @@ struct pk_cmd
   pk_cmd_fn handler;
   /* Usage message.  */
   const char *usage;
+  /* The completion generator which generates arguments/operands
+     for this command.  */
+  completer_t completer;
 };
 
-/* Parse STR and execute a command.  */
+/* Parse STR and execute a command.  Return 1 if the command was
+   executed successfully, 0 otherwise.  */
 
 int pk_cmd_exec (char *str);
 
@@ -98,5 +108,9 @@ void pk_cmd_init (void);
 /* Shutdown the cmd subsystem, freeing all used resources.  */
 
 void pk_cmd_shutdown (void);
+
+char *pk_cmd_get_next_match (int *idx, const char *x, size_t len);
+
+struct pk_cmd *pk_cmd_find (const char *cmdname);
 
 #endif /* ! PK_H_CMD */

@@ -1,6 +1,6 @@
 ;;; poke-ras-mode.el --- Major mode for editing poke RAS files
 
-;; Copyright (C) 2019 Jose E. Marchesi
+;; Copyright (C) 2019, 2020 Jose E. Marchesi
 
 ;; Maintainer: Jose E. marchesi
 

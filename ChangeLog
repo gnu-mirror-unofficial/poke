@@ -42,6 +42,1370 @@
 	* bootstrap.conf (gnulib_modules): Import the `pthread' module
 	from gnulib.
 
+2020-01-18 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pkl.c: Use std macro for bug report address.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-anal.c (pkl_anal2_ps_offset): Remove unused local
+	variable.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Using data files in tests): New section.
+	(Writing tests that depend on a certain capability): Likewise.
+	* testsuite/lib/poke-dg.exp (dg-require): Add a note.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* TODO: New task.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_trimmer): check that the
+	operator of a trimming operation is either an array or a string.
+	* testsuite/poke.pkl/trim-diag-5.pk: New test.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_struct_type_field): struct
+	fields cannot be of type `any' nor `void'.
+	* testsuite/poke.pkl/struct-types-diag-9.pk: New test.
+	* testsuite/poke.pkl/struct-types-diag-10.pk: Likewise.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-pass.h (PKL_PASS_SUBPASS): fix detection of error when
+	calling pkl_do_subpass.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl.c (pkl_ice): do not dump files in /etc if --quiet is
+	used in the command line.
+
+2020-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_op_boolean): make sure the
+	arguments to relational operators are integral.
+	* testsuite/poke.pkl/and-diag-1.pk: New test.
+	* testsuite/poke.pkl/xor-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/or-diag-1.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y: Do not try to pop lexical frames in <ast>
+	destructors.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Casting to/from void is
+	not allowed.
+	* testsuite/poke.pkl/cast-void-diag-1.pk: New test.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_first_operand): Check the type
+	of the operand for NEG, POS and BNOT.
+	* testsuite/poke.pkl/neg-diag-1.pk: New test.
+	* testsuite/poke.pkl/bnot-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/pos-diag-1.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-insn.def (PKL_INSN_OSETM): Define.
+	* src/pvm.jitter (osetm): new instruction.
+	* src/pkl-gen.c (pkl_gen_ps_op_intexp): Adapt to offsets.
+	* src/pkl-asm.c (pkl_asm_insn_intop): Likewise.
+	* testsuite/poke.pkl/neg-offsets-1.pk: New test.
+	* testsuite/poke.pkl/bnot-offsets-1.pk: Likewise.
+	* testsuite/poke.pkl/bnot-integers-1.pk: Renamed from bnot-1.pk
+	* testsuite/poke.pkl/bnot-integers-2.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Check casts from arrays.
+	* testsuite/poke.pkl/cast-array-diag-8.pk: New file.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-fold.c (pkl_fold_cdiv): Fix detection of division by zero
+	for offsets with implicit magnitudes.
+	(pkl_fold_div): Likewise.
+	* testsuite/poke.pkl/cdiv-offsets-3.pk: New file.
+	* testsuite/poke.pkl/div-offsets-4.pk: Likewise.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-fold.c (pkl_fold_mod): Fix detection of division by zero
+	for offsets with implicit magnitudes.
+	* testsuite/poke.pkl/mod-offsets-5.pk: New file.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-anal.c (pkl_anal1_ps_offset): New handler.
+	(pkl_phase_anal1): Add handler.
+	* testsuite/poke.pkl/offset-type-diag-3.pk: New test.
+	* testsuite/poke.pkl/offsets-diag-2.pk: Likewise.
+	* doc/poke.texi (Offset Literals): Document that the unit of
+	offsets shall be bigger than 0.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* TODO: Several updates.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-file.c (print_info_file): Use the IO's id as tags.
+	(pk_cmd_info_files): Adapt accordingly.
+	* testsuite/poke.cmd/file-mode.pk: Adjust accordingly.
+
+2020-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-lex.l: Ignore form feed characters.
+	* testsuite/poke.pkl/formfeedchar.pk: New file.
+	* doc/poke.texi (Comments): New chapter.
+
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm-val.c (pvm_print_val): Fix printing of hexadecimal
+	values with odd widths.
+	* testsuite/poke.map/maps-uint-19.pk: Test for the above.
+
+2020-01-12 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi: Fixed various typos.
+
+2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_get): Remove.
+	* src/ios.h (ios_get): Likewise.
+	* src/pk-file.c (pk_cmd_file): Replace the bogus call to ios_get
+	with ios_search_by_id.
+	(pk_cmd_close): Replace the bogus call to ios_get with
+	ios_search_by_id.
+
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/chars-1.pk: New file.
+	* testsuite/poke.pkl/chars-8.pk: Likewise.
+	* testsuite/poke.pkl/chars-7.pk: Likewise.
+	* testsuite/poke.pkl/chars-6.pk: Likewise.
+	* testsuite/poke.pkl/chars-5.pk: Likewise.
+	* testsuite/poke.pkl/chars-4.pk: Likewise.
+	* testsuite/poke.pkl/chars-3.pk: Likewise.
+	* testsuite/poke.pkl/chars-9.pk: Renamed from chars.pk
+
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-lex.l (CHAR): Allow '\r' as character literals.
+	* testsuite/poke.pkl/chars-2.pk: New file.
+
+2020-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios.c (ios_read_string): Fix detection of EOF.
+
+2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_open): Add argument set_cur to control making
+	the newly opened IO space the current IO space.
+	* src/ios.h (ios_open): Add the new argument, set_cur.
+	* src/poke.c (parse_args): Call ios_open with set_cur 1.
+	* src/pk-file.c (pk_cmd_file): Likewise.
+	* src/pvm.jitter (instruction open): Call ios_open with set_cur 0.
+	* testsuite/poke.pkl/close-1.pk: Adjust.
+	* testsuite/poke.pkl/set-ios-1.pk: Likewise.
+
+2020-01-12 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Remove PKL_INSN_RETURN from
+	PKL_AST_BUILTIN_CLOSE which returns void.
+	* src/pvm.jitter (close): Add JITTER_DROP_STACK.
+
+2020-01-11 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_write_int_common): Add specifiers "static inline".
+
+2020-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ras: Stop claiming posix compatibility both as the current
+	state and a goal.
+
+2020-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import module
+	`update-copyright'.
+
+2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* testsuite/poke.map/maps-uint-write-01.pk: New test.
+	* testsuite/poke.map/maps-uint-write-02.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-03.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-04.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-05.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-06.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-07.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-08.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-09.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-10.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-11.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-12.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-13.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-14.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-15.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-16.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-17.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-18.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-19.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-20.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-21.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-22.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-23.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-24.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-25.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-26.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-27.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-28.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-29.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-30.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-31.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-32.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-33.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-34.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-35.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-36.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-37.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-38.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-39.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-40.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-41.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-42.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-43.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-44.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-45.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-46.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-47.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-48.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-49.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-50.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-51.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-52.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-53.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-54.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-55.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-56.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-57.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-58.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-59.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-60.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-61.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-62.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-63.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-64.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-65.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-66.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-67.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-68.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-69.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-70.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-71.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-72.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-73.pk: Likewise.
+	* testsuite/poke.map/maps-uint-write-74.pk: Likewise.
+
+2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (IOS_PUT_C_ERR_CHCK): New macro.
+	(ios_write_int_fast): New function.
+	(ios_write_int_common): Likewise.
+	(ios_write_int): Rewrite.
+	(ios_write_uint): Rewrite.
+
+2020-01-03 Egeyar Bagcioglu <egeyar@gmail.com>
+
+	* src/ios.c (ios_mask_first_byte): Replace this function with ...
+	(IOS_CHAR_GET_LSB): ... this macro.
+	(ios_mask_last_byte): Replace this function with ...
+	(IOS_CHAR_GET_MSB): ... this macro.
+	(ios_read_int_common): Replace the calls to ios_mask_first_byte
+	and ios_mask_last_byte with IOS_CHAR_GET_LSB and
+	IOS_CHAR_GET_MSB, respectively.
+
+2019-12-29 John Darrington <john@darrington.wattle.id.au>
+
+	* src/ios-dev-file.c (ios_dev_file_open): Use a more reliable
+	method to determine the file's mode.
+	(ios_dev_file_get_mode): New function.
+	* src/ios-dev.h (struct ios_dev_if) [get_mode]: New member.
+	* src/ios.c (ios_mode): Use method from implementation.
+	* src/ios.h (IOS_M_RDONLY): New macro.
+	* testsuite/poke.cmd/file-mode.pk: New file.
+
+2019-12-22 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pkl.c (pkl_ast): Fix bugs dealing with path search.
+
+2019-12-22 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (pk_cmd_exec_1): Properly initialise argc
+	instead of relying on subsequent assignment.
+
+2019-12-21 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-file.c (pk_cmd_file): Fix memory leaks and
+	check for failures on opening file.
+
+2019-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/std.pk (days_in_month): Simplify the code a bit.
+
+2019-12-16  Dan Čermák  <dan.cermak@cgc-instruments.com>
+
+	* src/pk-repl.c (pk_repl): fix memory leak of poke_history
+	* src/pk-cmd.c (pk_cmd_exec): fix memory leak of ecmd
+	* src/pk-cmd.c (pk_cmd_exec_1): fix memory leak of filename
+	* src/pk-cmd.c (null_cmd): properly initialize struct
+
+2019-12-15 John Darrington <john@darrington.wattle.id.au>
+
+	*src/ios.c (ios_mask_last_byte) simplify
+	*src/ios.c (ios_mask_first_byte) simplify
+
+2019-12-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-asm.pks (atrim): The mka instruction expects the type of
+	the array, not the type of the elements stored in the array.
+	* testsuite/poke.pkl/trim-25.pk: New test.
+
+2019-12-15 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (Date and Time Functions): New chapter.
+	* src/std.pk (posix_time32): New type.
+	* testsuite/poke.std/time32.pk: New file.
+
+2019-12-15 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (Scripts): Elaborate on what scripts are
+	(and what they are not).
+
+2019-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_ass_stmt): Remove obsolete
+	check.
+	* testsuite/poke.pkl/ass-function-1.pk: New test.
+
+2019-12-13  Dan Čermák  <dan.cermak@posteo.net>
+
+	* src/pkl-env.c (hash_string): Avoid overflow of signed integers
+	in hash calculation.
+
+2019-12-13  Dan Čermák  <dan.cermak@posteo.net>
+
+	* src/pk-cmd.c (pk_cmd_get_next_match): Fix buffer overflow.
+
+2019-12-12  Dan Čermák  <dan.cermak@posteo.net>
+
+	* src/pkl-ast.c (pkl_print_type): Fix call to fprintf to use "%s"
+	to print a non-constant string.
+
+2019-12-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_type_is_complete): Struct types having
+	fields with labels are no complete types.
+	(pkl_ast_sizeof_type): Assert if a struct type with field labels
+	is not marked as complete.
+	* testsuite/poke.pkl/offsets-diag-1.pk: New test.
+
+2019-12-08 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pkl-lex. (CHAR): Accept \\ as a CHAR token.
+	* testsuite/poke.pkl/chars.pk: Add new test.
+	* doc/poke.texi (Characters): Document new escape sequence.
+
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (Offset Literals):  Change the example to agree with the text.
+
+2019-12-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_mul): Do not accept multiplying
+	strings.
+	* testsuite/poke.pkl/mul-strings-diag-1.pk: New test.
+
+2019-12-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (offset_type_specifier): Allow integer literals as
+	offset units.
+	* src/pkl-anal.c (pkl_anal1_ps_type_offset): New handler.
+	(pkl_phase_anal1): Install handler.
+	* testsuite/poke.pkl/casts-offsets-4.pk: New test.
+	* testsuite/poke.pkl/cast-offsets-diag-3.pk: Likewise.
+	* doc/poke.texi (Offset Types): Mention using integers as offset
+	type units.
+
+2019-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-cmd.h: Document the value returned by pk_cmd_exec.
+	* src/pk-cmd.c (pk_cmd_exec_script): Fix the value returned by the
+	function to match the function prototype documentation.
+	* src/poke.c (parse_args): Improve the check for the result value
+	of pk_cmd_exec_script.
+	(initialize_user): Likewise.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl.c (pkl_ice): Use an hyperlink for the bug report
+	address.
+	* src/pkl-asm.c (pkl_asm_catch): Remove obsolete comment.
+	* src/pkl-env.c (pkl_env_dup_toplevel): Likewise.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-insn.def: New instruction ASETO.
+	* src/pvm.jitter (aseto): Define.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Detect invalid casts,
+	and diagnose them.
+	* testsuite/poke.pkl/cast-struct-diag-1.pk: New test.
+	* testsuite/poke.pkl/cast-offsets-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/cast-offsets-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-str-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-2.pk: Likewise.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-fold.c: Define cdivo semantic routines for UUU and III
+	cases.
+	(pkl_fold_cdiv): Fold /^ operations on offsets.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/offset-arg-1.pk: New test.
+	* testsuite/poke.pkl/offset-arg-2.pk: Likewise.
+
+2019-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-fold.c: Define pkl_fold_gcd using gnulib's <gcd.c.>
+	(EMUL_UUU): Define for gcd.
+	(pkl_fold_gcd): Define handler.
+	(pkl_phase_fold): Register handler.
+	(OP_BINARY_OOI): Make sure operands are offsets
+	before accessing their magnitude/units.
+	(OP_BINARY_OOO): Likewise.
+	(OP_BINARY_OOI): Fix handling of base_type.
+
+	* src/pkl-promo.c (promote_offset): Support non-integer units.
+	(pkl_promo_ps_op_div): Adjust to new API.
+	(pkl_promo_ps_op_add_sub_mod): Likewise.
+	(pkl_promo_ps_op_mul): Likewise.
+	(pkl_promo_ps_op_rela): Likewise.
+	(pkl_promo_ps_type_array): Likewise.
+	(pkl_promo_ps_ass_stmt): Likewise.
+	(pkl_promo_ps_funcall): Likewise.
+	(pkl_promo_ps_return_stmt): Likewise.
+	(pkl_promo_ps_func_arg): Likewise.
+	(pkl_promo_ps_map): Likewise.
+	(pkl_promo_ps_struct_type_field): Likewise.
+	(pkl_promo_ps_op_in): Likewise.
+	* src/pkl-ops.def: Define PKL_AST_OP_GCD.
+	* src/pkl-typify.c (CASE_OFFSET): Use pkl_ast_make_binary_exp and
+	do not assume the unit types are integers, but avoid superfluous
+	casts whenever possible.
+	(CASE_OFFSET): Likewise.
+	* src/pkl.c (rest_of_compilation): Run a constant folding phase at
+	the beginning of the middle end pass.
+	* testsuite/poke.pkl/add-offsets-9.pk: New test.
+	* testsuite/poke.pkl/eq-offsets-6.pk: Likewise.
+	* testsuite/poke.pkl/eq-offsets-5.pk: Likewise.
+	* testsuite/poke.pkl/mod-offsets-4.pk: Likewise.
+	* testsuite/poke.pkl/mod-offsets-3.pk: Likewise.
+	* testsuite/poke.pkl/div-offsets-3.pk: Likewise.
+	* testsuite/poke.pkl/div-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/mul-offsets-9.pk: Likewise.
+	* testsuite/poke.pkl/sub-offsets-8.pk: Likewise.
+	* testsuite/poke.pkl/sub-offsets-7.pk: Likewise.
+	* testsuite/poke.pkl/add-offsets-10.pk: Likewise.
+
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* bootstrap.conf: Remove "system"
+
+2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Do not calculate the
+	array bound when building array types.
+	* testsuite/poke.map/maps-arrays-18.pk: New test.
+
+2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-trans.c (pkl_phase_transl): Install
+	pkl_transl_{pr,ps}_map handlers for struct type fields.
+	(pkl_transl_pr_type_struct): Only break the pass when into a map.
+	* testsuite/poke.map/maps-arrays-17.pk: New test.
+
+2019-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_if_stmt): New handler.
+	(pkl_phase_typify1): Install it.
+	* testsuite/poke.pkl/if-diag-1.pk: New test.
+	* testsuite/poke.pkl/if-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/if-diag-3.pk: Likewise.
+
+2019-12-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf.pk (Elf64_Sym): New type.
+	(STB_LOCAL): New variable.
+	(STB_GLOBAL): Likewise.
+	(STB_WEAK): Likewise.
+	(STB_LOOS): Likewise.
+	(STB_HIOS): Likewise.
+	(STB_LOPROC): Likewise.
+	(STB_HIPROC): Likewise.
+	(STV_DEFAULT): Likewise.
+	(STV_INTERNAL): Likewise.
+	(STV_HIDDEN): Likewise.
+	(STV_PROTECTED): Likewise.
+
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (dump): Numerous minor changes.
+
+2019-12-01 Luca Saiu <positron@gnu.org>
+
+	* src/pkl-insn.def (PKL_INSN_TUCK): Define new instruction.
+	* src/pvm.jitter (rot, nrot): Simplify definition using Jitter
+	macro.
+	(tuck): New instruction.
+	(revn): Add specialized arguments.  Use unsigned JITTER_ARGU0 to
+	catch bugs more easily.
+	(swap-over-to-tuck): New rewrite rule.
+	(rot-swap-to-quake): Re-introduce deleted rewrite rule, which was
+	actually correct.
+	* pkl-asm.pks (remap, write, addo, subo, mulo, divo, modo, atrim)
+	(cdivo, ais, bconc): Simplify and optimize using new instructions.
+	* src/pkl-gen.pks (struct_field_mapper): Likewise.
+	
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk_dump.pk (dump): New parameter cluster_by
+
+2019-12-01 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (dump): Document the dump command.
+
+2019-11-30 John Darrington <john@darrington.wattle.id.au>
+
+	* testsuite/poke.std/crc32.pk: New file.
+
+2019-11-30 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (pk_cmd_find):  Use STREQ instead of strcmp.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_pr_map): Fix bug in optimization.
+	* testsuite/poke.pkl/map-offset-expr-1.pk: New test.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-asm.pks (atrim): Fix calculation of the resulting mapped
+	array offset.
+	* testsuite/poke.map/maps-trims-1.pk: New test.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter (siz): Modify to generate a bit-offset in an
+	ulong<64> instead of an offset.
+	* src/pkl-gen.pks (off_plus_sizeof): Remove.
+	(array_mapper): Adapt accordingly.
+	(array_valmapper): Likewise.
+	(struct_field_mapper): Likewise.
+	* src/pkl-asm.pks (array_conv_siz): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Likewise.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks (array_valmapper): Adapt to bit-offsets.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-asm.pks (atrim): Adapt to bit-offsets.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Convert the value returned
+	by mgeto to an offset value.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm-val.c (pvm_sizeof): Struct fields now store bit-offsets
+	instead of offsets.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_pr_type_offset): Fix regression.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Convert sbounds in maps
+	to bit-offsets.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks (struct_writer): Adapt to bit-offsets.
+	(struct_field_writer): Likewise.
+	(array_writer): Likewise.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks (struct_mapper): Use bit-offsets for the struct
+	offsets.
+	(struct_field_mapper): Likewise.
+	(handle_struct_field_label): Likewise.
+	(off_plus_sizeof): Likewise.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks (array_mapper): Use bit-offsets for the array
+	offsets and for sbound.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_pr_map): Convert map argument to
+	bit-offset.
+	(pkl_gen_pr_ass_stmt): Likewise.
+	(pkl_gen_pr_type_offset): Do not convert to bit-offset.
+	(pkl_gen_ps_type_integral): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	* src/pvm.jitter: Remove invalid rot-swap-to-quake rewrite.
+
+2019-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter: Update comments to reflect that peek/poke
+	instructions get bit-offsets, not regular offsets.
+
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
+            * src/pk-file (pk_file_readable): New function.
+            (pk_cmd_load_file): Use it to check files before
+            opening.
+
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-term.c: Remove unnecessary #include <sys/stat.h>
+
+2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/lib/poke-dg.exp (dg-data): Avoid appending duplicated
+	file names to poke_data_files.
+	(poke_finish): Fix deleting the temporary files.
+
+2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter: Add ios_write_string to the list of wrapped
+	functions.
+	(pokes): Implement instruction.
+	* src/ios.c (ios_write_string): Implement.
+	* testsuite/poke.map/ass-map-3.pk: New test.
+	* testsuite/poke.map/ass-map-4.pk: Likewise.
+	* testsuite/poke.map/ass-map-5.pk: Likewise.
+
+2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-anal.c (pkl_anal1_ps_return_stmt): New handler.
+	(pkl_phase_anal1): Register it.
+	* testsuite/poke.pkl/return-diag-2.pk: New test.
+
+2019-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_type_offset): New handler.
+	(pkl_phase_typify1): Register it.
+	* testsuite/poke.pkl/offset-type-diag-1.pk: New test.
+	* testsuite/poke.pkl/offset-type-diag-2.pk: Likewise.
+
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
+
+        * src/std.pk (crc32): New function.
+        * doc/poke.texi (CRC Functions): New node.
+
+2019-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter (quake): New instruction.
+	(rot-swap-to-quake): New rewrite rule.
+
+2019-11-24 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (pk_cmd_exec_script): Use getline instead
+	of a loop and getc.
+
+2019-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm-alloc.c (pvm_realloc): New function.
+	* src/pkl-asm.c (pkl_asm_insn): Remove hard limit
+	PKL_AST_MAX_POINTERS, reallocating memory as necessary.
+	(pkl_asm_new): Initialize pointers to NULL.
+
+2019-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/lib/poke-dg.exp (poke-dg-test): Pass -q to poke to
+	avoid reading ~/.pokerc.
+
+2019-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios.c (IOS_GET_C_ERR_CHCK): Make sure to check get_c return
+	value as an int before casting it.
+	* src/ios-dev-file.c (ios_dev_file_getc): Do not rely on EOF ==
+	IOD_EOF.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_type_is_complete): Handle function types.
+	* src/pkl-typify.c (pkl_typify1_ps_op_unmap): New handler.
+	* testsuite/poke.pkl/unmap-diag-1.pk: New test.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_type_is_complete): Fix handling of
+	structs.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_type_mappable_p): New function.
+	* src/pkl-typify.c (pkl_typify1_ps_map): Check for types that
+	cannot be mapped and error about it.
+	* testsuite/poke.pkl/map-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-1.pk: New test.
+	* testsuite/poke.pkl/map-diag-7.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-6.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/map-diag-4.pk: Likewise.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/struct-types-diag-8.pk: Rewrite.
+
+2019-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (offset_type_specifier): Allow simple types only
+	for the offset unit.
+
+2019-11-19 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi: Add indeces.
+
+2019-11-19 John Darrington <john@darrington.wattle.id.au>
+
+        * src/pk-dump.pk (print_ascii): New function. (print_hex) New function.
+        (print_data): Deal properly with EOF and data not ending on 16#B boundary.
+        * testsuite/poke.cmd/dump-5.pk: New file.
+        * testsuite/poke.cmd/dump-6.pk: New file.
+        * testsuite/poke.cmd/dump-7.pk: New file.
+
+2019-11-17 John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (Standard Integral Types): Correct size of nibble.
+
+2019-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Field Constraints): New section.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (__LINE__ and __FILE__): New chapter.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks: Fix handling of sboundm.
+	* testsuite/poke.map/maps-arrays-16.pk: New test.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y: New tokens UU_LINE_UU and UU_FILE_UU.
+	* src/pkl-lex.l: Rules for __FILE__ and for __LINE__.
+	* testsuite/poke.pkl/uu-line-1.pk: New test.
+	* testsuite/poke.pkl/uu-file-1.pk: Likewise.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* man/Makefile.am (poke.1): Go back to depend on the source file
+	to avoid distcheck to fail.  This time, make sure the executable
+	exists before invoking help2man.
+
+2019-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/leb128.pk: Remove trailing blanks.
+	* testsuite/lib/poke-dg.exp: Likewise.
+	* src/pvm.jitter: Likeise.
+	* src/pkl-typify.c: Likewise.
+	* src/pkl-tab.y: Likewise.
+	* src/pkl-promo.c: Likewise.
+	* src/pkl-gen.c: Likewise.
+	* src/pkl-ast.h: Likewise.
+	* src/pkl-ast.c: Likewise.
+	* src/pk-editor.c: Likewise.
+	* testsuite/poke.map/ass-map-1.pk: Remove empty lines at EOF.
+	* testsuite/poke.std/atoi-9.pk: Likewise.
+	* testsuite/poke.std/atoi-8.pk: Likewise.
+	* testsuite/poke.std/atoi-7.pk: Likewise.
+	* testsuite/poke.std/atoi-6.pk: Likewise.
+	* testsuite/poke.std/atoi-5.pk: Likewise.
+	* testsuite/poke.std/atoi-4.pk: Likewise.
+	* testsuite/poke.std/atoi-3.pk: Likewise.
+	* testsuite/poke.std/atoi-2.pk: Likewise.
+	* testsuite/poke.std/atoi-13.pk: Likewise.
+	* testsuite/poke.std/atoi-12.pk: Likewise.
+	* testsuite/poke.std/atoi-11.pk: Likewise.
+	* testsuite/poke.std/atoi-10.pk: Likewise.
+	* testsuite/poke.std/atoi-1.pk: Likewise.
+	* testsuite/poke.pkl/try-until-3.pk: Likewise.
+	* testsuite/poke.pkl/strings-1.pk: Likewise.
+	* testsuite/poke.pkl/ass-map-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/ass-map-diag-1.pk: Likewise.
+	* testsuite/poke.map/maps-offsets-2.pk: Likewise.
+	* testsuite/poke.map/maps-offsets-1.pk: Likewise.
+	* testsuite/poke.map/maps-ios-1.pk: Likewise.
+	* testsuite/poke.map/ass-map-2.pk: Likewise.
+	* .x-sc_prohibit_atoi_atof: New file.
+	* doc/poke.texi (IO Spaces): s/filesystem/file system/.
+	* src/ios.c: Avoid double word in comment.
+	* man/Makefile.am (poke.1): Do not use $< in this non-implicit
+	rule.
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.h (completer_t): New typedef.
+	(pk_cmd) [completer]: New member;
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pkl-env.h (pkl_ast_node_iter): New struct.
+	(pkl_env_iter_begin): New declaration.
+	(pkl_env_iter_next): New declaration.
+	(pkl_env_iter_end): New declaration.
+	* src/pkl-env.c (pkl_env_iter_begin): New function.
+	(pkl_env_iter_next): New function.
+	(pkl_env_iter_end): New function.
+	(pkl_env_map_decls): Use them to implement this function.
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (cmds): Rename to dot_cmds.
+	(pk_cmd_init): Deal with the consequences.
+
+2019-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* man/Makefile.am: New file.
+	* Makefile.am (SUBDIRS): Add the man directory.
+	* doc/poke.texi (pokerc): New chapter.
+	* configure.ac: Initialize HELP2MAN.
+
+2019-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-insn.def: peeklu, peekiu, pokelu and pokeiu get two
+	arguments, not three.
+	* testsuite/poke.pkl/struct-types-endian-1.pk: New test.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_ps_op_in): Delete commented out code.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Installing Obvious Changes): Fix typo
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* HACKING (Dejagnu): Fix typo.
+	(libtextstyle): Fix typo.
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-repl.c (pk_repl): Remove superfluous tests of the
+	variable "line".
+
+2019-11-13 John Darrington <john@darrington.wattle.id.au>
+
+	* src/poke.c (pk_print_version): Update translatable strings.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y: Add missing trailing ';' in the try-until syntax
+	rule.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Exceptions): Document the ranges of exceptions.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/get-ios-1.pk: New test.
+	* testsuite/poke.pkl/get-ios-2.pk: Likewise.
+	* testsuite/poke.pkl/set-ios-1.pk: Likewise.
+	* testsuite/poke.pkl/close-1.pk: Likewise.
+	* testsuite/poke.pkl/open-1.pk: Likewise.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (IO Spaces): New section.
+	(open): New subsection.
+	(close): Likewise.
+	(get_ios): Likewise.
+	(set_ios): Likewise.
+	(The Map Operator): Update to cover the ternary map operator.
+
+2019-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/lib/poke-dg.exp (dg-data): Accept a file name
+	argument.
+	(poke_finish): poke_data_files is now a list.
+	* testsuite/poke.map/maps-ios-1.pk: New test.
+	* testsuite/poke.map/maps-ios-2.pk: Likewise.
+	* testsuite/poke.map/maps-ios-3.pk: Likewise.
+	* testsuite/poke.map/maps-ios-4.pk: Likewise.
+	* testsuite/poke.map/maps-ios-5.pk: Likewise.
+	* testsuite/poke.map/maps-ios-6.pk: Likewise.
+	* testsuite/poke.map/maps-ios-7.pk: Likewise.
+
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter (peeks): Take an IOS argument.
+	(PVM_PEEK): Likewise.
+	(PVM_POKE): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_map): Pass the IO argument to the
+	mappers.
+	(pkl_gen_ps_type_integral): Take an IOS argument for mappers and
+	writers.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_pr_type_offset): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	(pkl_gen_pr_ass_stmt): Pass IOS to the l-value map.
+	* src/pkl-gen.pks (array_mapper): Likewise.
+	(array_writer): Likewise.
+	(struct_mapper): Likewise.
+	(struct_field_mapper): Likewise.
+	(op_unmap): Set ios to null.
+	* src/pkl-asm.pks (write): Pass the mapped object's IOS to the
+	writer.
+	(remap): Pass the mapped object's IOS to the mapper.
+	* src/pkl-tab.y (struct_type_specifier): Register 3 dummies in the
+	compile-time lexical environment to reflect lexical changes in
+	struct_mapper.
+	* testsuite/poke.map/maps-strings-1.pk: New test.
+	* testsuite/poke.map/maps-offsets-1.pk: Likewise.
+	* testsuite/poke.map/maps-offsets-2.pk: Likewise.
+
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios.c (struct ios): New field `id'.
+	(ios_next_id): New static variable.
+	(ios_open): Return the id of the opened ios.
+	(ios_search_by_id): New function.
+	* src/poke.c (parse_args): Adapt to the new interface of ios_open.
+	* src/pvm.jitter (close): Use ios_search_by_id.
+
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.h (PKL_AST_BUILTIN_OPEN): Define.
+	(PKL_AST_BUILTIN_CLOSE): Likewise.
+	* src/pkl-tab.y (builtin): Handle BUILTIN_OPEN and BUILTIN_CLOSE.
+	(BUILTIN_OPEN): New token.
+	(BUILTIN_CLOSE): Likewise.
+	* src/pkl-lex.l: Add __PKL_BUILTIN_OPEN__ and
+	__PKL_BUILTIN_CLOSE__.
+	* src/pkl-rt.pk (open): Define.
+	(close): Likewise.
+	* src/pkl-insn.def (open): New instruction.
+	(close): Likewise.
+	* src/pvm.jitter (open): New instruction.
+	(close): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle
+	PKL_AST_BUILTIN_OPEN and PKL_AST_BUILTIN_CLOSE.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.h (PKL_AST_BUILTIN_GET_IOS): Define.
+	(PKL_AST_BUILTIN_SET_IOS): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle get_ios and set_ios
+	builtins.
+	* src/pkl-insn.def: Define instructions PKL_INSN_PUSHIOS and
+	PKL_INSN_POPIOS.
+	* src/pvm.jitter (pushios): New instruction.
+	(popios): Likewise.
+	* src/pkl-rt.pk (get_ios): New function.
+	(set_ios): Likewise.
+	* src/pkl-lex.l: Rules for __PKL_BUILTIN_GET_IOS__ and
+	__PKL_BUILTIN_SET_IOS__.
+	* src/pkl-tab.y: Define tokens BUILTIN_GET_IOS and
+	BUILTIN_SET_IOS.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_make_map): Get an `ios' argument.
+	(pkl_ast_node_free): Handle the map ios.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-ast.h (struct pkl_ast_map): New attribute `ios'.
+	* src/pkl-tab.y (map): Add ternary variant of the operator.
+	* src/pkl-pass.c (pkl_do_pass_1): Visit the ios node of maps.
+	* src/pkl-typify.c (pkl_typify1_ps_map): Check whether the IOS
+	expression evaluates to an integral value.
+	(pkl_typify1_ps_attr): The type of the 'io attribute is an
+	int<32>.
+	* src/pkl-promo.c (pkl_promo_ps_map): Promote the ios argument to
+	the map operator.
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Generate code for the 'ios
+	attribute.
+	* src/pkl-attrs.def: Define PKL_AST_ATTR_IOS.
+	* src/pkl-insn.def: New instructions mgetio and msetio.
+	* src/pvm.jitter (mgetio): New instruction.
+	(msetio): Likewise.
+	* testsuite/poke.pkl/map-ios-diag-1.pk: New test.
+	* testsuite/poke.pkl/map-ios-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-diag-2.pk: Likewise.
+	* src/pvm-val.h (PVM_VAL_IO): Define.
+	(PVM_VAL_SET_IO): Likewise.
+	(PVM_VAL_ARR_IO): Likewise.
+	(PVM_VAL_SCT_IO): Likewise.
+	(struct pvm_struct): New field io.
+	(struct pvm_array): Likewise.
+	* src/pvm-val.c (pvm_make_array): Initialize io.
+	(pvm_make_struct): Likewise.
+
+2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-lex.l: Handle token UNTIL.
+	* src/pkl-tab.y (UNTIL): New token.
+	* src/pkl-ast.h (PKL_AST_TRY_UNTIL_STMT_CODE): Define.
+	(PKL_AST_TRY_UNTIL_STMT_EXP): Likewise.
+	(struct pkl_ast_try_until_stmt): New struct.
+	* src/pkl-ast.c (pkl_ast_make_try_until_stmt): New function.
+	(pkl_ast_node_free): Handle try-until AST nodes.
+	(pkl_ast_finish_breaks_1): Likewise.
+	(pkl_ast_finish_returns_1): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_try_until_stmt): New handler.
+	* src/pkl-promo.c (pkl_promo_ps_try_until_stmt): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_try_until_stmt): New handler.
+	* doc/poke.texi (try-until): New section.
+	* testsuite/poke.pkl/try-until-diag-1.pk: New test.
+	* testsuite/poke.pkl/try-until-1.pk: Likewise.
+	* testsuite/poke.pkl/try-until-2.pk: Likewise.
+	* testsuite/poke.pkl/try-until-3.pk: Likewise.
+
+2019-11-12 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pkl-lex.l (YYFATAL_ERROR): Redefine
+
+2019-11-12 John Darrington <john@darrington.wattle.id.au>
+
+	* src/std.pk (ltrim): New function.
+	* src/std.pk (rtrim): New function.
+	* doc/poke.texi (String Functions): New chapter.
+	* testsuite/poke.std/ltrim.pk: New file.
+	* testsuite/poke.std/rtrim.pk: New file.
+
+2019-11-12 John Darrington <john@darrington.wattle.id.au>
+
+        * src/pk-file.c (pk_cmd_file): Use strerror for reason.
+        (pk_cmd_load_file): ditto.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-trans.c (pkl_trans1_ps_string): Handle \".
+	* src/pvm-val.c (pvm_print_val): Likewise.
+	* testsuite/poke.pkl/strings-1.pk: New test.
+	* testsuite/poke.pkl/strings-2.pk: Likewise.
+	* testsuite/poke.pkl/strings-3.pk: Likewise.
+	* doc/poke.texi (String Literals): Document \".
+
+2019-11-11 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-editor.c (pk_cmd_editor): Initialize newline
+
+2019-11-11 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-repl.c (pk_repl): Use ~/.poke_history to persist repl
+	commands.
+	* doc/poke.texi (The REPL): Document the use of readline and the
+	poke_history file.
+
+2019-11-11 John Darrington <john@darrington.wattle.id.au>
+
+        * doc/poke.texi (The REPL): Fix typo
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-print.c: Remove.
+	* src/pk-cmd.c (print_cmd): Likewise.
+	(cmds): Remove print_cmd.
+	* src/Makefile.am (poke_SOURCES): Remove pk-print.c
+	* testsuite/poke.map/maps-simple-1.pk: New test.
+	* testsuite/poke.map/maps-simple-8.pk: Likewise.
+	* testsuite/poke.map/maps-simple-7.pk: Likewise.
+	* testsuite/poke.map/maps-simple-6.pk: Likewise.
+	* testsuite/poke.map/maps-simple-5.pk: Likewise.
+	* testsuite/poke.map/maps-simple-4.pk: Likewise.
+	* testsuite/poke.map/maps-simple-3.pk: Likewise.
+	* testsuite/poke.map/maps-simple-2.pk: Likewise.
+	* testsuite/poke.pkl/sl-1.pk: Do not use .print.
+	* testsuite/poke.map/maps-arrays-10.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-9.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-8.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-7.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-6.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-1.pk: Likewise.
+	* testsuite/poke.map/valmaps-arrays.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-4.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-3.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-2.pk: Likewise.
+	* testsuite/poke.map/trimmed-map.pk: Likewise.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (.file): Add note about blank characters trimming
+	from paths.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-cmd.c (pk_cmd_exec_1): Do not include trailing blanks in
+	tag arguments.
+
+2019-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (The isa Operator): New chapter.
+
+2019-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Functions): New chapter.
+	(Function Declarations): New section.
+	(Optional Arguments): Likewise.
+	(Variadic Functions): Likewise.
+	(Calling Functions): Likewise.
+	(Function Types): Likewise.
+
+2019-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Write After Approval): Add John Darrington.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
+	* src/pk-repl.c: Include signa.h.
+	(poke_sigint_handler): New function.
+	(pk_repl): Install signal handler for SIGINT.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
+	* src/ras: Correct punctuation in default error message.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
+	* src/pk-editor.c (pk_cmd_editor): Use xrealloc instead of
+	realloc.
+
+2019-11-09  John Darrington  <john@darrington.wattle.id.au>
+
+	* src/pk-editor.c (pk_cmd_editor): Fix memory leak.
+
+2019-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Make libreadline a hard requirement.
+	* HACKING (readline): Document that now a full implementation of
+	readline is required.
+
+2019-11-09  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* testsuite/poke.map/maps-int-01.pk: New test.
+	* testsuite/poke.map/maps-int-02.pk: Likewise.
+	* testsuite/poke.map/maps-int-03.pk: Likewise.
+	* testsuite/poke.map/maps-int-04.pk: Likewise.
+	* testsuite/poke.map/maps-int-05.pk: Likewise.
+	* testsuite/poke.map/maps-int-06.pk: Likewise.
+	* testsuite/poke.map/maps-int-07.pk: Likewise.
+	* testsuite/poke.map/maps-int-08.pk: Likewise.
+	* testsuite/poke.map/maps-int-09.pk: Likewise.
+	* testsuite/poke.map/maps-int-10.pk: Likewise.
+	* testsuite/poke.map/maps-int-11.pk: Likewise.
+	* testsuite/poke.map/maps-int-12.pk: Likewise.
+	* testsuite/poke.map/maps-int-13.pk: Likewise.
+	* testsuite/poke.map/maps-int-14.pk: Likewise.
+	* testsuite/poke.map/maps-int-15.pk: Likewise.
+	* testsuite/poke.map/maps-int-16.pk: Likewise.
+	* testsuite/poke.map/maps-int-17.pk: Likewise.
+	* testsuite/poke.map/maps-int-18.pk: Likewise.
+	* testsuite/poke.map/maps-int-19.pk: Likewise.
+	* testsuite/poke.map/maps-int-20.pk: Likewise.
+	* testsuite/poke.map/maps-int-21.pk: Likewise.
+	* testsuite/poke.map/maps-int-22.pk: Likewise.
+	* testsuite/poke.map/maps-int-23.pk: Likewise.
+	* testsuite/poke.map/maps-int-24.pk: Likewise.
+	* testsuite/poke.map/maps-int-25.pk: Likewise.
+	* testsuite/poke.map/maps-int-26.pk: Likewise.
+	* testsuite/poke.map/maps-int-27.pk: Likewise.
+	* testsuite/poke.map/maps-int-28.pk: Likewise.
+	* testsuite/poke.map/maps-int-29.pk: Likewise.
+	* testsuite/poke.map/maps-int-30.pk: Likewise.
+	* testsuite/poke.map/maps-int-31.pk: Likewise.
+	* testsuite/poke.map/maps-int-32.pk: Likewise.
+	* testsuite/poke.map/maps-int-33.pk: Likewise.
+	* testsuite/poke.map/maps-int-34.pk: Likewise.
+	* testsuite/poke.map/maps-int-35.pk: Likewise.
+	* testsuite/poke.map/maps-int-36.pk: Likewise.
+	* testsuite/poke.map/maps-int-37.pk: Likewise.
+	* testsuite/poke.map/maps-int-38.pk: Likewise.
+	* testsuite/poke.map/maps-int-39.pk: Likewise.
+	* testsuite/poke.map/maps-int-40.pk: Likewise.
+	* testsuite/poke.map/maps-int-41.pk: Likewise.
+	* testsuite/poke.map/maps-int-42.pk: Likewise.
+	* testsuite/poke.map/maps-int-43.pk: Likewise.
+	* testsuite/poke.map/maps-int-44.pk: Likewise.
+	* testsuite/poke.map/maps-int-45.pk: Likewise.
+	* testsuite/poke.map/maps-int-46.pk: Likewise.
+	* testsuite/poke.map/maps-int-47.pk: Likewise.
+	* testsuite/poke.map/maps-int-48.pk: Likewise.
+	* testsuite/poke.map/maps-int-49.pk: Likewise.
+	* testsuite/poke.map/maps-int-50.pk: Likewise.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Unmapping): New section.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (stmt): Set location of assignments to maps.
+	* src/pkl-ast.c (pkl_ast_lvalue_p): Allow maps in lvalues.
+	* src/pkl-typify.c (pkl_typify1_ps_ass_stmt): The type of a map in
+	an l-value shall be simple.
+	* src/pkl-gen.c (pkl_gen_pr_ass_stmt): Handle maps in l-values.
+	* doc/poke.texi (Assignments): Document maps in l-values.
+	* testsuite/poke.pkl/ass-map-diag-1.pk: New test.
+	* testsuite/poke.pkl/ass-map-diag-2.pk: Likewise.
+	* testsuite/poke.map/ass-map-1.pk: Likewise.
+	* testsuite/poke.map/ass-map-2.pk: Likewise.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Conditionals): New chapter.
+	(if-else): New section.
+	(Loops): New chapter.
+	(while): New section.
+	(for-in): Likewise.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Exception Handling): New chapter.
+	(Exceptions): New section.
+	(try-catch): Likewise.
+	(raise): Likewise.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/std.pk (substr): Remove.
+	(strstr): Likewise.
+	(format): Likewise.
+	* testsuite/poke.std/substr.pk: Remove test.
+	* testsuite/poke.std/strstr.pk: Likewise.
+
+2019-11-08  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* doc/poke.texi (Standard Integral Types): New chapter.
+	(Standard Offset Types): Likewise.
+	(Coversion Functions): Likewise.
+	(catos): New section.
+	(atoi): Likewise.
+	(Sorting Functions): New chapter.
+	(qsort): New section.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-repl.c (banner): New function.
+	(pk_repl): Call banner.
+	(pk_repl_display_begin): Use rl_prompt instead of a literal
+	string.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/std.pk (catos): Stop at the first null character '\0'.
+	* testsuite/poke.std/catos-3.pk: New test.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import the module unlink from
+	gnulib.
+	* src/pk-editor.c (pk_cmd_editor): Open result file and extract
+	the new line from it.
+	Remove the temporary file.
+	* doc/poke.texi (.editor): New chapter.
+
+2019-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import `system' gnulib module.
+	* src/pk-editor.c: New file.
+	* src/pk-cmd.c (editor_cmd): New extern.
+	(cmds): Add editor_cmd.
+	* src/Makefile.am (poke_SOURCES): Add pk_editor.c.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/bpf.pk (BPF_Insn_Opcode._print): Simply using the `in'
+	operator.
+	(bpf_class_is_alujmp): Likewise.
+	* pickles/btf.pk (BTF_Type): Likewise.
+
+2019-11-08  Michael Drüing <michael@drueing.de>
+
+	* src/std.pk (atoi): New function.
+	* testsuite/poke.std/atoi-1.pk: New test.
+	* testsuite/poke.std/atoi-2.pk: Likewise.
+	* testsuite/poke.std/atoi-3.pk: Likewise.
+	* testsuite/poke.std/atoi-4.pk: Likewise.
+	* testsuite/poke.std/atoi-5.pk: Likewise.
+	* testsuite/poke.std/atoi-6.pk: Likewise.
+	* testsuite/poke.std/atoi-7.pk: Likewise.
+	* testsuite/poke.std/atoi-8.pk: Likewise.
+	* testsuite/poke.std/atoi-9.pk: Likewise.
+	* testsuite/poke.std/atoi-10.pk: Likewise.
+	* testsuite/poke.std/atoi-11.pk: Likewise.
+	* testsuite/poke.std/atoi-12.pk: Likewise.
+	* testsuite/poke.std/atoi-13.pk: Likewise.
+
+2019-11-08  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* HACKING (Writing poke Tests): New section.
+
+2019-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y: Handle compound statements in the parser
+	destructor.
+
+2019-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-repl.h: New file.
+	* src/pk-repl.c: Likewise.
+	* src/Makefile.am (poke_SOURCES): Add pk-repl.c and pk-repl.h
+	* HACKING (Appendix): Add src/pk-repl.h and src/pk-repl.c to the
+	list of sources.
+	* src/poke.c: Include pk-repl.h
+	(repl): Remove function.
+	(main): Use pk_repl.
+
+2019-11-06  Darshit Shah  <darnir@gnu.org>
+
+    * bootstrap.conf: Exit out if jitter's bootstrap fails
+
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-term.c (pk_term_hyperlink): Fix guard.
+	(pk_term_end_hyperlink): Likewise.
+
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Write After Approval): Add Darshit Shah to the list of
+	commiters.
+
 2019-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/union-diag-7.pk: New test.

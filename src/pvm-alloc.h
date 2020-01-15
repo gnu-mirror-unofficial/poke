@@ -1,6 +1,6 @@
 /* pvm-val.h - Memory allocator for the PVM.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,12 @@ void pvm_alloc_remove_gc_roots (void *pointer, size_t nelems);
    NULL.  */
 
 void *pvm_alloc (size_t size);
+
+/* Reallocate the given pointer to occupy SIZE bytes and return a
+   pointer to the allocated memory.  SIZE has the same semantics as in
+   realloc(3).  On error, return NULL.  */
+
+void *pvm_realloc (void *ptr, size_t size);
 
 /* Allocate a pvm_cls struct and return a pointer to the allocated
    memory.  This type-specific allocator is needed because the GC

@@ -2,7 +2,7 @@
 ;;; pkl-gen.pks - Assembly routines for the codegen
 ;;;
 
-;;; Copyright (C) 2019 Jose E. Marchesi
+;;; Copyright (C) 2019, 2020 Jose E. Marchesi
 
 ;;; This program is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -30,13 +30,16 @@
         msetm
         push null
         msetw
+        push null
+        msetios
         .end
 
 ;;; RAS_FUNCTION_ARRAY_MAPPER
-;;; ( OFF EBOUND SBOUND -- ARR )
+;;; ( IOS BOFF EBOUND SBOUND -- ARR )
 ;;;
-;;; Assemble a function that maps an array value at the given offset
-;;; OFF, with mapping attributes EBOUND and SBOUND.
+;;; Assemble a function that maps an array value at the given
+;;; bit-offset BOFF in the IO space IOS, with mapping attributes
+;;; EBOUND and SBOUND.
 ;;;
 ;;; If both EBOUND and SBOUND are null, then perform an unbounded map,
 ;;; i.e. read array elements from IO until EOF.  XXX: what about empty
@@ -47,8 +50,8 @@
 ;;; amount of elements are read, then raise PVM_E_MAP_BOUNDS.
 ;;;
 ;;; Otherwise, if SBOUND is not null, then perform a map bounded by the
-;;; given size (an offset), i.e. read array elements from IO until the
-;;; total size of the array is exactly SBOUND.  If SBOUND is exceeded,
+;;; given size (a bit-offset), i.e. read array elements from IO until
+;;; the total size of the array is exactly SBOUND.  If SBOUND is exceeded,
 ;;; then raise PVM_E_MAP_BOUNDS.
 ;;;
 ;;; Only one of EBOUND or SBOUND simultanously are supported.
@@ -63,40 +66,16 @@
         pushf
         regvar $sbound           ; Argument
         regvar $ebound           ; Argument
-        regvar $off              ; Argument
-        ;; Determine the offset of the array, in bits, and put it in a
-        ;; local.
-        pushvar $off            ; OFF
-        ogetm		        ; OFF OMAG
-        swap                    ; OMAG OFF
-        ogetu                   ; OMAG OFF OUNIT
-        rot                     ; OFF OUNIT OMAG
-        mullu                   ; OFF OUNIT OMAG (OUNIT*OMAG)
-        nip2                    ; OFF (OUNIT*OMAG)
-        regvar $eomag           ; OFF
+        regvar $boff             ; Argument
+        regvar $ios              ; Argument
+        ;; Initialize the bit-offset of the elements in a local.
+        pushvar $boff           ; BOFF
+        dup                     ; BOFF BOFF
+        regvar $eboff           ; BOFF
         ;; Initialize the element index to 0UL, and put it
         ;; in a local.
-        push ulong<64>0         ; OFF 0UL
-        regvar $eidx            ; OFF
-        ;; Save the offset in bits of the beginning of the array in a
-        ;; local.
-        pushvar $eomag          ; OFF EOMAG
-        regvar $aomag           ; OFF
-        ;; If it is not null, transform the SBOUND from an offset to a
-        ;; magnitude in bits.
-        pushvar $sbound         ; OFF SBOUND
-        bn .after_sbound_conv
-        ogetm                   ; OFF SBOUND SBOUNDM
-        swap                    ; OFF SBOUNDM SBOUND
-        ogetu                   ; OFF SBOUNDM SBOUND SBOUNDU
-        swap                    ; OFF SBOUNDM SBOUNDU SBOUND
-        drop                    ; OFF SOBUNDM SBOUNDU
-        mullu                   ; OFF SBOUNDM SBOUNDU (SBOUNDM*SBOUNDU)
-        nip2                    ; OFF (SBOUNDM*SBOUNDU)
-        regvar $sboundm         ; OFF
-        push null               ; OFF null
-.after_sbound_conv:
-        drop                    ; OFF
+        push ulong<64>0         ; BOFF 0UL
+        regvar $eidx            ; BOFF
         ;; Build the type of the new mapped array.  Note that we use
         ;; the bounds passed to the mapper instead of just subpassing
         ;; in array_type.  This is because this mapper should work for
@@ -125,14 +104,14 @@
         ba .end_loop_on
 .loop_on_sbound:
         drop                    ; OFF ATYPE
-        pushvar $sboundm        ; OFF ATYPE SBOUNDM
+        pushvar $sbound         ; OFF ATYPE SBOUND
         bn .loop_unbounded
-        pushvar $aomag          ; OFF ATYPE SBOUNDM AOMAG
-        addlu                   ; OFF ATYPE SBOUNDM AOMAG (SBOUNDM+AOMAG)
-        nip2                    ; OFF ATYPE (SBOUNDM+AOMAG)
-        pushvar $eomag          ; OFF ATYPE (SBOUNDM+AOMAG) EOMAG
-        gtlu                    ; OFF ATYPE (SBOUNDM+AOMAG) EOMAG ((SBOUNDM+AOMAG)>EOMAG)
-        nip2                    ; OFF ATYPE ((SBOUNDM+AOMAG)>EOMAG)
+        pushvar $boff           ; OFF ATYPE SBOUND BOFF
+        addlu                   ; OFF ATYPE SBOUND BOFF (SBOUND+BOFF)
+        nip2                    ; OFF ATYPE (SBOUND+BOFF)
+        pushvar $eboff          ; OFF ATYPE (SBOUND+BOFF) EBOFF
+        gtlu                    ; OFF ATYPE (SBOUND+BOFF) EBOFF ((SBOUND+BOFF)>EBOFF)
+        nip2                    ; OFF ATYPE ((SBOUND+BOFF)>EBOFF)
         ba .end_loop_on
 .loop_unbounded:
         drop                    ; OFF ATYPE
@@ -140,39 +119,33 @@
 .end_loop_on:
         .loop
                                 ; OFF ATYPE
-        ;; Mount the Ith element triplet: [EOFF EIDX EVAL]
-        pushvar $eomag          ; ... EOMAG
-        push ulong<64>1         ; ... EOMAG EOUNIT
-        mko                     ; ... EOFF
-        dup                     ; ... EOFF EOFF
+        ;; Mount the Ith element triplet: [EBOFF EIDX EVAL]
+        pushvar $eboff          ; ... EBOFF
+        dup                     ; ... EBOFF EBOFF
         push PVM_E_EOF
         pushe .eof
         push PVM_E_CONSTRAINT
         pushe .constraint_error
+        pushvar $ios            ; ... EBOFF EBOFF IOS
+        swap                    ; ... EBOFF IOS EBOFF
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
         pope
         pope
         ;; Update the current offset with the size of the value just
         ;; peeked.
-        siz                     ; ... EOFF EVAL ESIZ
-        rot                     ; ... EVAL ESIZ EOFF
-        ogetm                   ; ... EVAL ESIZ EOFF EOMAG
-        rot                     ; ... EVAL EOFF EOMAG ESIZ
-        ogetm                   ; ... EVAL EOFF EOMAG ESIZ ESIGMAG
-        rot                     ; ... EVAL EOFF ESIZ ESIGMAG EOMAG
-        addlu                   ; ... EVAL EOFF ESIZ ESIGMAG EOMAG (ESIGMAG+EOMAG)
-        popvar $eomag           ; ... EVAL EOFF ESIZ ESIGMAG EOMAG
-        drop                    ; ... EVAL EOFF ESIZ ESIGMAG
-        drop                    ; ... EVAL EOFF ESIZ
-        drop                    ; ... EVAL EOFF
-        pushvar $eidx           ; ... EVAL EOFF EIDX
-        rot                     ; ... EOFF EIDX EVAL
+        siz                     ; ... EBOFF EVAL ESIZ
+        quake                   ; ... EVAL EBOFF ESIZ
+        addlu                   ; ... EVAL EBOFF ESIZ (EBOFF+ESIZ)
+        popvar $eboff           ; ... EVAL EBOFF ESIZ
+        drop                    ; ... EVAL EBOFF
+        pushvar $eidx           ; ... EVAL EBOFF EIDX
+        rot                     ; ... EBOFF EIDX EVAL
         ;; Increase the current index and process the next element.
-        pushvar $eidx           ; ... EOFF EIDX EVAL EIDX
-        push ulong<64>1         ; ... EOFF EIDX EVAL EIDX 1UL
-        addlu                   ; ... EOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
-        nip2                    ; ... EOFF EIDX EVAL (EIDX+1UL)
-        popvar $eidx            ; ... EOFF EIDX EVAL
+        pushvar $eidx           ; ... EBOFF EIDX EVAL EIDX
+        push ulong<64>1         ; ... EBOFF EIDX EVAL EIDX 1UL
+        addlu                   ; ... EBOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
+        nip2                    ; ... EBOFF EIDX EVAL (EIDX+1UL)
+        popvar $eidx            ; ... EBOFF EIDX EVAL
         .endloop
         push null
         ba .mountarray
@@ -213,16 +186,16 @@
         push PVM_E_EOF
         raise
 .mountarray:
-        drop                   ; OFF ATYPE [EOFF EIDX EVAL]...
-        pushvar $eidx          ; OFF ATYPE [EOFF EIDX EVAL]... NELEM
-        dup                    ; OFF ATYPE [EOFF EIDX EVAL]... NELEM NINITIALIZER
+        drop                   ; BOFF ATYPE [EBOFF EIDX EVAL]...
+        pushvar $eidx          ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM
+        dup                    ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM NINITIALIZER
         mka                    ; ARRAY
         ;; Check that the resulting array satisfies the mapping's
         ;; bounds (number of elements and total size.)
         pushvar $ebound        ; ARRAY EBOUND
         bnn .check_ebound
         drop                   ; ARRAY
-        pushvar $sboundm       ; ARRAY SBOUNDM
+        pushvar $sbound        ; ARRAY SBOUND
         bnn .check_sbound
         drop
         ba .bounds_ok
@@ -237,18 +210,12 @@
         drop                   ; ARRAY
         ba .bounds_ok
 .check_sbound:
-        swap                   ; SBOUNDM ARRAY
-        siz                    ; SBOUNDM ARRAY OFF
-        ogetm                  ; SBOUNDM ARRAY OFF OFFM
-        swap                   ; SBOUNDM ARRAY OFFM OFF
-        ogetu                  ; SBOUNDM ARRAY OFFM OFF OFFU
-        nip                    ; SBOUNDM ARRAY OFFM OFFU
-        mullu                  ; SBOUNDM ARRAY OFFM OFFU (OFFM*OFFU)
-        nip2                   ; SBOUNDM ARRAY (OFFM*OFFU)
-        rot                    ; ARRAY (OFFM*OFFU) SBOUNDM
-        sublu                  ; ARRAY (OFFM*OFFU) SBOUNDM ((OFFM*OFFU)-SBOUND)
+        swap                   ; SBOUND ARRAY
+        siz                    ; SBOUND ARRAY SIZ
+        rot                    ; ARRAY SIZ SBOUND
+        sublu                  ; ARRAY SIZ SBOUND (SIZ-SBOUND)
         bnzlu .bounds_fail
-        drop                   ; ARRAY (OFFU*OFFM) SBOUNDM
+        drop                   ; ARRAY (OFFU*OFFM) SBOUND
         drop                   ; ARRAY (OFFU*OFFM)
         drop                   ; ARRAY
 .bounds_ok:
@@ -265,10 +232,11 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_VALMAPPER
-;;; ( VAL NVAL OFF -- ARR )
+;;; ( VAL NVAL BOFF -- ARR )
 ;;;
-;;; Assemble a function that "valmaps" a given NVAL at the given offset
-;;; OFF, using the data of NVAL, and the mapping attributes of VAL.
+;;; Assemble a function that "valmaps" a given NVAL at the given
+;;; bit-offset BOFF, using the data of NVAL, and the mapping
+;;; attributes of VAL.
 ;;;
 ;;; This function can raise PVM_E_MAP_BOUNDS if the characteristics of
 ;;; NVAL violate the bounds of the map.
@@ -278,10 +246,9 @@
         .function array_valmapper
         prolog
         pushf
-        regvar $off             ; Argument
+        regvar $boff            ; Argument
         regvar $nval            ; Argument
         regvar $val             ; Argument
-
         ;; Determine VAL's bounds and set them in locals to be used
         ;; later.
         pushvar $val            ; VAL
@@ -290,61 +257,33 @@
         mgetsiz                 ; VAL SBOUND
         regvar $sbound          ; VAL
         drop                    ; _
-
-        ;; Determine the offset of the array, in bits, and put it in a
-        ;; local.
-        pushvar $off            ; OFF
-        ogetm                   ; OFF OMAG
-        swap                    ; OMAG OFF
-        ogetu                   ; OMAG OFF OUNIT
-        rot                     ; OFF OUNIT OMAG
-        mullu                   ; OFF OUNIT OMAG (OUNIT*OMAG)
-        nip2                    ; OFF (OUNIT*OMAG)
-        regvar $eomag           ; OFF
-
+        ;; Initialize the bit-offset of the elements in a local.
+        pushvar $boff           ; BOFF
+        dup
+        regvar $eboff           ; BOFF
         ;; Initialize the element index to 0UL, and put it
         ;; in a local.
-        push ulong<64>0         ; OFF 0UL
-        regvar $eidx	        ; OFF
-
+        push ulong<64>0         ; BOFF 0UL
+        regvar $eidx	        ; BOFF
         ;; Get the number of elements in NVAL, and put it in a local.
-        pushvar $nval           ; OFF NVAL
-        sel                     ; OFF NVAL NELEM
-        nip                     ; OFF NELEM
-        regvar $nelem           ; OFF
-
-        ;; If it is not null, transform the SBOUND from an offset to
-        ;; a magnitude in bits.
-        pushvar $sbound         ; OFF SBOUND
-        bn .after_sbound_conv
-        ogetm                   ; OFF SBOUND SBOUNDM
-        swap                    ; OFF SBOUNDM SBOUND
-        ogetu                   ; OFF SBOUNDM SBOUND SBOUNDU
-        swap                    ; OFF SBOUNDM SBOUNDU SBOUND
-        drop                    ; OFF SOBUNDM SBOUNDU
-        mullu                   ; OFF SBOUNDM SBOUNDU (SBOUNDM*SBOUNDU)
-        nip2                    ; OFF (SBOUNDM*SBOUNDU)
-        regvar $sboundm         ; OFF
-        push null               ; OFF null
-.after_sbound_conv:
-        drop                    ; OFF
-
+        pushvar $nval           ; BOFF NVAL
+        sel                     ; BOFF NVAL NELEM
+        nip                     ; BOFF NELEM
+        regvar $nelem           ; BOFF
         ;; Check that NVAL satisfies EBOUND if this bound is specified
         ;; i.e. the number of elements stored in the array matches the
         ;; bound.
-        pushvar $ebound         ; OFF EBOUND
+        pushvar $ebound         ; BOFF EBOUND
         bnn .check_ebound
-        drop                    ; OFF
+        drop                    ; BOFF
         ba .ebound_ok
-
 .check_ebound:
-        pushvar $nelem          ; OFF EBOUND NELEM
-        sublu                   ; OFF EBOUND NELEM (EBOUND-NELEM)
+        pushvar $nelem          ; BOFF EBOUND NELEM
+        sublu                   ; BOFF EBOUND NELEM (EBOUND-NELEM)
         bnzlu .bounds_fail
-        drop                    ; OFF EBOUND NELEM
-        drop                    ; OFF EBOUND
-        drop                    ; OFF
-
+        drop                    ; BOFF EBOUND NELEM
+        drop                    ; BOFF EBOUND
+        drop                    ; BOFF
 .ebound_ok:
         ;; Build the type of the new mapped array.  Note that we use
         ;; the bounds extracted above instead of just subpassing in
@@ -355,107 +294,85 @@
         .c PKL_GEN_PAYLOAD->in_valmapper = 0;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
         .c PKL_GEN_PAYLOAD->in_valmapper = 1;
-                                ; OFF ETYPE
-        pushvar $ebound         ; OFF ETYPE EBOUND
+                                ; BOFF ETYPE
+        pushvar $ebound         ; BOFF ETYPE EBOUND
         bnn .atype_bound_done
-        drop                    ; OFF ETYPE
-        pushvar $sbound         ; OFF ETYPE (SBOUND|NULL)
+        drop                    ; BOFF ETYPE
+        pushvar $sbound         ; BOFF ETYPE (SBOUND|NULL)
 .atype_bound_done:
-        mktya                   ; OFF ATYPE
+        mktya                   ; BOFF ATYPE
         .while
-        pushvar $eidx           ; OFF ATYPE I
-        pushvar $nelem          ; OFF ATYPE I NELEM
-        ltlu                    ; OFF ATYPE I NELEM (NELEM<I)
-        nip2                    ; OFF ATYPE (NELEM<I)
+        pushvar $eidx           ; BOFF ATYPE I
+        pushvar $nelem          ; BOFF ATYPE I NELEM
+        ltlu                    ; BOFF ATYPE I NELEM (NELEM<I)
+        nip2                    ; BOFF ATYPE (NELEM<I)
         .loop
-                                ; OFF ATYPE
+                                ; BOFF ATYPE
 
-        ;; Mount the Ith element triplet: [EOFF EIDX EVAL]
-        pushvar $eomag          ; ... EOMAG
-        push ulong<64>1         ; ... EOMAG EOUNIT
-        mko                     ; ... EOFF
-        dup                     ; ... EOFF EOFF
-
-        pushvar $nval           ; ... EOFF EOFF NVAL
-        pushvar $eidx           ; ... EOFF EOFF NVAL IDX
-        aref                    ; ... EOFF EOFF NVAL IDX ENVAL
-        nip2                    ; ... EOFF EOFF ENVAL
-        swap                    ; ... EOFF ENVAL EOFF
-        pushvar $val            ; ... EOFF ENVAL EOFF VAL
-        pushvar $eidx           ; ... EOFF ENVAL EOFF VAL EIDX
-        aref                    ; ... EOFF ENVAL EOFF VAL EIDX OVAL
-        nip2                    ; ... EOFF ENVAL EOFF OVAL
-        nrot                    ; ... EOFF OVAL ENVAL EOFF
+        ;; Mount the Ith element triplet: [EBOFF EIDX EVAL]
+        pushvar $eboff          ; ... EBOFF
+        dup                     ; ... EBOFF EBOFF
+        pushvar $nval           ; ... EBOFF EBOFF NVAL
+        pushvar $eidx           ; ... EBOFF EBOFF NVAL IDX
+        aref                    ; ... EBOFF EBOFF NVAL IDX ENVAL
+        nip2                    ; ... EBOFF EBOFF ENVAL
+        swap                    ; ... EBOFF ENVAL EBOFF
+        pushvar $val            ; ... EBOFF ENVAL EBOFF VAL
+        pushvar $eidx           ; ... EBOFF ENVAL EBOFF VAL EIDX
+        aref                    ; ... EBOFF ENVAL EBOFF VAL EIDX OVAL
+        nip2                    ; ... EBOFF ENVAL EBOFF OVAL
+        nrot                    ; ... EBOFF OVAL ENVAL EBOFF
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
-                                ; ... EOFF EVAL
+                                ; ... EBOFF EVAL
         ;; Update the current offset with the size of the value just
         ;; peeked.
-        siz                     ; ... EOFF EVAL ESIZ
-        rot                     ; ... EVAL ESIZ EOFF
-        ogetm                   ; ... EVAL ESIZ EOFF EOMAG
-        rot                     ; ... EVAL EOFF EOMAG ESIZ
-        ogetm                   ; ... EVAL EOFF EOMAG ESIZ ESIGMAG
-        rot                     ; ... EVAL EOFF ESIZ ESIGMAG EOMAG
-        addlu                   ; ... EVAL EOFF ESIZ ESIGMAG EOMAG (ESIGMAG+EOMAG)
-        popvar $eomag           ; ... EVAL EOFF ESIZ ESIGMAG EOMAG
-        drop                    ; ... EVAL EOFF ESIZ ESIGMAG
-        drop                    ; ... EVAL EOFF ESIZ
-        drop                    ; ... EVAL EOFF
-        pushvar $eidx           ; ... EVAL EOFF EIDX
-        rot                     ; ... EOFF EIDX EVAL
-
+        siz                     ; ... EBOFF EVAL ESIZ
+        quake                   ; ... EVAL EBOFF ESIZ
+        addlu                   ; ... EVAL EBOFF ESIZ (EBOFF+ESIZ)
+        popvar $eboff           ; ... EVAL EBOFF ESIZ
+        drop                    ; ... EVAL EBOFF
+        pushvar $eidx           ; ... EVAL EBOFF EIDX
+        rot                     ; ... EBOFF EIDX EVAL
         ;; Increase the current index and process the next element.
-        pushvar $eidx           ; ... EOFF EIDX EVAL EIDX
-        push ulong<64>1         ; ... EOFF EIDX EVAL EIDX 1UL
-        addlu                   ; ... EOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
-        nip2                    ; ... EOFF EIDX EVAL (EIDX+1UL)
-        popvar $eidx            ; ... EOFF EIDX EVAL
+        pushvar $eidx           ; ... EBOFF EIDX EVAL EIDX
+        push ulong<64>1         ; ... EBOFF EIDX EVAL EIDX 1UL
+        addlu                   ; ... EBOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
+        nip2                    ; ... EBOFF EIDX EVAL (EIDX+1UL)
+        popvar $eidx            ; ... EBOFF EIDX EVAL
         .endloop
-
-        pushvar $eidx           ; OFF ATYPE [EOFF EIDX EVAL]... NELEM
-        dup                     ; OFF ATYPE [EOFF EIDX EVAL]... NELEM NINITIALIZER
+        pushvar $eidx           ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM
+        dup                     ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM NINITIALIZER
         mka                     ; ARRAY
-
         ;; Check that the resulting array satisfies the mapping's
         ;; total size bound.
-        pushvar $sboundm        ; ARRAY SBOUNDM
+        pushvar $sbound         ; ARRAY SBOUND
         bnn .check_sbound
         drop
         ba .sbound_ok
-
 .check_sbound:
-        swap                    ; SBOUNDM ARRAY
-        siz                     ; SBOUNDM ARRAY OFF
-        ogetm                   ; SBOUNDM ARRAY OFF OFFM
-        swap                    ; SBOUNDM ARRAY OFFM OFF
-        ogetu                   ; SBOUNDM ARRAY OFFM OFF OFFU
-        nip                     ; SBOUNDM ARRAY OFFM OFFU
-        mullu                   ; SBOUNDM ARRAY OFFM OFFU (OFFM*OFFU)
-        nip2                    ; SBOUNDM ARRAY (OFFM*OFFU)
-        rot                     ; ARRAY (OFFM*OFFU) SBOUNDM
-        sublu                   ; ARRAY (OFFM*OFFU) SBOUNDM ((OFFM*OFFU)-SBOUND)
+        swap                    ; SBOUND ARRAY
+        siz                     ; SBOUND ARRAY SIZ
+        rot                     ; ARRAY SIZ SBOUND
+        sublu                   ; ARRAY SIZ SBOUND (SIZ-SBOUND)
         bnzlu .bounds_fail
-        drop                    ; ARRAY (OFFU*OFFM) SBOUNDM
+        drop                    ; ARRAY (OFFU*OFFM) SBOUND
         drop                    ; ARRAY (OFFU*OFFM)
         drop                    ; ARRAY
-
 .sbound_ok:
         ;; Set the map bound attributes in the new object.
         pushvar $sbound         ; ARRAY SBOUND
         msetsiz                 ; ARRAY
         pushvar $ebound         ; ARRAY EBOUND
         msetsel                 ; ARRAY
-
         popf 1
         return
-
 .bounds_fail:
         push PVM_E_MAP_BOUNDS
         raise
         .end
 
 ;;; RAS_FUNCTION_ARRAY_WRITER
-;;; ( OFF VAL -- )
+;;; ( IOS BOFF VAL -- )
 ;;;
 ;;; Assemble a function that pokes a mapped array value to it's mapped
 ;;; offset in the current IOS.
@@ -467,7 +384,8 @@
         prolog
         pushf
         regvar $value           ; Argument
-        drop                    ; The offset is not used.
+        drop                    ; The bit-offset is not used.
+        regvar $ios             ; Argument
         push ulong<64>0         ; 0UL
         regvar $idx             ; _
      .while
@@ -484,9 +402,11 @@
         pushvar $idx            ; ARRAY I
         aref                    ; ARRAY I VAL
         nrot                    ; VAL ARRAY I
-        arefo                   ; VAL ARRAY I EOFF
-        nip2                    ; VAL EOFF
-        swap                    ; EOFF VAL
+        arefo                   ; VAL ARRAY I EBOFF
+        nip2                    ; VAL EBOFF
+        swap                    ; EBOFF VAL
+        pushvar $ios            ; EBOFF VAL IOS
+        nrot                    ; IOS EOFF VAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
         .c PKL_GEN_PAYLOAD->in_writer = 0;
@@ -531,42 +451,12 @@
         return
         .end
 
-;;; RAS_MACRO_OFF_PLUS_SIZEOF
-;;; ( VAL OFF -- VAL OFF NOFF )
-;;;
-;;; Given a value and an offset in the stack, provide an offset whose
-;;; value is OFF + sizeof(VAL).
-;;;
-;;; XXX this can be greatly simplified if it can be assumed OFF
-;;; is of type offset<uint<64>,b>.
-
-        .macro off_plus_sizeof
-        swap                   ; OFF VAL
-        siz                    ; OFF VAL ESIZ
-        rot                    ; VAL ESIZ OFF
-        swap                   ; VAL OFF ESIZ
-        ogetm                  ; VAL OFF ESIZ ESIZM
-        nip                    ; VAL OFF ESIZM
-        swap                   ; VAL ESIZM OFF
-        ogetm                  ; VAL ESIZM OFF OFFM
-        swap                   ; VAL ESIZM OFFM OFF
-        ogetu                  ; VAL ESIZM OFFM OFF OFFU
-        rot                    ; VAL ESIZM OFF OFFU OFFM
-        mullu
-        nip2                   ; VAL ESIZM OFF (OFFU*OFFM)
-        rot                    ; VAL OFF (OFFU*OFFM) ESIZM
-        addlu
-        nip2                   ; VAL OFF (OFFU*OFFM+ESIZM)
-        push ulong<64>1        ; VAL OFF (OFFU*OFFM+ESIZM) 1UL
-        mko                    ; VAL OFF NOFF
-        .end
-
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL
-;;; ( OFF SOFF - OFF )
+;;; ( BOFF SBOFF - BOFF )
 ;;;
 ;;; Given a struct type element, it's offset and the offset of the struct
-;;; on the stack, increase the offset by the element's label, in case
-;;; it exists.
+;;; on the stack, increase the bit-offset by the element's label, in
+;;; case it exists.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -575,31 +465,22 @@
 
         .macro handle_struct_field_label
    .c if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field) == NULL)
-        drop                    ; OFF
+        drop                    ; BOFF
    .c else
    .c {
-        nip                     ; SOFF
+        nip                     ; SBOFF
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
-                                ; SOFF LOFF
-        ogetm                   ; SOFF LOFF LOFFM
-        swap                    ; SOFF LOFFM LOFF
-        ogetu                   ; SOFF LOFFM LOFF LOFFU
-        nip                     ; SOFF LOFFM LOFFU
+                                ; SBOFF LOFF
+        ogetm                   ; SBOFF LOFF LOFFM
+        swap                    ; SBOFF LOFFM LOFF
+        ogetu                   ; SBOFF LOFFM LOFF LOFFU
+        nip                     ; SBOFF LOFFM LOFFU
         mullu
-        nip2                    ; SOFF (LOFFM*LOFFU)
-        swap                    ; (LOFFM*LOFFU) SOFF
-        ogetm                   ; (LOFFM*LOFFU) SOFF SOFFM
-        swap                    ; (LOFFM*LOFFU) SOFFM SOFF
-        ogetu                   ; (LOFFM*LOFFU) SOFFM SOFF SOFFU
-        nip                     ; (LOFFM*LOFFU) SOFFM SOFFU
-        mullu
-        nip2                    ; (LOFFM*LOFFU) (SOFFM*SOFFU)
+        nip2                    ; SBOFF (LOFFM*LOFFU)
         addlu
-        nip2                    ; (LOFFM*LOFFU+SOFFM*SOFFU)
-        push ulong<64>1         ; (LOFFM*LOFFU+SOFFM*SOFFU) 1UL
-        mko                     ; OFF
+        nip2                    ; (SBOFF+LOFFM*LOFFU)
    .c }
         .end
 
@@ -630,11 +511,11 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_MAPPER
-;;; ( OFF SOFF -- OFF STR VAL NOFF )
+;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Map a struct field from the current IOS.
-;;; SOFF is the offset of the beginning of the struct.
-;;; NOFF is the offset marking the end of this field.
+;;; SBOFF is the bit-offset of the beginning of the struct.
+;;; NBOFF is the bit-offset marking the end of this field.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -643,35 +524,39 @@
 
         .macro struct_field_mapper
         ;; Increase OFF by the label, if the field has one.
-        .e handle_struct_field_label     ; OFF
-        dup                             ; OFF OFF
+        .e handle_struct_field_label    ; IOS BOFF
+        dup                             ; IOS BOFF BOFF
+        nrot                            ; BOFF IOS BOFF
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
         .c PKL_GEN_PAYLOAD->endian = endian; }
-                                	; OFF VAL
-        dup                             ; OFF VAL VAL
-        regvar $val                     ; OFF VAL
+                                	; BOFF VAL
+        dup                             ; BOFF VAL VAL
+        regvar $val                     ; BOFF VAL
    .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (field) == NULL)
         push null
    .c else
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (field));
-                                	; OFF VAL STR
-        swap                            ; OFF STR VAL
+                                	; BOFF VAL STR
+        swap                            ; BOFF STR VAL
         ;; Evaluate the field's constraint and raise
         ;; an exception if not satisfied.
         .e check_struct_field_constraint
         ;; Calculate the offset marking the end of the field, which is
         ;; the field's offset plus it's size.
-        rot                    ; STR VAL OFF
-        .e off_plus_sizeof     ; STR VAL OFF NOFF
-        tor                    ; STR VAL OFF
-        nrot                   ; OFF STR VAL
-        fromr                  ; OFF STR VAL NOFF
+        quake                  ; STR BOFF VAL
+        siz                    ; STR BOFF VAL SIZ
+        quake                  ; STR VAL BOFF SIZ
+        addlu
+        nip                    ; STR VAL BOFF (BOFF+SIZ)
+        tor                    ; STR VAL BOFF
+        nrot                   ; BOFF STR VAL
+        fromr                  ; BOFF STR VAL NBOFF
         .end
 
 ;;; RAS_FUNCTION_STRUCT_MAPPER
-;;; ( OFF EBOUND SBOUND -- SCT )
+;;; ( IOS BOFF EBOUND SBOUND -- SCT )
 ;;;
 ;;; Assemble a function that maps a struct value at the given offset
 ;;; OFF.
@@ -679,7 +564,7 @@
 ;;; Both EBOUND and SBOUND are always null, and not used, i.e. struct maps
 ;;; are not bounded by either number of fields or size.
 ;;;
-;;; OFF should be of type offset<uint<64>,*>.
+;;; BOFF should be of type uint<64>.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -703,11 +588,12 @@
         pushf
         drop                    ; sbound
         drop                    ; ebound
-        regvar $off
+        regvar $boff
+        regvar $ios
         push ulong<64>0
         regvar $nfield
-        pushvar $off            ; OFF
-        dup                     ; OFF OFF
+        pushvar $boff           ; BOFF
+        dup                     ; BOFF BOFF
         ;; Iterate over the elements of the struct type.
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
@@ -726,31 +612,33 @@
         push PVM_E_CONSTRAINT
         pushe .alternative_failed
  .c   }
-        pushvar $off             ; ...[EOFF ENAME EVAL] NEOFF OFF
-        .e struct_field_mapper   ; ...[EOFF ENAME EVAL] NEOFF
+        pushvar $ios             ; ...[EBOFF ENAME EVAL] NEOFF IOS
+        swap                     ; ...[EBOFF ENAME EVAL] IOS NEOFF
+        pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEOFF OFF
+        .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         pope
  .c   }
-        ;; If the struct is pinned, replace NEOFF with OFF
+        ;; If the struct is pinned, replace NEBOFF with BOFF
  .c   if (PKL_AST_TYPE_S_PINNED (type_struct))
  .c   {
         drop
-        pushvar $off            ; ...[EOFF ENAME EVAL] OFF
+        pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
  .c   }
         ;; Increase the number of fields.
-        pushvar $nfield         ; ...[EOFF ENAME EVAL] NEOFF NFIELD
-        push ulong<64>1         ; ...[EOFF ENAME EVAL] NEOFF NFIELD 1UL
+        pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD
+        push ulong<64>1         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD 1UL
         addl
-        nip2                    ; ...[EOFF ENAME EVAL] NEOFF (NFIELD+1UL)
-        popvar $nfield          ; ...[EOFF ENAME EVAL] NEOFF
+        nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
+        popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         ;; Union field successfully mapped.  We are done.
         ba .union_fields_done
 .alternative_failed:
         ;; Drop the exception number and try next alternative.
-        drop                    ; ...[EOFF ENAME EVAL] NEOFF
+        drop                    ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c }
  .c if (PKL_AST_TYPE_S_UNION (type_struct))
@@ -760,7 +648,7 @@
         raise
  .c }
 .union_fields_done:
-        drop  			; ...[EOFF ENAME EVAL]
+        drop  			; ...[EBOFF ENAME EVAL]
         ;; Ok, at this point all the struct field triplets are
         ;; in the stack.
         ;; Iterate over the methods of the struct type.
@@ -774,8 +662,8 @@
  .c       i++;
  .c     continue;
  .c   }
-        ;; The lexical address of this method is 0,B where B is 2 +
-        ;; element order.  This 2 should be updated if the lexical
+        ;; The lexical address of this method is 0,B where B is 3 +
+        ;; element order.  This 3 should be updated if the lexical
         ;; structure of this function changes.
         ;;
         ;; XXX note that here we really want to duplicate the
@@ -784,7 +672,7 @@
         ;; Sounds good.
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
  .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (PKL_AST_DECL_NAME (field))));
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 2 + i);
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 3 + i);
  .c     nmethod++;
  .c     i++;
  .c }
@@ -792,12 +680,12 @@
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (nmethod, 64));
  .c }
         ;;  Push the number of fields
-        pushvar $nfield         ; OFF [OFF STR VAL]... NFIELD
+        pushvar $nfield         ; BOFF [EBOFF STR VAL]... NFIELD
         ;; Finally, push the struct type and call mksct.
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
         .c PKL_PASS_SUBPASS (type_struct);
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
-                                ; OFF [OFF STR VAL]... NFIELD TYP
+                                ; BOFF [EBOFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
         popf 1
         return
@@ -891,8 +779,8 @@
         drop                    ; SCT I
         srefi                   ; SCT I EVAL
         nrot                    ; EVAL SCT I
-        srefio                  ; EVAL SCT I EOFF
-        nip2                    ; EVAL EOFF
+        srefio                  ; EVAL SCT I EBOFF
+        nip2                    ; EVAL EBOFF
         swap                    ; EOFF EVAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
@@ -906,7 +794,7 @@
         .end
 
 ;;; RAS_FUNCTION_STRUCT_WRITER
-;;; ( OFF VAL -- )
+;;; ( BOFF VAL -- )
 ;;;
 ;;; Assemble a function that pokes a mapped struct value to it's mapped
 ;;; offset in the current IOS.
@@ -924,7 +812,7 @@
         prolog
         pushf
         regvar $sct
-        drop                    ; OFF is not used.
+        drop                    ; BOFF is not used.
 .c { uint64_t i;
  .c for (i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {

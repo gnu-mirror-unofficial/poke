@@ -1,6 +1,6 @@
 /* pvm-val.h - Values for the PVM.  */
 
-/* Copyright (C) 2019 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +186,9 @@ void pvm_print_string (pvm_val string);
 /* Arrays values are boxed, and store sequences of homogeneous values
    called array "elements".  They can be mapped in IO, or unmapped.
 
+   IOS is an int<32> value that identifies the IO space where the
+   value is mapped.  If the array is not mapped then this is PVM_NULL.
+
    OFFSET is an ulong<64> value with the bit offset in the current IO
    space where the array is mapped.  If the array is not mapped then
    this is PVM_NULL.
@@ -218,6 +221,7 @@ void pvm_print_string (pvm_val string);
    relevant.  */
 
 #define PVM_VAL_ARR(V) (PVM_VAL_BOX_ARR (PVM_VAL_BOX ((V))))
+#define PVM_VAL_ARR_IOS(V) (PVM_VAL_ARR(V)->ios)
 #define PVM_VAL_ARR_OFFSET(V) (PVM_VAL_ARR(V)->offset)
 #define PVM_VAL_ARR_ELEMS_BOUND(V) (PVM_VAL_ARR(V)->elems_bound)
 #define PVM_VAL_ARR_SIZE_BOUND(V) (PVM_VAL_ARR(V)->size_bound)
@@ -229,6 +233,7 @@ void pvm_print_string (pvm_val string);
 
 struct pvm_array
 {
+  pvm_val ios;
   pvm_val offset;
   pvm_val elems_bound;
   pvm_val size_bound;
@@ -245,8 +250,8 @@ typedef struct pvm_array *pvm_array;
    how to obtain these values.
 
    OFFSET is an ulong<64> value holding the bit offset of the element,
-   relative to the array's offset, if the array is mapped.  If the
-   array is not mapped then this is PVM_NULL.
+   relative to the begginnig of the IO space.  If the array is not
+   mapped then this is PVM_NULL.
 
    VALUE is the value contained in the element.  If the array is
    mapped this is the cached value, which is returned by `aref'.  */
@@ -267,8 +272,12 @@ pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
    called structure "elements".  They can be mapped in IO, or
    unmapped.
 
-   OFFSET is the offset in the current IO space where the structure is
-   mapped.  If the structure is not mapped then this is PVM_NULL.
+   IO is an int<32> value that identifies the IO space where the value
+   is mapped.  If the structure is not mapped then this is PVM_NULL.
+
+   OFFSET is an ulong<64> value holding the bit offset of in the IO
+   space where the structure is mapped.  If the structure is not
+   mapped then this is PVM_NULL.
 
    TYPE is the type of the struct.  This includes the types of the
    struct fields.
@@ -284,6 +293,7 @@ pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
    irrelevant.  */
 
 #define PVM_VAL_SCT(V) (PVM_VAL_BOX_SCT (PVM_VAL_BOX ((V))))
+#define PVM_VAL_SCT_IOS(V) (PVM_VAL_SCT((V))->ios)
 #define PVM_VAL_SCT_OFFSET(V) (PVM_VAL_SCT((V))->offset)
 #define PVM_VAL_SCT_MAPPER(V) (PVM_VAL_SCT((V))->mapper)
 #define PVM_VAL_SCT_WRITER(V) (PVM_VAL_SCT((V))->writer)
@@ -295,6 +305,7 @@ pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
 
 struct pvm_struct
 {
+  pvm_val ios;
   pvm_val offset;
   pvm_val mapper;
   pvm_val writer;
@@ -308,8 +319,9 @@ struct pvm_struct
 /* Struct fields hold the data of the fields, and/or information on
    how to obtain these values.
 
-   OFFSET is the offset, relative to the beginning of the struct,
-   where the struct field resides when stored.
+   OFFSET is an ulong<64> value containing the bit-offset,
+   relative to the beginning of the struct, where the struct field
+   resides when stored.
 
    NAME is a string containing the name of the struct field.  This
    name should be unique in the struct.
@@ -554,7 +566,7 @@ pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
 /* The following macros allow to handle map-able PVM values (such as
    arrays and structs) polymorphically.
 
-   It is important for the PVM_VAL_SET_{OFFSET,MAPPER,WRITER} to work
+   It is important for the PVM_VAL_SET_{IO,OFFSET,MAPPER,WRITER} to work
    for non-mappeable values, as nops, as they are used in the
    implementation of the `unmap' operator.  */
 
@@ -570,6 +582,20 @@ pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
         PVM_VAL_ARR_OFFSET ((V)) = (O);         \
       else if (PVM_IS_SCT ((V)))                \
         PVM_VAL_SCT_OFFSET ((V)) = (O);         \
+    } while (0)
+
+#define PVM_VAL_IOS(V)                          \
+  (PVM_IS_ARR ((V)) ? PVM_VAL_ARR_IOS ((V))     \
+   : PVM_IS_SCT ((V)) ? PVM_VAL_SCT_IOS ((V))   \
+   : PVM_NULL)
+
+#define PVM_VAL_SET_IOS(V,I)                     \
+  do                                             \
+    {                                            \
+      if (PVM_IS_ARR ((V)))                      \
+        PVM_VAL_ARR_IOS ((V)) = (I);             \
+      else if (PVM_IS_SCT (V))                   \
+        PVM_VAL_SCT_IOS ((V)) = (I);             \
     } while (0)
 
 #define PVM_VAL_MAPPER(V)                               \
