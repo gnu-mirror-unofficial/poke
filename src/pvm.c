@@ -50,8 +50,7 @@ struct pvm
 pvm
 pvm_init (void)
 {
-  pvm apvm = xmalloc (sizeof (struct pvm));
-  memset (apvm, 0, sizeof (struct pvm));
+  pvm apvm = xzalloc (sizeof (struct pvm));
 
   /* Initialize the memory allocation subsystem.  */
   pvm_alloc_initialize ();

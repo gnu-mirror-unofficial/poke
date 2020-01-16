@@ -74,10 +74,9 @@ poke_completion_function (const char *x, int state)
 static int
 poke_getc (FILE *stream)
 {
-  char *line_to_point = xmalloc (rl_point + 1);
+  char *line_to_point = xzalloc (rl_point + 1);
   int end = rl_point ? rl_point - 1 : 0;
   strncpy (line_to_point, rl_line_buffer, end);
-  line_to_point[end] = '\0';
 
   char *tok = strtok (line_to_point, "\t ");
   if (rl_completion_entry_function == poke_completion_function)

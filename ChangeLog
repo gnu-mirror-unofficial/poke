@@ -1,3 +1,12 @@
+2020-01-18 John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-repl.c (poke_getc): Use xzalloc instead of xmalloc.
+	* src/pkl-ast.c (pkl_ast_make_node): ditto
+	* src/pkl-env.c (pkl_env_new): ditto
+	* src/pkl-parser.c (pkl_parser_init): ditto
+	* src/pkl.c (pkl_new): ditto
+	* src/pvm.c (pvm_init): ditto
+
 2020-01-16  Darshit Shah  <darnir@gnu.org>
 
 	* bootstrap.conf: Set --skip-po to be the default option.

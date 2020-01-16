@@ -127,10 +127,7 @@ register_decl (pkl_hash hash_table,
 pkl_env
 pkl_env_new ()
 {
-  pkl_env env = xmalloc (sizeof (struct pkl_env));
-
-  memset (env, 0, sizeof (struct pkl_env));
-  return env;
+  return xzalloc (sizeof (struct pkl_env));
 }
 
 void

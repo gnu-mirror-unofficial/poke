@@ -63,9 +63,7 @@ pkl_compiler
 pkl_new ()
 {
   pkl_compiler compiler
-    = xmalloc (sizeof (struct pkl_compiler));
-
-  memset (compiler, 0, sizeof (struct pkl_compiler));
+    = xzalloc (sizeof (struct pkl_compiler));
 
   /* Create the top-level compile-time environment.  This will be used
      for as long as the incremental compiler lives.  */

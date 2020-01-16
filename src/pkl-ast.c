@@ -40,8 +40,7 @@ pkl_ast_make_node (pkl_ast ast,
 {
   pkl_ast_node node;
 
-  node = xmalloc (sizeof (union pkl_ast_node));
-  memset (node, 0, sizeof (union pkl_ast_node));
+  node = xzalloc (sizeof (union pkl_ast_node));
   PKL_AST_AST (node) = ast;
   PKL_AST_CODE (node) = code;
   PKL_AST_UID (node) = ast->uid++;
@@ -2041,8 +2040,7 @@ pkl_ast_init (void)
   struct pkl_ast *ast;
 
   /* Allocate a new AST and initialize it to 0.  */
-  ast = xmalloc (sizeof (struct pkl_ast));
-  memset (ast, 0, sizeof (struct pkl_ast));
+  ast = xzalloc (sizeof (struct pkl_ast));
 
   return ast;
 }
