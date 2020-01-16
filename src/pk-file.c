@@ -191,18 +191,17 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static void
 print_info_file (ios io, void *data)
 {
-  pk_printf ("%s#%d\t%s\t0x%08jx#b\t%s\n",
+  pk_printf ("%s#%d\t%s\t",
              io == ios_cur () ? "* " : "  ",
              ios_get_id (io),
-             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ",
-             ios_tell (io), ios_handler (io));
+             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ");
 
 #if HAVE_HSERVER
   {
     char *cmd;
     char *hyperlink;
     
-    asprintf (&cmd, "0x%x#b", ios_tell (io));
+    asprintf (&cmd, "0x%08jx#b", ios_tell (io));
     hyperlink = pk_hserver_make_hyperlink ('i', cmd);
     free (cmd);
     
@@ -222,7 +221,7 @@ print_info_file (ios io, void *data)
     char *cmd;
     char *hyperlink;
     
-    asprintf (&cmd, ".file #%d", ios_tell (io));
+    asprintf (&cmd, ".file #%d", ios_get_id (io));
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
     
