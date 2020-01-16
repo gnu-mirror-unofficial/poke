@@ -1,3 +1,7 @@
+2020-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/poke.c (pk_print_version): Update copyright years.
+
 2020-01-18 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-repl.c (poke_getc): Use xzalloc instead of xmalloc.

@@ -188,7 +188,7 @@ pk_print_version ()
   pk_term_class ("copyright");
   pk_printf (_("\
 %s (C) %s Jose E. Marchesi.\n\
-License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019");
+License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019, 2020");
   pk_term_hyperlink ("http://gnu.org/licenses/gpl.html", NULL);
   pk_puts (" <http://gnu.org/licenses/gpl.html>");
   pk_term_end_hyperlink ();
