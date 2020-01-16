@@ -1,3 +1,10 @@
+2019-11-06  Darshit Shah  <darnir@gnu.org>
+
+	* src/pk-hserver.c (read_from_client): Fix off by one when terminating
+	the string
+	* src/pk-file.c (print_info_file): Fix errors introduced when merging
+	master into the hyperserver branch.
+
 2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-file.c (print_info_file): Use terminal hyperlinks if
