@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU poke 0.1-beta\n"
-"Report-Msgid-Bugs-To: poke-devel@nongnu.org\n"
-"POT-Creation-Date: 2019-11-14 00:59+0100\n"
+"Report-Msgid-Bugs-To: bug-poke@gnu.org\n"
+"POT-Creation-Date: 2020-01-16 10:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,25 +17,25 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/pk-cmd.c:286
+#: src/pk-cmd.c:291
 #, c-format
 msgid "%s: command not found.\n"
 msgstr ""
 
-#: src/pk-cmd.c:307
+#: src/pk-cmd.c:312
 #, c-format
 msgid "%s: invalid flag `%c'\n"
 msgstr ""
 
-#: src/pk-cmd.c:549
+#: src/pk-cmd.c:553
 msgid "This command requires an IO space.  Use the `file' command."
 msgstr ""
 
-#: src/pk-cmd.c:559
+#: src/pk-cmd.c:563
 msgid "This command requires a writable IO space."
 msgstr ""
 
-#: src/pk-cmd.c:582
+#: src/pk-cmd.c:585
 #, c-format
 msgid "Usage: %s\n"
 msgstr ""
@@ -44,81 +44,96 @@ msgstr ""
 msgid "Name\t\tValue\t\t\tDeclared at\n"
 msgstr ""
 
-#: src/pk-file.c:48 src/pk-file.c:107
+#: src/pk-file.c:97 src/pk-file.c:165
 #, c-format
 msgid "No such file #%d\n"
 msgstr ""
 
-#: src/pk-file.c:64 src/pk-file.c:194
+#: src/pk-file.c:113 src/pk-file.c:240
 #, c-format
 msgid "%s: file cannot be read: %s\n"
 msgstr ""
 
-#: src/pk-file.c:73
+#: src/pk-file.c:123
 #, c-format
 msgid "File %s already opened.  Use `file #N' to switch.\n"
 msgstr ""
 
-#: src/pk-file.c:83 src/pk-file.c:122
+#: src/pk-file.c:132
+#, c-format
+msgid "Error opening %s: %s\n"
+msgstr ""
+
+#: src/pk-file.c:141 src/pk-file.c:180
 #, c-format
 msgid "The current file is now `%s'.\n"
 msgstr ""
 
-#: src/pk-file.c:118
+#: src/pk-file.c:176
 msgid "No more IO spaces."
 msgstr ""
 
-#: src/pk-file.c:149
+#: src/pk-file.c:203
 msgid "  Id\tMode\tPosition\tFilename\n"
 msgstr ""
 
-#: src/pkl.c:272 src/pkl.c:330 src/pkl.c:376 src/pkl.c:427
+#: src/pk-file.c:227
+#, c-format
+msgid "Cannot stat %s: %s\n"
+msgstr ""
+
+#: src/pk-file.c:233
+#, c-format
+msgid "%s is a directory\n"
+msgstr ""
+
+#: src/pkl.c:274 src/pkl.c:332 src/pkl.c:378 src/pkl.c:429
 #, c-format
 msgid "out of memory\n"
 msgstr ""
 
-#: src/pkl-trans.c:794
+#: src/pkl-trans.c:800
 msgid "Base with more than 64 bits"
 msgstr ""
 
-#: src/pkl-trans.c:808
+#: src/pkl-trans.c:814
 msgid "char format only makes sense with 8 bits"
 msgstr ""
 
-#: src/pkl-trans.c:813
+#: src/pkl-trans.c:819
 msgid "invalid base"
 msgstr ""
 
-#: src/pkl-trans.c:829
+#: src/pkl-trans.c:835
 #, c-format
 msgid "Expected decimal digit after %u"
 msgstr ""
 
-#: src/pkl-trans.c:852 src/pkl-trans.c:867 src/pkl-trans.c:937
+#: src/pkl-trans.c:858 src/pkl-trans.c:873 src/pkl-trans.c:943
 msgid "invalid format specifier"
 msgstr ""
 
-#: src/pkl-trans.c:879
+#: src/pkl-trans.c:885
 msgid "unpaired styling class"
 msgstr ""
 
-#: src/pkl-trans.c:963
+#: src/pkl-trans.c:969
 msgid "unclosed styling tag"
 msgstr ""
 
-#: src/pk-repl.c:57
+#: src/pk-repl.c:113
 msgid "For help, type \""
 msgstr ""
 
-#: src/pk-repl.c:65
+#: src/pk-repl.c:121
 msgid "For help, type \".help\".\n"
 msgstr ""
 
-#: src/pk-repl.c:67
+#: src/pk-repl.c:123
 msgid "Type \".exit\" to leave the program.\n"
 msgstr ""
 
-#: src/pk-repl.c:75
+#: src/pk-repl.c:131
 msgid "Quit"
 msgstr ""
 

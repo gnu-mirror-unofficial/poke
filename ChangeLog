@@ -1,3 +1,9 @@
+2020-01-18 John Darrington <john@darrington.wattle.id.au>
+
+	* configure.ac (AC_INIT): Change email address to poke-devel@gnu.org
+	* bootstrap.conf: Remove MSGID_BUGS_ADDRESS
+	* po/poke.pot: regenerate
+
 2020-01-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-dump.pk (dump): Add new argument ios and use it in the
