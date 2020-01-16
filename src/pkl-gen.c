@@ -1499,7 +1499,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
          transforming to bit offsets at compile time.  */
       if (PKL_AST_CODE (map_offset) == PKL_AST_OFFSET)
         map_offset_magnitude = PKL_AST_OFFSET_MAGNITUDE (map_offset);
-          
+
       if (map_offset_magnitude
           && PKL_AST_CODE (map_offset_magnitude) == PKL_AST_INTEGER)
         {

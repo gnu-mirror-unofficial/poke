@@ -4,4 +4,5 @@ po_file=does-not-exist
 export _gl_TS_headers = *.h
 
 local-checks-to-skip =                  \
-   sc_tight_scope
+   sc_tight_scope \
+   sc_prohibit_gnu_make_extensions

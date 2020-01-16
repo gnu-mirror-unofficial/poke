@@ -175,7 +175,7 @@ D [0-9]
 
   return INTEGER;
 }
-                       
+
 "__FILE__"	{
   pkl_ast_node type
     = pkl_ast_make_string_type (yyextra->ast);

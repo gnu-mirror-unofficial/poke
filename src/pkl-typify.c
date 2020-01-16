@@ -294,7 +294,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
-  
+
   /* Casting to ANY is always forbidden.  But casting from ANY is
      always allowed.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)
@@ -307,7 +307,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
 
   if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ANY)
     goto done;
-  
+
   /* Casting from offset to offset is allowed, but not any other cast
      involving offsets.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
@@ -1606,7 +1606,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
-  
+
   if (PKL_AST_TYPE_CODE (map_offset_type) != PKL_TYPE_OFFSET)
     {
       PKL_ERROR (PKL_AST_LOC (map_offset),

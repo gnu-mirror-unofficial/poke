@@ -1993,7 +1993,7 @@ instruction aseto () # ( ARR ULONG BOFF -- ARR )
     if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
       PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
 
-    PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;    
+    PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;
   end
 end
 
@@ -2688,7 +2688,7 @@ instruction pokes ()
          PVM_RAISE (PVM_E_EOF);
       else
          PVM_RAISE (PVM_E_IO);
-    }    
+    }
   end
 end
 

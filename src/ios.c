@@ -1477,7 +1477,7 @@ ios_write_string (ios io, ios_off offset, int flags,
                   const char *value)
 {
   const char *p;
-  
+
   if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
       == -1)
     return IOS_EIOFF;

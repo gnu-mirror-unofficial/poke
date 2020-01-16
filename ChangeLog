@@ -552,7 +552,7 @@
 	* pkl-asm.pks (remap, write, addo, subo, mulo, divo, modo, atrim)
 	(cdivo, ais, bconc): Simplify and optimize using new instructions.
 	* src/pkl-gen.pks (struct_field_mapper): Likewise.
-	
+
 2019-12-01 John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk_dump.pk (dump): New parameter cluster_by

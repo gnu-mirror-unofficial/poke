@@ -723,7 +723,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
   pkl_ast_node to_type = PKL_AST_CAST_TYPE (cast);
 
   pkl_ast_node new = NULL;
-  
+
   if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_INTEGRAL
       && PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_INTEGRAL
       && PKL_AST_CODE (exp) == PKL_AST_INTEGER)
@@ -740,7 +740,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
       pkl_ast_node to_unit = PKL_AST_TYPE_O_UNIT (to_type);
       pkl_ast_node from_base_type = PKL_AST_TYPE_O_BASE_TYPE (from_type);
       pkl_ast_node to_base_type = PKL_AST_TYPE_O_BASE_TYPE (to_type);
-      
+
       if (PKL_AST_CODE (magnitude) != PKL_AST_INTEGER
           || PKL_AST_CODE (unit) != PKL_AST_INTEGER
           || PKL_AST_CODE (to_unit) != PKL_AST_INTEGER)
@@ -771,7 +771,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
         = (PKL_AST_INTEGER_VALUE (magnitude)
            /  PKL_AST_INTEGER_VALUE (unit));
 
-      
+
       new = pkl_ast_make_offset (PKL_PASS_AST,
                                  magnitude, unit);
     }

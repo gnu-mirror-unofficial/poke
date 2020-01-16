@@ -818,7 +818,7 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
             /* Struct fields with labels are not expected, as these
                cannot appear in complete struct types.  */
             assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
-            
+
             elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
             res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
                                            res,

@@ -96,7 +96,7 @@ promote_offset (pkl_ast ast,
           && (PKL_AST_INTEGER_VALUE (a_type_unit)
               == PKL_AST_INTEGER_VALUE (unit)))
         different_units = 0;
-        
+
       if (a_type_base_type_size != size
           || a_type_base_type_sign != sign
           || different_units)
@@ -335,7 +335,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_add_sub_mod)
 
         size_t size = PKL_AST_TYPE_I_SIZE (base_type);
         int sign = PKL_AST_TYPE_I_SIGNED (base_type);
-        
+
         if (!promote_offset (PKL_PASS_AST,
                              size, sign, unit,
                              &PKL_AST_EXP_OPERAND (exp, 0), &restart1))
@@ -527,7 +527,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
           goto error;
 
         pkl_ast_node_free (unit_bit);
-        
+
         PKL_PASS_RESTART = restart1 || restart2;
         break;
         case PKL_TYPE_STRING:
@@ -740,7 +740,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_type_array)
 
         ASTREF (unit_bit);
         PKL_AST_LOC (unit_bit) = PKL_AST_LOC (PKL_PASS_NODE);
-        
+
         if (!promote_offset (PKL_PASS_AST,
                              64, 0, unit_bit,
                              &PKL_AST_TYPE_A_BOUND (array_type), &restart))
@@ -1256,7 +1256,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
 
   ASTREF (unit_bit);
   PKL_AST_LOC (unit_bit) = PKL_AST_LOC (PKL_PASS_NODE);
-  
+
   if (!promote_offset (PKL_PASS_AST,
                        64, 0, unit_bit,
                        &PKL_AST_MAP_OFFSET (map),
