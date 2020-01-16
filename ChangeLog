@@ -1,6 +1,8 @@
 2020-01-16  Darshit Shah  <darnir@gnu.org>
 
 	* bootstrap.conf: Set --skip-po to be the default option.
+	* testsuite/poke.map/maps-arrays-19.pk: Extend test to ensure e_EOF is
+	thrown when reading through End-of-File.
 
 2020-01-16  Jose E. Marchesi  <jemarch@gnu.org>
 
