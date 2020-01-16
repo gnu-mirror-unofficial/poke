@@ -38,7 +38,8 @@ defvar pk_dump_offset = 0#B;
 
 /* And the command itself.  */
 
-defun dump = (off64 from = pk_dump_offset,
+defun dump = (int<32> ios = get_ios,
+              off64 from = pk_dump_offset,
               off64 size = pk_dump_size,
               off64 group_by = pk_dump_group_by,
               int cluster_by = pk_dump_cluster_by,
@@ -90,7 +91,7 @@ defun dump = (off64 from = pk_dump_offset,
     defvar o = 0#B;
     while (o < step && offset + o < top)
       {
-	defvar v = byte @ (offset + o);
+	defvar v = byte @ ios : (offset + o);
 	if (v < ' ' || v > '~')
 	  printf "%<dump-ascii:%c%>", '.';
 	else
@@ -120,7 +121,7 @@ defun dump = (off64 from = pk_dump_offset,
 	{
 	  while (o < step && offset + o < top)
 	    {
-	      print_hex (byte @ (offset + o), o);
+	      print_hex (byte @ ios : (offset + o), o);
 	      o = o + 1#B;
 	      if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
 		printf (" ");

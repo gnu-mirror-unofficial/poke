@@ -737,6 +737,14 @@ representation of each byte, and on the right hand side is their ascii
 representation.   If a byte is not representable in ascii, then the
 byte will be displayed as a dot.
 
+By default the @command{dump} command reads from the currently
+selected IO space.  However, it is possible to specify an explicit IO
+space using the @code{ios} option:
+
+@example
+(poke) defvar myfile = open ("/path/to/file")
+(poke) dump :ios myfile
+@end example
 
 @menu
 * Information @command{dump} shows::         Changing what @command{dump} shows.
