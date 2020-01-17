@@ -1026,14 +1026,17 @@ function_type_specifier:
                                                    $2);
                   PKL_AST_LOC ($$) = @$;
                 }
+	| '(' ')' simple_type_specifier
+        	{
+                  $$ = pkl_ast_make_function_type (pkl_parser->ast,
+                                                   $3, 0 /* narg */,
+                                                   NULL);
+                  PKL_AST_LOC ($$) = @$;
+                }
 	;
 
 function_type_arg_list:
-	  %empty
-		{
-                  $$ = NULL;
-                }
-	|  function_type_arg
+	   function_type_arg
         |  function_type_arg ',' function_type_arg_list
 		{
                   $$ = pkl_ast_chainon ($1, $3);

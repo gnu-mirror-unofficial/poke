@@ -1,5 +1,13 @@
 2020-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y (function_type_specifier): Fix definition to not
+	allow trailing commas.
+	(function_type_arg_list): The list of arguments can't be empty.
+	* etc/poke.g4: Likewise.
+	* testsuite/poke.pkl/fun-types-diag-2.pk: New test.
+
+2020-01-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.g4: New file.
 	* HACKING (Appendix): Add mention to etc/poke.g4.
 	(Grammarinator): New section.

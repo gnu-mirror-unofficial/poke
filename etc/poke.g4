@@ -250,13 +250,13 @@ offset_type_specifier:
     | 'offset<' simple_type_specifier ',' INTEGER '>'
 	;
 
-function_type_specifier:
-        '(' function_type_arg_list ')' simple_type_specifier
+function_type_specifier
+    : '(' function_type_arg_list ')' simple_type_specifier
+    | '(' ')' simple_type_specifier
 	;
 
-function_type_arg_list:
-        /* Empty */ 
-	| function_type_arg
+function_type_arg_list
+	: function_type_arg
     | function_type_arg ',' function_type_arg_list
 	;
 
