@@ -59,51 +59,53 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        5.4  dg-output may require a newline
        5.5  Using data files in tests
        5.6  Writing tests that depend on a certain capability
-     6  Deciding on What to Work on
-     7  Submitting a Patch
-     8  Maintenance
-     9  Poke Architecture
-    10  The Poke Compiler
-      10.1  Compiler Overview
-      10.2  The bison Parser in pkl-tab.y
-      10.3  The AST
-      10.4  Compiler Passes and Phases
-        10.4.1  Naming Conventions for Phases
-        10.4.2  Naming Conventions for Handlers
-        10.4.3  Transformation Phases
-        10.4.4  Analysis Phases
-        10.4.5  Type System Phases
-        10.4.6  Middle End Handlers should be Re-executable
-      10.5  The Type System
-        10.5.1  Type Expressions
-      10.6  Adding Compiler Built-Ins
-    11  The Poke Virtual Machine
-      11.1  Exception Handling
-      11.2  Offsets and bit-offsets in the PVM
-    12  Memory Management
-      12.1  Using ASTREF
-      12.2  Using ASTDEREF
-      12.3  PVM values in PVM routines
-      12.4  PVM values in AST nodes
-    13  Terminal Handling
-      13.1  pk-term
-      13.2  Styling Classes
-      13.3  Debugging Styling
-    14  Debugging Poke
-      14.1  Building with Debugging support
-      14.2  Using GDB extensions
-      14.3  Valgrind and Poke
-      14.4  Debugging PVM Assembly Code
-    15  Future Developments
-    16  Appendix: The Source Tree
-      16.1  The Compiler
-      16.2  The Poke Virtual Machine
-      16.3  The IO Subsystem
-      16.4  Poke Program
-      16.5  Pickles and Libraries
-      16.6  Test Suite
-      16.7  Documentation
-      16.8  Other Stuff
+     6  Fuzzing poke
+       6.1  Grammarinator
+     7  Deciding on What to Work on
+     8  Submitting a Patch
+     9  Maintenance
+    10  Poke Architecture
+    11  The Poke Compiler
+      11.1  Compiler Overview
+      11.2  The bison Parser in pkl-tab.y
+      11.3  The AST
+      11.4  Compiler Passes and Phases
+        11.4.1  Naming Conventions for Phases
+        11.4.2  Naming Conventions for Handlers
+        11.4.3  Transformation Phases
+        11.4.4  Analysis Phases
+        11.4.5  Type System Phases
+        11.4.6  Middle End Handlers should be Re-executable
+      11.5  The Type System
+        11.5.1  Type Expressions
+      11.6  Adding Compiler Built-Ins
+    12  The Poke Virtual Machine
+      12.1  Exception Handling
+      12.2  Offsets and bit-offsets in the PVM
+    13  Memory Management
+      13.1  Using ASTREF
+      13.2  Using ASTDEREF
+      13.3  PVM values in PVM routines
+      13.4  PVM values in AST nodes
+    14  Terminal Handling
+      14.1  pk-term
+      14.2  Styling Classes
+      14.3  Debugging Styling
+    15  Debugging Poke
+      15.1  Building with Debugging support
+      15.2  Using GDB extensions
+      15.3  Valgrind and Poke
+      15.4  Debugging PVM Assembly Code
+    16  Future Developments
+    17  Appendix: The Source Tree
+      17.1  The Compiler
+      17.2  The Poke Virtual Machine
+      17.3  The IO Subsystem
+      17.4  Poke Program
+      17.5  Pickles and Libraries
+      17.6  Test Suite
+      17.7  Documentation
+      17.8  Other Stuff
 
 
 Nomenclature
@@ -451,6 +453,40 @@ The supported capabilities are:
 
 libtextstyle
   poke is built with libtextstyle support.
+
+Fuzzing poke
+------------
+
+Grammarinator
+~~~~~~~~~~~~~
+
+*grammarinator* is a random test generator/fuzzer that creates test
+cases according to an input antlr4 grammar.
+
+In order to generate Poke programs with grammarinator, follow the
+following steps.
+
+First of all, install grammarinator::
+
+  $ git clone https://github.com/renatahodovan/grammarinator
+  $ cd grammarinator
+  $ sudo python3 setup.py install
+
+Then, use ``grammarinator-process`` in order to create the "unparser"
+and "unlexer" for poke::
+
+  $ grammarinator-process ../path/to/poke.g4
+
+This will create two files in the current working directory:
+``pokeUnlexer.py`` and ``pokeUnparser.py``.  Next step is to use
+``grammarinator-generate`` in order to create tests::
+
+  $ grammarinator-generate -l pokeUnlexer.py -p pokeUnparser.py \
+                           -r program -n 100 -d 10
+
+The option ``-n`` specifies the number of tests (Poke programs) to
+generate, whereas ``-d`` specifies the maximum recursive level.  The
+bigger the recursive level, the bigger the test files will be.
 
 Deciding on What to Work on
 ---------------------------
@@ -1527,6 +1563,9 @@ Suppression list for memcheck
 
 Emacs mode for editing RAS files
   ``etc/poke-ras-mode.el``
+
+Antlr4 grammar for Poke.
+ ``etc/poke.g4``
 
 ..
   Local Variables:

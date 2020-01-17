@@ -1,16 +1,19 @@
 2020-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
-	* testsuite/poke.pkl/printf-binary-4.pk: Likewise.
+	* etc/poke.g4: New file.
+	* HACKING (Appendix): Add mention to etc/poke.g4.
+	(Grammarinator): New section.
 
-	* testsuite/poke.pkl/printf-binary-3.pk: Likewise.
-
-	* testsuite/poke.pkl/printf-binary-2.pk: Likewise.
+2020-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pvm-val.c (pvm_print_binary): Make non-static.
 	* src/pvm-val.h: Prototype for pvm_print_binary.
 	* src/pvm.jitter (PVM_PRINTI): Handle binary output.
 	(PVM_PRINTL): Likewise.
 	* testsuite/poke.pkl/printf-binary-1.pk: New test.
+	* testsuite/poke.pkl/printf-binary-4.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-3.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-2.pk: Likewise.
 
 2020-01-18 John Darrington <john@darrington.wattle.id.au>
 
