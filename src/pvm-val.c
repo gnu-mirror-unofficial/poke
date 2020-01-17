@@ -481,7 +481,7 @@ pvm_sizeof (pvm_val val)
 /* XXX use similar printers for hexadecimal and octal, so we can use
    _'s */
 
-static void
+void
 pvm_print_binary (uint64_t val, int size, int sign)
 {
   char b[65];

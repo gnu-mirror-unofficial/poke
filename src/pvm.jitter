@@ -356,7 +356,9 @@ late-header-c
       }                                                                     \
       else if (JITTER_ARGN1 == 2)                                           \
       {                                                                     \
-        assert (0); /* XXX */                                               \
+        pvm_print_binary (val, JITTER_ARGN0, 1);                            \
+        JITTER_DROP_STACK ();                                               \
+        break;                                                              \
       }                                                                     \
                                                                             \
       assert (prec != 0);                                                   \
@@ -399,7 +401,9 @@ late-header-c
       }                                                                     \
       else if (JITTER_ARGN1 == 2)                                           \
       {                                                                     \
-        assert (0); /* XXX */                                               \
+        pvm_print_binary (val, JITTER_ARGN0, 1);                            \
+        JITTER_DROP_STACK ();                                               \
+        break;                                                              \
       }                                                                     \
                                                                             \
       fmt[2] = '0' + (prec / 10);                                           \

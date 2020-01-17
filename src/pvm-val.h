@@ -673,4 +673,7 @@ pvm_val pvm_val_writer (pvm_val val);
 
 void pvm_print_val (pvm_val val, int base, int flags);
 
+/* XXX move this to an utilities module.  */
+void pvm_print_binary (uint64_t val, int size, int sign);
+
 #endif /* !PVM_VAL_H */
