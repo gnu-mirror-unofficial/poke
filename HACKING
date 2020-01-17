@@ -482,11 +482,19 @@ This will create two files in the current working directory:
 ``grammarinator-generate`` in order to create tests::
 
   $ grammarinator-generate -l pokeUnlexer.py -p pokeUnparser.py \
-                           -r program -n 100 -d 10
+                           -r program -n 100 -d 10 \
+                           -t grammarinator.runtime.simple_space_transformer
 
 The option ``-n`` specifies the number of tests (Poke programs) to
-generate, whereas ``-d`` specifies the maximum recursive level.  The
-bigger the recursive level, the bigger the test files will be.
+generate.
+
+The option ``-d`` specifies the maximum recursive level.  The bigger
+the recursive level, the bigger the test files will be.  If you don't
+specify a maximum recursive level then grammarinator-generate will
+crash.
+
+The option ``-t grammarinator.runtime.simple_space_transformer`` makes
+sure that whitespaces get inserted between literal tokens.
 
 Deciding on What to Work on
 ---------------------------
