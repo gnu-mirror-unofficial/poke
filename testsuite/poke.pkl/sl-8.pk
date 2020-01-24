@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command { .set obase 10 } } */
+
+/* { dg-command { 1 as uint<4> <<. 2 } } */
+/* { dg-output "4UN" } */

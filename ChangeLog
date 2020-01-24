@@ -1,3 +1,13 @@
+2020-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/sl-2.pk: New test.
+	* testsuite/poke.pkl/sl-8.pk: Likewise.
+	* testsuite/poke.pkl/sl-7.pk: Likewise.
+	* testsuite/poke.pkl/sl-6.pk: Likewise.
+	* testsuite/poke.pkl/sl-5.pk: Likewise.
+	* testsuite/poke.pkl/sl-4.pk: Likewise.
+	* testsuite/poke.pkl/sl-3.pk: Likewise.
+
 2020-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-tab.y (function_type_specifier): Fix definition to not

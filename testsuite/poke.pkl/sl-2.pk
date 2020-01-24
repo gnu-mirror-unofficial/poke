@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command { .set obase 16 } } */
+
+/* { dg-command { 1 <<. 3 } } */
+/* { dg-output "0x8" } */
