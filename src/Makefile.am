@@ -54,7 +54,7 @@ poke_SOURCES = poke.c poke.h \
 
 
 .pks.pkc:
-	srcdir=$(srcdir) $(srcdir)/ras $< > $@
+	srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@
 
 # XXX this shouldn't be necessary?
 EXTRA_DIST = pkl-lex.h

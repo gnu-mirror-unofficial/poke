@@ -70,6 +70,9 @@ dnl i18n with gettext
 AM_GNU_GETTEXT_VERSION([0.19.8])
 AM_GNU_GETTEXT([external])
 
+# Poke requires a version of awk that supports gensub()
+AX_CHECK_AWK_GENSUB([], AC_MSG_ERROR([$AWK does not support gensub.]))
+
 dnl The Boehm-Weiser garbage collector
 
 PKG_PROG_PKG_CONFIG
