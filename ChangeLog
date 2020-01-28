@@ -1,3 +1,9 @@
+2020-01-28  Darshit Shah  <darnir@gnu.org>
+
+	* bootstrap.conf: Update minimum required Automake to 1.14
+	Downgrade minimum required flex to 2.5.37
+	Add makeinfo as a build dependency
+
 2020-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/sl-2.pk: New test.
