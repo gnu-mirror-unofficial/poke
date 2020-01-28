@@ -30,5 +30,7 @@ check-DEJAGNU: site.exp
           POKEDATADIR="$(top_srcdir)/src" \
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
 			$(RUNTESTFLAGS); \
-	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
+	else \
+	  >&2 echo "WARNING: could not find \`runtest'"; \
+	  exit 77; :;\
 	fi
