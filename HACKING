@@ -213,16 +213,19 @@ readline
 ~~~~~~~~
 
 Poke uses GNU libreadline in order to provide a nice line editor in
-the ``(poke)`` prompt.  Any recent version will suffice.
-
-In Debian or derivatives, install the ``libreadline-dev`` package.
+the ``(poke)`` prompt.  Any recent version will suffice.  The package
+name usually is:
+  - On Debian and Debian-based systems: libreadline-dev,
+  - On Red Hat distributions: readline-devel.
 
 Boehm GC
 ~~~~~~~~
 
 poke uses the Boehm conservative garbage collector for managing the
 memory of some of its subsystems.  Therefore, you must have it
-installed.
+installed.  The package name usually is:
+  - On Debian and Debian-based systems: libgc-dev,
+  - On Red Hat distributions: gc-devel.
 
 Note that if you have the Boehm GC installed in a prefix different
 from the one that contains pkg-config, you need to set PKL_CONFIG_PATH
