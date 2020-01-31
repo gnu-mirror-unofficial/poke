@@ -241,6 +241,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token UNMAP
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
+%token BUILTIN_IOSIZE
 
 /* ATTRIBUTE operator.  */
 
@@ -1368,6 +1369,7 @@ builtin:
         | BUILTIN_SET_IOS       { $$ = PKL_AST_BUILTIN_SET_IOS; }
 	| BUILTIN_OPEN		{ $$ = PKL_AST_BUILTIN_OPEN; }
 	| BUILTIN_CLOSE		{ $$ = PKL_AST_BUILTIN_CLOSE; }
+	| BUILTIN_IOSIZE	{ $$ = PKL_AST_BUILTIN_IOSIZE; }
 	;
 
 stmt_decl_list:

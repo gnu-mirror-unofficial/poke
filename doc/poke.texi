@@ -3160,6 +3160,7 @@ memory of some process.
 * close::			Destroying IO spaces.
 * get_ios::			Getting the current IO space.
 * set_ios::			Setting the current IO space.
+* iosize::			Getting the size of an IO space.
 @end menu
 
 @node open
@@ -3240,6 +3241,20 @@ space.  If the IO space specified to @code{set_ios} doesn't exist,
 
 Note that @code{set_ios} always returns @code{1}.  This is to ease its
 usage in struct fields constraint expressions.
+
+@node iosize
+@subsection @code{iosize}
+@cindex @code{iosize}
+
+The @code{iosize} builtin returns the size of a given IO space, as an
+offset.  It has the following prototype:
+
+@example
+defun iosize = (int<32> ios) offset<uint<64>,1>: @{ @dots{} @}
+@end example
+
+If the IO space specified to @code{iosize} doesn't exist,
+@code{E_no_ios} will be raised.
 
 @node The Map Operator
 @section The Map Operator

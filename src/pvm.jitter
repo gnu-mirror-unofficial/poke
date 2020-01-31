@@ -692,6 +692,18 @@ instruction popios () # ( INT -- )
   end
 end
 
+instruction iosize () # ( INT -- INT OFF )
+  code
+    ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
+
+    if (io == NULL)
+      PVM_RAISE (PVM_E_NO_IOS);
+      
+    JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_size (io), 64),
+                                        pvm_make_ulong (1, 64)));
+  end
+end
+
 
 
 ## Function management instructions

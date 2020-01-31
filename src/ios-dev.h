@@ -85,4 +85,8 @@ struct ios_dev_if
   /* Return the mode of the device, as it was opened.  */
 
   int (*get_mode) (void *dev);
+
+  /* Return the size of the device, in bytes.  */
+
+  ios_dev_off (*size) (void *dev);
 };

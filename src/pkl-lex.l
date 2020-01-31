@@ -224,6 +224,7 @@ D [0-9]
 "__PKL_BUILTIN_SET_IOS__" { return BUILTIN_SET_IOS; }
 "__PKL_BUILTIN_OPEN__" { return BUILTIN_OPEN; }
 "__PKL_BUILTIN_CLOSE__" { return BUILTIN_CLOSE; }
+"__PKL_BUILTIN_IOSIZE__" { return BUILTIN_IOSIZE; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

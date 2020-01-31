@@ -1,5 +1,23 @@
 2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-insn.def (PKL_INSN_IOSIZE): New instruction.
+	* src/pkl-ast.h (PKL_AST_BUILTIN_IOSIZE): Define.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle iosize builtin.
+	* src/pkl-lex.l: New token BUILTIN_IOSIZE.
+	* src/pkl-rt.pk (iosize): New builtin.
+	* src/pkl-tab.y (builtin): Handle the iosize builtin.
+	* bootstrap.conf (gnulib_modules): Import `fstat' module.
+	* src/ios.h: Prototype for ios_size.
+	* src/ios.c (ios_size): Define.
+	* src/ios-dev.h (struct ios_dev_if): New IOD operation `size'.
+	* src/pvm.jitter (iosize): New instruction.
+	* src/ios-dev-file.c (ios_dev_file_size): New function.
+	* doc/poke.texi (iosize): New section.
+	* testsuite/poke.pkl/iosize-1.pk: New file.
+	* testsuite/poke.pkl/iosize-diag-1.pk: Likewise.
+
+2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-insn.def (PKL_INSN_SYNC): Define.
 	* src/pvm.c (pvm_run): Install the pvm signal handler to handle
 	SIGINT.

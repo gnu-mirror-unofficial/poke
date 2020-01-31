@@ -1216,6 +1216,7 @@ pkl_ast_node pkl_ast_make_var (pkl_ast ast,
 #define PKL_AST_BUILTIN_SET_IOS 6
 #define PKL_AST_BUILTIN_OPEN 7
 #define PKL_AST_BUILTIN_CLOSE 8
+#define PKL_AST_BUILTIN_IOSIZE 9
 
 struct pkl_ast_comp_stmt
 {

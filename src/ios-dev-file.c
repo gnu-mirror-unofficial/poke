@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <xalloc.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "ios.h"
 #include "ios-dev.h"
@@ -146,6 +147,16 @@ ios_dev_file_seek (void *iod, ios_dev_off offset, int whence)
   return fseeko (fio->file, offset, fwhence);
 }
 
+static ios_dev_off
+ios_dev_file_size (void *iod)
+{
+  struct stat st;
+  struct ios_dev_file *fio = iod;
+
+  fstat (fileno (fio->file), &st);
+  return st.st_size;
+}
+
 struct ios_dev_if ios_dev_file =
   {
    .handler_p = ios_dev_file_handler_p,
@@ -156,4 +167,5 @@ struct ios_dev_if ios_dev_file =
    .get_c = ios_dev_file_getc,
    .put_c = ios_dev_file_putc,
    .get_mode = ios_dev_file_get_mode,
+   .size = ios_dev_file_size,
   };

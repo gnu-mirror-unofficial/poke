@@ -377,6 +377,7 @@ PKL_DEF_INSN (PKL_INSN_PUSHIOS, "", "pushios")
 PKL_DEF_INSN (PKL_INSN_POPIOS, "", "popios")
 PKL_DEF_INSN (PKL_INSN_OPEN, "", "open")
 PKL_DEF_INSN (PKL_INSN_CLOSE, "", "close")
+PKL_DEF_INSN (PKL_INSN_IOSIZE, "", "iosize")
 
 /* VM instructions.  */
 

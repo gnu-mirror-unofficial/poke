@@ -1492,3 +1492,9 @@ ios_write_string (ios io, ios_off offset, int flags,
 
   return IOS_OK;
 }
+
+uint64_t
+ios_size (ios io)
+{
+  return io->dev_if->size ((io)->dev) * 8;
+}

@@ -169,6 +169,12 @@ int ios_get_id (ios io);
 typedef void (*ios_map_fn) (ios io, void *data);
 void ios_map (ios_map_fn cb, void *data);
 
+/* **************** IOS properties************************  */
+
+/* Return the size of the given IO, in bits.  */
+
+uint64_t ios_size (ios io);
+
 /* **************** Object read/write API ****************  */
 
 /* An integer with flags is passed to the read/write operations,

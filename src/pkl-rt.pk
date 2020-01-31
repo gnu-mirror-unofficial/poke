@@ -40,6 +40,7 @@ defun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
 defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
 defun open = (string handler) int<32>: __PKL_BUILTIN_OPEN__;
 defun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
+defun iosize = (int<32> ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
 
 defvar ENDIAN_LITTLE = 0;
 defvar ENDIAN_BIG = 1;
