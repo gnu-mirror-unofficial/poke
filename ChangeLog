@@ -1,3 +1,7 @@
+2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING: Add Bruno Haible to the Write After Approval list.
+
 2020-01-28  Darshit Shah  <darnir@gnu.org>
 
 	* bootstrap.conf: Update minimum required Automake to 1.14
