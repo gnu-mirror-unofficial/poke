@@ -788,10 +788,101 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
 }
 PKL_PHASE_END_HANDLER
 
+/* If the container indexed (either an array or a string) is constant,
+   and the indexing expession is also constant, then we can fold it
+   into the referred element.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
+{
+  pkl_ast_node indexer = PKL_PASS_NODE;
+  pkl_ast_node container = PKL_AST_INDEXER_ENTITY (indexer);
+  pkl_ast_node index = PKL_AST_INDEXER_INDEX (indexer);
+
+  if (PKL_AST_CODE (index) == PKL_AST_INTEGER)
+    {
+      int64_t index_value = PKL_AST_INTEGER_VALUE (index);
+      
+      switch (PKL_AST_CODE (container))
+        {
+        case PKL_AST_STRING:
+          {
+            pkl_ast_node t, new, new_type;
+            char *str = PKL_AST_STRING_POINTER (container);
+
+            /* Check that the index is on bounds.  */
+            if (index_value < 0
+                || index_value >= strlen (str))
+              {
+                PKL_ERROR (PKL_AST_LOC (index),
+                           "index is out of bounds of string");
+                PKL_PASS_ERROR;
+              }
+
+            /* fold the indexer into the referred element, which is an
+               uint<8> with the value of the corresponding character
+               in the string.  */
+            new_type = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
+            new = pkl_ast_make_integer (PKL_PASS_AST, str[index_value]);
+
+            PKL_AST_LOC (new_type) = PKL_AST_LOC (index);
+            PKL_AST_LOC (new) = PKL_AST_LOC (index);
+            PKL_AST_TYPE (new) = ASTREF (new_type);
+
+            t = PKL_PASS_NODE;
+            PKL_PASS_NODE = ASTREF (new);
+            pkl_ast_node_free (t);                                       
+            break;
+          }
+        case PKL_AST_ARRAY:
+          {
+            pkl_ast_node t, elem = NULL;
+
+            /* Look for the referred element in the array
+               initializers.  */
+            for (t = PKL_AST_ARRAY_INITIALIZERS (container);
+                 t;
+                 t = PKL_AST_CHAIN (t))
+              {
+                pkl_ast_node initializer_index
+                  = PKL_AST_ARRAY_INITIALIZER_INDEX (t);
+                uint64_t initializer_index_value;
+                
+                assert (PKL_AST_CODE (initializer_index) == PKL_AST_INTEGER);
+                initializer_index_value
+                  = PKL_AST_INTEGER_VALUE (initializer_index);
+
+                if (index_value <= initializer_index_value)
+                  {
+                    elem = PKL_AST_ARRAY_INITIALIZER_EXP (t);
+                    break;
+                  }
+              }
+
+            /* Check that the index is on bounds.  */
+            if (elem == NULL)
+              {
+                PKL_ERROR (PKL_AST_LOC (index),
+                           "index is out of bounds of array");
+                PKL_PASS_ERROR;
+              }
+
+            t = PKL_PASS_NODE;
+            PKL_PASS_NODE = ASTREF (elem);
+            pkl_ast_node_free (t);
+            break;
+          }
+        default:
+          break;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_fold =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_fold_pr_type),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_fold_ps_cast),
+   PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_fold_ps_indexer),
 #define ENTRY(ops, fs)\
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_##ops, pkl_fold_##fs)
 

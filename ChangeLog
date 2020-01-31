@@ -1,5 +1,23 @@
 2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-fold.c (pkl_fold_ps_indexer): New handler.
+	(pkl_phase_fold): Register pkl_fold_ps_indexer.
+	* testsuite/poke.pkl/strings-index-diag-1.pk: New test.
+	* testsuite/poke.pkl/arrays-index-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/arrays-index-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/strings-index-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/arrays-index-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/arrays-index-1.pk: Likewise.
+	* testsuite/poke.pkl/strings-index-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/arrays-2.pk: Adapt to constant folding.
+	* testsuite/poke.pkl/arrays-6.pk: Likewise.
+	* testsuite/poke.pkl/arrays-8.pk: Likewise.
+	* testsuite/poke.pkl/arrays-9.pk: Likewise.
+	* testsuite/poke.pkl/arrays-10.pk: Likewise.
+	* testsuite/poke.pkl/arrays-11.pk: Likewise.
+
+2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios.c (ios_read_string): Support reading strings from
 	non-byte aligned offsets.
 	(ios_write_string): Likewise, for writing.
