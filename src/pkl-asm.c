@@ -1112,7 +1112,7 @@ pkl_asm_finish (pkl_asm pasm, int epilogue, void **pointers)
          assembly.  Otherwise, call the _pkl_exception_handler
          function which is part of the compiler run-time.  */
       if (pkl_bootstrapped_p (pasm->compiler))
-        pkl_asm_call (pasm, "_pkl_exception_handler");
+          pkl_asm_call (pasm, "_pkl_exception_handler");
       else
         {
           pkl_asm_insn (pasm, PKL_INSN_DROP); /* Discard exception number.  */
@@ -1697,6 +1697,7 @@ pkl_asm_loop (pkl_asm pasm)
 void
 pkl_asm_endloop (pkl_asm pasm)
 {
+  pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);
   pvm_routine_append_label (pasm->routine, pasm->level->label2);
   /* Pop the loop condition from the stack.  */
@@ -1836,6 +1837,7 @@ pkl_asm_for_loop (pkl_asm pasm)
 void
 pkl_asm_for_endloop (pkl_asm pasm)
 {
+  pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_PUSH, PVM_NULL);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label2);
 

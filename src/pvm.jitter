@@ -420,6 +420,23 @@ end
 
 late-c
   code
+    void
+    pvm_handle_signal (int signal_number)
+    {
+      struct vmprefix_state *s;
+
+      /* For every state... */
+      VMPREFIX_FOR_EACH_STATE (s)
+      {
+        /* ...Mark the signal signal_number as pending... */
+        VMPREFIX_STATE_AND_SIGNAL_TO_PENDING_SIGNAL_NOTIFICATION
+           (s, signal_number) = true;
+        /* ...And record the fact that there is at least one notification to
+           handle. */
+        VMPREFIX_STATE_TO_PENDING_NOTIFICATIONS (s) = true;
+      }
+    }
+
     jitter_uint printer_hi;
   end
 end
@@ -587,6 +604,15 @@ instruction exit ()
       assert (jitter_original_state->pvm_state_backing.canary
               == JITTER_HEIGHT_STACK ());
 
+    /* Clear pending signals.  */
+    {
+      int i;
+      for (i = 0; i < JITTER_SIGNAL_NO; i ++)
+        if (JITTER_PENDING_SIGNAL_NOTIFICATION (i))
+          JITTER_PENDING_SIGNAL_NOTIFICATION (i) = false;
+      JITTER_PENDING_NOTIFICATIONS = false;
+    }
+
     JITTER_EXIT ();
   end
 end
@@ -603,6 +629,16 @@ instruction popend () # ( INT -- )
     uint32_t endian = PVM_VAL_INT (JITTER_TOP_STACK ());
     jitter_state_runtime.endian = endian;
     JITTER_DROP_STACK ();
+  end
+end
+
+instruction sync () # ( -- )
+  code
+    /* XXX for now we treat all signals the same way.
+       As soon as we support exception arguments, we shall
+       pass the mask of signals to the signal handler.  */
+    if (JITTER_PENDING_NOTIFICATIONS)
+      PVM_RAISE (PVM_E_SIGNAL);
   end
 end
 

@@ -1,5 +1,20 @@
 2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-insn.def (PKL_INSN_SYNC): Define.
+	* src/pvm.c (pvm_run): Install the pvm signal handler to handle
+	SIGINT.
+	* src/pkl-asm.c (pkl_asm_endloop): Emit a sync instruction before
+	branching back.
+	(pkl_asm_for_endloop): Likewise.
+	* src/pvm.h (PVM_E_SIGNAL): Define.
+	* src/pkl-rt.pk (E_signal): Likewise.
+	* src/pvm.jitter (sync): New instruction.
+	(exit): Clear signals before exitting the PVM.
+	(late-c): Define pvm_handle_signal.
+	* HACKING (Signal Handling): New section.
+
+2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING: Add Bruno Haible to the Write After Approval list.
 
 2020-01-28  Darshit Shah  <darnir@gnu.org>

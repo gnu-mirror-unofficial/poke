@@ -45,9 +45,10 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        3. 6  Jitter
        3. 7  libtextstyle
        3. 8  Building
-       3. 9  Gettext
-       3.10  Running an Uninstalled Poke
-       3.11  Continuous Integration
+       3. 9  Building a 32-bit poke
+       3.10  Gettext
+       3.11  Running an Uninstalled Poke
+       3.12  Continuous Integration
      4  Coding Style and Conventions
        4.1  Writing C
        4.2  Writing Poke
@@ -81,7 +82,8 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
       11.6  Adding Compiler Built-Ins
     12  The Poke Virtual Machine
       12.1  Exception Handling
-      12.2  Offsets and bit-offsets in the PVM
+      12.2  Signal Handling
+      12.3  Offsets and bit-offsets in the PVM
     13  Memory Management
       13.1  Using ASTREF
       13.2  Using ASTDEREF
@@ -106,6 +108,7 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
       17.6  Test Suite
       17.7  Documentation
       17.8  Other Stuff
+
 
 
 Nomenclature
@@ -957,6 +960,24 @@ is installed by the macro-assembler in ``src/pkl-asm.c:pkl_asm_new``
 and ``src/pkl-asm.c:pkl_asm_finish``.  It calls the function
 ``_pkl_exception_handler``, that is defined in the compiler runtime in
 ``src/pkl-rt.pkl``.
+
+Signal Handling
+~~~~~~~~~~~~~~~
+
+When the PVM is about to execute a program, it installs a signal
+handler that, at the moment, handles ``SIGINT``.  This signal handler
+is defined in the ``late-c`` block in pvm.jitter, and records the
+signal in the PVM internal state.
+
+Then, when a ``sync`` instruction is executed, it checks the PVM
+internal state and raises a ``PVM_E_SIGNAL`` exception if there is
+some pending signal.  The default signal handler just ignores this
+signal, but the user can also intercept it if desired.  The PKL
+compiler generates ``sync`` instructions in strategic places, such as
+before backward jumps in loops.
+
+The ``exit`` PVM instruction clears the pending signals in the
+internal PVM state.
 
 Offsets and bit-offsets in the PVM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

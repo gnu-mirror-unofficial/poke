@@ -21,6 +21,7 @@
 #include <xalloc.h>
 #include <string.h>
 #include <assert.h>
+#include <signal.h>
 
 #include "pvm.h"
 
@@ -116,10 +117,14 @@ pvm_shutdown (pvm apvm)
 enum pvm_exit_code
 pvm_run (pvm apvm, pvm_routine routine, pvm_val *res)
 {
+  sighandler_t previous_handler;
+
   PVM_STATE_RESULT_VALUE (apvm) = PVM_NULL;
   PVM_STATE_EXIT_CODE (apvm) = PVM_EXIT_OK;
 
+  previous_handler = signal (SIGINT, pvm_handle_signal);
   pvm_execute_routine (routine, &apvm->pvm_state);
+  signal (SIGINT, previous_handler);
 
   if (res != NULL)
     *res = PVM_STATE_RESULT_VALUE (apvm);

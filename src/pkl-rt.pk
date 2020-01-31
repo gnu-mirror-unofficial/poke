@@ -64,6 +64,7 @@ defvar E_conv          = 8;
 defvar E_elem          = 9;
 defvar E_constraint    = 10;
 defvar E_io            = 11;
+defvar E_signal        = 12;
 
 /* Default exception handler.
 
@@ -73,6 +74,9 @@ defvar E_io            = 11;
 
 defun _pkl_exception_handler = (Exception exception) void:
   {
+   if (exception == E_signal)
+     return;
+
    print "unhandled ";
 
    /* XXX: use a multiple conditional statement here.  */
