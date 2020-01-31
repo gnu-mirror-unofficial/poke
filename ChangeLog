@@ -1,5 +1,16 @@
 2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/ios.c (ios_read_string): Support reading strings from
+	non-byte aligned offsets.
+	(ios_write_string): Likewise, for writing.
+	* testsuite/poke.map/maps-strings-2.pk: New test.
+	* testsuite/poke.map/maps-strings-diag-1.pk: Likewise.
+	* testsuite/poke.map/maps-strings-diag-2.pk: Likewise.
+	* testsuite/poke.map/maps-strings-diag-4.pk: Likewise.
+	* testsuite/poke.map/maps-strings-3.pk: Likewise.
+
+2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-insn.def (PKL_INSN_IOSIZE): New instruction.
 	* src/pkl-ast.h (PKL_AST_BUILTIN_IOSIZE): Define.
 	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle iosize builtin.

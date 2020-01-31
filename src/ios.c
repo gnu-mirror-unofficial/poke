@@ -879,22 +879,54 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
   size_t i = 0;
   int c;
 
-  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
-      == -1)
-    return IOS_EIOFF;
-
-  do
+  if (offset % 8 == 0)
     {
-      if (i % 128 == 0)
-        str = xrealloc (str, i + 128 * sizeof (char));
-
-      c = io->dev_if->get_c (io->dev);
-      if (c == IOD_EOF)
+      /* This is the fast case: the string is aligned to a byte
+         boundary.  We just read bytes from the IOD until either EOF
+         or a NULL byte.  */
+      
+      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
+          == -1)
         return IOS_EIOFF;
-      else
-        str[i] = (char) c;
+      
+      do
+        {
+          if (i % 128 == 0)
+            str = xrealloc (str, i + 128 * sizeof (char));
+          
+          c = io->dev_if->get_c (io->dev);
+          if (c == IOD_EOF)
+            return IOS_EIOFF;
+          else
+            str[i] = (char) c;
+        }
+      while (str[i++] != '\0');
     }
-  while (str[i++] != '\0');
+  else
+    {
+      /* The string is not aligned to a byte boundary.  Instead of
+         reading bytes from the IOD, we use the IOS to read 8-byte
+         unsigned integers.  */
+
+      do
+        {
+          int ret;
+          uint64_t abyte;
+          
+          if (i % 128 == 0)
+            str = xrealloc (str, i + 128 * sizeof (char));
+
+          ret = ios_read_uint (io, offset, flags, 8,
+                               IOS_ENDIAN_MSB, /* Arbitrary.  */
+                               &abyte);
+          if (ret == IOS_EIOFF)
+            return ret;
+
+          str[i] = (char) abyte;
+          offset += 8;
+        }
+      while (str[i++] != '\0');
+    }
 
   *value = str;
   return IOS_OK;
@@ -1478,17 +1510,43 @@ ios_write_string (ios io, ios_off offset, int flags,
 {
   const char *p;
 
-  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
-      == -1)
-    return IOS_EIOFF;
-
-  p = value;
-  do
+  if (offset % 8 == 0)
     {
-      if (io->dev_if->put_c (io->dev, *p) == IOD_EOF)
+      /* This is the fast case: we want to write a string at a
+         byte-boundary.  Just write the bytes to the IOD.  */
+      
+      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
+          == -1)
         return IOS_EIOFF;
+      
+      p = value;
+      do
+        {
+          if (io->dev_if->put_c (io->dev, *p) == IOD_EOF)
+            return IOS_EIOFF;
+        }
+      while (*(p++) != '\0');
     }
-  while (*(p++) != '\0');
+  else
+    {
+      /* We want to write the string in an offset that is not aligned
+         to a byte.  Instead of writing bytes to the IOD, use the IOS
+         to write 8-byte unsigned integers instead.  */
+
+      p = value;
+      do
+        {
+          int ret = ios_write_uint (io, offset, flags, 8,
+                                    IOS_ENDIAN_MSB, /* Arbitrary.  */
+                                    (uint64_t) *p);
+          if (ret == IOS_EIOFF)
+            return ret;
+
+          offset += 8;
+        }
+      while (*(p++) != '\0');
+
+    }
 
   return IOS_OK;
 }
