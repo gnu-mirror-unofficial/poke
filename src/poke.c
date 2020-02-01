@@ -287,7 +287,7 @@ parse_args (int argc, char *argv[])
 
   if (optind < argc)
     {
-      if (ios_open (argv[optind++], 1) == IOS_ERROR)
+      if (ios_open (argv[optind++], 0, 1) == IOS_ERROR)
         goto exit_failure;
 
       optind++;

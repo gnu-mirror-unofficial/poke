@@ -558,7 +558,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
     {
       ios cur_io = ios_cur ();
       if (cur_io == NULL
-          || !(ios_mode (cur_io) & IOS_M_RDWR))
+          || !(ios_flags (cur_io) & IOS_M_RDWR))
         {
           pk_puts (_("This command requires a writable IO space."));
           return 0;

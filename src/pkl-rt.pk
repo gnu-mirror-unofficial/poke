@@ -38,12 +38,31 @@ defun get_endian = int<32>: __PKL_BUILTIN_GET_ENDIAN__;
 defun set_endian = (int<32> endian) int<32>: __PKL_BUILTIN_SET_ENDIAN__;
 defun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
 defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
-defun open = (string handler) int<32>: __PKL_BUILTIN_OPEN__;
+defun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
 defun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
 defun iosize = (int<32> ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
 
 defvar ENDIAN_LITTLE = 0;
 defvar ENDIAN_BIG = 1;
+
+/* IOS flags and modes.
+
+   There is space for 64 flags in the uint<64> optional argument to
+   `open'.  The flags in the least-significative 32 bits are valid for
+   all IOD backends and are defined below.  The most-significative 32
+   bits are reserved for backend-specific flags.
+
+   Please keep these values in sync with the constants in ios.c.  */
+
+defvar IOS_F_READ   = 1;
+defvar IOS_F_WRITE  = 2;
+defvar IOS_F_APPEND = 4;
+defvar IOS_F_TRUNCATE = 8;
+defvar IOS_F_CREATE = 16;
+
+defvar IOS_M_RDONLY = IOS_F_READ;
+defvar IOS_M_WRONLY = IOS_F_WRITE;
+defvar IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
 
 /* Exceptions.
 

@@ -127,7 +127,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
 
       errno = 0;
-      if (IOS_ERROR == ios_open (filename, 1))
+      if (IOS_ERROR == ios_open (filename, 0, 1))
 	{
 	  pk_printf (_("Error opening %s: %s\n"), filename,
 		     strerror (errno));
@@ -188,10 +188,17 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static void
 print_info_file (ios io, void *data)
 {
+  uint64_t flags = ios_flags (io);
+  char mode[3];
+
+  mode[0] = flags & IOS_F_READ ? 'r' : ' ';
+  mode[1] = flags & IOS_F_WRITE ? 'w' : ' ';
+  mode[2] = '\0';
+  
   pk_printf ("%s#%d\t%s\t0x%08jx#b\t%s\n",
              io == ios_cur () ? "* " : "  ",
              ios_get_id (io),
-             ios_mode (io) & IOS_M_RDWR ? "rw" : "r ",
+             mode,
              ios_tell (io), ios_handler (io));
 }
 

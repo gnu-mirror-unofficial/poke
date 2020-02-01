@@ -1,5 +1,30 @@
 2020-02-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/ios.h (ios_open): Get a flags argument.
+	(IOS_F_READ): Define.
+	(IOS_F_WRITE): Likewise.
+	(IOS_F_APPEND): Likewise.
+	(IOS_F_CREATE): Likewise.
+	(IOS_F_TRUNCATE): Likewise.
+	(IOS_M_RDONLY): Likewise.
+	(IOS_M_WRONLY): Likewise.
+	(IOS_M_RDWR): Likewise.
+	* src/ios.c (ios_open): Likewise.
+	* src/pkl-rt.pk (open): get an optional argument for the flags.
+	(IOS_F_READ): Define.
+	(IOS_F_WRITE): Likewise.
+	(IOS_F_APPEND): Likewise.
+	(IOS_F_CREATE): Likewise.
+	(IOS_M_RDONLY): Likewise.
+	(IOS_M_WRONLY): Likewise.
+	(IOS_M_RDWR): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): The `open' instruction now
+	takes two arguments.
+	* src/pvm.jitter (open): Likewise.
+	* src/pk-file.c (print_info_file): Adapt to new flags.
+
+2020-02-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm.jitter (mka): Initialize non-initialized elements in the
 	array.
 	* testsuite/poke.pkl/arrays-4.pk: Update to new semantics.

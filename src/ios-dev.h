@@ -52,7 +52,7 @@ struct ios_dev_if
      assumes that HANDLER is recognized as a handler by the backend,
      i.e. HANDLER_P returns 1 if HANDLER is passed to it.  */
 
-  void *(*open) (const char *handler);
+  void *(*open) (const char *handler, uint64_t flags);
 
   /* Close the given device.  Return 0 if there was an error during
 
@@ -82,9 +82,9 @@ struct ios_dev_if
 
   int (*put_c) (void *dev, int c);
 
-  /* Return the mode of the device, as it was opened.  */
+  /* Return the flags of the device, as it was opened.  */
 
-  int (*get_mode) (void *dev);
+  uint64_t (*get_flags) (void *dev);
 
   /* Return the size of the device, in bytes.  */
 

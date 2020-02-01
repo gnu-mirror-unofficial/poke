@@ -159,7 +159,7 @@ ios_shutdown (void)
 }
 
 int
-ios_open (const char *handler, int set_cur)
+ios_open (const char *handler, uint64_t flags, int set_cur)
 {
   struct ios *io = NULL;
   struct ios_dev_if **dev_if = NULL;
@@ -184,7 +184,7 @@ ios_open (const char *handler, int set_cur)
   io->dev_if = *dev_if;
 
   /* Open the device using the interface found above.  */
-  io->dev = io->dev_if->open (handler);
+  io->dev = io->dev_if->open (handler, flags);
   if (io->dev == NULL)
     goto error;
 
@@ -234,10 +234,10 @@ ios_close (ios io)
   cur_io = io_list;
 }
 
-int
-ios_mode (ios io)
+uint64_t
+ios_flags (ios io)
 {
-  return io->dev_if->get_mode (io->dev);
+  return io->dev_if->get_flags (io->dev);
 }
 
 ios_off

@@ -646,14 +646,17 @@ end
 
 ## IOS related instructions
 
-instruction open () # ( STR -- INT )
+instruction open () # ( STR ULONG -- INT )
   code
-     char *filename = PVM_VAL_STR (JITTER_TOP_STACK ());
-     int ret = ios_open (filename, 0);
+     char *filename = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
+     uint64_t flags = PVM_VAL_ULONG (JITTER_TOP_STACK ());
+
+     int ret = ios_open (filename, flags, 0);
 
      if (ret == IOS_ERROR)
        PVM_RAISE (PVM_E_IO);
 
+     JITTER_DROP_STACK ();
      JITTER_TOP_STACK () = pvm_make_int (ret, 32);
   end
 end

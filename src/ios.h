@@ -90,6 +90,31 @@ typedef int64_t ios_off;
 
 #define IOS_ERROR -1  /* An unspecified error condition happened.  */
 
+/* **************** IOS flags ******************************
+
+   The 64-bit unsigned flags associated with IO spaces have the
+   following structure:
+
+
+    63                   32 31              8 7     0
+   |  IOD-specific flags   |  generic flags  |  mode |
+
+*/
+
+#define IOS_FLAGS_MODE 0xff
+
+/* Mode flags.  */
+
+#define IOS_F_READ   1
+#define IOS_F_WRITE  2
+#define IOS_F_APPEND 4
+#define IOS_F_TRUNCATE 8
+#define IOS_F_CREATE 16
+
+#define IOS_M_RDONLY IOS_F_READ
+#define IOS_M_WRONLY IOS_F_WRITE
+#define IOS_M_RDWR IOS_F_READ | IOS_F_WRITE
+
 /* **************** IO space collection API ****************
 
    The collection of open IO spaces are organized in a global list.
@@ -106,29 +131,31 @@ typedef int64_t ios_off;
    The functions declared below are used to manage this
    collection.  */
 
+
 /* Open an IO space using a handler and if set_cur is set to 1, make
    the newly opened IO space the current space.  Return IOS_ERROR if
    there is an error opening the space (such as an unrecognized
-   handler), the ID of the new IOS otherwise.  */
+   handler), the ID of the new IOS otherwise.
 
-int ios_open (const char *handler, int set_cur);
+   FLAGS is a bitmask.  The least significative 32 bits are
+   reservedfor common flags (the IOS_F_* above).  The most
+   significative 32 bits are reserved for IOD specific flags.
+
+   If no IOS_F_READ or IOS_F_WRITE flags are specified, then the IOS
+   will be opened in whatever mode makes more sense.  */
+
+int ios_open (const char *handler, uint64_t flags, int set_cur);
 
 /* Close the given IO space, freing all used resources and flushing
    the space cache associated with the space.  */
 
 void ios_close (ios io);
 
-/* Depending on the underlying IOD, an IO space may allow several
-   operations but not others.  For example, a read-only file won't
-   allow being written to.  In order to reflect this, every IO space
-   features a "mode" bitmap that can be queried by the user using the
-   function below.  The several bits in which a given IO space can be
-   are summarized in the IOS_M_* constants, also defined below.  */
+/* Return the flags which are active in a given IO.  Note that this
+   doesn't necessarily correspond to the flags passed when opening the
+   IO space: some IOD backends modify them.  */
 
-#define IOS_M_RDWR 1
-#define IOS_M_RDONLY 2
-
-int ios_mode (ios io);
+uint64_t ios_flags (ios io);
 
 /* Many IO devices are able to maintain a current read/write pointer.
    The function below can be used to retrieve it, as an IOS
