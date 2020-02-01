@@ -1909,9 +1909,9 @@ literals.  For example, @code{[1,2,3,.[3] = 4]} denotes the same
 array as @code{[1,2,3,4]}.
 
 This allows creating arrays without having to specify all its
-elements.  Unspecified elements have the next specified value.  For
-example, @code{[.[2] = 2]} denotes the same array as
-@code{[2,2,2]}.
+elements; every unspecified element takes the value of the first
+specified element to its right.  For example, @code{[.[2] = 2]}
+denotes the same array as @code{[2,2,2]}.
 
 Note that an array element can be referenced more than once.  When
 that happens, the final value of the element is the last specified.

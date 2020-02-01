@@ -1,3 +1,11 @@
+2020-02-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pvm.jitter (mka): Initialize non-initialized elements in the
+	array.
+	* testsuite/poke.pkl/arrays-4.pk: Update to new semantics.
+	* testsuite/poke.pkl/arrays-index-1.pk: Likewise.
+	* doc/poke.texi (Array Literals): Update.
+
 2020-01-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-fold.c (pkl_fold_ps_indexer): New handler.

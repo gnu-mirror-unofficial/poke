@@ -1949,7 +1949,7 @@ end
 instruction mka ()
   code
     size_t i;
-    pvm_val nelem, ninitializer, arr;
+    pvm_val nelem, ninitializer, arr, elem;
 
     ninitializer = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
@@ -1969,6 +1969,22 @@ instruction mka ()
 
       PVM_VAL_ARR_ELEM_OFFSET (arr, index) = JITTER_TOP_STACK ();
       JITTER_DROP_STACK ();
+    }
+
+    /* Fill-in non-initialized elements in the array.  */
+    if (PVM_VAL_ULONG (nelem) != PVM_VAL_ULONG (ninitializer))
+    {
+       for (i = PVM_VAL_ULONG (nelem), elem = PVM_NULL;
+            i > 0;
+            --i)
+       {
+         pvm_val elem_value = PVM_VAL_ARR_ELEM_VALUE (arr, i - 1);
+
+         if (elem_value == PVM_NULL)
+           PVM_VAL_ARR_ELEM_VALUE (arr, i - 1) = elem;
+         else
+           elem = elem_value;
+       }
     }
 
     PVM_VAL_ARR_TYPE (arr) = JITTER_TOP_STACK ();

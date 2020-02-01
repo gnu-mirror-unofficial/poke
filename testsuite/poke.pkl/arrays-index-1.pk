@@ -2,9 +2,9 @@
 
 defvar a = [1,.[2]=3];
 
-/* { XXX-dg-command { a[1] } } */
-/* { XXX-dg-output "3" } */
+/* { dg-command { a[1] } } */
+/* { dg-output "3" } */
 
 /* For constant folding: */
 /* { dg-command { [1,.[2]=3][1] } } */
-/* { dg-output "3" } */
+/* { dg-output "\n3" } */
