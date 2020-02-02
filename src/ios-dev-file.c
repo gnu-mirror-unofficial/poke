@@ -69,14 +69,10 @@ ios_dev_file_open (const char *handler, uint64_t flags)
         mode = "rb";
       else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
         mode = "wb";
-      else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_APPEND))
-        mode = "ab";
       else if (flags_mode == (IOS_F_READ | IOS_F_WRITE))
         mode = "r+b";
       else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
         mode = "w+b";
-      else if (flags_mode == (IOS_F_READ | IOS_F_WRITE | IOS_F_CREATE | IOS_F_APPEND))
-        mode = "a+b";
       else
         /* Invalid mode.  */
         return 0;

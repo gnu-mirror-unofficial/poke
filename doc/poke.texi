@@ -3240,8 +3240,6 @@ the compiler.  These are:
 The IO space is intended to be read.
 @item IOS_F_WRITE
 The IO space is intended to be written.
-@item IOS_F_APPEND
-We intend to append information to the IO space.
 @item IOS_F_TRUNCATE
 The IO space shall be truncated upon opening.
 @item IOS_F_CREATE

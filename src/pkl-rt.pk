@@ -56,7 +56,6 @@ defvar ENDIAN_BIG = 1;
 
 defvar IOS_F_READ   = 1;
 defvar IOS_F_WRITE  = 2;
-defvar IOS_F_APPEND = 4;
 defvar IOS_F_TRUNCATE = 8;
 defvar IOS_F_CREATE = 16;
 

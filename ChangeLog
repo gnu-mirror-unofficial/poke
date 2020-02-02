@@ -1,5 +1,13 @@
 2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-rt.pk (IOS_F_APPEND): Remove.
+	* src/ios.h (IOS_F_APPEND): Likewise.
+	* src/ios-dev-file.c (ios_dev_file_open): Do not use "a" modes in
+	fopen.
+	* doc/poke.texi (open): Update.
+
+2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-save.pk: New file.
 	* src/pk-cmd.c (pk_cmd_init): Load pk-save.pk
 	* src/Makefile.am (dist_pkgdata_DATA): Add pk-save.pk.

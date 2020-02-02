@@ -107,7 +107,6 @@ typedef int64_t ios_off;
 
 #define IOS_F_READ   1
 #define IOS_F_WRITE  2
-#define IOS_F_APPEND 4
 #define IOS_F_TRUNCATE 8
 #define IOS_F_CREATE 16
 
