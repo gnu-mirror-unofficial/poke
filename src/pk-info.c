@@ -64,5 +64,5 @@ info_completion_function (const char *x, int state)
 
 
 struct pk_cmd info_cmd =
-  {"info", "", "", 0, &info_trie, NULL, "info (files|variable|function)",
+  {"info", "", "", 0, &info_trie, NULL, "info (ios|variable|function)",
    info_completion_function};
