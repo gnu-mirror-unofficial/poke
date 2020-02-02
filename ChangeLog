@@ -1,5 +1,9 @@
 2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.cmd/copy-5.pk: New test.
+
+2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-copy.pk: New file.
 	* src/Makefile.am (dist_pkgdata_DATA): Add pk-copy.pk.
 	* HACKING (Appendix): Mention pk-copy.pk.
