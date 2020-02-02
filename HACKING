@@ -1558,7 +1558,8 @@ REPL
 Commands
   ``src/pk-def.c``, ``src/pk-dump.pk``, ``src/pk-file.c``,
   ``src/pk-help.c``, ``src/pk-info.c``, ``src/pk-misc.h``,
-  ``src/pk-set.c``, ``src/pk-vm.c``, ``src/pk-save.pk``
+  ``src/pk-set.c``, ``src/pk-vm.c``, ``src/pk-save.pk``,
+  ``src/pk-copy.pk``
 
 Pickles and Libraries
 ~~~~~~~~~~~~~~~~~~~~~

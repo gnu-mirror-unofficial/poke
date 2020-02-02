@@ -77,6 +77,7 @@ Dot-Commands
 
 Commands
 * dump::			Binary dumps.
+* copy::			Copying data around.
 * save::			Save data into a file.
 
 Configuration
@@ -852,6 +853,38 @@ If you have a personal preference on how memory dumps should appear,
 you can set the relevant @code{pk_dump_*} variables.   These
 global variables serve as the defaults for @command{dump}, so this way, you
 will not need to explicitly pass them when you call the function.
+
+@node copy
+@chapter @command{copy}
+@cindex @command{copy}
+
+The command @command{copy} allows to copy regions of data inside an IO
+space, or between different IO spaces.
+
+This command has the following prototype:
+
+@example
+defun copy = (int from_ios = get_ios,
+              int to_ios = from_ios,
+              off64 from = 0#B,
+              off64 to = 0#B,
+              off64 size = 0#B) void:
+@end example
+
+@noindent
+All arguments are optional.  When invoked with no arguments,
+@command{copy} does nothing.
+
+The arguments @code{from} and @code{size} determine the region to
+copy.  By default, this region is taken from the current IO space, but
+this can be overwritten using the optional @code{from_ios} argument.
+
+The argument @code{to} tells @command{copy} where to copy the stuff.
+Again, this offset is applied to the current IO space by default, but
+this can be overwritten using the @code{to_ios} argument.
+
+Note that it is allowed for the source and destination ranges to
+overlap.
 
 @node save
 @chapter @command{save}

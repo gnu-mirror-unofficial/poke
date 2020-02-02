@@ -44,45 +44,9 @@ defun save = (int ios = get_ios,
  if (append)
    output_offset = iosize (file_ios);
 
- /* Determine the best step size to operate with.  */
- defvar step = 1#B;
-
- if (size % 64#B == 0#B)
-   step = 64#B;
- else if (size % 32#B == 0#B)
-   step = 32#B;
- else if (size % 16#B == 0#B)
-   step = 16#B;
-
- /* Change the endianness to big endian, so we get the right ordering
-    of the bytes when operating on steps > 1#B.  */
- defvar endian = get_endian;
- set_endian (ENDIAN_BIG);
-
- /* Write the bytes out. */
- defvar input_offset = from; 
- while (input_offset < from + size)
-   {
-     if (verbose)
-       printf ("Writing %u64d bytes from %v to %v\n",
-               step / #B,
-               input_offset as offset<uint<64>,8>,
-               output_offset as offset<uint<64>,8>);
-     
-     if (step == 64#B)
-       uint<64> @ file_ios : output_offset = uint<64> @ ios : input_offset;
-     else if (step == 32#B)
-       uint<32> @ file_ios : output_offset = uint<32> @ ios : input_offset;
-     else if (step == 16#B)
-       uint<16> @ file_ios : output_offset = uint<16> @ ios : input_offset;
-     else
-       byte @ file_ios : output_offset = byte @ ios : input_offset;
-
-     input_offset = input_offset + step;
-     output_offset = output_offset + step;
-   }
+ /* Copy the stuff.  */
+ copy :from_ios ios :to_ios file_ios :from from :size size;
 
  /* Cleanup.  */
- set_endian (endian);
  close (file_ios);
 }

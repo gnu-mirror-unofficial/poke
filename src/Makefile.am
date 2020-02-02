@@ -17,7 +17,7 @@
 
 
 dist_pkgdata_DATA = pkl-rt.pk std.pk \
-                    pk-cmd.pk pk-dump.pk pk-save.pk
+                    pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk
 
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \

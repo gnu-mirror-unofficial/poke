@@ -767,6 +767,7 @@ pk_cmd_init (void)
 
     LOAD_PK_FILE ("pk-cmd.pk");
     LOAD_PK_FILE ("pk-dump.pk");
+    LOAD_PK_FILE ("pk-copy.pk");
     LOAD_PK_FILE ("pk-save.pk");
 
 #undef LOAD_PK_FILE
