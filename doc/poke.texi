@@ -76,6 +76,7 @@ Dot-Commands
 
 Commands
 * dump::			Binary dumps.
+* save::			Save data into a file.
 
 Configuration
 * pokerc::			User's initialization file.
@@ -829,6 +830,50 @@ If you have a personal preference on how memory dumps should appear,
 you can set the relevant @code{pk_dump_*} variables.   These
 global variables serve as the defaults for @command{dump}, so this way, you
 will not need to explicitly pass them when you call the function.
+
+@node save
+@chapter @command{save}
+@cindex @command{save}
+
+Use the @command{save} command in order to write a region from an IO
+space into a file in your file system.
+
+This command has the following prototype:
+
+@example
+defun save = (int ios = get_ios,
+              string file = "",
+              off64 from = 0#B,
+              off64 size = 0#B,
+              int append = 0) void:
+@end example
+
+@noindent
+All arguments are optional.  When invoked with no arguments,
+@command{save} does nothing.
+
+The arguments @code{from} and @code{size} are used to determine the
+region of the IO space to save.  This is how you would extract and
+save the contents of an ELF section to a file @file{out.text}:
+
+@example
+(poke) defvar s = elf_section_by_name (Elf64_Ehdr @@ 0#B, ".text")
+(poke) save :file "out.text" :from s.sh_offset :size s.sh_size
+@end example
+
+@noindent
+Both @code{from} and @code{size} are arbitrary offsets.  You should
+keep in mind however that files are byte oriented.  Therefore saving,
+say, nine bits to a file will actually write two bytes.
+
+By default @command{save} will extract the data from the @dfn{current
+IO space}.  However, it is possible to specify an alternative IOS by
+using the @code{ios} argument.
+
+By default @command{save} will truncate the output file, if it exists,
+before starting writing.  If the argument @command{append} is
+set as true, however, it will append to the existing contents of the
+file.  In this case, the file should exist.
 
 @node pokerc
 @chapter @file{.pokerc}
