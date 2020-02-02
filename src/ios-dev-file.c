@@ -57,11 +57,6 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
   const char *mode;
   uint8_t flags_mode = flags & IOS_FLAGS_MODE;
 
-  /* Skip the file:// part in the handler, if needed.  */
-  if (strlen (handler) >= 7
-      && strncmp (handler, "file://", 7) == 0)
-    handler += 7;
-
   if (flags_mode != 0)
     {
       /* Decide what mode to use to open the file.  */

@@ -41,7 +41,8 @@
 
 /* Table of supported commands.  */
 
-extern struct pk_cmd file_cmd; /* pk-file.c  */
+extern struct pk_cmd file_cmd; /* pk-ios.c  */
+extern struct pk_cmd mem_cmd; /* pk-ios.c */
 extern struct pk_cmd close_cmd; /* pk-file.c */
 extern struct pk_cmd load_cmd; /* pk-file.c */
 extern struct pk_cmd info_cmd; /* pk-info.c  */
@@ -66,6 +67,7 @@ static struct pk_cmd *dot_cmds[] =
     &vm_cmd,
     &set_cmd,
     &editor_cmd,
+    &mem_cmd,
     &null_cmd
   };
 

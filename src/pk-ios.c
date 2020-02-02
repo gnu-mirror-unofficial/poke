@@ -1,4 +1,4 @@
-/* pk-file.c - Commands for operating files.  */
+/* pk-ios.c - Commands for operating on IO spaces.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
@@ -104,25 +104,19 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     {
       /* Create a new IO space.  */
       const char *arg_str = PK_CMD_ARG_STR (argv[0]);
-      char *filename
-        = xmalloc (strlen ("file://") + strlen (arg_str) + 1);
+      const char *filename = arg_str;
 
-      if (access (arg_str, R_OK) != 0)
+      if (access (filename, R_OK) != 0)
         {
           char *why = strerror (errno);
           pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
-	  free (filename);
           return 0;
         }
-
-      strcpy (filename, "file://");
-      strcat (filename, arg_str);
 
       if (ios_search (filename) != NULL)
         {
           printf (_("File %s already opened.  Use `file #N' to switch.\n"),
                   filename);
-	  free (filename);
           return 0;
         }
 
@@ -131,15 +125,13 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 	{
 	  pk_printf (_("Error opening %s: %s\n"), filename,
 		     strerror (errno));
-	  free (filename);
 	  return 0;
 	}
-      free (filename);
     }
 
   if (poke_interactive_p && !poke_quiet_p)
     pk_printf (_("The current file is now `%s'.\n"),
-               ios_handler (ios_cur ()) + strlen ("file://"));
+               ios_handler (ios_cur ()));
 
   return 1;
 }
@@ -186,7 +178,7 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static void
-print_info_file (ios io, void *data)
+print_info_ios (ios io, void *data)
 {
   uint64_t flags = ios_flags (io);
   char mode[3];
@@ -203,12 +195,12 @@ print_info_file (ios io, void *data)
 }
 
 static int
-pk_cmd_info_files (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   assert (argc == 0);
 
-  pk_printf (_("  Id\tMode\tPosition\tFilename\n"));
-  ios_map (print_info_file, NULL);
+  pk_printf (_("  Id\tMode\tPosition\tName\n"));
+  ios_map (print_info_ios, NULL);
 
   return 1;
 }
@@ -298,14 +290,75 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 0;
 }
 
+static int
+pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* mem NAME */
+
+  assert (argc == 1);
+
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG)
+    {
+      /* Switch to an already opened IO space.  */
+
+      int io_id;
+      ios io;
+
+      io_id = PK_CMD_ARG_TAG (argv[0]);
+      io = ios_search_by_id (io_id);
+      if (io == NULL)
+        {
+          pk_printf (_("No such file #%d\n"), io_id);
+          return 0;
+        }
+
+      ios_set_cur (io);
+    }
+  else
+    {
+      /* Create a new memory IO space.  */
+      const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+      char *mem_name = xmalloc (strlen (arg_str) + 2 + 1);
+
+      strcpy (mem_name, "*");
+      strcat (mem_name, arg_str);
+      strcat (mem_name, "*");
+
+      if (ios_search (mem_name) != NULL)
+        {
+          printf (_("Buffer %s already opened.  Use `file #N' to switch.\n"),
+                  mem_name);
+	  free (mem_name);
+          return 0;
+        }
+
+      if (IOS_ERROR == ios_open (mem_name, 0, 1))
+        {
+	  pk_printf (_("Error creating memory IOS %s\n"), mem_name);
+	  free (mem_name);
+	  return 0;
+        }
+    }
+
+  if (poke_interactive_p && !poke_quiet_p)
+    pk_printf (_("The current IOS is now `%s'.\n"),
+               ios_handler (ios_cur ()));
+
+    return 1;
+}
+
+
 struct pk_cmd file_cmd =
   {"file", "tf", "", 0, NULL, pk_cmd_file, "file (FILENAME|#ID)", rl_filename_completion_function};
+
+struct pk_cmd mem_cmd =
+  {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem (NAME|#ID)"};
 
 struct pk_cmd close_cmd =
   {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", close_completion_function};
 
-struct pk_cmd info_files_cmd =
-  {"files", "", "", 0, NULL, pk_cmd_info_files, "info files"};
+struct pk_cmd info_ios_cmd =
+  {"ios", "", "", 0, NULL, pk_cmd_info_ios, "info ios"};
 
 struct pk_cmd load_cmd =
   {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME", rl_filename_completion_function};

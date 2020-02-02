@@ -1,5 +1,23 @@
 2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/ios-dev-file.c (ios_dev_file_open): Remove handling of
+	file://.
+	* src/ios-dev-mem.c: New file.
+	* src/Makefile.am (poke_SOURCES): Add ios-dev-mem.c.
+	* src/ios.c (ios_dev_ifs): Register ios_dev_mem.
+	* doc/poke.texi (open): Document memory buffer IOS.
+	(info command): Updated.
+	* testsuite/poke.pkl/open-2.pk: New file.
+	* testsuite/poke.pkl/ios-mem-1.pk: Likewise.
+	* testsuite/poke.pkl/ios-mem-2.pk: Likewise.
+	* src/pk-misc.c (pk_cmd_mem): New function.
+	* src/pk-cmd.c (dot_cmds): Register .mem.
+	* src/pk-ios.c: Renamed from pk-file.c.
+	* testsuite/poke.cmd/file-mode.pk: Updated.
+	* doc/poke.texi (mem command): New chapter.
+
+2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios-dev.h (IOD_ERROR): Define.
 	(IOD_EINVAL): Likewise.
 	* src/ios.h (IOS_EFLAGS): Likewise.

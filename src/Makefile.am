@@ -22,11 +22,11 @@ dist_pkgdata_DATA = pkl-rt.pk std.pk \
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \
                ios.c ios.h ios-dev.h \
-               ios-dev-file.c \
+               ios-dev-file.c ios-dev-mem.c \
                pk-term.c pk-term.h \
                pk-repl.c pk-repl.h \
                pk-cmd.c pk-cmd.h \
-               pk-file.c \
+               pk-ios.c \
                pk-info.c pk-misc.c pk-help.c pk-vm.c \
                pk-def.c pk-set.c pk-editor.c \
                pkl.h pkl.c \

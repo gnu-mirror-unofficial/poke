@@ -66,7 +66,8 @@ Using poke
 
 Dot-Commands
 * load command::		Loading pickles.
-* file command::		Opening and selecting IO spaces.
+* file command::		Opening and selecting file IO spaces.
+* mem command::			Opening and selecting memory IO spaces.
 * close command::		Closing IO spaces.
 * editor command::		Using an external editor for input.
 * info command::		Getting information about open files, @i{etc}.
@@ -520,13 +521,34 @@ The current file is now `foo.o'.
 
 @cindex tags, file ID tags
 A list of open files, and their corresponding tags, can be obtained
-using the @command{.info files} command.  Once a tag is known, you can
+using the @command{.info ios} command.  Once a tag is known, you can
 use it to switch back to that file:
 
 @example
 (poke) .file #1
 The current file is now `foo.o'.
 @end example
+
+@node mem command
+@chapter @code{.mem}
+@cindex @code{.mem}
+@cindex opening memory buffers
+@cindex IO space
+The @command{.mem} command opens a new IO space backed by a memory
+buffer, or switches to a previously opened IOS.  The syntax is:
+
+@example
+.mem @var{name}|@var{#tag}
+@end example
+
+@cindex tags, file ID tags
+Where @var{name} is the name of the newly created buffer, and
+@var{tag} is a tag of the form @code{#NUMBER} that identifies a
+previously open IOS.  Note that poke adds prefix and trailing asterisk
+characters, to differentiate file names from buffer names.
+
+When a new memory buffer IOS is opened, it becomes the current IO
+space.  @xref{file command}.
 
 @node close command
 @chapter @code{.close}
@@ -563,12 +585,12 @@ The @command{.info} command provides information about several kinds
 of entities.  The recognized sub commands are:
 
 @table @command
-@item .info files
+@item .info ios
 Display a list of open files.
 
 @example
-(poke) .info files
-  Id	Mode	Position	Filename
+(poke) .info ios
+  Id	Mode	Position	Name
 * #0	rw      0x00000000#b	foo.bson
   #1	r       0x00000000#b	foo.o
 @end example
@@ -583,9 +605,9 @@ switch to it as the new current IO space:
 @example
 (poke) .file #1
 The current file is now `foo.o'.
-(poke) .info files
+(poke) .info ios
   Id	Mode	Position	Filename
-  #0	rw      0x00000000#b	file://foo.bson
+  #0	rw      0x00000000#b	foo.bson
 * #1	r       0x00000000#b	foo.o
 @end example
 
@@ -3223,11 +3245,12 @@ Where @var{handler} is a string identifying the IO device that will
 serve the IO space.  This handler can be:
 
 @table @code
-@item file://path/to/file
-@itemx /path/to/file
-An either absolute or relative path to a file.  Both syntaxes are allowed.
+@item *@var{name}*
+An auto growing memory buffer.
 @item pid://[0-9]+
 The process ID of some process.
+@item /path/to/file
+An either absolute or relative path to a file.
 @end table
 
 @var{flags} is a bitmask that specifies several aspects of the
