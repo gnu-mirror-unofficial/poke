@@ -1,5 +1,12 @@
 2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/ios.h (IOS_M_RDONLY): Use parenthesis in macro definition.
+	(IOS_M_WRONLY): Likewise.
+	(IOS_M_RDWR): Likewise.
+	* src/pk-cmd.c (pk_cmd_exec_1): Fix usage of ios_flags.
+
+2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (open): Document the `flags' optional argument to
 	open.
 
