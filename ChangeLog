@@ -1,3 +1,54 @@
+2019-11-06  Darshit Shah  <darnir@gnu.org>
+
+	* src/pk-hserver.c (read_from_client): Fix off by one when terminating
+	the string
+	* src/pk-file.c (print_info_file): Fix errors introduced when merging
+	master into the hyperserver branch.
+
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-file.c (print_info_file): Use terminal hyperlinks if
+	available.
+
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-hserver.c (pk_hserver_get_token): New function.
+	(pk_hserver_make_hyperlink): Likewise.
+	(pk_hserver_port): New function.
+	* src/pk-repl.c (pk_repl): Emit an hyperlink for .help.
+	* src/pk-term.c (pk_term_hyperlink): Fix guard.
+	(pk_term_end_hyperlink): Likewise.
+
+2019-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-repl.h: New file.
+	* src/pk-repl.c: Likewise.
+	* src/Makefile.am (poke_SOURCES): Add pk-repl.h and pk-repl.c.
+	* src/poke.c (repl): Remove function.
+	(main): Call pk_repl instead of repl.
+
+2019-11-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-hserver.h: New file.
+	* src/pk-hserver.c: Likewise.
+	* src/poke.c: Initialize and finalize the hyperlinks server.
+	* configure.ac: Add support for --enable-hserver and set the
+	HSERVER automake conditional.
+	* src/Makefile.am (poke_SOURCES): Add pk-hserver.h and
+	pk-hserver.c.
+	(poke_LDADD): Link with pthreads if the server is enabled.
+	* HACKING (Appendix: The Source Tree): list server files.
+
+2019-11-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Import the socket, bind and
+	accept modules from gnulib.
+
+2019-11-03  Jose E. Marchesi  <jemarch@gnu.org>,
+
+	* bootstrap.conf (gnulib_modules): Import the `pthread' module
+	from gnulib.
+
 2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.cmd/copy-5.pk: New test.

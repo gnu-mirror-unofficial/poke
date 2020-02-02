@@ -53,6 +53,10 @@ poke_SOURCES = poke.c poke.h \
                pkl-insn.def pkl-ops.def pkl-attrs.def
 
 
+if HSERVER
+  poke_SOURCES += pk-hserver.h pk-hserver.c
+endif
+
 .pks.pkc:
 	srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@
 
@@ -74,6 +78,10 @@ poke_CFLAGS = -Wall $(BDW_GC_CFLAGS)
 poke_LDADD = $(top_builddir)/lib/libpoke.la \
              $(LTLIBREADLINE) $(BDW_GC_LIBS) $(LIBTEXTSTYLE)
 poke_LDFLAGS =
+
+if HSERVER
+  poke_LDADD += -lpthread
+endif
 
 # Integration with jitter.
 

@@ -97,6 +97,24 @@ dnl file provided by gnulib's libtextstyle-optional module.
 gl_LIBTEXTSTYLE_OPTIONAL
 AX_LIBTEXTSTYLE_HYPERLINK
 
+dnl The hyperlinks server is optional.  It is enabled by default if
+dnl there is a libtextstyle with hyperlinks support available.
+
+AC_ARG_ENABLE([hserver],
+              AS_HELP_STRING([--enable-hserver],
+                             [Enable the terminal hyperlinks server (default is YES)]),
+              [hserver_enabled=$enableval], [hserver_enabled=$has_hyper_support])
+
+if test "x$has_hyper_support" = "xno"; then
+  hserver_enabled=no
+fi
+
+AM_CONDITIONAL([HSERVER], [test "x$hserver_enabled" = "xyes"])
+if test "x$hserver_enabled" = "xyes"; then
+  AC_DEFINE([HAVE_HSERVER], 1,
+            [Defined if the hyperlinks server is available])
+fi
+
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 lib/Makefile
@@ -114,6 +132,12 @@ dnl Report warnings
 if test "x$HAVE_LIBTEXTSTYLE" = "xno"; then
    echo "warning: libtextstyle was not found in the system."
    echo "warning: poke's output won't be styled."
+fi
+
+if test "x$hserver_enabled" = "xno"; then
+   echo "warning: building poke without terminal hyperlinks server support."
+   echo "warning: install an hyperlinks-capable libtextstyle and use"
+   echo "warning: --enable-hserver to activate it."
 fi
 
 dnl Report errors

@@ -29,6 +29,9 @@
 #include "ios.h"
 #include "poke.h"
 #include "pk-cmd.h"
+#if HAVE_HSERVER
+#  include "pk-hserver.h"
+#endif
 
 static void
 count_io_spaces (ios io, void *data)
@@ -182,16 +185,55 @@ print_info_ios (ios io, void *data)
 {
   uint64_t flags = ios_flags (io);
   char mode[3];
-
   mode[0] = flags & IOS_F_READ ? 'r' : ' ';
   mode[1] = flags & IOS_F_WRITE ? 'w' : ' ';
   mode[2] = '\0';
   
-  pk_printf ("%s#%d\t%s\t0x%08jx#b\t%s\n",
+  pk_printf ("%s#%d\t%s\t",
              io == ios_cur () ? "* " : "  ",
              ios_get_id (io),
-             mode,
-             ios_tell (io), ios_handler (io));
+	     mode);
+
+#if HAVE_HSERVER
+  {
+    char *cmd;
+    char *hyperlink;
+    
+    asprintf (&cmd, "0x%08jx#b", ios_tell (io));
+    hyperlink = pk_hserver_make_hyperlink ('i', cmd);
+    free (cmd);
+    
+    pk_term_hyperlink (hyperlink, NULL);
+    pk_printf ("0x%08jx#b", ios_tell (io));
+    pk_term_end_hyperlink ();
+    
+    free (hyperlink);
+  }
+#else
+  pk_printf ("0x%08jx#b", ios_tell (io));
+#endif
+  pk_puts ("\t");
+
+#if HAVE_HSERVER
+  {
+    char *cmd;
+    char *hyperlink;
+    
+    asprintf (&cmd, ".file #%d", ios_get_id (io));
+    hyperlink = pk_hserver_make_hyperlink ('e', cmd);
+    free (cmd);
+    
+    pk_term_hyperlink (hyperlink, NULL);
+    pk_puts (ios_handler (io));
+    pk_term_end_hyperlink ();
+    
+    free (hyperlink);
+  }
+#else
+  pk_puts (ios_handler (io));
+#endif
+  
+  pk_puts ("\n");
 }
 
 static int

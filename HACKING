@@ -1554,7 +1554,10 @@ Terminal stuff
 
 REPL
   ``src/pk-repl.h, ``src/pk-repl.c``
-  
+
+Terminal Hyperlinks Server
+  ``src/pk-hserver.h``, ``src/pk-hserver.c``
+
 Commands
   ``src/pk-def.c``, ``src/pk-dump.pk``, ``src/pk-file.c``,
   ``src/pk-help.c``, ``src/pk-info.c``, ``src/pk-misc.h``,

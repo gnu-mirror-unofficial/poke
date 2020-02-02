@@ -26,11 +26,11 @@
 #define _(str) dgettext (PACKAGE, str)
 #include <unistd.h>
 #include <string.h>
-#include "readline.h"
-#if defined HAVE_READLINE_HISTORY_H
-# include <readline/history.h>
-#endif
 #include <locale.h>
+
+#ifdef HAVE_HSERVER
+#  include "pk-hserver.h"
+#endif
 
 #include "ios.h"
 #include "pk-cmd.h"
@@ -209,6 +209,10 @@ Perpetrated by Jose E. Marchesi.\n"));
 static void
 finalize ()
 {
+#ifdef HAVE_HSERVER
+  if (pk_term_color_p ())
+    pk_hserver_shutdown ();
+#endif
   ios_shutdown ();
   pk_cmd_shutdown ();
   pkl_free (poke_compiler);
@@ -358,6 +362,12 @@ initialize (int argc, char *argv[])
 
   /* Initialize the IO subsystem.  Ditto.  */
   ios_init ();
+
+#ifdef HAVE_HSERVER
+  /* Initialize and start the terminal hyperlinks server.  */
+  if (pk_term_color_p ())
+    pk_hserver_init ();
+#endif
 }
 
 static void
