@@ -24,10 +24,13 @@
 
 #include "pk-cmd.h"
 
+#include "findprog.h"
+
 static int
 pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  char *editor, *cmdline;
+  const char *editor;
+  char *cmdline;
   char tmpfile[1024];
   int des, ret;
   FILE *f;
@@ -37,6 +40,10 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   /* Get the value of EDITOR.  */
   editor = getenv ("EDITOR");
+  /* Debian based systems should always have "sensible-editor"
+     in the path.  */
+  if (!editor)
+    editor = find_in_path ("sensible-editor");
   if (!editor)
     {
       pk_term_class ("error");
