@@ -36,6 +36,11 @@ typedef uint64_t ios_dev_off;
 #define IOD_SEEK_CUR 1
 #define IOD_SEEK_END 2
 
+/* Error codes to be used in the inteface below.  */
+
+#define IOD_ERROR  1 /* Generic error.     */
+#define IOD_EINVAL 2 /* Invalid argument.  */
+
 /* Each IO backend should implement a device interface, by filling an
    instance of the struct defined below.  */
 
@@ -48,11 +53,12 @@ struct ios_dev_if
   int (*handler_p) (const char *handler);
 
   /* Open a device using the provided HANDLER.  Return the opened
-     device, or NULL if there was an error.  Note that this function
-     assumes that HANDLER is recognized as a handler by the backend,
-     i.e. HANDLER_P returns 1 if HANDLER is passed to it.  */
+     device, or NULL if there was an error.  In case of invalid flags,
+     store IOD_EINVAL in ERROR.  Note that this function assumes that
+     HANDLER is recognized as a handler by the backend, i.e. HANDLER_P
+     returns 1 if HANDLER is passed to it.  */
 
-  void *(*open) (const char *handler, uint64_t flags);
+  void *(*open) (const char *handler, uint64_t flags, int *error);
 
   /* Close the given device.  Return 0 if there was an error during
 

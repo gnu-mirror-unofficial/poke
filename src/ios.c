@@ -163,6 +163,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
 {
   struct ios *io = NULL;
   struct ios_dev_if **dev_if = NULL;
+  int error, ret;
 
   /* Allocate and initialize the new IO space.  */
   io = xmalloc (sizeof (struct ios));
@@ -184,7 +185,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
   io->dev_if = *dev_if;
 
   /* Open the device using the interface found above.  */
-  io->dev = io->dev_if->open (handler, flags);
+  io->dev = io->dev_if->open (handler, flags, &error);
   if (io->dev == NULL)
     goto error;
 
@@ -203,7 +204,12 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
     free (io->handler);
   free (io);
 
-  return IOS_ERROR;
+  if (error == IOD_EINVAL)
+    ret = IOS_EFLAGS;
+  else
+    ret = IOS_ERROR;
+
+  return ret;
 }
 
 void

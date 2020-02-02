@@ -233,6 +233,11 @@ uint64_t ios_size (ios io);
                          when an end-of-file condition happens in the
                          underlying IO device.  */
 
+/* the following error code is returned when the IO backend can't
+   handle the specified flags in ios_open. */
+
+#define IOS_EFLAGS -4 /* Invalid flags specified.  */
+
 /* When reading and writing integers from/to IO spaces, it is needed
    to specify some details on how the integers values are encoded in
    the underlying storage.  The following enumerations provide the

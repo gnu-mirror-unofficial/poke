@@ -1,3 +1,18 @@
+2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios-dev.h (IOD_ERROR): Define.
+	(IOD_EINVAL): Likewise.
+	* src/ios.h (IOS_EFLAGS): Likewise.
+	(struct ios_dev_if): Add an `error' argument to `open'.
+	* src/ios-dev-file.c (ios_dev_file_open): Adapt to interface
+	change.
+	* src/ios.c (ios_open): Return IOS_EFLAGS in case of invalid
+	flags.
+	* src/pvm.h (PVM_E_IOFLAGS): Define.
+	* src/pkl-rt.pk (E_io_flags): Likewise.
+	(_pkl_exception_handler): Handle E_io_flags.
+	* src/pvm.jitter (open): Raise PVM_E_IOFLAGS whenever necessary.
+
 2020-02-02  John Darrington <john@darrington.wattle.id.au>
 
 	* bootstrap.conf (gnulib_modules): Add findprog.

@@ -653,7 +653,9 @@ instruction open () # ( STR ULONG -- INT )
 
      int ret = ios_open (filename, flags, 0);
 
-     if (ret == IOS_ERROR)
+     if (ret == IOS_EFLAGS)
+       PVM_RAISE (PVM_E_IOFLAGS);
+     else if (ret == IOS_ERROR)
        PVM_RAISE (PVM_E_IO);
 
      JITTER_DROP_STACK ();

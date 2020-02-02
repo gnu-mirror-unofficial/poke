@@ -50,7 +50,7 @@ ios_dev_file_handler_p (const char *handler)
 }
 
 static void *
-ios_dev_file_open (const char *handler, uint64_t flags)
+ios_dev_file_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_file *fio;
   FILE *f;
@@ -74,8 +74,12 @@ ios_dev_file_open (const char *handler, uint64_t flags)
       else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
         mode = "w+b";
       else
-        /* Invalid mode.  */
-        return 0;
+        {
+          /* Invalid mode.  */
+          if (error != NULL)
+            *error = IOD_EINVAL;
+          return NULL;
+        }
 
       f = fopen (handler, mode);
     }
@@ -94,8 +98,10 @@ ios_dev_file_open (const char *handler, uint64_t flags)
 
   if (!f)
     {
-      perror (handler);
-      return 0;
+      if (error != NULL)
+        *error = IOD_ERROR;
+
+      return NULL;
     }
 
   fio = xmalloc (sizeof (struct ios_dev_file));

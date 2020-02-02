@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU poke 0.1-beta\n"
 "Report-Msgid-Bugs-To: bug-poke@gnu.org\n"
-"POT-Creation-Date: 2020-01-16 10:42+0100\n"
+"POT-Creation-Date: 2020-02-02 16:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "No such file #%d\n"
 msgstr ""
 
-#: src/pk-file.c:113 src/pk-file.c:240
+#: src/pk-file.c:113 src/pk-file.c:247
 #, c-format
 msgid "%s: file cannot be read: %s\n"
 msgstr ""
@@ -73,16 +73,16 @@ msgstr ""
 msgid "No more IO spaces."
 msgstr ""
 
-#: src/pk-file.c:203
+#: src/pk-file.c:210
 msgid "  Id\tMode\tPosition\tFilename\n"
 msgstr ""
 
-#: src/pk-file.c:227
+#: src/pk-file.c:234
 #, c-format
 msgid "Cannot stat %s: %s\n"
 msgstr ""
 
-#: src/pk-file.c:233
+#: src/pk-file.c:240
 #, c-format
 msgid "%s is a directory\n"
 msgstr ""
