@@ -42,6 +42,13 @@ config.h.in
 /doc/stamp-vti
 /doc/version.texi
 /doc/version-int.texi
+/doc/poke.aux
+/doc/poke.cp
+/doc/poke.cps
+/doc/poke.log
+/doc/poke.toc
+/doc/poke.tree
+/doc/poke.tree.err
 /src/pcl-lex.h
 /GNUmakefile
 /maint.mk
