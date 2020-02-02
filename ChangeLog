@@ -1,3 +1,8 @@
+2020-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (open): Document the `flags' optional argument to
+	open.
+
 2020-02-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/ios.h (ios_open): Get a flags argument.

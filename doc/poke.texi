@@ -3171,7 +3171,7 @@ The @code{open} builtin allows you to create new IO spaces, by opening an
 IO device.  It has the following prototype:
 
 @example
-defun open = (string @var{handler}) int<32>: @{ @dots{} @}
+defun open = (string @var{handler}, uint<64> flags = 0) int<32>: @{ @dots{} @}
 @end example
 
 Where @var{handler} is a string identifying the IO device that will
@@ -3183,6 +3183,41 @@ serve the IO space.  This handler can be:
 An either absolute or relative path to a file.  Both syntaxes are allowed.
 @item pid://[0-9]+
 The process ID of some process.
+@end table
+
+@var{flags} is a bitmask that specifies several aspects of the
+operation, including the mode in which the IO space is opened.  Its
+value is usually built by ORing a set of flags that are provided by
+the compiler.  These are:
+
+@table @code
+@item IOS_F_READ
+The IO space is intended to be read.
+@item IOS_F_WRITE
+The IO space is intended to be written.
+@item IOS_F_APPEND
+We intend to append information to the IO space.
+@item IOS_F_TRUNCATE
+The IO space shall be truncated upon opening.
+@item IOS_F_CREATE
+If the IO device doesn't exist, then create it, usually empty.
+@end table
+
+@noindent
+Note that the specific meanings of these flags depend on the on the
+nature of the IO space that is opened: for example, a file can be
+truncated, but a memory buffer is truncated by default.
+
+In order to ease the usage of @code{open}, a few pre-made bitmaps are
+provided to specify opening @dfn{modes}:
+
+@table @code
+@item IOS_M_RDONLY
+This is equivalent to @code{IOS_F_READ}.
+@item IOS_M_WRONLY
+This is equivalent to @code{IOS_F_WRITE}.
+@item IOS_M_RDWR
+This is equivalent to @code{IOS_F_READ | IOS_F_WRITE}.
 @end table
 
 The @code{open} builtin returns a signed 32-bit integer.  This number
