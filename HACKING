@@ -577,6 +577,11 @@ coverage
   ``$(top_builddir)/doc/coverage/``.  It is necessary to have the
   ``lcov`` program for this to work.
 
+cyclo-poke.html
+  This target runs the pmccabe utility to calculate the modified
+  cyclomatic complexity of the functions composing the poke sources,
+  and generates a nice html report.
+
 refresh-po
   This target download the latest available translations from the
   translation project and installs them in the source tree.

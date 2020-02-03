@@ -1,5 +1,11 @@
 2020-02-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (gnulib_modules): Import pmccabe2html module.
+	* Makefile.am (cyclo-$(PACKAGE).html): New target.
+	* HACKING (Maintenance): Document make cyclo-poke.html.
+
+2020-02-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios-dev-file.c (ios_dev_file_close): Free the IOD structure.
 	* src/ios-dev-mem.c (ios_dev_mem_close): Likewise.
 	* testsuite/poke.pkl/close-2.pk: New test.

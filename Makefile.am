@@ -6,3 +6,20 @@ SUBDIRS = jitter lib pickles src doc man testsuite etc po
 # if it is installed in a standard location.
 AM_DISTCHECK_CONFIGURE_FLAGS = --with-jitter=$(WITH_JITTER) \
                                --enable-debug=$(ENABLE_DEBUG)
+
+# Support for generating a cyclomatic complexity report using the
+# pmccabe tool.
+
+CYCLO_SRCS = ${top_srcdir}/src/*.[ch]
+
+cyclo-$(PACKAGE).html: $(CYCLO_SRCS)
+	$(PMCCABE) $(CYCLO_SRCS) \
+		| sort -nr \
+		| $(AWK) -f ${top_srcdir}/build-aux/pmccabe2html \
+			-v lang=html -v name="$(PACKAGE_NAME)" \
+			-v vcurl="https://git.savannah.gnu.org/gitweb/?p=$(PACKAGE).git;a=blob;f=%FILENAME%;hb=HEAD" \
+			-v url="https://www.jemarch.net/poke" \
+			-v css=${top_srcdir}/build-aux/pmccabe.css \
+			-v cut_dir=${top_srcdir}/ \
+			> $@-tmp
+	mv $@-tmp $@
