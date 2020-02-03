@@ -1,3 +1,9 @@
+2020-02-03  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* pickles/ctf.pk: Correct the filename on the first line of the file.
+	* src/ios-dev-mem.c: Likewise.
+	* src/ios.h: Fix typo.
+
 2020-02-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* bootstrap.conf (gnulib_modules): Import pmccabe2html module.

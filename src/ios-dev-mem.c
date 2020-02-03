@@ -1,4 +1,4 @@
-/* ios-dev-file.c - Memory IO devices.  */
+/* ios-dev-mem.c - Memory IO devices.  */
 
 /* Copyright (C) 2020 Jose E. Marchesi */
 

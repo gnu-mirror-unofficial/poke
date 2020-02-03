@@ -136,9 +136,9 @@ typedef int64_t ios_off;
    there is an error opening the space (such as an unrecognized
    handler), the ID of the new IOS otherwise.
 
-   FLAGS is a bitmask.  The least significative 32 bits are
-   reservedfor common flags (the IOS_F_* above).  The most
-   significative 32 bits are reserved for IOD specific flags.
+   FLAGS is a bitmask.  The least significant 32 bits are
+   reserved for common flags (the IOS_F_* above).  The most
+   significant 32 bits are reserved for IOD specific flags.
 
    If no IOS_F_READ or IOS_F_WRITE flags are specified, then the IOS
    will be opened in whatever mode makes more sense.  */
