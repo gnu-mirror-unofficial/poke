@@ -1,3 +1,9 @@
+2020-02-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios-dev-file.c (ios_dev_file_close): Free the IOD structure.
+	* src/ios-dev-mem.c (ios_dev_mem_close): Likewise.
+	* testsuite/poke.pkl/close-2.pk: New test.
+
 2019-11-06  Darshit Shah  <darnir@gnu.org>
 
 	* src/pk-hserver.c (read_from_client): Fix off by one when terminating

@@ -115,7 +115,8 @@ ios_dev_file_close (void *iod)
   if (fclose (fio->file) != 0)
     perror (fio->filename);
   free (fio->filename);
-
+  free (fio);
+  
   return 1;
 }
 

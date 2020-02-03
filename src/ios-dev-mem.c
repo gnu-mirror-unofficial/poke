@@ -66,6 +66,7 @@ ios_dev_mem_close (void *iod)
 
   free (mio->handler);
   free (mio->pointer);
+  free (mio);
 
   return 1;
 }
