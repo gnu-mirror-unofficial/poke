@@ -127,7 +127,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   
   if (ios_search (filename) != NULL)
     {
-      printf (_("File %s already opened.  Use `file #N' to switch.\n"),
+      printf (_("File %s already opened.  Use `.ios #N' to switch.\n"),
               filename);
       return 0;
     }
@@ -358,7 +358,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (ios_search (mem_name) != NULL)
     {
-      printf (_("Buffer %s already opened.  Use `file #N' to switch.\n"),
+      printf (_("Buffer %s already opened.  Use `.ios #N' to switch.\n"),
               mem_name);
       free (mem_name);
       return 0;
