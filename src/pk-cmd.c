@@ -41,6 +41,7 @@
 
 /* Table of supported commands.  */
 
+extern struct pk_cmd ios_cmd; /* pk-ios.c */
 extern struct pk_cmd file_cmd; /* pk-ios.c  */
 extern struct pk_cmd mem_cmd; /* pk-ios.c */
 extern struct pk_cmd close_cmd; /* pk-file.c */
@@ -57,6 +58,7 @@ struct pk_cmd null_cmd = {};
 
 static struct pk_cmd *dot_cmds[] =
   {
+    &ios_cmd,
     &file_cmd,
     &exit_cmd,
     &version_cmd,

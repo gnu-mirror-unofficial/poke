@@ -68,6 +68,7 @@ Dot-Commands
 * load command::		Loading pickles.
 * file command::		Opening and selecting file IO spaces.
 * mem command::			Opening and selecting memory IO spaces.
+* ios command::			Switching between IO spaces.
 * close command::		Closing IO spaces.
 * editor command::		Using an external editor for input.
 * info command::		Getting information about open files, @i{etc}.
@@ -520,16 +521,6 @@ program will operate on that IO space:
 The current file is now `foo.o'.
 @end example
 
-@cindex tags, file ID tags
-A list of open files, and their corresponding tags, can be obtained
-using the @command{.info ios} command.  Once a tag is known, you can
-use it to switch back to that file:
-
-@example
-(poke) .file #1
-The current file is now `foo.o'.
-@end example
-
 @node mem command
 @chapter @code{.mem}
 @cindex @code{.mem}
@@ -550,6 +541,20 @@ characters, to differentiate file names from buffer names.
 
 When a new memory buffer IOS is opened, it becomes the current IO
 space.  @xref{file command}.
+
+@node ios command
+@chapter @code{.ios}
+@cindex @code{.ios}
+
+@cindex tags, file ID tags
+A list of open files, and their corresponding tags, can be obtained
+using the @command{.info ios} command.  Once a tag is known, you can
+use the @command{.ios} command to switch back to that file:
+
+@example
+(poke) .ios #1
+The current IOS is now `foo.o'.
+@end example
 
 @node close command
 @chapter @code{.close}

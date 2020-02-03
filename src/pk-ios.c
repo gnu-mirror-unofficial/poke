@@ -80,60 +80,68 @@ close_completion_function (const char *x, int state)
 
 
 static int
+pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* ios #ID */
+
+  int io_id;
+  ios io;
+
+  assert (argc == 1);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG);
+
+  io_id = PK_CMD_ARG_TAG (argv[0]);
+  io = ios_search_by_id (io_id);
+  if (io == NULL)
+    {
+      pk_printf (_("No IOS with tag #%d\n"), io_id);
+      return 0;
+    }
+
+  ios_set_cur (io);
+
+  if (poke_interactive_p && !poke_quiet_p)
+    pk_printf (_("The current IOS is now `%s'.\n"),
+               ios_handler (ios_cur ()));
+  return 1;
+}
+
+static int
 pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* file FILENAME */
 
   assert (argc == 1);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG)
+  /* Create a new IO space.  */
+  const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+  const char *filename = arg_str;
+  
+  if (access (filename, R_OK) != 0)
     {
-      /* Switch to an already opened IO space.  */
-
-      int io_id;
-      ios io;
-
-      io_id = PK_CMD_ARG_TAG (argv[0]);
-      io = ios_search_by_id (io_id);
-      if (io == NULL)
-        {
-          pk_printf (_("No such file #%d\n"), io_id);
-          return 0;
-        }
-
-      ios_set_cur (io);
+      char *why = strerror (errno);
+      pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
+      return 0;
     }
-  else
+  
+  if (ios_search (filename) != NULL)
     {
-      /* Create a new IO space.  */
-      const char *arg_str = PK_CMD_ARG_STR (argv[0]);
-      const char *filename = arg_str;
-
-      if (access (filename, R_OK) != 0)
-        {
-          char *why = strerror (errno);
-          pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
-          return 0;
-        }
-
-      if (ios_search (filename) != NULL)
-        {
-          printf (_("File %s already opened.  Use `file #N' to switch.\n"),
-                  filename);
-          return 0;
-        }
-
-      errno = 0;
-      if (IOS_ERROR == ios_open (filename, 0, 1))
-	{
-	  pk_printf (_("Error opening %s: %s\n"), filename,
-		     strerror (errno));
-	  return 0;
-	}
+      printf (_("File %s already opened.  Use `file #N' to switch.\n"),
+              filename);
+      return 0;
+    }
+  
+  errno = 0;
+  if (IOS_ERROR == ios_open (filename, 0, 1))
+    {
+      pk_printf (_("Error opening %s: %s\n"), filename,
+                 strerror (errno));
+      return 0;
     }
 
   if (poke_interactive_p && !poke_quiet_p)
-    pk_printf (_("The current file is now `%s'.\n"),
+    pk_printf (_("The current IOS is now `%s'.\n"),
                ios_handler (ios_cur ()));
 
   return 1;
@@ -338,48 +346,29 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* mem NAME */
 
   assert (argc == 1);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  
+  /* Create a new memory IO space.  */
+  const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+  char *mem_name = xmalloc (strlen (arg_str) + 2 + 1);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG)
+  strcpy (mem_name, "*");
+  strcat (mem_name, arg_str);
+  strcat (mem_name, "*");
+
+  if (ios_search (mem_name) != NULL)
     {
-      /* Switch to an already opened IO space.  */
-
-      int io_id;
-      ios io;
-
-      io_id = PK_CMD_ARG_TAG (argv[0]);
-      io = ios_search_by_id (io_id);
-      if (io == NULL)
-        {
-          pk_printf (_("No such file #%d\n"), io_id);
-          return 0;
-        }
-
-      ios_set_cur (io);
+      printf (_("Buffer %s already opened.  Use `file #N' to switch.\n"),
+              mem_name);
+      free (mem_name);
+      return 0;
     }
-  else
+
+  if (IOS_ERROR == ios_open (mem_name, 0, 1))
     {
-      /* Create a new memory IO space.  */
-      const char *arg_str = PK_CMD_ARG_STR (argv[0]);
-      char *mem_name = xmalloc (strlen (arg_str) + 2 + 1);
-
-      strcpy (mem_name, "*");
-      strcat (mem_name, arg_str);
-      strcat (mem_name, "*");
-
-      if (ios_search (mem_name) != NULL)
-        {
-          printf (_("Buffer %s already opened.  Use `file #N' to switch.\n"),
-                  mem_name);
-	  free (mem_name);
-          return 0;
-        }
-
-      if (IOS_ERROR == ios_open (mem_name, 0, 1))
-        {
-	  pk_printf (_("Error creating memory IOS %s\n"), mem_name);
-	  free (mem_name);
-	  return 0;
-        }
+      pk_printf (_("Error creating memory IOS %s\n"), mem_name);
+      free (mem_name);
+      return 0;
     }
 
   if (poke_interactive_p && !poke_quiet_p)
@@ -389,12 +378,14 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     return 1;
 }
 
+struct pk_cmd ios_cmd =
+  {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID"};
 
 struct pk_cmd file_cmd =
-  {"file", "tf", "", 0, NULL, pk_cmd_file, "file (FILENAME|#ID)", rl_filename_completion_function};
+  {"file", "f", "", 0, NULL, pk_cmd_file, "file FILENAME", rl_filename_completion_function};
 
 struct pk_cmd mem_cmd =
-  {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem (NAME|#ID)"};
+  {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem NAME"};
 
 struct pk_cmd close_cmd =
   {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", close_completion_function};
