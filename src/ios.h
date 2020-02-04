@@ -201,6 +201,16 @@ void ios_map (ios_map_fn cb, void *data);
 
 uint64_t ios_size (ios io);
 
+/* The IOS bias is added to every offset used in a read/write
+   operation.  It is signed and measured in bits.  By default it is
+   zero, i.e. no bias is applied.
+
+   The following functions set and get the bias of a given IO
+   space.  */
+
+ios_off ios_get_bias (ios io);
+void ios_set_bias (ios io, ios_off bias);
+
 /* **************** Object read/write API ****************  */
 
 /* An integer with flags is passed to the read/write operations,

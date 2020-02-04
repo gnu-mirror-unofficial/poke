@@ -120,6 +120,7 @@ struct ios
   char *handler;
   void *dev;
   struct ios_dev_if *dev_if;
+  ios_off bias;
 
   struct ios *next;
 };
@@ -172,6 +173,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
   io->id = ios_next_id++;
   io->next = NULL;
   io->handler = xstrdup (handler);
+  io->bias = 0;
 
   /* Look for a device interface suitable to operate on the given
      handler.  */
@@ -301,6 +303,18 @@ int
 ios_get_id (ios io)
 {
   return io->id;
+}
+
+ios_off
+ios_get_bias (ios io)
+{
+  return io->bias;
+}
+
+void
+ios_set_bias (ios io, ios_off bias)
+{
+  io->bias = bias;
 }
 
 void
@@ -665,6 +679,9 @@ ios_read_int (ios io, ios_off offset, int flags,
               enum ios_nenc nenc,
               int64_t *value)
 {
+  /* Apply the IOS bias.  */
+  offset += ios_get_bias (io);
+  
   /* We always need to start reading from offset / 8  */
   if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
     return IOS_EIOFF;
@@ -794,6 +811,9 @@ ios_read_uint (ios io, ios_off offset, int flags,
                enum ios_endian endian,
                uint64_t *value)
 {
+  /* Apply the IOS bias.  */
+  offset += ios_get_bias (io);
+
   /* When aligned, 1 to 64 bits can span at most 8 bytes.  */
   uint64_t c[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -886,6 +906,9 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
   char *str = NULL;
   size_t i = 0;
   int c;
+
+  /* Apply the IOS bias.  */
+  offset += ios_get_bias (io);
 
   if (offset % 8 == 0)
     {
@@ -1478,6 +1501,9 @@ ios_write_int (ios io, ios_off offset, int flags,
                enum ios_nenc nenc,
                int64_t value)
 {
+  /* Apply the IOS bias.  */
+  offset += ios_get_bias (io);
+
   /* We always need to start reading or writing from offset / 8  */
   if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
     return IOS_EIOFF;
@@ -1500,6 +1526,9 @@ ios_write_uint (ios io, ios_off offset, int flags,
                 enum ios_endian endian,
                 uint64_t value)
 {
+  /* Apply the IOS bias.  */
+  offset += ios_get_bias (io);
+
   /* We always need to start reading or writing from offset / 8  */
   if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
     return IOS_EIOFF;
@@ -1517,6 +1546,9 @@ ios_write_string (ios io, ios_off offset, int flags,
                   const char *value)
 {
   const char *p;
+
+  /* Apply the IOS bias.  */
+  offset += ios_get_bias (io);
 
   if (offset % 8 == 0)
     {

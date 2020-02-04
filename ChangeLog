@@ -1,3 +1,17 @@
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/ios.h: Prototypes for ios_get_bias and ios_set_bias.
+	* src/ios.c (struct ios): New field `bias'.
+	(ios_open): Initialize the IOS bias to 0.
+	(ios_get_bias): New function.
+	(ios_set_bias): Likewise.
+	(ios_read_int): Apply the IOS bias.
+	(ios_read_uint): Likewise.
+	(ios_read_string): Likewise.
+	(ios_write_int): Likewise.
+	(ios_write_uint): Likewise.
+	(ios_write_string): Likewise.
+
 2020-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/cdiv-integers-diag-1.pk: New test.
