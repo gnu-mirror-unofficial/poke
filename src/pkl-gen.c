@@ -2609,6 +2609,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_and)
   PKL_PASS_SUBPASS (op2);
   pkl_asm_label (PKL_GEN_ASM, label);
 
+  /* Normalize the result to 0 or 1.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
+
   PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
@@ -2625,6 +2630,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_or)
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
   PKL_PASS_SUBPASS (op2);
   pkl_asm_label (PKL_GEN_ASM, label);
+
+  /* Normalize the result to 0 or 1.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
 
   PKL_PASS_BREAK;
 }

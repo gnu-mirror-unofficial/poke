@@ -1,4 +1,4 @@
-/* { dg-do compile } */
+/* { dg-do run } */
 
 defvar x = 0x0000ffffU;
 
@@ -8,5 +8,5 @@ defvar x = 0x0000ffffU;
 /* { dg-output "0xffffffffU" } */
 
 /* For constant folding: */
-/* { dg-command { 0 ^ 0xffff0000U } } */
+/* { dg-command { 0x0000ffffU ^ 0xffff0000U } } */
 /* { dg-output "\n0xffffffffU" } */

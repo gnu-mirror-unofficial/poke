@@ -2,9 +2,9 @@
 
 defvar x = 666;
 
-/* { dg-command { x || 0 } } */
-/* { dg-output "1" } */
+/* { dg-command {  1 && x } } */
+/* { dg-output 1 } */
 
 /* For constant folding: */
-/* { dg-command { 666 || 0 } } */
+/* { dg-command {  1 && 666 } } */
 /* { dg-output "\n1" } */

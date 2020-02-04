@@ -1,4 +1,4 @@
-/* { dg-do compile } */
+/* { dg-do run } */
 
 defvar x = 0;
 

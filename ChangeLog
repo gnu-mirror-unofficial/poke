@@ -1,3 +1,33 @@
+2020-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_pr_op_or): Normalize result to 1 or 0.
+	(pkl_gen_pr_op_and): Likewise.
+	* testsuite/poke.pkl/eq-integers-3.pk: New test.
+	* testsuite/poke.pkl/eq-integers-4.pk: Likewise.
+	* testsuite/poke.pkl/not-5.pk: Likewise.
+	* testsuite/poke.pkl/sub-integers-5.pk: Likewise.
+	* testsuite/poke.pkl/xor-2.pk: Likewise.
+	* testsuite/poke.pkl/ior-2.pk: Likewise.
+	* testsuite/poke.pkl/and-14.pk: Likewise.
+	* testsuite/poke.pkl/or-5.pk: Likewise.
+	* testsuite/poke.pkl/bnot-integers-3.pk: Likewise.
+	* testsuite/poke.pkl/bnot-integers-4.pk: Likewise.
+	* testsuite/poke.pkl/mod-integers-3.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-integers-3.pk: Likewise.
+	* testsuite/poke.pkl/div-integers-3.pk: Likewise.
+	* testsuite/poke.pkl/ge-integers-4.pk: Likewise.
+	* testsuite/poke.pkl/le-integers-4.pk: Likewise.
+	* testsuite/poke.pkl/gt-integers-3.pk: Likewise.
+	* testsuite/poke.pkl/lt-integers-3.pk: Likewise.
+	* testsuite/poke.pkl/ge-offsets-5.pk: Likewise.
+	* testsuite/poke.pkl/le-offsets-4.pk: Likewise.
+	* testsuite/poke.pkl/lt-offsets-5.pk: Likewise.
+	* testsuite/poke.pkl/neq-offsets-5.pk: Likewise.
+	* testsuite/poke.pkl/eq-offsets-7.pk: Likewise.
+	* testsuite/poke.pkl/gt-offsets-5.pk: Likewise.
+	* testsuite/poke.pkl/and-15.pk: Likewise.
+	* testsuite/poke.pkl/mul-offsets-10.pk: Likewise.
+
 2020-02-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-ios.c (ios_cmd): Define.
