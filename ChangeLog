@@ -1,5 +1,9 @@
 2020-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/cdiv-integers-diag-1.pk: New test.
+
+2020-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.c (pkl_gen_pr_op_or): Normalize result to 1 or 0.
 	(pkl_gen_pr_op_and): Likewise.
 	* testsuite/poke.pkl/eq-integers-3.pk: New test.
