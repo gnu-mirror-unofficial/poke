@@ -1,3 +1,15 @@
+2020-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-fold.c: Constant folding for bit shifts.
+	* testsuite/poke.pkl/sl-1.pk: Test constant folding.
+	* testsuite/poke.pkl/sl-2.pk: Likewise.
+	* testsuite/poke.pkl/sl-3.pk: Likewise.
+	* testsuite/poke.pkl/sl-4.pk: Likewise.
+	* testsuite/poke.pkl/sl-5.pk: Likewise.
+	* testsuite/poke.pkl/sl-6.pk: Likewise.
+	* testsuite/poke.pkl/sl-7.pk: Likewise.
+	* testsuite/poke.pkl/sl-8.pk: Likewise.
+
 2020-02-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/arrays-8.pk: New test

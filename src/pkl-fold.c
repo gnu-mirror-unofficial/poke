@@ -126,9 +126,9 @@ EMUL_UUU (gcd) { return gcd (op1, op2); }
 EMUL_III (gcd) { assert (0); return 0; }
 
 EMUL_UUU (sl) { return op1 << op2; }
-EMUL_III (sl) { return op1 << op2; } /* XXX support 1c */
+EMUL_III (sl) { return op1 << op2; }
 EMUL_UUU (sr) { return op1 >> op2; }
-EMUL_III (sr) { return op1 >> op2; } /* XXX support 2c */
+EMUL_III (sr) { return op1 >> op2; }
 
 EMUL_SSI (eqs) { return (STREQ (op1, op2)); }
 EMUL_SSI (nes) { return (STRNEQ (op1, op2)); }
@@ -534,6 +534,8 @@ PKL_PHASE_HANDLER_BIN_INT (ior);
 PKL_PHASE_HANDLER_BIN_INT (xor);
 PKL_PHASE_HANDLER_BIN_INT (and);
 PKL_PHASE_HANDLER_BIN_INT (band);
+PKL_PHASE_HANDLER_BIN_INT (sr);
+PKL_PHASE_HANDLER_BIN_INT (sl);
 
 #define PKL_PHASE_HANDLER_BIN_RELA(OP)               \
   PKL_PHASE_BEGIN_HANDLER (pkl_fold_##OP)            \
@@ -711,9 +713,6 @@ PKL_PHASE_END_HANDLER
     /* WRITEME */                               \
   }                                             \
   PKL_PHASE_END_HANDLER
-
-PKL_PHASE_HANDLER_UNIMPL (sl);
-PKL_PHASE_HANDLER_UNIMPL (sr);
 
 PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
 {

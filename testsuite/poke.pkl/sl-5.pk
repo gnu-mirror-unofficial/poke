@@ -1,6 +1,12 @@
 /* { dg-do run } */
 
+defvar x = 1;
+
 /* { dg-command { .set obase 10 } } */
 
-/* { dg-command { 1 <<. 32 } } */
+/* { dg-command { x <<. 32 } } */
 /* { dg-output "1" } */
+
+/* For constant folding:  */
+/* { dg-command { 1 <<. 32 } } */
+/* { dg-output "\n1" } */
