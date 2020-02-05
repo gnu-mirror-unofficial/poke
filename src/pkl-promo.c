@@ -1314,8 +1314,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cond_exp)
         PKL_PASS_ERROR;
       }
 
-    pkl_ast_print (stdout, cond_exp);
-    
     PKL_PASS_RESTART = restart;
 }
 PKL_PHASE_END_HANDLER

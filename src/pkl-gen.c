@@ -2897,11 +2897,44 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_noimpl)
 }
 PKL_PHASE_END_HANDLER
 
+/*
+ * COND_EXP
+ * | COND
+ * | THENEXP
+ * | ELSEEXP
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cond_exp)
+{
+  pkl_ast_node cond_exp = PKL_PASS_NODE;
+  pkl_ast_node cond = PKL_AST_COND_EXP_COND (cond_exp);
+  pkl_ast_node thenexp = PKL_AST_COND_EXP_THENEXP (cond_exp);
+  pkl_ast_node elseexp = PKL_AST_COND_EXP_ELSEEXP (cond_exp);
+
+  jitter_label label1 = pkl_asm_fresh_label (PKL_GEN_ASM);
+  jitter_label label2 = pkl_asm_fresh_label (PKL_GEN_ASM);
+
+  PKL_PASS_SUBPASS (cond);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label1);
+  PKL_PASS_SUBPASS (thenexp);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, label2);
+  pkl_asm_label (PKL_GEN_ASM, label1);
+  PKL_PASS_SUBPASS (elseexp);
+  pkl_asm_label (PKL_GEN_ASM, label2);
+
+  /* Get rid fo the condition expression.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+
+  PKL_PASS_BREAK;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_gen =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_gen_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_gen_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_gen_ps_var),
+   PKL_PHASE_PR_HANDLER (PKL_AST_COND_EXP, pkl_gen_pr_cond_exp),
    PKL_PHASE_PR_HANDLER (PKL_AST_COMP_STMT, pkl_gen_pr_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_gen_ps_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_NULL_STMT, pkl_gen_ps_null_stmt),
