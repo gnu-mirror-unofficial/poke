@@ -1,5 +1,9 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/strings-4.pk: New test.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.map/maps-structs-endian-2.pk: New test.
 	* src/pkl-gen.pks (struct_field_writer): Honour the struct field
 	endianness while writing.
