@@ -788,8 +788,32 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
 }
 PKL_PHASE_END_HANDLER
 
+/* If the condition expression of a conditional expression is
+   constant, we can fold it into either the then-expression or the
+   else-expression, depending on its value.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cond_exp)
+{
+  pkl_ast_node cond_exp = PKL_PASS_NODE;
+  pkl_ast_node cond = PKL_AST_COND_EXP_COND (cond_exp);
+
+  if (PKL_AST_CODE (cond) == PKL_AST_INTEGER)
+    {
+      pkl_ast_node t;
+      pkl_ast_node replacement_node
+        = (PKL_AST_INTEGER_VALUE (cond)
+           ? PKL_AST_COND_EXP_THENEXP (cond_exp)
+           : PKL_AST_COND_EXP_ELSEEXP (cond_exp));
+      
+      t = PKL_PASS_NODE;
+      PKL_PASS_NODE = ASTREF (replacement_node);
+      pkl_ast_node_free (t);
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /* If the container indexed (either an array or a string) is constant,
-   and the indexing expession is also constant, then we can fold it
+   and the indexing expression is also constant, then we can fold it
    into the referred element.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
@@ -883,6 +907,7 @@ struct pkl_phase pkl_phase_fold =
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_fold_pr_type),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_fold_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_fold_ps_indexer),
+   PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_fold_ps_cond_exp),
 #define ENTRY(ops, fs)\
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_##ops, pkl_fold_##fs)
 
