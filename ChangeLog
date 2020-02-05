@@ -1,5 +1,10 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-insn.def: Entries for iogetb and iosetb.
+	* src/pvm.jitter (iogetb): New instruction.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios.h: Prototypes for ios_get_bias and ios_set_bias.
 	* src/ios.c (struct ios): New field `bias'.
 	(ios_open): Initialize the IOS bias to 0.
