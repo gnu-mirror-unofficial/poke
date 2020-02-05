@@ -1,5 +1,9 @@
 2020-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Conditional Expression): New section.
+
+2020-02-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.c (pkl_gen_pr_cond_exp): New handler.
 	(pkl_phase_gen): Install handler.
 	* testsuite/poke.pkl/cond-exp-1.pk: New file.

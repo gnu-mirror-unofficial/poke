@@ -94,7 +94,7 @@ The Poke Language
 * Types::			Declaring types.
 * Assignments::			Changing the value of variables.
 * Compound Statements::		Sequences of statements.
-* Conditionals::		Conditional statements.
+* Conditionals::		Conditional statements and expressions.
 * Loops::			Statements to iterate on conditions.
 * Expression Statements::	Using expressions for their side-effects.
 * Functions::			Procedural abstraction.
@@ -2722,12 +2722,12 @@ Finally, compound statements can be empty: @code{@{ @}}.
 @node Conditionals
 @chapter Conditionals
 
-
-Poke provides several conditional statements, which are discussed in
-the sections below.
+Poke provides several conditional statements, and a ternary
+conditional operator, which are discussed in the sections below.
 
 @menu
 * if-else::			Simple conditionals.
+* Conditional Expression::	Conditionals in expressions.
 @end menu
 
 @node if-else
@@ -2745,6 +2745,19 @@ executed if @var{exp} holds true, and @var{else_stmt} is a sentence
 that will be executed if @var{exp} holds false.  The @code{else} part
 of the sentence is optional.
 
+
+@node Conditional Expression
+@section Conditional Expressions
+
+Poke supports a ternary conditional expression that has the form:
+
+@example
+@var{condition} ? @var{true_expression} : @var{false_expression}
+@end example
+
+Where @var{condition} is an expression that should evaluate to a
+boolean, and @var{true_expression} and @var{false_expression} are
+expressions that have exactly the same type.
 
 @node Loops
 @chapter Loops
