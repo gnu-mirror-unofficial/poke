@@ -2325,6 +2325,39 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_if_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* The `then' and `else' expressions in a ternary conditional
+   expression shall be of the exactly the same type, with no coercions
+   performed.  The condition should evaluate to an integral type.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
+{
+  pkl_ast_node cond_exp = PKL_PASS_NODE;
+  pkl_ast_node cond = PKL_AST_COND_EXP_COND (cond_exp);
+  pkl_ast_node cond_type = PKL_AST_TYPE (cond);
+
+  pkl_ast_node then_exp = PKL_AST_COND_EXP_THENEXP (cond_exp);
+  pkl_ast_node else_exp = PKL_AST_COND_EXP_ELSEEXP (cond_exp);
+
+  if (!pkl_ast_type_equal (PKL_AST_TYPE (then_exp),
+                           PKL_AST_TYPE (else_exp)))
+    {
+      PKL_ERROR (PKL_AST_LOC (cond_exp),
+                 "alternatives in conditional expression shall be of\n"
+                 "exactly the same type.");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_TYPE_CODE (cond_type) != PKL_TYPE_INTEGRAL)
+    {
+      PKL_ERROR (PKL_AST_LOC (cond),
+                 "expected boolean expression");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_typify1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
@@ -2354,6 +2387,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_typify1_ps_struct_type_field),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_typify1_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_IF_STMT, pkl_typify1_ps_if_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_typify1_ps_cond_exp),
 
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_typify1_ps_op_sizeof),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_typify1_ps_op_not),

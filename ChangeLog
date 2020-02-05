@@ -1,3 +1,15 @@
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_cond_exp): New handler.
+	(pkl_phase_typify1): Install it.
+	* src/pkl-tab.y (expression): New rule for the ternary conditional
+	operator.
+	* src/pkl-promo.c (pkl_promo_ps_cond_exp): New handler.
+	(pkl_phase_promo): Install handler.
+	* testsuite/poke.pkl/cond-exp-diag-1.pk: New file.
+	* testsuite/poke.pkl/cond-exp-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/cond-exp-diag-2.pk: Likewise.
+
 2020-02-05  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* testsuite/poke.pkl/structs-diag-1.pk: New test.

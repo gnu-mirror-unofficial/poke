@@ -146,8 +146,8 @@ pkl_ast_make_cond_exp (pkl_ast ast,
   assert (cond && thenexp && elseexp);
 
   PKL_AST_COND_EXP_COND (cond_exp) = ASTREF (cond);
-  PKL_AST_COND_EXP_THENEXP (thenexp) = ASTREF (thenexp);
-  PKL_AST_COND_EXP_ELSEEXP (elseexp) = ASTREF (elseexp);
+  PKL_AST_COND_EXP_THENEXP (cond_exp) = ASTREF (thenexp);
+  PKL_AST_COND_EXP_ELSEEXP (cond_exp) = ASTREF (elseexp);
 
   PKL_AST_LITERAL_P (cond_exp)
     = PKL_AST_LITERAL_P (thenexp) && PKL_AST_LITERAL_P (elseexp);

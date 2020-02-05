@@ -1292,6 +1292,34 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
 }
 PKL_PHASE_END_HANDLER
 
+/* The condition expression in a conditional ternary expression is
+   promoteable to a boolean.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cond_exp)
+{
+    pkl_ast_node cond_exp = PKL_PASS_NODE;
+    pkl_ast_node cond = PKL_AST_COND_EXP_COND (cond_exp);
+    pkl_ast_node cond_type = PKL_AST_TYPE (cond);
+    int restart;
+
+    assert (PKL_AST_TYPE_CODE (cond_type) == PKL_TYPE_INTEGRAL);
+
+    if (!promote_integral (PKL_PASS_AST, 32, 1,
+                           &PKL_AST_COND_EXP_COND (cond_exp),
+                           &restart))
+      {
+        pkl_ice (PKL_PASS_AST, PKL_AST_LOC (cond),
+                 "couldn't promote condition expression in ternary conditional\
+ operator");
+        PKL_PASS_ERROR;
+      }
+
+    pkl_ast_print (stdout, cond_exp);
+    
+    PKL_PASS_RESTART = restart;
+}
+PKL_PHASE_END_HANDLER
+
 /* Element constraints in struct types are promoteable to
    booleans.  */
 
@@ -1462,5 +1490,6 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_promo_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_PRINT_STMT, pkl_promo_ps_print_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_promo_ps_struct_type_field),
+   PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_promo_ps_cond_exp),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_promo_ps_type_array),
   };

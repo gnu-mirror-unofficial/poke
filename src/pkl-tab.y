@@ -572,6 +572,12 @@ expression:
                   $$ = pkl_ast_make_isa (pkl_parser->ast, $3, $1);
                   PKL_AST_LOC ($$) = @$;
                 }
+	| expression '?' expression ':' expression
+        	{
+                  $$ = pkl_ast_make_cond_exp (pkl_parser->ast,
+                                              $1, $3, $5);
+                  PKL_AST_LOC ($$) = @$;
+                }
         | TYPENAME '{' struct_field_list '}'
           	{
                   pkl_ast_node type;
