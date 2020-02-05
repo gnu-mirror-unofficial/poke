@@ -92,7 +92,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_struct)
           if (STREQ (PKL_AST_IDENTIFIER_POINTER (ename),
                      PKL_AST_IDENTIFIER_POINTER (uname)))
             {
-              PKL_ERROR (PKL_AST_LOC (uname),
+              PKL_ERROR (PKL_AST_LOC (u),
                          "duplicated struct element '%s'",
                          PKL_AST_IDENTIFIER_POINTER (uname));
               PKL_ANAL_PAYLOAD->errors++;

@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+defvar s = struct
+           {
+             a = 10, /* { dg-error "duplicated" } */
+             b = 20,
+             a = 30 
+           };
