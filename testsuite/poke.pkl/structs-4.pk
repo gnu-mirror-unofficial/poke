@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+defvar struct_ref_2 = struct {fo = 10#Kb};
+
+/* { dg-command {  struct_ref_2.fo/2#Kb } } */
+/* { dg-output "5" } */

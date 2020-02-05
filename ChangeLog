@@ -1,5 +1,40 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/printf-diag-9.pk: New test.
+	* testsuite/poke.pkl/printf-diag-10.pk: Likewise.
+	* testsuite/poke.pkl/printf-diag-11.pk: Likewise.
+	* testsuite/poke.pkl/printf-diag-12.pk: Likewise.
+	* testsuite/poke.pkl/printf-diag-13.pk: Likewise.
+	* testsuite/poke.pkl/printf-1.pk: Likewise.
+	* testsuite/poke.pkl/printf-18.pk: Likewise.
+	* testsuite/poke.pkl/printf-17.pk: Likewise.
+	* testsuite/poke.pkl/printf-16.pk: Likewise.
+	* testsuite/poke.pkl/printf-15.pk: Likewise.
+	* testsuite/poke.pkl/printf-14.pk: Likewise.
+	* testsuite/poke.pkl/printf-13.pk: Likewise.
+	* testsuite/poke.pkl/printf-12.pk: Likewise.
+	* testsuite/poke.pkl/printf-11.pk: Likewise.
+	* testsuite/poke.pkl/printf-10.pk: Likewise.
+	* testsuite/poke.pkl/printf-9.pk: Likewise.
+	* testsuite/poke.pkl/printf-8.pk: Likewise.
+	* testsuite/poke.pkl/printf-7.pk: Likewise.
+	* testsuite/poke.pkl/printf-6.pk: Likewise.
+	* testsuite/poke.pkl/printf-5.pk: Likewise.
+	* testsuite/poke.pkl/printf-4.pk: Likewise.
+	* testsuite/poke.pkl/printf-3.pk: Likewise.
+	* testsuite/poke.pkl/printf-2.pk: Likewise.
+	* testsuite/poke.pkl/offset-type-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/string-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/printf-class-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/printf-diag-14.pk: Likewise.
+	* testsuite/poke.map/maps-structs-methods-8.pk: Likewise.
+	* testsuite/poke.pkl/offset-type-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/structs-3.pk: Likewise.
+	* testsuite/poke.pkl/structs-2.pk: Likewise.
+	* testsuite/poke.pkl/structs-1.pk: Likewise.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/attr-size-12.pk: Renamed from attrs.pk
 	* testsuite/poke.pkl/attr-size-1.pk: New test.
 	* testsuite/poke.pkl/attr-length-5.pk: Likewise.
