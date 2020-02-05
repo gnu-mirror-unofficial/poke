@@ -1278,7 +1278,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
                              32, 1,
                              &PKL_AST_MAP_IOS (map),
                              &lrestart))
-      PKL_PASS_ERROR;
+        {
+          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (map_ios),
+                   "couldn't promote ios of map #%" PRIu64,
+                   PKL_AST_UID (map));
+          PKL_PASS_ERROR;
+        }
 
       restart |= lrestart;
     }

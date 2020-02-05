@@ -1,5 +1,9 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-promo.c (pkl_promo_ps_map): Add missing ICE.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/printf-diag-9.pk: New test.
 	* testsuite/poke.pkl/printf-diag-10.pk: Likewise.
 	* testsuite/poke.pkl/printf-diag-11.pk: Likewise.
