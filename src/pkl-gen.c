@@ -185,7 +185,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             /* Compile the arrays closures and complete them using the
                current environment.  */
 
-            if (PKL_AST_TYPE_A_WRITER (array_type) != PVM_NULL)
+            if (PKL_AST_TYPE_A_WRITER (array_type) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_writer = 1;
                 RAS_FUNCTION_ARRAY_WRITER (writer_closure);

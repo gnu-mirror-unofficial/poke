@@ -1,5 +1,10 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_pr_decl): Fix bug that causes to rebuild
+	array writers at every usage.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-insn.def: Entries for iogetb and iosetb.
 	* src/pvm.jitter (iogetb): New instruction.
 
