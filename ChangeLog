@@ -1,5 +1,11 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.map/maps-structs-endian-2.pk: New test.
+	* src/pkl-gen.pks (struct_field_writer): Honour the struct field
+	endianness while writing.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.c (pkl_gen_pr_decl): Fix bug that causes to rebuild
 	array writers at every usage.
 

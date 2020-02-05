@@ -782,9 +782,12 @@
         srefio                  ; EVAL SCT I EBOFF
         nip2                    ; EVAL EBOFF
         swap                    ; EOFF EVAL
+        .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
+        .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
         .c PKL_GEN_PAYLOAD->in_writer = 0;
+        .c PKL_GEN_PAYLOAD->endian = endian; }
         ba .next
 .unmodified:
         drop                    ; SCT I
