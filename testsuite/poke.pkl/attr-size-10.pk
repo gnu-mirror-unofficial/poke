@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {  struct {}'size } } */
+/* { dg-output "0UL#b" } */

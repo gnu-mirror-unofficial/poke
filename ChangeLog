@@ -1,5 +1,30 @@
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/attr-size-12.pk: Renamed from attrs.pk
+	* testsuite/poke.pkl/attr-size-1.pk: New test.
+	* testsuite/poke.pkl/attr-length-5.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-signed-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-signed-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-magnitude-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-unit-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-11.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-10.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-9.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-8.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-7.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-6.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-5.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-diag-1.pk: Likewise.
+
+2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/strings-4.pk: New test.
 
 2020-02-05  Jose E. Marchesi  <jemarch@gnu.org>

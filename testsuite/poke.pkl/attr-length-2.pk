@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {  struct {1, bar="foo"}'length } } */
+/* { dg-output "2UL" } */
