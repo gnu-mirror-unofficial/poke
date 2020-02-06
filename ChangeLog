@@ -1,5 +1,15 @@
 2020-02-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/ass-2.pk: New file.
+	* testsuite/poke.pkl/ass-8.pk: Likewise.
+	* testsuite/poke.pkl/ass-7.pk: Likewise.
+	* testsuite/poke.pkl/ass-6.pk: Likewise.
+	* testsuite/poke.pkl/ass-5.pk: Likewise.
+	* testsuite/poke.pkl/ass-4.pk: Likewise.
+	* testsuite/poke.pkl/ass-3.pk: Likewise.
+
+2020-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* TODO (fold bconc expressions): Task done.
 	(fold array subscripts): Likewise.
 	(fold .<< and .>> expressions): Likewise.
