@@ -1,5 +1,9 @@
 2020-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h (enum pkl_ast_code): Define PKL_AST_LAST_EXP.
+
+2020-02-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_lvalue_p): Fix logic to avoid assignments
 	to values.
 	* testsuite/poke.pkl/ass-diag-6.pk: New test.
