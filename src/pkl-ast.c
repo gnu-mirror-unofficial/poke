@@ -2240,28 +2240,39 @@ pkl_ast_lvalue_p (pkl_ast_node node)
   switch (PKL_AST_CODE (node))
     {
     case PKL_AST_VAR:
-    case PKL_AST_STRUCT_REF:
     case PKL_AST_MAP:
+      /* Variable references and maps can always be used as
+         l-values.  */
+      return 1;
+      break;
+    case PKL_AST_STRUCT_REF:
+      /* A field reference can be used as a l-value if the referred
+         struct is itself a l-value.  */
+      return pkl_ast_lvalue_p (PKL_AST_STRUCT_REF_STRUCT (node));
       break;
     case PKL_AST_INDEXER:
+      /* An indexer can be used as a l-value if the referred entity is
+         an array, and it is itself a l-value.  */
+      /* XXX: to change when we support s[1] = 'x'  */
       {
         pkl_ast_node entity = PKL_AST_INDEXER_ENTITY (node);
         pkl_ast_node entity_type = PKL_AST_TYPE (entity);
 
         if (PKL_AST_TYPE_CODE (entity_type) == PKL_TYPE_ARRAY)
-          break;
+          return pkl_ast_lvalue_p (entity);
+        
+        break;
       }
     case PKL_AST_EXP:
-      if (PKL_AST_EXP_CODE (node) == PKL_AST_OP_BCONC
-          && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 0))
-          && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 1)))
-        break;
+      if (PKL_AST_EXP_CODE (node) == PKL_AST_OP_BCONC)
+        return (pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 0))
+                && pkl_ast_lvalue_p (PKL_AST_EXP_OPERAND (node, 1)));
+      break;
     default:
-      return 0;
       break;
     }
 
-  return 1;
+  return 0;
 }
 
 #ifdef PKL_DEBUG
