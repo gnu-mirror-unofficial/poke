@@ -340,26 +340,11 @@ MultiPrecision library ``libgmp``.  This task involves:
 - Adapt the compiler to support big integer literals.
 - Adapt the code generator to use the new instructions.
 
-#A1 fold bconc expressions
---------------------------
-
-This task is about implementing constant folding for the
-bit-concatenation operation, ::.  For this purpose, a
-``pkl_fold_bconc`` handler should be defined in ``src/pkl-fold.c``.
-
 #A2 fold array trims
 --------------------
 
 This task is about implementing constant folding for array trims.
 This shall be implemented in a handler in ``src/pkl-fold.c``.
-
-#A2 fold array subscripts
--------------------------
-
-This task is about implementing constant folding for subscripts of
-array literals.  This shall be implemented in a handler in
-``src/pkl-fold.c``.
-
 
 #A1 fold array casts
 --------------------
@@ -375,13 +360,6 @@ type.
 
 This should be implemented as a handler in ``src/pkl-fold.c``.
 
-
-#A1 fold .<< and .>> expressions
---------------------------------
-
-This task is about implementing constant folding of bit-shift
-operations on integer literals.  This should be implemented as a
-handler in ``src/pkl-fold.c``.
 
 #A1 fold "isa" expressions
 --------------------------

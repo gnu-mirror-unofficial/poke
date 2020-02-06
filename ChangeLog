@@ -1,3 +1,9 @@
+2020-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* TODO (fold bconc expressions): Task done.
+	(fold array subscripts): Likewise.
+	(fold .<< and .>> expressions): Likewise.
+
 2020-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-ast.h (enum pkl_ast_code): Define PKL_AST_LAST_EXP.
