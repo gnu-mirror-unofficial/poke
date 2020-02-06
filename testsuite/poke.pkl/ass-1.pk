@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command { defvar x = struct {a=10,b= struct {x=20}} } } */
+/* { dg-command { x.b.x = 30 } } */
+/* { dg-command { x } } */
+/* { dg-output "struct {a=10,b=struct {x=30}}" } */
