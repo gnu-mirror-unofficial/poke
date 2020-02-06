@@ -53,8 +53,50 @@ pk_cmd_version (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static int
+pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  assert (argc == 0);
+
+  static char *strings[] =
+    {
+     "<jmd> I never win on the pokies.",
+     "<jmd> \"poke\" is an anagram of \"peok\" which is the "
+     "Indonesian word for \"dent\".",
+     "<jmd> Good morning poke(wo)men!",
+     "<jmd> jemarch: I though it was a dismissal for a golden duck.",
+     "<jmd> Just have a .do-what-i-want command and be done "
+     "with it.",
+     "<jmd> It looks as if Jose was poking late into the night!",
+     "<jmd> I inadvertently pushed some experimental crap.",
+     "<jmd> Whey are they called \"pickles\"?  They ought to be "
+     "called \"pokles\".",
+     "<jmd> I thought I'd just poke my nose in here and see what's "
+     "going on.",
+     "[jmd wonders if jemarch has \"export EDITOR=poke\" in his .bashrc]",
+     "<jmd> everytime I type \"killall -11 poke\", poke segfaults.",
+     "<jemarch> a bugfix a day keeps jmd away",
+     "<jmd> Did you know that \"Poke\" is a Hawaiian salad?",
+     NULL
+    };
+  static int num_strings = 0;
+
+  if (num_strings == 0)
+    {
+      char **p = strings;
+      while (*p++ != NULL)
+        num_strings++;
+    }
+
+  pk_printf ("%s\n", strings[rand () % num_strings]);
+  return 1;
+}
+
 struct pk_cmd exit_cmd =
   {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]"};
 
 struct pk_cmd version_cmd =
   {"version", "", "", 0, NULL, pk_cmd_version, "version"};
+
+struct pk_cmd jmd_cmd =
+  {"jmd", "", "", 0, NULL, pk_cmd_jmd, "jmd"};
