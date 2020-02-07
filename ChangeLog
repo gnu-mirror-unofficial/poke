@@ -1,5 +1,9 @@
 2020-02-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm.jitter: Add comments to instruction definitions.
+
+2020-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/ass-2.pk: New file.
 	* testsuite/poke.pkl/ass-8.pk: Likewise.
 	* testsuite/poke.pkl/ass-7.pk: Likewise.
