@@ -2123,43 +2123,94 @@ instruction gtiu ()
   end
 end
 
-instruction gtl () # ( LONG LONG -- LONG LONG INT )
+# Instruction: gtl
+#
+# Push 1 to the main stack if the long at the under top is greater
+# than the long at the top.  Otherwise push 0.
+#
+# Stack: ( LONG LONG -- LONG LONG INT )
+
+instruction gtl ()
   code
      PVM_BOOL_BINOP (LONG, >);
   end
 end
 
-instruction gtlu () # ( ULONG ULONG -- ULONG ULONG INT )
+# Instruction: gtlu
+#
+# Push 1 to the main stack if the unsigned long at the under top is
+# greater than the unsigned long at the top.  Otherwise push 0.
+#
+# Stack: ( LONG LONG -- LONG LONG INT )
+
+instruction gtlu ()
   code
      PVM_BOOL_BINOP (ULONG, >);
   end
 end
 
-instruction gei () # ( INT INT -- INT INT INT )
+# Instruction: gei
+#
+# Push 1 to the main stack if the integer at the under top is greater
+# or equal than the integer at the top.  Otherwise push 0.
+#
+# Stack: ( INT INT -- INT INT INT )
+
+instruction gei ()
   code
      PVM_BOOL_BINOP (INT, >=);
   end
 end
 
-instruction geiu () # ( UINT UINT -- UINT UINT INT )
+# Instruction: geiu
+#
+# Push 1 to the main stack if the unsigned integer at the under top is
+# greater or equal than the unsigned integer at the top.  Otherwise
+# push 0.
+#
+# Stack: ( UINT UINT -- UINT UINT INT )
+
+instruction geiu ()
   code
      PVM_BOOL_BINOP (UINT, >=);
   end
 end
 
-instruction gel () # ( LONG LONG -- LONG LONG INT )
+# Instruction: gel
+#
+# Push 1 to the main stack if the long at the under top is greater
+# or equal than the long at the top.  Otherwise push 0.
+#
+# Stack: ( LONG LONG -- LONG LONG INT )
+
+instruction gel ()
   code
      PVM_BOOL_BINOP (LONG, >=);
   end
 end
 
-instruction gelu () # ( ULONG ULONG -- ULONG ULONG INT )
+# Instruction: gelu
+#
+# Push 1 to the main stack if the unsigned long at the under top is
+# greater or equal than the unsigned long at the top.  Otherwise push
+# 0.
+#
+# Stack: ( ULONG ULONG -- ULONG ULONG INT )
+
+instruction gelu ()
   code
      PVM_BOOL_BINOP (ULONG, >=);
   end
 end
 
-instruction lts () # ( STR STR -- STR STR INT )
+# Instruction: lts
+#
+# Push 1 to the main stack if the string at the under top is less than
+# the string at the top, in lexicographic order.  Otherwise push 0.
+#
+# Stack: ( STR STR -- STR STR INT )
+
+instruction lts ()
   code
     pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) < 0, 32);
@@ -2167,7 +2218,14 @@ instruction lts () # ( STR STR -- STR STR INT )
   end
 end
 
-instruction gts () # ( STR STR -- STR STR INT )
+# Instruction: gts
+#
+# Push 1 to the main stack if the string at the under top is greater than
+# the string at the top, in lexicographic order.  Otherwise push 0.
+#
+# Stack: ( STR STR -- STR STR INT )
+
+instruction gts ()
   code
     pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) > 0, 32);
@@ -2175,7 +2233,15 @@ instruction gts () # ( STR STR -- STR STR INT )
   end
 end
 
-instruction ges () # ( STR STR -- STR STR INT )
+# Instruction: ges
+#
+# Push 1 to the main stack if the string at the under top is greater
+# or equal than the string at the top, in lexicographic order.
+# Otherwise push 0.
+#
+# Stack: ( STR STR -- STR STR INT )
+
+instruction ges ()
   code
     pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) >= 0, 32);
@@ -2183,7 +2249,15 @@ instruction ges () # ( STR STR -- STR STR INT )
   end
 end
 
-instruction les () # ( STR STR -- STR STR INT )
+# Instruction: les
+#
+# Push 1 to the main stack if the string at the under top is less or
+# equal than the string at the top, in lexicographic order.  Otherwise
+# push 0.
+#
+# Stack: ( STR STR -- STR STR INT )
+
+instruction les ()
   code
     pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) <= 0, 32);
@@ -2191,9 +2265,17 @@ instruction les () # ( STR STR -- STR STR INT )
   end
 end
 
-# Concatenation instructions.
+
+## Concatenation instructions.
 
-instruction sconc () # ( STR STR -- STR STR STR )
+# Instruction: sconc
+#
+# Push the concatenation of the two strings at the top of the main
+# stack.
+#
+# Stack: ( STR STR -- STR STR STR )
+
+instruction sconc ()
   code
      pvm_val res;
      char *sa = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
@@ -2208,123 +2290,235 @@ instruction sconc () # ( STR STR -- STR STR STR )
   end
 end
 
-# Logical instructions.
+
+## Logical instructions
 
-instruction and () # ( INT INT -- INT INT INT )
+# Instruction: and
+#
+# Push the logical and of the two elements at the top of the main
+# stack.
+#
+# Stack: ( INT INT -- INT INT INT )
+
+instruction and ()
   code
     PVM_BOOL_BINOP (INT, &&);
   end
 end
 
-instruction or () # ( INT INT -- INT INT INT )
+# Instruction: or
+#
+# Push the logical or of the two elements at the top of the main
+# stack.
+#
+# Stack: ( INT INT -- INT INT INT )
+
+instruction or ()
   code
     PVM_BOOL_BINOP (INT, ||);
   end
 end
 
-instruction not () # ( INT -- INT INT )
+# Instruction: not
+#
+# Push the logical not of the element at the top of the main stack.
+#
+# Stack: ( INT -- INT INT )
+
+instruction not ()
   code
     pvm_val res = pvm_make_int (! PVM_VAL_INT (JITTER_TOP_STACK ()), 32);
     JITTER_PUSH_STACK (res);
   end
 end
 
-# Bitwise operators.
+
+## Bitwise instructions
 
-instruction bxori () # ( INT INT -- INT INT INT )
+# Instruction: bxori
+#
+# Push the bitwise exclusive or of the two integers at the top of the
+# main stack.
+#
+# Stack: ( INT INT -- INT INT INT )
+
+instruction bxori ()
   code
     PVM_BINOP (INT, INT, INT, int, ^);
   end
 end
 
-instruction bxoriu () # ( UINT UINT -- UINT UINT UINT )
+# Instruction: bxoriu
+#
+# Push the bitwise exclusive or of the two unsigned integers at the
+# top of the main stack.
+#
+# Stack: ( UINT UINT -- UINT UINT UINT )
+
+instruction bxoriu ()
   code
     PVM_BINOP (UINT, UINT, UINT, uint, ^);
   end
 end
 
-instruction bxorl () # ( LONG LONG -- LONG LONG LONG )
+# Instruction: bxorl
+#
+# Push the bitwise exclusive or of the two longs at the top of the
+# main stack.
+#
+# Stack: ( LONG LONG -- LONG LONG LONG )
+
+instruction bxorl ()
   code
     PVM_BINOP (LONG, LONG, LONG, long, ^);
   end
 end
 
-instruction bxorlu () # ( ULONG ULONG -- ULONG ULONG ULONG )
+# Instruction: bxorlu
+#
+# Push the bitwise exclusive or of the two unsigned longs at the top
+# of the main stack.
+#
+# Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
+
+instruction bxorlu ()
   code
     PVM_BINOP (ULONG, ULONG, ULONG, ulong, ^);
   end
 end
 
-instruction bconciii () # ( INT INT -- INT )
-  code
-  end
-end
+# Instruction: bori
+#
+# Push the bitwise or of the two integers at the top of the main
+# stack.
+#
+# Stack: ( INT INT -- INT INT INT )
 
-instruction bconciil () # ( INT INT -- LONG )
-  code
-  end
-end
-
-
-instruction bori () # ( INT INT -- INT )
+instruction bori ()
   code
     PVM_BINOP (INT, INT, INT, int, |);
   end
 end
 
-instruction boriu () # ( UINT UINT -- UINT UINT UINT )
+# Instruction: boriu
+#
+# Push the bitwise or of the two unsigned integers at the top of the
+# main stack.
+#
+# Stack: ( UINT UINT -- UINT UINT UINT )
+
+instruction boriu ()
   code
     PVM_BINOP (UINT, UINT, UINT, uint, |);
   end
 end
 
-instruction borl () # ( LONG LONG -- LONG LONG LONG )
+# Instruction: borl
+#
+# Push the bitwise or of the two longs at the top of the main stack.
+#
+# Stack: ( LONG LONG -- LONG LONG LONG )
+
+instruction borl ()
   code
     PVM_BINOP (LONG, LONG, LONG, long, |);
   end
 end
 
-instruction borlu () # ( ULONG ULONG -- ULONG ULONG ULONG )
+# Instruction: borlu
+#
+# Push the bitwise or of the two longs at the top of the main stack.
+#
+# Stack: ( ULONG ULONG  -- ULONG ULONG ULONG )
+
+instruction borlu ()
   code
     PVM_BINOP (ULONG, ULONG, ULONG, ulong, |);
   end
 end
 
-instruction bandi () # ( INT INT -- INT INT INT )
+# Instruction: bandi
+#
+# Push the bitwise and of the two integers at the top of the main
+# stack.
+#
+# Stack: ( INT INT -- INT INT INT )
+
+instruction bandi ()
   code
     PVM_BINOP (INT, INT, INT, int, &);
   end
 end
 
-instruction bandiu () # ( UINT UINT -- UINT UINT UINT )
+# Instruction: bandiu
+#
+# Push the bitwise and of the two unsigned integers at the top of the
+# main stack.
+#
+# Stack: ( UINT UINT -- UINT UINT UINT )
+
+instruction bandiu ()
   code
     PVM_BINOP (UINT, UINT, UINT, uint, &);
   end
 end
 
-instruction bandl () # ( LONG LONG -- LONG LONG LONG )
+# Instruction: bandl
+#
+# Push the bitwise and of the two longs at the top of the main
+# stack.
+#
+# Stack: ( LONG LONG -- LONG LONG LONG )
+
+instruction bandl ()
   code
     PVM_BINOP (LONG, LONG, LONG, long, &);
   end
 end
 
-instruction bandlu () # ( ULONG ULONG -- ULONG ULONG ULONG )
+# Instruction: bandlu
+#
+# Push the bitwise and of the two unsigned longs at the top of the
+# main stack.
+#
+# Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
+
+instruction bandlu ()
   code
     PVM_BINOP (ULONG, ULONG, ULONG, ulong, &);
   end
 end
 
-instruction bnoti () # ( INT -- INT INT )
+# Instruction: bnoti
+#
+# Push the bitwise not of the integer at the top of the main stack.
+#
+# Stack: ( INT -- INT INT INT )
+
+instruction bnoti ()
   code
     PVM_UNOP (INT, INT, int, ~);
   end
 end
 
-instruction bnotiu () # ( UINT -- UINT UINT )
+# Instruction: bnotiu
+#
+# Push the bitwise not of the unsigned integer at the top of the main
+# stack.
+#
+# Stack: ( UINT -- UINT UINT )
+
+instruction bnotiu ()
   code
     PVM_UNOP (UINT, UINT, uint, ~);
   end
 end
+
+# Instruction: bnotl
+#
+# Push the bitwise not of the long at the top of the main stack.
+#
+# Stack: ( LONG -- LONG LONG )
 
 instruction bnotl () # ( LONG -- LONG LONG )
   code
@@ -2332,11 +2526,21 @@ instruction bnotl () # ( LONG -- LONG LONG )
   end
 end
 
-instruction bnotlu () # ( ULONG -- ULONG ULONG )
+# Instruction: bnotlu
+#
+# Push the bitwise not of the unsigned long at the top of the main
+# stack.
+#
+# Stack: ( ULONG -- ULONG ULONG )
+
+instruction bnotlu ()
   code
     PVM_UNOP (ULONG, ULONG, ulong, ~);
   end
 end
+
+
+## Shift instructions
 
 instruction bsli () # ( INT UINT -- INT UINT INT )
   code
@@ -2387,7 +2591,6 @@ instruction bsrlu () # ( ULONG UINT -- ULONG UINT ULONG )
 end
 
 
-
 ## Compare-and-swap instructions.
 
 instruction swapgti () # ( INT INT - INT INT )
