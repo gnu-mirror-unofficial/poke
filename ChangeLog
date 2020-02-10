@@ -1,3 +1,10 @@
+2020-02-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/arrays-8.pk: New test
+	* testsuite/poke.pkl/arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/arrays-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/arrays-diag-3.pk: Likewise.
+
 2020-02-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-tab.y (array_initializer): Support expressions in .[]
