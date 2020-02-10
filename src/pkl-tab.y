@@ -846,12 +846,10 @@ array_initializer:
                                                          NULL, $1);
                     PKL_AST_LOC ($$) = @$;
                 }
-        | '.' '[' INTEGER ']' '=' expression
+        | '.' '[' expression ']' '=' expression
         	{
                     $$ = pkl_ast_make_array_initializer (pkl_parser->ast,
                                                          $3, $6);
-                    PKL_AST_LOC ($3) = @3;
-                    PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
                     PKL_AST_LOC ($$) = @$;
                 }
         ;

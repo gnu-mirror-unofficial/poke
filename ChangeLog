@@ -1,3 +1,12 @@
+2020-02-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (array_initializer): Support expressions in .[]
+	constructions in array initializers.
+	* src/pkl-anal.c (pkl_anal2_ps_array): New handler.
+	* src/pkl-trans.c (pkl_trans2_ps_array): Moved from trans1.
+	* src/pkl-typify.c (pkl_typify2_ps_ass_stmt): Moved from typify1.
+	* testsuite/poke.pkl/arrays-6.pk: New test.
+
 2020-02-08  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-editor.c (pk_cmd_editor): Fix memory leak.

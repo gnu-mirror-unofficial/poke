@@ -1417,50 +1417,6 @@ expected %s, got %s",
 }
 PKL_PHASE_END_HANDLER
 
-/* The type of the r-value in an assignment statement should match the
-   type of the l-value.
-
-   Also, if the l-value is a map, its type should be a simple type.
-*/
-
-PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_ass_stmt)
-{
-  pkl_ast_node ass_stmt = PKL_PASS_NODE;
-  pkl_ast_node lvalue = PKL_AST_ASS_STMT_LVALUE (ass_stmt);
-  pkl_ast_node exp = PKL_AST_ASS_STMT_EXP (ass_stmt);
-  pkl_ast_node lvalue_type = PKL_AST_TYPE (lvalue);
-  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
-
-  if (!pkl_ast_type_promoteable (exp_type, lvalue_type,
-                                 1 /* promote_array_of_any */))
-    {
-      char *expected_type = pkl_type_str (lvalue_type, 1);
-      char *found_type = pkl_type_str (exp_type, 1);
-
-      PKL_ERROR (PKL_AST_LOC (ass_stmt),
-                 "r-value in assignment has the wrong type\n\
-expected %s got %s",
-                 expected_type, found_type);
-
-      free (found_type);
-      free (expected_type);
-
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  if (PKL_AST_CODE (lvalue) == PKL_AST_MAP
-      && (PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_ARRAY
-          || PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_STRUCT))
-    {
-      PKL_ERROR (PKL_AST_LOC (PKL_AST_MAP_TYPE (lvalue)),
-                 "the map in l-value shall be of a simple type");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-}
-PKL_PHASE_END_HANDLER
-
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_field)
 {
   pkl_ast_node struct_field = PKL_PASS_NODE;
@@ -2373,7 +2329,6 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_TRIMMER, pkl_typify1_ps_trimmer),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_typify1_ps_indexer),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_typify1_ps_struct),
-   PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_typify1_ps_ass_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_FIELD, pkl_typify1_ps_struct_field),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC, pkl_typify1_pr_func),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC_ARG, pkl_typify1_ps_func_arg),
@@ -2461,6 +2416,50 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type_array)
 }
 PKL_PHASE_END_HANDLER
 
+/* The type of the r-value in an assignment statement should match the
+   type of the l-value.
+
+   Also, if the l-value is a map, its type should be a simple type.
+*/
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_ass_stmt)
+{
+  pkl_ast_node ass_stmt = PKL_PASS_NODE;
+  pkl_ast_node lvalue = PKL_AST_ASS_STMT_LVALUE (ass_stmt);
+  pkl_ast_node exp = PKL_AST_ASS_STMT_EXP (ass_stmt);
+  pkl_ast_node lvalue_type = PKL_AST_TYPE (lvalue);
+  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
+
+  if (!pkl_ast_type_promoteable (exp_type, lvalue_type,
+                                 1 /* promote_array_of_any */))
+    {
+      char *expected_type = pkl_type_str (lvalue_type, 1);
+      char *found_type = pkl_type_str (exp_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (ass_stmt),
+                 "r-value in assignment has the wrong type\n\
+expected %s got %s",
+                 expected_type, found_type);
+
+      free (found_type);
+      free (expected_type);
+
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_CODE (lvalue) == PKL_AST_MAP
+      && (PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_ARRAY
+          || PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_STRUCT))
+    {
+      PKL_ERROR (PKL_AST_LOC (PKL_AST_MAP_TYPE (lvalue)),
+                 "the map in l-value shall be of a simple type");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /* Determine the completeness of the type associated with a SIZEOF
    (TYPE).  */
 
@@ -2481,4 +2480,5 @@ struct pkl_phase pkl_phase_typify2 =
    PKL_PHASE_PS_HANDLER (PKL_AST_TYPE, pkl_typify2_ps_type),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_typify2_ps_type_array),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_typify2_ps_op_sizeof),
+   PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_typify2_ps_ass_stmt),
   };

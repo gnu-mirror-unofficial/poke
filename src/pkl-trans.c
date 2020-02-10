@@ -234,82 +234,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_type_struct)
 }
 PKL_PHASE_END_HANDLER
 
-/* Compute and set the indexes of all the elements of an ARRAY node
-   and set the size of the array consequently.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
-{
-  pkl_ast_node array = PKL_PASS_NODE;
-  pkl_ast_node initializers
-    = PKL_AST_ARRAY_INITIALIZERS (array);
-
-  pkl_ast_node tmp;
-  size_t index, nelem, ninitializer;
-
-  nelem = 0;
-  for (index = 0, tmp = initializers, ninitializer = 0;
-       tmp;
-       tmp = PKL_AST_CHAIN (tmp), ++ninitializer)
-    {
-      pkl_ast_node initializer_index_node
-        = PKL_AST_ARRAY_INITIALIZER_INDEX (tmp);
-      size_t initializer_index;
-      size_t elems_appended, effective_index;
-
-      /* Set the index of the initializer.  */
-      if (initializer_index_node == NULL)
-        {
-          pkl_ast_node initializer_index_type
-            = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-          PKL_AST_LOC (initializer_index_type)
-            = PKL_AST_LOC (tmp);
-
-
-          initializer_index_node
-            = pkl_ast_make_integer (PKL_PASS_AST, index);
-          PKL_AST_TYPE (initializer_index_node)
-            = ASTREF (initializer_index_type);
-          PKL_AST_LOC (initializer_index_node)
-            = PKL_AST_LOC (tmp);
-
-          PKL_AST_ARRAY_INITIALIZER_INDEX (tmp)
-            = ASTREF (initializer_index_node);
-
-          PKL_PASS_RESTART = 1;
-          elems_appended = 1;
-        }
-      else
-        {
-          if (PKL_AST_CODE (initializer_index_node)
-              != PKL_AST_INTEGER)
-            {
-              pkl_ice (PKL_PASS_AST, PKL_AST_NOLOC,
-                       "array initialize index should be an integer node");
-              PKL_PASS_ERROR;
-            }
-
-          initializer_index
-            = PKL_AST_INTEGER_VALUE (initializer_index_node);
-
-          if (initializer_index < index)
-            elems_appended = 0;
-          else
-            elems_appended = initializer_index - index + 1;
-          effective_index = initializer_index;
-
-          PKL_AST_INTEGER_VALUE (initializer_index_node)
-            = effective_index;
-        }
-
-      index += elems_appended;
-      nelem += elems_appended;
-    }
-
-  PKL_AST_ARRAY_NELEM (array) = nelem;
-  PKL_AST_ARRAY_NINITIALIZER (array) = ninitializer;
-}
-PKL_PHASE_END_HANDLER
-
 /* At this point offsets can have either an identifier, an integer or
    a type expressing its unit.  This handler takes care of the first
    case, replacing the identifier with a suitable unit factor.  If the
@@ -995,7 +919,6 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_trans1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
-   PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans1_ps_array),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_trans1_ps_struct),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_trans1_ps_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL, pkl_trans1_ps_funcall),
@@ -1263,11 +1186,88 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_op_sizeof)
 }
 PKL_PHASE_END_HANDLER
 
+/* Compute and set the indexes of all the elements of an ARRAY node
+   and set the size of the array consequently.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_array)
+{
+  pkl_ast_node array = PKL_PASS_NODE;
+  pkl_ast_node initializers
+    = PKL_AST_ARRAY_INITIALIZERS (array);
+
+  pkl_ast_node tmp;
+  size_t index, nelem, ninitializer;
+
+  nelem = 0;
+  for (index = 0, tmp = initializers, ninitializer = 0;
+       tmp;
+       tmp = PKL_AST_CHAIN (tmp), ++ninitializer)
+    {
+      pkl_ast_node initializer_index_node
+        = PKL_AST_ARRAY_INITIALIZER_INDEX (tmp);
+      size_t initializer_index;
+      size_t elems_appended, effective_index;
+
+      /* Set the index of the initializer.  */
+      if (initializer_index_node == NULL)
+        {
+          pkl_ast_node initializer_index_type
+            = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+          PKL_AST_LOC (initializer_index_type)
+            = PKL_AST_LOC (tmp);
+
+
+          initializer_index_node
+            = pkl_ast_make_integer (PKL_PASS_AST, index);
+          PKL_AST_TYPE (initializer_index_node)
+            = ASTREF (initializer_index_type);
+          PKL_AST_LOC (initializer_index_node)
+            = PKL_AST_LOC (tmp);
+
+          PKL_AST_ARRAY_INITIALIZER_INDEX (tmp)
+            = ASTREF (initializer_index_node);
+
+          PKL_PASS_RESTART = 1;
+          elems_appended = 1;
+        }
+      else
+        {
+          if (PKL_AST_CODE (initializer_index_node)
+              != PKL_AST_INTEGER)
+            {
+              pkl_ice (PKL_PASS_AST, PKL_AST_NOLOC,
+                       "array initialize index should be an integer node");
+              PKL_PASS_ERROR;
+            }
+
+          initializer_index
+            = PKL_AST_INTEGER_VALUE (initializer_index_node);
+
+          if (initializer_index < index)
+            elems_appended = 0;
+          else
+            elems_appended = initializer_index - index + 1;
+          effective_index = initializer_index;
+
+          PKL_AST_INTEGER_VALUE (initializer_index_node)
+            = effective_index;
+        }
+
+      index += elems_appended;
+      nelem += elems_appended;
+    }
+
+  PKL_AST_ARRAY_NELEM (array) = nelem;
+  PKL_AST_ARRAY_NINITIALIZER (array) = ninitializer;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_trans3 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_trans3_ps_op_sizeof),
+   PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans3_ps_array),
   };
 
 
