@@ -620,7 +620,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_array)
       pkl_ast_node index
         = PKL_AST_ARRAY_INITIALIZER_INDEX (initializer);
 
-      /* pkl_trans3_ps_array should install indexes in all
+      /* pkl_trans1_ps_array should install indexes in all
          initializers.  */
       assert (index);
 
