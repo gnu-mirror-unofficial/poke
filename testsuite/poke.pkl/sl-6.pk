@@ -1,12 +1,9 @@
 /* { dg-do run } */
 
 defvar x = 2;
+defvar c = 33;
 
 /* { dg-command { .set obase 10 } } */
 
-/* { dg-command { x <<. 33 } } */
-/* { dg-output "2" } */
-
-/* For constant folding:  */
-/* { dg-command { 1 <<. 33 } } */
-/* { dg-output "\n2" } */
+/* { dg-command { try x <<. c; catch if E_out_of_bounds { printf "catched\n"; } } } */
+/* { dg-output "catched" } */

@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 1;
-defvar c = 32;
+defvar x = 2 as int<13>;
+defvar c = 13;
 
 /* { dg-command { .set obase 10 } } */
 

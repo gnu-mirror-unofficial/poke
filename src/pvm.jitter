@@ -207,6 +207,23 @@ late-header-c
       PVM_BINOP (TYPEA, TYPEB, TYPER, TYPERLC, OP);                          \
    }
 
+/* Same, but for left-shifts, which includes an overflow check on the
+   bit count.  */
+# define PVM_BINOP_SL(TYPEA, TYPEB,TYPER,TYPERLC,OP)                         \
+   {                                                                         \
+     pvm_val type = pvm_typeof (JITTER_UNDER_TOP_STACK ());                  \
+     uint64_t size = PVM_VAL_INTEGRAL (PVM_VAL_TYP_I_SIZE (type));           \
+                                                                             \
+     if (PVM_VAL_##TYPEB (JITTER_TOP_STACK ()) >= size)                      \
+     {                                                                       \
+        PVM_RAISE (PVM_E_OUT_OF_BOUNDS);                                     \
+     }                                                                       \
+     else                                                                    \
+     {                                                                       \
+        PVM_BINOP (TYPEA, TYPEB, TYPER, TYPERLC, OP);                        \
+     }                                                                       \
+   }
+
 /* Conversion instructions.
    ( TYPE -- TYPE RTYPE )  */
 #define PVM_CONVOP(TYPE, TYPEC, RTYPELC, RTYPEC)                             \
@@ -2542,27 +2559,73 @@ end
 
 ## Shift instructions
 
+# Instruction: bsli
+#
+# Left-shift the integer at the under top of the main stack the number
+# of bits indicated by the unsigned int at the top of the stack.
+#
+# If the bit count is equal or bigger than the size of the left
+# operand, then raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( INT UINT -- INT UINT INT )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
 instruction bsli () # ( INT UINT -- INT UINT INT )
   code
-    PVM_BINOP (INT, UINT, INT, int, <<);
+    PVM_BINOP_SL (INT, UINT, INT, int, <<);
   end
 end
+
+# Instruction: bsliu
+#
+# Left-shift the unsigned integer at the under top of the main stack
+# the number of bits indicated by the unsigned int at the top of the
+# stack.
+#
+# If the bit count is equal or bigger than the size of the left
+# operand, then raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( UINT UINT -- UINT UINT UINT )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction bsliu () # ( UINT UINT -- UINT UINT UINT )
   code
-    PVM_BINOP (UINT, UINT, UINT, uint, <<);
+    PVM_BINOP_SL (UINT, UINT, UINT, uint, <<);
   end
 end
+
+# Instruction: bsll
+#
+# Left-shift the long at the under top of the main stack the number
+# of bits indicated by the unsigned int at the top of the stack.
+#
+# If the bit count is equal or bigger than the size of the left
+# operand, then raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( LONG UINT -- LONG UINT LONG )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction bsll () # ( LONG UINT -- LONG UINT LONG )
   code
-    PVM_BINOP (LONG, UINT, LONG, long, <<);
+    PVM_BINOP_SL (LONG, UINT, LONG, long, <<);
   end
 end
 
+# Instruction: bslu
+#
+# Left-shift the unsigned long at the under top of the main stack the
+# number of bits indicated by the unsigned int at the top of the
+# stack.
+#
+# If the bit count is equal or bigger than the size of the left
+# operand, then raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( ULONG UINT -- ULONG UINT ULONG )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
 instruction bsllu () # ( ULONG UINT -- ULONG UINT ULONG )
   code
-    PVM_BINOP (ULONG, UINT, ULONG, ulong, <<);
+    PVM_BINOP_SL (ULONG, UINT, ULONG, ulong, <<);
   end
 end
 

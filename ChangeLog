@@ -1,3 +1,18 @@
+2020-02-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-anal.c (pkl_anal1_ps_op_sl): New handler.
+	(pkl_phase_anal1): Install handler.
+	* testsuite/poke.pkl/sl-diag-1.pk: New test.
+	* testsuite/poke.pkl/sl-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sl-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/sl-9.pk: Likewise.
+	* testsuite/poke.pkl/sl-10.pk: Likewise.
+	* testsuite/poke.pkl/sl-11.pk: Likewise.
+	* testsuite/poke.pkl/sl-12.pk: Likewise.
+	* testsuite/poke.pkl/sl-5.pk: Adapt to new semantics.
+	* testsuite/poke.pkl/sl-6.pk: Likewise.
+	* src/pvm.jitter (PVM_BINOP_SL): Define.
+
 2020-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-fold.c: Constant folding for bit shifts.
