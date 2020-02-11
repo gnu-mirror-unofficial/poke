@@ -1278,6 +1278,15 @@ in descending precedence order:
 @cindex concatenation, bitwise
 @end itemize
 
+Both @code{<<.} and @code{.>>} operators perform logical shifting.
+Unlike in many other programming languages, arithmetic right-shifting
+operators are not provided.  This means that right shifting always
+inserts zeroes at the most-significant side of the value operand,
+whereas left shifting always inserts zeroes at the least-significant
+side of the value operand.  Left shifting by a number of bits equal or
+bigger than the value operand is an error, and will trigger either a
+compile-time error or a run-time @code{E_out_of_bounds} exception.
+
 Bitwise concatenation works with any integral type, of any bit length.
 
 The following right-associative unary bitwise operators are supported:

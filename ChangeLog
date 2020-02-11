@@ -1,5 +1,10 @@
 2020-02-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Bitwise Operators): Document the behavior of the
+	shifting operators.
+
+2020-02-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-anal.c (pkl_anal1_ps_op_sl): New handler.
 	(pkl_phase_anal1): Install handler.
 	* testsuite/poke.pkl/sl-diag-1.pk: New test.
