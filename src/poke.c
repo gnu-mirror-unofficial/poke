@@ -264,11 +264,6 @@ parse_args (int argc, char *argv[])
             goto exit_success;
 
           break;
-        case 'L':
-          if (!pkl_compile_file (poke_compiler, optarg))
-            goto exit_success;
-          poke_interactive_p = 0;
-          break;
         case 'c':
         case CMD_ARG:
           {
@@ -287,6 +282,9 @@ parse_args (int argc, char *argv[])
             poke_interactive_p = 0;
             break;
           }
+          /* -L is handled below.  */
+        case 'L':
+          break;
           /* libtextstyle arguments are handled in pk-term.c, not
              here.   */
         case COLOR_ARG:
@@ -309,6 +307,28 @@ parse_args (int argc, char *argv[])
     {
       print_help ();
       goto exit_failure;
+    }
+
+  /* Second round: handle command line arguments that need the data
+     files opened.  */
+  optind = 1;
+  while ((ret = getopt_long (argc,
+                             argv,
+                             "ql:c:s:L:",
+                             long_options,
+                             NULL)) != -1)
+    {
+      c = ret;
+      switch (c)
+        {
+        case 'L':
+          if (!pkl_compile_file (poke_compiler, optarg))
+            goto exit_success;
+          poke_interactive_p = 0;
+          break;
+        default:
+          break;
+        }
     }
 
   return;

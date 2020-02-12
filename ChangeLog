@@ -1,5 +1,10 @@
 2020-02-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/poke.c (parse_args): Handle -L after the data files
+	specified in the command line are loaded.
+
+2020-02-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/load-1.pk: New test.
 	* testsuite/poke.pkl/load-2.pk: Likewise.
 	* testsuite/poke.pkl/load-3.pk: Likewise.
