@@ -27,6 +27,7 @@ check-DEJAGNU: site.exp
 	  CC_FOR_TARGET="$(CC_FOR_TARGET)" CFLAGS_FOR_TARGET="$(CFLAGS)" \
 	  HAVE_LIBTEXTSTYLE="$(HAVE_LIBTEXTSTYLE)" \
           POKESTYLESDIR="$(top_srcdir)/etc" \
+          POKEPICKLESDIR="$(top_srcdir)/pickles" \
           POKEDATADIR="$(top_srcdir)/src" \
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
 			$(RUNTESTFLAGS); \
