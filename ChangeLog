@@ -1,3 +1,8 @@
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Shebang): Document the shebang style that allows
+	passing more arguments to poke.
+
 2020-02-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/Makefile.am (POKEDATADIR): Define.

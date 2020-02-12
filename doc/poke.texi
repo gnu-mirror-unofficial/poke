@@ -472,6 +472,18 @@ if they were normal programs.  Example of a script:
 print "Hello world!\n";
 @end example
 
+If you want to pass additional flags to the poke command, you need to
+use a slightly different kind of shebang:
+
+@example
+#!/usr/bin/env sh
+exec poke -L "$0" "$@@"
+!#
+
+load elf;
+printf ("%v\n", Elf4_Ehdr @@ 0#B);
+@end example
+
 @node load command
 @chapter @code{.load}
 @cindex @code{.load}
