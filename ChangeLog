@@ -1,5 +1,20 @@
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/funcall-3.pk: Split from funcall.pk.
+	* testsuite/poke.pkl/funcall-14.pk: Likewise.
+	* testsuite/poke.pkl/funcall-13.pk: Likewise.
+	* testsuite/poke.pkl/funcall-12.pk: Likewise.
+	* testsuite/poke.pkl/funcall-11.pk: Likewise.
+	* testsuite/poke.pkl/funcall-10.pk: Likewise.
+	* testsuite/poke.pkl/funcall-9.pk: Likewise.
+	* testsuite/poke.pkl/funcall-8.pk: Likewise.
+	* testsuite/poke.pkl/funcall-7.pk: Likewise.
+	* testsuite/poke.pkl/funcall-6.pk: Likewise.
+	* testsuite/poke.pkl/funcall-5.pk: Likewise.
+	* testsuite/poke.pkl/funcall-4.pk: Likewise.
+
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Shebang): Document the shebang style that allows
 	passing more arguments to poke.
 
