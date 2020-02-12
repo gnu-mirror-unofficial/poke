@@ -103,6 +103,7 @@ The Poke Language
 * Exception Handling::		Dealing with exceptional conditions.
 * Printing::			Output in Poke programs.
 * Comments::			Documenting Poke programs.
+* Modules::			Loading pickles from Poke programs.
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
@@ -4093,6 +4094,50 @@ line or the end of the file, whatever comes first.
 Poke ignores form feed characters (ASCII code 14, often visualized as
 ^L).  In GNU software, this character is traditionally used to
 separate conceptually different entities in source files.
+
+@node Modules
+@chapter Modules
+@cindex @code{load}
+@cindex @code{modules}
+
+It is common for pickles to depend on stuff defined in other pickles.
+In such cases, the @code{load} language construction can be used to
+load pickles from your Poke program.  The syntax is:
+
+@example
+load @var{module};
+@end example
+
+@noindent
+Where @var{module} is the name of the pickle to load.
+
+For example, your Poke program may want to access some ELF data
+structures.  In that case, we can just do:
+
+@example
+/* Pickle to poke the contents of some ELF section.  */
+
+load elf;
+
+/* ... code  ... */
+@end example
+
+When asked to open a module, poke assumes it is implemented in a file
+named @file{@var{module}.pk}.  In the example above, it will try to
+load @file{elf.pk}.
+
+The pickles are searched first in the current working directory.  If
+not found, then @file{@var{prefix}/share/poke/@var{module}.pk} is
+tried next.
+
+If the environment variable @code{POKEDATADIR} is defined, it replaces
+@file{@var{prefix}/share/poke}.  This is mainly intended to test a
+poke program before it gets installed in its final location.
+
+Nothing prevents you to load the same pickle twice.  This will work if
+the pickle doesn't include definitions, but just executes statements.
+Otherwise, you will likely get an error due to trying to define stuff
+twice.
 
 @node __LINE__ and __FILE__
 @chapter @code{__LINE__} and @code{__FILE__}

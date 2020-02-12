@@ -1,5 +1,13 @@
 2020-02-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/load-1.pk: New test.
+	* testsuite/poke.pkl/load-2.pk: Likewise.
+	* testsuite/poke.pkl/load-3.pk: Likewise.
+	* testsuite/poke.pkl/load-diag-1.pk: Likewise.
+	* doc/poke.texi (Modules): New chapter.
+
+2020-02-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/poke.h (poke_picklesdir): New variable.
 	* src/poke.c (initialize): Initialize poke_picklesdir.
 	* src/pkl-lex.l: Recognize the token LOAD.

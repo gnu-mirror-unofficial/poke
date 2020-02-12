@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {a*} {foo = foo + 1;} foo.pk } */
+
+defvar foo = 0;
+
+/* { dg-command { load foo } } */
+/* { dg-command { foo } } */
+/* { dg-output "1" } */
+/* { dg-command { load foo } } */
+/* { dg-command { foo } } */
+/* { dg-output "\n2" } */
