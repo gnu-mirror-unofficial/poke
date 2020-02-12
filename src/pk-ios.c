@@ -28,6 +28,7 @@
 
 #include "ios.h"
 #include "poke.h"
+#include "pk-utils.h"
 #include "pk-cmd.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
@@ -254,46 +255,6 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   return 1;
 }
-
-
-/* Returns zero iff FILENAME is the name
-   of an entry in the file system which :
-   * is not a directory;
-   * is readable; AND
-   * exists.
-   If it satisfies the above, the function returns NULL.
-   Otherwise, returns a pointer to a statically allocated
-   error message describing how the file doesn't satisfy
-   the conditions.  */
-static char *
-pk_file_readable (const char *filename)
-{
-  static char errmsg[4096];
-  struct stat statbuf;
-  if (0 != stat (filename, &statbuf))
-    {
-      char *why = strerror (errno);
-      snprintf (errmsg, 4096, _("Cannot stat %s: %s\n"), filename, why);
-      return errmsg;
-    }
-
-  if (S_ISDIR (statbuf.st_mode))
-    {
-      snprintf (errmsg, 4096, _("%s is a directory\n"), filename);
-      return errmsg;
-    }
-
-  if (access (filename, R_OK) != 0)
-    {
-      char *why = strerror (errno);
-      snprintf (errmsg, 4096, _("%s: file cannot be read: %s\n"),
-		filename, why);
-      return errmsg;
-    }
-
-  return 0;
-}
-
 
 static int
 pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)

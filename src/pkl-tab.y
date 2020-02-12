@@ -38,6 +38,9 @@
 #include <xalloc.h>
 #include <assert.h>
 
+#include "poke.h" /* For poke_picklesdir.  */
+#include "pk-utils.h"
+
 #include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-parser.h" /* For struct pkl_parser.  */
@@ -169,6 +172,73 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
     }
 }
 
+/* Load a module, given its name.
+   If the module file cannot be read, return 1.
+   If there is a parse error loading the module, return 2.
+   Otherwise, return 0.  */
+
+static int
+load_module (struct pkl_parser *parser,
+             const char *module, pkl_ast_node *node)
+{
+  char *filename = alloca (strlen (module) + 3 + 1);
+  pkl_ast ast;
+  FILE *fd;
+  const char *emsg;
+
+  /* Derive the name of the file containing the module.  It is:
+     MODULE.pk */
+  strcpy (filename, module);
+  strcat (filename, ".pk");
+
+  /* Try to open the module in different locations:
+     - First, the current working directory is attempted.
+     - Then, POKEPICKLESDIR is attempted.
+       XXX that directory should be added to load_path at compiler
+           initialization time.
+     - XXX Then, the directories in load_path are attempted.  */
+
+  if ((emsg = pk_file_readable (filename)) == NULL)
+    ;
+  else
+    {
+      char *datafilename = alloca (strlen (poke_picklesdir)
+                                   + 1 /* "/" */ + strlen (filename)
+                                   + 1);
+      strcpy (datafilename, poke_picklesdir);
+      strcat (datafilename, "/");
+      strcat (datafilename, filename);
+
+      filename = datafilename;
+    }
+
+  fd = fopen (filename, "rb");
+  if (!fd)
+    return 1;
+
+  /* Parse the file, using the given environment.  The declarations
+     found in the parsed file are appended to that environment, so
+     nothing extra should be done about that.  */
+  if (pkl_parse_file (parser->compiler, &parser->env, &ast, fd, filename)
+      != 0)
+    {
+      fclose (fd);
+      return 2;
+    }
+
+  /* However, the AST nodes shall be appended explicitly, which is
+     achieved by returning them to the caller in the NODE
+     argument.  */
+  *node = PKL_AST_PROGRAM_ELEMS (ast->ast);
+
+  /* Dirty hack is dirty, but it works.  */
+  PKL_AST_PROGRAM_ELEMS (ast->ast) = NULL;
+  pkl_ast_free (ast);
+
+  fclose (fd);
+  return 0;
+}
+ 
 %}
 
 %union {
@@ -239,6 +309,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 %token PRINT
 %token PRINTF
 %token UNMAP
+%token LOAD
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE
@@ -295,7 +366,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 
 %type <opcode> unary_operator
 
-%type <ast> start program program_elem_list program_elem
+%type <ast> start program program_elem_list program_elem load
 %type <ast> expression primary identifier bconc map
 %type <ast> funcall funcall_arg_list funcall_arg
 %type <ast> array array_initializer_list array_initializer
@@ -381,6 +452,18 @@ start:
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                 }
+	| START_STMT load
+                {
+                  $$ = pkl_ast_make_program (pkl_parser->ast, $2);
+                  PKL_AST_LOC ($$) = @$;
+                  pkl_parser->ast->ast = ASTREF ($$);
+                }
+	| START_STMT load ';'
+                {
+                  $$ = pkl_ast_make_program (pkl_parser->ast, $2);
+                  PKL_AST_LOC ($$) = @$;
+                  pkl_parser->ast->ast = ASTREF ($$);
+                }
         | START_PROGRAM program
         	{
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
@@ -401,14 +484,41 @@ program_elem_list:
 	  program_elem
         | program_elem_list program_elem
         	{
-                  $$ = pkl_ast_chainon ($1, $2);
+                  if ($2 != NULL)
+                    $$ = pkl_ast_chainon ($1, $2);
+                  else
+                    $$ = $1;
                 }
 	;
 
 program_elem:
 	  declaration
         | stmt
+        | load
         ;
+
+load:
+	LOAD IDENTIFIER ';'
+        	{
+                  int ret = load_module (pkl_parser,
+                                         PKL_AST_IDENTIFIER_POINTER ($2),
+                                         &$$);
+                  if (ret == 2)
+                    /* The sub-parser should have emitted proper error
+                       messages.  No need to be verbose here.  */
+                    YYERROR;
+                  else if (ret == 1)
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
+                                 "cannot load `%s'",
+                                 PKL_AST_IDENTIFIER_POINTER ($2));
+                      YYERROR;
+                    }
+
+                  $2 = ASTREF ($2);
+                  pkl_ast_node_free ($2);
+                }
+	;
 
 /*
  * Identifiers.

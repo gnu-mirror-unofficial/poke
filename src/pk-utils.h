@@ -1,6 +1,6 @@
-/* poke.h - Interactive editor for binary files.  */
+/* pk-utils.h - Common utility functions for poke.  */
 
-/* Copyright (C) 2019, 2020 Jose E. Marchesi */
+/* Copyright (C) 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef POKE_H
-#define POKE_H
+#ifndef PK_UTILS_H
+#define PK_UTILS_H
 
-#include "pkl.h"
+/* Returns zero iff FILENAME is the name
+   of an entry in the file system which :
+   * is not a directory;
+   * is readable; AND
+   * exists.
+   If it satisfies the above, the function returns NULL.
+   Otherwise, returns a pointer to a statically allocated
+   error message describing how the file doesn't satisfy
+   the conditions.  */
 
-extern int poke_interactive_p;
-extern int poke_quiet_p;
-extern int poke_exit_p;
-extern int poke_exit_code;
-extern pkl_compiler poke_compiler;
-extern pvm poke_vm;
-extern char *poke_datadir;
-extern char *poke_picklesdir;
-extern int poke_obase;
+char *pk_file_readable (const char *filename);
 
-void pk_print_version ();
-
-#endif /* !POKE_H */
+#endif /* ! PK_UTILS_H */

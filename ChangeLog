@@ -1,3 +1,20 @@
+2020-02-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/poke.h (poke_picklesdir): New variable.
+	* src/poke.c (initialize): Initialize poke_picklesdir.
+	* src/pkl-lex.l: Recognize the token LOAD.
+	* src/pkl-tab.y (load): New rule.
+	(program_elem): New alternative `load'.
+	(LOAD): New token.
+	(load_module): New auxiliary function.
+	* src/pk-ios.c: Include pk-utils.h.
+	(pk_file_readable): Moved to pk-utils.c.
+	* src/Makefile.am (poke_SOURCES): Add pk-utils.[hc].
+	* src/pk-utils.h: New file.
+	* src/pk-utils.c: Likewise.
+	* pickles/ctf.pk: load elf.
+	* HACKING (Appendix): List pk-utils.c and pk-utils.h.
+
 2020-02-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Bitwise Operators): Document the behavior of the

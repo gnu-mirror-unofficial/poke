@@ -21,7 +21,7 @@
    The Compact ANSI-C Type Format is described in
    https://github.com/oracle/libdtrace-ctf  */
 
-/* require elf; */
+load elf;
 
 defvar CTF_MAX_SIZE = 0xfffffffe;
 defvar CTF_LSIZE_SENT = 0xffffffff;

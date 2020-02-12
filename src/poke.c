@@ -56,6 +56,14 @@ int poke_quiet_p;
 
 char *poke_datadir;
 
+/* The following global contains the directory holding pickles shipped
+   with poke.  In an installed program, this is the same than
+   poke_datadir, but the POKE_PICKLESDIR environment variable can be
+   set to a different value, which is mainly to run an uninstalled
+   poke.  */
+
+char *poke_picklesdir;
+
 /* This is used by commands to indicate to the REPL that it must
    exit.  */
 
@@ -333,6 +341,10 @@ initialize (int argc, char *argv[])
   poke_datadir = getenv ("POKEDATADIR");
   if (poke_datadir == NULL)
     poke_datadir = PKGDATADIR;
+
+  poke_picklesdir = getenv ("POKEPICKLESDIR");
+  if (poke_picklesdir == NULL)
+    poke_picklesdir = poke_datadir;
 
   /* Initialize the terminal output.  */
   pk_term_init (argc, argv);

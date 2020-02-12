@@ -1551,6 +1551,9 @@ Poke Program
 Main program
   ``src/poke.h``, ``src/poke.c``
 
+Utility functions used by everyone else
+  ``src/pk-utils.h``, ``src/pk-utils.c``
+
 Infrastructure for writing poke commands
   ``src/pk-cmd.h``, ``src/pk-cmd.c``
 
