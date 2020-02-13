@@ -3924,7 +3924,7 @@ compute with every integer in the current IO space:
 defvar o = 0#B;
 try
 @{
-  compute (int @ o);
+  compute (int @@ o);
   o = o + 1#B;
 @} until E_eof;
 @end example
