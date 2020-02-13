@@ -1,5 +1,9 @@
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/ras (pop_frame): Fix typo.
+
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (Write After Approval): Added Carlo Caione.
 	* AUTHORS: Likewise.
 

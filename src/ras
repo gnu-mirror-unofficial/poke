@@ -346,7 +346,7 @@ function push_frame()
 
 function pop_frame()
 {
-    if (cure_frame == -1)
+    if (cur_frame == -1)
     {
         error(FNR " frame underflow")
         return
