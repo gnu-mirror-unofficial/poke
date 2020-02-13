@@ -1,3 +1,8 @@
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Write After Approval): Added Carlo Caione.
+	* AUTHORS: Likewise.
+
 2020-02-13  Carlo Caione  <ccaione@baylibre.com>
 
 	* testsuite/poke.cmd/set-odepth.pk: new test
