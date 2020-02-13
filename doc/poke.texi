@@ -694,6 +694,12 @@ up to the @code{depth}-th level. The default value @code{0} means no limit.
 @cindex indent, as number of spaces
 Number defining the number of spaces used for indentation for each level. Only
 values >=1 and <= 10 are valid. Default value is '2'.
+@item oacutoff
+@cindex array cutoff
+When displaying an array as struct field, display only the elements up to the
+@code{cutoff} index and display @code{...} after that. Value of @code{0}
+means no limit. This cutoff value is not used when directly displaying arrays
+content.
 @end table
 
 @node vm command

@@ -111,6 +111,9 @@ void pvm_set_oindent (pvm apvm, unsigned int oindent);
 unsigned int pvm_odepth (pvm apvm);
 void pvm_set_odepth (pvm apvm, unsigned int odepth);
 
+unsigned int pvm_oacutoff (pvm apvm);
+void pvm_set_oacutoff (pvm apvm, unsigned int cutoff);
+
 /* Set the current negative encoding for PVM.  NENC should be one of
  * the IOS_NENC_* values defined in ios.h */
 

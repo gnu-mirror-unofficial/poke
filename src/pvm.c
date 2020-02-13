@@ -45,6 +45,8 @@
   ((PVM)->pvm_state.pvm_state_runtime.odepth)
 #define PVM_STATE_OINDENT(PVM)                          \
   ((PVM)->pvm_state.pvm_state_runtime.oindent)
+#define PVM_STATE_OACUTOFF(PVM)                         \
+  ((PVM)->pvm_state.pvm_state_runtime.oacutoff)
 
 struct pvm
 {
@@ -208,6 +210,18 @@ void
 pvm_set_odepth (pvm apvm, unsigned int odepth)
 {
   PVM_STATE_ODEPTH (apvm) = odepth;
+}
+
+unsigned int
+pvm_oacutoff (pvm apvm)
+{
+  return PVM_STATE_OACUTOFF (apvm);
+}
+
+void
+pvm_set_oacutoff (pvm apvm, unsigned int cutoff)
+{
+  PVM_STATE_OACUTOFF (apvm) = cutoff;
 }
 
 void

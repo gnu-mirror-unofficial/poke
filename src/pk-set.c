@@ -231,6 +231,28 @@ pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set oacutoff [CUTOFF]  */
+
+  assert(argc == 1);
+
+  int cutoff = PK_CMD_ARG_INT (argv[0]);
+
+  if (cutoff < 0)
+    {
+      pk_term_class ("error");
+      pk_puts ("error: ");
+      pk_term_end_class ("error");
+      pk_puts (_(" cutoff should be >=0.\n"));
+      return 0;
+    }
+
+  pvm_set_oacutoff (poke_vm, cutoff);
+  return 1;
+}
+
+static int
 pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set odepth [DEPTH]  */
@@ -369,6 +391,9 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
+struct pk_cmd set_oacutoff_cmd =
+  {"oacutoff", "i", "", 0, NULL, pk_cmd_set_oacutoff, "set oacutoff [CUTOFF]"};
+
 struct pk_cmd set_oindent_cmd =
   {"oindent", "i", "", 0, NULL, pk_cmd_set_oindent, "set oindent [INDENT]"};
 
@@ -397,6 +422,7 @@ struct pk_cmd set_error_on_warning_cmd =
 
 struct pk_cmd *set_cmds[] =
   {
+   &set_oacutoff_cmd,
    &set_obase_cmd,
    &set_omode_cmd,
    &set_odepth_cmd,

@@ -30,6 +30,8 @@
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
+unsigned int pk_odepth;
+
 pvm_val
 pvm_make_int (int32_t value, int size)
 {
@@ -794,6 +796,17 @@ pvm_print_val (pvm_val val, int base, int flags)
 
           if (idx != 0)
             pk_puts (",");
+
+          if ((pvm_oacutoff (poke_vm) != 0) &&
+             ((pvm_oacutoff (poke_vm) <= idx) &&
+              (pk_odepth != 0)))
+            {
+              pk_term_class ("ellipsis");
+              pk_puts("...");
+              pk_term_end_class ("ellipsis");
+              break;
+            }
+
           pvm_print_val (elem_value, base, flags);
 
           if (flags & PVM_PRINT_F_MAPS && elem_offset != PVM_NULL)
@@ -818,7 +831,6 @@ pvm_print_val (pvm_val val, int base, int flags)
       pvm_val struct_type = PVM_VAL_SCT_TYPE (val);
       pvm_val struct_type_name = PVM_VAL_TYP_S_NAME (struct_type);
       pvm_val pretty_printer = pvm_get_struct_method (val, "_print");
-      static unsigned int pk_odepth;
 
       /* If the struct has a pretty printing method (called _print)
          then use it, unless the PVM is configured to not do so.

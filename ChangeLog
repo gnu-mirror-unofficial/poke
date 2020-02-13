@@ -1,3 +1,13 @@
+2020-02-13  Carlo Caione  <ccaione@baylibre.com>
+
+	* doc/poke.texi: add documentation
+	* src/pk-set.c: new set oacutoff command
+	* testsuite/poke.cmd/set-oacutoff.pk: new test file
+	* src/pvm.c: helpers to retrieve oacutoff flag
+	* src/pvm.h: likewise
+	* src/pvm.jitter: new flag in the PVM state struct
+	* src/pvm-val.c: support new array cutoff parameter
+
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/poke.c (initialize): Initialize the hyperserver only if poke
