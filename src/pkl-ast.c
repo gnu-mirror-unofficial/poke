@@ -621,6 +621,69 @@ pkl_ast_dup_type (pkl_ast_node type)
   return new;
 }
 
+/* Given a struct type node AST and a string in the form BB.CC.CC.xx,
+   check that the intermediate fields are valid struct references, and return
+   the pkl_ast_node corresponding to the type of the latest field CC. */
+
+pkl_ast_node
+pkl_struct_type_traverse (pkl_ast_node type, const char *path)
+{
+  char *trunk, *sub, *base;
+
+  if (PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
+    return NULL;
+
+  trunk = strndup (path, strlen (path) - strlen (strrchr (path, '.')));
+  base = strtok (trunk, ".");
+
+  /* Node in the form XX. Check to silence the compiler about base not used */
+  if (base == NULL)
+    {
+      free (trunk);
+      return type;
+    }
+
+  while ((sub = strtok (NULL, ".")) != NULL)
+    {
+      pkl_ast_node ename;
+      pkl_ast_node etype, t;
+      char *field;
+
+      etype = NULL;
+
+      if (PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
+        goto out;
+
+      for (t = PKL_AST_TYPE_S_ELEMS (type); t;
+           t = PKL_AST_CHAIN (t))
+        {
+          if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
+            continue;
+      
+          ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
+          etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
+
+          field = PKL_AST_IDENTIFIER_POINTER (ename);
+
+          if (STREQ (field, sub))
+            {
+              type = etype;
+              break;
+            }
+        }
+
+      if (type != etype)
+        goto out;
+    }
+
+  free (trunk);
+  return type;
+
+out:
+  free (trunk);
+  return NULL;
+}
+
 /* Return whether two given type AST nodes are equal, i.e. they denote
    the same type.  */
 

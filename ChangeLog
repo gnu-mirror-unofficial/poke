@@ -1,3 +1,9 @@
+2020-02-17  Carlo Caione  <ccaione@baylibre.com>
+
+	* src/pk-repl.c (pkl_complete_struct): new auto-complete function
+	* src/pkl-ast.c (pkl_struct_type_traverse): new helper function
+	* src/pkl-ast.h: likewise
+
 2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.cmd/set-oacutoff-2.pk: New test.
