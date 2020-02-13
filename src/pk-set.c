@@ -231,6 +231,95 @@ pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set odepth [DEPTH]  */
+
+  assert(argc == 1);
+
+  int odepth = PK_CMD_ARG_INT (argv[0]);
+
+  if (odepth < 0)
+    {
+      pk_term_class ("error");
+      pk_puts ("error: ");
+      pk_term_end_class ("error");
+      pk_puts (_(" odepth should be >=0.\n"));
+      return 0;
+    }
+
+  pvm_set_odepth (poke_vm, odepth);
+  return 1;
+}
+
+static int
+pk_cmd_set_oindent (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set oindent [INDENT]  */
+
+  assert(argc == 1);
+
+  int oindent = PK_CMD_ARG_INT (argv[0]);
+
+  if (oindent < 1 || oindent > 10)
+    {
+      pk_term_class ("error");
+      pk_puts ("error: ");
+      pk_term_end_class ("error");
+      pk_puts (_(" oindent should be >=1 and <= 10.\n"));
+      return 0;
+    }
+
+  pvm_set_oindent (poke_vm, oindent);
+  return 1;
+}
+
+static int
+pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set omode {normal|tree}  */
+
+  enum pvm_omode omode;
+  const char *arg;
+
+  assert(argc == 1);
+
+  arg = PK_CMD_ARG_STR (argv[0]);
+
+  if (*arg == '\0')
+    {
+      omode = pvm_omode (poke_vm);
+
+      switch (omode)
+        {
+        case PVM_PRINT_FLAT: pk_puts ("flat\n"); break;
+        case PVM_PRINT_TREE: pk_puts ("tree\n"); break;
+        default:
+          assert (0);
+        }
+    }
+  else
+    {
+      if (STREQ (arg, "flat"))
+        omode = PVM_PRINT_FLAT;
+      else if (STREQ (arg, "tree"))
+        omode = PVM_PRINT_TREE;
+      else
+        {
+          pk_term_class ("error");
+          pk_puts (_("error: "));
+          pk_term_end_class ("error");
+          pk_puts (_(" omode should be one of `flat' or `tree'.\n"));
+          return 0;
+        }
+
+      pvm_set_omode (poke_vm, omode);
+    }
+
+  return 1;
+}
+
+static int
 pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
                              uint64_t uflags)
 {
@@ -280,6 +369,15 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
+struct pk_cmd set_oindent_cmd =
+  {"oindent", "i", "", 0, NULL, pk_cmd_set_oindent, "set oindent [INDENT]"};
+
+struct pk_cmd set_odepth_cmd =
+  {"odepth", "i", "", 0, NULL, pk_cmd_set_odepth, "set odepth [DEPTH]"};
+
+struct pk_cmd set_omode_cmd =
+  {"omode", "s?", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)"};
+
 struct pk_cmd set_obase_cmd =
   {"obase", "i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)"};
 
@@ -300,6 +398,9 @@ struct pk_cmd set_error_on_warning_cmd =
 struct pk_cmd *set_cmds[] =
   {
    &set_obase_cmd,
+   &set_omode_cmd,
+   &set_odepth_cmd,
+   &set_oindent_cmd,
    &set_endian_cmd,
    &set_nenc_cmd,
    &set_pretty_print_cmd,

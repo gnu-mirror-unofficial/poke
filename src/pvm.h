@@ -27,6 +27,12 @@
 #include "pvm-env.h"
 #include "pvm-alloc.h"
 
+enum pvm_omode
+  {
+    PVM_PRINT_FLAT,
+    PVM_PRINT_TREE,
+  };
+
 /* The following enumeration contains every possible exit code
    resulting from the execution of a routine in the PVM.
 
@@ -95,6 +101,15 @@ void pvm_set_nenc (pvm pvm, enum ios_nenc nenc);
 
 int pvm_pretty_print (pvm pvm);
 void pvm_set_pretty_print (pvm pvm, int flag);
+
+enum pvm_omode pvm_omode (pvm apvm);
+void pvm_set_omode (pvm apvm, enum pvm_omode omode);
+
+unsigned int pvm_oindent (pvm apvm);
+void pvm_set_oindent (pvm apvm, unsigned int oindent);
+
+unsigned int pvm_odepth (pvm apvm);
+void pvm_set_odepth (pvm apvm, unsigned int odepth);
 
 /* Set the current negative encoding for PVM.  NENC should be one of
  * the IOS_NENC_* values defined in ios.h */

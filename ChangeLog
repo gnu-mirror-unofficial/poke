@@ -1,3 +1,17 @@
+2020-02-13  Carlo Caione  <ccaione@baylibre.com>
+
+	* testsuite/poke.cmd/set-odepth.pk: new test
+	* testsuite/poke.cmd/set-oindent.pk: likewise
+	* testsuite/poke.cmd/set-odepth.pk: likewise
+	* src/pvm.jitter: new flags in the PVM state struct
+	* src/pvm.c: helpers to retrieve tree-related flags
+	* src/pvm.h: likewise
+	* src/pvm-val.c: support new printing modes
+	* src/pk-term.c: new function to print indentation
+	* src/pk-term.h: likewise
+	* src/pk-set.c: new .set sub-commands
+	* doc/poke.texi: updated documentation
+
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-tab.y (load_module): Try to load modules from both

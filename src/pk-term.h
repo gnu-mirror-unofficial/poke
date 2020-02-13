@@ -40,6 +40,9 @@ extern void pk_puts (const char *str);
 /* Print a formatted string to the terminal.  */
 extern void pk_printf (const char *format, ...);
 
+/* Print indentation.  */
+extern void pk_term_indent (unsigned int lvl);
+
 /* Class handling.  */
 extern void pk_term_class (const char *class);
 extern void pk_term_end_class (const char *class);

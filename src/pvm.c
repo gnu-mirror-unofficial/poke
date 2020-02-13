@@ -39,6 +39,12 @@
   ((PVM)->pvm_state.pvm_state_runtime.nenc)
 #define PVM_STATE_PRETTY_PRINT(PVM)                     \
   ((PVM)->pvm_state.pvm_state_runtime.pretty_print)
+#define PVM_STATE_OMODE(PVM)                            \
+  ((PVM)->pvm_state.pvm_state_runtime.omode)
+#define PVM_STATE_ODEPTH(PVM)                           \
+  ((PVM)->pvm_state.pvm_state_runtime.odepth)
+#define PVM_STATE_OINDENT(PVM)                          \
+  ((PVM)->pvm_state.pvm_state_runtime.oindent)
 
 struct pvm
 {
@@ -166,6 +172,42 @@ void
 pvm_set_pretty_print (pvm apvm, int flag)
 {
   PVM_STATE_PRETTY_PRINT (apvm) = flag;
+}
+
+enum pvm_omode
+pvm_omode (pvm apvm)
+{
+  return PVM_STATE_OMODE (apvm);
+}
+
+void
+pvm_set_omode (pvm apvm, enum pvm_omode omode)
+{
+  PVM_STATE_OMODE (apvm) = omode;
+}
+
+unsigned int
+pvm_oindent (pvm apvm)
+{
+  return PVM_STATE_OINDENT (apvm);
+}
+
+void
+pvm_set_oindent (pvm apvm, unsigned int oindent)
+{
+  PVM_STATE_OINDENT (apvm) = oindent;
+}
+
+unsigned int
+pvm_odepth (pvm apvm)
+{
+  return PVM_STATE_ODEPTH (apvm);
+}
+
+void
+pvm_set_odepth (pvm apvm, unsigned int odepth)
+{
+  PVM_STATE_ODEPTH (apvm) = odepth;
 }
 
 void

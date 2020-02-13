@@ -681,6 +681,19 @@ is @code{no}.
 @cindex warnings
 Flag indicating whether handling compilation warnings as errors.
 Default value is @code{no}.
+@item omode
+@cindex mode, of displayed values
+It defines the way the binary struct data is displayed. In @code{flat} mode
+data is not formatted in any special way. In @code{tree} mode the struct data
+is displayed in a hierarchical (tree) mode.
+@item odepth
+@cindex depth, of displayed struct fields
+In @code{tree} and @code{flat} mode the struct fields are recursively displayed
+up to the @code{depth}-th level. The default value @code{0} means no limit.
+@item oindent
+@cindex indent, as number of spaces
+Number defining the number of spaces used for indentation for each level. Only
+values >=1 and <= 10 are valid. Default value is '2'.
 @end table
 
 @node vm command

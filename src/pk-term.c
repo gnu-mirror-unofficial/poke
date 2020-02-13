@@ -118,6 +118,15 @@ pk_printf (const char *format, ...)
 }
 
 void
+pk_term_indent (unsigned int lvl)
+{
+  unsigned int oindent = pvm_oindent (poke_vm);
+
+  if (pvm_omode (poke_vm) == PVM_PRINT_TREE)
+    pk_printf ("\n%*s", (oindent * lvl), "");
+}
+
+void
 pk_term_class (const char *class)
 {
   styled_ostream_begin_use_class (poke_ostream, class);

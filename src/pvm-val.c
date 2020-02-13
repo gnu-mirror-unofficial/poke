@@ -818,6 +818,7 @@ pvm_print_val (pvm_val val, int base, int flags)
       pvm_val struct_type = PVM_VAL_SCT_TYPE (val);
       pvm_val struct_type_name = PVM_VAL_TYP_S_NAME (struct_type);
       pvm_val pretty_printer = pvm_get_struct_method (val, "_print");
+      static unsigned int pk_odepth;
 
       /* If the struct has a pretty printing method (called _print)
          then use it, unless the PVM is configured to not do so.
@@ -840,9 +841,19 @@ pvm_print_val (pvm_val val, int base, int flags)
         }
       else
         pk_puts ("struct");
-      pk_puts (" ");
 
+      if (pk_odepth >= pvm_odepth (poke_vm) &&
+          pvm_odepth (poke_vm) != 0)
+        {
+          pk_puts (" {...}");
+          pk_term_end_class ("struct");
+          return;
+        }
+
+      pk_puts (" ");
       pk_printf ("{");
+
+      pk_odepth++;
       for (idx = 0; idx < nelem; ++idx)
         {
           pvm_val name = PVM_VAL_SCT_FIELD_NAME(val, idx);
@@ -851,6 +862,9 @@ pvm_print_val (pvm_val val, int base, int flags)
 
           if (idx != 0)
             pk_puts (",");
+
+          pk_term_indent (pk_odepth);
+
           if (name != PVM_NULL)
             {
               pk_term_class ("struct-field-name");
@@ -866,6 +880,9 @@ pvm_print_val (pvm_val val, int base, int flags)
               pvm_print_val (offset, base, flags);
             }
         }
+      pk_odepth--;
+
+      pk_term_indent (pk_odepth);
       pk_puts ("}");
 
       pk_term_end_class ("struct");

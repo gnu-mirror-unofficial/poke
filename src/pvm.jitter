@@ -567,6 +567,9 @@ state-struct-runtime-c
       uint32_t endian;
       uint32_t nenc;
       uint32_t pretty_print;
+      enum pvm_omode omode;
+      uint32_t odepth;
+      uint32_t oindent;
   end
 end
 
@@ -579,6 +582,9 @@ state-initialization-c
       jitter_state_runtime->endian = IOS_ENDIAN_MSB;
       jitter_state_runtime->nenc = IOS_NENC_2;
       jitter_state_runtime->pretty_print = 0;
+      jitter_state_runtime->omode = PVM_PRINT_FLAT;
+      jitter_state_runtime->odepth = 0;
+      jitter_state_runtime->oindent = 2;
   end
 end
 
