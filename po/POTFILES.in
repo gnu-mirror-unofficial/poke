@@ -16,6 +16,7 @@ src/pkl-promo.h
 src/pkl-trans.h
 src/pkl-typify.h
 src/pk-term.h
+src/pk-utils.h
 src/poke.h
 src/pvm-alloc.h
 src/pvm-env.h
@@ -27,8 +28,8 @@ src/ios-dev-file.c
 src/pk-cmd.c
 src/pk-def.c
 src/pk-editor.c
-src/pk-file.c
 src/pk-help.c
+src/pk-utils.c
 src/pk-info.c
 src/pkl-anal.c
 src/pkl-asm.c

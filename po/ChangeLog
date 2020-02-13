@@ -1,3 +1,8 @@
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* POTFILES.in: Remove pk-file.c.
+	Add pk-utils.[ch].
+
 2019-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* POTFILES.in: Remove pk-print.c.
