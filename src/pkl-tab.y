@@ -179,7 +179,8 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 
 static int
 load_module (struct pkl_parser *parser,
-             const char *module, pkl_ast_node *node)
+             const char *module, pkl_ast_node *node,
+             int filename_p)
 {
   char *filename = alloca (strlen (module) + 3 + 1);
   pkl_ast ast;
@@ -189,7 +190,8 @@ load_module (struct pkl_parser *parser,
   /* Derive the name of the file containing the module.  It is:
      MODULE.pk */
   strcpy (filename, module);
-  strcat (filename, ".pk");
+  if (!filename_p)
+    strcat (filename, ".pk");
 
   /* Try to open the module in different locations:
      - First, the current working directory is attempted.
@@ -502,7 +504,7 @@ load:
         	{
                   int ret = load_module (pkl_parser,
                                          PKL_AST_IDENTIFIER_POINTER ($2),
-                                         &$$);
+                                         &$$, 0 /* filename_p */);
                   if (ret == 2)
                     /* The sub-parser should have emitted proper error
                        messages.  No need to be verbose here.  */
@@ -512,6 +514,26 @@ load:
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
                                  "cannot load `%s'",
                                  PKL_AST_IDENTIFIER_POINTER ($2));
+                      YYERROR;
+                    }
+
+                  $2 = ASTREF ($2);
+                  pkl_ast_node_free ($2);
+                }
+	| LOAD STR ';'
+        	{
+                  int ret = load_module (pkl_parser,
+                                         PKL_AST_STRING_POINTER ($2),
+                                         &$$, 1 /* filename_p */);
+                  if (ret == 2)
+                    /* The sub-parser should have emitted proper error
+                       messages.  No need to be verbose here.  */
+                    YYERROR;
+                  else if (ret == 1)
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
+                                 "cannot load module from file `%s'",
+                                 PKL_AST_STRING_POINTER ($2));
                       YYERROR;
                     }
 

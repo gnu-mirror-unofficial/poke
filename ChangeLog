@@ -1,5 +1,14 @@
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y (load): Add a LOAD STRING syntactic variant.
+	(load_module): Get a filename_p argument.
+	* doc/poke.texi (Modules): Document the alternate syntax for
+	`load'.
+	* testsuite/poke.pkl/load-4.pk: New test.
+	* testsuite/poke.pkl/load-diag-2.pk: Likewise.
+
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/funcall-3.pk: Split from funcall.pk.
 	* testsuite/poke.pkl/funcall-14.pk: Likewise.
 	* testsuite/poke.pkl/funcall-13.pk: Likewise.

@@ -4151,6 +4151,19 @@ the pickle doesn't include definitions, but just executes statements.
 Otherwise, you will likely get an error due to trying to define stuff
 twice.
 
+There is an alternate syntax of the @code{load} construction that is
+useful when the module is implemented in a file whose name doesn't
+conform to a Poke identifier.  This happens, for example, when the
+file name contains hyphens.  Example:
+
+@example
+load "my-pickle.pk";
+@end example
+
+Note that if you use this variant of @code{load}, you must specify the
+full file name, including whatever extension it uses (usually
+@file{.pk}).
+
 @node __LINE__ and __FILE__
 @chapter @code{__LINE__} and @code{__FILE__}
 @cindex @code{__FILE__}
