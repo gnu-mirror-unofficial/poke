@@ -1,5 +1,11 @@
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/poke.c (initialize): Initialize the hyperserver only if poke
+	is used interactively.
+	(finalize): Ditto for finalize.
+
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ras (pop_frame): Fix typo.
 
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
