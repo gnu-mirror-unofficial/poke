@@ -20,5 +20,8 @@
    with no arguments.  It should contain an entry per command.  */
 defvar pk_help_str = "";
 
-/* XXX code to load the .pk files with the commands should be here,
-   not in pkl-cmd.c  */
+/* poke commands implemented in Poke.  */
+
+load "pk-dump.pk";
+load "pk-copy.pk";
+load "pk-save.pk";

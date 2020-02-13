@@ -1,5 +1,13 @@
 2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y (load_module): Try to load modules from both
+	poke_datadir and poke_picklesdir.
+	* src/pk-cmd.c (pk_cmd_init): Do not load commands written in Poke
+	from C.  Do it in pk-cmd.pk instead.
+	* src/pk-cmd.pk: Load commands written in Poke.
+
+2020-02-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-tab.y (load): Add a LOAD STRING syntactic variant.
 	(load_module): Get a filename_p argument.
 	* doc/poke.texi (Modules): Document the alternate syntax for

@@ -195,6 +195,7 @@ load_module (struct pkl_parser *parser,
 
   /* Try to open the module in different locations:
      - First, the current working directory is attempted.
+     - Then, POKEDATADIR is attempted.
      - Then, POKEPICKLESDIR is attempted.
        XXX that directory should be added to load_path at compiler
            initialization time.
@@ -204,14 +205,27 @@ load_module (struct pkl_parser *parser,
     ;
   else
     {
-      char *datafilename = alloca (strlen (poke_picklesdir)
+      char *datafilename = alloca (strlen (poke_datadir)
                                    + 1 /* "/" */ + strlen (filename)
                                    + 1);
-      strcpy (datafilename, poke_picklesdir);
+      strcpy (datafilename, poke_datadir);
       strcat (datafilename, "/");
       strcat (datafilename, filename);
 
-      filename = datafilename;
+      if ((emsg = pk_file_readable (datafilename)) == NULL)
+        filename = datafilename;
+      else
+        {
+          char *picklesfilename = alloca (strlen (poke_picklesdir)
+                                          + 1 /* "/" */ + strlen (filename)
+                                          + 1);
+
+          strcpy (picklesfilename, poke_picklesdir);
+          strcat (picklesfilename, "/");
+          strcat (picklesfilename, filename);
+
+          filename = picklesfilename;
+        }
     }
 
   fd = fopen (filename, "rb");
