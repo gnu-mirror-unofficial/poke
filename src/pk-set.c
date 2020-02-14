@@ -34,19 +34,28 @@
 static int
 pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* set obase {2,8,10,16} */
-  int base = PK_CMD_ARG_INT (argv[0]);
+  /* set obase [{2,8,10,16}] */
 
-  if (base != 10 && base != 16 && base != 2 && base != 8)
+  assert (argc == 1);
+
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+    pk_printf ("%d\n", poke_obase);
+  else
     {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_puts ("obase should be one of 2, 8, 10 or 16.\n");
-      return 0;
-    }
+      int base = PK_CMD_ARG_INT (argv[0]);
 
-  poke_obase = base;
+      if (base != 10 && base != 16 && base != 2 && base != 8)
+        {
+          pk_term_class ("error");
+          pk_puts ("error: ");
+          pk_term_end_class ("error");
+          pk_puts ("obase should be one of 2, 8, 10 or 16.\n");
+          return 0;
+        }
+      
+      poke_obase = base;
+    }
+  
   return 1;
 }
 
@@ -235,20 +244,26 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set oacutoff [CUTOFF]  */
 
-  assert(argc == 1);
+  assert (argc == 1);
 
-  int cutoff = PK_CMD_ARG_INT (argv[0]);
-
-  if (cutoff < 0 || cutoff > 15)
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+    pk_printf ("%d\n", pvm_oacutoff (poke_vm));
+  else
     {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_puts (_(" cutoff should be between 0 and 15.\n"));
-      return 0;
+      int cutoff = PK_CMD_ARG_INT (argv[0]);
+      
+      if (cutoff < 0 || cutoff > 15)
+        {
+          pk_term_class ("error");
+          pk_puts ("error: ");
+          pk_term_end_class ("error");
+          pk_puts (_(" cutoff should be between 0 and 15.\n"));
+          return 0;
+        }
+      
+      pvm_set_oacutoff (poke_vm, cutoff);
     }
-
-  pvm_set_oacutoff (poke_vm, cutoff);
+  
   return 1;
 }
 
@@ -259,18 +274,24 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   assert(argc == 1);
 
-  int odepth = PK_CMD_ARG_INT (argv[0]);
-
-  if (odepth < 0 || odepth > 15)
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+    pk_printf ("%d\n", pvm_odepth (poke_vm));
+  else
     {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_puts (_(" odepth should be between 0 and 15.\n"));
-      return 0;
+      int odepth = PK_CMD_ARG_INT (argv[0]);
+      
+      if (odepth < 0 || odepth > 15)
+        {
+          pk_term_class ("error");
+          pk_puts ("error: ");
+          pk_term_end_class ("error");
+          pk_puts (_(" odepth should be between 0 and 15.\n"));
+          return 0;
+        }
+      
+      pvm_set_odepth (poke_vm, odepth);
     }
-
-  pvm_set_odepth (poke_vm, odepth);
+  
   return 1;
 }
 
@@ -392,19 +413,19 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 struct pk_cmd set_oacutoff_cmd =
-  {"oacutoff", "i", "", 0, NULL, pk_cmd_set_oacutoff, "set oacutoff [CUTOFF]"};
+  {"oacutoff", "?i", "", 0, NULL, pk_cmd_set_oacutoff, "set oacutoff [CUTOFF]"};
 
 struct pk_cmd set_oindent_cmd =
-  {"oindent", "i", "", 0, NULL, pk_cmd_set_oindent, "set oindent [INDENT]"};
+  {"oindent", "?i", "", 0, NULL, pk_cmd_set_oindent, "set oindent [INDENT]"};
 
 struct pk_cmd set_odepth_cmd =
-  {"odepth", "i", "", 0, NULL, pk_cmd_set_odepth, "set odepth [DEPTH]"};
+  {"odepth", "?i", "", 0, NULL, pk_cmd_set_odepth, "set odepth [DEPTH]"};
 
 struct pk_cmd set_omode_cmd =
   {"omode", "s?", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)"};
 
 struct pk_cmd set_obase_cmd =
-  {"obase", "i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)"};
+  {"obase", "?i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)"};
 
 struct pk_cmd set_endian_cmd =
   {"endian", "s?", "", 0, NULL, pk_cmd_set_endian, "set endian (little|big|host)"};

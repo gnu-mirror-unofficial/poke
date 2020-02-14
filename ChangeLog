@@ -1,5 +1,22 @@
 2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-set.c (set_oacutoff_cmd): Make argument optional.
+	(set_oindent_cmd): Likewise.
+	(set_odepth_cmd): Likewise.
+	(pk_cmd_set_oacutoff): Print the current array cutoff if the set
+	command is invoked without arguments.
+	(pk_cmd_set_odepth): Likewise.
+	(pk_cmd_set_obase): Likewise.
+	* testsuite/poke.cmd/set-oacutoff-1.pk: New test.
+	* testsuite/poke.cmd/set-odepth-2.pk: Likewise.
+	* testsuite/poke.cmd/set-obase-1.pk: Likewise.
+	* testsuite/poke.cmd/set-obase-2.pk: Likewise.
+	* testsuite/poke.cmd/set-obase-4.pk: Likewise.
+	* testsuite/poke.cmd/set-obase-3.pk: Likewise.
+	* testsuite/poke.cmd/set-obase-5.pk: Renamed from set-obase.pk.
+
+2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h (PKL_AST_PRINT_STMT_ARG_PRINT_MODE): Define.
 	(struct pkl_ast_print_stmt_arg): New field print_mode.
 	(PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH): Define.
