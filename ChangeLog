@@ -1,5 +1,10 @@
 2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-cmd.c (pk_cmd_exec): Honour pvm_oacutoff when calling
+	pvm_print_val.
+
+2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-set.c (set_oacutoff_cmd): Make argument optional.
 	(set_oindent_cmd): Likewise.
 	(set_odepth_cmd): Likewise.

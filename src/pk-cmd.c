@@ -671,7 +671,8 @@ pk_cmd_exec (char *str)
               pvm_print_val (val, poke_obase,
                              PVM_PRINT_F_MODE (pvm_omode (poke_vm))
                              | PVM_PRINT_F_DEPTH (pvm_odepth (poke_vm))
-                             | PVM_PRINT_F_INDENT (pvm_oindent (poke_vm)));
+                             | PVM_PRINT_F_INDENT (pvm_oindent (poke_vm))
+                             | PVM_PRINT_F_ACUTOFF (pvm_oacutoff (poke_vm)));
               pk_puts ("\n");
             }
         }
