@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+printf ("%Tv\n", struct { s = struct { i = 10 },  l = 20L });
+
+/* { dg-output "struct \{" } */
+/* { dg-output "\n  s=struct \{" } */
+/* { dg-output "\n    i=10" } */
+/* { dg-output "\n  \}," } */
+/* { dg-output "\n  l=20L" } */
+/* { dg-output "\n\}" } */

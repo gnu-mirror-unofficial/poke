@@ -528,12 +528,18 @@ pvm_print_binary (uint64_t val, int size, int sign)
 }
 
 void
-pvm_print_val (pvm_val val, int base, int flags)
+pvm_print_val (pvm_val val, int base, uint32_t flags)
 {
   const char *long64_fmt, *long_fmt;
   const char *ulong64_fmt, *ulong_fmt;
   const char *int32_fmt, *int16_fmt, *int8_fmt, *int4_fmt, *int_fmt;
   const char *uint32_fmt, *uint16_fmt, *uint8_fmt, *uint4_fmt, *uint_fmt;
+
+  /* Extract configuration settings from FLAGS.  */
+  int depth = PVM_PRINT_F_GET_DEPTH (flags);
+  int mode = PVM_PRINT_F_GET_MODE (flags);
+  int indent = PVM_PRINT_F_GET_INDENT (flags);
+  int acutoff = PVM_PRINT_F_GET_ACUTOFF (flags);
 
   /* Select the appropriate formatting templates for the given
      base.  */
@@ -797,9 +803,8 @@ pvm_print_val (pvm_val val, int base, int flags)
           if (idx != 0)
             pk_puts (",");
 
-          if ((pvm_oacutoff (poke_vm) != 0) &&
-             ((pvm_oacutoff (poke_vm) <= idx) &&
-              (pk_odepth != 0)))
+          if ((acutoff != 0) &&
+             ((acutoff <= idx) && (pk_odepth != 0)))
             {
               pk_term_class ("ellipsis");
               pk_puts("...");
@@ -854,8 +859,7 @@ pvm_print_val (pvm_val val, int base, int flags)
       else
         pk_puts ("struct");
 
-      if (pk_odepth >= pvm_odepth (poke_vm) &&
-          pvm_odepth (poke_vm) != 0)
+      if (pk_odepth >= depth && depth != 0)
         {
           pk_puts (" {...}");
           pk_term_end_class ("struct");
@@ -875,9 +879,8 @@ pvm_print_val (pvm_val val, int base, int flags)
           if (idx != 0)
             pk_puts (",");
 
-          if (pvm_omode (poke_vm) == PVM_PRINT_TREE)
-            pk_term_indent (pk_odepth,
-                            pvm_oindent (poke_vm));
+          if (mode == PVM_PRINT_TREE)
+            pk_term_indent (pk_odepth, indent);
 
           if (name != PVM_NULL)
             {
@@ -896,9 +899,8 @@ pvm_print_val (pvm_val val, int base, int flags)
         }
       pk_odepth--;
 
-      if (pvm_omode (poke_vm) == PVM_PRINT_TREE)
-        pk_term_indent (pk_odepth,
-                        pvm_oindent (poke_vm));
+      if (mode == PVM_PRINT_TREE)
+        pk_term_indent (pk_odepth, indent);
       pk_puts ("}");
 
       pk_term_end_class ("struct");

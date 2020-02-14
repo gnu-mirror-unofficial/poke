@@ -820,11 +820,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
               PKL_PASS_SUBPASS (exp);
               if (PKL_AST_PRINT_STMT_ARG_VALUE_P (arg))
                 {
-                  pkl_ast_node any_type
-                    = pkl_ast_make_any_type (PKL_PASS_AST);
+                  int print_depth
+                    = PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg);
+                  int print_mode;
 
-                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINT, any_type, base);
-                  ASTREF (any_type); pkl_ast_node_free (any_type);
+                  switch (PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg))
+                    {
+                    case PKL_AST_PRINT_MODE_FLAT:
+                      print_mode = PVM_PRINT_FLAT;
+                      break;
+                    case PKL_AST_PRINT_MODE_TREE:
+                      print_mode = PVM_PRINT_TREE;
+                      break;
+                    default:
+                      assert (0);
+                    }
+
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTV,
+                                print_mode, print_depth);
                 }
               else
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINT, PKL_AST_TYPE (exp),

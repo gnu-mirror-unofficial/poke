@@ -1508,7 +1508,12 @@ pkl_ast_node pkl_ast_make_print_stmt (pkl_ast ast,
    value of EXP, respectively.
 
    VALUE_P indicates whether the argument shall be printed as a PVM
-   value or not.  */
+   value or not.
+
+   PRINT_MODE and PRINT_DEPTH specify how the argument shall be
+   printed if VALUE_P is true.  PRINT_MODE can be one of the
+   PKL_AST_PRINT_MODE_* constants defined below, while PRINT_DEPTH can
+   be zero or a positive integer.  */
 
 #define PKL_AST_PRINT_STMT_ARG_EXP(AST) ((AST)->print_stmt_arg.exp)
 #define PKL_AST_PRINT_STMT_ARG_BASE(AST) ((AST)->print_stmt_arg.base)
@@ -1516,7 +1521,12 @@ pkl_ast_node pkl_ast_make_print_stmt (pkl_ast ast,
 #define PKL_AST_PRINT_STMT_ARG_BEGIN_SC(AST) ((AST)->print_stmt_arg.begin_sc)
 #define PKL_AST_PRINT_STMT_ARG_END_SC(AST) ((AST)->print_stmt_arg.end_sc)
 #define PKL_AST_PRINT_STMT_ARG_VALUE_P(AST) ((AST)->print_stmt_arg.value_p)
+#define PKL_AST_PRINT_STMT_ARG_PRINT_MODE(AST) ((AST)->print_stmt_arg.print_mode)
+#define PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH(AST) ((AST)->print_stmt_arg.print_depth)
 
+#define PKL_AST_PRINT_MODE_FLAT 0
+#define PKL_AST_PRINT_MODE_TREE 1
+  
 struct pkl_ast_print_stmt_arg
 {
   struct pkl_ast_common common;
@@ -1525,6 +1535,8 @@ struct pkl_ast_print_stmt_arg
   char *end_sc;
   int base;
   int value_p;
+  int print_mode;
+  int print_depth;
   char *suffix;
   union pkl_ast_node *exp;
 };

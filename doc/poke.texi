@@ -4050,6 +4050,33 @@ Print the value printed representation of the argument, which can be
 of any type including complex types like arrays and structs.  This is
 similar to the @code{write} operation available in many Lisp systems.
 
+This tag supports an optional numerical argument (restricted to a
+single digit) that specifies the maximum depth level when printing
+structures.  Example:
+
+@example
+(poke) printf ("%1v\n", struct @{ s = struct @{ i = 10 @},  l = 20L @});
+struct @{s=struct @{...@},l=0x14L@}
+@end example
+
+By default, the depth level is @code{0}, which means no limit.
+
+This tag also support an optional flag that specifies how the value is
+printed.  The supported tags are @code{F} (for @dfn{flat}) and
+@code{T} (for @dfn{tree}).  The default is flat.  Example:
+
+@example
+(poke) printf ("%Tv\n", struct @{ s = struct @{ i = 10 @},  l = 20L @});
+struct @{
+  s=struct @{
+    i=0xa
+  @},
+  l=0x14L
+@}
+(poke) printf ("%Fv\n", struct @{ s = struct @{ i = 10 @},  l = 20L @});
+struct @{s=struct @{i=0xa@},l=0x14L@}
+@end example
+
 This tag is mainly intended to be used in pretty-printers.
 @end table
 

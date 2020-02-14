@@ -664,14 +664,53 @@ pvm_val pvm_val_writer (pvm_val val);
 
 /* Print a pvm_val to the given file descriptor.
 
+   FLAGS is a 32-bit unsigned integer, that encodes certain properties
+   to be used while printing:
+
+   The most-significative 8 bits of FLAGS is used to express a
+   printing depth, which is used when printing structures.  A depth of
+   0 means infinite depth.
+
+   The next most-significative 4 bits of FLAGS is used to express a
+   printing mode.  The accepted values are the PVM_PRINT_* values
+   defined in pvm.h.
+
+   The next most-significative 4 bits of FLAGS is used to express the
+   widht of each indentation step.
+
+   The next most-significative 4 bits of FLAGS is used to expresss a
+   cutoff for how many elements to print for arrays.
+
+   The lest significative 8 bits of FLAGS is devoted to flags:
+
    If PVM_PRINT_F_MAPS is specified in FLAGS, then the attributes of
    mapped values (notably their offsets) are also printed out.  When
    PVM_PRINT_F_MAPS is not specified, mapped values are printed
    exactly the same way than non-mapped values.  */
 
+#define PVM_PRINT_F_DEPTH(DEPTH)                \
+  (((uint32_t) (DEPTH) & 0xff) << 24)
+#define PVM_PRINT_F_GET_DEPTH(FLAGS)            \
+  (((FLAGS) >> 24) & 0xff)
+
+#define PVM_PRINT_F_MODE(MODE)                  \
+  (((uint32_t) (MODE) & 0xf) << 20)
+#define PVM_PRINT_F_GET_MODE(FLAGS)             \
+  (((FLAGS) >> 20) & 0xf)
+
+#define PVM_PRINT_F_INDENT(INDENT)              \
+  (((uint32_t) (INDENT) & 0xf) << 16)
+#define PVM_PRINT_F_GET_INDENT(FLAGS)           \
+  (((FLAGS) >> 16) & 0xf)
+
+#define PVM_PRINT_F_ACUTOFF(CUTOFF)             \
+  (((uint32_t) (CUTOFF) & 0xf) << 12)
+#define PVM_PRINT_F_GET_ACUTOFF(FLAGS)           \
+  (((FLAGS) >> 12) & 0xf)
+
 #define PVM_PRINT_F_MAPS 1
 
-void pvm_print_val (pvm_val val, int base, int flags);
+void pvm_print_val (pvm_val val, int base, uint32_t flags);
 
 /* XXX move this to an utilities module.  */
 void pvm_print_binary (uint64_t val, int size, int sign);

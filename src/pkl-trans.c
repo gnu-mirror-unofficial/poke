@@ -662,6 +662,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
        prev_arg = arg, arg = PKL_AST_CHAIN (arg))
     {
       pkl_ast_node atype;
+      char flag = 0;
+      int prefix = -1;
 
       assert (*p == '%');
       if (ntag >= nargs && p[1] != '>' && p[1] != '<')
@@ -672,6 +674,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
           PKL_PASS_ERROR;
         }
 
+      /* Process the optional numerical prefix.  */
+      if (p[1] >= '0' && p[1] <= '9')
+        {
+          prefix = p[1] - '0';
+          p++;
+        }
+
+      /* Process an optional flag (uppercase letter.)  */
+      if (p[1] >= 'A' && p[1] <= 'Z')
+        {
+          flag = p[1];
+          p++;
+        }
+
+      /* Make sure this tag supports the given numerical prefix and
+         tag.  */
+      if ((flag != 0 || prefix != -1)
+          && p[1] != 'v')
+        {
+          if (flag != 0)
+            msg = _("invalid flag");
+          else
+            msg = _("invalid numerical prefix");
+          goto invalid_tag;
+        }
+
+      /* Now process the rest of the tag.  */
       switch (p[1])
         {
         case 'v':
@@ -679,6 +708,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
           PKL_AST_PRINT_STMT_ARG_BASE (arg) = 0; /* Arbitrary.  */
           atype = pkl_ast_make_any_type (PKL_PASS_AST);
           PKL_AST_PRINT_STMT_ARG_VALUE_P (arg) = 1;
+          PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg)
+            = (prefix == -1 ? 0 : prefix);
+          switch (flag)
+            {
+            case 'T':
+              PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg)
+                = PKL_AST_PRINT_MODE_TREE;
+              break;
+            case 'F':
+              /* Fallthrough.  */
+            case 0:
+              PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg)
+                = PKL_AST_PRINT_MODE_FLAT;
+              break;
+            default:
+              msg = _("invalid flag");
+              goto invalid_tag;
+            }
           PKL_AST_LOC (atype) = PKL_AST_LOC (print_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;

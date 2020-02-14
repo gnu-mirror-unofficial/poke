@@ -1113,16 +1113,28 @@ instruction prints ()
   end
 end
 
-# Instruction: printv
+# Instruction: printv MODE, DEPTH
 #
 # Print the PVM value at the top of the stack, using the same printer
 # that is used in the REPL.  This takes into account pretty-printers.
 #
+# MODE can be one of the printing modes PVM_PRINT_* defined in pvm.h.
+# DEPTH is either 0 (meaning no depth limit while printing structures) or
+# a positive integer, specifying how many levels of structures to print.
+#
 # Stack: ( VAL -- )
 
-instruction printv ()
+instruction printv (?n,?n)
   code
-    pvm_print_val (JITTER_TOP_STACK (), poke_obase, 0);
+    int mode = (int) JITTER_ARGN0;
+    int depth = (int) JITTER_ARGN1;
+    int indent = jitter_state_runtime.oindent;
+
+    pvm_print_val (JITTER_TOP_STACK (), poke_obase,
+                   PVM_PRINT_F_MODE (mode)
+                   | PVM_PRINT_F_DEPTH (depth)
+                   | PVM_PRINT_F_INDENT (indent));
+
     JITTER_DROP_STACK ();
   end
 end

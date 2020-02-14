@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command { .set omode tree } } */
+/* { dg-command { printf ("%v\n", struct { i = 10, l = 20L }); } } */
+
+/* { dg-output "struct \{i=10,l=20L\}" } */

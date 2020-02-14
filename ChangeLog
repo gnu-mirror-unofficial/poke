@@ -1,5 +1,46 @@
 2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h (PKL_AST_PRINT_STMT_ARG_PRINT_MODE): Define.
+	(struct pkl_ast_print_stmt_arg): New field print_mode.
+	(PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH): Define.
+	(struct pkl_ast_print_stmt_arg): New field print_depth.
+	* src/pkl-trans.c (pkl_trans1_ps_print_stmt): Support for
+	numerical prefix and flag T for the %v format tag.
+	* src/pvm.jitter (printv): Accept two arguments MODE and DEPTH.
+	* src/pkl-insn.def: Annotate printv to get two numerical
+	arguments.
+	* src/pkl-gen.c (pkl_gen_pr_print_stmt): Emit a printv
+	instruction with the right mode and depth.
+	* src/pvm-val.h (PVM_PRINT_F_DEPTH): Define.
+	(PVM_PRINT_F_GET_DEPTH): Likewise.
+	(PVM_PRINT_F_MODE): Likewise.
+	(PVM_PRINT_F_GET_MODE): Likewise.
+	(PVM_PRINT_F_INDENT): Likewise.
+	(PVM_PRINT_F_GET_INDENT): Likewise.
+	(PVM_PRINT_F_ACUTOFF): Likewise.
+	(PVM_PRINT_F_GET_ACUTOFF): Likewise.
+	* src/pvm-val.c (pvm_print_val): `flags' is an unsigned 32-bit
+	integer.
+	(pvm_print_val): Extract the desired printing depth from the
+	`flags', `mode', `acutoff' and `indent' arguments.
+	* src/pk-cmd.c (pk_cmd_exec): Pass mode/depth/indent to
+	pvm_print_val.
+	* src/pk-set.c (pk_cmd_set_odepth): Check that the odepth is
+	between 0 and 15.
+	(pk_cmd_set_oacutoff): Likewise for oacutoff.
+	* doc/poke.texi (printf): Document the additional options for %v.
+	* testsuite/poke.pkl/printf-diag-14.pk: Adjust.
+	* testsuite/poke.pkl/printf-diag-15.pk: New test.
+	* testsuite/poke.pkl/printf-diag-16.pk: Likewise.
+	* testsuite/poke.pkl/printf-20.pk: Likewise.
+	* testsuite/poke.pkl/printf-21.pk: Likewise.
+	* testsuite/poke.pkl/printf-22.pk: Likewise.
+	* testsuite/poke.pkl/printf-23.pk: Likewise.
+	* testsuite/poke.pkl/printf-24.pk: Likewise.
+	* testsuite/poke.pkl/printf-25.pk: Likewise.
+
+2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-term.c (pk_term_indent): Get a new argument `step'.
 	* src/pvm-val.c (pvm_print_val): Call pk_term_indent only if
 	output mode is `tree', and pass the indentation step.

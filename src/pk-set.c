@@ -239,12 +239,12 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   int cutoff = PK_CMD_ARG_INT (argv[0]);
 
-  if (cutoff < 0)
+  if (cutoff < 0 || cutoff > 15)
     {
       pk_term_class ("error");
       pk_puts ("error: ");
       pk_term_end_class ("error");
-      pk_puts (_(" cutoff should be >=0.\n"));
+      pk_puts (_(" cutoff should be between 0 and 15.\n"));
       return 0;
     }
 
@@ -261,12 +261,12 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   int odepth = PK_CMD_ARG_INT (argv[0]);
 
-  if (odepth < 0)
+  if (odepth < 0 || odepth > 15)
     {
       pk_term_class ("error");
       pk_puts ("error: ");
       pk_term_end_class ("error");
-      pk_puts (_(" odepth should be >=0.\n"));
+      pk_puts (_(" odepth should be between 0 and 15.\n"));
       return 0;
     }
 
