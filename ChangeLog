@@ -1,3 +1,9 @@
+2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-term.c (pk_term_indent): Get a new argument `step'.
+	* src/pvm-val.c (pvm_print_val): Call pk_term_indent only if
+	output mode is `tree', and pass the indentation step.
+
 2020-02-13  Carlo Caione  <ccaione@baylibre.com>
 
 	* doc/poke.texi: add documentation

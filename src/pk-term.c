@@ -118,12 +118,10 @@ pk_printf (const char *format, ...)
 }
 
 void
-pk_term_indent (unsigned int lvl)
+pk_term_indent (unsigned int lvl,
+                unsigned int step)
 {
-  unsigned int oindent = pvm_oindent (poke_vm);
-
-  if (pvm_omode (poke_vm) == PVM_PRINT_TREE)
-    pk_printf ("\n%*s", (oindent * lvl), "");
+  pk_printf ("\n%*s", (step * lvl), "");
 }
 
 void

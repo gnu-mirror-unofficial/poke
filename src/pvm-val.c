@@ -875,7 +875,9 @@ pvm_print_val (pvm_val val, int base, int flags)
           if (idx != 0)
             pk_puts (",");
 
-          pk_term_indent (pk_odepth);
+          if (pvm_omode (poke_vm) == PVM_PRINT_TREE)
+            pk_term_indent (pk_odepth,
+                            pvm_oindent (poke_vm));
 
           if (name != PVM_NULL)
             {
@@ -894,7 +896,9 @@ pvm_print_val (pvm_val val, int base, int flags)
         }
       pk_odepth--;
 
-      pk_term_indent (pk_odepth);
+      if (pvm_omode (poke_vm) == PVM_PRINT_TREE)
+        pk_term_indent (pk_odepth,
+                        pvm_oindent (poke_vm));
       pk_puts ("}");
 
       pk_term_end_class ("struct");

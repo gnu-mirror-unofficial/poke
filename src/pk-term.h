@@ -41,7 +41,8 @@ extern void pk_puts (const char *str);
 extern void pk_printf (const char *format, ...);
 
 /* Print indentation.  */
-extern void pk_term_indent (unsigned int lvl);
+extern void pk_term_indent (unsigned int lvl,
+                            unsigned int step);
 
 /* Class handling.  */
 extern void pk_term_class (const char *class);
