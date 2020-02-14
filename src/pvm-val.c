@@ -803,8 +803,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
           if (idx != 0)
             pk_puts (",");
 
-          if ((acutoff != 0) &&
-             ((acutoff <= idx) && (pk_odepth != 0)))
+          if ((acutoff != 0) && (acutoff <= idx))
             {
               pk_term_class ("ellipsis");
               pk_puts("...");

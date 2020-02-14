@@ -1,5 +1,11 @@
 2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.cmd/set-oacutoff-2.pk: New test.
+	* src/pvm-val.c (pvm_print_val): Apply acutoff also in arrays that
+	are not inside other structs.
+
+2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-set.c (pk_cmd_set_endian): Fix handling of optional
 	argument.
 	(pk_cmd_set_nenc): Likewise.
