@@ -64,19 +64,9 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set endian {little,big,host,network}  */
 
-  const char *arg;
+  assert (argc == 1);
 
-  /* Note that it is not possible to distinguish between no argument
-     and an empty unique string argument.  Therefore, argc should be
-     always 1 here, and we determine when no value was specified by
-     checking whether the passed string is empty or not.  */
-
-  if (argc != 1)
-    assert (0);
-
-  arg = PK_CMD_ARG_STR (argv[0]);
-
-  if (*arg == '\0')
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
       enum ios_endian endian = pvm_endian (poke_vm);
 
@@ -91,6 +81,7 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       enum ios_endian endian;
+      const char *arg = PK_CMD_ARG_STR (argv[0]);
 
       if (STREQ (arg, "little"))
         endian = IOS_ENDIAN_LSB;
@@ -145,19 +136,9 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set nenc {1c,2c}  */
 
-  const char *arg;
+  assert (argc == 1);
 
-  /* Note that it is not possible to distinguish between no argument
-     and an empty unique string argument.  Therefore, argc should be
-     always 1 here, and we determine when no value was specified by
-     checking whether the passed string is empty or not.  */
-
-  if (argc != 1)
-    assert (0);
-
-  arg = PK_CMD_ARG_STR (argv[0]);
-
-  if (*arg == '\0')
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
       enum ios_nenc nenc = pvm_nenc (poke_vm);
 
@@ -172,6 +153,7 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       enum ios_nenc nenc;
+      const char *arg = PK_CMD_ARG_STR (argv[0]);
 
       if (STREQ (arg, "1c"))
         nenc = IOS_NENC_1;
@@ -323,13 +305,10 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* set omode {normal|tree}  */
 
   enum pvm_omode omode;
-  const char *arg;
 
   assert(argc == 1);
 
-  arg = PK_CMD_ARG_STR (argv[0]);
-
-  if (*arg == '\0')
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
       omode = pvm_omode (poke_vm);
 
@@ -343,6 +322,8 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
   else
     {
+      const char *arg = PK_CMD_ARG_STR (argv[0]);
+
       if (STREQ (arg, "flat"))
         omode = PVM_PRINT_FLAT;
       else if (STREQ (arg, "tree"))
@@ -422,16 +403,16 @@ struct pk_cmd set_odepth_cmd =
   {"odepth", "?i", "", 0, NULL, pk_cmd_set_odepth, "set odepth [DEPTH]"};
 
 struct pk_cmd set_omode_cmd =
-  {"omode", "s?", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)"};
+  {"omode", "?s", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)"};
 
 struct pk_cmd set_obase_cmd =
   {"obase", "?i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)"};
 
 struct pk_cmd set_endian_cmd =
-  {"endian", "s?", "", 0, NULL, pk_cmd_set_endian, "set endian (little|big|host)"};
+  {"endian", "?s", "", 0, NULL, pk_cmd_set_endian, "set endian (little|big|host)"};
 
 struct pk_cmd set_nenc_cmd =
-  {"nenc", "s?", "", 0, NULL, pk_cmd_set_nenc, "set nenc (1c|2c)"};
+  {"nenc", "?s", "", 0, NULL, pk_cmd_set_nenc, "set nenc (1c|2c)"};
 
 struct pk_cmd set_pretty_print_cmd =
   {"pretty-print", "s?", "", 0, NULL, pk_cmd_set_pretty_print,

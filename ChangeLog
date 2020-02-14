@@ -1,5 +1,12 @@
 2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-set.c (pk_cmd_set_endian): Fix handling of optional
+	argument.
+	(pk_cmd_set_nenc): Likewise.
+	(pk_cmd_set_omode): Likewise.
+
+2020-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-cmd.c (pk_cmd_exec): Honour pvm_oacutoff when calling
 	pvm_print_val.
 
