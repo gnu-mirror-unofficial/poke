@@ -84,7 +84,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      it.  */
   if ((f = fopen (tmpfile, "r")) != NULL)
     {
-#define STEP 128
+      const int STEP = 128;
       char *newline = xmalloc (STEP);
       size_t size, i = 0;
       int c;
@@ -102,7 +102,6 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           newline[i] = c;
         }
       newline[i] = '\0';
-#undef STEP
       fclose (f);
 
       if (newline && *newline != '\0')
