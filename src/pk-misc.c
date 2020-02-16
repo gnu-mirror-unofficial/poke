@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <assert.h>
+#include <time.h>
 
 #include "poke.h"
 #include "pk-cmd.h"
@@ -83,6 +84,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (num_strings == 0)
     {
+      srand (time (NULL));
       char **p = strings;
       while (*p++ != NULL)
         num_strings++;
