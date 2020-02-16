@@ -32,7 +32,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   const char *editor;
   char *cmdline;
   char tmpfile[1024];
-  int des, ret;
+  int des;
   FILE *f;
 
   /* editor */
@@ -68,7 +68,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   asprintf (&cmdline, "%s %s", editor, tmpfile);
 
   /* Start command.  */
-  if ((ret = system (cmdline)) != 0)
+  if (system (cmdline) != 0)
     {
       pk_term_class ("error");
       pk_puts ("error: ");
@@ -82,8 +82,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* If the editor returned success and a file got created, read the
      contents of the file, turn newlines into spaces and execute
      it.  */
-  if (ret == 0
-      && (f = fopen (tmpfile, "r")) != NULL)
+  if ((f = fopen (tmpfile, "r")) != NULL)
     {
 #define STEP 128
       char *newline = xmalloc (STEP);
