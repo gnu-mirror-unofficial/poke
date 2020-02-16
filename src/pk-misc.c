@@ -93,10 +93,10 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 struct pk_cmd exit_cmd =
-  {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]"};
+  {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]", NULL};
 
 struct pk_cmd version_cmd =
-  {"version", "", "", 0, NULL, pk_cmd_version, "version"};
+  {"version", "", "", 0, NULL, pk_cmd_version, "version", NULL};
 
 struct pk_cmd jmd_cmd =
-  {"jmd", "", "", 0, NULL, pk_cmd_jmd, "jmd"};
+  {"jmd", "", "", 0, NULL, pk_cmd_jmd, "jmd", NULL};

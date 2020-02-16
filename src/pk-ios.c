@@ -340,19 +340,19 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 struct pk_cmd ios_cmd =
-  {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID"};
+  {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", NULL};
 
 struct pk_cmd file_cmd =
   {"file", "f", "", 0, NULL, pk_cmd_file, "file FILENAME", rl_filename_completion_function};
 
 struct pk_cmd mem_cmd =
-  {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem NAME"};
+  {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
 
 struct pk_cmd close_cmd =
   {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", close_completion_function};
 
 struct pk_cmd info_ios_cmd =
-  {"ios", "", "", 0, NULL, pk_cmd_info_ios, "info ios"};
+  {"ios", "", "", 0, NULL, pk_cmd_info_ios, "info ios", NULL};
 
 struct pk_cmd load_cmd =
   {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME", rl_filename_completion_function};

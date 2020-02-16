@@ -123,8 +123,8 @@ pk_cmd_info_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
 struct pk_cmd info_var_cmd =
   {"variable", "", "", 0, NULL, pk_cmd_info_var,
-   "info variable"};
+   "info variable", NULL};
 
 struct pk_cmd info_fun_cmd =
   {"function", "", "", 0, NULL, pk_cmd_info_fun,
-   "info funtion"};
+   "info funtion", NULL};

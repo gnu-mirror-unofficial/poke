@@ -1,3 +1,13 @@
+2020-02-16  John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-def.c: Explicitly set completer member of struct pk_cmd
+	typed variables to NULL.
+        * src/pk-help.c: ditto
+        * src/pk-ios.c:  ditto
+        * src/pk-misc.c: ditto
+        * src/pk-set.c:  ditto
+        * src/pk-vm.c:   ditto
+
 2020-02-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-gen.c (pkl_gen_pr_try_until_stmt): Emit sync instruction

@@ -394,33 +394,33 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 struct pk_cmd set_oacutoff_cmd =
-  {"oacutoff", "?i", "", 0, NULL, pk_cmd_set_oacutoff, "set oacutoff [CUTOFF]"};
+  {"oacutoff", "?i", "", 0, NULL, pk_cmd_set_oacutoff, "set oacutoff [CUTOFF]", NULL};
 
 struct pk_cmd set_oindent_cmd =
-  {"oindent", "?i", "", 0, NULL, pk_cmd_set_oindent, "set oindent [INDENT]"};
+  {"oindent", "?i", "", 0, NULL, pk_cmd_set_oindent, "set oindent [INDENT]", NULL};
 
 struct pk_cmd set_odepth_cmd =
-  {"odepth", "?i", "", 0, NULL, pk_cmd_set_odepth, "set odepth [DEPTH]"};
+  {"odepth", "?i", "", 0, NULL, pk_cmd_set_odepth, "set odepth [DEPTH]", NULL};
 
 struct pk_cmd set_omode_cmd =
-  {"omode", "?s", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)"};
+  {"omode", "?s", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)", NULL};
 
 struct pk_cmd set_obase_cmd =
-  {"obase", "?i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)"};
+  {"obase", "?i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)", NULL};
 
 struct pk_cmd set_endian_cmd =
-  {"endian", "?s", "", 0, NULL, pk_cmd_set_endian, "set endian (little|big|host)"};
+  {"endian", "?s", "", 0, NULL, pk_cmd_set_endian, "set endian (little|big|host)", NULL};
 
 struct pk_cmd set_nenc_cmd =
-  {"nenc", "?s", "", 0, NULL, pk_cmd_set_nenc, "set nenc (1c|2c)"};
+  {"nenc", "?s", "", 0, NULL, pk_cmd_set_nenc, "set nenc (1c|2c)", NULL};
 
 struct pk_cmd set_pretty_print_cmd =
   {"pretty-print", "s?", "", 0, NULL, pk_cmd_set_pretty_print,
-   "set pretty-print (yes|no)"};
+   "set pretty-print (yes|no)", NULL};
 
 struct pk_cmd set_error_on_warning_cmd =
   {"error-on-warning", "s?", "", 0, NULL, pk_cmd_set_error_on_warning,
-   "set error-on-warning (yes|no)"};
+   "set error-on-warning (yes|no)", NULL};
 
 struct pk_cmd *set_cmds[] =
   {
