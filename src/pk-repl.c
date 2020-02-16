@@ -145,7 +145,6 @@ poke_completion_function (const char *x, int state)
   return NULL;
 }
 
-
 static char *
 null_completion_function (const char *x, int state)
 {
@@ -164,17 +163,21 @@ poke_getc (FILE *stream)
   strncpy (line_to_point, rl_line_buffer, end);
 
   char *tok = strtok (line_to_point, "\t ");
-  if (rl_completion_entry_function == poke_completion_function)
-    {
-      struct pk_cmd *cmd = pk_cmd_find (tok);
-      if (cmd)
-	{
-	  if (cmd->completer)
-	    rl_completion_entry_function = cmd->completer;
-	  else
-	    rl_completion_entry_function = null_completion_function;
-	}
-    }
+  const struct pk_cmd *cmd = pk_cmd_find (tok);
+
+  if (cmd == NULL)
+    rl_completion_entry_function = poke_completion_function;
+
+   if (rl_completion_entry_function == poke_completion_function)
+     {
+       if (cmd)
+	 {
+	   if (cmd->completer)
+	     rl_completion_entry_function = cmd->completer;
+	   else
+	     rl_completion_entry_function = null_completion_function;
+	 }
+     }
   free (line_to_point);
 
   return rl_getc (stream);
