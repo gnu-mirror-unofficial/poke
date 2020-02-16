@@ -145,6 +145,13 @@ poke_completion_function (const char *x, int state)
   return NULL;
 }
 
+
+static char *
+null_completion_function (const char *x, int state)
+{
+  return NULL;
+}
+
 /* Readline's getc callback.
    Use this function to update the completer which
    should be used.
@@ -160,8 +167,13 @@ poke_getc (FILE *stream)
   if (rl_completion_entry_function == poke_completion_function)
     {
       struct pk_cmd *cmd = pk_cmd_find (tok);
-      if (cmd && cmd->completer)
-	rl_completion_entry_function = cmd->completer;
+      if (cmd)
+	{
+	  if (cmd->completer)
+	    rl_completion_entry_function = cmd->completer;
+	  else
+	    rl_completion_entry_function = null_completion_function;
+	}
     }
   free (line_to_point);
 

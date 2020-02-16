@@ -1,5 +1,12 @@
 2020-02-16  John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-editor.c (null_complete_function): delete
+	* src/pk-repl.c (null_complete_function): add (move from above)
+	* src/pk-repl.c (poke_getc): Use null_complete_function as the
+	default completer.
+
+2020-02-16  John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-def.c: Explicitly set completer member of struct pk_cmd
 	typed variables to NULL.
         * src/pk-help.c: ditto
