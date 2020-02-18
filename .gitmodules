@@ -4,3 +4,4 @@
 [submodule "jitter"]
 	path = jitter
 	url = http://git.ageinghacker.net/jitter
+	ignore = dirty

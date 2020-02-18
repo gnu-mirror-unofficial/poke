@@ -1,4 +1,9 @@
 2020-02-18  Carlo Caione  <ccaione@baylibre.com>
+	
+	* .gitignore: ignore more files
+	* .gitmodules: ignore dirty sub-repo
+
+2020-02-18  Carlo Caione  <ccaione@baylibre.com>
 
 	* src/pk-repl.c: Rework poke_sigint_handler()
 

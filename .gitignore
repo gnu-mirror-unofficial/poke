@@ -52,3 +52,14 @@ config.h.in
 /src/pcl-lex.h
 /GNUmakefile
 /maint.mk
+/man/poke.1
+/src/pkl-asm.pkc
+/src/pkl-gen.pkc
+/src/pkl-lex.c
+/src/pkl-lex.h
+/src/pkl-tab.c
+/src/pkl-tab.h
+/src/pkl-tab.output
+/src/pvm-vm.h
+/src/pvm-vm1.c
+/src/pvm-vm2.c
