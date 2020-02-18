@@ -1,3 +1,7 @@
+2020-02-18  Carlo Caione  <ccaione@baylibre.com>
+
+	* src/pk-repl.c: Rework poke_sigint_handler()
+
 2020-02-17  Carlo Caione  <ccaione@baylibre.com>
 
 	* src/pk-repl.c (pkl_complete_struct): new auto-complete function

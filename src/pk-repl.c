@@ -34,6 +34,9 @@
 
 #include <signal.h>
 #include <unistd.h>
+#include <setjmp.h>
+
+sigjmp_buf ctrlc_buf;
 
 static char *
 pkl_complete_struct (int *idx, const char *x, size_t len, int state)
@@ -203,11 +206,11 @@ banner (void)
 static void
 poke_sigint_handler (int status)
 {
-  fputs (_("Quit"), rl_outstream);
-  fputs ("\n", rl_outstream);
-  rl_on_new_line ();
-  rl_replace_line ("", 0);
-  rl_redisplay ();
+  rl_free_line_state ();
+  rl_cleanup_after_signal ();
+  rl_line_buffer[rl_point = rl_end = rl_mark = 0] = 0;
+  printf("\n");
+  siglongjmp(ctrlc_buf, 1);
 }
 
 void
@@ -245,6 +248,8 @@ pk_repl (void)
     {
       int ret;
       char *line;
+
+      while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
 
       pk_term_flush ();
       rl_completion_entry_function = poke_completion_function;
