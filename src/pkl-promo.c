@@ -373,13 +373,18 @@ PKL_PHASE_END_HANDLER
       INTEGRAL x INTEGRAL -> INTEGRAL
       OFFSET   x INTEGRAL -> OFFSET
       INTEGRAL x OFFSET   -> OFFSET
+      STRING   x INTEGRAL -> STRING
+      INTEGRAL x STRING   -> STRING
 
    In the I x I -> I configuration, the types of the operands are
    promoted to match the type of the result, if needed.
 
    In the O x I -> O and I x O -> O configurations, both the type of
    the integral operand and the base type of the offset operand are
-   promoted to match the base type of the offset result.  */
+   promoted to match the base type of the offset result.
+
+   In the S x I -> S and I x S -> S configurations, the type of the
+   integral operand shall be promoted to an uint64.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_mul)
 {
@@ -404,6 +409,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_mul)
             {
               size = PKL_AST_TYPE_I_SIZE (exp_type);
               sign = PKL_AST_TYPE_I_SIGNED  (exp_type);
+            }
+          else if (exp_type_code == PKL_TYPE_STRING)
+            {
+              size = 64;
+              sign = 0;
             }
           else
             {
@@ -435,6 +445,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_mul)
 
           PKL_PASS_RESTART = restart;
         }
+      else if (PKL_AST_TYPE_CODE (op_type) == PKL_TYPE_STRING)
+        ;
       else
         assert (0);
     }

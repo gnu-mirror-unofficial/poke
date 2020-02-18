@@ -77,6 +77,8 @@ PKL_PHASE_END_HANDLER
   EMUL_BIN_PROTO (OP,u,uint64_t,int64_t)
 #define EMUL_SSI(OP)                          \
   EMUL_BIN_PROTO (OP,s,const char *,int64_t)
+#define EMUL_SIS(OP)                            \
+  static inline char * emul_##OP (const char *op1, uint64_t op2)
 
 EMUL_II (neg) { return -op; }
 EMUL_UU (neg) { return -op; }
@@ -136,6 +138,18 @@ EMUL_SSI (gts) { return (strcmp (op1, op2) > 0); }
 EMUL_SSI (lts) { return (strcmp (op1, op2) < 0); }
 EMUL_SSI (les) { return (strcmp (op1, op2) <= 0); }
 EMUL_SSI (ges) { return (strcmp (op1, op2) >= 0); }
+
+EMUL_SIS (muls)
+{
+  char *res = xmalloc (strlen (op1) * op2 + 1);
+  size_t i;
+
+  *res = '\0';
+  for (i = 0; i < op2; ++i)
+    strcat (res, op1);
+
+  return res;
+}
 
 /* The following emulation routines work on offset magnitudes
    normalized to bits.  */
@@ -319,6 +333,49 @@ EMUL_III (modo) { return op1 % op2; }
                                                                         \
           new = pkl_ast_make_offset (PKL_PASS_AST, magnitude,           \
                                      type_unit);                        \
+          PKL_AST_TYPE (new) = ASTREF (type);                           \
+          PKL_AST_LOC (new) = PKL_AST_LOC (PKL_PASS_NODE);              \
+                                                                        \
+          pkl_ast_node_free (PKL_PASS_NODE);                            \
+          PKL_PASS_NODE = new;                                          \
+          PKL_PASS_DONE;                                                \
+        }                                                               \
+    }                                                                   \
+  while (0)
+
+#define OP_BINARY_SIS(OP)                                               \
+  do                                                                    \
+    {                                                                   \
+      pkl_ast_node new;                                                 \
+      pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);        \
+      pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);        \
+      pkl_ast_node type = PKL_AST_TYPE (PKL_PASS_NODE);                 \
+      pkl_ast_node op1_type = PKL_AST_TYPE (op1);                       \
+      pkl_ast_node op2_type = PKL_AST_TYPE (op2);                       \
+                                                                        \
+      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRING                   \
+          && ((PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRING          \
+               && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_INTEGRAL)    \
+              || (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_INTEGRAL     \
+                  && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRING))) \
+        {                                                               \
+          char *result;                                                 \
+          pkl_ast_node string_op                                        \
+            = (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRING ?        \
+               op1 : op2);                                              \
+          pkl_ast_node int_op                                           \
+            = (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_INTEGRAL ?      \
+               op1 : op2);                                              \
+                                                                        \
+          if (PKL_AST_CODE (string_op) != PKL_AST_STRING                \
+              || PKL_AST_CODE (int_op) != PKL_AST_INTEGER)              \
+            /* We cannot fold this expression.  */                      \
+            PKL_PASS_DONE;                                              \
+                                                                        \
+          result = emul_##OP (PKL_AST_STRING_POINTER (string_op),       \
+                              PKL_AST_INTEGER_VALUE (int_op));          \
+                                                                        \
+          new = pkl_ast_make_string (PKL_PASS_AST, result);             \
           PKL_AST_TYPE (new) = ASTREF (type);                           \
           PKL_AST_LOC (new) = PKL_AST_LOC (PKL_PASS_NODE);              \
                                                                         \
@@ -575,6 +632,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_mul)
 {
   OP_BINARY_III (mul);
   OP_BINARY_OIO (mulo);
+  OP_BINARY_SIS (muls);
 }
 PKL_PHASE_END_HANDLER
 

@@ -1967,6 +1967,27 @@ indexing:
 0x78UB
 @end example
 
+Additionally, the @code{*} operator allows to ``multiply'' a string by
+concatenating it with itself a given number of times.  This works like
+this:
+
+@example
+(poke) "foo" * 3
+"foofoofoo"
+(poke) "foo" * 0
+""
+@end example
+
+This is useful for building strings whose length is not known at
+compile time.  For example:
+
+@example
+defun make_empty_string = (int length) string:
+@{
+   return " " * length;  
+@}
+@end example
+
 @node String Attributes
 @section String Attributes
 @cindex attributes, string attributes

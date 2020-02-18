@@ -649,9 +649,9 @@ TYPIFY_BIN (sub);
 
 TYPIFY_BIN (add);
 
-/* MUL accepts integral and offset operands.  We can't use TYPIFY_BIN
-   here because it relies on a different logic to determine the result
-   type.  */
+/* MUL accepts integral, offset and string operands.  We can't use
+   TYPIFY_BIN here because it relies on a different logic to determine
+   the result type.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
 {
@@ -663,10 +663,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
   int t1_code = PKL_AST_TYPE_CODE (t1);
   int t2_code = PKL_AST_TYPE_CODE (t2);
 
-
   pkl_ast_node type;
 
-  if (t1_code == PKL_TYPE_OFFSET || t2_code == PKL_TYPE_OFFSET)
+  if (t1_code == PKL_TYPE_STRING || t2_code == PKL_TYPE_STRING)
+    {
+      /* One operand must be a string, the other an integral.  */
+      if (t1_code != PKL_TYPE_INTEGRAL && t2_code != PKL_TYPE_INTEGRAL)
+        goto error;
+
+      type = pkl_ast_make_string_type (PKL_PASS_AST);
+    }
+  else if (t1_code == PKL_TYPE_OFFSET || t2_code == PKL_TYPE_OFFSET)
     {
       pkl_ast_node offset_type;
       pkl_ast_node int_type;

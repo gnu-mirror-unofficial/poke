@@ -2457,6 +2457,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_mul)
         pkl_asm_insn (pasm, PKL_INSN_NIP2);
       }
       break;
+    case PKL_TYPE_STRING:
+      {
+        pkl_ast_node op2 = PKL_AST_EXP_OPERAND (node, 1);
+        pkl_ast_node op2_type = PKL_AST_TYPE (op2);
+
+        if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRING)
+          pkl_asm_insn (pasm, PKL_INSN_SWAP);
+
+        pkl_asm_insn (pasm, PKL_INSN_MULS);
+        pkl_asm_insn (pasm, PKL_INSN_NIP2);
+      }
+      break;
     default:
       assert (0);
       break;

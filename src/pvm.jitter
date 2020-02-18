@@ -2960,8 +2960,32 @@ instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
   end
 end
 
-
+# Instruction: muls
+#
+# Given a string and an unsigned long in the stack, push a new
+# string value whose value is the concatenation of the argument
+# string applied to itself as many times as the unsigned long.  If
+# the second argument to muls is 0 then the result of the operation
+# is the empty string.
+#
+# Stack: ( STR ULONG -- STR ULONG STR )
 
+instruction muls ()
+  code
+    pvm_val str = JITTER_UNDER_TOP_STACK ();
+    size_t i, num = PVM_VAL_ULONG (JITTER_TOP_STACK ());
+    char *res = xmalloc (strlen (PVM_VAL_STR (str)) * num + 1);
+
+    *res = '\0';
+    for (i = 0; i < num; ++i)
+      strcat (res, PVM_VAL_STR (str));
+
+    JITTER_PUSH_STACK (pvm_make_string (res));
+    free (res);
+  end
+end
+
+
 ## Array instructions.
 
 # ( BOFF TYP [BOFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )

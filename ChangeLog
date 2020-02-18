@@ -1,3 +1,22 @@
+2020-02-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-promo.c (pkl_promo_ps_op_mul): Support multiplication of
+	an integer by string.
+	* src/pkl-typify.c (pkl_typify1_ps_mul): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_op_mul): Likewise.
+	* src/pkl-fold.c (OP_BINARY_SIS): Define.
+	(EMUL_SIS): Likewise.
+	(pkl_fold_mul): Use OP_BINARY_SIS.
+	* src/pkl-insn.def (PKL_INSN_MULS): Define.
+	* src/pvm.jitter (muls): New instruction.
+	* testsuite/poke.pkl/mul-strings-1.pk: New test.
+	* testsuite/poke.pkl/mul-strings-2.pk: Likewise.
+	* testsuite/poke.pkl/mul-strings-3.pk: Likewise.
+	* testsuite/poke.pkl/mul-strings-4.pk: Likewise.
+	* testsuite/poke.pkl/mul-strings-5.pk: Likewise.
+	* doc/poke.texi (String Concatenation): Document the * operator
+	for strings.
+
 2020-02-18  Carlo Caione  <ccaione@baylibre.com>
 	
 	* .gitignore: ignore more files
