@@ -23,7 +23,7 @@
 	for strings.
 
 2020-02-18  Carlo Caione  <ccaione@baylibre.com>
-	
+
 	* .gitignore: ignore more files
 	* .gitmodules: ignore dirty sub-repo
 
