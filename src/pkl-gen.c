@@ -898,6 +898,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_try_until_stmt)
   {
     pkl_asm_label (PKL_GEN_ASM, loop);
     PKL_PASS_SUBPASS (code);
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SYNC);
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, loop);
   }
   pkl_asm_catch (PKL_GEN_ASM);
