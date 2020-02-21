@@ -1,3 +1,18 @@
+2020-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/sizeof-1.pk: New test.
+	* testsuite/poke.pkl/sizeof-2.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-3.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-12.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-11.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-10.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-9.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-8.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-7.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-6.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-5.pk: Likewise.
+	* testsuite/poke.pkl/sizeof-4.pk: Likewise.
+
 2020-02-16  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-repl.c (poke_getc): Revert to poke_completion_function
