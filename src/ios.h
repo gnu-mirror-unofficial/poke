@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 /* The following two functions intialize and shutdown the IO poke
    subsystem.  */
@@ -189,6 +190,19 @@ ios ios_search_by_id (int id);
 /* Return the ID of the given IO space.  */
 
 int ios_get_id (ios io);
+
+/* Return the first IO space.  */
+
+ios ios_begin (void);
+
+/* Return the space following IO.  */
+
+ios ios_next (const ios io);
+
+/* Return true iff IO is past the last one.  */
+
+bool ios_end (const ios io);
+
 
 /* Map over all the open IO spaces executing a handler.  */
 

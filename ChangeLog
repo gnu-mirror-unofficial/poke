@@ -1,3 +1,12 @@
+2020-02-22  John Darrington <john@darrington.wattle.id.au>
+
+	* src/ios.c (ios_begin): New function.
+	* src/ios.c (ios_end): New function.
+	* src/ios.c (ios_next): New function.
+	* src/ios.h (ios_begin): New declaration.
+	* src/ios.h (ios_end): New declaration.
+	* src/ios.h (ios_next): New declaration.
+
 2020-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/sizeof-1.pk: New test.

@@ -317,6 +317,24 @@ ios_set_bias (ios io, ios_off bias)
   io->bias = bias;
 }
 
+ios
+ios_begin (void)
+{
+  return io_list;
+}
+
+bool
+ios_end (const ios io)
+{
+  return (io == NULL);
+}
+
+ios
+ios_next (const ios io)
+{
+  return io->next;
+}
+
 void
 ios_map (ios_map_fn cb, void *data)
 {
