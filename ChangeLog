@@ -1,5 +1,14 @@
 2020-02-22  John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-ios.c (count_io_spaces): delete.
+	* src/pk-ios.c (close_completion_function): Rename
+	to ios_completion_function.
+	* src/pk-ios.c (ios_completion_function): Do not
+	assume that IO tags are consecutive integers.
+	* src/pk-ios.c (ios_cmd): Add new completer.
+
+2020-02-22  John Darrington <john@darrington.wattle.id.au>
+
 	* src/ios.c (ios_begin): New function.
 	* src/ios.c (ios_end): New function.
 	* src/ios.c (ios_next): New function.

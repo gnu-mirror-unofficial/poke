@@ -34,41 +34,32 @@
 #  include "pk-hserver.h"
 #endif
 
-static void
-count_io_spaces (ios io, void *data)
-{
-  int *i = (int *) data;
-  if (i == NULL)
-    return;
-  (*i)++;
-}
-
 static char *
-close_completion_function (const char *x, int state)
+ios_completion_function (const char *x, int state)
 {
-  static int idx = 0;
-  static int n_ids = 0;
+  static ios io;
   if (state == 0)
     {
-      idx = 0;
-      n_ids = 0;
-      ios_map (count_io_spaces, &n_ids);
+      io = ios_begin ();
     }
   else
-    ++idx;
+    {
+      io = ios_next (io);
+    }
 
   int len  = strlen (x);
   while (1)
     {
-      if (idx >= n_ids)
+      if (ios_end (io))
 	break;
+
       char buf[16];
-      snprintf (buf, 16, "#%d", idx);
+      snprintf (buf, 16, "#%d", ios_get_id (io));
 
       int match = strncmp (buf, x, len);
       if (match != 0)
 	{
-	  idx++;
+	  io = ios_next (io);
 	  continue;
 	}
 
@@ -340,7 +331,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 struct pk_cmd ios_cmd =
-  {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", NULL};
+  {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};
 
 struct pk_cmd file_cmd =
   {"file", "f", "", 0, NULL, pk_cmd_file, "file FILENAME", rl_filename_completion_function};
@@ -349,7 +340,7 @@ struct pk_cmd mem_cmd =
   {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
 
 struct pk_cmd close_cmd =
-  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", close_completion_function};
+  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", ios_completion_function};
 
 struct pk_cmd info_ios_cmd =
   {"ios", "", "", 0, NULL, pk_cmd_info_ios, "info ios", NULL};
