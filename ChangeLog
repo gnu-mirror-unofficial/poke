@@ -1,3 +1,11 @@
+2020-02-23  John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-cmd.c (pk_cmd_exec_1)[case 'f']: Remove a lot
+	of code which seems to serve no useful purpose.
+	* src/pk-repl.c (escape_metacharacters): New function.
+	* src/pk-repl.c (pk_repl): Initialize various readling
+	parameters.
+
 2020-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-lex.l: Set errno to 0 before calling strtoull.

@@ -464,56 +464,35 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                   }
                 case 'f':
                   {
-                    /* Parse a filename, doing tilde expansion.  */
-                    size_t i;
-                    wordexp_t exp_result;
-                    char *end;
-                    char *filename = xmalloc (strlen (p) + 1);
-
-                    p = skip_blanks (p);
-                    i = 0;
-                    while (*p != '\0' && *p != ',')
-                      filename[i++] = *(p++);
-                    filename[i] = '\0';
-
-                    /* Trim trailing space.  */
-                    end = filename + strlen (filename) - 1;
-                    while (end > filename && isspace ((unsigned char) *end))
-                      end--;
-                    end++;
-                    *end = '\0';
-
-                    if (filename[0] == '\0')
+		    wordexp_t exp_result;
+		    exp_result.we_wordv = 0;
+                    if (p[0] == '\0')
                       GOTO_USAGE();
 
-                    switch (wordexp (filename, &exp_result, 0))
+                    switch (wordexp (p, &exp_result, 0))
                       {
                       case 0: /* Successful.  */
                         break;
-                      case WRDE_NOSPACE:
-                        wordfree (&exp_result);
                       default:
+			if (exp_result.we_wordv)
+			  wordfree (&exp_result);
                         GOTO_USAGE();
+			break;
                       }
-
                     if (exp_result.we_wordc != 1)
                       {
                         wordfree (&exp_result);
                         GOTO_USAGE();
                       }
 
-                    filename = xrealloc (filename,
-                                         strlen (exp_result.we_wordv[0]) + 1);
-                    strcpy (filename, exp_result.we_wordv[0]);
+                    char *filename = strdup (exp_result.we_wordv[0]);
                     wordfree (&exp_result);
 
-                    if (*p == ',' || *p == '\0')
-                      {
-                        argv[argc].type = PK_CMD_ARG_STR;
-                        argv[argc].val.str = filename;
-                        match = 1;
-                      }
+		    argv[argc].type = PK_CMD_ARG_STR;
+		    argv[argc].val.str = filename;
+		    match = 1;
 
+		    p += strlen (p);
                     break;
                   }
                 default:

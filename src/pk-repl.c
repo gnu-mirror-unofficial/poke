@@ -228,6 +228,25 @@ poke_sigint_handler (int status)
   siglongjmp(ctrlc_buf, 1);
 }
 
+static char *
+escape_metacharacters (char *text, int match_type, char *qp)
+{
+  char *p = text;
+  char *r = xmalloc (strlen (text) * 2 + 1);
+  char *s = r;
+
+  while (*p)
+    {
+      char c = *p++;
+      if (c == ' ')
+	*r++ = '\\';
+      *r++ = c;
+    }
+  *r = '\0';
+
+  return s;
+}
+
 void
 pk_repl (void)
 {
@@ -258,6 +277,9 @@ pk_repl (void)
     }
 #endif
   rl_getc_function = poke_getc;
+  rl_completer_quote_characters = "\"";
+  rl_filename_quote_characters = " ";
+  rl_filename_quoting_function = escape_metacharacters;
 
   while (!poke_exit_p)
     {
