@@ -55,6 +55,3 @@ pk_file_readable (const char *filename)
 
   return 0;
 }
-
-
-

@@ -1,3 +1,10 @@
+2020-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke.g4 (funcall_stmt_arg): Remove empty lines at EOF.
+	* testsuite/poke.pkl/funcall-13.pk: Likewise.
+	* testsuite/poke.pkl/close-2.pk: Likewise.
+	* src/pk-utils.c: Likewise.
+
 2020-02-22  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-ios.c (count_io_spaces): delete.

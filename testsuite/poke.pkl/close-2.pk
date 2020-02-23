@@ -9,4 +9,3 @@
 /* { dg-command { get_ios == bar } } */
 /* { dg-output "\n1" } */
 /* { dg-command { close (bar) } } */
-
