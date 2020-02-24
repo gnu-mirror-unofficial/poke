@@ -1,5 +1,10 @@
 2020-02-23  Bruno Haible  <bruno@clisp.org>
 
+	HACKING: Tell where to find the DejaGnu documentation.
+	* HACKING (Test framework): New section.
+
+2020-02-23  Bruno Haible  <bruno@clisp.org>
+
 	Avoid a test failure, when running the test suite as root.
 	* testsuite/poke.cmd/file-mode.pk: Allow /etc/passwd to be opened
 	read-write.

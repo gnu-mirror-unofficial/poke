@@ -366,6 +366,17 @@ Writing Tests
 The poke testsuites live in the ``testsuite/`` subdirectory.  This
 section contains useful hints for adding tests there.
 
+Test framework
+~~~~~~~~~~~~~~
+
+The test suite is based on DejaGnu, for which you find the general
+documentation at
+  https://www.gnu.org/software/dejagnu/manual/index.html
+
+The documentation of specific DejaGnu directives is at
+  https://gcc.gnu.org/onlinedocs/gccint/Directives.html
+  https://gcc.gnu.org/wiki/HowToPrepareATestcase
+
 Naming Tests
 ~~~~~~~~~~~~
 
