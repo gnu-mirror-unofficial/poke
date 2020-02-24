@@ -1,3 +1,9 @@
+2020-02-23  Bruno Haible  <bruno@clisp.org>
+
+	Avoid a test failure, when running the test suite as root.
+	* testsuite/poke.cmd/file-mode.pk: Allow /etc/passwd to be opened
+	read-write.
+
 2020-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/poke.g4 (funcall_stmt_arg): Remove empty lines at EOF.
