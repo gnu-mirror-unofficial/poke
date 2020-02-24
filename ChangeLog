@@ -1,3 +1,8 @@
+2020-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Running and Uninstalled Poke): Update to cover
+	POKEPICKLESDIR.
+
 2020-02-23  Bruno Haible  <bruno@clisp.org>
 
 	HACKING: Tell where to find the DejaGnu documentation.

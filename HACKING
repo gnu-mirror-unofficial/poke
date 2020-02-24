@@ -308,14 +308,15 @@ Running an Uninstalled Poke
 
 Once poke is compiled, you can run it before installing by defining
 the ``POKEDATADIR`` environment variable to point to the ``src/``
-directory in the sources tree.  Another variable to set is
-``POKESTYLESDIR``.
+directory in the sources tree, and ``POKEPICKLESDIR`` to point to the
+``pickles/`` directory in the sources tree.  Another variable to set
+is ``POKESTYLESDIR``.
 
 For example::
 
   $ pwd
   /home/jemarch/gnu/hacks/poke/build/
-  $ export POKEDATADIR=../src POKESTYLESDIR=../etc
+  $ export POKEDATADIR=../src POKEPICKLESDIR=../pickles POKESTYLESDIR=../etc
   $ ./src/poke
 
 Continuous Integration
