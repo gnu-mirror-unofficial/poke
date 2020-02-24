@@ -125,6 +125,8 @@ AC_CONFIG_FILES(Makefile
                 po/Makefile.in
                 etc/Makefile
                 testsuite/Makefile)
+AC_CONFIG_FILES([run],
+                [chmod +x,-w run])
 AC_OUTPUT
 
 dnl Report warnings

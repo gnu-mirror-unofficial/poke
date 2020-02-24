@@ -53,6 +53,7 @@ config.h.in
 /GNUmakefile
 /maint.mk
 /man/poke.1
+/run
 /src/pkl-asm.pkc
 /src/pkl-gen.pkc
 /src/pkl-lex.c
