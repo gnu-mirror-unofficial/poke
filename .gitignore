@@ -64,3 +64,6 @@ config.h.in
 /src/pvm-vm.h
 /src/pvm-vm1.c
 /src/pvm-vm2.c
+/testsuite/poke.log
+/testsuite/poke.sum
+/testsuite/site.exp
