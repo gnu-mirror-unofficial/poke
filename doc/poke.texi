@@ -511,13 +511,12 @@ The @command{.file} command opens a new IO space backed by a file, or
 switches to a previously opened file.  The syntax is:
 
 @example
-.file @var{path}|@var{#tag}
+.file @var{path}
 @end example
 
 @cindex tags, file ID tags
-Where @var{path} is a path to a file to open (which can be relative to
-poke's current working directory or absolute) and @var{tag} is a tag
-of the form @code{#NUMBER} that identifies a previously open file.
+Where @var{path} is a path to a file to open, which can be relative to
+poke's current working directory or absolute.
 
 Tilde expansion is performed in @var{path}, much like it's done in the
 shell.  This means you can include special characters like @code{~}
@@ -525,7 +524,7 @@ shell.  This means you can include special characters like @code{~}
 @code{"} in case it includes leading or trailing blank characters,
 @i{etc}.
 
-When a new file is opened, it becomes the current IO space.  On that
+When a new file is opened it becomes the current IO space.  On that
 point on, every map executed in the REPL or while loading a Poke
 program will operate on that IO space:
 
@@ -543,16 +542,15 @@ The @command{.mem} command opens a new IO space backed by a memory
 buffer, or switches to a previously opened IOS.  The syntax is:
 
 @example
-.mem @var{name}|@var{#tag}
+.mem @var{name}
 @end example
 
 @cindex tags, file ID tags
-Where @var{name} is the name of the newly created buffer, and
-@var{tag} is a tag of the form @code{#NUMBER} that identifies a
-previously open IOS.  Note that poke adds prefix and trailing asterisk
-characters, to differentiate file names from buffer names.
+Where @var{name} is the name of the buffer to create.  Note that poke
+adds prefix and trailing asterisk characters, to differentiate file
+names from buffer names.
 
-When a new memory buffer IOS is opened, it becomes the current IO
+When a new memory buffer IOS is opened it becomes the current IO
 space.  @xref{file command}.
 
 @node ios command
@@ -622,7 +620,7 @@ the file that can be passed to the @command{.file} command in order to
 switch to it as the new current IO space:
 
 @example
-(poke) .file #1
+(poke) .ios #1
 The current file is now `foo.o'.
 (poke) .info ios
   Id	Mode	Position	Filename

@@ -1,5 +1,13 @@
 2020-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pk-ios.c (mem_cmd): Do not accept IOS tags in the .mem
+	command.
+	* doc/poke.texi (mem command): Update accordingly.
+	(file command): Likewise, for .file.
+	(info command): Use .ios instead of .file in example.
+
+2020-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (Write After Approval): Add Eric Blake.
 
 2020-02-24  Eric Blake  <eblake@redhat.com>

@@ -337,7 +337,7 @@ struct pk_cmd file_cmd =
   {"file", "f", "", 0, NULL, pk_cmd_file, "file FILENAME", rl_filename_completion_function};
 
 struct pk_cmd mem_cmd =
-  {"mem", "ts", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
+  {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
 
 struct pk_cmd close_cmd =
   {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", ios_completion_function};
