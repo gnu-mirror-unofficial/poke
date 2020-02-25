@@ -1,3 +1,7 @@
+2020-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Write After Approval): Add Eric Blake.
+
 2020-02-24  Eric Blake  <eblake@redhat.com>
 
 	* src/pkl-tab.y (array): Allow trailing comma in arrays.
