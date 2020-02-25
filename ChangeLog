@@ -1,5 +1,14 @@
 2020-02-25  Eric Blake  <eblake@redhat.com>
 
+	* src/pkl-tab.y (opt_comma): New rule.
+	(array): Use it to simplify trailing comma in arrays.
+	(struct, expression): Allow trailing comma in struct literals.
+	* doc/poke.texi (Struct Literals): Document it.
+	* testsuite/poke.pkl/structs-5.pk: Test it.
+	* etc/poke.g4 (array, struct): Match the real grammar.
+
+2020-02-25  Eric Blake  <eblake@redhat.com>
+
 	maint: Fix syntax-check
 	* .x-sc_prohibit_strncpy: Exempt pk-repl.c.
 	* etc/poke.g4 (expression): Whitespace cleanups.

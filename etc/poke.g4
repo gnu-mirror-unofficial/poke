@@ -113,7 +113,7 @@ expression:
 	| expression 'in' expression
 	| expression 'as' simple_type_specifier
 	| expression 'isa' simple_type_specifier
-    | TYPENAME '{' struct_field_list '}'
+    | TYPENAME '{' struct_field_list opt_comma '}'
     | UNIT
     | expression UNIT
 	| struct
@@ -161,8 +161,13 @@ funcall_arg:
         expression
     ;
 
+opt_comma:
+        /* Empty */
+	| ','
+    ;
+
 struct:
-        'struct' '{' struct_field_list '}'
+        'struct' '{' struct_field_list opt_comma '}'
 	;
 
 struct_field_list:
@@ -177,7 +182,7 @@ struct_field:
     ;
 
 array:
-        '[' array_initializer_list ']'
+        '[' array_initializer_list opt_comma ']'
 	;
 
 array_initializer_list:

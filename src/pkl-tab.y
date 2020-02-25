@@ -724,7 +724,7 @@ expression:
                                               $1, $3, $5);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | TYPENAME '{' struct_field_list '}'
+        | TYPENAME '{' struct_field_list opt_comma '}'
           	{
                   pkl_ast_node type;
                   pkl_ast_node astruct;
@@ -929,8 +929,13 @@ funcall_arg:
                 }
         ;
 
+opt_comma:
+	  %empty
+	| ','
+        ;
+
 struct:
-	  STRUCT '{' struct_field_list '}'
+	  STRUCT '{' struct_field_list opt_comma '}'
 		{
                     $$ = pkl_ast_make_struct (pkl_parser->ast,
                                               0 /* nelem */, $3);
@@ -967,15 +972,7 @@ struct_field:
         ;
 
 array:
-	  '[' array_initializer_list ']'
-        	{
-                    $$ = pkl_ast_make_array (pkl_parser->ast,
-                                             0 /* nelem */,
-                                             0 /* ninitializer */,
-                                             $2);
-                    PKL_AST_LOC ($$) = @$;
-                }
-        | '[' array_initializer_list ',' ']'
+	  '[' array_initializer_list opt_comma ']'
         	{
                     $$ = pkl_ast_make_array (pkl_parser->ast,
                                              0 /* nelem */,

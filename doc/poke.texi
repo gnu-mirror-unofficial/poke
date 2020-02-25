@@ -2389,7 +2389,8 @@ struct @{ [[@var{field_name}=]@var{exp},]@dots{} @}
 
 The contents of the struct literal is a possibly empty set of fields.
 Each field has an optional name @var{field_name} and a value
-@var{exp}.  The expression for the value can be of any type.
+@var{exp}.  The expression for the value can be of any type.  For
+convenience, a trailing comma is accepted but not required.
 
 @c XXX document struct constructors once they are supported.
 
