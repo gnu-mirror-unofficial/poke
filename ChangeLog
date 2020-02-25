@@ -1,5 +1,9 @@
 2020-02-25  Eric Blake  <eblake@redhat.com>
 
+	* .gitignore: Allow './configure -C'.
+
+2020-02-25  Eric Blake  <eblake@redhat.com>
+
 	* doc/poke.texi (Assignments): Typo fix.
 
 2020-02-25  Jose E. Marchesi  <jemarch@gnu.org>
