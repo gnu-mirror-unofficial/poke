@@ -44,22 +44,24 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        3. 5  Boehm GC
        3. 6  Jitter
        3. 7  libtextstyle
-       3. 8  Building
-       3. 9  Building a 32-bit poke
-       3.10  Gettext
-       3.11  Running an Uninstalled Poke
-       3.12  Continuous Integration
+       3. 8  libnbd
+       3. 9  Building
+       3.10  Building a 32-bit poke
+       3.11  Gettext
+       3.12  Running an Uninstalled Poke
+       3.13  Continuous Integration
      4  Coding Style and Conventions
        4.1  Writing C
        4.2  Writing Poke
        4.3  Writing RAS
      5  Writing Tests
-       5.1  Naming Tests
-       5.2  Always set obase
-       5.3  Put each test in its own file
-       5.4  dg-output may require a newline
-       5.5  Using data files in tests
-       5.6  Writing tests that depend on a certain capability
+       5.1  Test framework
+       5.2  Naming Tests
+       5.3  Always set obase
+       5.4  Put each test in its own file
+       5.5  dg-output may require a newline
+       5.6  Using data files in tests
+       5.7  Writing tests that depend on a certain capability
      6  Fuzzing poke
        6.1  Grammarinator
      7  Deciding on What to Work on
@@ -264,6 +266,15 @@ instead... that does not do any styling!
 
 At the moment libtextstyle lives in a subdirectory of GNU gettext.
 See http://www.gnu.org/s/gettext for more information.
+
+libnbd
+~~~~~~
+
+GNU poke optionally uses libnbd to expose an io space for data served
+by an arbitrary NBD (Network Block Device) server.  The package names are:
+  - On Red Hat distributions: libnbd-devel
+
+See http://libguestfs.org/libnbd.3.html for more information.
 
 Building
 ~~~~~~~~

@@ -310,6 +310,42 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     return 1;
 }
 
+#ifdef HAVE_LIBNBD
+static int
+pk_cmd_nbd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* nbd URI */
+
+  assert (argc == 1);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+
+  /* Create a new NBD IO space.  */
+  const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+  char *nbd_name = xstrdup (arg_str);
+
+  if (ios_search (nbd_name) != NULL)
+    {
+      printf (_("Buffer %s already opened.  Use `.ios #N' to switch.\n"),
+              nbd_name);
+      free (nbd_name);
+      return 0;
+    }
+
+  if (IOS_ERROR == ios_open (nbd_name, 0, 1))
+    {
+      pk_printf (_("Error creating NBD IOS %s\n"), nbd_name);
+      free (nbd_name);
+      return 0;
+    }
+
+  if (poke_interactive_p && !poke_quiet_p)
+    pk_printf (_("The current IOS is now `%s'.\n"),
+               ios_handler (ios_cur ()));
+
+  return 1;
+}
+#endif /* HAVE_LIBNBD */
+
 const struct pk_cmd ios_cmd =
   {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};
 
@@ -318,6 +354,11 @@ const struct pk_cmd file_cmd =
 
 const struct pk_cmd mem_cmd =
   {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
+
+#ifdef HAVE_LIBNBD
+const struct pk_cmd nbd_cmd =
+  {"nbd", "s", "", 0, NULL, pk_cmd_nbd, "nbd URI", NULL};
+#endif
 
 const struct pk_cmd close_cmd =
   {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", ios_completion_function};

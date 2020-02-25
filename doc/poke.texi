@@ -68,6 +68,7 @@ Dot-Commands
 * load command::		Loading pickles.
 * file command::		Opening and selecting file IO spaces.
 * mem command::			Opening and selecting memory IO spaces.
+* nbd command::			Opening and selecting NBD IO spaces.
 * ios command::			Switching between IO spaces.
 * close command::		Closing IO spaces.
 * doc command::                 Online manual.
@@ -541,7 +542,7 @@ The current file is now `foo.o'.
 @cindex opening memory buffers
 @cindex IO space
 The @command{.mem} command opens a new IO space backed by a memory
-buffer, or switches to a previously opened IOS.  The syntax is:
+buffer.  The syntax is:
 
 @example
 .mem @var{name}
@@ -554,6 +555,40 @@ names from buffer names.
 
 When a new memory buffer IOS is opened it becomes the current IO
 space.  @xref{file command}.
+
+@node nbd command
+@chapter @code{.nbd}
+@cindex @code{.nbd}
+@cindex opening NBD buffers
+@cindex IO space
+The @command{.nbd} command opens a new IO space backed by an external
+NBD server.  The syntax is:
+
+@example
+.nbd @var{uri}
+@end example
+
+@cindex tags, file ID tags
+Where @var{uri} is the name of the newly created buffer, matching the
+@url{https://github.com/NetworkBlockDevice/nbd/blob/master/doc/uri.md,
+NBD URI specification}.
+
+When a new NBD IOS is opened, it becomes the current IO
+space.  @xref{file command}.
+
+NBD support in GNU poke is optional, depending on whether poke was
+compiled against @url{http://libguestfs.org/libnbd.3.html,, libnbd}.
+
+For an example of connecting to the guest-visible content of a qcow2
+image, with the default export name as exposed by using qemu as an NBD
+server:
+
+@example
+$ qemu-nbd --socket=/tmp/mysock -f qcow2 image.qcow2
+$ poke
+(poke) .nbd nbd+unix:///socket=?/tmp/mysock
+The current file is now `nbd+unix:///socket=?/tmp/mysock'.
+@end example
 
 @node ios command
 @chapter @code{.ios}
@@ -3404,6 +3439,9 @@ An auto growing memory buffer.
 The process ID of some process.
 @item /path/to/file
 An either absolute or relative path to a file.
+@item nbd://@var{host:port}/@var{export}
+@itemx nbd+unix:///@var{export}?socket=@var{/path/to/socket}
+A connection to an NBD server. @xref{nbd command}
 @end table
 
 @var{flags} is a bitmask that specifies several aspects of the
@@ -3424,8 +3462,9 @@ If the IO device doesn't exist, then create it, usually empty.
 
 @noindent
 Note that the specific meanings of these flags depend on the on the
-nature of the IO space that is opened: for example, a file can be
-truncated, but a memory buffer is truncated by default.
+nature of the IO space that is opened: for example, it is optional
+whether a file is truncated, but a memory buffer is truncated by
+default, and an NBD iospace does not support truncation.
 
 In order to ease the usage of @code{open}, a few pre-made bitmaps are
 provided to specify opening @dfn{modes}:

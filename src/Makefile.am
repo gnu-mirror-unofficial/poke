@@ -52,6 +52,9 @@ poke_SOURCES = poke.c poke.h \
                pkl-gen.pkc pkl-asm.pkc \
                pkl-insn.def pkl-ops.def pkl-attrs.def
 
+if NBD
+poke_SOURCES += ios-dev-nbd.c
+endif NBD
 
 if HSERVER
   poke_SOURCES += pk-hserver.h pk-hserver.c
@@ -75,9 +78,10 @@ poke_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
                 -DPKGINFODIR=\"$(infodir)\" \
                 -DJITTER_VERSION=\"$(JITTER_VERSION)\" \
                 -DLOCALEDIR=\"$(localedir)\"
-poke_CFLAGS = -Wall $(BDW_GC_CFLAGS)
+poke_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
 poke_LDADD = $(top_builddir)/lib/libpoke.la \
              libpvmjitter.a \
+             $(LIBNBD_LIBS) \
              $(LTLIBREADLINE) $(BDW_GC_LIBS) $(LIBTEXTSTYLE)
 poke_LDFLAGS =
 

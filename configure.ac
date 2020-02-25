@@ -82,6 +82,15 @@ dnl Jitter
 
 AC_JITTER_SUBPACKAGE([jitter])
 
+dnl libnbd for nbd:// io spaces (optional)
+PKG_CHECK_MODULES([LIBNBD], [libnbd], [
+  AC_SUBST([LIBNBD_CFLAGS])
+  AC_SUBST([LIBNBD_LIBS])
+  AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
+  libnbd_enabled=yes
+], [libnbd_enabled=no])
+AM_CONDITIONAL([NBD], [test "x$libnbd_enabled" = "xyes"])
+
 dnl Used in Makefile.am.  See the note there.
 WITH_JITTER=$with_jitter
 AC_SUBST([WITH_JITTER])
@@ -138,6 +147,11 @@ fi
 if test "x$hserver_enabled" = "xno"; then
    AC_MSG_WARN([building poke without terminal hyperlinks server support.
      Install a hyperlinks-capable libtextstyle and use --enable-hserver to activate it.])
+fi
+
+if test "x$libnbd_enabled" != "xyes"; then
+   AC_MSG_WARN([building poke without NBD io space support.
+     Install libnbd to use it.])
 fi
 
 dnl Report errors

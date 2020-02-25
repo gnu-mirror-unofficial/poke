@@ -1,3 +1,16 @@
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
+	Add optional nbd:// io space support
+	* configure.ac (PKG_CHECK_MODULES): Check for libnbd.
+	* src/ios-dev-nbd.c: New file.
+	* src/Makefile.am (poke_SOURCES): Optionally build it.
+	* src/ios.c (ios_dev_ifs): Expose it through 'open'.
+	* src/pk-ios.c (pk_cmd_nbd): Add .nbd command.
+	* src/pk-cmd.c (dot_cmds): Load it.
+	* doc/poke.texi (nbd command): New section.
+	(open): Document nbd handler.
+	* HACKING (libnbd): Mention it.
+
 2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-gen.pks (array_mapper): Set the IOS of the mapped value.
