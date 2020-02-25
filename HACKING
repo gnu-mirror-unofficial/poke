@@ -61,7 +61,8 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        5.4  Put each test in its own file
        5.5  dg-output may require a newline
        5.6  Using data files in tests
-       5.7  Writing tests that depend on a certain capability
+       5.7  Using NBD connections in tests
+       5.8  Writing tests that depend on a certain capability
      6  Fuzzing poke
        6.1  Grammarinator
      7  Deciding on What to Work on
@@ -271,8 +272,10 @@ libnbd
 ~~~~~~
 
 GNU poke optionally uses libnbd to expose an io space for data served
-by an arbitrary NBD (Network Block Device) server.  The package names are:
-  - On Red Hat distributions: libnbd-devel
+by an arbitrary NBD (Network Block Device) server.  Testing this
+further requires nbdkit to quickly provide an arbitrary NBD server.
+The package names are:
+  - On Red Hat distributions: libnbd-devel, nbdkit-basic-plugins
 
 See http://libguestfs.org/libnbd.3.html for more information.
 
@@ -474,6 +477,28 @@ which is the name of the temporary file to create::
 The file created by the last dg-data (be it anonymous or named) is the
 current IO space.
 
+Using NBD connections in tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If your test requires an NBD server (only useful when poke is compiled
+with libnbd), the dg-nbd directive is what you need.  It has one form::
+
+  /* { dg-nbd { 0x1 0x2 ...} [dg-tmpdir]/sock } */
+
+This utilizes nbdkit to serve an in-memory disk with initial contents
+over a named Unix socket.  Note that the data argument is not the same
+as for dg-data (which uses tcl's binary command), but rather the
+syntax accepted by nbdkit-data-plugin's data= argument, although the
+two are similar.  nbdkit then creates a Unix socket server for the
+data, and will be shut down gracefully when the testsuite completes.
+Use of the utility directive [dg-tmpdir] ensures that the socket name
+will not be too long while still respecting $TMPDIR (defaulting to a
+new subdirectory of /tmp), since $objdir may be arbitrarily deep.
+
+To use the server as an IO space, your test will then follow up with::
+
+  /* { dg-command "open (\"nbd+unix:///?socket=[dg-tmpdir]/sock\")" } */
+
 Writing tests that depend on a certain capability
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -496,6 +521,8 @@ The supported capabilities are:
 
 libtextstyle
   poke is built with libtextstyle support.
+nbd
+  poke is built with NBD io space support, and dg-nbd works.
 
 Fuzzing poke
 ------------

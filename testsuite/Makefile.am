@@ -26,6 +26,7 @@ check-DEJAGNU: site.exp
 	if $(SHELL) -c "$$runtest --version" > /dev/null 2>&1; then \
 	  CC_FOR_TARGET="$(CC_FOR_TARGET)" CFLAGS_FOR_TARGET="$(CFLAGS)" \
 	  HAVE_LIBTEXTSTYLE="$(HAVE_LIBTEXTSTYLE)" \
+	  NBDKIT="$(NBDKIT)" \
           POKESTYLESDIR="$(top_srcdir)/etc" \
           POKEPICKLESDIR="$(top_srcdir)/pickles" \
           POKEDATADIR="$(top_srcdir)/src" \

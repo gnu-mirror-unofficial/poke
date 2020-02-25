@@ -1,5 +1,20 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	nbd: Add testsuite coverage
+	* HACKING (Using NBD connections in tests): New section.
+	(Writing tests that depend on a certain capability): New capability.
+	* testsuite/Makefile.am (check-DEJAGNU): Expose NBD witnesses.
+	* configure.ac (AC_CHECK_PROGS): Check for nbdkit.
+	* testsuite/lib/poke-dg.exp (dg-require): Add 'nbd' capability.
+	(dg-tmpdir): New command to create safe short temp dir.
+	(dg-nbd): New command to spawn nbdkit server.
+	(poke_finish): Clean up nbdkit.
+	* testsuite/poke.cmd/nbd-1.pk: New test of '.nbd'.
+	* testsuite/poke.pkl/open-3.pk: New test of open("nbd...").
+	* testsuite/poke.pkl/ios-nbd-1.pk: New test of nbd I/O.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	Add optional nbd:// io space support
 	* configure.ac (PKG_CHECK_MODULES): Check for libnbd.
 	* src/ios-dev-nbd.c: New file.

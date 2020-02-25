@@ -82,13 +82,14 @@ dnl Jitter
 
 AC_JITTER_SUBPACKAGE([jitter])
 
-dnl libnbd for nbd:// io spaces (optional)
+dnl libnbd for nbd:// io spaces (optional). Testing it also requires nbdkit
 PKG_CHECK_MODULES([LIBNBD], [libnbd], [
   AC_SUBST([LIBNBD_CFLAGS])
   AC_SUBST([LIBNBD_LIBS])
   AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
   libnbd_enabled=yes
-], [libnbd_enabled=no])
+  AC_CHECK_PROGS([NBDKIT], [nbdkit], [no])
+], [libnbd_enabled=no NBDKIT=no])
 AM_CONDITIONAL([NBD], [test "x$libnbd_enabled" = "xyes"])
 
 dnl Used in Makefile.am.  See the note there.

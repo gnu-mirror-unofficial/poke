@@ -25,6 +25,7 @@ load_lib dg.exp
 
 set poke_commands {}
 set poke_data_files {}
+set poke_nbd_pids {}
 
 # Append the specified command to `poke_commands'.  The commands added
 # this way will be executed in order by the poke invocation.
@@ -59,6 +60,11 @@ proc dg-require { args } {
 
     if {[lindex $args 1] == "libtextstyle" \
             && $::env(HAVE_LIBTEXTSTYLE) != "yes"} {
+        # Mark the test as unsupported
+        set do-what [list [lindex do-what 0] N P]
+    }
+    if {[lindex $args 1] == "nbd" \
+            && $::env(NBDKIT) == "no"} {
         # Mark the test as unsupported
         set do-what [list [lindex do-what 0] N P]
     }
@@ -119,6 +125,56 @@ proc dg-data { args } {
     }
 }
 
+# Return the name of a temporary directory honoring $TMPDIR.  The
+# directory and all content therein will be cleaned up at the end of
+# the testsuite.
+#
+# dg-tmpdir
+
+proc dg-tmpdir { args } {
+    global poke_data_files
+
+    set tmpdir /tmp
+    catch {set tmpdir $::env(TMPDIR)}
+    set subdir [file join $tmpdir poketest.[pid]]
+
+    if {! [file exists $subdir]} {
+        file mkdir $subdir
+        lappend poke_data_files $subdir
+    }
+    return $subdir
+}
+
+# Create a temporary NBD server with the given initial contents over
+# the given Unix socket (dg-tmpdir is useful for creating a
+# reasonable-length socket name).  The server will be cleaned up at
+# the end of the testsuite.
+#
+# The data argument is passed to nbdkit's data plugin (which parses
+# slightly differently than the Poke language).
+#
+# The test can then use open ("nbd+unix:///?socket=[dg-tmpdir]/sock"),
+# if nbd support was compiled in (the test is automatically skipped
+# otherwise).
+#
+# dg-nbd data socketname
+
+proc dg-nbd { args } {
+    global poke_commands
+    global poke_nbd_pids
+
+    if { [llength $args] != 3 } {
+        error "[lindex $args 0]: invalid arguments"
+    }
+    dg-require nbd
+
+    set data [lindex $args 1]
+    set sock [lindex $args 2]
+
+    set fh [open |[list nbdkit -f -U $sock data data=$data]]
+    lappend poke_nbd_pids [pid $fh]
+}
+
 # We set LC_ALL and LANG to C so that we get the same error messages
 # as expected.
 setenv LC_ALL C
@@ -133,7 +189,7 @@ proc poke-dg-test { prog do_what extra_tool_flags } {
 
     set VALGRIND ""
     # Uncomment the following couple of lines to run the testsuite with
-    # valgring.
+    # valgrind.
 #    set VALGRIND "valgrind --quiet --suppressions=${srcdir}/../etc/boehm-gc.suppressions \
 #                           --tool=memcheck --gen-suppressions=all"
 
@@ -174,6 +230,11 @@ proc poke-dg-test { prog do_what extra_tool_flags } {
 # This function is invoked by dg-finish.
 proc poke_finish {} {
     global poke_data_files
+    global poke_nbd_pids
+
+    foreach p $poke_nbd_pids {
+	exec kill $p
+    }
 
     foreach f $poke_data_files {
         file delete -force $f
