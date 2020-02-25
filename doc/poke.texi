@@ -2047,7 +2047,8 @@ Where @var{exp} is an arbitrary expression.
 
 For example, @code{[1,2,3]} constructs an array of three signed 32-bit
 integers.  Likewise, @code{['a','b','c']} constructs an array of three
-unsigned 8-bit integers (characters).
+unsigned 8-bit integers (characters).  For convenience, a trailing
+comma is accepted but not required.
 
 The type of the array literal is inferred from the type of its
 elements.  Accordingly, all the elements in an array literal must be
@@ -2068,7 +2069,7 @@ This is how a @code{3x3} matrix could be constructed using an array of
 arrays:
 
 @example
-[[1,2,3],[4,5,6],[7,8,9]]
+[[1,2,3],[4,5,6],[7,8,9],]
 @end example
 
 It is possible to refer to specific elements when constructing array

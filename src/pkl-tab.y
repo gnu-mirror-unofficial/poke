@@ -975,6 +975,14 @@ array:
                                              $2);
                     PKL_AST_LOC ($$) = @$;
                 }
+        | '[' array_initializer_list ',' ']'
+        	{
+                    $$ = pkl_ast_make_array (pkl_parser->ast,
+                                             0 /* nelem */,
+                                             0 /* ninitializer */,
+                                             $2);
+                    PKL_AST_LOC ($$) = @$;
+                }
 	;
 
 array_initializer_list:

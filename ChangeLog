@@ -1,5 +1,11 @@
 2020-02-24  Eric Blake  <eblake@redhat.com>
 
+	* src/pkl-tab.y (array): Allow trailing comma in arrays.
+	* doc/poke.texi (Array Literals): Document it.
+	* testsuite/poke.pkl/arrays-9.pk: New file, to test it.
+
+2020-02-24  Eric Blake  <eblake@redhat.com>
+
 	* .gitignore: Ignore files created during 'make check'.
 
 2020-02-24  Eric Blake  <eblake@redhat.com>
