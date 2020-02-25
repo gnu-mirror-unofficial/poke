@@ -1527,7 +1527,7 @@ pkl_ast_node pkl_ast_make_print_stmt (pkl_ast ast,
 
 #define PKL_AST_PRINT_MODE_FLAT 0
 #define PKL_AST_PRINT_MODE_TREE 1
-  
+
 struct pkl_ast_print_stmt_arg
 {
   struct pkl_ast_common common;

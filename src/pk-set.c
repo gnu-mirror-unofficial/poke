@@ -52,10 +52,10 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           pk_puts ("obase should be one of 2, 8, 10 or 16.\n");
           return 0;
         }
-      
+
       poke_obase = base;
     }
-  
+
   return 1;
 }
 
@@ -233,7 +233,7 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       int cutoff = PK_CMD_ARG_INT (argv[0]);
-      
+
       if (cutoff < 0 || cutoff > 15)
         {
           pk_term_class ("error");
@@ -242,10 +242,10 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           pk_puts (_(" cutoff should be between 0 and 15.\n"));
           return 0;
         }
-      
+
       pvm_set_oacutoff (poke_vm, cutoff);
     }
-  
+
   return 1;
 }
 
@@ -261,7 +261,7 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       int odepth = PK_CMD_ARG_INT (argv[0]);
-      
+
       if (odepth < 0 || odepth > 15)
         {
           pk_term_class ("error");
@@ -270,10 +270,10 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           pk_puts (_(" odepth should be between 0 and 15.\n"));
           return 0;
         }
-      
+
       pvm_set_odepth (poke_vm, odepth);
     }
-  
+
   return 1;
 }
 

@@ -81,7 +81,7 @@ make_socket (uint16_t port)
 {
   int sock;
   struct sockaddr_in name;
-  
+
   /* Create the socket. */
   sock = socket (PF_INET, SOCK_STREAM, 0);
   if (sock < 0)
@@ -125,7 +125,7 @@ read_from_client (int filedes)
 {
   char buffer[MAXMSG];
   int nbytes;
-  
+
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0)
     {
@@ -144,7 +144,7 @@ read_from_client (int filedes)
 
       /* Remove the newline at the end.  */
       buffer[nbytes-1] = '\0';
-      
+
       /* The format of the payload is:
          [0-9]+/{e,i}/.*  */
 
@@ -154,10 +154,10 @@ read_from_client (int filedes)
           printf ("PARSING INT\n");
           return 0;
         }
-        
+
       if (!hserver_tokens[token])
         return 0;
-      
+
       if (*p != '/')
         return 0;
       p++;
@@ -170,7 +170,7 @@ read_from_client (int filedes)
       if (*p != '/')
         return 0;
       p++;
-      
+
       switch (cmd)
         {
         case 'e':
@@ -332,7 +332,7 @@ pk_hserver_make_hyperlink (char type,
   int token;
   char *str, token_str[128], type_str[2];
   char hostname[128];
-  
+
   assert (type == 'i' || type == 'e');
   type_str[0] = type;
   type_str[1] = '\0';
@@ -340,7 +340,7 @@ pk_hserver_make_hyperlink (char type,
   /* XXX: check for maximum length 2048.  */
   token = pk_hserver_get_token ();
   sprintf (token_str, "%d", token);
-  
+
   if (gethostname (hostname, 128) != 0)
     {
       perror ("gethostname");

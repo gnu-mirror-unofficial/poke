@@ -659,7 +659,7 @@ pkl_struct_type_traverse (pkl_ast_node type, const char *path)
         {
           if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
             continue;
-      
+
           ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
           etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
 
@@ -2323,7 +2323,7 @@ pkl_ast_lvalue_p (pkl_ast_node node)
 
         if (PKL_AST_TYPE_CODE (entity_type) == PKL_TYPE_ARRAY)
           return pkl_ast_lvalue_p (entity);
-        
+
         break;
       }
     case PKL_AST_EXP:

@@ -1982,7 +1982,7 @@ compile time.  For example:
 @example
 defun make_empty_string = (int length) string:
 @{
-   return " " * length;  
+   return " " * length;
 @}
 @end example
 

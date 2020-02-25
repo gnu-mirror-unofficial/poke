@@ -86,7 +86,7 @@ ios_dev_mem_getc (void *iod)
 
   if (mio->cur >= mio->size)
     return IOD_EOF;
-  
+
   return mio->pointer[mio->cur++];
 }
 

@@ -820,7 +820,7 @@ instruction iosize ()
 
     if (io == NULL)
       PVM_RAISE (PVM_E_NO_IOS);
-      
+
     JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_size (io), 64),
                                         pvm_make_ulong (1, 64)));
   end
@@ -846,7 +846,7 @@ instruction iogetb ()
 
     if (io == NULL)
       PVM_RAISE (PVM_E_NO_IOS);
-      
+
     JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_get_bias (io), 64),
                                         pvm_make_ulong (1, 64)));
   end

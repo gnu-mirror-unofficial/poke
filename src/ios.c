@@ -699,7 +699,7 @@ ios_read_int (ios io, ios_off offset, int flags,
 {
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
-  
+
   /* We always need to start reading from offset / 8  */
   if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
     return IOS_EIOFF;
@@ -933,16 +933,16 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
       /* This is the fast case: the string is aligned to a byte
          boundary.  We just read bytes from the IOD until either EOF
          or a NULL byte.  */
-      
+
       if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
           == -1)
         return IOS_EIOFF;
-      
+
       do
         {
           if (i % 128 == 0)
             str = xrealloc (str, i + 128 * sizeof (char));
-          
+
           c = io->dev_if->get_c (io->dev);
           if (c == IOD_EOF)
             return IOS_EIOFF;
@@ -961,7 +961,7 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
         {
           int ret;
           uint64_t abyte;
-          
+
           if (i % 128 == 0)
             str = xrealloc (str, i + 128 * sizeof (char));
 
@@ -1572,11 +1572,11 @@ ios_write_string (ios io, ios_off offset, int flags,
     {
       /* This is the fast case: we want to write a string at a
          byte-boundary.  Just write the bytes to the IOD.  */
-      
+
       if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
           == -1)
         return IOS_EIOFF;
-      
+
       p = value;
       do
         {

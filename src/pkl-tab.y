@@ -254,7 +254,7 @@ load_module (struct pkl_parser *parser,
   fclose (fd);
   return 0;
 }
- 
+
 %}
 
 %union {

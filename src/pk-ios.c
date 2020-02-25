@@ -109,21 +109,21 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* Create a new IO space.  */
   const char *arg_str = PK_CMD_ARG_STR (argv[0]);
   const char *filename = arg_str;
-  
+
   if (access (filename, R_OK) != 0)
     {
       char *why = strerror (errno);
       pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
       return 0;
     }
-  
+
   if (ios_search (filename) != NULL)
     {
       printf (_("File %s already opened.  Use `.ios #N' to switch.\n"),
               filename);
       return 0;
     }
-  
+
   errno = 0;
   if (IOS_ERROR == ios_open (filename, 0, 1))
     {
@@ -188,7 +188,7 @@ print_info_ios (ios io, void *data)
   mode[0] = flags & IOS_F_READ ? 'r' : ' ';
   mode[1] = flags & IOS_F_WRITE ? 'w' : ' ';
   mode[2] = '\0';
-  
+
   pk_printf ("%s#%d\t%s\t",
              io == ios_cur () ? "* " : "  ",
              ios_get_id (io),
@@ -198,15 +198,15 @@ print_info_ios (ios io, void *data)
   {
     char *cmd;
     char *hyperlink;
-    
+
     asprintf (&cmd, "0x%08jx#b", ios_tell (io));
     hyperlink = pk_hserver_make_hyperlink ('i', cmd);
     free (cmd);
-    
+
     pk_term_hyperlink (hyperlink, NULL);
     pk_printf ("0x%08jx#b", ios_tell (io));
     pk_term_end_hyperlink ();
-    
+
     free (hyperlink);
   }
 #else
@@ -218,21 +218,21 @@ print_info_ios (ios io, void *data)
   {
     char *cmd;
     char *hyperlink;
-    
+
     asprintf (&cmd, ".file #%d", ios_get_id (io));
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
-    
+
     pk_term_hyperlink (hyperlink, NULL);
     pk_puts (ios_handler (io));
     pk_term_end_hyperlink ();
-    
+
     free (hyperlink);
   }
 #else
   pk_puts (ios_handler (io));
 #endif
-  
+
   pk_puts ("\n");
 }
 
@@ -299,7 +299,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   assert (argc == 1);
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  
+
   /* Create a new memory IO space.  */
   const char *arg_str = PK_CMD_ARG_STR (argv[0]);
   char *mem_name = xmalloc (strlen (arg_str) + 2 + 1);

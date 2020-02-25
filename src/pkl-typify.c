@@ -2395,7 +2395,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_IF_STMT, pkl_typify1_ps_if_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_typify1_ps_cond_exp),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_typify1_ps_ass_stmt),
-   
+
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_typify1_ps_op_sizeof),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_typify1_ps_op_not),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EQ, pkl_typify1_ps_op_rela),

@@ -116,7 +116,7 @@ expression:
     | TYPENAME '{' struct_field_list '}'
     | UNIT
     | expression UNIT
-   	| struct
+	| struct
     /* The next rule is bconc, but we cannot use the bconc rule
        because that introduces indirect left-recursivity that cannot
        be handled by antlr4.  */
@@ -273,7 +273,7 @@ struct_type_specifier:
 
 struct_or_union:
         'struct'
-	| 'union'	
+	| 'union'
     ;
 
 struct_type_pinned:

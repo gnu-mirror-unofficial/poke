@@ -861,7 +861,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cond_exp)
         = (PKL_AST_INTEGER_VALUE (cond)
            ? PKL_AST_COND_EXP_THENEXP (cond_exp)
            : PKL_AST_COND_EXP_ELSEEXP (cond_exp));
-      
+
       t = PKL_PASS_NODE;
       PKL_PASS_NODE = ASTREF (replacement_node);
       pkl_ast_node_free (t);
@@ -882,7 +882,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
   if (PKL_AST_CODE (index) == PKL_AST_INTEGER)
     {
       int64_t index_value = PKL_AST_INTEGER_VALUE (index);
-      
+
       switch (PKL_AST_CODE (container))
         {
         case PKL_AST_STRING:
@@ -911,7 +911,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
 
             t = PKL_PASS_NODE;
             PKL_PASS_NODE = ASTREF (new);
-            pkl_ast_node_free (t);                                       
+            pkl_ast_node_free (t);
             break;
           }
         case PKL_AST_ARRAY:
@@ -927,7 +927,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
                 pkl_ast_node initializer_index
                   = PKL_AST_ARRAY_INITIALIZER_INDEX (t);
                 uint64_t initializer_index_value;
-                
+
                 assert (PKL_AST_CODE (initializer_index) == PKL_AST_INTEGER);
                 initializer_index_value
                   = PKL_AST_INTEGER_VALUE (initializer_index);
