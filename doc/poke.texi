@@ -2749,8 +2749,8 @@ Examples:
 (poke) packet.length = 4
 (poke) packet.data = [1,2,3,4]
 (poke) packet.data[2] = 666
-(poke) int @ 23#B = 23
-(poke) string @ str.offset = "foo"
+(poke) int @@ 23#B = 23
+(poke) string @@ str.offset = "foo"
 @end example
 
 @node Compound Statements

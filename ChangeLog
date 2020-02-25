@@ -1,3 +1,7 @@
+2020-02-25  Eric Blake  <eblake@redhat.com>
+
+	* doc/poke.texi (Assignments): Typo fix.
+
 2020-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-ios.c (mem_cmd): Do not accept IOS tags in the .mem
