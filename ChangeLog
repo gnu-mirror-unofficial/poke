@@ -1,5 +1,12 @@
 2020-02-25  Eric Blake  <eblake@redhat.com>
 
+	maint: Saner diff output
+	* .gitattributes: New file.
+	* etc/git.orderfile: New file.
+	* bootstrap.conf (bootstrap_post_import_hook): Set it up.
+
+2020-02-25  Eric Blake  <eblake@redhat.com>
+
 	* .gitignore: Allow './configure -C'.
 
 2020-02-25  Eric Blake  <eblake@redhat.com>
