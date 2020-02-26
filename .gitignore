@@ -67,4 +67,5 @@ config.h.in
 /src/pvm-vm2.c
 /testsuite/poke.log
 /testsuite/poke.sum
+/testsuite/site.bak
 /testsuite/site.exp

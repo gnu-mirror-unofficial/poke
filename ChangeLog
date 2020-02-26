@@ -1,5 +1,9 @@
 2020-02-25  Eric Blake  <eblake@redhat.com>
 
+	* .gitignore: Ignore more testsuite leftovers.
+
+2020-02-25  Eric Blake  <eblake@redhat.com>
+
 	* src/pkl-tab.y (opt_comma): New rule.
 	(array): Use it to simplify trailing comma in arrays.
 	(struct, expression): Allow trailing comma in struct literals.
