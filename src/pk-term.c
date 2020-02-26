@@ -108,9 +108,11 @@ pk_printf (const char *format, ...)
 {
   va_list ap;
   char *str;
+  int r;
 
   va_start (ap, format);
-  assert (vasprintf (&str, format, ap) != -1);
+  r = vasprintf (&str, format, ap);
+  assert (r != -1);
   va_end (ap);
 
   ostream_write_str (poke_ostream, str);

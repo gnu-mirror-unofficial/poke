@@ -512,9 +512,11 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
       int c;
 
       off64_t cur_pos = ftello (fd);
+      off64_t tmp;
 
       /* Seek to the beginning of the file.  */
-      assert (fseeko (fd, 0, SEEK_SET) == 0);
+      tmp = fseeko (fd, 0, SEEK_SET);
+      assert (tmp == 0);
 
       while ((c = fgetc (fd)) != EOF)
         {
@@ -542,7 +544,8 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
         }
 
       /* Restore the file position so parsing can continue.  */
-      assert (fseeko (fd, cur_pos, SEEK_SET) == 0);
+      tmp = fseeko (fd, cur_pos, SEEK_SET);
+      assert (tmp == 0);
     }
 
   pk_puts ("\n");

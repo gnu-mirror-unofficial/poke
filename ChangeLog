@@ -1,5 +1,14 @@
 2020-02-26  Eric Blake  <eblake@redhat.com>
 
+	* src/ios.c (ios_close): Avoid side-effect inside assert.
+	* src/pk-def.c (print_var_decl, print_fun_decl): Likewise.
+	* src/pk-term.c (pk_printf): Likewise.
+	* src/pkl-asm.c (pkl_asm_call): Likewise.
+	* src/pkl-tab.y (pkl_register_dummies): Likewise.
+	* src/pkl.c (pkl_detailed_location): Likewise.
+
+2020-02-26  Eric Blake  <eblake@redhat.com>
+
 	* etc/git.orderfile (ChangeLog): Always list first.
 	(Documentation): Correct spelling of doc/.
 	(Build files): build-aux is not stored in git.

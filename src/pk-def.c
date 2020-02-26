@@ -41,14 +41,16 @@ print_var_decl (pkl_ast_node decl, void *data)
 
   pkl_env compiler_env = pkl_get_env (poke_compiler);
   pvm_env runtime_env = pvm_get_env (poke_vm);
+  pkl_ast_node tmp;
 
   /* XXX this is not needed.  */
   if (PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR)
     return;
 
-  assert (pkl_env_lookup (compiler_env,
-                          PKL_AST_IDENTIFIER_POINTER (decl_name),
-                          &back, &over) != NULL);
+  tmp = pkl_env_lookup (compiler_env,
+                        PKL_AST_IDENTIFIER_POINTER (decl_name),
+                        &back, &over);
+  assert (tmp != NULL);
 
   val = pvm_env_lookup (runtime_env, back, over);
   assert (val != PVM_NULL);
@@ -78,6 +80,7 @@ print_fun_decl (pkl_ast_node decl, void *data)
   int back, over;
 
   pkl_env compiler_env = pkl_get_env (poke_compiler);
+  pkl_ast_node tmp;
 
   /* Skip mappers, i.e. function declarations whose initials are
      actually struct types, and not function literals.  */
@@ -85,9 +88,10 @@ print_fun_decl (pkl_ast_node decl, void *data)
   if (PKL_AST_CODE (func) != PKL_AST_FUNC)
     return;
 
-  assert (pkl_env_lookup (compiler_env,
-                          PKL_AST_IDENTIFIER_POINTER (decl_name),
-                          &back, &over) != NULL);
+  tmp = pkl_env_lookup (compiler_env,
+                        PKL_AST_IDENTIFIER_POINTER (decl_name),
+                        &back, &over);
+  assert (tmp != NULL);
 
   /* Print the name and the type of the function.  */
   pk_puts (PKL_AST_IDENTIFIER_POINTER (decl_name));

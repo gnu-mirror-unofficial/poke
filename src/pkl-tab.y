@@ -160,6 +160,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
       char *name;
       pkl_ast_node id;
       pkl_ast_node decl;
+      int r;
 
       asprintf (&name, "@*UNUSABLE_OFF_%d*@", i);
       id = pkl_ast_make_identifier (parser->ast, name);
@@ -168,7 +169,8 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
                                 id, NULL /* initial */,
                                 NULL /* source */);
 
-      assert (pkl_env_register (parser->env, name, decl));
+      r = pkl_env_register (parser->env, name, decl);
+      assert (r);
     }
 }
 

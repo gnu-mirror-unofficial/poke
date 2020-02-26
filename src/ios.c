@@ -220,12 +220,14 @@ void
 ios_close (ios io)
 {
   struct ios *tmp;
+  int r;
 
   /* XXX: if not saved, ask before closing.  */
 
   /* Close the device operated by the IO space.
      XXX: handle errors.  */
-  assert (io->dev_if->close (io->dev));
+  r = io->dev_if->close (io->dev);
+  assert (r);
 
   /* Unlink the IOS from the list.  */
   assert (io_list != NULL); /* The list must contain at least one IO
