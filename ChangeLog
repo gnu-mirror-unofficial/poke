@@ -1,5 +1,19 @@
 2020-02-26  Eric Blake  <eblake@redhat.com>
 
+	open: Normalize tricky .file names.
+	* src/ios-dev.h (struct ios_dev_if): Replace handler_p with
+	handler_noramlize callback.
+	* src/ios.c (ios_open): Store normalized name per ios.
+	* src/ios-dev-file.c (ios_dev_file_handler_p): Rename...
+	(ios_dev_file_handler_normalize): ...and prepend ./ to risky
+	relative file names.
+	* src/ios-dev-mem.c (ios_dev_mem_handler_p): Rename...
+	(ios_dev_mem_handler_normalize): ...to this.
+	(ios_dev_mem_open, ios_dev_mem_close): Drop unused handler member.
+	* testsuite/poke.cmd/file-relative.pk: New test.
+
+2020-02-26  Eric Blake  <eblake@redhat.com>
+
 	* src/ios.c (ios_close): Avoid side-effect inside assert.
 	* src/pk-def.c (print_var_decl, print_fun_decl): Likewise.
 	* src/pk-term.c (pk_printf): Likewise.

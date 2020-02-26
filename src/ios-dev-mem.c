@@ -28,7 +28,6 @@
 
 struct ios_dev_mem
 {
-  char *handler;
   char *pointer;
   size_t size;
   size_t cur;
@@ -37,11 +36,12 @@ struct ios_dev_mem
 
 #define MEM_STEP (512 * 8)
 
-static int
-ios_dev_mem_handler_p (const char *handler)
+static char *
+ios_dev_mem_handler_normalize (const char *handler)
 {
-  return (handler[0] == '*'
-          && handler[strlen(handler) - 1] == '*');
+  if (handler[0] == '*' && handler[strlen (handler) - 1] == '*')
+    return xstrdup (handler);
+  return NULL;
 }
 
 static void *
@@ -50,7 +50,6 @@ ios_dev_mem_open (const char *handler, uint64_t flags, int *error)
   struct ios_dev_mem *mio;
 
   mio = xmalloc (sizeof (struct ios_dev_mem));
-  mio->handler = xstrdup (handler);
   mio->pointer = xmalloc (MEM_STEP);
   mio->size = MEM_STEP;
   mio->cur = 0;
@@ -64,7 +63,6 @@ ios_dev_mem_close (void *iod)
 {
   struct ios_dev_mem *mio = iod;
 
-  free (mio->handler);
   free (mio->pointer);
   free (mio);
 
@@ -139,7 +137,7 @@ ios_dev_mem_size (void *iod)
 
 struct ios_dev_if ios_dev_mem =
   {
-   .handler_p = ios_dev_mem_handler_p,
+   .handler_normalize = ios_dev_mem_handler_normalize,
    .open = ios_dev_mem_open,
    .close = ios_dev_mem_close,
    .tell = ios_dev_mem_tell,

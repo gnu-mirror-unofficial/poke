@@ -172,14 +172,14 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
   io = xmalloc (sizeof (struct ios));
   io->id = ios_next_id++;
   io->next = NULL;
-  io->handler = xstrdup (handler);
   io->bias = 0;
 
   /* Look for a device interface suitable to operate on the given
      handler.  */
   for (dev_if = ios_dev_ifs; *dev_if; ++dev_if)
     {
-      if ((*dev_if)->handler_p (handler))
+      io->handler = (*dev_if)->handler_normalize (handler);
+      if (io->handler)
         break;
     }
 

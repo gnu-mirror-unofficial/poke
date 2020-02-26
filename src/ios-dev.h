@@ -47,10 +47,10 @@ typedef uint64_t ios_dev_off;
 struct ios_dev_if
 {
   /* Determine whether the provided HANDLER is recognized as a valid
-     device spec by this backend.  Return 1 if the handler is
-     recognized, 0 otherwise.  */
+     device spec by this backend, and if so, return its normalized
+     form (caller will free).  If not, return NULL.  */
 
-  int (*handler_p) (const char *handler);
+  char *(*handler_normalize) (const char *handler);
 
   /* Open a device using the provided HANDLER.  Return the opened
      device, or NULL if there was an error.  In case of invalid flags,
