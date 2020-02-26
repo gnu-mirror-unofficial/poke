@@ -1,3 +1,9 @@
+2020-02-26  Eric Blake  <eblake@redhat.com>
+
+	* etc/git.orderfile (ChangeLog): Always list first.
+	(Documentation): Correct spelling of doc/.
+	(Build files): build-aux is not stored in git.
+
 2020-02-25  Eric Blake  <eblake@redhat.com>
 
 	* .gitignore: Ignore more testsuite leftovers.

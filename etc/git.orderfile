@@ -23,8 +23,11 @@
 # Or make the change permanently by doing:
 #   git config diff.orderFile etc/git.orderfile
 
+# ChangeLog (for as long as we still maintain it manually).
+ChangeLog
+
 # Documentation.
-docs/*
+doc/*
 HACKING
 NEWS
 README
@@ -34,7 +37,6 @@ TODO
 configure.ac
 Makefile.am
 bootstrap.conf
-build-aux/*
 cfg.mk
 m4/*
 
