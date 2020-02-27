@@ -42,6 +42,7 @@
 #include <ctype.h>
 #include <xalloc.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "pkl-ast.h"
 #include "pkl-env.h"
 #include "pkl-parser.h"
@@ -345,11 +346,10 @@ D [0-9]
 
   base = pkl_lex_get_base (yytext, &offset);
 
-  /* strtoll can fail here only in case of under/overflow.  Check for
-     that and return ERR accordingly.  */
-  value = strtoll (yytext + offset, &end, base);
-  if ((value == LLONG_MIN || value == LLONG_MAX) && errno == ERANGE)
-    return INTEGER_OVERFLOW;
+  /* strtoull can fail here only in case of overflow.  */
+  value = strtoull (yytext + offset, &end, base);
+  if (value == ULLONG_MAX && errno == ERANGE)
+        return INTEGER_OVERFLOW;
 
   signed_p = 1;
   if (*end == 'u' || *end == 'U'

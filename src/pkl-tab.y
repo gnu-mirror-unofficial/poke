@@ -853,7 +853,7 @@ primary:
         	{
                   $$ = NULL; /* To avoid bison warning.  */
                   pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
-                             "integer literal is too big or too small");
+                             "integer literal is too big");
                   YYERROR;
                 }
         | CHAR
