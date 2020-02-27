@@ -128,23 +128,6 @@ We can use the python syntax """ ... """.  Other ideas are welcome.
 
 This should be implemented in the lexer, ``src/pkl-lex.l``.
 
-#P2 Operator * for strings: "ab" * 3 -> "ababab"
-------------------------------------------------
-
-Introduce an operator ``*`` for strings implementing repetition.  This
-involves:
-
-- Adapting the ``pkl_typify1_ps_op_mul`` handler to accept a string
-  and an integer as operands for the MUL operator.
-
-- Adapting the ``pkl_gen_ps_op_mul`` handler to generate code
-  implementing the operation.
-
-It is probably best to implement this operation as a
-macro-instruction, and not as a real PVM instruction.  This involves
-adding stuff into ``src/pkl-insn.def``, ``src/pkl-asm.c`` and the
-instruction implementation in ``src/pkl-asm.pks``.
-
 #P3! Locations in exceptions
 ----------------------------
 
