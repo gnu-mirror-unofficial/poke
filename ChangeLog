@@ -1,5 +1,12 @@
 2020-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-tab.y (INTEGER_OVERFLOW): New token.
+	(primary): Accept INTEGER_OVERFLOW as a primary.
+	* src/pkl-lex.l: Return INTEGER_OVERFLOW whenever appropriate.
+	* testsuite/poke.pkl/integers-diag-1.pk: New test.
+
+2020-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* TODO: Update.
 
 2020-02-26  Eric Blake  <eblake@redhat.com>

@@ -292,6 +292,7 @@ load_module (struct pkl_parser *parser,
 /* Primaries.  */
 
 %token <ast> INTEGER
+%token INTEGER_OVERFLOW
 %token <ast> CHAR
 %token <ast> STR
 %token <ast> IDENTIFIER
@@ -847,6 +848,13 @@ primary:
                   $$ = $1;
                   PKL_AST_LOC ($$) = @$;
                   PKL_AST_LOC (PKL_AST_TYPE ($$)) = @$;
+                }
+        | INTEGER_OVERFLOW
+        	{
+                  $$ = NULL; /* To avoid bison warning.  */
+                  pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                             "integer literal is too big or too small");
+                  YYERROR;
                 }
         | CHAR
                 {

@@ -345,8 +345,11 @@ D [0-9]
 
   base = pkl_lex_get_base (yytext, &offset);
 
-  /* Note that strtol can't fail in this context.  */
+  /* strtoll can fail here only in case of under/overflow.  Check for
+     that and return ERR accordingly.  */
   value = strtoll (yytext + offset, &end, base);
+  if ((value == LLONG_MIN || value == LLONG_MAX) && errno == ERANGE)
+    return INTEGER_OVERFLOW;
 
   signed_p = 1;
   if (*end == 'u' || *end == 'U'
