@@ -1,5 +1,9 @@
 2020-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-lex.l: Set errno to 0 before calling strtoull.
+
+2020-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Add module strtoull.
 	* src/pkl-lex.l: Use strtoull instead of strtoll.
 	* src/pkl-tab.y: Improve error message on integer overflow.

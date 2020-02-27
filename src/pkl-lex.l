@@ -347,6 +347,7 @@ D [0-9]
   base = pkl_lex_get_base (yytext, &offset);
 
   /* strtoull can fail here only in case of overflow.  */
+  errno = 0;
   value = strtoull (yytext + offset, &end, base);
   if (value == ULLONG_MAX && errno == ERANGE)
         return INTEGER_OVERFLOW;
