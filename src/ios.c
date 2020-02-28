@@ -49,59 +49,6 @@
       return IOS_EIOBJ;					\
   }
 
-#define IOS_READ_INTO_CHARRAY_1BYTE(charray, off)	\
-{							\
-  IOS_GET_C_ERR_CHCK((charray)[0], io, off);		\
-}
-
-#define IOS_READ_INTO_CHARRAY_2BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_1BYTE(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[1], io, (off) + 1);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_3BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_2BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[2], io, (off) + 2);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_4BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_3BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[3], io, (off) + 3);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_5BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_4BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[4], io, (off) + 4);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_6BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_5BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[5], io, (off) + 5);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_7BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_6BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[6], io, (off) + 6);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_8BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_7BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[7], io, (off) + 7);	\
-}
-
-#define IOS_READ_INTO_CHARRAY_9BYTES(charray, off)	\
-{							\
-  IOS_READ_INTO_CHARRAY_8BYTES(charray, off);		\
-  IOS_GET_C_ERR_CHCK((charray)[8], io, (off) + 8);	\
-}
-
 /* The following struct implements an instance of an IO space.
 
    `ID' is an unique integer identifying the IO space.
@@ -357,7 +304,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 		     uint64_t *value)
 {
   /* 64 bits might span at most 9 bytes.  */
-  uint64_t c[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  uint8_t c[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   /* Number of signifcant bits in the first byte.  */
   int firstbyte_bits = 8 - (offset % 8);
@@ -369,8 +316,9 @@ ios_read_int_common (ios io, ios_off offset, int flags,
   int lastbyte_bits = (bits + (offset % 8)) % 8;
   lastbyte_bits = lastbyte_bits == 0 ? 8 : lastbyte_bits;
 
-  /* Read the first byte and clear the unused bits.  */
-  IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
+  /* Read the bytes and clear the unused bits.  */
+  if (io->dev_if->pread (io->dev, c, bytes_minus1 + 1, offset / 8) == IOD_EOF)
+    return IOS_EIOFF;
   IOS_CHAR_GET_LSB(&c[0], firstbyte_bits);
 
   switch (bytes_minus1)
@@ -380,7 +328,6 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 1:
-    IOS_READ_INTO_CHARRAY_1BYTE(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[1], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -411,7 +358,6 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 2:
-    IOS_READ_INTO_CHARRAY_2BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[2], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -424,8 +370,9 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	    /* We have to shift to fill the least significant byte to get
 	       the right bits in the same bytes.  */
 	    uint64_t reg;
-	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-		  | (c[2] << (40 + offset % 8));
+	    reg = ((uint64_t) c[0] << (56 + offset % 8))
+	          | ((uint64_t) c[1] << (48 + offset % 8))
+		  | ((uint64_t) c[2] << (40 + offset % 8));
 	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 16)
@@ -448,7 +395,6 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 3:
-    IOS_READ_INTO_CHARRAY_3BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[3], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -462,8 +408,10 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	    /* We have to shift to fill the least significant byte to get
 	       the right bits in the same bytes.  */
 	    uint64_t reg;
-	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8));
+	    reg = ((uint64_t) c[0] << (56 + offset % 8))
+	          | ((uint64_t) c[1] << (48 + offset % 8))
+		  | ((uint64_t) c[2] << (40 + offset % 8))
+	          | ((uint64_t) c[3] << (32 + offset % 8));
 	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 24)
@@ -486,23 +434,25 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 4:
-    IOS_READ_INTO_CHARRAY_4BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[4], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
 	  /* If little endian and the least significant byte is 8 bits aligned,
 	  then we can handle the information byte by byte as we read.  */
-	  *value = (c[4] << (24 + lastbyte_bits)) | (c[3] << 24) | (c[2] << 16)
+	  *value = ((uint64_t) c[4] << (24 + lastbyte_bits))
+	           | ((uint64_t) c[3] << 24) | (c[2] << 16)
 		   | (c[1] << 8) | c[0];
 	else
 	  {
 	    /* We have to shift to fill the least significant byte to get
 	       the right bits in the same bytes.  */
 	    uint64_t reg;
-	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
-		  | (c[4] << (24 + offset % 8));
+	    reg = ((uint64_t) c[0] << (56 + offset % 8))
+	          | ((uint64_t) c[1] << (48 + offset % 8))
+		  | ((uint64_t) c[2] << (40 + offset % 8))
+	          | ((uint64_t) c[3] << (32 + offset % 8))
+		  | ((uint64_t) c[4] << (24 + offset % 8));
 	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 32)
@@ -519,30 +469,34 @@ ios_read_int_common (ios io, ios_off offset, int flags,
       {
 	/* We should shift to fill the least significant byte
 	which is the last 8 bits.  */
-	*value = (c[0] << (24 + lastbyte_bits)) | (c[1] << (16 + lastbyte_bits))
+	*value = ((uint64_t) c[0] << (24 + lastbyte_bits))
+	         | ((uint64_t) c[1] << (16 + lastbyte_bits))
 		 | (c[2] << (8 + lastbyte_bits)) | (c[3] << lastbyte_bits)
 		 | (c[4] >> (8 - lastbyte_bits));
       }
     return IOS_OK;
 
   case 5:
-    IOS_READ_INTO_CHARRAY_5BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[5], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
 	  /* If little endian and the least significant byte is 8 bits aligned,
 	  then we can handle the information byte by byte as we read.  */
-	  *value = (c[5] << (32 + lastbyte_bits)) | (c[4] << 32) | (c[3] << 24)
+	  *value = ((uint64_t) c[5] << (32 + lastbyte_bits))
+	           | ((uint64_t) c[4] << 32) | ((uint64_t) c[3] << 24)
 		   | (c[2] << 16) | (c[1] << 8) | c[0];
 	else
 	  {
 	    /* We have to shift to fill the least significant byte to get
 	       the right bits in the same bytes.  */
 	    uint64_t reg;
-	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
-		  | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8));
+	    reg = ((uint64_t) c[0] << (56 + offset % 8))
+	          | ((uint64_t) c[1] << (48 + offset % 8))
+	          | ((uint64_t) c[2] << (40 + offset % 8))
+	          | ((uint64_t) c[3] << (32 + offset % 8))
+	          | ((uint64_t) c[4] << (24 + offset % 8))
+	          | (c[5] << (16 + offset % 8));
 	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 40)
@@ -559,30 +513,36 @@ ios_read_int_common (ios io, ios_off offset, int flags,
       {
 	/* We should shift to fill the least significant byte
 	which is the last 8 bits.  */
-	*value = (c[0] << (32 + lastbyte_bits)) | (c[1] << (24 + lastbyte_bits))
-		 | (c[2] << (16 + lastbyte_bits)) | (c[3] << (8 + lastbyte_bits))
+	*value = ((uint64_t) c[0] << (32 + lastbyte_bits))
+	         | ((uint64_t) c[1] << (24 + lastbyte_bits))
+	         | ((uint64_t) c[2] << (16 + lastbyte_bits))
+	         | (c[3] << (8 + lastbyte_bits))
 		 | (c[4] << lastbyte_bits) | (c[5] >> (8 - lastbyte_bits));
       }
     return IOS_OK;
 
   case 6:
-    IOS_READ_INTO_CHARRAY_6BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[6], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
 	  /* If little endian and the least significant byte is 8 bits aligned,
 	  then we can handle the information byte by byte as we read.  */
-	  *value = (c[6] << (40 + lastbyte_bits)) | (c[5] << 40) | (c[4] << 32)
-		   | (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
+	  *value = ((uint64_t) c[6] << (40 + lastbyte_bits))
+	           | ((uint64_t) c[5] << 40) | ((uint64_t) c[4] << 32)
+	           | ((uint64_t) c[3] << 24) | (c[2] << 16) | (c[1] << 8)
+	           | c[0];
 	else
 	  {
 	    /* We have to shift to fill the least significant byte to get
 	       the right bits in the same bytes.  */
 	    uint64_t reg;
-	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
-		  | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8))
+	    reg = ((uint64_t) c[0] << (56 + offset % 8))
+	          | ((uint64_t) c[1] << (48 + offset % 8))
+	          | ((uint64_t) c[2] << (40 + offset % 8))
+	          | ((uint64_t) c[3] << (32 + offset % 8))
+	          | ((uint64_t) c[4] << (24 + offset % 8))
+	          | (c[5] << (16 + offset % 8))
 		  | (c[6] << (8 + offset % 8));
 	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
@@ -600,32 +560,37 @@ ios_read_int_common (ios io, ios_off offset, int flags,
       {
 	/* We should shift to fill the least significant byte
 	which is the last 8 bits.  */
-	*value = (c[0] << (40 + lastbyte_bits)) | (c[1] << (32 + lastbyte_bits))
-		 | (c[2] << (24 + lastbyte_bits)) | (c[3] << (16 + lastbyte_bits))
+	*value = ((uint64_t) c[0] << (40 + lastbyte_bits))
+	         | ((uint64_t) c[1] << (32 + lastbyte_bits))
+	         | ((uint64_t) c[2] << (24 + lastbyte_bits))
+	         | ((uint64_t) c[3] << (16 + lastbyte_bits))
 		 | (c[4] << (8 + lastbyte_bits)) | (c[5] << lastbyte_bits)
 		 | (c[6] >> (8 - lastbyte_bits));
       }
     return IOS_OK;
 
   case 7:
-    IOS_READ_INTO_CHARRAY_7BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[7], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	if ((offset % 8) == 0)
 	  /* If little endian and the least significant byte is 8 bits aligned,
 	  then we can handle the information byte by byte as we read.  */
-	  *value = (c[7] << (48 + lastbyte_bits)) | (c[6] << 48) | (c[5] << 40)
-		   | (c[4] << 32) | (c[3] << 24) | (c[2] << 16) | (c[1] << 8)
-		   | c[0];
+	  *value = ((uint64_t) c[7] << (48 + lastbyte_bits))
+	           | ((uint64_t) c[6] << 48) | ((uint64_t) c[5] << 40)
+	           | ((uint64_t) c[4] << 32) | ((uint64_t) c[3] << 24)
+	           | (c[2] << 16) | (c[1] << 8) | c[0];
 	else
 	  {
 	    /* We have to shift to fill the least significant byte to get
 	       the right bits in the same bytes.  */
 	    uint64_t reg;
-	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
-		  | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8))
+	    reg = ((uint64_t) c[0] << (56 + offset % 8))
+	          | ((uint64_t) c[1] << (48 + offset % 8))
+		  | ((uint64_t) c[2] << (40 + offset % 8))
+	          | ((uint64_t) c[3] << (32 + offset % 8))
+		  | ((uint64_t) c[4] << (24 + offset % 8))
+	          | (c[5] << (16 + offset % 8))
 		  | (c[6] << (8 + offset % 8)) | (c[7] << offset % 8);
 	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
@@ -643,24 +608,29 @@ ios_read_int_common (ios io, ios_off offset, int flags,
       {
 	/* We should shift to fill the least significant byte
 	which is the last 8 bits.  */
-	*value = (c[0] << (48 + lastbyte_bits)) | (c[1] << (40 + lastbyte_bits))
-		 | (c[2] << (32 + lastbyte_bits)) | (c[3] << (24 + lastbyte_bits))
-		 | (c[4] << (16 + lastbyte_bits)) | (c[5] << (8 + lastbyte_bits))
+	*value = ((uint64_t) c[0] << (48 + lastbyte_bits))
+	         | ((uint64_t) c[1] << (40 + lastbyte_bits))
+		 | ((uint64_t) c[2] << (32 + lastbyte_bits))
+	         | ((uint64_t) c[3] << (24 + lastbyte_bits))
+	         | ((uint64_t) c[4] << (16 + lastbyte_bits))
+	         | (c[5] << (8 + lastbyte_bits))
 		 | (c[6] << lastbyte_bits) | (c[7] >> (8 - lastbyte_bits));
       }
     return IOS_OK;
 
   case 8:
-    IOS_READ_INTO_CHARRAY_8BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[8], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
 	/* We have to shift to fill the least significant byte to get
 	   the right bits in the same bytes.  */
 	uint64_t reg;
-	reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
-	      | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
-	      | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8))
+	reg = ((uint64_t) c[0] << (56 + offset % 8))
+	      | ((uint64_t) c[1] << (48 + offset % 8))
+	      | ((uint64_t) c[2] << (40 + offset % 8))
+	      | ((uint64_t) c[3] << (32 + offset % 8))
+	      | ((uint64_t) c[4] << (24 + offset % 8))
+	      | (c[5] << (16 + offset % 8))
 	      | (c[6] << (8 + offset % 8)) | (c[7] << offset % 8)
 	      | (c[8] >> firstbyte_bits);
 	/* The bits in the most-significant-byte-to-be is aligned to left,
@@ -674,9 +644,12 @@ ios_read_int_common (ios io, ios_off offset, int flags,
       {
 	/* We should shift to fill the least significant byte
 	which is the last 8 bits.  */
-	*value = (c[0] << (56 + lastbyte_bits)) | (c[1] << (48 + lastbyte_bits))
-		 | (c[2] << (40 + lastbyte_bits)) | (c[3] << (32 + lastbyte_bits))
-		 | (c[4] << (24 + lastbyte_bits)) | (c[5] << (16 + lastbyte_bits))
+	*value = ((uint64_t) c[0] << (56 + lastbyte_bits))
+	         | ((uint64_t) c[1] << (48 + lastbyte_bits))
+		 | ((uint64_t) c[2] << (40 + lastbyte_bits))
+	         | ((uint64_t) c[3] << (32 + lastbyte_bits))
+		 | ((uint64_t) c[4] << (24 + lastbyte_bits))
+	         | ((uint64_t) c[5] << (16 + lastbyte_bits))
 		 | (c[6] << (8 + lastbyte_bits)) | (c[7] << lastbyte_bits)
 		 | (c[8] >> (8 - lastbyte_bits));
       }
@@ -700,30 +673,28 @@ ios_read_int (ios io, ios_off offset, int flags,
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     {
+      uint8_t c[8];
+      if (io->dev_if->pread (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
+	return IOS_EIOFF;
+
       switch (bits) {
       case 8:
 	{
-	  int8_t c[1] = {0};
-	  IOS_READ_INTO_CHARRAY_1BYTE(c, offset / 8);
-	  *value = c[0];
+	  *value = (int8_t) c[0];
 	  return IOS_OK;
 	}
 
       case 16:
 	{
-	  int16_t c[2] = {0, 0};
-	  IOS_READ_INTO_CHARRAY_2BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
-	    *value = (c[1] << 8) | c[0];
+	    *value = (int16_t) (c[1] << 8) | c[0];
 	  else
-	    *value = (c[0] << 8) | c[1];
+	    *value = (int16_t) (c[0] << 8) | c[1];
 	  return IOS_OK;
 	}
 
       case 24:
 	{
-	  int64_t c[3] = {0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_3BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[2] << 16) | (c[1] << 8) | c[0];
 	  else
@@ -735,25 +706,21 @@ ios_read_int (ios io, ios_off offset, int flags,
 
       case 32:
         {
-	  int32_t c[4] = {0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_4BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
-	    *value = (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
+	    *value = (int32_t) (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
 	  else
-	    *value = (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
+	    *value = (int32_t) (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
 	  return IOS_OK;
 	}
 
       case 40:
         {
-	  int64_t c[5] = {0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_5BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
-	    *value = (c[4] << 32) | (c[3] << 24) | (c[2] << 16) | (c[1] << 8)
-		     | c[0];
+	    *value = ((uint64_t) c[4] << 32) | ((uint64_t) c[3] << 24)
+	             | (c[2] << 16) | (c[1] << 8) | c[0];
 	  else
-	    *value = (c[0] << 32) | (c[1] << 24) | (c[2] << 16) | (c[3] << 8)
-		     | c[4];
+	    *value = ((uint64_t) c[0] << 32) | ((uint64_t) c[1] << 24)
+	             | (c[2] << 16) | (c[3] << 8) | c[4];
 	  *value <<= 24;
 	  *value >>= 24;
 	  return IOS_OK;
@@ -761,13 +728,13 @@ ios_read_int (ios io, ios_off offset, int flags,
 
       case 48:
 	{
-	  int64_t c[6] = {0, 0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_6BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
-	    *value = (c[5] << 40) | (c[4] << 32) | (c[3] << 24) | (c[2] << 16)
+	    *value = ((uint64_t) c[5] << 40) | ((uint64_t) c[4] << 32)
+	             | ((uint64_t) c[3] << 24) | (c[2] << 16)
 		     | (c[1] << 8) | c[0];
 	  else
-	    *value = (c[0] << 40) | (c[1] << 32) | (c[2] << 24) | (c[3] << 16)
+	    *value = ((uint64_t) c[0] << 40) | ((uint64_t) c[1] << 32)
+	             | ((uint64_t) c[2] << 24) | (c[3] << 16)
 		     | (c[4] << 8) | c[5];
 	  *value <<= 16;
 	  *value >>= 16;
@@ -776,13 +743,13 @@ ios_read_int (ios io, ios_off offset, int flags,
 
       case 56:
 	{
-	  int64_t c[7] = {0, 0, 0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_7BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
-	    *value = (c[6] << 48) | (c[5] << 40) | (c[4] << 32) | (c[3] << 24)
+	    *value = ((uint64_t) c[6] << 48) | ((uint64_t) c[5] << 40)
+	             | ((uint64_t) c[4] << 32) | ((uint64_t) c[3] << 24)
 		     | (c[2] << 16) | (c[1] << 8) | c[0];
 	  else
-	    *value = (c[0] << 48) | (c[1] << 40) | (c[2] << 32) | (c[3] << 24)
+	    *value = ((uint64_t) c[0] << 48) | ((uint64_t) c[1] << 40)
+	             | ((uint64_t) c[2] << 32) | ((uint64_t) c[3] << 24)
 		     | (c[4] << 16) | (c[5] << 8) | c[6];
 	  *value <<= 8;
 	  *value >>= 8;
@@ -791,14 +758,16 @@ ios_read_int (ios io, ios_off offset, int flags,
 
       case 64:
 	{
-	  int64_t c[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_8BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
-	    *value = (c[7] << 56) | (c[6] << 48) | (c[5] << 40) | (c[4] << 32)
-		     | (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
+	    *value = ((uint64_t) c[7] << 56) | ((uint64_t) c[6] << 48)
+	             | ((uint64_t) c[5] << 40) | ((uint64_t) c[4] << 32)
+	             | ((uint64_t) c[3] << 24) | (c[2] << 16) | (c[1] << 8)
+	             | c[0];
 	  else
-	    *value = (c[0] << 56) | (c[1] << 48) | (c[2] << 40) | (c[3] << 32)
-		     | (c[4] << 24) | (c[5] << 16) | (c[6] << 8) | c[7];
+	    *value = ((uint64_t) c[0] << 56) | ((uint64_t) c[1] << 48)
+	             | ((uint64_t) c[2] << 40) | ((uint64_t) c[3] << 32)
+	             | ((uint64_t) c[4] << 24) | (c[5] << 16) | (c[6] << 8)
+	             | c[7];
 	  return IOS_OK;
 	}
       }
@@ -825,20 +794,19 @@ ios_read_uint (ios io, ios_off offset, int flags,
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
-  /* When aligned, 1 to 64 bits can span at most 8 bytes.  */
-  uint64_t c[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     {
+      uint8_t c[8];
+      if (io->dev_if->pread (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
+	return IOS_EIOFF;
+
       switch (bits) {
       case 8:
-	IOS_READ_INTO_CHARRAY_1BYTE(c, offset / 8);
 	*value = c[0];
 	return IOS_OK;
 
       case 16:
-	IOS_READ_INTO_CHARRAY_2BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[1] << 8) | c[0];
 	else
@@ -846,7 +814,6 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 24:
-	IOS_READ_INTO_CHARRAY_3BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[2] << 16) | (c[1] << 8) | c[0];
 	else
@@ -854,51 +821,54 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 32:
-	IOS_READ_INTO_CHARRAY_4BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
-	  *value = (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
+	  *value = ((uint64_t) c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
 	else
-	  *value = (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
+	  *value = ((uint64_t) c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
 	return IOS_OK;
 
       case 40:
-	IOS_READ_INTO_CHARRAY_5BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
-	  *value = (c[4] << 32) | (c[3] << 24) | (c[2] << 16) | (c[1] << 8)
-		   | c[0];
+	  *value = ((uint64_t) c[4] << 32) | ((uint64_t) c[3] << 24)
+	           | (c[2] << 16) | (c[1] << 8) | c[0];
 	else
-	  *value = (c[0] << 32) | (c[1] << 24) | (c[2] << 16) | (c[3] << 8)
-		   | c[4];
+	  *value = ((uint64_t) c[0] << 32) | ((uint64_t) c[1] << 24)
+	           | (c[2] << 16) | (c[3] << 8) | c[4];
 	return IOS_OK;
 
       case 48:
-	IOS_READ_INTO_CHARRAY_6BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
-	  *value = (c[5] << 40) | (c[4] << 32) | (c[3] << 24) | (c[2] << 16)
+	  *value = ((uint64_t) c[5] << 40) | ((uint64_t) c[4] << 32)
+	           | ((uint64_t) c[3] << 24) | (c[2] << 16)
 		   | (c[1] << 8) | c[0];
 	else
-	  *value = (c[0] << 40) | (c[1] << 32) | (c[2] << 24) | (c[3] << 16)
+	  *value = ((uint64_t) c[0] << 40) | ((uint64_t) c[1] << 32)
+	           | ((uint64_t) c[2] << 24) | (c[3] << 16)
 		   | (c[4] << 8) | c[5];
 	return IOS_OK;
 
       case 56:
-	IOS_READ_INTO_CHARRAY_7BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
-	  *value = (c[6] << 48) | (c[5] << 40) | (c[4] << 32) | (c[3] << 24)
+	  *value = ((uint64_t) c[6] << 48) | ((uint64_t) c[5] << 40)
+	           | ((uint64_t) c[4] << 32) | ((uint64_t) c[3] << 24)
 		   | (c[2] << 16) | (c[1] << 8) | c[0];
 	else
-	  *value = (c[0] << 48) | (c[1] << 40) | (c[2] << 32) | (c[3] << 24)
+	  *value = ((uint64_t) c[0] << 48) | ((uint64_t) c[1] << 40)
+	           | ((uint64_t) c[2] << 32) | ((uint64_t) c[3] << 24)
 		   | (c[4] << 16) | (c[5] << 8) | c[6];
 	return IOS_OK;
 
       case 64:
-	IOS_READ_INTO_CHARRAY_8BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
-	  *value = (c[7] << 56) | (c[6] << 48) | (c[5] << 40) | (c[4] << 32)
-		   | (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
+	  *value = ((uint64_t) c[7] << 56) | ((uint64_t) c[6] << 48)
+	           | ((uint64_t) c[5] << 40) | ((uint64_t) c[4] << 32)
+		   | ((uint64_t) c[3] << 24) | (c[2] << 16) | (c[1] << 8)
+	           | c[0];
 	else
-	  *value = (c[0] << 56) | (c[1] << 48) | (c[2] << 40) | (c[3] << 32)
-		   | (c[4] << 24) | (c[5] << 16) | (c[6] << 8) | c[7];
+	  *value = ((uint64_t) c[0] << 56) | ((uint64_t) c[1] << 48)
+	           | ((uint64_t) c[2] << 40) | ((uint64_t) c[3] << 32)
+		   | ((uint64_t) c[4] << 24) | (c[5] << 16) | (c[6] << 8)
+	           | c[7];
 	return IOS_OK;
       }
     }

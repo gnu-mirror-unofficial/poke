@@ -1,5 +1,16 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	ios: Utilize buffer reads.
+	* src/ios.c (ios_read_int_common, ios_read_int, ios_read_uint):
+	Consolidate reads.
+	(IOS_READ_INTO_CHARRAY_1BYTE, IOS_READ_INTO_CHARRAY_2BYTES)
+	(IOS_READ_INTO_CHARRAY_3BYTES, IOS_READ_INTO_CHARRAY_4BYTES)
+	(IOS_READ_INTO_CHARRAY_5BYTES, IOS_READ_INTO_CHARRAY_6BYTES)
+	(IOS_READ_INTO_CHARRAY_7BYTES, IOS_READ_INTO_CHARRAY_8BYTES)
+	(IOS_READ_INTO_CHARRAY_9BYTES): Delete unused macros.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	ios: Change from getchar to pread device interface.
 	* src/ios-dev.h (struct ios_dev_if): Replace get_c/put_c with
 	pread/pwrite.
