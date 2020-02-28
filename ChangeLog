@@ -1,5 +1,20 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	ios: Pass offset to low-level macros.
+	* src/ios.c (IOS_GET_C_ERR_CHCK, IOS_PUT_C_ERR_CHCK)
+	(IOS_READ_INTO_CHARRAY_1BYTE, IOS_READ_INTO_CHARRAY_2BYTES)
+	(IOS_READ_INTO_CHARRAY_3BYTES, IOS_READ_INTO_CHARRAY_4BYTES)
+	(IOS_READ_INTO_CHARRAY_5BYTES, IOS_READ_INTO_CHARRAY_6BYTES)
+	(IOS_READ_INTO_CHARRAY_7BYTES, IOS_READ_INTO_CHARRAY_8BYTES)
+	(IOS_READ_INTO_CHARRAY_9BYTES): Add parameter (unused until next
+	patch).
+	(ios_write_int_fast): Add parameter.
+	(ios_read_int_common, ios_read_int, ios_read_uint)
+	(ios_write_int_common, ios_write_int, ios_write_uint): Adjust
+	callers.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	ios: Avoid data leak and write-beyond-bounds in mem.
 	* src/ios-dev-mem.c (ios_dev_mem_putc): Zero the added bytes, and
 	track the updated size.

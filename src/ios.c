@@ -32,77 +32,77 @@
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
-#define IOS_GET_C_ERR_CHCK(c, io)               \
+#define IOS_GET_C_ERR_CHCK(c, io, off)		\
   {                                             \
-  int ret = io->dev_if->get_c ((io)->dev); 	\
-  if (ret == IOD_EOF)                           \
-    return IOS_EIOFF;                           \
-  (c) = ret;                                    \
-}
+    int ret = (io)->dev_if->get_c ((io)->dev); 	\
+    if (ret == IOD_EOF)				\
+      return IOS_EIOFF;				\
+    (c) = ret;					\
+  }
 
-#define IOS_PUT_C_ERR_CHCK(c, io)		\
-{						\
-  if (io->dev_if->put_c ((io)->dev, (char)(c))	\
-      == IOD_EOF)				\
-    return IOS_EIOBJ;				\
-}
+#define IOS_PUT_C_ERR_CHCK(c, io, off)			\
+  {							\
+  if ((io)->dev_if->put_c ((io)->dev, (char)(c))	\
+      == IOD_EOF)					\
+    return IOS_EIOBJ;					\
+  }
 
-#define IOS_READ_INTO_CHARRAY_1BYTE(charray)		\
+#define IOS_READ_INTO_CHARRAY_1BYTE(charray, off)	\
 {							\
-  IOS_GET_C_ERR_CHCK((charray)[0], io);			\
+  IOS_GET_C_ERR_CHCK((charray)[0], io, off);		\
 }
 
-#define IOS_READ_INTO_CHARRAY_2BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_2BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_1BYTE(charray);			\
-  IOS_GET_C_ERR_CHCK((charray)[1], io);			\
+  IOS_READ_INTO_CHARRAY_1BYTE(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[1], io, (off) + 1);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_3BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_3BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_2BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[2], io);			\
+  IOS_READ_INTO_CHARRAY_2BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[2], io, (off) + 2);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_4BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_4BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_3BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[3], io);			\
+  IOS_READ_INTO_CHARRAY_3BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[3], io, (off) + 3);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_5BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_5BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_4BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[4], io);			\
+  IOS_READ_INTO_CHARRAY_4BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[4], io, (off) + 4);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_6BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_6BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_5BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[5], io);			\
+  IOS_READ_INTO_CHARRAY_5BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[5], io, (off) + 5);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_7BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_7BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_6BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[6], io);			\
+  IOS_READ_INTO_CHARRAY_6BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[6], io, (off) + 6);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_8BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_8BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_7BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[7], io);			\
+  IOS_READ_INTO_CHARRAY_7BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[7], io, (off) + 7);	\
 }
 
-#define IOS_READ_INTO_CHARRAY_9BYTES(charray)		\
+#define IOS_READ_INTO_CHARRAY_9BYTES(charray, off)	\
 {							\
-  IOS_READ_INTO_CHARRAY_8BYTES(charray);		\
-  IOS_GET_C_ERR_CHCK((charray)[8], io);			\
+  IOS_READ_INTO_CHARRAY_8BYTES(charray, off);		\
+  IOS_GET_C_ERR_CHCK((charray)[8], io, (off) + 8);	\
 }
 
 /* The following struct implements an instance of an IO space.
 
-   `IS' is an unique integer identifying the IO space.
+   `ID' is an unique integer identifying the IO space.
 
    HANDLER is a copy of the handler string used to open the space.
 
@@ -368,7 +368,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
   lastbyte_bits = lastbyte_bits == 0 ? 8 : lastbyte_bits;
 
   /* Read the first byte and clear the unused bits.  */
-  IOS_GET_C_ERR_CHCK(c[0], io);
+  IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
   IOS_CHAR_GET_LSB(&c[0], firstbyte_bits);
 
   switch (bytes_minus1)
@@ -378,7 +378,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 1:
-    IOS_READ_INTO_CHARRAY_1BYTE(c+1);
+    IOS_READ_INTO_CHARRAY_1BYTE(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[1], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -409,7 +409,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 2:
-    IOS_READ_INTO_CHARRAY_2BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_2BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[2], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -424,7 +424,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	    uint64_t reg;
 	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
 		  | (c[2] << (40 + offset % 8));
-	    /* The bits in the most-significant-byte-to-be is alligned to left,
+	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 16)
 	      reg = ((reg & 0x00ff000000000000LL) >> (16 - bits))
@@ -446,7 +446,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 3:
-    IOS_READ_INTO_CHARRAY_3BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_3BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[3], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -462,7 +462,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	    uint64_t reg;
 	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
 		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8));
-	    /* The bits in the most-significant-byte-to-be is alligned to left,
+	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 24)
 	      reg = ((reg & 0x0000ff0000000000LL) >> (24 - bits))
@@ -484,7 +484,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 4:
-    IOS_READ_INTO_CHARRAY_4BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_4BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[4], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -501,7 +501,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
 		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
 		  | (c[4] << (24 + offset % 8));
-	    /* The bits in the most-significant-byte-to-be is alligned to left,
+	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 32)
 	      reg = ((reg & 0x000000ff00000000LL) >> (32 - bits))
@@ -524,7 +524,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 5:
-    IOS_READ_INTO_CHARRAY_5BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_5BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[5], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -541,7 +541,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	    reg = (c[0] << (56 + offset % 8)) | (c[1] << (48 + offset % 8))
 		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
 		  | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8));
-	    /* The bits in the most-significant-byte-to-be is alligned to left,
+	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 40)
 	      reg = ((reg & 0x00000000ff000000LL) >> (40 - bits))
@@ -564,7 +564,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 6:
-    IOS_READ_INTO_CHARRAY_6BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_6BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[6], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -582,7 +582,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
 		  | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8))
 		  | (c[6] << (8 + offset % 8));
-	    /* The bits in the most-significant-byte-to-be is alligned to left,
+	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 48)
 	      reg = ((reg & 0x0000000000ff0000LL) >> (48 - bits))
@@ -606,7 +606,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 7:
-    IOS_READ_INTO_CHARRAY_7BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_7BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[7], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -625,7 +625,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 		  | (c[2] << (40 + offset % 8)) | (c[3] << (32 + offset % 8))
 		  | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8))
 		  | (c[6] << (8 + offset % 8)) | (c[7] << offset % 8);
-	    /* The bits in the most-significant-byte-to-be is alligned to left,
+	    /* The bits in the most-significant-byte-to-be is aligned to left,
 	       shift it towards right! */
 	    if (bits <= 56)
 	      reg = ((reg & 0x000000000000ff00LL) >> (56 - bits))
@@ -649,7 +649,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   case 8:
-    IOS_READ_INTO_CHARRAY_8BYTES(c+1);
+    IOS_READ_INTO_CHARRAY_8BYTES(c+1, offset / 8 + 1);
     IOS_CHAR_GET_MSB(&c[8], lastbyte_bits);
     if (endian == IOS_ENDIAN_LSB)
       {
@@ -661,7 +661,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
 	      | (c[4] << (24 + offset % 8)) | (c[5] << (16 + offset % 8))
 	      | (c[6] << (8 + offset % 8)) | (c[7] << offset % 8)
 	      | (c[8] >> firstbyte_bits);
-	/* The bits in the most-significant-byte-to-be is alligned to left,
+	/* The bits in the most-significant-byte-to-be is aligned to left,
 	   shift it towards right! */
 	reg = ((reg & 0x00000000000000ffLL) >> (64 - bits))
 	      | (reg & 0xffffffffffffff00LL);
@@ -706,7 +706,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 8:
 	{
 	  int8_t c[1] = {0};
-	  IOS_READ_INTO_CHARRAY_1BYTE(c);
+	  IOS_READ_INTO_CHARRAY_1BYTE(c, offset / 8);
 	  *value = c[0];
 	  return IOS_OK;
 	}
@@ -714,7 +714,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 16:
 	{
 	  int16_t c[2] = {0, 0};
-	  IOS_READ_INTO_CHARRAY_2BYTES(c);
+	  IOS_READ_INTO_CHARRAY_2BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[1] << 8) | c[0];
 	  else
@@ -725,7 +725,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 24:
 	{
 	  int64_t c[3] = {0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_3BYTES(c);
+	  IOS_READ_INTO_CHARRAY_3BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[2] << 16) | (c[1] << 8) | c[0];
 	  else
@@ -738,7 +738,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 32:
         {
 	  int32_t c[4] = {0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_4BYTES(c);
+	  IOS_READ_INTO_CHARRAY_4BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
 	  else
@@ -749,7 +749,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 40:
         {
 	  int64_t c[5] = {0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_5BYTES(c);
+	  IOS_READ_INTO_CHARRAY_5BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[4] << 32) | (c[3] << 24) | (c[2] << 16) | (c[1] << 8)
 		     | c[0];
@@ -764,7 +764,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 48:
 	{
 	  int64_t c[6] = {0, 0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_6BYTES(c);
+	  IOS_READ_INTO_CHARRAY_6BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[5] << 40) | (c[4] << 32) | (c[3] << 24) | (c[2] << 16)
 		     | (c[1] << 8) | c[0];
@@ -779,7 +779,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 56:
 	{
 	  int64_t c[7] = {0, 0, 0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_7BYTES(c);
+	  IOS_READ_INTO_CHARRAY_7BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[6] << 48) | (c[5] << 40) | (c[4] << 32) | (c[3] << 24)
 		     | (c[2] << 16) | (c[1] << 8) | c[0];
@@ -794,7 +794,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       case 64:
 	{
 	  int64_t c[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-	  IOS_READ_INTO_CHARRAY_8BYTES(c);
+	  IOS_READ_INTO_CHARRAY_8BYTES(c, offset / 8);
 	  if (endian == IOS_ENDIAN_LSB)
 	    *value = (c[7] << 56) | (c[6] << 48) | (c[5] << 40) | (c[4] << 32)
 		     | (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
@@ -839,12 +839,12 @@ ios_read_uint (ios io, ios_off offset, int flags,
     {
       switch (bits) {
       case 8:
-	IOS_READ_INTO_CHARRAY_1BYTE(c);
+	IOS_READ_INTO_CHARRAY_1BYTE(c, offset / 8);
 	*value = c[0];
 	return IOS_OK;
 
       case 16:
-	IOS_READ_INTO_CHARRAY_2BYTES(c);
+	IOS_READ_INTO_CHARRAY_2BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[1] << 8) | c[0];
 	else
@@ -852,7 +852,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 24:
-	IOS_READ_INTO_CHARRAY_3BYTES(c);
+	IOS_READ_INTO_CHARRAY_3BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[2] << 16) | (c[1] << 8) | c[0];
 	else
@@ -860,7 +860,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 32:
-	IOS_READ_INTO_CHARRAY_4BYTES(c);
+	IOS_READ_INTO_CHARRAY_4BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
 	else
@@ -868,7 +868,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 40:
-	IOS_READ_INTO_CHARRAY_5BYTES(c);
+	IOS_READ_INTO_CHARRAY_5BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[4] << 32) | (c[3] << 24) | (c[2] << 16) | (c[1] << 8)
 		   | c[0];
@@ -878,7 +878,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 48:
-	IOS_READ_INTO_CHARRAY_6BYTES(c);
+	IOS_READ_INTO_CHARRAY_6BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[5] << 40) | (c[4] << 32) | (c[3] << 24) | (c[2] << 16)
 		   | (c[1] << 8) | c[0];
@@ -888,7 +888,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 56:
-	IOS_READ_INTO_CHARRAY_7BYTES(c);
+	IOS_READ_INTO_CHARRAY_7BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[6] << 48) | (c[5] << 40) | (c[4] << 32) | (c[3] << 24)
 		   | (c[2] << 16) | (c[1] << 8) | c[0];
@@ -898,7 +898,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
 	return IOS_OK;
 
       case 64:
-	IOS_READ_INTO_CHARRAY_8BYTES(c);
+	IOS_READ_INTO_CHARRAY_8BYTES(c, offset / 8);
 	if (endian == IOS_ENDIAN_LSB)
 	  *value = (c[7] << 56) | (c[6] << 48) | (c[5] << 40) | (c[4] << 32)
 		   | (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
@@ -977,147 +977,148 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
 }
 
 static inline int
-ios_write_int_fast (ios io, int flags,
+ios_write_int_fast (ios io, ios_off offset, int flags,
 		    int bits,
 		    enum ios_endian endian,
 		    uint64_t value)
 {
+  offset /= 8;
   switch (bits)
     {
     case 8:
-      IOS_PUT_C_ERR_CHCK(value, io);
+      IOS_PUT_C_ERR_CHCK(value, io, offset);
       return IOS_OK;
 
     case 16:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 1);
 	}
       return IOS_OK;
 
     case 24:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 2);
 	}
       return IOS_OK;
 
     case 32:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 3);
 	}
       return IOS_OK;
 
     case 40:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 4);
 	}
       return IOS_OK;
 
     case 48:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 5);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 4);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 5);
 	}
       return IOS_OK;
 
     case 56:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 5);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset + 6);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 4);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 5);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 6);
 	}
       return IOS_OK;
 
     case 64:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 56, io);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 5);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset + 6);
+	  IOS_PUT_C_ERR_CHCK(value >> 56, io, offset + 7);
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 56, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io);
-	  IOS_PUT_C_ERR_CHCK(value, io);
+	  IOS_PUT_C_ERR_CHCK(value >> 56, io, offset);
+	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset + 1);
+	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 2);
+	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 3);
+	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 4);
+	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 5);
+	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 6);
+	  IOS_PUT_C_ERR_CHCK(value, io, offset + 7);
 	}
       return IOS_OK;
 
@@ -1152,7 +1153,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     {
       /* We are altering only a single byte.  */
       uint64_t head, tail;
-      IOS_GET_C_ERR_CHCK(head, io);
+      IOS_GET_C_ERR_CHCK(head, io, offset / 8);
       tail = head;
       IOS_CHAR_GET_MSB(&head, offset % 8);
       IOS_CHAR_GET_LSB(&tail, 8 - lastbyte_bits);
@@ -1162,16 +1163,16 @@ ios_write_int_common (ios io, ios_off offset, int flags,
 
       /* Write the byte back without changing the surrounding bits.  */
       c[0] = head | tail | (value << (8 - lastbyte_bits));
-      IOS_PUT_C_ERR_CHCK(c[0], io);
+      IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
       return IOS_OK;
     }
 
   case 1:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + 1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1187,18 +1188,18 @@ ios_write_int_common (ios io, ios_off offset, int flags,
       }
     c[0] |= value >> lastbyte_bits;
     c[1] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
     return IOS_OK;
 
   case 2:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1220,19 +1221,19 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[0] |= value >> (8 + lastbyte_bits);
     c[1] = (value >> lastbyte_bits) & 0xff;
     c[2] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
     return IOS_OK;
 
   case 3:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1257,20 +1258,20 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[1] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[2] = (value >> lastbyte_bits) & 0xff;
     c[3] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
-    IOS_PUT_C_ERR_CHCK(c[3], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
     return IOS_OK;
 
   case 4:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1298,21 +1299,21 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[2] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[3] = (value >> lastbyte_bits) & 0xff;
     c[4] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
-    IOS_PUT_C_ERR_CHCK(c[3], io);
-    IOS_PUT_C_ERR_CHCK(c[4], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
+    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
     return IOS_OK;
 
   case 5:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1343,22 +1344,22 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[3] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[4] = (value >> lastbyte_bits) & 0xff;
     c[5] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
-    IOS_PUT_C_ERR_CHCK(c[3], io);
-    IOS_PUT_C_ERR_CHCK(c[4], io);
-    IOS_PUT_C_ERR_CHCK(c[5], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
+    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
+    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
     return IOS_OK;
 
   case 6:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1392,23 +1393,23 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[4] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[5] = (value >> lastbyte_bits) & 0xff;
     c[6] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
-    IOS_PUT_C_ERR_CHCK(c[3], io);
-    IOS_PUT_C_ERR_CHCK(c[4], io);
-    IOS_PUT_C_ERR_CHCK(c[5], io);
-    IOS_PUT_C_ERR_CHCK(c[6], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
+    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
+    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
+    IOS_PUT_C_ERR_CHCK(c[6], io, offset / 8 + 6);
     return IOS_OK;
 
   case 7:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1445,24 +1446,24 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[5] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[6] = (value >> lastbyte_bits) & 0xff;
     c[7] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
-    IOS_PUT_C_ERR_CHCK(c[3], io);
-    IOS_PUT_C_ERR_CHCK(c[4], io);
-    IOS_PUT_C_ERR_CHCK(c[5], io);
-    IOS_PUT_C_ERR_CHCK(c[6], io);
-    IOS_PUT_C_ERR_CHCK(c[7], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
+    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
+    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
+    IOS_PUT_C_ERR_CHCK(c[6], io, offset / 8 + 6);
+    IOS_PUT_C_ERR_CHCK(c[7], io, offset / 8 + 7);
     return IOS_OK;
 
   case 8:
     /* Correctly set the unmodified leading bits of the first byte.  */
-    IOS_GET_C_ERR_CHCK(c[0], io);
+    IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
     if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
       return IOS_EIOFF;
-    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io);
+    IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
     /* We will write starting from offset / 8.  */
     if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
@@ -1491,15 +1492,15 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[6] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[7] = (value >> lastbyte_bits) & 0xff;
     c[8] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io);
-    IOS_PUT_C_ERR_CHCK(c[1], io);
-    IOS_PUT_C_ERR_CHCK(c[2], io);
-    IOS_PUT_C_ERR_CHCK(c[3], io);
-    IOS_PUT_C_ERR_CHCK(c[4], io);
-    IOS_PUT_C_ERR_CHCK(c[5], io);
-    IOS_PUT_C_ERR_CHCK(c[6], io);
-    IOS_PUT_C_ERR_CHCK(c[7], io);
-    IOS_PUT_C_ERR_CHCK(c[8], io);
+    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
+    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
+    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
+    IOS_PUT_C_ERR_CHCK(c[6], io, offset / 8 + 6);
+    IOS_PUT_C_ERR_CHCK(c[7], io, offset / 8 + 7);
+    IOS_PUT_C_ERR_CHCK(c[8], io, offset / 8 + 8);
     return IOS_OK;
 
   default:
@@ -1523,7 +1524,7 @@ ios_write_int (ios io, ios_off offset, int flags,
 
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
-    return ios_write_int_fast (io, flags, bits, endian, value);
+    return ios_write_int_fast (io, offset, flags, bits, endian, value);
 
   /* Shift the sign bit right.  */
   int unused_bits = 64 - bits;
@@ -1548,7 +1549,7 @@ ios_write_uint (ios io, ios_off offset, int flags,
 
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
-    return ios_write_int_fast (io, flags, bits, endian, value);
+    return ios_write_int_fast (io, offset, flags, bits, endian, value);
 
   /* Fall into the case for the unaligned and the sizes other than 8x.  */
   return ios_write_int_common (io, offset, flags, bits, endian, value);
