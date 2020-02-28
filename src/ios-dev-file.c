@@ -148,7 +148,8 @@ ios_dev_file_getc (void *iod, ios_dev_off offset)
   struct ios_dev_file *fio = iod;
   int ret;
 
-  assert (ftello (fio->file) == offset);
+  if (fseeko (fio->file, offset, SEEK_SET) == -1)
+    return IOD_EOF;
   ret = fgetc (fio->file);
 
   return ret == EOF ? IOD_EOF : ret;
@@ -160,35 +161,11 @@ ios_dev_file_putc (void *iod, int c, ios_dev_off offset)
   struct ios_dev_file *fio = iod;
   int ret;
 
-  assert (ftello (fio->file) == offset);
+  if (fseeko (fio->file, offset, SEEK_SET) == -1)
+    return IOD_EOF;
   ret = putc (c, fio->file);
   //printf ("%d -> 0x%lu\n", ret, ftello (fio->file));
   return ret == EOF ? IOD_EOF : ret;
-}
-
-static ios_dev_off
-ios_dev_file_tell (void *iod)
-{
-  struct ios_dev_file *fio = iod;
-  return ftello (fio->file);
-}
-
-static int
-ios_dev_file_seek (void *iod, ios_dev_off offset, int whence)
-{
-  struct ios_dev_file *fio = iod;
-  int fwhence;
-
-  switch (whence)
-    {
-    case IOD_SEEK_SET: fwhence = SEEK_SET; break;
-    case IOD_SEEK_CUR: fwhence = SEEK_CUR; break;
-    case IOD_SEEK_END: fwhence = SEEK_END; break;
-    default:
-      assert (0);
-    }
-
-  return fseeko (fio->file, offset, fwhence);
 }
 
 static ios_dev_off
@@ -206,8 +183,6 @@ struct ios_dev_if ios_dev_file =
    .handler_normalize = ios_dev_file_handler_normalize,
    .open = ios_dev_file_open,
    .close = ios_dev_file_close,
-   .tell = ios_dev_file_tell,
-   .seek = ios_dev_file_seek,
    .get_c = ios_dev_file_getc,
    .put_c = ios_dev_file_putc,
    .get_flags = ios_dev_file_get_flags,

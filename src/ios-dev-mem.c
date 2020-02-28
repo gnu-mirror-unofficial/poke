@@ -32,7 +32,6 @@ struct ios_dev_mem
 {
   char *pointer;
   size_t size;
-  size_t cur;
   uint64_t flags;
 };
 
@@ -54,7 +53,6 @@ ios_dev_mem_open (const char *handler, uint64_t flags, int *error)
   mio = xmalloc (sizeof (struct ios_dev_mem));
   mio->pointer = xzalloc (MEM_STEP);
   mio->size = MEM_STEP;
-  mio->cur = 0;
   mio->flags = flags;
 
   return mio;
@@ -84,11 +82,10 @@ ios_dev_mem_getc (void *iod, ios_dev_off offset)
 {
   struct ios_dev_mem *mio = iod;
 
-  assert (mio->cur == offset);
-  if (mio->cur >= mio->size)
+  if (offset >= mio->size)
     return IOD_EOF;
 
-  return mio->pointer[mio->cur++];
+  return mio->pointer[offset];
 }
 
 static int
@@ -96,48 +93,16 @@ ios_dev_mem_putc (void *iod, int c, ios_dev_off offset)
 {
   struct ios_dev_mem *mio = iod;
 
-  assert (mio->cur == offset);
-  if (mio->cur >= mio->size) {
-    assert (mio->cur - mio->size < MEM_STEP);
+  if (offset >= mio->size) {
+    if (MEM_STEP <= offset - mio->size)
+      return IOD_EOF;
     mio->pointer = xrealloc (mio->pointer,
                              mio->size + MEM_STEP);
     memset (&mio->pointer[mio->size], 0, MEM_STEP);
     mio->size += MEM_STEP;
   }
-  mio->pointer[mio->cur++] = c;
+  mio->pointer[offset] = c;
   return c;
-}
-
-static ios_dev_off
-ios_dev_mem_tell (void *iod)
-{
-  struct ios_dev_mem *mio = iod;
-  return mio->cur;
-}
-
-static int
-ios_dev_mem_seek (void *iod, ios_dev_off offset, int whence)
-{
-  struct ios_dev_mem *mio = iod;
-  size_t target = mio->cur;
-
-  switch (whence)
-    {
-    case IOD_SEEK_SET:
-      target = offset;
-      break;
-    case IOD_SEEK_CUR:
-      target += offset;
-      break;
-    case IOD_SEEK_END:
-      target = mio->size - offset;
-      break;
-    }
-
-  if (target >= mio->size + MEM_STEP)
-    return IOD_EOF;
-
-  return mio->cur = target;
 }
 
 static ios_dev_off
@@ -152,8 +117,6 @@ struct ios_dev_if ios_dev_mem =
    .handler_normalize = ios_dev_mem_handler_normalize,
    .open = ios_dev_mem_open,
    .close = ios_dev_mem_close,
-   .tell = ios_dev_mem_tell,
-   .seek = ios_dev_mem_seek,
    .get_c = ios_dev_mem_getc,
    .put_c = ios_dev_mem_putc,
    .get_flags = ios_dev_mem_get_flags,

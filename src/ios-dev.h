@@ -32,9 +32,6 @@ typedef uint64_t ios_dev_off;
 /* The following macros are part of the device interface.  */
 
 #define IOD_EOF -1
-#define IOD_SEEK_SET 0
-#define IOD_SEEK_CUR 1
-#define IOD_SEEK_END 2
 
 /* Error codes to be used in the inteface below.  */
 
@@ -65,18 +62,6 @@ struct ios_dev_if
      the operation, 1 otherwise.  */
 
   int (*close) (void *dev);
-
-  /* Return the current position in the given device.  Return -1 on
-     error.  */
-
-  ios_dev_off (*tell) (void *dev);
-
-  /* Change the current position in the given device according to
-     OFFSET and WHENCE.  WHENCE can be one of IOD_SEEK_SET,
-     IOD_SEEK_CUR and IOD_SEEK_END.  Return 0 on successful
-     completion, and -1 on error.  */
-
-  int (*seek) (void *dev, ios_dev_off offset, int whence);
 
   /* Read a byte from the given device at the current position.
      Return the byte in an int, or IOD_EOF on error.  */

@@ -1,5 +1,19 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	ios: Drop unused seek/tell callbacks.
+	* src/ios.c (ios_read_int, ios_read_uint, ios_read_string)
+	(ios_write_int_common, ios_write_int, ios_write_uint)
+	(ios_write_string): Drop redundant seek calls.
+	* src/ios-dev.h (struct ios_dev_if): Drop unused seek and tell.
+	* src/ios-dev-file.c (ios_dev_file_getc, ios_dev_file_putc): Set
+	rather than assert offset.
+	(ios_dev_file_tell, ios_dev_file_seek): Delete.
+	* src/ios-dev-mem.c (ios_dev_mem_getc, ios_dev_mem_putc): Simplify.
+	(ios_dev_mem_tell, ios_dev_mem_seek): Delete.
+	* testsuite/poke.pkl/ios-mem-5.pk: Update the test.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	ios: Prove we don't need seek.
 	* src/ios-dev.h (struct ios_dev_if): Add offset parameter to get_c
 	and put_c.

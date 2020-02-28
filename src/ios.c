@@ -695,10 +695,6 @@ ios_read_int (ios io, ios_off offset, int flags,
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
-  /* We always need to start reading from offset / 8  */
-  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-    return IOS_EIOFF;
-
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     {
@@ -830,10 +826,6 @@ ios_read_uint (ios io, ios_off offset, int flags,
   /* When aligned, 1 to 64 bits can span at most 8 bytes.  */
   uint64_t c[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-  /* We always need to start reading from offset / 8  */
-  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-    return IOS_EIOFF;
-
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     {
@@ -928,10 +920,6 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
       /* This is the fast case: the string is aligned to a byte
          boundary.  We just read bytes from the IOD until either EOF
          or a NULL byte.  */
-
-      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
-          == -1)
-        return IOS_EIOFF;
 
       do
         {
@@ -1157,9 +1145,6 @@ ios_write_int_common (ios io, ios_off offset, int flags,
       tail = head;
       IOS_CHAR_GET_MSB(&head, offset % 8);
       IOS_CHAR_GET_LSB(&tail, 8 - lastbyte_bits);
-      /* We will write starting from offset / 8.  */
-      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-	return IOS_EIOFF;
 
       /* Write the byte back without changing the surrounding bits.  */
       c[0] = head | tail | (value << (8 - lastbyte_bits));
@@ -1174,9 +1159,6 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     /* Correctly set the unmodified trailing bits of the last byte.  */
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + 1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB && bits > 8)
       {
@@ -1197,13 +1179,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1231,13 +1208,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1269,13 +1241,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1311,13 +1278,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1357,13 +1319,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1407,13 +1364,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1461,13 +1413,8 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     IOS_GET_C_ERR_CHCK(c[0], io, offset / 8);
     IOS_CHAR_GET_MSB(&c[0], offset % 8);
     /* Correctly set the unmodified trailing bits of the last byte.  */
-    if (io->dev_if->seek (io->dev, offset / 8 + bytes_minus1, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
     IOS_GET_C_ERR_CHCK(c[bytes_minus1], io, offset / 8 + bytes_minus1);
     IOS_CHAR_GET_LSB(&c[bytes_minus1], 8 - lastbyte_bits);
-    /* We will write starting from offset / 8.  */
-    if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-      return IOS_EIOFF;
 
     if (endian == IOS_ENDIAN_LSB)
     {
@@ -1518,10 +1465,6 @@ ios_write_int (ios io, ios_off offset, int flags,
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
-  /* We always need to start reading or writing from offset / 8  */
-  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-    return IOS_EIOFF;
-
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     return ios_write_int_fast (io, offset, flags, bits, endian, value);
@@ -1542,10 +1485,6 @@ ios_write_uint (ios io, ios_off offset, int flags,
 {
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
-
-  /* We always need to start reading or writing from offset / 8  */
-  if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET) == -1)
-    return IOS_EIOFF;
 
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
@@ -1568,10 +1507,6 @@ ios_write_string (ios io, ios_off offset, int flags,
     {
       /* This is the fast case: we want to write a string at a
          byte-boundary.  Just write the bytes to the IOD.  */
-
-      if (io->dev_if->seek (io->dev, offset / 8, IOD_SEEK_SET)
-          == -1)
-        return IOS_EIOFF;
 
       p = value;
       do
