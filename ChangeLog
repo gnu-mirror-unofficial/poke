@@ -1,5 +1,19 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	ios: Change from getchar to pread device interface.
+	* src/ios-dev.h (struct ios_dev_if): Replace get_c/put_c with
+	pread/pwrite.
+	* src/ios.c (IOS_GET_C_ERR_CHCK, IOS_PUT_C_ERR_CHCK)
+	(ios_read_string, ios_write_string): Use the new interface.
+	* src/ios-dev-file.c (ios_dev_file_getc, ios_dev_file_putc):
+	Rewrite to...
+	(ios_dev_file_pread, ios_dev_file_pwrite): ...this.
+	* src/ios-dev-mem.c (ios_dev_mem_getc, ios_dev_mem_putc): Rewrite
+	to...
+	(ios_dev_mem_pread, ios_dev_mem_pwrite): ...this.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	ios: Drop unused seek/tell callbacks.
 	* src/ios.c (ios_read_int, ios_read_uint, ios_read_string)
 	(ios_write_int_common, ios_write_int, ios_write_uint)

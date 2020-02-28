@@ -32,17 +32,19 @@
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
-#define IOS_GET_C_ERR_CHCK(c, io, off)			\
-  {							\
-    int ret = (io)->dev_if->get_c ((io)->dev, off); 	\
-    if (ret == IOD_EOF)					\
-      return IOS_EIOFF;					\
-    (c) = ret;						\
+#define IOS_GET_C_ERR_CHCK(c, io, off)				\
+  {								\
+    uint8_t ch;							\
+    int ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off); 	\
+    if (ret == IOD_EOF)						\
+      return IOS_EIOFF;						\
+    (c) = ch;							\
   }
 
 #define IOS_PUT_C_ERR_CHCK(c, io, off)			\
   {							\
-    if ((io)->dev_if->put_c ((io)->dev, (char)(c), off)	\
+    uint8_t ch = (c);					\
+    if ((io)->dev_if->pwrite ((io)->dev, &ch, 1, off)	\
 	== IOD_EOF)					\
       return IOS_EIOBJ;					\
   }
@@ -910,7 +912,6 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
 {
   char *str = NULL;
   size_t i = 0;
-  int c;
 
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
@@ -926,11 +927,9 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
           if (i % 128 == 0)
             str = xrealloc (str, i + 128 * sizeof (char));
 
-          c = io->dev_if->get_c (io->dev, offset / 8 + i);
-          if (c == IOD_EOF)
+          if (io->dev_if->pread (io->dev, &str[i], 1,
+				 offset / 8 + i) == IOD_EOF)
             return IOS_EIOFF;
-          else
-            str[i] = (char) c;
         }
       while (str[i++] != '\0');
     }
@@ -1511,8 +1510,8 @@ ios_write_string (ios io, ios_off offset, int flags,
       p = value;
       do
         {
-          if (io->dev_if->put_c (io->dev, *p,
-				 offset / 8 + p - value) == IOD_EOF)
+          if (io->dev_if->pwrite (io->dev, p, 1,
+				  offset / 8 + p - value) == IOD_EOF)
             return IOS_EIOFF;
         }
       while (*(p++) != '\0');

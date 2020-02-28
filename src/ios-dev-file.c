@@ -143,29 +143,38 @@ ios_dev_file_get_flags (void *iod)
 
 
 static int
-ios_dev_file_getc (void *iod, ios_dev_off offset)
+ios_dev_file_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
 {
   struct ios_dev_file *fio = iod;
   int ret;
 
+  /* We are using FILE* for buffering, rather than low-level fd, so we
+     have to fake low-level pread by using fseeko.  */
   if (fseeko (fio->file, offset, SEEK_SET) == -1)
     return IOD_EOF;
-  ret = fgetc (fio->file);
+  ret = fread (buf, 1, count, fio->file);
 
-  return ret == EOF ? IOD_EOF : ret;
+  /* XXX As long as count <= 9 because the ios layer reads at most an
+     unaligned uint64_t, we are unlikely to hit short reads.  But if
+     future code adds in large buffer reads, we may want to retry on
+     short reads rather than giving up right away. */
+  return ret == count ? 0 : IOD_EOF;
 }
 
 static int
-ios_dev_file_putc (void *iod, int c, ios_dev_off offset)
+ios_dev_file_pwrite (void *iod, const void *buf, size_t count,
+                     ios_dev_off offset)
 {
   struct ios_dev_file *fio = iod;
   int ret;
 
-  if (fseeko (fio->file, offset, SEEK_SET) == -1)
+  /* We are using FILE* for buffering, rather than low-level fd, so we
+     have to fake low-level pread by using fseeko.  */
+  if (fseeko (fio->file, offset, SEEK_SET))
     return IOD_EOF;
-  ret = putc (c, fio->file);
-  //printf ("%d -> 0x%lu\n", ret, ftello (fio->file));
-  return ret == EOF ? IOD_EOF : ret;
+  ret = fwrite (buf, 1, count, fio->file);
+
+  return ret == count ? 0 : IOD_EOF;
 }
 
 static ios_dev_off
@@ -183,8 +192,8 @@ struct ios_dev_if ios_dev_file =
    .handler_normalize = ios_dev_file_handler_normalize,
    .open = ios_dev_file_open,
    .close = ios_dev_file_close,
-   .get_c = ios_dev_file_getc,
-   .put_c = ios_dev_file_putc,
+   .pread = ios_dev_file_pread,
+   .pwrite = ios_dev_file_pwrite,
    .get_flags = ios_dev_file_get_flags,
    .size = ios_dev_file_size,
   };

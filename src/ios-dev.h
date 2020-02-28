@@ -17,10 +17,9 @@
  */
 
 /* An IO space operates on one or more "IO devices", which are
-   abstractions providing byte-oriented operations, such as
-   positioning, reading bytes, and writing bytes.  Typical abstracted
-   entities are files stored in some file system, the memory of a
-   process, etc.
+   abstractions providing pread and pwrite byte-oriented operations.
+   Typical abstracted entities are files stored in some file system,
+   the memory of a process, etc.
 
    Since the IO devices are byte-oriented, aspects like endianness,
    alignment and negative encoding are not of consideration.
@@ -33,7 +32,7 @@ typedef uint64_t ios_dev_off;
 
 #define IOD_EOF -1
 
-/* Error codes to be used in the inteface below.  */
+/* Error codes to be used in the interface below.  */
 
 #define IOD_ERROR  1 /* Generic error.     */
 #define IOD_EINVAL 2 /* Invalid argument.  */
@@ -63,15 +62,15 @@ struct ios_dev_if
 
   int (*close) (void *dev);
 
-  /* Read a byte from the given device at the current position.
-     Return the byte in an int, or IOD_EOF on error.  */
+  /* Read a small byte buffer from the given device at the given byte offset.
+     Return 0 on success, or IOD_EOF on error, including on short reads.  */
 
-  int (*get_c) (void *dev, ios_dev_off offset);
+  int (*pread) (void *dev, void *buf, size_t count, ios_dev_off offset);
 
-  /* Write a byte to the given device at the current position.  Return
-     the character written as an int, or IOD_EOF on error.  */
+  /* Write a small byte buffer to the given device at the given byte offset.
+     Return 0 on success, or IOD_EOF on error, including short writes.  */
 
-  int (*put_c) (void *dev, int c, ios_dev_off offset);
+  int (*pwrite) (void *dev, const void *buf, size_t count, ios_dev_off offset);
 
   /* Return the flags of the device, as it was opened.  */
 

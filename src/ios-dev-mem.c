@@ -70,7 +70,7 @@ ios_dev_mem_close (void *iod)
 }
 
 static uint64_t
-ios_dev_mem_get_flags  (void *iod)
+ios_dev_mem_get_flags (void *iod)
 {
   struct ios_dev_mem *mio = iod;
 
@@ -78,31 +78,34 @@ ios_dev_mem_get_flags  (void *iod)
 }
 
 static int
-ios_dev_mem_getc (void *iod, ios_dev_off offset)
+ios_dev_mem_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
 {
   struct ios_dev_mem *mio = iod;
 
-  if (offset >= mio->size)
+  if (offset + count > mio->size)
     return IOD_EOF;
 
-  return mio->pointer[offset];
+  memcpy (buf, &mio->pointer[offset], count);
+  return 0;
 }
 
 static int
-ios_dev_mem_putc (void *iod, int c, ios_dev_off offset)
+ios_dev_mem_pwrite (void *iod, const void *buf, size_t count,
+                    ios_dev_off offset)
+
 {
   struct ios_dev_mem *mio = iod;
 
-  if (offset >= mio->size) {
-    if (MEM_STEP <= offset - mio->size)
-      return IOD_EOF;
+  if (offset + count > mio->size + MEM_STEP)
+    return IOD_EOF;
+  if (offset + count > mio->size) {
     mio->pointer = xrealloc (mio->pointer,
                              mio->size + MEM_STEP);
     memset (&mio->pointer[mio->size], 0, MEM_STEP);
     mio->size += MEM_STEP;
   }
-  mio->pointer[offset] = c;
-  return c;
+  memcpy (&mio->pointer[offset], buf, count);
+  return 0;
 }
 
 static ios_dev_off
@@ -117,8 +120,8 @@ struct ios_dev_if ios_dev_mem =
    .handler_normalize = ios_dev_mem_handler_normalize,
    .open = ios_dev_mem_open,
    .close = ios_dev_mem_close,
-   .get_c = ios_dev_mem_getc,
-   .put_c = ios_dev_mem_putc,
+   .pread = ios_dev_mem_pread,
+   .pwrite = ios_dev_mem_pwrite,
    .get_flags = ios_dev_mem_get_flags,
    .size = ios_dev_mem_size,
   };
