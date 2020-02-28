@@ -157,12 +157,6 @@ void ios_close (ios io);
 
 uint64_t ios_flags (ios io);
 
-/* Many IO devices are able to maintain a current read/write pointer.
-   The function below can be used to retrieve it, as an IOS
-   offset.  */
-
-ios_off ios_tell (ios io);
-
 /* The following function returns the handler operated by the given IO
    space.  */
 

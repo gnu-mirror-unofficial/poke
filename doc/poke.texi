@@ -607,9 +607,9 @@ Display a list of open files.
 
 @example
 (poke) .info ios
-  Id	Mode	Position	Name
-* #0	rw      0x00000000#b	foo.bson
-  #1	r       0x00000000#b	foo.o
+  Id	Mode	Name
+* #0	rw      foo.bson
+  #1	r       foo.o
 @end example
 
 @cindex IO space
@@ -623,9 +623,9 @@ switch to it as the new current IO space:
 (poke) .ios #1
 The current file is now `foo.o'.
 (poke) .info ios
-  Id	Mode	Position	Filename
-  #0	rw      0x00000000#b	foo.bson
-* #1	r       0x00000000#b	foo.o
+  Id	Mode	Filename
+  #0	rw      foo.bson
+* #1	r       foo.o
 @end example
 
 @item .info variable

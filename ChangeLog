@@ -1,3 +1,13 @@
+2020-02-27  Eric Blake  <eblake@redhat.com>
+
+	ios: Drop Position column from .info ios
+	* src/pk-ios.c (pk_cmd_info_ios, print_info_ios): Simplify.
+	* src/ios.c (ios_tell): Delete.
+	* src/ios.h (ios_tell): Likewise.
+	* doc/poke.texi (info command): Update output.
+	* testsuite/poke.cmd/file-mode.pk: Likewise.
+	* testsuite/poke.cmd/file-relative.pk: Likewise.
+
 2020-02-23  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-cmd.c (pk_cmd_exec_1)[case 'f']: Remove a lot

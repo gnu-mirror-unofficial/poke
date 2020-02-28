@@ -252,13 +252,6 @@ ios_flags (ios io)
   return io->dev_if->get_flags (io->dev);
 }
 
-ios_off
-ios_tell (ios io)
-{
-  ios_dev_off dev_off = io->dev_if->tell (io->dev);
-  return dev_off * 8;
-}
-
 const char *
 ios_handler (ios io)
 {
@@ -813,7 +806,7 @@ ios_read_int (ios io, ios_off offset, int flags,
       }
     }
 
-  /* Fall into the case for the unaligned and the sizes other than 8k.  */
+  /* Fall into the case for the unaligned and the sizes other than 8x.  */
   int ret_val = ios_read_int_common(io, offset, flags, bits, endian,
 				    (uint64_t *) value);
   if (ret_val == IOS_OK)
@@ -916,7 +909,7 @@ ios_read_uint (ios io, ios_off offset, int flags,
       }
     }
 
-  /* Fall into the case for the unaligned and the sizes other than 8k.  */
+  /* Fall into the case for the unaligned and the sizes other than 8x.  */
   return ios_read_int_common (io, offset, flags, bits, endian, value);
 }
 
@@ -1536,7 +1529,7 @@ ios_write_int (ios io, ios_off offset, int flags,
   int unused_bits = 64 - bits;
   uint64_t uvalue = ((uint64_t) (value << unused_bits)) >> unused_bits;
 
-  /* Fall into the case for the unaligned and the sizes other than 8k.  */
+  /* Fall into the case for the unaligned and the sizes other than 8x.  */
   return ios_write_int_common (io, offset, flags, bits, endian, uvalue);
 }
 
@@ -1557,7 +1550,7 @@ ios_write_uint (ios io, ios_off offset, int flags,
   if (offset % 8 == 0 && bits % 8 == 0)
     return ios_write_int_fast (io, flags, bits, endian, value);
 
-  /* Fall into the case for the unaligned and the sizes other than 8k.  */
+  /* Fall into the case for the unaligned and the sizes other than 8x.  */
   return ios_write_int_common (io, offset, flags, bits, endian, value);
 }
 

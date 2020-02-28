@@ -199,26 +199,6 @@ print_info_ios (ios io, void *data)
     char *cmd;
     char *hyperlink;
 
-    asprintf (&cmd, "0x%08jx#b", ios_tell (io));
-    hyperlink = pk_hserver_make_hyperlink ('i', cmd);
-    free (cmd);
-
-    pk_term_hyperlink (hyperlink, NULL);
-    pk_printf ("0x%08jx#b", ios_tell (io));
-    pk_term_end_hyperlink ();
-
-    free (hyperlink);
-  }
-#else
-  pk_printf ("0x%08jx#b", ios_tell (io));
-#endif
-  pk_puts ("\t");
-
-#if HAVE_HSERVER
-  {
-    char *cmd;
-    char *hyperlink;
-
     asprintf (&cmd, ".file #%d", ios_get_id (io));
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
@@ -241,7 +221,7 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   assert (argc == 0);
 
-  pk_printf (_("  Id\tMode\tPosition\tName\n"));
+  pk_printf (_("  Id\tMode\tName\n"));
   ios_map (print_info_ios, NULL);
 
   return 1;
