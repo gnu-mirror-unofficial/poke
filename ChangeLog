@@ -1,3 +1,8 @@
+2020-02-29  John Darrington <john@darrington.wattle.id.au>
+
+	* src/poke.c (parse_args): Set poke_interactive_p before any statements
+	which might want to test it.
+
 2020-02-27  Eric Blake  <eblake@redhat.com>
 
 	ios: Drop Position column from .info ios

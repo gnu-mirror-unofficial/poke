@@ -267,19 +267,19 @@ parse_args (int argc, char *argv[])
         case 'c':
         case CMD_ARG:
           {
+            poke_interactive_p = 0;
             int ret = pk_cmd_exec (optarg);
             if (!ret)
               goto exit_failure;
-            poke_interactive_p = 0;
             break;
           }
         case 's':
         case SCRIPT_ARG:
           {
+            poke_interactive_p = 0;
             int ret = pk_cmd_exec_script (optarg);
             if (!ret)
               goto exit_failure;
-            poke_interactive_p = 0;
             break;
           }
           /* -L is handled below.  */
@@ -322,9 +322,9 @@ parse_args (int argc, char *argv[])
       switch (c)
         {
         case 'L':
+          poke_interactive_p = 0;
           if (!pkl_compile_file (poke_compiler, optarg))
             goto exit_success;
-          poke_interactive_p = 0;
           break;
         default:
           break;
