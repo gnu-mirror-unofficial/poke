@@ -226,31 +226,6 @@ conversions as casts::
 Note that the string-to-integer cast can raise an E_conv exception if
 it is not possible to convert the string to an integer value.
 
-#L2 Support for defunit
------------------------
-
-Currently offsets can have named units from a fixed list of valid
-units: b, B, Kb, Mb, etc.
-
-This task is about introducing a new language construction to allow
-the user to define new units, i.e.::
-
-  defunit X = 1;
-  defunit Y = 3;
-
-where the number is the multiple of the basic unit, i.e. the bit.
-Thus::
-
-  3#X == 3#1
-  12#Y == 12#3
-
-Once this is in place, we can define the standard units in
-``src/std.pk`` instead of having them hardcoded in the compiler::
-
-  defunit b = 1;
-  defunit B = 2;
-  ...
-
 #L3! Support `big' integral values (>64 bit) with GMP
 -----------------------------------------------------
 
