@@ -31,9 +31,10 @@ b=$(cd @abs_builddir@ && pwd)
 # setup to run uninstalled poke
 PATH=$b/src:$PATH
 POKEDATADIR=$s/src
+POKEINFODIR=$s/doc
 POKEPICKLESDIR=$s/pickles
 POKESTYLESDIR=$s/etc
-export PATH POKEDATADIR POKEPICKLESDIR POKESTYLESDIR
+export PATH POKEDATADIR POKEPICKLESDIR POKESTYLESDIR POKEINFODIR
 
 # Cheap way to find some use-after-free and uninit read problems with glibc
 MALLOC_CHECK_=1

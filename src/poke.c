@@ -56,6 +56,11 @@ int poke_quiet_p;
 
 char *poke_datadir;
 
+/* The following global contains the directory holding the program's
+   info file(s).  */
+
+char *poke_infodir;
+
 /* The following global contains the directory holding pickles shipped
    with poke.  In an installed program, this is the same than
    poke_datadir, but the POKE_PICKLESDIR environment variable can be
@@ -371,6 +376,10 @@ initialize (int argc, char *argv[])
   poke_picklesdir = getenv ("POKEPICKLESDIR");
   if (poke_picklesdir == NULL)
     poke_picklesdir = poke_datadir;
+
+  poke_infodir = getenv ("POKEINFODIR");
+  if (poke_infodir == NULL)
+    poke_infodir = PKGINFODIR;
 
   /* Initialize the terminal output.  */
   pk_term_init (argc, argv);

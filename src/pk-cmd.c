@@ -49,6 +49,7 @@ extern struct pk_cmd load_cmd; /* pk-file.c */
 extern struct pk_cmd info_cmd; /* pk-info.c  */
 extern struct pk_cmd exit_cmd; /* pk-misc.c  */
 extern struct pk_cmd version_cmd; /* pk-misc.c */
+extern struct pk_cmd doc_cmd; /* pk-misc.c */
 extern struct pk_cmd jmd_cmd; /* pk-misc.c */
 extern struct pk_cmd help_cmd; /* pk-help.c */
 extern struct pk_cmd vm_cmd; /* pk-vm.c  */
@@ -63,6 +64,7 @@ static struct pk_cmd *dot_cmds[] =
     &file_cmd,
     &exit_cmd,
     &version_cmd,
+    &doc_cmd,
     &jmd_cmd,
     &info_cmd,
     &close_cmd,

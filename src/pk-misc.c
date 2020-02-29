@@ -20,6 +20,8 @@
 #include <assert.h>
 #include <time.h>
 
+#include "findprog.h"
+#include "readline.h"
 #include "poke.h"
 #include "pk-cmd.h"
 
@@ -52,6 +54,59 @@ pk_cmd_version (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* version */
   pk_print_version ();
   return 1;
+}
+
+/* Call the info command for the poke documentation, using
+   the requested node.  */
+static int
+pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  int ret = 1;
+
+  /* This command is inherently interactive.  So if we're not
+     supposed to be in interactive mode, then do nothing.  */
+  if (poke_interactive_p)
+  {
+    int size = 0;
+    char *cmd = NULL;
+    int bytes = 64;
+
+    const char info_prog_name[] = "info";
+    const char *ip = find_in_path (info_prog_name);
+    if (strcmp (ip, info_prog_name) == 0)
+      {
+	pk_term_class ("error");
+	pk_puts ("error: ");
+	pk_term_end_class ("error");
+	pk_puts ("the \"info\" program is not installed.\n");
+	return 0;
+      }
+
+    do
+      {
+	size = bytes + 1;
+	cmd = xrealloc (cmd, size);
+	bytes = snprintf (cmd, size, "info -f \"%s/poke.info\"",
+			  poke_infodir);
+      }
+    while (bytes >= size);
+
+    if (argv[0].type == PK_CMD_ARG_STR)
+      {
+	const char *node = argv[0].val.str;
+	cmd = xrealloc (cmd, bytes + 7 + strlen (node));
+	strcat (cmd, " -n \"");
+	strcat (cmd, node);
+	strcat (cmd, "\"");
+      }
+
+    /* Open the documentation at the requested page.  */
+    ret = (0 == system (cmd));
+
+    free (cmd);
+  }
+
+  return ret;
 }
 
 static int
@@ -95,6 +150,64 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+/* A completer to provide the node names of the info
+   documentation.  */
+char *
+doc_completion_function (const char *x, int state)
+{
+  static char **nodelist = NULL;
+  if (nodelist == NULL)
+    {
+      int n_nodes = 0;
+      char nlfile[256];
+      snprintf (nlfile, 256, "%s/nodelist", poke_infodir);
+      FILE *fp = fopen (nlfile, "r");
+      if (fp == NULL)
+	return NULL;
+      char *lineptr = NULL;
+      size_t size = 0;
+      while (!feof (fp))
+	{
+	  int x = getline (&lineptr, &size, fp);
+	  if (x != -1)
+	    {
+	      nodelist = xrealloc (nodelist, ++n_nodes * sizeof (*nodelist));
+	      lineptr [strlen (lineptr) - 1] = '\0';
+	      nodelist[n_nodes - 1] = strdup (lineptr);
+	    }
+	}
+      fclose (fp);
+      free (lineptr);
+      nodelist = xrealloc (nodelist, ++n_nodes * sizeof (*nodelist));
+      nodelist[n_nodes - 1] = NULL;
+    }
+
+  static int idx = 0;
+  if (state == 0)
+    idx = 0;
+  else
+    ++idx;
+
+  int len = strlen (x);
+  while (1)
+    {
+      const char *name = nodelist[idx];
+      if (name == NULL)
+	break;
+
+      int match = strncmp (name, x, len);
+      if (match != 0)
+	{
+	  idx++;
+	  continue;
+	}
+      return strdup (name);
+    }
+
+  return NULL;
+}
+
+
 struct pk_cmd exit_cmd =
   {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]", NULL};
 
@@ -103,3 +216,6 @@ struct pk_cmd version_cmd =
 
 struct pk_cmd jmd_cmd =
   {"jmd", "", "", 0, NULL, pk_cmd_jmd, "jmd", NULL};
+
+struct pk_cmd doc_cmd =
+  {"doc", "?s", "", 0, NULL, pk_cmd_doc, "doc [section]", doc_completion_function};

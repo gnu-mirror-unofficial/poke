@@ -152,6 +152,49 @@ null_completion_function (const char *x, int state)
   return NULL;
 }
 
+char * doc_completion_function (const char *x, int state);
+
+#define SPACE_SUBSTITUTE  '/'
+
+/* Display the list of matches, replacing SPACE_SUBSTITUTE with
+   a space.  */
+static void
+space_substitute_display_matches (char **matches, int num_matches,
+				int max_length)
+{
+  for (int i = 0; i < num_matches + 1; ++i)
+    {
+      for (char *m = matches[i]; *m; ++m)
+	{
+	  if (*m == SPACE_SUBSTITUTE)
+	    *m = ' ';
+	}
+    }
+
+  rl_display_match_list (matches, num_matches, max_length);
+}
+
+/* Display the rl_line_buffer substituting
+SPACE_SUBSTITUTE with a space.  */
+static void
+space_substitute_redisplay (void)
+{
+  /* Take a copy of the line_buffer.  */
+  char *olb = strdup (rl_line_buffer);
+
+  for (char *x = rl_line_buffer; *x ; x++)
+    {
+      if (*x == SPACE_SUBSTITUTE)
+        *x = ' ';
+    }
+
+  rl_redisplay ();
+
+  /* restore the line_buffer to its original state.  */
+  strcpy (rl_line_buffer, olb);
+  free (olb);
+}
+
 /* Readline's getc callback.
    Use this function to update the completer which
    should be used.
@@ -181,7 +224,27 @@ poke_getc (FILE *stream)
      }
   free (line_to_point);
 
-  return rl_getc (stream);
+  int c =  rl_getc (stream);
+
+  /* Due to readline's apparent inability to change the word break
+     character in the middle of a line, we have to do some underhand
+     skullduggery here.  Spaces are substituted with SPACE_SUBSTITUTE,
+     and then substituted back again in various callback functions.  */
+  if (rl_completion_entry_function == doc_completion_function)
+    {
+      rl_completion_display_matches_hook = space_substitute_display_matches;
+      rl_redisplay_function = space_substitute_redisplay;
+
+      if (c == ' ')
+	c = SPACE_SUBSTITUTE;
+    }
+  else
+    {
+      rl_completion_display_matches_hook = NULL;
+      rl_redisplay_function = rl_redisplay;
+    }
+
+  return c;
 }
 
 
@@ -298,6 +361,12 @@ pk_repl (void)
           pk_puts ("\n");
           break;
         }
+
+      for (char *s = line; *s; ++s)
+	{
+	  if (*s == SPACE_SUBSTITUTE)
+	    *s = ' ';
+	}
 
       /* Ignore empty lines.  */
       if (*line == '\0')

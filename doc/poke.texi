@@ -70,6 +70,7 @@ Dot-Commands
 * mem command::			Opening and selecting memory IO spaces.
 * ios command::			Switching between IO spaces.
 * close command::		Closing IO spaces.
+* doc command::                 Online manual.
 * editor command::		Using an external editor for input.
 * info command::		Getting information about open files, @i{etc}.
 * set command::			Querying and setting global options.
@@ -581,6 +582,26 @@ is:
 @end example
 
 Where @var{#tag} is a tag identifying an open IO stream.
+
+@node doc command
+@chapter @code{.doc}
+@cindex @code{.doc}
+@cindex doc
+The @command{.doc} command is used to display this manual in poke's REPL.
+The syntax is:
+
+@example
+.doc [@var{node}]
+@end example
+
+@noindent
+where @var{node} is an optional parameter which indicates the chapter
+or section at which the manual should be opened.
+This command uses the info program (@ref{Top,,, info, The GNU Texinfo Manual})
+to interactively present the manual.
+Hence, it will fail if info is not installed.
+If poke is not running interactively then @command{.doc} does nothing.
+
 
 @node editor command
 @chapter @code{.editor}

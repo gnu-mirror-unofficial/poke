@@ -72,6 +72,7 @@ AM_LFLAGS = -d
 poke_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
                 -DPKL_DEBUG \
                 -DPKGDATADIR=\"$(pkgdatadir)\" \
+                -DPKGINFODIR=\"$(infodir)\" \
                 -DJITTER_VERSION=\"$(JITTER_VERSION)\" \
                 -DLOCALEDIR=\"$(localedir)\"
 poke_CFLAGS = -Wall $(BDW_GC_CFLAGS)

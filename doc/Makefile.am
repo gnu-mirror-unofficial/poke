@@ -16,3 +16,14 @@
 
 info_TEXINFOS = poke.texi
 poke_TEXINFOS = fdl.texi
+
+
+# This rule generates a list of the node names from the manual.
+# It then substitutes spaces with '/' which is a kludge used to
+# work around some limitations of readline.
+# Look for the macro SPACE_SUBSTITUTE in pk-repl.c to see how this
+# is used.
+$(srcdir)/nodelist: $(srcdir)/poke.info
+	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' > $@
+
+INFO_DEPS = $(srcdir)/nodelist $(srcdir)/poke.info
