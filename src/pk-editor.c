@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <tmpdir.h>
 
+#include "poke.h"
 #include "pk-cmd.h"
 
 #include "findprog.h"
@@ -34,6 +35,10 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char tmpfile[1024];
   int des;
   FILE *f;
+
+  /* Do nothing (succesfully) if not in interactive mode.  */
+  if (!poke_interactive_p)
+    return 1;
 
   /* editor */
   assert (argc == 0);

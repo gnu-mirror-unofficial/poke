@@ -590,6 +590,7 @@ invokes an external text editor on a temporary file.  You can then
 put contents on that file, save it and exit the editor.  At that point
 poke will read the file contents, turn them into a single line and
 execute them in the repl.
+If poke is not running interactively, then @command{.editor} does nothing.
 
 The editor used is identified by the @code{EDITOR} environment
 variable.
