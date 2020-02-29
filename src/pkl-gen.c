@@ -119,6 +119,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
 
   switch (PKL_AST_DECL_KIND (decl))
     {
+    case PKL_AST_DECL_KIND_UNIT:
+      /* Nothing to do with units at run-time, for now.  */
+      PKL_PASS_BREAK;
+      break;
     case PKL_AST_DECL_KIND_TYPE:
       switch (PKL_AST_TYPE_CODE (initial))
         {

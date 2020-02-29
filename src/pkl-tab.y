@@ -93,6 +93,7 @@ pkl_register_arg (struct pkl_parser *parser, pkl_ast_node arg)
   PKL_AST_LOC (arg_decl) = PKL_AST_LOC (arg);
 
   if (!pkl_env_register (parser->env,
+                         PKL_ENV_NS_MAIN,
                          PKL_AST_IDENTIFIER_POINTER (arg_identifier),
                          arg_decl))
     {
@@ -134,6 +135,7 @@ pkl_register_args (struct pkl_parser *parser, pkl_ast_node arg_list)
       PKL_AST_LOC (arg_decl) = PKL_AST_LOC (arg);
 
       if (!pkl_env_register (parser->env,
+                             PKL_ENV_NS_MAIN,
                              PKL_AST_IDENTIFIER_POINTER (arg_identifier),
                              arg_decl))
         {
@@ -169,7 +171,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
                                 id, NULL /* initial */,
                                 NULL /* source */);
 
-      r = pkl_env_register (parser->env, name, decl);
+      r = pkl_env_register (parser->env, PKL_ENV_NS_MAIN, name, decl);
       assert (r);
     }
 }
@@ -318,7 +320,7 @@ load_module (struct pkl_parser *parser,
 %token ASSERT
 %token ERR
 %token INTCONSTR UINTCONSTR OFFSETCONSTR
-%token DEFUN DEFSET DEFTYPE DEFVAR
+%token DEFUN DEFSET DEFTYPE DEFVAR DEFUNIT
 %token RETURN BREAK
 %token STRING
 %token TRY CATCH RAISE
@@ -733,6 +735,7 @@ expression:
                   pkl_ast_node astruct;
 
                   pkl_ast_node decl = pkl_env_lookup (pkl_parser->env,
+                                                      PKL_ENV_NS_MAIN,
                                                       PKL_AST_IDENTIFIER_POINTER ($1),
                                                       NULL, NULL);
                   assert (decl != NULL
@@ -765,6 +768,13 @@ expression:
         	}
         | UNIT
 		{
+                  if ($1 == NULL)
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                                 "invalid unit in offset");
+                      YYERROR;
+                    }
+                  
                     $$ = pkl_ast_make_offset (pkl_parser->ast, NULL, $1);
                     PKL_AST_LOC ($1) = @1;
                     if (PKL_AST_TYPE ($1))
@@ -773,6 +783,13 @@ expression:
                 }
         | expression UNIT
         	{
+                  if ($2 == NULL)
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
+                                 "invalid unit in offset");
+                      YYERROR;
+                    }
+
                     $$ = pkl_ast_make_offset (pkl_parser->ast, $1, $2);
                     PKL_AST_LOC ($2) = @2;
                     if (PKL_AST_TYPE ($2))
@@ -827,6 +844,7 @@ primary:
 
                   pkl_ast_node decl
                     = pkl_env_lookup (pkl_parser->env,
+                                      PKL_ENV_NS_MAIN,
                                       name, &back, &over);
                   if (!decl
                       || (PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR
@@ -1101,6 +1119,7 @@ simple_type_specifier:
 	  TYPENAME
           	{
                   pkl_ast_node decl = pkl_env_lookup (pkl_parser->env,
+                                                      PKL_ENV_NS_MAIN,
                                                       PKL_AST_IDENTIFIER_POINTER ($1),
                                                       NULL, NULL);
                   assert (decl != NULL
@@ -1147,18 +1166,36 @@ integral_type_sign:
 	;
 
 offset_type_specifier:
-          OFFSETCONSTR simple_type_specifier ',' IDENTIFIER '>'
+          OFFSETCONSTR simple_type_specifier ',' identifier '>'
                 {
-                    $$ = pkl_ast_make_offset_type (pkl_parser->ast,
-                                                   $2, $4);
-                    PKL_AST_LOC ($4) = @4;
-                    PKL_AST_LOC ($$) = @$;
-                }
-        | OFFSETCONSTR simple_type_specifier ',' simple_type_specifier '>'
-                {
-                    $$ = pkl_ast_make_offset_type (pkl_parser->ast,
-                                                   $2, $4);
-                    PKL_AST_LOC ($$) = @$;
+                  pkl_ast_node decl
+                    = pkl_env_lookup (pkl_parser->env,
+                                      PKL_ENV_NS_UNITS,
+                                      PKL_AST_IDENTIFIER_POINTER ($4),
+                                      NULL, NULL);
+
+                  if (!decl)
+                    {
+                      /* This could be the name of a type.  Try it out.  */
+                      decl = pkl_env_lookup (pkl_parser->env,
+                                             PKL_ENV_NS_MAIN,
+                                             PKL_AST_IDENTIFIER_POINTER ($4),
+                                             NULL, NULL);
+                      
+                      if (!decl)
+                        {
+                          pkl_error (pkl_parser->compiler, pkl_parser->ast, @4,
+                                     "invalid unit in offset type");
+                          YYERROR;
+                        }
+                    }
+
+                  $$ = pkl_ast_make_offset_type (pkl_parser->ast,
+                                                 $2,
+                                                 PKL_AST_DECL_INITIAL (decl));
+
+                  ASTREF ($4); pkl_ast_node_free ($4);
+                  PKL_AST_LOC ($$) = @$;
                 }
         | OFFSETCONSTR simple_type_specifier ',' INTEGER '>'
         	{
@@ -1325,6 +1362,7 @@ struct_type_field:
                       PKL_AST_LOC (decl) = @$;
 
                       if (!pkl_env_register (pkl_parser->env,
+                                             PKL_ENV_NS_MAIN,
                                              PKL_AST_IDENTIFIER_POINTER ($3),
                                              decl))
                         {
@@ -1411,6 +1449,7 @@ declaration:
                   PKL_AST_LOC ($<ast>$) = @$;
 
                   if (!pkl_env_register (pkl_parser->env,
+                                         PKL_ENV_NS_MAIN,
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          $<ast>$))
                     {
@@ -1460,6 +1499,7 @@ declaration:
                   PKL_AST_LOC ($$) = @$;
 
                   if (!pkl_env_register (pkl_parser->env,
+                                         PKL_ENV_NS_MAIN,
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          $$))
                     {
@@ -1482,6 +1522,7 @@ declaration:
                   PKL_AST_TYPE_NAME ($4) = ASTREF ($2);
 
                   if (!pkl_env_register (pkl_parser->env,
+                                         PKL_ENV_NS_MAIN,
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          $$))
                     {
@@ -1489,6 +1530,39 @@ declaration:
                          declaration to "" and add the new one.  */
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
                                  "the type `%s' is already defined",
+                                 PKL_AST_IDENTIFIER_POINTER ($2));
+                      YYERROR;
+                    }
+                }
+	| DEFUNIT identifier '=' expression ';'
+        	{
+                  /* We need to cast the expression to uint<64> here,
+                     instead of pkl-promo, because the installed
+                     initializer is used as earlier as in the
+                     lexer.  Not pretty.  */
+                  pkl_ast_node type
+                    = pkl_ast_make_integral_type (pkl_parser->ast,
+                                                  64, 0);
+                  pkl_ast_node cast
+                    = pkl_ast_make_cast (pkl_parser->ast,
+                                         type, $4);
+                  
+                  $$ = pkl_ast_make_decl (pkl_parser->ast,
+                                          PKL_AST_DECL_KIND_UNIT, $2, cast,
+                                          pkl_parser->filename);
+
+                  PKL_AST_LOC (type) = @4;
+                  PKL_AST_LOC (cast) = @4;
+                  PKL_AST_LOC ($2) = @2;
+                  PKL_AST_LOC ($$) = @$;
+
+                  if (!pkl_env_register (pkl_parser->env,
+                                         PKL_ENV_NS_UNITS,
+                                         PKL_AST_IDENTIFIER_POINTER ($2),
+                                         $$))
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
+                                 "the unit `%s' is already defined",
                                  PKL_AST_IDENTIFIER_POINTER ($2));
                       YYERROR;
                     }
@@ -1614,6 +1688,7 @@ stmt:
                   PKL_AST_LOC ($<ast>$) = @3;
 
                   if (!pkl_env_register (pkl_parser->env,
+                                         PKL_ENV_NS_MAIN,
                                          PKL_AST_IDENTIFIER_POINTER ($3),
                                          $<ast>$))
                     /* This should never happen.  */
@@ -1659,6 +1734,7 @@ stmt:
                   PKL_AST_LOC ($<ast>$) = @3;
 
                   if (!pkl_env_register (pkl_parser->env,
+                                         PKL_ENV_NS_MAIN,
                                          PKL_AST_IDENTIFIER_POINTER ($3),
                                          $<ast>$))
                     /* This should never happen.  */

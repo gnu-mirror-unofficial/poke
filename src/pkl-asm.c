@@ -1864,8 +1864,8 @@ pkl_asm_call (pkl_asm pasm, const char *funcname)
   int back, over;
   pkl_ast_node tmp;
 
-  tmp = pkl_env_lookup (compiler_env, funcname,
-                        &back, &over);
+  tmp = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
+                        funcname, &back, &over);
   assert (tmp != NULL);
 
   pkl_asm_insn (pasm, PKL_INSN_PUSHVAR, back, over);

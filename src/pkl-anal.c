@@ -414,6 +414,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_op_sl)
 }
 PKL_PHASE_END_HANDLER
 
+/* The initializing expressions in unit declarations should be integer
+   nodes.  Note this handler runs after the unit is
+   constant-folded.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_decl)
+{
+  pkl_ast_node decl = PKL_PASS_NODE;
+
+  if (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_UNIT)
+    {
+      pkl_ast_node initial = PKL_AST_DECL_INITIAL (decl);
+
+      if (PKL_AST_CODE (initial) != PKL_AST_INTEGER)
+        {
+          PKL_ERROR (PKL_AST_LOC (initial),
+                     "expected constant integral value for unit");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_anal1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
@@ -424,6 +447,7 @@ struct pkl_phase pkl_phase_anal1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_anal1_ps_func),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_anal1_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_anal1_ps_offset),
+   PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_anal1_ps_decl),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),

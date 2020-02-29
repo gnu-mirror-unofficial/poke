@@ -58,6 +58,14 @@
 
 typedef struct pkl_env *pkl_env;  /* Struct defined in pkl-env.c */
 
+/* Declarations in Poke live in two different, separated name spaces:
+
+   The `main' namespace, shared by types, variables and functions.
+   The `units' namespace, for offset units.  */
+
+#define PKL_ENV_NS_MAIN 0
+#define PKL_ENV_NS_UNITS 1
+
 /* Get an empty environment.  */
 
 pkl_env pkl_env_new (void);
@@ -77,18 +85,19 @@ pkl_env pkl_env_push_frame (pkl_env env);
 
 pkl_env pkl_env_pop_frame (pkl_env env);
 
-/* Register the declaration DECL in the current frame under NAME.
-   Return 1 if the declaration was properly registered.  Return 0 if
-   there is already a declaration with the given name in the current
-   frame.  */
+/* Register the declaration DECL in the current frame under NAME in
+   the given NAMESPACE.  Return 1 if the declaration was properly
+   registered.  Return 0 if there is already a declaration with the
+   given name in the current frame and namespace.  */
 
 int pkl_env_register (pkl_env env,
+                      int namespace,
                       const char *name,
                       pkl_ast_node decl);
 
-/* Search in the environment ENV for a declaration with name NAME, put
-   the lexical address of the first match in BACK and OVER if these
-   are not NULL.  Return the declaration node.
+/* Search in the environment ENV for a declaration with name NAME in
+   the given NAMESPACE, put the lexical address of the first match in
+   BACK and OVER if these are not NULL.  Return the declaration node.
 
    BACK is the number of frames back the declaration is located.  It
    is 0-based.
@@ -96,7 +105,8 @@ int pkl_env_register (pkl_env env,
    OVER indicates its position in the list of declarations in the
    resulting frame.  It is 0-based.  */
 
-pkl_ast_node pkl_env_lookup (pkl_env env, const char *name,
+pkl_ast_node pkl_env_lookup (pkl_env env, int namespace,
+                             const char *name,
                              int *back, int *over);
 
 /* Return 1 if the given ENV contains only one frame.  Return 0
@@ -122,6 +132,8 @@ void pkl_env_map_decls (pkl_env env,
 
 pkl_env pkl_env_dup_toplevel (pkl_env env);
 
+
+/* The following iterators work on the main namespace.  */
 
 struct pkl_ast_node_iter
 {

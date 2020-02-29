@@ -111,6 +111,7 @@ Debugging Poke Programs
 The Standard Library
 * Standard Integral Types::	int, long and the like.
 * Standard Offset Types::	off64 and the like.
+* Standard Units::		b, B, Kb and the like.
 * Conversion Functions::	catos, atoi, etc.
 * String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
@@ -1391,6 +1392,7 @@ very central concept in poke.
 @menu
 * Why Offsets::			Byte-oriented or bit-oriented?
 * Offset Literals::		Denoting offsets in Poke.
+* Offset Units::		Pears and potatoes.
 * Offset Types::		offset<...>.
 * Casting Offsets::		Converting offsets.
 * Offset Operations::		Operating with offsets.
@@ -1590,37 +1592,51 @@ denote ``a bytes'':
 a#B
 @end example
 
-In the offset syntax units are specified as @code{#@var{foo}}, where
-@var{FOO} is the name of the unit.  Poke provides the following list
-of hard coded unit names:
+In the offset syntax units are specified as @code{#@var{unit}}, where
+@var{unit} is the specification of an unit.  See the next section for
+details.
 
-@cindex units
+@node Offset Units
+@section Offset Units
 
-@table @code
-@item b
-bits.
-@item B
-bytes.
-@item Kb
-@cindex kilobits
-kilo bits (1024 bits.)
-@item KB
-@cindex kilobytes
-Kilo bytes (1024 bytes.)
-@item Mb
-@cindex megabits
-Mega bits.
-@item MB
-@cindex megabytes
-Mega bytes.
-@item Gb
-@cindex gigabits
-Giga bits.
-@end table
+There are several ways to express the unit of an offset, which is
+always interpreted as a multiple of the basic unit, which is the bit
+(one bit.)
 
-However, it is also possible to express units in multiples of the base
-unit, which is the bit.  Using this syntax, it becomes possible to
-express offsets in any arbitrary unit, as disparate as it may seem:
+@subsection Named Units
+
+The first way is to refer to an unit by name.  For example, @code{2#B}
+for two bytes.  Units are defined using the @code{defunit}
+construction:
+
+@example
+defunit @var{name} = @var{constant_expression};
+@end example
+
+Where @var{name} is the name of the unit, and
+@var{constant_expression} is a constant expression that should
+evaluate to an integral value.  The resulting value is always coerced
+into an unsigned 64-bit integer.
+
+Note that unit names live in a different namespace than variables and
+types.  However, when a given name is both a type name and an unit
+name in an unit context, the named unit takes precedence:
+
+@example
+(poke) deftype xx = int
+(poke) defunit xx = 2
+(poke) 1#xx
+1#2
+@end example
+
+Many useful units are defined in the standard library.  @xref{Standard
+Units}.
+
+@subsection Arbitrary Units
+
+It is also possible to express units in multiples of the base unit,
+which is the bit.  Using this syntax, it becomes possible to express
+offsets in any arbitrary unit, as disparate as it may seem:
 
 @example
 17#3
@@ -1631,6 +1647,8 @@ express offsets in any arbitrary unit, as disparate as it may seem:
 That's it, 17 units of 3 bits each, zero units of 12 bits each,
 and eight units of 1 bit each.  Note that the unit should be bigger
 than 0.
+
+@subsection Types as Units
 
 But then, why stopping there?  Poking is all about defining data
 structures and operating on them@dots{} so why not using these structures
@@ -4305,6 +4323,35 @@ types.
 64-bit signed offset in bits.
 @item uoff64
 64-bit unsigned offset in bits.
+@end table
+
+@node Standard Units
+@chapter Standard Units
+
+The following list of units are defined in the standard library.
+
+@cindex units
+
+@table @code
+@item b
+bits.
+@item B
+bytes.
+@item Kb
+@cindex kilobits
+kilo bits (1024 bits.)
+@item KB
+@cindex kilobytes
+Kilo bytes (1024 bytes.)
+@item Mb
+@cindex megabits
+Mega bits.
+@item MB
+@cindex megabytes
+Mega bytes.
+@item Gb
+@cindex gigabits
+Giga bits.
 @end table
 
 @node Conversion Functions

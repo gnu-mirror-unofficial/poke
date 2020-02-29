@@ -234,18 +234,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_type_struct)
 }
 PKL_PHASE_END_HANDLER
 
-/* At this point offsets can have either an identifier, an integer or
-   a type expressing its unit.  This handler takes care of the first
-   case, replacing the identifier with a suitable unit factor.  If the
-   identifier is invalid, then an error is raised.
-
-   Also, if the magnitude of the offset wasn't specified then it
-   defaults to 1. */
+/* If the magnitude of an offset is not specified then it defaults to
+   1. */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_offset)
 {
   pkl_ast_node offset = PKL_PASS_NODE;
-  pkl_ast_node unit = PKL_AST_OFFSET_UNIT (offset);
 
   if (PKL_AST_OFFSET_MAGNITUDE (offset) == NULL)
     {
@@ -259,54 +253,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_offset)
       PKL_AST_TYPE (magnitude) = ASTREF (magnitude_type);
 
       PKL_AST_OFFSET_MAGNITUDE (offset) = ASTREF (magnitude);
-      PKL_PASS_RESTART = 1;
-    }
-
-  if (PKL_AST_CODE (unit) == PKL_AST_IDENTIFIER)
-    {
-      pkl_ast_node new_unit
-        = pkl_ast_id_to_offset_unit (PKL_PASS_AST, unit);
-
-      if (!new_unit)
-        {
-          PKL_ERROR (PKL_AST_LOC (unit),
-                     "expected `b', `N', `B', `Kb', `KB', `Mb', 'MB' or `Gb'");
-          PKL_TRANS_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-
-      PKL_AST_OFFSET_UNIT (offset) = ASTREF (new_unit);
-      pkl_ast_node_free (unit);
-      PKL_PASS_RESTART = 1;
-    }
-}
-PKL_PHASE_END_HANDLER
-
-/* At this point offset types can have an identifier expressing its
-   units.  This handler replaces the identifier with a suitable unit
-   factor.  If the identifier is invalid, then an error is raised.
-   XXX: to remove.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_type_offset)
-{
-  pkl_ast_node offset_type = PKL_PASS_NODE;
-  pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (offset_type);
-
-  if (PKL_AST_CODE (unit) == PKL_AST_IDENTIFIER)
-    {
-      pkl_ast_node new_unit
-        = pkl_ast_id_to_offset_unit (PKL_PASS_AST, unit);
-
-      if (!new_unit)
-        {
-          PKL_ERROR (PKL_AST_LOC (unit),
-                     "expected `b', `B', `Kb', `KB', `Mb', 'MB' or `Gb'");
-          PKL_TRANS_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-
-      PKL_AST_TYPE_O_UNIT (offset_type) = ASTREF (new_unit);
-      pkl_ast_node_free (unit);
       PKL_PASS_RESTART = 1;
     }
 }
@@ -1063,7 +1009,6 @@ struct pkl_phase pkl_phase_trans1 =
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_trans1_ps_op_attr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_trans1_ps_type_struct),
-   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_trans1_ps_type_offset),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_trans1_ps_type_function),
   };
 
@@ -1229,7 +1174,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_offset_type)
 
   if (PKL_AST_TYPE_COMPLETE (unit_type) != PKL_AST_TYPE_COMPLETE_YES)
     {
-      PKL_ERROR (PKL_AST_LOC (unit_type),
+      PKL_ERROR (PKL_AST_LOC (type),
                  "offset types only work on complete types");
       PKL_TRANS_PAYLOAD->errors++;
       PKL_PASS_ERROR;

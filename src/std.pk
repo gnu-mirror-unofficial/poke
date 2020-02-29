@@ -16,6 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*** Standard units.  */
+
+defunit b = 1;
+defunit N = 4;
+defunit B = 8;
+defunit Kb = 1024;
+defunit KB = 1024 * 8;
+defunit Mb = 1024UL * 1024;
+defunit MB = 1024UL * 1024 * 8;
+defunit Gb = 1024UL * 1024 * 1024;
+defunit GB = 1024UL * 1024 * 1024 * 8;
+
 /*** Standard Integral Types.  */
 
 deftype bit = uint<1>;

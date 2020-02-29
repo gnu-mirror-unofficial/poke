@@ -203,6 +203,7 @@ D [0-9]
 "defun"		{ return DEFUN; }
 "deftype"	{ return DEFTYPE; }
 "defvar"	{ return DEFVAR; }
+"defunit"	{ return DEFUNIT; }
 "break"		{ return BREAK; }
 "return"        { return RETURN; }
 "string"	{ return STRING; }
@@ -306,19 +307,29 @@ D [0-9]
 
 #{L}({L}|{D})* {
    pkl_ast_node decl
-       = pkl_env_lookup (yyextra->env, yytext + 1, NULL, NULL);
+      = pkl_env_lookup (yyextra->env, PKL_ENV_NS_UNITS,
+                        yytext + 1, NULL, NULL);
 
-   if (decl && PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_TYPE)
+   if (decl)
      yylval->ast = PKL_AST_DECL_INITIAL (decl);
    else
-     yylval->ast = pkl_ast_make_identifier (yyextra->ast, yytext + 1);
+     {
+       decl = pkl_env_lookup (yyextra->env, PKL_ENV_NS_MAIN,
+                              yytext + 1, NULL, NULL);
+
+       if (decl && PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_TYPE)
+         yylval->ast = PKL_AST_DECL_INITIAL (decl);
+       else
+         yylval->ast = NULL;
+     }
 
    return UNIT;
 }
 
 {L}({L}|{D})* {
    pkl_ast_node decl
-       = pkl_env_lookup (yyextra->env, yytext, NULL, NULL);
+     = pkl_env_lookup (yyextra->env, PKL_ENV_NS_MAIN,
+                       yytext, NULL, NULL);
 
    yylval->ast = pkl_ast_make_identifier (yyextra->ast, yytext);
 

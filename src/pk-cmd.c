@@ -619,7 +619,9 @@ pk_cmd_exec (char *str)
           if (strncmp (ecmd, "defvar ", 6) == 0
               || strncmp (ecmd, "defvar\t", 6) == 0
               || strncmp (ecmd, "deftype ", 8) == 0
-              || strncmp (ecmd, "deftype\t", 8) == 0)
+              || strncmp (ecmd, "deftype\t", 8) == 0
+              || strncmp (ecmd, "defunit", 7) == 0
+              || strncmp (ecmd, "defunit\t", 8) == 0)
             what = 0;
           else
             what = 1;

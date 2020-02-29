@@ -936,8 +936,8 @@ pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
    function, type, variable....
 
    KIND allows to quickly identify the nature of the entity being
-   declared: PKL_AST_DECL_KIND_VAR, PKL_AST_DECL_KIND_TYPE or
-   PKL_AST_DECL_KIND_FUNC.
+   declared: PKL_AST_DECL_KIND_VAR, PKL_AST_DECL_KIND_TYPE,
+   PKL_AST_DECL_KIND_FUNC or PKL_AST_DECL_KIND_UNIT.
 
    NAME is PKL_AST_IDENTIFIER node containing the name in the
    association.
@@ -947,6 +947,7 @@ pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
    - An expression node for a variable.
    - A PKL_AST_TYPE for a type.
    - A PKL_AST_FUNC for a function.
+   - A constant expression node for an unit.
 
    ORDER is the order of the declaration in its containing
    compile-time environment.  It is filled up when the declaration is
@@ -967,6 +968,7 @@ pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
 #define PKL_AST_DECL_KIND_VAR 1
 #define PKL_AST_DECL_KIND_TYPE 2
 #define PKL_AST_DECL_KIND_FUNC 3
+#define PKL_AST_DECL_KIND_UNIT 4
 
 struct pkl_ast_decl
 {
@@ -1011,9 +1013,6 @@ struct pkl_ast_offset
 pkl_ast_node pkl_ast_make_offset (pkl_ast ast,
                                   pkl_ast_node magnitude,
                                   pkl_ast_node unit);
-
-pkl_ast_node pkl_ast_id_to_offset_unit (pkl_ast ast,
-                                        pkl_ast_node id);
 
 /* PKL_AST_CAST nodes represent casts at the language level.
 

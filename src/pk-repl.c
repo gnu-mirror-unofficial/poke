@@ -55,7 +55,8 @@ pkl_complete_struct (int *idx, const char *x, size_t len, int state)
       compiler_env = pkl_get_env (poke_compiler);
       base = strndup (x, len - strlen (strchr (x, '.')));
 
-      type = pkl_env_lookup (compiler_env, base, &back, &over);
+      type = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
+                             base, &back, &over);
       free (base);
 
       if (type == NULL || PKL_AST_DECL_KIND (type) != PKL_AST_DECL_KIND_VAR)

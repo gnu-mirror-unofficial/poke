@@ -66,8 +66,8 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   fname = PK_CMD_ARG_STR (argv[0]);
 
-  decl = pkl_env_lookup (compiler_env, fname,
-                         &back, &over);
+  decl = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
+                         fname, &back, &over);
 
   if (decl == NULL)
     {

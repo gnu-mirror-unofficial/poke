@@ -1,3 +1,53 @@
+2020-02-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (DEFUNIT): New token.
+	* src/pkl-lex.l (DEFUNIT): Likewise.
+	* src/pk-cmd.c (pk_cmd_exec): Recognize defunit.
+	* src/pkl-env.h (PKL_ENV_NS_MAIN): Define.
+	(PKL_ENV_NS_UNITS): Likewise.
+	* src/pkl-env.c (struct pkl_env): New field units_hash_table.
+	(pkl_env_free): Handle units_hash_table.
+	(pkl_env_dup_toplevel): Handle the units hash table.
+	(pkl_env_lookup): Get a new argument `namespace'.
+	(pkl_env_lookup_1): Likewise.
+	(pkl_env_register): Likewise.
+	(get_ns_table): New function.
+	(pkl_env_lookup_1): Handle `namespace'.
+	(struct pkl_env): New field num_units.
+	* src/pkl-lex.l: Pass namespace to pkl_env_lookup.
+	* src/pkl-tab.y: Likewise.
+	* src/pk-def.c (print_var_decl): Likewise.
+	* src/pk-repl.c (pkl_complete_struct): Likewise.
+	* src/pk-vm.c (pk_cmd_vm_disas_fun): Likewise.
+	(pk_cmd_vm_disas_fun): Likewise.
+	* src/pkl-ast.h (PKL_AST_DECL_KIND_UNIT): Define.
+	* src/pkl-ast.c (pkl_ast_id_to_offset_unit): Remove function.
+	* src/pkl-anal.c (pkl_anal1_ps_decl): New handler.
+	(pkl_phase_anal1): Install new handler.
+	* src/pkl-typify.c (pkl_typify1_ps_decl): New handler.
+	(pkl_phase_typify1): Install new handler.
+	* src/pkl-trans.c (pkl_trans1_ps_offset): Do not handle
+	identifiers in offset units.
+	(pkl_trans1_ps_type_offset): Remove.
+	(pkl_trans2_ps_offset_type): Fix error location.
+	* src/pkl-fold.c (pkl_fold_ps_cast): Do not overwrite unit nodes
+	while constant-folding offset casts.  Create a new node instead.
+	* src/pkl-gen.c (pkl_gen_pr_decl): Handle PKL_AST_DECL_KIND_UNIT.
+	* src/pkl-asm.c (pkl_asm_call): Pass a namespace to
+	pkl_env_lookup.
+	* src/std.pk (b,N,B,Kb,KB,Mb,MB,Gb,GB): Define units.
+	* testsuite/poke.pkl/units-1.pk: New test.
+	* testsuite/poke.pkl/units-2.pk: Likewise.
+	* testsuite/poke.pkl/units-3.pk: Likewise.
+	* testsuite/poke.pkl/units-4.pk: Likewise.
+	* testsuite/poke.pkl/units-5.pk: Likewise.
+	* testsuite/poke.pkl/units-6.pk: Likewise.
+	* testsuite/poke.pkl/units-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/units-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/units-diag-3.pk: Likewise.
+	* doc/poke.texi (Offset Units): New section.
+	(Standard Units): New chapter.
+
 2020-02-29  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-editor.c (pk_cmd_editor): Do nothing if poke is not running 

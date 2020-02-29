@@ -48,6 +48,7 @@ print_var_decl (pkl_ast_node decl, void *data)
     return;
 
   tmp = pkl_env_lookup (compiler_env,
+                        PKL_ENV_NS_MAIN,
                         PKL_AST_IDENTIFIER_POINTER (decl_name),
                         &back, &over);
   assert (tmp != NULL);
@@ -89,6 +90,7 @@ print_fun_decl (pkl_ast_node decl, void *data)
     return;
 
   tmp = pkl_env_lookup (compiler_env,
+                        PKL_ENV_NS_MAIN,
                         PKL_AST_IDENTIFIER_POINTER (decl_name),
                         &back, &over);
   assert (tmp != NULL);

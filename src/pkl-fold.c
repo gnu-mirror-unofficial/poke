@@ -809,16 +809,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
         = (PKL_AST_INTEGER_VALUE (magnitude) *
            PKL_AST_INTEGER_VALUE (unit));
 
-      /* Calculate the new unit.  */
-      PKL_AST_INTEGER_VALUE (unit)
-        = PKL_AST_INTEGER_VALUE (to_unit);
+      /* Calculate the new unit.  It should always be a new node,
+         since otherwise we may be chaning an integer node that is
+         also part of an unit declaration, or who knows what.  */
+      {
+        pkl_ast_node unit_type = PKL_AST_TYPE (unit);
+        pkl_ast_node new_unit
+          =  pkl_ast_make_integer (PKL_PASS_AST,
+                                   PKL_AST_INTEGER_VALUE (to_unit));
+
+        PKL_AST_TYPE (new_unit) = ASTREF (unit_type);
+        PKL_AST_LOC (new_unit) = PKL_AST_LOC (unit);
+        unit = new_unit;
+      }
 
       /* We may need to create a new magnitude node, if the base type
          is different.  */
       if (!pkl_ast_type_equal (from_base_type, to_base_type))
         {
-          magnitude = pkl_ast_make_integer  (PKL_PASS_AST,
-                                             PKL_AST_INTEGER_VALUE (magnitude));
+          magnitude = pkl_ast_make_integer (PKL_PASS_AST,
+                                            PKL_AST_INTEGER_VALUE (magnitude));
           PKL_AST_TYPE (magnitude) = ASTREF (to_base_type);
           PKL_AST_LOC (magnitude) = PKL_AST_LOC (cast);
         }
@@ -827,7 +837,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
       PKL_AST_INTEGER_VALUE (magnitude)
         = (PKL_AST_INTEGER_VALUE (magnitude)
            /  PKL_AST_INTEGER_VALUE (unit));
-
 
       new = pkl_ast_make_offset (PKL_PASS_AST,
                                  magnitude, unit);

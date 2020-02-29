@@ -27,9 +27,15 @@
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* The declarations are organized in a hash table, chained in their
-   buckes through CHAIN2.  Note that in Pkl an unique namespace is
-   shared by types, variables and functions, so only one table is
-   required.
+   buckes through CHAIN2.
+
+   There are two namespaces in Poke:
+
+   - A main namespace, shared by types, variables and functions.
+     HASH_TABLE is used to store declarations for these entities.
+
+   - A separated namespace for offset units.  UNITS_HASH_TABLE is used
+     to store declarations for these.
 
    UP is a link to the immediately enclosing frame.  This is NULL for
    the top-level frame.  */
@@ -40,9 +46,11 @@ typedef pkl_ast_node pkl_hash[HASH_TABLE_SIZE];
 struct pkl_env
 {
   pkl_hash hash_table;
+  pkl_hash units_hash_table;
 
   int num_types;
   int num_vars;
+  int num_units;
 
   struct pkl_env *up;
 };
@@ -95,6 +103,7 @@ get_registered (pkl_hash hash_table, const char *name)
   for (t = hash_table[hash]; t != NULL; t = PKL_AST_CHAIN2 (t))
     {
       pkl_ast_node t_name = PKL_AST_DECL_NAME (t);
+
       if (STREQ (PKL_AST_IDENTIFIER_POINTER (t_name),
                  name))
         return t;
@@ -122,6 +131,26 @@ register_decl (pkl_hash hash_table,
   return 1;
 }
 
+static pkl_hash *
+get_ns_table (pkl_env env, int namespace)
+{
+  pkl_hash *table = NULL;
+
+  switch (namespace)
+    {
+    case PKL_ENV_NS_MAIN:
+      table = &env->hash_table;
+      break;
+    case PKL_ENV_NS_UNITS:
+      table = &env->units_hash_table;
+      break;
+    default:
+      assert (0);
+    }
+
+  return table;
+}
+
 /* The following functions are documented in pkl-env.h.  */
 
 pkl_env
@@ -137,6 +166,7 @@ pkl_env_free (pkl_env env)
     {
       pkl_env_free (env->up);
       free_hash_table (env->hash_table);
+      free_hash_table (env->units_hash_table);
       free (env);
     }
 }
@@ -165,10 +195,13 @@ pkl_env_pop_frame (pkl_env env)
 
 int
 pkl_env_register (pkl_env env,
+                  int namespace,
                   const char *name,
                   pkl_ast_node decl)
 {
-  if (register_decl (env->hash_table, name, decl))
+  pkl_hash *table = get_ns_table (env, namespace);
+  
+  if (register_decl (*table, name, decl))
     {
       switch (PKL_AST_DECL_KIND (decl))
         {
@@ -178,6 +211,9 @@ pkl_env_register (pkl_env env,
         case PKL_AST_DECL_KIND_VAR:
         case PKL_AST_DECL_KIND_FUNC:
           PKL_AST_DECL_ORDER (decl) = env->num_vars++;
+          break;
+        case PKL_AST_DECL_KIND_UNIT:
+          PKL_AST_DECL_ORDER (decl) = env->num_units++;
           break;
         default:
           assert (0);
@@ -189,14 +225,15 @@ pkl_env_register (pkl_env env,
 }
 
 static pkl_ast_node
-pkl_env_lookup_1 (pkl_env env, const char *name,
+pkl_env_lookup_1 (pkl_env env, int namespace, const char *name,
                   int *back, int *over, int num_frame)
 {
   if (env == NULL)
     return NULL;
   else
     {
-      pkl_ast_node decl = get_registered (env->hash_table, name);
+      pkl_hash *table = get_ns_table (env, namespace);
+      pkl_ast_node decl = get_registered (*table, name);
 
       if (decl)
         {
@@ -208,15 +245,15 @@ pkl_env_lookup_1 (pkl_env env, const char *name,
         }
     }
 
-  return pkl_env_lookup_1 (env->up, name, back, over,
+  return pkl_env_lookup_1 (env->up, namespace, name, back, over,
                            num_frame + 1);
 }
 
 pkl_ast_node
-pkl_env_lookup (pkl_env env, const char *name,
+pkl_env_lookup (pkl_env env, int namespace, const char *name,
                 int *back, int *over)
 {
-  return pkl_env_lookup_1 (env, name, back, over, 0);
+  return pkl_env_lookup_1 (env, namespace, name, back, over, 0);
 }
 
 int
@@ -285,18 +322,30 @@ pkl_env_dup_toplevel (pkl_env env)
   assert (pkl_env_toplevel_p (env));
 
   new = pkl_env_new ();
+
   for (i = 0; i < HASH_TABLE_SIZE; ++i)
     {
       pkl_ast_node t;
-
       pkl_ast_node decl = env->hash_table[i];
+
       for (t = decl; t; t = PKL_AST_CHAIN2 (t))
         t = ASTREF (t);
       new->hash_table[i] = decl;
     }
 
+  for (i = 0; i < HASH_TABLE_SIZE; ++i)
+    {
+      pkl_ast_node t;
+      pkl_ast_node decl = env->units_hash_table[i];
+
+      for (t = decl; t; t = PKL_AST_CHAIN2 (t))
+        t = ASTREF (t);
+      new->units_hash_table[i] = decl;
+    }
+
   new->num_types = env->num_types;
   new->num_vars = env->num_vars;
+  new->num_units = env->num_units;
 
   return new;
 }
@@ -324,7 +373,7 @@ pkl_env_get_next_matching_decl (pkl_env env, struct pkl_ast_node_iter *iter,
 	  pkl_env_iter_next (env, iter);
           continue;
 	}
-      return  strdup (cmdname);
+      return strdup (cmdname);
     }
   return NULL;
 }
