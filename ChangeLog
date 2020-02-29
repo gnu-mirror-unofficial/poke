@@ -1,3 +1,9 @@
+2020-02-29  John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-editor.c (pk_cmd_editor):  Correctly test
+	the output from find_in_path:  if the program is not
+	found, it returns its argument verbatim.
+
 2020-02-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-tab.y (DEFUNIT): New token.

@@ -48,7 +48,11 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* Debian based systems should always have "sensible-editor"
      in the path.  */
   if (!editor)
-    editor = find_in_path ("sensible-editor");
+    {
+      editor = find_in_path ("sensible-editor");
+      if (strcmp (editor, "sensible-editor") == 0)
+	editor = NULL;
+    }
   if (!editor)
     {
       pk_term_class ("error");
