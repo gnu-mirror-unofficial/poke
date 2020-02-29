@@ -1,5 +1,12 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	ios: Utilize buffer writes.
+	* src/ios.c (IOS_PUT_C_ERR_CHCK): Add parameter.
+	(ios_write_int_fast, ios_write_int_common): Consolidate writes.
+	(ios_size): Drop useless ().
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	ios: Utilize buffer reads.
 	* src/ios.c (ios_read_int_common, ios_read_int, ios_read_uint):
 	Consolidate reads.

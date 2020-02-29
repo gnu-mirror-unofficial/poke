@@ -41,10 +41,9 @@
     (c) = ch;							\
   }
 
-#define IOS_PUT_C_ERR_CHCK(c, io, off)			\
+#define IOS_PUT_C_ERR_CHCK(c, io, len, off)		\
   {							\
-    uint8_t ch = (c);					\
-    if ((io)->dev_if->pwrite ((io)->dev, &ch, 1, off)	\
+    if ((io)->dev_if->pwrite ((io)->dev, c, len, off)	\
 	== IOD_EOF)					\
       return IOS_EIOBJ;					\
   }
@@ -939,150 +938,155 @@ ios_write_int_fast (ios io, ios_off offset, int flags,
 		    enum ios_endian endian,
 		    uint64_t value)
 {
-  offset /= 8;
+  uint8_t c[8];
+
   switch (bits)
     {
     case 8:
-      IOS_PUT_C_ERR_CHCK(value, io, offset);
-      return IOS_OK;
+      c[0] = value;
+      break;
 
     case 16:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
+	  c[0] = value;
+	  c[1] = value >> 8;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 1);
+	  c[0] = value >> 8;
+	  c[1] = value;
 	}
-      return IOS_OK;
+      break;
 
     case 24:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
+	  c[0] = value;
+	  c[1] = value >> 8;
+	  c[2] = value >> 16;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 2);
+	  c[0] = value >> 16;
+	  c[1] = value >> 8;
+	  c[2] = value;
 	}
-      return IOS_OK;
+      break;
 
     case 32:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
+	  c[0] = value;
+	  c[1] = value >> 8;
+	  c[2] = value >> 16;
+	  c[3] = value >> 24;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 3);
+	  c[0] = value >> 24;
+	  c[1] = value >> 16;
+	  c[2] = value >> 8;
+	  c[3] = value;
 	}
-      return IOS_OK;
+      break;
 
     case 40:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
+	  c[0] = value;
+	  c[1] = value >> 8;
+	  c[2] = value >> 16;
+	  c[3] = value >> 24;
+	  c[4] = value >> 32;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 4);
+	  c[0] = value >> 32;
+	  c[1] = value >> 24;
+	  c[2] = value >> 16;
+	  c[3] = value >> 8;
+	  c[4] = value;
 	}
-      return IOS_OK;
+      break;
 
     case 48:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 5);
+	  c[0] = value;
+	  c[1] = value >> 8;
+	  c[2] = value >> 16;
+	  c[3] = value >> 24;
+	  c[4] = value >> 32;
+	  c[5] = value >> 40;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 4);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 5);
+	  c[0] = value >> 40;
+	  c[1] = value >> 32;
+	  c[2] = value >> 24;
+	  c[3] = value >> 16;
+	  c[4] = value >> 8;
+	  c[5] = value;
 	}
-      return IOS_OK;
+      break;
 
     case 56:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 5);
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset + 6);
+	  c[0] = value;
+	  c[1] = value >> 8;
+	  c[2] = value >> 16;
+	  c[3] = value >> 24;
+	  c[4] = value >> 32;
+	  c[5] = value >> 40;
+	  c[6] = value >> 48;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 4);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 5);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 6);
+	  c[0] = value >> 48;
+	  c[1] = value >> 40;
+	  c[2] = value >> 32;
+	  c[3] = value >> 24;
+	  c[4] = value >> 16;
+	  c[5] = value >> 8;
+	  c[6] = value;
 	}
-      return IOS_OK;
+      break;
 
     case 64:
       if (endian == IOS_ENDIAN_LSB)
 	{
-	  IOS_PUT_C_ERR_CHCK(value, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 4);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 5);
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset + 6);
-	  IOS_PUT_C_ERR_CHCK(value >> 56, io, offset + 7);
+	  c[0] = value;
+	  c[1] = value >> 8;
+	  c[2] = value >> 16;
+	  c[3] = value >> 24;
+	  c[4] = value >> 32;
+	  c[5] = value >> 40;
+	  c[6] = value >> 48;
+	  c[7] = value >> 56;
 	}
       else
 	{
-	  IOS_PUT_C_ERR_CHCK(value >> 56, io, offset);
-	  IOS_PUT_C_ERR_CHCK(value >> 48, io, offset + 1);
-	  IOS_PUT_C_ERR_CHCK(value >> 40, io, offset + 2);
-	  IOS_PUT_C_ERR_CHCK(value >> 32, io, offset + 3);
-	  IOS_PUT_C_ERR_CHCK(value >> 24, io, offset + 4);
-	  IOS_PUT_C_ERR_CHCK(value >> 16, io, offset + 5);
-	  IOS_PUT_C_ERR_CHCK(value >> 8, io, offset + 6);
-	  IOS_PUT_C_ERR_CHCK(value, io, offset + 7);
+	  c[0] = value >> 56;
+	  c[1] = value >> 48;
+	  c[2] = value >> 40;
+	  c[3] = value >> 32;
+	  c[4] = value >> 24;
+	  c[5] = value >> 16;
+	  c[6] = value >> 8;
+	  c[7] = value;
 	}
-      return IOS_OK;
+      break;
 
     default:
       assert (0);
       break;
     }
+
+  if (io->dev_if->pwrite (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
+    return IOS_EIOBJ;
+  return IOS_OK;
 }
 
 static inline int
@@ -1092,7 +1096,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
 		      uint64_t value)
 {
   /* 64 bits might span at most 9 bytes.  */
-  uint64_t c[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  uint8_t c[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   /* Number of signifcant bits in the first byte.  */
   int firstbyte_bits = 8 - (offset % 8);
@@ -1117,7 +1121,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
 
       /* Write the byte back without changing the surrounding bits.  */
       c[0] = head | tail | (value << (8 - lastbyte_bits));
-      IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
+      IOS_PUT_C_ERR_CHCK(c, io, 1, offset / 8);
       return IOS_OK;
     }
 
@@ -1139,8 +1143,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
       }
     c[0] |= value >> lastbyte_bits;
     c[1] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
+    IOS_PUT_C_ERR_CHCK(c, io, 2, offset / 8);
     return IOS_OK;
 
   case 2:
@@ -1167,9 +1170,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[0] |= value >> (8 + lastbyte_bits);
     c[1] = (value >> lastbyte_bits) & 0xff;
     c[2] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
+    IOS_PUT_C_ERR_CHCK(c, io, 3, offset / 8);
     return IOS_OK;
 
   case 3:
@@ -1199,10 +1200,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[1] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[2] = (value >> lastbyte_bits) & 0xff;
     c[3] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
-    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
+    IOS_PUT_C_ERR_CHCK(c, io, 4, offset / 8);
     return IOS_OK;
 
   case 4:
@@ -1235,11 +1233,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[2] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[3] = (value >> lastbyte_bits) & 0xff;
     c[4] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
-    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
-    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
+    IOS_PUT_C_ERR_CHCK(c, io, 5, offset / 8);
     return IOS_OK;
 
   case 5:
@@ -1275,12 +1269,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[3] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[4] = (value >> lastbyte_bits) & 0xff;
     c[5] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
-    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
-    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
-    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
+    IOS_PUT_C_ERR_CHCK(c, io, 6, offset / 8);
     return IOS_OK;
 
   case 6:
@@ -1319,13 +1308,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[4] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[5] = (value >> lastbyte_bits) & 0xff;
     c[6] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
-    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
-    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
-    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
-    IOS_PUT_C_ERR_CHCK(c[6], io, offset / 8 + 6);
+    IOS_PUT_C_ERR_CHCK(c, io, 7, offset / 8);
     return IOS_OK;
 
   case 7:
@@ -1367,14 +1350,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[5] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[6] = (value >> lastbyte_bits) & 0xff;
     c[7] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
-    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
-    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
-    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
-    IOS_PUT_C_ERR_CHCK(c[6], io, offset / 8 + 6);
-    IOS_PUT_C_ERR_CHCK(c[7], io, offset / 8 + 7);
+    IOS_PUT_C_ERR_CHCK(c, io, 8, offset / 8);
     return IOS_OK;
 
   case 8:
@@ -1408,15 +1384,7 @@ ios_write_int_common (ios io, ios_off offset, int flags,
     c[6] = (value >> (8 + lastbyte_bits)) & 0xff;
     c[7] = (value >> lastbyte_bits) & 0xff;
     c[8] |= (value << (8 - lastbyte_bits)) & 0xff;
-    IOS_PUT_C_ERR_CHCK(c[0], io, offset / 8);
-    IOS_PUT_C_ERR_CHCK(c[1], io, offset / 8 + 1);
-    IOS_PUT_C_ERR_CHCK(c[2], io, offset / 8 + 2);
-    IOS_PUT_C_ERR_CHCK(c[3], io, offset / 8 + 3);
-    IOS_PUT_C_ERR_CHCK(c[4], io, offset / 8 + 4);
-    IOS_PUT_C_ERR_CHCK(c[5], io, offset / 8 + 5);
-    IOS_PUT_C_ERR_CHCK(c[6], io, offset / 8 + 6);
-    IOS_PUT_C_ERR_CHCK(c[7], io, offset / 8 + 7);
-    IOS_PUT_C_ERR_CHCK(c[8], io, offset / 8 + 8);
+    IOS_PUT_C_ERR_CHCK(c, io, 9, offset / 8);
     return IOS_OK;
 
   default:
@@ -1513,5 +1481,5 @@ ios_write_string (ios io, ios_off offset, int flags,
 uint64_t
 ios_size (ios io)
 {
-  return io->dev_if->size ((io)->dev) * 8;
+  return io->dev_if->size (io->dev) * 8;
 }
