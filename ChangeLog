@@ -50,7 +50,7 @@
 
 2020-02-29  John Darrington <john@darrington.wattle.id.au>
 
-	* src/pk-editor.c (pk_cmd_editor): Do nothing if poke is not running 
+	* src/pk-editor.c (pk_cmd_editor): Do nothing if poke is not running
 	interactively.
 
 2020-02-29  John Darrington <john@darrington.wattle.id.au>

@@ -200,7 +200,7 @@ pkl_env_register (pkl_env env,
                   pkl_ast_node decl)
 {
   pkl_hash *table = get_ns_table (env, namespace);
-  
+
   if (register_decl (*table, name, decl))
     {
       switch (PKL_AST_DECL_KIND (decl))

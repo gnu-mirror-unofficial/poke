@@ -774,7 +774,7 @@ expression:
                                  "invalid unit in offset");
                       YYERROR;
                     }
-                  
+
                     $$ = pkl_ast_make_offset (pkl_parser->ast, NULL, $1);
                     PKL_AST_LOC ($1) = @1;
                     if (PKL_AST_TYPE ($1))
@@ -1181,7 +1181,7 @@ offset_type_specifier:
                                              PKL_ENV_NS_MAIN,
                                              PKL_AST_IDENTIFIER_POINTER ($4),
                                              NULL, NULL);
-                      
+
                       if (!decl)
                         {
                           pkl_error (pkl_parser->compiler, pkl_parser->ast, @4,
@@ -1546,7 +1546,7 @@ declaration:
                   pkl_ast_node cast
                     = pkl_ast_make_cast (pkl_parser->ast,
                                          type, $4);
-                  
+
                   $$ = pkl_ast_make_decl (pkl_parser->ast,
                                           PKL_AST_DECL_KIND_UNIT, $2, cast,
                                           pkl_parser->filename);
