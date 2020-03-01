@@ -1,5 +1,15 @@
 2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/Makefile.am (poke_SOURCES): Remove jitter generated sources.
+	(poke_LDADD): Add libpvmjitter.a.
+	(noinst_LIBRARIES): Define.
+	(libpvmjitter_a_SOURCES): Likewise.
+	(libpvmjitter_a_CPPFLAGS): Likewise.
+	(libpvmjitter_a_CFLAGS): Likewise.
+	* TODO: Another task bites the dust!
+
+2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/sl-integers-1.pk: Rename from sl-1.pk
 	* testsuite/poke.pkl/sl-integers-2.pk: Rename from sl-2.pk
 	* testsuite/poke.pkl/sl-integers-3.pk: Rename from sl-3.pk

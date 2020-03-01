@@ -79,14 +79,6 @@ same directory.
 
 Happy poking!
 
-#B0 Use jitter deopt options only where needed
-----------------------------------------------
-
-At the moment the JITTER_CFLAGS and friends are applied to all the
-sources of the `poke' program.  As jitter does some deoptimizations,
-it would be more efficient to use these flags only in jitter-generated
-vm files.  This could be achieved using a libtool convenience library.
-
 #B1 Parallelize the dg testsuite
 --------------------------------
 

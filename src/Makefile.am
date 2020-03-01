@@ -48,7 +48,6 @@ poke_SOURCES = poke.c poke.h \
                pvm-val.h pvm-val.c \
                pvm-env.h pvm-env.c \
                pvm.jitter \
-               pvm-vm.h pvm-vm1.c pvm-vm2.c \
                pkl-gen.pks pkl-asm.pks \
                pkl-gen.pkc pkl-asm.pkc \
                pkl-insn.def pkl-ops.def pkl-attrs.def
@@ -77,6 +76,7 @@ poke_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
                 -DLOCALEDIR=\"$(localedir)\"
 poke_CFLAGS = -Wall $(BDW_GC_CFLAGS)
 poke_LDADD = $(top_builddir)/lib/libpoke.la \
+             libpvmjitter.a \
              $(LTLIBREADLINE) $(BDW_GC_LIBS) $(LIBTEXTSTYLE)
 poke_LDFLAGS =
 
@@ -86,8 +86,12 @@ endif
 
 # Integration with jitter.
 
+noinst_LIBRARIES = libpvmjitter.a
+libpvmjitter_a_SOURCES = pvm-vm.h pvm-vm1.c pvm-vm2.c
+libpvmjitter_a_CPPFLAGS = $(poke_CPPFLAGS)
+libpvmjitter_a_CFLAGS = $(poke_CFLAGS) $(JITTER_CFLAGS)
+
 poke_CPPFLAGS += $(JITTER_CPPFLAGS)
-poke_CFLAGS += $(JITTER_CFLAGS)
 poke_LDADD += $(JITTER_LDADD)
 poke_LDFLAGS += $(JITTER_LDFLAGS)
 
