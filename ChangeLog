@@ -1,3 +1,8 @@
+2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-asm.c (pkl_asm_insn_binop): Remove gratuitous
+	conditional.
+
 2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* TODO: New task.

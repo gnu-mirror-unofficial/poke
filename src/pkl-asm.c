@@ -694,13 +694,10 @@ pkl_asm_insn_binop (pkl_asm pasm,
           pkl_asm_insn (pasm, mul_table[tl][signed_p]);
           break;
         case PKL_INSN_DIV:
+          pkl_asm_insn (pasm, div_table[tl][signed_p]);
+          break;
         case PKL_INSN_MOD:
-
-          if (insn == PKL_INSN_DIV)
-            pkl_asm_insn (pasm, div_table[tl][signed_p]);
-          else
-            pkl_asm_insn (pasm, mod_table[tl][signed_p]);
-
+          pkl_asm_insn (pasm, mod_table[tl][signed_p]);
           break;
         case PKL_INSN_BNOT:
           pkl_asm_insn (pasm, bnot_table[tl][signed_p]);
