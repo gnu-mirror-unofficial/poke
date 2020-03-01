@@ -971,28 +971,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
 }
 PKL_PHASE_END_HANDLER
 
-#if 0
-PKL_PHASE_BEGIN_HANDLER (pkl_fold_pow)
-{
-  pkl_ast_node exp = PKL_PASS_NODE;
-  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
-  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
-
-  if (PKL_AST_CODE (op1) == PKL_AST_INTEGER
-      && PKL_AST_CODE (op2) == PKL_AST_INTEGER)
-    {
-      pkl_ast_node op1_type = PKL_AST_TYPE (op1);
-
-      if (PKL_AST_TYPE_I_SIGNED (op1_type))
-        {
-
-
-        }
-    }
-}
-PKL_PHASE_END_HANDLER
-#endif
-
 struct pkl_phase pkl_phase_fold =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_fold_pr_type),
