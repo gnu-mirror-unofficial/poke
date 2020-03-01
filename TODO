@@ -285,6 +285,23 @@ A new %-sequence shall be added to printf: %%.  This denotes a single
 ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
 
 
+#M1 make the PVM run-time environment aware of units
+----------------------------------------------------
+
+The poke compiler allows the user to define her own units using the
+``defunit`` construct.  The PVM, however, is oblivious of this, and it
+only knows how to print the names of the standard units.  This is
+achieved by replicating the logic of the units in the
+``print_unit_name`` function.
+
+We really want to make the PVM aware of units.  This would allow us
+to:
+
+1. Print the name of user-defined units when printing offsets.
+
+2. Avoid logic replication in ``print_unit_name`` and the set of
+   ``PVM_VAL_OFF_UNIT_*`` constants defined in ``pvm-val.h``.
+
 
 This file is part of GNU poke.
 
