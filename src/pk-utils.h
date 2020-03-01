@@ -31,4 +31,10 @@
 
 char *pk_file_readable (const char *filename);
 
+/* Integer exponentiation by squaring, for both signed and unsigned
+   integers.  */
+
+int64_t pk_ipow (int64_t base, uint32_t exp);
+uint64_t pk_upow (uint64_t base, uint32_t exp);
+
 #endif /* ! PK_UTILS_H */

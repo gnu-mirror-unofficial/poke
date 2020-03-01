@@ -1,3 +1,36 @@
+2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ops.def (PKL_AST_OP_POW): New operator.
+	* src/pkl-tab.y (POW): New token.
+	(expression): New rule alternative for exponentiation.
+	* src/pkl-lex.l: Handle POW.
+	* src/pkl-typify.c: Handle the exponent operator.
+	* src/pkl-fold.c: Likewise.
+	* src/pkl-promo.c: Likewise.
+	(pkl_promo_ps_op_bshiftpow): Renamed from pkl_promo_ps_op_bshift.
+	* src/pvm.jitter (PVM_POWOP): Define.
+	(powi): New instruction.
+	(powiu): Likewise.
+	(powl): Likewise.
+	(powlu): Likewise.
+	* src/pkl-insn.def (PKL_INSN_POWI): Define
+	(PKL_INSN_POWIU): Likewise.
+	(PKL_INSN_POWL): Likewise.
+	(PKL_INSN_POWLU): Likewise.
+	(PKL_INSN_POW): Likewise.
+	* src/pkl-asm.c (pkl_asm_insn_intop): Implement the pow
+	macro-instruction.
+	(pkl_asm_insn): Handle PKL_INSN_POW.
+	* src/pkl-gen.c (pkl_gen_ps_op_pow): New handler.
+	* src/pk-utils.h: Prototypes for pk_ipow and pk_upow.
+	* src/pk-utils.c (pk_ipow): New function.
+	(pk_upow): Likewise.
+	* testsuite/poke.pkl/pow-1.pk: New test.
+	* testsuite/poke.pkl/pow-2.pk: Likewise.
+	* testsuite/poke.pkl/pow-3.pk: Likewise.
+	* doc/poke.texi (Arithmetic Operators): Mention the exponentiation
+	operator.
+
 2020-02-29  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-editor.c (pk_cmd_editor):  Correctly test

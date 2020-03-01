@@ -1264,7 +1264,7 @@ The following left-associative binary arithmetic operators are
 supported, in descending precedence order:
 
 @itemize
-@item Multiplication @code{*}, integer division @code{/}, integer
+@item Exponentiation @code{**}, multiplication @code{*}, integer division @code{/}, integer
 ceil-division @code{/^} and modulus @code{%}.
 @item Addition @code{+} and subtraction @code{-}.
 @end itemize

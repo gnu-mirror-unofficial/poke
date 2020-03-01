@@ -121,6 +121,11 @@ PKL_DEF_INSN (PKL_INSN_MODIU, "", "modiu")
 PKL_DEF_INSN (PKL_INSN_MODL, "", "modl")
 PKL_DEF_INSN (PKL_INSN_MODLU, "", "modlu")
 
+PKL_DEF_INSN (PKL_INSN_POWI, "", "powi")
+PKL_DEF_INSN (PKL_INSN_POWIU, "", "powiu")
+PKL_DEF_INSN (PKL_INSN_POWL, "", "powl")
+PKL_DEF_INSN (PKL_INSN_POWLU, "", "powlu")
+
 /* Compare-and-swap instructions.  */
 
 PKL_DEF_INSN (PKL_INSN_SWAPGTI, "", "swapgti")
@@ -406,6 +411,7 @@ PKL_DEF_INSN (PKL_INSN_MUL, "a", "mul")
 PKL_DEF_INSN (PKL_INSN_DIV, "a", "div")
 PKL_DEF_INSN (PKL_INSN_CDIV, "a", "cdiv")
 PKL_DEF_INSN (PKL_INSN_MOD, "a", "mod")
+PKL_DEF_INSN (PKL_INSN_POW, "a", "pow")
 PKL_DEF_INSN (PKL_INSN_PEEK, "ann", "peek")
 PKL_DEF_INSN (PKL_INSN_POKE, "ann", "poke")
 PKL_DEF_INSN (PKL_INSN_PEEKD, "a", "peekd")

@@ -560,8 +560,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
 }
 PKL_PHASE_END_HANDLER
 
-/* The bit shift operations are defined on the following
-   configurations of operand and result types:
+/* The bit shift operations, and also exponentiation, are defined on
+   the following configurations of operand and result types:
 
            INTEGRAL x INTEGRAL(32,0) -> INTEGRAL
 
@@ -569,7 +569,7 @@ PKL_PHASE_END_HANDLER
    match the type of the result.  The type of the second operand is
    promoted to an unsigned 32-bit integral type.  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_bshift)
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_bshiftpow)
 {
   int restart1, restart2;
 
@@ -1472,8 +1472,8 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_GT, pkl_promo_ps_op_rela),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_LE, pkl_promo_ps_op_rela),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_GE, pkl_promo_ps_op_rela),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_promo_ps_op_bshift),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_promo_ps_op_bshift),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_promo_ps_op_bshiftpow),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_promo_ps_op_binary),
@@ -1484,6 +1484,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_promo_ps_op_add_sub_mod),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_promo_ps_op_add_sub_mod),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_promo_ps_op_mul),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_promo_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_promo_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_promo_ps_op_in),

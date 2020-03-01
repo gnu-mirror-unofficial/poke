@@ -377,6 +377,7 @@ load_module (struct pkl_parser *parser,
 %left SL SR
 %left '+' '-'
 %left '*' '/' CEILDIV '%'
+%left POW
 %left BCONC
 %right '@'
 %nonassoc UNIT
@@ -621,6 +622,11 @@ expression:
 	| expression CEILDIV expression
         	{
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_CEILDIV, $1, $3);
+                  PKL_AST_LOC ($$) = @$;
+                }
+	| expression POW expression
+        	{
+                  $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_POW, $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '%' expression

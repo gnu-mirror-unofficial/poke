@@ -276,6 +276,7 @@ D [0-9]
 ">"		{ return '>'; }
 "+"		{ return '+'; }
 "-"		{ return '-'; }
+"**"		{ return POW; }
 "*"		{ return '*'; }
 "/^"		{ return CEILDIV; }
 "/"		{ return '/'; }

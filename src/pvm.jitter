@@ -81,9 +81,11 @@ end
 
 early-header-c
   code
+#   include <config.h>
 #   include "pvm.h"
 #   include "ios.h"
 #   include "pk-term.h"
+#   include "pk-utils.h"
 
 #   define STREQ(a, b) (strcmp (a, b) == 0)
 #   define STRNEQ(a, b) (strcmp (a, b) != 0)
@@ -224,6 +226,19 @@ late-header-c
      }                                                                       \
    }
 
+/* Exponentiation instructions.  */
+# define PVM_POWOP(TYPE,TYPEC,TYPELC,POWF)                                  \
+  do                                                                        \
+  {                                                                         \
+     uint64_t size = PVM_VAL_##TYPE##_SIZE (JITTER_UNDER_TOP_STACK ());     \
+     TYPEC res                                                              \
+      = (TYPEC) POWF (PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ()),           \
+                      PVM_VAL_UINT (JITTER_TOP_STACK ()));                  \
+                                                                            \
+     JITTER_PUSH_STACK (pvm_make_##TYPELC (res, size));                     \
+  }                                                                         \
+  while (0)
+  
 /* Conversion instructions.
    ( TYPE -- TYPE RTYPE )  */
 #define PVM_CONVOP(TYPE, TYPEC, RTYPELC, RTYPEC)                             \
@@ -1873,6 +1888,62 @@ end
 instruction neglu ()
   code
     PVM_UNOP (ULONG, ULONG, ulong, -);
+  end
+end
+
+# Instruction: powi
+#
+# Perform the exponentiation of the integer at the under top of the
+# main stack.  The exponent is the unsigned integer at the top of the
+# stack.  If the exponent is 0, the result is 1.
+#
+# Stack: ( INT UINT -- INT UINT INT )
+
+instruction powi ()
+  code
+    PVM_POWOP (INT,int64_t,int,pk_ipow);
+  end
+end
+
+# Instruction: powiu
+#
+# Perform the exponentiation of the unsigned integer at the under top
+# of the main stack.  The exponent is the unsigned integer at the top
+# of the stack.  If the exponent is 0, the result is 1.
+#
+# Stack: ( UINT UINT -- UINT UINT UINT )
+
+instruction powiu ()
+  code
+    PVM_POWOP (UINT,uint64_t,uint,pk_upow);
+  end
+end
+
+# Instruction: powl
+#
+# Perform the exponentiation of the long at the under top of the
+# main stack.  The exponent is the unsigned integer at the top of the
+# stack.  If the exponent is 0, the result is 1.
+#
+# Stack: ( LONG UINT -- LONG UINT LONG )
+
+instruction powl ()
+  code
+    PVM_POWOP (LONG,int64_t,long,pk_ipow);
+  end
+end
+
+# Instruction: powlu
+#
+# Perform the exponentiation of the unsigned long at the under top
+# of the main stack.  The exponent is the unsigned integer at the top
+# of the stack.  If the exponent is 0, the result is 1.
+#
+# Stack: ( ULONG UINT -- ULONG UINT ULONG )
+
+instruction powlu ()
+  code
+    PVM_POWOP (ULONG,uint64_t,ulong,pk_upow);
   end
 end
 

@@ -620,10 +620,14 @@ pkl_asm_insn_poked (pkl_asm pasm, pkl_ast_node type)
    Macro-instruction: SR type
    ( VAL VAL -- VAL VAL VAL )
 
+   Macro-instruction: POW type
+   ( VAL VAL -- VAL VAL VAL )
+
    Generate code for performing negation, addition, subtraction,
    multiplication, division, remainder and bit shift to integral and
-   offset operands.  INSN identifies the operation to perform, and
-   TYPE the type of the operands and the result.  */
+   offset operands.  Also exponentiation.  INSN identifies the
+   operation to perform, and TYPE the type of the operands and the
+   result.  */
 
 static void
 pkl_asm_insn_intop (pkl_asm pasm,
@@ -667,6 +671,9 @@ pkl_asm_insn_intop (pkl_asm pasm,
 
       static int sr_table[2][2] = {{ PKL_INSN_SRIU, PKL_INSN_SRI },
                                    { PKL_INSN_SRLU, PKL_INSN_SRL }};
+
+      static int pow_table[2][2] = {{ PKL_INSN_POWIU, PKL_INSN_POWI },
+                                    { PKL_INSN_POWLU, PKL_INSN_POWL }};
 
       uint64_t size = PKL_AST_TYPE_I_SIZE (type);
       int signed_p = PKL_AST_TYPE_I_SIGNED (type);
@@ -712,6 +719,9 @@ pkl_asm_insn_intop (pkl_asm pasm,
           break;
         case PKL_INSN_SR:
           pkl_asm_insn (pasm, sr_table[tl][signed_p]);
+          break;
+        case PKL_INSN_POW:
+          pkl_asm_insn (pasm, pow_table[tl][signed_p]);
           break;
         default:
           assert (0);
@@ -1408,6 +1418,7 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
         case PKL_INSN_BXOR:
         case PKL_INSN_SL:
         case PKL_INSN_SR:
+        case PKL_INSN_POW:
           {
             pkl_ast_node type;
 

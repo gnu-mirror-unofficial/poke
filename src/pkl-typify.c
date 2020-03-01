@@ -506,6 +506,7 @@ PKL_PHASE_END_HANDLER
 
 TYPIFY_BIN (sl);
 TYPIFY_BIN (sr);
+TYPIFY_BIN (pow);
 
 #undef CASE_INTEGRAL
 #define CASE_INTEGRAL                                                   \
@@ -2411,6 +2412,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_typify1_ps_mul),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_typify1_ps_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_typify1_ps_ceildiv),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_typify1_ps_pow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_typify1_ps_mod),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_typify1_ps_sl),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_typify1_ps_sr),
