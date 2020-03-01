@@ -1,5 +1,26 @@
 2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/sl-integers-1.pk: Rename from sl-1.pk
+	* testsuite/poke.pkl/sl-integers-2.pk: Rename from sl-2.pk
+	* testsuite/poke.pkl/sl-integers-3.pk: Rename from sl-3.pk
+	* testsuite/poke.pkl/sl-integers-4.pk: Rename from sl-4.pk
+	* testsuite/poke.pkl/sl-integers-5.pk: Rename from sl-5.pk
+	* testsuite/poke.pkl/sl-integers-6.pk: Rename from sl-6.pk
+	* testsuite/poke.pkl/sl-integers-7.pk: Rename from sl-7.pk
+	* testsuite/poke.pkl/sl-integers-8.pk: Rename from sl-8.pk
+	* testsuite/poke.pkl/sl-integers-9.pk: Rename from sl-9.pk
+	* testsuite/poke.pkl/sl-integers-10.pk: Rename from sl-10.pk
+	* testsuite/poke.pkl/sl-integers-11.pk: Rename from sl-11.pk
+	* testsuite/poke.pkl/sl-integers-12.pk: Rename from sl-12.pk
+	* testsuite/poke.pkl/sl-offsets-1.pk: New test.
+	* testsuite/poke.pkl/sr-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/sr-offsets-1.pk: Likewise.
+	* testsuite/poke.pkl/sr-integers-2.pk: Likewise.
+	* testsuite/poke.pkl/sr-integers-1.pk: Likewise.
+	* testsuite/poke.pkl/sl-offsets-2.pk: Likewise.
+
+2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-asm.c (pkl_asm_insn_binop): Remove gratuitous
 	conditional.
 
