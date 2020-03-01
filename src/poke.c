@@ -297,8 +297,14 @@ parse_args (int argc, char *argv[])
 
   if (optind < argc)
     {
-      if (ios_open (argv[optind++], 0, 1) == IOS_ERROR)
-        goto exit_failure;
+      char *filename = argv[optind++];
+      
+      if (ios_open (filename, 0, 1) == IOS_ERROR)
+        {
+          if (!poke_quiet_p)
+            pk_printf (_("cannot open file %s\n"), filename);
+          goto exit_failure;
+        }
 
       optind++;
     }

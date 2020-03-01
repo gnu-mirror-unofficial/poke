@@ -1,5 +1,10 @@
 2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/poke.c (parse_args): Emit an error message if the specified
+	data file cannot be opened.
+
+2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-promo.c (pkl_promo_ps_op_binary_intoffstr): Renamed from
 	pkl_promo_ps_op_add_sub_mod.
 	(pkl_promo_ps_op_bshiftpow): Promote offset operand.
