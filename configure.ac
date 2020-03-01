@@ -132,20 +132,18 @@ AC_OUTPUT
 dnl Report warnings
 
 if test "x$HAVE_LIBTEXTSTYLE" = "xno"; then
-   echo "warning: libtextstyle was not found in the system."
-   echo "warning: poke's output won't be styled."
+   AC_MSG_WARN([libtextstyle was not found in the system. Poke's output won't be styled.])
 fi
 
 if test "x$hserver_enabled" = "xno"; then
-   echo "warning: building poke without terminal hyperlinks server support."
-   echo "warning: install an hyperlinks-capable libtextstyle and use"
-   echo "warning: --enable-hserver to activate it."
+   AC_MSG_WARN([building poke without terminal hyperlinks server support.
+     Install a hyperlinks-capable libtextstyle and use --enable-hserver to activate it.])
 fi
 
 dnl Report errors
 
 if test "x$gl_cv_lib_readline" = "xno"; then
-   AC_ERROR("can't find an usable libreadline.  Please install one")
+   AC_MSG_ERROR([can't find an usable libreadline.  Please install one.])
 fi
 
 dnl End of configure.ac
