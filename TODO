@@ -292,6 +292,23 @@ to:
 2. Avoid logic replication in ``print_unit_name`` and the set of
    ``PVM_VAL_OFF_UNIT_*`` constants defined in ``pvm-val.h``.
 
+#P2 implement ``format``
+------------------------
+
+We want to add a new language construction ``format``, which has the
+form::
+
+  format (FMT, ARGS...)
+
+or::
+
+  format FMT, ARGS...
+
+``format`` works like printf, but instead of printing out the
+formatted string it returns it.  This task requires adding support for
+this construction to the compiler.  In principle no PVM changes are
+necessary.
+
 
 This file is part of GNU poke.
 
