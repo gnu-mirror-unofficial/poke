@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar foo = 0#Kb;
+defvar foo = 0#Kib;
 
-/* { dg-command { foo = 1#Mb; } } */
+/* { dg-command { foo = 1#Mib; } } */
 /* { dg-command { foo } } */
-/* { dg-output "1024#Kb" } */
+/* { dg-output "1024#Kib" } */

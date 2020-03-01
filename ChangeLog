@@ -1,5 +1,30 @@
 2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/std.pk: Define standard units using the power operator, and
+	use the same prefixes than coreutils.
+	* src/pvm-val.h (PVM_VAL_OFF_UNIT_GIGABYTES): Define.
+	(PVM_VAL_OFF_UNIT_KIBIBITS): Likewise.
+	(PVM_VAL_OFF_UNIT_KIBIBYTES): Likewise.
+	(PVM_VAL_OFF_UNIT_MEBIBITS): Likewise.
+	(PVM_VAL_OFF_UNIT_MEBIBYTES): Likewise.
+	(PVM_VAL_OFF_UNIT_KILOBITS): Changed to base 10.
+	(PVM_VAL_OFF_UNIT_KILOBYTES): Likewise.
+	(PVM_VAL_OFF_UNIT_MEGABITS): Likewise.
+	(PVM_VAL_OFF_UNIT_MEGABYTES): Likewise.
+	(PVM_VAL_OFF_UNIT_GIGABITS): Likewise.
+	* src/pvm-val.c (pvm_print_val): Fix unit names.
+	(print_unit_name): New function.
+	(pvm_print_val): Use print_unit_name.
+	* testsuite/poke.pkl/ass-offset-1.pk: Adjust test to new units.
+	* testsuite/poke.pkl/promo-offset-arg-2.pk: Likewise.
+	* testsuite/poke.pkl/promo-offset-arg-1.pk: Likewise.
+	* testsuite/poke.pkl/offsets-53.pk: Likewise.
+	* testsuite/poke.pkl/mod-offsets-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/div-offsets-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/units-8.pk: New test.
+
+2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ops.def (PKL_AST_OP_POW): New operator.
 	* src/pkl-tab.y (POW): New token.
 	(expression): New rule alternative for exponentiation.

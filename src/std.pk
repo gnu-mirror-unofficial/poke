@@ -21,12 +21,20 @@
 defunit b = 1;
 defunit N = 4;
 defunit B = 8;
-defunit Kb = 1024;
-defunit KB = 1024 * 8;
-defunit Mb = 1024UL * 1024;
-defunit MB = 1024UL * 1024 * 8;
-defunit Gb = 1024UL * 1024 * 1024;
-defunit GB = 1024UL * 1024 * 1024 * 8;
+
+defunit Kb = 10 ** 3;
+defunit KB = 10 ** 3 * 8;
+defunit Mb = 10 ** 6;
+defunit MB = 10 ** 6 * 8;
+defunit Gb = 10 ** 9;
+defunit GB = 10 ** 9 * 8;
+
+defunit Kib = 2 ** 10;
+defunit KiB = 2 ** 10 * 8;
+defunit Mib = 2 ** 20;
+defunit MiB = 2 ** 20 * 8;
+defunit Gib = 2 ** 30;
+defunit GiB = 2 ** 30 * 8;
 
 /*** Standard Integral Types.  */
 

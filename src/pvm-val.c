@@ -527,6 +527,63 @@ pvm_print_binary (uint64_t val, int size, int sign)
     }
 }
 
+static void
+print_unit_name (uint64_t unit)
+{
+  switch (unit)
+    {
+    case PVM_VAL_OFF_UNIT_BITS:
+      pk_puts ("b");
+      break;
+    case PVM_VAL_OFF_UNIT_NIBBLES:
+      pk_puts ("N");
+      break;
+    case PVM_VAL_OFF_UNIT_BYTES:
+      pk_puts ("B");
+      break;
+    case PVM_VAL_OFF_UNIT_KILOBITS:
+      pk_puts ("Kb");
+      break;
+    case PVM_VAL_OFF_UNIT_KILOBYTES:
+      pk_puts ("KB");
+      break;
+    case PVM_VAL_OFF_UNIT_MEGABITS:
+      pk_puts ("Mb");
+      break;
+    case PVM_VAL_OFF_UNIT_MEGABYTES:
+      pk_puts ("MB");
+      break;
+    case PVM_VAL_OFF_UNIT_GIGABITS:
+      pk_puts ("Gb");
+      break;
+    case PVM_VAL_OFF_UNIT_GIGABYTES:
+      pk_puts ("GB");
+      break;
+    case PVM_VAL_OFF_UNIT_KIBIBITS:
+      pk_puts ("Kib");
+      break;
+    case PVM_VAL_OFF_UNIT_KIBIBYTES:
+      pk_puts ("KiB");
+      break;
+    case PVM_VAL_OFF_UNIT_MEBIBITS:
+      pk_puts ("Mib");
+      break;
+    case PVM_VAL_OFF_UNIT_MEBIBYTES:
+      pk_puts ("MiB");
+      break;
+    case PVM_VAL_OFF_UNIT_GIGIBITS:
+      pk_puts ("Gib");
+      break;
+    case PVM_VAL_OFF_UNIT_GIGIBYTES:
+      pk_puts ("GiB");
+      break;
+    default:
+      /* XXX: print here the name of the base type of the
+         offset.  */
+      pk_printf ("%" PRIu64, unit);
+    }
+}
+
 void
 pvm_print_val (pvm_val val, int base, uint32_t flags)
 {
@@ -944,32 +1001,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
           pk_puts ("[");
           pvm_print_val (PVM_VAL_TYP_O_BASE_TYPE (val), base, flags);
           pk_puts (" ");
-          switch (PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (val)))
-            {
-            case PVM_VAL_OFF_UNIT_BITS:
-              pk_puts ("b");
-              break;
-            case PVM_VAL_OFF_UNIT_BYTES:
-              pk_puts ("B");
-              break;
-            case PVM_VAL_OFF_UNIT_KILOBITS:
-              pk_puts ("Kb");
-              break;
-            case PVM_VAL_OFF_UNIT_KILOBYTES:
-              pk_puts ("KB");
-              break;
-            case PVM_VAL_OFF_UNIT_MEGABITS:
-              pk_puts ("Mb");
-              break;
-            case PVM_VAL_OFF_UNIT_MEGABYTES:
-              pk_puts ("MB");
-              break;
-            case PVM_VAL_OFF_UNIT_GIGABITS:
-              pk_puts ("Gb");
-              break;
-            default:
-              assert (0);
-            }
+          print_unit_name (PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (val)));
           pk_puts ("]");
           break;
         case PVM_TYPE_CLOSURE:
@@ -1021,39 +1053,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
       pk_term_class ("offset");
       pvm_print_val (PVM_VAL_OFF_MAGNITUDE (val), base, flags);
       pk_puts ("#");
-      switch (PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (val)))
-        {
-        case PVM_VAL_OFF_UNIT_BITS:
-          pk_puts ("b");
-          break;
-        case PVM_VAL_OFF_UNIT_NIBBLES:
-          pk_puts ("N");
-          break;
-        case PVM_VAL_OFF_UNIT_BYTES:
-          pk_puts ("B");
-          break;
-        case PVM_VAL_OFF_UNIT_KILOBITS:
-          pk_puts ("Kb");
-          break;
-        case PVM_VAL_OFF_UNIT_KILOBYTES:
-          pk_puts ("KB");
-          break;
-        case PVM_VAL_OFF_UNIT_MEGABITS:
-          pk_puts ("Mb");
-          break;
-        case PVM_VAL_OFF_UNIT_MEGABYTES:
-          pk_puts ("MB");
-          break;
-        case PVM_VAL_OFF_UNIT_GIGABITS:
-          pk_puts ("Gb");
-          break;
-        default:
-          /* XXX: print here the name of the base type of the
-             offset.  */
-          pk_printf ("%" PRIu64, PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (val)));
-          break;
-        }
-
+      print_unit_name (PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (val)));
       pk_term_end_class ("offset");
     }
   else if (PVM_IS_CLS (val))
