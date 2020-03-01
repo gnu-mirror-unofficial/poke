@@ -196,18 +196,6 @@ For example, this is passed as valid::
 
 RAS should emit an error in that case.
 
-#L2 Support casts from/to integrals to strings
-----------------------------------------------
-
-This task is about supporting string-to-integer and integer-to-string
-conversions as casts::
-
-  10 as string -> "10"
-  "10" as uint<32> -> 10U
-
-Note that the string-to-integer cast can raise an E_conv exception if
-it is not possible to convert the string to an integer value.
-
 #L3! Support `big' integral values (>64 bit) with GMP
 -----------------------------------------------------
 
