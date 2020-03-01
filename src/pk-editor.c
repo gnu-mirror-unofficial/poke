@@ -27,6 +27,8 @@
 
 #include "findprog.h"
 
+#define STREQ(a, b) (strcmp (a, b) == 0)
+
 static int
 pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -50,7 +52,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   if (!editor)
     {
       editor = find_in_path ("sensible-editor");
-      if (strcmp (editor, "sensible-editor") == 0)
+      if (STREQ (editor, "sensible-editor"))
 	editor = NULL;
     }
   if (!editor)

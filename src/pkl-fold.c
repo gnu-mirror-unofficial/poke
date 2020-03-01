@@ -982,10 +982,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_pow)
       && PKL_AST_CODE (op2) == PKL_AST_INTEGER)
     {
       pkl_ast_node op1_type = PKL_AST_TYPE (op1);
-      
+
       if (PKL_AST_TYPE_I_SIGNED (op1_type))
         {
-          
+
 
         }
     }

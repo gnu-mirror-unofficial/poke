@@ -1,5 +1,12 @@
 2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm.jitter: Remove trailing whitespaces.
+	* src/pkl-fold.c: Likewise.
+	* src/pk-editor.c (STREQ): Define.
+	(pk_cmd_editor): use STREQ instead of strcmp.
+
+2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/std.pk: Define standard units using the power operator, and
 	use the same prefixes than coreutils.
 	* src/pvm-val.h (PVM_VAL_OFF_UNIT_GIGABYTES): Define.

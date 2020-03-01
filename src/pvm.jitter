@@ -238,7 +238,7 @@ late-header-c
      JITTER_PUSH_STACK (pvm_make_##TYPELC (res, size));                     \
   }                                                                         \
   while (0)
-  
+
 /* Conversion instructions.
    ( TYPE -- TYPE RTYPE )  */
 #define PVM_CONVOP(TYPE, TYPEC, RTYPELC, RTYPEC)                             \
