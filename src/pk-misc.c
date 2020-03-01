@@ -78,6 +78,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jmd> everytime I type \"killall -11 poke\", poke segfaults.",
      "<jemarch> a bugfix a day keeps jmd away",
      "<jmd> Did you know that \"Poke\" is a Hawaiian salad?",
+     "<jmd> I never place periods after my strncpy.",
      NULL
     };
   static int num_strings = 0;
