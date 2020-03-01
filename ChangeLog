@@ -1,5 +1,9 @@
 2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/bpf.pk (BPF_Insn_Offset): Fix offset type.
+
+2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/poke.c (parse_args): Emit an error message if the specified
 	data file cannot be opened.
 

@@ -112,7 +112,7 @@ defvar BPF_LDST_INSN_MODE_XADD = 0b110;
 
 /* Offsets in instructions are measured in 64-bit words.  */
 
-deftype BPF_Insn_Offset = offset<int<16>,uint<64>>;
+deftype BPF_Insn_Offset = offset<int<16>,64>;
 
 /* Registers.  */
 
