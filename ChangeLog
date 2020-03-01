@@ -1,5 +1,45 @@
 2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-promo.c (pkl_promo_ps_op_binary_intoffstr): Renamed from
+	pkl_promo_ps_op_add_sub_mod.
+	(pkl_promo_ps_op_bshiftpow): Promote offset operand.
+	* src/pkl-typify.c: ior, xor and band accept both integers and
+	offsets as arguments.
+	* src/pkl-gen.c (pkl_gen_ps_op_binexp): Renamed from
+	pkl_gen_ps_op_intexp, and allow offsets for all operations.
+	(pkl_gen_ps_op_pow): Remove.
+	* src/pkl-asm.c (pkl_asm_insn_binop): Renamed from
+	pkl_asm_insn_binop, and expanded to support binary offset
+	macro-instructions.
+	* src/pkl-typify.c (pkl_typify1_ps_bshift_pow): New handler.
+	* testsuite/poke.pkl/pow-integers-1.pk: Renamed from pow-1.pk.
+	* testsuite/poke.pkl/pow-integers-2.pk: Renamed from pow-2.pk.
+	* testsuite/poke.pkl/pow-integers-3.pk: Renamed from pow-3.pk.
+	* testsuite/poke.pkl/xor-integers-1.pk: Renamed from xor-1.pk
+	* testsuite/poke.pkl/xor-integers-2.pk: Renamed from xor-2.pk
+	* testsuite/poke.pkl/ior-integers-1.pk: Renamed from ior-1.pk.
+	* testsuite/poke.pkl/ior-integers-2.pk: Renamed from ior-2.pk.
+	* testsuite/poke.pkl/band-integers-1.pk: Renamed from band-1.pk.
+	* testsuite/poke.pkl/band-integers-2.pk: Renamed from band-2.pk.
+	* testsuite/poke.pkl/band-offsets-1.pk: New test.
+	* testsuite/poke.pkl/band-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/ior-offsets-1.pk: Likewise.
+	* testsuite/poke.pkl/ior-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/xor-offsets-1.pk: Likewise.
+	* testsuite/poke.pkl/xor-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/pow-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/sr-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/sl-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/sr-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sl-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/pow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/pow-offsets-1.pk: Likewise.
+	* testsuite/poke.pkl/pow-offsets-2.pk: Likewise.
+	* testsuite/poke.pkl/pow-offsets-3.pk: Likewise.
+	* TODO: Update.
+
+2020-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm.jitter: Remove trailing whitespaces.
 	* src/pkl-fold.c: Likewise.
 	* src/pk-editor.c (STREQ): Define.

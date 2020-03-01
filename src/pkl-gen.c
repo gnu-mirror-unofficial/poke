@@ -2551,22 +2551,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_ceildiv)
 }
 PKL_PHASE_END_HANDLER
 
-/*
- * | OP1
- * | OP2
- * EXP
- */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_pow)
-{
-  pkl_ast_node type = PKL_AST_TYPE (PKL_PASS_NODE);
-
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POW, type);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
-}
-PKL_PHASE_END_HANDLER
-
-
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_mod)
 {
   pkl_ast_node node = PKL_PASS_NODE;
@@ -2596,7 +2580,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_mod)
 }
 PKL_PHASE_END_HANDLER
 
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_intexp)
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_binexp)
 {
   pkl_asm pasm = PKL_GEN_ASM;
 
@@ -2618,6 +2602,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_intexp)
     case PKL_AST_OP_XOR: insn = PKL_INSN_BXOR; break;
     case PKL_AST_OP_SL: insn = PKL_INSN_SL; break;
     case PKL_AST_OP_SR: insn = PKL_INSN_SR; break;
+    case PKL_AST_OP_POW: insn = PKL_INSN_POW; break;
     default:
       assert (0);
       break;
@@ -2626,7 +2611,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_intexp)
   switch (PKL_AST_TYPE_CODE (type))
     {
     case PKL_TYPE_OFFSET:
-      assert (insn == PKL_INSN_NEG || insn == PKL_INSN_BNOT);
+      /* Fallthrough.  */
     case PKL_TYPE_INTEGRAL:
       pkl_asm_insn (pasm, insn, type);
       pkl_asm_insn (pasm, PKL_INSN_NIP);
@@ -3028,17 +3013,17 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_gen_ps_op_sub),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_gen_ps_op_mul),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_gen_ps_op_mod),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BNOT, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NEG, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POS, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_gen_ps_op_intexp),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_gen_ps_op_intexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BNOT, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NEG, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POS, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_gen_ps_op_binexp),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_gen_ps_op_binexp),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_gen_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_gen_ps_op_ceildiv),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_gen_ps_op_pow),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_gen_ps_op_binexp),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_AND, pkl_gen_pr_op_and),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_OR, pkl_gen_pr_op_or),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_gen_ps_op_not),

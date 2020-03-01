@@ -282,8 +282,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
 }
 PKL_PHASE_END_HANDLER
 
-/* Addition, subtraction and modulus are defined on the following
-   configurations of operand and result types:
+/* Addition, subtraction, modulus, and the bitwise binary operators
+   are defined on the following configurations of operand and result
+   types:
 
       INTEGRAL x INTEGRAL -> INTEGRAL
       OFFSET   x OFFSET   -> OFFSET
@@ -301,7 +302,7 @@ PKL_PHASE_END_HANDLER
 
    In this configuration no promotions are done.  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_add_sub_mod)
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary_intoffstr)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node type = PKL_AST_TYPE (exp);
@@ -564,6 +565,7 @@ PKL_PHASE_END_HANDLER
    the following configurations of operand and result types:
 
            INTEGRAL x INTEGRAL(32,0) -> INTEGRAL
+           OFFSET   x INTEGRAL(32,0) -> OFFSET
 
    In this configuration, the type of the first operand is promoted to
    match the type of the result.  The type of the second operand is
@@ -576,25 +578,51 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_bshiftpow)
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node type = PKL_AST_TYPE (exp);
 
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
+  switch (PKL_AST_TYPE_CODE (type))
     {
-      size_t size = PKL_AST_TYPE_I_SIZE (type);
-      int sign = PKL_AST_TYPE_I_SIGNED (type);
+    case PKL_TYPE_INTEGRAL:
+      {
+        size_t size = PKL_AST_TYPE_I_SIZE (type);
+        int sign = PKL_AST_TYPE_I_SIGNED (type);
 
-      if (!promote_integral (PKL_PASS_AST, size, sign,
+        if (!promote_integral (PKL_PASS_AST, size, sign,
+                               &PKL_AST_EXP_OPERAND (exp, 0), &restart1)
+            || !promote_integral (PKL_PASS_AST, 32, 0,
+                                  &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
+          goto error;
+
+        PKL_PASS_RESTART = restart1 || restart2;
+        break;
+      }
+    case PKL_TYPE_OFFSET:
+      {
+        pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (type);
+        pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (type);
+
+        size_t size = PKL_AST_TYPE_I_SIZE (base_type);
+        int sign = PKL_AST_TYPE_I_SIGNED (base_type);
+
+        if (!promote_offset (PKL_PASS_AST,
+                             size, sign, unit,
                              &PKL_AST_EXP_OPERAND (exp, 0), &restart1)
-          || !promote_integral (PKL_PASS_AST, 32, 0,
-                                &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
-        {
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
-                   "couldn't promote operands of expression #%" PRIu64,
-                   PKL_AST_UID (exp));
-          PKL_PASS_ERROR;
-        }
+            || !promote_integral (PKL_PASS_AST, 32, 0,
+                                  &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
+          goto error;
 
-      PKL_PASS_RESTART = restart1 || restart2;
+        PKL_PASS_RESTART = restart1 || restart2;
+        break;
+      }
+    default:
+      assert (0);
     }
 
+  PKL_PASS_DONE;
+
+ error:
+  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+           "couldn't promote operands of expression #%" PRIu64,
+           PKL_AST_UID (exp));
+  PKL_PASS_ERROR;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1474,15 +1502,15 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_GE, pkl_promo_ps_op_rela),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_promo_ps_op_bshiftpow),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_promo_ps_op_binary),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_promo_ps_op_binary),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_promo_ps_op_binary),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_promo_ps_op_binary_intoffstr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_promo_ps_op_binary_intoffstr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_promo_ps_op_binary_intoffstr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_AND, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_OR, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_promo_ps_op_unary),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_promo_ps_op_add_sub_mod),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_promo_ps_op_add_sub_mod),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_promo_ps_op_add_sub_mod),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_promo_ps_op_binary_intoffstr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_promo_ps_op_binary_intoffstr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_promo_ps_op_binary_intoffstr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_promo_ps_op_mul),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_promo_ps_op_div),

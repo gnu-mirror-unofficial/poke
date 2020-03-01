@@ -630,7 +630,7 @@ pkl_asm_insn_poked (pkl_asm pasm, pkl_ast_node type)
    result.  */
 
 static void
-pkl_asm_insn_intop (pkl_asm pasm,
+pkl_asm_insn_binop (pkl_asm pasm,
                     enum pkl_asm_insn insn,
                     pkl_ast_node type)
 {
@@ -730,17 +730,51 @@ pkl_asm_insn_intop (pkl_asm pasm,
   else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET)
     {
       pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (type);
+      pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (type);
 
-      /* Only certain operations are valid on offsets.  */
-      assert (insn == PKL_INSN_NEG || insn == PKL_INSN_BNOT);
-
-      /* Get the magnitude of the offset, operate on it, and set it
-         back in the offset value.  The offset is in the stack.  */
-      pkl_asm_insn (pasm, PKL_INSN_DUP);          /* OFF OFF */
-      pkl_asm_insn (pasm, PKL_INSN_OGETM);        /* OFF OFF OMAG */
-      pkl_asm_insn_intop (pasm, insn, base_type); /* OFF OFF OMAG NOMAG */
-      pkl_asm_insn (pasm, PKL_INSN_NIP);          /* OFF OFF NOMAG */
-      pkl_asm_insn (pasm, PKL_INSN_OSETM);        /* OFF NOFF */
+      if (insn == PKL_INSN_NEG || insn == PKL_INSN_BNOT)
+        {
+          pkl_asm_insn (pasm, PKL_INSN_OGETM);        /* OFF OMAG */
+          pkl_asm_insn_binop (pasm, insn, base_type); /* OFF OMAG NOMAG */
+          pkl_asm_insn (pasm, PKL_INSN_NIP);          /* OFF NOMAG */
+          pkl_asm_insn (pasm, PKL_INSN_PUSH,
+                        pvm_make_ulong (PKL_AST_INTEGER_VALUE (unit), 64));
+                                                      /* OFF NOMAG RUNIT */
+          pkl_asm_insn (pasm, PKL_INSN_MKO);          /* OFF ROFF */
+        }
+      else if (insn == PKL_INSN_SL
+               || insn == PKL_INSN_SR
+               || insn == PKL_INSN_POW)
+        {
+          pkl_asm_insn (pasm, PKL_INSN_OVER);         /* OFF UINT OFF */
+          pkl_asm_insn (pasm, PKL_INSN_OGETM);        /* OFF UINT OFF OMAG */
+          pkl_asm_insn (pasm, PKL_INSN_NIP);          /* OFF UINT OMAG */
+          pkl_asm_insn (pasm, PKL_INSN_SWAP);         /* OFF OMAG UINT */
+          pkl_asm_insn_binop (pasm, insn, base_type); /* OFF OMAG UINT NOMAG */
+          pkl_asm_insn (pasm, PKL_INSN_ROT);          /* OFF UINT NOMAG OMAG */
+          pkl_asm_insn (pasm, PKL_INSN_DROP);         /* OFF UINT NOMAG */
+          pkl_asm_insn (pasm, PKL_INSN_PUSH,
+                        pvm_make_ulong (PKL_AST_INTEGER_VALUE (unit), 64));
+                                                      /* OFF UINT NOMAG RUNIT */
+          pkl_asm_insn (pasm, PKL_INSN_MKO);          /* OFF1 OFF2 ROFF */
+        }
+      else
+        {
+          pkl_asm_insn (pasm, PKL_INSN_OVER);         /* OFF1 OFF2 OFF1 */
+          pkl_asm_insn (pasm, PKL_INSN_OVER);         /* OFF1 OFF2 OFF1 OFF2 */
+          pkl_asm_insn (pasm, PKL_INSN_OGETM);        /* ... OFF1 OFF2 OMAG2 */
+          pkl_asm_insn (pasm, PKL_INSN_NIP);          /* ... OFF1 OMAG2 */
+          pkl_asm_insn (pasm, PKL_INSN_SWAP);         /* ... OMAG2 OFF1 */
+          pkl_asm_insn (pasm, PKL_INSN_OGETM);        /* ... OMAG2 OFF1 OMAG1 */
+          pkl_asm_insn (pasm, PKL_INSN_NIP);          /* ... OMAG2 OMAG1 */
+          pkl_asm_insn (pasm, PKL_INSN_SWAP);         /* ... OMAG1 OMAG2 */
+          pkl_asm_insn_binop (pasm, insn, base_type); /* ... OMAG1 OMAG2 RMAG */
+          pkl_asm_insn (pasm, PKL_INSN_NIP2);         /* OFF1 OFF2 RMAG */
+          pkl_asm_insn (pasm, PKL_INSN_PUSH,
+                        pvm_make_ulong (PKL_AST_INTEGER_VALUE (unit), 64));
+                                                      /* OFF1 OFF2 RMAG RUNIT */
+          pkl_asm_insn (pasm, PKL_INSN_MKO);          /* OFF1 OFF2 ROFF */
+        }
     }
   else
     assert (0);
@@ -1426,7 +1460,7 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
             type = va_arg (valist, pkl_ast_node);
             va_end (valist);
 
-            pkl_asm_insn_intop (pasm, insn, type);
+            pkl_asm_insn_binop (pasm, insn, type);
             break;
           }
         case PKL_INSN_CDIV:

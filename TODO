@@ -197,23 +197,6 @@ For example, this is passed as valid::
 
 RAS should emit an error in that case.
 
-#L2 Support bitwise operators for offsets
------------------------------------------
-
-Offset values should support bitwise operations, in exactly the same
-way than integer values::
-
-  OFF1 ^ OFF2
-  OFF1 & OFF2
-  OFF1 | OFF2
-  OFF1 <<. INT
-  OFF1 .>> INT
-
-This task involves modifying the relevant typify1 handlers to allow
-offsets in these operators, promotion rules in promo and updates to
-the code generator.  I suggest to implement the operations as
-macro-instructions in ``src/pkl-asm.c``.
-
 #L2 Support casts from/to integrals to strings
 ----------------------------------------------
 

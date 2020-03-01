@@ -489,24 +489,10 @@ PKL_PHASE_END_HANDLER
   }                                                                     \
   PKL_PHASE_END_HANDLER
 
-/* The following operations only accept integers.  */
+/* DIV, MOD and SUB accept integral and offset operands.  */
 
 #define CASE_STR
 #define CASE_OFFSET
-
-#define CASE_INTEGRAL                                                   \
-  case PKL_TYPE_INTEGRAL:                                               \
-  {                                                                     \
-    int signed_p = PKL_AST_TYPE_I_SIGNED (t1);                          \
-    int size = PKL_AST_TYPE_I_SIZE (t1);                                \
-                                                                        \
-    type = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);   \
-    break;                                                              \
-  }
-
-TYPIFY_BIN (sl);
-TYPIFY_BIN (sr);
-TYPIFY_BIN (pow);
 
 #undef CASE_INTEGRAL
 #define CASE_INTEGRAL                                                   \
@@ -520,12 +506,6 @@ TYPIFY_BIN (pow);
     type = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);   \
     break;                                                              \
   }
-
-TYPIFY_BIN (ior);
-TYPIFY_BIN (xor);
-TYPIFY_BIN (band);
-
-/* DIV, MOD and SUB accept integral and offset operands.  */
 
 #undef CASE_OFFSET
 #define CASE_OFFSET                                                     \
@@ -587,7 +567,7 @@ TYPIFY_BIN (div);
 TYPIFY_BIN (ceildiv);
 TYPIFY_BIN (mod);
 
-/* SUB accepts integrals and offsets.  */
+/* IOR, XOR, BAND and SUB accept integrals and offsets.  */
 
 #undef CASE_OFFSET
 #define CASE_OFFSET                                                     \
@@ -638,6 +618,9 @@ TYPIFY_BIN (mod);
     break;                                                              \
   }
 
+TYPIFY_BIN (ior);
+TYPIFY_BIN (xor);
+TYPIFY_BIN (band);
 TYPIFY_BIN (sub);
 
 /* ADD accepts integral, string and offset operands.  */
@@ -649,6 +632,62 @@ TYPIFY_BIN (sub);
       break;
 
 TYPIFY_BIN (add);
+
+/* The bit-shift operators and the pow operator can't be handled with
+   TYPIFY_BIN.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
+  pkl_ast_node t1 = PKL_AST_TYPE (op1);
+  pkl_ast_node t2 = PKL_AST_TYPE (op2);
+
+  pkl_ast_node type;
+
+  /* The second argument should be an integral.  */
+  if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)
+    {
+      PKL_ERROR (PKL_AST_LOC (op2), "expected an integer");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  /* The first argument can be either an integral or an offset.  */
+
+  switch (PKL_AST_TYPE_CODE (t1))
+    {
+    case PKL_TYPE_INTEGRAL:
+      {
+        int signed_p = PKL_AST_TYPE_I_SIGNED (t1);
+        int size = PKL_AST_TYPE_I_SIZE (t1);
+
+        type = pkl_ast_make_integral_type (PKL_PASS_AST,
+                                           size, signed_p);
+        break;
+      }
+    case PKL_TYPE_OFFSET:
+      {
+        pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (t1);
+        pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (t1);
+
+        type = pkl_ast_make_offset_type (PKL_PASS_AST,
+                                         base_type, unit);
+        break;
+      }
+    default:
+      PKL_ERROR (PKL_AST_LOC (op1), "expected integral or offset");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+      break;
+    }
+
+  PKL_AST_LOC (type) = PKL_AST_LOC (exp);
+  PKL_AST_TYPE (exp) = ASTREF (type);
+  PKL_PASS_DONE;
+}
+PKL_PHASE_END_HANDLER
 
 /* MUL accepts integral, offset and string operands.  We can't use
    TYPIFY_BIN here because it relies on a different logic to determine
@@ -2412,10 +2451,10 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_typify1_ps_mul),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_typify1_ps_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_typify1_ps_ceildiv),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_typify1_ps_pow),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_typify1_ps_bshift_pow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_typify1_ps_mod),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_typify1_ps_sl),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_typify1_ps_sr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_typify1_ps_bshift_pow),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_typify1_ps_bshift_pow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_typify1_ps_ior),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_typify1_ps_xor),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_typify1_ps_band),
