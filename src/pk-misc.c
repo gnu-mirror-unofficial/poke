@@ -208,14 +208,14 @@ doc_completion_function (const char *x, int state)
 }
 
 
-struct pk_cmd exit_cmd =
+const struct pk_cmd exit_cmd =
   {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]", NULL};
 
-struct pk_cmd version_cmd =
+const struct pk_cmd version_cmd =
   {"version", "", "", 0, NULL, pk_cmd_version, "version", NULL};
 
-struct pk_cmd jmd_cmd =
+const struct pk_cmd jmd_cmd =
   {"jmd", "", "", 0, NULL, pk_cmd_jmd, "jmd", NULL};
 
-struct pk_cmd doc_cmd =
+const struct pk_cmd doc_cmd =
   {"doc", "?s", "", 0, NULL, pk_cmd_doc, "doc [section]", doc_completion_function};

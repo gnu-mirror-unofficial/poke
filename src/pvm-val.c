@@ -30,7 +30,7 @@
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
-unsigned int pk_odepth;
+static unsigned int pk_odepth;
 
 pvm_val
 pvm_make_int (int32_t value, int size)

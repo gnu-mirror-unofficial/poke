@@ -21,12 +21,12 @@
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
-struct pk_cmd *help_cmds[] =
+const struct pk_cmd *help_cmds[] =
   {
     &null_cmd
   };
 
 struct pk_trie *help_trie;
 
-struct pk_cmd help_cmd =
+const struct pk_cmd help_cmd =
   {"help", "", "", 0, &help_trie, NULL, "help COMMAND", NULL};

@@ -41,24 +41,24 @@
 
 /* Table of supported commands.  */
 
-extern struct pk_cmd ios_cmd; /* pk-ios.c */
-extern struct pk_cmd file_cmd; /* pk-ios.c  */
-extern struct pk_cmd mem_cmd; /* pk-ios.c */
-extern struct pk_cmd close_cmd; /* pk-file.c */
-extern struct pk_cmd load_cmd; /* pk-file.c */
-extern struct pk_cmd info_cmd; /* pk-info.c  */
-extern struct pk_cmd exit_cmd; /* pk-misc.c  */
-extern struct pk_cmd version_cmd; /* pk-misc.c */
-extern struct pk_cmd doc_cmd; /* pk-misc.c */
-extern struct pk_cmd jmd_cmd; /* pk-misc.c */
-extern struct pk_cmd help_cmd; /* pk-help.c */
-extern struct pk_cmd vm_cmd; /* pk-vm.c  */
-extern struct pk_cmd set_cmd; /* pk-set.c */
-extern struct pk_cmd editor_cmd; /* pk-editor.c */
+extern const struct pk_cmd ios_cmd; /* pk-ios.c */
+extern const struct pk_cmd file_cmd; /* pk-ios.c  */
+extern const struct pk_cmd mem_cmd; /* pk-ios.c */
+extern const struct pk_cmd close_cmd; /* pk-file.c */
+extern const struct pk_cmd load_cmd; /* pk-file.c */
+extern const struct pk_cmd info_cmd; /* pk-info.c  */
+extern const struct pk_cmd exit_cmd; /* pk-misc.c  */
+extern const struct pk_cmd version_cmd; /* pk-misc.c */
+extern const struct pk_cmd doc_cmd; /* pk-misc.c */
+extern const struct pk_cmd jmd_cmd; /* pk-misc.c */
+extern const struct pk_cmd help_cmd; /* pk-help.c */
+extern const struct pk_cmd vm_cmd; /* pk-vm.c  */
+extern const struct pk_cmd set_cmd; /* pk-set.c */
+extern const struct pk_cmd editor_cmd; /* pk-editor.c */
 
-struct pk_cmd null_cmd = {};
+const struct pk_cmd null_cmd = {};
 
-static struct pk_cmd *dot_cmds[] =
+static const struct pk_cmd *dot_cmds[] =
   {
     &ios_cmd,
     &file_cmd,
@@ -116,7 +116,7 @@ struct pk_trie
   struct pk_trie *parent;
   int num_children;
   struct pk_trie *children[256];
-  struct pk_cmd *cmd;
+  const struct pk_cmd *cmd;
 };
 
 static struct pk_trie *
@@ -176,12 +176,12 @@ pk_trie_expand_cmds (struct pk_trie *root,
 }
 
 static struct pk_trie *
-pk_trie_from_cmds (struct pk_cmd *cmds[])
+pk_trie_from_cmds (const struct pk_cmd *cmds[])
 {
   size_t i;
   struct pk_trie *root;
   struct pk_trie *t;
-  struct pk_cmd *cmd;
+  const struct pk_cmd *cmd;
 
   root = pk_trie_new (' ', NULL);
   t = root;
@@ -213,7 +213,7 @@ pk_trie_from_cmds (struct pk_cmd *cmds[])
   return root;
 }
 
-static struct pk_cmd *
+static const struct pk_cmd *
 pk_trie_get_cmd (struct pk_trie *trie, const char *str)
 {
   const char *pc;
@@ -264,7 +264,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   int ret = 1;
   size_t i;
   char cmd_name[MAX_CMD_NAME], *p;
-  struct pk_cmd *cmd;
+  const struct pk_cmd *cmd;
   int argc = 0;
   struct pk_cmd_arg argv[8];
   uint64_t uflags;
@@ -575,19 +575,19 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
 #undef GOTO_USAGE
 }
 
-extern struct pk_cmd *info_cmds[]; /* pk-info.c  */
+extern const struct pk_cmd *info_cmds[]; /* pk-info.c  */
 extern struct pk_trie *info_trie; /* pk-info.c  */
 
-extern struct pk_cmd *help_cmds[]; /* pk-help.c */
+extern const struct pk_cmd *help_cmds[]; /* pk-help.c */
 extern struct pk_trie *help_trie; /* pk-help.c */
 
-extern struct pk_cmd *vm_cmds[]; /* pk-vm.c  */
+extern const struct pk_cmd *vm_cmds[]; /* pk-vm.c  */
 extern struct pk_trie *vm_trie;  /* pk-vm.c  */
 
-extern struct pk_cmd *vm_disas_cmds[];  /* pk-vm.c */
+extern const struct pk_cmd *vm_disas_cmds[];  /* pk-vm.c */
 extern struct pk_trie *vm_disas_trie; /* pk-vm.c */
 
-extern struct pk_cmd *set_cmds[]; /* pk-set.c */
+extern const struct pk_cmd *set_cmds[]; /* pk-set.c */
 extern struct pk_trie *set_trie; /* pk-set.c */
 
 static struct pk_trie *cmds_trie;
@@ -784,7 +784,7 @@ pk_cmd_get_next_match (int *idx, const char *x, size_t len)
   /* Dot commands */
   for (;;)
     {
-      struct pk_cmd **c = dot_cmds + *idx;
+      const struct pk_cmd **c = dot_cmds + *idx;
       if (*c == &null_cmd)
 	break;
 
@@ -807,12 +807,12 @@ pk_cmd_get_next_match (int *idx, const char *x, size_t len)
 
 /* Search for a command which matches cmdname.
  Returns NULL if no such command exists.  */
-struct pk_cmd *
+const struct pk_cmd *
 pk_cmd_find (const char *cmdname)
 {
   if (cmdname != NULL)
     {
-      struct pk_cmd **c;
+      const struct pk_cmd **c;
       for (c = dot_cmds; *c != &null_cmd; ++c)
 	{
 	  /* Check if the command name matches.

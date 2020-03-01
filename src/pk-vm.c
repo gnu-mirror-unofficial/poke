@@ -177,31 +177,31 @@ pk_cmd_vm_disas_writ (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
-struct pk_cmd vm_disas_exp_cmd =
+const struct pk_cmd vm_disas_exp_cmd =
   {"expression", "e", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_exp,
    "vm disassemble expression[/n] EXP\n\
 Flags:\n\
   n (do a native disassemble)", NULL};
 
-struct pk_cmd vm_disas_fun_cmd =
+const struct pk_cmd vm_disas_fun_cmd =
   {"function", "s", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_fun,
    "vm disassemble function[/n] FUNCTION_NAME\n\
 Flags:\n\
   n (do a native disassemble)", NULL};
 
-struct pk_cmd vm_disas_map_cmd =
+const struct pk_cmd vm_disas_map_cmd =
   {"mapper", "e", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_map,
    "vm disassemble mapper[/n] EXPRESSION\n\
 Flags:\n\
   n (do a native disassemble)", NULL};
 
-struct pk_cmd vm_disas_wri_cmd =
+const struct pk_cmd vm_disas_wri_cmd =
   {"writter", "e", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_writ,
    "vm disassemble writer[/n] EXPRESSION\n\
 Flags:\n\
   n (do a native disassemble)", NULL};
 
-struct pk_cmd *vm_disas_cmds[] =
+const struct pk_cmd *vm_disas_cmds[] =
   {
    &vm_disas_exp_cmd,
    &vm_disas_fun_cmd,
@@ -212,17 +212,17 @@ struct pk_cmd *vm_disas_cmds[] =
 
 struct pk_trie *vm_disas_trie;
 
-struct pk_cmd vm_disas_cmd =
+const struct pk_cmd vm_disas_cmd =
   {"disassemble", "e", PK_VM_DIS_UFLAGS, 0, &vm_disas_trie, NULL,
    "vm disassemble (expression|function)", NULL};
 
-struct pk_cmd *vm_cmds[] =
+struct pk_trie *vm_trie;
+
+const struct pk_cmd *vm_cmds[] =
   {
     &vm_disas_cmd,
     &null_cmd
   };
 
-struct pk_trie *vm_trie;
-
-struct pk_cmd vm_cmd =
+const struct pk_cmd vm_cmd =
   {"vm", "", "", 0, &vm_trie, NULL, "vm (disassemble)", NULL};

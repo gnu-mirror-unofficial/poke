@@ -24,7 +24,7 @@ extern struct pk_cmd info_ios_cmd;   /* pk-ios.c  */
 extern struct pk_cmd info_var_cmd;   /* pk-def.c  */
 extern struct pk_cmd info_fun_cmd;   /* pk-def.c  */
 
-struct pk_cmd *info_cmds[] =
+const struct pk_cmd * info_cmds[] =
   {
     &info_ios_cmd,
     &info_var_cmd,
@@ -46,7 +46,7 @@ info_completion_function (const char *x, int state)
   size_t len = strlen (x);
   while (1)
     {
-      struct pk_cmd **c = info_cmds + idx;
+      const struct pk_cmd **c = info_cmds + idx;
 
       if (*c == &null_cmd)
 	break;
@@ -63,6 +63,6 @@ info_completion_function (const char *x, int state)
 }
 
 
-struct pk_cmd info_cmd =
+const struct pk_cmd info_cmd =
   {"info", "", "", 0, &info_trie, NULL, "info (ios|variable|function)",
    info_completion_function};
