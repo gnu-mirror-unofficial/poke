@@ -1,7 +1,15 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	ios: Add Size to '.info ios'.
+	* src/pk-ios.c (pk_cmd_info_ios, print_info_ios): Add Size
+	column.
+	* doc/poke.texi (info command): Document the addition.
+	* testsuite/poke.cmd/file-mode.pk: Adjust expected output.
+	* testsuite/poke.cmd/file-relative.pk: Likewise.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	* src/pk-ios.c (print_info_ios): Correct hyperlink.
-	* .gitignore: Exempt new file added for '.doc'.
 
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
