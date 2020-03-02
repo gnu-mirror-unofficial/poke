@@ -2,5 +2,5 @@
 
 defvar n = -1;
 
-/* { dg-command { try "foo"[n]; catch if E_out_of_bounds { print "catched\n"; } } } */
-/* { dg-output "catched" } */
+/* { dg-command { try "foo"[n]; catch if E_out_of_bounds { print "caught\n"; } } } */
+/* { dg-output "caught" } */

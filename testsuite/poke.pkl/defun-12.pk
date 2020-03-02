@@ -5,8 +5,8 @@ defun foo = (any a) int: { return a as int + 1; }
 /* { dg-command { foo (10) } } */
 /* { dg-output "11" } */
 
-/* { dg-command { try foo ("foo"); catch if E_conv { print "catched\n"; } } } */
-/* { dg-output "\ncatched" } */
+/* { dg-command { try foo ("foo"); catch if E_conv { print "caught\n"; } } } */
+/* { dg-output "\ncaught" } */
 
 defun bar = (any a) int: { return (a as int[])[1] + 1; }
 

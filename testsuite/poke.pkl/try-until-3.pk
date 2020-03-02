@@ -14,5 +14,5 @@ defun foo = void:
    until 666;
   }
 
-/* { dg-command { try foo; catch { print "catched\n"; } } } */
-/* { dg-output "catched" } */
+/* { dg-command { try foo; catch { print "caught\n"; } } } */
+/* { dg-output "caught" } */

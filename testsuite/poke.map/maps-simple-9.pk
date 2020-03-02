@@ -4,5 +4,5 @@
 /* { dg-command {.set obase 16} } */
 
 /* { dg-command {defvar i = 10} } */
-/* { dg-command {try i = int @ 999#B; catch if E_eof { print ("catched\n"); } } } */
-/* { dg-output "catched" } */
+/* { dg-command {try i = int @ 999#B; catch if E_eof { print ("caught\n"); } } } */
+/* { dg-output "caught" } */

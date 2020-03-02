@@ -6,7 +6,7 @@ defun foo = (Exception e) int:
      raise e;
    catch if "foo" /* { dg-error "" } */
    {
-     print ("catched\n");
+     print ("caught\n");
    }
 
    return 0;
@@ -18,7 +18,7 @@ defun bar = (Exception e) int:
      return foo (e);
    catch
    {
-     print ("uncatched\n");
+     print ("uncaught\n");
    }
 
    return 0;

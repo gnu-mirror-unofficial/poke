@@ -10,8 +10,8 @@ deftype Packet = struct { byte a; byte b : b == a + 0x10; };
 /* { dg-output "Packet \\{a=0x10UB,b=0x20UB\\}" } */
 
 /* { dg-command { defvar p = Packet @ 0#B } } */
-/* { dg-command { try  p = Packet @ 4#B; catch if E_constraint { print "catched\n"; } } } */
-/* { dg-output "\ncatched" } */
+/* { dg-command { try  p = Packet @ 4#B; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "\ncaught" } */
 
 deftype Packet2 = struct { byte a; byte b : 2L; };
 

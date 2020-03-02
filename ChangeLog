@@ -1,3 +1,53 @@
+2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/arrays-10.pk: s/catched/caught.
+	* testsuite/poke.map/maps-unions-3.pk: Likewise.
+	* testsuite/poke.map/maps-uint-diag-1.pk: Likewise.
+	* testsuite/poke.map/maps-structs-constraints-1.pk: Likewise.
+	* testsuite/poke.map/maps-strings-diag-4.pk: Likewise.
+	* testsuite/poke.map/maps-strings-diag-2.pk: Likewise.
+	* testsuite/poke.map/maps-strings-diag-1.pk: Likewise.
+	* testsuite/poke.map/maps-simple-9.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-11.pk: Likewise.
+	* testsuite/poke.map/maps-arrays-3.pk: Likewise.
+	* testsuite/poke.pkl/try-until-3.pk: Likewise.
+	* testsuite/poke.pkl/try-catch-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/try-catch-7.pk: Likewise.
+	* testsuite/poke.pkl/try-catch-6.pk: Likewise.
+	* testsuite/poke.pkl/trim-15.pk: Likewise.
+	* testsuite/poke.pkl/trim-14.pk: Likewise.
+	* testsuite/poke.pkl/trim-13.pk: Likewise.
+	* testsuite/poke.pkl/trim-12.pk: Likewise.
+	* testsuite/poke.pkl/trim-11.pk: Likewise.
+	* testsuite/poke.pkl/sl-integers-12.pk: Likewise.
+	* testsuite/poke.pkl/sl-integers-11.pk: Likewise.
+	* testsuite/poke.pkl/sl-integers-10.pk: Likewise.
+	* testsuite/poke.pkl/sl-integers-9.pk: Likewise.
+	* testsuite/poke.pkl/sl-integers-6.pk: Likewise.
+	* testsuite/poke.pkl/sl-integers-5.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-return-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-arg-diag-7.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-arg-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-arg-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-arg-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/iosize-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/funcal-vararg.pk: Likewise.
+	* testsuite/poke.pkl/funcall-vararg.pk: Likewise.
+	* testsuite/poke.pkl/defun-12.pk: Likewise.
+	* testsuite/poke.pkl/cast-array-siz-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/cast-array-siz-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/cast-array-siz-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-array-diag-6.pk: Likewise.
+	* testsuite/poke.pkl/cast-array-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/cast-array-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-12.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/ass-9.pk: Likewise.
+	* testsuite/poke.pkl/array-siz-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/arrays-12.pk: Likewise.
+	* testsuite/poke.pkl/arrays-11.pk: Likewise.
+
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
 	* .gitignore: Broaden exclusion to cover all build objects.

@@ -3,5 +3,5 @@
 /* { dg-data {c*} {0x11 0x12 0x13 0x14 0x15 0x16 0x17 0x18} bar.data } */
 
 /* { dg-command { .set obase 10 } } */
-/* { dg-command { try iosize (10); catch if E_no_ios { printf "catched\n"; } } } */
-/* { dg-output "catched" } */
+/* { dg-command { try iosize (10); catch if E_no_ios { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

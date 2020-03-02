@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU poke 0.1-beta\n"
 "Report-Msgid-Bugs-To: bug-poke@gnu.org\n"
-"POT-Creation-Date: 2020-02-13 23:29+0100\n"
+"POT-Creation-Date: 2020-03-02 13:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,34 +27,34 @@ msgstr ""
 msgid "%s: invalid flag `%c'\n"
 msgstr ""
 
-#: src/pk-cmd.c:559
+#: src/pk-cmd.c:538
 msgid "This command requires an IO space.  Use the `file' command."
 msgstr ""
 
-#: src/pk-cmd.c:569
+#: src/pk-cmd.c:548
 msgid "This command requires a writable IO space."
 msgstr ""
 
-#: src/pk-cmd.c:591
+#: src/pk-cmd.c:570
 #, c-format
 msgid "Usage: %s\n"
 msgstr ""
 
-#: src/pk-def.c:109
+#: src/pk-def.c:115
 msgid "Name\t\tValue\t\t\tDeclared at\n"
 msgstr ""
 
-#: src/pk-utils.c:38
+#: src/pk-utils.c:39
 #, c-format
 msgid "Cannot stat %s: %s\n"
 msgstr ""
 
-#: src/pk-utils.c:44
+#: src/pk-utils.c:45
 #, c-format
 msgid "%s is a directory\n"
 msgstr ""
 
-#: src/pk-utils.c:51
+#: src/pk-utils.c:52
 #, c-format
 msgid "%s: file cannot be read: %s\n"
 msgstr ""
@@ -64,64 +64,72 @@ msgstr ""
 msgid "out of memory\n"
 msgstr ""
 
-#: src/pkl-trans.c:724
+#: src/pkl-trans.c:643 src/pkl-trans.c:672
+msgid "invalid flag"
+msgstr ""
+
+#: src/pkl-trans.c:645
+msgid "invalid numerical prefix"
+msgstr ""
+
+#: src/pkl-trans.c:717
 msgid "Base with more than 64 bits"
 msgstr ""
 
-#: src/pkl-trans.c:738
+#: src/pkl-trans.c:731
 msgid "char format only makes sense with 8 bits"
 msgstr ""
 
-#: src/pkl-trans.c:743
+#: src/pkl-trans.c:736
 msgid "invalid base"
 msgstr ""
 
-#: src/pkl-trans.c:759
+#: src/pkl-trans.c:752
 #, c-format
 msgid "Expected decimal digit after %u"
 msgstr ""
 
-#: src/pkl-trans.c:782 src/pkl-trans.c:797 src/pkl-trans.c:867
+#: src/pkl-trans.c:775 src/pkl-trans.c:790 src/pkl-trans.c:860
 msgid "invalid format specifier"
 msgstr ""
 
-#: src/pkl-trans.c:809
+#: src/pkl-trans.c:802
 msgid "unpaired styling class"
 msgstr ""
 
-#: src/pkl-trans.c:893
+#: src/pkl-trans.c:886
 msgid "unclosed styling tag"
 msgstr ""
 
-#: src/pk-repl.c:113
+#: src/pk-repl.c:207
 msgid "For help, type \""
 msgstr ""
 
-#: src/pk-repl.c:121
+#: src/pk-repl.c:215
 msgid "For help, type \".help\".\n"
 msgstr ""
 
-#: src/pk-repl.c:123
+#: src/pk-repl.c:217
 msgid "Type \".exit\" to leave the program.\n"
 msgstr ""
 
-#: src/pk-repl.c:131
-msgid "Quit"
+#: src/pk-set.c:242
+msgid " cutoff should be between 0 and 15.\n"
 msgstr ""
 
-#: src/pk-set.c:247
-msgid " odepth should be >=0.\n"
+#: src/pk-set.c:270
+msgid " odepth should be between 0 and 15.\n"
 msgstr ""
 
-#: src/pk-set.c:269
+#: src/pk-set.c:294
 msgid " oindent should be >=1 and <= 10.\n"
 msgstr ""
 
-#: src/pk-set.c:310
+#: src/pk-set.c:334
 msgid "error: "
 msgstr ""
 
-#: src/pk-set.c:312
+#: src/pk-set.c:336
 msgid " omode should be one of `flat' or `tree'.\n"
 msgstr ""
 
@@ -214,4 +222,9 @@ msgstr ""
 msgid ""
 "\n"
 "Perpetrated by Jose E. Marchesi.\n"
+msgstr ""
+
+#: src/poke.c:305
+#, c-format
+msgid "cannot open file %s\n"
 msgstr ""

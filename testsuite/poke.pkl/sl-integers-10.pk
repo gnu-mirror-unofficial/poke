@@ -5,5 +5,5 @@ defvar c = 64;
 
 /* { dg-command { .set obase 10 } } */
 
-/* { dg-command { try x <<. c; catch if E_out_of_bounds { printf "catched\n"; } } } */
-/* { dg-output "catched" } */
+/* { dg-command { try x <<. c; catch if E_out_of_bounds { printf "caught\n"; } } } */
+/* { dg-output "caught" } */
