@@ -199,7 +199,7 @@ print_info_ios (ios io, void *data)
     char *cmd;
     char *hyperlink;
 
-    asprintf (&cmd, ".file #%d", ios_get_id (io));
+    asprintf (&cmd, ".ios #%d", ios_get_id (io));
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
 

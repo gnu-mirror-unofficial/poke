@@ -1,5 +1,10 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	* src/pk-ios.c (print_info_ios): Correct hyperlink.
+	* .gitignore: Exempt new file added for '.doc'.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	* .gitignore: Implementing '.doc' creates another file.
 
 2020-03-02  Eric Blake  <eblake@redhat.com>
