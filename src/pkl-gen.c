@@ -1514,7 +1514,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
         PKL_PASS_SUBPASS (map_ios);
       else
         /* PVM_NULL means use the current IO space, if any.  */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHIOS);
 
       /* Push the offset of the map and convert to a bit-offset.  Note
          that the offset is guaranteed to be an ulong<64> with unit
@@ -2791,18 +2791,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
     case PKL_AST_ATTR_IOS:
       switch (PKL_AST_TYPE_CODE (operand_type))
         {
+        case PKL_TYPE_ANY:
+          /* Fallthrough.  */
         case PKL_TYPE_ARRAY:
+          /* Fallthrough.  */
         case PKL_TYPE_STRUCT:
           {
             jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
             if (attr == PKL_AST_ATTR_OFFSET)
-              {
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                              pvm_make_ulong (1, 64));
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
-              }
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
             else
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
@@ -2811,6 +2809,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
                           pvm_make_int (PVM_E_MAP, 32));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
             pkl_asm_label (PKL_GEN_ASM, label);
+            if (attr == PKL_AST_ATTR_OFFSET)
+              {
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                              pvm_make_ulong (1, 64));
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
+              }
             break;
           }
         default:
@@ -2823,6 +2827,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
     case PKL_AST_ATTR_MAPPED:
       switch (PKL_AST_TYPE_CODE (operand_type))
         {
+        case PKL_TYPE_ANY:
         case PKL_TYPE_ARRAY:
         case PKL_TYPE_STRUCT:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);

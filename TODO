@@ -289,13 +289,6 @@ formatted string it returns it.  This task requires adding support for
 this construction to the compiler.  In principle no PVM changes are
 necessary.
 
-#P2 Support 'mapped, 'offset and 'ios in ``any`` values
--------------------------------------------------------
-
-We should support applying the attributes 'mapped, 'offset and 'ios to
-values of type ``any``.  This will allow to implement things like a
-function to check whether two given mapped values overlap.
-
 #I2 Support Poke IOS Translators
 --------------------------------
 

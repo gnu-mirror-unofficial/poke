@@ -224,6 +224,9 @@
         msetsiz               ; ARRAY
         pushvar $ebound       ; ARRAY EBOUND
         msetsel               ; ARRAY
+        ;; Set the other map attributes.
+        pushvar $ios          ; ARRAY IOS
+        msetios               ; ARRAY
         popf 1
         return
 .bounds_fail:
@@ -687,6 +690,9 @@
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
                                 ; BOFF [EBOFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
+        ;; Install the attributes of the mapped object.
+        pushvar $ios            ; SCT IOS
+        msetios                 ; SCT
         popf 1
         return
         .end

@@ -2092,17 +2092,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;
     case PKL_AST_ATTR_OFFSET:
-      /* 'offset is defined for struct and array values.  */
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_ARRAY:
-        case PKL_TYPE_STRUCT:
-          break;
-        default:
-          goto invalid_attribute;
-          break;
-        }
-
       /* The type of 'offset is an offset<uint<64>,1>  */
       offset_unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
       PKL_AST_LOC (offset_unit_type) = PKL_AST_LOC (exp);

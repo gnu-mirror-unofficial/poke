@@ -1,3 +1,33 @@
+2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks (array_mapper): Set the IOS of the mapped value.
+	(struct_mapper): Likewise.
+	* src/pvm.jitter (PVM_PEEK): Do not support ios == PVM_NULL.
+	(PVM_POKE): Likewise.
+	(peeks): Likewise.
+	(pokes): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_map): Push the current IOS if no IOS
+	was specified in the map, instead of pushing PVM_NULL.
+	* src/pkl-typify.c (pkl_typify1_ps_attr): Allow 'offset in any
+	type.
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Handle 'offset and 'ios in
+	values of type any, checking at run-time.
+	* testsuite/poke.pkl/attr-ios-diag-3.pk: New test.
+	* testsuite/poke.map/maps-ios-8.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-offset-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-offset-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-offset-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-offset-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-offset-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ios-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-mapped-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-mapped-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-mapped-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-mapped-1.pk: Likewise.
+	* TODO (or): Update.
+
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
 	ios: Utilize buffer writes.

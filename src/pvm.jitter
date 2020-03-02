@@ -273,11 +273,7 @@ late-header-c
      ios_off offset;                                                         \
                                                                              \
      offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());                           \
-                                                                             \
-     if (JITTER_UNDER_TOP_STACK () == PVM_NULL)                              \
-       io = ios_cur ();                                                      \
-     else                                                                    \
-       io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));      \
+     io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));        \
                                                                              \
      if (io == NULL)                                                         \
        PVM_RAISE (PVM_E_NO_IOS);                                             \
@@ -312,10 +308,7 @@ late-header-c
      JITTER_DROP_STACK ();                                                   \
      JITTER_DROP_STACK ();                                                   \
                                                                              \
-     if (JITTER_TOP_STACK () == PVM_NULL)                                    \
-       io = ios_cur ();                                                      \
-     else                                                                    \
-       io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));            \
+     io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));              \
                                                                              \
      if (io == NULL)                                                         \
        PVM_RAISE (PVM_E_NO_IOS);                                             \
@@ -3815,11 +3808,7 @@ instruction peeks ()
     int ret;
 
     offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());
-
-    if (JITTER_UNDER_TOP_STACK () == PVM_NULL)
-      io = ios_cur ();
-    else
-      io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
+    io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
 
     if (io == NULL)
       PVM_RAISE (PVM_E_NO_IOS);
@@ -3853,10 +3842,7 @@ instruction pokes ()
     JITTER_DROP_STACK();
     JITTER_DROP_STACK();
 
-    if (JITTER_TOP_STACK () == PVM_NULL)
-      io = ios_cur ();
-    else
-      io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
+    io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
       PVM_RAISE (PVM_E_NO_IOS);
