@@ -296,6 +296,38 @@ We should support applying the attributes 'mapped, 'offset and 'ios to
 values of type ``any``.  This will allow to implement things like a
 function to check whether two given mapped values overlap.
 
+#I2 Support Poke IOS Translators
+--------------------------------
+
+The goal of this project is to being able to "translate" an IO space
+using Poke code.  Example::
+
+  defvar my_translator
+     = IOS_Translate { readp = my_readp, writep = my_writep ... };
+  
+  defvar outer = open ("disk.img");
+  defvar inner = translate (outer, my_translator);
+
+In this scenario, the methods in ``my_translator`` are invoked when IO
+mapping is performed in ``inner``::
+
+  int @ inner : 0#B -> calls my_read
+
+When the methods in ``my_translator`` run, the current IOS is
+``outer``.
+
+The ``IOS_Translate`` type shall be defined in ``std.pk`` and
+basically implements the IOD interface in ``ios-dev.h``::
+
+  deftype IOS_Translate =
+     struct
+     {
+        defun readp = ...;
+        defun writep = ...;
+     };
+
+This of course depends on struct constructors.
+
 
 This file is part of GNU poke.
 
