@@ -17,6 +17,8 @@
  */
 
 #include <config.h>
+
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
@@ -50,7 +52,7 @@ ios_dev_mem_open (const char *handler, uint64_t flags, int *error)
   struct ios_dev_mem *mio;
 
   mio = xmalloc (sizeof (struct ios_dev_mem));
-  mio->pointer = xmalloc (MEM_STEP);
+  mio->pointer = xzalloc (MEM_STEP);
   mio->size = MEM_STEP;
   mio->cur = 0;
   mio->flags = flags;
@@ -93,9 +95,13 @@ ios_dev_mem_putc (void *iod, int c)
 {
   struct ios_dev_mem *mio = iod;
 
-  if (mio->cur >= mio->size)
+  if (mio->cur >= mio->size) {
+    assert (mio->cur - mio->size < MEM_STEP);
     mio->pointer = xrealloc (mio->pointer,
                              mio->size + MEM_STEP);
+    memset (&mio->pointer[mio->size], 0, MEM_STEP);
+    mio->size += MEM_STEP;
+  }
   mio->pointer[mio->cur++] = c;
   return c;
 }
@@ -111,21 +117,25 @@ static int
 ios_dev_mem_seek (void *iod, ios_dev_off offset, int whence)
 {
   struct ios_dev_mem *mio = iod;
+  size_t target = mio->cur;
 
   switch (whence)
     {
     case IOD_SEEK_SET:
-      mio->cur = offset;
+      target = offset;
       break;
     case IOD_SEEK_CUR:
-      mio->cur += offset;
+      target += offset;
       break;
     case IOD_SEEK_END:
-      mio->cur = mio->size - offset;
+      target = mio->size - offset;
       break;
     }
 
-  return mio->cur;
+  if (target >= mio->size + MEM_STEP)
+    return IOD_EOF;
+
+  return mio->cur = target;
 }
 
 static ios_dev_off

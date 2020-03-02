@@ -1,3 +1,15 @@
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
+	ios: Avoid data leak and write-beyond-bounds in mem.
+	* src/ios-dev-mem.c (ios_dev_mem_putc): Zero the added bytes, and
+	track the updated size.
+	(ios_dev_mem_seek): Forbid seeks beyond our desired growth amount.
+	(ios_dev_mem_open): Zero the initial bytes.
+	* testsuite/poke.pkl/ios-mem-2.pk: Actually obey comment.
+	* testsuite/poke.pkl/ios-mem-3.pk: New test.
+	* testsuite/poke.pkl/ios-mem-4.pk: Likewise.
+	* testsuite/poke.pkl/ios-mem-5.pk: Likewise.
+
 2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/funcall-vararg-1.pk: Split from
