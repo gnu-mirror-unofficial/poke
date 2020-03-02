@@ -1,3 +1,7 @@
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
+	* .gitignore: Broaden exclusion to cover all build objects.
+
 2020-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-fold.c (PKL_PHASE_HANDLER_BIN_LOGIC): Renamed from

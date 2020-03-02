@@ -8,7 +8,8 @@ stamp-h1
 /ABOUT-NLS
 /build-aux
 *~
-src/*.o
+*.a
+*.o
 Makefile.in
 aclocal.m4
 m4
