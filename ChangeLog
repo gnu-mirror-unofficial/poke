@@ -1,5 +1,9 @@
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
+	* .gitignore: Implementing '.doc' creates another file.
+
+2020-03-02  Eric Blake  <eblake@redhat.com>
+
 	nbd: Add testsuite coverage
 	* HACKING (Using NBD connections in tests): New section.
 	(Writing tests that depend on a certain capability): New capability.

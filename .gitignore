@@ -37,6 +37,7 @@ config.h.in
 /build-aux/install-sh
 /build-aux/missing
 /autom4te.cache/
+/doc/nodelist
 /doc/poke.info
 /doc/pokeint.info
 /doc/pkl.info
