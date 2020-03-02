@@ -32,19 +32,19 @@
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 
-#define IOS_GET_C_ERR_CHCK(c, io, off)		\
-  {                                             \
-    int ret = (io)->dev_if->get_c ((io)->dev); 	\
-    if (ret == IOD_EOF)				\
-      return IOS_EIOFF;				\
-    (c) = ret;					\
+#define IOS_GET_C_ERR_CHCK(c, io, off)			\
+  {							\
+    int ret = (io)->dev_if->get_c ((io)->dev, off); 	\
+    if (ret == IOD_EOF)					\
+      return IOS_EIOFF;					\
+    (c) = ret;						\
   }
 
 #define IOS_PUT_C_ERR_CHCK(c, io, off)			\
   {							\
-  if ((io)->dev_if->put_c ((io)->dev, (char)(c))	\
-      == IOD_EOF)					\
-    return IOS_EIOBJ;					\
+    if ((io)->dev_if->put_c ((io)->dev, (char)(c), off)	\
+	== IOD_EOF)					\
+      return IOS_EIOBJ;					\
   }
 
 #define IOS_READ_INTO_CHARRAY_1BYTE(charray, off)	\
@@ -938,7 +938,7 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
           if (i % 128 == 0)
             str = xrealloc (str, i + 128 * sizeof (char));
 
-          c = io->dev_if->get_c (io->dev);
+          c = io->dev_if->get_c (io->dev, offset / 8 + i);
           if (c == IOD_EOF)
             return IOS_EIOFF;
           else
@@ -1576,7 +1576,8 @@ ios_write_string (ios io, ios_off offset, int flags,
       p = value;
       do
         {
-          if (io->dev_if->put_c (io->dev, *p) == IOD_EOF)
+          if (io->dev_if->put_c (io->dev, *p,
+				 offset / 8 + p - value) == IOD_EOF)
             return IOS_EIOFF;
         }
       while (*(p++) != '\0');

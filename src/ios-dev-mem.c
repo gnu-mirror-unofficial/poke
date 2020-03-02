@@ -80,10 +80,11 @@ ios_dev_mem_get_flags  (void *iod)
 }
 
 static int
-ios_dev_mem_getc (void *iod)
+ios_dev_mem_getc (void *iod, ios_dev_off offset)
 {
   struct ios_dev_mem *mio = iod;
 
+  assert (mio->cur == offset);
   if (mio->cur >= mio->size)
     return IOD_EOF;
 
@@ -91,10 +92,11 @@ ios_dev_mem_getc (void *iod)
 }
 
 static int
-ios_dev_mem_putc (void *iod, int c)
+ios_dev_mem_putc (void *iod, int c, ios_dev_off offset)
 {
   struct ios_dev_mem *mio = iod;
 
+  assert (mio->cur == offset);
   if (mio->cur >= mio->size) {
     assert (mio->cur - mio->size < MEM_STEP);
     mio->pointer = xrealloc (mio->pointer,

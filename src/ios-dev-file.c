@@ -143,19 +143,25 @@ ios_dev_file_get_flags (void *iod)
 
 
 static int
-ios_dev_file_getc (void *iod)
+ios_dev_file_getc (void *iod, ios_dev_off offset)
 {
   struct ios_dev_file *fio = iod;
-  int ret = fgetc (fio->file);
+  int ret;
+
+  assert (ftello (fio->file) == offset);
+  ret = fgetc (fio->file);
 
   return ret == EOF ? IOD_EOF : ret;
 }
 
 static int
-ios_dev_file_putc (void *iod, int c)
+ios_dev_file_putc (void *iod, int c, ios_dev_off offset)
 {
   struct ios_dev_file *fio = iod;
-  int ret = putc (c, fio->file);
+  int ret;
+
+  assert (ftello (fio->file) == offset);
+  ret = putc (c, fio->file);
   //printf ("%d -> 0x%lu\n", ret, ftello (fio->file));
   return ret == EOF ? IOD_EOF : ret;
 }

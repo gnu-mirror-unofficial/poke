@@ -81,12 +81,12 @@ struct ios_dev_if
   /* Read a byte from the given device at the current position.
      Return the byte in an int, or IOD_EOF on error.  */
 
-  int (*get_c) (void *dev);
+  int (*get_c) (void *dev, ios_dev_off offset);
 
   /* Write a byte to the given device at the current position.  Return
      the character written as an int, or IOD_EOF on error.  */
 
-  int (*put_c) (void *dev, int c);
+  int (*put_c) (void *dev, int c, ios_dev_off offset);
 
   /* Return the flags of the device, as it was opened.  */
 
