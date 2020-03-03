@@ -1,5 +1,10 @@
 2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-trans.c (pkl_trans3_ps_scons): New handler.
+	(pkl_phase_trans3): Likewise.
+
+2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h: Prototype for pkl_at_type_defval.
 	* src/pkl-ast.c (pkl_ast_type_defval): New function.
 
