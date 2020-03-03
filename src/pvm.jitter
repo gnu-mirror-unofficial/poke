@@ -87,9 +87,6 @@ early-header-c
 #   include "pk-term.h"
 #   include "pk-utils.h"
 
-#   define STREQ(a, b) (strcmp (a, b) == 0)
-#   define STRNEQ(a, b) (strcmp (a, b) != 0)
-
     /* Globals.  */
     extern int poke_obase;
 

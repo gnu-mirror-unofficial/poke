@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+#include "pk-utils.h"
+
 #include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-pass.h"
@@ -35,9 +37,6 @@
 #include <gcd.c>
 
 #define PKL_FOLD_PAYLOAD ((pkl_fold_payload) PKL_PASS_PAYLOAD)
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
-#define STRNEQ(a, b) (strcmp (a, b) != 0)
 
 /* The following handler is used in the folding phase to avoid
    re-folding already processed AST type nodes.  */
@@ -704,7 +703,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_pow)
     pkl_ast_node type = PKL_AST_TYPE (PKL_PASS_NODE);
     pkl_ast_node op1_type = PKL_AST_TYPE (op1);
     pkl_ast_node op2_type = PKL_AST_TYPE (op2);
-    
+
     if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
         && ((PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_OFFSET
              && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_INTEGRAL)

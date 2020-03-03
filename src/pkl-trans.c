@@ -23,12 +23,12 @@
 #include <stdio.h>
 #include <xalloc.h>
 
+#include "pk-utils.h"
+
 #include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-pass.h"
 #include "pkl-trans.h"
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* This file implements several transformation compiler phases which,
    generally speaking, are restartable.

@@ -27,10 +27,9 @@
 #define _(str) gettext (str)
 #include <streq.h>
 
+#include "pk-utils.h"
 #include "ios.h"
 #include "ios-dev.h"
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 #define IOS_GET_C_ERR_CHCK(c, io, off)				\
   {								\

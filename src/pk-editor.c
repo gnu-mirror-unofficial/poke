@@ -22,12 +22,12 @@
 #include <stdlib.h>
 #include <tmpdir.h>
 
+#include "pk-utils.h"
+
 #include "poke.h"
 #include "pk-cmd.h"
 
 #include "findprog.h"
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 static int
 pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)

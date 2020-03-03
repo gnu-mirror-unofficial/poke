@@ -19,6 +19,14 @@
 #ifndef PK_UTILS_H
 #define PK_UTILS_H
 
+#include <config.h>
+#include <stdint.h>
+
+/* Macros to avoid using strcmp directly.  */
+
+#define STREQ(a, b) (strcmp (a, b) == 0)
+#define STRNEQ(a, b) (strcmp (a, b) != 0)
+
 /* Returns zero iff FILENAME is the name
    of an entry in the file system which :
    * is not a directory;

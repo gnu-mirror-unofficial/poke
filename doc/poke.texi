@@ -667,7 +667,7 @@ Display a list of open files.
 (poke) .info ios
 Id	Mode	Size		Name
 * #0	rw	0x00000022#B	foo.bson
-#1	r 	0x0000df78#B	foo.o
+#1	r	0x0000df78#B	foo.o
 @end example
 
 @cindex IO space

@@ -21,14 +21,14 @@
 #include <assert.h>
 #include <string.h>
 
+#include "pk-utils.h"
+
 #include "poke.h" /* XXX for poke_vm and poke_compiler, this should go
                      away.  */
 
 #include "pkl-asm.h"
 #include "pk-term.h"
 #include "pvm.h"
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 static unsigned int pk_odepth;
 

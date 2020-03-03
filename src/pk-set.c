@@ -23,13 +23,13 @@
 #include <string.h>
 #include <arpa/inet.h> /* For htonl */
 
+#include "pk-utils.h"
+
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-term.h"
 #include "ios.h"
 #include "pvm.h"
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 static int
 pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)

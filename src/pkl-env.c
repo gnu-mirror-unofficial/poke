@@ -22,9 +22,9 @@
 #include <xalloc.h>
 #include <string.h>
 
-#include "pkl-env.h"
+#include "pk-utils.h"
 
-#define STREQ(a, b) (strcmp (a, b) == 0)
+#include "pkl-env.h"
 
 /* The declarations are organized in a hash table, chained in their
    buckes through CHAIN2.

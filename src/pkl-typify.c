@@ -39,6 +39,8 @@
 
 #include <string.h>
 
+#include "pk-utils.h"
+
 #include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-pass.h"
@@ -50,8 +52,6 @@
 #include <gcd.c>
 
 #define PKL_TYPIFY_PAYLOAD ((pkl_typify_payload) PKL_PASS_PAYLOAD)
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* Note the following macro evaluates the arguments twice!  */
 #define MAX(A,B) ((A) > (B) ? (A) : (B))

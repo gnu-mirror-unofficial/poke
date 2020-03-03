@@ -19,12 +19,12 @@
 #include <config.h>
 #include <string.h>
 
+#include "pk-utils.h"
+
 #include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-pass.h"
 #include "pkl-anal.h"
-
-#define STREQ(a, b) (strcmp (a, b) == 0)
 
 /* This file implements several analysis compiler phases, which can
    raise errors and/or warnings, and update annotations in nodes, but

@@ -20,6 +20,8 @@
 #include <assert.h>
 #include <time.h>
 
+#include "pk-utils.h"
+
 #include "findprog.h"
 #include "readline.h"
 #include "poke.h"
@@ -73,7 +75,7 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
     const char info_prog_name[] = "info";
     const char *ip = find_in_path (info_prog_name);
-    if (strcmp (ip, info_prog_name) == 0)
+    if (STREQ (ip, info_prog_name))
       {
 	pk_term_class ("error");
 	pk_puts ("error: ");

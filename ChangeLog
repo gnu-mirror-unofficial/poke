@@ -1,3 +1,24 @@
+2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pk-utils.h (STREQ): Define.
+	(STRNEQ): Likewise.
+	* src/ios.c: Include pk-uttils.h.
+	(STREQ): Remove.
+	* src/pvm-val.c: Likewise.
+	* src/pvm.jitter: Likewise.
+	* src/pk-set.c: Likewise.
+	* src/pk-hserver.c: Likewise.
+	* src/pk-editor.c: Likewise.
+	* src/pkl-typify.c: Likewise.
+	* src/pkl-trans.c: Likewise.
+	* src/pkl-fold.c: Likewise.
+	* src/pkl-env.c: Likewise.
+	* src/pkl-ast.c: Likewise.
+	* src/pkl-anal.c: Likewise.
+	* src/pk-misc.c: Likewise.
+	* src/ios-dev-mem.c: Do not include assert.h.
+	* src/ios-dev-nbd.c: Likewise.
+
 2020-03-02  Eric Blake  <eblake@redhat.com>
 
 	ios: Add Size to '.info ios'.
