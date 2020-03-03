@@ -77,15 +77,9 @@
 
         .macro write
         dup                     ; VAL VAL
-        ;; The write should be done only if the value has a writer.
+        ;; The write should be done only if the value is mapped.
         mgetw                   ; VAL VAL WCLS
         bn .label
-        tor                     ; VAL VAL [WCLS]
-        mgeto                   ; VAL VAL OFF [WCLS]
-        swap                    ; VAL OFF VAL [WCLS]
-        mgetios                 ; VAL OFF VAL IOS [WCLS]
-        nrot                    ; VAL IOS OFF VAL [WCLS]
-        fromr                   ; VAL IOS OFF VAL WCLS
         call                    ; VAL null
         dup                     ; VAL null null
 .label:

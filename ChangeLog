@@ -1,5 +1,15 @@
 2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_writer): Use the mapping attributes from
+	the mapped objects instead of getting them as arguments.
+	(array_writer): Likewise.
+	* src/pkl-asm.pks (write): Adjust accordingly.
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Clarify why the offset
+	and ios are not used in a comment.
+	(pkl_gen_pr_type_struct): Likewise.
+
+2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke-dg.exp (dg-nbd): Run nbdkit only when
 	available.
 	(dg-command): Do not append to poke_commands if the current test

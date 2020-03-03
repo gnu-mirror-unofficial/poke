@@ -375,20 +375,19 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_WRITER
-;;; ( IOS BOFF VAL -- )
+;;; ( VAL -- )
 ;;;
-;;; Assemble a function that pokes a mapped array value to it's mapped
-;;; offset in the current IOS.
+;;; Assemble a function that pokes a mapped array value.
 ;;;
-;;; Note that it is important for the elements of the array to be poked
-;;; in order.
+;;; Note that it is important for the elements of the array to be
+;;; poked in order.
 
         .function array_writer
         prolog
         pushf
-        regvar $value           ; Argument
-        drop                    ; The bit-offset is not used.
-        regvar $ios             ; Argument
+        mgetios                 ; ARRAY IOS
+        regvar $ios             ; ARRAY
+        regvar $value           ; _
         push ulong<64>0         ; 0UL
         regvar $idx             ; _
      .while
@@ -770,9 +769,9 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_WRITER
-;;; ( SCT I -- )
+;;; ( IOS SCT I -- )
 ;;;
-;;; Macro that writes the Ith field of struct SCT to IO space.
+;;; Macro that writes the Ith field of struct SCT to the given IOS.
 ;;;
 ;;; C environment required:
 ;;; `field' is a pkl_ast_node with the type of the field to write.
@@ -780,14 +779,14 @@
         .macro struct_field_writer
         ;; The field is written out only if it hasn't
         ;; been modified since the last mapping.
-        smodi                   ; SCT I MODIFIED
+        smodi                   ; IOS SCT I MODIFIED
         bzi .unmodified
-        drop                    ; SCT I
-        srefi                   ; SCT I EVAL
-        nrot                    ; EVAL SCT I
-        srefio                  ; EVAL SCT I EBOFF
-        nip2                    ; EVAL EBOFF
-        swap                    ; EOFF EVAL
+        drop                    ; IOS SCT I
+        srefi                   ; IOS SCT I EVAL
+        nrot                    ; IOS EVAL SCT I
+        srefio                  ; IOS EVAL SCT I EBOFF
+        nip2                    ; IOS EVAL EBOFF
+        swap                    ; IOS EOFF EVAL
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_GEN_PAYLOAD->in_writer = 1;
@@ -796,17 +795,18 @@
         .c PKL_GEN_PAYLOAD->endian = endian; }
         ba .next
 .unmodified:
-        drop                    ; SCT I
-        drop                    ; SCT
+        drop                    ; IOS SCT I
+        drop                    ; IOS SCT
+        drop                    ; IOS
         drop                    ; _
 .next:
         .end
 
 ;;; RAS_FUNCTION_STRUCT_WRITER
-;;; ( BOFF VAL -- )
+;;; ( VAL -- )
 ;;;
-;;; Assemble a function that pokes a mapped struct value to it's mapped
-;;; offset in the current IOS.
+;;; Assemble a function that pokes a mapped struct value.
+;;;
 ;;; The C environment required is:
 ;;;
 ;;; `type_struct' is a pkl_ast_node with the struct type being
@@ -820,8 +820,7 @@
         .function struct_writer
         prolog
         pushf
-        regvar $sct
-        drop                    ; BOFF is not used.
+        regvar $sct             ; Argument
 .c { uint64_t i;
  .c for (i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
@@ -830,8 +829,10 @@
         ;; Poke this struct field, but only if it has been modified
         ;; since the last mapping.
         pushvar $sct            ; SCT
+        mgetios                 ; SCT IOS
+        swap                    ; IOS SCT
         .c pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
-                                ; SCT I
+                                ; IOS SCT I
         .e struct_field_writer
  .c   i = i + 1;
  .c }

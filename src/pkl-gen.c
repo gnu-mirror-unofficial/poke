@@ -1925,9 +1925,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
   if (PKL_GEN_PAYLOAD->in_writer)
     {
       /* Stack: IOS OFF ARR */
-      /* XXX: handle exceptions from the writer.  */
-      /* Note that we don't use the offset, because it should be the
-         same than the mapped offset in the array.  */
+
+      /* Note that we don't use the offset, nor the IOS, since these
+         are attributes of the mapped value.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The array.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The offset. */
@@ -2190,10 +2190,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
   if (PKL_GEN_PAYLOAD->in_writer)
     {
       /* Stack: IOS OFF SCT */
-      /* XXX: handle exceptions from the writer.  */
 
-      /* Note that we don't use the offset, because it should be the
-         same than the mapped offset in the struct.  */
+      /* Note that we don't use the offset, nor the IOS, because these
+         are attributes of the mapped value.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The struct.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The offset. */
