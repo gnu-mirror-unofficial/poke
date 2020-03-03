@@ -680,6 +680,7 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
             for (i = 0; i < nelems; ++i)
               {
                 pkl_ast_node initializer_index;
+                pkl_ast_node initializer_index_type;
                 pkl_ast_node initializer;
                 pkl_ast_node elem_val;
 
@@ -694,10 +695,12 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
 
                 PKL_AST_TYPE (elem_val) = ASTREF (etype);
 
+                initializer_index_type
+                  = pkl_ast_make_integral_type (ast, 64, 0);
                 initializer_index
                   = pkl_ast_make_integer (ast, 0);
                 PKL_AST_TYPE (initializer_index)
-                  = pkl_ast_make_integral_type (ast, 64, 0);
+                  = ASTREF (initializer_index_type);
 
                 initializer
                   = pkl_ast_make_array_initializer (ast,
