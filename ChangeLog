@@ -2,6 +2,7 @@
 
 	* src/pkl-ast.c (pkl_ast_type_defval): ASTREF the type of the
 	index of new array elements.
+	(pkl_ast_type_defval): Add missing `break'.
 
 2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
 

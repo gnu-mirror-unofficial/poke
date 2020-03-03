@@ -758,6 +758,7 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
           }
 
         value = pkl_ast_make_struct (ast, nelem, elements);
+        break;
       }
     default:
       assert (0);
