@@ -621,6 +621,150 @@ pkl_ast_dup_type (pkl_ast_node type)
   return new;
 }
 
+/* Given a type node, return an expression that evaluates to the
+   "default value" corresponding to TYPE.  The kind of expression that
+   constitutes a "default value" depends on the type.
+
+   If the default value for the provided TYPE can't be calculated at
+   compile-time, then return NULL.  */
+
+pkl_ast_node
+pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
+{
+  assert (PKL_AST_CODE (type) == PKL_AST_TYPE);
+
+  pkl_ast_node value;
+
+  switch (PKL_AST_TYPE_CODE (type))
+    {
+    case PKL_TYPE_INTEGRAL:
+      /* The default value for an integral type is zero.  */
+      value = pkl_ast_make_integer (ast, 0);
+      break;
+    case PKL_TYPE_STRING:
+      /* The default value for a string is the empty string.  */
+      value = pkl_ast_make_string (ast, "");
+      break;
+    case PKL_TYPE_OFFSET:
+      {
+        /* The default value for an offset is 0#UNIT, where UNIT is
+           the unit of the offset type.  */
+
+        pkl_ast_node type_unit = PKL_AST_TYPE_O_UNIT (type);
+        pkl_ast_node type_base_type = PKL_AST_TYPE_O_BASE_TYPE (type);
+
+        pkl_ast_node magnitude = pkl_ast_make_integer (ast, 0);
+
+        PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);
+        value = pkl_ast_make_offset (ast, magnitude, type_unit);
+        break;
+      }
+    case PKL_TYPE_ARRAY:
+      {
+        /* The default value for an array type that is bounded by a
+           constant number of elements is an array containing that
+           many default values for the array element's type.
+
+           Other cases, i.e. array types bounded by a variable number
+           of elements, by size, or unbounded, can't be handled
+           here.  */
+
+        pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (type);
+        pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (type);
+
+        if (PKL_AST_CODE (bound) == PKL_AST_INTEGER)
+          {
+            size_t i, nelems = PKL_AST_INTEGER_VALUE (bound);
+            pkl_ast_node initializers = NULL;
+
+            for (i = 0; i < nelems; ++i)
+              {
+                pkl_ast_node initializer_index;
+                pkl_ast_node initializer;
+                pkl_ast_node elem_val;
+
+                elem_val = pkl_ast_type_defval (ast,
+                                                etype);
+                if (elem_val == NULL)
+                  /* Note that if this happens, it will happen at the
+                     first iteration.  So it is fine to just return
+                     here without freeing the list of initializers,
+                     which will be empty.  */
+                  return NULL;
+
+                PKL_AST_TYPE (elem_val) = ASTREF (etype);
+
+                initializer_index
+                  = pkl_ast_make_integer (ast, 0);
+                PKL_AST_TYPE (initializer_index)
+                  = pkl_ast_make_integral_type (ast, 64, 0);
+
+                initializer
+                  = pkl_ast_make_array_initializer (ast,
+                                                    initializer_index,
+                                                    elem_val);
+                initializers = pkl_ast_chainon (initializers, initializer);
+              }
+
+            value = pkl_ast_make_array (ast,
+                                        nelems, nelems /* ninitializer */,
+                                        initializers);
+          }
+        else
+          return NULL;
+
+        break;
+      }
+    case PKL_TYPE_STRUCT:
+      {
+        /* The default value for a struct type is a struct containing
+           default values for all its fields.  */
+
+        pkl_ast_node field_type, elements = NULL;
+        size_t nelem;
+
+        for (nelem = 0, field_type = PKL_AST_TYPE_S_ELEMS (type);
+             field_type;
+             field_type = PKL_AST_CHAIN (field_type))
+          {
+            pkl_ast_node elem;
+            pkl_ast_node elem_type;
+            pkl_ast_node elem_name;
+            pkl_ast_node elem_value;
+
+            if (PKL_AST_CODE (field_type) != PKL_AST_STRUCT_TYPE_FIELD)
+              /* Process only fields.  */
+              continue;
+
+            elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_type);
+            elem_value = pkl_ast_type_defval (ast, elem_type);
+
+            if (elem_value == NULL)
+              {
+                pkl_ast_node_free_chain (elements);
+                return NULL;
+              }
+
+            PKL_AST_TYPE (elem_value) = ASTREF (elem_type);
+
+            elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field_type);
+            elem = pkl_ast_make_struct_field (ast,
+                                              elem_name, elem_value);
+            elements = pkl_ast_chainon (elements, elem);
+            nelem++;
+          }
+
+        value = pkl_ast_make_struct (ast, nelem, elements);
+      }
+    default:
+      assert (0);
+      break;
+    }
+
+  PKL_AST_TYPE (value) = ASTREF (type);
+  return value;
+}
+
 /* Given a struct type node AST and a string in the form BB.CC.CC.xx,
    check that the intermediate fields are valid struct references, and return
    the pkl_ast_node corresponding to the type of the latest field CC. */

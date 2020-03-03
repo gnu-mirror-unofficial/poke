@@ -1,5 +1,10 @@
 2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h: Prototype for pkl_at_type_defval.
+	* src/pkl-ast.c (pkl_ast_type_defval): New function.
+
+2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (struct_writer): Use the mapping attributes from
 	the mapped objects instead of getting them as arguments.
 	(array_writer): Likewise.
