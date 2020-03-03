@@ -1,5 +1,17 @@
 2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke-dg.exp (dg-nbd): Run nbdkit only when
+	available.
+	(dg-command): Do not append to poke_commands if the current test
+	is being skipped as UNSUPPORTED.
+	* testsuite/poke.pkl/ios-nbd-1.pk: dg-require nbd.
+	* testsuite/poke.pkl/open-3.pk: Likewise.
+	* testsuite/poke.cmd/nbd-1.pk: Likewise.
+	* HACKING: Note that dg-require should be used before dg-command
+	directives.
+
+2020-03-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-utils.h (STREQ): Define.
 	(STRNEQ): Likewise.
 	* src/ios.c: Include pk-uttils.h.

@@ -517,6 +517,9 @@ capability ``libtextstyle`` is not found in poke::
   /* { dg-command {printf "%<foo:%i32d%>", 10} } */
   /* { dg-output "<span class=\"foo\">10</span>" } */
 
+IMPORTANT NOTE: dg-require should appear before any dg-command
+directive in the test file.
+
 The supported capabilities are:
 
 libtextstyle

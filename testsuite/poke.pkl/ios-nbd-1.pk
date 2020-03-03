@@ -1,4 +1,5 @@
 /* { dg-do run } */
+/* { dg-require nbd } */
 /* { dg-nbd {0 0 0 0x10} [dg-tmpdir]/ios-nbd-1 } */
 
 /* { dg-command { .set obase 10 } } */

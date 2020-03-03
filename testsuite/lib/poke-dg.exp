@@ -32,9 +32,17 @@ set poke_nbd_pids {}
 
 proc dg-command { args } {
     global poke_commands
+    upvar dg-do-what do-what
 
     if { [llength $args] > 2 } {
         error "[lindex $args 0]: too many arguments"
+    }
+
+    # If this test is unsupported, then do not append anything to
+    # poke_commands.  This is needed because poke_commands doesn't get
+    # reset to {} in these cases.
+    if { [lindex ${do-what} 1] == N } {
+        return;
     }
 
     # Prepare the command for shell unquoting.
@@ -166,13 +174,14 @@ proc dg-nbd { args } {
     if { [llength $args] != 3 } {
         error "[lindex $args 0]: invalid arguments"
     }
-    dg-require nbd
 
-    set data [lindex $args 1]
-    set sock [lindex $args 2]
+    if { $::env(NBDKIT) != "no"} {
+        set data [lindex $args 1]
+        set sock [lindex $args 2]
 
-    set fh [open |[list nbdkit -f -U $sock data data=$data]]
-    lappend poke_nbd_pids [pid $fh]
+        set fh [open |[list nbdkit -f -U $sock data data=$data]]
+        lappend poke_nbd_pids [pid $fh]
+    }
 }
 
 # We set LC_ALL and LANG to C so that we get the same error messages
