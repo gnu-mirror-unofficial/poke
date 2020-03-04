@@ -2,6 +2,7 @@
 
 	* src/pkl-gen.pks (struct_constructor): Handle the struct methods.
 	* testsuite/poke.pkl/scons-18.pk: New test.
+	* testsuite/poke.pkl/scons-19.pk: New test.
 
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 

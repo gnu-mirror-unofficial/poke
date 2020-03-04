@@ -16,6 +16,6 @@ deftype BPF_Reg =
    }
   };
 
-/* { dg-comamnd { .set pretty-print yes } } */
+/* { dg-command { .set pretty-print yes } } */
 /* { dg-command { BPF_Reg { code = 3 } } } */
 /* { dg-output "#<%r3>" } */
