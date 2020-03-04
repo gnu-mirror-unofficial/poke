@@ -2442,6 +2442,7 @@ They contain heterogeneous collections of values.
 @menu
 * Struct Literals::		Writing struct values.
 * Struct Types::		Simple structs.
+* Struct Constructors::		Building structs from struct types.
 * Field Endianness::            Specifying the endianness of integral fields.
 * Accessing Fields::            Getting and fetching the values of fields.
 * Field Constraints::		Specifying data integrity.
@@ -2466,8 +2467,6 @@ The contents of the struct literal is a possibly empty set of fields.
 Each field has an optional name @var{field_name} and a value
 @var{exp}.  The expression for the value can be of any type.  For
 convenience, a trailing comma is accepted but not required.
-
-@c XXX document struct constructors once they are supported.
 
 @node Struct Types
 @section Struct Types
@@ -2508,6 +2507,61 @@ deftype Imm64 =
 It is not allowed to have several fields with the same name in the
 same struct.  The compiler will complain if it finds such an
 occurrence.
+
+@node Struct Constructors
+@section Struct Constructors
+
+Once a struct type gets defined, it is possible to build values of
+that type using a @dfn{struct constructor}.  They have the following
+form:
+
+@example
+@var{type_name} @{ [@var{field_initializer}]... @}
+@end example
+
+@noindent
+Suppose for example that we have a type defined as:
+
+@example
+deftype Packet =
+  struct
+  @{
+    uint<16> flags;
+    byte[32] data;
+  @}
+@end example
+
+We can construct a new packet, with all its fields initialized to
+zero, like this:
+
+@example
+(poke) Packet @{@}
+Packet @{
+  flags=0x0UH,
+  data=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...]
+@}
+@end example
+
+In the constructor we can specify initial values for some of the
+fields:
+
+@example
+(poke) Packet @{ flags = 0x8 @}
+Packet @{
+  flags=0x8UH,
+  data=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...]
+@}
+@end example
+
+It is not allowed to specify initializers that are not part of the
+type being constructed:
+
+@example
+(poke) Packet @{ foo = 10 @}
+<stdin>:1:10: error: invalid struct field `foo' in constructor
+Packet @{ foo = 10 @};
+         ^~~
+@end example
 
 @node Field Endianness
 @section Field Endianness
