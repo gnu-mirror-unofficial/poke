@@ -2302,7 +2302,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
         }
 
       /* Call the constructor to get a new struct.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);    /* SCT CLS CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);    /* NSCT */
 
       /* And we are done.  */
       PKL_PASS_BREAK;

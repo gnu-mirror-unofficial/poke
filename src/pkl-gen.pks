@@ -697,7 +697,7 @@
         .end
 
 ;;; RAS_FUNCTION_STRUCT_CONSTRUCTOR
-;;; ( SCT -- SCT SCT )
+;;; ( SCT -- SCT )
 ;;;
 ;;; Assemble a function that constructs a struct value of a given type
 ;;; from another struct value.
@@ -715,20 +715,20 @@
         .function struct_constructor
         prolog
         pushf
-        push null               ; SCT OFF(NULL)
+        regvar $sct             ; SCT
         ;; Initialize $nfield to 0UL
         push ulong<64>0
         regvar $nfield
-        ;; Initialize $off to 0UL#b.
+        ;; Initialize $boff to 0UL#b.
         push ulong<64>0
-        push ulong<64>1
-        mko
-        dup                     ; OFF OFF
-        regvar $off             ; OFF
+        regvar $boff
+        ;; The struct is not mapped, so its offset is null.
+        push null               ; null
         ;; Iterate over the fields of the struct type.
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
- .c     if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field) ;
+ .c   if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
  .c     PKL_GEN_PAYLOAD->in_constructor = 0;
@@ -737,32 +737,58 @@
  .c
  .c     continue;
  .c   }
-        pushvar $off               ; ...[EOFF ENAME EVAL] NEOFF OFF
-;        .e struct_field_mapper      ; ...[EOFF ENAME EVAL] NEOFF
-        ;; If the struct is pinned, replace NEOFF with OFF
+        pushvar $sct           ; ... [EBOFF ENAME EVAL] SCT
+        .c if (field_name)
+        .c   pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
+        .c                 pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name)));
+        .c else
+        .c {
+        push null
+        .c }
+                               ; ... SCT ENAME
+        ;; Get the value of the field in $sct, which must exist as
+        ;; per trans.
+        ;; XXX but it may be null if is an unbounded array.  We have
+        ;; to handle these.
+        sref                   ; ... SCT ENAME EVAL
+        rot
+        drop                   ; ... ENAME EVAL
+        ;; XXX regvar the field as a variable.
+        ;; XXX Evaluate the constraint expression.
+        ;; Increase off with the siz of the last element.  Note
+        ;; the offset starts at 0 since this struct is not mapped,
+        ;; unless the struct is pinned.
    .c if (PKL_AST_TYPE_S_PINNED (type_struct))
    .c {
-        drop
-        pushvar $off            ; ...[EOFF ENAME EVAL] OFF
+        push uint<64>0         ; ... ENAME EVAL NEBOFF
    .c }
+   .c else
+   .c {
+        siz                    ; ... ENAME EVAL ESIZ
+        pushvar $boff          ; ... ENAME EVAL ESIZ EBOFF
+        addlu
+        nip2                   ; ... ENAME EVAL NEBOFF
+   .c }
+        dup
+        popvar $boff           ; ... ENAME EVAL NEBOFF
+        nrot                   ; ... NEBOFF ENAME EVAL
         ;; Increase the number of fields.
-        pushvar $nfield         ; ...[EOFF ENAME EVAL] NEOFF NFIELD
-        push ulong<64>1         ; ...[EOFF ENAME EVAL] NEOFF NFIELD 1UL
+        pushvar $nfield        ; ... NEBOFF ENAME EVAL NFIELD
+        push ulong<64>1        ; ... NEBOFF ENAME EVAL NFIELD 1
         addl
-        nip2                    ; ...[EOFF ENAME EVAL] NEOFF (NFIELD+1UL)
-        popvar $nfield          ; ...[EOFF ENAME EVAL] NEOFF
+        nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
+        popvar $nfield         ; ... NEBOFF ENAME EVAL
  .c }
-        drop  			; ...[EOFF ENAME EVAL]
         ;; No methods in struct constructors.
         push ulong<64>0
         ;; Ok, at this point all the struct field triplets are
         ;; in the stack.  Push the number of fields, create
         ;; the struct and return it.
-        pushvar $nfield        ; OFF [OFF STR VAL]... NFIELD
+        pushvar $nfield        ; null [OFF STR VAL]... NFIELD
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
         .c PKL_PASS_SUBPASS (type_struct);
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
-                                ; OFF [OFF STR VAL]... NFIELD TYP
+                                ; null [OFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
         popf 1
         return

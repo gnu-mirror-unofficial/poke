@@ -693,12 +693,13 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
                      which will be empty.  */
                   return NULL;
 
+                PKL_AST_LOC (elem_val) = PKL_AST_LOC (type);
                 PKL_AST_TYPE (elem_val) = ASTREF (etype);
 
                 initializer_index_type
                   = pkl_ast_make_integral_type (ast, 64, 0);
                 initializer_index
-                  = pkl_ast_make_integer (ast, 0);
+                  = pkl_ast_make_integer (ast, i);
                 PKL_AST_TYPE (initializer_index)
                   = ASTREF (initializer_index_type);
 
@@ -741,7 +742,7 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
 
             elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_type);
             elem_value = pkl_ast_type_defval (ast, elem_type);
-
+            
             if (elem_value == NULL)
               {
                 pkl_ast_node_free_chain (elements);
@@ -753,6 +754,10 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
             elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field_type);
             elem = pkl_ast_make_struct_field (ast,
                                               elem_name, elem_value);
+
+            PKL_AST_LOC (elem) = PKL_AST_LOC (type);
+            PKL_AST_LOC (elem_value) = PKL_AST_LOC (type);
+
             elements = pkl_ast_chainon (elements, elem);
             nelem++;
           }

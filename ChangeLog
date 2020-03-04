@@ -1,5 +1,32 @@
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_type_defval): Fix the index of elements
+	in array defvals.
+	* src/pkl-trans.c (pkl_trans3_ps_scons): Set the number of
+	elements in the created struct value.
+	* src/pkl-gen.c (pkl_gen_pr_type_struct): Fix comment.
+	* src/pkl-gen.pks (struct_constructor): Handle compile-time built
+	fields.
+	* testsuite/poke.pkl/scons-1.pk: New test.
+	* testsuite/poke.pkl/scons-13.pk: Likewise.
+	* testsuite/poke.pkl/scons-12.pk: Likewise.
+	* testsuite/poke.pkl/scons-11.pk: Likewise.
+	* testsuite/poke.pkl/scons-10.pk: Likewise.
+	* testsuite/poke.pkl/scons-9.pk: Likewise.
+	* testsuite/poke.pkl/scons-8.pk: Likewise.
+	* testsuite/poke.pkl/scons-7.pk: Likewise.
+	* testsuite/poke.pkl/scons-6.pk: Likewise.
+	* testsuite/poke.pkl/scons-5.pk: Likewise.
+	* testsuite/poke.pkl/scons-4.pk: Likewise.
+	* testsuite/poke.pkl/scons-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/scons-3.pk: Likewise.
+	* testsuite/poke.pkl/scons-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-14.pk: Likewise.
+	* testsuite/poke.pkl/scons-16.pk: Likewise.
+	* testsuite/poke.pkl/scons-15.pk: Likewise.
+
+2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_type_defval): ASTREF the type of the
 	index of new array elements.
 	(pkl_ast_type_defval): Add missing `break'.

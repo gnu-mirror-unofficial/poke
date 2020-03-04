@@ -1273,6 +1273,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_scons)
 
   pkl_ast_node type_elem;
   pkl_ast_node added_elems = NULL;
+  size_t num_added_elems = 0;
 
   for (type_elem = PKL_AST_TYPE_S_ELEMS (constructor_type);
        type_elem;
@@ -1313,20 +1314,36 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_scons)
 
           default_value = pkl_ast_type_defval (PKL_PASS_AST,
                                                elem_type);
+
+          if (default_value == NULL)
+            {
+              PKL_ERROR (PKL_AST_LOC (constructor),
+                         "constructor not supported for this struct type (yet)");
+              PKL_TRANS_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+
           new_elem = pkl_ast_make_struct_field (PKL_PASS_AST,
                                                 elem_name,
                                                 default_value);
           PKL_AST_TYPE (new_elem) = ASTREF (elem_type);
           PKL_AST_LOC (new_elem) = PKL_AST_LOC (constructor_value);
+          PKL_AST_LOC (default_value) = PKL_AST_LOC (constructor_value);
 
-          added_elems = pkl_ast_chainon (added_elems, default_value);
+          added_elems = pkl_ast_chainon (added_elems,
+                                         /* XXX astref? */ ASTREF (new_elem));
+          num_added_elems++;
         }
     }
 
-  if (added_elems)
-    PKL_AST_STRUCT_FIELDS (constructor_value)
-      = pkl_ast_chainon (PKL_AST_STRUCT_FIELDS (constructor_value),
-                         added_elems);
+  if (num_added_elems > 0)
+    {
+      PKL_AST_STRUCT_NELEM (constructor_value)
+        = PKL_AST_STRUCT_NELEM (constructor_value) + num_added_elems;
+      PKL_AST_STRUCT_FIELDS (constructor_value)
+        = pkl_ast_chainon (PKL_AST_STRUCT_FIELDS (constructor_value),
+                           added_elems);
+    }
 }
 PKL_PHASE_END_HANDLER
 
