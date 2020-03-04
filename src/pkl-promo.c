@@ -1508,7 +1508,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
       pkl_ast_node elem_name = PKL_AST_STRUCT_FIELD_NAME (elem);
       pkl_ast_node elem_exp = PKL_AST_STRUCT_FIELD_EXP (elem);
       pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
-      
+
       /* Look for the target type of this struct element.  As per
          typify, the later can always be promoted to the first.  */
 
@@ -1533,7 +1533,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
               if (!pkl_ast_type_equal (elem_type, type_elem_type))
                 {
                   int restart = 0;
-                  
+
                   switch (PKL_AST_TYPE_CODE (type_elem_type))
                     {
                     case PKL_TYPE_INTEGRAL:
@@ -1555,7 +1555,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
 
                         size_t size = PKL_AST_TYPE_I_SIZE (base_type);
                         int sign = PKL_AST_TYPE_I_SIGNED (base_type);
-                        
+
                         if (!promote_offset (PKL_PASS_AST,
                                              size, sign, unit,
                                              &PKL_AST_STRUCT_FIELD_EXP (elem),

@@ -742,7 +742,7 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
 
             elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_type);
             elem_value = pkl_ast_type_defval (ast, elem_type);
-            
+
             if (elem_value == NULL)
               {
                 pkl_ast_node_free_chain (elements);

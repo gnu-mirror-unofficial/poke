@@ -1,5 +1,10 @@
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c: Remove trailing whitespaces.
+	* src/pkl-promo.c: Likewise.
+
+2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Struct Constructors): New section.
 
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
