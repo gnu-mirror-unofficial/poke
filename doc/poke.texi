@@ -2440,9 +2440,8 @@ Structs are the main abstraction that Poke provides to structure data.
 They contain heterogeneous collections of values.
 
 @menu
-* Struct Literals::		Writing struct values.
 * Struct Types::		Simple structs.
-* Struct Constructors::		Building structs from struct types.
+* Struct Constructors::		Constructing struct values.
 * Field Endianness::            Specifying the endianness of integral fields.
 * Accessing Fields::            Getting and fetching the values of fields.
 * Field Constraints::		Specifying data integrity.
@@ -2453,20 +2452,6 @@ They contain heterogeneous collections of values.
 * Methods::			Declaring functions within a struct.
 * Struct Attributes::		Accessing properties of struct values.
 @end menu
-
-@node Struct Literals
-@section Struct Literals
-
-A struct literal is written like:
-
-@example
-struct @{ [[@var{field_name}=]@var{exp},]@dots{} @}
-@end example
-
-The contents of the struct literal is a possibly empty set of fields.
-Each field has an optional name @var{field_name} and a value
-@var{exp}.  The expression for the value can be of any type.  For
-convenience, a trailing comma is accepted but not required.
 
 @node Struct Types
 @section Struct Types
@@ -2511,15 +2496,28 @@ occurrence.
 @node Struct Constructors
 @section Struct Constructors
 
-Once a struct type gets defined, it is possible to build values of
-that type using a @dfn{struct constructor}.  They have the following
-form:
+Once a struct type gets defined, there are two ways to build struct
+values from it.  One is @dfn{mapping}.  @xref{Mapping Structs}.  The
+other is using @dfn{struct constructor}, which is explained in this
+section.
+
+Struct constructors have the following form:
 
 @example
-@var{type_name} @{ [@var{field_initializer}]... @}
+@var{type_name} @{ [@var{field_initializer},]@dots{} @}
 @end example
 
 @noindent
+where each @var{field_initializer} has the form:
+
+@example
+[@var{field_name}=]@var{exp}
+@end example
+
+Note how each field has an optional name @var{field_name} and a value
+@var{exp}.  The expression for the value can be of any type.  For
+convenience, a trailing comma is accepted but not required.
+
 Suppose for example that we have a type defined as:
 
 @example
@@ -2562,6 +2560,30 @@ type being constructed:
 Packet @{ foo = 10 @};
          ^~~
 @end example
+
+As we shall see later, many struct types define constraints on the
+values their fields can hold.  This is a way to implement data
+integrity.  While building struct values using constructors, these
+constraints are taken into account.  For example, given the following
+struct type:
+
+@example
+deftype BPF_Reg =
+  struct
+  @{
+   uint<4> code < 11;
+  @};
+@end example
+
+@noindent
+we will get a constraint violation exception if we try to construct an
+@code{BPF_Reg}:
+
+@example
+(poke) BPF_Reg @{ code = 20 @}
+unhandled constraint violation exception
+@end example
+
 
 @node Field Endianness
 @section Field Endianness

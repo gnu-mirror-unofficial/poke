@@ -760,7 +760,22 @@
         drop                   ; ... ENAME EVAL
         dup                    ; ... ENAME EVAL EVAL
         regvar $val            ; ... ENAME EVAL
-        ;; XXX Evaluate the constraint expression.
+        ; Evaluate the constraint expression.
+        ;; XXX    If it fails and union, try next field.
+        ;; XXX    factorize in check_struct_field_constraint.
+        .label .constraint_ok
+   .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field) != NULL)
+   .c {
+        .c PKL_GEN_PAYLOAD->in_constructor = 0;
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field));
+        .c PKL_GEN_PAYLOAD->in_constructor = 1;
+        bnzi .constraint_ok
+        drop
+        push PVM_E_CONSTRAINT
+        raise
+.constraint_ok:
+        drop
+   .c }
         ;; Increase off with the siz of the last element.  Note
         ;; the offset starts at 0 since this struct is not mapped,
         ;; unless the struct is pinned.

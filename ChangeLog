@@ -1,5 +1,18 @@
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_constructor): Check field constraints in
+	struct constructors.
+	* testsuite/poke.pkl/scons-20.pk: New test.
+	* testsuite/poke.pkl/scons-21.pk: Likewise.
+	* testsuite/poke.pkl/scons-22.pk: Likewise.
+	* testsuite/poke.pkl/scons-23.pk: Likewise.
+	* testsuite/poke.pkl/scons-24.pk: Likewise.
+	* doc/poke.texi (Struct Literals): Remove section.
+	(Struct Constructors): Document that struct constructors take data
+	integrity into account.
+
+2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (struct_constructor): Handle the struct methods.
 	* testsuite/poke.pkl/scons-18.pk: New test.
 	* testsuite/poke.pkl/scons-19.pk: New test.
