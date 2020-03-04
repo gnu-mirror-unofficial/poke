@@ -1490,6 +1490,100 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_in)
 }
 PKL_PHASE_END_HANDLER
 
+/* The fields in struct constructors may have to be promoted to their
+   corresponding types.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
+{
+  pkl_ast_node scons = PKL_PASS_NODE;
+  pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
+  pkl_ast_node astruct = PKL_AST_SCONS_VALUE (scons);
+  pkl_ast_node struct_fields = PKL_AST_STRUCT_FIELDS (astruct);
+  pkl_ast_node elem = NULL;
+
+  for (elem = struct_fields; elem; elem = PKL_AST_CHAIN (elem))
+    {
+      pkl_ast_node type_elem;
+
+      pkl_ast_node elem_name = PKL_AST_STRUCT_FIELD_NAME (elem);
+      pkl_ast_node elem_exp = PKL_AST_STRUCT_FIELD_EXP (elem);
+      pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
+      
+      /* Look for the target type of this struct element.  As per
+         typify, the later can always be promoted to the first.  */
+
+      for (type_elem = PKL_AST_TYPE_S_ELEMS (scons_type);
+           type_elem;
+           type_elem = PKL_AST_CHAIN (type_elem))
+        {
+          pkl_ast_node type_elem_name;
+
+          /* Process only struct type fields.  */
+          if (PKL_AST_CODE (type_elem) != PKL_AST_STRUCT_TYPE_FIELD)
+            continue;
+
+          type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
+          if (type_elem_name
+              && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
+                        PKL_AST_IDENTIFIER_POINTER (elem_name)))
+            {
+              pkl_ast_node type_elem_type
+                = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
+
+              if (!pkl_ast_type_equal (elem_type, type_elem_type))
+                {
+                  int restart = 0;
+                  
+                  switch (PKL_AST_TYPE_CODE (type_elem_type))
+                    {
+                    case PKL_TYPE_INTEGRAL:
+                      if (!promote_integral (PKL_PASS_AST,
+                                             PKL_AST_TYPE_I_SIZE (type_elem_type),
+                                             PKL_AST_TYPE_I_SIGNED (type_elem_type),
+                                             &PKL_AST_STRUCT_FIELD_EXP (elem),
+                                             &restart))
+                        goto error;
+
+                      PKL_PASS_RESTART |= restart;
+                      break;
+                    case PKL_TYPE_OFFSET:
+                      {
+                        pkl_ast_node base_type
+                          = PKL_AST_TYPE_O_BASE_TYPE (type_elem_type);
+                        pkl_ast_node unit
+                          = PKL_AST_TYPE_O_UNIT (type_elem_type);
+
+                        size_t size = PKL_AST_TYPE_I_SIZE (base_type);
+                        int sign = PKL_AST_TYPE_I_SIGNED (base_type);
+                        
+                        if (!promote_offset (PKL_PASS_AST,
+                                             size, sign, unit,
+                                             &PKL_AST_STRUCT_FIELD_EXP (elem),
+                                             &restart))
+                          goto error;
+
+                        PKL_PASS_RESTART |= restart;
+                        break;
+                      }
+                    default:
+                      assert (0);
+                      break;
+                    }
+                }
+            }
+        }
+
+      continue;
+    error:
+      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem),
+               "couldn't promote field in struct constructor");
+      PKL_PASS_ERROR;
+    }
+
+  PKL_PASS_DONE;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_promo =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_promo_pr_type),
@@ -1530,5 +1624,6 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_HANDLER (PKL_AST_PRINT_STMT, pkl_promo_ps_print_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_promo_ps_struct_type_field),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_promo_ps_cond_exp),
+   PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_promo_ps_scons),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_promo_ps_type_array),
   };

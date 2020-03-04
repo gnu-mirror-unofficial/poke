@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-deftype Foo = struct { int i; long j; };
+deftype Foo = struct { offset<int,B> i; long j; };
 
 defvar a = Foo { i = 10L }; /* { dg-error "" } */

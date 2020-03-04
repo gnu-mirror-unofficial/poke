@@ -1,5 +1,12 @@
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-promo.c (pkl_promo_ps_scons): New handler.
+	(pkl_phase_promo): Install new handler.
+	* testsuite/poke.pkl/scons-17.pk: New test.
+	* testsuite/poke.pkl/scons-diag-4.pk: Adjust.
+
+2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_type_defval): Fix the index of elements
 	in array defvals.
 	* src/pkl-trans.c (pkl_trans3_ps_scons): Set the number of
