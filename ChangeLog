@@ -1,5 +1,10 @@
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_constructor): Handle the struct methods.
+	* testsuite/poke.pkl/scons-18.pk: New test.
+
+2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c: Remove trailing whitespaces.
 	* src/pkl-promo.c: Likewise.
 

@@ -712,6 +712,11 @@
 ;;;
 ;;; `field' is a scratch pkl_ast_node.
 
+        ;; NOTE: this function should have the same lexical structure
+        ;; than struct_mapper above.  If you add more local variables,
+        ;; please adjust struct_mapper accordingly, and also follow the
+        ;; instructions on the NOTE there.
+        
         .function struct_constructor
         prolog
         pushf
@@ -753,7 +758,8 @@
         sref                   ; ... SCT ENAME EVAL
         rot
         drop                   ; ... ENAME EVAL
-        ;; XXX regvar the field as a variable.
+        dup                    ; ... ENAME EVAL EVAL
+        regvar $val            ; ... ENAME EVAL
         ;; XXX Evaluate the constraint expression.
         ;; Increase off with the siz of the last element.  Note
         ;; the offset starts at 0 since this struct is not mapped,
@@ -779,11 +785,33 @@
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
  .c }
-        ;; No methods in struct constructors.
-        push ulong<64>0
-        ;; Ok, at this point all the struct field triplets are
-        ;; in the stack.  Push the number of fields, create
-        ;; the struct and return it.
+        ;; Handle the methods.
+ .c { int i; int nmethod;
+ .c for (nmethod = 0, i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
+ .c {
+ .c   if (PKL_AST_CODE (field) != PKL_AST_DECL
+ .c       || PKL_AST_DECL_KIND (field) != PKL_AST_DECL_KIND_FUNC)
+ .c   {
+ .c     if (PKL_AST_DECL_KIND (field) != PKL_AST_DECL_KIND_TYPE)
+ .c       i++;
+ .c     continue;
+ .c   }
+        ;; The lexical address of this method is 0,B where B is 3 +
+        ;; element order.  This 3 should be updated if the lexical
+        ;; structure of this function changes.
+        ;;
+        ;; XXX push the closure specified in the struct constructor
+        ;; instead, if appropriate.
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
+ .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (PKL_AST_DECL_NAME (field))));
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 3 + i);
+ .c     nmethod++;
+ .c     i++;
+ .c }
+        ;; Push the number of methods.
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (nmethod, 64));
+ .c }
+        ;; Push the number of fields, create the struct and return it.
         pushvar $nfield        ; null [OFF STR VAL]... NFIELD
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
         .c PKL_PASS_SUBPASS (type_struct);
