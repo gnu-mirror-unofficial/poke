@@ -756,6 +756,10 @@ When displaying an array as struct field, display only the elements up to the
 @code{cutoff} index and display @code{...} after that. Value of @code{0}
 means no limit. This cutoff value is not used when directly displaying arrays
 content.
+@item omaps
+@cindex maps, of displayed values
+Flag indicating whether including mapping information when printing
+out mapped values.
 @end table
 
 @node vm command

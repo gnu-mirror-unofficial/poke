@@ -707,6 +707,11 @@ pvm_val pvm_val_writer (pvm_val val);
 #define PVM_PRINT_F_GET_MODE(FLAGS)             \
   (((FLAGS) >> 20) & 0xf)
 
+#define PVM_PRINT_F_MAPS(MAPS)                  \
+  (((uint32_t) (MAPS) & 0x1))
+#define PVM_PRINT_F_GET_MAPS(FLAGS)             \
+  ((FLAGS) & 0x1)
+
 #define PVM_PRINT_F_INDENT(INDENT)              \
   (((uint32_t) (INDENT) & 0xf) << 16)
 #define PVM_PRINT_F_GET_INDENT(FLAGS)           \
@@ -716,8 +721,6 @@ pvm_val pvm_val_writer (pvm_val val);
   (((uint32_t) (CUTOFF) & 0xf) << 12)
 #define PVM_PRINT_F_GET_ACUTOFF(FLAGS)           \
   (((FLAGS) >> 12) & 0xf)
-
-#define PVM_PRINT_F_MAPS 1
 
 void pvm_print_val (pvm_val val, int base, uint32_t flags);
 

@@ -595,6 +595,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
   int mode = PVM_PRINT_F_GET_MODE (flags);
   int indent = PVM_PRINT_F_GET_INDENT (flags);
   int acutoff = PVM_PRINT_F_GET_ACUTOFF (flags);
+  int maps = PVM_PRINT_F_GET_MAPS (flags);
 
   /* Select the appropriate formatting templates for the given
      base.  */
@@ -852,7 +853,6 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
       pk_puts ("[");
       for (idx = 0; idx < nelem; idx++)
         {
-          pvm_val elem_offset = PVM_VAL_ARR_ELEM_OFFSET (val, idx);
           pvm_val elem_value = PVM_VAL_ARR_ELEM_VALUE (val, idx);
 
           if (idx != 0)
@@ -867,19 +867,18 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
             }
 
           pvm_print_val_1 (elem_value, base, flags, ndepth);
-
-          if (flags & PVM_PRINT_F_MAPS && elem_offset != PVM_NULL)
-            {
-              pk_puts ("@");
-              pvm_print_val_1 (elem_offset, base, flags, ndepth);
-            }
         }
       pk_puts ("]");
 
-      if (flags & PVM_PRINT_F_MAPS && array_offset != PVM_NULL)
+      if (maps && array_offset != PVM_NULL)
         {
-          pk_puts ("@");
+          /* The struct offset is a bit-offset.  Do not bother to
+             create a real offset here.  */
+          pk_puts (" @ ");
+          pk_term_class ("offset");
           pvm_print_val_1 (array_offset, base, flags, ndepth);
+          pk_puts ("#b");
+          pk_term_end_class ("offset");
         }
 
       pk_term_end_class ("array");
@@ -928,7 +927,6 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
         {
           pvm_val name = PVM_VAL_SCT_FIELD_NAME(val, idx);
           pvm_val value = PVM_VAL_SCT_FIELD_VALUE(val, idx);
-          pvm_val offset = PVM_VAL_SCT_FIELD_OFFSET(val, idx);
 
           if (idx != 0)
             pk_puts (",");
@@ -944,22 +942,21 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
               pk_puts ("=");
             }
           pvm_print_val_1 (value, base, flags, ndepth + 1);
-
-          if (flags & PVM_PRINT_F_MAPS && offset != PVM_NULL)
-            {
-              pk_puts ("@");
-              pvm_print_val_1 (offset, base, flags, ndepth);
-            }
         }
 
       if (mode == PVM_PRINT_TREE)
         pk_term_indent (ndepth, indent);
       pk_puts ("}");
 
-      if (flags & PVM_PRINT_F_MAPS && struct_offset != PVM_NULL)
+      if (maps && struct_offset != PVM_NULL)
         {
-          pk_puts ("@");
+          /* The struct offset is a bit-offset.  Do not bother to
+             create a real offset here.  */
+          pk_puts (" @ ");
+          pk_term_class ("offset");
           pvm_print_val_1 (struct_offset, base, flags, ndepth);
+          pk_puts ("#b");
+          pk_term_end_class ("offset");
         }
 
       pk_term_end_class ("struct");

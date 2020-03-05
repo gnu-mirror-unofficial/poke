@@ -105,6 +105,9 @@ void pvm_set_pretty_print (pvm pvm, int flag);
 enum pvm_omode pvm_omode (pvm apvm);
 void pvm_set_omode (pvm apvm, enum pvm_omode omode);
 
+int pvm_omaps (pvm apvm);
+void pvm_set_omaps (pvm apvm, int omaps);
+
 unsigned int pvm_oindent (pvm apvm);
 void pvm_set_oindent (pvm apvm, unsigned int oindent);
 

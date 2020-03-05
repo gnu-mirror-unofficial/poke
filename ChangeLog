@@ -1,5 +1,25 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm-val.h (PVM_PRINT_F_GET_MAPS): Define.
+	* src/pk-cmd.c (pk_cmd_exec): Use PVM_PRINT_F_MAPS.
+	* src/pvm.jitter (printv): Likewise.
+	(strace): Likewise.
+	(state-struct-runtime-c): Add field omaps.
+	(state-initialization-c): omaps is 0 by default.
+	* src/pvm.c (pvm_omaps): New function.
+	(pvm_set_omaps): Likewise.
+	(PVM_STATE_OMAPS): Define.
+	* src/pvm.h: Prototypes for pvm_omaps and pvm_set_omaps.
+	* src/pk-set.c (pk_cmd_set_omaps): New function.
+	(set_cmds): Add set_omaps_cmd.
+	* src/pvm-val.c (pvm_print_val_1): Do not print offsets of array
+	elements or struct fields.
+	Use PVM_PRINT_F_GET_MAPS.
+	* testsuite/poke.cmd/set-omaps-1.pk: New test.
+	* doc/poke.texi (set command): Document omaps.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm-val.c (pvm_print_val): Print struct offsets when invoked
 	with F_MAPS.
 	(pvm_print_val_1): Renamed from pvm_print_val, and added new

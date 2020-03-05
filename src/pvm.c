@@ -41,6 +41,8 @@
   ((PVM)->pvm_state.pvm_state_runtime.pretty_print)
 #define PVM_STATE_OMODE(PVM)                            \
   ((PVM)->pvm_state.pvm_state_runtime.omode)
+#define PVM_STATE_OMAPS(PVM)                            \
+  ((PVM)->pvm_state.pvm_state_runtime.omaps)
 #define PVM_STATE_ODEPTH(PVM)                           \
   ((PVM)->pvm_state.pvm_state_runtime.odepth)
 #define PVM_STATE_OINDENT(PVM)                          \
@@ -186,6 +188,18 @@ void
 pvm_set_omode (pvm apvm, enum pvm_omode omode)
 {
   PVM_STATE_OMODE (apvm) = omode;
+}
+
+int
+pvm_omaps (pvm apvm)
+{
+  return PVM_STATE_OMAPS (apvm);
+}
+
+void
+pvm_set_omaps (pvm apvm, int omaps)
+{
+  PVM_STATE_OMAPS (apvm) = omaps;
 }
 
 unsigned int

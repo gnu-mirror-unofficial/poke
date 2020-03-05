@@ -300,6 +300,44 @@ pk_cmd_set_oindent (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_set_omaps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set omaps {yes|no} */
+
+  assert (argc == 1);
+
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+    {
+      if (pvm_omaps (poke_vm))
+        pk_puts ("yes\n");
+      else
+        pk_puts ("no\n");
+    }
+  else
+    {
+      int omaps = 0;
+      const char *arg = PK_CMD_ARG_STR (argv[0]);
+
+      if (STREQ (arg, "yes"))
+        omaps = 1;
+      else if (STREQ (arg, "no"))
+        omaps = 0;
+      else
+        {
+          pk_term_class ("error");
+          pk_puts (_("error: "));
+          pk_term_end_class ("error");
+          pk_puts (_(" omap should be one of `yes' or `no'.\n"));
+          return 0;
+        }
+
+      pvm_set_omaps (poke_vm, omaps);
+    }
+
+  return 1;
+}
+
+static int
 pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set omode {normal|tree}  */
@@ -405,6 +443,9 @@ const struct pk_cmd set_odepth_cmd =
 const struct pk_cmd set_omode_cmd =
   {"omode", "?s", "", 0, NULL, pk_cmd_set_omode, "set omode (normal|tree)", NULL};
 
+const struct pk_cmd set_omaps_cmd =
+  {"omaps", "?s", "", 0, NULL, pk_cmd_set_omaps, "set omaps (yes|no)", NULL};
+
 const struct pk_cmd set_obase_cmd =
   {"obase", "?i", "", 0, NULL, pk_cmd_set_obase, "set obase (2|8|10|16)", NULL};
 
@@ -427,6 +468,7 @@ const struct pk_cmd *set_cmds[] =
    &set_oacutoff_cmd,
    &set_obase_cmd,
    &set_omode_cmd,
+   &set_omaps_cmd,
    &set_odepth_cmd,
    &set_oindent_cmd,
    &set_endian_cmd,
