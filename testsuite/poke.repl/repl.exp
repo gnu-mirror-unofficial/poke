@@ -18,7 +18,7 @@
 
 load_lib ${tool}.exp
 
-set test "yes"
+set test "slashes are preserved"
 
 poke_start
 poke_test_cmd {4 / 2} {2}

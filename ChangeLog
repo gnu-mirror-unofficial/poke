@@ -1,5 +1,11 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke.exp (poke_start): Pass -q to poke to avoid
+	acknowledging the user init file.
+	* testsuite/poke.repl/repl.exp: Use a more meaningful test name.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h (PKL_AST_STRUCT_FIELD_COMPLETED): Remove.
 	(struct pkl_ast_struct_field): Remove field `completed'.
 
