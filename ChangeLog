@@ -1,5 +1,16 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_constructor): Support unions.
+	* testsuite/poke.pkl/scons-union-1.pk: New test.
+	* testsuite/poke.pkl/scons-union-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-8.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-6.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-5.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-4.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-3.pk: Likewise.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_indexer): No need to restart
 	the pass.
 	(pkl_typify1_ps_struct_field): Likewise.

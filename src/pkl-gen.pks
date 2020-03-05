@@ -761,8 +761,7 @@
         dup                    ; ... ENAME EVAL EVAL
         regvar $val            ; ... ENAME EVAL
         ; Evaluate the constraint expression.
-        ;; XXX    If it fails and union, try next field.
-        ;; XXX    factorize in check_struct_field_constraint.
+        .label .alternative_failed
         .label .constraint_ok
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field) != NULL)
    .c {
@@ -771,6 +770,11 @@
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
         bnzi .constraint_ok
         drop
+   .c   if (PKL_AST_TYPE_S_UNION (type_struct))
+   .c   {
+        ;; Alternative failed: try next alternative.
+        ba .alternative_failed
+   .c   }
         push PVM_E_CONSTRAINT
         raise
 .constraint_ok:
@@ -800,7 +804,23 @@
         addlu
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
+        
+   .c if (PKL_AST_TYPE_S_UNION (type_struct))
+   .c {
+        ;; Union field successfully constructed.  We are done.
+        ba .union_fields_done
+.alternative_failed:
+        drop                    ; ... ENAME
+        drop                    ; ... EVAL
+    .c }
  .c }
+ .c if (PKL_AST_TYPE_S_UNION (type_struct))
+ .c {
+        ;; No valid alternative found in union.
+        push PVM_E_CONSTRAINT
+        raise
+ .c }
+.union_fields_done:
         ;; Handle the methods.
  .c { int i; int nmethod;
  .c for (nmethod = 0, i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
