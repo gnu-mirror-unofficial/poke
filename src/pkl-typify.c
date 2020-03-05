@@ -1094,7 +1094,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_indexer)
     }
 
   PKL_AST_TYPE (indexer) = ASTREF (type);
-  PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1475,7 +1474,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_field)
   /* The type of a STRUCT_FIELD in a struct initializer is the type of
      it's expression.  */
   PKL_AST_TYPE (struct_field) = ASTREF (struct_field_exp_type);
-  PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1538,7 +1536,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_ref)
     }
 
   PKL_AST_TYPE (struct_ref) = ASTREF (type);
-  PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1581,8 +1578,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_array)
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
-
-  PKL_PASS_RESTART = 1; /* XXX ? */
 }
 PKL_PHASE_END_HANDLER
 

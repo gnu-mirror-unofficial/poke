@@ -1,5 +1,13 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_indexer): No need to restart
+	the pass.
+	(pkl_typify1_ps_struct_field): Likewise.
+	(pkl_typify1_ps_struct_ref): Likewise.
+	(pkl_typify1_ps_type_array): Likewise.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pvm-val.h (PVM_PRINT_F_GET_MAPS): Define.
 	* src/pk-cmd.c (pk_cmd_exec): Use PVM_PRINT_F_MAPS.
 	* src/pvm.jitter (printv): Likewise.
