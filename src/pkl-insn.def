@@ -291,6 +291,7 @@ PKL_DEF_INSN (PKL_INSN_TYAGETB, "", "tyagetb")
 PKL_DEF_INSN (PKL_INSN_TYPOF, "", "typof")
 
 PKL_DEF_INSN (PKL_INSN_TYISC, "", "tyisc")
+PKL_DEF_INSN (PKL_INSN_TYISSCT, "", "tyissct")
 
 /* Branch instructions.  */
 

@@ -416,6 +416,7 @@ pkl_ast_node pkl_ast_make_struct (pkl_ast ast,
 
 #define PKL_AST_STRUCT_FIELD_NAME(AST) ((AST)->sct_field.name)
 #define PKL_AST_STRUCT_FIELD_EXP(AST) ((AST)->sct_field.exp)
+#define PKL_AST_STRUCT_FIELD_COMPLETED(AST) ((AST)->sct_field.completed)
 
 struct pkl_ast_struct_field
 {
@@ -423,6 +424,7 @@ struct pkl_ast_struct_field
 
   union pkl_ast_node *name;
   union pkl_ast_node *exp;
+  int completed;
 };
 
 pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,
@@ -1105,6 +1107,8 @@ struct pkl_ast_scons
 pkl_ast_node pkl_ast_make_scons (pkl_ast ast,
                                  pkl_ast_node type,
                                  pkl_ast_node value);
+int pkl_ast_complete_scons (pkl_ast ast, pkl_ast_node value,
+                            pkl_ast_node type);
 
 /* PKL_AST_FUNCALL nodes represent the invocation of a function.
 

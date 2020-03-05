@@ -732,7 +732,8 @@
         ;; Iterate over the fields of the struct type.
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
- .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field) ;
+ .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field);
+ .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
  .c   if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
@@ -743,20 +744,53 @@
  .c     continue;
  .c   }
         pushvar $sct           ; ... [EBOFF ENAME EVAL] SCT
-        .c if (field_name)
-        .c   pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
-        .c                 pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name)));
-        .c else
-        .c {
+ .c   if (field_name)
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
+ .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name)));
+ .c   else
+ .c   {
         push null
-        .c }
+ .c   }
                                ; ... SCT ENAME
         ;; Get the value of the field in $sct, which must exist as
         ;; per trans.
-        ;; XXX but it may be null if is an unbounded array.  We have
-        ;; to handle these.
         sref                   ; ... SCT ENAME EVAL
-        rot
+        ;; If the field type is a struct, and the value stored in the
+        ;; struct is not a struct, it means we need to provide a "default
+        ;; value".
+   .c if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_STRUCT)
+   .c {
+        .label .is_a_struct
+        tyissct                 ; ... SCT ENAME EVAL BOOL
+        bnzi .is_a_struct
+        drop                    ; ... SCT ENAME EVAL
+        drop                    ; ... SCT ENAME
+        ;; The passed struct has a dummy ulong<64>0 value for this
+        ;; field, which we won't be using.  Instead, we create an empty
+        ;; AST struct and complete it using the field's type.  Then we
+        ;; generate code for it, subpassing.
+        .c pkl_ast_node s = pkl_ast_make_struct (PKL_PASS_AST, 0, NULL);
+        .c PKL_AST_TYPE (s) = ASTREF (field_type);
+        .c assert (pkl_ast_complete_scons (PKL_PASS_AST, s, field_type));
+        .c PKL_GEN_PAYLOAD->in_constructor = 0;
+        .c PKL_PASS_SUBPASS (s);
+        .c PKL_GEN_PAYLOAD->in_constructor = 1;
+        ;; Ok sweet, next step is to invoke the field type's
+        ;; constructor passing this completed struct as an argument.
+        .c pkl_ast_node scons = pkl_ast_make_scons (PKL_PASS_AST, field_type,
+        .c                                          s);
+        .c PKL_AST_TYPE (scons) = ASTREF (field_type);
+        .c PKL_GEN_PAYLOAD->in_constructor = 0;
+        .c PKL_PASS_SUBPASS (scons);
+        .c PKL_GEN_PAYLOAD->in_constructor = 1;
+        .c ASTREF (s); pkl_ast_node_free (s);
+        .c ASTREF (scons); pkl_ast_node_free (scons);
+        nip
+        push null              ; ... SCT ENAME EVAL null
+.is_a_struct:
+        drop                   ; ... SCT ENAME EVAL
+   .c }
+        rot                    ; ... ENAME EVAL SCT
         drop                   ; ... ENAME EVAL
         dup                    ; ... ENAME EVAL EVAL
         regvar $val            ; ... ENAME EVAL

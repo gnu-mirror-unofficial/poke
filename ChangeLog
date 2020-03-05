@@ -1,5 +1,24 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_type_defval): This function cannot
+	calculate the default value for structs and unions.
+	* src/pkl-ast.h: Prototype for pkl_ast_complete_scons.
+	* src/pkl-ast.c: New function.
+	* src/pkl-trans.c (pkl_trans3_ps_scons): Call
+	pkl_ast_complete_scons.
+	* src/pkl-gen.c (pkl_gen_ps_scons): Compile ad-hoc struct
+	constructors for anonymous structs/unions.
+	* src/pkl-gen.pks (struct_constructor): handle completed struct
+	fields properly.
+	* src/pvm.jitter (tyissct): New instruction.
+	* src/pkl-insn.def (PKL_INSN_TYISSCT): Define.
+	* testsuite/poke.pkl/scons-26.pk: New test.
+	* testsuite/poke.pkl/scons-27.pk: Likewise.
+	* testsuite/poke.pkl/scons-28.pk: Likewise.
+	* testsuite/poke.pkl/scons-29.pk: Likewise.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (struct_constructor): Support unions.
 	* testsuite/poke.pkl/scons-union-1.pk: New test.
 	* testsuite/poke.pkl/scons-union-2.pk: Likewise.

@@ -3489,6 +3489,12 @@ instruction tyisc () # ( VAL -- VAL BOOL )
   end
 end
 
+instruction tyissct () # ( VAL -- VAL BOOL )
+  code
+    JITTER_PUSH_STACK (pvm_make_int (PVM_IS_SCT (JITTER_TOP_STACK ()), 32));
+  end
+end
+
 # `Any' type.
 
 instruction mktyany () # ( -- TYP )

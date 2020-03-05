@@ -1268,81 +1268,15 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_scons)
 {
   pkl_ast_node constructor = PKL_PASS_NODE;
-  pkl_ast_node constructor_value = PKL_AST_SCONS_VALUE (constructor);
-  pkl_ast_node constructor_type = PKL_AST_TYPE (constructor);
 
-  pkl_ast_node type_elem;
-  pkl_ast_node added_elems = NULL;
-  size_t num_added_elems = 0;
-
-  for (type_elem = PKL_AST_TYPE_S_ELEMS (constructor_type);
-       type_elem;
-       type_elem = PKL_AST_CHAIN (type_elem))
+  if (!pkl_ast_complete_scons (PKL_PASS_AST,
+                               PKL_AST_SCONS_VALUE (constructor),
+                               PKL_AST_SCONS_TYPE (constructor)))
     {
-      pkl_ast_node elem_name;
-      pkl_ast_node elem_type;
-      pkl_ast_node value_elem;
-
-      if (PKL_AST_CODE (type_elem) != PKL_AST_STRUCT_TYPE_FIELD)
-        /* Process only fields.  */
-        continue;
-
-      /* If the constructor's value doesn't have a field with this
-         name, add one with a default value.  Note that
-         pkl_ast_type_defval will return NULL if it is not possible to
-         determine a default value for the given type at compile-time.
-         This NULL will be handled by the code generator.  */
-
-      elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
-      elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
-
-      for (value_elem = PKL_AST_STRUCT_FIELDS (constructor_value);
-           value_elem;
-           value_elem = PKL_AST_CHAIN (value_elem))
-        {
-          pkl_ast_node name = PKL_AST_STRUCT_FIELD_NAME (value_elem);
-
-          if (strcmp (PKL_AST_IDENTIFIER_POINTER (name),
-                      PKL_AST_IDENTIFIER_POINTER (elem_name)) == 0)
-            break;
-        }
-
-      if (value_elem == NULL)
-        {
-          pkl_ast_node default_value;
-          pkl_ast_node new_elem;
-
-          default_value = pkl_ast_type_defval (PKL_PASS_AST,
-                                               elem_type);
-
-          if (default_value == NULL)
-            {
-              PKL_ERROR (PKL_AST_LOC (constructor),
-                         "constructor not supported for this struct type (yet)");
-              PKL_TRANS_PAYLOAD->errors++;
-              PKL_PASS_ERROR;
-            }
-
-          new_elem = pkl_ast_make_struct_field (PKL_PASS_AST,
-                                                elem_name,
-                                                default_value);
-          PKL_AST_TYPE (new_elem) = ASTREF (elem_type);
-          PKL_AST_LOC (new_elem) = PKL_AST_LOC (constructor_value);
-          PKL_AST_LOC (default_value) = PKL_AST_LOC (constructor_value);
-
-          added_elems = pkl_ast_chainon (added_elems,
-                                         /* XXX astref? */ ASTREF (new_elem));
-          num_added_elems++;
-        }
-    }
-
-  if (num_added_elems > 0)
-    {
-      PKL_AST_STRUCT_NELEM (constructor_value)
-        = PKL_AST_STRUCT_NELEM (constructor_value) + num_added_elems;
-      PKL_AST_STRUCT_FIELDS (constructor_value)
-        = pkl_ast_chainon (PKL_AST_STRUCT_FIELDS (constructor_value),
-                           added_elems);
+      PKL_ERROR (PKL_AST_LOC (constructor),
+                 "constructor not supported for this struct type (yet)");
+      PKL_TRANS_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
     }
 }
 PKL_PHASE_END_HANDLER

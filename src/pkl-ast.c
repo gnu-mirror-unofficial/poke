@@ -719,52 +719,6 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
 
         break;
       }
-    case PKL_TYPE_STRUCT:
-      {
-        /* The default value for a struct type is a struct containing
-           default values for all its fields.  */
-
-        pkl_ast_node field_type, elements = NULL;
-        size_t nelem;
-
-        for (nelem = 0, field_type = PKL_AST_TYPE_S_ELEMS (type);
-             field_type;
-             field_type = PKL_AST_CHAIN (field_type))
-          {
-            pkl_ast_node elem;
-            pkl_ast_node elem_type;
-            pkl_ast_node elem_name;
-            pkl_ast_node elem_value;
-
-            if (PKL_AST_CODE (field_type) != PKL_AST_STRUCT_TYPE_FIELD)
-              /* Process only fields.  */
-              continue;
-
-            elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_type);
-            elem_value = pkl_ast_type_defval (ast, elem_type);
-
-            if (elem_value == NULL)
-              {
-                pkl_ast_node_free_chain (elements);
-                return NULL;
-              }
-
-            PKL_AST_TYPE (elem_value) = ASTREF (elem_type);
-
-            elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field_type);
-            elem = pkl_ast_make_struct_field (ast,
-                                              elem_name, elem_value);
-
-            PKL_AST_LOC (elem) = PKL_AST_LOC (type);
-            PKL_AST_LOC (elem_value) = PKL_AST_LOC (type);
-
-            elements = pkl_ast_chainon (elements, elem);
-            nelem++;
-          }
-
-        value = pkl_ast_make_struct (ast, nelem, elements);
-        break;
-      }
     default:
       assert (0);
       break;
@@ -772,6 +726,104 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
 
   PKL_AST_TYPE (value) = ASTREF (type);
   return value;
+}
+
+/* Given an AST, a struct constructor node, and a struct type,
+   complete it by adding missing fields whose "default values" can be
+   calculated at compile-time.
+
+   If the struct constructor cannot be completed for some reason,
+   return 0.  Otherwise, return 1.  */
+
+int
+pkl_ast_complete_scons (pkl_ast ast,
+                        pkl_ast_node constructor_value,
+                        pkl_ast_node constructor_type)
+{
+  pkl_ast_node type_elem;
+  pkl_ast_node added_elems = NULL;
+  size_t num_added_elems = 0;
+
+  for (type_elem = PKL_AST_TYPE_S_ELEMS (constructor_type);
+       type_elem;
+       type_elem = PKL_AST_CHAIN (type_elem))
+    {
+      pkl_ast_node elem_name;
+      pkl_ast_node elem_type;
+      pkl_ast_node value_elem;
+
+      if (PKL_AST_CODE (type_elem) != PKL_AST_STRUCT_TYPE_FIELD)
+        /* Process only fields.  */
+        continue;
+
+      /* If the constructor's value doesn't have a field with this
+         name, add one with a default value.  Note that
+         pkl_ast_type_defval will return NULL if it is not possible to
+         determine a default value for the given type at compile-time.
+         This NULL will be handled by the code generator.  */
+
+      elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
+      elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
+
+      for (value_elem = PKL_AST_STRUCT_FIELDS (constructor_value);
+           value_elem;
+           value_elem = PKL_AST_CHAIN (value_elem))
+        {
+          pkl_ast_node name = PKL_AST_STRUCT_FIELD_NAME (value_elem);
+
+          if (strcmp (PKL_AST_IDENTIFIER_POINTER (name),
+                      PKL_AST_IDENTIFIER_POINTER (elem_name)) == 0)
+            break;
+        }
+
+      if (value_elem == NULL)
+        {
+          pkl_ast_node default_value;
+          pkl_ast_node new_elem;
+
+          if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_STRUCT)
+            {
+              /* For structs, we use a dummy default value in the
+                 struct, which will never be actually used.  The
+                 struct constructor in pkl-gen.pks will do the right
+                 thing instead.  */
+
+              pkl_ast_node t = pkl_ast_make_integral_type (ast, 64, 0);
+
+              PKL_AST_LOC (t) = PKL_AST_LOC (constructor_value);
+              default_value = pkl_ast_make_integer (ast, 0);
+              PKL_AST_TYPE (default_value) = ASTREF (t);
+            }
+          else
+            {
+              default_value = pkl_ast_type_defval (ast, elem_type);
+              if (default_value == NULL)
+                return 0;
+            }
+
+          new_elem = pkl_ast_make_struct_field (ast,
+                                                elem_name,
+                                                default_value);
+          PKL_AST_TYPE (new_elem) = ASTREF (elem_type);
+          PKL_AST_LOC (new_elem) = PKL_AST_LOC (constructor_value);
+          PKL_AST_LOC (default_value) = PKL_AST_LOC (constructor_value);
+
+          added_elems = pkl_ast_chainon (added_elems,
+                                         /* XXX astref? */ ASTREF (new_elem));
+          num_added_elems++;
+        }
+    }
+
+  if (num_added_elems > 0)
+    {
+      PKL_AST_STRUCT_NELEM (constructor_value)
+        = PKL_AST_STRUCT_NELEM (constructor_value) + num_added_elems;
+      PKL_AST_STRUCT_FIELDS (constructor_value)
+        = pkl_ast_chainon (PKL_AST_STRUCT_FIELDS (constructor_value),
+                           added_elems);
+    }
+
+  return 1;
 }
 
 /* Given a struct type node AST and a string in the form BB.CC.CC.xx,

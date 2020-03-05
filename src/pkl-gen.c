@@ -1462,16 +1462,30 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_scons)
      SCONS_VALUE as an argument.  The constructor will return a struct
      on the top of the stack.
 
-     Since we know that the type has been specified by name, due to
-     syntax, then the constructor closure is for sure defined in the
-     type AST node.
-
-     XXX: install an exception handler for constraint errors, etc.  */
+     Note that the type of the constructor may not have been specified
+     by name.  In that case, we compile it.  */
 
   pvm_val constructor = PKL_AST_TYPE_S_CONSTRUCTOR (scons_type);
 
-  assert (constructor != PVM_NULL);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
+  if (constructor != PVM_NULL)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
+  else
+    {
+      pvm_val constructor_closure;
+
+      /* The following three automatics conform the C environment
+         required by RAS_FUNCTION_STRUCT_CONSTRUCTOR.  */
+      pkl_ast_node type_struct = scons_type;
+      pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (scons_type);
+      pkl_ast_node field;
+      
+      PKL_GEN_PAYLOAD->in_constructor = 1;
+      RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
+      PKL_GEN_PAYLOAD->in_constructor = 0;
+    }
+
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
 }
 PKL_PHASE_END_HANDLER
