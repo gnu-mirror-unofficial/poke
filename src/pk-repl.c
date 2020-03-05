@@ -362,10 +362,13 @@ pk_repl (void)
           break;
         }
 
-      for (char *s = line; *s; ++s)
+      if (rl_completion_entry_function == doc_completion_function)
 	{
-	  if (*s == SPACE_SUBSTITUTE)
-	    *s = ' ';
+	  for (char *s = line; *s; ++s)
+	    {
+	      if (*s == SPACE_SUBSTITUTE)
+	      *s = ' ';
+	    }
 	}
 
       /* Ignore empty lines.  */

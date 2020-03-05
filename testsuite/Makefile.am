@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST = config lib poke.cmd poke.map poke.pkl poke.std
+EXTRA_DIST = config lib poke.repl poke.cmd poke.map poke.pkl poke.std
 
 AUTOMAKE_OPTIONS = dejagnu
 
