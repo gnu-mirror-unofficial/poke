@@ -1,5 +1,10 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h (PKL_AST_STRUCT_FIELD_COMPLETED): Remove.
+	(struct pkl_ast_struct_field): Remove field `completed'.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.c (pkl_ast_type_defval): This function cannot
 	calculate the default value for structs and unions.
 	* src/pkl-ast.h: Prototype for pkl_ast_complete_scons.

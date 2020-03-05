@@ -416,7 +416,6 @@ pkl_ast_node pkl_ast_make_struct (pkl_ast ast,
 
 #define PKL_AST_STRUCT_FIELD_NAME(AST) ((AST)->sct_field.name)
 #define PKL_AST_STRUCT_FIELD_EXP(AST) ((AST)->sct_field.exp)
-#define PKL_AST_STRUCT_FIELD_COMPLETED(AST) ((AST)->sct_field.completed)
 
 struct pkl_ast_struct_field
 {
@@ -424,7 +423,6 @@ struct pkl_ast_struct_field
 
   union pkl_ast_node *name;
   union pkl_ast_node *exp;
-  int completed;
 };
 
 pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,
