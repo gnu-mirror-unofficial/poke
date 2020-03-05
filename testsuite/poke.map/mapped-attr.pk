@@ -7,7 +7,9 @@
 /* { dg-command { [1,2]'mapped} } */
 /* { dg-output "\n0" } */
 
-/* { dg-command { struct {1,"foo"}'mapped} } */
+deftype Struct = struct { int i; string s; };
+
+/* { dg-command { Struct {i=1,s="foo"}'mapped} } */
 /* { dg-output "\n0" } */
 
 /* { dg-command { (byte[2] @ 2#B)'mapped} } */

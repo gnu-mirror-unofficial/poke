@@ -1,4 +1,6 @@
 /* { dg-do run } */
 
-/* { dg-command {  [struct {foo=10}] } } */
-/* { dg-output "\\\[struct \\{foo=10\\}\\\]" } */
+deftype Struct = struct { int foo; };
+
+/* { dg-command {  [Struct { foo = 10 }] } } */
+/* { dg-output "\\\[Struct \\{foo=10\\}\\\]" } */

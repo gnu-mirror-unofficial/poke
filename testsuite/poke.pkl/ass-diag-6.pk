@@ -1,3 +1,0 @@
-/* { dg-do compile } */
-
-(struct {a=10,b=20}).b = 10; /* { dg-error "invalid l-value" } */

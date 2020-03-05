@@ -1304,7 +1304,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_scons)
 
           if (strcmp (PKL_AST_IDENTIFIER_POINTER (name),
                       PKL_AST_IDENTIFIER_POINTER (elem_name)) == 0)
-            continue;
+            break;
         }
 
       if (value_elem == NULL)

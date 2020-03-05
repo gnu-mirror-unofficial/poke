@@ -631,7 +631,7 @@
         ;; Increase the number of fields.
         pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD
         push ulong<64>1         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD 1UL
-        addl
+        addlu
         nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
         popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
@@ -781,22 +781,23 @@
         ;; unless the struct is pinned.
    .c if (PKL_AST_TYPE_S_PINNED (type_struct))
    .c {
-        push uint<64>0         ; ... ENAME EVAL NEBOFF
+        push uint<64>0         ; ... ENAME EVAL EBOFF
+        dup                    ; ... ENAME EVAL EBOFF NEBOFF
    .c }
    .c else
    .c {
         siz                    ; ... ENAME EVAL ESIZ
         pushvar $boff          ; ... ENAME EVAL ESIZ EBOFF
+        swap                   ; ... ENAME EVAL EBOFF ESIZ
         addlu
-        nip2                   ; ... ENAME EVAL NEBOFF
+        nip                    ; ... ENAME EVAL EBOFF NEBOFF
    .c }
-        dup
         popvar $boff           ; ... ENAME EVAL NEBOFF
         nrot                   ; ... NEBOFF ENAME EVAL
         ;; Increase the number of fields.
         pushvar $nfield        ; ... NEBOFF ENAME EVAL NFIELD
         push ulong<64>1        ; ... NEBOFF ENAME EVAL NFIELD 1
-        addl
+        addlu
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
  .c }

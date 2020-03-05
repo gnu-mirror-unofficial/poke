@@ -1,4 +1,0 @@
-/* { dg-do run } */
-
-/* { dg-command {  struct {} } } */
-/* { dg-output "struct \\{\\}" } */

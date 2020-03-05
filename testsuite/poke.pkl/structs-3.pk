@@ -1,4 +1,0 @@
-/* { dg-do run } */
-
-/* { dg-command {  (struct {fo=10}).fo } } */
-/* { dg-output "10" } */

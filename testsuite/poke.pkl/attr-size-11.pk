@@ -1,4 +1,6 @@
 /* { dg-do run } */
 
-/* { dg-command {  struct {1, 2UL, "foo"}'size } } */
+deftype Struct = struct { int i; long l; string s; };
+
+/* { dg-command {  (Struct {i=1, l=2UL, s="foo"})'size } } */
 /* { dg-output "128UL#b" } */

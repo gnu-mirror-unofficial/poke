@@ -392,7 +392,7 @@ load_module (struct pkl_parser *parser,
 %type <ast> expression primary identifier bconc map
 %type <ast> funcall funcall_arg_list funcall_arg
 %type <ast> array array_initializer_list array_initializer
-%type <ast> struct struct_field_list struct_field
+%type <ast> struct_field_list struct_field
 %type <ast> type_specifier simple_type_specifier
 %type <ast> integral_type_specifier offset_type_specifier array_type_specifier
 %type <ast> function_type_specifier function_type_arg_list function_type_arg
@@ -802,7 +802,6 @@ expression:
                         PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
                     PKL_AST_LOC ($$) = @$;
                 }
-   	| struct
 	| bconc
         | map
         ;
@@ -967,15 +966,6 @@ opt_comma:
 	  %empty
 	| ','
         ;
-
-struct:
-	  STRUCT '{' struct_field_list opt_comma '}'
-		{
-                    $$ = pkl_ast_make_struct (pkl_parser->ast,
-                                              0 /* nelem */, $3);
-                    PKL_AST_LOC ($$) = @$;
-                }
-	;
 
 struct_field_list:
 	  %empty

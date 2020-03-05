@@ -1,3 +1,39 @@
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-tab.y (struct): Remove rule.
+	(expression): Remove corresponding alternative.
+	* src/pkl-trans.c (pkl_trans3_ps_scons): Fix logic in loop.
+	* src/pkl-gen.pks (struct_constructor): Fix offsets, and make sure
+	the number of fields is stored in an ulong<64>.
+	(struct_mapper): Likewise, for nfields.
+	* testsuite/poke.pkl/ass-diag-6.pk: Remove.
+	* testsuite/poke.pkl/structs-1.pk: Likewise.
+	* testsuite/poke.pkl/structs-2.pk: Likewise.
+	* testsuite/poke.pkl/arrays-3.pk: Adapt.
+	* testsuite/poke.map/mapped-attr.pk: Likewise.
+	* testsuite/poke.pkl/ass-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-10.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-11.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/defvar-5.pk: Likewise.
+	* testsuite/poke.pkl/isa.pk: Likewise.
+	* testsuite/poke.pkl/printf-20.pk: Likewise.
+	* testsuite/poke.pkl/printf-21.pk: Likewise.
+	* testsuite/poke.pkl/printf-22.pk: Likewise.
+	* testsuite/poke.pkl/printf-23.pk: Likewise.
+	* testsuite/poke.pkl/printf-24.pk: Likewise.
+	* testsuite/poke.pkl/printf-25.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-3.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-4.pk: Likewise.
+	* testsuite/poke.pkl/sref-1.pk: Renamed from structs-3.pk
+	* testsuite/poke.pkl/sref-2.pk: Renamed from structs-4.pk
+	* testsuite/poke.pkl/scons-25.pk: Renamed from structs-5.pk.
+	* testsuite/poke.pkl/scons-diag-6.pk: Renamed from
+	structs-diag-1.pk.
+	* testsuite/poke.pkl/attr-length-6.pk: New test.
+
 2020-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-gen.pks (struct_constructor): Check field constraints in

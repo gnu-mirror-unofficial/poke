@@ -1,3 +1,5 @@
 /* { dg-do compile } */
 
-defvar x = struct {} as int<32>; /* { dg-error "not allowed" } */
+deftype Struct = struct {};
+
+defvar x = Struct {} as int<32>; /* { dg-error "not allowed" } */
