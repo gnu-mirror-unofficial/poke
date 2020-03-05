@@ -30,8 +30,6 @@
 #include "pk-term.h"
 #include "pvm.h"
 
-static unsigned int pk_odepth;
-
 pvm_val
 pvm_make_int (int32_t value, int size)
 {
@@ -585,7 +583,7 @@ print_unit_name (uint64_t unit)
 }
 
 void
-pvm_print_val (pvm_val val, int base, uint32_t flags)
+pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
 {
   const char *long64_fmt, *long_fmt;
   const char *ulong64_fmt, *ulong_fmt;
@@ -868,12 +866,12 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
               break;
             }
 
-          pvm_print_val (elem_value, base, flags);
+          pvm_print_val_1 (elem_value, base, flags, ndepth);
 
           if (flags & PVM_PRINT_F_MAPS && elem_offset != PVM_NULL)
             {
               pk_puts ("@");
-              pvm_print_val (elem_offset, base, flags);
+              pvm_print_val_1 (elem_offset, base, flags, ndepth);
             }
         }
       pk_puts ("]");
@@ -881,7 +879,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
       if (flags & PVM_PRINT_F_MAPS && array_offset != PVM_NULL)
         {
           pk_puts ("@");
-          pvm_print_val (array_offset, base, flags);
+          pvm_print_val_1 (array_offset, base, flags, ndepth);
         }
 
       pk_term_end_class ("array");
@@ -892,6 +890,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
       pvm_val struct_type = PVM_VAL_SCT_TYPE (val);
       pvm_val struct_type_name = PVM_VAL_TYP_S_NAME (struct_type);
       pvm_val pretty_printer = pvm_get_struct_method (val, "_print");
+      pvm_val struct_offset = PVM_VAL_SCT_OFFSET (val);
 
       /* If the struct has a pretty printing method (called _print)
          then use it, unless the PVM is configured to not do so.
@@ -915,7 +914,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
       else
         pk_puts ("struct");
 
-      if (pk_odepth >= depth && depth != 0)
+      if (ndepth >= depth && depth != 0)
         {
           pk_puts (" {...}");
           pk_term_end_class ("struct");
@@ -925,7 +924,6 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
       pk_puts (" ");
       pk_printf ("{");
 
-      pk_odepth++;
       for (idx = 0; idx < nelem; ++idx)
         {
           pvm_val name = PVM_VAL_SCT_FIELD_NAME(val, idx);
@@ -936,7 +934,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
             pk_puts (",");
 
           if (mode == PVM_PRINT_TREE)
-            pk_term_indent (pk_odepth, indent);
+            pk_term_indent (ndepth + 1, indent);
 
           if (name != PVM_NULL)
             {
@@ -945,19 +943,24 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
               pk_term_end_class ("struct-field-name");
               pk_puts ("=");
             }
-          pvm_print_val (value, base, flags);
+          pvm_print_val_1 (value, base, flags, ndepth + 1);
 
           if (flags & PVM_PRINT_F_MAPS && offset != PVM_NULL)
             {
               pk_puts ("@");
-              pvm_print_val (offset, base, flags);
+              pvm_print_val_1 (offset, base, flags, ndepth);
             }
         }
-      pk_odepth--;
 
       if (mode == PVM_PRINT_TREE)
-        pk_term_indent (pk_odepth, indent);
+        pk_term_indent (ndepth, indent);
       pk_puts ("}");
+
+      if (flags & PVM_PRINT_F_MAPS && struct_offset != PVM_NULL)
+        {
+          pk_puts ("@");
+          pvm_print_val_1 (struct_offset, base, flags, ndepth);
+        }
 
       pk_term_end_class ("struct");
     }
@@ -991,15 +994,15 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
           pk_term_end_class ("any");
           break;
         case PVM_TYPE_ARRAY:
-          pvm_print_val (PVM_VAL_TYP_A_ETYPE (val), base, flags);
+          pvm_print_val_1 (PVM_VAL_TYP_A_ETYPE (val), base, flags, ndepth);
           pk_puts ("[");
           if (PVM_VAL_TYP_A_BOUND (val) != PVM_NULL)
-            pvm_print_val (PVM_VAL_TYP_A_BOUND (val), base, flags);
+            pvm_print_val_1 (PVM_VAL_TYP_A_BOUND (val), base, flags, ndepth);
           pk_puts ("]");
           break;
         case PVM_TYPE_OFFSET:
           pk_puts ("[");
-          pvm_print_val (PVM_VAL_TYP_O_BASE_TYPE (val), base, flags);
+          pvm_print_val_1 (PVM_VAL_TYP_O_BASE_TYPE (val), base, flags, ndepth);
           pk_puts (" ");
           print_unit_name (PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (val)));
           pk_puts ("]");
@@ -1014,9 +1017,9 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
             for (i = 0; i < nargs; ++i)
               {
                 pvm_val atype = PVM_VAL_TYP_C_ATYPE (val, i);
-                pvm_print_val (atype, base, flags);
+                pvm_print_val_1 (atype, base, flags, ndepth);
               }
-            pvm_print_val (PVM_VAL_TYP_C_RETURN_TYPE (val), 10, flags);
+            pvm_print_val_1 (PVM_VAL_TYP_C_RETURN_TYPE (val), 10, flags, ndepth);
             break;
           }
         case PVM_TYPE_STRUCT:
@@ -1034,7 +1037,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
                 if (i != 0)
                   pk_puts (" ");
 
-                pvm_print_val (etype, base, flags);
+                pvm_print_val_1 (etype, base, flags, ndepth);
                 if (ename != PVM_NULL)
                   pk_printf (" %s", PVM_VAL_STR (ename));
                 pk_puts (";");
@@ -1051,7 +1054,7 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
   else if (PVM_IS_OFF (val))
     {
       pk_term_class ("offset");
-      pvm_print_val (PVM_VAL_OFF_MAGNITUDE (val), base, flags);
+      pvm_print_val_1 (PVM_VAL_OFF_MAGNITUDE (val), base, flags, ndepth);
       pk_puts ("#");
       print_unit_name (PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (val)));
       pk_term_end_class ("offset");
@@ -1064,6 +1067,12 @@ pvm_print_val (pvm_val val, int base, uint32_t flags)
     }
   else
     assert (0);
+}
+
+void
+pvm_print_val (pvm_val val, int base, uint32_t flags)
+{
+  pvm_print_val_1 (val, base, flags, 0);
 }
 
 pvm_val

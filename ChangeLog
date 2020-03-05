@@ -1,5 +1,14 @@
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm-val.c (pvm_print_val): Print struct offsets when invoked
+	with F_MAPS.
+	(pvm_print_val_1): Renamed from pvm_print_val, and added new
+	argument `depth'.
+	(pvm_print_val): New function.
+	(pk_odepth): Remove.
+
+2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-tab.y (struct): Remove rule.
 	(expression): Remove corresponding alternative.
 	* src/pkl-trans.c (pkl_trans3_ps_scons): Fix logic in loop.
