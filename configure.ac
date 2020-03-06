@@ -88,7 +88,7 @@ PKG_CHECK_MODULES([LIBNBD], [libnbd], [
   AC_SUBST([LIBNBD_LIBS])
   AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
   libnbd_enabled=yes
-  AC_CHECK_PROGS([NBDKIT], [nbdkit], [no])
+  AC_PATH_PROGS([NBDKIT], [nbdkit], [no], [$PATH:/usr/local/sbin:/usr/sbin])
 ], [libnbd_enabled=no NBDKIT=no])
 AM_CONDITIONAL([NBD], [test "x$libnbd_enabled" = "xyes"])
 

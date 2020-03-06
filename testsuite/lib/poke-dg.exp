@@ -175,11 +175,12 @@ proc dg-nbd { args } {
         error "[lindex $args 0]: invalid arguments"
     }
 
-    if { $::env(NBDKIT) != "no"} {
+    set nbdkit $::env(NBDKIT)
+    if {$nbdkit != "no"} {
         set data [lindex $args 1]
         set sock [lindex $args 2]
 
-        set fh [open |[list nbdkit -f -U $sock data data=$data]]
+        set fh [open |[list $nbdkit -f -U $sock data data=$data]]
         lappend poke_nbd_pids [pid $fh]
     }
 }

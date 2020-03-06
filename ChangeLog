@@ -1,3 +1,9 @@
+2020-03-06  Eric Blake  <eblake@redhat.com>
+
+	* configure.ac: Check for nbdkit in /usr/[local/]sbin.
+	* testsuite/lib/poke-dg.exp (dg-nbd): Actually use $NBDKIT from
+	environment.
+
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-rt.pk: Remove obsolete/spurious comments.
