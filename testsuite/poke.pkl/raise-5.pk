@@ -6,7 +6,7 @@ defun foo = int:
      raise E_div_by_zero;
    catch (Exception e)
    {
-     if (e == E_div_by_zero)
+     if (e.code == EC_div_by_zero)
        print ("got division by zero exception\n");
      else
        print ("got some other exception\n");

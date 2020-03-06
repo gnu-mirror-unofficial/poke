@@ -4021,11 +4021,32 @@ provides an exceptions mechanism to deal with these situations.
 @node Exceptions
 @section Exceptions
 
-Exceptions in Poke are just integers.  You can use values @code{255}
-and higher for your own exceptions.
+Exceptions in Poke are values of type @code{Exception}, which is a
+struct defined like this:
 
-The range @code{0..254} is reserved for poke, and the following values
-have specific meanings:
+@example
+deftype Exception =
+  struct
+  @{
+    int<32> code;
+    string msg;
+  @};
+@end example
+
+@noindent
+Where @code{code} identifies the type of the exception, and @code{msg}
+is supposed to be a textual description of the exceptional situation.
+
+You can use codes @code{255} and higher for your own exceptions.  For
+example:
+
+@example
+raise Exception @{ code = 255; msg = "double upset event" @};
+@end example
+
+Exception codes in the range @code{0..254} are reserved for poke.
+These are used in predefined exceptions which are standard, and have
+specific meanings:
 
 @table @code
 @item E_generic
@@ -4061,7 +4082,18 @@ No return exception.  This is raised when the end of a void function
 is reached.
 @item E_io
 Generic IO exception.
+@item E_io_flags
+Invalid flags were tried while opening an IO device.
 @end table
+
+The exception codes of the standard exceptions are available in the
+form of @code{EC_*} variables.  For example, this how you would raise
+an IO error with a particular message:
+
+@example
+raise Exception @{ code = EC_io,
+                   msg = "fluzo capacitator overheat impedes IO" @}
+@end example
 
 @node try-catch
 @section @code{try-catch}
@@ -4086,10 +4118,10 @@ exceptions:
 try @var{stmt} catch if @var{exp} @var{compound_stmt}
 @end example
 
-Where @var{exp} is an expression that should evaluate to an integer.
-This integer is interpreted as an exception type.  The handler
-@var{compound_stmt} will only be executed if that specific exception
-is caught.  Any other exception will be re-raised.
+Where @var{exp} is an expression that should evaluate to an
+@code{Exception}.  The handler @var{compound_stmt} will only be
+executed if that specific exception is caught.  Any other exception
+will be re-raised.
 
 The third form of the statement is the most generic:
 
@@ -4098,7 +4130,7 @@ try @var{stmt} catch (Exception @var{formal}) @var{compound_stmt}
 @end example
 
 Where @var{formal} is a formal argument that contains the exception
-type when @var{compound_stmt} is executed.
+when @var{compound_stmt} is executed.
 
 @node try-until
 @section @code{try-until}
@@ -4113,7 +4145,7 @@ try @var{stmt} until @var{exp}
 Where @var{stmt} is the statement that will be executed repeatedly
 until some exception is raised.  If the raised exception has type
 @var{exp} then execution continues normally.  @var{exp} should be an
-expression that evaluates to a signed integer.
+expression that evaluates to an @code{Exception}.
 
 This statement is particularly useful for mapping IO spaces until an
 @code{eof} condition occurs.  For example, this is how we would

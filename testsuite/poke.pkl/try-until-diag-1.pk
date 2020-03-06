@@ -3,4 +3,4 @@
 defvar x = 10;
 
 try x = 20;
-until "foo";  /* { dg-error "invalid exception number" } */
+until "foo";  /* { dg-error "invalid exception" } */

@@ -125,7 +125,7 @@ late-header-c
   code
     extern jitter_uint printer_hi;
 
-    /* Macro to raise an exception from within an instruction.  This
+    /* Macros to raise an exception from within an instruction.  This
        is used in the RAISE instruction itself, and also in instructions
        that can fail, such as integer division or IO.
 
@@ -136,29 +136,42 @@ late-header-c
        type as an integer in the main stack, before branching to the
        exception handler.  */
 
-#define PVM_RAISE(EXCEPTION)                                           \
- do {                                                                  \
-    while (1)                                                          \
-    {                                                                  \
-      struct pvm_exception_handler *ehandler                           \
-        = JITTER_TOP_EXCEPTIONSTACK ();                                \
-      int handler_exception = ehandler->exception;                     \
-                                                                       \
-      JITTER_DROP_EXCEPTIONSTACK ();                                   \
-                                                                       \
-      if (handler_exception == 0 || handler_exception == (EXCEPTION))  \
-      {                                                                \
-        JITTER_SET_HEIGHT_STACK (ehandler->main_stack_height);         \
-        JITTER_SET_HEIGHT_RETURNSTACK (ehandler->return_stack_height); \
-                                                                       \
-        JITTER_PUSH_STACK (pvm_make_int ((EXCEPTION), 32));            \
-                                                                       \
-        jitter_state_runtime.env = ehandler->env;                      \
-        JITTER_BRANCH (ehandler->code);                                \
-        break;                                                         \
-      }                                                                \
-    }                                                                  \
-  } while (0)
+#define PVM_RAISE_DIRECT(EXCEPTION)                                   \
+  do                                                                  \
+  {                                                                   \
+   int exception_code                                                 \
+     = PVM_VAL_INT (pvm_ref_struct ((EXCEPTION),                      \
+                                    pvm_make_string ("code")));       \
+   while (1)                                                          \
+   {                                                                  \
+     struct pvm_exception_handler *ehandler                           \
+       = JITTER_TOP_EXCEPTIONSTACK ();                                \
+     int handler_exception = ehandler->exception;                     \
+                                                                      \
+     JITTER_DROP_EXCEPTIONSTACK ();                                   \
+                                                                      \
+     if (handler_exception == 0                                       \
+         || handler_exception == exception_code)                      \
+     {                                                                \
+       JITTER_SET_HEIGHT_STACK (ehandler->main_stack_height);         \
+       JITTER_SET_HEIGHT_RETURNSTACK (ehandler->return_stack_height); \
+                                                                      \
+       JITTER_PUSH_STACK ((EXCEPTION));                               \
+                                                                      \
+       jitter_state_runtime.env = ehandler->env;                      \
+       JITTER_BRANCH (ehandler->code);                                \
+       break;                                                         \
+     }                                                                \
+   }                                                                  \
+ } while (0)
+
+
+#define PVM_RAISE(CODE,STR)                                           \
+ do                                                                   \
+ {                                                                    \
+   pvm_val exception = pvm_make_exception ((CODE),(STR));             \
+   PVM_RAISE_DIRECT (exception);                                      \
+ } while (0)
 
     /* Macros to implement different kind of instructions.  These are to
        avoid flagrant code replication below.  */
@@ -199,7 +212,7 @@ late-header-c
 # define PVM_CHECKED_BINOP(TYPEA,TYPEB,TYPER,TYPERLC,OP)                     \
    if (PVM_VAL_##TYPEB (JITTER_TOP_STACK ()) == 0)                           \
    {                                                                         \
-      PVM_RAISE (PVM_E_DIV_BY_ZERO);                                         \
+      PVM_RAISE (PVM_E_DIV_BY_ZERO, PVM_E_DIV_BY_ZERO_MSG);                  \
    }                                                                         \
    else                                                                      \
    {                                                                         \
@@ -215,7 +228,7 @@ late-header-c
                                                                              \
      if (PVM_VAL_##TYPEB (JITTER_TOP_STACK ()) >= size)                      \
      {                                                                       \
-        PVM_RAISE (PVM_E_OUT_OF_BOUNDS);                                     \
+        PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);            \
      }                                                                       \
      else                                                                    \
      {                                                                       \
@@ -273,15 +286,15 @@ late-header-c
      io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));        \
                                                                              \
      if (io == NULL)                                                         \
-       PVM_RAISE (PVM_E_NO_IOS);                                             \
+       PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);                           \
                                                                              \
      JITTER_DROP_STACK ();                                                   \
      if ((ret = ios_read_##IOTYPE (IOARGS)) != IOS_OK)                       \
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
-            PVM_RAISE (PVM_E_EOF);                                           \
+            PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);                            \
          else                                                                \
-            PVM_RAISE (PVM_E_IO);                                            \
+            PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);                              \
          JITTER_TOP_STACK () = PVM_NULL;                                     \
        }                                                                     \
      else                                                                    \
@@ -308,16 +321,16 @@ late-header-c
      io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));              \
                                                                              \
      if (io == NULL)                                                         \
-       PVM_RAISE (PVM_E_NO_IOS);                                             \
+       PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);                           \
      JITTER_DROP_STACK ();                                                   \
                                                                              \
      offset = PVM_VAL_ULONG (offset_val);                                    \
      if ((ret = ios_write_##IOTYPE (IOARGS)) != IOS_OK)                      \
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
-            PVM_RAISE (PVM_E_EOF);                                           \
+            PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);                            \
          else                                                                \
-            PVM_RAISE (PVM_E_IO);                                            \
+            PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);                              \
        }                                                                     \
    } while (0)
 
@@ -709,7 +722,7 @@ instruction sync ()
        As soon as we support exception arguments, we shall
        pass the mask of signals to the signal handler.  */
     if (JITTER_PENDING_NOTIFICATIONS)
-      PVM_RAISE (PVM_E_SIGNAL);
+      PVM_RAISE (PVM_E_SIGNAL, PVM_E_SIGNAL_MSG);
   end
 end
 
@@ -740,9 +753,9 @@ instruction open ()
      int ret = ios_open (filename, flags, 0);
 
      if (ret == IOS_EFLAGS)
-       PVM_RAISE (PVM_E_IOFLAGS);
+       PVM_RAISE (PVM_E_IOFLAGS, PVM_E_IOFLAGS_MSG);
      else if (ret == IOS_ERROR)
-       PVM_RAISE (PVM_E_IO);
+       PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
 
      JITTER_DROP_STACK ();
      JITTER_TOP_STACK () = pvm_make_int (ret, 32);
@@ -766,7 +779,7 @@ instruction close ()
     ios io = ios_search_by_id (io_id);
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_IO);
+      PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
 
     ios_close (io);
     JITTER_DROP_STACK ();
@@ -787,7 +800,7 @@ instruction pushios ()
     ios cur_io = ios_cur ();
 
     if (cur_io == NULL)
-       PVM_RAISE (PVM_E_NO_IOS);
+       PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
     JITTER_PUSH_STACK (pvm_make_int (ios_get_id (cur_io), 32));
   end
 end
@@ -806,7 +819,7 @@ instruction popios ()
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS);
+      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
     ios_set_cur (io);
     JITTER_DROP_STACK ();
   end
@@ -826,7 +839,7 @@ instruction iosize ()
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS);
+      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
 
     JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_size (io), 64),
                                         pvm_make_ulong (1, 64)));
@@ -852,7 +865,7 @@ instruction iogetb ()
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS);
+      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
 
     JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_get_bias (io), 64),
                                         pvm_make_ulong (1, 64)));
@@ -880,7 +893,7 @@ instruction iosetb ()
     JITTER_DROP_STACK ();
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS);
+      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
 
     ios_set_bias (io,
                   (PVM_VAL_INTEGRAL (PVM_VAL_OFF_MAGNITUDE (bias))
@@ -2991,7 +3004,7 @@ instruction strref () # ( STR ULONG -- STR ULONG VAL )
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             strlen (PVM_VAL_STR (string))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     JITTER_PUSH_STACK (pvm_make_uint (PVM_VAL_STR (string)[PVM_VAL_ULONG (index)],
                                       8));
@@ -3013,7 +3026,7 @@ instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
     if (PVM_VAL_ULONG (from) >= strlen (PVM_VAL_STR (str))
         || PVM_VAL_ULONG (to) >= strlen (PVM_VAL_STR (str))
         || PVM_VAL_ULONG (from) > PVM_VAL_ULONG (to))
-        PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+        PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     s = pvm_alloc (slen + 1); /* XX XGC */
     strncpy (s,
@@ -3123,7 +3136,7 @@ instruction aset () # ( ARR ULONG VAL -- ARR )
     arr = JITTER_TOP_STACK ();
 
     if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     /* If the array is bounded by size, check whether the new value
        results in a different size.  */
@@ -3146,7 +3159,7 @@ instruction aset () # ( ARR ULONG VAL -- ARR )
         if (new_size_bits != old_size_bits)
          {
            PVM_VAL_ARR_ELEM_VALUE (arr, idx) = oval;
-           PVM_RAISE (PVM_E_CONV);
+           PVM_RAISE (PVM_E_CONV, PVM_E_CONV_MSG);
          }
       }
    else
@@ -3167,7 +3180,7 @@ instruction aseto () # ( ARR ULONG BOFF -- ARR )
     arr = JITTER_TOP_STACK ();
 
     if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;
   end
@@ -3181,7 +3194,7 @@ instruction aref () # ( ARR ULONG -- ARR ULONG VAL )
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (array))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     JITTER_PUSH_STACK (PVM_VAL_ARR_ELEM_VALUE (array,
                                                PVM_VAL_ULONG (index)));
@@ -3196,7 +3209,7 @@ instruction arefo () # ( ARR ULONG -- ARR ULONG OFF )
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (array))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     JITTER_PUSH_STACK (PVM_VAL_ARR_ELEM_OFFSET (array,
                                                 PVM_VAL_ULONG (index)));
@@ -3279,7 +3292,7 @@ instruction sset () # ( SCT STR VAL -- SCT )
 
     sct = JITTER_TOP_STACK ();
     if (!pvm_set_struct (sct, name, val))
-       PVM_RAISE (PVM_E_ELEM);
+       PVM_RAISE (PVM_E_ELEM, PVM_E_ELEM_MSG);
   end
 end
 
@@ -3289,7 +3302,7 @@ instruction sref () # ( SCT STR -- SCT STR VAL )
                                   JITTER_TOP_STACK ());
 
     if (val == PVM_NULL)
-      PVM_RAISE (PVM_E_ELEM);
+      PVM_RAISE (PVM_E_ELEM, PVM_E_ELEM_MSG);
     JITTER_PUSH_STACK (val);
   end
 end
@@ -3302,7 +3315,7 @@ instruction srefi () # ( SCT ULONG -- SCT ULONG VAL )
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_VALUE (sct,
                                                PVM_VAL_ULONG (index)));
@@ -3317,7 +3330,7 @@ instruction srefio () # ( SCT ULONG -- SCT ULONG OFF )
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS);
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_OFFSET (sct,
                                                  PVM_VAL_ULONG (index)));
@@ -3818,15 +3831,15 @@ instruction peeks ()
     io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS);
+      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
 
     JITTER_DROP_STACK ();
     if ((ret = ios_read_string (io, offset, 0 /* flags */, &ios_str)) != IOS_OK)
     {
       if (ret == IOS_EIOFF)
-         PVM_RAISE (PVM_E_EOF);
+         PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);
       else
-         PVM_RAISE (PVM_E_IO);
+         PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
       JITTER_TOP_STACK () = PVM_NULL;
     }
     else
@@ -3852,15 +3865,15 @@ instruction pokes ()
     io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS);
+      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
 
     JITTER_DROP_STACK ();
     if ((ret = ios_write_string (io, offset, 0 /* flags */, str)) != IOS_OK)
     {
       if (ret == IOS_EIOFF)
-         PVM_RAISE (PVM_E_EOF);
+         PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);
       else
-         PVM_RAISE (PVM_E_IO);
+         PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
     }
   end
 end
@@ -3871,14 +3884,17 @@ end
 
 # pushe LABEL
 #
-# ( EXCEPTION_TYPE -- )
+# ( EXCEPTION -- )
 
 instruction pushe (?l)
   code
    struct pvm_exception_handler *ehandler
       = pvm_alloc (sizeof (struct pvm_exception_handler));
+   pvm_val exception = JITTER_TOP_STACK ();
+   pvm_val exception_code = pvm_ref_struct (exception,
+                                            pvm_make_string ("code"));
 
-   ehandler->exception = PVM_VAL_INT (JITTER_TOP_STACK ());
+   ehandler->exception = PVM_VAL_INT (exception_code);
    JITTER_DROP_STACK ();
    ehandler->main_stack_height = JITTER_HEIGHT_STACK ();
    ehandler->return_stack_height = JITTER_HEIGHT_RETURNSTACK ();
@@ -3907,7 +3923,7 @@ instruction raise ()
   code
     pvm_val exception = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
-    PVM_RAISE (PVM_VAL_INT (exception));
+    PVM_RAISE_DIRECT (exception);
   end
 end
 

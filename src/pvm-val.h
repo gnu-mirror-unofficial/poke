@@ -671,6 +671,11 @@ pvm_val pvm_elemsof (pvm_val val);
 pvm_val pvm_val_mapper (pvm_val val);
 pvm_val pvm_val_writer (pvm_val val);
 
+/* Return a PVM value for an exception with the given CODE and
+   MESSAGE.  */
+
+pvm_val pvm_make_exception (int code, char *message);
+
 /* Print a pvm_val to the given file descriptor.
 
    FLAGS is a 32-bit unsigned integer, that encodes certain properties

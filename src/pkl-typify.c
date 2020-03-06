@@ -1905,8 +1905,8 @@ expected %s, got %s",
 }
 PKL_PHASE_END_HANDLER
 
-/* The type of a `raise' exception number, if specified, should be
-   integral.  */
+/* The type of a `raise' exception, if specified, should be a
+   Exception struct.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_raise_stmt)
 {
@@ -1920,10 +1920,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_raise_stmt)
         = PKL_AST_TYPE (raise_stmt_exp);
 
       if (raise_stmt_exp_type
-          && PKL_AST_TYPE_CODE (raise_stmt_exp_type) != PKL_TYPE_INTEGRAL)
+          && !pkl_ast_type_is_exception (raise_stmt_exp_type))
         {
           PKL_ERROR (PKL_AST_LOC (raise_stmt),
-                     "exception in `raise' statement should be an integral number");
+                     "exception in `raise' statement should be an Exception");
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -1931,9 +1931,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_raise_stmt)
 }
 PKL_PHASE_END_HANDLER
 
-/* The expression used in a TRY-UNTIL statement should be a 32-bit
-   signed integer, which is the type currently used to denote an
-   exception type.  */
+/* The expression used in a TRY-UNTIL statement should be an Exception
+   type.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_until_stmt)
 {
@@ -1941,40 +1940,36 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_until_stmt)
   pkl_ast_node try_until_stmt_exp = PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt);
   pkl_ast_node exp_type = PKL_AST_TYPE (try_until_stmt_exp);
 
-  if (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL)
+  if (!pkl_ast_type_is_exception (exp_type))
     {
-      PKL_ERROR (PKL_AST_LOC (exp_type), "invalid exception number");
+      PKL_ERROR (PKL_AST_LOC (exp_type), "invalid exception");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
 }
 PKL_PHASE_END_HANDLER
 
-/* The argument to a TRY-CATCH statement, if specified, should be a
-   32-bit signed integer, which is the type currently used to denote
-   an exception type.
+/* The argument to a TRY-CATCH statement, if specified, should be an
+   Exception.
 
-   Also, the exception expression in a CATCH-IF clause should be of
-   an integral type.  */
+   Also, the exception expression in a CATCH-IF clause should be an
+   Exception.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
 {
   pkl_ast_node try_catch_stmt = PKL_PASS_NODE;
   pkl_ast_node try_catch_stmt_arg = PKL_AST_TRY_CATCH_STMT_ARG (try_catch_stmt);
   pkl_ast_node try_catch_stmt_exp = PKL_AST_TRY_CATCH_STMT_EXP (try_catch_stmt);
+  pkl_ast_loc error_loc = PKL_AST_NOLOC;
 
   if (try_catch_stmt_arg)
     {
       pkl_ast_node arg_type = PKL_AST_FUNC_ARG_TYPE (try_catch_stmt_arg);
 
-      if (PKL_AST_TYPE_CODE (arg_type) != PKL_TYPE_INTEGRAL
-          || PKL_AST_TYPE_I_SIZE (arg_type) != 32
-          || PKL_AST_TYPE_I_SIGNED (arg_type) != 1)
+      if (!pkl_ast_type_is_exception (arg_type))
         {
-          PKL_ERROR (PKL_AST_LOC (arg_type),
-                     "expected int<32> for exception type");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
+          error_loc = PKL_AST_LOC (arg_type);
+          goto error;
         }
     }
 
@@ -1982,14 +1977,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
     {
       pkl_ast_node exp_type = PKL_AST_TYPE (try_catch_stmt_exp);
 
-      if (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL)
+      if (!pkl_ast_type_is_exception (exp_type))
         {
-          PKL_ERROR (PKL_AST_LOC (exp_type),
-                     "invalid exception number");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
+          error_loc = PKL_AST_LOC (exp_type);
+          goto error;
         }
     }
+
+  PKL_PASS_DONE;
+
+ error:
+  PKL_ERROR (error_loc, "expected an Exception");
+  PKL_TYPIFY_PAYLOAD->errors++;
+  PKL_PASS_ERROR;
 }
 PKL_PHASE_END_HANDLER
 

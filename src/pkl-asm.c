@@ -1119,7 +1119,8 @@ pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
       pkl_asm_insn (pasm, PKL_INSN_POPR, 0);
 
       /* Install the default signal handler.  */
-      pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (0, 32));
+      pkl_asm_insn (pasm, PKL_INSN_PUSH,
+                    pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG));
       pkl_asm_insn (pasm, PKL_INSN_PUSHE, pasm->error_label);
       pkl_asm_note (pasm, "#end prologue");
     }
@@ -1156,7 +1157,7 @@ pkl_asm_finish (pkl_asm pasm, int epilogue, void **pointers)
           pkl_asm_call (pasm, "_pkl_exception_handler");
       else
         {
-          pkl_asm_insn (pasm, PKL_INSN_DROP); /* Discard exception number.  */
+          pkl_asm_insn (pasm, PKL_INSN_DROP); /* Discard the exception.  */
           pkl_asm_insn (pasm, PKL_INSN_PUSH,
                         pvm_make_string ("unhandled exception while bootstrapping\n"));
           pkl_asm_insn (pasm, PKL_INSN_PRINTS);
@@ -1646,8 +1647,8 @@ pkl_asm_endif (pkl_asm pasm)
 
    Thus, try-catch blocks use two labels.
 
-   Note that pkl_asm_try expects to find an exception number (a 32-bit
-   signed integer) at the top of the main stack.  */
+   Note that pkl_asm_try expects to find an Exception at the top of
+   the main stack.  */
 
 void
 pkl_asm_try (pkl_asm pasm, pkl_ast_node arg)
@@ -1672,9 +1673,9 @@ pkl_asm_catch (pkl_asm pasm)
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label2);
   pvm_routine_append_label (pasm->routine, pasm->level->label1);
 
-  /* At this point the exception number is at the top of the stack.
-     If the catch block received an argument, push a new environment
-     and set it as a local.  Otherwise, just discard it.  */
+  /* At this point the Exception is at the top of the stack.  If the
+     catch block received an argument, push a new environment and set
+     it as a local.  Otherwise, just discard it.  */
 
   if (pasm->level->node1)
     {

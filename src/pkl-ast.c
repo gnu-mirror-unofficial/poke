@@ -892,6 +892,19 @@ out:
   return NULL;
 }
 
+/* Return whether the given type AST node corresponds to an exception
+   type.  */
+
+int
+pkl_ast_type_is_exception (pkl_ast_node type)
+{
+  pkl_ast_node type_name = PKL_AST_TYPE_NAME (type);
+
+  return (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+          && type_name
+          && STREQ (PKL_AST_IDENTIFIER_POINTER (type_name), "Exception"));
+}
+
 /* Return whether two given type AST nodes are equal, i.e. they denote
    the same type.  */
 

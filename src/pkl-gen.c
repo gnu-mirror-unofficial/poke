@@ -554,7 +554,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* INDEX ARRAY VAL BOOL */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
 
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (PVM_E_CONV, 32));
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          pvm_make_exception (PVM_E_CONV, PVM_E_CONV_MSG));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
 
             pkl_asm_label (PKL_GEN_ASM, label);
@@ -877,7 +878,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_raise_stmt)
   /* If the `raise' statement was anonymous, then we need to push the
      exception to raise, which by default, is 0.  */
   if (PKL_AST_RAISE_STMT_EXP (raise_stmt) == NULL)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (0, 32));
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                  pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG));
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
 }
@@ -930,12 +932,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_try_catch_stmt)
   pkl_ast_node catch_arg = PKL_AST_TRY_CATCH_STMT_ARG (try_catch_stmt);
   pkl_ast_node catch_exp = PKL_AST_TRY_CATCH_STMT_EXP (try_catch_stmt);
 
-  /* Push the exception number that will be catched by the sentence.
-     This is EXP if it is defined, or 0 (catch-all) if it isnt.  */
+  /* Push the exception that will be catched by the sentence.  This is
+     EXP if it is defined, or E_generic if it isnt.  */
   if (catch_exp)
     PKL_PASS_SUBPASS (catch_exp);
   else
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (0, 32));
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                  pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG));
 
   pkl_asm_try (PKL_GEN_ASM, catch_arg);
   {
@@ -1184,7 +1187,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
   else
     {
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_int (PVM_E_NO_RETURN, 32));
+                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_MSG));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
     }
 
@@ -1400,7 +1403,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (PVM_E_CONV, 32));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_exception (PVM_E_CONV, PVM_E_CONV_MSG));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
       pkl_asm_label (PKL_GEN_ASM, label);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
@@ -2753,7 +2757,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label);
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_int (PVM_E_CONV, 32));
+                        pvm_make_exception (PVM_E_CONV, PVM_E_CONV_MSG));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
 
           pkl_asm_label (PKL_GEN_ASM, label);
@@ -2819,7 +2823,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          pvm_make_int (PVM_E_MAP, 32));
+                          pvm_make_exception (PVM_E_MAP, PVM_E_MAP_MSG));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
             pkl_asm_label (PKL_GEN_ASM, label);
             if (attr == PKL_AST_ATTR_OFFSET)
@@ -2832,7 +2836,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           }
         default:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_int (PVM_E_MAP, 32));
+                        pvm_make_exception (PVM_E_MAP, PVM_E_MAP_MSG));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
           break;
         }

@@ -3,7 +3,7 @@
 defun foo = int:
   {
    try
-     raise 1;
+     raise Exception { code = 1 };
    catch (string e)
    {
      raise e;  /* { dg-error "" } */

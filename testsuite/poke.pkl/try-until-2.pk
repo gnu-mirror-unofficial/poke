@@ -7,11 +7,11 @@ defun foo = void:
    try
    {
      if (x == 5)
-       raise 666;
+       raise Exception {code=666};
      printf "%v\n", x;
      x = x + 1;
    }
-   until 666;
+   until Exception {code = 666};
   }
 
 /* { dg-command { foo } } */

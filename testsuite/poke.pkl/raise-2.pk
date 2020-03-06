@@ -3,7 +3,7 @@
 defun foo = int:
   {
    try
-     raise 0;
+     raise Exception { code = 0} ;
    catch
    {
     print ("got an exception\n");

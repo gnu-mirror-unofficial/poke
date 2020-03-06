@@ -4,7 +4,7 @@ defun foo = (Exception e) int:
   {
    try
      raise e;
-   catch if 2 - 1L
+   catch if Exception {code = 2 - 1L}
    {
      print ("caught\n");
    }

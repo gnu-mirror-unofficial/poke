@@ -939,6 +939,7 @@ int pkl_ast_func_all_optargs (pkl_ast_node type);
 int pkl_ast_type_mappable_p (pkl_ast_node type);
 pkl_ast_node pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type);
 pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
+int pkl_ast_type_is_exception (pkl_ast_node type);
 
 /* PKL_AST_DECL nodes represent the declaration of a named entity:
    function, type, variable....

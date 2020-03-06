@@ -3,8 +3,8 @@
 defun foo = int:
   {
    try
-     raise 1;
-   catch (int e)
+     raise Exception {code = 1};
+   catch (Exception e)
    {
      raise e;
    }

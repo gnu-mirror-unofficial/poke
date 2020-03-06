@@ -1207,3 +1207,41 @@ pvm_call_pretty_printer (pvm_val val, pvm_val cls)
 
   return (ret == PVM_EXIT_OK);
 }
+
+/* IMPORTANT: please keep pvm_make_exception in sync with the
+   definition of the struct Exception in pkl-rt.pk.  */
+
+pvm_val
+pvm_make_exception (int code, char *message)
+{
+  pvm_val nfields = pvm_make_ulong (2, 64);
+  pvm_val nmethods = pvm_make_ulong (0, 64);
+  pvm_val struct_name = pvm_make_string ("Exception");
+  pvm_val code_name = pvm_make_string ("code");
+  pvm_val msg_name = pvm_make_string ("msg");
+  pvm_val *field_names, *field_types, type;
+  pvm_val exception;
+
+  pvm_allocate_struct_attrs (nfields, &field_names, &field_types);
+
+  field_names[0] = code_name;
+  field_types[0] = pvm_make_integral_type (32, 1);
+
+  field_names[1] = msg_name;
+  field_types[1] = pvm_make_string_type ();
+  
+  type = pvm_make_struct_type (nfields, struct_name,
+                               field_names, field_types);
+
+  exception = pvm_make_struct (nfields, nmethods, type);
+
+  PVM_VAL_SCT_FIELD_NAME (exception, 0) = code_name;
+  PVM_VAL_SCT_FIELD_VALUE (exception, 0)
+    = pvm_make_int (code, 32);
+
+  PVM_VAL_SCT_FIELD_NAME (exception, 1) = msg_name;
+  PVM_VAL_SCT_FIELD_VALUE (exception, 1)
+    = pvm_make_string (message);
+
+  return exception;
+}

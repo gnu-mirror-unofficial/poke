@@ -63,28 +63,68 @@ defvar IOS_M_RDONLY = IOS_F_READ;
 defvar IOS_M_WRONLY = IOS_F_WRITE;
 defvar IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
 
-/* Exceptions.
+/* Exceptions.  */
 
-   XXX: use an enumeration?
+/* IMPORTANT: if you make changes to the Exception struct, please
+   update the pvm_make_exception function in pvm-val.c
+   accordingly.  */
 
-   User-defined exceptions start with 255.  */
+deftype Exception =
+  struct
+  {
+    int<32> code;
+    string msg;
+  };
 
-deftype Exception = int<32>;
+/* Standard exception codes.
+   Note that user-defined exceptions must have codes starting with
+   255.  */
 
-defvar E_generic       = 0;
-defvar E_div_by_zero   = 1;
-defvar E_no_ios        = 2;
-defvar E_no_return     = 3;
-defvar E_out_of_bounds = 4;
-defvar E_map_bounds    = 5;
-defvar E_eof           = 6;
-defvar E_map           = 7;
-defvar E_conv          = 8;
-defvar E_elem          = 9;
-defvar E_constraint    = 10;
-defvar E_io            = 11;
-defvar E_signal        = 12;
-defvar E_io_flags      = 13;
+defvar EC_generic       = 0;
+defvar EC_div_by_zero   = 1;
+defvar EC_no_ios        = 2;
+defvar EC_no_return     = 3;
+defvar EC_out_of_bounds = 4;
+defvar EC_map_bounds    = 5;
+defvar EC_eof           = 6;
+defvar EC_map           = 7;
+defvar EC_conv          = 8;
+defvar EC_elem          = 9;
+defvar EC_constraint    = 10;
+defvar EC_io            = 11;
+defvar EC_signal        = 12;
+defvar EC_io_flags      = 13;
+
+/* Standard exceptions.  */
+
+defvar E_generic
+  = Exception {code = EC_generic, msg = "generic"};
+defvar E_div_by_zero
+  = Exception {code = EC_div_by_zero, msg = "division by zero"};
+defvar E_no_ios
+  = Exception {code = EC_no_ios, msg = "no IOS"};
+defvar E_no_return
+  = Exception {code = EC_no_return, msg = "no return"};
+defvar E_out_of_bounds
+  = Exception {code = EC_out_of_bounds, msg = "out of bounds"};
+defvar E_map_bounds
+  = Exception {code = EC_map_bounds, msg = "out of map bounds"};
+defvar E_eof
+  = Exception {code = EC_eof, msg = "EOF"};
+defvar E_map
+  = Exception {code = EC_map, msg = "no map"};
+defvar E_conv
+  = Exception {code = EC_conv, msg = "conversion error"};
+defvar E_elem
+  = Exception {code = EC_elem, msg = "invalid element"};
+defvar E_constraint
+  = Exception {code = EC_constraint, msg = "constraint violation"};
+defvar E_io
+  = Exception {code = EC_io, msg = "generic IO"};
+defvar E_signal
+  = Exception {code = EC_signal};
+defvar E_io_flags
+  = Exception {code = EC_io_flags, msg = "invalid IO flags"};
 
 /* Default exception handler.
 
@@ -94,40 +134,13 @@ defvar E_io_flags      = 13;
 
 defun _pkl_exception_handler = (Exception exception) void:
   {
-   if (exception == E_signal)
+   if (exception.code == EC_signal)
      return;
 
-   print "unhandled ";
-
-   /* XXX: use a multiple conditional statement here.  */
-   if (exception == E_out_of_bounds)
-     print "out of bounds";
-   else if (exception == E_eof)
-     print "EOF";
-   else if (exception == E_elem)
-     print "invalid element";
-   else if (exception == E_constraint)
-     print "constraint violation";
-   else if (exception == E_conv)
-     print "conversion error";
-   else if (exception == E_map_bounds)
-     print "out of map bounds";
-   else if (exception == E_map)
-     print "no map";
-   else if (exception == E_div_by_zero)
-     print "division by zero";
-   else if (exception == E_no_ios)
-     print "no IOS";
-   else if (exception == E_no_return)
-     print "no return";
-   else if (exception == E_io)
-     print "generic IO";
-   else if (exception == E_io_flags)
-     print "invalid IO flags";
+   if (exception.msg == "")
+     print ("unhandled unknown exception");
    else
-     print "generic";
-
-   print " exception\n";
+     print ("unhandled " + exception.msg + " exception\n");
   }
 
 /* Find the greatest common divisor of two unsigned 64-bit integrals A

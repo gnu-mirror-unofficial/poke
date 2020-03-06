@@ -1,5 +1,94 @@
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-rt.pk (Exception): Define as a struct.
+	(EC_generic): Define.
+	(EC_div_by_zero): Likewise.
+	(EC_no_ios): Likewise.
+	(EC_no_return): Likewise.
+	(EC_out_of_bounds): Likewise.
+	(EC_map_bounds): Likewise.
+	(EC_eof): Likewise.
+	(EC_map): Likewise.
+	(EC_conv): Likewise.
+	(EC_elem): Likewise.
+	(EC_constraint): Likewise.
+	(EC_io): Likewise.
+	(EC_signal): Likewise.
+	(EC_io_flags): Likewise.
+	(_pkl_exception_handler): Adapt to new exceptions.
+	* src/pvm-val.h: Prototype for pvm_make_exception.
+	* src/pvm-val.c (pvm_make_exception): New function.
+	* src/pkl-ast.h: Prototype for pkl_ast_type_is_exception.
+	* src/pkl-ast.c (pkl_ast_type_is_exception): New function.
+	* src/pvm.jitter (PVM_CHECKED_BINOP): Pass a message to PVM_RAISE.
+	(PVM_BINOP_SL): Likewise.
+	(PVM_PEEK): Likewise.
+	(PVM_POKE): Likewise.
+	(sync): Likewise.
+	(open): Likewise.
+	(close): Likewise.
+	(pushios): Likewise.
+	(popios): Likewise.
+	(iosize): Likewise.
+	(iogetb): Likewise.
+	(iosetb): Likewise.
+	(strref): Likewise.
+	(substr): Likewise.
+	(aset): Likewise.
+	(aseto): Likewise.
+	(aref): Likewise.
+	(arefo): Likewise.
+	(sset): Likewise.
+	(sref): Likewise.
+	(srefi): Likewise.
+	(srefio): Likewise.
+	(peeks): Likewise.
+	(pokes): Likewise.
+	(PVM_RAISE_DIRECT): Define.
+	(PVM_RAISE): Re-define in terms of PVM_RAISE_DIRECT.
+	(raise): Use PVM_RAISE_DIRECT.
+	(pushe): Get an Exception.
+	* src/pvm.h (PVM_E_GENERIC_MSG): Define.
+	(PVM_E_DIV_BY_ZERO_MSG): Likewise.
+	(PVM_E_NO_IOS_MSG): Likewise.
+	(PVM_E_NO_RETURN_MSG): Likewise.
+	(PVM_E_OUT_OF_BOUNDS_MSG): Likewise.
+	(PVM_E_MAP_BOUNDS_MSG): Likewise.
+	(PVM_E_EOF_MSG): Likewise.
+	(PVM_E_MAP_MSG): Likewise.
+	(PVM_E_CONV_MSG): Likewise.
+	(PVM_E_ELEM_MSG): Likewise.
+	(PVM_E_CONSTRAINT_MSG): Likewise.
+	(PVM_E_IO_MSG): Likewise.
+	(PVM_E_SIGNAL_MSG): Likewise.
+	(PVM_E_IOFLAGS_MSG): Likewise.
+	* src/pkl-asm.c (pkl_asm_finish): Adapt to new exceptions.
+	* src/pkl-typify.c (pkl_typify1_ps_raise_stmt): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_try_until_stmt): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_try_catch_stmt): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_raise_stmt): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_try_catch_stmt): Likewise.
+	* src/pkl-promo.c (pkl_promo_ps_raise_stmt): Remove handler.
+	(pkl_promo_ps_try_until_stmt): Likewise.
+	(pkl_promo_ps_try_catch_stmt): Likewise.
+	* src/ras: Adapt handling of PVM_E_* arguments to generate
+	Exceptions instead of integers.
+	* testsuite/poke.pkl/raise-2.pk: Adapt to new exceptions.
+	* testsuite/poke.pkl/try-until-3.pk: Likewise.
+	* testsuite/poke.pkl/try-until-2.pk: Likewise.
+	* testsuite/poke.pkl/try-catch-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/try-catch-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/try-catch-7.pk: Likewise.
+	* testsuite/poke.pkl/raise-5.pk: Likewise.
+	* testsuite/poke.pkl/raise-4.pk: Likewise.
+	* testsuite/poke.pkl/raise-3.pk: Likewise.
+	* testsuite/poke.pkl/raise-6.pk: New test.
+	* doc/poke.texi (Exceptions): Update.
+	(try-until): Likewise.
+	(try-catch): Likewise.
+
+2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h (PKL_AST_STRUCT_FIELD_DUMMY): Define.
 	(struct pkl_ast_struct_field): Add field `dummy'.
 	* src/pkl-ast.c (pkl_ast_complete_scons): Annotate the dummy
