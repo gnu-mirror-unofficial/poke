@@ -1,32 +1,6 @@
 /* { dg-do run } */
 
-/* { dg-command {  10 isa any } } */
-/* { dg-output "1" } */
-
-/* { dg-command {  "foo" isa any } } */
-/* { dg-output "\n1" } */
-
 deftype Struct = struct { int i; string j; };
-
-/* { dg-command {  Struct {i=1,j="foo"} isa any } } */
-/* { dg-output "\n1" } */
-
-/* { dg-command {  10 isa int } } */
-/* { dg-output "\n1" } */
-
-/* { dg-command {  10 isa int<32> } } */
-/* { dg-output "\n1" } */
-
-/* { dg-command {  10 isa uint<32> } } */
-/* { dg-output "\n0" } */
-
-/* { dg-command {  "foo" isa string } } */
-/* { dg-output "\n1" } */
-
-defun foo = int<3>: { return 2; }
-
-/* { dg-command {  foo isa int<3> } } */
-/* { dg-output "\n1" } */
 
 defun foo2 = (any a) void:
   {
@@ -42,7 +16,7 @@ defun foo2 = (any a) void:
   }
 
 /* { dg-command { foo2 (10) } } */
-/* { dg-output "\nan int32" } */
+/* { dg-output "an int32" } */
 
 /* { dg-command { foo2 (666) } } */
 /* { dg-output "\nan int32" } */

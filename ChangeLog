@@ -1,3 +1,15 @@
+2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/isa-1.pk: Split from isa.pk.
+	* testsuite/poke.pkl/isa-9.pk: Likewise.
+	* testsuite/poke.pkl/isa-8.pk: Likewise.
+	* testsuite/poke.pkl/isa-7.pk: Likewise.
+	* testsuite/poke.pkl/isa-6.pk: Likewise.
+	* testsuite/poke.pkl/isa-5.pk: Likewise.
+	* testsuite/poke.pkl/isa-4.pk: Likewise.
+	* testsuite/poke.pkl/isa-3.pk: Likewise.
+	* testsuite/poke.pkl/isa-2.pk: Likewise.
+
 2020-03-06  Eric Blake  <eblake@redhat.com>
 
 	* configure.ac: Check for nbdkit in /usr/[local/]sbin.
