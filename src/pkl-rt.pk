@@ -16,17 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Please note, in this file:
-
-   - No standard types.
-   - Use a `_pkl_' prefix for every declaration that is not defining
-     a compiler-builtin wrapper.
-   - No array or struct operators, only simple values please.
-   - Compiler __builtins__ can be used in this file.
-
-   You break it, you fix it.  */
-
-/* XXX: every declaration here should be immutable.  */
+/* True is actually any integer that is not zero.  */
 
 defvar true = 1;
 defvar false = 0;
@@ -153,8 +143,3 @@ defun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
    else
      return _pkl_gcd (b, a % b);
   }
-
-/* XXX Array to string.
-   Struct to string.  */
-/* XXX error reporting routine, called by the macro pkl_asm_rterror().
-   This should exit the vm with the exitvm instruction.  */
