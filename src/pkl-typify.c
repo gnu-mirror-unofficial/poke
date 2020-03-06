@@ -2138,6 +2138,43 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
 }
 PKL_PHASE_END_HANDLER
 
+/* Check that the types of certain declarations in struct types are
+   the right ones.  This applies to pretty printers and other methods
+   that have some special meaning.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_decl)
+{
+  pkl_ast_node decl = PKL_PASS_NODE;
+
+  /* If this is a declaration in a struct type, it is a function
+     declaration, and its name is _print, then its type should be
+     ()void: */
+  if (PKL_PASS_PARENT
+      && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_TYPE
+      && PKL_AST_TYPE_CODE (PKL_PASS_PARENT) == PKL_TYPE_STRUCT
+      && PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_FUNC)
+    {
+      pkl_ast_node decl_name = PKL_AST_DECL_NAME (decl);
+
+      if (STREQ (PKL_AST_IDENTIFIER_POINTER (decl_name), "_print"))
+        {
+          pkl_ast_node initial = PKL_AST_DECL_INITIAL (decl);
+          pkl_ast_node initial_type = PKL_AST_TYPE (initial);
+          pkl_ast_node ret_type = PKL_AST_TYPE_F_RTYPE (initial_type);
+
+          if (PKL_AST_TYPE_CODE (ret_type) != PKL_TYPE_VOID
+              || PKL_AST_TYPE_F_NARG (initial_type) != 0)
+            {
+              PKL_ERROR (PKL_AST_LOC (decl_name),
+                         "_print should be of type ()void");
+              PKL_TYPIFY_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
 {
   pkl_ast_node elem = PKL_PASS_NODE;
@@ -2420,6 +2457,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_TRY_CATCH_STMT, pkl_typify1_ps_try_catch_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_TRY_UNTIL_STMT, pkl_typify1_ps_try_until_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_typify1_ps_struct_type_field),
+   PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_typify1_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_typify1_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_IF_STMT, pkl_typify1_ps_if_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_typify1_ps_cond_exp),

@@ -1,5 +1,12 @@
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_decl): New handler.
+	(pkl_phase_typify1): Register handler.
+	* testsuite/poke.pkl/struct-pretty-print-diag-1.pk: New test.
+	* testsuite/poke.pkl/struct-pretty-print-diag-2.pk: Likewise.
+
+2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_cond_exp): Set the type of the
 	conditional expression node!
 	* src/pkl-rt.pk: Simplify.
