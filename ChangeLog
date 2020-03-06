@@ -1,5 +1,12 @@
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_cond_exp): Set the type of the
+	conditional expression node!
+	* src/pkl-rt.pk: Simplify.
+	* testsuite/poke.pkl/cond-exp-3.pk: New test.
+
+2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/isa-1.pk: Split from isa.pk.
 	* testsuite/poke.pkl/isa-9.pk: Likewise.
 	* testsuite/poke.pkl/isa-8.pk: Likewise.

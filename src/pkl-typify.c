@@ -2314,7 +2314,8 @@ PKL_PHASE_END_HANDLER
 
 /* The `then' and `else' expressions in a ternary conditional
    expression shall be of the exactly the same type, with no coercions
-   performed.  The condition should evaluate to an integral type.  */
+   performed.  The condition should evaluate to an integral type.  The
+   type of the conditional expression is the type of the operands.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
 {
@@ -2325,8 +2326,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
   pkl_ast_node then_exp = PKL_AST_COND_EXP_THENEXP (cond_exp);
   pkl_ast_node else_exp = PKL_AST_COND_EXP_ELSEEXP (cond_exp);
 
-  if (!pkl_ast_type_equal (PKL_AST_TYPE (then_exp),
-                           PKL_AST_TYPE (else_exp)))
+  pkl_ast_node then_type = PKL_AST_TYPE (then_exp);
+  pkl_ast_node else_type = PKL_AST_TYPE (else_exp);
+
+  if (!pkl_ast_type_equal (then_type, else_type))
     {
       PKL_ERROR (PKL_AST_LOC (cond_exp),
                  "alternatives in conditional expression shall be of\n"
@@ -2342,6 +2345,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
+
+  PKL_AST_TYPE (cond_exp) = ASTREF (then_type);
 }
 PKL_PHASE_END_HANDLER
 

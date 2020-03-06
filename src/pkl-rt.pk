@@ -127,10 +127,9 @@ defun _pkl_exception_handler = (Exception exception) void:
    if (exception.code == EC_signal)
      return;
 
-   if (exception.msg == "")
-     print ("unhandled unknown exception");
-   else
-     print ("unhandled " + exception.msg + " exception\n");
+   print ("unhandled "
+          + (exception.msg == "" ? "unkonwn" : exception.msg)
+          + " exception\n");
   }
 
 /* Find the greatest common divisor of two unsigned 64-bit integrals A
