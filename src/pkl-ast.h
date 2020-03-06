@@ -412,10 +412,16 @@ pkl_ast_node pkl_ast_make_struct (pkl_ast ast,
    NAME is a PKL_AST_IDENTIFIER node with the name of the struct
    element.  If no name is specified, this is NULL.
 
-   EXP is the value of the struct field.  */
+   EXP is the value of the struct field.
+
+   DUMMY is a boolean indicating whether this field's value is a
+   "dummy" value inserted by pkl_ast_complete_scons.  A dummy struct
+   field always matches its type, and should never be promoted.  This
+   is used make several struct constructor handlers re-entrant.  */
 
 #define PKL_AST_STRUCT_FIELD_NAME(AST) ((AST)->sct_field.name)
 #define PKL_AST_STRUCT_FIELD_EXP(AST) ((AST)->sct_field.exp)
+#define PKL_AST_STRUCT_FIELD_DUMMY(AST) ((AST)->sct_field.dummy)
 
 struct pkl_ast_struct_field
 {
@@ -423,6 +429,7 @@ struct pkl_ast_struct_field
 
   union pkl_ast_node *name;
   union pkl_ast_node *exp;
+  int dummy;
 };
 
 pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,

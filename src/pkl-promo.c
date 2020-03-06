@@ -1509,6 +1509,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
       pkl_ast_node elem_exp = PKL_AST_STRUCT_FIELD_EXP (elem);
       pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
 
+      /* Do not promote "dummy" struct elements.  See the
+         documentation for pkl_ast_struct_field in pkl-ast.h for an
+         explanation of what a "dummy" struct element is.  */
+      if (PKL_AST_STRUCT_FIELD_DUMMY (elem))
+        continue;
+
       /* Look for the target type of this struct element.  As per
          typify, the later can always be promoted to the first.  */
 

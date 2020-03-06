@@ -1,5 +1,15 @@
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h (PKL_AST_STRUCT_FIELD_DUMMY): Define.
+	(struct pkl_ast_struct_field): Add field `dummy'.
+	* src/pkl-ast.c (pkl_ast_complete_scons): Annotate the dummy
+	property in struct fields.
+	* src/pkl-typify.c (pkl_typify1_ps_scons): Acknowledge the dummy
+	annotation.
+	* src/pkl-promo.c (pkl_promo_ps_scons): Likewise.
+
+2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING: Mention non-restartable passes.
 
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>

@@ -780,6 +780,7 @@ pkl_ast_complete_scons (pkl_ast ast,
         {
           pkl_ast_node default_value;
           pkl_ast_node new_elem;
+          int dummy = 0;
 
           if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_STRUCT)
             {
@@ -793,6 +794,7 @@ pkl_ast_complete_scons (pkl_ast ast,
               PKL_AST_LOC (t) = PKL_AST_LOC (constructor_value);
               default_value = pkl_ast_make_integer (ast, 0);
               PKL_AST_TYPE (default_value) = ASTREF (t);
+              dummy = 1;
             }
           else
             {
@@ -807,6 +809,7 @@ pkl_ast_complete_scons (pkl_ast ast,
           PKL_AST_TYPE (new_elem) = ASTREF (elem_type);
           PKL_AST_LOC (new_elem) = PKL_AST_LOC (constructor_value);
           PKL_AST_LOC (default_value) = PKL_AST_LOC (constructor_value);
+          PKL_AST_STRUCT_FIELD_DUMMY (new_elem) = dummy;
 
           added_elems = pkl_ast_chainon (added_elems,
                                          /* XXX astref? */ ASTREF (new_elem));
