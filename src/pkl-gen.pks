@@ -771,7 +771,7 @@
         ;; generate code for it, subpassing.
         .c pkl_ast_node s = pkl_ast_make_struct (PKL_PASS_AST, 0, NULL);
         .c PKL_AST_TYPE (s) = ASTREF (field_type);
-        .c assert (pkl_ast_complete_scons (PKL_PASS_AST, s, field_type));
+        .c pkl_ast_complete_scons (PKL_PASS_AST, s, field_type);
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
         .c PKL_PASS_SUBPASS (s);
         .c PKL_GEN_PAYLOAD->in_constructor = 1;

@@ -1,3 +1,7 @@
+2020-03-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.pks (struct_constructor): Remove assert.
+
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-typify.c (pkl_typify1_ps_decl): New handler.
