@@ -1482,7 +1482,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_scons)
       pkl_ast_node type_struct = scons_type;
       pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (scons_type);
       pkl_ast_node field;
-      
+
       PKL_GEN_PAYLOAD->in_constructor = 1;
       RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */

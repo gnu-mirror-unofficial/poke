@@ -716,7 +716,7 @@
         ;; than struct_mapper above.  If you add more local variables,
         ;; please adjust struct_mapper accordingly, and also follow the
         ;; instructions on the NOTE there.
-        
+
         .function struct_constructor
         prolog
         pushf
@@ -838,7 +838,7 @@
         addlu
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
-        
+
    .c if (PKL_AST_TYPE_S_UNION (type_struct))
    .c {
         ;; Union field successfully constructed.  We are done.

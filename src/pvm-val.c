@@ -1229,7 +1229,7 @@ pvm_make_exception (int code, char *message)
 
   field_names[1] = msg_name;
   field_types[1] = pvm_make_string_type ();
-  
+
   type = pvm_make_struct_type (nfields, struct_name,
                                field_names, field_types);
 
