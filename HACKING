@@ -999,8 +999,11 @@ The Poke Virtual Machine
 Exception Handling
 ~~~~~~~~~~~~~~~~~~
 
-Exception types are signed 32-bit integers, and are defined in
-``src/pkl-rt.pkl``.
+Exception types or codes are signed 32-bit integers, and are defined
+in ``src/pkl-rt.pk`` as ``EC_*`` variables.
+
+The exceptions themselves are struct values of type Exception, also
+defined in ``src/pkl-rt.pk``.
 
 There are two ways an exception can be raised in the PVM:
 

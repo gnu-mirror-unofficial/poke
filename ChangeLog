@@ -1,5 +1,10 @@
 2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* TODO: Update.
+	* HACKING: Likewise.
+
+2020-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-rt.pk (Exception): Define as a struct.
 	(EC_generic): Define.
 	(EC_div_by_zero): Likewise.

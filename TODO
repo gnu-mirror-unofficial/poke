@@ -319,7 +319,8 @@ basically implements the IOD interface in ``ios-dev.h``::
         defun writep = ...;
      };
 
-This of course depends on struct constructors.
+This of course depends on support for setting methods in struct
+constructors.
 
 
 This file is part of GNU poke.
