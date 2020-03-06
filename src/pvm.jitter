@@ -3279,6 +3279,18 @@ end
 
 ## String instructions
 
+# Instruction: strref
+#
+# Given a string and an unsigned long at the top of the stack,
+# push an unsigned integer with the code of the character that
+# occupies that position in the string, to the main stack.
+#
+# The index is zero-based.  If it is less than 0 or exceeds the
+# length of the string, then PVM_E_OUT_OF_BOUNDS is raised.
+#
+# Stack: ( STR ULONG -- STR ULONG UINT )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
 instruction strref () # ( STR ULONG -- STR ULONG VAL )
   code
      pvm_val string = JITTER_UNDER_TOP_STACK ();
