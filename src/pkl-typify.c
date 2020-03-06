@@ -1105,7 +1105,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
   pkl_ast_node node = PKL_PASS_NODE;
   pkl_ast_node type;
   pkl_ast_node t, struct_field_types = NULL;
-
+  int type_complete = 1;
 
   /* Build a chain with the types of the struct fields.  */
   for (t = PKL_AST_STRUCT_FIELDS (node); t; t = PKL_AST_CHAIN (t))
@@ -1121,6 +1121,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
 
       struct_field_types = pkl_ast_chainon (struct_field_types,
                                             struct_type_field);
+
+      if (!PKL_AST_TYPE_COMPLETE (PKL_AST_TYPE (t)))
+        type_complete = 0;
     }
 
   /* Build the type of the struct.  */
@@ -1133,7 +1136,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
                                    0 /* union */);
   PKL_AST_LOC (type) = PKL_AST_LOC (node);
   PKL_AST_TYPE (node) = ASTREF (type);
-  PKL_PASS_RESTART = 1;
+  PKL_AST_TYPE_COMPLETE (type) = type_complete;
 }
 PKL_PHASE_END_HANDLER
 
