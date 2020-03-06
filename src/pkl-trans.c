@@ -253,7 +253,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_offset)
       PKL_AST_TYPE (magnitude) = ASTREF (magnitude_type);
 
       PKL_AST_OFFSET_MAGNITUDE (offset) = ASTREF (magnitude);
-      PKL_PASS_RESTART = 1;
     }
 }
 PKL_PHASE_END_HANDLER
@@ -898,7 +897,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
   PKL_AST_PRINT_STMT_TYPES (print_stmt) = ASTREF (types);
 
   PKL_AST_PRINT_STMT_FMT_PROCESSED_P (print_stmt) = 1;
-  PKL_PASS_RESTART=1;
   PKL_PASS_DONE;
 
  invalid_tag:
@@ -1258,6 +1256,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_op_sizeof)
 
   pkl_ast_node_free (PKL_PASS_NODE);
   PKL_PASS_NODE = offset;
+  pkl_ast_print (stdout, offset);
   PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER

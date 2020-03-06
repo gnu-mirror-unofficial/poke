@@ -244,7 +244,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_isa)
 
       pkl_ast_node_free (PKL_PASS_NODE);
       PKL_PASS_NODE = true_node;
-      PKL_PASS_RESTART = 1;
     }
   else if (PKL_AST_TYPE_CODE (isa_exp_type) != PKL_TYPE_ANY)
     {
@@ -258,13 +257,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_isa)
 
       pkl_ast_node_free (PKL_PASS_NODE);
       PKL_PASS_NODE = bool_node;
-      PKL_PASS_RESTART = 1;
     }
   else
-    {
-      /* The rest of the cases should be resolved at run-time.  */
-      PKL_AST_TYPE (isa) = ASTREF (bool_type);
-    }
+    /* The rest of the cases should be resolved at run-time.  */
+    PKL_AST_TYPE (isa) = ASTREF (bool_type);
 }
 PKL_PHASE_END_HANDLER
 
@@ -424,7 +420,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
 
  done:
   PKL_AST_TYPE (cast) = ASTREF (type);
-  PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER
 
@@ -992,17 +987,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_array)
       = pkl_ast_make_integer (PKL_PASS_AST, PKL_AST_ARRAY_NELEM (array));
     pkl_ast_node bound_type
       = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+    pkl_ast_node array_type;
 
     PKL_AST_TYPE (bound) = ASTREF (bound_type);
     PKL_AST_LOC (bound) = PKL_AST_LOC (PKL_PASS_NODE);
     PKL_AST_LOC (bound_type) = PKL_AST_LOC (PKL_PASS_NODE);
 
-    type = pkl_ast_make_array_type (PKL_PASS_AST, type, bound);
-    PKL_AST_LOC (type) = PKL_AST_LOC (PKL_PASS_NODE);
-    PKL_AST_TYPE (array) = ASTREF (type);
+    array_type = pkl_ast_make_array_type (PKL_PASS_AST, type, bound);
+    PKL_AST_LOC (array_type) = PKL_AST_LOC (PKL_PASS_NODE);
+    PKL_AST_TYPE_COMPLETE (array_type) = PKL_AST_TYPE_COMPLETE (type);
+    PKL_AST_TYPE (array) = ASTREF (array_type);
   }
-
-  PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER
 

@@ -6,6 +6,11 @@
 
 	* src/pkl-typify.c (pkl_typify1_ps_struct): Avoid restarting the
 	pass.
+	* src/pkl-typify.c (pkl_typify1_ps_array): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_isa): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Likewise.
+	* src/pkl-trans.c (pkl_trans1_ps_offset): Likewise.
+	* src/pkl-trans.c (pkl_trans1_ps_print_stmt): Likewise.
 
 2020-03-05  Jose E. Marchesi  <jemarch@gnu.org>
 
