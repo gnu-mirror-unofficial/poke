@@ -2727,25 +2727,56 @@ instruction bsllu () # ( ULONG UINT -- ULONG UINT ULONG )
   end
 end
 
-instruction bsri () # ( INT UINT -- INT UINT INT )
+# Instruction: bsri
+#
+# Right-shift the integer at the under top of the main stack the
+# number of tis indicated by the unsigned int at the top of the
+# stack.
+#
+# Stack: ( INT UINT -- INT UINT INT )
+
+instruction bsri ()
   code
     PVM_BINOP (INT, UINT, INT, int, >>);
   end
 end
 
-instruction bsriu () # ( UINT UINT -- UINT UINT UINT )
+# Instruction: bsriu
+#
+# Right-shift the unsigned integer at the under top of the main stack
+# the number of tis indicated by the unsigned int at the top of the
+# stack.
+#
+# Stack: ( UINT UINT -- UINT UINT UINT )
+
+instruction bsriu ()
   code
     PVM_BINOP (UINT, UINT, UINT, uint, >>);
   end
 end
 
-instruction bsrl () # ( LONG UINT -- LONG UINT LONG )
+# Instruction: bsrl
+#
+# Right-shift the long  at the under top of the main stack the
+# number of tis indicated by the unsigned int at the top of the
+# stack.
+#
+# Stack: ( LONG UINT -- LONG UINT LONG )
+
+instruction bsrl ()
   code
     PVM_BINOP (LONG, UINT, LONG, long, >>);
   end
 end
 
-instruction bsrlu () # ( ULONG UINT -- ULONG UINT ULONG )
+# Instruction: bsrl
+#
+# Right-shift the unsigned long at the under top of the main stack the
+# number of tis indicated by the unsigned int at the top of the stack.
+#
+# Stack: ( ULONG UINT -- ULONG UINT ULONG )
+
+instruction bsrlu ()
   code
     PVM_BINOP (ULONG, UINT, ULONG, ulong, >>);
   end
@@ -2754,7 +2785,14 @@ end
 
 ## Compare-and-swap instructions.
 
-instruction swapgti () # ( INT INT - INT INT )
+# Instruction: swapgti
+#
+# Swap the two integers at the top of the main stack if the element at
+# the under-top is greater than the element at the top.
+#
+# Stack: ( INT INT -- INT INT )
+
+instruction swapgti ()
   code
      pvm_val a = JITTER_UNDER_TOP_STACK ();
      pvm_val b = JITTER_TOP_STACK ();
@@ -2766,7 +2804,14 @@ instruction swapgti () # ( INT INT - INT INT )
   end
 end
 
-instruction swapgtiu () # ( UINT UINT - UINT UINT )
+# Instruction: swapgtiu
+#
+# Swap the two unsigned integers at the top of the main stack if the
+# element at the under-top is greater than the element at the top.
+#
+# Stack: ( UINT UINT -- UINT UINT )
+
+instruction swapgtiu ()
   code
      pvm_val a = JITTER_UNDER_TOP_STACK ();
      pvm_val b = JITTER_TOP_STACK ();
@@ -2777,7 +2822,15 @@ instruction swapgtiu () # ( UINT UINT - UINT UINT )
      }
   end
 end
-instruction swapgtl () # ( LONG LONG - LONG LONG )
+
+# Instruction: swapgtl
+#
+# Swap the two longs at the top of the main stack if the element at
+# the under-top is greater than the element at the top.
+#
+# Stack: ( LONG LONG -- LONG LONG )
+
+instruction swapgtl ()
   code
      pvm_val a = JITTER_UNDER_TOP_STACK ();
      pvm_val b = JITTER_TOP_STACK ();
@@ -2789,7 +2842,14 @@ instruction swapgtl () # ( LONG LONG - LONG LONG )
   end
 end
 
-instruction swapgtlu () # ( ULONG ULONG - ULONG ULONG )
+# Instruction: swapgtlu
+#
+# Swap the two unsigned longs at the top of the main stack if the
+# element at the under-top is greater than the element at the top.
+#
+# Stack: ( ULONG ULONG -- ULONG ULONG )
+
+instruction swapgtlu ()
   code
      pvm_val a = JITTER_UNDER_TOP_STACK ();
      pvm_val b = JITTER_TOP_STACK ();
@@ -2805,25 +2865,52 @@ end
 
 ## Branches
 
-instruction ba (?f) # Branch always.
+# Instruction: ba LABEL
+#
+# Branch unconditionally to the given LABEL.
+#
+# Stack: ( -- )
+
+instruction ba (?f)
   code
     JITTER_BRANCH_FAST(JITTER_ARGF0);
   end
 end
 
-instruction bn (?f) # Branch if null
+# Instruction: bn LABEL
+#
+# Branch to the given LABEL if the value at the top of the stack is
+# null.
+#
+# Stack: ( VAL -- VAL )
+
+instruction bn (?f)
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (tmp != PVM_NULL, JITTER_ARGF0);
   end
 end
 
-instruction bnn (?f) # Branch if not null
+# Instruction: bnn LABEL
+#
+# Branch to the given LABEL if the value at the top of the stack is
+# not null.
+#
+# Stack: ( VAL -- VAL )
+
+instruction bnn (?f)
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (tmp == PVM_NULL, JITTER_ARGF0);
   end
 end
+
+# Instruction: bzi LABEL
+#
+# Branch to the given LABEL if the integer at the top of the stack is
+# zero.
+#
+# Stack: ( INT -- INT )
 
 instruction bzi (?f)
   code
@@ -2832,12 +2919,26 @@ instruction bzi (?f)
   end
 end
 
+# Instruction: bziu LABEL
+#
+# Branch to the given LABEL if the unsigned integer at the top of
+# the stack is zero.
+#
+# Stack: ( UINT -- UINT )
+
 instruction bziu (?f)
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (PVM_VAL_UINT (tmp), JITTER_ARGF0);
   end
 end
+
+# Instruction: bzl LABEL
+#
+# Branch to the given LABEL if the long at the top of the stack
+# is zero.
+#
+# Stack: ( LONG -- LONG )
 
 instruction bzl (?f)
   code
@@ -2846,12 +2947,26 @@ instruction bzl (?f)
   end
 end
 
+# Instruction: bzlu LABEL
+#
+# Branch to the given LABEL if the unsigned long at the top of the
+# stack is zero.
+#
+# Stack: ( ULONG -- ULONG )
+
 instruction bzlu (?f)
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (PVM_VAL_ULONG (tmp), JITTER_ARGF0);
   end
 end
+
+# Instruction: bzni LABEL
+#
+# Branch to the given LABEL if the integer at the top of the stack
+# is nonzero.
+#
+# Stack: ( INT -- INT )
 
 instruction bnzi (?f)
   code
@@ -2860,6 +2975,13 @@ instruction bnzi (?f)
   end
 end
 
+# Instruction: bnziu LABEL
+#
+# Branch to the given LABEL if the unsigned integer at the top of the
+# stack is nonzero.
+#
+# Stack: ( UINT -- UINT )
+
 instruction bnziu (?f)
   code
     pvm_val tmp = JITTER_TOP_STACK ();
@@ -2867,12 +2989,26 @@ instruction bnziu (?f)
   end
 end
 
+# Instruction: bnzl LABEL
+#
+# Branch to the given LABEL if the long at the top of the stack is
+# nonzero.
+#
+# Stack: ( LONG -- LONG )
+
 instruction bnzl (?f)
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_NONZERO (PVM_VAL_LONG (tmp), JITTER_ARGF0);
   end
 end
+
+# Instruction: bnzlu LABEL
+#
+# Branch to the given LABEL if the unsigned long at the top of the
+# stack is nonzero.
+#
+# Stack: ( ULONG -- ULONG )
 
 instruction bnzlu (?f)
   code
@@ -2885,7 +3021,14 @@ end
 
 ## Conversion instructions.
 
-instruction ctos () # ( UINT8 - UINT8 STR )
+# Instruction: ctos
+#
+# Convert the character encoded as an unsigned integer at the top of
+# the stack to a string that contains just that character.
+#
+# Stack: ( UINT -- UINT STR )
+
+instruction ctos ()
   code
     uint8_t c = PVM_VAL_UINT (JITTER_TOP_STACK ());
     char *str = pvm_alloc (2);
@@ -2896,23 +3039,59 @@ instruction ctos () # ( UINT8 - UINT8 STR )
   end
 end
 
-instruction itoi (?n pvm_literal_printer_cast) # ( INT -- INT INT )
+# Instruction: itoi NBITS
+#
+# Convert the integer at the top of the stack to an integer
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( INT -- INT INT )
+
+instruction itoi (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (INT, int32_t, int, int32_t);
   end
 end
 
-instruction itoiu (?n pvm_literal_printer_cast) # ( INT -- INT UINT )
+# Instruction: itoiu NBITS
+#
+# Convert the integer at the top of the stack to an unsigned integer
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( INT -- INT UINT )
+
+instruction itoiu (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (INT, int32_t, uint, uint32_t);
   end
 end
 
-instruction itol (?n pvm_literal_printer_cast) # ( INT -- INT LONG )
+# Instruction: itol NBITS
+#
+# Convert the integer at the top of the stack to a long featuring
+# NBITS bits.
+#
+# NBITS can be any number from 1 to 64.
+#
+# Stack: ( INT -- INT LONG )
+
+instruction itol (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (INT, int32_t, long, int64_t);
   end
 end
+
+# Instruction: itolu NBITS
+#
+# Convert the integer at the top of the stack to an unsigned long
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 64.
+#
+# Stack: ( INT -- INT ULONG )
 
 instruction itolu (?n pvm_literal_printer_cast) # ( INT -- INT ULONG )
   code
@@ -2920,11 +3099,29 @@ instruction itolu (?n pvm_literal_printer_cast) # ( INT -- INT ULONG )
   end
 end
 
+# Instruction: iutoi NBITS
+#
+# Convert the unsigned integer at the top of the stack to an integer
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( UINT -- UINT INT )
+
 instruction iutoi (?n pvm_literal_printer_cast) # ( UINT -- UINT INT )
   code
     PVM_CONVOP (UINT, uint32_t, int, int32_t);
   end
 end
+
+# Instruction: iutoiu NBITS
+#
+# Convert the unsigned integer at the top of the stack to an unsigned
+# integer featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( UINT -- UINT UINT )
 
 instruction iutoiu (?n pvm_literal_printer_cast) # ( UINT -- UINT UINT )
   code
@@ -2932,61 +3129,147 @@ instruction iutoiu (?n pvm_literal_printer_cast) # ( UINT -- UINT UINT )
   end
 end
 
-instruction iutol (?n pvm_literal_printer_cast) # ( UINT -- UINT LONG )
+# Instruction: iutol NBITS
+#
+# Convert the unsigned integer at the top of the stack to a long
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 64.
+#
+# Stack: ( UINT -- UINT LONG )
+
+instruction iutol (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (UINT, uint32_t, long, int64_t);
   end
 end
 
-instruction iutolu (?n pvm_literal_printer_cast) # ( UINT -- UINT ULONG )
+# Instruction: iutolu NBITS
+#
+# Convert the unsigned integer at the top of the stack to an
+# unsigned long featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 64.
+#
+# Stack: ( UINT -- UINT ULONG )
+
+instruction iutolu (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (UINT, uint32_t, ulong, uint64_t);
   end
 end
 
-instruction ltoi (?n pvm_literal_printer_cast) # ( LONG -- LONG INT )
+# Instruction: ltoi NBITS
+#
+# Convert the long at the top of the stack to an integer
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( LONG -- LONG INT )
+
+instruction ltoi (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (LONG, int64_t, int, int32_t);
   end
 end
 
-instruction ltoiu (?n pvm_literal_printer_cast) # ( LONG -- LONG UINT )
+# Instruction: ltoiu NBITS
+#
+# Convert the long at the top of the stack to an unsigned
+# integer featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( LONG -- LONG UINT )
+
+instruction ltoiu (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (LONG, int64_t, uint, uint32_t);
   end
 end
 
-instruction ltol (?n pvm_literal_printer_cast) # ( LONG -- LONG LONG )
+# Instruction: ltol NBITS
+#
+# Convert the long at the top of the stack to a long featuring
+# NBITS bits.
+#
+# NBITS can be any number from 1 to 64.
+#
+# Stack: ( LONG -- LONG LONG )
+
+instruction ltol (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (LONG, int64_t, long, int64_t);
   end
 end
 
-instruction ltolu (?n pvm_literal_printer_cast) # ( LONG -- LONG ULONG )
+# Instruction: ltolu NBITS
+#
+# Convert the long at the top of the stack to an unsigned long
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 64.
+#
+# Stack: ( LONG -- LONG ULONG )
+
+instruction ltolu (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (LONG, int64_t, ulong, uint64_t);
   end
 end
 
-instruction lutoi (?n pvm_literal_printer_cast) # ( ULONG -- ULONG INT )
+# Instruction: lutoi NBITS
+#
+# Convert the unsigned long at the top of the stack to an integer
+# featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( ULONG -- ULONG INT )
+
+instruction lutoi (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (ULONG, uint64_t, int, int32_t);
   end
 end
 
-instruction lutoiu (?n pvm_literal_printer_cast) # ( ULONG -- ULONG UINT )
+# Instruction: lutoiu NBITS
+#
+# Convert the unsigned long at the top of the stack to an unsigned
+# integer featuring NBITS bits.
+#
+# NBITS can be any number from 1 to 32.
+#
+# Stack: ( ULONG -- ULONG UINT )
+
+instruction lutoiu (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (ULONG, uint64_t, uint, uint32_t);
   end
 end
 
-instruction lutol (?n pvm_literal_printer_cast) # ( ULONG -- ULONG LONG )
+# Instruction: lutol NBITS
+#
+# Convert the unsigned long at the top of the stack to a long
+# featuring NBITS bits.
+#
+# Stack: ( ULONG -- ULONG LONG )
+
+instruction lutol (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (ULONG, uint64_t, long, int64_t);
   end
 end
 
-instruction lutolu (?n pvm_literal_printer_cast) # ( ULONG -- ULONG ULONG )
+# Instruction: lutolu NBITS
+#
+# Convert the unsigned long at the top of the stack to an
+# unsigned long featuring NBITS bits.
+#
+# Stack: ( ULONG -- ULONG ULONG )
+
+instruction lutolu (?n pvm_literal_printer_cast)
   code
     PVM_CONVOP (ULONG, uint64_t, ulong, uint64_t);
   end
