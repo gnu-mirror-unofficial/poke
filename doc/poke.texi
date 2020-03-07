@@ -255,7 +255,7 @@ To help you, poke uses the readline library
 @xref{Top,,,rluserman,GNU Readline Library}.
 This provides shortcuts and simple keystrokes to repeat
 previous commands with or without modification, fast selection of
-filenames and entries from other multiple choice contexts, and
+file names and entries from other multiple choice contexts, and
 navigation within a command and among previous commands.
 @cindex history, session history
 When the REPL starts, the history of your previous sessions
@@ -282,7 +282,7 @@ When a trailing semicolon is required, it can be omitted.
 
 When an expression is evaluated, the result of the expression is
 printed back to you.  For example:
-@cindex expresssions
+@cindex expressions
 @example
 (poke) 23
 23
@@ -523,7 +523,7 @@ poke's current working directory or absolute.
 
 Tilde expansion is performed in @var{path}, much like it's done in the
 shell.  This means you can include special characters like @code{~}
-(which will expand to your home directory) delimit the filename with
+(which will expand to your home directory) delimit the file name with
 @code{"} in case it includes leading or trailing blank characters,
 @i{etc}.
 
@@ -681,7 +681,7 @@ switch to it as the new current IO space:
 (poke) .ios #1
 The current file is now `foo.o'.
 (poke) .info ios
-  Id	Mode	Size		Filename
+  Id	Mode	Size		Name
   #0	rw      0x00000022#B	foo.bson
 * #1	r       0x0000df78#B	foo.o
 @end example
@@ -1130,7 +1130,7 @@ The type of a numeric literal is the smallest signed integer capable
 of holding it, starting with 32 bits, in steps of powers of two and up
 to 64 bits.@footnote{Rationale: the width of a C ``int'' is 32 bits in
 most currently used architectures, and binary data formats are usually
-modeled after C.}
+modelled after C.}
 
 So, for example, the value @code{2} has type @code{int<32>}, but the
 value @code{0xffff_ffff} has type @code{int<64>}, because it is out of
@@ -1482,7 +1482,7 @@ similar to C structs, I was determined to not continue with the poke
 implementation until I had described as many as binary formats in my
 language as possible.  That, I reckoned, was the only way to make sure
 the implemented language would be expressive, complete and useful
-enough to fulfill my requirements.
+enough to fulfil my requirements.
 
 The first formats I implemented using my immature little language
 included ELF, FLV, MP3, BSON@dots{} of them describing structures
@@ -2234,7 +2234,7 @@ re-evaluated and a new value is computed.
 
 Consequently, if the value of a variable referred in the expression
 changes, like in our example, the type itself gets updated
-automagically.  Very nice but, why is Poke designed like this?  Just
+auto-magically.  Very nice but, why is Poke designed like this?  Just
 to impress the cat?  Nope.
 
 In binary formats, and also in protocols, the size of some given data

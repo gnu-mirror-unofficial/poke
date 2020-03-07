@@ -370,7 +370,7 @@ const struct pk_cmd ios_cmd =
   {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};
 
 const struct pk_cmd file_cmd =
-  {"file", "f", "", 0, NULL, pk_cmd_file, "file FILENAME", rl_filename_completion_function};
+  {"file", "f", "", 0, NULL, pk_cmd_file, "file FILE-NAME", rl_filename_completion_function};
 
 const struct pk_cmd mem_cmd =
   {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
@@ -387,4 +387,4 @@ const struct pk_cmd info_ios_cmd =
   {"ios", "", "", 0, NULL, pk_cmd_info_ios, "info ios", NULL};
 
 const struct pk_cmd load_cmd =
-  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILENAME", rl_filename_completion_function};
+  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILE-NAME", rl_filename_completion_function};

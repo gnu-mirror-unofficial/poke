@@ -1,3 +1,9 @@
+2020-03-07  John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi: Spell check.
+	* src/pk-ios.c (load_cmd, file_cmd): Change "filename" to be two
+	words per GNU Coding Standards.
+
 2020-03-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-gen.pks (struct_constructor): Remove assert.
