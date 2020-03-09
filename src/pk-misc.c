@@ -137,6 +137,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jmd> Did you know that \"Poke\" is a Hawaiian salad?",
      "<jmd> I never place periods after my strncpy.",
      "<jmd> pokie pokie!",
+     "<jmd> Hokus Pokus",
      NULL
     };
   static int num_strings = 0;
