@@ -2452,6 +2452,7 @@ They contain heterogeneous collections of values.
 * Field Labels::		Explicit offsets for fields.
 * Pinned Structs::		Fix the offset of fields.
 * Unions::			Dealing with conditional data.
+* Optional Fields::		Fields that may or may not exist.
 * Declarations in Structs::	Declaring stuff within a struct.
 * Methods::			Declaring functions within a struct.
 * Struct Attributes::		Accessing properties of struct values.
@@ -2771,6 +2772,56 @@ deftype Ctf_Stype_V1 =
 @section Unions
 @cindex unions
 XXX
+
+@node Optional Fields
+@section Optional Fields
+@cindex struct fields
+
+Sometimes a field in a struct is optional, i.e. it exists or not
+depending on some criteria.  A good example of this is the ``extended
+header'' in a MP3 id3v2 tag.  From the specification:
+
+@example
+The second bit (bit 6) indicates whether or not the header is followed
+by an extended header. The extended header is described in section
+3.2. A set bit indicates the presence of an extended header.
+@end example
+
+In order to express this in a Poke struct type, we could of course use
+an union, like:
+
+@example
+deftype ID3V2_Tag =
+  struct
+  @{
+    ID3V2_Hdr hdr;
+    union
+    @{
+      ID3V2_Ext_Hdr hdr if hdr.extended_hdr_present;
+      struct @{@};
+    @} ext;
+    @dots{}
+  @}
+@end example
+
+That's it, we use an union with an empty alternative.  However, this
+is a bit cumbersome.  Therefore Poke provides a more convenient way to
+denote this:
+
+@example
+deftype ID3V2_Tag =
+  struct
+  @{
+     ID3V2_Hdr hdr;
+     IDV2_Ext_Hdr ext_hdr if hdr.extended_hdr_present;
+     @dots{}
+  @}
+@end example
+
+If both a constraint and an optional field expression are specified,
+the second should follow the first.
+
+For obvious reasons, optional fields are not allowed in unions.
 
 @node Declarations in Structs
 @section Declarations in Structs

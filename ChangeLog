@@ -1,3 +1,42 @@
+2020-03-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.h (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND): Define.
+	(struct pkl_ast_struct_type_field): New field optcond.
+	* src/pkl-ast.c (pkl_ast_make_struct_type_field): Get an argument
+	optcond.
+	(pkl_ast_dup_type): Handle optcond.
+	(pkl_ast_node_free): Likewise.
+	(pkl_ast_type_is_complete): Struct types with optional fields are
+	not complete.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-pass.c (pkl_do_pass_1): Traverse optcond nodes.
+	* src/pkl-tab.y (struct_type_field_optcond): New rule.
+	(struct_type_field): Add conditional expression.
+	* src/pkl-anal.c (pkl_anal2_ps_type_struct): Optional fields are
+	not allowed in unions.
+	* src/pkl-typify.c (pkl_typify1_ps_struct_type_field): Make sure
+	that optcond expressions in fields evaluate to a boolean.
+	* src/pkl-promo.c (pkl_promo_ps_struct_type_field): Promote
+	optcond expressions to boolean.
+	* src/pkl-gen.pks (struct_mapper): Use the optcond expression in
+	optional fields.
+	(struct_constructor): Likewise.
+	* testsuite/poke.pkl/optcond-1.pk: New test.
+	* testsuite/poke.pkl/optcond-2-diag.pk: Likewise.
+	* testsuite/poke.map/map-optcond-6.pk: Likewise.
+	* testsuite/poke.map/map-optcond-5.pk: Likewise.
+	* testsuite/poke.map/map-optcond-4.pk: Likewise.
+	* testsuite/poke.map/map-optcond-3.pk: Likewise.
+	* testsuite/poke.map/map-optcond-2.pk: Likewise.
+	* testsuite/poke.map/map-optcond-1.pk: Likewise.
+	* testsuite/poke.map/map-optcond-7.pk: Likewise.
+	* testsuite/poke.map/map-optcond-8.pk: Likewise.
+	* testsuite/poke.pkl/optcond-2.pk: Likewise.
+	* testsuite/poke.pkl/optcond-5.pk: Likewise.
+	* testsuite/poke.pkl/optcond-4.pk: Likewise.
+	* testsuite/poke.pkl/optcond-3.pk: Likewise.
+	* doc/poke.texi (Optional Fields): Document optional fields.
+
 2020-03-07  John Darrington <john@darrington.wattle.id.au>
 
 	* doc/poke.texi: Spell check.

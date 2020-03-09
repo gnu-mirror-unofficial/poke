@@ -417,6 +417,8 @@ pkl_do_pass_1 (pkl_compiler compiler,
       PKL_PASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (node));
       if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (node))
         PKL_PASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (node));
+      if (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (node))
+        PKL_PASS (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (node));
       if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (node))
         PKL_PASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (node));
       break;

@@ -399,7 +399,7 @@ load_module (struct pkl_parser *parser,
 %type <ast> struct_type_specifier
 %type <integer> struct_type_pinned integral_type_sign struct_or_union builtin endianness
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
-%type <ast> struct_type_field_constraint struct_type_field_label
+%type <ast> struct_type_field_constraint struct_type_field_label struct_type_field_optcond
 %type <ast> declaration
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
 %type <ast> comp_stmt stmt_decl_list stmt print_stmt_arg_list
@@ -1369,10 +1369,10 @@ struct_type_field:
                         }
                     }
                 }
-          struct_type_field_constraint struct_type_field_label ';'
+          struct_type_field_constraint struct_type_field_label struct_type_field_optcond ';'
           	{
                   $$ = pkl_ast_make_struct_type_field (pkl_parser->ast, $3, $2,
-                                                       $5, $6, $1);
+                                                       $5, $6, $1, $7);
                   PKL_AST_LOC ($$) = @$;
 
                   /* If endianness is empty, bison includes the blank
@@ -1423,6 +1423,18 @@ struct_type_field_constraint:
                   PKL_AST_LOC ($$) = @$;
                 }
           ;
+
+struct_type_field_optcond:
+	  %empty
+		{
+                  $$ = NULL;
+                }
+	| IF expression
+        	{
+                  $$ = $2;
+                  PKL_AST_LOC ($$) = @$;
+                }
+	;
 
 /*
  * Declarations.

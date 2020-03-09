@@ -513,11 +513,13 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_MAPPER
-;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF )
+;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF NADDED )
 ;;;
 ;;; Map a struct field from the current IOS.
 ;;; SBOFF is the bit-offset of the beginning of the struct.
 ;;; NBOFF is the bit-offset marking the end of this field.
+;;; NADDED is an ulong<64> with the number of fields processed
+;;; by this macro.  It is typically ulong<64>0 or ulong<64>1.
 ;;;
 ;;; The C environment required is:
 ;;;
@@ -542,6 +544,27 @@
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (field));
                                 	; BOFF VAL STR
         swap                            ; BOFF STR VAL
+        ;; If this is an optional field, evaluate the optcond.  If
+        ;; it is false, then do not add this field to the struct.
+   .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field);
+   .c if (optcond)
+        .c {
+        .c PKL_GEN_PAYLOAD->in_mapper = 0;
+        .c PKL_PASS_SUBPASS (optcond);
+        .c PKL_GEN_PAYLOAD->in_mapper = 1;
+        bnzi .optcond_ok
+        drop                    ; BOFF STR VAL
+        drop                    ; BOFF STR
+        drop                    ; BOFF
+        push ulong<64>0         ; BOFF NADDED
+        ba .omitted_field
+   .c }
+   .c else
+   .c {
+        push null               ; BOFF STR VAL null
+   .c }
+.optcond_ok:
+        drop                    ; BOFF STR VAL
         ;; Evaluate the field's constraint and raise
         ;; an exception if not satisfied.
         .e check_struct_field_constraint
@@ -555,6 +578,8 @@
         tor                    ; STR VAL BOFF
         nrot                   ; BOFF STR VAL
         fromr                  ; BOFF STR VAL NBOFF
+        push ulong<64>1        ; BOFF STR VAL NBOFF NADDED
+.omitted_field:
         .end
 
 ;;; RAS_FUNCTION_STRUCT_MAPPER
@@ -614,26 +639,25 @@
         push PVM_E_CONSTRAINT
         pushe .alternative_failed
  .c   }
-        pushvar $ios             ; ...[EBOFF ENAME EVAL] NEOFF IOS
-        swap                     ; ...[EBOFF ENAME EVAL] IOS NEOFF
-        pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEOFF OFF
-        .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEOFF
+        pushvar $ios             ; ...[EBOFF ENAME EVAL] NEBOFF IOS
+        swap                     ; ...[EBOFF ENAME EVAL] IOS NEBOFF
+        pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEBOFF OFF
+        .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEBOFF NADDED
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         pope
  .c   }
+        ;; Increase the number of fields.
+        pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NADDED NFIELD
+        addlu
+        nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+NADDED)
+        popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
         ;; If the struct is pinned, replace NEBOFF with BOFF
  .c   if (PKL_AST_TYPE_S_PINNED (type_struct))
  .c   {
         drop
         pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
  .c   }
-        ;; Increase the number of fields.
-        pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD
-        push ulong<64>1         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD 1UL
-        addlu
-        nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
-        popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         ;; Union field successfully mapped.  We are done.
@@ -732,6 +756,10 @@
         ;; Iterate over the fields of the struct type.
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
+        .label .alternative_failed
+        .label .constraint_ok
+        .label .optcond_ok
+        .label .omitted_field
  .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field);
  .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
  .c   if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
@@ -794,9 +822,27 @@
         drop                   ; ... ENAME EVAL
         dup                    ; ... ENAME EVAL EVAL
         regvar $val            ; ... ENAME EVAL
-        ; Evaluate the constraint expression.
-        .label .alternative_failed
-        .label .constraint_ok
+        ;; If this is an optional field, evaluate the optcond.  If
+        ;; it is false, then do not add this field to the struct.
+   .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field);
+   .c if (optcond)
+   .c {
+        .c PKL_GEN_PAYLOAD->in_constructor = 0;
+        .c PKL_PASS_SUBPASS (optcond);
+        .c PKL_GEN_PAYLOAD->in_constructor = 1;
+        bnzi .optcond_ok
+        drop                    ; ENAME EVAL
+        drop                    ; ENAME
+        drop                    ; _
+        ba .omitted_field
+   .c }
+   .c else
+   .c {
+        push null               ; BOFF STR VAL null
+   .c }
+.optcond_ok:
+        drop                    ; BOFF STR VAL        
+        ;; Evaluate the constraint expression.
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field) != NULL)
    .c {
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
@@ -838,7 +884,6 @@
         addlu
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
-
    .c if (PKL_AST_TYPE_S_UNION (type_struct))
    .c {
         ;; Union field successfully constructed.  We are done.
@@ -846,7 +891,8 @@
 .alternative_failed:
         drop                    ; ... ENAME
         drop                    ; ... EVAL
-    .c }
+   .c }
+.omitted_field:
  .c }
  .c if (PKL_AST_TYPE_S_UNION (type_struct))
  .c {

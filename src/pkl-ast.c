@@ -445,7 +445,8 @@ pkl_ast_make_struct_type_field (pkl_ast ast,
                                 pkl_ast_node type,
                                 pkl_ast_node constraint,
                                 pkl_ast_node label,
-                                int endian)
+                                int endian,
+                                pkl_ast_node optcond)
 {
   pkl_ast_node struct_type_elem
     = pkl_ast_make_node (ast, PKL_AST_STRUCT_TYPE_FIELD);
@@ -460,6 +461,9 @@ pkl_ast_make_struct_type_field (pkl_ast ast,
   if (label)
     PKL_AST_STRUCT_TYPE_FIELD_LABEL (struct_type_elem)
       = ASTREF (label);
+  if (optcond)
+    PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (struct_type_elem)
+      = ASTREF (optcond);
 
   PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (struct_type_elem)
     = endian;
@@ -547,6 +551,7 @@ pkl_ast_dup_type (pkl_ast_node type)
           pkl_ast_node struct_type_elem_label;
           pkl_ast_node new_struct_type_elem_name;
           pkl_ast_node struct_type_elem;
+          pkl_ast_node struct_type_elem_optcond;
           int struct_type_elem_endian;
 
           /* Process only struct type fields.  XXX But what about
@@ -559,6 +564,7 @@ pkl_ast_dup_type (pkl_ast_node type)
           struct_type_elem_constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (t);
           struct_type_elem_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (t);
           struct_type_elem_endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (t);
+          struct_type_elem_optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t);
 
           new_struct_type_elem_name
             = (struct_type_elem_name
@@ -571,7 +577,8 @@ pkl_ast_dup_type (pkl_ast_node type)
                                               pkl_ast_dup_type (struct_type_elem_type),
                                               struct_type_elem_constraint,
                                               struct_type_elem_label,
-                                              struct_type_elem_endian);
+                                              struct_type_elem_endian,
+                                              struct_type_elem_optcond);
 
           PKL_AST_TYPE_S_ELEMS (new)
             = pkl_ast_chainon (PKL_AST_TYPE_S_ELEMS (new),
@@ -1099,8 +1106,10 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
               continue;
 
             /* Struct fields with labels are not expected, as these
-               cannot appear in complete struct types.  */
+               cannot appear in complete struct types.  Ditto for
+               optional fields.  */
             assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
+            assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
 
             elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
             res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
@@ -1192,7 +1201,7 @@ pkl_ast_type_is_complete (pkl_ast_node type)
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;
       /* Struct types are complete if their fields are also of
-         complete types and there are no labels.  */
+         complete types and there are no labels nor optconds.  */
     case PKL_TYPE_STRUCT:
       {
         pkl_ast_node elem;
@@ -1204,6 +1213,7 @@ pkl_ast_type_is_complete (pkl_ast_node type)
           {
             if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
                 && (PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem)
+                    || PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem)
                     || !pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))))
               {
                 complete = PKL_AST_TYPE_COMPLETE_NO;
@@ -2020,6 +2030,7 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_TYPE (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_LABEL (ast));
+      pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (ast));
       break;
 
     case PKL_AST_FUNC_TYPE_ARG:
@@ -2791,6 +2802,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (type, STRUCT_TYPE_FIELD_TYPE);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_CONSTRAINT);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_LABEL);
+      PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_OPTCOND);
       PRINT_AST_IMM (endian, STRUCT_TYPE_FIELD_ENDIAN, "%d");
       break;
 

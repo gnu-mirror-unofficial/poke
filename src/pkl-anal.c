@@ -600,7 +600,9 @@ PKL_PHASE_END_HANDLER
    constraint expression, or a constant expression known to be true,
    are unreachable.  Also, if an union alternative has a constraint
    known to be false, it is never taken.  Warning about these two
-   situations.  */
+   situations.
+
+   Optional fields are not supported in unions.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
 {
@@ -617,14 +619,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
     {
       pkl_ast_node constraint;
       pkl_ast_node elem_type;
+      pkl_ast_node optcond;
 
       /* Process only struct type fields.  */
       if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
         continue;
 
       constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (t);
+      optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t);
       elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
 
+      if (optcond)
+        {
+          PKL_ERROR (PKL_AST_LOC (t),
+                     "optional fields are not allowed in unions");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      
       if (last_unconditional_alternative)
         {
           PKL_WARNING (PKL_AST_LOC (t),

@@ -723,13 +723,17 @@ pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
    this is NULL.
 
    ENDIAN is the endianness to use when reading and writing data
-   to/from the field.  */
+   to/from the field.
+
+   OPTCOND is a boolean expression that, if present, specifies whether
+   the field exists in the struct or not.  */
 
 #define PKL_AST_STRUCT_TYPE_FIELD_NAME(AST) ((AST)->sct_type_elem.name)
 #define PKL_AST_STRUCT_TYPE_FIELD_TYPE(AST) ((AST)->sct_type_elem.type)
 #define PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT(AST) ((AST)->sct_type_elem.constraint)
 #define PKL_AST_STRUCT_TYPE_FIELD_LABEL(AST) ((AST)->sct_type_elem.label)
 #define PKL_AST_STRUCT_TYPE_FIELD_ENDIAN(AST) ((AST)->sct_type_elem.endian)
+#define PKL_AST_STRUCT_TYPE_FIELD_OPTCOND(AST) ((AST)->sct_type_elem.optcond)
 
 struct pkl_ast_struct_type_field
 {
@@ -739,6 +743,7 @@ struct pkl_ast_struct_type_field
   union pkl_ast_node *type;
   union pkl_ast_node *constraint;
   union pkl_ast_node *label;
+  union pkl_ast_node *optcond;
   int endian;
 };
 
@@ -747,7 +752,8 @@ pkl_ast_node pkl_ast_make_struct_type_field (pkl_ast ast,
                                              pkl_ast_node type,
                                              pkl_ast_node constraint,
                                              pkl_ast_node label,
-                                             int endian);
+                                             int endian,
+                                             pkl_ast_node optcond);
 
 /* PKL_AST_FUNC_TYPE_ARG nodes represent the arguments part of a
    function type.

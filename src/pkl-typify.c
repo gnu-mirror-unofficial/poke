@@ -1111,7 +1111,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
                                           PKL_AST_TYPE (t),
                                           NULL /* constraint */,
                                           NULL /* label */,
-                                          PKL_AST_ENDIAN_DFL /* endian */);
+                                          PKL_AST_ENDIAN_DFL /* endian */,
+                                          NULL /* optcond */);
       PKL_AST_LOC (struct_type_field) = PKL_AST_LOC (t);
 
       struct_field_types = pkl_ast_chainon (struct_field_types,
@@ -2181,6 +2182,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
   pkl_ast_node elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
   pkl_ast_node elem_constraint
     = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem);
+  pkl_ast_node elem_optcond
+    = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem);
   pkl_ast_node elem_label
     = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
 
@@ -2210,6 +2213,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
         {
           PKL_ERROR (PKL_AST_LOC (elem_constraint),
                      "struct field constraint should evaluate to a boolean");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+
+      ASTREF (bool_type); pkl_ast_node_free (bool_type);
+    }
+
+  /* Ditto for the optcond.  */
+  if (elem_optcond)
+    {
+      pkl_ast_node bool_type
+        = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
+      pkl_ast_node optcond_type
+        = PKL_AST_TYPE (elem_optcond);
+
+      if (!pkl_ast_type_promoteable (optcond_type, bool_type,
+                                     1 /* promote_array_of_any */))
+        {
+          PKL_ERROR (PKL_AST_LOC (elem_optcond),
+                     "expected boolean expression");
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }

@@ -1287,12 +1287,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cond_exp)
 PKL_PHASE_END_HANDLER
 
 /* Element constraints in struct types are promoteable to
-   booleans.  */
+   booleans.  Ditto for optconds.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
 {
   pkl_ast_node elem = PKL_PASS_NODE;
   pkl_ast_node elem_constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem);
+  pkl_ast_node elem_optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem);
   pkl_ast_node elem_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
 
   if (elem_constraint)
@@ -1315,6 +1316,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
         default:
           pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_constraint),
                    "non-promoteable struct field constraint at promo time");
+          PKL_PASS_ERROR;
+          break;
+        }
+
+      PKL_PASS_RESTART = restart;
+    }
+
+  if (elem_optcond)
+    {
+      pkl_ast_node optcond_type = PKL_AST_TYPE (elem_optcond);
+      int restart = 0;
+
+      switch (PKL_AST_TYPE_CODE (optcond_type))
+        {
+        case PKL_TYPE_INTEGRAL:
+          if (!promote_integral (PKL_PASS_AST, 32, 1,
+                                 &PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem),
+                                 &restart))
+            {
+              pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_optcond),
+                       "couldn't promote struct field optcond");
+              PKL_PASS_ERROR;
+            }
+          break;
+        default:
+          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_optcond),
+                   "non-promoteable struct field optcond at promo time");
           PKL_PASS_ERROR;
           break;
         }
