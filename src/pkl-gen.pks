@@ -634,8 +634,11 @@
  .c     continue;
  .c   }
         .label .alternative_failed
+        .label .eof_in_alternative
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
+        push PVM_E_EOF
+        pushe .eof_in_alternative
         push PVM_E_CONSTRAINT
         pushe .alternative_failed
  .c   }
@@ -662,8 +665,16 @@
  .c   {
         ;; Union field successfully mapped.  We are done.
         ba .union_fields_done
+.eof_in_alternative:
+        ;; If we got EOF in an union alternative, and this is the last
+        ;; alternative in the union, re-raise it.  Otherwise just
+        ;; try the next alternative.
+     .c if (PKL_AST_CHAIN (field) == NULL)
+     .c {
+        raise
+     .c }
 .alternative_failed:
-        ;; Drop the exception number and try next alternative.
+        ;; Drop the exception and try next alternative.
         drop                    ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c }

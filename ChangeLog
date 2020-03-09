@@ -1,5 +1,12 @@
 2020-03-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (struct_mapper): Fix the handling of EOF while
+	mapping unions.
+	* testsuite/poke.map/maps-unions-9.pk: New test.
+	* testsuite/poke.map/maps-unions-10.pk: Likewise.
+
+2020-03-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND): Define.
 	(struct pkl_ast_struct_type_field): New field optcond.
 	* src/pkl-ast.c (pkl_ast_make_struct_type_field): Get an argument
