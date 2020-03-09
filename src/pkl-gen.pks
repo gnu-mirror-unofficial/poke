@@ -649,6 +649,7 @@
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         pope
+        pope
  .c   }
         ;; Increase the number of fields.
         pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NADDED NFIELD
