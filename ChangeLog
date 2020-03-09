@@ -1,5 +1,10 @@
 2020-03-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/Makefile.am: Make files compiled by ras to depend on ras
+	itself.
+
+2020-03-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (struct_mapper): Fix the handling of EOF while
 	mapping unions.
 	* testsuite/poke.map/maps-unions-9.pk: New test.

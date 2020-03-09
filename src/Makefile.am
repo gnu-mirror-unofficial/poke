@@ -63,6 +63,8 @@ endif
 .pks.pkc:
 	srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@
 
+pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras
+
 # XXX this shouldn't be necessary?
 EXTRA_DIST = pkl-lex.h
 
