@@ -1,3 +1,10 @@
+2020-03-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.c (pkl_ast_type_defval): Add missing locations to
+	built offsets.
+	* testsuite/poke.pkl/attr-size-13.pk: New test.
+	* testsuite/poke.pkl/attr-length-7.pk: Likewise.
+
 2020-03-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/Makefile.am: Make files compiled by ras to depend on ras

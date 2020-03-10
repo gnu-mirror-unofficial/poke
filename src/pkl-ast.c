@@ -663,6 +663,8 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
         pkl_ast_node magnitude = pkl_ast_make_integer (ast, 0);
 
         PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);
+        PKL_AST_LOC (magnitude) = PKL_AST_LOC (type);
+        PKL_AST_LOC (type_unit) = PKL_AST_LOC (type);
         value = pkl_ast_make_offset (ast, magnitude, type_unit);
         break;
       }
