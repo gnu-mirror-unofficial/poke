@@ -164,7 +164,7 @@ doc_completion_function (const char *x, int state)
     {
       int n_nodes = 0;
       char nlfile[256];
-      snprintf (nlfile, 256, "%s/nodelist", poke_infodir);
+      snprintf (nlfile, 256, "%s/nodelist", poke_datadir);
       FILE *fp = fopen (nlfile, "r");
       if (fp == NULL)
 	return NULL;

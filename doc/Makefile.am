@@ -23,7 +23,10 @@ poke_TEXINFOS = fdl.texi
 # work around some limitations of readline.
 # Look for the macro SPACE_SUBSTITUTE in pk-repl.c to see how this
 # is used.
-$(srcdir)/nodelist: $(srcdir)/poke.info
+$(top_srcdir)/src/nodelist: $(srcdir)/poke.info
+	chmod u+w ${dir $@}
 	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' > $@
 
-INFO_DEPS = $(srcdir)/nodelist $(srcdir)/poke.info
+INFO_DEPS = $(srcdir)/poke.info
+
+pkgdata_DATA = $(top_srcdir)/src/nodelist
