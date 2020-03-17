@@ -1,3 +1,7 @@
+2020-03-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-rt.pk (_pkl_exception_handler): fix typo in message.
+
 2020-03-14  John Darrington <john@darrington.wattle.id.au>
 
 	* doc/Makefile.am (pkgdata_DATA): New variable.

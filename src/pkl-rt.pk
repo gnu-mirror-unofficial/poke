@@ -128,7 +128,7 @@ defun _pkl_exception_handler = (Exception exception) void:
      return;
 
    print ("unhandled "
-          + (exception.msg == "" ? "unkonwn" : exception.msg)
+          + (exception.msg == "" ? "unknown" : exception.msg)
           + " exception\n");
   }
 
