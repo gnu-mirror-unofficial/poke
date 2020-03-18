@@ -310,7 +310,8 @@ pkl_do_pass_1 (pkl_compiler compiler,
 
       break;
     case PKL_AST_ARRAY:
-      PKL_PASS_CHAIN (PKL_AST_ARRAY_INITIALIZERS (node));
+      if (PKL_AST_ARRAY_INITIALIZERS (node))
+        PKL_PASS_CHAIN (PKL_AST_ARRAY_INITIALIZERS (node));
 
       break;
     case PKL_AST_ARRAY_INITIALIZER:

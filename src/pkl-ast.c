@@ -674,14 +674,18 @@ pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type)
            constant number of elements is an array containing that
            many default values for the array element's type.
 
+           The default value for an unbounded array is an empty array
+           of the given type.
+
            Other cases, i.e. array types bounded by a variable number
-           of elements, by size, or unbounded, can't be handled
-           here.  */
+           of elements, or by size, can't be handled here.  */
 
         pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (type);
         pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (type);
 
-        if (PKL_AST_CODE (bound) == PKL_AST_INTEGER)
+        if (bound == NULL)
+          value = pkl_ast_make_array (ast, 0, 0, NULL);
+        else if (PKL_AST_CODE (bound) == PKL_AST_INTEGER)
           {
             size_t i, nelems = PKL_AST_INTEGER_VALUE (bound);
             pkl_ast_node initializers = NULL;
@@ -805,11 +809,25 @@ pkl_ast_complete_scons (pkl_ast ast,
               PKL_AST_TYPE (default_value) = ASTREF (t);
               dummy = 1;
             }
+          else if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_ARRAY)
+            {
+              /* Some arrays can be handled at compile-time by
+                 pkl_ast_type_defval.  For the other cases, use a
+                 dummy default value, which will never be actually
+                 used.  The constructors in pkl-gen.pks will do the
+                 right thing instead.  */
+
+              default_value = pkl_ast_type_defval (ast, elem_type);
+              if (default_value == NULL)
+                {
+                  /* XXX WRITEME */
+                  return 0;
+                }
+            }
           else
             {
               default_value = pkl_ast_type_defval (ast, elem_type);
-              if (default_value == NULL)
-                return 0;
+              assert (default_value != NULL);
             }
 
           new_elem = pkl_ast_make_struct_field (ast,
