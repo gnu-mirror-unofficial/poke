@@ -454,15 +454,14 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_CONSTRUCTOR
-;;; ( BOUND -- ARR )
+;;; ( EBOUND SBOUND -- ARR )
 ;;;
 ;;; Assemble a function that constructs an array value of a given
 ;;; type, with default values.
 ;;;
-;;; BOUND is the bounding of the array.  If null, then the array is
-;;; unbounded.  If an integral value, then the array is bounded by
-;;; that number of elements. If an offset, then the array is bounded
-;;; by size.
+;;; EBOUND and SBOUND determine the bounding of the array.  If both
+;;; are null, then the array is unbounded.  Otherwise, only one of
+;;; EBOUND and SBOUND can be provided.
 ;;;
 ;;; Empty arrays are always constructed for unbounded arrays.
 ;;;
@@ -472,32 +471,22 @@
 
         .function array_constructor
         prolog
-        pushf
-        ;; A null BOUND means an array of size 0.
-        bnn .unbound_set
-        drop
-        push ulong<64>0         ; 0UL
-.unbound_set:
-        ;; Set the $ebound and $sbound locals
-        push ulong<64>64
-        push uint<32>0
-        mktyi                   ; BOUND TYPE
-        isa                     ; BOUND TYPE BOUND-ISA-ULONG64
-        nip                     ; BOUND BOUND-ISA-ULONG64
-        bzi .bound_is_offset
-        drop                    ; BOUND
-        push null               ; BOUND NULL
-        swap                    ; NULL BOUND
+        pushf                   ; EBOUND SBOUND
+        ;; If both bounds are null, then ebound is 0.
+        bn .sbound_nil
         ba .bounds_ready
-.bound_is_offset:
-        drop
-        ogetm
-        nip
-        push null               ; BOUND NULL
-.bounds_ready:
-                                ; SBOUND EBOUND
-        regvar $ebound          ; SBOUND
-        regvar $sbound          ; _
+.sbound_nil:
+        swap                    ; SBOUND EBOUND
+        bn .ebound_nil
+        swap                    ; EBOUND SBOUND
+        ba .bounds_ready
+.ebound_nil:
+        drop                    ; null
+        push ulong<64>0         ; null 0UL
+        swap                    ; 0UL null
+.bounds_ready: 
+        regvar $sbound          ; EBOUND
+        regvar $ebound          ; _
         ;; Initialize the element index and the bit cound, and put them
         ;; in locals.
         push ulong<64>0         ; 0UL

@@ -1,5 +1,17 @@
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (array_constructor): Optimize calculation of
+	bounds at run-time.
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Pass EBOUND and SBOUND as
+	two arguments to the array constructor.
+	* testsuite/poke.pkl/scons-36.pk: New test.
+	* testsuite/poke.pkl/scons-37.pk: Likewise.
+	* testsuite/poke.pkl/scons-38.pk: Likewise.
+	* testsuite/poke.pkl/scons-39.pk: Likewise.
+	* testsuite/poke.pkl/scons-40.pk: Likewise.
+
+2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (array_constructor): Implement with full support
 	for both unbounded and bounded arrays.
 	* testsuite/poke.pkl/scons-diag-5.pk: Remove.
