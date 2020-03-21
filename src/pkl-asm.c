@@ -348,7 +348,7 @@ pkl_asm_insn_nton  (pkl_asm pasm,
     }
   else
     {
-      static int cast_table[2][2][2][2] =
+      static const int cast_table[2][2][2][2] =
         {
          /* Source is int.  */
          {
@@ -428,7 +428,7 @@ pkl_asm_insn_peek (pkl_asm pasm, pkl_ast_node type,
       size_t size = PKL_AST_TYPE_I_SIZE (type);
       int sign = PKL_AST_TYPE_I_SIGNED (type);
 
-      static int peek_table[2][2] =
+      static const int peek_table[2][2] =
         {
          {PKL_INSN_PEEKIU, PKL_INSN_PEEKI},
          {PKL_INSN_PEEKLU, PKL_INSN_PEEKL}
@@ -465,7 +465,7 @@ pkl_asm_insn_peekd (pkl_asm pasm, pkl_ast_node type)
       size_t size = PKL_AST_TYPE_I_SIZE (type);
       int sign = PKL_AST_TYPE_I_SIGNED (type);
 
-      static int peekd_table[2][2] =
+      static const int peekd_table[2][2] =
         {
          {PKL_INSN_PEEKDIU, PKL_INSN_PEEKDI},
          {PKL_INSN_PEEKDLU, PKL_INSN_PEEKDL}
@@ -498,7 +498,7 @@ pkl_asm_insn_print (pkl_asm pasm, pkl_ast_node type, int base)
       size_t size = PKL_AST_TYPE_I_SIZE (type);
       int sign = PKL_AST_TYPE_I_SIGNED (type);
 
-      static int print_table[2][2] =
+      static const int print_table[2][2] =
         {
          {PKL_INSN_PRINTIU, PKL_INSN_PRINTI},
          {PKL_INSN_PRINTLU, PKL_INSN_PRINTL}
@@ -531,7 +531,7 @@ pkl_asm_insn_poke (pkl_asm pasm, pkl_ast_node type,
       size_t size = PKL_AST_TYPE_I_SIZE (type);
       int sign = PKL_AST_TYPE_I_SIGNED (type);
 
-      static int poke_table[2][2] =
+      static const int poke_table[2][2] =
         {
          {PKL_INSN_POKEIU, PKL_INSN_POKEI},
          {PKL_INSN_POKELU, PKL_INSN_POKEL}
@@ -569,7 +569,7 @@ pkl_asm_insn_poked (pkl_asm pasm, pkl_ast_node type)
       size_t size = PKL_AST_TYPE_I_SIZE (type);
       int sign = PKL_AST_TYPE_I_SIGNED (type);
 
-      static int poked_table[2][2] =
+      static const int poked_table[2][2] =
         {
          {PKL_INSN_POKEDIU, PKL_INSN_POKEDI},
          {PKL_INSN_POKEDLU, PKL_INSN_POKEDL}
@@ -636,43 +636,43 @@ pkl_asm_insn_binop (pkl_asm pasm,
 {
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
     {
-      static int neg_table[2][2] = {{ PKL_INSN_NEGIU, PKL_INSN_NEGI },
+      static const int neg_table[2][2] = {{ PKL_INSN_NEGIU, PKL_INSN_NEGI },
                                     { PKL_INSN_NEGLU, PKL_INSN_NEGL }};
 
-      static int add_table[2][2] = {{ PKL_INSN_ADDIU, PKL_INSN_ADDI },
+      static const int add_table[2][2] = {{ PKL_INSN_ADDIU, PKL_INSN_ADDI },
                                     { PKL_INSN_ADDLU, PKL_INSN_ADDL }};
 
-      static int sub_table[2][2] = {{ PKL_INSN_SUBIU, PKL_INSN_SUBI },
+      static const int sub_table[2][2] = {{ PKL_INSN_SUBIU, PKL_INSN_SUBI },
                                     { PKL_INSN_SUBLU, PKL_INSN_SUBL }};
 
-      static int mul_table[2][2] = {{ PKL_INSN_MULIU, PKL_INSN_MULI },
+      static const int mul_table[2][2] = {{ PKL_INSN_MULIU, PKL_INSN_MULI },
                                     { PKL_INSN_MULLU, PKL_INSN_MULL }};
 
-      static int div_table[2][2] = {{ PKL_INSN_DIVIU, PKL_INSN_DIVI },
+      static const int div_table[2][2] = {{ PKL_INSN_DIVIU, PKL_INSN_DIVI },
                                     { PKL_INSN_DIVLU, PKL_INSN_DIVL }};
 
-      static int mod_table[2][2] = {{ PKL_INSN_MODIU, PKL_INSN_MODI },
+      static const int mod_table[2][2] = {{ PKL_INSN_MODIU, PKL_INSN_MODI },
                                     { PKL_INSN_MODLU, PKL_INSN_MODL }};
 
-      static int bnot_table[2][2] = {{ PKL_INSN_BNOTIU, PKL_INSN_BNOTI },
+      static const int bnot_table[2][2] = {{ PKL_INSN_BNOTIU, PKL_INSN_BNOTI },
                                      { PKL_INSN_BNOTLU, PKL_INSN_BNOTL }};
 
-      static int band_table[2][2] = {{ PKL_INSN_BANDIU, PKL_INSN_BANDI },
+      static const int band_table[2][2] = {{ PKL_INSN_BANDIU, PKL_INSN_BANDI },
                                      { PKL_INSN_BANDLU, PKL_INSN_BANDL }};
 
-      static int bor_table[2][2] = {{ PKL_INSN_BORIU, PKL_INSN_BORI },
+      static const int bor_table[2][2] = {{ PKL_INSN_BORIU, PKL_INSN_BORI },
                                     { PKL_INSN_BORLU, PKL_INSN_BORL }};
 
-      static int bxor_table[2][2] = {{ PKL_INSN_BXORIU, PKL_INSN_BXORI },
+      static const int bxor_table[2][2] = {{ PKL_INSN_BXORIU, PKL_INSN_BXORI },
                                      { PKL_INSN_BXORLU, PKL_INSN_BXORL }};
 
-      static int sl_table[2][2] = {{ PKL_INSN_SLIU, PKL_INSN_SLI },
+      static const int sl_table[2][2] = {{ PKL_INSN_SLIU, PKL_INSN_SLI },
                                    { PKL_INSN_SLLU, PKL_INSN_SLL }};
 
-      static int sr_table[2][2] = {{ PKL_INSN_SRIU, PKL_INSN_SRI },
+      static const int sr_table[2][2] = {{ PKL_INSN_SRIU, PKL_INSN_SRI },
                                    { PKL_INSN_SRLU, PKL_INSN_SRL }};
 
-      static int pow_table[2][2] = {{ PKL_INSN_POWIU, PKL_INSN_POWI },
+      static const int pow_table[2][2] = {{ PKL_INSN_POWIU, PKL_INSN_POWI },
                                     { PKL_INSN_POWLU, PKL_INSN_POWL }};
 
       uint64_t size = PKL_AST_TYPE_I_SIZE (type);
@@ -856,21 +856,21 @@ pkl_asm_insn_cmp (pkl_asm pasm,
     }
   else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
     {
-      static int eq_table[2][2] = {{ PKL_INSN_EQIU, PKL_INSN_EQI },
+      static const int eq_table[2][2] = {{ PKL_INSN_EQIU, PKL_INSN_EQI },
                                    { PKL_INSN_EQLU, PKL_INSN_EQL }};
 
-      static int ne_table[2][2] = {{ PKL_INSN_NEIU, PKL_INSN_NEI },
+      static const int ne_table[2][2] = {{ PKL_INSN_NEIU, PKL_INSN_NEI },
                                    { PKL_INSN_NELU, PKL_INSN_NEL }};
-      static int lt_table[2][2] = {{ PKL_INSN_LTIU, PKL_INSN_LTI },
+      static const int lt_table[2][2] = {{ PKL_INSN_LTIU, PKL_INSN_LTI },
                                    { PKL_INSN_LTLU, PKL_INSN_LTL }};
 
-      static int gt_table[2][2] = {{ PKL_INSN_GTIU, PKL_INSN_GTI },
+      static const int gt_table[2][2] = {{ PKL_INSN_GTIU, PKL_INSN_GTI },
                                    { PKL_INSN_GTLU, PKL_INSN_GTL }};
 
-      static int ge_table[2][2] = {{ PKL_INSN_GEIU, PKL_INSN_GEI },
+      static const int ge_table[2][2] = {{ PKL_INSN_GEIU, PKL_INSN_GEI },
                                    { PKL_INSN_GELU, PKL_INSN_GEL }};
 
-      static int le_table[2][2] = {{ PKL_INSN_LEIU, PKL_INSN_LEI },
+      static const int le_table[2][2] = {{ PKL_INSN_LEIU, PKL_INSN_LEI },
                                    { PKL_INSN_LELU, PKL_INSN_LEL }};
 
       uint64_t size = PKL_AST_TYPE_I_SIZE (type);
@@ -1016,7 +1016,7 @@ pkl_asm_insn_modo (pkl_asm pasm, pkl_ast_node base_type,
 static void
 pkl_asm_insn_swapgt (pkl_asm pasm, pkl_ast_node type)
 {
-  static int swapgt_table[2][2] = {{PKL_INSN_SWAPGTIU, PKL_INSN_SWAPGTI},
+  static const int swapgt_table[2][2] = {{PKL_INSN_SWAPGTIU, PKL_INSN_SWAPGTI},
                                    {PKL_INSN_SWAPGTLU, PKL_INSN_SWAPGTL}};
 
   size_t size = PKL_AST_TYPE_I_SIZE (type);
@@ -1037,7 +1037,7 @@ pkl_asm_insn_bz (pkl_asm pasm,
                  pkl_ast_node type,
                  jitter_label label)
 {
-  static int bz_table[2][2] = {{PKL_INSN_BZIU, PKL_INSN_BZI},
+  static const int bz_table[2][2] = {{PKL_INSN_BZIU, PKL_INSN_BZI},
                                {PKL_INSN_BZLU, PKL_INSN_BZL}};
 
   size_t size = PKL_AST_TYPE_I_SIZE (type);
@@ -1059,7 +1059,7 @@ pkl_asm_insn_bnz (pkl_asm pasm,
                   pkl_ast_node type,
                   jitter_label label)
 {
-  static int bnz_table[2][2] = {{PKL_INSN_BNZIU, PKL_INSN_BNZI},
+  static const int bnz_table[2][2] = {{PKL_INSN_BNZIU, PKL_INSN_BNZI},
                                 {PKL_INSN_BNZLU, PKL_INSN_BNZL}};
 
   size_t size = PKL_AST_TYPE_I_SIZE (type);

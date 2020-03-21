@@ -116,7 +116,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   assert (argc == 0);
 
-  static char *strings[] =
+  static const char *strings[] =
     {
      "<jmd> I never win on the pokies.",
      "<jmd> \"poke\" is an anagram of \"peok\" which is the "
@@ -145,7 +145,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   if (num_strings == 0)
     {
       srand (time (NULL));
-      char **p = strings;
+      const char **p = strings;
       while (*p++ != NULL)
         num_strings++;
     }
