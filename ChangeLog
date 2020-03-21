@@ -1,5 +1,11 @@
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Use the array bounder, if
+	available, instead of subpassing.
+	* testsuite/poke.map/maps-arrays-20.pk: New test.
+
+2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (array_constructor): Optimize calculation of
 	bounds at run-time.
 	* src/pkl-gen.c (pkl_gen_pr_type_array): Pass EBOUND and SBOUND as
