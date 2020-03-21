@@ -427,10 +427,10 @@
         .end                    ; array_writer
 
 ;;; RAS_FUNCTION_ARRAY_BOUNDER
-;;; ( ARR -- BOUND )
+;;; ( _ -- BOUND )
 ;;;
-;;; Assemble a function that returns the boundary of a given array.
-;;; If the array is not bounded by either number of elements nor size
+;;; Assemble a function that returns the boundary of an array type.
+;;; If the array type is not bounded by either number of elements nor size
 ;;; then PVM_NULL is returned.
 ;;;
 ;;; Note how this function doesn't introduce any lexical level.  This
@@ -454,10 +454,17 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_CONSTRUCTOR
-;;; ( null -- ARR )
+;;; ( BOUND -- ARR )
 ;;;
 ;;; Assemble a function that constructs an array value of a given
 ;;; type, with default values.
+;;;
+;;; BOUND is the bounding of the array.  If null, then the array is
+;;; unbounded.  If an integral value, then the array is bounded by
+;;; that number of elements. If an offset, then the array is bounded
+;;; by size.
+;;;
+;;; Empty arrays are always constructed for unbounded arrays.
 ;;;
 ;;; The C environment required is:
 ;;;
