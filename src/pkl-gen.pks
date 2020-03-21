@@ -772,6 +772,7 @@
         .label .constraint_ok
         .label .optcond_ok
         .label .omitted_field
+        .label .got_value
  .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field);
  .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
  .c   if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
@@ -794,42 +795,13 @@
                                ; ... SCT ENAME
         ;; Get the value of the field in $sct, which must exist as
         ;; per trans.
-        sref                   ; ... SCT ENAME EVAL
-        ;; If the field type is a struct, and the value stored in the
-        ;; struct is not a struct, it means we need to provide a "default
-        ;; value".
-   .c if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_STRUCT)
-   .c {
-        .label .is_a_struct
-        tyissct                 ; ... SCT ENAME EVAL BOOL
-        bnzi .is_a_struct
-        drop                    ; ... SCT ENAME EVAL
-        drop                    ; ... SCT ENAME
-        ;; The passed struct has a dummy ulong<64>0 value for this
-        ;; field, which we won't be using.  Instead, we create an empty
-        ;; AST struct and complete it using the field's type.  Then we
-        ;; generate code for it, subpassing.
-        .c pkl_ast_node s = pkl_ast_make_struct (PKL_PASS_AST, 0, NULL);
-        .c PKL_AST_TYPE (s) = ASTREF (field_type);
-        .c pkl_ast_complete_scons (PKL_PASS_AST, s, field_type);
-        .c PKL_GEN_PAYLOAD->in_constructor = 0;
-        .c PKL_PASS_SUBPASS (s);
-        .c PKL_GEN_PAYLOAD->in_constructor = 1;
-        ;; Ok sweet, next step is to invoke the field type's
-        ;; constructor passing this completed struct as an argument.
-        .c pkl_ast_node scons = pkl_ast_make_scons (PKL_PASS_AST, field_type,
-        .c                                          s);
-        .c PKL_AST_TYPE (scons) = ASTREF (field_type);
-        .c PKL_GEN_PAYLOAD->in_constructor = 0;
-        .c PKL_PASS_SUBPASS (scons);
-        .c PKL_GEN_PAYLOAD->in_constructor = 1;
-        .c ASTREF (s); pkl_ast_node_free (s);
-        .c ASTREF (scons); pkl_ast_node_free (scons);
-        nip
-        push null              ; ... SCT ENAME EVAL null
-.is_a_struct:
-        drop                   ; ... SCT ENAME EVAL
-   .c }
+        srefnt                 ; ... SCT ENAME EVAL
+        ;; If the value is not-null, use it.  Otherwise, use the value
+        ;; obtained by subpassing in the value's type.
+        bnn .got_value         ; ... SCT ENAME null
+        .c PKL_PASS_SUBPASS (field_type);
+                               ; ... SCT ENAME EVAL
+.got_value:
         rot                    ; ... ENAME EVAL SCT
         drop                   ; ... ENAME EVAL
         dup                    ; ... ENAME EVAL EVAL

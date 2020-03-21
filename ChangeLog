@@ -1,5 +1,21 @@
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h: Remove prototype for pkl_ast_complete_scons.
+	(struct pkl_ast_struct_field): Remove field `dummy'.
+	(PKL_AST_STRUCT_FIELD_DUMMY): Delete.
+	* src/pkl-ast.c (pkl_ast_complete_scons): Delete.
+	(pkl_ast_type_defval): Delete.
+	* src/pkl-trans.c (pkl_trans3_ps_scons): Delete.
+	(pkl_phase_trans3): Deregister handler.
+	* src/pkl-promo.c (pkl_promo_ps_scons): There is no more need to
+	handle `dummy' fields in structs.
+	* src/pkl-typify.c (pkl_typify1_ps_scons): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_type_struct): If a constructor
+	receives a null, turn it into an empty struct of the proper type.
+	(pkl_gen_ps_scons): Struct constructors always have named types.
+
+2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-insn.def (PKL_INSN_SREFNT): Define.
 	* src/pvm.jitter (srefnt): New instruction.
 

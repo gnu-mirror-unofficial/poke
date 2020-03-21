@@ -1261,30 +1261,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_op_sizeof)
 }
 PKL_PHASE_END_HANDLER
 
-/* Add missing fields to struct constructors, whose "default values"
-   can be calculated at compile-time.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_scons)
-{
-  pkl_ast_node constructor = PKL_PASS_NODE;
-
-  if (!pkl_ast_complete_scons (PKL_PASS_AST,
-                               PKL_AST_SCONS_VALUE (constructor),
-                               PKL_AST_SCONS_TYPE (constructor)))
-    {
-      PKL_ERROR (PKL_AST_LOC (constructor),
-                 "constructor not supported for this struct type (yet)");
-      PKL_TRANS_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-}
-PKL_PHASE_END_HANDLER
-
 struct pkl_phase pkl_phase_trans3 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
-   PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_trans3_ps_scons),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_trans3_ps_op_sizeof),
   };
 

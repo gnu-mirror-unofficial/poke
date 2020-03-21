@@ -1462,39 +1462,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_scons)
 {
   pkl_ast_node scons = PKL_PASS_NODE;
   pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
-
-  /* Call the constructor function of the struct type, passing
-     SCONS_VALUE as an argument.  The constructor will return a struct
-     on the top of the stack.
-
-     Note that the type of the constructor may not have been specified
-     by name.  In that case, we compile it.  */
-
-  /* XXX: no anonymous struct shall happen here, i.e. this shoul dnot
-     be subpassed from gen.pks functions, only from literal struct
-     constructors in the code.  */
-  
   pvm_val constructor = PKL_AST_TYPE_S_CONSTRUCTOR (scons_type);
 
-  if (constructor != PVM_NULL)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
-  else
-    {
-      pvm_val constructor_closure;
-
-      /* The following three automatics conform the C environment
-         required by RAS_FUNCTION_STRUCT_CONSTRUCTOR.  */
-      pkl_ast_node type_struct = scons_type;
-      pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (scons_type);
-      pkl_ast_node field;
-
-      PKL_GEN_PAYLOAD->in_constructor = 1;
-      RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
-      PKL_GEN_PAYLOAD->in_constructor = 0;
-    }
-
+  assert (constructor != PVM_NULL);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
 }
 PKL_PHASE_END_HANDLER
@@ -2334,10 +2305,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       /* Stack: SCT */
       pkl_ast_node type_struct = PKL_PASS_NODE;
       pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (type_struct);
+      pvm_val type_struct_constructor = PKL_AST_TYPE_S_CONSTRUCTOR (type_struct);
       pkl_ast_node field;
 
-      pvm_val type_struct_constructor = PKL_AST_TYPE_S_CONSTRUCTOR (type_struct);
+      /* If the given structure is null, then create an empty AST
+         struct of the right type.  */
+      {
+        jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+        pkl_ast_node s = pkl_ast_make_struct (PKL_PASS_AST,
+                                              0, NULL);
 
+        PKL_AST_TYPE (s) = ASTREF (type_struct);
+
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The null */
+        PKL_GEN_PAYLOAD->in_constructor = 0;
+        PKL_PASS_SUBPASS (s);
+        PKL_GEN_PAYLOAD->in_constructor = 1;
+
+        pkl_asm_label (PKL_GEN_ASM, label);
+        ASTREF(s); pkl_ast_node_free (s);
+      }
+      
       if (type_struct_constructor != PVM_NULL)
         {
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
@@ -2352,7 +2341,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
           RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC); /* SCT CLS */
-        }
+        }      
 
       /* Call the constructor to get a new struct.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);    /* NSCT */

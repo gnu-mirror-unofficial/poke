@@ -412,16 +412,10 @@ pkl_ast_node pkl_ast_make_struct (pkl_ast ast,
    NAME is a PKL_AST_IDENTIFIER node with the name of the struct
    element.  If no name is specified, this is NULL.
 
-   EXP is the value of the struct field.
-
-   DUMMY is a boolean indicating whether this field's value is a
-   "dummy" value inserted by pkl_ast_complete_scons.  A dummy struct
-   field always matches its type, and should never be promoted.  This
-   is used make several struct constructor handlers re-entrant.  */
+   EXP is the value of the struct field.  */
 
 #define PKL_AST_STRUCT_FIELD_NAME(AST) ((AST)->sct_field.name)
 #define PKL_AST_STRUCT_FIELD_EXP(AST) ((AST)->sct_field.exp)
-#define PKL_AST_STRUCT_FIELD_DUMMY(AST) ((AST)->sct_field.dummy)
 
 struct pkl_ast_struct_field
 {
@@ -429,7 +423,6 @@ struct pkl_ast_struct_field
 
   union pkl_ast_node *name;
   union pkl_ast_node *exp;
-  int dummy;
 };
 
 pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,
@@ -943,7 +936,6 @@ void pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name);
 char *pkl_type_str (pkl_ast_node type, int use_given_name);
 int pkl_ast_func_all_optargs (pkl_ast_node type);
 int pkl_ast_type_mappable_p (pkl_ast_node type);
-pkl_ast_node pkl_ast_type_defval (pkl_ast ast, pkl_ast_node type);
 pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
 int pkl_ast_type_is_exception (pkl_ast_node type);
 
@@ -1119,8 +1111,6 @@ struct pkl_ast_scons
 pkl_ast_node pkl_ast_make_scons (pkl_ast ast,
                                  pkl_ast_node type,
                                  pkl_ast_node value);
-int pkl_ast_complete_scons (pkl_ast ast, pkl_ast_node value,
-                            pkl_ast_node type);
 
 /* PKL_AST_FUNCALL nodes represent the invocation of a function.
 

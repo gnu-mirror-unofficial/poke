@@ -1691,9 +1691,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_scons)
 
               found = 1;
 
-              if (!PKL_AST_STRUCT_FIELD_DUMMY (elem)
-                  && !pkl_ast_type_promoteable (elem_type, type_elem_type,
-                                                0 /* promote array of any */))
+              if (!pkl_ast_type_promoteable (elem_type, type_elem_type,
+                                             0 /* promote array of any */))
                 {
                   char *expected_type = pkl_type_str (type_elem_type, 1);
                   char *found_type = pkl_type_str (elem_type, 1);
