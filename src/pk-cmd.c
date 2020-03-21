@@ -292,9 +292,16 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
 
   /* Get the command name.  */
   i = 0;
+  memset (cmd_name, 0, MAX_CMD_NAME);
   while (isalnum (*p) || *p == '_' || *p == '-' || *p == ':')
-    cmd_name[i++] = *(p++);
-  cmd_name[i] = '\0';
+    {
+      if (i >= MAX_CMD_NAME - 1)
+	{
+	  pk_printf (_("%s: command not found.\n"), cmd_name);
+	  return 0;
+	}
+      cmd_name[i++] = *(p++);
+    }
 
   /* Look for the command in the prefix table.  */
   cmd = pk_trie_get_cmd (cmds_trie, cmd_name);

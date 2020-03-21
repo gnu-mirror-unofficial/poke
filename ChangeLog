@@ -1,3 +1,8 @@
+2020-03-21  John Darrington <john@darrington.wattle.id.au>
+
+	*src/pk-cmd.c (pk_cmd_exec_1): Check that cmd_name
+	does not overflow.
+
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/ctf.pk: Updates.
