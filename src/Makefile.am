@@ -66,7 +66,7 @@ endif
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras
 
 # XXX this shouldn't be necessary?
-EXTRA_DIST = pkl-lex.h
+EXTRA_DIST = pkl-lex.h ras
 
 BUILT_SOURCES = pkl-tab.h pkl-lex.c \
                 pkl-gen.pkc pkl-asm.pkc \
