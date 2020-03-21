@@ -636,7 +636,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
           PKL_ANAL_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
-      
+
       if (last_unconditional_alternative)
         {
           PKL_WARNING (PKL_AST_LOC (t),

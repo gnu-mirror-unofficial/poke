@@ -853,7 +853,7 @@
         push null               ; BOFF STR VAL null
    .c }
 .optcond_ok:
-        drop                    ; BOFF STR VAL        
+        drop                    ; BOFF STR VAL
         ;; Evaluate the constraint expression.
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field) != NULL)
    .c {
