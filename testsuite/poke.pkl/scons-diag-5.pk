@@ -1,4 +1,0 @@
-/* { dg-do compile } */
-
-deftype Packet = struct { byte n; byte[n] d; };
-defvar p = Packet { n = 2UB };  /* { dg-error "not supported" } */

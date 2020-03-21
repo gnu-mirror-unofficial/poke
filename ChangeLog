@@ -1,5 +1,15 @@
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.pks (array_constructor): Implement with full support
+	for both unbounded and bounded arrays.
+	* testsuite/poke.pkl/scons-diag-5.pk: Remove.
+	* testsuite/poke.pkl/scons-32.pk: New test.
+	* testsuite/poke.pkl/scons-33.pk: Likewise.
+	* testsuite/poke.pkl/scons-34.pk: Likewise.
+	* testsuite/poke.pkl/scons-35.pk: Likewise.
+
+2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.c (pkl_gen_pr_type_array): Handle in_constructor
 	cases.
 

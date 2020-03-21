@@ -472,8 +472,103 @@
 
         .function array_constructor
         prolog
-        ;; XXX: writeme
+        pushf
+        ;; A null BOUND means an array of size 0.
+        bnn .unbound_set
+        drop
+        push ulong<64>0         ; 0UL
+.unbound_set:
+        ;; Set the $ebound and $sbound locals
+        push ulong<64>64
+        push uint<32>0
+        mktyi                   ; BOUND TYPE
+        isa                     ; BOUND TYPE BOUND-ISA-ULONG64
+        nip                     ; BOUND BOUND-ISA-ULONG64
+        bzi .bound_is_offset
+        drop                    ; BOUND
+        push null               ; BOUND NULL
+        swap                    ; NULL BOUND
+        ba .bounds_ready
+.bound_is_offset:
+        drop
+        ogetm
+        nip
+        push null               ; BOUND NULL
+.bounds_ready:
+                                ; SBOUND EBOUND
+        regvar $ebound          ; SBOUND
+        regvar $sbound          ; _
+        ;; Initialize the element index and the bit cound, and put them
+        ;; in locals.
+        push ulong<64>0         ; 0UL
+        dup                     ; 0UL 0UL
+        regvar $eidx            ; BOFF
+        regvar $eboff           ; _
+        ;; The offset of the constructed array is null, since it is
+        ;; not mapped.
+        push null               ; null
+        ;; Build the type of the constructed array.
+        .c PKL_GEN_PAYLOAD->in_constructor = 0;
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_GEN_PAYLOAD->in_constructor = 1;
+                                ; null ATYPE
+        ;; Ok, loop to add elements to the constructed array.
+     .while
+        ;; If there is an EBOUND, check it.
+        ;; Else, check the SBOUND.
+        pushvar $ebound         ; NELEM
+        bn .loop_on_sbound
+        pushvar $eidx           ; NELEM I
+        gtlu                    ; NELEM I (NELEM>I)
+        nip2
+        ba .end_loop_on
+.loop_on_sbound:
+        drop
+        pushvar $sbound         ; SBOUND
+        pushvar $eboff          ; SBOUND EBOFF
+        gtlu                    ; SBOUND EBOFF (SBOUNDMAG>EBOFF)
+        nip2
+.end_loop_on:
+     .loop
+        ;; Mount the Ith element triplet: [EBOFF EIDX EVAL]
+        pushvar $eboff          ; ... EBOFF
+        pushvar $eidx           ; ... EBOFF EIDX
+        push null               ; ... EBOFF null
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+                                ; ... EBOFF EIDX EVAL
+        ;; Update the bit offset.
+        siz                     ; ... EBOFF EIDX EVAL ESIZ
+        pushvar $eboff          ; ... EBOFF EIDX EVAL ESIZ EBOFF
+        addlu
+        nip2                    ; ... EBOFF EIDX EVAL NEBOFF
+        popvar $eboff           ; ... EBOFF EIDX EVAL
+        ;; Update the index.
+        over                    ; ... EBOFF EIDX EVAL EIDX
+        push ulong<64>1         ; ... EBOFF EIDX EVAL EIDX 1UL
+        addlu
+        nip2                    ; ... EBOFF EIDX EVAL (EIDX+1UL)
+        popvar $eidx
+     .endloop
+        pushvar $eidx           ; null ATYPE [EBOFF EIDX EVAL]... NELEM
+        dup                     ; null ATYPE [EBOFF EIDX EVAL]... NELEM NINITIALIZER
+        mka                     ; ARRAY
+        ;; Check that the resulting array satisfies the size bound.
+        pushvar $sbound         ; ARRAY SBOUND
+        bn .bounds_ok
+        swap                    ; SBOUND ARRAY
+        siz                     ; SBOUND ARRAY SIZ
+        rot                     ; ARRAY SIZ SBOUND
+        sublu                   ; ARRAY SIZ SBOUND (SIZ-SBOUND)
+        bnzlu .bounds_fail
+        drop                   ; ARRAY (OFFU*OFFM) SBOUND
+        drop                   ; ARRAY (OFFU*OFFM)
+.bounds_ok:
+        drop                   ; ARRAY
+        popf 1
         return
+.bounds_fail:
+        push PVM_E_MAP_BOUNDS
+        raise
         .end
         
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL

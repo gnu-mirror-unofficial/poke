@@ -2149,7 +2149,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The null.  */
 
-      /* Make sure the array type has a bounder.  */
+      /* Make sure the array type has a bounder and put the array
+         bound on the stack.  */
       if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
         {
           PKL_GEN_PAYLOAD->in_constructor = 0;
@@ -2159,20 +2160,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           PKL_GEN_PAYLOAD->in_constructor = 1;
         }
 
-      /* Make sure the array type has a constructor.  */
-      if (constructor == PVM_NULL)
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    PKL_AST_TYPE_A_BOUNDER (array_type)); /* CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);          /* BOUND */
+
+      /* Make sure the array type has a constructor, and call it
+         passing the bound.  */
+      if (constructor != PVM_NULL)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor); /* BOUND CLS */
+      else
         {
           RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
         }
 
-      /* Call the array constructor, passing the bound.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    PKL_AST_TYPE_A_BOUNDER (array_type)); /* CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);          /* BOUND */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor); /* BOUND CLS */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);          /* BOUND ARR */
+      PKL_PASS_BREAK;
     }
   else
     {
