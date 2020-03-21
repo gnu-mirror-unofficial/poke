@@ -797,8 +797,8 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    number of elements, then BOUND is an expression that must evaluate
    to an integer.  If the array type is bounded by size, then BOUND is
    an expression that must evaluate to an offset.  If the array type
-   is unbounded, then BOUND is NULL.  MAPPER, WRITER and BOUNDCLS are
-   used to hold closures, or PVM_NULL.
+   is unbounded, then BOUND is NULL.  MAPPER, WRITER, CONSTRUCTOR and
+   BOUNDCLS are used to hold closures, or PVM_NULL.
 
    In struct types, NELEM is the number of elements in the struct
    type, NFIELD is the number of fields, and NDECL is the number of
@@ -836,6 +836,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_A_MAPPER(AST) ((AST)->type.val.array.mapper)
 #define PKL_AST_TYPE_A_WRITER(AST) ((AST)->type.val.array.writer)
 #define PKL_AST_TYPE_A_BOUNDER(AST) ((AST)->type.val.array.bounder)
+#define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.constructor)
 #define PKL_AST_TYPE_S_NFIELD(AST) ((AST)->type.val.sct.nfield)
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
@@ -881,6 +882,7 @@ struct pkl_ast_type
       pvm_val mapper;
       pvm_val writer;
       pvm_val bounder;
+      pvm_val constructor;
     } array;
 
     struct

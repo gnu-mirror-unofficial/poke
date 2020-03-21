@@ -1,5 +1,18 @@
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_node_free): Remove GC roots for array
+	constructor closures.
+	(pkl_ast_make_array_type): Initialize array type constructor
+	closures to null and add GC roots for them.
+	* src/pkl-ast.h (struct pkl_ast_type): New field `constructor' for
+	array types.
+	(PKL_AST_TYPE_S_CONSTRUCTOR): Define.
+	* src/pkl-gen.c (pkl_gen_pr_decl): Compile constructor closures
+	for array types.
+	* src/pkl-gen.pks (array_constructor): New RAS function.
+
+2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h: Remove prototype for pkl_ast_complete_scons.
 	(struct pkl_ast_struct_field): Remove field `dummy'.
 	(PKL_AST_STRUCT_FIELD_DUMMY): Delete.

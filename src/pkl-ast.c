@@ -360,11 +360,13 @@ pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
   PKL_AST_TYPE_A_MAPPER (type) = PVM_NULL;
   PKL_AST_TYPE_A_WRITER (type) = PVM_NULL;
   PKL_AST_TYPE_A_BOUNDER (type) = PVM_NULL;
+  PKL_AST_TYPE_A_CONSTRUCTOR (type) = PVM_NULL;
 
   /* The closure slots are GC roots.  */
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_MAPPER (type), 1);
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_WRITER (type), 1);
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_BOUNDER (type), 1);
+  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_CONSTRUCTOR (type), 1);
 
   return type;
 }
@@ -1779,6 +1781,7 @@ pkl_ast_node_free (pkl_ast_node ast)
           pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_MAPPER (ast), 1);
           pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_WRITER (ast), 1);
           pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_BOUNDER (ast), 1);
+          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_CONSTRUCTOR (ast), 1);
 
           pkl_ast_node_free (PKL_AST_TYPE_A_BOUND (ast));
           pkl_ast_node_free (PKL_AST_TYPE_A_ETYPE (ast));

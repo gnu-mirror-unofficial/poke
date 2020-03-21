@@ -183,6 +183,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
           {
             pvm_val mapper_closure;
             pvm_val writer_closure;
+            pvm_val constructor_closure;
 
             pkl_ast_node array_type = initial;
 
@@ -221,6 +222,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 PKL_GEN_PAYLOAD->in_array_bounder = 1;
                 PKL_PASS_SUBPASS (array_type);
                 PKL_GEN_PAYLOAD->in_array_bounder = 0;
+              }
+
+            if (PKL_AST_TYPE_A_CONSTRUCTOR (array_type) == PVM_NULL)
+              {
+                PKL_GEN_PAYLOAD->in_constructor = 1;
+                RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor_closure);           /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                      /* _ */
+                PKL_GEN_PAYLOAD->in_constructor = 0;
+
+                PKL_AST_TYPE_A_CONSTRUCTOR (array_type) = constructor_closure;
               }
 
             PKL_PASS_BREAK;

@@ -453,6 +453,22 @@
         return
         .end
 
+;;; RAS_FUNCTION_ARRAY_CONSTRUCTOR
+;;; ( null -- ARR )
+;;;
+;;; Assemble a function that constructs an array value of a given
+;;; type, with default values.
+;;;
+;;; The C environment required is:
+;;;
+;;; `array_type' is a pkl_ast_node with the array type being constructed.
+
+        .function array_constructor
+        prolog
+        ;; XXX: writeme
+        return
+        .end
+        
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL
 ;;; ( BOFF SBOFF - BOFF )
 ;;;
