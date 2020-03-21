@@ -2376,7 +2376,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
         pkl_asm_label (PKL_GEN_ASM, label);
         ASTREF(s); pkl_ast_node_free (s);
       }
-      
+
       if (type_struct_constructor != PVM_NULL)
         {
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
@@ -2391,7 +2391,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
           RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC); /* SCT CLS */
-        }      
+        }
 
       /* Call the constructor to get a new struct.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);    /* NSCT */

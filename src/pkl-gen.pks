@@ -570,7 +570,7 @@
         push PVM_E_MAP_BOUNDS
         raise
         .end
-        
+
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL
 ;;; ( BOFF SBOFF - BOFF )
 ;;;

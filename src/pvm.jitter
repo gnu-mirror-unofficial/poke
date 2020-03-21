@@ -3615,7 +3615,7 @@ instruction srefnt ()
     pvm_val val = pvm_ref_struct (JITTER_UNDER_TOP_STACK (),
                                   JITTER_TOP_STACK ());
 
-    JITTER_PUSH_STACK (val);    
+    JITTER_PUSH_STACK (val);
   end
 end
 
