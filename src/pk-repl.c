@@ -36,7 +36,7 @@
 #include <unistd.h>
 #include <setjmp.h>
 
-sigjmp_buf ctrlc_buf;
+static sigjmp_buf ctrlc_buf;
 
 static char *
 pkl_complete_struct (int *idx, const char *x, size_t len, int state)
