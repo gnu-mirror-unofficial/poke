@@ -1326,11 +1326,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_offset)
   /* Note that in_writer is handled in the pre-order handler, and not
      here.  */
 
-  if (PKL_GEN_PAYLOAD->in_mapper)
+  if (PKL_GEN_PAYLOAD->in_mapper || PKL_GEN_PAYLOAD->in_constructor)
     {
-      /* Note the value in the stack is the mapped value from
-         traversing the BASE_TYPE with in_maapper = 1 */
-      /* Stack: VAL */
+      /* Note the value in the stack is the mapped/constructed value
+         from traversing the BASE_TYPE with in_{mapper,constructor} =
+         1 */
+      /* Stack: VAL UNIT */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
     }
   else if (PKL_GEN_PAYLOAD->in_valmapper)
@@ -1469,6 +1470,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_scons)
      Note that the type of the constructor may not have been specified
      by name.  In that case, we compile it.  */
 
+  /* XXX: no anonymous struct shall happen here, i.e. this shoul dnot
+     be subpassed from gen.pks functions, only from literal struct
+     constructors in the code.  */
+  
   pvm_val constructor = PKL_AST_TYPE_S_CONSTRUCTOR (scons_type);
 
   if (constructor != PVM_NULL)
@@ -1885,6 +1890,30 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* NVAL */
     }
+  else if (PKL_GEN_PAYLOAD->in_constructor)
+    {
+      /* Stack: NULL */
+      int size = PKL_AST_TYPE_I_SIZE (integral_type);
+      pvm_val zero;
+
+      if (PKL_AST_TYPE_I_SIGNED (integral_type))
+        {
+          if (size <= 32)
+            zero = pvm_make_int (0, size);
+          else
+            zero = pvm_make_long (0, size);
+        }
+      else
+        {
+          if (size <= 32)
+            zero = pvm_make_uint (0, size);
+          else
+            zero = pvm_make_ulong (0, size);
+        }
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The NULL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, zero);
+    }
   else
     {
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
@@ -2188,6 +2217,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
       /* Stack: VAL NVAL BOFF */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+    }
+  else if (PKL_GEN_PAYLOAD->in_constructor)
+    {
+      /* Stack: NULL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (""));
     }
   else
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYS);

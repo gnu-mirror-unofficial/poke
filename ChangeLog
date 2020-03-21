@@ -1,3 +1,9 @@
+2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-gen.c (pkl_gen_ps_type_integral): Handle in_constructor.
+	(pkl_gen_ps_type_offset): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+
 2020-03-21  John Darrington <john@darrington.wattle.id.au>
 
 	*src/pk-cmd.c (pk_cmd_exec_1): Check that cmd_name
