@@ -2141,7 +2141,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       pvm_val bounder_closure;
 
       if (PKL_AST_TYPE_CODE (etype) == PKL_TYPE_ARRAY)
-        PKL_PASS_SUBPASS (etype);
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF);
+          PKL_PASS_SUBPASS (etype);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
+        }
 
       RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, bounder_closure); /* CLS */

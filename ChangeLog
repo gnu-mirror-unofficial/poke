@@ -1,3 +1,19 @@
+2020-03-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.h (PKL_AST_TYPE_A_LEX_CORRECTED): Define.
+	(struct pkl_ast_type): New field lex_corected in array types.
+	* src/pkl-trans.h (struct pkl_trans_payload): Remove field in_map.
+	* src/pkl-trans.c (pkl_transl_pr_map): Remove.
+	(pkl_transl_ps_map): Likewise.
+	(pkl_transl_pr_type_struct): Likewise.
+	(pkl_phase_transl): Update accordingly.
+	(pkl_tarnsl_pr_type_array): Use lex_corrected to avoid correcting
+	the same node more than once.
+	* src/pkl-gen.c (pkl_gen_pr_type_array): Introduce a lexical frame
+	per sub-array type.
+	* testsuite/poke.pkl/scons-40.pk: New test.
+	* testsuite/poke.pkl/scons-41.pk: Likewise.
+
 2020-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-gen.c (pkl_gen_pr_type_array): Use the array bounder, if

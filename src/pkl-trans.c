@@ -121,31 +121,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans_ps_type)
 PKL_PHASE_END_HANDLER
 
 
-/* The array mappers introduce a lexical frame.  Unfortunately, it is
-   not possible to add this frame in the bison parser due to syntactic
-   ambiguities.  So, we need to reflect the extra lexical frame
-   here, by adjusting lexical addresses accordingly.
-
-   Note the handler below is used for several AST nodes where an array
-   can be mapped: map operator and struct type fields.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_transl_pr_map)
-{
-  PKL_TRANS_PAYLOAD->in_map += 1;
-}
-PKL_PHASE_END_HANDLER
-
-PKL_PHASE_BEGIN_HANDLER (pkl_transl_ps_map)
-{
-  assert (PKL_TRANS_PAYLOAD->in_map > 0);
-  PKL_TRANS_PAYLOAD->in_map -= 1;
-}
-PKL_PHASE_END_HANDLER
+/* Each array type specifier introduces a lexical frame.  This lexical
+   frame is exploited in the array mapper, array constructor, etc.
+   Unfortunately, it is not possible to add this frame in the bison
+   parser due to syntactic ambiguities.  So, we need to reflect the
+   extra lexical frame here, by adjusting lexical addresses
+   accordingly.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_transl_pr_type_array)
 {
-  if (PKL_TRANS_PAYLOAD->in_map == 0)
+  /* Make sure we don't process this type twice.  */
+  if (PKL_AST_TYPE_A_LEX_CORRECTED (PKL_PASS_NODE))
     PKL_PASS_BREAK;
+  PKL_AST_TYPE_A_LEX_CORRECTED (PKL_PASS_NODE) = 1;
 
   PKL_TRANS_PAYLOAD->add_frames += 1;
 }
@@ -155,17 +143,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_transl_ps_type_array)
 {
   assert (PKL_TRANS_PAYLOAD->add_frames != -1);
   PKL_TRANS_PAYLOAD->add_frames -= 1;
-}
-PKL_PHASE_END_HANDLER
-
-PKL_PHASE_BEGIN_HANDLER (pkl_transl_pr_type_struct)
-{
-  /* Do not modify the lexical environment of struct types in maps or
-     they will be incorrect if they happen to be contained in arrays
-     in maps.  This sucks, but will go away once we handle lexical
-     addresses properly later in the compilation process.  */
-  if (PKL_TRANS_PAYLOAD->in_map > 0)
-    PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -181,15 +158,10 @@ PKL_PHASE_END_HANDLER
 
 struct pkl_phase pkl_phase_transl =
   {
-   PKL_PHASE_PR_HANDLER (PKL_AST_MAP, pkl_transl_pr_map),
-   PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_transl_ps_map),
-   PKL_PHASE_PR_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_transl_pr_map),
-   PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_transl_ps_map),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_transl_ps_var),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_transl_pr_type_array),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_transl_ps_type_array),
-   PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_transl_pr_type_struct),
   };
 
 

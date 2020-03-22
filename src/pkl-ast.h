@@ -798,7 +798,10 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    to an integer.  If the array type is bounded by size, then BOUND is
    an expression that must evaluate to an offset.  If the array type
    is unbounded, then BOUND is NULL.  MAPPER, WRITER, CONSTRUCTOR and
-   BOUNDCLS are used to hold closures, or PVM_NULL.
+   BOUNDCLS are used to hold closures, or PVM_NULL. The field
+   LEX_CORRECTED is used by the transl phase, to keep record of array
+   types that have been lexically corrected; this is to avoid
+   processing the same type more than once.
 
    In struct types, NELEM is the number of elements in the struct
    type, NFIELD is the number of fields, and NDECL is the number of
@@ -837,6 +840,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_A_WRITER(AST) ((AST)->type.val.array.writer)
 #define PKL_AST_TYPE_A_BOUNDER(AST) ((AST)->type.val.array.bounder)
 #define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.constructor)
+#define PKL_AST_TYPE_A_LEX_CORRECTED(AST) ((AST)->type.val.array.lex_corrected)
 #define PKL_AST_TYPE_S_NFIELD(AST) ((AST)->type.val.sct.nfield)
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
@@ -883,6 +887,7 @@ struct pkl_ast_type
       pvm_val writer;
       pvm_val bounder;
       pvm_val constructor;
+      int lex_corrected;
     } array;
 
     struct

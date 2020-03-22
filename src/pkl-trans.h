@@ -41,7 +41,6 @@ struct pkl_trans_payload
 {
   int errors;
   int add_frames;
-  int in_map;
   pkl_ast_node functions[PKL_TRANS_MAX_FUNCTION_NEST];
   int next_function;
 };
