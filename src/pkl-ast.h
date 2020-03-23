@@ -840,7 +840,6 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_A_WRITER(AST) ((AST)->type.val.array.writer)
 #define PKL_AST_TYPE_A_BOUNDER(AST) ((AST)->type.val.array.bounder)
 #define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.constructor)
-#define PKL_AST_TYPE_A_LEX_CORRECTED(AST) ((AST)->type.val.array.lex_corrected)
 #define PKL_AST_TYPE_S_NFIELD(AST) ((AST)->type.val.sct.nfield)
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
@@ -887,7 +886,6 @@ struct pkl_ast_type
       pvm_val writer;
       pvm_val bounder;
       pvm_val constructor;
-      int lex_corrected;
     } array;
 
     struct
@@ -945,6 +943,7 @@ int pkl_ast_func_all_optargs (pkl_ast_node type);
 int pkl_ast_type_mappable_p (pkl_ast_node type);
 pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
 int pkl_ast_type_is_exception (pkl_ast_node type);
+void pkl_ast_array_type_remove_bounders (pkl_ast_node type);
 
 /* PKL_AST_DECL nodes represent the declaration of a named entity:
    function, type, variable....

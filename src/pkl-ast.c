@@ -706,6 +706,27 @@ pkl_ast_type_is_exception (pkl_ast_node type)
           && STREQ (PKL_AST_IDENTIFIER_POINTER (type_name), "Exception"));
 }
 
+/* Remove bounder closures from the given array type.  This works
+   recursively for arrays of arrays.  */
+
+void
+pkl_ast_array_type_remove_bounders (pkl_ast_node type)
+{
+  pkl_ast_node etype;
+
+  assert (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY);
+
+  PKL_AST_TYPE_A_BOUNDER (type) = PVM_NULL;
+
+  for (etype = PKL_AST_TYPE_A_ETYPE (type);
+       PKL_AST_TYPE_CODE (etype) == PKL_TYPE_ARRAY
+         && PKL_AST_TYPE_NAME (etype) == NULL;
+       etype = PKL_AST_TYPE_A_ETYPE (etype))
+    {
+      PKL_AST_TYPE_A_BOUNDER (etype) = PVM_NULL;
+    }
+}
+
 /* Return whether two given type AST nodes are equal, i.e. they denote
    the same type.  */
 
@@ -844,6 +865,36 @@ pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
       && PKL_AST_TYPE_CODE (tt) == PKL_TYPE_ARRAY
       && PKL_AST_TYPE_CODE (PKL_AST_TYPE_A_ETYPE (tt)) == PKL_TYPE_ANY)
     return 1;
+
+  /* An array type is promoteable to other array type if the types of
+     the elements are equal.  Only length may differ.  */
+  if (PKL_AST_TYPE_CODE (ft) == PKL_TYPE_ARRAY
+      && PKL_AST_TYPE_CODE (tt) == PKL_TYPE_ARRAY)
+    {
+      pkl_ast_node ft_bound = PKL_AST_TYPE_A_BOUND (ft);
+      pkl_ast_node tt_bound = PKL_AST_TYPE_A_BOUND (tt);
+      pkl_ast_node ft_etype = PKL_AST_TYPE_A_ETYPE (ft);
+      pkl_ast_node tt_etype = PKL_AST_TYPE_A_ETYPE (tt);
+
+      if (!pkl_ast_type_equal (tt_etype, ft_etype))
+        return 0;
+
+      /* Static array types can be handled here.  */
+      if (tt_bound && (PKL_AST_CODE (tt_bound) == PKL_AST_INTEGER))
+        {
+          if (!ft_bound || PKL_AST_CODE (ft_bound) != PKL_AST_INTEGER)
+            return 0;
+
+          if (PKL_AST_INTEGER_VALUE (ft_bound)
+              != PKL_AST_INTEGER_VALUE (tt_bound))
+            return 0;
+        }
+
+      return 1;
+      //      return pkl_ast_type_promoteable (PKL_AST_TYPE_A_ETYPE (ft),
+      //                                       PKL_AST_TYPE_A_ETYPE (tt),
+      //                                       promote_array_of_any);
+    }
 
   return 0;
 }

@@ -1486,7 +1486,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
               pkl_ast_node type_elem_type
                 = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
 
-              if (!pkl_ast_type_equal (elem_type, type_elem_type))
+              if (!pkl_ast_type_equal (elem_type, type_elem_type)
+                  || (PKL_AST_TYPE_CODE (type_elem_type) == PKL_TYPE_ARRAY))
                 {
                   int restart = 0;
 
@@ -1521,6 +1522,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
                         PKL_PASS_RESTART |= restart;
                         break;
                       }
+                    case PKL_TYPE_ARRAY:
+                      /* Array promotion of scons initializers is
+                         performed in the constructor, not here.  This
+                         is because the target type's bounder shall be
+                         created in the constructor's environment.  */
+                      break;
                     default:
                       assert (0);
                       break;

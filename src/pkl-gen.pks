@@ -909,6 +909,24 @@
         .c PKL_PASS_SUBPASS (field_type);
                                ; ... SCT ENAME EVAL
 .got_value:
+        ;; If the field type is an array, emit a cast here so array
+        ;; bounds are checked.  This is not done in promo because the
+        ;; array bounders shall be evaluated in this lexical
+        ;; environment.
+   .c if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_ARRAY)
+   .c {
+   .c   /* Make sure the cast type has a bounder.  If it doesn't */
+   .c   /*   compile and install one.  */
+   .c   if (PKL_AST_TYPE_A_BOUNDER (field_type) == PVM_NULL)
+   .c   {
+   .c      PKL_GEN_PAYLOAD->in_array_bounder = 1;
+   .c      PKL_PASS_SUBPASS (field_type);
+   .c      PKL_GEN_PAYLOAD->in_array_bounder = 0;
+   .c    }
+   .c
+   .c   pkl_asm_insn (RAS_ASM, PKL_INSN_ATOA,
+   .c                 NULL /* from_type */, field_type);
+   .c }
         rot                    ; ... ENAME EVAL SCT
         drop                   ; ... ENAME EVAL
         dup                    ; ... ENAME EVAL EVAL

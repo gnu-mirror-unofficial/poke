@@ -916,6 +916,8 @@ instruction call ()
   caller
   code
     pvm_val closure = JITTER_TOP_STACK ();
+
+    assert (PVM_VAL_CLS_ENV (closure) != NULL);
     JITTER_DROP_STACK ();
     PVM_CALL (closure);
   end

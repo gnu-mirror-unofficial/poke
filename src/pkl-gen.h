@@ -78,7 +78,10 @@
    generated.  0 otherwise.
 
    ENDIAN is the endianness to be used when mapping and writing
-   integral types.  */
+   integral types.
+
+   MAPPER_DEPTH and CONSTRUCTOR_DEPTH are used in the array mapper and
+   constructor generation handlers.  */
 
 struct pkl_gen_payload
 {
@@ -97,6 +100,8 @@ struct pkl_gen_payload
   int in_lvalue;
   int in_array_bounder;
   int endian;
+  int constructor_depth;
+  int mapper_depth;
 };
 
 typedef struct pkl_gen_payload *pkl_gen_payload;

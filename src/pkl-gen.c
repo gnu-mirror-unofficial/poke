@@ -190,6 +190,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             /* Compile the arrays closures and complete them using the
                current environment.  */
 
+            if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
+              {
+                /* The bounder closures for this array and possibly
+                   contained sub-arrays are installed in the
+                   pkl_gen_pr_type_array handler.  This should be done
+                   before compiling the rest of the closures below, to
+                   assure the bounder closures capture the right
+                   lexical context!  This makes the calls to
+                   in_array_bounder in array mappers/constructors to
+                   only happen for anonymous array types.  */
+                PKL_GEN_PAYLOAD->in_array_bounder = 1;
+                PKL_PASS_SUBPASS (array_type);
+                PKL_GEN_PAYLOAD->in_array_bounder = 0;
+              }
+
             if (PKL_AST_TYPE_A_WRITER (array_type) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_writer = 1;
@@ -212,16 +227,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 PKL_GEN_PAYLOAD->in_mapper = 0;
 
                 PKL_AST_TYPE_A_MAPPER (array_type) = mapper_closure;
-              }
-
-            if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
-              {
-                /* The bounder closures for this array and possibly
-                   contained sub-arrays are installed in the
-                   pkl_gen_pr_type_array handler.  */
-                PKL_GEN_PAYLOAD->in_array_bounder = 1;
-                PKL_PASS_SUBPASS (array_type);
-                PKL_GEN_PAYLOAD->in_array_bounder = 0;
               }
 
             if (PKL_AST_TYPE_A_CONSTRUCTOR (array_type) == PVM_NULL)
@@ -1974,6 +1979,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       pvm_val array_type_mapper = PKL_AST_TYPE_A_MAPPER (array_type);
       pvm_val array_type_writer = PKL_AST_TYPE_A_WRITER (array_type);
 
+      int bounder_created = 0;
+
       if (PKL_GEN_PAYLOAD->in_valmapper)
         {
           pvm_val mapper_closure;
@@ -2023,6 +2030,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);  /* OFF IOS IOS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* IOS IOS OFF */
 
+          /* Make sure the array type has a bounder.  Note that this
+             should be done before compiling mapper, writer,
+             constructor, etc functions, in order to make sure the
+             bounder closures are compiled in the right
+             environment.  */
+
+          PKL_GEN_PAYLOAD->mapper_depth++;
+
+          if (PKL_GEN_PAYLOAD->mapper_depth == 1
+              && PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
+            {
+              /* Note that this only happens at the top-level of an
+                 anonymous array type, and compiles a bounder for it.
+                 Named array types have their bounder compiled in
+                 pkl_gen_pr_decl.  */
+              bounder_created = 1;
+              PKL_GEN_PAYLOAD->in_mapper = 0;
+              PKL_GEN_PAYLOAD->in_array_bounder = 1;
+              PKL_PASS_SUBPASS (array_type);
+              PKL_GEN_PAYLOAD->in_array_bounder = 0;
+              PKL_GEN_PAYLOAD->in_mapper = 1;
+            }
+
           if (array_type_mapper != PVM_NULL)
             {
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
@@ -2055,18 +2085,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
               && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
                   == PKL_TYPE_INTEGRAL))
             {
-              if (PKL_AST_TYPE_A_BOUNDER (array_type) != PVM_NULL)
-                {
-                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                                PKL_AST_TYPE_A_BOUNDER (array_type));
-                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-                }
-              else
-                {
-                  PKL_GEN_PAYLOAD->in_mapper = 0;
-                  PKL_PASS_SUBPASS (array_type_bound);
-                  PKL_GEN_PAYLOAD->in_mapper = 1;
-                }
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                            PKL_AST_TYPE_A_BOUNDER (array_type));
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
             }
           else
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
@@ -2078,18 +2099,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
               && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
                   == PKL_TYPE_OFFSET))
             {
-              if (PKL_AST_TYPE_A_BOUNDER (array_type) != PVM_NULL)
-                {
-                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                                PKL_AST_TYPE_A_BOUNDER (array_type));
-                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-                }
-              else
-                {
-                  PKL_GEN_PAYLOAD->in_mapper = 0;
-                  PKL_PASS_SUBPASS (array_type_bound);
-                  PKL_GEN_PAYLOAD->in_mapper = 1;
-                }
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                            PKL_AST_TYPE_A_BOUNDER (array_type));
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
 
               /* Convert to bit-offset.  */
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
@@ -2132,6 +2144,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW);                /* VAL */
       /* Yay!, we are done ;) */
+
+      if (PKL_GEN_PAYLOAD->in_mapper)
+        PKL_GEN_PAYLOAD->mapper_depth--;
+
+      if (bounder_created)
+        pkl_ast_array_type_remove_bounders (array_type);
+
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_PAYLOAD->in_array_bounder)
@@ -2141,21 +2160,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       pvm_val bounder_closure;
 
       if (PKL_AST_TYPE_CODE (etype) == PKL_TYPE_ARRAY)
+        PKL_PASS_SUBPASS (etype);
+
+      if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
         {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF);
-          PKL_PASS_SUBPASS (etype);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
+          RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, bounder_closure); /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                   /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                  /* _ */
+          PKL_AST_TYPE_A_BOUNDER (array_type) = bounder_closure;
         }
 
-      RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, bounder_closure); /* CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                   /* CLS */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                  /* _ */
-
-      /* XXX */
-      /* pvm_routine_print (stdout, PVM_VAL_CLS_ROUTINE (bounder_closure)); */
-
-      PKL_AST_TYPE_A_BOUNDER (array_type) = bounder_closure;
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_PAYLOAD->in_constructor)
@@ -2164,26 +2179,37 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       pkl_ast_node array_type = PKL_PASS_NODE;
       pkl_ast_node array_type_bound = PKL_AST_TYPE_A_BOUND (array_type);
       pvm_val constructor = PKL_AST_TYPE_A_CONSTRUCTOR (array_type);
+      int bounder_created = 0;
+
+      PKL_GEN_PAYLOAD->constructor_depth++;
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The null.  */
+
+      /* Make sure the array type has a bounder.  */
+      if (PKL_GEN_PAYLOAD->constructor_depth == 1
+          && PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
+        {
+          /* Note that this only happens at the top-level of an
+             anonymous array type, and compiles a bounder for it.
+             Named array types have their bounder compiled in
+             pkl_gen_pr_decl.  */
+          bounder_created = 1;
+          PKL_GEN_PAYLOAD->in_constructor = 0;
+          PKL_GEN_PAYLOAD->in_array_bounder = 1;
+          PKL_PASS_SUBPASS (array_type);
+          PKL_GEN_PAYLOAD->in_array_bounder = 0;
+          PKL_GEN_PAYLOAD->in_constructor = 1;
+        }
 
       /* Push the EBOUND argument for the constructor.  */
       if (array_type_bound
           && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
               == PKL_TYPE_INTEGRAL))
         {
-          if (PKL_AST_TYPE_A_BOUNDER (array_type) != PVM_NULL)
-            {
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                            PKL_AST_TYPE_A_BOUNDER (array_type));
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-            }
-          else
-            {
-              PKL_GEN_PAYLOAD->in_constructor = 0;
-              PKL_PASS_SUBPASS (array_type_bound);
-              PKL_GEN_PAYLOAD->in_constructor = 1;
-            }
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOTE, pvm_make_string ("bounder"));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        PKL_AST_TYPE_A_BOUNDER (array_type));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
         }
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
@@ -2194,18 +2220,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
               == PKL_TYPE_OFFSET))
         {
-          if (PKL_AST_TYPE_A_BOUNDER (array_type) != PVM_NULL)
-            {
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                            PKL_AST_TYPE_A_BOUNDER (array_type));
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-            }
-          else
-            {
-              PKL_GEN_PAYLOAD->in_constructor = 0;
-              PKL_PASS_SUBPASS (array_type_bound);
-              PKL_GEN_PAYLOAD->in_constructor = 1;
-            }
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        PKL_AST_TYPE_A_BOUNDER (array_type));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
 
           /* Convert to bit-offset.  */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
@@ -2225,6 +2242,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
         }
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);          /* ARR */
+
+      PKL_GEN_PAYLOAD->constructor_depth--;
+
+      if (bounder_created)
+        pkl_ast_array_type_remove_bounders (array_type);
+
       PKL_PASS_BREAK;
     }
   else
