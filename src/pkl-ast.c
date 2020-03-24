@@ -2068,7 +2068,6 @@ pkl_ast_node_free (pkl_ast_node ast)
       break;
 
     case PKL_AST_INTEGER:
-      /* Fallthrough.  */
       break;
 
     default:
