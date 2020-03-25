@@ -21,8 +21,6 @@
 
 2020-03-24  Jose E. Marchesi  <jemarch@gnu.org>
 
-2020-03-24  Jose E. Marchesi  <jemarch@gnu.org>
-
 	* src/pkl-trans.c (pkl_transl_pr_type_array): Remove.
 	(pkl_transl_ps_type_array): Likewise.
 	(pkl_transl_ps_var): Likewise.
