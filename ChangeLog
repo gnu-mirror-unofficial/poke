@@ -1,5 +1,12 @@
 2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/scons-53.pk: New test.
+	* testsuite/poke.pkl/promo-array-arg-10.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-arg-11.pk: Likewise.
+	* testsuite/poke.pkl/promo-array-arg-diag-8.pk: Likewise.
+
+2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_Sym): fix type of st_name.
 	Adjust labels in st_info for endianness.
 
