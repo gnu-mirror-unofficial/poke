@@ -16,11 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* True is actually any integer that is not zero.  */
-
-defvar true = 1;
-defvar false = 0;
-
 /* Compiler built-ins. */
 
 defun rand = int<32>: __PKL_BUILTIN_RAND__;
