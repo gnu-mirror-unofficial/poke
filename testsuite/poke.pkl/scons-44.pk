@@ -6,4 +6,3 @@ deftype Foo = struct { Matrix a; };
 
 /* { dg-command { Foo {} } } */
 /* { dg-output "Foo \{a=\\\[\\\[\\\[0UB,0UB,0UB\\\],\\\[0UB,0UB,0UB\\\]\\\]\\\]\}" } */
-

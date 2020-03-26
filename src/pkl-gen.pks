@@ -484,7 +484,7 @@
         drop                    ; null
         push ulong<64>0         ; null 0UL
         swap                    ; 0UL null
-.bounds_ready: 
+.bounds_ready:
         regvar $sbound          ; EBOUND
         regvar $ebound          ; _
         ;; Initialize the element index and the bit cound, and put them
