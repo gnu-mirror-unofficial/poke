@@ -349,6 +349,16 @@ raise the following exceptions when they find certain IOS error codes:
 
 Obviously a new exception ``E_perm`` shall be added as well.
 
+#C2 Implement command .vm time
+------------------------------
+
+This command will measure and show the time spent to execute some
+given expression/statement.  The computed time shall be decomposed
+into several components:
+
+- Time spent in the compiler.
+- Time spent in the PVM.
+- Total amount of time.
 
 
 This file is part of GNU poke.
