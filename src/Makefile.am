@@ -81,7 +81,7 @@ poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                 -DJITTER_VERSION=\"$(JITTER_VERSION)\" \
                 -DLOCALEDIR=\"$(localedir)\"
 poke_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
-poke_LDADD = $(top_builddir)/gl/libpoke.la \
+poke_LDADD = $(top_builddir)/gl/libgnu.la \
              libpvmjitter.a \
              $(LIBNBD_LIBS) \
              $(LTLIBREADLINE) $(BDW_GC_LIBS) $(LIBTEXTSTYLE)

@@ -1,4 +1,9 @@
 2020-03-26  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* bootstrap.conf: Set gnulib_name=libgnu
+	* src/Makefile.am: Rename libpoke to libgnu.
+
+2020-03-26  Tim Rühsen  <tim.ruehsen@gmx.de>
  
 	* Makefile.am: Rename lib to gl.
 	* bootstrap.conf: Set source_base=gl.
