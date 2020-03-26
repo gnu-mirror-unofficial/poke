@@ -64,11 +64,11 @@ defvar STV_PROTECTED = 3;
 deftype Elf64_Sym =
   struct
   {
-    Elf_Word st_name;
+    offset<Elf_Word,B> st_name;
     struct
     {
-      uint<4> st_bind;
-      uint<4> st_type;
+      uint<4> st_bind @ get_endian == ENDIAN_BIG ? 0#b : 4#b;
+      uint<4> st_type @ get_endian == ENDIAN_BIG ? 4#b : 0#b;
     } st_info;
 
     uint<8> st_other;

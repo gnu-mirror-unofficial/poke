@@ -1,3 +1,8 @@
+2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf.pk (Elf64_Sym): fix type of st_name.
+	Adjust labels in st_info for endianness.
+
 2020-03-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-ast.h: Prototype for pkl_ast_array_type_remove_bounders.
