@@ -478,53 +478,6 @@ pvm_sizeof (pvm_val val)
   return 0;
 }
 
-/* XXX use similar printers for hexadecimal and octal, so we can use
-   _'s */
-
-void
-pvm_print_binary (uint64_t val, int size, int sign)
-{
-  char b[65];
-
-  if (size != 64 && size != 32 && size != 16 && size != 8
-      && size != 4)
-    pk_printf ("(%sint<%d>) ", sign ? "" : "u", size);
-
-  for (int z = 0; z < size; z++) {
-    b[size-1-z] = ((val >> z) & 0x1) + '0';
-  }
-  b[size] = '\0';
-
-  pk_printf ("0b%s", b);
-
-  if (size == 64)
-    {
-      if (!sign)
-        pk_puts ("U");
-      pk_puts ("L");
-    }
-  else if (size == 16)
-    {
-      if (!sign)
-        pk_puts ("U");
-      pk_puts ("H");
-    }
-  else if (size == 8)
-    {
-      if (!sign)
-        pk_puts ("U");
-      pk_puts ("B");
-    }
-  else if (size == 4)
-    {
-      {
-        if (!sign)
-          pk_puts ("U");
-      }
-      pk_puts ("N");
-    }
-}
-
 static void
 print_unit_name (uint64_t unit)
 {
@@ -689,7 +642,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
         ulongval = (uint64_t) longval & ((((uint64_t) 1) << size) - 1);
 
       if (base == 2)
-        pvm_print_binary (ulongval, size, 1);
+        pk_print_binary (ulongval, size, 1);
       else
         {
           if (size == 64)
@@ -715,7 +668,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
         uintval = (uint32_t) intval & ((((uint32_t) 1) << size) - 1);
 
       if (base == 2)
-        pvm_print_binary ((uint64_t) uintval, size, 1);
+        pk_print_binary ((uint64_t) uintval, size, 1);
       else
         {
           if (size == 32)
@@ -741,7 +694,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
       pk_term_class ("integer");
 
       if (base == 2)
-        pvm_print_binary (ulongval, size, 0);
+        pk_print_binary (ulongval, size, 0);
       else
         {
           if (size == 64)
@@ -760,7 +713,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
       pk_term_class ("integer");
 
       if (base == 2)
-        pvm_print_binary (uintval, size, 0);
+        pk_print_binary (uintval, size, 0);
       else
         {
           if (size == 32)

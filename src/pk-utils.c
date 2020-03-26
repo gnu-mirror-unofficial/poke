@@ -26,6 +26,7 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
+#include "pk-term.h"
 #include "pk-utils.h"
 
 char *
@@ -78,3 +79,48 @@ PK_POW (pk_ipow, int64_t)
 PK_POW (pk_upow, uint64_t)
 
 #undef PK_POW
+
+void
+pk_print_binary (uint64_t val, int size, int sign)
+{
+  char b[65];
+
+  if (size != 64 && size != 32 && size != 16 && size != 8
+      && size != 4)
+    pk_printf ("(%sint<%d>) ", sign ? "" : "u", size);
+
+  for (int z = 0; z < size; z++) {
+    b[size-1-z] = ((val >> z) & 0x1) + '0';
+  }
+  b[size] = '\0';
+
+  pk_printf ("0b%s", b);
+
+  if (size == 64)
+    {
+      if (!sign)
+        pk_puts ("U");
+      pk_puts ("L");
+    }
+  else if (size == 16)
+    {
+      if (!sign)
+        pk_puts ("U");
+      pk_puts ("H");
+    }
+  else if (size == 8)
+    {
+      if (!sign)
+        pk_puts ("U");
+      pk_puts ("B");
+    }
+  else if (size == 4)
+    {
+      {
+        if (!sign)
+          pk_puts ("U");
+      }
+      pk_puts ("N");
+    }
+}
+

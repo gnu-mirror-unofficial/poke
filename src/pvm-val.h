@@ -729,7 +729,4 @@ pvm_val pvm_make_exception (int code, char *message);
 
 void pvm_print_val (pvm_val val, int base, uint32_t flags);
 
-/* XXX move this to an utilities module.  */
-void pvm_print_binary (uint64_t val, int size, int sign);
-
 #endif /* !PVM_VAL_H */

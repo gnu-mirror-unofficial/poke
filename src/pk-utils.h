@@ -45,4 +45,7 @@ char *pk_file_readable (const char *filename);
 int64_t pk_ipow (int64_t base, uint32_t exp);
 uint64_t pk_upow (uint64_t base, uint32_t exp);
 
+/* Print the give unsigned 64-bit integer in binary.  */
+void pk_print_binary (uint64_t val, int size, int sign);
+
 #endif /* ! PK_UTILS_H */
