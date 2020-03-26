@@ -1,5 +1,12 @@
 2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_try_catch_stmt): Fix locations
+	of errors.
+	* testsuite/poke.pkl/try-catch-diag-4.pk: New test.
+	* testsuite/poke.pkl/try-catch-diag-5.pk: Likewise.
+
+2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/scons-53.pk: New test.
 	* testsuite/poke.pkl/promo-array-arg-10.pk: Likewise.
 	* testsuite/poke.pkl/promo-array-arg-11.pk: Likewise.

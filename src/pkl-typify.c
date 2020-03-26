@@ -1968,7 +1968,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
 
       if (!pkl_ast_type_is_exception (arg_type))
         {
-          error_loc = PKL_AST_LOC (arg_type);
+          error_loc = PKL_AST_LOC (try_catch_stmt_arg);
           goto error;
         }
     }
@@ -1979,7 +1979,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
 
       if (!pkl_ast_type_is_exception (exp_type))
         {
-          error_loc = PKL_AST_LOC (exp_type);
+          error_loc = PKL_AST_LOC (try_catch_stmt_exp);
           goto error;
         }
     }

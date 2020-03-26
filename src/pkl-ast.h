@@ -1430,10 +1430,9 @@ pkl_ast_node pkl_ast_make_try_until_stmt (pkl_ast ast,
    is raised while executing CODE.
 
    TYPE, if specified, is the argument to the catch clause.  The type
-   of the argument must be a signed 32-bit type, which is the type
-   used to denote exception types.
+   of the argument must be an Exception.
 
-   EXP, if specified, is an expression evaluating to a 32-bit integer.
+   EXP, if specified, is an expression evaluating to an Exception.
    Exceptions having any other type won't be catched by the `catch'
    clause of the statement.
 
