@@ -3524,11 +3524,23 @@ instruction asettb () # ( ARR BOUND -- ARR )
 end
 
 
+## Struct instructions
 
-## Struct instructions.
+# Instruction: mksct
+#
+# Given an offset, a list of fields, a list of methods and a struct
+# type, create a struct value and push it to the main stack.
+#
+# Each field is specified as a triplet [OFF STR VAL] where OFF is the
+# offset of field, STR the name of the field or PVM_NULL if the field
+# is anonymous, and VAL is a value.
+#
+# Each method is specified as a tuple [STR VAL] where STR is the name
+# of the method and VAL is the closure value corresponding to the
+# method.
+#
+# Stack: ( OFF [OFF STR VAL]... [STR VAL]... ULONG ULONG TYP -- SCT )
 
-#          fields         methods  nmethods nfields
-# ( OFF [OFF STR VAL]... [STR VAL]... ULONG ULONG TYP -- SCT )
 instruction mksct ()
   code
     size_t e;
@@ -3578,7 +3590,15 @@ instruction mksct ()
   end
 end
 
-instruction sset () # ( SCT STR VAL -- SCT )
+# Instruction: sset
+#
+# Given a struct, a field name and a value, replace the value of
+# the referred struct field with the given value.  If the struct
+# does not have a field with the given name, then raise PVM_E_ELEM.
+#
+# Stack: ( SCT STR VAL -- SCT )
+
+instruction sset ()
   code
     pvm_val val = JITTER_TOP_STACK ();
     pvm_val name = JITTER_UNDER_TOP_STACK ();
@@ -3593,7 +3613,16 @@ instruction sset () # ( SCT STR VAL -- SCT )
   end
 end
 
-instruction sref () # ( SCT STR -- SCT STR VAL )
+# Instruction: sref
+#
+# Given a struct and a field name, push the value contained in
+# the referred struct field on the main stack.  If the struct does
+# not have a field with the given name, then raise PVM_E_ELEM.
+#
+# Stack: ( SCT STR -- SCT STR VAL )
+# Exceptions: PVM_E_ELEM
+
+instruction sref ()
   code
     pvm_val val = pvm_ref_struct (JITTER_UNDER_TOP_STACK (),
                                   JITTER_TOP_STACK ());
@@ -3621,7 +3650,16 @@ instruction srefnt ()
   end
 end
 
-instruction srefi () # ( SCT ULONG -- SCT ULONG VAL )
+# Instruction: srefi
+#
+# Given a struct and an index, push the value of the field occupying
+# the position specified by the index in the given struct.  If the
+# struct doesn't have that many fields, raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( SCT ULONG -- SCT ULONG VAL )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction srefi ()
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -3636,7 +3674,16 @@ instruction srefi () # ( SCT ULONG -- SCT ULONG VAL )
   end
 end
 
-instruction srefio () # ( SCT ULONG -- SCT ULONG OFF )
+# Instruction: srefio
+#
+# Given a struct and an index, push the offset of the field occupying
+# the position specified by the index in the given struct.  If the
+# struct doesn't have that many fields, raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( SCT ULONG -- SCT ULONG OFF )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction srefio ()
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -3651,10 +3698,25 @@ instruction srefio () # ( SCT ULONG -- SCT ULONG OFF )
   end
 end
 
-instruction smodi () # ( SCT ULONG -- BOOL )
+# Instruction: smodi
+#
+# Given a struct and an index, push the modified flags of the field
+# occupying the position specified by the index in the given struct.
+# If the struct doesn't have that many fields, raise
+# PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( SCT ULONG -- SCT ULONG BOOL )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction smodi ()
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
+
+    if (PVM_VAL_ULONG (index) < 0
+        || (PVM_VAL_ULONG (index) >=
+            PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_MODIFIED (sct,
                                                    PVM_VAL_ULONG (index)));
@@ -3662,8 +3724,7 @@ instruction smodi () # ( SCT ULONG -- BOOL )
 end
 
 
-
-## Offset instructions.
+## Offset instructions
 
 instruction mko () # ( EXP ULONG -- OFF )
   code

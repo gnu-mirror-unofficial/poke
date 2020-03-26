@@ -1,5 +1,10 @@
 2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pvm.jitter (smodi): Check that the provided index is
+	in-range.
+
+2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-rt.pk: Do not define `true' nor `false'.
 
 2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
