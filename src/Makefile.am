@@ -74,14 +74,14 @@ BUILT_SOURCES = pkl-tab.h pkl-lex.c \
 AM_YFLAGS = -d -t --report=state
 AM_LFLAGS = -d
 
-poke_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
+poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                 -DPKL_DEBUG \
                 -DPKGDATADIR=\"$(pkgdatadir)\" \
                 -DPKGINFODIR=\"$(infodir)\" \
                 -DJITTER_VERSION=\"$(JITTER_VERSION)\" \
                 -DLOCALEDIR=\"$(localedir)\"
 poke_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
-poke_LDADD = $(top_builddir)/lib/libpoke.la \
+poke_LDADD = $(top_builddir)/gl/libpoke.la \
              libpvmjitter.a \
              $(LIBNBD_LIBS) \
              $(LTLIBREADLINE) $(BDW_GC_LIBS) $(LIBTEXTSTYLE)

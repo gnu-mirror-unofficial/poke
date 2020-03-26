@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = jitter lib pickles src doc man testsuite etc po
+SUBDIRS = jitter gl pickles src doc man testsuite etc po
 
 noinst_SCRIPTS = run
 

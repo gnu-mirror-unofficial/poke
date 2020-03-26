@@ -1,3 +1,10 @@
+2020-03-26  Tim Rühsen  <tim.ruehsen@gmx.de>
+ 
+	* Makefile.am: Rename lib to gl.
+	* bootstrap.conf: Set source_base=gl.
+	* configure.ac: Rename lib/ to gl/.
+	* src/Makefile.am: Rename lib to gl.
+
 2020-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pk-utils.h: Prototype for pk_print_binary moved from
