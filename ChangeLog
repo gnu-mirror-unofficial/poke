@@ -1,3 +1,16 @@
+2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_op_rela): Accept array
+	arguments in EQ and NE operators.
+	* src/pkl-promo.c (pkl_promo_ps_op_rela): Likewise.
+	* testsuite/poke.pkl/le-arrays-diag-1.pk: New test.
+	* testsuite/poke.pkl/ge-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/gt-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/lt-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-diag-1.pk: Likewise.
+
 2020-03-26  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* bootstrap.conf: Set gnulib_name=libgnu

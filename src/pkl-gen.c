@@ -2865,6 +2865,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_rela)
 
   switch (PKL_AST_TYPE_CODE (op1_type))
     {
+    case PKL_TYPE_ARRAY:
+      assert (exp_code == PKL_AST_OP_EQ
+              || exp_code == PKL_AST_OP_NE);
+      /* Fallthrough.  */
     case PKL_TYPE_INTEGRAL:
     case PKL_TYPE_OFFSET:
     case PKL_TYPE_STRING:

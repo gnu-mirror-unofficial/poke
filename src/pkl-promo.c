@@ -468,6 +468,7 @@ PKL_PHASE_END_HANDLER
            INTEGRAL x INTEGRAL -> BOOL
            STRING   x STRING   -> BOOL
            OFFSET   x OFFSET   -> BOOL
+           ARRAY    x ARRAY    -> BOOL
 
    In the I x I -> I configuration, the types of the operands are
    promoted in a way both operands end having the same type, following
@@ -477,7 +478,7 @@ PKL_PHASE_END_HANDLER
    in the O x O -> O configuration.
 
    No operand promotion is performed in the S x S -> S
-   configuration.  */
+   configuration.  Ditto for A x A -> A.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
 {
@@ -543,10 +544,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
 
         PKL_PASS_RESTART = restart1 || restart2;
         break;
-        case PKL_TYPE_STRING:
-          /* Nothing to do.  */
-          break;
       }
+    case PKL_TYPE_STRING:
+      /* Breakthrough.  */
+    case PKL_TYPE_ARRAY:
+      /* Nothing to do.  */
+      break;
     default:
       goto error;
     }

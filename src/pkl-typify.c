@@ -105,10 +105,13 @@ PKL_PHASE_END_HANDLER
 
 /* The type of the relational operations EQ, NE, LT, GT, LE and GE is
    a boolean encoded as a 32-bit signed integer type.  Their operands
-   should be either both integral types, or strings, or offsets.  */
+   should be either both integral types, or strings, or offsets.  EQ
+   and NE also accept arrays.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
 {
+  enum pkl_ast_op exp_code = PKL_AST_EXP_CODE (PKL_PASS_NODE);
+  
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
   pkl_ast_node op1_type = PKL_AST_TYPE (op1);
   int op1_type_code = PKL_AST_TYPE_CODE (op1_type);
@@ -117,24 +120,69 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
   pkl_ast_node op2_type = PKL_AST_TYPE (op2);
   int op2_type_code = PKL_AST_TYPE_CODE (op2_type);
 
-  if (op1_type_code == op2_type_code
-      && (op1_type_code == PKL_TYPE_INTEGRAL
-          || op1_type_code == PKL_TYPE_STRING
-          || op1_type_code == PKL_TYPE_OFFSET))
-    {
-      pkl_ast_node exp_type
-        = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
+  pkl_ast_node exp_type;
 
-      PKL_AST_LOC (exp_type) = PKL_AST_LOC (PKL_PASS_NODE);
-      PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (exp_type);
-    }
-  else
+  if (op1_type_code != op2_type_code)
+    goto invalid_operands;
+
+  switch (op1_type_code)
     {
-      PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE),
-                 "invalid operands to relational operator");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+    case PKL_TYPE_INTEGRAL:
+      /* Fallthrough.  */
+    case PKL_TYPE_STRING:
+      /* Fallthrough.  */
+    case PKL_TYPE_OFFSET:
+      break;
+    case PKL_TYPE_ARRAY:
+      {
+
+        /* Only EQ and NE are supported for arrays.  */
+        if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
+          goto invalid_operands;
+
+        /* If the bounds of both array types are known at
+           compile-time, then we can check and emit an error if they
+           are not the same.  */
+        {
+          pkl_ast_node op1_type_bound = PKL_AST_TYPE_A_BOUND (op1_type);
+          pkl_ast_node op2_type_bound = PKL_AST_TYPE_A_BOUND (op2_type);
+
+          if (PKL_AST_CODE (op1_type_bound) == PKL_AST_INTEGER
+              && PKL_AST_CODE (op2_type_bound) == PKL_AST_INTEGER
+              && (PKL_AST_INTEGER_VALUE (op1_type_bound)
+                  != PKL_AST_INTEGER_VALUE (op2_type_bound)))
+            {
+              char *op1_type_str = pkl_type_str (op1_type, 1);
+              char *op2_type_str = pkl_type_str (op2_type, 1);
+              
+              PKL_ERROR (PKL_AST_LOC (op2),
+                         "invalid operand\nexpected %s, got %s",
+                         op1_type_str, op2_type_str);
+
+              free (op1_type_str);
+              free (op2_type_str);
+              
+              PKL_TYPIFY_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+        }
+        break;
+      }
+    default:
+      assert (0);
     }
+
+  /* Set the type of the expression node.  */
+  exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
+  PKL_AST_LOC (exp_type) = PKL_AST_LOC (PKL_PASS_NODE);
+  PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (exp_type);
+  PKL_PASS_DONE;
+  
+ invalid_operands:
+  PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE),
+             "invalid operands to relational operator");
+  PKL_TYPIFY_PAYLOAD->errors++;
+  PKL_PASS_ERROR;
 }
 PKL_PHASE_END_HANDLER
 
