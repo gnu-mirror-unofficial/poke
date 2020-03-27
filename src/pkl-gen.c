@@ -131,6 +131,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             pvm_val mapper_closure;
             pvm_val writer_closure;
             pvm_val constructor_closure;
+            pvm_val comparator_closure;
 
             pkl_ast_node type_struct = initial;
             pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (type_struct);
@@ -174,6 +175,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 PKL_GEN_PAYLOAD->in_constructor = 0;
 
                 PKL_AST_TYPE_S_CONSTRUCTOR (type_struct) = constructor_closure;
+              }
+
+            if (PKL_AST_TYPE_S_COMPARATOR (type_struct) == PVM_NULL)
+              {
+                PKL_GEN_PAYLOAD->in_comparator = 1;
+                RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure);           /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure); /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
+                PKL_GEN_PAYLOAD->in_comparator = 0;
+
+                PKL_AST_TYPE_S_COMPARATOR (type_struct) = comparator_closure;
               }
 
             PKL_PASS_BREAK;
@@ -2471,6 +2484,32 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       /* And we are done.  */
       PKL_PASS_BREAK;
     }
+  else if (PKL_GEN_PAYLOAD->in_comparator)
+    {
+      /* Stack: SCT1 SCT2 */
+      
+      pkl_ast_node type_struct = PKL_PASS_NODE;
+      pvm_val comparator_closure
+        = PKL_AST_TYPE_S_COMPARATOR (type_struct);
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OVER);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OVER);
+      
+      if (comparator_closure == PVM_NULL)
+        {
+          /* Compile a comparator function and complete it using the
+             current environment.  */
+          RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure);
+
+      /* Call the comparator.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* SCT1 SCT2 INT */
+      PKL_PASS_BREAK;
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -2866,6 +2905,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_rela)
   switch (PKL_AST_TYPE_CODE (op1_type))
     {
     case PKL_TYPE_ARRAY:
+      /* Fallthrough.  */
+    case PKL_TYPE_STRUCT:
       assert (exp_code == PKL_AST_OP_EQ
               || exp_code == PKL_AST_OP_NE);
       /* Fallthrough.  */

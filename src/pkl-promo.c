@@ -469,6 +469,7 @@ PKL_PHASE_END_HANDLER
            STRING   x STRING   -> BOOL
            OFFSET   x OFFSET   -> BOOL
            ARRAY    x ARRAY    -> BOOL
+           STRUCT   x STRUCT   -> BOOL
 
    In the I x I -> I configuration, the types of the operands are
    promoted in a way both operands end having the same type, following
@@ -546,8 +547,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
         break;
       }
     case PKL_TYPE_STRING:
-      /* Breakthrough.  */
+      /* Fallthrough.  */
     case PKL_TYPE_ARRAY:
+      /* Fallthrough.  */
+    case PKL_TYPE_STRUCT:
       /* Nothing to do.  */
       break;
     default:

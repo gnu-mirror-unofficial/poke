@@ -161,6 +161,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
         }
         break;
       }
+    case PKL_TYPE_STRUCT:
+      {
+        /* Only EQ and NE are supported for structs.  */
+        if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
+          goto invalid_operands;
+
+        /* The two struct types should be named, and refer to the same
+           type for equality to be tested.  */
+        {
+          pkl_ast_node op1_type_name = PKL_AST_TYPE_NAME (op1_type);
+          pkl_ast_node op2_type_name = PKL_AST_TYPE_NAME (op2_type);
+
+          if (op1_type_name
+              && op2_type_name
+              && STREQ (PKL_AST_IDENTIFIER_POINTER (op1_type_name),
+                        PKL_AST_IDENTIFIER_POINTER (op2_type_name)))
+            ;
+          else
+            goto invalid_array_operands;
+        }
+
+        break;
+      }
     default:
       assert (0);
     }

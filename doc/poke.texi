@@ -2463,6 +2463,7 @@ They contain heterogeneous collections of values.
 @menu
 * Struct Types::		Simple structs.
 * Struct Constructors::		Constructing struct values.
+* Struct Comparison::		Comparing struct values
 * Field Endianness::            Specifying the endianness of integral fields.
 * Accessing Fields::            Getting and fetching the values of fields.
 * Field Constraints::		Specifying data integrity.
@@ -2606,6 +2607,21 @@ we will get a constraint violation exception if we try to construct an
 unhandled constraint violation exception
 @end example
 
+@node Struct Comparison
+@section Struct Comparison
+@cindex comparing, structs
+
+The equality operator (@code{==}) and the inequality operator
+(@code{!=}) can be applied to struct values.  Examples:
+
+@example
+(poke) E_eof == E_eof
+1
+(Poke) Packet @{ payload=0x3 @} != Packet @{ payload=0x4 @}
+1
+@end example
+
+The struct values are compares recursively.
 
 @node Field Endianness
 @section Field Endianness

@@ -917,6 +917,26 @@ pkl_asm_insn_cmp (pkl_asm pasm,
           pkl_asm_insn (pasm, PKL_INSN_NIP);
         }
     }
+  else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT)
+    {
+      pvm_val struct_comparator = PKL_AST_TYPE_S_COMPARATOR (type);
+
+      assert (insn == PKL_INSN_EQ || insn == PKL_INSN_NE);
+
+      /* Call the comparator of the struct type, which must exist at
+         this point.  */
+      assert (struct_comparator != PVM_NULL);
+      pkl_asm_insn (pasm, PKL_INSN_OVER); /* SCT1 SCT2 SCT1 */
+      pkl_asm_insn (pasm, PKL_INSN_OVER); /* SCT1 SCT2 SCT1 SCT2 */
+      pkl_asm_insn (pasm, PKL_INSN_PUSH, struct_comparator); /* SCT1 SCT2 SCT1 SCT2 CLS */
+      pkl_asm_insn (pasm, PKL_INSN_CALL); /* SCT1 SCT2 INT */
+      
+      if (insn == PKL_INSN_NE)
+        {
+          pkl_asm_insn (pasm, PKL_INSN_NOT);
+          pkl_asm_insn (pasm, PKL_INSN_NIP);
+        }
+    }
   else
     assert (0);
 }

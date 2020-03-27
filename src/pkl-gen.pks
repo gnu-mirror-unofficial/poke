@@ -839,6 +839,68 @@
         return
         .end
 
+;;; RAS_FUNCTION_STRUCT_COMPARATOR
+;;; ( SCT SCT -- INT )
+;;;
+;;; Assemble a function that, given two structs of a given type,
+;;; return 1 if the two structs are equal, 0 otherwise.
+;;;
+;;; The C environment erquired is:
+;;;
+;;; `type_struct' is a pkl_ast_node with the types of the structs
+;;;  being compared.
+
+        ;; NOTE: this function should have the same lexical structure
+        ;; than struct_mapper above.  If you add more local variables,
+        ;; please adjust struct_comparator accordingly, and also follow
+        ;; the instructions on the NOTE there.
+
+        ;; XXX support optional fields.
+        
+        .function struct_comparator
+        prolog
+.c { uint64_t i; pkl_ast_node field;
+ .c  for (i = 0, field = PKL_AST_TYPE_S_ELEMS (type_struct);
+ .c       field;
+ .c       field = PKL_AST_CHAIN (field), ++i)
+ .c  {
+ .c     pkl_ast_node field_type
+ .c       = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field) ;
+ .c
+ .c     if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        ;; Compare the fields of both structs.
+        tor                     ; SCT1 [SCT2]
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
+                                ; SCT1 I [SCT2]
+        srefi                   ; SCT1 I VAL1 [SCT2]
+        swap                    ; SCT1 VAL1 I [SCT2]
+        fromr                   ; SCT1 VAL1 I SCT2
+        swap                    ; SCT1 VAL1 SCT2 I
+        srefi                   ; SCT1 VAL1 SCT2 I VAL2
+        nip                     ; SCT1 VAL1 SCT2 VAL2
+        quake                   ; SCT1 SCT2 VAL1 VAL2
+        ;; Note that we cannot use EQ if the field is a struct itself,
+        ;; because EQ uses comparators!  So we subpass instead.  :)
+ .c     if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_STRUCT)
+ .c       PKL_PASS_SUBPASS (field_type);
+ .c     else
+ .c     {
+ .c       pkl_asm_insn (RAS_ASM, PKL_INSN_EQ,
+ .c                     PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
+ .c     }
+        nip2                    ; SCT1 SCT2 (VAL1==VAL2)
+        bzi .done
+        drop                    ; SCT1 SCT2
+ .c  }
+.c }
+        ;; The structs are equal
+        push int<32>1           ; SCT1 SCT2 1
+.done:
+        nip2                    ; INT
+        return
+        .end
+        
 ;;; RAS_FUNCTION_STRUCT_CONSTRUCTOR
 ;;; ( SCT -- SCT )
 ;;;

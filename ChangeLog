@@ -1,5 +1,38 @@
 2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.h (struct pkl_ast_type): New field `comparator' for
+	structs.
+	(PKL_AST_TYPE_S_COMPARATOR): Define.
+	* src/pkl-ast.c (pkl_ast_make_struct_type): Initialize the struct
+	type comparator closure, and add it as a GC root.
+	(pkl_ast_node_free): Deregister the struct type comparator as a GC
+	root.
+	* src/pkl-typify.c (pkl_typify1_ps_op_rela): Accept struct
+	operands in EQ and NE operators.
+	* src/pkl-promo.c (pkl_promo_ps_op_rela): Likewise.
+	* src/pkl-gen.h (struct pkl_gen_payload): New field
+	`in_comparator'.
+	* src/pkl-gen.c (pkl_gen_ps_op_rela): Likewise.
+	(pkl_gen_pr_decl): Build comparator closures for named struct
+	types.
+	(pkl_gen_pr_type_struct): Handle in_comparator contexts.
+	* src/pkl-asm.c (pkl_asm_insn_cmp): Handle structs.
+	* src/pkl-gen.pks (struct_comparator): New RAS function.
+	* doc/poke.texi (Struct Comparison): New section.
+	* testsuite/poke.pkl/eq-structs-diag-1.pk: New test.
+	* testsuite/poke.pkl/ne-structs-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-8.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-7.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-6.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-5.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-4.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-3.pk: Likewise.
+	* testsuite/poke.pkl/ne-structs-2.pk: Likewise.
+	* testsuite/poke.pkl/ne-structs-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-1.pk: Likewise.
+
+2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_Ehdr): Use arrays equality.
 	* testsuite/poke.pkl/eq-arrays-11.pk: New test.
 	* testsuite/poke.pkl/eq-arrays-12.pk: Likewise.
