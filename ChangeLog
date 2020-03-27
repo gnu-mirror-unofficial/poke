@@ -1,5 +1,11 @@
 2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_Ehdr): Use arrays equality.
+	* testsuite/poke.pkl/eq-arrays-11.pk: New test.
+	* testsuite/poke.pkl/eq-arrays-12.pk: Likewise.
+
+2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_op_rela): The array operands
 	must have the same kind of elements.
 	* src/pkl-asm.pks (eqa): New macro.

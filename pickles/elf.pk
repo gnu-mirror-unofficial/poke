@@ -102,10 +102,7 @@ deftype Elf64_Ehdr =
   {
     struct
     {
-      byte[4] ei_mag : ei_mag[0] == 0x7fUB
-                       && ei_mag[1] == 'E'
-                       && ei_mag[2] == 'L'
-                       && ei_mag[3] == 'F';
+      byte[4] ei_mag : ei_mag == [0x7fUB, 'E', 'L', 'F'];
       byte ei_class;
       byte ei_data;
       byte ei_version;
