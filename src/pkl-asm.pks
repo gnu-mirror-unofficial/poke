@@ -620,3 +620,67 @@
         bor @res_type             ; ... OP2C (OP1C<<.OP2_SIZE) ((OP1C<<.OP2_SIZE)|OP2C)
         nip2                      ; OP2 OP1 ((OP1C<<.OP2_SIZE)|OP2C)
         .end
+
+;;; RAS_MACRO_EQA
+;;; ( ARR ARR -- ARR ARR INT )
+;;;
+;;; This macro generates code that compares the two arrays in
+;;; the stack for equality.
+;;;
+;;; Macro arguments:
+;;; @type_elem
+;;;   type of the elements of the arrays.
+
+        .macro eqa @type_elem
+        ;; If the two arrays do not have the same number of
+        ;; elements, then they are not equal.
+        sel                     ; ARR1 ARR2 SEL2
+        rot                     ; ARR2 SEL2 ARR1
+        sel                     ; ARR2 SEL2 ARR1 SEL1
+        quake                   ; ARR2 ARR1 SEL2 SEL1
+        eqlu
+        nip2                    ; ARR2 ARR1 (SEL2==SEL1)
+        quake                   ; ARR1 ARR2 (SEL2==SEL1)
+        bzi .done
+        drop                    ; ARR1 ARR2
+        ;; At this point both arrays are guaranteed to have the same
+        ;; number of elements.  Check equality of the elements
+        ;; themselves.
+        pushf
+        sel                     ; ARR1 ARR2 SEL
+        regvar $len
+        push ulong<64>0         ; ARR1 ARR2 0UL
+        regvar $idx
+      .while
+        pushvar $idx            ; ARR1 ARR2 IDX
+        pushvar $len            ; ARR1 ARR2 IDX LEN
+        ltlu                    ; ARR1 ARR2 IDX 0UL (IDX<LEN)
+        nip2                    ; ARR1 ARR2 (IDX<LEN)
+      .loop
+        pushvar $idx            ; ARR1 ARR2 IDX
+        rot                     ; ARR2 IDX ARR1
+        tor                     ; ARR2 IDX [ARR1]
+        aref                    ; ARR2 IDX VAL2 [ARR1]
+        swap                    ; ARR2 VAL2 IDX [ARR1]
+        fromr                   ; ARR2 VAL2 IDX ARR1
+        swap                    ; ARR2 VAL2 ARR1 IDX
+        aref                    ; ARR2 VAL2 ARR1 IDX VAL1
+        nip                     ; ARR2 VAL2 ARR1 VAL1
+        quake                   ; ARR2 ARR1 VAL2 VAL1
+        eq @type_elem
+        nip2                    ; ARR2 ARR1 (VAL2==VAL1)
+        bzi .done
+        drop                    ; ARR2 ARR1
+        swap                    ; ARR1 ARR2
+        ;; Update the index.
+        pushvar $idx            ; ARR1 ARR2 IDX
+        push ulong<64>1         ; ARR1 ARR2 IDX 1UL
+        addlu
+        nip2                    ; ARR1 ARR2 (IDX+1UL)
+        popvar $idx
+      .endloop
+        ;; The arrays are equal
+        push int<32>1           ; ARR1 ARR2 1
+        popf 1
+.done:
+        .end

@@ -135,10 +135,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
       break;
     case PKL_TYPE_ARRAY:
       {
-
         /* Only EQ and NE are supported for arrays.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
           goto invalid_operands;
+
+        /* The arrays must contain the same kind of elements.  */
+        if (!pkl_ast_type_equal (PKL_AST_TYPE_A_ETYPE (op1_type),
+                                 PKL_AST_TYPE_A_ETYPE (op2_type)))
+          goto invalid_array_operands;
 
         /* If the bounds of both array types are known at
            compile-time, then we can check and emit an error if they
@@ -147,24 +151,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
           pkl_ast_node op1_type_bound = PKL_AST_TYPE_A_BOUND (op1_type);
           pkl_ast_node op2_type_bound = PKL_AST_TYPE_A_BOUND (op2_type);
 
-          if (PKL_AST_CODE (op1_type_bound) == PKL_AST_INTEGER
+          if (op1_type_bound
+              && op2_type_bound
+              && PKL_AST_CODE (op1_type_bound) == PKL_AST_INTEGER
               && PKL_AST_CODE (op2_type_bound) == PKL_AST_INTEGER
               && (PKL_AST_INTEGER_VALUE (op1_type_bound)
                   != PKL_AST_INTEGER_VALUE (op2_type_bound)))
-            {
-              char *op1_type_str = pkl_type_str (op1_type, 1);
-              char *op2_type_str = pkl_type_str (op2_type, 1);
-              
-              PKL_ERROR (PKL_AST_LOC (op2),
-                         "invalid operand\nexpected %s, got %s",
-                         op1_type_str, op2_type_str);
-
-              free (op1_type_str);
-              free (op2_type_str);
-              
-              PKL_TYPIFY_PAYLOAD->errors++;
-              PKL_PASS_ERROR;
-            }
+            goto invalid_array_operands;
         }
         break;
       }
@@ -183,6 +176,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
              "invalid operands to relational operator");
   PKL_TYPIFY_PAYLOAD->errors++;
   PKL_PASS_ERROR;
+
+ invalid_array_operands:
+  {
+    char *op1_type_str = pkl_type_str (op1_type, 1);
+    char *op2_type_str = pkl_type_str (op2_type, 1);
+    
+    PKL_ERROR (PKL_AST_LOC (op2),
+               "invalid operand\nexpected %s, got %s",
+               op1_type_str, op2_type_str);
+    
+    free (op1_type_str);
+    free (op2_type_str);
+    
+    PKL_TYPIFY_PAYLOAD->errors++;
+    PKL_PASS_ERROR;
+  }
 }
 PKL_PHASE_END_HANDLER
 

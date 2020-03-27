@@ -2105,6 +2105,7 @@ Arrays are homogeneous collections of values.
 @menu
 * Array Literals::		Writing array values.
 * Array Types::			Bounded and unbounded arrays.
+* Array Comparison::		Comparing array values.
 * Array Indexing::		Accessing values stored in arrays.
 * Array Trimming::		Working with array pieces.
 * Array Elements::		Checking for array elements.
@@ -2300,6 +2301,22 @@ So, as we have seen, Poke's way of handling boundaries in array types
 allows data structures to adjust to the particular data they contain,
 so usual in binary formats.  This is an important feature, that gives
 Poke part of its feel and magic.
+
+@node Array Comparison
+@section Array Comparison
+@cindex comparing, arrays
+
+The equality operator (@code{==}) and the inequality operator
+(@code{!=}) can be applied to arrays.  Examples:
+
+@example
+(poke) [1,2,3] == [1,2,3]
+1
+(poke) [[1,2],[3,4]] != [[5,6],[7,8]]
+1
+@end example
+
+Note that the array elements are compared recursively.
 
 @node Array Indexing
 @section Array Indexing

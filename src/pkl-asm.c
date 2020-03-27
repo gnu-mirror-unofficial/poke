@@ -906,6 +906,17 @@ pkl_asm_insn_cmp (pkl_asm pasm,
       pkl_asm_insn (pasm, insn, base_type);
       pkl_asm_insn (pasm, PKL_INSN_NIP2);  /* OFF1 OFF2 (OFF1M?OFF2M) */
     }
+  else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY)
+    {
+      assert (insn == PKL_INSN_EQ || insn == PKL_INSN_NE);
+
+      RAS_MACRO_EQA (PKL_AST_TYPE_A_ETYPE (type));
+      if (insn == PKL_INSN_NE)
+        {
+          pkl_asm_insn (pasm, PKL_INSN_NOT);
+          pkl_asm_insn (pasm, PKL_INSN_NIP);
+        }
+    }
   else
     assert (0);
 }

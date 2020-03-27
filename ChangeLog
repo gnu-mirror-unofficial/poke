@@ -1,5 +1,33 @@
 2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_op_rela): The array operands
+	must have the same kind of elements.
+	* src/pkl-asm.pks (eqa): New macro.
+	* src/pkl-asm.c (pkl_asm_insn_cmp): Cover EQ and NE for arrays.
+	* doc/poke.texi (Array Comparison): New section.
+	* testsuite/poke.pkl/eq-arrays-1.pk: New test.
+	* testsuite/poke.pkl/ne-arrays-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-2.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-2.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-3.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-3.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-4.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-4.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-10.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-10.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-8.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-8.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-7.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-7.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-6.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-6.pk: Likewise.
+	* testsuite/poke.pkl/ne-arrays-5.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-5.pk: Likewise.
+
+2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_op_rela): Accept array
 	arguments in EQ and NE operators.
 	* src/pkl-promo.c (pkl_promo_ps_op_rela): Likewise.
