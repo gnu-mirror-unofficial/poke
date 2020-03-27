@@ -102,7 +102,7 @@ deftype Elf64_Ehdr =
   {
     struct
     {
-      byte[4] ei_mag : ei_mag == [0x7fUB, 'E', 'L', 'F'];
+      byte[4] ei_mag = [0x7fUB, 'E', 'L', 'F'];
       byte ei_class;
       byte ei_data;
       byte ei_version;
@@ -126,7 +126,7 @@ deftype Elf64_Ehdr =
     Elf_Half e_phnum;
     offset<Elf_Half,B> e_shentsize;
     Elf_Half e_shnum;
-    Elf_Half e_shstrndx : e_shstrndx < e_shnum;
+    Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
   };
 
 /* Given an ELF header and an offset in the file's string table,

@@ -1,5 +1,43 @@
 2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-ast.c (pkl_ast_make_struct_type_field): Handle
+	initializer.
+	(pkl_ast_dup_type): Likewise.
+	(pkl_ast_node_free): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-ast.h (PKL_AST_EXP_FLAG): Define.
+	(PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER): Define.
+	(struct pkl_ast_struct_type_field): New field `initializer'.
+	* src/pkl-tab.y (struct_type_field_constraint_or_init): Renamed
+	from struct_type_field_constraint.
+	* src/pkl-pass.c (pkl_do_pass_1): Traverse struct field
+	initializers.
+	* src/pkl-typify.c (pkl_typify1_ps_struct): Pass a NULL
+	initializer when constructing a struct type field.
+	(pkl_typify1_ps_struct_type_field): Check the type of the field
+	initializer, if specified.
+	* src/pkl-promo.c (pkl_promo_ps_struct_type_field): Promote field
+	initializers.
+	* src/pkl-gen.pks (struct_constructor): Use field initializers.
+	* pickles/elf.pk (Elf64_Ehdr): Use an initialization value for the
+	magic field.
+	* doc/poke.texi (Field Initializers): New section.
+	* testsuite/poke.pkl/field-init-diag-1.pk: New test.
+	* testsuite/poke.pkl/field-init-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/field-init-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/field-init-1.pk: Likewise.
+	* testsuite/poke.pkl/field-init-2.pk: Likewise.
+	* testsuite/poke.pkl/field-init-3.pk: Likewise.
+	* testsuite/poke.pkl/field-init-diag-4.pk: Likewise.
+	* testsuite/poke.map/maps-structs-init-1.pk: Likewise.
+	* testsuite/poke.map/maps-structs-init-2.pk: Likewise.
+	* testsuite/poke.pkl/field-init-4.pk: Likewise.
+	* testsuite/poke.pkl/field-init-7.pk: Likewise.
+	* testsuite/poke.pkl/field-init-6.pk: Likewise.
+	* testsuite/poke.pkl/field-init-5.pk: Likewise.
+
+2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h (struct pkl_ast_type): New field `comparator' for
 	structs.
 	(PKL_AST_TYPE_S_COMPARATOR): Define.

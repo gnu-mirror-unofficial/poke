@@ -2467,6 +2467,7 @@ They contain heterogeneous collections of values.
 * Field Endianness::            Specifying the endianness of integral fields.
 * Accessing Fields::            Getting and fetching the values of fields.
 * Field Constraints::		Specifying data integrity.
+* Field Initializers::		Initial values for fields.
 * Field Labels::		Explicit offsets for fields.
 * Pinned Structs::		Fix the offset of fields.
 * Unions::			Dealing with conditional data.
@@ -2716,6 +2717,93 @@ byte ei_data : ei_data == ELFDATA2LSB       \
 @end example
 
 Note that @code{set_endian} always returns @code{1}.
+
+@node Field Initializers
+@section Field Initializers
+
+We saw that field constraints are useful to express magic numbers,
+which are pretty common in binary formats.  Imagine a package has a
+marker byte at the beginning, which should always be @code{0xff}.  We
+could use a constraint like in:
+
+@example
+deftype Packet =
+  struct
+  @{
+    byte marker : marker == 0xff;
+    byte length;
+    byte[length] payload;
+  @};
+@end example
+
+This works well when mapping packages.  The constraint is checked and
+a constraint violation exception is raised if the first byte of the
+alleged package is not @code{0xff}.
+
+However, suppose we want to construct a new @code{Package}, with no
+particular contents.  We would use a constructor, but unfortunately:
+
+@example
+(poke) Packet @{ @}
+unhandled constraint violation exception
+@end example
+
+What happened?  Since we didn't specify a value for the marker in the
+struct constructor, a default value was used.  The default value for
+an integral type is zero, which violates the constraint associated
+with the field.  Therefore, we would need to remember to specify the
+marker, every time we construct a new packet:
+
+@example
+(poke) Packet @{ marker = 0xff @}
+Packet @{
+  marker=0xffUB,
+  length=0x0UB,
+  payload=[]
+@}
+@end example
+
+Unfortunately, such markers and magic numbers are not precisely very
+memorable.  To help with this, Poke has the notion of @dfn{type field
+initializers}.  Lets use one in our example:
+
+@example
+deftype Packet =
+  struct
+  @{
+    byte marker = 0xff;
+    byte length;
+    byte[length] payload;
+  @};
+@end example
+
+Note how the syntax is different than the one used for constraints.
+When a field in a struct type has an initializer, two things happen:
+
+@itemize @bullet
+@item On one side, an implicit constraint is created for the field, of
+the form @code{@var{field} == @var{initializer_expression}}.
+@item On the other, the struct constructor will use the initializer
+expression as the initial value for the field.
+@end itemize
+
+This achieves exactly what we want, in a very natural way:
+
+@example
+(poke) Packet @{@}
+Packet @{
+  marker=0xffUB,
+  length=0x0UB,
+  payload=[]
+@}
+@end example
+
+Note that it is not possible to specify both a constraint and an
+initializer in a struct type field.
+
+Note also that it is considered good practice to design struct types
+in a way that a constructor with no arguments will result in something
+usable.
 
 @node Field Labels
 @section Field Labels

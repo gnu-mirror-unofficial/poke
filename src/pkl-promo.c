@@ -1293,12 +1293,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cond_exp)
 PKL_PHASE_END_HANDLER
 
 /* Element constraints in struct types are promoteable to
-   booleans.  Ditto for optconds.  */
+   booleans.  Ditto for optconds.
+
+   Also, the initializer in a struct type field should be promoted to
+   the field type.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
 {
   pkl_ast_node elem = PKL_PASS_NODE;
   pkl_ast_node elem_constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem);
+  pkl_ast_node elem_initializer = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem);
   pkl_ast_node elem_optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem);
   pkl_ast_node elem_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
 
@@ -1329,6 +1333,68 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
       PKL_PASS_RESTART = restart;
     }
 
+  if (elem_initializer)
+    {
+      int restart = 0;
+      pkl_ast_node elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
+
+      switch (PKL_AST_TYPE_CODE (elem_type))
+        {
+        case PKL_TYPE_INTEGRAL:
+          {
+            if (!promote_integral (PKL_PASS_AST,
+                                   PKL_AST_TYPE_I_SIZE (elem_type),
+                                   PKL_AST_TYPE_I_SIGNED (elem_type),
+                                   &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
+                                   &restart))
+              {
+                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_initializer),
+                         "couldn't promote struct type field initializer");
+                PKL_PASS_ERROR;
+              }
+            break;
+          }
+        case PKL_TYPE_OFFSET:
+          {
+            pkl_ast_node base_type
+              = PKL_AST_TYPE_O_BASE_TYPE (elem_type);
+            
+            if (!promote_offset (PKL_PASS_AST,
+                                 PKL_AST_TYPE_I_SIZE (base_type),
+                                 PKL_AST_TYPE_I_SIGNED (base_type),
+                                 PKL_AST_TYPE_O_UNIT (elem_type),
+                                 &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
+                                 &restart))
+              {
+                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_initializer),
+                         "couldn't promote struct type field initializer");
+                PKL_PASS_ERROR;
+              }
+            break;
+          }
+        case PKL_TYPE_ARRAY:
+          {
+            if (!promote_array (PKL_PASS_AST,
+                                elem_type,
+                                &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
+                                &restart))
+              {
+                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_initializer),
+                         "couldn't promote struct type field initializer");
+                PKL_PASS_ERROR;
+              }
+            break;
+          }
+        case PKL_TYPE_STRUCT:
+          /* Nothing to do.  */
+          break;
+        default:
+          assert (0);
+        }
+
+      PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
+    }
+
   if (elem_optcond)
     {
       pkl_ast_node optcond_type = PKL_AST_TYPE (elem_optcond);
@@ -1353,7 +1419,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
           break;
         }
 
-      PKL_PASS_RESTART = restart;
+      PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
     }
 
   if (elem_label)

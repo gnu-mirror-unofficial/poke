@@ -399,7 +399,8 @@ load_module (struct pkl_parser *parser,
 %type <ast> struct_type_specifier
 %type <integer> struct_type_pinned integral_type_sign struct_or_union builtin endianness
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
-%type <ast> struct_type_field_constraint struct_type_field_label struct_type_field_optcond
+%type <ast> struct_type_field_constraint_or_init struct_type_field_label
+%type <ast> struct_type_field_optcond
 %type <ast> declaration
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
 %type <ast> comp_stmt stmt_decl_list stmt print_stmt_arg_list
@@ -1369,10 +1370,53 @@ struct_type_field:
                         }
                     }
                 }
-          struct_type_field_constraint struct_type_field_label struct_type_field_optcond ';'
+          struct_type_field_constraint_or_init struct_type_field_label
+          struct_type_field_optcond ';'
           	{
+                  pkl_ast_node constraint = NULL;
+                  pkl_ast_node initializer = NULL;
+
+                  if ($5 && PKL_AST_EXP_FLAG ($5))
+                    {
+                      pkl_ast_node field_decl, field_var;
+                      int back, over;
+
+                      /* We need a field name.  */
+                      if ($3 == NULL)
+                        {
+                          pkl_error (pkl_parser->compiler, pkl_parser->ast, @$,
+                                     "no initializer allowed in anonymous field");
+                          YYERROR;
+                        }
+
+                      initializer = $5;
+                      
+                      /* Build a constraint derived from the
+                         initializer.  */
+                      field_decl = pkl_env_lookup (pkl_parser->env,
+                                                   PKL_ENV_NS_MAIN,
+                                                   PKL_AST_IDENTIFIER_POINTER ($3),
+                                                   &back, &over);
+                      assert (field_decl);
+
+                      field_var = pkl_ast_make_var (pkl_parser->ast,
+                                                    $3,
+                                                    field_decl,
+                                                    back, over);
+                      PKL_AST_LOC (field_var) = PKL_AST_LOC (initializer);
+                      
+                      constraint = pkl_ast_make_binary_exp (pkl_parser->ast,
+                                                            PKL_AST_OP_EQ,
+                                                            field_var,
+                                                            initializer);
+                      PKL_AST_LOC (constraint) = PKL_AST_LOC (initializer);
+                    }
+                  else
+                    constraint = $5;
+
                   $$ = pkl_ast_make_struct_type_field (pkl_parser->ast, $3, $2,
-                                                       $5, $6, $1, $7);
+                                                       constraint, initializer,
+                                                       $6, $1, $7);
                   PKL_AST_LOC ($$) = @$;
 
                   /* If endianness is empty, bison includes the blank
@@ -1412,7 +1456,7 @@ struct_type_field_label:
                 }
 	;
 
-struct_type_field_constraint:
+struct_type_field_constraint_or_init:
 	  %empty
 		{
                   $$ = NULL;
@@ -1420,6 +1464,14 @@ struct_type_field_constraint:
           | ':' expression
           	{
                   $$ = $2;
+                  PKL_AST_LOC ($$) = @$;
+                }
+	  | '=' expression
+          	{
+                  $$ = $2;
+                  /* Use use the flag to distinguish between
+                     constraint and initializer.  */
+                  PKL_AST_EXP_FLAG ($$) = 1;
                   PKL_AST_LOC ($$) = @$;
                 }
           ;

@@ -944,6 +944,7 @@
         .label .got_value
  .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field);
  .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
+ .c   pkl_ast_node field_initializer = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (field);
  .c   if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
@@ -966,9 +967,18 @@
         ;; per trans.
         srefnt                 ; ... SCT ENAME EVAL
         ;; If the value is not-null, use it.  Otherwise, use the value
-        ;; obtained by subpassing in the value's type.
+        ;; obtained by subpassing in the value's type, or the field's
+        ;; initializer.
         bnn .got_value         ; ... SCT ENAME null
-        .c PKL_PASS_SUBPASS (field_type);
+        .c if (field_initializer)
+        .c {
+        drop
+        .c   PKL_GEN_PAYLOAD->in_constructor = 0;
+        .c   PKL_PASS_SUBPASS (field_initializer);
+        .c   PKL_GEN_PAYLOAD->in_constructor = 1;
+        .c }
+        .c else
+        .c   PKL_PASS_SUBPASS (field_type);
                                ; ... SCT ENAME EVAL
 .got_value:
         ;; If the field type is an array, emit a cast here so array

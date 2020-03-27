@@ -435,8 +435,10 @@ pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,
    The supported operators are specified in pkl-ops.def.
    The supported attributes are defined in pkl-attrs.def.
 
-   In PKL_AST_OP_ATTR exprssions, ATTR contains the code for the
+   In PKL_AST_OP_ATTR expressions, ATTR contains the code for the
    invoked attribute.
+
+   FLAG is used for several purposes.
 
    There are two constructors for this node type: one for unary
    expressions, another for binary expressions.  */
@@ -444,7 +446,8 @@ pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,
 #define PKL_AST_EXP_CODE(AST) ((AST)->exp.code)
 #define PKL_AST_EXP_ATTR(AST) ((AST)->exp.attr)
 #define PKL_AST_EXP_NUMOPS(AST) ((AST)->exp.numops)
-#define PKL_AST_EXP_OPERAND(AST, I) ((AST)->exp.operands[(I)])
+#define PKL_AST_EXP_OPERAND(AST,I) ((AST)->exp.operands[(I)])
+#define PKL_AST_EXP_FLAG(AST) ((AST)->exp.flag)
 
 struct pkl_ast_exp
 {
@@ -454,6 +457,7 @@ struct pkl_ast_exp
   enum pkl_ast_attr attr;
   uint8_t numops : 8;
   union pkl_ast_node *operands[2];
+  int flag;
 };
 
 pkl_ast_node pkl_ast_make_unary_exp (pkl_ast ast,
@@ -719,7 +723,12 @@ pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
    to/from the field.
 
    OPTCOND is a boolean expression that, if present, specifies whether
-   the field exists in the struct or not.  */
+   the field exists in the struct or not.
+
+   INITIALIZER is an expression, that will be used to derive an
+   implicit constraint, and also as the initialization value for this
+   field when constructing structs.  If no initializer is provided in
+   the struct field definition this is NULL.  */
 
 #define PKL_AST_STRUCT_TYPE_FIELD_NAME(AST) ((AST)->sct_type_elem.name)
 #define PKL_AST_STRUCT_TYPE_FIELD_TYPE(AST) ((AST)->sct_type_elem.type)
@@ -727,6 +736,7 @@ pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
 #define PKL_AST_STRUCT_TYPE_FIELD_LABEL(AST) ((AST)->sct_type_elem.label)
 #define PKL_AST_STRUCT_TYPE_FIELD_ENDIAN(AST) ((AST)->sct_type_elem.endian)
 #define PKL_AST_STRUCT_TYPE_FIELD_OPTCOND(AST) ((AST)->sct_type_elem.optcond)
+#define PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER(AST) ((AST)->sct_type_elem.initializer)
 
 struct pkl_ast_struct_type_field
 {
@@ -735,6 +745,7 @@ struct pkl_ast_struct_type_field
   union pkl_ast_node *name;
   union pkl_ast_node *type;
   union pkl_ast_node *constraint;
+  union pkl_ast_node *initializer;
   union pkl_ast_node *label;
   union pkl_ast_node *optcond;
   int endian;
@@ -744,6 +755,7 @@ pkl_ast_node pkl_ast_make_struct_type_field (pkl_ast ast,
                                              pkl_ast_node name,
                                              pkl_ast_node type,
                                              pkl_ast_node constraint,
+                                             pkl_ast_node initializer,
                                              pkl_ast_node label,
                                              int endian,
                                              pkl_ast_node optcond);

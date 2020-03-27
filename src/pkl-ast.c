@@ -448,6 +448,7 @@ pkl_ast_make_struct_type_field (pkl_ast ast,
                                 pkl_ast_node name,
                                 pkl_ast_node type,
                                 pkl_ast_node constraint,
+                                pkl_ast_node initializer,
                                 pkl_ast_node label,
                                 int endian,
                                 pkl_ast_node optcond)
@@ -468,6 +469,9 @@ pkl_ast_make_struct_type_field (pkl_ast ast,
   if (optcond)
     PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (struct_type_elem)
       = ASTREF (optcond);
+  if (initializer)
+    PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (struct_type_elem)
+      = ASTREF (initializer);
 
   PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (struct_type_elem)
     = endian;
@@ -552,6 +556,7 @@ pkl_ast_dup_type (pkl_ast_node type)
           pkl_ast_node struct_type_elem_name;
           pkl_ast_node struct_type_elem_type;
           pkl_ast_node struct_type_elem_constraint;
+          pkl_ast_node struct_type_elem_initializer;
           pkl_ast_node struct_type_elem_label;
           pkl_ast_node new_struct_type_elem_name;
           pkl_ast_node struct_type_elem;
@@ -566,6 +571,7 @@ pkl_ast_dup_type (pkl_ast_node type)
           struct_type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
           struct_type_elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
           struct_type_elem_constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (t);
+          struct_type_elem_initializer = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (t);
           struct_type_elem_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (t);
           struct_type_elem_endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (t);
           struct_type_elem_optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t);
@@ -580,6 +586,7 @@ pkl_ast_dup_type (pkl_ast_node type)
                                               new_struct_type_elem_name,
                                               pkl_ast_dup_type (struct_type_elem_type),
                                               struct_type_elem_constraint,
+                                              struct_type_elem_initializer,
                                               struct_type_elem_label,
                                               struct_type_elem_endian,
                                               struct_type_elem_optcond);
@@ -1878,6 +1885,7 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_NAME (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_TYPE (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (ast));
+      pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_LABEL (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (ast));
       break;
@@ -2649,6 +2657,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (name, STRUCT_TYPE_FIELD_NAME);
       PRINT_AST_SUBAST (type, STRUCT_TYPE_FIELD_TYPE);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_CONSTRAINT);
+      PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_INITIALIZER);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_LABEL);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_OPTCOND);
       PRINT_AST_IMM (endian, STRUCT_TYPE_FIELD_ENDIAN, "%d");

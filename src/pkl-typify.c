@@ -1190,6 +1190,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
                                           PKL_AST_STRUCT_FIELD_NAME (t),
                                           PKL_AST_TYPE (t),
                                           NULL /* constraint */,
+                                          NULL /* initializer */,
                                           NULL /* label */,
                                           PKL_AST_ENDIAN_DFL /* endian */,
                                           NULL /* optcond */);
@@ -2261,6 +2262,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
   pkl_ast_node elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
   pkl_ast_node elem_constraint
     = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem);
+  pkl_ast_node elem_initializer
+    = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem);
   pkl_ast_node elem_optcond
     = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem);
   pkl_ast_node elem_label
@@ -2317,6 +2320,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
         }
 
       ASTREF (bool_type); pkl_ast_node_free (bool_type);
+    }
+
+  /* If specified, the type of the initializer of a struct field
+     should be promoteable to the type of the field.  */
+  if (elem_initializer)
+    {
+      pkl_ast_node field_type
+        = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
+      pkl_ast_node initializer_type
+        = PKL_AST_TYPE (elem_initializer);
+      
+      if (!pkl_ast_type_promoteable (initializer_type, field_type,
+                                     0 /* promote_array_of_any */))
+        {
+          char *field_type_str = pkl_type_str (field_type, 1);
+          char *initializer_type_str = pkl_type_str (initializer_type, 1);
+          
+          PKL_ERROR (PKL_AST_LOC (elem_initializer),
+                     "invalid initializer\n\
+expected %s, got %s",
+                     field_type_str, initializer_type_str);
+          free (field_type_str);
+          free (initializer_type_str);
+
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
     }
 
   /* If specified, the label of a struct elem should be promoteable to
