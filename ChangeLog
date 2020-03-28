@@ -1,5 +1,9 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/Makefile.am: the .pkc files depend on pkl-insn.def.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/field-init-8.pk: New test.
 
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
