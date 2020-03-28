@@ -97,7 +97,7 @@ deftype CTF_Type_Id =
 deftype CTF_Preamble =
   struct
   {
-    uint<16> ctp_magic : ctp_magic == CTF_MAGIC;
+    uint<16> ctp_magic = CTF_MAGIC;
     byte ctp_version;
     byte ctp_flags;
   };
