@@ -257,26 +257,30 @@ banner (void)
       pk_puts ("\n");
 
 #if HAVE_HSERVER
-      pk_printf ("hserver listening in port %d.\n",
-                 pk_hserver_port ());
-      pk_puts ("\n");
+      if (poke_hserver_p)
+        {
+          pk_printf ("hserver listening in port %d.\n",
+                     pk_hserver_port ());
+          pk_puts ("\n");
+        }
 #endif
 
 #if HAVE_HSERVER
-      {
-        char *help_hyperlink
-          = pk_hserver_make_hyperlink ('e', ".help");
-
-        pk_puts (_("For help, type \""));
-        pk_term_hyperlink (help_hyperlink, NULL);
-        pk_puts (".help");
-        pk_term_end_hyperlink ();
-        pk_puts ("\".\n");
-        free (help_hyperlink);
-      }
-#else
-      pk_puts (_("For help, type \".help\".\n"));
+      if (poke_hserver_p)
+        {
+          char *help_hyperlink
+            = pk_hserver_make_hyperlink ('e', ".help");
+          
+          pk_puts (_("For help, type \""));
+          pk_term_hyperlink (help_hyperlink, NULL);
+          pk_puts (".help");
+          pk_term_end_hyperlink ();
+          pk_puts ("\".\n");
+          free (help_hyperlink);
+        }
+      else
 #endif
+      pk_puts (_("For help, type \".help\".\n"));
       pk_puts (_("Type \".exit\" to leave the program.\n"));
     }
 

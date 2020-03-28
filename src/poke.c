@@ -45,6 +45,12 @@
 
 int poke_interactive_p;
 
+#if HAVE_HSERVER
+/* The following global indicates whether the hyperserver is activated
+   or not.  */
+int poke_hserver_p;
+#endif
+
 /* The following global indicates whether poke should be as terse as
    possible in its output.  This is useful when running poke from
    other programs.  */
@@ -223,7 +229,7 @@ static void
 finalize ()
 {
 #ifdef HAVE_HSERVER
-  if (poke_interactive_p && pk_term_color_p ())
+  if (poke_hserver_p)
     pk_hserver_shutdown ();
 #endif
   ios_shutdown ();
@@ -411,8 +417,10 @@ initialize (int argc, char *argv[])
   ios_init ();
 
 #ifdef HAVE_HSERVER
+  poke_hserver_p = poke_interactive_p && pk_term_color_p ();
+  
   /* Initialize and start the terminal hyperlinks server.  */
-  if (poke_interactive_p && pk_term_color_p ())
+  if (poke_hserver_p)
     pk_hserver_init ();
 #endif
 }

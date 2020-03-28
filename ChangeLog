@@ -1,5 +1,14 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/poke.h: New extern for poke_hserver_p.
+	* src/poke.c: New global poke_hserver_p.
+	(initialize): Initialize poke_hserver_p.
+	(finalize): Use poke_hserver_p.
+	* src/pk-repl.c (banner): Print `hserver listening..' only if the
+	hyperserver is used.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (Loop Statements): New subsection.
 
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
