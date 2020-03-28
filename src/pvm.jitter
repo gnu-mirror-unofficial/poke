@@ -488,7 +488,6 @@ printer-c
     void
     pvm_literal_printer (FILE *out, jitter_uint val)
     {
-      /* XXX what about out.  */
       fflush (out);
       pvm_print_val ((pvm_val) val, poke_obase, 0);
       pk_term_flush ();
@@ -598,7 +597,6 @@ state-initialization-c
       jitter_state_backing->canary = NULL;
       jitter_state_backing->exit_code = PVM_EXIT_OK;
       jitter_state_backing->result_value = PVM_NULL;
-      /* XXX: are these reasonable defaults? */
       jitter_state_runtime->endian = IOS_ENDIAN_MSB;
       jitter_state_runtime->nenc = IOS_NENC_2;
       jitter_state_runtime->pretty_print = 0;
@@ -3324,7 +3322,7 @@ instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
         || PVM_VAL_ULONG (from) > PVM_VAL_ULONG (to))
         PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 
-    s = pvm_alloc (slen + 1); /* XX XGC */
+    s = pvm_alloc (slen + 1);
     strncpy (s,
              PVM_VAL_STR (str) + PVM_VAL_ULONG (from),
              slen);

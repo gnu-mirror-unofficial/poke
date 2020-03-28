@@ -18,8 +18,6 @@
 
 #include <config.h>
 #include <assert.h>
-/* XXX to remove */
-#include <stdio.h>
 #include <string.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
@@ -43,10 +41,7 @@ print_var_decl (pkl_ast_node decl, void *data)
   pvm_env runtime_env = pvm_get_env (poke_vm);
   pkl_ast_node tmp;
 
-  /* XXX this is not needed.  */
-  if (PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR)
-    return;
-
+  assert (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_VAR);
   tmp = pkl_env_lookup (compiler_env,
                         PKL_ENV_NS_MAIN,
                         PKL_AST_IDENTIFIER_POINTER (decl_name),
@@ -59,8 +54,7 @@ print_var_decl (pkl_ast_node decl, void *data)
   /* Print the name and the current value of the variable.  */
   pk_puts (PKL_AST_IDENTIFIER_POINTER (decl_name));
   pk_puts ("\t\t");
-  /* XXX: support different bases with a /[xbo] cmd flag.  */
-  pvm_print_val (val, 10, 0);
+  pvm_print_val (val, poke_obase, 0);
   pk_puts ("\t\t");
 
   /* Print information about the site where the variable was

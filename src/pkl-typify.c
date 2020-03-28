@@ -1311,8 +1311,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
         }
     }
 
-  /* XXX if named arguments are used, the vararg cannot be specified,
-     so it will always be empty and this warning applies.  */
+  /* If named arguments are used, the vararg cannot be specified, so
+     it will always be empty and this check applies.  */
   if (!vararg
       && (PKL_AST_FUNCALL_NARG (funcall) >
           PKL_AST_TYPE_F_NARG (funcall_function_type)))
@@ -1805,10 +1805,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_var)
   pkl_ast_node decl = PKL_AST_VAR_DECL (var);
   pkl_ast_node initial = PKL_AST_DECL_INITIAL (decl);
 
-  /* XXX: change to an ICE.  */
-  /* XXX: for recursive functions, the type of `initial' has not been
-     determined yet.  */
-  assert (PKL_AST_TYPE (initial) != NULL);
+  if (PKL_AST_TYPE (initial) == NULL)
+    {
+      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (initial),
+               "the type of a variable initial is unknownx");
+      PKL_PASS_ERROR;
+    }
   PKL_AST_TYPE (var) = ASTREF (PKL_AST_TYPE (initial));
 }
 PKL_PHASE_END_HANDLER

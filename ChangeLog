@@ -1,5 +1,11 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-typify.c (pkl_typify1_ps_var): Turn assert into ICE.
+	* src/pk-def.c: Do not include stdio.h.
+	(print_var_decl): Pass poke_obase to pvm_print_val.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_op_in): Remove unneeded check.
 	* testsuite/poke.pkl/in-4.pk: Renamed from in-diag-4.pk and
 	adapted.
