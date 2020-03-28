@@ -1,5 +1,9 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/field-init-8.pk: New test.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/ctf.pk (CTF_Preamble): Use field initialization.
 
 2020-03-27  Jose E. Marchesi  <jemarch@gnu.org>
