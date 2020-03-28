@@ -743,9 +743,61 @@ Loop statements are represented with trees like::
       +-- [condition]
       +-- body
 
-Note how the ``iterator`` is optional.  When not specified, the
-``loop_stmt`` node represents a "while" statement.  When it is
-specified, the node represents a "for-in" statement.
+Different kind of loop statements supported in Poke are represented
+including or not including optional fields.
+
+``while`` statements with a condition::
+
+  while (CONDITION) BODY
+
+are represented as::
+
+  loop_stmt
+      |
+      +-- condition
+      +-- body
+
+``while`` statements without a condition::
+
+  while () BODY
+
+are represented as::
+
+  loop_stmt
+      |
+      +-- body
+
+``for-in`` statements::
+
+  for (VAR in CONTAINER) BODY
+
+are represented as::
+
+  loop_stmt
+      |
+      +-- iterator
+      |      |
+      |      +-- decl (VAR
+      |      +-- container
+      |
+      +-- body
+
+``for-in-where`` statements::
+
+  for (VAR in CONTAINER where SELECTOR) BODY
+
+are represented as::
+
+  loop_stmt
+      |
+      +-- iterator
+      |      |
+      |      +-- decl (VAR)
+      |      +-- container
+      |
+      +-- condition (SELECTOR)
+      +-- body
+
 
 Compiler Passes and Phases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
