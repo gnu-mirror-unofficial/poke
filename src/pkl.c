@@ -90,7 +90,6 @@ pkl_new ()
     free (poke_rt_pk);
 
     compiler->bootstrapped = 1;
-    /* XXX: disable compiler built-ins from this point on.  */
   }
 
   return compiler;
