@@ -56,7 +56,6 @@ struct pkl_compiler
   int bootstrapped;
   int compiling;
   int error_on_warning;
-  /* XXX: put a link to the run-time top-level closure here.  */
 };
 
 pkl_compiler
@@ -179,9 +178,6 @@ rest_of_compilation (pkl_compiler compiler,
   pkl_trans_init_payload (&trans4_payload);
   pkl_gen_init_payload (&gen_payload, compiler);
 
-  /* XXX */
-  /* pkl_ast_print (stdout, ast->ast); */
-
   if (!pkl_do_pass (poke_compiler, ast,
                     frontend_phases, frontend_payloads, PKL_PASS_F_TYPES))
     goto error;
@@ -196,9 +192,6 @@ rest_of_compilation (pkl_compiler compiler,
       || typify2_payload.errors > 0)
     goto error;
 
-  /* XXX */
-  /* pkl_ast_print (stdout, ast->ast); */
-
   if (!pkl_do_pass (poke_compiler, ast,
                     middleend_phases, middleend_payloads, PKL_PASS_F_TYPES))
     goto error;
@@ -207,9 +200,6 @@ rest_of_compilation (pkl_compiler compiler,
       || fold_payload.errors > 0
       || analf_payload.errors > 0)
     goto error;
-
-  /* XXX */
-  /* pkl_ast_print (stdout, ast->ast); */
 
   if (!pkl_do_pass (poke_compiler, ast,
                     backend_phases, backend_payloads, 0))
@@ -261,8 +251,6 @@ pkl_compile_buffer (pkl_compiler compiler,
     goto error;
 
   jitter_routine_make_executable_if_needed (routine);
-  /* XXX */
-  /* pvm_routine_print (stdout, routine); */
 
   /* Execute the routine in the poke vm.  */
   {
@@ -319,8 +307,6 @@ pkl_compile_statement (pkl_compiler compiler,
     goto error;
 
   jitter_routine_make_executable_if_needed (routine);
-  /* XXX */
-  /* pvm_routine_print (stdout, routine); */
 
   /* Execute the routine in the poke vm.  */
   if (pvm_run (poke_vm, routine, val) != PVM_EXIT_OK)
@@ -367,8 +353,7 @@ pkl_compile_expression (pkl_compiler compiler,
   pkl_env_free (compiler->env);
   compiler->env = env;
   jitter_routine_make_executable_if_needed (routine);
-  /* XXX */
-  /* pvm_routine_print (stdout, routine); */
+
   return routine;
 
  error:
@@ -417,8 +402,6 @@ pkl_compile_file (pkl_compiler compiler, const char *fname)
     goto error;
 
   jitter_routine_make_executable_if_needed (routine);
-  /* XXX */
-  /* pvm_routine_print (stdout, routine); */
   fclose (fd);
 
   /* Execute the routine in the poke vm.  */
