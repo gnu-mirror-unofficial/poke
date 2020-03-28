@@ -42,8 +42,7 @@
 ;;; EBOUND and SBOUND.
 ;;;
 ;;; If both EBOUND and SBOUND are null, then perform an unbounded map,
-;;; i.e. read array elements from IO until EOF.  XXX: what about empty
-;;; arrays?
+;;; i.e. read array elements from IO until EOF.
 ;;;
 ;;; Otherwise, if EBOUND is not null, then perform a map bounded by the
 ;;; given number of elements.  If EOF is encountered before the given
