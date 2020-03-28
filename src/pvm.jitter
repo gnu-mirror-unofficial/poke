@@ -3785,7 +3785,14 @@ end
 
 ## Offset instructions
 
-instruction mko () # ( EXP ULONG -- OFF )
+# Instruction: mko
+#
+# Given an integral magnitude VAL and an unit expressed in an ULONG,
+# make an offset value and push it to the main stack.
+#
+# Stack: ( VAL ULONG -- OFF )
+
+instruction mko ()
   code
    pvm_val res = pvm_make_offset (JITTER_UNDER_TOP_STACK (),
                                   JITTER_TOP_STACK ());
@@ -3794,13 +3801,26 @@ instruction mko () # ( EXP ULONG -- OFF )
   end
 end
 
-instruction ogetm () # ( OFF -- OFF (INT|LONG|UINT|ULONG) )
+# Instruction: ogetm
+#
+# Given an offset OFF, push its magnitude to the main stack.
+#
+# Stack: ( OFF -- OFF VAL )
+
+instruction ogetm ()
   code
    JITTER_PUSH_STACK (PVM_VAL_OFF_MAGNITUDE (JITTER_TOP_STACK ()));
   end
 end
 
-instruction osetm () # ( OFF (INT|LONG|UINT|ULONG) -- OFF )
+# Instruction: osetm
+#
+# Given an offset OFF and an integral value VAL, make it the
+# offset's magnitude.
+#
+# Stack: ( OFF VAL -- OFF )
+
+instruction osetm ()
   code
    PVM_VAL_OFF_MAGNITUDE (JITTER_UNDER_TOP_STACK ())
     =  JITTER_TOP_STACK ();
@@ -3808,20 +3828,31 @@ instruction osetm () # ( OFF (INT|LONG|UINT|ULONG) -- OFF )
   end
 end
 
-instruction ogetu () # ( OFF -- OFF ULONG )
+# Instruction: ogetu
+#
+# Given an offset OFF, push its unit to the main stack.
+#
+# Stack: ( OFF -- OFF ULONG )
+
+instruction ogetu ()
   code
     JITTER_PUSH_STACK (PVM_VAL_OFF_UNIT (JITTER_TOP_STACK ()));
   end
 end
 
-instruction ogetbt () # ( OFF -- OFF BT )
+# Instruction: ogetbt
+#
+# Given an offset OFF, push its base type to the main stack.
+#
+# Stack: ( OFF -- OFF TYP )
+
+instruction ogetbt ()
   code
     JITTER_PUSH_STACK (PVM_VAL_OFF_BASE_TYPE (JITTER_TOP_STACK ()));
   end
 end
 
 
-
 ## Instructions to handle mapped values.
 
 instruction mgeto () # ( VAL -- VAL OFF )
