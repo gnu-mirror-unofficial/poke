@@ -687,17 +687,27 @@ PKL_PHASE_END_HANDLER
 
 /*
  * LOOP_STMT
- * | CONDITION
+ * | PARAMS
  * | BODY
  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_loop_stmt)
 {
   pkl_ast_node loop_stmt = PKL_PASS_NODE;
-  pkl_ast_node condition = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
-  pkl_ast_node iterator = PKL_AST_LOOP_STMT_ITERATOR (loop_stmt);
-  pkl_ast_node container = PKL_AST_LOOP_STMT_CONTAINER (loop_stmt);
+  pkl_ast_node loop_stmt_iterator
+    = PKL_AST_LOOP_STMT_ITERATOR (loop_stmt);
+  pkl_ast_node condition
+    = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
   pkl_ast_node body = PKL_AST_LOOP_STMT_BODY (loop_stmt);
+
+  pkl_ast_node iterator = NULL;
+  pkl_ast_node container = NULL;
+
+  if (loop_stmt_iterator)
+    {
+      iterator = PKL_AST_LOOP_STMT_ITERATOR_DECL (loop_stmt_iterator);
+      container = PKL_AST_LOOP_STMT_ITERATOR_CONTAINER (loop_stmt_iterator);
+    }
 
   if (condition && !iterator  && !container)
     {

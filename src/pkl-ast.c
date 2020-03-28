@@ -1592,25 +1592,43 @@ pkl_ast_make_if_stmt (pkl_ast ast, pkl_ast_node exp,
 /* Build and return an AST node for a loop statement.  */
 
 pkl_ast_node
-pkl_ast_make_loop_stmt (pkl_ast ast, pkl_ast_node condition,
-                        pkl_ast_node iterator, pkl_ast_node container,
-                        pkl_ast_node body)
+pkl_ast_make_loop_stmt (pkl_ast ast, pkl_ast_node iterator,
+                        pkl_ast_node condition, pkl_ast_node body)
 {
   pkl_ast_node loop_stmt
     = pkl_ast_make_node (ast, PKL_AST_LOOP_STMT);
 
   assert (body);
 
-  if (condition)
-    PKL_AST_LOOP_STMT_CONDITION (loop_stmt) = ASTREF (condition);
   if (iterator)
-    PKL_AST_LOOP_STMT_ITERATOR (loop_stmt) = ASTREF (iterator);
-  if (container)
-    PKL_AST_LOOP_STMT_CONTAINER (loop_stmt) = ASTREF (container);
-
+    PKL_AST_LOOP_STMT_ITERATOR (loop_stmt)
+      = ASTREF (iterator);
+  if (condition)
+    PKL_AST_LOOP_STMT_CONDITION (loop_stmt)
+      = ASTREF (condition);
   PKL_AST_LOOP_STMT_BODY (loop_stmt) = ASTREF (body);
 
   return loop_stmt;
+}
+
+/* Build and return an AST node for the iterator of a loop
+   statement.  */
+
+pkl_ast_node
+pkl_ast_make_loop_stmt_iterator (pkl_ast ast, pkl_ast_node decl,
+                                 pkl_ast_node container)
+{
+  pkl_ast_node loop_stmt_iterator
+    = pkl_ast_make_node (ast, PKL_AST_LOOP_STMT_ITERATOR);
+
+  assert (decl && container);
+
+  PKL_AST_LOOP_STMT_ITERATOR_DECL (loop_stmt_iterator)
+    = ASTREF (decl);
+  PKL_AST_LOOP_STMT_ITERATOR_CONTAINER (loop_stmt_iterator)
+    = ASTREF (container);
+
+  return loop_stmt_iterator;
 }
 
 /* Build and return an AST node for a return statement.  */
@@ -2063,11 +2081,17 @@ pkl_ast_node_free (pkl_ast_node ast)
 
     case PKL_AST_LOOP_STMT:
 
-      pkl_ast_node_free (PKL_AST_LOOP_STMT_CONDITION (ast));
       pkl_ast_node_free (PKL_AST_LOOP_STMT_ITERATOR (ast));
-      pkl_ast_node_free (PKL_AST_LOOP_STMT_CONTAINER (ast));
+      pkl_ast_node_free (PKL_AST_LOOP_STMT_CONDITION (ast));
       pkl_ast_node_free (PKL_AST_LOOP_STMT_BODY (ast));
 
+      break;
+
+    case PKL_AST_LOOP_STMT_ITERATOR:
+
+      pkl_ast_node_free (PKL_AST_LOOP_STMT_ITERATOR_DECL (ast));
+      pkl_ast_node_free (PKL_AST_LOOP_STMT_ITERATOR_CONTAINER (ast));
+      
       break;
 
     case PKL_AST_RETURN_STMT:
@@ -2238,6 +2262,7 @@ pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
     case PKL_AST_DECL:
     case PKL_AST_RETURN_STMT:
     case PKL_AST_LOOP_STMT:
+    case PKL_AST_LOOP_STMT_ITERATOR:
     case PKL_AST_EXP_STMT:
     case PKL_AST_ASS_STMT:
     case PKL_AST_PRINT_STMT:
@@ -2298,14 +2323,16 @@ pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
                                   nframes, ndrops);
       break;
     case PKL_AST_LOOP_STMT:
-      if (PKL_AST_LOOP_STMT_CONTAINER (stmt))
-        *ndrops += 3;
-      pkl_ast_finish_returns_1 (function,
-                                PKL_AST_LOOP_STMT_BODY (stmt),
-                                nframes, ndrops);
-      if (PKL_AST_LOOP_STMT_CONTAINER (stmt))
-        *ndrops -= 3;
-      break;
+      {
+        if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
+          *ndrops += 3;
+        pkl_ast_finish_returns_1 (function,
+                                  PKL_AST_LOOP_STMT_BODY (stmt),
+                                  nframes, ndrops);
+        if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
+          *ndrops -= 3;
+        break;
+      }
     case PKL_AST_TRY_CATCH_STMT:
       pkl_ast_finish_returns_1 (function,
                                 PKL_AST_TRY_CATCH_STMT_CODE (stmt),
@@ -2829,10 +2856,17 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       IPRINTF ("LOOP_STMT::\n");
 
       PRINT_COMMON_FIELDS;
-      PRINT_AST_SUBAST (condition, LOOP_STMT_CONDITION);
       PRINT_AST_SUBAST (iterator, LOOP_STMT_ITERATOR);
-      PRINT_AST_SUBAST (container, LOOP_STMT_CONTAINER);
+      PRINT_AST_SUBAST (condition, LOOP_STMT_CONDITION);
       PRINT_AST_SUBAST (body, LOOP_STMT_BODY);
+      break;
+
+    case PKL_AST_LOOP_STMT_ITERATOR:
+      IPRINTF ("LOOP_STMT_ITERATOR::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_SUBAST (decl, LOOP_STMT_ITERATOR_DECL);
+      PRINT_AST_SUBAST (container, LOOP_STMT_ITERATOR_CONTAINER);
       break;
 
     case PKL_AST_RETURN_STMT:

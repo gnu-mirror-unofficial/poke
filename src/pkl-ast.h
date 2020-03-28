@@ -75,6 +75,7 @@ enum pkl_ast_code
   PKL_AST_ASS_STMT,
   PKL_AST_IF_STMT,
   PKL_AST_LOOP_STMT,
+  PKL_AST_LOOP_STMT_ITERATOR,
   PKL_AST_RETURN_STMT,
   PKL_AST_EXP_STMT,
   PKL_AST_TRY_CATCH_STMT,
@@ -1328,6 +1329,8 @@ pkl_ast_node pkl_ast_make_if_stmt (pkl_ast ast,
 
 /* PKL_AST_LOOP_STMT nodes represent iterative statements.
 
+   ITERATOR is a PKL_AST_LOOP_STMT_ITERATOR node, or NULL.
+
    CONDITION is an expression that should evaluate to a boolean, that
    is evaluated at the beginning of the loop.  If it evals to false,
    the loop is exited.  This is used in WHILE, FOR-IN and FOR-IN-WHERE
@@ -1335,38 +1338,49 @@ pkl_ast_node pkl_ast_make_if_stmt (pkl_ast ast,
    available in the scope where CONDITION is evaluated, and CONDITION
    determines whether BODY is executed in the current iteration.
 
-   ITERATOR is a declaration for a variable created in a new lexical
-   scope.
-
-   CONTAINER is an expression that evaluates to an array.  This is
-   used in FOR-IN and FOR-IN-HWERE loops.
-
-   SELECTOR is an expression that should evaluate to a boolean.  It is
-   evaluated at the beginning of the loop, and determines whether the
-   BODY is executed for the current iterator.
-
    BODY is a statement, which is the body of the loop.  */
 
-#define PKL_AST_LOOP_STMT_CONDITION(AST) ((AST)->loop_stmt.condition)
 #define PKL_AST_LOOP_STMT_ITERATOR(AST) ((AST)->loop_stmt.iterator)
-#define PKL_AST_LOOP_STMT_CONTAINER(AST) ((AST)->loop_stmt.container)
+#define PKL_AST_LOOP_STMT_CONDITION(AST) ((AST)->loop_stmt.condition)
 #define PKL_AST_LOOP_STMT_BODY(AST) ((AST)->loop_stmt.body)
 
 struct pkl_ast_loop_stmt
 {
   struct pkl_ast_common COMMON;
 
-  union pkl_ast_node *condition;
   union pkl_ast_node *iterator;
-  union pkl_ast_node *container;
+  union pkl_ast_node *condition;
   union pkl_ast_node *body;
 };
 
 pkl_ast_node pkl_ast_make_loop_stmt (pkl_ast ast,
-                                     pkl_ast_node condition,
                                      pkl_ast_node iterator,
-                                     pkl_ast_node container,
+                                     pkl_ast_node condition,
                                      pkl_ast_node body);
+
+/* PKL_AST_LOOP_STMT_ITERATOR nodes represent an iterator in a loop
+   statement.
+
+   DECL is a declaration for a variable created in a new lexical
+   scope.
+
+   CONTAINER is an expression that evaluates to an array.  This is
+   used in FOR-IN and FOR-IN-HWERE loops.  */
+
+#define PKL_AST_LOOP_STMT_ITERATOR_DECL(AST) ((AST)->loop_stmt_iterator.decl)
+#define PKL_AST_LOOP_STMT_ITERATOR_CONTAINER(AST) ((AST)->loop_stmt_iterator.container)
+
+struct pkl_ast_loop_stmt_iterator
+{
+  struct pkl_ast_common COMMON;
+
+  union pkl_ast_node *decl;
+  union pkl_ast_node *container;
+};
+
+pkl_ast_node pkl_ast_make_loop_stmt_iterator (pkl_ast ast,
+                                              pkl_ast_node decl,
+                                              pkl_ast_node container);
 
 /* PKL_AST_RETURN_STMT nodes represent return statements.
 
@@ -1651,6 +1665,7 @@ union pkl_ast_node
   struct pkl_ast_ass_stmt ass_stmt;
   struct pkl_ast_if_stmt if_stmt;
   struct pkl_ast_loop_stmt loop_stmt;
+  struct pkl_ast_loop_stmt_iterator loop_stmt_iterator;
   struct pkl_ast_return_stmt return_stmt;
   struct pkl_ast_exp_stmt exp_stmt;
   struct pkl_ast_try_catch_stmt try_catch_stmt;

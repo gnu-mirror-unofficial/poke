@@ -1,5 +1,25 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	BZ 25395
+	* src/pkl-ast.h (enum pkl_ast_code): New value
+	PKL_AST_LOOP_STMT_ITERATOR.
+	(struct pkl_ast_loop_stmt_iterator): Define.
+	(PKL_AST_LOOP_STMT_ITERATOR_DECL): Define.
+	(PKL_AST_LOOP_STMT_ITERATOR_CONTAINER): Likewise.
+	(PKL_AST_LOOP_STMT_ITERATOR): Likewise.
+	* src/pkl-ast.c (pkl_ast_make_loop_stmt_iterator): New function.
+	(pkl_ast_node_free): Update to new topology.
+	(pkl_ast_finish_breaks_1): Likewise.
+	(pkl_ast_finish_returns_1): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* src/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* src/pkl-gen.c (pkl_gen_pr_loop_stmt): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_loop_stmt_iterator): Renamed from
+	pkl_typify1_pr_loop_stmt.
+	* testsuite/poke.pkl/while-1.pk: New test.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/Makefile.am: the .pkc files depend on pkl-insn.def.
 
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>

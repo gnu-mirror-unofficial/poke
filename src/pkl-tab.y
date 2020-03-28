@@ -1720,9 +1720,8 @@ stmt:
 	| WHILE '(' expression ')' stmt
         	{
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
-                                               $3,   /* condition */
                                                NULL, /* iterator */
-                                               NULL, /* container */
+                                               $3,   /* condition */
                                                $5);  /* body */
                   PKL_AST_LOC ($$) = @$;
 
@@ -1756,10 +1755,15 @@ stmt:
                 }
 	  ')' stmt
         	{
+                  pkl_ast_node iterator
+                    = pkl_ast_make_loop_stmt_iterator (pkl_parser->ast,
+                                                       $<ast>7, /* decl */
+                                                       $5); /* container */
+                  PKL_AST_LOC (iterator) = @$;
+                  
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
+                                               iterator,
                                                NULL, /* condition */
-                                               $<ast>7, /* iterator */
-                                               $5,   /* container */
                                                $9);  /* body */
                   PKL_AST_LOC ($$) = @$;
 
@@ -1802,10 +1806,15 @@ stmt:
                 }
 	  WHERE expression ')' stmt
         	{
+                  pkl_ast_node iterator
+                    = pkl_ast_make_loop_stmt_iterator (pkl_parser->ast,
+                                                       $<ast>7, /* decl */
+                                                       $5); /* container */
+                  PKL_AST_LOC (iterator) = @$;
+
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
-                                               $9,   /* condition */
-                                               $<ast>7,   /* iterator */
-                                               $5,   /* container */
+                                               iterator,
+                                               $9, /* condition */
                                                $11); /* body */
                   PKL_AST_LOC ($3) = @3;
                   PKL_AST_LOC ($$) = @$;
