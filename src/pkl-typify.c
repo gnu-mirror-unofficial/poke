@@ -882,19 +882,6 @@ expected array");
       PKL_PASS_ERROR;
     }
 
-  /* XXX remove this check when all types support testing for
-     equality.  */
-  if (PKL_AST_TYPE_CODE (t1) != PKL_TYPE_INTEGRAL
-      && PKL_AST_TYPE_CODE (t1) != PKL_TYPE_STRING
-      && PKL_AST_TYPE_CODE (t1) != PKL_TYPE_OFFSET)
-    {
-      PKL_ERROR (PKL_AST_LOC (op2),
-                 "operator has the wrong type\n\
-it should support testing for equality");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
   if (!pkl_ast_type_promoteable (t1,
                                  PKL_AST_TYPE_A_ETYPE (t2),
                                  0 /* promote_array_of_any */))
