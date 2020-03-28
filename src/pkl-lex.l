@@ -220,14 +220,22 @@ D [0-9]
 "big"		{ return BIG; }
 "little"	{ return LITTLE; }
 "load"		{ return LOAD; }
-"__PKL_BUILTIN_RAND__" { return BUILTIN_RAND; }
-"__PKL_BUILTIN_GET_ENDIAN__" { return BUILTIN_GET_ENDIAN; }
-"__PKL_BUILTIN_SET_ENDIAN__" { return BUILTIN_SET_ENDIAN; }
-"__PKL_BUILTIN_GET_IOS__" { return BUILTIN_GET_IOS; }
-"__PKL_BUILTIN_SET_IOS__" { return BUILTIN_SET_IOS; }
-"__PKL_BUILTIN_OPEN__" { return BUILTIN_OPEN; }
-"__PKL_BUILTIN_CLOSE__" { return BUILTIN_CLOSE; }
-"__PKL_BUILTIN_IOSIZE__" { return BUILTIN_IOSIZE; }
+"__PKL_BUILTIN_RAND__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_RAND; }
+"__PKL_BUILTIN_GET_ENDIAN__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_GET_ENDIAN; }
+"__PKL_BUILTIN_SET_ENDIAN__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_SET_ENDIAN; }
+"__PKL_BUILTIN_GET_IOS__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_GET_IOS; }
+"__PKL_BUILTIN_SET_IOS__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_SET_IOS; }
+"__PKL_BUILTIN_OPEN__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_OPEN; }
+"__PKL_BUILTIN_CLOSE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_CLOSE; }
+"__PKL_BUILTIN_IOSIZE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_IOSIZE; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

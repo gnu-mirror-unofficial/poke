@@ -29,7 +29,10 @@
 /* The `pkl_parser' struct holds the parser state.
 
    SCANNER is a flex scanner.
-   AST is the abstract syntax tree created by the bison parser.  */
+   AST is the abstract syntax tree created by the bison parser.
+
+   BOOTSTRAPPED is 1 if the compiler has been bootstrapped.  0
+   otherwise.  */
 
 struct pkl_parser
 {
@@ -41,6 +44,7 @@ struct pkl_parser
   char *filename;
   int start_token;
   size_t nchars;
+  int bootstrapped;
 };
 
 /* Public interface.  */

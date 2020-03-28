@@ -44,6 +44,7 @@ pkl_parser_init (void)
   parser->interactive = 0;
   parser->filename = NULL;
   parser->nchars = 0;
+  parser->bootstrapped = 0;
 
   return parser;
 }
@@ -76,6 +77,7 @@ pkl_parse_file (pkl_compiler compiler, pkl_env *env,
   parser->filename = xstrdup (fname);
   parser->start_token = START_PROGRAM;
   parser->compiler = compiler;
+  parser->bootstrapped = pkl_bootstrapped_p (compiler);
 
   parser->env = *env;
   parser->ast->file = fd;
@@ -113,6 +115,7 @@ pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
   parser = pkl_parser_init ();
   parser->interactive = 1;
   parser->compiler = compiler;
+  parser->bootstrapped = pkl_bootstrapped_p (compiler);
 
   if (what == PKL_PARSE_PROGRAM)
     parser->start_token = START_PROGRAM;

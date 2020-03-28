@@ -1,5 +1,15 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-parser.h (struct pkl_parser): New field `bootstrapped'.
+	* src/pkl-parser.c (pkl_parse_file): Set parser->bootstrapped.
+	(pkl_parse_buffer): Likewise.
+	(pkl_parser_init): Initialize parser->bootstrapped.
+	* src/pkl-lex.l: Do not acknowledge built-in identifiers if the
+	compiler has been already bootstrapped.
+	* testsuite/poke.pkl/builtins-1.pk: New test.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_var): Turn assert into ICE.
 	* src/pk-def.c: Do not include stdio.h.
 	(print_var_decl): Pass poke_obase to pvm_print_val.
