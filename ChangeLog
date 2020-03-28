@@ -1,5 +1,9 @@
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING (Loop Statements): New subsection.
+
+2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	BZ 25395
 	* src/pkl-ast.h (enum pkl_ast_code): New value
 	PKL_AST_LOOP_STMT_ITERATOR.

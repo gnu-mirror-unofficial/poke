@@ -724,6 +724,29 @@ programs.
 The AST
 ~~~~~~~
 
+The compiler operates on an abstract syntax tree that represent the
+program being compiled.  The following subsections discuss some
+aspects of the structure of the AST.
+
+Loop Statements
+...............
+
+Loop statements are represented with trees like::
+
+  loop_stmt
+      |
+      +-- [iterator]
+      |       |
+      |       +-- decl
+      |       +-- container
+      |
+      +-- [condition]
+      +-- body
+
+Note how the ``iterator`` is optional.  When not specified, the
+``loop_stmt`` node represents a "while" statement.  When it is
+specified, the node represents a "for-in" statement.
+
 Compiler Passes and Phases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
