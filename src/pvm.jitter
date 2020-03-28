@@ -3278,7 +3278,6 @@ instruction lutolu (?n pvm_literal_printer_cast)
 end
 
 
-
 ## String instructions
 
 # Instruction: strref
@@ -3363,7 +3362,21 @@ end
 
 ## Array instructions.
 
-# ( BOFF TYP [BOFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
+# Instruction: mka
+#
+# Given an offset, an elements type, a list of initializers, and
+# numbers of elements and number of initializers, create an array
+# value and push it to the main stack.
+#
+# Each array initializer is specified as a triplet [BOFF IDX VAL]
+# where BOFF is the bit-offsets of the element, IDX its position
+# inside the array, and VAL the value to store in that position.
+#
+# Array elements that are not initialized are set to the value of the
+# first initializer to their right.
+#
+# Stack: ( BOFF TYP [BOFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
+
 instruction mka ()
   code
     size_t i;
@@ -3415,10 +3428,20 @@ instruction mka ()
   end
 end
 
-# Executing this instruction can result in the following exceptions:
-#   PVM_E_CONV
+# Instruction: aset
+#
+# Set the value with index ULONG in the array ARR to have the value
+# VAL.
+#
+# If the specified index exceeds the capability of the array, then
+# PVM_E_OUT_OF_BOUNDS is raised.  If the array is bounded by size and
+# the new value makes the total size of the array to change, then
+# PVM_E_CONV is raised.
+#
+# Stack: ( ARR ULONG VAL -- ARR )
+# Exceptions: PVM_E_CONV, PVM_E_OUT_OF_BOUNDS
 
-instruction aset () # ( ARR ULONG VAL -- ARR )
+instruction aset ()
   code
     uint64_t idx;
     pvm_val val;
@@ -3464,7 +3487,14 @@ instruction aset () # ( ARR ULONG VAL -- ARR )
   end
 end
 
-instruction aseto () # ( ARR ULONG BOFF -- ARR )
+# Instruction: aseto
+#
+# Set the offset of the element with index ULONG in the array ARR, to
+# the bit-offset BOFF.
+#
+# Stack: ( ARR ULONG BOFF -- ARR )
+
+instruction aseto ()
   code
     uint64_t idx;
     pvm_val boff;
@@ -3483,7 +3513,18 @@ instruction aseto () # ( ARR ULONG BOFF -- ARR )
   end
 end
 
-instruction aref () # ( ARR ULONG -- ARR ULONG VAL )
+# Instruction: aref
+#
+# Given an array ARR and an index ULONG, push the element of the
+# array occupying that position in the main stack.
+#
+# If the provided index is out of bounds, then raise
+# PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( ARR ULONG -- ARR ULONG VAL )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction aref ()
   code
     pvm_val array = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -3498,7 +3539,18 @@ instruction aref () # ( ARR ULONG -- ARR ULONG VAL )
   end
 end
 
-instruction arefo () # ( ARR ULONG -- ARR ULONG OFF )
+# Instruction: arefo
+#
+# Given an array ARR and an index ULONG, push the offset of the
+# element occupying that position in the array.
+#
+# If the provided index is out of bounds, then raise
+# PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( ARR ULONG -- ARR ULONG OFF )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction arefo ()
   code
     pvm_val array = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -3513,7 +3565,14 @@ instruction arefo () # ( ARR ULONG -- ARR ULONG OFF )
   end
 end
 
-# Array set type boundary
+# Instruction: asettb
+#
+# Given an array ARR and a closure BOUND, set the later as the array's
+# bounder function.  This is a function that, once executed with no
+# arguments, returns the size of the array.
+#
+# Stack: ( ARR BOUND -- ARR )
+
 instruction asettb () # ( ARR BOUND -- ARR )
   code
     pvm_val type = PVM_VAL_ARR_TYPE (JITTER_UNDER_TOP_STACK ());
