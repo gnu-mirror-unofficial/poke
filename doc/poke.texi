@@ -2475,6 +2475,7 @@ They contain heterogeneous collections of values.
 * Pinned Structs::		Fix the offset of fields.
 * Unions::			Dealing with conditional data.
 * Optional Fields::		Fields that may or may not exist.
+* Casting Structs::		Converting structs from one type to another.
 * Declarations in Structs::	Declaring stuff within a struct.
 * Methods::			Declaring functions within a struct.
 * Struct Attributes::		Accessing properties of struct values.
@@ -2946,6 +2947,23 @@ If both a constraint and an optional field expression are specified,
 the second should follow the first.
 
 For obvious reasons, optional fields are not allowed in unions.
+
+@node Casting Structs
+@section Casting Structs
+
+It is possible to cast a struct of some particular type into another
+struct type.   Examples:
+
+@example
+(poke) deftype Foo = struct @{ int i; int j; @};
+(poke) deftype Bar = struct @{ int k; int j; @};
+(poke) Bar @{j=2@} as Foo @{@}
+Foo @{i=0,j=2@}
+@end example
+
+The semantics of the cast are exactly the same than constructing a
+struct of the target type using the struct provided as an expression
+to the cast.
 
 @node Declarations in Structs
 @section Declarations in Structs

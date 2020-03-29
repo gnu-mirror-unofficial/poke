@@ -421,24 +421,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
-  /* Casting from a struct type is forbidden.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a value to a struct type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Casting a struct value is forbidden.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a struct value to any other type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
   /* Only characters (uint<8>) can be casted to string.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRING
       && (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL
@@ -460,6 +442,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
     {
       PKL_ERROR (PKL_AST_LOC (cast),
                  "casting a string value to any other type is not allowed");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  /* Only structs can be casted to structs.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_STRUCT)
+    {
+      PKL_ERROR (PKL_AST_LOC (exp_type),
+                 "invalid cast, expected struct");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
+    {
+      PKL_ERROR (PKL_AST_LOC (type),
+                 "invalid cast, expected struct");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

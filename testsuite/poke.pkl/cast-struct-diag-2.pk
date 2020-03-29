@@ -2,4 +2,4 @@
 
 deftype Struct = struct {};
 
-defvar x = Struct {} as int<32>; /* { dg-error "not allowed" } */
+defvar x = Struct {} as int<32>; /* { dg-error "expected struct" } */

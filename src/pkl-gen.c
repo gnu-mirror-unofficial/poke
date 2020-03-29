@@ -1487,8 +1487,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
 
       pkl_asm_insn (pasm, PKL_INSN_ATOA, from_type, to_type);
     }
+  else if (PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_STRUCT
+           && PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_STRUCT)
+    {
+      pvm_val constructor = PKL_AST_TYPE_S_CONSTRUCTOR (to_type);
+
+      /* The constructor should exist, because a struct type specified
+         in a cast shall be referred by name.  */
+      assert (constructor != PVM_NULL);
+
+      /* Apply the constructor to the expression, which is also a
+         struct.  */
+      pkl_asm_insn (pasm, PKL_INSN_PUSH, constructor);
+      pkl_asm_insn (pasm, PKL_INSN_CALL);
+    }
   else
-    /* XXX: handle casts to structs.  For structs, reorder fields.  */
     assert (0);
 
 }

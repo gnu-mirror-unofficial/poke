@@ -1,3 +1,16 @@
+2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-typify.c (pkl_typify1_ps_cast): Allow casts from structs
+	to structs.
+	* src/pkl-gen.c (pkl_gen_ps_cast): Support struct-to-struct casts.
+	* doc/poke.texi (Casting Structs): New section.
+	* testsuite/poke.pkl/cast-struct-1.pk: New test.
+	* testsuite/poke.pkl/cast-struct-4.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/csat-struct-6.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-5.pk: Likewise.
+
 2020-03-29  John Darrington <john@darrington.wattle.id.au>
 
 	*doc/poke.texi: Miscellaneous minor fixes.
