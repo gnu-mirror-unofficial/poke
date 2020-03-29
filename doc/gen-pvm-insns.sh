@@ -40,7 +40,7 @@ do
 
     echo ""
     echo "@node $sub"
-    echo "@section $sub"
+    echo "@subsection $sub"
     echo ""
 
     # Instructions menu
@@ -56,7 +56,7 @@ do
               -e 's/# Stack: \(.*\)/\nStack: @code{\1}/' \
               -e 's/# Exceptions Stack: \(.*\)/\nException Stack: @code{\1}/' \
               -e 's/# Exceptions: \(.*\)/\nExceptions: @code{\1}/' \
-              -e 's/# Instruction: \([^ ][^ ]*\)\(.*\)/\n@node Instruction \1\n@subsection Instruction \1\n\nSynopsys:\n\n@example\n\1\2\n@end example\n\n/' \
+              -e 's/# Instruction: \([^ ][^ ]*\)\(.*\)/\n@node Instruction \1\n@subsubsection Instruction \1\n\nSynopsys:\n\n@example\n\1\2\n@end example\n\n/' \
               -e 's/^# //' -e 's/^#//' \
         | uniq
 done <<< "$SUBSECTIONS"

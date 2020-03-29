@@ -1,5 +1,10 @@
 2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi: Change the sectioning and add a detailed menu.
+	* doc/gen-pvm-insns.sh: Adapt accordingly.
+
+2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (basic Editing): New chapter.
 
 2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
