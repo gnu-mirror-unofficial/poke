@@ -123,6 +123,9 @@ The Standard Library
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
 
+The Poke Virtual Machine
+* PVM Instructions::		Virtual Machine instructions.
+
 Appendices
 * GNU Free Documentation License:: Distribution terms for this document.
 
@@ -4910,6 +4913,11 @@ defun ptime = (uint<64> seconds) void:
 @chapter Writing Commands
 
 XXX
+
+@node PVM Instructions
+@chapter PVM Instructions
+
+@include pvm-insns.texi
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License

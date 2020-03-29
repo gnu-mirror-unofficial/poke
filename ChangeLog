@@ -1,3 +1,11 @@
+2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/Makefile.am (pvm-insns.texi): New rule.
+	(poke_TEXINFOS): Add pvm-insns.texi.
+	* doc/gen-pvm-insns.sh: New file.
+	* src/pvm.jitter: Document instructions.
+	* doc/poke.texi (PVM Instructions): New chapter.
+
 2020-03-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl-parser.h (struct pkl_parser): New field `bootstrapped'.

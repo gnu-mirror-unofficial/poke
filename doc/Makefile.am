@@ -13,10 +13,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 info_TEXINFOS = poke.texi
-poke_TEXINFOS = fdl.texi
+poke_TEXINFOS = fdl.texi pvm-insns.texi
 
+# The description of PVM instructions is generated from the
+# src/pvm.jitter file.
+
+pvm-insns.texi: $(top_srcdir)/src/pvm.jitter $(srcdir)/gen-pvm-insns.sh
+	$(srcdir)/gen-pvm-insns.sh $(top_srcdir)/src/pvm.jitter \
+	  > pvm-insns.texi
 
 # This rule generates a list of the node names from the manual.
 # It then substitutes spaces with '/' which is a kludge used to
@@ -30,3 +35,6 @@ $(top_srcdir)/src/nodelist: $(srcdir)/poke.info
 INFO_DEPS = $(srcdir)/poke.info
 
 pkgdata_DATA = $(top_srcdir)/src/nodelist
+
+clean-local:
+	rm -f pvm-insns.texi

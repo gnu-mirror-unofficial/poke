@@ -176,7 +176,7 @@ late-header-c
     /* Macros to implement different kind of instructions.  These are to
        avoid flagrant code replication below.  */
 
-/* Binary numeric operations generating a boolean in the stack.
+/* Binary numeric operations generating a boolean on the stack.
    ( TYPE TYPE -- TYPE TYPE INT ) */
 # define PVM_BOOL_BINOP(TYPE,OP)                                             \
    do                                                                        \
@@ -617,6 +617,10 @@ end
 
 ### Begin of instructions
 
+# In the instruction descriptions below, references to "the stack"
+# refer to the main stack.  References to the other stacks (exceptions
+# stack, return stack) are always explicit.
+
 ## VM instructions
 
 # Instruction: canary
@@ -676,7 +680,7 @@ end
 
 # Instruction: pushend
 #
-# Push the current endianness to the stack.  This endianness is part
+# Push the current endianness on the stack.  This endianness is part
 # of the global state of the PVM.
 #
 # Stack: ( -- INT )
@@ -763,7 +767,7 @@ end
 # Instruction: close
 #
 # Close an IO space.  The descriptor of the space to close is provided
-# in the stack as a signed integer.
+# on the stack as a signed integer.
 #
 # If the specified IO space doesn't exist, this instruction raises
 # PVM_E_IO.
@@ -786,7 +790,7 @@ end
 
 # Instruction: pushios
 #
-# Push the descriptor of the current IO space to the stack, as a
+# Push the descriptor of the current IO space on the stack, as a
 # signed integer.  If no IO space is currently opened, raise
 # PVM_E_NO_IOS.
 #
@@ -825,7 +829,7 @@ end
 
 # Instruction: iosize
 #
-# Push the size of the given IO space to the stack, as an offset.  The
+# Push the size of the given IO space on the stack, as an offset.  The
 # IO space is identified by a descriptor, which is a signed integer.
 # If the given IO space doesn't exist, raise PVM_E_NO_IOS.
 #
@@ -904,7 +908,7 @@ end
 
 # Instruction: call
 #
-# Call a closure in the stack, passing the specified arguments.  After
+# Call a closure on the stack, passing the specified arguments.  After
 # the execution of the closure, control is transferred to the
 # instruction immediately following the call instruction.
 #
@@ -997,7 +1001,7 @@ end
 # Instruction: pushvar BACK, OVER
 #
 # Retrieve the value of a variable from the lexical environment and
-# push it to the stack.  The lexical address of the variable is
+# push it on the stack.  The lexical address of the variable is
 # specified as arguments to the instruction.
 #
 # Stack: ( -- VAL )
@@ -1163,7 +1167,7 @@ end
 
 # Instruction: begsc
 #
-# Begin the styling class whose name is found in the stack.  This
+# Begin the styling class whose name is found on the stack.  This
 # class will be in effect in subsequent print operations until it is
 # explicitly ended by a `endsc' instruction.
 #
@@ -1178,7 +1182,7 @@ end
 
 # Instruction: endsc
 #
-# End the styling class whose name is found in the stack.  This class
+# End the styling class whose name is found on the stack.  This class
 # should have been previously began by a `begsc' instruction.
 #
 # Stack: ( STR -- )
@@ -1351,7 +1355,7 @@ end
 
 # Instruction: nrot
 #
-# Rotate the three elements at the top of the main stakc, counter
+# Rotate the three elements at the top of the stack, counter
 # clock-wise.
 #
 # Stack: ( A B C -- C A B )
@@ -1364,7 +1368,7 @@ end
 
 # Instruction: tuck
 #
-# Tuck a copy of the element at the top of the main stack down two
+# Tuck a copy of the element at the top of the stack down two
 # positions.
 #
 # Stack: ( A B -- B A B )
@@ -1377,7 +1381,7 @@ end
 
 # Instruction: quake
 #
-# Swap the two elements at the under top of the main stack.
+# Swap the two elements at the under top of the stack.
 #
 # Stack: ( A B C - B A C )
 
@@ -1389,9 +1393,9 @@ end
 
 # Instruction: revn N
 #
-# Reverse the N elements at the top of the main stack.
+# Reverse the N elements at the top of the stack.
 #
-# Stack: ( VAL{N} -- VAL{N} )
+# Stack: ( VAL... -- VAL... )
 
 instruction revn (?n 3 4 popf_printer)
   code
@@ -1435,9 +1439,9 @@ end
 
 # Instruction: push32 VAL
 #
-# Push the value passed as an argument to the main stack.  This
-# assumes that the internal representation of VAL doesn't require more
-# than 32-bit.
+# Push the value passed as an argument on the stack.  This assumes
+# that the internal representation of VAL doesn't require more than
+# 32-bit.
 #
 # This instruction is a workaround to a limitation of Jitter.
 #
@@ -1455,7 +1459,7 @@ end
 
 # Instruction: pushr REGNO
 #
-# Push the contents of the register REGNO to the main stack.
+# Push the contents of the register REGNO on the stack.
 #
 # Stack: ( -- VAL )
 
@@ -1467,7 +1471,7 @@ end
 
 # Instruction: popr REGNO
 #
-# Pop the element at the top of the main stack and put it in the
+# Pop the element at the top of the stack and put it in the
 # register REGNO.
 #
 # Stack: ( VAL -- )
@@ -1481,7 +1485,7 @@ end
 
 # Instruction: setr REGNO
 #
-# Set the element at the top of the main stack to the value of the
+# Set the element at the top of the stack to the value of the
 # register REGNO.
 #
 # Stack: ( -- )
@@ -1525,7 +1529,7 @@ end
 
 # Instruction: tor
 #
-# Pop an element from the main stack and push it in the return stack.
+# Pop an element from the stack and push it in the return stack.
 #
 # Stack: ( VAL -- )
 # ReturnStack: ( -- VAL )
@@ -1539,7 +1543,7 @@ end
 
 # Instruction: fromr
 #
-# Pop an element from the return stack and push it in the main stack.
+# Pop an element from the return stack and push it on the stack.
 #
 # Stack: ( -- VAL)
 # ReturnStack: ( VAL -- )
@@ -1554,7 +1558,7 @@ end
 # Instruction: atr
 #
 # Push a copy of the element at the top of the return stack into the
-# main stack.
+# stack.
 #
 # Stack: ( -- VAL )
 
@@ -1572,8 +1576,7 @@ end
 
 # Instruction: addi
 #
-# Push the result of adding the two integers at the top of the main
-# stack.
+# Push the result of adding the two integers at the top of the stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -1586,7 +1589,7 @@ end
 # Instruction: addiu
 #
 # Push the result of adding the two unsigned integers at the top of
-# the main stack.
+# the stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -1598,8 +1601,7 @@ end
 
 # Instruction addl
 #
-# Push the result of adding the two longs at the top of the main
-# stack.
+# Push the result of adding the two longs at the top of the stack.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
@@ -1612,7 +1614,7 @@ end
 # Instruction: addlu
 #
 # Push the result of adding the two unsigned longs at the top of
-# the main stack.
+# the stack.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
@@ -1625,7 +1627,7 @@ end
 # Instruction: subi
 #
 # Push the result of subtracting the two integers at the top of
-# the main stack.
+# the stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -1638,7 +1640,7 @@ end
 # Instruction: subiu
 #
 # Push the result of subtracting the two unsigned integers at the
-# top of the main stack.
+# top of the stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -1651,7 +1653,7 @@ end
 # Instruction: subl
 #
 # Push the result of subtracting the two longs at the top
-# of the main stack.
+# of the stack.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
@@ -1664,7 +1666,7 @@ end
 # Instruction: sublu
 #
 # Push the result of subtracting the two unsigned longs at the
-# top of the main stack.
+# top of the stack.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
@@ -1677,7 +1679,7 @@ end
 # Instruction: muli
 #
 # Push the result of multiplying the two integers at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -1690,7 +1692,7 @@ end
 # Instruction: muliu
 #
 # Push the result of multiplying the two unsigned integers at the
-# top of the main stack.
+# top of the stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -1703,7 +1705,7 @@ end
 # Instruction: mull
 #
 # Push the result of multiplying the two longs at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
@@ -1716,7 +1718,7 @@ end
 # Instruction: mullu
 #
 # Push the result of multiplying the two unsigned longs at the top
-# of the main stack.
+# of the stack.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
@@ -1728,8 +1730,8 @@ end
 
 # Instruction: divi
 #
-# Push the result of the integer division of the two integers at
-# the top of the main stack.  If the denominator is zero, raise
+# Push the result of the integer division of the two integers at the
+# top of the stack.  If the denominator is zero, raise
 # PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( INT INT -- INT INT INT )
@@ -1744,7 +1746,7 @@ end
 # Instruction: diviu
 #
 # Push the result of the integer division of the two unsigned integers
-# at the top of the main stack.  If the denominator is zero, raise
+# at the top of the stack.  If the denominator is zero, raise
 # PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
@@ -1758,9 +1760,8 @@ end
 
 # Instruction: divl
 #
-# Push the result of the integer division of the two longs at
-# the top of the main stack.  If the denominator is zero, raise
-# PVM_E_DIV_BY_ZERO.
+# Push the result of the integer division of the two longs at the top
+# of the stack.  If the denominator is zero, raise PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 # Exceptions: PVM_E_DIV_BY_ZERO
@@ -1788,9 +1789,8 @@ end
 
 # Instruction: modi
 #
-# Push the result of the modulus of the two integers at the top
-# of the main stack.  If the denominator is zero, raise
-# PVM_E_DIV_BY_ZERO.
+# Push the result of the modulus of the two integers at the top of the
+# stack.  If the denominator is zero, raise PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( INT INT -- INT INT INT )
 # Exceptions: PVM_E_DIV_BY_ZERO
@@ -1803,8 +1803,8 @@ end
 
 # Instruction: modiu
 #
-# Push the result of the modulus of the two unsigned integers at
-# the top of the main stack.  If the denominator is zero, raise
+# Push the result of the modulus of the two unsigned integers at the
+# top of the stack.  If the denominator is zero, raise
 # PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
@@ -1818,9 +1818,8 @@ end
 
 # Instruction: modl
 #
-# Push the result of the modulus of the two longs at the top
-# of the main stack.  If the denominator is zero, raise
-# PVM_E_DIV_BY_ZERO.
+# Push the result of the modulus of the two longs at the top of the
+# stack.  If the denominator is zero, raise PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 # Exceptions: PVM_E_DIV_BY_ZERO
@@ -1833,9 +1832,8 @@ end
 
 # Instruction: modlu
 #
-# Push the result of the modulus of the two unsigned longs at the
-# top of the main stack.  If the denominator is zero, raise
-# PVM_E_DIV_BY_ZERO.
+# Push the result of the modulus of the two unsigned longs at the top
+# of the stack.  If the denominator is zero, raise PVM_E_DIV_BY_ZERO.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 # Exceptions: PVM_E_DIV_BY_ZERO
@@ -1849,7 +1847,7 @@ end
 # Instruction: negi
 #
 # Push the result of the negation of the integer at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( INT -- INT INT )
 
@@ -1862,7 +1860,7 @@ end
 # Instruction: negiu
 #
 # Push the result of the negation of the unsigned integer at the
-# top of the main stack.
+# top of the stack.
 #
 # Stack: ( UINT -- UINT UINT UINT )
 
@@ -1875,7 +1873,7 @@ end
 # Instruction: negl
 #
 # Push the result of the negation of the long at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( LONG -- LONG LONG )
 
@@ -1887,8 +1885,8 @@ end
 
 # Instruction: neglu
 #
-# Push the result of the negation of the unsigned long at the top
-# of the main stack.
+# Push the result of the negation of the unsigned long at the top of
+# the stack.
 #
 # Stack: ( ULONG -- ULONG ULONG )
 
@@ -1901,7 +1899,7 @@ end
 # Instruction: powi
 #
 # Perform the exponentiation of the integer at the under top of the
-# main stack.  The exponent is the unsigned integer at the top of the
+# stack.  The exponent is the unsigned integer at the top of the
 # stack.  If the exponent is 0, the result is 1.
 #
 # Stack: ( INT UINT -- INT UINT INT )
@@ -1915,8 +1913,8 @@ end
 # Instruction: powiu
 #
 # Perform the exponentiation of the unsigned integer at the under top
-# of the main stack.  The exponent is the unsigned integer at the top
-# of the stack.  If the exponent is 0, the result is 1.
+# of the stack.  The exponent is the unsigned integer at the top of
+# the stack.  If the exponent is 0, the result is 1.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -1929,7 +1927,7 @@ end
 # Instruction: powl
 #
 # Perform the exponentiation of the long at the under top of the
-# main stack.  The exponent is the unsigned integer at the top of the
+# stack.  The exponent is the unsigned integer at the top of the
 # stack.  If the exponent is 0, the result is 1.
 #
 # Stack: ( LONG UINT -- LONG UINT LONG )
@@ -1942,9 +1940,9 @@ end
 
 # Instruction: powlu
 #
-# Perform the exponentiation of the unsigned long at the under top
-# of the main stack.  The exponent is the unsigned integer at the top
-# of the stack.  If the exponent is 0, the result is 1.
+# Perform the exponentiation of the unsigned long at the under top of
+# the stack.  The exponent is the unsigned integer at the top of the
+# stack.  If the exponent is 0, the result is 1.
 #
 # Stack: ( ULONG UINT -- ULONG UINT ULONG )
 
@@ -1959,8 +1957,8 @@ end
 
 # Instruction: eqi
 #
-# Push 1 to the main stack if the two integers at the top of
-# the main stack are equal.  Otherwise push 0.
+# Push 1 on the stack if the two integers at the top of the stack are
+# equal.  Otherwise push 0.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -1972,8 +1970,8 @@ end
 
 # Instruction: eqiu
 #
-# Push 1 to the main stack if the two unsigned integers at the top of
-# the main stack are equal.  Otherwise push 0.
+# Push 1 on the stack if the two unsigned integers at the top of the
+# stack are equal.  Otherwise push 0.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -1985,8 +1983,8 @@ end
 
 # Instruction: eql
 #
-# Push 1 to the main stack if the two longs at the top of
-# the main stack are equal.  Otherwise push 0.
+# Push 1 on the stack if the two longs at the top of the stack are
+# equal.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -1998,8 +1996,8 @@ end
 
 # Instruction: eqlu
 #
-# Push 1 to the main stack if the two unsigned longs at the top of the
-# main stack are equal.  Otherwise push 0.
+# Push 1 on the stack if the two unsigned longs at the top of the
+# stack are equal.  Otherwise push 0.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG INT )
 
@@ -2011,8 +2009,8 @@ end
 
 # Instruction: eqs
 #
-# Push 1 to the main stack if the two strings at the top of the
-# main stack are equal.  Otherwise push 0.
+# Push 1 on the stack if the two strings at the top of the stack are
+# equal.  Otherwise push 0.
 #
 # Stack: ( STR STR -- STR STR INT )
 
@@ -2027,8 +2025,8 @@ end
 
 # Instruction: nei
 #
-# Push 1 to the main stack if the two integers at the top of the
-# main stack are not equal.  Otherwise push 0.
+# Push 1 on the stack if the two integers at the top of the stack are
+# not equal.  Otherwise push 0.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2040,8 +2038,8 @@ end
 
 # Instruction: neiu
 #
-# Push 1 to the main stack if the two unsigned integers at the top of
-# the main stack are not equal.  Otherwise push 0.
+# Push 1 on the stack if the two unsigned integers at the top of the
+# stack are not equal.  Otherwise push 0.
 #
 # Stack: ( UINT UINT -- UINT UINT INT )
 
@@ -2053,8 +2051,8 @@ end
 
 # Instruction: nel
 #
-# Push 1 to the main stack if the two longs at the top of the
-# main stack are not equal.  Otherwise push 0.
+# Push 1 on the stack if the two longs at the top of the stack are not
+# equal.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -2066,8 +2064,8 @@ end
 
 # Instruction: nelu
 #
-# Push 1 to the main stack if the two unsigned longs at the top of the
-# main stack are not equal.  Otherwise push 0.
+# Push 1 on the stack if the two unsigned longs at the top of the
+# stack are not equal.  Otherwise push 0.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG INT )
 
@@ -2079,8 +2077,8 @@ end
 
 # Instruction: nes
 #
-# Push 1 to the main stack if the two strings at the top of the main
-# stack are not equal.  Otherwise push 0.
+# Push 1 on the stack if the two strings at the top of the stack are
+# not equal.  Otherwise push 0.
 #
 # Stack: ( STR STR -- STR STR INT )
 
@@ -2095,8 +2093,8 @@ end
 
 # Instruction: nn
 #
-# Push 1 to the main stack if the value at the top of the main
-# stack equals PVM_NULL.  Otherwise push 0.
+# Push 1 on the stack if the value at the top of the stack equals
+# PVM_NULL.  Otherwise push 0.
 #
 # Stack: ( VAL -- VAL INT )
 
@@ -2109,8 +2107,8 @@ end
 
 # Instruction: lti
 #
-# Push 1 to the main stack if the integer at the under top is
-# less that the integer at the top.  Otherwise push 0.
+# Push 1 on the stack if the integer at the under top is less that the
+# integer at the top.  Otherwise push 0.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2122,8 +2120,8 @@ end
 
 # Instruction: ltiu
 #
-# Push 1 to the main stack if the unsigned integer at the under top is
-# less that the unsigned integer at the top.  Otherwise push 0.
+# Push 1 on the stack if the unsigned integer at the under top is less
+# that the unsigned integer at the top.  Otherwise push 0.
 #
 # Stack: ( UINT INT -- UINT UINT INT )
 
@@ -2135,8 +2133,8 @@ end
 
 # Instruction: ltl
 #
-# Push 1 to the main stack if the long at the under top is
-# less that the long at the top.  Otherwise push 0.
+# Push 1 on the stack if the long at the under top is less that the
+# long at the top.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -2148,8 +2146,8 @@ end
 
 # Instruction: ltlu
 #
-# Push 1 to the main stack if the unsigned long at the under top is
-# less that the unsigned long at the top.  Otherwise push 0.
+# Push 1 on the stack if the unsigned long at the under top is less
+# that the unsigned long at the top.  Otherwise push 0.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG INT )
 
@@ -2161,8 +2159,8 @@ end
 
 # Instruction: lei
 #
-# Push 1 to the main stack if the integer at the under top is
-# less or equal that the integer at the top.  Otherwise push 0.
+# Push 1 on the stack if the integer at the under top is less or equal
+# that the integer at the top.  Otherwise push 0.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2174,9 +2172,8 @@ end
 
 # Instruction: leiu
 #
-# Push 1 to the main stack if the unsigned integer at the under top is
-# less or equal that the unsigned integer at the top.  Otherwise push
-# 0.
+# Push 1 on the stack if the unsigned integer at the under top is less
+# or equal that the unsigned integer at the top.  Otherwise push 0.
 #
 # Stack: ( UINT UINT -- UINT UINT INT )
 
@@ -2188,8 +2185,8 @@ end
 
 # Instruction: lel
 #
-# Push 1 to the main stack if the long at the under top is
-# less or equal that the long at the top.  Otherwise push 0.
+# Push 1 on the stack if the long at the under top is less or equal
+# that the long at the top.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -2201,8 +2198,8 @@ end
 
 # Instruction: lelu
 #
-# Push 1 to the main stack if the unsigned long at the under top is
-# less or equal that the unsigned long at the top.  Otherwise push 0.
+# Push 1 on the stack if the unsigned long at the under top is less or
+# equal that the unsigned long at the top.  Otherwise push 0.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG INT )
 
@@ -2214,8 +2211,8 @@ end
 
 # Instruction: gti
 #
-# Push 1 to the main stack if the integer at the under top is
-# greater than the integer at the top.  Otherwise push 0.
+# Push 1 on the stack if the integer at the under top is greater than
+# the integer at the top.  Otherwise push 0.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2227,7 +2224,7 @@ end
 
 # Instruction: gtiu
 #
-# Push 1 to the main stack if the unsigned integer at the under top is
+# Push 1 on the stack if the unsigned integer at the under top is
 # greater than the unsigned integer at the top.  Otherwise push 0.
 #
 # Stack: ( UINT UINT -- UINT UINT INT )
@@ -2240,8 +2237,8 @@ end
 
 # Instruction: gtl
 #
-# Push 1 to the main stack if the long at the under top is greater
-# than the long at the top.  Otherwise push 0.
+# Push 1 on the stack if the long at the under top is greater than the
+# long at the top.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -2253,8 +2250,8 @@ end
 
 # Instruction: gtlu
 #
-# Push 1 to the main stack if the unsigned long at the under top is
-# greater than the unsigned long at the top.  Otherwise push 0.
+# Push 1 on the stack if the unsigned long at the under top is greater
+# than the unsigned long at the top.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -2266,8 +2263,8 @@ end
 
 # Instruction: gei
 #
-# Push 1 to the main stack if the integer at the under top is greater
-# or equal than the integer at the top.  Otherwise push 0.
+# Push 1 on the stack if the integer at the under top is greater or
+# equal than the integer at the top.  Otherwise push 0.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2279,7 +2276,7 @@ end
 
 # Instruction: geiu
 #
-# Push 1 to the main stack if the unsigned integer at the under top is
+# Push 1 on the stack if the unsigned integer at the under top is
 # greater or equal than the unsigned integer at the top.  Otherwise
 # push 0.
 #
@@ -2293,8 +2290,8 @@ end
 
 # Instruction: gel
 #
-# Push 1 to the main stack if the long at the under top is greater
-# or equal than the long at the top.  Otherwise push 0.
+# Push 1 on the stack if the long at the under top is greater or equal
+# than the long at the top.  Otherwise push 0.
 #
 # Stack: ( LONG LONG -- LONG LONG INT )
 
@@ -2306,9 +2303,8 @@ end
 
 # Instruction: gelu
 #
-# Push 1 to the main stack if the unsigned long at the under top is
-# greater or equal than the unsigned long at the top.  Otherwise push
-# 0.
+# Push 1 on the stack if the unsigned long at the under top is greater
+# or equal than the unsigned long at the top.  Otherwise push 0.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG INT )
 
@@ -2320,8 +2316,8 @@ end
 
 # Instruction: lts
 #
-# Push 1 to the main stack if the string at the under top is less than
-# the string at the top, in lexicographic order.  Otherwise push 0.
+# Push 1 on the stack if the string at the under top is less than the
+# string at the top, in lexicographic order.  Otherwise push 0.
 #
 # Stack: ( STR STR -- STR STR INT )
 
@@ -2335,7 +2331,7 @@ end
 
 # Instruction: gts
 #
-# Push 1 to the main stack if the string at the under top is greater than
+# Push 1 on the stack if the string at the under top is greater than
 # the string at the top, in lexicographic order.  Otherwise push 0.
 #
 # Stack: ( STR STR -- STR STR INT )
@@ -2350,9 +2346,9 @@ end
 
 # Instruction: ges
 #
-# Push 1 to the main stack if the string at the under top is greater
-# or equal than the string at the top, in lexicographic order.
-# Otherwise push 0.
+# Push 1 on the stack if the string at the under top is greater or
+# equal than the string at the top, in lexicographic order.  Otherwise
+# push 0.
 #
 # Stack: ( STR STR -- STR STR INT )
 
@@ -2366,9 +2362,9 @@ end
 
 # Instruction: les
 #
-# Push 1 to the main stack if the string at the under top is less or
-# equal than the string at the top, in lexicographic order.  Otherwise
-# push 0.
+# Push 1 on the stack if the string at the under top is less or equal
+# than the string at the top, in lexicographic order.  Otherwise push
+# 0.
 #
 # Stack: ( STR STR -- STR STR INT )
 
@@ -2381,12 +2377,11 @@ instruction les ()
 end
 
 
-## Concatenation instructions.
+## Concatenation instructions
 
 # Instruction: sconc
 #
-# Push the concatenation of the two strings at the top of the main
-# stack.
+# Push the concatenation of the two strings at the top of the stack.
 #
 # Stack: ( STR STR -- STR STR STR )
 
@@ -2410,8 +2405,7 @@ end
 
 # Instruction: and
 #
-# Push the logical and of the two elements at the top of the main
-# stack.
+# Push the logical and of the two elements at the top of the stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2423,8 +2417,7 @@ end
 
 # Instruction: or
 #
-# Push the logical or of the two elements at the top of the main
-# stack.
+# Push the logical or of the two elements at the top of the stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2436,7 +2429,7 @@ end
 
 # Instruction: not
 #
-# Push the logical not of the element at the top of the main stack.
+# Push the logical not of the element at the top of the stack.
 #
 # Stack: ( INT -- INT INT )
 
@@ -2453,7 +2446,7 @@ end
 # Instruction: bxori
 #
 # Push the bitwise exclusive or of the two integers at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2466,7 +2459,7 @@ end
 # Instruction: bxoriu
 #
 # Push the bitwise exclusive or of the two unsigned integers at the
-# top of the main stack.
+# top of the stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -2479,7 +2472,7 @@ end
 # Instruction: bxorl
 #
 # Push the bitwise exclusive or of the two longs at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
@@ -2492,7 +2485,7 @@ end
 # Instruction: bxorlu
 #
 # Push the bitwise exclusive or of the two unsigned longs at the top
-# of the main stack.
+# of the stack.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
@@ -2504,8 +2497,7 @@ end
 
 # Instruction: bori
 #
-# Push the bitwise or of the two integers at the top of the main
-# stack.
+# Push the bitwise or of the two integers at the top of the stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2518,7 +2510,7 @@ end
 # Instruction: boriu
 #
 # Push the bitwise or of the two unsigned integers at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -2530,7 +2522,7 @@ end
 
 # Instruction: borl
 #
-# Push the bitwise or of the two longs at the top of the main stack.
+# Push the bitwise or of the two longs at the top of the stack.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
@@ -2542,7 +2534,7 @@ end
 
 # Instruction: borlu
 #
-# Push the bitwise or of the two longs at the top of the main stack.
+# Push the bitwise or of the two longs at the top of the stack.
 #
 # Stack: ( ULONG ULONG  -- ULONG ULONG ULONG )
 
@@ -2554,8 +2546,7 @@ end
 
 # Instruction: bandi
 #
-# Push the bitwise and of the two integers at the top of the main
-# stack.
+# Push the bitwise and of the two integers at the top of the stack.
 #
 # Stack: ( INT INT -- INT INT INT )
 
@@ -2568,7 +2559,7 @@ end
 # Instruction: bandiu
 #
 # Push the bitwise and of the two unsigned integers at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -2580,8 +2571,7 @@ end
 
 # Instruction: bandl
 #
-# Push the bitwise and of the two longs at the top of the main
-# stack.
+# Push the bitwise and of the two longs at the top of the stack.
 #
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
@@ -2594,7 +2584,7 @@ end
 # Instruction: bandlu
 #
 # Push the bitwise and of the two unsigned longs at the top of the
-# main stack.
+# stack.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
@@ -2606,7 +2596,7 @@ end
 
 # Instruction: bnoti
 #
-# Push the bitwise not of the integer at the top of the main stack.
+# Push the bitwise not of the integer at the top of the stack.
 #
 # Stack: ( INT -- INT INT INT )
 
@@ -2618,7 +2608,7 @@ end
 
 # Instruction: bnotiu
 #
-# Push the bitwise not of the unsigned integer at the top of the main
+# Push the bitwise not of the unsigned integer at the top of the
 # stack.
 #
 # Stack: ( UINT -- UINT UINT )
@@ -2631,7 +2621,7 @@ end
 
 # Instruction: bnotl
 #
-# Push the bitwise not of the long at the top of the main stack.
+# Push the bitwise not of the long at the top of the stack.
 #
 # Stack: ( LONG -- LONG LONG )
 
@@ -2643,8 +2633,7 @@ end
 
 # Instruction: bnotlu
 #
-# Push the bitwise not of the unsigned long at the top of the main
-# stack.
+# Push the bitwise not of the unsigned long at the top of the stack.
 #
 # Stack: ( ULONG -- ULONG ULONG )
 
@@ -2659,8 +2648,8 @@ end
 
 # Instruction: bsli
 #
-# Left-shift the integer at the under top of the main stack the number
-# of bits indicated by the unsigned int at the top of the stack.
+# Left-shift the integer at the under top of the stack the number of
+# bits indicated by the unsigned int at the top of the stack.
 #
 # If the bit count is equal or bigger than the size of the left
 # operand, then raise PVM_E_OUT_OF_BOUNDS.
@@ -2676,8 +2665,8 @@ end
 
 # Instruction: bsliu
 #
-# Left-shift the unsigned integer at the under top of the main stack
-# the number of bits indicated by the unsigned int at the top of the
+# Left-shift the unsigned integer at the under top of the stack the
+# number of bits indicated by the unsigned int at the top of the
 # stack.
 #
 # If the bit count is equal or bigger than the size of the left
@@ -2694,8 +2683,8 @@ end
 
 # Instruction: bsll
 #
-# Left-shift the long at the under top of the main stack the number
-# of bits indicated by the unsigned int at the top of the stack.
+# Left-shift the long at the under top of the stack the number of bits
+# indicated by the unsigned int at the top of the stack.
 #
 # If the bit count is equal or bigger than the size of the left
 # operand, then raise PVM_E_OUT_OF_BOUNDS.
@@ -2711,7 +2700,7 @@ end
 
 # Instruction: bslu
 #
-# Left-shift the unsigned long at the under top of the main stack the
+# Left-shift the unsigned long at the under top of the stack the
 # number of bits indicated by the unsigned int at the top of the
 # stack.
 #
@@ -2729,9 +2718,8 @@ end
 
 # Instruction: bsri
 #
-# Right-shift the integer at the under top of the main stack the
-# number of tis indicated by the unsigned int at the top of the
-# stack.
+# Right-shift the integer at the under top of the stack the number of
+# tis indicated by the unsigned int at the top of the stack.
 #
 # Stack: ( INT UINT -- INT UINT INT )
 
@@ -2743,9 +2731,8 @@ end
 
 # Instruction: bsriu
 #
-# Right-shift the unsigned integer at the under top of the main stack
-# the number of tis indicated by the unsigned int at the top of the
-# stack.
+# Right-shift the unsigned integer at the under top of the stack the
+# number of tis indicated by the unsigned int at the top of the stack.
 #
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
@@ -2757,9 +2744,8 @@ end
 
 # Instruction: bsrl
 #
-# Right-shift the long  at the under top of the main stack the
-# number of tis indicated by the unsigned int at the top of the
-# stack.
+# Right-shift the long at the under top of the stack the number of tis
+# indicated by the unsigned int at the top of the stack.
 #
 # Stack: ( LONG UINT -- LONG UINT LONG )
 
@@ -2769,9 +2755,9 @@ instruction bsrl ()
   end
 end
 
-# Instruction: bsrl
+# Instruction: bsrlu
 #
-# Right-shift the unsigned long at the under top of the main stack the
+# Right-shift the unsigned long at the under top of the stack the
 # number of tis indicated by the unsigned int at the top of the stack.
 #
 # Stack: ( ULONG UINT -- ULONG UINT ULONG )
@@ -2783,12 +2769,12 @@ instruction bsrlu ()
 end
 
 
-## Compare-and-swap instructions.
+## Compare-and-swap instructions
 
 # Instruction: swapgti
 #
-# Swap the two integers at the top of the main stack if the element at
-# the under-top is greater than the element at the top.
+# Swap the two integers at the top of the stack if the element at the
+# under-top is greater than the element at the top.
 #
 # Stack: ( INT INT -- INT INT )
 
@@ -2806,7 +2792,7 @@ end
 
 # Instruction: swapgtiu
 #
-# Swap the two unsigned integers at the top of the main stack if the
+# Swap the two unsigned integers at the top of the stack if the
 # element at the under-top is greater than the element at the top.
 #
 # Stack: ( UINT UINT -- UINT UINT )
@@ -2825,8 +2811,8 @@ end
 
 # Instruction: swapgtl
 #
-# Swap the two longs at the top of the main stack if the element at
-# the under-top is greater than the element at the top.
+# Swap the two longs at the top of the stack if the element at the
+# under-top is greater than the element at the top.
 #
 # Stack: ( LONG LONG -- LONG LONG )
 
@@ -2844,8 +2830,8 @@ end
 
 # Instruction: swapgtlu
 #
-# Swap the two unsigned longs at the top of the main stack if the
-# element at the under-top is greater than the element at the top.
+# Swap the two unsigned longs at the top of the stack if the element
+# at the under-top is greater than the element at the top.
 #
 # Stack: ( ULONG ULONG -- ULONG ULONG )
 
@@ -2862,8 +2848,7 @@ instruction swapgtlu ()
 end
 
 
-
-## Branches
+## Branch instructions
 
 # Instruction: ba LABEL
 #
@@ -2880,7 +2865,7 @@ end
 # Instruction: bn LABEL
 #
 # Branch to the given LABEL if the value at the top of the stack is
-# null.
+# PVM_NULL.
 #
 # Stack: ( VAL -- VAL )
 
@@ -2894,7 +2879,7 @@ end
 # Instruction: bnn LABEL
 #
 # Branch to the given LABEL if the value at the top of the stack is
-# not null.
+# not PVM_NULL.
 #
 # Stack: ( VAL -- VAL )
 
@@ -3018,8 +3003,7 @@ instruction bnzlu (?f)
 end
 
 
-
-## Conversion instructions.
+## Conversion instructions
 
 # Instruction: ctos
 #
@@ -3280,9 +3264,9 @@ end
 
 # Instruction: strref
 #
-# Given a string and an unsigned long at the top of the stack,
-# push an unsigned integer with the code of the character that
-# occupies that position in the string, to the main stack.
+# Given a string and an unsigned long at the top of the stack, push an
+# unsigned integer with the code of the character that occupies that
+# position in the string, on the stack.
 #
 # The index is zero-based.  If it is less than 0 or exceeds the
 # length of the string, then PVM_E_OUT_OF_BOUNDS is raised.
@@ -3334,7 +3318,7 @@ end
 
 # Instruction: muls
 #
-# Given a string and an unsigned long in the stack, push a new
+# Given a string and an unsigned long on the stack, push a new
 # string value whose value is the concatenation of the argument
 # string applied to itself as many times as the unsigned long.  If
 # the second argument to muls is 0 then the result of the operation
@@ -3358,13 +3342,13 @@ instruction muls ()
 end
 
 
-## Array instructions.
+## Array instructions
 
 # Instruction: mka
 #
 # Given an offset, an elements type, a list of initializers, and
 # numbers of elements and number of initializers, create an array
-# value and push it to the main stack.
+# value and push it on the stack.
 #
 # Each array initializer is specified as a triplet [BOFF IDX VAL]
 # where BOFF is the bit-offsets of the element, IDX its position
@@ -3513,8 +3497,8 @@ end
 
 # Instruction: aref
 #
-# Given an array ARR and an index ULONG, push the element of the
-# array occupying that position in the main stack.
+# Given an array ARR and an index ULONG, push the element of the array
+# occupying that position on the stack.
 #
 # If the provided index is out of bounds, then raise
 # PVM_E_OUT_OF_BOUNDS.
@@ -3586,7 +3570,7 @@ end
 # Instruction: mksct
 #
 # Given an offset, a list of fields, a list of methods and a struct
-# type, create a struct value and push it to the main stack.
+# type, create a struct value and push it on the stack.
 #
 # Each field is specified as a triplet [OFF STR VAL] where OFF is the
 # offset of field, STR the name of the field or PVM_NULL if the field
@@ -3672,9 +3656,9 @@ end
 
 # Instruction: sref
 #
-# Given a struct and a field name, push the value contained in
-# the referred struct field on the main stack.  If the struct does
-# not have a field with the given name, then raise PVM_E_ELEM.
+# Given a struct and a field name, push the value contained in the
+# referred struct field on the stack.  If the struct does not have a
+# field with the given name, then raise PVM_E_ELEM.
 #
 # Stack: ( SCT STR -- SCT STR VAL )
 # Exceptions: PVM_E_ELEM
@@ -3693,8 +3677,8 @@ end
 # Instruction: srefnt
 #
 # Given a struct and a field name, push the value contained in the
-# struct field on the main stack.  If the struct does not have a field
-# with the given name, then push null.
+# struct field on the stack.  If the struct does not have a field with
+# the given name, then push PVM_NULL.
 #
 # Stack: ( SCT STR -- SCT STR VAL )
 
@@ -3781,12 +3765,12 @@ instruction smodi ()
 end
 
 
-## Offset instructions
+## Offset Instructions
 
 # Instruction: mko
 #
 # Given an integral magnitude VAL and an unit expressed in an ULONG,
-# make an offset value and push it to the main stack.
+# make an offset value and push it on the stack.
 #
 # Stack: ( VAL ULONG -- OFF )
 
@@ -3801,7 +3785,7 @@ end
 
 # Instruction: ogetm
 #
-# Given an offset OFF, push its magnitude to the main stack.
+# Given an offset OFF, push its magnitude on the stack.
 #
 # Stack: ( OFF -- OFF VAL )
 
@@ -3828,7 +3812,7 @@ end
 
 # Instruction: ogetu
 #
-# Given an offset OFF, push its unit to the main stack.
+# Given an offset OFF, push its unit on the stack.
 #
 # Stack: ( OFF -- OFF ULONG )
 
@@ -3840,7 +3824,7 @@ end
 
 # Instruction: ogetbt
 #
-# Given an offset OFF, push its base type to the main stack.
+# Given an offset OFF, push its base type on the stack.
 #
 # Stack: ( OFF -- OFF TYP )
 
@@ -3851,15 +3835,30 @@ instruction ogetbt ()
 end
 
 
-## Instructions to handle mapped values.
+## Instructions to handle mapped values
 
-instruction mgeto () # ( VAL -- VAL OFF )
+# Instruction: mgeto
+#
+# Given a map-able value, push its bit-offset on the stack as an
+# unsigned long.  If the given value is not map-able then push
+# PVM_NULL.
+#
+# Stack: ( VAL -- VAL ULONG )
+
+instruction mgeto ()
   code
     JITTER_PUSH_STACK (PVM_VAL_OFFSET (JITTER_TOP_STACK ()));
   end
 end
 
-instruction mseto () # ( VAL OFF -- VAL )
+# Instruction: mseto
+#
+# Given a map-able value an a bit-offset, set its offset to the value.
+# If the given value is not map-able, then the offset is ignored.
+#
+# Stack: ( VAL ULONG -- VAL )
+
+instruction mseto ()
   code
     PVM_VAL_SET_OFFSET (JITTER_UNDER_TOP_STACK (),
                         JITTER_TOP_STACK ());
@@ -3867,13 +3866,29 @@ instruction mseto () # ( VAL OFF -- VAL )
   end
 end
 
-instruction mgetios () # ( VAL -- VAL INT )
+# Instruction: mgetios
+#
+# Given a map-able value, push its associated IO space on the stack.
+# If the given value is not map-able, then push PVM_NULL.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction mgetios ()
   code
     JITTER_PUSH_STACK (PVM_VAL_IOS (JITTER_TOP_STACK ()));
   end
 end
 
-instruction msetios () # ( VAL INT -- VAL )
+# Instruction: msetios
+#
+# Given a map-able value and an IOS descriptor, set it as its
+# associated IO space.  If the IOS descriptor is PVM_NULL then it uses
+# the current IO space.  If the given value is not map-able then the
+# IO space is ignored.
+#
+# Stack: ( VAL INT -- VAL )
+
+instruction msetios ()
   code
     PVM_VAL_SET_IOS (JITTER_UNDER_TOP_STACK (),
                      JITTER_TOP_STACK ());
@@ -3881,58 +3896,122 @@ instruction msetios () # ( VAL INT -- VAL )
   end
 end
 
-instruction mgetm () # ( VAL -- VAL CLS )
+# Instruction: mgetm
+#
+# Given a map-able value, push its mapper closure on the stack.  If
+# the given value is not map-able, then push PVM_NULL.
+#
+# Stack: ( VAL -- VAL CLS )
+
+instruction mgetm ()
   code
      JITTER_PUSH_STACK (PVM_VAL_MAPPER (JITTER_TOP_STACK ()));
   end
 end
 
-instruction msetm () #  ( VAL CLS -- VAL )
+# Instruction: msetm
+#
+# Given a map-able value and a closure, set it as its mapper.  If the
+# given value is not map-able then the closure is ignored.
+#
+# Stack: ( VAL CLS -- VAL )
+
+instruction msetm ()
   code
     PVM_VAL_SET_MAPPER (JITTER_UNDER_TOP_STACK (), JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
   end
 end
 
-instruction mgetw () #  ( VAL -- VAL CLS )
+# Instruction: mgetw
+#
+# Given a map-able value, push its writer closure on the stack.  If
+# the given value is not map-able, then push PVM_NULL.
+#
+# Stack: ( VAL -- VAL CLS )
+
+instruction mgetw ()
   code
      JITTER_PUSH_STACK (PVM_VAL_WRITER (JITTER_TOP_STACK ()));
   end
 end
 
-instruction msetw () #  ( VAL CLS -- VAL )
+# Instruction: msetw
+#
+# Given a map-able value and a closure, set it as its writer.  If the
+# given value is not map-able then the closure is ignored.
+#
+# Stack: ( VAL CLS -- VAL )
+
+instruction msetw ()
   code
     PVM_VAL_SET_WRITER (JITTER_UNDER_TOP_STACK (), JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
   end
 end
 
-# mgetsel
+# Instruction: mgetsel
 #
-# Given a value in the TOS, push the number of elements to which a
-# given mapped value is bounded to.  If the value is not mapped, or if
-# it is not bounded by number of elements, push PVM_NULL.
+# Given a map-able value in the TOS, push the number of elements to
+# which its mapping is bounded to.  If the value is not mapped, or
+# if it is not bounded by number of elements, push PVM_NULL.
+#
+# Note that only array values can have mappings bounded by number of
+# elements.
+#
+# Stack: ( VAL -- VAL ULONG )
 
-instruction mgetsel () # ( VAL -- VAL ULONG )
+instruction mgetsel ()
   code
     JITTER_PUSH_STACK (PVM_VAL_ELEMS_BOUND (JITTER_TOP_STACK ()));
   end
 end
 
-instruction msetsel () # ( VAL ULONG -- VAL )
+# Instruction: msetsel
+#
+# Given a map-able value and an unsigned long, set it as the mapping
+# bound by number of elements.  If the value is not map-able the
+# unsigned long is ignored.
+#
+# Note that only array values can have mappings bounded by number of
+# elements.
+#
+# Stack: ( VAL ULONG -- VAL )
+
+instruction msetsel ()
   code
     PVM_VAL_SET_ELEMS_BOUND (JITTER_UNDER_TOP_STACK (), JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
   end
 end
 
-instruction mgetsiz () # ( VAL -- VAL OFF )
+# Instruction: mgetsiz
+#
+# Given a map-able value in the TOS, push its mapping size-bound as a
+# bit-offset.  If the value is not map-able, or if it is not bounded
+# by size, push PVM_NULL.
+#
+# Note that only array values can have mappings bounded by size.
+#
+# Stack: ( VAL -- VAL ULONG )
+
+instruction mgetsiz ()
   code
     JITTER_PUSH_STACK (PVM_VAL_SIZE_BOUND (JITTER_TOP_STACK ()));
   end
 end
 
-instruction msetsiz () # ( VAL OFF -- VAL )
+# Instruction: msetsiz
+#
+# Given a map-able value and a bit-offset, set it as the mapping
+# size-bound.  If the value is not map-able, the bit-offset is
+# ignored.
+#
+# Note that only array values can have mappings bounded by size.
+#
+# Stack: ( VAL ULONG -- VAL )
+
+instruction msetsiz ()
   code
     PVM_VAL_SET_SIZE_BOUND (JITTER_UNDER_TOP_STACK (), JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
@@ -3942,7 +4021,14 @@ end
 
 ## Type related instructions
 
-instruction isa () # ( VAL TYPE -- TYPE VAL BOOL )
+# Instruction: isa
+#
+# Given a value and a type, push 1 on the stack if the value is of the
+# given type.  Push 0 otherwise.
+#
+# Stack: ( VAL TYPE -- TYPE VAL INT )
+
+instruction isa ()
   code
     pvm_val type = JITTER_TOP_STACK ();
     pvm_val val = JITTER_UNDER_TOP_STACK ();
@@ -3953,35 +4039,65 @@ instruction isa () # ( VAL TYPE -- TYPE VAL BOOL )
   end
 end
 
-instruction typof () # ( VAL -- VAL TYP )
+# Instruction: typof
+#
+# Given a value, push its type on the stack.
+#
+# Stack: ( VAL -- VAL TYPE )
+
+instruction typof ()
   code
     JITTER_PUSH_STACK (pvm_typeof (JITTER_TOP_STACK ()));
   end
 end
 
-instruction tyisc () # ( VAL -- VAL BOOL )
+# Instruction: tyisc
+#
+# Given a value, push 1 on the stack if it is a closure.  Push 0
+# otherwise.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction tyisc ()
   code
     JITTER_PUSH_STACK (pvm_make_int (PVM_IS_CLS (JITTER_TOP_STACK ()), 32));
   end
 end
 
-instruction tyissct () # ( VAL -- VAL BOOL )
+# Instruction: tyissct
+#
+# Given a value, push 1 on the stack if it is a struct.  Push 0
+# otherwise.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction tyissct ()
   code
     JITTER_PUSH_STACK (pvm_make_int (PVM_IS_SCT (JITTER_TOP_STACK ()), 32));
   end
 end
 
-# `Any' type.
+# Instruction: mktyany
+#
+# Build an "any" type and push it on the stack.
+#
+# Stack: ( -- TYPE )
 
-instruction mktyany () # ( -- TYP )
+instruction mktyany ()
   code
     JITTER_PUSH_STACK (pvm_make_any_type ());
   end
 end
 
-# Integral types
+# Instruction: mktyi
+#
+# Given an unsigned long denoting a bit width, and an unsigned int
+# denoting signedness (0 is unsigned, 1 is signed), build a an
+# integral type with these features and push it on the stack.
+#
+# Stack: ( ULONG UINT -- TYPE )
 
-instruction mktyi () # ( ULONG UINT -- TYP )
+instruction mktyi ()
   code
     pvm_val size = JITTER_UNDER_TOP_STACK ();
     pvm_val signed_p = JITTER_TOP_STACK ();
@@ -3991,17 +4107,27 @@ instruction mktyi () # ( ULONG UINT -- TYP )
   end
 end
 
-# String types
+# Instruction: mktys
+#
+# Push a string type on the stack.
+#
+# Stack: ( -- TYPE )
 
-instruction mktys () # ( -- TYP )
+instruction mktys ()
   code
     JITTER_PUSH_STACK (pvm_make_string_type ());
   end
 end
 
-# Offset types
+# Instruction: mktyo
+#
+# Given a base integral type and an integer denoting an offset unit
+# (multiple of the base unit) construct an offset type having these
+# features, and push it on the stack.
+#
+# Stack: ( TYPE INT -- TYPE )
 
-instruction mktyo () # ( TYP INT -- TYP )
+instruction mktyo ()
   code
 #define F(res, a, b) \
   { res = pvm_make_offset_type (a, b); }
@@ -4010,9 +4136,15 @@ instruction mktyo () # ( TYP INT -- TYP )
   end
 end
 
-# Array types
+# Instruction: mktya
+#
+# Given an elements type and an unsigned long denoting a length, build
+# an array type having these features and push it on the stack.  If
+# the type array is unbounded then length is PVM_NULL.
+#
+# Stack: ( TYPE (ULONG|NULL) -- TYPE )
 
-instruction mktya () # ( TYP BOUND -- TYP )
+instruction mktya ()
   code
      pvm_val bound = JITTER_TOP_STACK ();
      pvm_val etype = JITTER_UNDER_TOP_STACK ();
@@ -4022,21 +4154,38 @@ instruction mktya () # ( TYP BOUND -- TYP )
   end
 end
 
-instruction tyagett () # ( TYP -- TYP TYP )
+# Instruction: tyagett
+#
+# Given an array type, push the type of its elements on the stack.
+#
+# Stack: ( TYPE -- TYPE TYPE )
+
+instruction tyagett ()
   code
     JITTER_PUSH_STACK (PVM_VAL_TYP_A_ETYPE (JITTER_TOP_STACK ()));
   end
 end
 
-instruction tyagetb () # ( TYP - TYP BOUND )
+# Instruction: tyagetb
+#
+# Given an array type, push its bound on the stack.
+#
+# Stack: ( TYPE -- TYPE (ULONG|NULL) )
+
+instruction tyagetb ()
   code
     JITTER_PUSH_STACK (PVM_VAL_TYP_A_BOUND (JITTER_TOP_STACK ()));
   end
 end
 
-# Function types
+# Instruction: mktyc
+#
+# Given a list of argument types, a return type and a number of
+# arguments, build a closure type and push it on the stack.
+#
+# Stack: ( TYPE... TYPE ULONG -- TYPE )
 
-instruction mktyc () # ( ATYPE... RTYPE NARGS -- TYP )
+instruction mktyc ()
   code
     size_t i;
     pvm_val nargs, rtype, *atypes;
@@ -4060,9 +4209,17 @@ instruction mktyc () # ( ATYPE... RTYPE NARGS -- TYP )
   end
 end
 
-# Struct types
+# Instruction: mktysct
+#
+# Given a list of field descriptors, a number of fields and a struct
+# type name, build a struct type and push it on the stack.
+#
+# Each field descriptor has the form [STRING TYPE] and contains the
+# name of the field and its type.
+#
+# Stack: ( [STRING TYPE]... ULONG STR -- TYPE )
 
-instruction mktysct () # ( [STRING TYP]... NLONG NAME -- TYP )
+instruction mktysct ()
   code
     size_t i;
     pvm_val nelem, name, *etypes, *enames;
@@ -4090,22 +4247,17 @@ instruction mktysct () # ( [STRING TYP]... NLONG NAME -- TYP )
 end
 
 
-
 ## IO instructions
-#
-#
-# The following instructions operate on the global IO space.
 
-# write
+# Instruction: write
 #
-# If the value at the TOS is mapped, then write it to IO.
-# Otherwise, this is a NOP.
+# If the value at the TOS is mapped, then write it to its associated
+# IO space.  Otherwise, this is a no-op.
 #
-# Executing this instruction can result in the following exceptions:
-#   PVM_E_IOS_FULL
-#   PVM_E_CONSTRAINT_ERROR
+# Stack: ( VAL -- VAL )
+# Exceptions: PVM_E_IOS_FULL, PVM_E_CONSTRAINT_ERROR
 
-instruction write () # ( VAL -- VAL )
+instruction write ()
   caller
   code
      pvm_val val = JITTER_TOP_STACK ();
@@ -4120,8 +4272,13 @@ instruction write () # ( VAL -- VAL )
   end
 end
 
-# peeki NENC,ENDIAN,BITS
-# ( IOS BOFF -- INT )
+# Instruction: peeki NENC,ENDIAN,BITS
+#
+# Given an IOS descriptor and a bit-offset, peek an integer value of
+# width BITS bits.  The negative encoding and endianness to be used
+# are specified in the instruction arguments.
+#
+# Stack: ( INT ULONG -- INT )
 
 instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -4130,8 +4287,13 @@ instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
   end
 end
 
-# peekiu ENDIAN,BITS
-# ( IOS BOFF -- UINT )
+# Instruction: peekiu ENDIAN,BITS
+#
+# Given an IOS descriptor and a bit-offset, peek an unsigned integer
+# value of width BITS bits.  The endianness to be used is specified in
+# the instruction arguments.
+#
+# Stack: ( INT ULONG -- INT )
 
 instruction peekiu (?n endian_printer,?n bits_printer)
   code
@@ -4140,8 +4302,13 @@ instruction peekiu (?n endian_printer,?n bits_printer)
   end
 end
 
-# peekl NENC,ENDIAN,BITS
-# ( IOS BOFF -- LONG )
+# Instruction: peekl NENC,ENDIAN,BITS
+#
+# Given an IOS descriptor and a bit-offset, peek a long value of width
+# BITS bits.  The negative encoding and endianness to be used are
+# specified in the instruction arguments.
+#
+# Stack: ( INT ULONG -- LONG )
 
 instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -4150,8 +4317,13 @@ instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
   end
 end
 
-# peeklu ENDIAN,BITS
-# ( IOS BOFF -- ULONG )
+# Instruction: peeklu ENDIAN,BITS
+#
+# Given an IOS descriptor and a bit-offset, peek an unsigned long value
+# of width BITS bits.  The endianness to be used is specified in the
+# instruction arguments.
+#
+# Stack: ( INT ULONG -- ULONG )
 
 instruction peeklu (?n endian_printer,?n bits_printer)
   code
@@ -4160,8 +4332,12 @@ instruction peeklu (?n endian_printer,?n bits_printer)
   end
 end
 
-# peekdi BITS
-# ( IOS BOFF -- INT )
+# Instruction: peekdi BITS
+#
+# Given an IOS descriptor and a bit-offset, peek an integer value of
+# width BITS bits.  Use the default endianness and negative encoding.
+#
+# Stack: ( INT ULONG -- INT )
 
 instruction peekdi (?n bits_printer)
   code
@@ -4170,8 +4346,12 @@ instruction peekdi (?n bits_printer)
   end
 end
 
-# peekdiu BITS
-# ( IOS BOFF -- UINT )
+# Instruction: peekdiu BITS
+#
+# Given an IOS descriptor and a bit-offset, peek an unsigned integer
+# value of width BITS bits.  Use the default endianness.
+#
+# Stack: ( INT ULONG -- UINT )
 
 instruction peekdiu (?n bits_printer)
   code
@@ -4180,8 +4360,12 @@ instruction peekdiu (?n bits_printer)
   end
 end
 
-# peekdl BITS
-# ( IOS BOFF -- LONG )
+# Instruction: peekdl BITS
+#
+# Given an IOS descriptor and a bit-offset, peek a long value of width
+# BITS bits.  Use the default endianness and negative encoding.
+#
+# Stack: ( INT ULONG -- LONG )
 
 instruction peekdl (?n bits_printer)
   code
@@ -4190,8 +4374,12 @@ instruction peekdl (?n bits_printer)
   end
 end
 
-# peekdlu BITS
-# ( IOS BOFF -- ULONG )
+# Instruction: peekdlu BITS
+#
+# Given an IOS descriptor and a bit-offset, peek an unsigned long value
+# of width BITS bits.  Use the default endianness.
+#
+# Stack: ( INT ULONG -- ULONG )
 
 instruction peekdlu (?n bits_printer)
   code
@@ -4200,8 +4388,13 @@ instruction peekdlu (?n bits_printer)
   end
 end
 
-# pokei NENC,ENDIAN,BITS
-# ( IOS BOFF INT -- )
+# Instruction: pokei NENC,ENDIAN,BITS
+#
+# Given an IOS descriptor, a bit-offset and an integer value of BITS
+# bits, poke it.  Use the negative encoding and endianness specified
+# in the instruction arguments.
+#
+# Stack: ( INT ULONG INT -- )
 
 instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -4210,8 +4403,13 @@ instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
   end
 end
 
-# pokeiu ENDIAN,BITS
-# ( IOS BOFF UINT -- )
+# Instruction: pokeiu ENDIAN,BITS
+#
+# Given an IOS descriptor, a bit-offset and an unsigned integer value
+# of BITS bits, poke it.  Use the endianness specified in the
+# instruction arguments.
+#
+# Stack: ( INT ULONG INT -- )
 
 instruction pokeiu (?n endian_printer,?n bits_printer)
   code
@@ -4220,8 +4418,13 @@ instruction pokeiu (?n endian_printer,?n bits_printer)
   end
 end
 
-# pokel NENC,ENDIAN,BITS
-# ( IOS BOFF LONG -- )
+# Instruction: pokel NENC,ENDIAN,BITS
+#
+# Given an IOS descriptor, a bit-offset and a long value of BITS bits,
+# poke it.  Use the negative encoding and endianness specified in the
+# instruction arguments.
+#
+# Stack: ( INT ULONG LONG -- )
 
 instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
   code
@@ -4230,8 +4433,13 @@ instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
   end
 end
 
-# pokelu ENDIAN,BITS
-# ( IOS BOFF ULONG -- )
+# Instruction: pokelu ENDIAN,BITS
+#
+# Given an IOS descriptor, a bit-offset and an unsigned long value of
+# BITS bits, poke it.  Use the endianness specified in the instruction
+# arguments.
+#
+# Stack: ( INT ULONG ULONG -- )
 
 instruction pokelu (?n endian_printer,?n bits_printer)
   code
@@ -4240,8 +4448,12 @@ instruction pokelu (?n endian_printer,?n bits_printer)
   end
 end
 
-# pokedi BITS
-# ( IOS BOFF INT -- )
+# Instruction: pokedi BITS
+#
+# Given an IOS descriptor, a bit-offset and an integer of BITS bits,
+# poke it.  Use the default negative encoding and endianness.
+#
+# Stack: ( INT ULONG INT -- )
 
 instruction pokedi (?n bits_printer)
   code
@@ -4250,8 +4462,12 @@ instruction pokedi (?n bits_printer)
   end
 end
 
-# pokediu BITS
-# ( IOS BOFF UINT -- )
+# Instruction: pokediu BITS
+#
+# Given an IOS descriptor, a bit-offset and an unsigned integer of BITS
+# bits, poke it.  Use the default endianness.
+#
+# Stack: ( INT ULONG UINT -- )
 
 instruction pokediu (?n bits_printer)
   code
@@ -4260,8 +4476,12 @@ instruction pokediu (?n bits_printer)
   end
 end
 
-# pokedl BITS
-# ( IOS BOFF LONG -- )
+# Instruction: pokedl BITS
+#
+# Given an IOS descriptor, a bit-offset and a long of BITS bits, poke
+# it.  Use the default negative encoding and endianness.
+#
+# Stack: ( INT ULONG LONG -- )
 
 instruction pokedl (?n bits_printer)
   code
@@ -4270,8 +4490,12 @@ instruction pokedl (?n bits_printer)
   end
 end
 
-# pokedlu BITS
-# ( IOS BOFF ULONG -- )
+# Instruction: pokedlu BITS
+#
+# Given an IOS descriptor, a bit-offset and an unsigned long of BITS
+# bits, poke it.  Use the default endianness.
+#
+# Stack: ( INT ULONG ULONG -- )
 
 instruction pokedlu (?n bits_printer)
   code
@@ -4280,8 +4504,11 @@ instruction pokedlu (?n bits_printer)
   end
 end
 
-# peeks
-# ( IOS BOFF -- STR )
+# Instruction: peeks
+#
+# Given an IOS descriptor and a bit-offset, peek a string.
+#
+# Stack: ( INT ULONG -- STR )
 
 instruction peeks ()
   code
@@ -4310,8 +4537,11 @@ instruction peeks ()
   end
 end
 
-# pokes
-# ( IOS BOFF STR -- )
+# Instruction: pokes
+#
+# Given an IOS descriptor, a bit-offset and a string, poke it.
+#
+# Stack: ( INT ULONG STR -- )
 
 instruction pokes ()
   code
@@ -4342,12 +4572,14 @@ instruction pokes ()
 end
 
 
-
 ## Exceptions handling instructions
 
-# pushe LABEL
+# Instruction: pushe LABEL
 #
-# ( EXCEPTION -- )
+# Given an exception, push a handler for it on the exceptions stack.
+#
+# Stack: ( EXCEPTION -- )
+# Exceptions Stack: ( -- EXCEPTION_HANDLER )
 
 instruction pushe (?l)
   code
@@ -4368,9 +4600,12 @@ instruction pushe (?l)
   end
 end
 
-# pope
+# Instruction: pope
 #
-# ( EXCEPTION_HANDLER -- )
+# Pop an exception handler from the exceptions stack.
+#
+# Stack: ( -- )
+# Exceptions Stack: ( EXCEPTION_HANDLER -- )
 
 instruction pope ()
   code
@@ -4378,9 +4613,12 @@ instruction pope ()
   end
 end
 
-# raise
+# Instruction: raise
 #
-# ( EXCEPTION -- )
+# Raise the given exception.
+#
+# Stack: ( EXCEPTION -- )
+# Exceptions Stack: ( -- )
 
 instruction raise ()
   code
@@ -4393,7 +4631,15 @@ end
 
 ## Debugging Instructions
 
-instruction strace (?n) # ( -- )
+# Instruction: strace DEPTH
+#
+# Print a debugging trace with the elements of the top of the stack.
+# The number of elements to print is specified in DEPTH.  A depth of
+# zero means to print the whole stack.
+#
+# Stack: ( -- )
+
+instruction strace (?n)
   code
      pvm_val tmp[1024];
      int i = 0, j;
@@ -4416,33 +4662,73 @@ instruction strace (?n) # ( -- )
   end
 end
 
-
-## Miscellaneous Instructions
-
-instruction nop ()
-  code
-  end
-end
+# Instruction: note VALUE
+#
+# This instruction is intended to be used to insert annotations that
+# help to understand disassemblies.  Most of the times VALUE is a
+# string.
+#
+# Semantically, this instruction does nothing.
+#
+# Stack: ( -- )
 
 instruction note (?n pvm_literal_printer)
   code
   end
 end
 
-instruction rand () # ( -- INT )
+
+
+## Miscellaneous Instructions
+
+# Instruction: nop
+#
+# Do nothing.
+#
+# Stack: ( -- )
+
+instruction nop ()
+  code
+  end
+end
+
+# Instruction: rand
+#
+# Push a pseudo-random integer to the stack.
+#
+# Stack: ( -- INT )
+
+instruction rand ()
   code
     JITTER_PUSH_STACK (pvm_make_int (random (), 32));
   end
 end
 
-instruction siz () # ( VAL -- VAL ULONG )
+# Instruction: siz
+#
+# Given a value, push its size as a bit-offset.
+#
+# Stack: ( VAL -- VAL ULONG )
+
+instruction siz ()
   code
     uint64_t size = pvm_sizeof (JITTER_TOP_STACK ());
     JITTER_PUSH_STACK (pvm_make_ulong (size, 64));
   end
 end
 
-instruction sel () # ( VAL -- VAL ULONG )
+# Instruction: sel
+#
+# Given a value, push its length as an unsigned long.
+#
+# The length of an array is the number of values contained in it.
+# The lenght of a struct is the number of fields contained in it.
+# The lenght of a string is the number of characters contained in it.
+# The length of any other value is 1.
+#
+# Stack: ( VAL -- VAL ULONG )
+
+instruction sel ()
   code
     JITTER_PUSH_STACK (pvm_elemsof (JITTER_TOP_STACK ()));
   end
