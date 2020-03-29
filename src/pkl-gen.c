@@ -2510,14 +2510,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
   else if (PKL_GEN_PAYLOAD->in_comparator)
     {
       /* Stack: SCT1 SCT2 */
-      
+
       pkl_ast_node type_struct = PKL_PASS_NODE;
       pvm_val comparator_closure
         = PKL_AST_TYPE_S_COMPARATOR (type_struct);
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OVER);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OVER);
-      
+
       if (comparator_closure == PVM_NULL)
         {
           /* Compile a comparator function and complete it using the

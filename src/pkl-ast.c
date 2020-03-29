@@ -2091,7 +2091,7 @@ pkl_ast_node_free (pkl_ast_node ast)
 
       pkl_ast_node_free (PKL_AST_LOOP_STMT_ITERATOR_DECL (ast));
       pkl_ast_node_free (PKL_AST_LOOP_STMT_ITERATOR_CONTAINER (ast));
-      
+
       break;
 
     case PKL_AST_RETURN_STMT:

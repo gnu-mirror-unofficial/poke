@@ -1358,7 +1358,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
           {
             pkl_ast_node base_type
               = PKL_AST_TYPE_O_BASE_TYPE (elem_type);
-            
+
             if (!promote_offset (PKL_PASS_AST,
                                  PKL_AST_TYPE_I_SIZE (base_type),
                                  PKL_AST_TYPE_I_SIGNED (base_type),

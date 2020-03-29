@@ -418,7 +418,7 @@ initialize (int argc, char *argv[])
 
 #ifdef HAVE_HSERVER
   poke_hserver_p = poke_interactive_p && pk_term_color_p ();
-  
+
   /* Initialize and start the terminal hyperlinks server.  */
   if (poke_hserver_p)
     pk_hserver_init ();

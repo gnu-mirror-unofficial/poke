@@ -855,7 +855,7 @@
         ;; the instructions on the NOTE there.
 
         ;; XXX support optional fields.
-        
+
         .function struct_comparator
         prolog
 .c { uint64_t i; pkl_ast_node field;
@@ -899,7 +899,7 @@
         nip2                    ; INT
         return
         .end
-        
+
 ;;; RAS_FUNCTION_STRUCT_CONSTRUCTOR
 ;;; ( SCT -- SCT )
 ;;;

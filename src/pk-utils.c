@@ -123,4 +123,3 @@ pk_print_binary (uint64_t val, int size, int sign)
       pk_puts ("N");
     }
 }
-

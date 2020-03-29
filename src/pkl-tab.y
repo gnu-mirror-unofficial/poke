@@ -1390,7 +1390,7 @@ struct_type_field:
                         }
 
                       initializer = $5;
-                      
+
                       /* Build a constraint derived from the
                          initializer.  */
                       field_decl = pkl_env_lookup (pkl_parser->env,
@@ -1404,7 +1404,7 @@ struct_type_field:
                                                     field_decl,
                                                     back, over);
                       PKL_AST_LOC (field_var) = PKL_AST_LOC (initializer);
-                      
+
                       constraint = pkl_ast_make_binary_exp (pkl_parser->ast,
                                                             PKL_AST_OP_EQ,
                                                             field_var,
@@ -1760,7 +1760,7 @@ stmt:
                                                        $<ast>7, /* decl */
                                                        $5); /* container */
                   PKL_AST_LOC (iterator) = @$;
-                  
+
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
                                                iterator,
                                                NULL, /* condition */

@@ -930,7 +930,7 @@ pkl_asm_insn_cmp (pkl_asm pasm,
       pkl_asm_insn (pasm, PKL_INSN_OVER); /* SCT1 SCT2 SCT1 SCT2 */
       pkl_asm_insn (pasm, PKL_INSN_PUSH, struct_comparator); /* SCT1 SCT2 SCT1 SCT2 CLS */
       pkl_asm_insn (pasm, PKL_INSN_CALL); /* SCT1 SCT2 INT */
-      
+
       if (insn == PKL_INSN_NE)
         {
           pkl_asm_insn (pasm, PKL_INSN_NOT);

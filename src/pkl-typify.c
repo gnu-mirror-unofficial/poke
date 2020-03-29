@@ -111,7 +111,7 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
 {
   enum pkl_ast_op exp_code = PKL_AST_EXP_CODE (PKL_PASS_NODE);
-  
+
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
   pkl_ast_node op1_type = PKL_AST_TYPE (op1);
   int op1_type_code = PKL_AST_TYPE_CODE (op1_type);
@@ -193,7 +193,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
   PKL_AST_LOC (exp_type) = PKL_AST_LOC (PKL_PASS_NODE);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (exp_type);
   PKL_PASS_DONE;
-  
+
  invalid_operands:
   PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE),
              "invalid operands to relational operator");
@@ -204,14 +204,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
   {
     char *op1_type_str = pkl_type_str (op1_type, 1);
     char *op2_type_str = pkl_type_str (op2_type, 1);
-    
+
     PKL_ERROR (PKL_AST_LOC (op2),
                "invalid operand\nexpected %s, got %s",
                op1_type_str, op2_type_str);
-    
+
     free (op1_type_str);
     free (op2_type_str);
-    
+
     PKL_TYPIFY_PAYLOAD->errors++;
     PKL_PASS_ERROR;
   }
@@ -1867,7 +1867,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt_iterator)
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
-  
+
   /* The type of the iterator is the type of the elements contained
      in the container.  */
   if (PKL_AST_TYPE_CODE (container_type) == PKL_TYPE_ARRAY)
@@ -1879,7 +1879,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt_iterator)
         = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
       PKL_AST_LOC (container_elem_type) = PKL_AST_LOC (container_type);
     }
-  
+
   PKL_AST_TYPE (PKL_AST_DECL_INITIAL (decl))
     = ASTREF (container_elem_type);
 }
@@ -2301,13 +2301,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
         = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
       pkl_ast_node initializer_type
         = PKL_AST_TYPE (elem_initializer);
-      
+
       if (!pkl_ast_type_promoteable (initializer_type, field_type,
                                      0 /* promote_array_of_any */))
         {
           char *field_type_str = pkl_type_str (field_type, 1);
           char *initializer_type_str = pkl_type_str (initializer_type, 1);
-          
+
           PKL_ERROR (PKL_AST_LOC (elem_initializer),
                      "invalid initializer\n\
 expected %s, got %s",
