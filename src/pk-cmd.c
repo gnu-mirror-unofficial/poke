@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <wordexp.h> /* For tilde-expansion.  */
 #include <xalloc.h>
+#include <xstrndup.h>
 #include <ctype.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
@@ -454,25 +455,24 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                     char *end, *str;
                     size_t size;
 
-                    end = skip_blanks (p);
-                    while (*end != '\0' && *end != ',')
-                      end++;
+                    p = skip_blanks (p);
+                    for (end = p; *end != '\0' && *end != ','; end++)
+                      ;
 
-                    size = end - p + 1;
-                    assert (size > 0);
-                    str = xmalloc (size);
-                    strncpy (str, p, size);
+                    size = end - p;
+                    str = xstrndup (p, size);
+                    p = end;
 
                     /* Trim trailing space.  */
-                    end = str + strlen (str) - 1;
-                    while (end > str && isspace ((unsigned char) *end))
-                      end--;
-                    end++;
-                    *end = '\0';
+                    if (size)
+                      {
+                        end = str + size - 1;
+                        while (end > str && isspace ((unsigned char) *end))
+                          *end-- = '\0';
+                      }
 
                     argv[argc].type = PK_CMD_ARG_STR;
                     argv[argc].val.str = str;
-                    p = end;
                     match = 1;
                     break;
                   }

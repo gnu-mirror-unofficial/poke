@@ -1,5 +1,10 @@
 2020-03-29  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* bootstrap.conf: Add gnulib module xstrndup.
+	* src/pk-cmd.c (pk_cmd_exec_1): Fix code to use xstrndup.
+
+2020-03-29  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-cmd.c (skip_blanks): Remove superfluous check.
 
 2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
