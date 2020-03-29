@@ -114,7 +114,7 @@ The Standard Library
 * Standard Integral Types::	int, long and the like.
 * Standard Offset Types::	off64 and the like.
 * Standard Units::		b, B, Kb and the like.
-* Conversion Functions::	catos, atoi, etc.
+* Conversion Functions::	catos, atoi, @i{etc}.
 * String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
@@ -1664,7 +1664,7 @@ details.
 
 There are several ways to express the unit of an offset, which is
 always interpreted as a multiple of the basic unit, which is the bit
-(one bit.)
+(one bit).
 
 @subsection Named Units
 
@@ -1707,14 +1707,14 @@ offsets in any arbitrary unit, as disparate as it may seem:
 8#1
 @end example
 
-That's it, 17 units of 3 bits each, zero units of 12 bits each,
-and eight units of 1 bit each.  Note that the unit should be bigger
+That's it: 17 units of 3 bits each, zero units of 12 bits each,
+and eight units of 1 bit each.  Note that the unit should be greater
 than 0.
 
 @subsection Types as Units
 
-But then, why stopping there?  Poking is all about defining data
-structures and operating on them@dots{} so why not using these structures
+But then, why stop there?  Poking is all about defining data
+structures and operating on them@dots{} so why not use these structures
 as units as well?  Consider the following struct:
 
 @example
@@ -3066,7 +3066,7 @@ Where @var{lvalue} is either:
 @itemize @bullet
 @item A variable.
 @item A field reference like @code{foo.bar}.
-@item An index reference like @code{foo[30]}
+@item An index reference like @code{foo[30]}.
 @item A map of a simple type, like @code{int @@ 0#B}.
 @end itemize
 
@@ -3348,7 +3348,7 @@ it is of type @code{any[]}.
 @section Calling Functions
 @cindex calling, function calls
 To call a function, write its name followed by the arguments in
-parenthesis.  Examples:
+parentheses.  Examples:
 
 @example
 foo (1,2,3)
@@ -3372,7 +3372,7 @@ expression-as-statement context.  This alternate syntax is:
 @end example
 
 Where @var{arg1} is the name of an argument and @var{val1} the value
-to pass for that argument.  This is useful to use functions as
+to pass for that argument.  This is useful when using functions as
 commands in the REPL:
 
 @cindex dump
@@ -3574,7 +3574,7 @@ deftype BPF_Insn_Regs =
 
 This version, where the ordering of the fields is implemented using
 field labels, is not only more compact, but also has the virtue of not
-requiring additional "intermediate" fields like @code{le} and
+requiring additional ``intermediate'' fields like @code{le} and
 @code{be} above.  It also shows how convenient can be to declare
 variables inside structs.
 
@@ -3636,7 +3636,7 @@ deftype Elf64_Ehdr =
 @end example
 
 Note how @code{set_endian} returns an integer value@dots{}  it is always
-@code{1}. This is to facilitate its usage in fields constraint
+@code{1}. This is to facilitate its usage in field constraint
 expressions.
 
 @node Mapping
@@ -3960,6 +3960,7 @@ given the variable @code{nelems} has a value of @code{2}:
 [100,222,333]
 @end example
 
+@cindex end of file
 If an end-of-file condition happens while mapping the array, because
 the number of elements specified in the array type, at the given
 offset, exceeds the capacity of the underlying IO device, an exception
@@ -4230,6 +4231,7 @@ Generic error.
 Out of bounds exception.  This can be raised when accessing
 containers, like arrays and strings.
 @item E_eof
+@cindex end of file
 End of file exception.  This can be raised when mapping in the IO
 space.
 @item E_elem
@@ -4283,11 +4285,11 @@ try @var{stmt} catch @var{compound_stmt}
 @end example
 
 Where @var{stmt} is any statement and @var{compound_stmt} is a
-compound statement.  @var{stmt} is executed.  If during its execution
-an exception is raised, then @var{compound_stmt} gets executed.
+compound statement.  First, @var{stmt} is executed.  If during its execution
+an exception is raised, then @var{compound_stmt} is executed.
 
 The second form of the statement allows you to catch just one type of
-exceptions:
+exception:
 
 @example
 try @var{stmt} catch if @var{exp} @var{compound_stmt}
@@ -4322,6 +4324,7 @@ until some exception is raised.  If the raised exception has type
 @var{exp} then execution continues normally.  @var{exp} should be an
 expression that evaluates to an @code{Exception}.
 
+@cindex end of file
 This statement is particularly useful for mapping IO spaces until an
 @code{eof} condition occurs.  For example, this is how we would
 compute with every integer in the current IO space:
@@ -4509,6 +4512,7 @@ XXX
 
 @node Comments
 @chapter Comments
+@cindex comments
 
 There are several ways to document your Poke programs: comments of
 several types and support for separator characters.
@@ -4536,14 +4540,16 @@ line or the end of the file, whatever comes first.
 @node Vertical separator
 @section Vertical separator
 
-Poke ignores form feed characters (ASCII code 14, often visualized as
+@cindex @code{^L}
+@cindex form feed
+Poke ignores form feed characters (ASCII code 12, often visualized as
 ^L).  In GNU software, this character is traditionally used to
 separate conceptually different entities in source files.
 
 @node Modules
 @chapter Modules
 @cindex @code{load}
-@cindex @code{modules}
+@cindex modules
 
 It is common for pickles to depend on stuff defined in other pickles.
 In such cases, the @code{load} language construction can be used to

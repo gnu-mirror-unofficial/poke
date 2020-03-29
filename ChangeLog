@@ -1,3 +1,7 @@
+2020-03-29  John Darrington <john@darrington.wattle.id.au>
+
+	*doc/poke.texi: Miscellaneous minor fixes.
+
 2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/Makefile.am (pvm-insns.texi): New rule.
