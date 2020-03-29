@@ -1,3 +1,7 @@
+2020-03-29  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-cmd.c (skip_blanks): Remove superfluous check.
+
 2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi: Change the sectioning and add a detailed menu.

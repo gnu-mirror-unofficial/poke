@@ -88,9 +88,8 @@ static const struct pk_cmd *dot_cmds[] =
 static inline char *
 skip_blanks (char *p)
 {
-  if (p)
-    while (isblank (*p))
-      p++;
+  while (isblank (*p))
+    p++;
   return p;
 }
 
