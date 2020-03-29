@@ -45,16 +45,6 @@ Documentation License''.
 @insertcopying
 @end ifnottex
 
-@c Introduction
-@c
-@c - Motivation, and history (first part of talk)
-@c - The program
-@c - Demo: poking a relocation
-@c
-@c Hacking poke
-@c
-@c Writing poke commands.
-
 @menu
 Introduction
 * Motivation::			Why a binary editor?
@@ -63,6 +53,7 @@ Introduction
 Using poke
 * Invoking poke::		command line options.
 * Commanding poke::		Interactive and non-interactive usage.
+* Basic Editing::		Poking bits, bytes and simple data.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -489,6 +480,797 @@ exec poke -L "$0" "$@@"
 load elf;
 printf ("%v\n", Elf4_Ehdr @@ 0#B);
 @end example
+
+@node Basic Editing
+@chapter Basic Editing
+
+In this chapter we are gonna learn how to shuffle binary data around
+with poke, in terms of simple entities: bits and bytes.
+
+The first thing we need is a file containing binary data.  Actually,
+any file would serve, but it is better if it doesn't contain lots of
+data readable in printable ASCII characters, because that would be
+distracting.  A good way to generate a file containing both kind of
+data (binary-encoded and ASCII-encoded) is to compile an object file.
+
+We can just do that:
+
+@example
+$ echo 'int foo () @{ return 0; @}' | gcc -xc -o foo.o -
+@end example
+
+The command above compiles a very simple ELF object file that contains
+the compiled form of a little dummy function.  We will be using it in
+the sections below.
+
+@section Opening foo.o
+
+Now that we have a binary file (@file{foo.o}) it is time to open it
+with poke.  There are two ways to do that.
+
+One way is to pass the name of the file in the poke invocation.  The
+program will start, open the file, and present you with the REPL, like
+in:
+
+@example
+$ poke foo.o
+[...]
+(poke)
+@end example
+
+The other way is to fire up poke without arguments, and then use the
+@command{.file} dot-command to open the file:
+
+@example
+$ poke
+[...]
+(poke) .file foo.o
+The current IOS is now `./foo.o'.
+@end example
+
+@noindent
+Note how poke replies to the dot-command, stating that the
+@dfn{current IOS} is now the file we opened.
+
+You may be wondering, what is this IOS thing?  It is an acronym for
+Input/Output Space, and it is used to refer to the entities being
+edited with poke.  In this case the IO space being edited is a file,
+but we will see that is not always the case: poke can also edit other
+entities such as memory buffers and remote block-oriented devices over
+the network.  For now, lets keep in mind that IOS, or IO space, refers
+to the file being edited.
+
+And why ``current''?  Thing is, it is possible to edit several files
+(more generally, several IO spaces) simultaneously.  At any time, one
+of these files is the ``current one''.  In our case, the current IOS
+is the file @file{foo.o}, since it is the only file poke knows about:
+
+@example
+(poke) .info ios
+  Id	Mode	Size		Name
+* #0	rw	0x00000398#B	./foo.o
+@end example
+
+The command @command{.info ios} gives us information about all the IO
+spaces that are currently open.  The first column tells us a number
+that identifies the IOS.  In this example, the IOS Id corresponding to
+@file{foo.o} is 0.  The second column tells us that @file{foo.o}
+allows both reading and writing.  The third column tells us the size
+of the file, in hexadecimal.  You may wonder what is that weird suffix
+@code{#B}.  It is an unit, and tells us that the size @code{0x398} is
+measured in bytes, i.e. the size of @file{foo.o} is @code{0x398} bytes
+(or, in decimal, @code{920} bytes.)
+
+The asterisk at the left of the entry for @file{foo.o} tells us that
+it is the current IO space.  To see this more clearly, lets open
+another file:
+
+@example
+(poke) .file bar.o
+The current IOS is now `./bar.o'.
+(poke) .info ios
+  Id	Mode	Size		Name
+* #1	rw	0x00000398#B	./bar.o
+  #0	rw	0x00000398#B	./foo.o
+@end example
+
+Ah, there we have both @file{foo.o} and @file{bar.o}.  Now the current
+IO space (the entry featuring the asterisk at the left) is the file
+that we just opened, @file{bar.o}.  This tells us that poke always
+sets the most recently open file as the current one.  We can switch
+back to @file{foo.o} using yet another dot-command, @command{.ios}:
+
+@example
+(poke) .ios #0
+The current IOS is now `./foo.o'.
+(poke) .info ios
+  Id	Mode	Size		Name
+  #1	rw	0x00000398#B	./bar.o
+* #0	rw	0x00000398#B	./foo.o
+@end example
+
+We are back to @file{foo.o}.  Since we are not really interested in
+@file{bar.o}, we close it:
+
+@example
+(poke) .close #1
+(poke) .info ios
+  Id	Mode	Size		Name
+* #0	rw	0x00000398#B	./foo.o
+@end example
+
+Awesome.  Now we can focus on @file{foo.o}'s contents...
+
+@section A first look at foo.o
+
+Now that we have opened the file we are interested on (@file{foo.o})
+it is time to take a look at its contents.  A good way to do that is
+to use the @command{dump} command.  Note that this is not a
+dot-command like @command{.file}, @command{.ios} or @command{.close}:
+@command{dump} does not start with a dot!  We will see later how
+dot-commands differ from ``normal commands'' like @command{dump}, but
+for now, lets ignore the distinction.
+
+Lets see what @file{foo.o} has to offer:
+
+@example
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
+00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@.....@.....
+00000040: 2564 0a00 0000 0000 0000 0000 0000 0000  %d..............
+00000050: b702 0000 0100 0000 1801 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 8510 0000 ffff ffff  ................
+00000070: b700 0000 0000 0000 9500 0000 0000 0000  ................
+(poke)
+@end example
+
+@noindent
+So, what are we looking at?
+
+The first line of the output, starting with @code{76543210}, is a
+@dfn{ruler}.  It is there to help us to visually determine the
+location (or offset) of the data.  The first column is the offset in
+the file, in bytes, from which the row of data starts.  Using the
+ruler, it is easy to quickly find data given its offset.  For example,
+lets say we are interested in the byte at offset @code{0x68}: we use
+the first column to quickly find the row starting at @code{0x60}, and
+the ruler to find the column marked with @code{88}.  Cross both
+and... voila!  The byte in question has the value @code{0x85}.  The
+reverse process is as easy.  What is the offset of the first
+@code{0x40} in the file?  Try it!
+
+The section at the right of the output is the ASCII output.  It shows
+the row of bytes at the left interpreted as ASCII characters.
+Non-printable characters are shown as @code{.} to avoid scrambling
+the terminal, and no, there is no way to distinguish them from real
+ASCII dot characters (@code{0x2e}) :P In this dump, we can see that
+near the beginning of the file there are three bytes whose value, if
+interpreted as ASCII characters, conform the string ``ELF''.  As we
+shall see, this is part of the ELF magic number.  Again, the ruler is
+very useful to locate the byte corresponding to some character in the
+ASCII section, or the other way around.  What is the value of the byte
+corresponding to the @code{F} in @code{ELF}?  Try it!
+
+@section Specifying options for commands
+
+Something to notice in the command's output above is that these are
+not, by any mean, the complete contents of @file{foo.o}.  We saw above
+that the file contains 920 bytes, of which the @command{dump} command
+only showed us... @code{0x80} bytes, or @code{128} bytes in decimal.
+
+@command{dump} is certainly capable of showing more (and less) than
+@code{128} bytes.  We can ask @command{dump} to display some given
+amount of data by specifying its size using a command argument.  For
+example:
+
+@example
+(poke) dump :size 64#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
+00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@.....@.....
+@end example
+
+The command above asks poke ``please dump 64 bytes''.  In poke command
+option names start with the character ':'.  We again find the weird
+suffix @code{#B}, that tells poke we want to dump 64 bytes, not 64
+kilobits or 64 potatoes.
+
+Another interesting aspect of our first dump (ahem) is that it starts
+from the beginning of the file.  Certainly there should be other areas
+of the file with interesting contents for us to inspect.  To that
+purpose, we can use yet another option, @code{:from}:
+
+@example
+(poke) dump :size 64#B :from 128#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000080: 1400 0000 0000 0000 0000 0000 0000 0000  ................
+00000090: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000000a0: 0000 0000 0300 0100 0000 0000 0000 0000  ................
+000000b0: 0000 0000 0000 0000 0000 0000 0300 0300  ................
+@end example
+
+The command above asks poke to ``please dump 64 bytes starting at 128
+bytes from the beginning of the file''.  See how the first row of
+bytes start at offset @code{0x80}, i.e. @code{128} in decimal.
+
+@section Customizing commands setting variables
+
+Passing options to commands is easy and natural, but we may find
+ourselves passing the same values again and again, to certain command
+options.  For example, if the default size of @command{dump} of 128
+bytes is not what you prefer, because you have a particularly tall
+monitor, or you are one of these people using sub-atomic sized fonts.
+It can be tiresome and error-prone, to pass a bigger @command{:size}
+to @command{dump} every time.  Fortunately, the default size can be
+customized by setting a @dfn{global variable}:
+
+@example
+(poke) pk_dump_size = 160#B
+@end example
+
+@noindent
+This tells poke to set @code{160} bytes as the new value for the
+@code{pk_dump_size} variable.  This is a global variable that the
+@command{dump} command uses to determine how much data to show if the
+user doesn't specify an explicit value with the @code{:size} option.
+The default behavior of other commands can also be modified by
+customization variables.
+
+And now that we are talking about that, it is also cumbersome to have
+to set the default size used by @command{dump} every time we run
+poke.  But no problem, just set the variable in a file called
+@file{.pokerc} in your home directory, like this:
+
+@example
+pk_dump_size = 160#B
+@end example
+
+@noindent
+Every time poke starts, it reads @file{~/.pokerc} and executes the
+commands contained in it.
+
+The @command{dump} command is very flexible, and accepts a lot of
+options and customization variables that we won't be covering in this
+chapter.  For a complete description of the command, see @ref{dump}.
+
+@section Reading specific bytes
+
+Lets look again at the first bytes of the file @file{foo.o}:
+
+@example
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
+00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@.....@.....
+00000040: 2564 0a00 0000 0000 0000 0000 0000 0000  %d..............
+00000050: b702 0000 0100 0000 1801 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 8510 0000 ffff ffff  ................
+00000070: b700 0000 0000 0000 9500 0000 0000 0000  ................
+@end example
+
+@noindent
+At this point we know how to use the ruler to localize specific bytes
+just by looking at the dumped data.  But, how can we refer to them in
+the REPL?  Lets say we are interested in the byte at @code{64} bytes
+from the beginning of the file.  This is how we refer to it:
+
+@example
+(poke) byte @@ 64#B
+37UB
+@end example
+
+@noindent
+The entry above is known as a @dfn{mapping}.  Basically, it tells poke
+to map a byte at the offset 64 bytes, and it can be read as ``byte at
+64 bytes''.  Note how poke replies with the value @code{37UB}.  The
+suffix @code{UB} means ``unsigned byte''.
+
+Generally speaking, when dealing with bytes (and binary data in
+general) it is useful to manipulate magnitudes in hexadecimal, or
+octal.  This is because it is easy to group digits in these bases to
+little groups of bits (four and three respectively) in the equivalent
+binary representation.  As we can see, poke uses decimal by default
+when showing values in the REPL, but we can change that using the
+@command{.set obase} (``set output base'') dot-command as:
+
+@example
+(poke) .set obase
+10
+(poke) .set obase 16
+@end example
+
+@noindent
+As you can see, when you issue a @command{.set obase} dot-command
+without an argument, it shows you the current value of the
+@command{obase} configuration property.  The @command{.set obase 16}
+changes it.  Again, you can put that in your @file{~/.pokerc} file if
+you want to turn the customization persistent between poke
+invocations.
+
+But wait a second, what is a byte?  In the vast majority of modern
+computers, a byte is a small unsigned integer of width 8 bits, with
+values ranging from 0 to 255.  poke also follows this convention.  In
+fact, in poke @code{byte} is a just a synonym of @code{uint<8>}, which
+means ``unsigned 8-bit integer''.  You can therefore use:
+
+@example
+(poke) uint<8> @@ 64#B
+37UB
+@end example
+
+@noindent
+Getting exactly the same result.  It is of course more comfortable to
+write (and read) @code{byte} than @code{uint<8>}, and that's why the
+synonym is provided.
+
+The offset part of the map operator, i.e. the right size of @code{@@},
+can be any expression.  Therefore, we can also write:
+
+@example
+(poke) byte @@ 60#B + 4#B
+37UB
+@end example
+
+@noindent
+Which can be read as ``byte at 60 bytes plus 4 bytes''.
+
+@section Writing specific bytes
+
+So we can map bytes in the IO space.  What about altering them?  Lets
+recover our favorite dump:
+
+@example
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
+00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@.....@.....
+00000040: 2564 0a00 0000 0000 0000 0000 0000 0000  %d..............
+00000050: b702 0000 0100 0000 1801 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 8510 0000 ffff ffff  ................
+00000070: b700 0000 0000 0000 9500 0000 0000 0000  ................
+@end example
+
+Say we want to change the byte at offset 0x4a bytes, which currently
+reads @code{00}, and set it to @code{ff}.  We can achieve that by
+putting the map at the left hand side of an assign:
+
+@example
+(poke) byte @@ 0x4a#B = 0x66
+@end example
+
+@noindent
+Which reads ``assign 0x66 to the byte at offset 0x4a bytes''.  Dumping
+again, we can verify that the byte actually changed:
+
+@example
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
+00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0800 0700  ....@.....@.....
+00000040: 2564 0a00 0000 0000 0000 6600 0000 0000  %d........f.....
+00000050: b702 0000 0100 0000 1801 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 8510 0000 ffff ffff  ................
+00000070: b700 0000 0000 0000 9500 0000 0000 0000  ................
+@end example
+
+@noindent
+Does this mean that @file{foo.o} changed accordingly, in disk?  The
+answer is yes.  poke always commits changes immediately to the file
+being edited, so be careful.
+
+Altering the byte at offset 0x4a may have caused @file{foo.o} to stop
+being a valid ELF file, but since we are just editing bytes (and not
+ELF structures) we actually don't care much.
+
+Again, we can use any expression in the map construction, so this is
+also valid (and equivalent to the entry above):
+
+@example
+(poke) byte @@ 0x40#B + 0xa#B = 0x66
+@end example
+
+@section Saving values in variables
+
+Mapping bytes in the IO space is all right, but we may actually want
+to do some work with them: increasing them, adding them, and so on.
+In poke we do that by saving the mapped value in a @dfn{variable}.
+
+Lets get the byte at offset @code{64} bytes and save it in a variable
+called @code{foo}:
+
+@example
+(poke) defvar foo = byte @@ 64#B
+@end example
+
+@noindent
+This defines a new variable (@code{foo}) and initializes it with the
+byte at offset 64 bytes.  This results on @code{foo} to hold the value
+37.  We can get the value of a variable by just giving its name to
+poke:
+
+@example
+(poke) foo
+37UB
+@end example
+
+@noindent
+Once a variable is defined, we can use it to refer to its contained
+value.  For example, this is how we could get the byte at offset
+@code{foo} bytes:
+
+@example
+(poke) byte @@ foo#B
+0UB
+@end example
+
+@noindent
+Note how we had to use the suffix @code{#B} to indicate poke that we
+are talking about 37 bytes.
+
+The value of a variable can be changed by assigning to it.  For
+example, we can increase the value of @code{foo} by one issuing:
+
+@example
+(poke) foo = foo + 1
+@end example
+
+At this point, an important question is: when we change the value of
+the variable @code{foo}, are we also changing the value of the byte
+stored in @file{foo.o} at offset 64 bytes?  The answer is no.  This is
+because when we do the mapping:
+
+@example
+(poke) defvar foo = byte @@ 64#B
+@end example
+
+@noindent
+The value stored in @code{foo} is a @emph{copy} of the value returned
+by the map operator @code{@@}.  Therefore, if we wanted to increase
+the byte in the file, we would need to do something like:
+
+@example
+(poke) defvar foo = byte @@ 64#B
+(poke) foo = foo + 1
+(poke) byte @@ 64#B = foo
+@end example
+
+@noindent
+Or, more succintly, we can omit using the variable:
+
+@example
+(poke) byte @@ 64#B = (byte @@ 64#B) + 1
+@end example
+
+@noindent
+Note how we have to use parenthesis around the map at the right hand
+side, because the map operator @code{@@} has less precedent than the
+plus operator @code{+}.
+
+@section Working with groups of bytes
+
+Remember that string @code{EOF} near the beginning of @file{foo.o}?
+Lets take a look again:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+@end example
+
+The bytes whose ASCII representation compose the string are at offsets
+1, 2 and 3 bytes respectively.  In case we wanted to map them, we
+could of course do something like (note did I set the @command{obase}
+to hexadecimal):
+
+@example
+(poke) byte @@ 1#B
+0x45UB
+(poke) byte @@ 2#B
+0x4cUB
+(poke) byte @@ 3#B
+0x46UB
+@end example
+
+@noindent
+We could even store them in variables for later manipulation:
+
+@example
+(poke) defvar magic1 = byte @@ 1#B
+(poke) defvar magic2 = byte @@ 2#B
+(poke) defvar magic3 = byte @@ 3#B
+@end example
+
+However, there is a much better way to access consecutive groups of
+bytes.  In this case, we are interested in the three bytes starting at
+offset 1 byte.  We can get them using a single directive by issuing:
+
+@example
+(poke) byte[3] @@ 1#B
+[0x45UB,0x4cUB,0x46UB]
+@end example
+
+@noindent
+Which reads ``map three bytes starting at offset 1 byte''.  The result
+value is a Poke array, of three elements.  The elements are the
+individual bytes we asked for.
+
+As in many other programming languages, the elements of an array can
+be accessed by indexing.  This is how we can get the second byte of
+the array:
+
+@example
+(poke) (byte[3] @@ 1#B)[1]
+0x4cUB
+@end example
+
+@noindent
+Storing the array in a variable is much more readable, and allows us
+to index it several times without having to write the mapping again
+and again:
+
+@example
+(poke) defvar magic = byte[3] @@ 1#B
+(poke) magic[0]
+0x45UB
+(poke) magic[1]
+0x4cUB
+(poke) magic[2]
+0x46UB
+@end example
+
+Now, what happens if you alter an element of the mapped array?  Say we
+want to change @code{magic} to contain the characters for @code{EAF}
+instead of @code{ELF}.  The ASCII code for the character @code{A} is
+0x41, so we can issue:
+
+@example
+(poke) magic[1] = 0x41
+@end example
+
+Even better, poke allows us to use a different notation for small
+unsigned 8-bit integers.: @code{'X'} which corresponds to the ASCII
+code of the character @code{X}.  In this case:
+
+@example
+(poke) magic[1] = 'A'
+@end example
+
+@noindent
+Obviously the value of the array stored in the variable changes:
+
+@example
+(poke) magic
+[0x45UB,0x41UB,0x46UB]
+@end example
+
+@noindent
+But what about the file?  Lets see:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+It also changed!  Why?  We saw that assigning a mapped single byte to
+a variable actually assigned a copy of the byte, and therefore
+altering the variable basically didn't cause an update of the file.
+When we assign a mapped array to a variable, exactly the same happens:
+a copy of the array is stored in the variable.  But still altering the
+elements of the copied array alters the file contents.  The reason for
+this is that Poke values are copied by @dfn{shared value}.  This
+notion, which is used by many other programming languages, means that
+when you copy a composite value (such as an array) the elements
+contained in the resulting copy are the same than of the copied
+entity.
+
+Following this notion, will the following issue restore the original
+values to the file?
+
+@example
+(poke) magic = ['E','L','F']
+@end example
+
+@noindent
+The answer is no:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+The reason is that by assigning @code{['E','L','F']} to @code{magic},
+we are replacing the original array (the mapped array) with a new one,
+which is not mapped.  Therefore, any later modification of the
+elements of the new array won't have any effect on @file{foo.o}:
+
+@example
+(poke) magic[1] = 'X'
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@section From bytes to integers
+
+We said that bytes are no more (and no less) than little unsigned
+integers, of size 8-bit.  We also said that in poke @code{byte} is a
+synonym of the more informative (but more elaborated) @code{uint<8>}.
+In fact, poke allows you to manipulate integers, in both signed and
+unsigned flavors, of widths from 1 to 64 bits.
+
+Strings like @code{byte} or @code{uint<8>} are called @dfn{type
+specifiers}.  They... well, they specify types :D A type specifier for
+a signed 32-bit integer has the form @code{int<32>}, whereas the type
+specifier for an unsigned 16-bit integer has the form @code{uint<16>}.
+
+Unlike most (all?) other programming languages, Poke is not limited to
+a fixed set of integer sizes (such as 8, 16, 32, 64).  On the
+opposite, you can actually have integers having @emph{any} number of
+bits, between 1 and 64.  So yes, @code{int<3>} is a type specifier for
+signed 3-bit integers, and @code{uint<17>} is a type specifier for
+unsigned 7-bit integers.
+
+However, lets focus on the moment on the most conventional, friendly
+and harmless 32-bit integers.  The right type specifiers for these are
+@code{int<32>} (for signed) and @code{uint<32>} (for unsigned) but,
+again, poke is gentle enough to provide nice synonyms @code{int} and
+@code{uint}.
+
+Going back to our friend file @file{foo.o} and its,f by now, familiar
+starting bytes:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+Lets map the unsigned 32-bit integer at the beginning of the file:
+
+@example
+(poke) int @@ 0#B
+0x4641457f
+@end example
+
+@noindent
+Hmm, what happened?  The bytes are reversed compared to the @code{7f45
+4146} we can read in the dump!  This is because when we move from the
+realm of bytes to the realm of integers bigger than 8 bits, endianness
+comes into play.  By default, poke assumes big-endian for stored data.
+This can be checked using the @command{.set endian} dot-command:
+
+@example
+(poke) .set endian
+big
+@end example
+
+@noindent
+But, as it happens, I have this in my @file{~/.pokerc}:
+
+@example
+.set endian host
+@end example
+
+@noindent
+Which basically sets the endian to whatever endian is used by my
+system.  I have a x86 machine, which is little-endian.  Hence the
+result I got.  I can change the current endianness to big, and map
+again:
+
+@example
+(poke) .set endian big
+(poke) int @@ 0#B
+0x7f454146
+@end example
+
+@noindent
+And now I got the bytes in the same order than in the dump.  This
+means, by the way, that the @command{dump} command always works
+byte-by-byte: it never tries to interpret any sequence of bytes as
+integers bigger than 8 bits.  Do not let the grouping of the
+hexadecimal digits in the @command{dump} output fool you!
+
+@section From bytes to strings
+
+Let's now talk about strings... Poke supports native string values,
+whose type specifier is @code{string}.  Contrary to other programming
+languages, and this is important, strings in Poke are @emph{not}
+composite values. That's it, even if the contents of a string can be
+interpreted as @dfn{characters} or bytes, the string value itself is
+not decomposable, in principle (even if Poke provides a syntactic
+cheat for that.)
+
+The Poke strings are NULL-terminated when read or written to an IO
+space.  Back to our first bytes of @file{foo.o}:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+We may be tempted to map a string at offset 1 byte, to get the
+@code{"EAF"} string.  However, this will only succeed apparently:
+
+@example
+(poke) string @@ 1#B
+"EAF"
+@end example
+
+@noindent
+Why only apparently?  We got the string we wanted, didn't we?  Well,
+not really.  Lets use the @dfn{attribute} @code{'length} to query for
+the size of the string, in number of characters:
+
+@example
+(poke) (string @@ 1#B)'length
+6UL
+@end example
+
+@noindent
+Six... this makes sense if we look at the dump carefully.  The
+non-NULL bytes from offset 1 byte, plus the NULL byte, are @code{45
+4146 0201 00}.  That is six characters.  We don't see the characters
+@code{0201} in the printed representation of the string because these
+are not in the printable ASCII range.
+
+Since strings are not composite values, when they are copied by shared
+value, the characters are always copied as well.  This means the
+following entries will @emph{not} change the IO space:
+
+@example
+(poke) defvar magic = string @@ 1#B
+(poke) magic = "ELF"
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+This will make our poor @file{foo.o} to look like an ELF file again
+though:
+
+@example
+(poke) string @@ 1#B = "ELF" + 2UB as string + 1UB as string
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0000 0000 0000 0000 0000  .ELF............
+@end example
+
+@noindent
+Confused?  :) Lets analyze the command.  The construction @code{2UB as
+string} is a @dfn{cast}.  It converts a byte, i.e. an unsigned 8-bit
+integer, into a string whose constituents are the given byte followed
+by a NULL-byte.  The opeator @code{+}, when applied to strings,
+concatenates them.  Therefore, the result of the expression at the
+right-hand side of the assignment is the string with characters 'E',
+'L', 'F', 0x02, 0x01 and 0x00.  We can evaluate the expression by
+itself:
+
+@example
+(poke) "ELF" + 2UB as string + 1UB as string
+"ELF"
+@end example
+
+@noindent
+Again, note how both 0x02 and 0x01 are not printable.
 
 @node load command
 @chapter @code{.load}

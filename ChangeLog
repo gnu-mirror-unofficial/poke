@@ -1,5 +1,9 @@
 2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (basic Editing): New chapter.
+
+2020-03-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-typify.c (pkl_typify1_ps_cast): Allow casts from structs
 	to structs.
 	* src/pkl-gen.c (pkl_gen_ps_cast): Support struct-to-struct casts.
