@@ -1,3 +1,9 @@
+2020-03-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Binary Files): New section.
+	(Dumping File Contents): Improved.
+	(Working with Bytes): Likewise.
+
 2020-03-30  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* INSTALL: Remove from repository.

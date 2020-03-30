@@ -73,13 +73,14 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
       11.1  Compiler Overview
       11.2  The bison Parser in pkl-tab.y
       11.3  The AST
+        11.3.1  Loop Statements
       11.4  Compiler Passes and Phases
         11.4.1  Naming Conventions for Phases
         11.4.2  Naming Conventions for Handlers
         11.4.3  Transformation Phases
         11.4.4  Analysis Phases
         11.4.5  Type System Phases
-        11.4.6  Middle End Handlers should be Re-executable
+        11.4.6  Front and Middle End Handlers should be Re-entrant
       11.5  The Type System
         11.5.1  Type Expressions
       11.6  Adding Compiler Built-Ins
@@ -111,7 +112,6 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
       17.6  Test Suite
       17.7  Documentation
       17.8  Other Stuff
-
 
 
 Nomenclature
