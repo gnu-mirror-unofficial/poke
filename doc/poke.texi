@@ -734,7 +734,7 @@ command:
 
 @example
 (poke) dump
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
 00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
 00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
@@ -806,7 +806,7 @@ For example:
 
 @example
 (poke) dump :size 64#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
 00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
 00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
@@ -826,7 +826,7 @@ use yet another option, @code{:from}:
 
 @example
 (poke) dump :size 64#B :from 128#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000080: 1400 0000 0000 0000 0000 0000 0000 0000  ................
 00000090: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 000000a0: 0000 0000 0300 0100 0000 0000 0000 0000  ................
@@ -885,7 +885,7 @@ Lets look again at the first bytes of the file @file{foo.o}:
 
 @example
 (poke) dump :size 64#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
 00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
 00000020: 0102 0000 0000 0000 9801 0000 0000 0000  ................
@@ -982,7 +982,7 @@ Which reads ``assign 0xff to the byte at offset 0x4a bytes''.  Dumping
 again, we can verify that the byte actually changed:
 
 @example
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
 00000010: 0100 f700 0102 0000 0000 0000 0000 0000  ................
 00000020: 0102 0000 0000 0000 ff01 0000 0000 0000  ................
@@ -1261,7 +1261,7 @@ bytes are clearly arranged in the file the other way around:
 
 @example
 (poke) dump :from 0#B :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0000 0000 0000 0000 0000  .ELF............
 @end example
 
@@ -1355,7 +1355,7 @@ This is what the bit-concatenation operator implements:
 
 @example
 (poke) dump :from 0#B :size 3#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c                                  .EL
 (poke) defvar b1 = byte @@ 0#B
 (poke) defvar b2 = byte @@ 1#B
@@ -1704,7 +1704,7 @@ Looking at these bytes as sequences of bits, we have:
 @example
         byte @@ 0#B       |        byte @@ 1#B
 +-------------------------+-------------+-------------+
-|  0  1  1  1  1  1  1  1    0  1  0  0 :  0  1  0  1  
+|  0  1  1  1  1  1  1  1    0  1  0  0 :  0  1  0  1
 +-------------------------+-------------+-------------+
 |                uint<12>               |
 @end example
@@ -1883,7 +1883,7 @@ Let's map an unaligned 16 bit unsigned integer in @file{foo.o}:
 
 @example
 (poke) dump :from 0#B :size 3#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c                                  .EL
 (poke) .set obase 2
 (poke) byte @@ 0#B
@@ -1993,7 +1993,7 @@ space.  Back to our first bytes of @file{foo.o}:
 
 @example
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
 @end example
 
@@ -2031,7 +2031,7 @@ following entries will @emph{not} change the IO space:
 (poke) defvar magic = string @@ 1#B
 (poke) magic = "ELF"
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
 @end example
 
@@ -2042,7 +2042,7 @@ though:
 @example
 (poke) string @@ 1#B = "ELF" + 2UB as string + 1UB as string
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0000 0000 0000 0000 0000  .ELF............
 @end example
 
@@ -2072,7 +2072,7 @@ Lets take a look again:
 
 @example
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
 @end example
 
@@ -2121,7 +2121,7 @@ in the same order than they appear in the file:
 
 @example
 (poke) dump :from 1#B :size 3#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000001: 454c 46                                  .ELF............
 (poke) byte[3] @@ 1#B
 [0x45UB,0x4cUB,0x46UB]
@@ -2192,7 +2192,7 @@ But what about the file?  Lets see:
 
 @example
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
 @end example
 
@@ -2221,7 +2221,7 @@ The answer is no:
 
 @example
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
 @end example
 
@@ -2234,7 +2234,7 @@ elements of the new array won't have any effect on @file{foo.o}:
 @example
 (poke) magic[1] = 'X'
 (poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
 @end example
 
