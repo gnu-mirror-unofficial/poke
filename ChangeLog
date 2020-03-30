@@ -1,3 +1,8 @@
+2020-03-30  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* INSTALL: Remove from repository.
+	* .gitignore: Add /INSTALL.
+
 2020-03-29  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* bootstrap.conf: Add gnulib module xstrndup.
