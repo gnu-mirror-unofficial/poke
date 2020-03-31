@@ -86,11 +86,11 @@ Basic Editing
 * Binary Files::		What can be edited with poke.
 * Files as IO Spaces::		How poke looks at files.
 * Dumping File Contents::	A first look at a file's bytes.
-* Working with Bytes::		Reading, manipulating and writing bytes.
+* Poking Bytes::		Reading, manipulating and writing bytes.
 * Values and Variables::        Values can be stored in variables.
-* Working with Groups of Bytes:: The more the merrier!
-* Working with Integers::	From bytes to integers.
-* From bytes to strings::
+* Poking Integers::		From bytes to integers.
+* Poking Strings::		Readable sequences of bytes.
+* Poking Arrays::		Groups of homogeneous values.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -534,11 +534,11 @@ like.
 * Binary Files::		What can be edited with poke.
 * Files as IO Spaces::		How poke sees files.
 * Dumping File Contents::	A first look at a file's contents.
-* Working with Bytes::		Reading, manipulating and writing bytes.
+* Poking Bytes::		Reading, manipulating and writing bytes.
 * Values and Variables::        Values can be stored in variables.
-* Working with Groups of Bytes:: The more the merrier!
-* Working with Integers::	From bytes to integers.
-* From bytes to strings::
+* Poking Integers::		From bytes to integers.
+* Poking Strings::		Readable sequences of bytes.
+* Poking Arrays::		Groups of homogeneous values.
 @end menu
 
 @node Binary Files
@@ -585,7 +585,7 @@ Obtaining a simple ELF object file is easy, if you have a C compiler
 installed:
 
 @example
-$ echo 'int foo () @{ return 0; @}' | gcc -xc -o foo.o -
+$ echo 'int foo () @{ return 0; @}' | gcc -c -xc -o foo.o -
 @end example
 
 The command above compiles a very simple ELF object file that contains
@@ -878,8 +878,8 @@ The @command{dump} command is very flexible, and accepts a lot of
 options and customization variables that we won't be covering in this
 chapter.  For a complete description of the command, see @ref{dump}.
 
-@node Working with Bytes
-@section Working with Bytes
+@node Poking Bytes
+@section Poking Bytes
 
 Lets look again at the first bytes of the file @file{foo.o}:
 
@@ -1087,183 +1087,22 @@ Note how we have to use parenthesis around the map at the right hand
 side, because the map operator @code{@@} has less precedence than the
 plus operator @code{+}.
 
-@node Working with Groups of Bytes
-@section Working with Groups of Bytes
+@node Poking Integers
+@section Poking Integers
 
-Remember that string @code{EOF} near the beginning of @file{foo.o}?
-Lets take a look again:
+Integers are probably the most important notion when working with
+binary data.
 
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
-00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
-@end example
+@menu
+* From Bytes to Integers::	Building numbers with bytes.
+* Big and Little Endians::	Pick your egg.
+* Negative Integers::		Why so positive?
+* Weird Integers::		Incomplete bytes in numbers.
+* Unaligned Integers::		IO spaces are bit-oriented.
+* Integers of Different Sizes:: Promotion of integers in expressions.
+@end menu
 
-The bytes whose ASCII representation compose the string are at offsets
-1, 2 and 3 bytes respectively.  In case we wanted to map them, we
-could of course do something like this:
-
-@example
-(poke) byte @@ 1#B
-0x45UB
-(poke) byte @@ 2#B
-0x4cUB
-(poke) byte @@ 3#B
-0x46UB
-@end example
-
-@noindent
-As we learn in a previous section, we could even store them in
-variables for later manipulation:
-
-@example
-(poke) defvar magic1 = byte @@ 1#B
-(poke) defvar magic2 = byte @@ 2#B
-(poke) defvar magic3 = byte @@ 3#B
-@end example
-
-However, there is a much better way to access consecutive groups of
-bytes.  In this case, we are interested in the three bytes starting at
-offset 1 byte.  We can get them using a single directive by issuing:
-
-@example
-(poke) byte[3] @@ 1#B
-[0x45UB,0x4cUB,0x46UB]
-@end example
-
-@noindent
-Which reads ``map three bytes starting at offset 1 byte''.  The result
-value is a Poke @dfn{array}, of three elements.  The elements are the
-individual byte values we asked for.  Note how the left operand to the
-map operator @code{@@} specifies the kind of value we want to map: for
-a single byte we use @code{byte} and for three bytes we use
-@code{byte[3]}.
-
-The array we get from the mapping operation contains the bytes exactly
-in the same order than they appear in the file:
-
-@example
-(poke) dump :from 1#B :size 3#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
-00000001: 454c 46                                  .ELF............
-(poke) byte[3] @@ 1#B
-[0x45UB,0x4cUB,0x46UB]
-@end example
-
-Arrays can also be written directly in the REPL. The array resulting
-from the mapping above could have also be written directly as:
-
-@example
-(poke) [0x45UB, 0x4cUB, 0x46UB]
-[0x45UB,0x4cUB,0x46UB]
-@end example
-
-Given an array value, its elements can be accessed by @dfn{indexing}.
-The index is zero-based, i.e. the index @code{[0]} refers to the first
-element of the array, @code{[1]} refers to the second, and so on.  Any
-expression resulting in a number can be used as an index.
-
-For example, this is how we can get the second byte of an array of
-bytes:
-
-@example
-(poke) (byte[3] @@ 1#B)[1]
-0x4cUB
-@end example
-
-@noindent
-Storing the array in a variable allows us to index it several times
-without having to write the mapping again and again:
-
-@example
-(poke) defvar magic = byte[3] @@ 1#B
-(poke) magic[0]
-0x45UB
-(poke) magic[1]
-0x4cUB
-(poke) magic[2]
-0x46UB
-@end example
-
-Now, what happens if you alter an element of the mapped array?  Say we
-want to change @code{magic} to contain the characters for @code{EAF}
-instead of @code{ELF}.  The ASCII code for the character @code{A} is
-0x41, so we can issue:
-
-@example
-(poke) magic[1] = 0x41
-@end example
-
-Even better, poke allows us to use a different notation for byte
-values: @code{'X'} which corresponds to the ASCII code of the
-character @code{X}.  In this case:
-
-@example
-(poke) magic[1] = 'A'
-@end example
-
-@noindent
-Obviously the value of the array stored in the variable changes:
-
-@example
-(poke) magic
-[0x45UB,0x41UB,0x46UB]
-@end example
-
-@noindent
-But what about the file?  Lets see:
-
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@noindent
-It also changed!  Why?  We saw that assigning a mapped single byte to
-a variable actually assigned a copy of the byte, and therefore
-altering the variable basically didn't cause an update of the file.
-When we assign a mapped array to a variable, exactly the same happens:
-a copy of the array is stored in the variable.  But still altering the
-elements of the copied array alters the file contents.  The reason for
-this is that Poke values are copied by @dfn{shared value}.  This
-notion, which is used by many other programming languages, means that
-when you copy a composite value (such as an array) the elements
-contained in the resulting copy are the same than of the copied
-entity.
-
-Following this notion, will the following issue restore the original
-values to the file?
-
-@example
-(poke) magic = ['E','L','F']
-@end example
-
-@noindent
-The answer is no:
-
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@noindent
-The reason is that by assigning @code{['E','L','F']} to @code{magic},
-we are replacing the original array (the mapped array) with a new one,
-which is not mapped.  Therefore, any later modification of the
-elements of the new array won't have any effect on @file{foo.o}:
-
-@example
-(poke) magic[1] = 'X'
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@node Working with Integers
-@section Working with Integers
-
+@node From Bytes to Integers
 @subsection From Bytes to Integers
 
 The bytes we have been working with are unsigned whole numbers (or
@@ -1458,94 +1297,688 @@ GNU poke supports integers up to eight bytes, i.e. up to 64-bits.
 This may change in the future, as we are planning to support
 arbitrarily large integers.
 
+@node Big and Little Endians
 @subsection Big and Little Endians
 
+@cindex big endian
+@cindex little endian
+@cindex endianness
+When talking about whole numbers (integers) we should distinguish
+between a value (such as 123) and its @dfn{written form}, such as
+@code{123}.  The written form of a number is composed by digits,
+arranged in certain order.  It turns out that the ordering of the
+digits in the written form of a number is important, because depending
+on its position each digit contributes with a different ``weight'' to
+the resulting value.  This is regardless of the numerical base used.
 
+For example, the value of the number 123 (whose written form is
+@code{123}) is calculated as @code{1*10^2+2*10^1+3*10^0}.  If we swap
+the last two digits in the written form of the number, we have
+@code{1*10^2+3*10^1+2*10^0}, which results in a different value:
+@code{132}.  When we consider other numerical bases, the bases in the
+polynomial change accordingly, but the correspondence between written
+form and value stands: for example, the value of 0x123 is calculated
+as @code{1*16^2+2*16^1+3*16^0}.  The ``higher'' a digit is in the
+polynomial, the @dfn{more significant} it is.  In the written number
+@code{123}, for example, the digit 1 is the @dfn{most significant}
+digit of the number, and the digit 3 is the @dfn{least significant}
+digit.
 
-@c Negative Encodings::         One' and two' complement.
-@c Quantum Bitanics::           Sub-byte integers.
+This distinction between the written form of a number and its value is
+important.  In the same way there are languages that are read
+right-to-left and down-to-up, imagine there was a language in the
+world in which the digits of numbers were arranged from right-to-left
+instead of left-to-right.  In that context, the written representation
+of 123 would be @code{321}, not @code{123}.  In other words: the least
+significant digit would come first, not last, in the written form of
+the number.
 
-We said that bytes are no more (and no less) than little unsigned
-integers, of size 8-bit.  We also said that in poke @code{byte} is a
-synonym of the more informative (but more elaborated) @code{uint<8>}.
-In fact, poke allows you to manipulate integers, in both signed and
-unsigned flavors, of widths from 1 to 64 bits.
+Since we are composing numbers with bytes, it makes sense to have each
+byte to play the role of a digit in the written form of the bigger
+number.  Since bytes can have values from 0 to 255, the base is 256.
+But what is the ``written form'' for our byte-composed numbers?
 
-Strings like @code{byte} or @code{uint<8>} are called @dfn{type
-specifiers}.  They... well, they specify types :D A type specifier for
-a signed 32-bit integer has the form @code{int<32>}, whereas the type
-specifier for an unsigned 16-bit integer has the form @code{uint<16>}.
+In the last section we tried to compose bigger integers by
+concatenating bytes together and interpreting the result.  In doing
+so, we assumed (quite naturally) that in the written form of the
+resulting integer the bytes are ordered in the same order than they
+appear in the file, i.e. we assume that the written form of the number
+@code{b1*256^2+b2*256^1+b3*256^0} would be @code{b1b2b3}, where
+@code{b1}, @code{b2} and @code{b3} are bytes.  In other words, given a
+written form @code{b1b2b3}, @code{b1} would be the most significant
+byte (digit) and @code{b3} would be the least significant byte
+(digit).  In our world of IO spaces, the ``written form'' is the
+disposition of the bytes in the IO space (file, memory buffer, etc)
+being edited.
 
-Unlike most (all?) other programming languages, Poke is not limited to
-a fixed set of integer sizes (such as 8, 16, 32, 64).  On the
-opposite, you can actually have integers having @emph{any} number of
-bits, between 1 and 64.  So yes, @code{int<3>} is a type specifier for
-signed 3-bit integers, and @code{uint<17>} is a type specifier for
-unsigned 7-bit integers.
-
-However, lets focus on the moment on the most conventional, friendly
-and harmless 32-bit integers.  The right type specifiers for these are
-@code{int<32>} (for signed) and @code{uint<32>} (for unsigned) but,
-again, poke is gentle enough to provide nice synonyms @code{int} and
-@code{uint}.
-
-Going back to our friend file @file{foo.o} and its,f by now, familiar
-starting bytes:
+This is what the bit-concatenation operator implements:
 
 @example
-(poke) dump :size 16#B
+(poke) dump :from 0#B :size 3#B
 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+00000000: 7f45 4c                                  .EL
+(poke) defvar b1 = byte @@ 0#B
+(poke) defvar b2 = byte @@ 1#B
+(poke) defvar b3 = byte @@ 2#B
+(poke) b1::b2::b3
+(uint<24>) 0x7f454c
 @end example
 
-@noindent
-Lets map the unsigned 32-bit integer at the beginning of the file:
+However, much like in certain human languages the written form is read
+from right to left, some computers also read numbers from right to
+left in their ``written form''.  Actually, turns out that @emph{most}
+modern computers do it like that.  This means that, in these
+computers, given the written form @code{b1b2b3} (i.e. given a file
+where @code{b1} comes first, followed by @code{b2} and then @code{b3})
+the most significant byte is @code{b3} and the least significant byte
+is @code{b1}.  Therefore, the value of the number would be
+@code{b3*256^2+b2*256^1+b3*256^0}.
+
+So, given the written form of a bigger number @code{b1b2b3} (i.e. some
+ordering of bytes implied by the file they are stored in) there are at
+least two ways to interpret them to calculate the value of the
+number.  When the written form is read from left to right, we talk
+about a @dfn{big endian} interpretation.  When the written form is
+read from right to left, we talk about a @dfn{little endian}
+representation.
+
+Given the first three bytes in @code{foo.o}, we can determine the
+value of the integer composed by these three bytes in both
+interpretations:
 
 @example
-(poke) int @@ 0#B
-0x4641457f
+(poke) b1::b2::b3
+(uint<24>) 0x7f454c
+(poke) b3::b2::b1
+(uint<24>) 0x4c457f
+@end example
+
+Remember how the type specifier @code{byte} is just a synonym of
+@code{uint<8>}, and how we can use type specifiers like
+@code{uint<24>} and @code{uint<32>} to map bigger integers?  When we
+do that, like in:
+
+@example
+(poke) uint<24> @@ 0#B
+(uint<24>) 0x7f454c
 @end example
 
 @noindent
-Hmm, what happened?  The bytes are reversed compared to the @code{7f45
-4146} we can read in the dump!  This is because when we move from the
-realm of bytes to the realm of integers bigger than 8 bits, endianness
-comes into play.  By default, poke assumes big-endian for stored data.
-This can be checked using the @command{.set endian} dot-command:
+poke should decide what kind of interpretation to use, i.e. how to
+read the ``written form'' of the number.  As you can see from the
+example, poke uses the left-to-right interpretation, or big-endian, by
+default.  But you can change it using a new dot-command: @command{.set
+endian}:
+
+@example
+(poke) .set endian little
+(poke) uint<24> @@ 0#B
+(uint<24>) 0x4c457f
+@end example
+
+The currently used interpretation (also called @dfn{endianness}) is
+shown if you invoke the dot-command without an argument@footnote{This
+also applies to the other @command{.set} commands}:
 
 @example
 (poke) .set endian
-big
+little
 @end example
 
-@noindent
-But, as it happens, I have this in my @file{~/.pokerc}:
+Different systems use different endianness.  Into a given system, it
+is to be expected that most files will be encoded following the same
+conventions.  Therefore poke provides you a way to set the endianness
+to whatever endianness is in the system.  You do it this way:
 
 @example
-.set endian host
+(poke) .set endian host
+@end example
+
+@node Negative Integers
+@subsection Negative Integers
+
+@subsubsection Negative Encodings
+
+Up to this point we have worked with unsigned integers, i.e. whole
+numbers which are zero or bigger than zero.  Much like it happened
+with endianness, the interpretation of the value of several bytes as a
+negative number depends on the specific interpretation.
+
+@cindex negative encoding
+@cindex one complement
+@cindex two complement
+In computing there are two main ways to interpret the values of a
+group of bytes as a negative number: @dfn{one's complement} and
+@dfn{two's complement}.
+@c XXX: expand.
+
+GNU poke supports both interpretations, and the interpretation that is
+used depends on the global setting that can be changed using the
+@command{.set nenc} dot-command.  The possible values are @code{2c}
+for two's complement and @code{1c} for one's complement.
+
+@example
+(poke) .set nenc
+2c
+(poke) .set nenc 1c
 @end example
 
 @noindent
-Which basically sets the endian to whatever endian is used by my
-system.  I have a x86 machine, which is little-endian.  Hence the
-result I got.  I can change the current endianness to big, and map
-again:
+The default is two's complement, which is the negative encoding used
+in the vast majority of modern computers and operating systems.
+
+@subsubsection Signed Integers
+
+Unsigned values are never negative.  For example:
+
+@example
+(poke) 0UB - 1UB
+0xffUB
+@end example
+
+@noindent
+Instead of getting a -1, we get the result of an unsigned underflow,
+which is the biggest possible value for an unsigned integer of size 8
+bits: 0xff.
+
+When using type specifiers like @code{uint<8>} or @code{uint<16>} in a
+map, we get unsigned values such as 0UB.  It follows that we need
+other type specifiers to map signed values.  These look like
+@code{int<8>} and @code{int<16>}.
+
+For example, lets map a signed 16-bit value from @file{foo.o}:
+
+@example
+(poke) .set obase 10
+(poke) int<16> @@ 0#B
+28515H
+@end example
+
+@noindent
+Note how the suffix of the value is now @code{H} and not @code{UH}.
+This means that the value is signed!  But in this case it is still
+positive, so lets try to get an actual negative value:
+
+@example
+(poke) defvar h = int<16> @@ 0#B
+(poke) h - h - 1H
+-1H
+@end example
+
+@subsubsection Mixing Signed and Unsigned Integers
+
+Adding two signed integers gives you a signed integer:
+
+@example
+(poke) 1 + 2
+3
+@end example
+
+@noindent
+Likewise, adding two unsigned integers results in an unsigned integer:
+
+@example
+(poke) 1U + 2U
+3U
+@end example
+
+@noindent
+But, what happens if we mix signed and unsigned values in an
+expression?  Is the result signed, or unsigned?  Lets find out:
+
+@example
+(poke) 1U + 2
+3U
+@end example
+
+@noindent
+Looks like combining an unsigned value with a signed value gives us an
+unsigned value.  This actually applies to all the operators that work
+on integer values: multiplication, division, exponentiation, etc.
+
+@cindex casts
+What actually happens is that the signed operand is converted to an
+unsigned value before executing the expression.  You can also convert
+signed values into unsigned values (and vice-versa) using @dfn{cast
+constructions}:
+
+@example
+(poke) 2 as uint<32>
+2U
+@end example
+
+@noindent
+Therefore, the expression @code{1U + 2} is equivalent to @code{1U + 2
+as uint<32>}:
+
+@example
+(poke) 1U + 2 as uint<32>
+3U
+@end example
+
+You may be wondering: why not doing it the other way around?  Why not
+converting the unsigned operand into a signed value and then operate?
+The reason is that, given an integer size, the positive range that you
+can store in it is bigger when interpreted as an unsigned integer than
+when interpreted as a signed integer.  Therefore, converting signed
+into unsigned before operating reduces the risk of positive overflow.
+This of course assumes that we, as users, will be working with
+positive numbers more often than with negative numbers, but that is a
+reasonable assumption to do, as it is often the case!
+
+@node Weird Integers
+@subsection Weird Integers
+
+Up to this point we have been playing with integers that are built
+using a whole number of bytes.  However, we have seen that the type
+specifier for an integer has the form @code{int<N>} or @code{uint<N>}
+for signed and unsigned variants, where @code{N} is the width of the
+integer, in bits.  We have used bit-sizes that are multiple of 8,
+which is the size of a byte.  So, why is this so?  Why is @code{N} not
+measured in bytes instead?
+
+The reason is that poke is not limited to integers composed by a whole
+number of bytes. You can actually have integers having @emph{any}
+number of bits, between 1 and 64.  So yes, @code{int<3>} is a type
+specifier for signed 3-bit integers, and @code{uint<17>} is a type
+specifier for unsigned 7-bit integers.
+
+We call integers like this @dfn{weird integers}.
+
+The vast majority of programming languages do not provide any support
+for weird integers.  In the few cases they do, it is often in a very
+limited and specific way, like bitmap fields in C structs, that also
+depends on the system where you compile and run your program.
+
+In poke, on the contrary, weird numbers are first class citizens, and
+they don't differ in any way from ``normal'' integers composed of a
+whole number of bytes.
+
+@subsubsection Incomplete Bytes
+
+Let's consider first weird numbers that span for more than one byte.
+For example, an unsigned integer of 12 bits.  Lets visualize the
+written form of this number, i.e. the sequence of its constituent
+bytes as they appear in the underlying IO space:
+
+@example
+  byte 0  |  byte 1
++---------+----+----+
+|::::::::::::::|    |
++---------+----+----+
+|   uint<12>   |
+@end example
+
+@noindent
+All right, the first byte is used in its entirely, but only half of
+the second byte is used to conform the value of the number.  The other
+half of the second byte has no influence of the value of the 12 bits
+number.
+
+Now, we talk about the ``second half of the byte'', but what do that
+means exactly?  We know that bytes in memory and files (bytes in IO
+spaces) are indivisible at the system level: bytes are read and
+written one at a time, as little integers in the range @code{0..255}.
+However, we can create the useful fiction that each byte is composed
+by @dfn{bits}, which are the digits in the binary representation of
+the byte value.
+
+So, we can look at a byte as composed by a group of eight bits, like
+this:
+
+@example
+           byte
++-------------------------+
+| b7 b6 b5 b4 b3 b2 b1 b0 |
++-------------------------+
+@end example
+
+@noindent
+Note how we decided to number the bits in descending order from left
+to right.  This is because these bits correspond to the base of the
+polynomial equivalent to the binary value of the byte, i.e. the value
+of the byte is
+@code{b7*2^7+b6*2^6+b5*2^5+b4*2^4+b3*2^3+b2*2^2+b1*2^1+b0*2^0}.  In
+other words: at the bit level poke always uses a big endian
+interpretation, and the bit that ``comes first'' in this imaginary
+stream of bits is the most significant bit in the binary
+representation of the number.  Please note that this is just a
+convention, set by the poke authors: the opposite could have been
+chosen, but it would have been a bit confusing, as we would have to
+picture binary numbers in reverse order!
+
+With this new way of looking at bytes, we can now visualize what we
+mean exactly with the ``first half'' and ``second half'' of the
+trailing bit, in our 12 bits unsigned number:
+
+@example
+           byte 0         |           byte 1
++-------------------------+-------------+-------------+
+| a7 a6 a5 a4 a3 a2 a1 a0   b7 b6 b5 b4 :             |
++-------------------------+-------------+-------------+
+|                uint<12>               |
+@end example
+
+@noindent
+Thus the first half of @code{byte 1} is the sequence of bits @code{b7
+b6 b5 b4}.  The second half, which is not pictured since it doesn't
+contribute to the value of the number, would be @code{b3 b2 b1 b0}.
+
+So what would be the value of the 12-bit integer?  Exactly like with
+non-weird numbers, this depends on the current selected endianness,
+which determines the ordering of bytes.
+
+If the current endianness is big, then @code{byte 0} provides the most
+significant bits of the result number, and the used portion of
+@code{byte 1} provides the least significant bits of the result
+number:
+
+@example
+0b a7 a6 a5 a4 a3 a2 a1 a0 b7 b6 b5 b4
+@end example
+
+@noindent
+However, if the current selected endianness is little, then the used
+portion of @code{byte 1} provides the most significant bits of the
+result number, and @code{byte 0} provides the least significant bits
+of the result number:
+
+@example
+0b b7 b6 b5 b4 a7 a6 a5 a4 a3 a2 a1 a0
+@end example
+
+Lets see this in action.  Lets take a look to the value of the first
+two bytes in @file{foo.o}, in binary:
+
+@example
+(poke) .set obase 2
+(poke) byte @@ 0#B
+0b01111111UB
+(poke) byte @@ 1#B
+0b01000101UB
+@end example
+
+@noindent
+Looking at these bytes as sequences of bits, we have:
+
+@example
+        byte @@ 0#B       |        byte @@ 1#B
++-------------------------+-------------+-------------+
+|  0  1  1  1  1  1  1  1    0  1  0  0 :  0  1  0  1  
++-------------------------+-------------+-------------+
+|                uint<12>               |
+@end example
+
+@noindent
+Lets map our weird number at offset 0 bytes, using big endian:
 
 @example
 (poke) .set endian big
-(poke) int @@ 0#B
-0x7f454146
+(poke) uint<12> @@ 0#B
+(uint<12>) 0b011111110100
 @end example
 
 @noindent
-And now I got the bytes in the same order than in the dump.  This
-means, by the way, that the @command{dump} command always works
-byte-by-byte: it never tries to interpret any sequence of bytes as
-integers bigger than 8 bits.  Do not let the grouping of the
-hexadecimal digits in the @command{dump} output fool you!
+That matches what we explained before: the most significant bits of
+the unsigned 12 bits number come from the byte at offset 0,
+i.e. @code{01111111}, whereas the least significant bits come from the
+byte at offset 1, i.e. @code{0100}.
 
-@node From bytes to strings
-@section From bytes to strings
+Now lets map it using little endian:
+
+@example
+(poke) uint<12> @@ 0#B
+(uint<12>) 0b010001111111
+@end example
+
+@noindent
+This time the most significant bits of the unsigned 12 bits number
+come from the byte at offset 1, i.e. @code{0100}, whereas the least
+significant bits come from the byte at offset 0, i.e. @code{01111111}.
+
+An important thing to note is that non-weird numbers, i.e. numbers
+built with a whole number of bytes, are basically a particular case of
+weird numbers where the last byte in the written form (in the IO
+space) provides all its bits.  The rules are exactly the same in all
+cases, which makes it easy to obtain predictable and natural results
+when building integers using poke.
+
+@subsubsection Quantum Bytenics
+
+The second kind of weird numbers are integers using less than 8 bits.
+These ``sub-byte'' numbers do not use all the bytes of their
+containing byte.  Consider for example the written form of an unsigned
+integer of size 5 bits:
+
+@example
+    byte
++-----+----+
+|:::::|    |
++-----+----+
+uint<5>
+@end example
+
+@noindent
+Now lets view the byte as a sequence of bits:
+
+@example
+             byte
++----------------+----------+
+| b7 b6 b5 b4 b3 |          |
++----------------+----------+
+|    uint<5>     |
+@end example
+
+@noindent
+What is the value of this number?  Applying the general rules for
+building integers from bytes, we can easily see that regardless of the
+current endianness the value, in binary, is:
+
+@example
+0b b7 b6 b5 b4 b3
+@end example
+
+Lets see this in poke:
+
+@example
+(poke) .set obase 2
+(poke) .set endian big
+(poke) byte @@ 0#B
+0b01111111UB
+(poke) uint<5> @@ 0#B
+(uint<5>) 0b01111
+(poke) .set endian little
+(poke) uint<5> @@ 0#B
+(uint<5>) 0b01111
+@end example
+
+@subsubsection Signed Weird Numbers
+
+In the section discussing negative integers, we saw how the different
+between a signed number and an unsigned number is basically a
+different interpretation of the most significant byte.  Exactly the
+same applies to weird numbers.
+
+Lets summon our unsigned 12-bit integer at the beginning of the file
+@file{foo.o}:
+
+@example
+(poke) .set endian big
+(poke) uint<12> @@ 0#B
+(uint<12>) 0b011111110100
+@end example
+
+@noindent
+The most significant byte of the resulting value (not of its written
+form) indicates that this number would be positive if we were mapping
+the corresponding signed value.  Lets see:
+
+@example
+(poke) int<12> @@ 0#B
+(int<12>) 0b010001111111
+(poke) .set obase 10
+(poke) int<12> @@ 0#B
+(int<12>) 1151
+@end example
+
+Lets make it a bit more interesting, and change the value of the first
+byte in the file so we get a negative number:
+
+@example
+(poke) .set obase 2
+(poke) byte @@ 0#B = 0b1111_1111
+(poke) int<12> @@ 0#B
+(int<12>) 0b111111110100
+(poke) .set obase 10
+(poke) int<12> @@ 0#B
+(int<12>) -12
+@end example
+
+@noindent
+Now, lets switch to little endian:
+
+@example
+(poke) .set endian little
+(poke) .set obase 2
+(poke) int<12> @@ 0#B
+(int<12>) 0b010011111111
+(poke) .set obase 10
+(poke) int<12> @ 0#B
+(int<12>) 1279
+@end example
+
+@node Unaligned Integers
+@subsection Unaligned Integers
+
+@cindex IO devices
+@cindex IO spaces
+We have mentioned above that the data stored in computers, that we
+edit with poke, is arranged as a sequence of bytes.  The entities we
+edit with poke (that we call @dfn{IO devices}) are presented to us as
+IO spaces.  Up to now, we have accessed this IO space in terms of
+bytes, in commands like @code{dump :from 32#B} and in expressions like
+@code{2UB + byte @@ 0#B}.  We said that mapped integers are built from
+bytes read from the IO space.
+
+However, the IO space that poke offers to us is actually a space of
+bits, not a space of bytes, and the poke values are mapped on this
+space of bits.  The following figure shows this:
+
+@example
+poke values      |        uint<16> @@ 2#b         |
+-----------      |                               |
+IO space     |b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|
+-----------  |               |               |               |
+IO device    |     byte0     |     byte1     |     byte2     |
+@end example
+
+@noindent
+The main consequence of this, that you can see in the figure above, is
+that we can use offsets in mapping operations that are not
+@dfn{aligned to bytes}.  You can specify an offset in bits, instead of
+bytes, using the @code{#b} suffix instead of @code{#B}.  Little
+@code{b} means bits, and big @code{B} means bytes.
+
+Let's map an unaligned 16 bit unsigned integer in @file{foo.o}:
+
+@example
+(poke) dump :from 0#B :size 3#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c                                  .EL
+(poke) .set obase 2
+(poke) byte @@ 0#B
+0b01111111UB
+(poke) byte @@ 1#B
+0b01000101UB
+(poke) byte @@ 2#B
+0b01001100UB
+(poke) .set endian big
+(poke) uint<16> @@ 2#b
+0b1111110100010101UH
+@end example
+
+Graphically:
+
+@example
+poke values      |        uint<16> @@ 2#b         |
+-----------      |                               |
+IO space     |0|1|1|1|1|1|1|1|0|1|0|0|0|1|0|1|0|1|0|0|1|1|0|0|
+-----------  |               |               |               |
+IO device    |     0x7f      |      0x45     |      0x4c     |
+@end example
+
+These three levels of abstractions make it very easy and natural to
+work with unaligned data.  Imagine for example that you are poking
+packages in a network protocol that is bit-oriented.  This means that
+the packages will generally not be aligned to byte boundaries, but
+still the payload stored in the packages contains integers of several
+sizes.  poke allows you to directly map these integers as if they were
+aligned to byte boundaries, and work with them.
+
+However, when one tries to determine the correspondence between a
+given poke value and the underlying bytes in the IO device, things can
+get complicated.  This is particularly true when we map what we called
+``weird numbers'', i.e. numbers with partial bytes.  As we saw, the
+rules to build these numbers were expressed in terms of bytes.
+
+In order to ease the visualization of the process used to build
+integer values (especially if they are weird numbers, i.e. integers
+with partial bytes) one can imagine an additional layer of ``virtual
+bytes'' above the space of bits provided by the IO space.
+Graphically:
+
+@example
+poke values       |        uint<16> @@ 2#b         |
+-----------       |                               |
+Virtual bytes     | virt. byte1   |  virt. byte2  |
+-----------       |               |               |
+IO space      |0|1|1|1|1|1|1|1|0|1|0|0|0|1|0|1|0|1|0|0|1|1|0|0|
+-----------   |               |               |               |
+IO device     |     0x7f      |      0x45     |      0x4c     |
+@end example
+
+It is very important to understand that the IO space is an abstraction
+provided by poke.  The underlying file, or memory buffer, or whatever,
+is actually a sequence of bytes; poke translates the operations on
+integers, bits, bytes, etc into the corresponding byte operations,
+which are far from trivial.  Fortunately, you can let poke to do that
+dirty job for you, and abstract yourself from that complexity.
+
+@node Integers of Different Sizes
+@subsection Integers of Different Sizes
+
+When integer values of different sizes are passed to an arithmetic or
+relational operator, the ``smaller'' operand gets converted into the
+size of the ``bigger'' operand.  For example:
+
+@example
+(poke) 1H + 2
+3
+@end example
+
+@noindent
+The operands are of size 16-bit and 32-bit respectively, and the
+result is a 32-bit integer.  This is equivalent to:
+
+@example
+(poke) 1H as int<32> + 2
+3
+@end example
+
+@node Poking Strings
+@section Poking Strings
+
+@subsection From Bytes to Characters
+
+@c XXX character sets, ASCII
+
+@subsection From Characters to Strings
+
+@c XXX
+
+@subsection Extracting Characters from Strings
+
+@c XXX
 
 Let's now talk about strings... Poke supports native string values,
 whose type specifier is @code{string}.  Contrary to other programming
@@ -1630,6 +2063,184 @@ itself:
 
 @noindent
 Again, note how both 0x02 and 0x01 are not printable.
+
+@node Poking Arrays
+@section Poking Arrays
+
+Remember that string @code{EOF} near the beginning of @file{foo.o}?
+Lets take a look again:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+@end example
+
+The bytes whose ASCII representation compose the string are at offsets
+1, 2 and 3 bytes respectively.  In case we wanted to map them, we
+could of course do something like this:
+
+@example
+(poke) byte @@ 1#B
+0x45UB
+(poke) byte @@ 2#B
+0x4cUB
+(poke) byte @@ 3#B
+0x46UB
+@end example
+
+@noindent
+As we learn in a previous section, we could even store them in
+variables for later manipulation:
+
+@example
+(poke) defvar magic1 = byte @@ 1#B
+(poke) defvar magic2 = byte @@ 2#B
+(poke) defvar magic3 = byte @@ 3#B
+@end example
+
+However, there is a much better way to access consecutive groups of
+bytes.  In this case, we are interested in the three bytes starting at
+offset 1 byte.  We can get them using a single directive by issuing:
+
+@example
+(poke) byte[3] @@ 1#B
+[0x45UB,0x4cUB,0x46UB]
+@end example
+
+@noindent
+Which reads ``map three bytes starting at offset 1 byte''.  The result
+value is a Poke @dfn{array}, of three elements.  The elements are the
+individual byte values we asked for.  Note how the left operand to the
+map operator @code{@@} specifies the kind of value we want to map: for
+a single byte we use @code{byte} and for three bytes we use
+@code{byte[3]}.
+
+The array we get from the mapping operation contains the bytes exactly
+in the same order than they appear in the file:
+
+@example
+(poke) dump :from 1#B :size 3#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000001: 454c 46                                  .ELF............
+(poke) byte[3] @@ 1#B
+[0x45UB,0x4cUB,0x46UB]
+@end example
+
+Arrays can also be written directly in the REPL. The array resulting
+from the mapping above could have also be written directly as:
+
+@example
+(poke) [0x45UB, 0x4cUB, 0x46UB]
+[0x45UB,0x4cUB,0x46UB]
+@end example
+
+Given an array value, its elements can be accessed by @dfn{indexing}.
+The index is zero-based, i.e. the index @code{[0]} refers to the first
+element of the array, @code{[1]} refers to the second, and so on.  Any
+expression resulting in a number can be used as an index.
+
+For example, this is how we can get the second byte of an array of
+bytes:
+
+@example
+(poke) (byte[3] @@ 1#B)[1]
+0x4cUB
+@end example
+
+@noindent
+Storing the array in a variable allows us to index it several times
+without having to write the mapping again and again:
+
+@example
+(poke) defvar magic = byte[3] @@ 1#B
+(poke) magic[0]
+0x45UB
+(poke) magic[1]
+0x4cUB
+(poke) magic[2]
+0x46UB
+@end example
+
+Now, what happens if you alter an element of the mapped array?  Say we
+want to change @code{magic} to contain the characters for @code{EAF}
+instead of @code{ELF}.  The ASCII code for the character @code{A} is
+0x41, so we can issue:
+
+@example
+(poke) magic[1] = 0x41
+@end example
+
+Even better, poke allows us to use a different notation for byte
+values: @code{'X'} which corresponds to the ASCII code of the
+character @code{X}.  In this case:
+
+@example
+(poke) magic[1] = 'A'
+@end example
+
+@noindent
+Obviously the value of the array stored in the variable changes:
+
+@example
+(poke) magic
+[0x45UB,0x41UB,0x46UB]
+@end example
+
+@noindent
+But what about the file?  Lets see:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+It also changed!  Why?  We saw that assigning a mapped single byte to
+a variable actually assigned a copy of the byte, and therefore
+altering the variable basically didn't cause an update of the file.
+When we assign a mapped array to a variable, exactly the same happens:
+a copy of the array is stored in the variable.  But still altering the
+elements of the copied array alters the file contents.  The reason for
+this is that Poke values are copied by @dfn{shared value}.  This
+notion, which is used by many other programming languages, means that
+when you copy a composite value (such as an array) the elements
+contained in the resulting copy are the same than of the copied
+entity.
+
+Following this notion, will the following issue restore the original
+values to the file?
+
+@example
+(poke) magic = ['E','L','F']
+@end example
+
+@noindent
+The answer is no:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@noindent
+The reason is that by assigning @code{['E','L','F']} to @code{magic},
+we are replacing the original array (the mapped array) with a new one,
+which is not mapped.  Therefore, any later modification of the
+elements of the new array won't have any effect on @file{foo.o}:
+
+@example
+(poke) magic[1] = 'X'
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
+@end example
+
+@c XXX arrays of arrays
+@c XXX array trimming
+@c XXX 'length and 'size
 
 @node Dot-Commands
 @chapter Dot-Commands

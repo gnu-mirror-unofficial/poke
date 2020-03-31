@@ -1,3 +1,11 @@
+2020-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Big and Little Endians): New section.
+	(Negative Integers): Likewise.
+	(Weird Integers): Likewise.
+	(Unaligned Integers): Likewise.
+	(Integers of Different Sizes): Likewise.
+
 2020-03-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Binary Files): New section.
