@@ -1,5 +1,9 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c (pkl_gen_ps_decl): Complete assert expression.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/bmp.pk (IHS_BMP_V2): Define.
 	(IHS_BMP_V3): Likewise.
 	(BMP_Info_Header): Allow info_header_size to be any of the

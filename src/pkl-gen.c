@@ -294,7 +294,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_decl)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
       break;
     case PKL_AST_DECL_KIND_TYPE:
-      if (PKL_AST_TYPE_CODE (initial) == PKL_TYPE_STRUCT)
+      if (PKL_AST_TYPE_CODE (initial) == PKL_TYPE_STRUCT
+          || PKL_AST_TYPE_CODE (initial) == PKL_TYPE_ARRAY)
         assert (0);
       break;
     case PKL_AST_DECL_KIND_FUNC:
