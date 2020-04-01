@@ -955,16 +955,18 @@
  .c   }
         pushvar $sct           ; ... [EBOFF ENAME EVAL] SCT
  .c   if (field_name)
+ .c   {
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
  .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name)));
+                               ; ... SCT ENAME
+        ;; Get the value of the field in $sct.
+        srefnt                 ; ... SCT ENAME EVAL
+ .c   }
  .c   else
  .c   {
-        push null
+        push null               ; ... SCT ENAME
+        push null               ; ... SCT ENAME EVAL
  .c   }
-                               ; ... SCT ENAME
-        ;; Get the value of the field in $sct, which must exist as
-        ;; per trans.
-        srefnt                 ; ... SCT ENAME EVAL
         ;; If the value is not-null, use it.  Otherwise, use the value
         ;; obtained by subpassing in the value's type, or the field's
         ;; initializer.
