@@ -22,6 +22,11 @@
 remote="$1"
 url="$2"
 
+# This script executes at the top of the git tree.  Try to find the
+# build directory... but ignore jitter's.
+builddir=$(dirname "`find . -name config.log | grep -v jitter | head -1`")
+cd $builddir
+
 echo "Checking syntax... "
 out=`make syntax-check`
 if test $? != 0; then

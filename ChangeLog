@@ -1,5 +1,10 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/git-hooks/pre-push: Try to locate top_builddir and jump
+	there before executing make targets.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Debugging Poke Programs): Relocated.
 
 2020-04-01  Tim Rühsen  <tim.ruehsen@gmx.de>
