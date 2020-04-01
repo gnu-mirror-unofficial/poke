@@ -51,7 +51,7 @@ pk_file_readable (const char *filename)
     {
       char *why = strerror (errno);
       snprintf (errmsg, 4096, _("%s: file cannot be read: %s\n"),
-		filename, why);
+                filename, why);
       return errmsg;
     }
 

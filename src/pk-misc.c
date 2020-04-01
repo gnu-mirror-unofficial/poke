@@ -77,29 +77,29 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     const char *ip = find_in_path (info_prog_name);
     if (STREQ (ip, info_prog_name))
       {
-	pk_term_class ("error");
-	pk_puts ("error: ");
-	pk_term_end_class ("error");
-	pk_puts ("the \"info\" program is not installed.\n");
-	return 0;
+        pk_term_class ("error");
+        pk_puts ("error: ");
+        pk_term_end_class ("error");
+        pk_puts ("the \"info\" program is not installed.\n");
+        return 0;
       }
 
     do
       {
-	size = bytes + 1;
-	cmd = xrealloc (cmd, size);
-	bytes = snprintf (cmd, size, "info -f \"%s/poke.info\"",
-			  poke_infodir);
+        size = bytes + 1;
+        cmd = xrealloc (cmd, size);
+        bytes = snprintf (cmd, size, "info -f \"%s/poke.info\"",
+                          poke_infodir);
       }
     while (bytes >= size);
 
     if (argv[0].type == PK_CMD_ARG_STR)
       {
-	const char *node = argv[0].val.str;
-	cmd = xrealloc (cmd, bytes + 7 + strlen (node));
-	strcat (cmd, " -n \"");
-	strcat (cmd, node);
-	strcat (cmd, "\"");
+        const char *node = argv[0].val.str;
+        cmd = xrealloc (cmd, bytes + 7 + strlen (node));
+        strcat (cmd, " -n \"");
+        strcat (cmd, node);
+        strcat (cmd, "\"");
       }
 
     /* Open the documentation at the requested page.  */
@@ -167,19 +167,19 @@ doc_completion_function (const char *x, int state)
       snprintf (nlfile, 256, "%s/nodelist", poke_datadir);
       FILE *fp = fopen (nlfile, "r");
       if (fp == NULL)
-	return NULL;
+        return NULL;
       char *lineptr = NULL;
       size_t size = 0;
       while (!feof (fp))
-	{
-	  int x = getline (&lineptr, &size, fp);
-	  if (x != -1)
-	    {
-	      nodelist = xrealloc (nodelist, ++n_nodes * sizeof (*nodelist));
-	      lineptr [strlen (lineptr) - 1] = '\0';
-	      nodelist[n_nodes - 1] = strdup (lineptr);
-	    }
-	}
+        {
+          int x = getline (&lineptr, &size, fp);
+          if (x != -1)
+            {
+              nodelist = xrealloc (nodelist, ++n_nodes * sizeof (*nodelist));
+              lineptr [strlen (lineptr) - 1] = '\0';
+              nodelist[n_nodes - 1] = strdup (lineptr);
+            }
+        }
       fclose (fp);
       free (lineptr);
       nodelist = xrealloc (nodelist, ++n_nodes * sizeof (*nodelist));
@@ -197,14 +197,14 @@ doc_completion_function (const char *x, int state)
     {
       const char *name = nodelist[idx];
       if (name == NULL)
-	break;
+        break;
 
       int match = strncmp (name, x, len);
       if (match != 0)
-	{
-	  idx++;
-	  continue;
-	}
+        {
+          idx++;
+          continue;
+        }
       return strdup (name);
     }
 

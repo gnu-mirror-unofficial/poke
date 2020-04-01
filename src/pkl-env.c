@@ -271,7 +271,7 @@ pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter)
     {
       iter->bucket++;
       if (iter->bucket >= HASH_TABLE_SIZE)
-	break;
+        break;
       iter->node = env->hash_table[iter->bucket];
     }
 }
@@ -286,7 +286,7 @@ pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter)
     {
       iter->bucket++;
       if (iter->bucket >= HASH_TABLE_SIZE)
-	break;
+        break;
       iter->node = env->hash_table[iter->bucket];
     }
 }
@@ -308,8 +308,8 @@ pkl_env_map_decls (pkl_env env,
        pkl_env_iter_next (env, &iter))
     {
       if ((what == PKL_AST_DECL_KIND_ANY
-	   || what == PKL_AST_DECL_KIND (iter.node)))
-	cb (iter.node, data);
+           || what == PKL_AST_DECL_KIND (iter.node)))
+        cb (iter.node, data);
     }
 }
 
@@ -358,21 +358,21 @@ pkl_env_dup_toplevel (pkl_env env)
     The returned value must be freed by the caller.  */
 char *
 pkl_env_get_next_matching_decl (pkl_env env, struct pkl_ast_node_iter *iter,
-				const char *name, size_t len)
+                                const char *name, size_t len)
 {
   /* "Normal" commands.  */
   for (;;)
     {
       if (pkl_env_iter_end (env, iter))
-	break;
+        break;
 
       pkl_ast_node decl_name = PKL_AST_DECL_NAME (iter->node);
       const char *cmdname = PKL_AST_IDENTIFIER_POINTER (decl_name);
       if (0 != strncmp (cmdname, name, len))
-	{
-	  pkl_env_iter_next (env, iter);
+        {
+          pkl_env_iter_next (env, iter);
           continue;
-	}
+        }
       return strdup (cmdname);
     }
   return NULL;

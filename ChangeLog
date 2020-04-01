@@ -1,4 +1,20 @@
 2020-04-01  Tim Rühsen  <tim.ruehsen@gmx.de>
+    
+	* .x-sc_space_tab: Remove wildcards, list single files.
+	* src/ios.c: Replace indenting tabs by 8 spaces each.
+	* src/pk-cmd.c: Likewise.
+	* src/pk-editor.c: Likewise.
+	* src/pk-info.c: Likewise.
+	* src/pk-ios.c: Likewise.
+	* src/pk-misc.c: Likewise.
+	* src/pk-repl.c: Likewise.
+	* src/pk-set.c: Likewise.
+	* src/pk-utils.c: Likewise.
+	* src/pkl-env.c: Likewise.
+	* src/pkl-env.h: Likewise.
+	* src/pkl-gen.pks: Likewise.
+
+2020-04-01  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* HACKING: Mention pre-push git hook in Maintenance section.
 	* etc/git-hooks/pre-push: New file, pre-push git hook.

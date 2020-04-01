@@ -95,9 +95,9 @@
         ;; If there is an EBOUND, check it.
         ;; Else, if there is a SBOUND, check it.
         ;; Else, iterate (unbounded).
-        pushvar $ebound     	; OFF ATYPE NELEM
+        pushvar $ebound         ; OFF ATYPE NELEM
         bn .loop_on_sbound
-        pushvar $eidx		; OFF ATYPE NELEM I
+        pushvar $eidx           ; OFF ATYPE NELEM I
         gtlu                    ; OFF ATYPE NELEM I (NELEM>I)
         nip2                    ; OFF ATYPE (NELEM>I)
         ba .end_loop_on
@@ -266,7 +266,7 @@
         ;; Initialize the element index to 0UL, and put it
         ;; in a local.
         push ulong<64>0         ; BOFF 0UL
-        regvar $eidx	        ; BOFF
+        regvar $eidx            ; BOFF
         ;; Get the number of elements in NVAL, and put it in a local.
         pushvar $nval           ; BOFF NVAL
         sel                     ; BOFF NVAL NELEM
@@ -641,14 +641,14 @@
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field));
         .c PKL_GEN_PAYLOAD->endian = endian; }
-                                	; BOFF VAL
+                                        ; BOFF VAL
         dup                             ; BOFF VAL VAL
         regvar $val                     ; BOFF VAL
    .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (field) == NULL)
         push null
    .c else
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (field));
-                                	; BOFF VAL STR
+                                        ; BOFF VAL STR
         swap                            ; BOFF STR VAL
         ;; If this is an optional field, evaluate the optcond.  If
         ;; it is false, then do not add this field to the struct.
@@ -792,7 +792,7 @@
         raise
  .c }
 .union_fields_done:
-        drop  			; ...[EBOFF ENAME EVAL]
+        drop                    ; ...[EBOFF ENAME EVAL]
         ;; Ok, at this point all the struct field triplets are
         ;; in the stack.
         ;; Iterate over the methods of the struct type.

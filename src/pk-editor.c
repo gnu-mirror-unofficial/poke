@@ -53,7 +53,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     {
       editor = find_in_path ("sensible-editor");
       if (STREQ (editor, "sensible-editor"))
-	editor = NULL;
+        editor = NULL;
     }
   if (!editor)
     {

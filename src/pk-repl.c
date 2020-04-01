@@ -124,9 +124,9 @@ poke_completion_function (const char *x, int state)
   else
     {
       if (pkl_env_iter_end (env, &iter))
-	idx++;
+        idx++;
       else
-	pkl_env_iter_next (env, &iter);
+        pkl_env_iter_next (env, &iter);
     }
 
   size_t len = strlen (x);
@@ -160,15 +160,15 @@ char * doc_completion_function (const char *x, int state);
    a space.  */
 static void
 space_substitute_display_matches (char **matches, int num_matches,
-				int max_length)
+                                int max_length)
 {
   for (int i = 0; i < num_matches + 1; ++i)
     {
       for (char *m = matches[i]; *m; ++m)
-	{
-	  if (*m == SPACE_SUBSTITUTE)
-	    *m = ' ';
-	}
+        {
+          if (*m == SPACE_SUBSTITUTE)
+            *m = ' ';
+        }
     }
 
   rl_display_match_list (matches, num_matches, max_length);
@@ -215,12 +215,12 @@ poke_getc (FILE *stream)
    if (rl_completion_entry_function == poke_completion_function)
      {
        if (cmd)
-	 {
-	   if (cmd->completer)
-	     rl_completion_entry_function = cmd->completer;
-	   else
-	     rl_completion_entry_function = null_completion_function;
-	 }
+         {
+           if (cmd->completer)
+             rl_completion_entry_function = cmd->completer;
+           else
+             rl_completion_entry_function = null_completion_function;
+         }
      }
   free (line_to_point);
 
@@ -236,7 +236,7 @@ poke_getc (FILE *stream)
       rl_redisplay_function = space_substitute_redisplay;
 
       if (c == ' ')
-	c = SPACE_SUBSTITUTE;
+        c = SPACE_SUBSTITUTE;
     }
   else
     {
@@ -307,7 +307,7 @@ escape_metacharacters (char *text, int match_type, char *qp)
     {
       char c = *p++;
       if (c == ' ')
-	*r++ = '\\';
+        *r++ = '\\';
       *r++ = c;
     }
   *r = '\0';
@@ -336,12 +336,12 @@ pk_repl (void)
   if (homedir != NULL)
     {
       poke_history = xmalloc (strlen (homedir)
-			      + strlen ("/.poke_history") + 1);
+                              + strlen ("/.poke_history") + 1);
       strcpy (poke_history, homedir);
       strcat (poke_history, "/.poke_history");
 
       if (access (poke_history, R_OK) == 0)
-	read_history (poke_history);
+        read_history (poke_history);
     }
 #endif
   rl_getc_function = poke_getc;
@@ -367,13 +367,13 @@ pk_repl (void)
         }
 
       if (rl_completion_entry_function == doc_completion_function)
-	{
-	  for (char *s = line; *s; ++s)
-	    {
-	      if (*s == SPACE_SUBSTITUTE)
-	      *s = ' ';
-	    }
-	}
+        {
+          for (char *s = line; *s; ++s)
+            {
+              if (*s == SPACE_SUBSTITUTE)
+              *s = ' ';
+            }
+        }
 
       /* Ignore empty lines.  */
       if (*line == '\0')

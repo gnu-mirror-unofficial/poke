@@ -147,7 +147,7 @@ void pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter);
 bool pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter);
 
 char *pkl_env_get_next_matching_decl (pkl_env env,
-				      struct pkl_ast_node_iter *iter,
-				      const char *name, size_t len);
+                                      struct pkl_ast_node_iter *iter,
+                                      const char *name, size_t len);
 
 #endif /* !PKL_ENV_H  */

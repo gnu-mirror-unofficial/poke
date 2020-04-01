@@ -296,10 +296,10 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
   while (isalnum (*p) || *p == '_' || *p == '-' || *p == ':')
     {
       if (i >= MAX_CMD_NAME - 1)
-	{
-	  pk_printf (_("%s: command not found.\n"), cmd_name);
-	  return 0;
-	}
+        {
+          pk_printf (_("%s: command not found.\n"), cmd_name);
+          return 0;
+        }
       cmd_name[i++] = *(p++);
     }
 
@@ -478,8 +478,8 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                   }
                 case 'f':
                   {
-		    wordexp_t exp_result;
-		    exp_result.we_wordv = 0;
+                    wordexp_t exp_result;
+                    exp_result.we_wordv = 0;
                     if (p[0] == '\0')
                       GOTO_USAGE();
 
@@ -488,10 +488,10 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                       case 0: /* Successful.  */
                         break;
                       default:
-			if (exp_result.we_wordv)
-			  wordfree (&exp_result);
+                        if (exp_result.we_wordv)
+                          wordfree (&exp_result);
                         GOTO_USAGE();
-			break;
+                        break;
                       }
                     if (exp_result.we_wordc != 1)
                       {
@@ -502,11 +502,11 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                     char *filename = strdup (exp_result.we_wordv[0]);
                     wordfree (&exp_result);
 
-		    argv[argc].type = PK_CMD_ARG_STR;
-		    argv[argc].val.str = filename;
-		    match = 1;
+                    argv[argc].type = PK_CMD_ARG_STR;
+                    argv[argc].val.str = filename;
+                    match = 1;
 
-		    p += strlen (p);
+                    p += strlen (p);
                     break;
                   }
                 default:
@@ -705,14 +705,14 @@ pk_cmd_exec_script (const char *filename)
       ssize_t n = getline (&line, &line_len, fd);
 
       if (n == -1)
-	{
-	  if (errno != 0)
-	    perror (filename);
-	  break;
-	}
+        {
+          if (errno != 0)
+            perror (filename);
+          break;
+        }
 
       if (line[n - 1] == '\n')
-	line[n - 1] = '\0';
+        line[n - 1] = '\0';
 
       /* If the line is empty, or it starts with '#', or it contains
          just blank characters, just ignore it.  */
@@ -799,7 +799,7 @@ pk_cmd_get_next_match (int *idx, const char *x, size_t len)
     {
       const struct pk_cmd **c = dot_cmds + *idx;
       if (*c == &null_cmd)
-	break;
+        break;
 
       /* don't forget the null terminator of name */
       const size_t name_len = strlen ((*c)->name);
@@ -807,11 +807,11 @@ pk_cmd_get_next_match (int *idx, const char *x, size_t len)
       name[0] = '.';
       strncpy (name+1, (*c)->name, name_len + 1);
       if (0 !=  strncmp (name, x, len))
-	{
-	  free (name);
-	  (*idx)++;
-	  continue;
-	}
+        {
+          free (name);
+          (*idx)++;
+          continue;
+        }
       return name;
     }
   return NULL;
@@ -827,12 +827,12 @@ pk_cmd_find (const char *cmdname)
     {
       const struct pk_cmd **c;
       for (c = dot_cmds; *c != &null_cmd; ++c)
-	{
-	  /* Check if the command name matches.
-	     +1 to skip the leading '.' */
-	  if (STREQ ((*c)->name, cmdname + 1))
-	    return *c;
-	}
+        {
+          /* Check if the command name matches.
+             +1 to skip the leading '.' */
+          if (STREQ ((*c)->name, cmdname + 1))
+            return *c;
+        }
     }
   return NULL;
 }

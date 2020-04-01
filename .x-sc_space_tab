@@ -1,1 +1,4 @@
-src/*
+src/pkl-lex.c
+src/pkl-lex.h
+src/pkl-tab.y
+src/ios.c

@@ -51,17 +51,17 @@ ios_completion_function (const char *x, int state)
   while (1)
     {
       if (ios_end (io))
-	break;
+        break;
 
       char buf[16];
       snprintf (buf, 16, "#%d", ios_get_id (io));
 
       int match = strncmp (buf, x, len);
       if (match != 0)
-	{
-	  io = ios_next (io);
-	  continue;
-	}
+        {
+          io = ios_next (io);
+          continue;
+        }
 
       return strdup (buf);
     }
@@ -192,7 +192,7 @@ print_info_ios (ios io, void *data)
   pk_printf ("%s#%d\t%s\t",
              io == ios_cur () ? "* " : "  ",
              ios_get_id (io),
-	     mode);
+             mode);
 
 #if HAVE_HSERVER
   {

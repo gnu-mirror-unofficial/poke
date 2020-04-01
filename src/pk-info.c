@@ -49,13 +49,13 @@ info_completion_function (const char *x, int state)
       const struct pk_cmd **c = info_cmds + idx;
 
       if (*c == &null_cmd)
-	break;
+        break;
 
       if (0 != strncmp ((*c)->name, x, len))
-	{
-	  idx++;
-	  continue;
-	}
+        {
+          idx++;
+          continue;
+        }
       return strdup ((*c)->name);
     }
 
