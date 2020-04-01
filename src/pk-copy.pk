@@ -21,7 +21,7 @@ pk_help_str = pk_help_str
 
 
 defun copy = (int from_ios = get_ios,
-              int to_ios = from_ios,
+              int to_ios = get_ios,
               off64 from = 0#B,
               off64 to = 0#B,
               off64 size = 0#B) void:
