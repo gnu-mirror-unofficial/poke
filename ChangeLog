@@ -1,5 +1,13 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/bmp.pk (IHS_BMP_V2): Define.
+	(IHS_BMP_V3): Likewise.
+	(BMP_Info_Header): Allow info_header_size to be any of the
+	supported IHS_* values.
+	(BMP_Header): Fix the size of the reserved fields.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/Makefile.am (dist_pkgdata_DATA): Add bmp.pk.
 
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>

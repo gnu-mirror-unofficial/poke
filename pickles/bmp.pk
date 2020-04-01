@@ -16,24 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Compression methods.  */
+
 defvar BI_RGB = 0;  /* No compression.  */
 defvar BI_RLE8 = 1; /* 8 bit RLE encoding.  */
 defvar BI_RLE4 = 2; /* 4 bit RLE encoding.  */
+
+/* The size of the info header depends on the type of BMP file.  */
+
+defvar IHS_BMP_V2 = 12#B;
+defvar IHS_BMP_V3 = 40#B;
 
 deftype BMP_Header =
   struct
   {
     byte[2] magic = ['B','M'];
     offset<uint<32>,B> file_size;
-    uint<32>; /* Reserved.  */
-    uint<32>; /* Reserved.  */
+    uint<16>; /* Reserved.  */
+    uint<16>; /* Reserved.  */
     offset<uint<32>,B> data_offset;
   };
 
 deftype BMP_Info_Header =
   struct
   {
-    offset<uint<32>,B> info_header_size = 40#B;
+    offset<uint<32>,B> info_header_size
+      : info_header_size in [IHS_BMP_V3];
     uint<32> width;      /* Horizontal width of bitmap in pixels.  */
     uint<32> height;     /* Vertical height of bitmap in pixels.  */
     uint<16> planes;     /* Number of planes. (=1) XXX */
