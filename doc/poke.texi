@@ -64,6 +64,7 @@ Advanced Poking
 Internals
 * The Poke Virtual Machine::	The PVM and its mysteries.
 
+* Table of ASCII Codes::	   The ASCII character set.
 * GNU Free Documentation License:: Distribution terms for this document.
 
 Indexes
@@ -84,12 +85,13 @@ Introduction
 
 Basic Editing
 * Binary Files::		What can be edited with poke.
-* Files as IO Spaces::		How poke looks at files.
+* Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
 * Values and Variables::        Values can be stored in variables.
 * Poking Integers::		From bytes to integers.
-* Poking Strings::		Readable sequences of bytes.
+* Buffers as IO Spaces::	Poking memory buffers.
+* Poking ASCII Strings::	Readable sequences of bytes.
 * Poking Arrays::		Groups of homogeneous values.
 
 Dot-Commands
@@ -526,18 +528,19 @@ printf ("%v\n", Elf4_Ehdr @@ 0#B);
 @node Basic Editing
 @chapter Basic Editing
 
-In this chapter we are gonna learn how to shuffle binary data around
-with poke, in terms of simple entities: bits, bytes, integers, and the
-like.
+In this chapter you will learn how to shuffle binary data around with
+poke, in terms of fundamental predefined entities: bits, bytes,
+integers, and the like.
 
 @menu
 * Binary Files::		What can be edited with poke.
-* Files as IO Spaces::		How poke sees files.
-* Dumping File Contents::	A first look at a file's contents.
+* Files as IO Spaces::		Poking files.
+* Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
 * Values and Variables::        Values can be stored in variables.
 * Poking Integers::		From bytes to integers.
-* Poking Strings::		Readable sequences of bytes.
+* Buffers as IO Spaces::	Poking memory buffers.
+* Poking ASCII Strings::	Readable sequences of bytes.
 * Poking Arrays::		Groups of homogeneous values.
 @end menu
 
@@ -1965,104 +1968,537 @@ result is a 32-bit integer.  This is equivalent to:
 3
 @end example
 
-@node Poking Strings
-@section Poking Strings
+@node Buffers as IO Spaces
+@section Buffers as IO Spaces
 
+Files are not the only kind of entities that can be edited using
+poke.  The bytes in memory buffers can be poked too!
+
+@menu
+* Creating Memory Buffers::	Allocating memory to poke.
+* Copying Bytes::		Moving data between IO spaces.
+* Saving Buffers in Files::	From memory to files.
+@end menu
+
+@node Creating Memory Buffers
+@subsection Creating Memory Buffers
+
+We have mentioned already that files are not the only entities that
+can be edited using poke. Remember the dot-command @command{.file}
+that opened a file as an IO space?
+
+@example
+(poke) .file foo.o
+The current IOS is now `./foo.o'.
+(poke) .info ios
+  Id	Mode	Size		Name
+* #0	rw	0x000004c8#B	./foo.o
+@end example
+
+@noindent
+Memory buffers can be created using a similar dot-command,
+@command{.mem}:
+
+@example
+(poke) .mem foo
+The current IOS is now `*foo*'.
+(poke) .info ios
+(poke) .info ios
+  Id	Mode	Size		Name
+* #1	  	0x00001000#B	*foo*
+  #0	rw	0x000004c8#B	./foo.o
+@end example
+
+Note how the name of the buffer is built by prepending and appending
+asterisks.  Therefore, the name of the buffer created by the command
+@code{.mem foo} is @code{*foo*}.  Note also that the new buffer is
+created with a size of 0x1000 bytes, or 4096 bytes.  The contents of
+the buffer are zeroed:
+
+@example
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000050: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+@end example
+
+Memory buffer IO spaces grow automatically when a value is mapped
+beyond their current size.  This is very useful when populating newly
+created buffers.  However, for security reasons, there is a limit: the
+IO spaces are only allow to grow 4096 bytes at a time.
+
+When it comes to map values, there is absolutely no difference between
+an IO space backed by a file and an IO space backed by a memory
+buffer.  Exactly the same rules apply in both cases.
+
+@node Copying Bytes
+@subsection Copying Bytes
+
+Memory buffer IO spaces are cheap, and they are often used as
+``scratch'' areas.
+
+Suppose for example we want to experiment with the ELF header of
+@file{foo.o}.  We could open it in poke:
+
+@example
+(poke) .file foo.o
+The current IOS is now `./foo.o'.
+@end example
+
+@noindent
+The header of an ELF file is composed by the first 64 bytes in the
+file:
+
+@example
+(poke) dump :size 64#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 3e00 0100 0000 0000 0000 0000 0000  ..>.............
+00000020: 0000 0000 0000 0000 0802 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0b00 0a00  ....@.....@.....
+@end example
+
+We know that as soon as we poke something on an IO space, the
+underlying file is immediately modified.  So if we start playing with
+@file{foo.o}'s header, we may corrupt the file.  We could of course
+make a copy of @file{foo.o} and work on the copy, but it is much
+better to create a memory IO space and copy the ELF header there:
+
+@example
+(poke) .mem scratch
+The current IOS is now `*scratch*'.
+(poke) copy :from_ios 0 :from 0#B :size 64#B
+(poke) dump :size 64#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 3e00 0100 0000 0000 0000 0000 0000  ..>.............
+00000020: 0000 0000 0000 0000 0802 0000 0000 0000  ................
+00000030: 0000 0000 4000 0000 0000 4000 0b00 0a00  ....@.....@.....
+@end example
+
+@noindent
+The command @command{copy} above copies 64 bytes starting at byte 0
+from the IO with id 0 (the file @file{foo.o}) to the current IO space
+(the buffer @code{*scratch*}).
+
+Once we are doing working with the copy of the ELF header, and
+satisfied, we can copy it back to the file and close the memory IO
+space:
+
+@example
+(poke) copy :from 0#B :size 64#B :to_ios 1
+(poke) .close
+The current IOS is now `./foo.o'.
+@end example
+
+@noindent
+Note how the command arguments @code{:from_ios} and @code{:to_ios} are
+assumed to be the current IO space if they are not explicitly
+specified in the command invocation.  For detailed information on the
+@command{copy} command, see @ref{copy}.
+
+@node Saving Buffers in Files
+@subsection Saving Buffers in Files
+
+Another useful command when working with buffer IO spaces (and in
+general, with any IO space) is @command{save}.  Lets say we want to
+save a copy of the header of an ELF file in another file.  We could do
+it the pokeish way:
+
+@example
+$ poke foo.o
+[...]
+(poke) save :from 0#B :size 64#B :file "header.dat"
+@end example
+
+@noindent
+The command above saves the first 64 bytes in the current IO space
+(which is backed by the file @file{foo.o}) into a new file
+@file{header.dat} in the current working directory.
+
+Lets now consider again the scenario where we are using a memory IO
+space as a scratch area.  It is late in the night and we are tired, so
+we would like to save the contents of the scratch buffer to a file, so
+we can continue our work tomorrow.  This is how we would do that:
+
+@example
+(poke) .info ios
+  Id	Mode	Size		Name
+* #1	  	0x00001000#B	*scratch*
+  #0	rw	0x000f4241#B	./foo.o
+(poke) save :from 0#B :size iosize (1) :file "scratch.dat"
+@end example
+
+@noindent
+Here we used the built-in function @code{iosize}, that given an IO
+space identifier returns its size.
+
+@node Poking ASCII Strings
+@section Poking ASCII Strings
+
+poke provides useful abstractions to handle ASCII characters and
+strings.  This section discusses these.
+
+@menu
+* Character Sets and Encodings::	ASCII, Unicode, ...
+* From Bytes to Characters::		Working with ASCII codes
+* ASCII Strings::			NULL-terminated strings.
+* From Strings to Characters::		Indexing strings.
+@end menu
+
+@node Character Sets and Encodings
+@subsection Character Sets and Encodings
+
+@cindex character
+@cindex character set
+Computers understand text as a sequence of @dfn{codes}, which are
+numbers identifying some particular @dfn{character}.  A character can
+represent things like letters, digits, ideograms, word separators,
+religious symbols, etc.  Collections of character codes are called
+@dfn{character sets}.
+
+@cindex ASCII
+@cindex Latin-1
+Some character sets try to cover one or a few similar written
+languages.  This is the case of ASCII and ISO Latin-1, for example.
+These character sets are small, i.e. just a few hundred codes.
+
+@cindex Unicode
+Other character sets are much more ambitious.  This is the case of
+Unicode, that tries to cover the entire totality of human languages in
+the globe, including the fictitious ones, like klingon.  Unicode is a
+really big character set.
+
+In order to store character codes in a computer's memory, or a file,
+we need to @dfn{encode} each character code in one or more bytes.  The
+number of bytes needed to encode a given character code depends on the
+range of codes in the containing set.
+
+ASCII, for example, defines 128 character codes: a single byte is
+enough to encode every possible ASCII character.  It is very easy to
+encode ASCII.
+
+@cindex utf-8
+Unicode, on the contrary, defines many thousand of character codes,
+and has room for many more: we would need 31 bits in order to encode
+any conceivable Unicode character code.  However, it would be wasteful
+to use that many bits per character: most used character codes tend to
+be in lower regions of the code space.  For example, the code
+corresponding to the Latin letter @code{'a'} is a fairly small number,
+whereas the codes corresponding to the Klingon alphabet are really big
+numbers.  Consequently, some systems opt to just encode a subset of
+Unicode, like the first 16 bits of the Unicode space, which is called
+the Basic Multilingual Plane, and contains all the characters that
+most people will ever need.  There are also variable-length encodings
+of Unicode, that try to use as less bytes as possible to encode any
+given code.  A particularly clever encoding of Unicode, designed by
+Rob Pike, is backwards compatible with the ASCII encoding, i.e. it
+encodes all the ASCII codes in one byte each, and the values of these
+byte are the same than in ASCII.  This clever encoding is called
+UTF-8.
+
+@node From Bytes to Characters
 @subsection From Bytes to Characters
 
-@c XXX character sets, ASCII
+@subsubsection Character Literals
 
-@subsection From Characters to Strings
+poke has built-in support for ASCII, and its simple encoding: each
+ASCII code is encoded using one byte.  Let's see:
+
+@example
+(poke) 'a'
+0x61UB
+@end example
+
+@noindent
+We presented poke with the character @code{a}, and it answered with
+its corresponding code in the ASCII character set, which is 0x61.  In
+fact, 'a' and 0x61UB are just two ways to write exactly the same byte
+value in poke:
+
+@example
+(poke) 'a' == 0x61UB
+1
+(poke) 'a' + 1
+0x62U
+@end example
+
+In order to make this more explicit, poke provides yet another synonym
+for the type specifier @code{uint<8>}: @code{char}.
+
+@subsubsection Classifying Characters
+
+When working with characters it is very useful to have some
+acquaintance of the ASCII character set, which is designed in a very
+clever way with the goal of easing certain code calculations.  See
+@ref{Table of ASCII Codes} for a table of ASCII codes in different
+numeration bases.
+
+Consider for example the problem of determining whether a byte we map
+from an IO space is a digit.  Looking at the ASCI table, we observe
+that digits all have consecutive codes, so we can do:
+
+@example
+(poke) defvar b = byte @@ 23#B
+(poke) b >= '0' && b <= '9'
+1
+@end example
+
+Now that we know that @code{b} is a digit, how could we calculate its
+digit value?  If we look at the ASCII table again, we will find that
+the character codes for digits are not only consecutive: they are also
+ordered in ascending order @code{0}, @code{1}, ...  Therefore, we can
+do:
+
+@example
+(poke) b
+0x37UB
+(poke) '0' - b
+7UB
+@end example
+
+@noindent
+@code{b} contains the ASCII code 0x37UB, which corresponds to the
+character @code{7}, which is a digit.
+
+How would we check whether @code{b} is a letter?  Looking at the ASCII
+table, we find that lower-case letters are encoded consecutively, and
+the same applies to upper-case letters.  This leads to repeat the
+trick again:
+
+@example
+(poke) (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
+0
+@end example
+
+@subsubsection Non-printable Characters
+
+Not all ASCII code are printable using the glyph that are usually
+supported in terminals.  If you look at the table in @ref{Table of
+ASCII Codes}, you will find codes for characters described as ``start
+of text'', ``vertical tab'', and so on.
+
+These character codes, which are commonly known as @dfn{non-printable
+characters}, can be represented in poke using its octal code:
+
+@example
+(poke) '\002'
+0x2UB
+@end example
+
+@noindent
+This is of course no different than using @code{2UB} directly, but in
+some contexts the ``character like'' notation may be desirable, to
+stress the fact that the byte value is used as an ASCII character.
+
+@cindex escape sequence
+Some of the non-printable characters also have alternative notations.
+This includes new-line and horizontal tab:
+
+@example
+(poke) '\n'
+0xaUB
+(poke) '\t'
+0x9UB
+@end example
+
+@noindent
+These @code{\} constructions in character literals are called
+@dfn{escape sequences}. See @ref{Characters} for a complete list of
+allowed escapes in character literals.
+
+@node ASCII Strings
+@subsection ASCII Strings
+
+@subsubsection String Values
+
+Now that we know how to manipulate ASCII codes in poke, we may wonder
+how can we combine them to conform words or, more generally,
+@dfn{strings} of ASCII characters.
+
+GNU poke has support for native ASCII string values.  The characters
+conforming the string are written between @code{"} and @code{"}
+characters, like in:
+
+@example
+(poke) "word"
+"word"
+@end example
+
+@noindent
+Note, and this is important, that string values are as atomic as
+integer values: they are not really composite values.  The fact that
+@code{"word"} contains an @code{r} at position 3 is like the fact that
+the value @code{123} contains two tens.
+
+Like in character literals, poke strings support several escape
+sequences that help to denote non-printed characters, such as new
+lines and horizontal tabs.  @xref{String Literals}.
+
+@subsubsection Poking Strings
+
+Lets start with a fresh memory buffer IOS @code{*scratch*}:
+
+@example
+(poke) .mem scratch
+The current IOS is now `*scratch*'.
+(poke) dump :size 48#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+@end example
+
+@noindent
+If we wanted to, somehow, store the word @code{word} in this IO space,
+encoded in ASCII, we could proceed as:
+
+@example
+(poke) char @@ 0x12#B = 'w'
+(poke) char @@ 0x13#B = 'o'
+(poke) char @@ 0x14#B = 'r'
+(poke) char @@ 0x15#B = 'd'
+(poke) dump :size 48#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000010: 0000 776f 7264 0000 0000 0000 0000 0000  ..word..........
+00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+@end example
+
+@noindent
+This worked.  The ASCII part of the @command{dump} output, which
+interprets the bytes as ASCII, clearly shows the word @code{word} at
+the offset where we poked the character values.  However, we can do
+better: string values can be mapped themselves.
+
+String values use the type specifier @code{string}.  As any other kind
+of value in poke, they can be mapped from an IO space:
+
+@example
+(poke) string @@ 0x12#B
+"word"
+@end example
+
+@noindent
+Clearly that is the string resulting from the concatenation of the
+character values that we poked before.
+
+The question now is: how did poke know that the last character of the
+string was the @code{d} at offset 0x15#B?  The fact the character code
+0 (also known as the @dfn{NULL character}) at offset 0x16#B is
+non-printable, doesn't imply it is not part of the ASCII character
+set.  Clearly, we have to pick an ASCII code and reserve it to mark
+the end of strings.  Like the C programming language, and countless
+formats and systems do, poke uses the NULL character to delimit
+strings.
+
+Now consider this:
+
+@example
+(poke) "word"'length
+4UL
+(poke) "word"'size
+40UL#b
+@end example
+
+@noindent
+Using the @code{length} and @code{size} attributes, poke tells us that
+the length of the string @code{"word"} is 4 characters, but the size
+of the string value is 40 bits, or 5 bytes.  Why this discrepancy?
+The @code{size} value attribute tells how much storage space a given
+value required once mapped to an IO space, and in the case of strings
+it should count the space occupied by the terminating NULL character.
+
+Poking string values on the IO space is as straightforward as poking
+integers:
+
+@example
+(poke) string @@ 0x22#B = "WORD"
+(poke) dump :size 48#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000010: 0000 776f 7264 0000 0000 0000 0000 0000  ..word..........
+00000020: 0000 574f 5244 0000 0000 0000 0000 0000  ..WORD..........
+@end example
+
+@subsubsection From Characters to Strings
+
+Strings can be concatenated using the string-concatenation @code{+}
+operators:
+
+@example
+(poke) "foo" + "bar"
+"foobar"
+@end example
+
+@noindent
+This operator requires two strings.  Therefore, if we wanted to append
+a character to a string, we would get an error:
+
+@example
+(poke) "Putin" + 'a'
+<stdin>:1:1: error: invalid operands in expression
+"Putin" + 'a';
+^~~~~~~~~~~~~
+@end example
+
+@noindent
+It is possible to transform a character value (i.e. a byte value) into
+a string composed by that character using a cast:
+
+@example
+(poke) 'a' as string
+"a"
+@end example
+
+@noindent
+Using that cast, we can now append:
+
+@example
+(poke) "Putin" + 'a' as string
+"Putina"
+@end example
+
+@node From Strings to Characters
+@subsection From Strings to Characters
+
+Despite being atomic values, poke strings can be indexed in order to
+retrieve individual characters:
+
+@example
+(poke) "word"[2]
+0x72UB
+@end example
+
+@noindent
+Note how the indexing is zero-based, i.e. the first position in the
+string is referred as @code{[0]}, the second position with @code{[1]},
+and so on.
+
+If you specify a negative index, or an index that is too big, you will
+get an error:
+is raised:
+
+@example
+(poke) "word"[-1]
+<stdin>:1:8: error: index is out of bounds of string
+"word"[-1];
+       ^
+(poke) "word"[5]
+<stdin>:1:8: error: index is out of bounds of string
+"word"[5];
+       ^
+@end example
 
 @c XXX
-
-@subsection Extracting Characters from Strings
-
-@c XXX
-
-Let's now talk about strings... Poke supports native string values,
-whose type specifier is @code{string}.  Contrary to other programming
-languages, and this is important, strings in Poke are @emph{not}
-composite values. That's it, even if the contents of a string can be
-interpreted as @dfn{characters} or bytes, the string value itself is
-not decomposable, in principle (even if Poke provides a syntactic
-cheat for that.)
-
-The Poke strings are NULL-terminated when read or written to an IO
-space.  Back to our first bytes of @file{foo.o}:
-
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@noindent
-We may be tempted to map a string at offset 1 byte, to get the
-@code{"EAF"} string.  However, this will only succeed apparently:
-
-@example
-(poke) string @@ 1#B
-"EAF"
-@end example
-
-@noindent
-Why only apparently?  We got the string we wanted, didn't we?  Well,
-not really.  Lets use the @dfn{attribute} @code{'length} to query for
-the size of the string, in number of characters:
-
-@example
-(poke) (string @@ 1#B)'length
-6UL
-@end example
-
-@noindent
-Six... this makes sense if we look at the dump carefully.  The
-non-NULL bytes from offset 1 byte, plus the NULL byte, are @code{45
-4146 0201 00}.  That is six characters.  We don't see the characters
-@code{0201} in the printed representation of the string because these
-are not in the printable ASCII range.
-
-Since strings are not composite values, when they are copied by shared
-value, the characters are always copied as well.  This means the
-following entries will @emph{not} change the IO space:
-
-@example
-(poke) defvar magic = string @@ 1#B
-(poke) magic = "ELF"
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@noindent
-This will make our poor @file{foo.o} to look like an ELF file again
-though:
-
-@example
-(poke) string @@ 1#B = "ELF" + 2UB as string + 1UB as string
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4c46 0201 0000 0000 0000 0000 0000  .ELF............
-@end example
-
-@noindent
-Confused?  :) Lets analyze the command.  The construction @code{2UB as
-string} is a @dfn{cast}.  It converts a byte, i.e. an unsigned 8-bit
-integer, into a string whose constituents are the given byte followed
-by a NULL-byte.  The opeator @code{+}, when applied to strings,
-concatenates them.  Therefore, the result of the expression at the
-right-hand side of the assignment is the string with characters 'E',
-'L', 'F', 0x02, 0x01 and 0x00.  We can evaluate the expression by
-itself:
-
-@example
-(poke) "ELF" + 2UB as string + 1UB as string
-"ELF"
-@end example
-
-@noindent
-Again, note how both 0x02 and 0x01 are not printable.
+@c @section Printing
+@c print and printf
 
 @node Poking Arrays
 @section Poking Arrays
@@ -2744,7 +3180,7 @@ This command has the following prototype:
 
 @example
 defun copy = (int from_ios = get_ios,
-              int to_ios = from_ios,
+              int to_ios = get_ios,
               off64 from = 0#B,
               off64 to = 0#B,
               off64 size = 0#B) void:
@@ -6788,6 +7224,79 @@ XXX
 @section PVM Instructions
 
 @include pvm-insns.texi
+
+@node Table of ASCII Codes
+@appendix Table of ASCII Codes
+
+@example
+Oct   Dec   Hex   Char                        Oct   Dec   Hex   Char
+────────────────────────────────────────────────────────────────────────
+000   0     00    NUL '\0' (null character)   100   64    40    @@
+001   1     01    SOH (start of heading)      101   65    41    A
+002   2     02    STX (start of text)         102   66    42    B
+003   3     03    ETX (end of text)           103   67    43    C
+004   4     04    EOT (end of transmission)   104   68    44    D
+005   5     05    ENQ (enquiry)               105   69    45    E
+006   6     06    ACK (acknowledge)           106   70    46    F
+007   7     07    BEL '\a' (bell)             107   71    47    G
+010   8     08    BS  '\b' (backspace)        110   72    48    H
+011   9     09    HT  '\t' (horizontal tab)   111   73    49    I
+012   10    0A    LF  '\n' (new line)         112   74    4A    J
+013   11    0B    VT  '\v' (vertical tab)     113   75    4B    K
+014   12    0C    FF  '\f' (form feed)        114   76    4C    L
+015   13    0D    CR  '\r' (carriage ret)     115   77    4D    M
+016   14    0E    SO  (shift out)             116   78    4E    N
+017   15    0F    SI  (shift in)              117   79    4F    O
+020   16    10    DLE (data link escape)      120   80    50    P
+021   17    11    DC1 (device control 1)      121   81    51    Q
+022   18    12    DC2 (device control 2)      122   82    52    R
+023   19    13    DC3 (device control 3)      123   83    53    S
+024   20    14    DC4 (device control 4)      124   84    54    T
+025   21    15    NAK (negative ack.)         125   85    55    U
+026   22    16    SYN (synchronous idle)      126   86    56    V
+027   23    17    ETB (end of trans. blk)     127   87    57    W
+030   24    18    CAN (cancel)                130   88    58    X
+031   25    19    EM  (end of medium)         131   89    59    Y
+032   26    1A    SUB (substitute)            132   90    5A    Z
+033   27    1B    ESC (escape)                133   91    5B    [
+034   28    1C    FS  (file separator)        134   92    5C    \  '\\'
+035   29    1D    GS  (group separator)       135   93    5D    ]
+036   30    1E    RS  (record separator)      136   94    5E    ^
+037   31    1F    US  (unit separator)        137   95    5F    _
+040   32    20    SPACE                       140   96    60    `
+041   33    21    !                           141   97    61    a
+042   34    22    "                           142   98    62    b
+043   35    23    #                           143   99    63    c
+044   36    24    $                           144   100   64    d
+045   37    25    %                           145   101   65    e
+046   38    26    &                           146   102   66    f
+047   39    27    '                           147   103   67    g
+050   40    28    (                           150   104   68    h
+051   41    29    )                           151   105   69    i
+052   42    2A    *                           152   106   6A    j
+053   43    2B    +                           153   107   6B    k
+054   44    2C    ,                           154   108   6C    l
+055   45    2D    -                           155   109   6D    m
+056   46    2E    .                           156   110   6E    n
+ 057   47    2F    /                           157   111   6F    o
+060   48    30    0                           160   112   70    p
+061   49    31    1                           161   113   71    q
+062   50    32    2                           162   114   72    r
+063   51    33    3                           163   115   73    s
+064   52    34    4                           164   116   74    t
+065   53    35    5                           165   117   75    u
+066   54    36    6                           166   118   76    v
+067   55    37    7                           167   119   77    w
+070   56    38    8                           170   120   78    x
+071   57    39    9                           171   121   79    y
+072   58    3A    :                           172   122   7A    z
+073   59    3B    ;                           173   123   7B    @{
+074   60    3C    <                           174   124   7C    |
+075   61    3D    =                           175   125   7D    @}
+076   62    3E    >                           176   126   7E    ~
+077   63    3F    ?                           177   127   7F    DEL
+@end example
+
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License

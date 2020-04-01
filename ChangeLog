@@ -1,5 +1,14 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (From Bytes to Characters): New section.
+	(Buffers as IO Spaces): Likewise.
+	(Saving Buffers in Files): Likewise.
+	(Copying Bytes): Likewise.
+	(copy): The to_ios argument defaults to the current IOS, no
+	from_ios.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pk-copy.pk (copy): to_ios defaults to the current IO space.
 
 2020-03-31  Tim Rühsen  <tim.ruehsen@gmx.de>
