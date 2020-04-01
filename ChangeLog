@@ -1,5 +1,9 @@
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Debugging Poke Programs): Relocated.
+
 2020-04-01  Tim Rühsen  <tim.ruehsen@gmx.de>
-    
+
 	* .x-sc_space_tab: Remove wildcards, list single files.
 	* src/ios.c: Replace indenting tabs by 8 spaces each.
 	* src/pk-cmd.c: Likewise.

@@ -46,19 +46,21 @@ Documentation License''.
 @end ifnottex
 
 @menu
-The Basics
 * Introduction::		Introducing GNU poke.
+
+Using poke
 * Basic Editing::		Poking bits, bytes and simple data.
+* Structuring Binary Data::	Poking your own abstractions.
+* Debugging Poke Programs::	When something goes wrong.
 
 Reference Material
 * Dot-Commands::                Commanding the tool.
 * Commands::			Commands for editing data.
 * Configuration::		Tailoring the tool to your needs.
 * The Poke Language::		All you wanted to know about Poke.
-* Debugging Poke Programs::	When something goes wrong.
 * The Standard Library::	Standard goodies for Poke programs.
 
-Advanced Poking
+Advanced Pokology
 * Hacking Poke::		Extending poke.
 
 Internals
@@ -84,7 +86,7 @@ Introduction
 * Commanding poke::		Interactive and non-interactive usage.
 
 Basic Editing
-* Binary Files::		What can be edited with poke.
+* Binary Files::		Text vs. binary.
 * Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
@@ -93,6 +95,12 @@ Basic Editing
 * Buffers as IO Spaces::	Poking memory buffers.
 * Poking ASCII Strings::	Readable sequences of bytes.
 * Poking Arrays::		Groups of homogeneous values.
+
+Structuring Binary Data
+* Named Types::			The type abstraction.
+
+Debugging Poke Programs
+* __LINE__ and __FILE__::	Error locations in traces.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -136,9 +144,6 @@ The Poke Language
 * Printing::			Output in Poke programs.
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
-
-Debugging Poke Programs
-* __LINE__ and __FILE__::	Error locations in traces.
 
 The Standard Library
 * Standard Integral Types::	int, long and the like.
@@ -533,7 +538,7 @@ poke, in terms of fundamental predefined entities: bits, bytes,
 integers, and the like.
 
 @menu
-* Binary Files::		What can be edited with poke.
+* Binary Files::		Text vs. binary.
 * Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
@@ -2004,9 +2009,9 @@ Memory buffers can be created using a similar dot-command,
 The current IOS is now `*foo*'.
 (poke) .info ios
 (poke) .info ios
-  Id	Mode	Size		Name
-* #1	  	0x00001000#B	*foo*
-  #0	rw	0x000004c8#B	./foo.o
+  Id    Mode    Size            Name
+* #1            0x00001000#B    *foo*
+  #0    rw      0x000004c8#B    ./foo.o
 @end example
 
 Note how the name of the buffer is built by prepending and appending
@@ -2129,9 +2134,9 @@ we can continue our work tomorrow.  This is how we would do that:
 
 @example
 (poke) .info ios
-  Id	Mode	Size		Name
-* #1	  	0x00001000#B	*scratch*
-  #0	rw	0x000f4241#B	./foo.o
+  Id    Mode    Size            Name
+* #1            0x00001000#B    *scratch*
+  #0    rw      0x000f4241#B    ./foo.o
 (poke) save :from 0#B :size iosize (1) :file "scratch.dat"
 @end example
 
@@ -2677,6 +2682,53 @@ elements of the new array won't have any effect on @file{foo.o}:
 @c XXX arrays of arrays
 @c XXX array trimming
 @c XXX 'length and 'size
+
+@node Structuring Binary Data
+@chapter Structuring Binary Data
+
+In the previous chapter we learned how to manipulate pre-defined
+entities like bytes, integers and strings.  One of the big points of
+poke, however, is that it allows you to define your own entities.
+This is achieved by defining data structures.
+
+@menu
+* Named Types::		The type abstraction.
+@c * Poking Structs::
+@end menu
+
+@node Named Types
+@section Named Types
+
+@c XXX
+
+@node Debugging Poke Programs
+@chapter Debugging Poke Programs
+
+@menu
+* __LINE__ and __FILE__::	Error locations in traces.
+@end menu
+
+@node __LINE__ and __FILE__
+@section @code{__LINE__} and @code{__FILE__}
+@cindex @code{__FILE__}
+@cindex @code{__LINE__}
+@cindex location
+@cindex tracing
+When printing traces it is often useful to include a description of
+the location of the trace.  The poke compiler provides two builtins
+for this purpose.
+
+@table @code
+@item __LINE__
+@cindex line number
+Expands to an unsigned 64-bit integer containing the current line of
+the program being compiled.
+@item __FILE__
+@cindex file name
+Expands to a string with the name of the file currently being compiled.  If the
+program is read from the standard input (like in the REPL) then this
+is @code{"<stdin>"}.
+@end table
 
 @node Dot-Commands
 @chapter Dot-Commands
@@ -6867,35 +6919,6 @@ load "my-pickle.pk";
 Note that if you use this variant of @code{load}, you must specify the
 full file name, including whatever extension it uses (usually
 @file{.pk}).
-
-@node Debugging Poke Programs
-@chapter Debugging Poke Programs
-
-@menu
-* __LINE__ and __FILE__::	Error locations in traces.
-@end menu
-
-@node __LINE__ and __FILE__
-@section @code{__LINE__} and @code{__FILE__}
-@cindex @code{__FILE__}
-@cindex @code{__LINE__}
-@cindex location
-@cindex tracing
-When printing traces it is often useful to include a description of
-the location of the trace.  The poke compiler provides two builtins
-for this purpose.
-
-@table @code
-@item __LINE__
-@cindex line number
-Expands to an unsigned 64-bit integer containing the current line of
-the program being compiled.
-@item __FILE__
-@cindex file name
-Expands to a string with the name of the file currently being compiled.  If the
-program is read from the standard input (like in the REPL) then this
-is @code{"<stdin>"}.
-@end table
 
 @node The Standard Library
 @chapter The Standard Library
