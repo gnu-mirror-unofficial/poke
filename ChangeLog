@@ -1,5 +1,9 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/Makefile.am (dist_pkgdata_DATA): Add bmp.pk.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-gen.pks (struct_constructor): Fix handling of anonymous
 	fields.
 	* testsuite/poke.pkl/scons-54.pk: New test.
