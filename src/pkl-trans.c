@@ -1062,11 +1062,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_struct_ref)
           && (PKL_AST_TYPE_F_NARG (type) == 0
               || pkl_ast_func_all_optargs (type)))
         {
+          pkl_ast_node function_rtype = PKL_AST_TYPE_F_RTYPE (type);
           pkl_ast_node funcall = pkl_ast_make_funcall (PKL_PASS_AST,
                                                        ASTDEREF (struct_ref),
                                                        NULL /* args */);
 
+          /* Note that we have to set the type here, because typify1
+             is performed before trans2.  */
+          PKL_AST_TYPE (funcall) = ASTREF (function_rtype);
           PKL_AST_LOC (funcall) = PKL_AST_LOC (struct_ref);
+
           PKL_PASS_NODE = funcall;
           PKL_PASS_RESTART = 1;
         }

@@ -1,5 +1,11 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-trans.c (pkl_trans2_ps_struct_ref): Set the type of the
+	newly inserted funcall, since typify1 happens before trans2.
+	* testsuite/poke.pkl/struct-method-1.pk: New test.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/git-hooks/pre-push: Try to locate top_builddir and jump
 	there before executing make targets.
 
