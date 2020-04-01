@@ -1,5 +1,9 @@
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.map/maps-arrays-16.pk: Add missing semicolon.
+
+2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/bmp.pk: Moved from future/ and translated to actual
 	Poke.
 
