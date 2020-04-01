@@ -1,3 +1,8 @@
+2020-04-01  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* HACKING: Mention pre-push git hook in Maintenance section.
+	* etc/git-hooks/pre-push: New file, pre-push git hook.
+
 2020-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (From Bytes to Characters): New section.

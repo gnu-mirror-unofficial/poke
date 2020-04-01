@@ -627,6 +627,11 @@ syntax-check
   applied to, say, an AWK file.  In these cases, consider adding a
   ``.x-sc_*`` fine-tuning file.  But please ask in poke-devel first.
 
+  We provide a pre-push git hook that performs the syntax check right
+  before pushing. If the check fails, the push is aborted. You should
+  consider enabling this check by coping ``etc/git-hooks/pre-push`` to
+  ``.git/hooks/``.
+
 coverage
   This target builds *poke* with code coverage support, runs the
   testsuite, and generates a nice html report under
