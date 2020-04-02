@@ -1,5 +1,9 @@
 2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* bootstrap.conf: Add gnulib module stdbool.
+
+2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-hserver.c (hserver_tokens): Fix type to bool.
 
 2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
