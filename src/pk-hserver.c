@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -61,7 +62,7 @@ static pthread_mutex_t hserver_mutex = PTHREAD_MUTEX_INITIALIZER;
    connection.  */
 
 #define NUM_TOKENS 2014
-int hserver_tokens[NUM_TOKENS];
+bool hserver_tokens[NUM_TOKENS];
 
 int
 pk_hserver_get_token (void)
@@ -72,7 +73,7 @@ pk_hserver_get_token (void)
     token = rand () % NUM_TOKENS;
   while (hserver_tokens[token]);
 
-  hserver_tokens[token] = 1;
+  hserver_tokens[token] = true;
   return token;
 }
 
@@ -270,7 +271,7 @@ pk_hserver_init ()
   socklen_t size;
 
   for (i = 0; i < NUM_TOKENS; ++i)
-    hserver_tokens[i] = 0;
+    hserver_tokens[i] = false;
 
   /* Create the socket and set it up to accept connections. */
   hserver_socket = make_socket (hserver_port);
