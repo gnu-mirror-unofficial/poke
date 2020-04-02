@@ -51,6 +51,7 @@ Documentation License''.
 Using poke
 * Basic Editing::		Poking bits, bytes and simple data.
 * Structuring Data::		Poking your own abstractions.
+
 * Debugging Poke Programs::	When something goes wrong.
 
 Reference Material
@@ -2516,6 +2517,7 @@ This is achieved by defining data structures.
 @menu
 * Poking Arrays::	Groups of homogeneous values.
 * Named Types::		The type abstraction.
+* Pickles::		Saving useful definitions for future use.
 @c * Poking Structs::
 @end menu
 
@@ -2528,6 +2530,7 @@ rich collection of mechanisms for this.
 @menu
 * The SBM Format::	The Stupid BitMap Format
 * Poking a SBM Image::	A need for abstraction.
+* Cropping SBM Images::	Trimming.
 @end menu
 
 @node The SBM Format
@@ -2566,21 +2569,22 @@ executed with certain parameters (like the desired resolution) the
 functional description generates a bitmap.  Image formats using this
 approach are commonly known as @dfn{vectorial formats}.
 
-When it comes to bitmaps, a plethora of different formats (bmp, jpg,
-png) compete in terms of capabilities such as higher color depths,
-better resolution, support for transparency (alpha channels), higher
-compression level, and the like.  These capabilities greatly
-complicate these formats, but ultimately any bitmap is reduced to a
-sequence of pixels, which can be further structured in terms of
-@dfn{lines}.
+When it comes to bitmaps, there are a plethora of different formats
+out there (bmp, jpg, png) competing in terms of capabilities such as
+higher color depths, better resolution, support for transparency
+(alpha channels), higher compression level, and the like.  These
+capabilities greatly complicate these formats, but ultimately any
+bitmap can be reduced to a sequence of pixels, which can be further
+structured in terms of @dfn{lines}.
 
 We don't know enough poke yet to handle the complications of these
 real-life bitmap formats, so in subsequent section we introduce a very
-simple format for bitmaps, the SBM format (Stupid BitMap), that we
-will use for learning purposes.
+simple format for bitmaps, the Stupid BitMap format, or simply SBM,
+that we will use for learning purposes.
 
-Do not be disappointed: later in this book, when we become more
-proficient pokers, we will poke these complex formats as well :)
+But please do not feel disappointed: later in this book, when we
+become more proficient pokers, we will poke these complex formats as
+well :)
 
 @subsubsection SBM header
 
@@ -2598,8 +2602,9 @@ and the number of lines, respectively.  In summary:
 @end example
 
 @noindent
-Therefore, the bigger image that can be encoded in SBM has dimensions
-255x255.
+Here @code{ppl} stands for pixels-per-line.  The encoding of these
+fields imply that the bigger image that can be encoded in SBM has
+dimensions 255x255.
 
 @subsubsection SBM data
 
@@ -2679,8 +2684,8 @@ their size.
 @subsubsection Poking the Header
 
 The first three bytes of the header of a SBM file contains the magic
-number that identifies the file as a SBM bitmap.  We can poke it very
-easily:
+number that identifies the file as a SBM bitmap.  We can poke these
+bytes very easily:
 
 @example
 (poke) byte @@ 0#B = 'S'
@@ -2694,10 +2699,23 @@ case 5x7:
 
 @example
 (poke) byte @@ 3#B = 5
-(poke) byte @@ 4#B = 8
+(poke) byte @@ 4#B = 7
 @end example
 
+@cindex truncation
+@cindex conversions
+@cindex coercions
 @noindent
+There is something worth noting in this last mapping.  Even tough we
+were poking bytes (passing the @code{byte} type specifier to the map
+operators) we specified the 32-bit signed integers @code{5} and
+@code{7} instead of @code{5UB} and @code{7UB}.  When poke finds a
+situation like this, where certain kind of integers are expected but
+other kind are provided, it converts the value from the provided type
+to the expected type.  This conversion may result in truncation (think
+about converting, say 0xfff to an unsigned byte, whose maximum
+possible value is 0xff) but certainly not in the case at hands.
+
 The final header looks like:
 
 @example
@@ -2818,6 +2836,19 @@ same type.  Therefore, this is not allowed:
 [1,"foo"];
 ^~~~~~~~~
 @end example
+
+Given an array value, it is possible to query for the number of values
+contained in it (called @dfn{elements}) by using the @code{'length}
+value attribute.  For example:
+
+@example
+(poke) bga'length
+3UL
+@end example
+
+@noindent
+Tells us that the array value stored in the variable @code{bga} has
+three elements.
 
 How can we poke an array value?  We know that the map operator accepts
 two operands: a type specifier and the value to map.  The type
@@ -2941,8 +2972,8 @@ So, lets define our image as an array of the lines defined above:
 
 @noindent
 What would be the type specifier for an image?  It would be an array
-of six arrays of five arrays of three bytes each, in other words
-@code{byte[3][5][6]}.  Lets poke the pixels:
+of seven arrays of five arrays of three bytes each, in other words
+@code{byte[3][5][7]}.  Lets poke the pixels:
 
 @example
 (poke) byte[3][5][6] @@ 5#B = image_data
@@ -2954,11 +2985,262 @@ abstractions such as colors, lines and images.  We achieved that by
 structuring the data in a way that reflects these abstractions.
 That's the way of the Poker.
 
-@c XXX array trimming
-@c XXX 'length and 'size
+@subsubsection Saving the Image
+
+Now that we have completed the SBM image in our buffer @code{*image*},
+it is time to save it to disk.  For that, we can use the
+@command{save} command we are already familiar with.
+
+We know that the SBM image starts at offset 0#B, but what is the size
+of its entire binary representation?  The header is easy: it spans for
+5 bytes.  The size of the sequence of pixels can be derived from the
+pixels per line byte, and the number of lines byte.  We know that each
+pixel occupies 3 bytes, so calculating...
+
+@example
+(poke) defvar ppl = byte @@ 3#B
+(poke) defvar lines = byte @@ 4#B
+(poke) save :from 0#B :size 5#B + ppl#B * lines#B :file "p.sbm"
+@end example
+
+@noindent
+Note how we expressed ``ppl bytes'' as @code{ppl#B}, and ``lines
+bytes'' as @code{lines#B}.  This is the same than expressing ``10
+bytes'' as @code{10#B}.  We well talk more about these united values
+later.
+
+There is another way of getting the size of the stream of pixels.
+Recall that we have the entire set of pixels, structured as lines,
+stored in the variable @code{image_data}.  Given an array, it is
+possible to query for its size using the @code{'size} @dfn{attribute}:
+
+@example
+(poke) .set obase 10
+(poke) [1,2,3]'size
+96UL#b
+@end example
+
+@noindent
+The above indicates that the size of the array of the three integers
+1, 2 and 3 is 96 bits.  Using that attribute, we can also obtain the
+size of the pixels in the image:
+
+@example
+(poke) image_data'size
+720UL#b
+@end example
+
+@noindent
+And we can use it in the save command:
+
+@example
+(poke) save :from 0#B :size 5#B + image_data'size :file "p.sbm"
+@end example
+
+Using either strategy, at this point a file named @file{p.sbm} should
+have been written in the current working directory, containing our ``P
+is for poke'' image.  Keep that file around, because we will be poking
+it further!
+
+@node Cropping SBM Images
+@subsection Cropping SBM Images
+
+@subsubsection Reading a SBM File
+
+Lets open with poke the cute image we created in the last section,
+@file{p.sbm}:
+
+@example
+$ poke p.sbm
+[...]
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 5342 4d05 07ff ffff ff63 47ff 6347 ffff  SBM......cG.cG..
+00000010: ffff ffff ffff ffff 6347 ffff ffff 6347  ........cG....cG
+00000020: ffff ffff ffff ff63 47ff ffff ff63 47ff  .......cG....cG.
+00000030: ffff ffff ffff 6347 ff63 47ff ffff ffff  ......cG.cG.....
+00000040: ffff ffff ff63 47ff ffff ffff ffff ffff  .....cG.........
+00000050: ffff ffff 6347 ffff ffff ffff ffff ffff  ....cG..........
+00000060: ffff ff63 47ff ffff ffff ffff ffff       ...cG.........
+@end example
+
+@noindent
+You can see the @code{P} in the ASCII column, right? If it wasn't for
+the header, it would be pictured almost straight. This is because dump
+shows 16 bytes per row, and our image has lines that are 15 bytes
+long.  This is a happy coincidence: you definitely shouldn't expect to
+see ASCII art in the dump output of SBM files in general! :)
+
+Now lets read the image's metadata from the header: pixels per line
+and how many lines are contained in the image:
+
+@example
+(poke) defvar ppl = byte @@ 3#B
+(poke) ppl
+5UB
+(poke) defvar lines = byte @@ 4#B
+7UB
+@end example
+
+@noindent
+All right, our image is 7x5.  Knowing that each pixel occupies three
+bytes, and that each line contains @code{ppl} pixels, and that we have
+@code{lines} lines, we can map the entire image data using an array
+type specifier:
+
+@example
+(poke) defvar image_data = byte[3][ppl][lines] @@ 5#B
+(poke) image_data
+[[[255UB,255UB,255UB],[255UB,99UB,71UB], ...]...]
+@end example
+
+@subsubsection Cropping the P
+
+Looking at our SBM file, we realize that the first and the last column
+of the image are all all background pixels.  We would like to modify
+the image to remove these columns, @dfn{cropping} the image so it
+looks like this:
+
+@example
+  | 0 | 1 | 2 |
+  +---+---+---+
+0 | * | * |   |
+1 | * |   | * |
+2 | * |   | * |
+3 | * | * |   |
+4 | * |   |   |
+5 | * |   |   |
+6 | * |   |   |
+@end example
+
+@noindent
+In order to perform this operation we need to rework the stream of
+pixels to reflect the desired result, and then to update the header
+metadata accordingly.
+
+@subsubsection Shortening and Shifting Lines
+
+Lets think in term of lines.  In the original image, each line has 5
+pixels, that we can enumerate as:
+
+@example
+     +----+----+----+----+----+
+line | p0 | p1 | p2 | p3 | p4 |
+     +----+----+----+----+----+
+@end example
+
+@noindent
+What we want is to crop out the first and the last column, so the
+resulting line would look like:
+
+@example
+     +----+----+----+
+line | p1 | p2 | p3 |
+     +----+----+----+
+@end example
+
+Lets get the first line from the original @code{image_data}:
+
+@example
+(poke) defvar l0 = image_data[0]
+(poke) l0
+[[255UB,255UB,255UB],[255UB,99UB,71UB],...]
+@end example
+
+@noindent
+We could create the corresponding cropped line, by doing something
+like this:
+
+@example
+(poke) defvar cl0 = [l0[1],l0[2],l0[3]]
+@end example
+
+@cindex arrays, trimming
+@noindent
+And the same for the other lines.  However, Poke provides a better way
+to easily obtain sub portions of arrays.  It is called @dfn{trimming}.
+Given an array like the line @code{l0}, we can obtain the desired
+portion of it by issuing:
+
+@example
+(poke) l0[1:2]
+[[255UB,99UB,71UB],[255UB,99UB,71UB]]
+@end example
+
+@noindent
+Note how the limits of the interval specified in the trim reflect
+array indexes (hence 0 based) and are both inclusive.  The result of
+an array trimming is always another array, even if it contains just
+one element:
+
+@example
+(poke) l0[1:1]
+[[255UB,99UB,71UB]]
+@end example
+
+Armed with this new operation, we can very easily mount the sequence
+of pixels for our cropped image:
+
+@example
+(poke) defvar l1 = image_data[1]
+(poke) defvar l2 = image_data[2]
+(poke) defvar l3 = image_data[3]
+(poke) defvar l4 = image_data[4]
+(poke) defvar l5 = image_data[5]
+(poke) defvar new_image_data = [l1[1:3],l2[1:3],l3[1:3],l4[1:3],l5[1:3]]
+@end example
+
+Now that we have the new image data, lets poke it in a temporary
+memory IO. Note how we have to adjust the type specifier in order to
+accommodate the fact that lines now have 3 pixels each, not 5:
+
+@example
+(poke) .mem cropped
+The current IOS is now `*cropped*'.
+(poke) byte[3][3][7] @ 5#B = new_image_data
+@end example
+
+@subsubsection Updating the Header
+
+The last step is to write the header of the file in @code{*cropped*}.
+This new header also reflects the new dimensions of the image:
+
+@example
+(poke) byte[] @@ 0#B = ['S','B','M']
+(poke) byte @@ 3#B = 3
+(poke) byte @@ 4#B = 7
+@end example
+
+@noindent
+And we are done.  Note how this time we wrote the magic bytes as an
+array, to save some typing and silly manual offset arithmetic.  You
+may have noticed that the type specifier we used this time in the map
+is @code{byte[]} instead of @code{byte[3]}.  This type specifier
+denotes an array of any number of bytes, which certainly includes
+arrays of three bytes, like in the example.
+
+@subsubsection Saving the Result
+
+And finally, lets write out the new file as @file{cp.sbm} (for
+``cropped P''):
+
+@example
+(poke) save :from 0#B :size 5#B + new_image_data'size :file "cp.sbm"
+@end example
 
 @node Named Types
 @section Named Types
+
+@c XXX
+@c type SBM_Pixel
+
+@node Pickles
+@section Pickles
+
+@c SBM pickle
+@c Colors in SBM
+@c (poke) defvar bga = [255UB, 255UB, 255UB]
+@c (poke) defvar fga = [255UB, 99UB, 71UB]
 
 @c XXX
 
