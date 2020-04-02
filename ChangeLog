@@ -1,3 +1,8 @@
+2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pkl-parser.c (pkl_parse_buffer): Add const to buffer param.
+	* src/pkl-parser.h (pkl_parse_buffer): Likewise.
+
 2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (The SBM Format): Do not use @acronym{}.
