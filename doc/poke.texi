@@ -2576,8 +2576,8 @@ sequence of pixels, which can be further structured in terms of
 
 We don't know enough poke yet to handle the complications of these
 real-life bitmap formats, so in subsequent section we introduce a very
-simple format for bitmaps, the @acronym{SBM} format (Stupid BitMap),
-that we will use for learning purposes.
+simple format for bitmaps, the SBM format (Stupid BitMap), that we
+will use for learning purposes.
 
 Do not be disappointed: later in this book, when we become more
 proficient pokers, we will poke these complex formats as well :)
