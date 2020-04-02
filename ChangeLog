@@ -1,5 +1,9 @@
 2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* bootstrap.conf: List gnulib modules in alphabetical order.
+
+2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-cmd.c (pk_cmd_exec): Reduce memory allocations.
 
 2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
