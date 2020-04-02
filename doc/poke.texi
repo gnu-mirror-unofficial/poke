@@ -50,7 +50,7 @@ Documentation License''.
 
 Using poke
 * Basic Editing::		Poking bits, bytes and simple data.
-* Structuring Binary Data::	Poking your own abstractions.
+* Structuring Data::		Poking your own abstractions.
 * Debugging Poke Programs::	When something goes wrong.
 
 Reference Material
@@ -94,9 +94,9 @@ Basic Editing
 * Poking Integers::		From bytes to integers.
 * Buffers as IO Spaces::	Poking memory buffers.
 * Poking ASCII Strings::	Readable sequences of bytes.
-* Poking Arrays::		Groups of homogeneous values.
 
-Structuring Binary Data
+Structuring Data
+* Poking Arrays::		Groups of homogeneous values.
 * Named Types::			The type abstraction.
 
 Debugging Poke Programs
@@ -546,7 +546,6 @@ integers, and the like.
 * Poking Integers::		From bytes to integers.
 * Buffers as IO Spaces::	Poking memory buffers.
 * Poking ASCII Strings::	Readable sequences of bytes.
-* Poking Arrays::		Groups of homogeneous values.
 @end menu
 
 @node Binary Files
@@ -2505,186 +2504,9 @@ is raised:
 @c @section Printing
 @c print and printf
 
-@node Poking Arrays
-@section Poking Arrays
 
-Remember that string @code{EOF} near the beginning of @file{foo.o}?
-Lets take a look again:
-
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
-@end example
-
-The bytes whose ASCII representation compose the string are at offsets
-1, 2 and 3 bytes respectively.  In case we wanted to map them, we
-could of course do something like this:
-
-@example
-(poke) byte @@ 1#B
-0x45UB
-(poke) byte @@ 2#B
-0x4cUB
-(poke) byte @@ 3#B
-0x46UB
-@end example
-
-@noindent
-As we learn in a previous section, we could even store them in
-variables for later manipulation:
-
-@example
-(poke) defvar magic1 = byte @@ 1#B
-(poke) defvar magic2 = byte @@ 2#B
-(poke) defvar magic3 = byte @@ 3#B
-@end example
-
-However, there is a much better way to access consecutive groups of
-bytes.  In this case, we are interested in the three bytes starting at
-offset 1 byte.  We can get them using a single directive by issuing:
-
-@example
-(poke) byte[3] @@ 1#B
-[0x45UB,0x4cUB,0x46UB]
-@end example
-
-@noindent
-Which reads ``map three bytes starting at offset 1 byte''.  The result
-value is a Poke @dfn{array}, of three elements.  The elements are the
-individual byte values we asked for.  Note how the left operand to the
-map operator @code{@@} specifies the kind of value we want to map: for
-a single byte we use @code{byte} and for three bytes we use
-@code{byte[3]}.
-
-The array we get from the mapping operation contains the bytes exactly
-in the same order than they appear in the file:
-
-@example
-(poke) dump :from 1#B :size 3#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000001: 454c 46                                  .ELF............
-(poke) byte[3] @@ 1#B
-[0x45UB,0x4cUB,0x46UB]
-@end example
-
-Arrays can also be written directly in the REPL. The array resulting
-from the mapping above could have also be written directly as:
-
-@example
-(poke) [0x45UB, 0x4cUB, 0x46UB]
-[0x45UB,0x4cUB,0x46UB]
-@end example
-
-Given an array value, its elements can be accessed by @dfn{indexing}.
-The index is zero-based, i.e. the index @code{[0]} refers to the first
-element of the array, @code{[1]} refers to the second, and so on.  Any
-expression resulting in a number can be used as an index.
-
-For example, this is how we can get the second byte of an array of
-bytes:
-
-@example
-(poke) (byte[3] @@ 1#B)[1]
-0x4cUB
-@end example
-
-@noindent
-Storing the array in a variable allows us to index it several times
-without having to write the mapping again and again:
-
-@example
-(poke) defvar magic = byte[3] @@ 1#B
-(poke) magic[0]
-0x45UB
-(poke) magic[1]
-0x4cUB
-(poke) magic[2]
-0x46UB
-@end example
-
-Now, what happens if you alter an element of the mapped array?  Say we
-want to change @code{magic} to contain the characters for @code{EAF}
-instead of @code{ELF}.  The ASCII code for the character @code{A} is
-0x41, so we can issue:
-
-@example
-(poke) magic[1] = 0x41
-@end example
-
-Even better, poke allows us to use a different notation for byte
-values: @code{'X'} which corresponds to the ASCII code of the
-character @code{X}.  In this case:
-
-@example
-(poke) magic[1] = 'A'
-@end example
-
-@noindent
-Obviously the value of the array stored in the variable changes:
-
-@example
-(poke) magic
-[0x45UB,0x41UB,0x46UB]
-@end example
-
-@noindent
-But what about the file?  Lets see:
-
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@noindent
-It also changed!  Why?  We saw that assigning a mapped single byte to
-a variable actually assigned a copy of the byte, and therefore
-altering the variable basically didn't cause an update of the file.
-When we assign a mapped array to a variable, exactly the same happens:
-a copy of the array is stored in the variable.  But still altering the
-elements of the copied array alters the file contents.  The reason for
-this is that Poke values are copied by @dfn{shared value}.  This
-notion, which is used by many other programming languages, means that
-when you copy a composite value (such as an array) the elements
-contained in the resulting copy are the same than of the copied
-entity.
-
-Following this notion, will the following issue restore the original
-values to the file?
-
-@example
-(poke) magic = ['E','L','F']
-@end example
-
-@noindent
-The answer is no:
-
-@example
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@noindent
-The reason is that by assigning @code{['E','L','F']} to @code{magic},
-we are replacing the original array (the mapped array) with a new one,
-which is not mapped.  Therefore, any later modification of the
-elements of the new array won't have any effect on @file{foo.o}:
-
-@example
-(poke) magic[1] = 'X'
-(poke) dump :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4146 0201 0100 0000 0000 0000 0000  .EAF............
-@end example
-
-@c XXX arrays of arrays
-@c XXX array trimming
-@c XXX 'length and 'size
-
-@node Structuring Binary Data
-@chapter Structuring Binary Data
+@node Structuring Data
+@chapter Structuring Data
 
 In the previous chapter we learned how to manipulate pre-defined
 entities like bytes, integers and strings.  One of the big points of
@@ -2692,9 +2514,448 @@ poke, however, is that it allows you to define your own entities.
 This is achieved by defining data structures.
 
 @menu
+* Poking Arrays::	Groups of homogeneous values.
 * Named Types::		The type abstraction.
 @c * Poking Structs::
 @end menu
+
+@node Poking Arrays
+@section Poking Arrays
+
+It is often convenient to manipulate data in groups.  poke provides a
+rich collection of mechanisms for this.
+
+@menu
+* The SBM Format::	The Stupid BitMap Format
+* Poking a SBM Image::	A need for abstraction.
+@end menu
+
+@node The SBM Format
+@subsection The SBM Format
+
+@subsubsection Images as Maps of Pixels
+
+There are two main ways to store two-dimensional images in computers.
+
+One is to explicitly store the different @dfn{pixels} that compose the
+image.  In these @dfn{bitmaps}, the pixels are arranged sequentially
+and implicitly organized into @dfn{lines}.  A header typically
+provides information to determine how many pixels fit in each line:
+
+@example
+ <--- line_width  --->
+| pixel | pixel | ... | pixel | pixel | ... | ...
+|        line 1       |         line 2      |
+@end example
+
+Several properties have to be encoded for each pixel, depending on the
+sophistication of the image: for monochrome images each pixel can be
+just either switched on or off, so a single bit could be used to
+encode each pixel (this is the origin of the term ``bitmap'').  When
+color is added, a bit is no longer sufficient: the color of the pixel
+shall be encoded in some way, typically using a color schema such as
+RGB, that requires triplet of little integers to be encoded.  If
+transparency is to be supported, the degree of transparency of the
+pixel shall also be encoded somehow.
+
+The other way to store an image is to store a functional description
+of the ``painted'' parts of the image.  This functional description
+usually contains instructions like ``paint a line of thickness 1 and
+color red from the coordinate 10,20 to coordinate 10,40''.  Once
+executed with certain parameters (like the desired resolution) the
+functional description generates a bitmap.  Image formats using this
+approach are commonly known as @dfn{vectorial formats}.
+
+When it comes to bitmaps, a plethora of different formats (bmp, jpg,
+png) compete in terms of capabilities such as higher color depths,
+better resolution, support for transparency (alpha channels), higher
+compression level, and the like.  These capabilities greatly
+complicate these formats, but ultimately any bitmap is reduced to a
+sequence of pixels, which can be further structured in terms of
+@dfn{lines}.
+
+We don't know enough poke yet to handle the complications of these
+real-life bitmap formats, so in subsequent section we introduce a very
+simple format for bitmaps, the @acronym{SBM} format (Stupid BitMap),
+that we will use for learning purposes.
+
+Do not be disappointed: later in this book, when we become more
+proficient pokers, we will poke these complex formats as well :)
+
+@subsubsection SBM header
+
+A SBM file starts with a header that contains a ``magic number''
+composed by the three bytes 'S' (0x53UB), 'B' (0x42UB) and 'M'
+(0x4dUB).  The next two bytes indicate the number of pixels per line,
+and the number of lines, respectively.  In summary:
+
+@example
+                SBM header
++-------+-------+-------+-------+-------+
+|  'S'  |  'B'  |  'M'  |  ppl  | lines |
++-------+-------+-------+-------+-------+
+  byte0   byte1   byte2   byte3   byte4
+@end example
+
+@noindent
+Therefore, the bigger image that can be encoded in SBM has dimensions
+255x255.
+
+@subsubsection SBM data
+
+Albeit stupid, SBM is a colorful format.  It supports more than a
+million colors, encoding each color in what is known as @dfn{RGB24}.
+In RGB24, each color is encoded using three little integers,
+specifying the amount of red, green and blue that, added together,
+compose the color.
+
+Therefore, each SBM pixel is encoded using three bytes:
+
+@example
+        SBM pixel
++-------+-------+-------+
+|  Red  | Green | Blue  |
++-------+-------+-------+
+  byte0   byte1   byte2
+@end example
+
+@node Poking a SBM Image
+@subsection Poking a SBM Image
+
+@subsubsection P is for Poke
+
+Lets create our first SBM image, using poke.  The image we want to
+encode is the very simple rendering of the letter @code{P} shown in
+the figure below.
+
+@example
+  | 0 | 1 | 2 | 3 | 4 |
+  +---+---+---+---+---+
+0 |   | * | * |   |   |
+1 |   | * |   | * |   |
+2 |   | * |   | * |   |
+3 |   | * | * |   |   |
+4 |   | * |   |   |   |
+5 |   | * |   |   |   |
+6 |   | * |   |   |   |
+@end example
+
+@noindent
+The image has seven lines, and there are five pixels per line,
+i.e. the dimension of the image in pixels is 5x7.  Also, the pixels
+denoted by asterisks are red, whereas the pixels denoted with empty
+spaces are white.  In other words, our image uses a red foreground
+over a write background.  The ``painted'' pixels are called foreground
+pixels, the non painted pixels are called background pixels.
+
+@subsubsection Preparing the Canvas
+
+The first thing we need is some suitable IO space where to encode the
+image.  Lets fire up poke and create a memory buffer:
+
+@example
+$ poke
+[...]
+(poke) .mem image
+The current IOS is now `*image*'.
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000050: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+@end example
+
+@noindent
+Freshly created memory IO spaces are 4096 bytes long, and that's big
+enough for our little image.  If we wanted to work with more data,
+remember that memory IO spaces will grow automagically when poked past
+their size.
+
+@subsubsection Poking the Header
+
+The first three bytes of the header of a SBM file contains the magic
+number that identifies the file as a SBM bitmap.  We can poke it very
+easily:
+
+@example
+(poke) byte @@ 0#B = 'S'
+(poke) byte @@ 1#B = 'B'
+(poke) byte @@ 2#B = 'M'
+@end example
+
+@noindent
+The next couple of bytes encode the dimensions of the bitmap, in this
+case 5x7:
+
+@example
+(poke) byte @@ 3#B = 5
+(poke) byte @@ 4#B = 8
+@end example
+
+@noindent
+The final header looks like:
+
+@example
+(poke) dump :size 16#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 5342 4d05 0800 0000 0000 0000 0000 0000  SBM.............
+@end example
+
+@subsubsection Poking the Pixels
+
+Now that we have written a SBM header, we have to encode the sequence
+of pixels composing the image.
+
+Recall that every pixel is encoded using three bytes, that conform a
+RGB24 color.  We have two kinds of pixels in our image: white pixels,
+and red pixels.  In RGB24 white is encoded as @code{(255,255,255)}.
+Pure red is encoded as @code{(255,0,0)}, but to make things more
+interesting we will be using a nicer tomato-like red
+@code{(255,99,71)}.
+
+Therefore, poking a white pixel at some offset @var{offset} would
+involve the following operations:
+
+@example
+(poke) byte @@ @var{offset} = 255
+(poke) byte @@ @var{offset}+1#B = 255
+(poke) byte @@ @var{offset}+2#B = 255
+@end example
+
+@noindent
+Likewise, the operations to poke a tomato pixel would look like:
+
+@example
+(poke) byte @@ @var{offset} = 255
+(poke) byte @@ @var{offset}+1#B = 99
+(poke) byte @@ @var{offset}+2#B = 71
+@end example
+
+@noindent
+To ease things a bit, we can define variables with the color codes for
+both foreground and background pixels:
+
+@example
+(poke) defvar bg1 = 255
+(poke) defvar bg2 = 255
+(poke) defvar bg3 = 255
+(poke) defvar fg1 = 255
+(poke) defvar fg2 = 99
+(poke) defvar fg3 = 71
+@end example
+
+@noindent
+Then to poke a foreground pixel would involve doing:
+
+@example
+(poke) byte @@ @var{offset} = fg1
+(poke) byte @@ @var{offset}+1#B = fg2
+(poke) byte @@ @var{offset}+2#B = fg3
+@end example
+
+At this point, looking at the perspective of mapping bytes like crazy
+(considering we have 5x7 = 35 pixels in our image, we will need to
+poke 35 * 3 = 105 bytes) we may feel tempted to, somehow, use a bigger
+integer to ``encapsulate'' the bytes.  Using the bit-concatenation
+operator, we could do something like:
+
+@example
+(poke) defvar bg = 255UB::255UB::255UB
+(poke) defvar fg = 255UB::99UB::71UB
+(poke) bg
+(uint<24>) 0xffffff
+(poke) fg
+(uint<24>) 0xff6347
+@end example
+
+@noindent
+This encodes each color with a 24-bit unsigned integer. When looking
+at the hexadecimal values of @code{bg} and @code{fg} above, note that
+0xff = 255, 0x63 = 99 and 0x47 = 71.  Each byte seems to be in the
+right position in the 24-bit containing number.  Now, poking a pixel
+at some given offset should be as easy as issugin would involve just
+one map operation, right?  Lets see, using some arbitrary offset 10#B:
+
+@example
+(poke) uint<24> @@ 10#B = fg
+(poke) dump :from 10#B :size 4#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+0000000a: 4763 ff00                                Gc..
+@end example
+
+@noindent
+If your current endianness is little (i.e. you are running on a x86
+system or similar) you will get the dump above.  The bytes are
+reversed, and consequently the resulting pixel has the wrong color.
+Our little trick didn't work :(
+
+So are we doomed to poke three bytes for each pixel we want to poke in
+our image?  No, not really.  The Poke language provides a construction
+oriented to alleviate cases like this, where several similar elements
+are to be ``encapsulated'' in a container.  These constructions are
+called @dfn{arrays}.
+
+Using array values, we can define the foreground and background colors
+like this:
+
+@example
+(poke) defvar bga = [255UB, 255UB, 255UB]
+(poke) defvar fga = [255UB, 99UB, 71UB]
+@end example
+
+@noindent
+All the elements on an array should be of the same kind, i.e. of the
+same type.  Therefore, this is not allowed:
+
+@example
+(poke) [1,"foo"]
+<stdin>:1:1: error: array initializers should be of the same type
+[1,"foo"];
+^~~~~~~~~
+@end example
+
+How can we poke an array value?  We know that the map operator accepts
+two operands: a type specifier and the value to map.  The type
+specifier of an array of three bytes is denoted as @code{byte[3]}.
+Therefore, we can again try to poke a foreground pixel at offset 10#B,
+this time using @code{fga}:
+
+@example
+(poke) byte[3] @@ 10#B = fga
+(poke) dump :from 10#B :size 4#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+0000000a: ff63 4700                                 .cG.
+@end example
+
+@indent
+This time, the bytes were written in the right order.  This is because
+array elements are always written using their ``written'' ordering,
+with no mind to endianness.  We can also map a pixel from a given
+offset:
+
+@example
+(poke) byte[3] @@ 10#B
+[255UB,99UB,71UB]
+@end example
+
+@subsubsection Poking Lines
+
+At this point, we could encode the 40 pixels composing the image, by
+issuing the same number of pokes of @code{byte[3]} arrays.  However,
+we can simplify the task even further.
+
+Our pixels are arrays of bytes, denoted by the type specifier
+@code{byte[3]}.  Similarly, we could conceive arrays of 32-bit signed
+integers, denoted by @code{int[3]}, or arrays of bits, denoted by
+@code{uint<1>[3]}.  But, is it possible to have arrays of other
+arrays?  Yes, it is:
+
+@example
+(poke) [[1,2],[3,4]]
+@end example
+
+@noindent
+The value above is an array of two arrays of two integers each.  If we
+wanted to map such an array, what would be the type specifier we would
+need to use?  It would be @code{int[2][2]}, which should be read from
+right-to-left as ``array of two arrays of two integers''.  Lets map
+one from an arbitrary offset in our IO space:
+
+@example
+(poke) int[2][2] @@ 100#B
+[[0,0],[0,0]]
+@end example
+
+Consider again the sequence of pixels composing the image.  Using the
+information we have in the SBM header, we can group the pixels in the
+sequence into ``lines''.  In our example images, each line contains 5
+pixels.  It would be natural to express each line as a sequence of
+pixels.  The first line in our image would be:
+
+@example
+(poke) defvar l0 = [bga,fga,fga,bga,bga]
+(poke) l0
+[[255UB,255UB,255UB],[255UB,99UB,71UB],...]
+@end example
+
+@noindent
+Lets complete the image lines:
+
+@example
+(poke) defvar l0 = [bga,fga,bga,fga,bga]
+(poke) defvar l1 = [bga,fga,bga,fga,bga]
+(poke) defvar l2 = [bga,fga,fga,bga,bga]
+(poke) defvar l3 = [bga,fga,bga,bga,bga]
+(poke) defvar l4 = l3
+(poke) defvar l5 = l4
+@end example
+
+@noindent
+Note how we exploited the fact that the three last lines of our image
+are identical, to avoid to write the same array thrice.  Array values
+can be assigned, and in general manipulated, like any other kind of
+value, such as integers or strings.
+
+At this point, we could poke the pixels line-by-line.  What would be
+the type specifier for a line?   A line is an array of five arrays of
+3 bytes each, so the type specifier would be @code{byte[3][5]}.  Lets
+do that:
+
+@example
+(poke) byte[3][5] @@ 5#B = l0
+(poke) byte[3][5] @@ 10#B = l1
+(poke) byte[3][5] @@ 15#B = l2
+(poke) byte[3][5] @@ 20#B = l3
+(poke) byte[3][5] @@ 25#B = l4
+(poke) byte[3][5] @@ 30#B = l5
+(poke) byte[3][5] @@ 35#B = l6
+@end example
+
+@noindent
+Not bad, we went from poking 105 bytes in the IO space to poking six
+lines.  But we can still do better...
+
+@subsubsection Poking Images
+
+When we poked the lines at the end of the previous section, we had to
+increase the offset of every poke.  This is inconvenient.
+
+In the same way than a sequence of bytes can be abstracted in a line,
+a sequence of lines can be abstracted in an image.  It follows that we
+can look at the image data as an array of lines.  But lines are
+themselves arrays of arrays... no matter, there is no limit on the
+number of arrays-of levels that you can nest.
+
+So, lets define our image as an array of the lines defined above:
+
+@example
+(poke) defvar image_data = [l0,l1,l2,l3,l4,l5]
+(poke) image_data
+[[[255UB,255UB,255UB],[255UB,99UB,71UB],[255UB,99UB,71UB]...]...]
+@end example
+
+@noindent
+What would be the type specifier for an image?  It would be an array
+of six arrays of five arrays of three bytes each, in other words
+@code{byte[3][5][6]}.  Lets poke the pixels:
+
+@example
+(poke) byte[3][5][6] @@ 5#B = image_data
+@end example
+
+This is an example of how abstraction can simplify the handling of
+binary data: we switched from manipulating bytes to manipulate higher
+abstractions such as colors, lines and images.  We achieved that by
+structuring the data in a way that reflects these abstractions.
+That's the way of the Poker.
+
+@c XXX array trimming
+@c XXX 'length and 'size
 
 @node Named Types
 @section Named Types
