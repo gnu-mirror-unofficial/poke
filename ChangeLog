@@ -1,5 +1,10 @@
 2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi: Flatten the sectioning, removing superfluous
+	nodes containing only menus.
+
+2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (The Bugzilla): New section.
 	(Dealing with spam in the Bugzilla): Likewise.
 

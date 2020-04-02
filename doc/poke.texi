@@ -92,12 +92,22 @@ Basic Editing
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
 * Values and Variables::        Values can be stored in variables.
-* Poking Integers::		From bytes to integers.
+* From Bytes to Integers::	Building numbers with bytes.
+* Big and Little Endians::	Pick your egg.
+* Negative Integers::		Going behind zero.
+* Weird Integers::		Incomplete bytes in numbers.
+* Unaligned Integers::		IO spaces are bit-oriented.
+* Integers of Different Sizes:: Promotion of integers in expressions.
 * Buffers as IO Spaces::	Poking memory buffers.
-* Poking ASCII Strings::	Readable sequences of bytes.
+* Character Sets::		ASCII, Unicode, ...
+* From Bytes to Characters::	Working with ASCII codes
+* ASCII Strings::		NULL-terminated strings.
+* From Strings to Characters::	Indexing strings.
 
 Structuring Data
-* Poking Arrays::		Groups of homogeneous values.
+* The SBM Format::		The Stupid BitMap Format
+* Poking a SBM Image::		A need for abstraction.
+* Cropping SBM Images::		Modifying existing data.
 * Named Types::			The type abstraction.
 
 Debugging Poke Programs
@@ -544,9 +554,17 @@ integers, and the like.
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
 * Values and Variables::        Values can be stored in variables.
-* Poking Integers::		From bytes to integers.
+* From Bytes to Integers::	Building numbers with bytes.
+* Big and Little Endians::	Pick your egg.
+* Negative Integers::		Going behind 0.
+* Weird Integers::		Incomplete bytes in numbers.
+* Unaligned Integers::		IO spaces are bit-oriented.
+* Integers of Different Sizes:: Promotion of integers in expressions.
 * Buffers as IO Spaces::	Poking memory buffers.
-* Poking ASCII Strings::	Readable sequences of bytes.
+* Character Sets::		ASCII, Unicode, ...
+* From Bytes to Characters::	Working with ASCII codes
+* ASCII Strings::		NULL-terminated strings.
+* From Strings to Characters::	Indexing strings.
 @end menu
 
 @node Binary Files
@@ -1095,23 +1113,8 @@ Note how we have to use parenthesis around the map at the right hand
 side, because the map operator @code{@@} has less precedence than the
 plus operator @code{+}.
 
-@node Poking Integers
-@section Poking Integers
-
-Integers are probably the most important notion when working with
-binary data.
-
-@menu
-* From Bytes to Integers::	Building numbers with bytes.
-* Big and Little Endians::	Pick your egg.
-* Negative Integers::		Why so positive?
-* Weird Integers::		Incomplete bytes in numbers.
-* Unaligned Integers::		IO spaces are bit-oriented.
-* Integers of Different Sizes:: Promotion of integers in expressions.
-@end menu
-
 @node From Bytes to Integers
-@subsection From Bytes to Integers
+@section From Bytes to Integers
 
 The bytes we have been working with are unsigned whole numbers (or
 integers) in the range @code{0..255}.  We saw how poke sees the
@@ -1306,7 +1309,7 @@ This may change in the future, as we are planning to support
 arbitrarily large integers.
 
 @node Big and Little Endians
-@subsection Big and Little Endians
+@section Big and Little Endians
 
 @cindex big endian
 @cindex little endian
@@ -1443,9 +1446,9 @@ to whatever endianness is in the system.  You do it this way:
 @end example
 
 @node Negative Integers
-@subsection Negative Integers
+@section Negative Integers
 
-@subsubsection Negative Encodings
+@subsection Negative Encodings
 
 Up to this point we have worked with unsigned integers, i.e. whole
 numbers which are zero or bigger than zero.  Much like it happened
@@ -1475,7 +1478,7 @@ for two's complement and @code{1c} for one's complement.
 The default is two's complement, which is the negative encoding used
 in the vast majority of modern computers and operating systems.
 
-@subsubsection Signed Integers
+@subsection Signed Integers
 
 Unsigned values are never negative.  For example:
 
@@ -1513,7 +1516,7 @@ positive, so lets try to get an actual negative value:
 -1H
 @end example
 
-@subsubsection Mixing Signed and Unsigned Integers
+@subsection Mixing Signed and Unsigned Integers
 
 Adding two signed integers gives you a signed integer:
 
@@ -1575,7 +1578,7 @@ positive numbers more often than with negative numbers, but that is a
 reasonable assumption to do, as it is often the case!
 
 @node Weird Integers
-@subsection Weird Integers
+@section Weird Integers
 
 Up to this point we have been playing with integers that are built
 using a whole number of bytes.  However, we have seen that the type
@@ -1602,7 +1605,7 @@ In poke, on the contrary, weird numbers are first class citizens, and
 they don't differ in any way from ``normal'' integers composed of a
 whole number of bytes.
 
-@subsubsection Incomplete Bytes
+@subsection Incomplete Bytes
 
 Let's consider first weird numbers that span for more than one byte.
 For example, an unsigned integer of 12 bits.  Lets visualize the
@@ -1751,7 +1754,7 @@ space) provides all its bits.  The rules are exactly the same in all
 cases, which makes it easy to obtain predictable and natural results
 when building integers using poke.
 
-@subsubsection Quantum Bytenics
+@subsection Quantum Bytenics
 
 The second kind of weird numbers are integers using less than 8 bits.
 These ``sub-byte'' numbers do not use all the bytes of their
@@ -1800,7 +1803,7 @@ Lets see this in poke:
 (uint<5>) 0b01111
 @end example
 
-@subsubsection Signed Weird Numbers
+@subsection Signed Weird Numbers
 
 In the section discussing negative integers, we saw how the different
 between a signed number and an unsigned number is basically a
@@ -1856,7 +1859,7 @@ Now, lets switch to little endian:
 @end example
 
 @node Unaligned Integers
-@subsection Unaligned Integers
+@section Unaligned Integers
 
 @cindex IO devices
 @cindex IO spaces
@@ -1953,7 +1956,7 @@ which are far from trivial.  Fortunately, you can let poke to do that
 dirty job for you, and abstract yourself from that complexity.
 
 @node Integers of Different Sizes
-@subsection Integers of Different Sizes
+@section Integers of Different Sizes
 
 When integer values of different sizes are passed to an arithmetic or
 relational operator, the ``smaller'' operand gets converted into the
@@ -2144,21 +2147,11 @@ we can continue our work tomorrow.  This is how we would do that:
 Here we used the built-in function @code{iosize}, that given an IO
 space identifier returns its size.
 
-@node Poking ASCII Strings
-@section Poking ASCII Strings
-
-poke provides useful abstractions to handle ASCII characters and
-strings.  This section discusses these.
-
 @menu
-* Character Sets and Encodings::	ASCII, Unicode, ...
-* From Bytes to Characters::		Working with ASCII codes
-* ASCII Strings::			NULL-terminated strings.
-* From Strings to Characters::		Indexing strings.
 @end menu
 
-@node Character Sets and Encodings
-@subsection Character Sets and Encodings
+@node Character Sets
+@section Character Sets
 
 @cindex character
 @cindex character set
@@ -2209,9 +2202,9 @@ byte are the same than in ASCII.  This clever encoding is called
 UTF-8.
 
 @node From Bytes to Characters
-@subsection From Bytes to Characters
+@section From Bytes to Characters
 
-@subsubsection Character Literals
+@subsection Character Literals
 
 poke has built-in support for ASCII, and its simple encoding: each
 ASCII code is encoded using one byte.  Let's see:
@@ -2237,7 +2230,7 @@ value in poke:
 In order to make this more explicit, poke provides yet another synonym
 for the type specifier @code{uint<8>}: @code{char}.
 
-@subsubsection Classifying Characters
+@subsection Classifying Characters
 
 When working with characters it is very useful to have some
 acquaintance of the ASCII character set, which is designed in a very
@@ -2282,7 +2275,7 @@ trick again:
 0
 @end example
 
-@subsubsection Non-printable Characters
+@subsection Non-printable Characters
 
 Not all ASCII code are printable using the glyph that are usually
 supported in terminals.  If you look at the table in @ref{Table of
@@ -2319,9 +2312,9 @@ These @code{\} constructions in character literals are called
 allowed escapes in character literals.
 
 @node ASCII Strings
-@subsection ASCII Strings
+@section ASCII Strings
 
-@subsubsection String Values
+@subsection String Values
 
 Now that we know how to manipulate ASCII codes in poke, we may wonder
 how can we combine them to conform words or, more generally,
@@ -2346,7 +2339,7 @@ Like in character literals, poke strings support several escape
 sequences that help to denote non-printed characters, such as new
 lines and horizontal tabs.  @xref{String Literals}.
 
-@subsubsection Poking Strings
+@subsection Poking Strings
 
 Lets start with a fresh memory buffer IOS @code{*scratch*}:
 
@@ -2432,7 +2425,7 @@ integers:
 00000020: 0000 574f 5244 0000 0000 0000 0000 0000  ..WORD..........
 @end example
 
-@subsubsection From Characters to Strings
+@subsection From Characters to Strings
 
 Strings can be concatenated using the string-concatenation @code{+}
 operators:
@@ -2471,7 +2464,7 @@ Using that cast, we can now append:
 @end example
 
 @node From Strings to Characters
-@subsection From Strings to Characters
+@section From Strings to Characters
 
 Despite being atomic values, poke strings can be indexed in order to
 retrieve individual characters:
@@ -2515,28 +2508,18 @@ poke, however, is that it allows you to define your own entities.
 This is achieved by defining data structures.
 
 @menu
-* Poking Arrays::	Groups of homogeneous values.
+* The SBM Format::	The Stupid BitMap Format
+* Poking a SBM Image::	A need for abstraction.
+* Cropping SBM Images::	Modifying existing data.
 * Named Types::		The type abstraction.
 * Pickles::		Saving useful definitions for future use.
 @c * Poking Structs::
 @end menu
 
-@node Poking Arrays
-@section Poking Arrays
-
-It is often convenient to manipulate data in groups.  poke provides a
-rich collection of mechanisms for this.
-
-@menu
-* The SBM Format::	The Stupid BitMap Format
-* Poking a SBM Image::	A need for abstraction.
-* Cropping SBM Images::	Trimming.
-@end menu
-
 @node The SBM Format
-@subsection The SBM Format
+@section The SBM Format
 
-@subsubsection Images as Maps of Pixels
+@subsection Images as Maps of Pixels
 
 There are two main ways to store two-dimensional images in computers.
 
@@ -2586,7 +2569,7 @@ But please do not feel disappointed: later in this book, when we
 become more proficient pokers, we will poke these complex formats as
 well :)
 
-@subsubsection SBM header
+@subsection SBM header
 
 A SBM file starts with a header that contains a ``magic number''
 composed by the three bytes 'S' (0x53UB), 'B' (0x42UB) and 'M'
@@ -2606,7 +2589,7 @@ Here @code{ppl} stands for pixels-per-line.  The encoding of these
 fields imply that the bigger image that can be encoded in SBM has
 dimensions 255x255.
 
-@subsubsection SBM data
+@subsection SBM data
 
 Albeit stupid, SBM is a colorful format.  It supports more than a
 million colors, encoding each color in what is known as @dfn{RGB24}.
@@ -2625,9 +2608,9 @@ Therefore, each SBM pixel is encoded using three bytes:
 @end example
 
 @node Poking a SBM Image
-@subsection Poking a SBM Image
+@section Poking a SBM Image
 
-@subsubsection P is for Poke
+@subsection P is for Poke
 
 Lets create our first SBM image, using poke.  The image we want to
 encode is the very simple rendering of the letter @code{P} shown in
@@ -2653,7 +2636,7 @@ spaces are white.  In other words, our image uses a red foreground
 over a write background.  The ``painted'' pixels are called foreground
 pixels, the non painted pixels are called background pixels.
 
-@subsubsection Preparing the Canvas
+@subsection Preparing the Canvas
 
 The first thing we need is some suitable IO space where to encode the
 image.  Lets fire up poke and create a memory buffer:
@@ -2681,7 +2664,7 @@ enough for our little image.  If we wanted to work with more data,
 remember that memory IO spaces will grow automagically when poked past
 their size.
 
-@subsubsection Poking the Header
+@subsection Poking the Header
 
 The first three bytes of the header of a SBM file contains the magic
 number that identifies the file as a SBM bitmap.  We can poke these
@@ -2724,7 +2707,7 @@ The final header looks like:
 00000000: 5342 4d05 0800 0000 0000 0000 0000 0000  SBM.............
 @end example
 
-@subsubsection Poking the Pixels
+@subsection Poking the Pixels
 
 Now that we have written a SBM header, we have to encode the sequence
 of pixels composing the image.
@@ -2874,7 +2857,7 @@ offset:
 [255UB,99UB,71UB]
 @end example
 
-@subsubsection Poking Lines
+@subsection Poking Lines
 
 At this point, we could encode the 40 pixels composing the image, by
 issuing the same number of pokes of @code{byte[3]} arrays.  However,
@@ -2951,7 +2934,7 @@ do that:
 Not bad, we went from poking 105 bytes in the IO space to poking six
 lines.  But we can still do better...
 
-@subsubsection Poking Images
+@subsection Poking Images
 
 When we poked the lines at the end of the previous section, we had to
 increase the offset of every poke.  This is inconvenient.
@@ -2985,7 +2968,7 @@ abstractions such as colors, lines and images.  We achieved that by
 structuring the data in a way that reflects these abstractions.
 That's the way of the Poker.
 
-@subsubsection Saving the Image
+@subsection Saving the Image
 
 Now that we have completed the SBM image in our buffer @code{*image*},
 it is time to save it to disk.  For that, we can use the
@@ -3043,9 +3026,9 @@ is for poke'' image.  Keep that file around, because we will be poking
 it further!
 
 @node Cropping SBM Images
-@subsection Cropping SBM Images
+@section Cropping SBM Images
 
-@subsubsection Reading a SBM File
+@subsection Reading a SBM File
 
 Lets open with poke the cute image we created in the last section,
 @file{p.sbm}:
@@ -3094,7 +3077,7 @@ type specifier:
 [[[255UB,255UB,255UB],[255UB,99UB,71UB], ...]...]
 @end example
 
-@subsubsection Cropping the P
+@subsection Cropping the P
 
 Looking at our SBM file, we realize that the first and the last column
 of the image are all all background pixels.  We would like to modify
@@ -3118,7 +3101,7 @@ In order to perform this operation we need to rework the stream of
 pixels to reflect the desired result, and then to update the header
 metadata accordingly.
 
-@subsubsection Shortening and Shifting Lines
+@subsection Shortening and Shifting Lines
 
 Lets think in term of lines.  In the original image, each line has 5
 pixels, that we can enumerate as:
@@ -3200,7 +3183,7 @@ The current IOS is now `*cropped*'.
 (poke) byte[3][3][7] @ 5#B = new_image_data
 @end example
 
-@subsubsection Updating the Header
+@subsection Updating the Header
 
 The last step is to write the header of the file in @code{*cropped*}.
 This new header also reflects the new dimensions of the image:
