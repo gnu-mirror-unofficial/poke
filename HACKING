@@ -36,6 +36,8 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        2.3  Write After Approval
        2.4  Personal Branches
        2.5  Installing Obvious Changes
+       2.6  The Bugzilla
+         2.6.1  Dealing with spam in the Bugzilla
      3  Development Environment
        3. 1  Autotools
        3. 2  Dejagnu
@@ -192,6 +194,30 @@ If you commit and push an obvious change, you are still required to
 send an email to the mailing list stating you installed the change.
 Please include a suggestive tag in your email's subject, something
 like ``[COMMITTED]``.  Also, make sure to include the patch itself.
+
+The Bugzilla
+~~~~~~~~~~~~
+
+We maintain a bugs database in http://www.sourceware.org/bugzilla.
+Our component is ``poke``.  If you find a bug and you don't want or
+you can't work on it, please file a bug there providing as much
+details as you can.
+
+Also, feel free to assign unasigned bugs to yourself.  You will have
+to open an account in bugzilla for that.
+
+Dealing with spam in the Bugzilla
+.................................
+
+Sometimes the bugzilla at sourceware gets some spam, in the form of
+bugs containing crap.  If you see one, you can flag is as spam by
+transitioning the following fields::
+
+  Component -> spam
+  Product -> web
+  Assigneee -> nobody@sourceware.org
+  Status -> Closed as invalid
+
 
 Development Environment
 -----------------------
