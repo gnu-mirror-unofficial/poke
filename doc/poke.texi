@@ -107,7 +107,7 @@ Basic Editing
 Structuring Data
 * The SBM Format::		The Stupid BitMap Format
 * Poking a SBM Image::		A need for abstraction.
-* Cropping SBM Images::		Modifying existing data.
+* Modifying SBM Images::	Modifying existing data.
 * Named Types::			The type abstraction.
 
 Debugging Poke Programs
@@ -2510,7 +2510,7 @@ This is achieved by defining data structures.
 @menu
 * The SBM Format::	The Stupid BitMap Format
 * Poking a SBM Image::	A need for abstraction.
-* Cropping SBM Images::	Modifying existing data.
+* Modifying SBM Images:: Modifying existing data.
 * Named Types::		The type abstraction.
 * Pickles::		Saving useful definitions for future use.
 @c * Poking Structs::
@@ -3025,8 +3025,8 @@ have been written in the current working directory, containing our ``P
 is for poke'' image.  Keep that file around, because we will be poking
 it further!
 
-@node Cropping SBM Images
-@section Cropping SBM Images
+@node Modifying SBM Images
+@section Modifying SBM Images
 
 @subsection Reading a SBM File
 
@@ -3076,6 +3076,18 @@ type specifier:
 (poke) image_data
 [[[255UB,255UB,255UB],[255UB,99UB,71UB], ...]...]
 @end example
+
+@subsection Changing Colors
+
+@c mapped values vs. non-mapped values
+@c mapped simple values vs. mapped arrays
+
+@c XXX from tomato to pure red.
+@c XXX byte @ .. = 0 => pixel[2] = 0
+@c XXX pixel[2] = 0;
+
+@c XXX valmappers
+@c XXX line[0] = [255,0,0]
 
 @subsection Cropping the P
 

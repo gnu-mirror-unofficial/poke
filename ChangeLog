@@ -1,3 +1,8 @@
+2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Modifying SBM Images): Renamed from `Cropping SBM
+	Images'.
+
 2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-cmd.c (pk_cmd_init):
