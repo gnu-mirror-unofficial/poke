@@ -617,13 +617,10 @@ pk_cmd_exec (char *str)
     return pk_cmd_exec_1 (cmd + 1, cmds_trie, NULL);
   else
     {
-      char *ecmd, *end;
+      char *ecmd = cmd, *end;
       pvm_val val;
       int what; /* 0 -> declaration, 1 -> statement */
       int retval = 1;
-
-      ecmd = xmalloc (strlen (cmd) + 2);
-      strcpy (ecmd, cmd);
 
       if (strncmp (ecmd, "defun ", 6) == 0
           || strncmp (ecmd, "defun\t", 6) == 0)
@@ -643,7 +640,12 @@ pk_cmd_exec (char *str)
 
       if (strncmp (ecmd, "defun ", 6) != 0
           && strncmp (ecmd, "defun\t", 6) != 0)
-        strcat (ecmd, ";");
+        {
+          size_t len = strlen (cmd);
+          ecmd = xmalloc (len + 2);
+          memcpy (ecmd, cmd, len);
+          memcpy (ecmd + len, ";", 2); /* incl. trailing 0 */
+        }
 
       if (what == 0)
         {
@@ -674,7 +676,8 @@ pk_cmd_exec (char *str)
         }
 
     cleanup:
-      free(ecmd);
+      if (ecmd != cmd)
+        free (ecmd);
       return retval;
     }
 }

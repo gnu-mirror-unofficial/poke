@@ -1,5 +1,9 @@
 2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* src/pk-cmd.c (pk_cmd_exec): Reduce memory allocations.
+
+2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pkl-parser.c (pkl_parse_buffer): Add const to buffer param.
 	* src/pkl-parser.h (pkl_parse_buffer): Likewise.
 
