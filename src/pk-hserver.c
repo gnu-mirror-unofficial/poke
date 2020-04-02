@@ -50,7 +50,6 @@ static int hserver_socket;
 
 /* Port where the server listens for connections.  */
 static int hserver_port = 0;
-static char hserver_port_str[128];
 
 /* hserver_finish is used to tell the server threads to terminate.  It
    is protected with a mutex.  */
@@ -291,7 +290,6 @@ pk_hserver_init ()
       exit (EXIT_FAILURE);
     }
   hserver_port = ntohs (clientname.sin_port);
-  sprintf (hserver_port_str, "%d", hserver_port);
 
   hserver_finish = 0;
   ret = pthread_create (&hserver_thread,
@@ -331,44 +329,29 @@ pk_hserver_make_hyperlink (char type,
                            const char *cmd)
 {
   int token;
-  char *str, token_str[128], type_str[2];
+  char *str;
   char hostname[128];
 
-  assert (type == 'i' || type == 'e');
-  type_str[0] = type;
-  type_str[1] = '\0';
-
-  /* XXX: check for maximum length 2048.  */
-  token = pk_hserver_get_token ();
-  sprintf (token_str, "%d", token);
-
-  if (gethostname (hostname, 128) != 0)
+  if (gethostname (hostname, sizeof (hostname)) != 0)
     {
       perror ("gethostname");
       exit (EXIT_FAILURE);
     }
 
-  str = xmalloc (strlen ("app://")
-                 + strlen (hostname)
-                 + 1 /* ':' */
-                 + strlen (hserver_port_str)
-                 + 1 /* '/' */
-                 + strlen (token_str)
-                 + 1 /* '/' */
-                 + 1 /* type */
-                 + 1 /* '/' */
-                 + strlen (cmd)
-                 + 1 /* '0' */);
-  strcpy (str, "app://");
-  strcat (str, hostname);
-  strcat (str, ":");
-  strcat (str, hserver_port_str);
-  strcat (str, "/");
-  strcat (str, token_str);
-  strcat (str, "/");
-  strcat (str, type_str);
-  strcat (str, "/");
-  strcat (str, cmd);
+  assert (type == 'i' || type == 'e');
+
+  token = pk_hserver_get_token ();
+
+  if (asprintf(&str, "app://%s:%d/%d/%c/%s",
+               hostname,
+               hserver_port,
+               token,
+               type,
+               cmd
+               ) == -1)
+    {
+      return NULL;
+    }
 
   return str;
 }

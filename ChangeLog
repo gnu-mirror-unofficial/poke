@@ -1,3 +1,10 @@
+2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-hserver.c (pk_hserver_make_hyperlink):
+	Simplify malloc/strlen/strcpy/strcat with asprintf.
+	(pk_hserver_init): Remove writing to hserver_port_str.
+	(hserver_port_str): Remove variable.
+
 2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi: Flatten the sectioning, removing superfluous
