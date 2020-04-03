@@ -86,8 +86,8 @@ static const struct pk_cmd *dot_cmds[] =
 
 /* Convenience macros and functions for parsing.  */
 
-static inline char *
-skip_blanks (char *p)
+static inline const char *
+skip_blanks (const char *p)
 {
   while (isblank (*p))
     p++;
@@ -95,7 +95,7 @@ skip_blanks (char *p)
 }
 
 static inline int
-pk_atoi (char **p, int64_t *number)
+pk_atoi (const char **p, int64_t *number)
 {
   long int li;
   char *end;
@@ -259,7 +259,7 @@ pk_print_trie (int indent, struct pk_trie *trie)
 #define MAX_CMD_NAME 18
 
 static int
-pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
+pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 {
 #define GOTO_USAGE()                                                           \
   do {                                                                         \
@@ -268,8 +268,9 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
     goto usage;                                                                \
   } while (1)
   int ret = 1;
-  int i;
-  char cmd_name[MAX_CMD_NAME], *p;
+  size_t i;
+  char cmd_name[MAX_CMD_NAME];
+  const char *p;
   const struct pk_cmd *cmd;
   int argc = 0;
   struct pk_cmd_arg argv[8];
@@ -371,7 +372,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
              the next argument or the end of the input is found.  */
           while (*a != ',' && *a != '\0')
             {
-              char *beg = p;
+              const char *beg = p;
 
               switch (*a)
                 {
@@ -379,8 +380,8 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                   {
                     /* Compile a poke program.  */
                     pvm_routine routine;
-                    char *end;
-                    char *program_string;
+                    const char *end;
+                    const char *program_string;
 
                     program_string = p;
                     routine = pkl_compile_expression (poke_compiler,
@@ -452,7 +453,8 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                   {
                     /* Parse a string.  */
 
-                    char *end, *str;
+                    const char *end;
+                    char *str;
                     size_t size;
 
                     p = skip_blanks (p);
@@ -466,9 +468,9 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
                     /* Trim trailing space.  */
                     if (size)
                       {
-                        end = str + size - 1;
-                        while (end > str && isspace ((unsigned char) *end))
-                          *end-- = '\0';
+                        char *e = str + size - 1;
+                        while (e > str && isspace ((unsigned char) *e))
+                          *e-- = '\0';
                       }
 
                     argv[argc].type = PK_CMD_ARG_STR;
@@ -605,19 +607,20 @@ extern struct pk_trie *set_trie; /* pk-set.c */
 static struct pk_trie *cmds_trie;
 
 int
-pk_cmd_exec (char *str)
+pk_cmd_exec (const char *str)
 {
   /* If the first non-blank character in STR is a dot ('.'), then this
      is a poke command.  Dispatch it with pk_cmd_exec_1.  Otherwise,
      compile a Poke declaration or a statement and execute it.  */
 
-  char *cmd = skip_blanks (str);
+  const char *cmd = skip_blanks (str);
 
   if (*cmd == '.')
     return pk_cmd_exec_1 (cmd + 1, cmds_trie, NULL);
   else
     {
-      char *ecmd = cmd, *end;
+      const char *ecmd = cmd, *end;
+      char *cmd_alloc = NULL;
       pvm_val val;
       int what; /* 0 -> declaration, 1 -> statement */
       int retval = 1;
@@ -642,9 +645,10 @@ pk_cmd_exec (char *str)
           && strncmp (ecmd, "defun\t", 6) != 0)
         {
           size_t len = strlen (cmd);
-          ecmd = xmalloc (len + 2);
-          memcpy (ecmd, cmd, len);
-          memcpy (ecmd + len, ";", 2); /* incl. trailing 0 */
+          cmd_alloc = xmalloc (len + 2);
+          memcpy (cmd_alloc, cmd, len);
+          memcpy (cmd_alloc + len, ";", 2); /* incl. trailing 0 */
+          ecmd = cmd_alloc;
         }
 
       if (what == 0)
@@ -676,8 +680,7 @@ pk_cmd_exec (char *str)
         }
 
     cleanup:
-      if (ecmd != cmd)
-        free (ecmd);
+      free (cmd_alloc);
       return retval;
     }
 }

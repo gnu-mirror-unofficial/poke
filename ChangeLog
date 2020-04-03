@@ -1,3 +1,24 @@
+2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-cmd.c (skip_blanks): Take const char *,
+	return const char *.
+	(pk_atoi): Add const to p.
+	(pk_cmd_exec_1): Add const to str param and to several vars.
+	(pk_cmd_exec): Add const to param and several vars,
+	use cmd_alloc for allocation.
+	* src/pk-cmd.h (pk_cmd_exec): Add const to param.
+	* pkl-parser.c (pkl_parse_buffer): Add const to 'buffer'
+	and 'end'.
+	* src/pkl-parser.h (pkl_parse_buffer): Likewise.
+	* src/pkl.c (pkl_compile_buffer): Add const to 'buffer'
+        and 'end'.
+	(pkl_compile_statement): Likewise.
+	(pkl_compile_expression): Likewise.
+	* src/pkl.h (pkl_compile_buffer): Add const to 'buffer'
+	and 'end'.
+	(pkl_compile_statement): Likewise.
+	(pkl_compile_expression): Likewise.
+
 2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Poking Bytes): Improve wording.

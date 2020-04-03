@@ -219,7 +219,7 @@ rest_of_compilation (pkl_compiler compiler,
 
 int
 pkl_compile_buffer (pkl_compiler compiler,
-                    char *buffer, char **end)
+                    const char *buffer, const char **end)
 {
   pkl_ast ast = NULL;
   pvm_routine routine;
@@ -274,7 +274,7 @@ pkl_compile_buffer (pkl_compiler compiler,
 
 int
 pkl_compile_statement (pkl_compiler compiler,
-                       char *buffer, char **end,
+                       const char *buffer, const char **end,
                        pvm_val *val)
 {
   pkl_ast ast = NULL;
@@ -325,7 +325,8 @@ pkl_compile_statement (pkl_compiler compiler,
 
 pvm_routine
 pkl_compile_expression (pkl_compiler compiler,
-                        char *buffer, char **end, void **pointers)
+                        const char *buffer, const char **end,
+                        void **pointers)
 {
   pkl_ast ast = NULL;
   pvm_routine routine;

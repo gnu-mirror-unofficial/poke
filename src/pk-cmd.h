@@ -94,7 +94,7 @@ struct pk_cmd
 /* Parse STR and execute a command.  Return 1 if the command was
    executed successfully, 0 otherwise.  */
 
-int pk_cmd_exec (char *str);
+int pk_cmd_exec (const char *str);
 
 /* Execute commands from the given FILENAME.  Return 1 if all the
    commands were executed successfully, 0 otherwise.  */

@@ -106,7 +106,7 @@ pkl_parse_file (pkl_compiler compiler, pkl_env *env,
 
 int
 pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
-                  pkl_ast *ast, int what, const char *buffer, char **end)
+                  pkl_ast *ast, int what, const char *buffer, const char **end)
 {
   YY_BUFFER_STATE yybuffer;
   struct pkl_parser *parser;

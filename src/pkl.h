@@ -78,12 +78,12 @@ int pkl_compile_file (pkl_compiler compiler, const char *fname);
    END is set to the first character in BUFFER that is not part of the
    compiled entity.  */
 
-int pkl_compile_buffer (pkl_compiler compiler, char *buffer, char **end);
+int pkl_compile_buffer (pkl_compiler compiler, const char *buffer, const char **end);
 
 /* Like pkl_compile_buffer but compile a single Poke statement, which
    may generate a value in VAL if it is an "expression statement".  */
 
-int pkl_compile_statement (pkl_compiler compiler, char *buffer, char **end,
+int pkl_compile_statement (pkl_compiler compiler, const char *buffer, const char **end,
                            pvm_val *val);
 
 
@@ -92,7 +92,7 @@ int pkl_compile_statement (pkl_compiler compiler, char *buffer, char **end,
    return NULL.  */
 
 pvm_routine pkl_compile_expression (pkl_compiler compiler,
-                                    char *buffer, char **end,
+                                    const char *buffer, const char **end,
                                     void **pointers);
 
 /* Return the current compile-time environment in COMPILER.  */
