@@ -1,5 +1,9 @@
 2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* src/pk-ios.c (pk_cmd_mem): Fix memleak.
+
+2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-ios.c (pk_cmd_mem):
 	Simplify malloc/strlen/strcpy/strcat with asprintf.
 

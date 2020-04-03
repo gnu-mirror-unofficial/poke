@@ -326,11 +326,13 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
+  free (mem_name);
+
   if (poke_interactive_p && !poke_quiet_p)
     pk_printf (_("The current IOS is now `%s'.\n"),
                ios_handler (ios_cur ()));
 
-    return 1;
+  return 1;
 }
 
 #ifdef HAVE_LIBNBD
