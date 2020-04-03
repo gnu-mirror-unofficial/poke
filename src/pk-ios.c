@@ -272,7 +272,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       strcat (filename, "/");
       strcat (filename, arg);
 
-      if ((emsg = pk_file_readable (arg)) == NULL)
+      if ((emsg = pk_file_readable (filename)) == NULL)
         goto no_file;
     }
   else
