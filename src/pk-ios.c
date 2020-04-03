@@ -252,25 +252,24 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* load FILENAME */
 
-  const char *arg;
+  char *arg;
   char *filename = NULL;
+  char *emsg;
 
   assert (argc == 1);
   arg = PK_CMD_ARG_STR (argv[0]);
 
-  char *emsg = NULL;
-
   if ((emsg = pk_file_readable (arg)) == NULL)
-    filename = xstrdup (arg);
+    filename = arg;
   else if (arg[0] != '/')
     {
       /* Try to open the specified file relative to POKEDATADIR.  */
-      filename = xmalloc (strlen (poke_datadir)
-                          + 1 /* "/" */ + strlen (arg)
-                          + 1);
-      strcpy (filename, poke_datadir);
-      strcat (filename, "/");
-      strcat (filename, arg);
+      if (asprintf (&filename, "%s/%s", poke_datadir, arg) == -1)
+        {
+          /* filename is undefined now, don't free */
+          pk_puts ("No memory");
+          return 0;
+        }
 
       if ((emsg = pk_file_readable (filename)) == NULL)
         goto no_file;
@@ -282,13 +281,15 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     /* Note that the compiler emits it's own error messages.  */
     goto error;
 
-  free (filename);
+  if (filename != arg)
+    free (filename);
   return 1;
 
  no_file:
   pk_puts (emsg);
  error:
-  free (filename);
+  if (filename != arg)
+    free (filename);
   return 0;
 }
 

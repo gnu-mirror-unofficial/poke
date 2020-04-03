@@ -1,5 +1,10 @@
 2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* src/pk-ios.c (pk_cmd_load_file):
+	Simplify malloc/strlen/strcpy/strcat with asprintf.
+
+2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-ios.c (pk_cmd_load_file): Fix reading file from
 	POKEDATADIR.
 
