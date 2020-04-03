@@ -67,6 +67,7 @@ Advanced Pokology
 Internals
 * The Poke Virtual Machine::	The PVM and its mysteries.
 
+Appendices
 * Table of ASCII Codes::	   The ASCII character set.
 * GNU Free Documentation License:: Distribution terms for this document.
 
@@ -74,8 +75,9 @@ Indexes
 * Concept Index::
 
 @detailmenu
- --- The Detailed Node Listing ---
- ---------------------------------
+@ifnothtml
+--- The Detailed Node Listing ---
+@end ifnothtml
 
 Here are some other nodes which are really subnodes of the ones
 already listed, mentioned here so you can get to them in one step:

@@ -1,3 +1,8 @@
+2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/Makefile.am (AM_MAKEINFOHTMLFLAGS): Define.
+	(html-local): Refine the generated html files.
+
 2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-ios.c (pk_cmd_mem): Fix memleak.
