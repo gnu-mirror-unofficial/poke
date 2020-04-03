@@ -1,3 +1,8 @@
+2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-cmd.c (pk_cmd_init):
+	Simplify malloc/strlen/strcpy/strcat with asprintf.
+
 2020-04-02 Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-hserver.c (pk_hserver_make_hyperlink):
