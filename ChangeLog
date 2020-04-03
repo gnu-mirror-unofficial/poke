@@ -1,3 +1,8 @@
+2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-repl.c (pkl_complete_struct):
+	Remove superfluous malloc within loop.
+
 2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/Makefile.am (AM_MAKEINFOHTMLFLAGS): Define.

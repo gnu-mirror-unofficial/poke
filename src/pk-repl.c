@@ -43,7 +43,7 @@ pkl_complete_struct (int *idx, const char *x, size_t len, int state)
 {
   static pkl_ast_node type;
   pkl_ast_node t;
-  char *trunk;
+  size_t trunk_len;
   int j;
 
   if (state == 0)
@@ -68,7 +68,8 @@ pkl_complete_struct (int *idx, const char *x, size_t len, int state)
         return NULL;
     }
 
-  trunk = strndup (x, len - strlen (strrchr (x, '.')));
+  trunk_len = len - strlen (strrchr (x, '.')) - 1;
+
   t = PKL_AST_TYPE_S_ELEMS (type);
 
   for (j = 0; j < (*idx); j++)
@@ -77,7 +78,7 @@ pkl_complete_struct (int *idx, const char *x, size_t len, int state)
   for (; t; t = PKL_AST_CHAIN (t), (*idx)++)
     {
       pkl_ast_node ename;
-      char *field, *name;
+      char *field;
 
       if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
         continue;
@@ -89,24 +90,18 @@ pkl_complete_struct (int *idx, const char *x, size_t len, int state)
       else
           field = "<unnamed field>";
 
-      name = xmalloc (strlen (trunk) + strlen (field) + 2);
-
-      strcpy (name, trunk);
-      strcat (name, ".");
-      strcat (name, field);
-
-      if (0 != strncmp (x, name, len))
+      if (strncmp (x + trunk_len, field, len - trunk_len) == 0)
         {
-          free (name);
-          continue;
-        }
+          char *name;
 
-      (*idx)++;
-      free (trunk);
-      return name;
+          if (asprintf (&name, "%.*s%s", (int) trunk_len, x, field) == -1)
+            return NULL;
+
+          (*idx)++;
+          return name;
+        }
     }
 
-  free (trunk);
   return NULL;
 }
 
