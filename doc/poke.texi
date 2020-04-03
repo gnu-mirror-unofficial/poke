@@ -112,7 +112,7 @@ Structuring Data
 * The SBM Format::		The Stupid BitMap Format
 * Poking a SBM Image::		A need for abstraction.
 * Modifying SBM Images::	Modifying existing data.
-* Named Types::			The type abstraction.
+* Defining Types::		The type abstraction.
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
@@ -2502,7 +2502,7 @@ This is achieved by defining data structures.
 * The SBM Format::	The Stupid BitMap Format
 * Poking a SBM Image::	A need for abstraction.
 * Modifying SBM Images:: Modifying existing data.
-* Named Types::		The type abstraction.
+* Defining Types::	The type abstraction.
 * Pickles::		Saving useful definitions for future use.
 @c * Poking Structs::
 @end menu
@@ -3378,7 +3378,7 @@ is @code{byte[]} instead of @code{byte[3]}.  This type specifier
 denotes an array of any number of bytes, which certainly includes
 arrays of three bytes, like in the example.
 
-@subsubsection Saving the Result
+@subsection Saving the Result
 
 And finally, lets write out the new file as @file{r.sbm}:
 
@@ -3386,11 +3386,104 @@ And finally, lets write out the new file as @file{r.sbm}:
 (poke) save :from 0#B :size 5#B + image_data'size :file "r.sbm"
 @end example
 
-@node Named Types
-@section Named Types
+@node Defining Types
+@section Defining Types
 
-@c XXX
-@c type SBM_Pixel
+@subsection Naming your Own Abstractions
+
+While in the process of creating and manipulating SBM files we soon
+started talking about things like lines, pixel sequences, pixels,
+colors, and so on.  What is more, very naturally we started
+@emph{thinking} in terms of these entities: lets drop this or that
+line, or lets change the green level of this pixel.
+
+Consider for example RGB colors.  We know that each color is defined
+by three levels of light: red, green and blue.  These components are
+also called color beams.  Since each color beam has a range of 0 to
+255, many formats like SBM use bytes to encode them.
+
+Therefore, in the previous sections we used the type specifier
+@code{byte} when we needed to map RGB color beams, like in:
+
+@example
+(poke) byte[3] @@ 5#B
+@end example
+
+@noindent
+Recall that the mapping operation above means ``map three bytes at the
+offset 5 bytes in the current IO space''.  But what we really want is
+to map color beams, not bytes!
+
+@cindex deftype
+Poke provides a way to assign names to type specifiers:
+
+@example
+(poke) deftype RGB_Color_Beam = byte
+@end example
+
+@noindent
+The definition above tells poke that a RGB color beam is composed by a
+byte, i.e. an unsigned 8-bit integer.  Any type specifier can be used
+at the right side of the assignment sign, and also names of already
+defined types.  From this point on, we can map in terms of color
+beams:
+
+@example
+(poke) RGB_Color_Beam[3] @@ 5#B
+@end example
+
+@noindent
+Meaning ``map three RGB color beams at the offset 5 in the current IO
+space''.
+
+Once a type is defined, the name can be used anywhere where a type
+specifier is expected.
+
+@subsection Abstracting the Structure of Entities
+
+Since we didn't know better, during our work with SBM images we had to
+remember how these entities were constructed from more simple entities
+such as bits and bytes, every time we needed to map them, or to poke
+them.  For example, if we wanted to map a pixel at some particular
+offset, we would need to issue the following command:
+
+@example
+(poke) defvar pixel = byte[3] @@ 5#B
+@end example
+
+@noindent
+Now that we made poke aware of what a RGB color beam is, we can
+rewrite the above as:
+
+@example
+(poke) defvar pixel = RGB_Color_Beam[3] @@ 5#B
+@end example
+
+@noindent
+This is better, but still adoleces from a big problem: what if at some
+point the SBM pixels get expanded to also have a transparency index,
+stored in a fourth byte?  If that happens (and @emph{will} happen
+later in this book) then we would need to remember it before issuing
+commands like:
+
+@example
+(poke) defvar image_data = RGB_Color_Beam[4][ppl][lines] @@ 5#B
+@end example
+
+To avoid this problem, we define yet another type, this time
+describing the structure of a SBM pixel:
+
+@example
+(poke) deftype SBM_Pixel = RGB_Color_Beam[3]
+@end example
+
+@noindent
+And then we can define @code{image_data} as a table of SBM pixels,
+instead of as a table of triplets of RGB color beams:
+
+@example
+(poke) defvar image_data = SBM_Pixel[ppl][lines] @@ 5#B
+@end example
 
 @node Pickles
 @section Pickles

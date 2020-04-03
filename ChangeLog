@@ -1,5 +1,12 @@
 2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Modifying SBM Images): Fix sectioning of a
+	subsection.
+	(Defining Types): Renamed from `Named Types'.
+	(Defining Types): Add contents.
+
+2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/ios-dev-file.c (ios_dev_file_pread): Fix type of variable.
 	(ios_dev_file_pwrite): Likewise.
 	* src/pk-cmd.c (pk_cmd_exec_1): Likewise.
@@ -48,6 +55,10 @@
 
 	* src/pk-ios.c (pk_cmd_load_file): Fix reading file from
 	POKEDATADIR.
+
+2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi: Sectioning changes.
 
 2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
