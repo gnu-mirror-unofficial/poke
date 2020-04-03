@@ -827,9 +827,10 @@ corresponding to the @code{F} in @code{ELF}?  Try it!
 @cindex commands, passing arguments
 Something to notice in the @command{dump} output above is that these
 are not, by any mean, the complete contents of the file @file{foo.o}.
-The @command{.info ios} dot-command told us in the last section that
-@file{foo.o} contains 920 bytes, of which the @command{dump} command
-only showed us... @code{0x80} bytes, or @code{128} bytes in decimal.
+The @command{.info ios} dot-command informed us in the last section
+that @file{foo.o} contains 920 bytes, of which the @command{dump}
+command only showed us... @code{0x80} bytes, or @code{128} bytes in
+decimal.
 
 @command{dump} is certainly capable of showing more (and less) than
 @code{128} bytes.  We can ask @command{dump} to display some given
@@ -956,8 +957,8 @@ any other value meaning true.
 
 Looking at the output of @command{dump} and writing the desired byte
 value in the prompt is cumbersome.  Fortunately, there is a much more
-convenient way to access to the value of a byte, given its offset in
-the file: it is called @dfn{mapping a byte value}.  This operation is
+convenient way to access the value of a byte, given its offset in the
+file: it is called @dfn{mapping} a byte value.  This operation is
 implemented by a binary operator, called the map operator.
 
 This is how it works.  Assuming we were interested in the byte at
@@ -1004,6 +1005,17 @@ persistent between poke invocations.
 Going back to the example of calculating whether the highest bit in
 the second byte in @file{foo.o} is set, this is how we would do it
 with a map:
+
+@example
+(poke) (byte @@ 2#B) & 0x80
+0
+@end example
+
+@noindent
+Turns out the answer is no.
+
+The map operator can also be used at the left side of an assignment
+operator:
 
 @example
 (poke) byte @@ 0x28#B = 0xff
@@ -3178,7 +3190,15 @@ When a Poke value is mapped, updating their elements have a side
 effect: the area corresponding to the updated element, in whatever IO
 space it is mapped on, is updated as well!
 
-This means that if we wanted to change the color of some SBM pixel
+Why is this?  The map operator, regardless of the kind of value it is
+mapping, always returns a @emph{copy} of the value found stored in the
+IO space.  We already saw how this worked with integers.  However, in
+Poke values are copied around using a mechanism called ``shared
+value''.  This means that when a composite value like an array is
+copied, its elements are shared by both the original value and the new
+value.
+
+It follows that if we wanted to change the color of some SBM pixel
 stored at offset @var{offset}, we would do this:
 
 @example
