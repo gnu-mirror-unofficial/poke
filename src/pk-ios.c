@@ -303,11 +303,13 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   /* Create a new memory IO space.  */
   const char *arg_str = PK_CMD_ARG_STR (argv[0]);
-  char *mem_name = xmalloc (strlen (arg_str) + 2 + 1);
+  char *mem_name;
 
-  strcpy (mem_name, "*");
-  strcat (mem_name, arg_str);
-  strcat (mem_name, "*");
+  if (asprintf (&mem_name, "*%s*", arg_str) == -1)
+    {
+      pk_puts (_("No memory"));
+      return 0;
+    }
 
   if (ios_search (mem_name) != NULL)
     {
