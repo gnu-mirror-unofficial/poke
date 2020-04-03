@@ -487,25 +487,12 @@ set_completion_function (const char *x, int state)
   else
     ++idx;
 
-  int len = strlen (x);
-  while (1)
+  for (const struct pk_cmd **c = set_cmds + idx;
+       *c != &null_cmd;
+       idx++)
     {
-      const struct pk_cmd **c = set_cmds + idx;
-
-      if (*c == &null_cmd)
-        break;
-
-      char *name = xmalloc (strlen ( (*c)->name) + 1);
-      strcpy (name, (*c)->name);
-
-      int match = strncmp (name, x, len);
-      if (match != 0)
-        {
-          free (name);
-          idx++;
-          continue;
-        }
-      return name;
+      if (STREQ ((*c)->name, x))
+        return xstrdup ((*c)->name);
     }
 
   return NULL;
