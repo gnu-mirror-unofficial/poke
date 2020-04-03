@@ -1124,8 +1124,8 @@ plus operator @code{+}.
 
 The bytes we have been working with are unsigned whole numbers (or
 integers) in the range @code{0..255}.  We saw how poke sees the
-contents of the files as a sequence of bytes, and that each byte can
-be addressed using an offset.  Mapping bytes using the map operator
+contents of the files as a sequence of bytes, and how each byte can be
+addressed using an offset.  Mapping bytes using the map operator
 @code{@@} gives us these values, which are denoted in poke with
 literals like @code{10UB} or @code{0x0aUB}.
 
@@ -1161,9 +1161,9 @@ third byte:
 @end example
 
 @noindent
-That's no good.  Adding the value of the third byte (0x4c) we
-overflowed the range of valid values for a byte value.  The
-calculation went banana at this point.
+That's no good.  Adding the value of the third byte (0x4c) we overflow
+the range of valid values for a byte value.  The calculation went
+banana at this point.
 
 Another obvious problem is that we surely will want to store integers
 bigger than 255 in our files.  Clearly we need a way to encode them
@@ -1321,12 +1321,18 @@ arbitrarily large integers.
 @cindex little endian
 @cindex endianness
 When talking about whole numbers (integers) we should distinguish
-between a value (such as 123) and its @dfn{written form}, such as
-@code{123}.  The written form of a number is composed by digits,
-arranged in certain order.  It turns out that the ordering of the
-digits in the written form of a number is important, because depending
-on its position each digit contributes with a different ``weight'' to
-the resulting value.  This is regardless of the numerical base used.
+between its value (such as 123) and its @dfn{written form} that we
+would use when writing the number on a piece of paper, such as
+@code{123}.
+
+The written form of a number is composed by digits, arranged in
+certain order.  We all know that the ordering of the digits in the
+written form of a number is important: if we write @code{123} we are
+referring to a different value than if we write @code{321}.  The
+mathematical reason for this is that depending on the position they
+occupy in the written form, each digit contributes with a different
+``weight'' to the resulting value.  This is regardless of the
+numerical base used.
 
 For example, the value of the number 123 (whose written form is
 @code{123}) is calculated as @code{1*10^2+2*10^1+3*10^0}.  If we swap
@@ -1335,21 +1341,27 @@ the last two digits in the written form of the number, we have
 @code{132}.  When we consider other numerical bases, the bases in the
 polynomial change accordingly, but the correspondence between written
 form and value stands: for example, the value of 0x123 is calculated
-as @code{1*16^2+2*16^1+3*16^0}.  The ``higher'' a digit is in the
-polynomial, the @dfn{more significant} it is.  In the written number
-@code{123}, for example, the digit 1 is the @dfn{most significant}
-digit of the number, and the digit 3 is the @dfn{least significant}
-digit.
+as @code{1*16^2+2*16^1+3*16^0}.
+
+The ``higher'' a digit is in the polynomial, the @dfn{more
+significant} it is, i.e. the more weight it has on the value of the
+number where it appears.  In the written number @code{123}, for
+example, the digit 1 is the @dfn{most significant} digit of the
+number, and the digit 3 is the @dfn{least significant} digit.
 
 This distinction between the written form of a number and its value is
-important.  In the same way there are languages that are read
-right-to-left and down-to-up, imagine there was a language in the
-world in which the digits of numbers were arranged from right-to-left
-instead of left-to-right.  In that context, the written representation
-of 123 would be @code{321}, not @code{123}.  In other words: the least
-significant digit would come first, not last, in the written form of
-the number.
+very important.  Just like in certain languages letters are are read
+right-to-left (Arabic) or even down-to-up (Japanese) we could
+certainly conceive a language in which the digits of numbers were
+arranged from right-to-left instead of left-to-right.  In that
+context, the written representation of 123 would be @code{321}, not
+@code{123}.  In other words: the least significant digit would come
+first, not last, in the written form of the number.
 
+Now when it comes to store numbers in computers, rather than writing
+them on a paper, the role of the paper is played by the computer's
+memory, be it ephemeral (like RAM) or persistent (like a spinning hard
+disk or a Flash memory), which is organized as a sequence of bytes.
 Since we are composing numbers with bytes, it makes sense to have each
 byte to play the role of a digit in the written form of the bigger
 number.  Since bytes can have values from 0 to 255, the base is 256.
@@ -1368,7 +1380,8 @@ byte (digit) and @code{b3} would be the least significant byte
 disposition of the bytes in the IO space (file, memory buffer, etc)
 being edited.
 
-This is what the bit-concatenation operator implements:
+That interpretation of the written form is exactly what the
+bit-concatenation operator implements:
 
 @example
 (poke) dump :from 0#B :size 3#B
@@ -1393,11 +1406,10 @@ is @code{b1}.  Therefore, the value of the number would be
 
 So, given the written form of a bigger number @code{b1b2b3} (i.e. some
 ordering of bytes implied by the file they are stored in) there are at
-least two ways to interpret them to calculate the value of the
-number.  When the written form is read from left to right, we talk
-about a @dfn{big endian} interpretation.  When the written form is
-read from right to left, we talk about a @dfn{little endian}
-representation.
+least two ways to interpret them to calculate the value of the number.
+When the written form is read from left to right, we talk about a
+@dfn{big endian} interpretation.  When the written form is read from
+right to left, we talk about a @dfn{little endian} interpretation.
 
 Given the first three bytes in @code{foo.o}, we can determine the
 value of the integer composed by these three bytes in both
@@ -1421,11 +1433,11 @@ do that, like in:
 @end example
 
 @noindent
-poke should decide what kind of interpretation to use, i.e. how to
-read the ``written form'' of the number.  As you can see from the
-example, poke uses the left-to-right interpretation, or big-endian, by
-default.  But you can change it using a new dot-command: @command{.set
-endian}:
+Poke should somehow decide what kind of interpretation to use,
+i.e. how to read the ``written form'' of the number.  As you can see
+from the example, poke uses the left-to-right interpretation, or
+big-endian, by default.  But you can change it using a new
+dot-command: @command{.set endian}:
 
 @example
 (poke) .set endian little
@@ -1811,7 +1823,7 @@ Lets see this in poke:
 
 @subsection Signed Weird Numbers
 
-In the section discussing negative integers, we saw how the different
+In the section discussing negative integers, we saw how the difference
 between a signed number and an unsigned number is basically a
 different interpretation of the most significant byte.  Exactly the
 same applies to weird numbers.
@@ -3438,6 +3450,12 @@ space''.
 
 Once a type is defined, the name can be used anywhere where a type
 specifier is expected.
+
+By the way, we mentioned many times how @code{byte} is a synonym for
+@code{uint<8}, @code{int} is a synonym for @code{int<32>} and so on.
+These synonyms are actually result of type definitions that are in the
+poke @dfn{standard library}.  This library is loaded by poke at
+startup time.
 
 @subsection Abstracting the Structure of Entities
 

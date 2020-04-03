@@ -1,5 +1,11 @@
 2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Weird Integers): Fix typo.
+	(From Bytes to Integers): Likewise.
+	(Defining Types): Add a mention to the poke standard library.
+
+2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Modifying SBM Images): Fix sectioning of a
 	subsection.
 	(Defining Types): Renamed from `Named Types'.
