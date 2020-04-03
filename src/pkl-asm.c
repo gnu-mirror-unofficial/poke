@@ -18,7 +18,6 @@
 
 #include <config.h>
 
-#include <xalloc.h>
 #include <stdarg.h>
 #include <assert.h>
 #include <jitter/jitter.h>
@@ -1324,21 +1323,6 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
       /* This is a macro-instruction.  Dispatch to the corresponding
          macro-instruction handler.  */
 
-      const char *note_begin_prefix = "#begin ";
-      const char *note_end_prefix = "#end ";
-      const char *macro_name = insn_names[insn];
-      char *note_begin = xmalloc (strlen (note_begin_prefix)
-                                  + strlen (macro_name) + 1);
-      char *note_end = xmalloc (strlen (note_end_prefix)
-                                + strlen (macro_name) + 1);
-
-      strcpy (note_begin, note_begin_prefix);
-      strcat (note_begin, macro_name);
-
-      strcpy (note_end, note_end_prefix);
-      strcat (note_end, macro_name);
-
-      /* pkl_asm_note (pasm, note_begin); */
       switch (insn)
         {
         case PKL_INSN_BCONC:
@@ -1585,10 +1569,6 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
         default:
           assert (0);
         }
-
-      /* pkl_asm_note (pasm, note_end); */
-      free (note_begin);
-      free (note_end);
     }
 }
 
