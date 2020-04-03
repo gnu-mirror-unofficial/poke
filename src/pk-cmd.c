@@ -268,7 +268,7 @@ pk_cmd_exec_1 (char *str, struct pk_trie *cmds_trie, char *prefix)
     goto usage;                                                                \
   } while (1)
   int ret = 1;
-  size_t i;
+  int i;
   char cmd_name[MAX_CMD_NAME], *p;
   const struct pk_cmd *cmd;
   int argc = 0;

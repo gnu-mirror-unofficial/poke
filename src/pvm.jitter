@@ -3511,8 +3511,7 @@ instruction aref ()
     pvm_val array = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
 
-    if (PVM_VAL_ULONG (index) < 0
-        || (PVM_VAL_ULONG (index) >=
+    if ((PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (array))))
       PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
 

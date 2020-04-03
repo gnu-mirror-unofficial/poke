@@ -146,7 +146,7 @@ static int
 ios_dev_file_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
 {
   struct ios_dev_file *fio = iod;
-  int ret;
+  size_t ret;
 
   /* We are using FILE* for buffering, rather than low-level fd, so we
      have to fake low-level pread by using fseeko.  */
@@ -166,7 +166,7 @@ ios_dev_file_pwrite (void *iod, const void *buf, size_t count,
                      ios_dev_off offset)
 {
   struct ios_dev_file *fio = iod;
-  int ret;
+  size_t ret;
 
   /* We are using FILE* for buffering, rather than low-level fd, so we
      have to fake low-level pread by using fseeko.  */
