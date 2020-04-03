@@ -74,7 +74,7 @@ defun dump = (int<32> ios = get_ios,
 	  {
 	    s = s + itoa(x) as string;
 	    x = x + 1;
-	    if ((x % ((cluster_by * group_by)/1#B)) == 0)
+	    if (x < 16 && (x % ((cluster_by * group_by)/1#B)) == 0)
 	      s = s + " ";
 	  }
 	printf "%<dump-ruler:  %s%>", s;
