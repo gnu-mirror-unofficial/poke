@@ -330,13 +330,13 @@ pk_repl (void)
 
   if (homedir != NULL)
     {
-      poke_history = xmalloc (strlen (homedir)
-                              + strlen ("/.poke_history") + 1);
-      strcpy (poke_history, homedir);
-      strcat (poke_history, "/.poke_history");
-
-      if (access (poke_history, R_OK) == 0)
-        read_history (poke_history);
+      if (asprintf (&poke_history, "%s/.poke_history", homedir) != -1)
+        {
+          if (access (poke_history, R_OK) == 0)
+            read_history (poke_history);
+        }
+      else
+        poke_history = NULL;
     }
 #endif
   rl_getc_function = poke_getc;

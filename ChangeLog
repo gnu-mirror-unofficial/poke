@@ -1,5 +1,10 @@
 2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
 
+        * src/pk-repl.c (pk_repl):
+        Simplify malloc/strlen/strcpy/strcat with asprintf.
+
+2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-repl.c (pkl_complete_struct):
 	Remove superfluous malloc within loop.
 
