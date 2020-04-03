@@ -99,6 +99,8 @@ Basic Editing
 * Unaligned Integers::		IO spaces are bit-oriented.
 * Integers of Different Sizes:: Promotion of integers in expressions.
 * Buffers as IO Spaces::	Poking memory buffers.
+* Copying Bytes::		Moving data between IO spaces.
+* Saving Buffers in Files::	From memory to files.
 * Character Sets::		ASCII, Unicode, ...
 * From Bytes to Characters::	Working with ASCII codes
 * ASCII Strings::		NULL-terminated strings.
@@ -561,6 +563,8 @@ integers, and the like.
 * Unaligned Integers::		IO spaces are bit-oriented.
 * Integers of Different Sizes:: Promotion of integers in expressions.
 * Buffers as IO Spaces::	Poking memory buffers.
+* Copying Bytes::		Moving data between IO spaces.
+* Saving Buffers in Files::	From memory to files.
 * Character Sets::		ASCII, Unicode, ...
 * From Bytes to Characters::	Working with ASCII codes
 * ASCII Strings::		NULL-terminated strings.
@@ -1979,18 +1983,6 @@ result is a 32-bit integer.  This is equivalent to:
 @node Buffers as IO Spaces
 @section Buffers as IO Spaces
 
-Files are not the only kind of entities that can be edited using
-poke.  The bytes in memory buffers can be poked too!
-
-@menu
-* Creating Memory Buffers::	Allocating memory to poke.
-* Copying Bytes::		Moving data between IO spaces.
-* Saving Buffers in Files::	From memory to files.
-@end menu
-
-@node Creating Memory Buffers
-@subsection Creating Memory Buffers
-
 We have mentioned already that files are not the only entities that
 can be edited using poke. Remember the dot-command @command{.file}
 that opened a file as an IO space?
@@ -2046,7 +2038,7 @@ an IO space backed by a file and an IO space backed by a memory
 buffer.  Exactly the same rules apply in both cases.
 
 @node Copying Bytes
-@subsection Copying Bytes
+@section Copying Bytes
 
 Memory buffer IO spaces are cheap, and they are often used as
 ``scratch'' areas.
@@ -2112,7 +2104,7 @@ specified in the command invocation.  For detailed information on the
 @command{copy} command, see @ref{copy}.
 
 @node Saving Buffers in Files
-@subsection Saving Buffers in Files
+@section Saving Buffers in Files
 
 Another useful command when working with buffer IO spaces (and in
 general, with any IO space) is @command{save}.  Lets say we want to
@@ -2146,9 +2138,6 @@ we can continue our work tomorrow.  This is how we would do that:
 @noindent
 Here we used the built-in function @code{iosize}, that given an IO
 space identifier returns its size.
-
-@menu
-@end menu
 
 @node Character Sets
 @section Character Sets
