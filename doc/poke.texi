@@ -2610,7 +2610,7 @@ Therefore, each SBM pixel is encoded using three bytes:
 @node Poking a SBM Image
 @section Poking a SBM Image
 
-@subsection P is for Poke
+@subsection P is for poke
 
 Lets create our first SBM image, using poke.  The image we want to
 encode is the very simple rendering of the letter @code{P} shown in
@@ -3077,24 +3077,195 @@ type specifier:
 [[[255UB,255UB,255UB],[255UB,99UB,71UB], ...]...]
 @end example
 
-@subsection Changing Colors
+@subsection Painting Pixels
 
-@c mapped values vs. non-mapped values
-@c mapped simple values vs. mapped arrays
+The ``P is for poke'' slogan was so successful and widely appraised
+that the recutils@footnote{http://www.gnu.org/s/recutils} chaps wanted
+to do a similar campaign ``R is for recutils''.  For that purpose,
+they asked us for a tomato-colored SBM image with an @code{R} in it.
 
-@c XXX from tomato to pure red.
-@c XXX byte @ .. = 0 => pixel[2] = 0
-@c XXX pixel[2] = 0;
+Our creative department got at it, and after a lot of work they came
+with the following design:
 
-@c XXX valmappers
-@c XXX line[0] = [255,0,0]
+@example
+  | 0 | 1 | 2 | 3 | 4 |
+  +---+---+---+---+---+
+0 |   | * | * |   |   |
+1 |   | * |   | * |   |
+2 |   | * |   | * |   |
+3 |   | * | * |   |   |
+4 |   | * | * |   |   |
+5 |   | * |   | * |   |
+6 |   | * |   | * |   |
+@end example
 
-@subsection Cropping the P
+@noindent
+Observe that this design really looks like our @code{P} (so much for a
+creative department).  The bitmap has exactly the same dimensions, and
+difference are just three pixels, that pass from being background
+pixels to foreground pixels.
 
-Looking at our SBM file, we realize that the first and the last column
-of the image are all all background pixels.  We would like to modify
-the image to remove these columns, @dfn{cropping} the image so it
-looks like this:
+Therefore, it makes sense to read our @file{p.sbm} and use it as a
+base, completing the missing pixels.  We saw in the last section how
+to read a SBM image.  This time, however, we will copy the image first
+to a memory IO space to avoid overwriting @file{p.sbm}:
+
+@example
+$ poke p.sbm
+[...]
+(poke) .mem scratch
+The current IOS is now `*scratch*'.
+(poke) .info ios
+  Id	Mode	Size		Name
+* #1		0x00001000#B	*scratch*
+  #0	rw	0x0000006e#B	./p.sbm
+(poke) copy :from_ios 0 :from 0#B :to 0#B :size iosize (0)
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 5342 4d05 07ff ffff ff63 47ff 6347 ffff  SBM......cG.cG..
+00000010: ffff ffff ffff ffff 6347 ffff ffff 6347  ........cG....cG
+00000020: ffff ffff ffff ff63 47ff ffff ff63 47ff  .......cG....cG.
+00000030: ffff ffff ffff 6347 ff63 47ff ffff ffff  ......cG.cG.....
+00000040: ffff ffff ff63 47ff ffff ffff ffff ffff  .....cG.........
+00000050: ffff ffff 6347 ffff ffff ffff ffff ffff  ....cG..........
+00000060: ffff ff63 47ff ffff ffff ffff ffff 0000  ...cG...........
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+@end example
+
+@noindent
+Good.  Now lets map the contents of the image, both header information
+and the sequence of pixels:
+
+@example
+(poke) defvar ppl = byte @@ 3#B
+(poke) defvar lines = byte @@ 4#B
+(poke) defvar image_data = byte[3][ppl][lines] @@ 5#B
+@end example
+
+@noindent
+Lets modify the image.  Since the dimensions of the new image are
+exactly the same, the header remains the same.  It is the pixel
+sequence that is different.  We basically need to turn the pixels at
+coordinates @code{(4,2)}, @code{(5,3)} and @code{(6,3)} from
+background pixels to foreground pixels.
+
+@cindex mapped values
+Remember how we would change the value of some integer in the IO
+space?  First, we would map it into a variable, change the value, and
+then poke it back to the IO space.  Something like this:
+
+@example
+(poke) defvar n = int @@ @var{offset}
+(poke) n = n + 1
+(poke) int @@ @var{offset} = n
+@end example
+
+@noindent
+This three-steps process is necessary because in the @code{n = n + 1}
+above we are modifying the value of the variable @code{n}, not the
+integer actually stored at offset @var{offset} in the current IO
+space.  Therefore we have to explicitly poke it back if we want the IO
+space to be updated as well.
+
+Array values (and, as we shall see, other ``composited'' values) are
+different: when they are the result of the application of the map
+operator, the resulting values are @dfn{mapped} themselves.
+
+When a Poke value is mapped, updating their elements have a side
+effect: the area corresponding to the updated element, in whatever IO
+space it is mapped on, is updated as well!
+
+This means that if we wanted to change the color of some SBM pixel
+stored at offset @var{offset}, we would do this:
+
+@example
+(poke) defvar pixel = byte[3] @@ @var{offset}
+(poke) a[1] = 10
+@end example
+
+@noindent
+There is no need to poke the array back explicitly: the side effect of
+assigning 10 to a[1] is that the byte at offset @code{@var{offset}+1}
+is poked.
+
+Generally speaking, mapped values can be handled in exactly the same
+way than non-mapped values.  This is actually a very central concept
+in poke.  However, it is possible to check whether a given value is
+mapped or not using the @code{'mapped} attribute.
+
+As we said, @dfn{simple values} such as integers and strings are never
+mapped.  Both @code{ppl} and @code{lines} are integers, therefore:
+
+@example
+(poke) ppl'mapped
+0
+(poke) lines'mapped
+0
+@end example
+
+@noindent
+However, @code{image_data} is an array that was the result of the
+application of a map operator, so:
+
+@example
+(poke) image_data'mapped
+1
+@end example
+
+@noindent
+When a value is mapped, you can ask for the offset where it is mapped,
+and the IO space where it is mapped, using the attributes @code{'ios}
+and @code{'offset} attributes.  Therefore:
+
+@example
+(poke) image_data'ios
+1
+(poke) image_data'offset
+40UL#b
+@end example
+
+@noindent
+In other words, @code{image_data} is mapped in the IO space with id 1
+(the @code{*scratch*} buffer) at offset 40 bits, or 5 bytes.  We
+already knew that, because we mapped the image data ourselves, but in
+other situations these attributes are most useful.  We shall see that
+later.
+
+Well, at this point it should be clear how to paint pixels.  First,
+lets define our background and foreground pixels:
+
+@example
+(poke) defvar bga = [255UB, 255UB, 255UB]
+(poke) defvar fga = [255UB, 99UB, 71UB]
+@end example
+
+@noindent
+Then, we just update the pixels in the image data using the right
+coordinates:
+
+@example
+(poke) image_data[4][2] = fga
+(poke) image_data[5][3] = fga
+(poke) image_data[6][3] = fga
+(poke) dump
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+00000000: 5342 4d05 07ff ffff ff63 47ff 6347 ffff  SBM......cG.cG..
+00000010: ffff ffff ffff ffff 6347 ffff ffff 6347  ........cG....cG
+00000020: ffff ffff ffff ff63 47ff ffff ff63 47ff  .......cG....cG.
+00000030: ffff ffff ffff 6347 ff63 47ff ffff ffff  ......cG.cG.....
+00000040: ffff ffff ff63 47ff 6347 ffff ffff ffff  .....cG.cG......
+00000050: ffff ffff 6347 ffff ffff 6347 ffff ffff  ....cG....cG....
+00000060: ffff ff63 47ff ffff ff63 47ff ffff 0000  ...cG....cG.....
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+@end example
+
+@subsection Cropping the R
+
+Looking at our new image, we realize that the first and the last
+column are all all background pixels.  We know that the recutils
+project is always short of resources, so we would like to modify the
+image to remove these columns, @dfn{cropping} it so it looks like
+this:
 
 @example
   | 0 | 1 | 2 |
@@ -3103,9 +3274,9 @@ looks like this:
 1 | * |   | * |
 2 | * |   | * |
 3 | * | * |   |
-4 | * |   |   |
-5 | * |   |   |
-6 | * |   |   |
+4 | * | * |   |
+5 | * |   | * |
+6 | * |   | * |
 @end example
 
 @noindent
@@ -3177,28 +3348,30 @@ Armed with this new operation, we can very easily mount the sequence
 of pixels for our cropped image:
 
 @example
+(poke) defvar l0 = image_data[0]
 (poke) defvar l1 = image_data[1]
 (poke) defvar l2 = image_data[2]
 (poke) defvar l3 = image_data[3]
 (poke) defvar l4 = image_data[4]
 (poke) defvar l5 = image_data[5]
-(poke) defvar new_image_data = [l1[1:3],l2[1:3],l3[1:3],l4[1:3],l5[1:3]]
 @end example
 
-Now that we have the new image data, lets poke it in a temporary
-memory IO. Note how we have to adjust the type specifier in order to
-accommodate the fact that lines now have 3 pixels each, not 5:
+@noindent
+And then update the lines in the mapped image data:
 
 @example
-(poke) .mem cropped
-The current IOS is now `*cropped*'.
-(poke) byte[3][3][7] @ 5#B = new_image_data
+(poke) image_data[0] = l0[1:3]
+(poke) image_data[0] = l1[1:3]
+(poke) image_data[1] = l2[1:3]
+(poke) image_data[2] = l3[1:3]
+(poke) image_data[3] = l4[1:3]
+(poke) image_data[4] = l5[1:3]
 @end example
 
 @subsection Updating the Header
 
-The last step is to write the header of the file in @code{*cropped*}.
-This new header also reflects the new dimensions of the image:
+The last step is to update the header to reflect the new dimensions of
+the image:
 
 @example
 (poke) byte[] @@ 0#B = ['S','B','M']
@@ -3216,11 +3389,10 @@ arrays of three bytes, like in the example.
 
 @subsubsection Saving the Result
 
-And finally, lets write out the new file as @file{cp.sbm} (for
-``cropped P''):
+And finally, lets write out the new file as @file{r.sbm}:
 
 @example
-(poke) save :from 0#B :size 5#B + new_image_data'size :file "cp.sbm"
+(poke) save :from 0#B :size 5#B + image_data'size :file "r.sbm"
 @end example
 
 @node Named Types
