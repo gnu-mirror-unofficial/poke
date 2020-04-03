@@ -1,5 +1,9 @@
 2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi: syntax-check fixes.
+
+2020-04-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Modifying SBM Images): Updated to cover mapped
 	vs. non-mapped values.
 

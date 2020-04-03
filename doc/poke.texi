@@ -3121,7 +3121,7 @@ The current IOS is now `*scratch*'.
   #0	rw	0x0000006e#B	./p.sbm
 (poke) copy :from_ios 0 :from 0#B :to 0#B :size iosize (0)
 (poke) dump
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 5342 4d05 07ff ffff ff63 47ff 6347 ffff  SBM......cG.cG..
 00000010: ffff ffff ffff ffff 6347 ffff ffff 6347  ........cG....cG
 00000020: ffff ffff ffff ff63 47ff ffff ff63 47ff  .......cG....cG.
@@ -3248,7 +3248,7 @@ coordinates:
 (poke) image_data[5][3] = fga
 (poke) image_data[6][3] = fga
 (poke) dump
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF 
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 5342 4d05 07ff ffff ff63 47ff 6347 ffff  SBM......cG.cG..
 00000010: ffff ffff ffff ffff 6347 ffff ffff 6347  ........cG....cG
 00000020: ffff ffff ffff ff63 47ff ffff ff63 47ff  .......cG....cG.
