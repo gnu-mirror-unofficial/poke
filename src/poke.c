@@ -264,6 +264,7 @@ parse_args (int argc, char *argv[])
           break;
         case QUIET_ARG:
           poke_quiet_p = 1;
+          pkl_set_quiet_p (poke_compiler, 1);
           break;
         case 'q':
         case NO_INIT_FILE_ARG:
@@ -397,7 +398,7 @@ initialize (int argc, char *argv[])
 
   /* Initialize the poke incremental compiler and load the standard
      library.  */
-  poke_compiler = pkl_new ();
+  poke_compiler = pkl_new (poke_vm, poke_datadir);
   {
     char *poke_std_pk;
 

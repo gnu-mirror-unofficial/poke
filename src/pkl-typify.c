@@ -1808,7 +1808,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_var)
 
   if (PKL_AST_TYPE (initial) == NULL)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (initial),
+      PKL_ICE (PKL_AST_LOC (initial),
                "the type of a variable initial is unknownx");
       PKL_PASS_ERROR;
     }
@@ -2163,7 +2163,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;
     default:
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+      PKL_ICE (PKL_AST_LOC (exp),
                "unhandled attribute expression code #%d in typify1",
                attr);
       PKL_PASS_ERROR;

@@ -1,3 +1,59 @@
+2020-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl.h (pkl_new): New argument `vm'.
+	(pkl_quiet_p): New prototype.
+	(pkl_set_quiet_p): Likewise.
+	(pkl_ice): Get an argument `compiler'.
+	* src/pkl.c (struct pkl_compiler): New fields `vm' and `quiet_p'.
+	(pkl_new): Get a VM as an argument.
+	(pkl_compile_buffer): Use the compiler's vm instead of the global
+	poke_vm.
+	(pkl_compile_statement): Likewise.
+	(pkl_compile_file): Likewise.
+	Do not include poke.h.
+	(rest_of_compilation): Do not use poke_compiler.
+	(rest_of_compilation): Likewise.
+	(rest_of_compilation): Likewise.
+	(pkl_new): Initialize quiet_p;
+	(pkl_quiet_p): Define.
+	(pkl_set_quiet_p): Likewise.
+	(pkl_error_internal): Do not use poke_quiet_p.
+	(pkl_warning): Likewise.
+	(pkl_ice): Likewise.
+	* src/poke.c (initialize): Pass the PVM and poke_datadir when
+	initializing the compiler.
+	(parse_args): Set compiler verbosity when processing QUIET_ARG.
+	* src/pkl-pass.h (PKL_ICE): Define.
+	* src/pkl-anal.c (pkl_anal1_ps_comp_stmt): Use PKL_ICE instead of
+	pkl_ice.
+	(pkl_anal_ps_default): Likewise.
+	(pkl_anal2_ps_checktype): Likewise.
+	(pkl_anal2_ps_checktype): Likewise.
+	(pkl_anal2_ps_offset): Likewise.
+	(pkl_analf_ps_array_initializer): Likewise.
+	* src/pkl-typify.c (pkl_typify1_ps_var): Likewise.
+	(pkl_typify1_ps_attr): Likewise.
+	* src/pkl-promo.c (pkl_promo_ps_op_div): Likewise.
+	(pkl_promo_ps-op_binary_intoffstr): Likewise.
+	(pkl_promo_ps_op_mul): Likewise.
+	(pkl_promo_ps_op_rela): Likewise.
+	(pkl_promo_ps_op_bshiftpow): Likewise.
+	(pkl_promo_ps_op_binary): Likewise.
+	(pkl_promo_ps_op_unary): Likewise.
+	(pkl_promo_ps_indexer): Likewise.
+	(pkl_promo_ps_trimmer): Likewise.
+	(pkl_promo_ps_type_array): Likewise.
+	(pkl_promo_ps_ass_stmt): Likewise.
+	(pkl_promo_ps_funcall): Likewise.
+	(pkl_promo_ps_return_stmt): Likewise.
+	(pkl_promo_ps_print_stmt): Likewise.
+	(pkl_promo_ps_func_arg): Likewise.
+	(pkl_promo_ps_map): Likewise.
+	(pkl_promo_ps_cond_exp): Likewise.
+	* src/pkl-gen.c (pkl_gen_ps_op_attr): Likewise.
+	(pkl_gen_noimpl): Likewise.
+	* src/pkl-lex.l (YY_FATAL_ERROR): Pass extra->compiler to pkl_ice.
+
 2020-04-04  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pkl-trans.c (pkl_trans1_ps_string): Avoid malloc if string

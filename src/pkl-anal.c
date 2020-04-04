@@ -177,7 +177,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_comp_stmt)
   if (PKL_AST_COMP_STMT_BUILTIN (comp_stmt) != PKL_AST_BUILTIN_NONE
       && PKL_AST_COMP_STMT_STMTS (comp_stmt) != NULL)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (comp_stmt),
+      PKL_ICE (PKL_AST_LOC (comp_stmt),
                "builtin comp-stmt contains statements");
       PKL_ANAL_PAYLOAD->errors++;
       PKL_PASS_ERROR;
@@ -192,7 +192,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal_ps_default)
 {
   if (!PKL_AST_LOC_VALID (PKL_AST_LOC (PKL_PASS_NODE)))
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_NOLOC,
+      PKL_ICE (PKL_AST_NOLOC,
                "node #%" PRIu64 " with code %d has no location",
                PKL_AST_UID (PKL_PASS_NODE), PKL_AST_CODE (PKL_PASS_NODE));
       PKL_PASS_ERROR;
@@ -468,7 +468,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_checktype)
 
   if (type == NULL)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+      PKL_ICE (PKL_AST_LOC (node),
                "node #%" PRIu64 " has no type",
                PKL_AST_UID (node));
       PKL_ANAL_PAYLOAD->errors++;
@@ -478,7 +478,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_checktype)
   if (PKL_AST_TYPE_COMPLETE (type)
       == PKL_AST_TYPE_COMPLETE_UNKNOWN)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (type),
+      PKL_ICE (PKL_AST_LOC (type),
                "type completeness is unknown in node #%" PRIu64,
                PKL_AST_UID (node));
       PKL_ANAL_PAYLOAD->errors++;
@@ -508,7 +508,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_offset)
 
   if (type == NULL)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+      PKL_ICE (PKL_AST_LOC (node),
                "node #% " PRIu64 " has no type",
                PKL_AST_UID (node));
       PKL_ANAL_PAYLOAD->errors++;
@@ -518,7 +518,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_offset)
   if (PKL_AST_TYPE_COMPLETE (type)
       == PKL_AST_TYPE_COMPLETE_UNKNOWN)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (type),
+      PKL_ICE (PKL_AST_LOC (type),
                "type completeness is unknown in node #%" PRIu64,
                PKL_AST_UID (node));
       PKL_ANAL_PAYLOAD->errors++;
@@ -721,7 +721,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_array_initializer)
 {
   if (!PKL_AST_ARRAY_INITIALIZER_INDEX (PKL_PASS_NODE))
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_NOLOC,
+      PKL_ICE (PKL_AST_NOLOC,
                "array initializer node #%" PRIu64 " has no index",
                PKL_AST_UID (PKL_PASS_NODE));
       PKL_PASS_ERROR;

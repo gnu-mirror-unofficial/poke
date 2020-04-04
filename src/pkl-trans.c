@@ -889,7 +889,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
           if (PKL_AST_CODE (initializer_index_node)
               != PKL_AST_INTEGER)
             {
-              pkl_ice (PKL_PASS_AST, PKL_AST_NOLOC,
+              PKL_ICE (PKL_AST_NOLOC,
                        "array initialize index should be an integer node");
               PKL_PASS_ERROR;
             }

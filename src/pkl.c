@@ -44,7 +44,6 @@
 #include "pkl-env.h"
 
 #include "pvm.h"
-#include "poke.h"
 
 #define PKL_COMPILING_EXPRESSION 0
 #define PKL_COMPILING_PROGRAM    1
@@ -53,13 +52,15 @@
 struct pkl_compiler
 {
   pkl_env env;  /* Compiler environment.  */
+  pvm vm;
   int bootstrapped;
   int compiling;
   int error_on_warning;
+  int quiet_p;
 };
 
 pkl_compiler
-pkl_new ()
+pkl_new (pvm vm, const char *rt_path)
 {
   pkl_compiler compiler
     = xzalloc (sizeof (struct pkl_compiler));
@@ -68,13 +69,20 @@ pkl_new ()
      for as long as the incremental compiler lives.  */
   compiler->env = pkl_env_new ();
 
+  /* Set the poke virtual machine that the compiler will be generating
+     code for.  */
+  compiler->vm = vm;
+
+  /* Be verbose by default :) */
+  compiler->quiet_p = 0;
+
   /* Bootstrap the compiler.  An error bootstraping is an internal
      error and should be reported as such.  */
   {
     char *poke_rt_pk;
 
-    poke_rt_pk = xmalloc (strlen (poke_datadir) + strlen ("/pkl-rt.pk") + 1);
-    strcpy (poke_rt_pk, poke_datadir);
+    poke_rt_pk = xmalloc (strlen (rt_path) + strlen ("/pkl-rt.pk") + 1);
+    strcpy (poke_rt_pk, rt_path);
     strcat (poke_rt_pk, "/pkl-rt.pk");
 
     if (!pkl_compile_file (compiler, poke_rt_pk))
@@ -178,7 +186,7 @@ rest_of_compilation (pkl_compiler compiler,
   pkl_trans_init_payload (&trans4_payload);
   pkl_gen_init_payload (&gen_payload, compiler);
 
-  if (!pkl_do_pass (poke_compiler, ast,
+  if (!pkl_do_pass (compiler, ast,
                     frontend_phases, frontend_payloads, PKL_PASS_F_TYPES))
     goto error;
 
@@ -192,7 +200,7 @@ rest_of_compilation (pkl_compiler compiler,
       || typify2_payload.errors > 0)
     goto error;
 
-  if (!pkl_do_pass (poke_compiler, ast,
+  if (!pkl_do_pass (compiler, ast,
                     middleend_phases, middleend_payloads, PKL_PASS_F_TYPES))
     goto error;
 
@@ -201,7 +209,7 @@ rest_of_compilation (pkl_compiler compiler,
       || analf_payload.errors > 0)
     goto error;
 
-  if (!pkl_do_pass (poke_compiler, ast,
+  if (!pkl_do_pass (compiler, ast,
                     backend_phases, backend_payloads, 0))
     goto error;
 
@@ -256,7 +264,7 @@ pkl_compile_buffer (pkl_compiler compiler,
   {
     pvm_val val;
 
-    if (pvm_run (poke_vm, routine, &val) != PVM_EXIT_OK)
+    if (pvm_run (compiler->vm, routine, &val) != PVM_EXIT_OK)
       goto error;
 
     /* Discard the value.  */
@@ -309,7 +317,7 @@ pkl_compile_statement (pkl_compiler compiler,
   jitter_routine_make_executable_if_needed (routine);
 
   /* Execute the routine in the poke vm.  */
-  if (pvm_run (poke_vm, routine, val) != PVM_EXIT_OK)
+  if (pvm_run (compiler->vm, routine, val) != PVM_EXIT_OK)
     goto error;
 
   pvm_destroy_routine (routine);
@@ -409,7 +417,7 @@ pkl_compile_file (pkl_compiler compiler, const char *fname)
   {
     pvm_val val;
 
-    if (pvm_run (poke_vm, routine, &val) != PVM_EXIT_OK)
+    if (pvm_run (compiler->vm, routine, &val) != PVM_EXIT_OK)
       goto error_no_close;
 
     /* Discard the value.  */
@@ -531,7 +539,7 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
 }
 
 static void
-pkl_error_internal (pkl_compiler compiler __attribute__((unused)),
+pkl_error_internal (pkl_compiler compiler,
                     pkl_ast ast,
                     pkl_ast_loc loc,
                     const char *fmt,
@@ -555,7 +563,7 @@ pkl_error_internal (pkl_compiler compiler __attribute__((unused)),
       if (PKL_AST_LOC_VALID (loc))
         {
           pk_term_class ("error-location");
-          if (poke_quiet_p)
+          if (compiler->quiet_p)
             pk_printf ("%d: ", loc.first_line);
           else
             pk_printf ("%d:%d: ",
@@ -578,7 +586,7 @@ pkl_error_internal (pkl_compiler compiler __attribute__((unused)),
     }
   free (errmsg);
 
-  if (!poke_quiet_p)
+  if (!compiler->quiet_p)
     pkl_detailed_location (ast, loc, "error");
 }
 
@@ -639,12 +647,13 @@ pkl_warning (pkl_compiler compiler,
 
   free (msg);
 
-  if (!poke_quiet_p)
+  if (!compiler->quiet_p)
     pkl_detailed_location (ast, loc, "warning");
 }
 
 void
-pkl_ice (pkl_ast ast,
+pkl_ice (pkl_compiler compiler,
+         pkl_ast ast,
          pkl_ast_loc loc,
          const char *fmt,
          ...)
@@ -652,7 +661,7 @@ pkl_ice (pkl_ast ast,
   va_list valist;
   char tmpfile[1024];
 
-  if (!poke_quiet_p)
+  if (!compiler->quiet_p)
   {
     int des;
     FILE *out;
@@ -705,7 +714,7 @@ pkl_ice (pkl_ast ast,
     free (msg);
   }
   pk_puts ("\n");
-  if (!poke_quiet_p)
+  if (!compiler->quiet_p)
     {
       pk_printf ("Important information has been dumped in %s.\n",
                  tmpfile);
@@ -740,4 +749,16 @@ pkl_set_error_on_warning (pkl_compiler compiler,
                           int error_on_warning)
 {
   compiler->error_on_warning = error_on_warning;
+}
+
+int
+pkl_quiet_p (pkl_compiler compiler)
+{
+  return compiler->quiet_p;
+}
+
+void
+pkl_set_quiet_p (pkl_compiler compiler, int quiet_p)
+{
+  compiler->quiet_p = quiet_p;
 }

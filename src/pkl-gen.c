@@ -3076,7 +3076,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
         }
       break;
     default:
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+      PKL_ICE (PKL_AST_LOC (exp),
                "unhandled attribute expression code #%d in code generator",
                attr);
       PKL_PASS_ERROR;
@@ -3145,18 +3145,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_noimpl)
 
   if (PKL_AST_CODE (node) == PKL_AST_EXP)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+      PKL_ICE (PKL_AST_LOC (node),
                "unhandled node #%" PRIu64 " with code %d opcode %d in code generator",
                PKL_AST_UID (node), PKL_AST_CODE (node), PKL_AST_EXP_CODE (node));
     }
   else if (PKL_AST_CODE (node) == PKL_AST_TYPE)
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+      PKL_ICE (PKL_AST_LOC (node),
                "unhandled node #%" PRIu64 " with code %d typecode %d in code generator",
                PKL_AST_UID (node), PKL_AST_CODE (node), PKL_AST_TYPE_CODE (node));
     }
   else
-    pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+    PKL_ICE (PKL_AST_LOC (node),
              "unhandled node #%" PRIu64 " with code %d in code generator",
              PKL_AST_UID (node), PKL_AST_CODE (node));
 

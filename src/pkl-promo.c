@@ -275,7 +275,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote operands of expression #%" PRIu64,
            PKL_AST_UID (exp));
   PKL_PASS_ERROR;
@@ -361,7 +361,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary_intoffstr)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote operands of expression #%" PRIu64,
            PKL_AST_UID (exp));
   PKL_PASS_ERROR;
@@ -455,7 +455,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_mul)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote operands of expression #%" PRIu64,
            PKL_AST_UID (exp));
   PKL_PASS_ERROR;
@@ -560,7 +560,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote operands of expression #%" PRIu64,
            PKL_AST_UID (exp));
   PKL_PASS_ERROR;
@@ -625,7 +625,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_bshiftpow)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote operands of expression #%" PRIu64,
            PKL_AST_UID (exp));
   PKL_PASS_ERROR;
@@ -657,7 +657,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary)
           || !promote_integral (PKL_PASS_AST, size, sign,
                                 &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
         {
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+          PKL_ICE (PKL_AST_LOC (exp),
                    "couldn't promote operands of expression #%" PRIu64,
                    PKL_AST_UID (exp));
           PKL_PASS_ERROR;
@@ -691,7 +691,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_unary)
       if (!promote_integral (PKL_PASS_AST, size, sign,
                              &PKL_AST_EXP_OPERAND (node, 0), &restart))
         {
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+          PKL_ICE (PKL_AST_LOC (node),
                    "couldn't promote operands of expression #%" PRIu64,
                    PKL_AST_UID (node));
           PKL_PASS_ERROR;
@@ -713,7 +713,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_indexer)
   if (!promote_integral (PKL_PASS_AST, 64, 0,
                          &PKL_AST_INDEXER_INDEX (node), &restart))
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (node),
+      PKL_ICE (PKL_AST_LOC (node),
                "couldn't promote indexer subscript");
       PKL_PASS_ERROR;
     }
@@ -735,7 +735,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_trimmer)
   if (!promote_integral (PKL_PASS_AST, 64, 0,
                          &PKL_AST_TRIMMER_FROM (trimmer), &restart))
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (from),
+      PKL_ICE (PKL_AST_LOC (from),
                "couldn't promote trimmer index");
       PKL_PASS_ERROR;
     }
@@ -743,7 +743,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_trimmer)
   if (!promote_integral (PKL_PASS_AST, 64, 0,
                          &PKL_AST_TRIMMER_TO (trimmer), &restart))
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (to),
+      PKL_ICE (PKL_AST_LOC (to),
                "couldn't promote trimmer index");
       PKL_PASS_ERROR;
     }
@@ -775,7 +775,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_type_array)
       if (!promote_integral (PKL_PASS_AST, 64, 0,
                              &PKL_AST_TYPE_A_BOUND (array_type), &restart))
         {
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (bound),
+          PKL_ICE (PKL_AST_LOC (bound),
                    "couldn't promote array type size expression");
           PKL_PASS_ERROR;
         }
@@ -791,7 +791,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_type_array)
                              64, 0, unit_bit,
                              &PKL_AST_TYPE_A_BOUND (array_type), &restart))
           {
-            pkl_ice (PKL_PASS_AST, PKL_AST_LOC (bound),
+            PKL_ICE (PKL_AST_LOC (bound),
                      "couldn't promote array type size expression");
             PKL_PASS_ERROR;
           }
@@ -898,7 +898,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_ass_stmt)
       }
       break;
     default:
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (ass_stmt),
+      PKL_ICE (PKL_AST_LOC (ass_stmt),
                "non-promoteable r-value in assignment statement at promo time");
       PKL_PASS_ERROR;
       break;
@@ -908,7 +908,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_ass_stmt)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote r-value in assignment");
   PKL_PASS_ERROR;
 }
@@ -987,7 +987,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
           }
           break;
         default:
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (funcall),
+          PKL_ICE (PKL_AST_LOC (funcall),
                    "funcall contains non-promoteable arguments at promo time");
           PKL_PASS_ERROR;
           break;
@@ -999,7 +999,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (aa),
+  PKL_ICE (PKL_AST_LOC (aa),
            "couldn't promote funcall argument");
   PKL_PASS_ERROR;
 }
@@ -1073,7 +1073,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_return_stmt)
           }
           break;
         default:
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (return_stmt),
+          PKL_ICE (PKL_AST_LOC (return_stmt),
                    "return statement non-promoteable arguments at promo time");
           PKL_PASS_ERROR;
           break;
@@ -1085,7 +1085,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_return_stmt)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (exp),
+  PKL_ICE (PKL_AST_LOC (exp),
            "couldn't promote return expression");
   PKL_PASS_ERROR;
 }
@@ -1125,7 +1125,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_print_stmt)
                                  &PKL_AST_PRINT_STMT_ARG_EXP (arg),
                                  &restart))
             {
-              pkl_ice (PKL_PASS_AST, PKL_AST_LOC (arg),
+              PKL_ICE (PKL_AST_LOC (arg),
                        "couldn't promote printf argument initializer");
                   PKL_PASS_ERROR;
             }
@@ -1195,7 +1195,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_func_arg)
               }
               break;
             default:
-              pkl_ice (PKL_PASS_AST, PKL_AST_LOC (initial),
+              PKL_ICE (PKL_AST_LOC (initial),
                        "non-promoteable function argument initializer at promo time");
               PKL_PASS_ERROR;
             }
@@ -1206,7 +1206,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_func_arg)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (initial),
+  PKL_ICE (PKL_AST_LOC (initial),
            "couldn't promote argument initializer");
   PKL_PASS_ERROR;
 }
@@ -1236,7 +1236,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
                        &PKL_AST_MAP_OFFSET (map),
                        &restart))
     {
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (map_offset),
+      PKL_ICE (PKL_AST_LOC (map_offset),
                "couldn't promote offset of map #%" PRIu64,
                PKL_AST_UID (map));
       PKL_PASS_ERROR;
@@ -1253,7 +1253,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
                              &PKL_AST_MAP_IOS (map),
                              &lrestart))
         {
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (map_ios),
+          PKL_ICE (PKL_AST_LOC (map_ios),
                    "couldn't promote ios of map #%" PRIu64,
                    PKL_AST_UID (map));
           PKL_PASS_ERROR;
@@ -1282,7 +1282,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cond_exp)
                            &PKL_AST_COND_EXP_COND (cond_exp),
                            &restart))
       {
-        pkl_ice (PKL_PASS_AST, PKL_AST_LOC (cond),
+        PKL_ICE (PKL_AST_LOC (cond),
                  "couldn't promote condition expression in ternary conditional\
  operator");
         PKL_PASS_ERROR;
@@ -1318,13 +1318,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                                  &PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem),
                                  &restart))
             {
-              pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_constraint),
+              PKL_ICE (PKL_AST_LOC (elem_constraint),
                        "couldn't promote struct field constraint");
               PKL_PASS_ERROR;
             }
           break;
         default:
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_constraint),
+          PKL_ICE (PKL_AST_LOC (elem_constraint),
                    "non-promoteable struct field constraint at promo time");
           PKL_PASS_ERROR;
           break;
@@ -1348,7 +1348,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                                    &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
                                    &restart))
               {
-                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_initializer),
+                PKL_ICE (PKL_AST_LOC (elem_initializer),
                          "couldn't promote struct type field initializer");
                 PKL_PASS_ERROR;
               }
@@ -1366,7 +1366,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                                  &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
                                  &restart))
               {
-                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_initializer),
+                PKL_ICE (PKL_AST_LOC (elem_initializer),
                          "couldn't promote struct type field initializer");
                 PKL_PASS_ERROR;
               }
@@ -1379,7 +1379,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                                 &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
                                 &restart))
               {
-                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_initializer),
+                PKL_ICE (PKL_AST_LOC (elem_initializer),
                          "couldn't promote struct type field initializer");
                 PKL_PASS_ERROR;
               }
@@ -1407,13 +1407,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                                  &PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem),
                                  &restart))
             {
-              pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_optcond),
+              PKL_ICE (PKL_AST_LOC (elem_optcond),
                        "couldn't promote struct field optcond");
               PKL_PASS_ERROR;
             }
           break;
         default:
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_optcond),
+          PKL_ICE (PKL_AST_LOC (elem_optcond),
                    "non-promoteable struct field optcond at promo time");
           PKL_PASS_ERROR;
           break;
@@ -1438,7 +1438,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                                  &PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem),
                                  &restart))
               {
-                pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_label),
+                PKL_ICE (PKL_AST_LOC (elem_label),
                          "couldn't promote struct field label");
                 PKL_PASS_ERROR;
               }
@@ -1446,7 +1446,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
             break;
           }
         default:
-          pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem_label),
+          PKL_ICE (PKL_AST_LOC (elem_label),
                    "non-promoteable struct field label at promo time");
           PKL_PASS_ERROR;
           break;
@@ -1512,7 +1512,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_in)
   PKL_PASS_DONE;
 
  error:
-  pkl_ice (PKL_PASS_AST, PKL_AST_LOC (op1),
+  PKL_ICE (PKL_AST_LOC (op1),
            "couldn't promote operand argument");
   PKL_PASS_ERROR;
 }
@@ -1610,7 +1610,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
 
       continue;
     error:
-      pkl_ice (PKL_PASS_AST, PKL_AST_LOC (elem),
+      PKL_ICE (PKL_AST_LOC (elem),
                "couldn't promote field in struct constructor");
       PKL_PASS_ERROR;
     }

@@ -65,7 +65,7 @@ typedef struct pkl_compiler *pkl_compiler; /* This data structure is
 
 /* Initialization and finalization functions.  */
 
-pkl_compiler pkl_new (void);
+pkl_compiler pkl_new (pvm vm, const char *rt_path);
 void pkl_free (pkl_compiler compiler);
 
 /* Compile a poke program from the given file FNAME.  Return 1 if the
@@ -118,12 +118,19 @@ int pkl_error_on_warning (pkl_compiler compiler);
 void pkl_set_error_on_warning (pkl_compiler compiler,
                                int error_on_warning);
 
+/* Set/get the quiet_p flag in/from the copmiler.  If this flag is
+   set, the compiler emits as few output as possible.  */
+
+int pkl_quiet_p (pkl_compiler compiler);
+void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p);
+
 /* Diagnostic routines.  */
 
 void pkl_error (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
                 const char *fmt, ...);
 void pkl_warning (pkl_compiler compiler, pkl_ast ast,
                   pkl_ast_loc loc, const char *fmt, ...);
-void pkl_ice (pkl_ast ast, pkl_ast_loc loc, const char *fmt, ...);
+void pkl_ice (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
+              const char *fmt, ...);
 
 #endif /* ! PKL_H */
