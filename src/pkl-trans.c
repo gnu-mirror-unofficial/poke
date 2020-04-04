@@ -269,6 +269,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
   char *new_string_pointer;
   char *p;
   size_t string_length, i;
+  bool found_backslash = false;
 
   /* Please keep this code in sync with the string printer in
      pvm-val.c:pvm_print_val.  */
@@ -294,10 +295,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
               PKL_PASS_ERROR;
             }
           p++;
+          found_backslash = true;
         }
       else
         string_length++;
     }
+
+  if (!found_backslash)
+    goto _exit;
 
   /* Second pass: compose the new string.  */
   new_string_pointer = xmalloc (string_length + 1);

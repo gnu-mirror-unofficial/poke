@@ -1,3 +1,8 @@
+2020-04-04  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pkl-trans.c (pkl_trans1_ps_string): Avoid malloc if string
+	does not need escaping.
+	
 2020-04-04  Bruno Haible  <bruno@clisp.org>
 
 	doc: Tweak formatting of ASCII table.
