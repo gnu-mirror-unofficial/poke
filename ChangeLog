@@ -1,4 +1,9 @@
-2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
+2020-04-04  Bruno Haible  <bruno@clisp.org>
+
+	Fix 'make distcheck'.
+	* doc/Makefile.am (EXTRA_DIST): New variable.
+
+2020-04-03  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pkl-asm.c (pkl_asm_insn):
 	Remove obsolete code.
@@ -179,6 +184,7 @@
 2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (The SBM Format): Do not use @acronym{}.
+
 2020-04-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Poking Arrays): New section.

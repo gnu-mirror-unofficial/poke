@@ -16,6 +16,8 @@
 info_TEXINFOS = poke.texi
 poke_TEXINFOS = fdl.texi pvm-insns.texi
 
+EXTRA_DIST = gen-pvm-insns.sh
+
 # The description of PVM instructions is generated from the
 # src/pvm.jitter file.
 
