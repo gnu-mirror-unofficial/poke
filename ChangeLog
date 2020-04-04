@@ -1,3 +1,7 @@
+2020-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING (Building Release Tarballs): New section.
+
 2020-04-04  Bruno Haible  <bruno@clisp.org>
 
 	Fix 'make distcheck'.

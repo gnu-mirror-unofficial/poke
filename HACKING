@@ -35,9 +35,10 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        2.2  Global Reviewers
        2.3  Write After Approval
        2.4  Personal Branches
-       2.5  Installing Obvious Changes
-       2.6  The Bugzilla
-         2.6.1  Dealing with spam in the Bugzilla
+       2.5  Building Release Tarballs
+       2.6  Installing Obvious Changes
+       2.7  The Bugzilla
+         2.7.1  Dealing with spam in the Bugzilla
      3  Development Environment
        3. 1  Autotools
        3. 2  Dejagnu
@@ -182,6 +183,17 @@ changes.
 Personal branches can be rebased, and deleted.  Please do not write
 into a personal branch unless you have the explicit approval of the
 branch owner.
+
+Building Release Tarballs
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The standard target ``make distcheck`` builds a distributable sources
+tarball, and tests that it can be built and tested properly.
+
+IMPORTANT: before building a tarball, please make sure no stale files
+are left in the testsuite/**/ directories, like Emacs backup files.
+The EXTRA_DIST setting in testsuite/Makefile.am includes these
+directories and all its contents.
 
 Installing Obvious Changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
