@@ -1,3 +1,7 @@
+2020-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Pickles): New section.
+
 2020-04-03 Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-cmd.c (skip_blanks): Take const char *,

@@ -112,7 +112,8 @@ Structuring Data
 * The SBM Format::		The Stupid BitMap Format
 * Poking a SBM Image::		A need for abstraction.
 * Modifying SBM Images::	Modifying existing data.
-* Defining Types::		The type abstraction.
+* Defining Types::		Abstracting data structures.
+* Pickles::			Pickling useful abstractions.
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
@@ -2526,8 +2527,8 @@ This is achieved by defining data structures.
 * The SBM Format::	The Stupid BitMap Format
 * Poking a SBM Image::	A need for abstraction.
 * Modifying SBM Images:: Modifying existing data.
-* Defining Types::	The type abstraction.
-* Pickles::		Saving useful definitions for future use.
+* Defining Types::	Abstracting data structures.
+* Pickles::		Pickling useful abstractions.
 @c * Poking Structs::
 @end menu
 
@@ -3526,12 +3527,208 @@ instead of as a table of triplets of RGB color beams:
 @node Pickles
 @section Pickles
 
-@c SBM pickle
-@c Colors in SBM
-@c (poke) defvar bga = [255UB, 255UB, 255UB]
-@c (poke) defvar fga = [255UB, 99UB, 71UB]
+@subsection poke Commands versus Poke Constructions
 
-@c XXX
+In @ref{Nomenclature} we mentioned that poke, the program, implements
+a domain specific programming language called Poke, with a big p.  In
+the examples so far we have already used the Poke language, quite
+extensively, while interacting with the program using the REPL.
+
+For example, in:
+
+@example
+(poke) 10 + 2
+12
+@end example
+
+@noindent
+We are giving poke a @dfn{Poke expression} @code{10 + 2} to be
+evaluated.  Once the expression is evaluated, the REPL prints the
+resulting value for us.
+
+Similarly, when we define a variable or a type with @code{defvar} and
+@code{deftype} respectively, we are providing poke definitions to be
+evaluated.  When we assign a value to a variable we are actually
+providing a Poke statement to be executed.
+
+So the REPL accepts @dfn{poke commands}, some of which happen to be
+Poke expressions, definitions or statements.  But we also have used
+dot-commands like @code{.file} or @code{.info}, that are not part of
+the Poke programming language.
+
+Every time we insert a line in the REPL and hit @key{enter}, poke
+recognizes the nature of the line, and then does the right thing.  If
+the line is recognized as a Poke expression, for example, the Poke
+compiler is used to compile the statement into a routine, that is
+executed by the Poke Virtual Machine.  The resulting value is then
+printed for the benefit of the user.
+
+@subsection Poke Files
+
+Poke programs are basically a collection of definitions and
+statements, which most often are stored in files.  By convention, we
+use the @file{.pk} file extension when naming files containing Poke
+programs.
+
+Remember how we defined the foreground and background pixels for
+@code{p.sbm} in the REPL?
+
+@example
+(poke) defvar bga = [255UB, 255UB, 255UB]
+(poke) defvar fga = [255UB, 99UB, 71UB]
+@end example
+
+@noindent
+Where @code{bga} is a white pixel and @code{fga} is a tomato colored
+pixel.  We could write these definitions in a file @file{colors.pk}
+like this:
+
+@example
+defvar white = [255UB, 255UB, 255UB];
+defvar tomato = [255UB, 99UB, 71UB];
+@end example
+
+@noindent
+Note that variable definitions in Poke are finished with a semicolon
+(@code{;}) character, whereas we didn't need to specify them when we
+issued the definitions in the REPL.  This is because poke adds the
+trailing semicolon for you when it detects a Poke construction
+requiring it is introduced in the REPL.
+
+@noindent
+Another difference is that Poke constructions can span for multiple
+lines, like in most programming languages.  For example, we could have
+the following variable definition in a file:
+
+@example
+defvar matrix = [[10, 20, 30],
+                 [40, 50, 60],
+                 [70, 80, 90]];
+@end example
+
+@cindex loading files
+@cindex .load
+Once we have written our @file{colors.pk} file, how can we make poke
+aware of it?  A possibility is to use the @code{load} construction:
+
+@example
+(poke) load colors
+@end example
+
+@noindent
+Assuming a file named @file{colors.pk} exists in the current working
+directory, poke will load it and evaluate its contents.  After this,
+we can use the colors:
+
+@example
+(poke) tomato
+[0xffUB,0x63UB,0x47UB]
+@end example
+
+@noindent
+Before, we would need to define these colors every time we would like
+to poke SBM files or, in fact, any RGB24 data.  Now we just have to
+load our @file{colors.pk} and use the variables defined there.
+
+If you try to load a file whose name contains a dash character
+(@code{-}) you will get an error message:
+
+@example
+(poke) load my-colors
+<stdin>:1:8: error: syntax error, unexpected '-', expecting ';'
+load my-colors;
+       ^
+@end example
+
+@noindent
+This is because the argument to @code{load} is interpreted as a Poke
+identifier, where @code{-} is not allowed.  To alleviate this problem,
+you can also specify a string to @code{load}, like in:
+
+@example
+(poke) load "my-colors.pk"
+@end example
+
+@noindent
+If you use this form of @code{load}, however, you have to specify the
+complete name of the file, including the @file{.pk} file extension.
+
+Since loading files is such a common operation, poke provides a
+dot-command @code{.load} that does auto-completion:
+
+@example
+(poke) .load my-colors.pk
+@end example
+
+@noindent
+Which is equivalent to @code{load "my-colors.pk"}.
+
+Since @code{load} is part of the Poke language, it can also be used in
+Poke programs stored in files.  We will explore this later.
+
+@subsection Pickling Abstractions
+
+In the last section we defined a couple of RGB colors @code{white} and
+@code{tomato} in a file called @file{colors.pk}.  If we keep adding
+colors to the file, we may end with a nice collection of colors that
+we can use by just loading the file.
+
+Since there are many ways to understand the notion of ``color'', and
+also many ways to implement these many notions, it would be better to
+be more precise and call our file @file{rgb24.pk}, since the notion of
+color we are using is of that RGB24.  While doing so, lets also rename
+the variables to reflect the fact they denote not just any kind of
+colors, but RGB24 colors:
+
+@example
+defvar rgb24_white = [255UB, 255UB, 255UB];
+defvar rgb24_tomato = [255UB, 99UB, 71UB];
+@end example
+
+@noindent
+At this point, we can also add the definitions of a couple of types to
+our @file{rgb24.pk}:
+
+@example
+deftype RGB_Color_Beam = byte;
+deftype RGB24_Color = RGB_Color_Beam[3];
+
+defvar rgb24_white = [255UB, 255UB, 255UB];
+defvar rgb24_tomato = [255UB, 99UB, 71UB];
+@end example
+
+@noindent
+Any time we want to manipulate RGB24 colors we can just load the file
+@file{rgb24.pk} and use these types and variables.
+
+In poke parlance we call files like the above, that contain
+definitions of conceptually related entities, @dfn{pickles}.  Pickles
+can be very simple, like the @file{rgb24.pk} sketched above, or fairly
+complicated like @file{dwarf.pk}.
+
+GNU poke includes several already written pickles for commonly used
+file formats, and other domains.  The @code{load} construction knows
+where these pickles are installed, so in order to load the pickle to
+manipulate ELF files, for example, all you have to do is to:
+
+@example
+(poke) load elf
+@end example
+
+@subsection Startup
+
+When poke starts it loads the file @file{.pokerc} located in our home
+directory, if it exists.  This initialization file contains poke
+commands, one per line.
+
+If we wanted to get some Poke file loaded at startup, we could do it
+by adding a load command to our @code{.pokerc}.  For example:
+
+@example
+# My poke configuration - jemarch
+[...]
+.load ~/.poke/mydefs.pk
+@end example
 
 @node Debugging Poke Programs
 @chapter Debugging Poke Programs
@@ -6281,10 +6478,10 @@ if @var{exp} @var{if_stmt} [else @var{else_stmt}]
 @end example
 
 Where @var{exp} is an expression that should evaluate to a boolean
-value (@i{i.e.} to an integer), @var{if_stmt} is a sentence that will be
-executed if @var{exp} holds true, and @var{else_stmt} is a sentence
-that will be executed if @var{exp} holds false.  The @code{else} part
-of the sentence is optional.
+value (@i{i.e.} to an integer), @var{if_stmt} is a statement that will
+be executed if @var{exp} holds true, and @var{else_stmt} is a
+statement that will be executed if @var{exp} holds false.  The
+@code{else} part of the statement is optional.
 
 
 @node Conditional Expression
@@ -6350,7 +6547,7 @@ for (@var{formal} in @var{container} [where @var{exp}]) @var{stmt}
 Where, in each iteration, the name @var{formal} will be associated
 with consecutive values of @var{container}, which shall be an
 expression evaluating to an array or a string.  @var{formal} is
-available in @var{stmt}, which is the sentence executed in each
+available in @var{stmt}, which is the statement executed in each
 iteration.
 
 If the @var{where} part is specified, then only iteration in which
