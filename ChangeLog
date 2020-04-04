@@ -1,3 +1,9 @@
+2020-04-04  Bruno Haible  <bruno@clisp.org>
+
+	doc: Tweak formatting of ASCII table.
+	* doc/poke.texi (Table of ASCII Codes): Use TeXinfo markup. Use a single
+	table, not two tables.
+
 2020-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* HACKING (Building Release Tarballs): New section.
