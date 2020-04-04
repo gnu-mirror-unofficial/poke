@@ -3706,6 +3706,20 @@ definitions of conceptually related entities, @dfn{pickles}.  Pickles
 can be very simple, like the @file{rgb24.pk} sketched above, or fairly
 complicated like @file{dwarf.pk}.
 
+It is common for pickles to @code{load} other pickles.  For example,
+if we were to write a SBM pickle, we would load the RGB24 pikle from
+it:
+
+@example
+load rgb24;
+
+[... SBM definitions ...]
+@end example
+
+@noindent
+This way, when we @command{load sbm} from the repl, the dependencies
+get loaded as well.
+
 GNU poke includes several already written pickles for commonly used
 file formats, and other domains.  The @code{load} construction knows
 where these pickles are installed, so in order to load the pickle to
@@ -3727,7 +3741,7 @@ by adding a load command to our @code{.pokerc}.  For example:
 @example
 # My poke configuration - jemarch
 [...]
-.load ~/.poke/mydefs.pk
+.load ~/.poke.d/mydefs.pk
 @end example
 
 @node Debugging Poke Programs
