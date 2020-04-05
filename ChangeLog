@@ -1,5 +1,9 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-rt.pk: Further simplifications.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-rt.pk: Simply the setting of load_path.
 
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>

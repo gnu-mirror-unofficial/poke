@@ -148,20 +148,12 @@ defun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
 defvar load_path = "";
 
 /* First, add the system-wide locations.  */
-{
-  defvar pokedatadir = "";
-  try pokedatadir = getenv ("POKEDATADIR");
-  catch if E_inval { pokedatadir = "%DATADIR%"; }
 
-  load_path = pokedatadir;
+try load_path = getenv ("POKEDATADIR");
+catch if E_inval { load_path = "%DATADIR%"; }
 
-  defvar pokepicklesdir = pokedatadir;
-  try pokepicklesdir = getenv ("POKEPICKLESDIR");
-  catch if E_inval { }
-
-  if (pokepicklesdir != pokedatadir)
-    load_path = pokepicklesdir + ":" + load_path;
-}
+try load_path = getenv ("POKEPICKLESDIR") + ":" + load_path;
+catch if E_inval { }
 
 /* Add the directories prescribed by the XDG Base Directory
    Specification as described in
