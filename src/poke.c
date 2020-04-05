@@ -430,8 +430,8 @@ initialize (int argc, char *argv[])
 static void
 initialize_user ()
 {
-  /* Load the user's initialization file ~/.pokerc, if it exists in the
-     HOME directory.  */
+  /* Load the user's initialization file ~/.pokerc, if it exists in
+     the HOME directory.  */
   char *homedir = getenv ("HOME");
 
   if (homedir != NULL)
@@ -439,19 +439,76 @@ initialize_user ()
       int ret;
       char *pokerc;
 
-      pokerc = xmalloc (strlen (homedir) + strlen ("/.pokerc") + 1);
+      pokerc = alloca (strlen (homedir) + strlen ("/.pokerc") + 1);
       strcpy (pokerc, homedir);
       strcat (pokerc, "/.pokerc");
 
-      if (access (pokerc, R_OK) == 0)
+      if (pk_file_readable (pokerc) == NULL)
         {
           ret = pk_cmd_exec_script (pokerc);
           if (!ret)
             exit (EXIT_FAILURE);
+          else
+            return;
         }
-
-      free (pokerc);
     }
+
+  /* If no ~/.pokerc file was found, acknowledge the XDG Base
+     Directory Specification, as documented in
+     https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+
+     If the environment variable XDG_CONFIG_HOME if defined, try to
+     load the file $XDG_CONFIG_HOME/pokerc.conf.
+
+     If the environment variable $XDG_CONFIG_DIRS is defined, try to
+     use all the : separated paths in that variable to find
+     pokerc.conf.  Else, try to load /etc/xdg/poke/pokerc.conf.  */
+  {
+    const char *xdg_config_home = getenv ("XDG_CONFIG_HOME");
+    const char *xdg_config_dirs = getenv ("XDG_CONFIG_DIRS");
+
+    if (xdg_config_home == NULL)
+      xdg_config_home = "";
+
+    if (xdg_config_dirs == NULL)
+      xdg_config_dirs = "/etc/xdg";
+
+    char *config_path = alloca (strlen (xdg_config_dirs)
+                                + 1 /* : */
+                                + strlen (xdg_config_home)
+                                + 1);
+    strcpy (config_path, xdg_config_dirs);
+    strcat (config_path, ":");
+    strcat (config_path, xdg_config_home);
+
+    char *dir = strtok (config_path, ":");
+    do
+      {
+        char *config_filename = NULL;
+
+        /* Ignore empty entries.  */
+        if (dir == '\0')
+          continue;
+
+        /* Mount the full path and determine whether the resulting
+           file is readable. */
+        config_filename = alloca (strlen (dir)
+                                  + strlen ("/pokerc.conf")
+                                  + 1);
+        strcpy (config_filename, dir);
+        strcat (config_filename, "/pokerc.conf");
+
+        if (pk_file_readable (config_filename) == NULL)
+          {
+            /* Load the configuration file.  */
+            int ret = pk_cmd_exec_script (config_filename);
+            if (!ret)
+              exit (EXIT_FAILURE);
+            break;
+          }
+      }
+    while ((dir = strtok (NULL, ":")) != NULL);
+  }
 }
 
 int

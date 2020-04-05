@@ -1,5 +1,10 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/poke.c (initialize_user): Acknowledge XDG configuration
+	files if ~/.pokerc is not found.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/std.pk (atoi): Raise E_inval instead of E_generic when the
 	provided base is not supported.
 	* doc/poke.texi (atoi): Update accordingly.
