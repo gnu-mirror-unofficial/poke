@@ -279,6 +279,106 @@
         mko                     ; OFF1 OFF2 OFFR
         .end
 
+;;; AELEMS
+;;; ( ULONG BOFF ARR -- [EBOFF IDX VAL]... )
+;;;
+;;; Given a base index, a bit offset and an array on the stack,
+;;; replace them with triplets of the form [EBOFF IDX VAL] where EBOFF
+;;; = BOFF + the original offset of the element.
+
+        .macro aelems
+        pushf
+        sel                     ; ULONG BOFF ARR SEL
+        regvar $nelem           ; ULONG BOFF ARR
+        regvar $arr             ; ULONG BOFF
+        regvar $boff            ; ULONG
+        regvar $baseidx         ; _
+        push ulong<64>0
+        regvar $idx
+      .while
+        pushvar $idx            ; ... IDX
+        pushvar $nelem          ; ... IDX NELEM
+        ltlu
+        nip2
+      .loop
+        ;; Mount the triple
+        pushvar $boff           ; ... BOFF
+        pushvar $idx            ; ... BOFF IDX
+        pushvar $baseidx        ; ... BOFF IDX BASEIDX
+        addlu
+        nip2                    ; ... BOFF (IDX+BASEIDX)
+        pushvar $arr
+        pushvar $idx
+        aref
+        nip2                    ; ... BOFF EIDX VAL
+        ;; Increase the bit-offset.
+        siz                     ; ... BOFF EIDX VAL SIZ
+        pushvar $boff           ; ... BOFF EIDX VAL SIZ BOFF
+        addlu
+        nip2                    ; ... BOFF EIDX VAL (SIZ+BOFF)
+        popvar $boff            ; ... BOFF EIDX VAL
+        ;; Increase index and loop.
+        pushvar $idx
+        push ulong<64>1
+        addlu
+        nip2
+        popvar $idx
+      .endloop
+        popf 1
+        .end
+
+;;; ACONC array_type
+;;; ( ARR ARR -- ARR ARR ARR )
+;;;
+;;;  Push a new array resulting from concatenating the elements of the
+;;;  two given arrays.  Both operands have the same type.
+;;;
+;;;  The resulting array is always unbounded, regardless of the bounds
+;;;  the operands.
+
+        .macro aconc
+        pushf
+        over                    ; ARR1 ARR2 ARR1
+        over                    ; ARR1 ARR2 ARR1 ARR2
+        typof                   ; ... ARR1 ARR2 ATYPE
+        tyagett                 ; ... ARR1 ARR2 ATYPE ETYPE
+        nip                     ; ... ARR1 ARR2 ETYPE
+        rot                     ; ... ARR2 ETYPE ARR1
+        regvar $arr1            ; ... ARR2 ETYPE
+        swap                    ; ... ETYPE ARR2
+        regvar $arr2            ; ... ETYPE
+        push null               ; ... ETYPE null
+        swap                    ; ... null ETYPE
+        ;; Get the elements of the first array.
+        push ulong<64>0         ; ... null ETYPE 0UL
+        dup                     ; ... null ETYPE 0UL 0UL
+        pushvar $arr1           ; ... null ETYPE 0UL 0UL ARR1
+        .e aelems               ; ... null ETYPE ARR1ELEMS...
+        ;; Get the elements of the second array.
+        pushvar $arr1           ; ... null ETYPE ARR1ELEMS ARR1
+        siz                     ; ... null ETYPE ARR1ELEMS ARR1 SIZ1
+        swap                    ; ... null ETYPE ARR1ELEMS SIZ1 ARR1
+        sel
+        nip                     ; ... null ETYPE ARR1ELEMS SIZ1 SEL1
+        swap                    ; ... null ETYPE ARR1ELEMS SEL1 SIZ1
+        pushvar $arr2           ; ... null ETYPE ARR1ELEMS SIZ1 ARR2
+        .e aelems               ; ... null ETYPE ARR1ELEMS ARR2ELEMS
+        ;; Set nelem and ninitializer.
+        pushvar $arr1           ; ... ARR1
+        pushvar $arr2           ; ... ARR1 ARR2
+        sel
+        nip                     ; ... ARR1 SEL2
+        swap                    ; ... SEL2 ARR1
+        sel
+        nip                     ; ... SEL2 SEL1
+        addlu
+        nip2                    ; ... null ETYPE ARR1ELEMS ARR2ELEMS (SEL1 + SEL2)
+        dup                     ; ... null ETYPE ARR1ELEMS ARR2ELEMS NELEMS NINIT
+        ;; Create the resulting array.
+        mka                     ; ARR1 ARR2 ARR
+        popf 1
+        .end
+
 ;;; ATRIM array_type
 ;;; ( ARR ULONG ULONG -- ARR )
 ;;;

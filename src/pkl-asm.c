@@ -940,6 +940,19 @@ pkl_asm_insn_cmp (pkl_asm pasm,
     assert (0);
 }
 
+/* Macro-instruction: ACONC array_elem_type
+   ( ARR ARR -- ARR ARR ARR )
+
+   Given two arrays of the same type (but with potentially different
+   bounds) generate code to push a new array value with the
+   concatenation of the elements of both arrays.  */
+
+static void
+pkl_asm_insn_aconc (pkl_asm pasm)
+{
+  RAS_MACRO_ACONC;
+}
+
 /* Macro-instruction: ATRIM array_type
    ( ARR ULONG ULONG -- ARR ULONG ULONG ARR )
 
@@ -1564,6 +1577,9 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
           break;
         case PKL_INSN_WRITE:
           pkl_asm_insn_write (pasm);
+          break;
+        case PKL_INSN_ACONC:
+          pkl_asm_insn_aconc (pasm);
           break;
         case PKL_INSN_MACRO:
         default:

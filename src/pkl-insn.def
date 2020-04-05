@@ -449,6 +449,7 @@ PKL_DEF_INSN (PKL_INSN_GCD, "a", "gcd")
 
 PKL_DEF_INSN (PKL_INSN_ATRIM, "a", "atrim")
 PKL_DEF_INSN (PKL_INSN_AIS, "", "ais")
+PKL_DEF_INSN (PKL_INSN_ACONC, "", "aconc")
 
 /* Offset macro-instructions.  */
 

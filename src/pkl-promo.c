@@ -296,13 +296,14 @@ PKL_PHASE_END_HANDLER
    operands are promoted to match the type of the magnitude type of
    the result offset, if needed.
 
-   Also, addition is used to concatenate strings:
+   Also, addition is used to concatenate strings and arrays:
 
       STRING x STRING -> STRING
+      ARRAY  x ARRAY  -> ARRAY
 
-   In this configuration no promotions are done.  */
+   In these configurations no promotions are done.  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary_intoffstr)
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary_intoffstrarr)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node type = PKL_AST_TYPE (exp);
@@ -351,6 +352,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary_intoffstr)
         break;
       }
     case PKL_TYPE_STRING:
+      /* Fallthrough.  */
+    case PKL_TYPE_ARRAY:
       if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_ADD)
         goto error;
       break;
@@ -1631,15 +1634,15 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_GE, pkl_promo_ps_op_rela),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_promo_ps_op_bshiftpow),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_promo_ps_op_binary_intoffstr),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_promo_ps_op_binary_intoffstr),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_promo_ps_op_binary_intoffstr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_promo_ps_op_binary_intoffstrarr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_promo_ps_op_binary_intoffstrarr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_promo_ps_op_binary_intoffstrarr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_AND, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_OR, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_promo_ps_op_unary),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_promo_ps_op_binary_intoffstr),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_promo_ps_op_binary_intoffstr),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_promo_ps_op_binary_intoffstr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_promo_ps_op_binary_intoffstrarr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_promo_ps_op_binary_intoffstrarr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_promo_ps_op_binary_intoffstrarr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_promo_ps_op_mul),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_promo_ps_op_div),

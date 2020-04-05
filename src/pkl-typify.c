@@ -548,6 +548,7 @@ PKL_PHASE_END_HANDLER
       CASE_STR                                                          \
       CASE_OFFSET                                                       \
       CASE_INTEGRAL                                                     \
+      CASE_ARRAY                                                        \
       default:                                                          \
         goto error;                                                     \
         break;                                                          \
@@ -569,6 +570,7 @@ PKL_PHASE_END_HANDLER
 
 #define CASE_STR
 #define CASE_OFFSET
+#define CASE_ARRAY
 
 #undef CASE_INTEGRAL
 #define CASE_INTEGRAL                                                   \
@@ -699,7 +701,7 @@ TYPIFY_BIN (xor);
 TYPIFY_BIN (band);
 TYPIFY_BIN (sub);
 
-/* ADD accepts integral, string and offset operands.  */
+/* ADD accepts integral, string, offset and array operands.  */
 
 #undef CASE_STR
 #define CASE_STR                                                        \
@@ -707,7 +709,41 @@ TYPIFY_BIN (sub);
       type = pkl_ast_make_string_type (PKL_PASS_AST);                   \
       break;
 
+#undef CASE_ARRAY
+#define CASE_ARRAY                              \
+  case PKL_TYPE_ARRAY:                                          \
+  {                                                             \
+  /* The type of the elements of the operand arrays */          \
+    /* should be the same.  */                                  \
+    if (!pkl_ast_type_equal (PKL_AST_TYPE_A_ETYPE (t1),         \
+                             PKL_AST_TYPE_A_ETYPE (t2)))        \
+      {                                                         \
+        char *t1_str = pkl_type_str (t1, 1);                    \
+        char *t2_str = pkl_type_str (t2, 1);                    \
+                                                                \
+        PKL_ERROR (PKL_AST_LOC (op2),                           \
+                   "invalid operand\nexpected %s, got %s",      \
+                   t1_str, t2_str);                             \
+        free (t1_str);                                          \
+        free (t2_str);                                          \
+                                                                \
+        PKL_TYPIFY_PAYLOAD->errors++;                           \
+        PKL_PASS_ERROR;                                         \
+      }                                                         \
+                                                                \
+    type = pkl_ast_make_array_type (PKL_PASS_AST,               \
+                                    PKL_AST_TYPE_A_ETYPE (t1),  \
+                                    NULL /* bound*/);           \
+                                                                \
+    /* We need to restart so the new type gets processed.  */   \
+    PKL_PASS_RESTART = 1;                                       \
+    break;                                                      \
+  }                                                             \
+
 TYPIFY_BIN (add);
+
+#undef CASE_ARRAY
+#define CASE_ARRAY
 
 /* The bit-shift operators and the pow operator can't be handled with
    TYPIFY_BIN.  */

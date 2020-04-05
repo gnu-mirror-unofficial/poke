@@ -5478,6 +5478,7 @@ Arrays are homogeneous collections of values.
 * Array Indexing::		Accessing values stored in arrays.
 * Array Trimming::		Working with array pieces.
 * Array Elements::		Checking for array elements.
+* Array Concatenation::		Concatenating the elements of arrays.
 * Array Attributes::		Accessing properties of array values.
 @end menu
 
@@ -5787,6 +5788,20 @@ element is stored in an array.  Examples:
 0
 @end example
 
+@node Array Concatenation
+@subsection Array Concatenation
+
+The operator @code{+} can be used to build new arrays resulting from
+the concatenation of the elements of two arrays given as operands:
+
+@example
+(poke) [1,2] + [3,4,5]
+[1,2,3,4,5]
+@end example
+
+@noindent
+The two arrays given as operands shall have the same elements of the
+same type.  The resulting array is always unbounded.
 
 @node Array Attributes
 @subsection Array Attributes

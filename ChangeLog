@@ -1,5 +1,24 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-promo.c (pkl_promo_ps_op_binary_intoffstrarr): Renamed
+	from pkl_promo_op_binary_intoffstr.
+	Do not promote array arguments.
+	* src/pkl-typify.c (TYPIFY_BIN): Add a case CASE_ARRAY.
+	(CASE_ARRAY): Define.
+	* src/pkl-gen.c (pkl_gen_ps_op_add): Handle array operands.
+	* src/pkl-insn.def (PKL_INSN_ACONC): New macro-instruction.
+	* src/pkl-asm.c (pkl_asm_insn_aconc): Define.
+	(pkl_asm_insn): Handle PKL_INSN_ACONC.
+	* doc/poke.texi (Array Concatenation): New section.
+	* testsuite/poke.pkl/add-arrays-diag-1.pk: New test.
+	* testsuite/poke.pkl/add-arrays-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-3.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-2.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-1.pk: Likewise.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/poke.c (initialize_user): Use `poke' subdirectories in the
 	XDG config dirs.
 

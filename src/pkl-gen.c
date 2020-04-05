@@ -2628,6 +2628,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_add)
       pkl_asm_insn (pasm, PKL_INSN_SCONC);
       pkl_asm_insn (pasm, PKL_INSN_NIP2);
       break;
+    case PKL_TYPE_ARRAY:
+      pkl_asm_insn (pasm, PKL_INSN_ACONC);
+      pkl_asm_insn (pasm, PKL_INSN_NIP2);
+      break;
     case PKL_TYPE_OFFSET:
       {
         pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (type);
