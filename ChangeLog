@@ -1,5 +1,9 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-rt.pk: Simply the setting of load_path.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl.h (pkl_get_vm): New prototype.
 	* src/pkl.c (pkl_get_vm): New function.
 	* src/pkl-rt.pk: Define load_path and compute its initial value.
