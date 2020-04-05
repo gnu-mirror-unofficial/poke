@@ -493,10 +493,10 @@ initialize_user ()
         /* Mount the full path and determine whether the resulting
            file is readable. */
         config_filename = alloca (strlen (dir)
-                                  + strlen ("/pokerc.conf")
+                                  + strlen ("/poke/pokerc.conf")
                                   + 1);
         strcpy (config_filename, dir);
-        strcat (config_filename, "/pokerc.conf");
+        strcat (config_filename, "/poke/pokerc.conf");
 
         if (pk_file_readable (config_filename) == NULL)
           {

@@ -1,5 +1,10 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/poke.c (initialize_user): Use `poke' subdirectories in the
+	XDG config dirs.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/poke.c (initialize_user): Acknowledge XDG configuration
 	files if ~/.pokerc is not found.
 
