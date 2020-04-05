@@ -373,6 +373,10 @@ PKL_DEF_INSN (PKL_INSN_SIZ, "", "siz")
 PKL_DEF_INSN (PKL_INSN_STRACE, "n", "strace")
 PKL_DEF_INSN (PKL_INSN_RAND, "", "rand")
 
+/* System interaction instructions.  */
+
+PKL_DEF_INSN (PKL_INSN_GETENV, "", "getenv")
+
 /* Exceptions handling instructions.  */
 
 PKL_DEF_INSN (PKL_INSN_PUSHE, "l", "pushe")

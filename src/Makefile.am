@@ -95,7 +95,7 @@ endif
 
 noinst_LIBRARIES = libpvmjitter.a
 libpvmjitter_a_SOURCES = pvm-vm.h pvm-vm1.c pvm-vm2.c
-libpvmjitter_a_CPPFLAGS = $(poke_CPPFLAGS)
+libpvmjitter_a_CPPFLAGS = $(poke_CPPFLAGS) -D_GNU_SOURCE
 libpvmjitter_a_CFLAGS = $(poke_CFLAGS) $(JITTER_CFLAGS)
 
 poke_CPPFLAGS += $(JITTER_CPPFLAGS)

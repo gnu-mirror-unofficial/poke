@@ -45,6 +45,8 @@
 #include "pkl-ast.h"
 #include "pkl-parser.h" /* For struct pkl_parser.  */
 
+#include "pvm.h"
+
 #define YYLTYPE pkl_ast_loc
 #define YYDEBUG 1
 #include "pkl-tab.h"
@@ -190,7 +192,7 @@ load_module (struct pkl_parser *parser,
   pkl_ast ast;
   FILE *fd;
   const char *emsg;
-
+  
   /* Derive the name of the file containing the module.  It is:
      MODULE.pk */
   strcpy (filename, module);
@@ -333,7 +335,7 @@ load_module (struct pkl_parser *parser,
 %token LOAD
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
-%token BUILTIN_IOSIZE
+%token BUILTIN_IOSIZE BUILTIN_GETENV
 
 /* ATTRIBUTE operator.  */
 
@@ -1669,6 +1671,7 @@ builtin:
 	| BUILTIN_OPEN		{ $$ = PKL_AST_BUILTIN_OPEN; }
 	| BUILTIN_CLOSE		{ $$ = PKL_AST_BUILTIN_CLOSE; }
 	| BUILTIN_IOSIZE	{ $$ = PKL_AST_BUILTIN_IOSIZE; }
+	| BUILTIN_GETENV	{ $$ = PKL_AST_BUILTIN_GETENV; }
 	;
 
 stmt_decl_list:

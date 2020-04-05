@@ -237,6 +237,8 @@ D [0-9]
    if (yyextra->bootstrapped) REJECT; return BUILTIN_CLOSE; }
 "__PKL_BUILTIN_IOSIZE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_IOSIZE; }
+"__PKL_BUILTIN_GETENV__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_GETENV; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

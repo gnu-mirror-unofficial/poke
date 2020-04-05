@@ -1,3 +1,24 @@
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/pkl-ast.h (PKL_AST_BUILTIN_GETENV): Define.
+	* src/pkl-tab.y (BUILTIN_GETENV): New token.
+	(builtin): Add rule for getenv.
+	* src/pkl-lex.l: Recognize __PKL_BUILTIN_GETENV__ tokens.
+	* src/pkl-gen.c (pkl_gen_ps_comp_stmt): Implement the getenv
+	builtin.
+	* src/pkl-insn.def (PKL_INSN_GETENV): Define.
+	* src/Makefile.am (libpvmjitter_a_CPPFLAGS): Define _GNU_SOURCE.
+	* src/pvm.jitter (getenv): New instruction.
+	* src/pvm.h (PVM_E_INVAL): Define.
+	(PVM_E_INVAL_MSG): Likewise.
+	* src/pkl-rt.pk (getenv): Define.
+	(EC_inval): Likewise.
+	(E_inval): Likewise.
+	* doc/poke.texi (System): New section.
+	(getenv): New subsection.
+	* testsuite/poke.pkl/getenv-1.pk: New test.
+	* testsuite/poke.pkl/getenv-2.pk: Likewise.
+
 2020-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pkl.h (pkl_new): New argument `vm'.

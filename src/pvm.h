@@ -92,6 +92,9 @@ enum pvm_exit_code
 #define PVM_E_IOFLAGS      13
 #define PVM_E_IOFLAGS_MSG "invalid IO flags"
 
+#define PVM_E_INVAL        14
+#define PVM_E_INVAL_MSG "invalid argument"
+
 /* Note that the jitter-generated header should be included this late
    in the file because it uses some stuff defined above.  */
 #include "pvm-vm.h"

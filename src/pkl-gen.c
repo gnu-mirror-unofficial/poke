@@ -450,6 +450,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
           break;
+        case PKL_AST_BUILTIN_GETENV:
+          {
+            jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+            
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_GETENV);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          pvm_make_exception (PVM_E_INVAL, PVM_E_INVAL_MSG));
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
+            pkl_asm_label (PKL_GEN_ASM, label);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+
+            break;
+          }
         default:
           assert (0);
         }

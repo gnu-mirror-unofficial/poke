@@ -399,6 +399,7 @@ initialize (int argc, char *argv[])
   /* Initialize the poke incremental compiler and load the standard
      library.  */
   poke_compiler = pkl_new (poke_vm, poke_datadir);
+  /* XXX: use pkl_load here.  */
   {
     char *poke_std_pk;
 

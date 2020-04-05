@@ -26,6 +26,7 @@ defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
 defun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
 defun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
 defun iosize = (int<32> ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
+defun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
 
 defvar ENDIAN_LITTLE = 0;
 defvar ENDIAN_BIG = 1;
@@ -79,6 +80,7 @@ defvar EC_constraint    = 10;
 defvar EC_io            = 11;
 defvar EC_signal        = 12;
 defvar EC_io_flags      = 13;
+defvar EC_inval         = 14;
 
 /* Standard exceptions.  */
 
@@ -110,6 +112,8 @@ defvar E_signal
   = Exception {code = EC_signal};
 defvar E_io_flags
   = Exception {code = EC_io_flags, msg = "invalid IO flags"};
+defvar E_inval
+  = Exception {code = EC_inval, msg = "invalid argument"};
 
 /* Default exception handler.
 

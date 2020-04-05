@@ -70,6 +70,7 @@ wrapped-functions
   ios_read_string
   ios_write_string
   random
+  getenv
 end
 
 #wrapped-globals
@@ -117,6 +118,8 @@ end
 
 early-c
   code
+#   include <config.h>
+#   include <stdlib.h>
 #   include <string.h>
   end
 end
@@ -2093,8 +2096,8 @@ end
 
 # Instruction: nn
 #
-# Push 1 on the stack if the value at the top of the stack equals
-# PVM_NULL.  Otherwise push 0.
+# Push 0 on the stack if the value at the top of the stack equals
+# PVM_NULL.  Otherwise push 1.
 #
 # Stack: ( VAL -- VAL INT )
 
@@ -4676,6 +4679,29 @@ instruction note (?n pvm_literal_printer)
   end
 end
 
+
+## System Interaction Instructions
+
+# Instruction: getenv
+#
+# This instruction gets the name of an environment variable on the
+# stack and pushes the value of the corresponding environment
+# variable.  If no variable with the given name is defined on the
+# environment, then push PVM_NULL.
+#
+# Stack: ( STR -- STR STR )
+
+instruction getenv ()
+  code
+    const char *varname = PVM_VAL_STR (JITTER_TOP_STACK ());
+    char *value = secure_getenv (varname);
+
+    if (value == NULL)
+      JITTER_PUSH_STACK (PVM_NULL);
+    else
+      JITTER_PUSH_STACK (pvm_make_string (value));
+  end
+end
 
 
 ## Miscellaneous Instructions

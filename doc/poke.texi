@@ -160,6 +160,7 @@ The Poke Language
 * Printing::			Output in Poke programs.
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
+* System::			Accessing the system from within Poke.
 
 The Standard Library
 * Standard Integral Types::	int, long and the like.
@@ -4395,6 +4396,7 @@ XXX
 * Printing::			Output in Poke programs.
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
+* System::                      Accessing the system from within Poke.
 @end menu
 
 @node Integers
@@ -7962,6 +7964,30 @@ load "my-pickle.pk";
 Note that if you use this variant of @code{load}, you must specify the
 full file name, including whatever extension it uses (usually
 @file{.pk}).
+
+@node System
+@section System
+
+Poke provides several constructions to interact with the operating
+system.  These are described in the subsections below.
+
+@menu
+* getenv::		Environment variables.
+@end menu
+
+@node getenv
+@subsection getenv
+
+The @code{getenv} built-in function has the form:
+
+@example
+defun getenv (string name) string:
+@end example
+
+@noindent
+Given the name of an environment variable, it returns a string with
+its value.  If the variable is not defined in the environment, then
+the @code{E_inval} exception is raised.
 
 @node The Standard Library
 @chapter The Standard Library
