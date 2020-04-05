@@ -1,5 +1,12 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Load Path): Add an example on updating the
+	load_path.
+	(pokerc): Document the support for the XDG base directory
+	specification.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-promo.c (pkl_promo_ps_op_binary_intoffstrarr): Renamed
 	from pkl_promo_op_binary_intoffstr.
 	Do not promote array arguments.

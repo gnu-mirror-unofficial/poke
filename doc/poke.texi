@@ -4354,10 +4354,24 @@ file.  In this case, the file should exist.
 @node pokerc
 @section @file{.pokerc}
 @cindex @file{.pokerc}
-Upon invocation poke will read and execute the commands of the file
-@file{~/.pokerc} if it exists in your home directory.  This can
-be disabled by passing @code{-q} or @code{--no-init-file} in the command
-line.
+
+Upon invocation poke will read and execute the commands of an
+initialization file, if it exists: the @file{pokerc} file.  There are
+two ways to keep an initialization file.
+
+The simple, traditional way is to have a file named @file{.pokerc} in
+your home directory.  GNU poke will look for a file like that first.
+
+If @file{.pokerc} is not found your home directory, poke looks in the
+locations specified by the @dfn{XDG Base Directory
+Specification}@footnote{https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html}
+for a file named @file{poke/pokerc.conf}.  For example, you could use
+@file{~/.config/poke/pokerc.conf}.
+
+Which way is better depends on your specific requirements and taste.
+
+GNU poke can be insturcted to not read the initialization file by
+passing @code{-q} or @code{--no-init-file} in the command line.
 
 Example of initialization file:
 
@@ -4389,6 +4403,15 @@ Some entries have special meanings:
 This is interpreted as the system-wide datadir directory, that depends
 on the prefix where poke is installed.
 @end table
+
+For example, say you want to maintain @file{.pk} files in your
+@file{~/.poke.d} directory.  You will probably want to add that
+directory to the @code{load_path}, when poke initializes.  A way to do
+that is to add a command like this to your @file{pokerc} file:
+
+@example
+load_path = getenv ("HOME") + "/.poke.d:" + load_path
+@end example
 
 @node Styling
 @section Styling
