@@ -762,3 +762,9 @@ pkl_set_quiet_p (pkl_compiler compiler, int quiet_p)
 {
   compiler->quiet_p = quiet_p;
 }
+
+pvm
+pkl_get_vm (pkl_compiler compiler)
+{
+  return compiler->vm;
+}

@@ -37,8 +37,8 @@
 #include <stdio.h>
 #include <xalloc.h>
 #include <assert.h>
+#include <string.h>
 
-#include "poke.h" /* For poke_picklesdir.  */
 #include "pk-utils.h"
 
 #include "pkl.h"
@@ -189,62 +189,98 @@ load_module (struct pkl_parser *parser,
              int filename_p)
 {
   char *filename = alloca (strlen (module) + 3 + 1);
+  char *module_filename = NULL;
   pkl_ast ast;
   FILE *fd;
-  const char *emsg;
+  char *load_path = NULL;
 
-  /* Derive the name of the file containing the module.  It is:
-     MODULE.pk */
+  /* Get the load path from the run-time environment.  */
+  {
+    pvm_val val;
+    pkl_ast_node tmp;
+    int back, over;
+
+    pkl_env compiler_env = pkl_get_env (parser->compiler);
+    pvm_env runtime_env = pvm_get_env (pkl_get_vm (parser->compiler));
+
+    tmp = pkl_env_lookup (compiler_env,
+                          PKL_ENV_NS_MAIN,
+                          "load_path",
+                          &back, &over);
+    assert (tmp != NULL);
+
+    val = pvm_env_lookup (runtime_env, back, over);
+    assert (val != PVM_NULL);
+
+    load_path = PVM_VAL_STR (val);
+  }
+
+  /* Derive the name of the file containing the module, if needed.  */
   strcpy (filename, module);
   if (!filename_p)
     strcat (filename, ".pk");
 
-  /* Try to open the module in different locations:
-     - First, the current working directory is attempted.
-     - Then, POKEDATADIR is attempted.
-     - Then, POKEPICKLESDIR is attempted.
-       XXX that directory should be added to load_path at compiler
-           initialization time.
-     - XXX Then, the directories in load_path are attempted.  */
+  /* Traverse the directories in the load path and try to load the
+     requested module.  */
+  {
+    char *full_filename;
+    char *saveptr = NULL;
+    char *path = xstrdup (load_path); /* Modified by strtok.  */
+    char *dir = strtok_r (path, ":", &saveptr);
 
-  if ((emsg = pk_file_readable (filename)) == NULL)
-    ;
-  else
-    {
-      char *datafilename = alloca (strlen (poke_datadir)
-                                   + 1 /* "/" */ + strlen (filename)
-                                   + 1);
-      strcpy (datafilename, poke_datadir);
-      strcat (datafilename, "/");
-      strcat (datafilename, filename);
+    if (dir)
+      {
+        do
+          {
+            /* Ignore empty entries.  */
+            if (dir == '\0')
+              continue;
 
-      if ((emsg = pk_file_readable (datafilename)) == NULL)
-        filename = datafilename;
-      else
-        {
-          char *picklesfilename = alloca (strlen (poke_picklesdir)
-                                          + 1 /* "/" */ + strlen (filename)
-                                          + 1);
+            /* Substitute %...% marks.  */
+            if (STREQ (dir, "%DATADIR%"))
+              dir = PKGDATADIR;
 
-          strcpy (picklesfilename, poke_picklesdir);
-          strcat (picklesfilename, "/");
-          strcat (picklesfilename, filename);
+            /* Mount the full path and determine whether the resulting
+               file is readable.  */
+            full_filename = alloca (strlen (dir)
+                                    + 1 /* "/" */ + strlen (filename)
+                                    + 1);
+            strcpy (full_filename, dir);
+            strcat (full_filename, "/");
+            strcat (full_filename, filename);
 
-          filename = picklesfilename;
-        }
-    }
+            if (pk_file_readable (full_filename) == NULL)
+              {
+                module_filename = xstrdup (full_filename);
+                break;
+              }
+          }
+        while ((dir = strtok_r (NULL, ":", &saveptr)) != NULL);
+      }
 
-  fd = fopen (filename, "rb");
-  if (!fd)
+    free (path);
+  }
+
+  if (module_filename == NULL)
+    /* No file found.  */
     return 1;
+
+  fd = fopen (module_filename, "rb");
+  if (!fd)
+    {
+      free (module_filename);
+      return 1;
+    }
 
   /* Parse the file, using the given environment.  The declarations
      found in the parsed file are appended to that environment, so
      nothing extra should be done about that.  */
-  if (pkl_parse_file (parser->compiler, &parser->env, &ast, fd, filename)
+  if (pkl_parse_file (parser->compiler, &parser->env, &ast, fd,
+                      module_filename)
       != 0)
     {
       fclose (fd);
+      free (module_filename);
       return 2;
     }
 
@@ -258,6 +294,7 @@ load_module (struct pkl_parser *parser,
   pkl_ast_free (ast);
 
   fclose (fd);
+  free (module_filename);
   return 0;
 }
 

@@ -139,6 +139,7 @@ Commands
 
 Configuration
 * pokerc::			User's initialization file.
+* Load Path::			Determining location of modules.
 * Styling::			Changing the appearance of poke's output.
 
 The Poke Language
@@ -4346,6 +4347,7 @@ file.  In this case, the file should exist.
 
 @menu
 * pokerc::			User's initialization file.
+* Load Path::			Determining location of modules.
 * Styling::			Changing the appearance of poke's output.
 @end menu
 
@@ -4367,6 +4369,26 @@ Example of initialization file:
 pk_dump_cluster_by = 4
 .load ~/.poke.d/mypickles.pk
 @end example
+
+@node Load Path
+@section Load Path
+@cindex load path
+
+The @code{load_path} Poke variable contains a list of directories
+separated by the colon character (@code{:}).  When a module is loaded
+using the @code{load} construction, these directories are searched in
+sequential order for the file corresponding to the requested module.
+
+Empty directory names and entries that do not name existing
+directories are ignored.
+
+Some entries have special meanings:
+
+@table @code
+@item %DATADIR%
+This is interpreted as the system-wide datadir directory, that depends
+on the prefix where poke is installed.
+@end table
 
 @node Styling
 @section Styling

@@ -99,6 +99,10 @@ pvm_routine pkl_compile_expression (pkl_compiler compiler,
 
 pkl_env pkl_get_env (pkl_compiler compiler);
 
+/* Return the VM associdated with COMPILER.  */
+
+pvm pkl_get_vm (pkl_compiler compiler);
+
 /* Returns a boolean telling whether the compiler has been
    bootstrapped.  */
 

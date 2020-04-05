@@ -141,3 +141,43 @@ defun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
    else
      return _pkl_gcd (b, a % b);
   }
+
+
+/**** Set the default load path ****/
+
+defvar load_path = "";
+
+/* First, add the system-wide locations.  */
+{
+  defvar pokedatadir = "";
+  try pokedatadir = getenv ("POKEDATADIR");
+  catch if E_inval { pokedatadir = "%DATADIR%"; }
+
+  load_path = pokedatadir;
+
+  defvar pokepicklesdir = pokedatadir;
+  try pokepicklesdir = getenv ("POKEPICKLESDIR");
+  catch if E_inval { }
+
+  if (pokepicklesdir != pokedatadir)
+    load_path = pokepicklesdir + ":" + load_path;
+}
+
+/* Add the directories prescribed by the XDG Base Directory
+   Specification as described in
+   https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html */
+{
+  defvar xdg_data_home = "";
+  try xdg_data_home = getenv ("XDG_DATA_HOME");
+  catch if E_inval { xdg_data_home = getenv ("HOME") + "/.local/share"; }
+  load_path = xdg_data_home + "/poke" + ":" + load_path;
+
+  defvar xdg_data_dirs = "";
+  try xdg_data_dirs = getenv ("XDG_DATA_DIRS");
+  catch if E_inval { }
+  if (xdg_data_dirs != "")
+    load_path = xdg_data_dirs + ":" + load_path;
+}
+
+/* Add the current working directory.  */
+load_path = ".:" + load_path;
