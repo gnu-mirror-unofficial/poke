@@ -192,7 +192,7 @@ load_module (struct pkl_parser *parser,
   pkl_ast ast;
   FILE *fd;
   const char *emsg;
-  
+
   /* Derive the name of the file containing the module.  It is:
      MODULE.pk */
   strcpy (filename, module);

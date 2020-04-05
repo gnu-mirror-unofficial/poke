@@ -1,5 +1,10 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pkl-gen.c: Remove trailing blanks.
+	* src/pkl-tab.y: Likewise.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-ast.h (PKL_AST_BUILTIN_GETENV): Define.
 	* src/pkl-tab.y (BUILTIN_GETENV): New token.
 	(builtin): Add rule for getenv.
