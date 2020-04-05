@@ -8163,7 +8163,7 @@ string @var{str} and returns it as a signed 64-bit integer.
 @cindex base, argument in @command{atoi}
 The accepted values for @var{base} are @code{2}, @code{8}, @code{10}
 (the default) and @code{16}.  If any other base is requested an
-@code{E_generic} exception is raised.
+@code{E_inval} exception is raised.
 
 Note that atoi allows for extra information to be stored in @var{str}
 after the parsed integer.  Thus, this works:

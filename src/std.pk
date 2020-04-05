@@ -99,7 +99,7 @@ defun atoi = (string s, int b = 10) long:
       }
 
     if (!(b in [2, 8, 10, 16]))
-      raise E_generic;
+      raise E_inval;
 
     for (c in s)
     {

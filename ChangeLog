@@ -1,5 +1,12 @@
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/std.pk (atoi): Raise E_inval instead of E_generic when the
+	provided base is not supported.
+	* doc/poke.texi (atoi): Update accordingly.
+	* testsuite/poke.std/atoi-14.pk: New test.
+
+2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pkl-rt.pk: Further simplifications.
 
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
