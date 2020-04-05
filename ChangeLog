@@ -1,3 +1,9 @@
+2020-04-04  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* bootstrap.conf: Add gnulib module strchrnul.
+	* src/pkl-trans.c: Include string.h and xstrndup.h.
+	(pkl_trans1_ps_print_stmt): Code cleanup using strchrnul.
+
 2020-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Load Path): Add an example on updating the

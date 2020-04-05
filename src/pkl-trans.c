@@ -21,7 +21,9 @@
 #include <gettext.h>
 #define _(str) gettext (str)
 #include <stdio.h>
+#include <string.h>
 #include <xalloc.h>
+#include "xstrndup.h"
 
 #include "pk-utils.h"
 
@@ -520,17 +522,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
   /* Process the prefix string, if any.  */
   if (*p != '%')
     {
-      char *prefix = xmalloc (strlen (fmt) + 1);
-      size_t j = 0;
-
-      while (*p != '%' && *p != '\0')
-            {
-              prefix[j] = *p;
-              p++;
-              j++;
-            }
-      prefix[j] = '\0';
-      PKL_AST_PRINT_STMT_PREFIX (print_stmt) = prefix;
+      p = strchrnul (fmt, '%');
+      PKL_AST_PRINT_STMT_PREFIX (print_stmt) = xstrndup (fmt, p - fmt);
     }
 
   /* Process the format string.  */
@@ -796,19 +789,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
       /* Add the optional suffix to the argument.  */
       if (*p != '\0' && *p != '%')
         {
-          /* This argument has a prefix.  */
-          size_t j;
-          char *suffix = xmalloc (strlen (fmt) + 1);
-
-          j = 0;
-          while (*p != '%' && *p != '\0')
-            {
-              suffix[j] = *p;
-              p++;
-              j++;
-            }
-          suffix[j] = '\0';
-          PKL_AST_PRINT_STMT_ARG_SUFFIX (arg) = suffix;
+          char *end = strchrnul (p, '%');
+          PKL_AST_PRINT_STMT_ARG_SUFFIX (arg) = xstrndup (p, end - p);
+          p = end;
         }
     }
 
