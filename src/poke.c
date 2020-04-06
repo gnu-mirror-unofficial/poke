@@ -18,7 +18,6 @@
 
 #include <config.h>
 #include <progname.h>
-#include <xalloc.h>
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -39,6 +38,7 @@
 #include "pk-repl.h"
 #include "pk-term.h"
 #include "poke.h"
+#include "pk-utils.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */
@@ -396,13 +396,11 @@ initialize (int argc, char *argv[])
   poke_compiler = pkl_new (poke_vm, poke_datadir);
   /* XXX: use pkl_load here.  */
   {
-    char *poke_std_pk;
+    char *poke_std_pk = pk_str_concat (poke_datadir, "/std.pk", NULL);
 
-    poke_std_pk = xmalloc (strlen (poke_datadir) + strlen ("/std.pk") + 1);
-    strcpy (poke_std_pk, poke_datadir);
-    strcat (poke_std_pk, "/std.pk");
     if (!pkl_compile_file (poke_compiler, poke_std_pk))
       exit (EXIT_FAILURE);
+
     free (poke_std_pk);
   }
 
@@ -432,11 +430,7 @@ initialize_user ()
   if (homedir != NULL)
     {
       int ret;
-      char *pokerc;
-
-      pokerc = alloca (strlen (homedir) + strlen ("/.pokerc") + 1);
-      strcpy (pokerc, homedir);
-      strcat (pokerc, "/.pokerc");
+      char *pokerc = pk_str_concat (homedir, "/.pokerc", NULL);
 
       if (pk_file_readable (pokerc) == NULL)
         {
@@ -446,6 +440,8 @@ initialize_user ()
           else
             return;
         }
+
+      free (pokerc);
     }
 
   /* If no ~/.pokerc file was found, acknowledge the XDG Base
@@ -468,30 +464,18 @@ initialize_user ()
     if (xdg_config_dirs == NULL)
       xdg_config_dirs = "/etc/xdg";
 
-    char *config_path = alloca (strlen (xdg_config_dirs)
-                                + 1 /* : */
-                                + strlen (xdg_config_home)
-                                + 1);
-    strcpy (config_path, xdg_config_dirs);
-    strcat (config_path, ":");
-    strcat (config_path, xdg_config_home);
+    char *config_path = pk_str_concat (xdg_config_dirs, ":", xdg_config_home, NULL);
 
     char *dir = strtok (config_path, ":");
     do
       {
-        char *config_filename = NULL;
-
         /* Ignore empty entries.  */
         if (*dir == '\0')
           continue;
 
         /* Mount the full path and determine whether the resulting
            file is readable. */
-        config_filename = alloca (strlen (dir)
-                                  + strlen ("/poke/pokerc.conf")
-                                  + 1);
-        strcpy (config_filename, dir);
-        strcat (config_filename, "/poke/pokerc.conf");
+        char *config_filename = pk_str_concat (dir, "/poke/pokerc.conf", NULL);
 
         if (pk_file_readable (config_filename) == NULL)
           {
@@ -501,8 +485,12 @@ initialize_user ()
               exit (EXIT_FAILURE);
             break;
           }
+
+        free (config_filename);
       }
     while ((dir = strtok (NULL, ":")) != NULL);
+
+    free (config_path);
   }
 }
 

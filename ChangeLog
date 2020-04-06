@@ -1,5 +1,11 @@
 2020-04-06  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* src/poke.c (initialize): Use pk_str_concat instead of
+	strlen/xmalloc/strcpy/strcat.
+	(initialize_user): Likewise.
+
+2020-04-06  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* bootstrap.conf: Add gnulib module stdarg.
 	* src/pk-utils.h: Declaration of pk_str_concat.
 	* src/pk-utils.c: Implementation of pk_str_concat.
