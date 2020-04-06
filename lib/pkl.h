@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* This is the public interface of the Poke Compiler (PKL) services as
+   provided by libpoke.  */
+
+
 #ifndef PKL_H
 #define PKL_H
 
@@ -23,9 +27,76 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "pkl-ast.h"
-#include "pkl-env.h"
 #include "pvm.h"
+
+/*** PKL Abstract Syntax Tree.  ***/
+
+#include "pkl-ast.h"
+
+/*** Compile-time Lexical Environment.  ***/
+
+/* An environment consists on a stack of frames, each frame containing
+   a set of declarations, which in effect are PKL_AST_DECL nodes.
+
+   There are no values bound to the entities being declared, as values
+   are not generally available at compile-time.  However, the type
+   information is always available at compile-time.  */
+
+typedef struct pkl_env *pkl_env;  /* Struct defined in pkl-env.c */
+
+/* Declarations in Poke live in two different, separated name spaces:
+
+   The `main' namespace, shared by types, variables and functions.
+   The `units' namespace, for offset units.  */
+
+#define PKL_ENV_NS_MAIN 0
+#define PKL_ENV_NS_UNITS 1
+
+/* Search in the environment ENV for a declaration with name NAME in
+   the given NAMESPACE, put the lexical address of the first match in
+   BACK and OVER if these are not NULL.  Return the declaration node.
+
+   BACK is the number of frames back the declaration is located.  It
+   is 0-based.
+
+   OVER indicates its position in the list of declarations in the
+   resulting frame.  It is 0-based.  */
+
+pkl_ast_node pkl_env_lookup (pkl_env env, int namespace,
+                             const char *name,
+                             int *back, int *over);
+
+/* The following iterators work on the main namespace.  */
+
+struct pkl_ast_node_iter
+{
+  int bucket;        /* The bucket in which this node resides.  */
+  pkl_ast_node node; /* A pointer to the node itself.  */
+};
+
+
+void pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter);
+void pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter);
+bool pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter);
+
+char *pkl_env_get_next_matching_decl (pkl_env env,
+                                      struct pkl_ast_node_iter *iter,
+                                      const char *name, size_t len);
+
+/* Map over the declarations defined in the top-level compile-time
+   environment, executing a handler.  */
+
+#define PKL_MAP_DECL_TYPES PKL_AST_DECL_KIND_TYPE
+#define PKL_MAP_DECL_VARS  PKL_AST_DECL_KIND_VAR
+
+typedef void (*pkl_map_decl_fn) (pkl_ast_node decl, void *data);
+
+void pkl_env_map_decls (pkl_env env,
+                        int what,
+                        pkl_map_decl_fn cb,
+                        void *data);
+
+/*** Compiler Services.  ***/
 
 /* This is the main header file for the Poke Compiler.  The Poke
    Compiler is an "incremental compiler", i.e. it is designed to
@@ -48,9 +119,9 @@
    types, function etc from the user.
 
    At any point, the user can request to compile a poke expression
-   with `pkl_compile_expression'.  This returns a PVM routine that,
+   with `pkl_compile_expression'.  This returns a PVM program that,
    can be executed in a virtual machine.  It is up to the user to free
-   the returned PVM routine when it is not useful anymore.
+   the returned PVM program when it is not useful anymore.
 
    `pkl_compile_buffer', `pkl_compile_file' and
    `pkl_compile_expression' can be called any number of times, in any
@@ -88,12 +159,11 @@ int pkl_compile_statement (pkl_compiler compiler, const char *buffer, const char
 
 
 /* Like pkl_compile_buffer, but compile a Poke expression and return a
-   PVM routine that evaluates to the expression.  In case of error
+   PVM program that evaluates to the expression.  In case of error
    return NULL.  */
 
-pvm_routine pkl_compile_expression (pkl_compiler compiler,
-                                    const char *buffer, const char **end,
-                                    void **pointers);
+pvm_program pkl_compile_expression (pkl_compiler compiler,
+                                    const char *buffer, const char **end);
 
 /* Return the current compile-time environment in COMPILER.  */
 
@@ -129,6 +199,7 @@ int pkl_quiet_p (pkl_compiler compiler);
 void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p);
 
 /* Diagnostic routines.  */
+/* XXX these should go in some internal header.  */
 
 void pkl_error (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
                 const char *fmt, ...);

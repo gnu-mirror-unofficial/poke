@@ -31,14 +31,15 @@
 #  include "pk-hserver.h"
 #endif
 
-#include "ios.h"
-#include "pk-cmd.h"
 #include "pkl.h"
 #include "pvm.h"
-#include "pk-repl.h"
-#include "pk-term.h"
-#include "poke.h"
+#include "ios.h"
 #include "pk-utils.h"
+#include "pk-term.h"
+
+#include "poke.h"
+#include "pk-cmd.h"
+#include "pk-repl.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */
@@ -66,6 +67,13 @@ char *poke_datadir;
    info file(s).  */
 
 char *poke_infodir;
+
+/* The following global contains the directory holding the source
+   files of the commands written in Poke.  In an installed program,
+   this is the same than poke_datadir, but the POKE_CMDSDIR
+   environment variable can be set to a different value, which is
+   mainly to run an uninstalled poke.  */
+char *poke_cmdsdir;
 
 /* The following global contains the directory holding pickles shipped
    with poke.  In an installed program, this is the same than
@@ -379,6 +387,10 @@ initialize (int argc, char *argv[])
   if (poke_picklesdir == NULL)
     poke_picklesdir = poke_datadir;
 
+  poke_cmdsdir = getenv ("POKECMDSDIR");
+  if (poke_cmdsdir == NULL)
+    poke_cmdsdir = poke_datadir;
+
   poke_infodir = getenv ("POKEINFODIR");
   if (poke_infodir == NULL)
     poke_infodir = PKGINFODIR;
@@ -391,18 +403,9 @@ initialize (int argc, char *argv[])
      runs pvm programs internally.  */
   poke_vm = pvm_init ();
 
-  /* Initialize the poke incremental compiler and load the standard
-     library.  */
+  /* Initialize the poke incremental compiler.  */
   poke_compiler = pkl_new (poke_vm, poke_datadir);
-  /* XXX: use pkl_load here.  */
-  {
-    char *poke_std_pk = pk_str_concat (poke_datadir, "/std.pk", NULL);
-
-    if (!pkl_compile_file (poke_compiler, poke_std_pk))
-      exit (EXIT_FAILURE);
-
-    free (poke_std_pk);
-  }
+  pvm_set_compiler (poke_vm, poke_compiler);
 
   /* Initialize the command subsystem.  This should be done even if
      called non-interactively.  */

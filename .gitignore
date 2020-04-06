@@ -20,7 +20,7 @@ config.h.in
 /config.log
 /config.status
 /configure.lineno
-/lib
+/gl
 /po/.gitignore
 /po/.reference
 /po/LINGUAS

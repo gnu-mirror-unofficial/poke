@@ -20,14 +20,17 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <inttypes.h>
+#include "xalloc.h"
 
-#include "pk-utils.h"
-
-#include "poke.h" /* XXX for poke_compiler, this should go away.  */
+#include "pkl.h"
+#include "pvm.h"
 
 #include "pkl-asm.h"
+
+#include "pvm-alloc.h"
+#include "pk-utils.h"
 #include "pk-term.h"
-#include "pvm.h"
 
 pvm_val
 pvm_make_int (int32_t value, int size)
@@ -316,14 +319,13 @@ pvm_make_closure_type (pvm_val rtype,
 }
 
 pvm_val
-pvm_make_cls (pvm_routine routine, void **pointers)
+pvm_make_cls (pvm_program program)
 {
   pvm_val_box box = pvm_make_box (PVM_VAL_TAG_CLS);
   pvm_cls cls = pvm_alloc_cls ();
 
-  cls->routine = routine;
-  cls->pointers = pointers;
-  cls->entry_point = PVM_ROUTINE_BEGINNING (routine);
+  cls->program = program;
+  cls->entry_point = pvm_program_beginning (program);
   cls->env = NULL; /* This should be set by a PEC instruction before
                       using the closure.  */
 
@@ -1157,7 +1159,7 @@ pvm_print_string (pvm_val string)
 int
 pvm_call_pretty_printer (pvm vm, pvm_val val)
 {
-  pvm_routine routine;
+  pvm_program program;
   int ret;
   pvm_val cls = pvm_get_struct_method (val, "_print");
   pkl_asm pasm;
@@ -1166,7 +1168,7 @@ pvm_call_pretty_printer (pvm vm, pvm_val val)
     return PVM_EXIT_OK;
 
   pasm = pkl_asm_new (NULL /* ast */,
-                      poke_compiler, 1 /* prologue */);
+                      pvm_compiler (vm), 1 /* prologue */);
 
   /* Remap the struct.  XXX this shouldn't be needed, because it won't
      have any effect in not-mapped structs.  What we need to do is to
@@ -1179,11 +1181,11 @@ pvm_call_pretty_printer (pvm vm, pvm_val val)
   pkl_asm_insn (pasm, PKL_INSN_PUSH, cls);
   pkl_asm_insn (pasm, PKL_INSN_CALL);
 
-  /* Run the routine in the poke VM.  */
-  routine = pkl_asm_finish (pasm, 1 /* epilogue */, NULL /* pointers */);
-  jitter_routine_make_executable_if_needed (routine);
-  ret = pvm_run (vm, routine, NULL);
-  pvm_destroy_routine (routine);
+  /* Run the program in the poke VM.  */
+  program = pkl_asm_finish (pasm, 1 /* epilogue */);
+  pvm_program_make_executable (program);
+  ret = pvm_run (vm, program, NULL);
+  pvm_destroy_program (program);
 
   return (ret == PVM_EXIT_OK);
 }

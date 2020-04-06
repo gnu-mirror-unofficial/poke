@@ -29,7 +29,9 @@ check-DEJAGNU: site.exp
 	  NBDKIT="$(NBDKIT)" \
           POKESTYLESDIR="$(top_srcdir)/etc" \
           POKEPICKLESDIR="$(top_srcdir)/pickles" \
-          POKEDATADIR="$(top_srcdir)/src" \
+          POKEDATADIR="$(top_srcdir)/lib" \
+          POKECMDSDIR="$(top_srcdir)/src" \
+          POKE_LOAD_PATH="$(top_srcdir)/src" \
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
 			$(RUNTESTFLAGS); \
 	else \

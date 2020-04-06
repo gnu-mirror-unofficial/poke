@@ -1,3 +1,18 @@
+2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pvm-program.c: Remove trailing whitespaces.
+
+2020-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* The big lib-ization.
+
+2020-04-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* run.in (POKEDATADIR): Point to lib.
+	* src/Makefile.am (poke_LDADD): Link with libpoke.
+	* configure.ac: Add lib/Makefile to AC_CONFIG_FILES.
+	* Makefile.am (SUBDIRS): Add lib.
+
 2020-04-08  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-cmd.c (pk_cmd_get_next_match): Fix endless loop

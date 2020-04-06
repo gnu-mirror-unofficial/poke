@@ -24,9 +24,10 @@
 
 #include "pkl.h"
 #include "pvm.h"
+#include "pk-term.h"
+
 #include "poke.h"
 #include "pk-cmd.h"
-#include "pk-term.h"
 
 static void
 print_var_decl (pkl_ast_node decl, void *data)

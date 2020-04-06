@@ -29,6 +29,6 @@ common_mandeps = $(top_srcdir)/configure.ac
 
 poke.1: $(top_srcdir)/src/poke.c $(common_mandeps)
 	$(MAKE) $(AM_MAKEFLAGS) $(builddir)/../src/poke$(EXEEXT)
-	POKEDATADIR=$(abs_top_srcdir)/src \
+	$(top_builddir)/run \
            $(HELP2MAN) -p poke --name="The GNU extensible binary editor" \
 		$(builddir)/../src/poke$(EXEEXT) -o $@

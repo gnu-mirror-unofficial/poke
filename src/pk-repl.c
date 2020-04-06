@@ -18,12 +18,17 @@
 
 #include <config.h>
 
+#include <signal.h>
+#include <unistd.h>
+#include <setjmp.h>
+#include <stdlib.h>
 #include "readline.h"
 #if defined HAVE_READLINE_HISTORY_H
 # include <readline/history.h>
 #endif
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
+#include "xalloc.h"
 
 #include "poke.h"
 #include "pk-term.h"
@@ -31,10 +36,6 @@
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif
-
-#include <signal.h>
-#include <unistd.h>
-#include <setjmp.h>
 
 static sigjmp_buf ctrlc_buf;
 

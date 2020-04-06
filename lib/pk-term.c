@@ -18,15 +18,15 @@
 
 #include <config.h>
 
+#include <stdlib.h> /* For exit.  */
+#include <assert.h> /* For assert. */
 #include <string.h>
 #include <unistd.h> /* For isatty */
 #include <textstyle.h>
 
-#include "poke.h" /* For poke_ostream.  */
-
 /* The following global is the libtextstyle output stream to use to
    emit contents to the terminal.  */
-styled_ostream_t poke_ostream;
+styled_ostream_t pk_ostream;
 
 void
 pk_term_init (int argc, char *argv[])
@@ -76,7 +76,7 @@ pk_term_init (int argc, char *argv[])
 #endif
 
   /* Create the output styled stream.  */
-  poke_ostream =
+  pk_ostream =
     (color_mode == color_html
      ? html_styled_ostream_create (file_ostream_create (stdout),
                                    style_file_name)
@@ -87,19 +87,19 @@ pk_term_init (int argc, char *argv[])
 void
 pk_term_shutdown ()
 {
-  styled_ostream_free (poke_ostream);
+  styled_ostream_free (pk_ostream);
 }
 
 void
 pk_term_flush ()
 {
-  ostream_flush (poke_ostream, FLUSH_THIS_STREAM);
+  ostream_flush (pk_ostream, FLUSH_THIS_STREAM);
 }
 
 void
 pk_puts (const char *str)
 {
-  ostream_write_str (poke_ostream, str);
+  ostream_write_str (pk_ostream, str);
 }
 
 __attribute__ ((__format__ (__printf__, 1, 2)))
@@ -115,7 +115,7 @@ pk_printf (const char *format, ...)
   assert (r != -1);
   va_end (ap);
 
-  ostream_write_str (poke_ostream, str);
+  ostream_write_str (pk_ostream, str);
   free (str);
 }
 
@@ -129,20 +129,20 @@ pk_term_indent (unsigned int lvl,
 void
 pk_term_class (const char *class)
 {
-  styled_ostream_begin_use_class (poke_ostream, class);
+  styled_ostream_begin_use_class (pk_ostream, class);
 }
 
 void
 pk_term_end_class (const char *class)
 {
-  styled_ostream_end_use_class (poke_ostream, class);
+  styled_ostream_end_use_class (pk_ostream, class);
 }
 
 void
 pk_term_hyperlink (const char *url, const char *id)
 {
 #ifdef HAVE_TEXTSTYLE_HYPERLINK_SUPPORT
-  styled_ostream_set_hyperlink (poke_ostream, url, id);
+  styled_ostream_set_hyperlink (pk_ostream, url, id);
 #endif
 }
 
@@ -150,7 +150,7 @@ void
 pk_term_end_hyperlink (void)
 {
 #ifdef HAVE_TEXTSTYLE_HYPERLINK_SUPPORT
-  styled_ostream_set_hyperlink (poke_ostream, NULL, NULL);
+  styled_ostream_set_hyperlink (pk_ostream, NULL, NULL);
 #endif
 }
 

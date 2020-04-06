@@ -94,7 +94,7 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
     13  Memory Management
       13.1  Using ASTREF
       13.2  Using ASTDEREF
-      13.3  PVM values in PVM routines
+      13.3  PVM values in PVM programs
       13.4  PVM values in AST nodes
     14  Terminal Handling
       14.1  pk-term
@@ -102,19 +102,24 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
       14.3  Debugging Styling
     15  Debugging Poke
       15.1  Building with Debugging support
-      15.2  Using GDB extensions
-      15.3  Valgrind and Poke
-      15.4  Debugging PVM Assembly Code
+      15.2  Invoking GDB to debug an uninstalled poke
+      15.3  Using GDB extensions
+      15.4  Valgrind and Poke
+      15.5  Debugging PVM Assembly Code
     16  Future Developments
     17  Appendix: The Source Tree
-      17.1  The Compiler
-      17.2  The Poke Virtual Machine
-      17.3  The IO Subsystem
-      17.4  Poke Program
-      17.5  Pickles and Libraries
-      17.6  Test Suite
-      17.7  Documentation
-      17.8  Other Stuff
+      17.1  The poke library
+        17.1.1  The Compiler
+        17.1.2  The Poke Virtual Machine
+        17.1.3  The IO Subsystem
+        17.1.4  Poke Standard Library
+        17.1.5  Terminal Services
+        17.1.6  Utility Services
+      17.2  The poke utility
+      17.3  Pickles
+      17.4  Test Suite
+      17.5  Documentation
+      17.6  Other Stuff
 
 
 Nomenclature
@@ -712,6 +717,11 @@ This figure depicts the overall architecture of Poke::
   | command  |
   +----------+
 
+The compiler, PVM and IO subsystems are provided by a shared library
+``libpoke``.
+
+The command subsystem resides in the ``poke`` executable.
+
 The Poke Compiler
 -----------------
 
@@ -1263,7 +1273,7 @@ This works because ``pkl_ast_make_xxx`` does an ``ASTREF`` to ``b``
 internally.  The final result is that the reference counter of ``b``
 doesn't change at all.
   
-PVM values in PVM routines
+PVM values in PVM programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PVM routines (data structures of type ``pvm_routine``) are
@@ -1280,19 +1290,17 @@ routine contains a pointer to a ``pvm_val_box``::
   push ulong<64>0
   regvar $eidx
 
-There are two places where PVM routines are stored in other data
-structures: in closures, and in the compiler.
+There is only one place where jitter routines are stored in other data
+structures: the PVM program abstraction.
 
-A closure is a kind of PVM value itself, and therefore allocated by
-the GC.  It is composed by a PVM routine, a run-time environment and
-an entry point into the routine (as a Jittery VM ``program point``)::
+PVM programs are allocated using ``pvm_alloc``, i.e. by the GC.  They
+are composed by a PVM routine and other fields::
 
-  struct pvm_cls
+  struct pvm_program
   {
     pvm_routine routine;
-    pvm_program_point entry_point;
-    struct pvm_env *env;
-  };
+    [...]
+  }
 
 However, since ``routine`` is malloc-allocated, the GC can't traverse
 it.  Consequently, the references to contained boxed values won't be
@@ -1300,44 +1308,18 @@ accounted for, and these values will be collected if there are no more
 references to them!
 
 The solution, recommended by Luca Saiu, is to keep an array of
-pointers in the closure structure, containing the pointers to every
-boxed value used in ``routine``::
+pointers in the PVM program structure, containing the pointers to
+every boxed value used in ``routine``::
 
-  struct pvm_cls
+  struct pvm_program
   {
     pvm_routine routine;
     void **pointers;
-    const void *entry_point;
-    struct pvm_env *env;
+    [...]
   };
 
-The subsystem responsible for collecting the pointers is the
-macro-assembler in ``pkl-asm.c``.  ``pkl_asm_finish`` will return the
-array of pointers, and it is up to the caller (in the code generator)
-to install it the corresponding closure structure.
-
-The second place where a PVM routine is stored in other data
-structures is the compiler functions ``pkl_compile_file`` and
-``pkl_compile_buffer``.  In both functions, the compiled PVM routine
-is executed and then discarded.  However, it is still required to have
-the ``pointers`` array linked from the C stack, to prevent the GC from
-freeing values used in the routine.  That's the purpose of the weird
-local variables, which are set but never used::
-
-  int
-  pkl_compile_buffer (pkl_compiler compiler,
-                      char *buffer, char **end)
-  {
-    ...
-    /* Note that the sole purpose of `pointers' is to serve as a root
-       (in the stack) for the GC, to prevent the boxed values in ROUTINE
-       to be collected.  Ugly as shit, but conservative garbage
-       collection doesn't really work.  */
-    void *pointers;
-    ...
-    routine = rest_of_compilation (compiler, ast, &pointers);
-    ...
-  }
+The pointers are collected in the ``pvm-program.c`` functions that
+append parameters to instructions.
 
 PVM values in AST nodes
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1503,6 +1485,14 @@ When configured in sub-package mode, as is the case when used with
 Poke, Jitter will only actually compile the single most efficient
 enabled dispatch.
 
+Invoking GDB to debug an uninstalled poke
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since we are using libtool, ``$(builddir)/src/poke`` is a shell
+script.  In order to debug the uninstalled poke, you can do::
+
+  $ libtool --mode=execute ./run gdb ./src/poke
+
 Using GDB extensions
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -1651,95 +1641,123 @@ Future Developments
 Appendix: The Source Tree
 -------------------------
 
-The Compiler
-~~~~~~~~~~~~
-Support for abstract syntax trees
-  ``src/pkl-ast.c``, ``src/pkl-ast.h``, ``src/pkl-ops.def``,
-  ``src/pkl-attrs.def``
-
-The compiler driver
-  ``src/pkl.h``, ``src/pkl.c``, ``src/pkl-pass.c``,
-  ``src/pkl-pass.h``
-   
-The lexer, and parser
-  ``src/pkl-lex.l``, ``src/pkl-tab.y``, ``src/pkl-parser.c``,
-  ``src/pkl-parser.h``
-   
-Compile-time lexical environment
-  ``src/pkl-env.h, ``src/pkl-env.c``
-
-Analysis phases
-  ``src/pkl-anal.c``, ``src/pkl-anal.h``
-
-Transformation phases
-  ``src/pkl-trans.c``, ``src/pkl-trans.h``
-
-Type system related phases
-  ``src/pkl-typify.c``, ``src/pkl-typify.h``
-
-Constant folding phase
-  ``src/pkl-fold.c``, ``src/pkl-fold.h``
-
-Coercions phases
-  ``src/pkl-promo.c``, ``src/pkl-promo.h``
-
-The code generator
-  ``src/pkl-gen.h``, ``src/pkl-gen.c``, ``src/pkl-gen.pks``
-  
-The macro-assembler
-  ``src/pkl-insn.def``, ``src/pkl-asm.h``, ``src/pkl-asm.c``,
-  ``src/pkl-asm.pks``
-  
-Our good friend ras
-  ``src/ras``
-
-Compiler run-time library
-  ``src/pkl-rt.pk``
-
-The Poke Virtual Machine
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Virtual machine driver
-  ``src/pvm.c``, ``src/pvm.h``
-
-Virtual machine values
-  ``src/pvm-val.c``, ``src/pvm-val.h``
-
-Memory allocator with garbage collection
-  ``src/pvm-alloc.c``, ``src/pvm-alloc.h``
-
-Run-time environment
-  ``src/pvm-env.c``, ``src/pvm-env.h``
-
-Virtual machine instructions
-  ``src/pvm.jitter``
-
-The IO Subsystem
+The poke library
 ~~~~~~~~~~~~~~~~
 
+The source files for ``libpoke`` are located in the ``lib/``
+subdirectory.
+
+The Compiler
+............
+
+Public Headers
+  ``lib/pkl.h``, ``lib/pkl-ast.h``
+
+Support for abstract syntax trees
+  ``lib/pkl-ast.c``, ``lib/pkl-ops.def``,
+  ``lib/pkl-attrs.def``
+
+The compiler driver
+  ``lib/pkl.c``, ``lib/pkl-pass.c``,
+  ``lib/pkl-pass.h``
+   
+The lexer, and parser
+  ``lib/pkl-lex.l``, ``lib/pkl-tab.y``, ``lib/pkl-parser.c``,
+  ``lib/pkl-parser.h``
+   
+Compile-time lexical environment
+  ``lib/pkl-env.h, ``lib/pkl-env.c``
+
+Analysis phases
+  ``lib/pkl-anal.c``, ``lib/pkl-anal.h``
+
+Transformation phases
+  ``lib/pkl-trans.c``, ``lib/pkl-trans.h``
+
+Type system related phases
+  ``lib/pkl-typify.c``, ``lib/pkl-typify.h``
+
+Constant folding phase
+  ``lib/pkl-fold.c``, ``lib/pkl-fold.h``
+
+Coercions phases
+  ``lib/pkl-promo.c``, ``lib/pkl-promo.h``
+
+The code generator
+  ``lib/pkl-gen.h``, ``lib/pkl-gen.c``, ``lib/pkl-gen.pks``
+  
+The macro-assembler
+  ``lib/pkl-insn.def``, ``lib/pkl-asm.h``, ``lib/pkl-asm.c``,
+  ``lib/pkl-asm.pks``
+  
+Our good friend ras
+  ``lib/ras``
+
+Compiler run-time library
+  ``lib/pkl-rt.pk``
+
+The Poke Virtual Machine
+........................
+
+Public Headers
+  ``lib/pvm.h``
+
+Virtual machine driver
+  ``lib/pvm.c``
+
+Virtual machine values
+  ``lib/pvm-val.c``
+
+Virtual machine programs.
+  ``lib/pvm-program.c``, ``lib/pvm-program.h``
+
+Memory allocator with garbage collection
+  ``lib/pvm-alloc.c``, ``lib/pvm-alloc.h``
+
+Run-time environment
+  ``lib/pvm-env.c``, ``lib/pvm-env.h``
+
+Virtual machine instructions
+  ``lib/pvm.jitter``
+
+The IO Subsystem
+................
+
 Support for IO spaces
-  ``src/ios.h``, ``src/ios.c``
+  ``lib/ios.h``, ``lib/ios.c``
 
 Support for IO devices
-  ``src/ios-dev.h``
+  ``lib/ios-dev.h``
 
 Supported IO devices
-  ``src/ios-dev-file.c``, ``src/ios-dev-mem.c``
+  ``lib/ios-dev-file.c``, ``lib/ios-dev-mem.c``, `lib/ios-dev-nbd.c``
 
-Poke Program
-~~~~~~~~~~~~
+Poke Standard Library
+.....................
+
+Standard library
+  ``lib/std.pk``
+
+Terminal Services
+.................
+
+Terminal stuff
+  ``lib/pk-term.h``, ``lib/pk-term.c``
+
+Utility Services
+................
+
+Utility functions used by everyone else
+  ``lib/pk-utils.h``, ``lib/pk-utils.c``
+
+The poke utility
+~~~~~~~~~~~~~~~~
 
 Main program
   ``src/poke.h``, ``src/poke.c``
 
-Utility functions used by everyone else
-  ``src/pk-utils.h``, ``src/pk-utils.c``
-
 Infrastructure for writing poke commands
   ``src/pk-cmd.h``, ``src/pk-cmd.c``
-
-Terminal stuff
-  ``src/pk-term.h``, ``src/pk-term.c``
 
 REPL
   ``src/pk-repl.h, ``src/pk-repl.c``
@@ -1753,11 +1771,8 @@ Commands
   ``src/pk-set.c``, ``src/pk-vm.c``, ``src/pk-save.pk``,
   ``src/pk-copy.pk``
 
-Pickles and Libraries
-~~~~~~~~~~~~~~~~~~~~~
-
-Standard library
-  ``src/std.pk``
+Pickles
+~~~~~~~
 
 Pickles
   ``pickles/elf.pk``, ``pickles/ctf.pk``

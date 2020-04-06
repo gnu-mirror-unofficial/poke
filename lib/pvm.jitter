@@ -118,6 +118,10 @@ early-c
 #   include <config.h>
 #   include <stdlib.h>
 #   include <string.h>
+#   include <assert.h>
+#   include "xalloc.h"
+
+#   include "pvm-alloc.h"
   end
 end
 

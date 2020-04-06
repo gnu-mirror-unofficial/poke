@@ -1,6 +1,6 @@
-/* poke.h - Interactive editor for binary files.  */
+/* pvm-program.h - Internal header for PVM programs.  */
 
-/* Copyright (C) 2019, 2020 Jose E. Marchesi */
+/* Copyright (C) 2020 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef POKE_H
-#define POKE_H
+#ifndef PVM_PROGRAM_H
+#define PVM_PROGRAM_H
 
-#include <config.h>
-#include "pkl.h"
+#include "pvm-vm.h"
 
-extern int poke_interactive_p;
-extern int poke_quiet_p;
-extern int poke_exit_p;
-#if HAVE_HSERVER
-extern int poke_hserver_p;
-#endif
-extern int poke_exit_code;
-extern pkl_compiler poke_compiler;
-extern pvm poke_vm;
-extern char *poke_datadir;
-extern char *poke_infodir;
-extern char *poke_picklesdir;
-extern char *poke_cmdsdir;
+/* Get the jitter routine associated with the program PROGRAM.  */
+pvm_routine pvm_program_routine (pvm_program program);
 
-void pk_print_version ();
-
-#endif /* !POKE_H */
+#endif /* ! PVM_PROGRAM_H */

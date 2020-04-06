@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include "xalloc.h"
 
 #include "pk-utils.h"
 

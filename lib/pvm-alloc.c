@@ -41,8 +41,11 @@ pvm_alloc_strdup (const char *string)
 static void
 pvm_alloc_finalize_closure (void *object, void *client_data)
 {
-  pvm_cls cls = (pvm_cls) object;
-  pvm_destroy_routine (cls->routine);
+  /* XXX this causes a crash because of a cycle in the finalizers:
+     routines of recursive PVM programs contain a reference to
+     themselves, be it directly or indirectly.  */
+  /* pvm_cls cls = (pvm_cls) object; */
+  /*  pvm_destroy_program (PVM_VAL_CLS_PROGRAM (cls)); */
 }
 
 void *

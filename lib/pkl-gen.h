@@ -44,20 +44,16 @@
    COMPILER is the Pkl compiler driving the compilation.
 
    PASM and PASM2 are stacks of macro-assemblers.  Assemblers in PASM
-   are used for assembling the main routine, struct mappers, and
+   are used for assembling the main program, struct mappers, and
    functions.  Assemblers in PASM2 are used for compiling struct
    constructors.
 
    CUR_PASM and CUR_PASM2 are the pointers to the top of PASM and
    PASM2, respectively.
 
-   ROUTINE is the main PVM routine being compiled.  When the phase is
-   completed, the routine is "finished" (in jitter parlance) and ready
+   PROGRAM is the main PVM program being compiled.  When the phase is
+   completed, the program is "finished" (in PVM parlance) and ready
    to be used.
-
-   POINTERS is an array of pointers to the boxed PVM values referenced
-   in ROUTINE.  It is necessary in order to provide the GC visibility
-   into the routine.
 
    IN_STRUCT_DECL is 1 when a struct declaration is being generated.
    0 otherwise.
@@ -93,8 +89,7 @@ struct pkl_gen_payload
   pkl_asm pasm2[PKL_GEN_MAX_PASM];
   int cur_pasm;
   int cur_pasm2;
-  pvm_routine routine;
-  void *pointers;
+  pvm_program program;
   int in_struct_decl;
   int in_mapper;
   int in_constructor;

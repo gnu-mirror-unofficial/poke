@@ -165,5 +165,9 @@ catch if E_inval { load_path = getenv ("HOME") + "/.local/share/poke:" + load_pa
 try load_path = getenv ("XDG_DATA_DIRS") + ":" + load_path;
 catch if E_inval { }
 
+/* Add the directories in POKE_LOAD_PATH, if defined.  */
+try load_path = getenv ("POKE_LOAD_PATH") + ":" + load_path;
+catch if E_inval { }
+
 /* Add the current working directory.  */
 load_path = ".:" + load_path;

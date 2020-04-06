@@ -49,8 +49,6 @@
 #define YYLTYPE pkl_ast_loc
 #define YYDEBUG 1
 #include <pkl-tab.h>
-#include "pk-cmd.h"
-
 
 #define YY_FATAL_ERROR(msg)                             \
   do                                                    \

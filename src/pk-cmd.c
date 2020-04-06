@@ -33,12 +33,14 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
-#include "poke.h"
-#include "pkl.h" /* For pkl_compile_buffer */
-#include "pkl-parser.h"
+#include "pkl.h"
 #include "ios.h"
-#include "pk-cmd.h"
 #include "pk-term.h"
+
+#include "poke.h"
+#include "pkl-parser.h"
+#include "pk-cmd.h"
+
 
 /* Table of supported commands.  */
 
@@ -278,13 +280,6 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
   const char *a;
   int besilent = 0;
 
-  /* Note that the sole purpose of `pointers' is to serve as a root
-     (in the stack) for the GC, to prevent the boxed values in the
-     program returned by pkl_compile_expression below to be collected.
-     XXX this should be hidden by a pkl_prog abstraction most
-     probably.  */
-  void *pointers;
-
   /* Skip blanks, and return if the command is composed by only blank
      characters.  */
   p = skip_blanks (str);
@@ -379,17 +374,16 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
                 case 'e':
                   {
                     /* Compile a poke program.  */
-                    pvm_routine routine;
+                    pvm_program program;
                     const char *end;
                     const char *program_string;
 
                     program_string = p;
-                    routine = pkl_compile_expression (poke_compiler,
-                                                      program_string, &end,
-                                                      &pointers);
-                    if (routine != NULL)
+                    program = pkl_compile_expression (poke_compiler,
+                                                      program_string, &end);
+                    if (program != NULL)
                       {
-                        argv[argc].val.routine = routine;
+                        argv[argc].val.program = program;
                         match = 1;
 
                         argv[argc].type = PK_CMD_ARG_EXP;
@@ -579,7 +573,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
       if (argv[i].type == PK_CMD_ARG_EXP
           || argv[i].type == PK_CMD_ARG_DEF
           || argv[i].type == PK_CMD_ARG_STMT)
-        pvm_destroy_routine (argv[i].val.routine);
+        pvm_destroy_program (argv[i].val.program);
     }
 
   if (!besilent)
@@ -758,7 +752,8 @@ pk_cmd_init (void)
 
   /* Compile commands written in Poke.  */
 
-  if (asprintf (&poke_cmdfile, "%s/%s", poke_datadir, "pk-cmd.pk") == -1)
+  /* XXX: replace with pkl_load ("pk-cmd.pk") */
+  if (asprintf (&poke_cmdfile, "%s/%s", poke_cmdsdir, "pk-cmd.pk") == -1)
     {
       perror ("pk_cmd_init");
       exit (EXIT_FAILURE);

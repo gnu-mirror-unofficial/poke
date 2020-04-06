@@ -21,8 +21,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "pvm-val.h"
-#include "pvm-env.h"
+#include "pvm.h"
 #include "pvm-alloc.h"
 
 /* The variables in each frame are organized in an array that can be

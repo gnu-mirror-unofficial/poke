@@ -81,7 +81,7 @@
 #
 # This translates into a C macro RAS_FUNCTION_NAME(CLOSURE), with a
 # single argument which should be an l-value.  The macro will compile
-# the function into a pvm_routine, and install it into a PVM closure
+# the function into a pvm_program, and install it into a PVM closure
 # value that is assigned to CLOSURE.
 #
 # Expanding Macros
@@ -191,7 +191,7 @@
 #       ...
 #  .c }
 #
-# The above will trigger run-time errors, because the bar_label jitter
+# The above will trigger run-time errors, because the bar_label PVM
 # label is used multiple times.  The solution is to declare the label
 # in the inner context using the .label directive, like this:
 #
@@ -287,7 +287,7 @@
 # Another difficulty when dealing with lexical addresses is that
 # different addresses are required to refer to the same variable,
 # depending on the context.  For example, consider the following PVM
-# routine:
+# program:
 #
 # pushf
 # regvar        ; A
@@ -591,7 +591,7 @@ BEGIN {
 
     out("#define RAS_FUNCTION_" toupper($2) "(CLOSURE)  \\")
     out("\tdo {                                         \\")
-    out("\tpvm_routine routine;                         \\")
+    out("\tpvm_program program;                         \\")
     out("\t                                             \\")
     out("\tPKL_GEN_PUSH_ASM (pkl_asm_new (PKL_PASS_AST, \\")
     out("\t                               PKL_GEN_PAYLOAD->compiler, \\")
@@ -613,13 +613,11 @@ BEGIN {
     if (current_entity == "function")
     {
         out("\t{                                                       \\")
-        out("\t  void *pointers;                                       \\")
-        out("\t  routine = pkl_asm_finish (RAS_ASM,                    \\")
-        out("\t                            0 /* epilogue */,           \\")
-        out("\t                            &pointers);                 \\")
+        out("\t  program = pkl_asm_finish (RAS_ASM,                    \\")
+        out("\t                            0 /* epilogue */);          \\")
         out("\t  PKL_GEN_POP_ASM;                                      \\")
-        out("\t  jitter_routine_make_executable_if_needed (routine);   \\")
-        out("\t  (CLOSURE) = pvm_make_cls (routine, pointers);         \\")
+        out("\t  pvm_program_make_executable (program);                \\")
+        out("\t  (CLOSURE) = pvm_make_cls (program);                   \\")
         out("\t}                                                       \\")
     }
     out("\t} while (0)")
@@ -641,7 +639,7 @@ BEGIN {
         {
             # Emit label declarations
             for (label in labels)
-                print "\t__attribute__((unused)) jitter_label " label \
+                print "\t__attribute__((unused)) pvm_program_label " label \
                       "_label = pkl_asm_fresh_label (RAS_ASM); \\"
         }
         else
@@ -710,7 +708,7 @@ BEGIN {
 /^[ \t]*\.label[ \t]+\.[a-zA-Z][0-9a-zA-Z_]*[ \t]*(;.*)?$/ {
     labelname = gensub (/^[ \t]*\.label[ \t]+\.([a-zA-Z][0-9a-zA-Z_]*)[ \t]*(;.*)?$/, \
                         "\\1", 1, $0) "_label"
-    out("\tjitter_label " labelname " = pkl_asm_fresh_label (RAS_ASM); \\")
+    out("\tpvm_program_label " labelname " = pkl_asm_fresh_label (RAS_ASM); \\")
     next
 }
 

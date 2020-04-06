@@ -30,13 +30,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <assert.h>
 
+#include "pk-term.h"
 #include "pk-utils.h"
 
-#include <pk-cmd.h>
-#include <pk-hserver.h>
-#include <pk-term.h>
-#include <pk-repl.h>
+#include "pk-cmd.h"
+#include "pk-hserver.h"
+#include "pk-repl.h"
 
 /* The app:// protocol defines a maximum length of messages of two
    kilobytes.  */

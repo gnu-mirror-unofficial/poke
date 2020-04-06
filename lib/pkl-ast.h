@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "pvm-val.h" /* For pvm_val */
+#include "pvm.h" /* For pvm_val */
 
 /* The following enumeration defines the codes characterizing the
    several types of nodes supported in the PKL abstract syntax

@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <xalloc.h>
+#include <stdlib.h>
 #include "xstrndup.h"
 
 #include "pk-utils.h"

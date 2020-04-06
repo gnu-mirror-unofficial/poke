@@ -25,11 +25,10 @@
 #include <inttypes.h>
 #include "xalloc.h"
 
-#include "pk-utils.h"
-
-#include "pkl-ast.h"
-#include "pvm-val.h" /* For PVM_NULL */
+#include "pvm.h"
 #include "pvm-alloc.h" /* For pvm_alloc_{add/remove}_gc_roots */
+#include "pk-utils.h"
+#include "pkl-ast.h"
 
 /* Allocate and return a new AST node, with the given CODE.  The rest
    of the node is initialized to zero.  */

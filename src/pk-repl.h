@@ -21,7 +21,7 @@
 
 #include <config.h>
 
-#include <poke.h> /* For poke_quiet_p  */
+#include "poke.h" /* For poke_quiet_p  */
 
 /* Enter the REPL!  :) */
 

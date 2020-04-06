@@ -22,6 +22,8 @@
 
 #include <config.h>
 
+#include "pk-utils.h"
+
 #include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-pass.h"

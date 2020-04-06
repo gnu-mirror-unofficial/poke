@@ -21,13 +21,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <tmpdir.h>
+#include <assert.h>
+#include "xalloc.h"
+#include "findprog.h"
 
 #include "pk-utils.h"
+#include "pk-term.h"
 
 #include "poke.h"
 #include "pk-cmd.h"
-
-#include "findprog.h"
 
 static int
 pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)

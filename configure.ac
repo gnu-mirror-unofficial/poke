@@ -128,6 +128,7 @@ fi
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
+                lib/Makefile
                 src/Makefile
                 pickles/Makefile
                 doc/Makefile

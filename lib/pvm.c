@@ -23,7 +23,12 @@
 #include <assert.h>
 #include <signal.h>
 
+#include "pkl.h"
 #include "pvm.h"
+
+#include "pvm-alloc.h"
+#include "pvm-program.h"
+#include "pvm-vm.h"
 
 /* The following struct defines a Poke Virtual Machine.  */
 
@@ -60,6 +65,10 @@ struct pvm
      state-struct-backing-c and state-struct-runtime-c entries in
      pvm.jitter.  */
   struct pvm_state pvm_state;
+
+  /* If not NULL, this is the compiler to be used when the PVM needs
+     to build programs.  */
+  pkl_compiler compiler;
 };
 
 pvm
@@ -102,6 +111,25 @@ pvm_get_env (pvm apvm)
   return PVM_STATE_ENV (apvm);
 }
 
+enum pvm_exit_code
+pvm_run (pvm apvm, pvm_program program, pvm_val *res)
+{
+  sighandler_t previous_handler;
+  pvm_routine routine = pvm_program_routine (program);
+
+  PVM_STATE_RESULT_VALUE (apvm) = PVM_NULL;
+  PVM_STATE_EXIT_CODE (apvm) = PVM_EXIT_OK;
+
+  previous_handler = signal (SIGINT, pvm_handle_signal);
+  pvm_execute_routine (routine, &apvm->pvm_state);
+  signal (SIGINT, previous_handler);
+
+  if (res != NULL)
+    *res = PVM_STATE_RESULT_VALUE (apvm);
+
+  return PVM_STATE_EXIT_CODE (apvm);
+}
+
 void
 pvm_shutdown (pvm apvm)
 {
@@ -127,24 +155,6 @@ pvm_shutdown (pvm apvm)
 
   /* Finalize the memory allocator.  */
   pvm_alloc_finalize ();
-}
-
-enum pvm_exit_code
-pvm_run (pvm apvm, pvm_routine routine, pvm_val *res)
-{
-  sighandler_t previous_handler;
-
-  PVM_STATE_RESULT_VALUE (apvm) = PVM_NULL;
-  PVM_STATE_EXIT_CODE (apvm) = PVM_EXIT_OK;
-
-  previous_handler = signal (SIGINT, pvm_handle_signal);
-  pvm_execute_routine (routine, &apvm->pvm_state);
-  signal (SIGINT, previous_handler);
-
-  if (res != NULL)
-    *res = PVM_STATE_RESULT_VALUE (apvm);
-
-  return PVM_STATE_EXIT_CODE (apvm);
 }
 
 enum ios_endian
@@ -253,6 +263,18 @@ void
 pvm_set_oacutoff (pvm apvm, unsigned int cutoff)
 {
   PVM_STATE_OACUTOFF (apvm) = cutoff;
+}
+
+pkl_compiler
+pvm_compiler (pvm apvm)
+{
+  return apvm->compiler;
+}
+
+void
+pvm_set_compiler (pvm apvm, pkl_compiler compiler)
+{
+  apvm->compiler = compiler;
 }
 
 void

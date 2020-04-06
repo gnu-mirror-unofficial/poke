@@ -20,6 +20,8 @@
 #define PK_UTILS_H
 
 #include <config.h>
+
+#include <string.h>
 #include <stdint.h>
 
 /* Macros to avoid using strcmp directly.  */

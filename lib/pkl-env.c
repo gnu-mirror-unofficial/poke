@@ -21,7 +21,9 @@
 #include <stdlib.h>
 #include <xalloc.h>
 #include <string.h>
+#include <assert.h>
 
+#include "pkl.h"
 #include "pk-utils.h"
 
 #include "pkl-env.h"

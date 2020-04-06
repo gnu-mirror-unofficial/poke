@@ -1,4 +1,4 @@
-/* pvm-val.h - Memory allocator for the PVM.  */
+/* pvm-alloc.h - Memory allocator for the PVM.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 

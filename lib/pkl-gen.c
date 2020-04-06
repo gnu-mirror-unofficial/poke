@@ -19,7 +19,6 @@
 #include <config.h>
 #include <stdio.h>
 #include <assert.h>
-#include <jitter/jitter.h>
 
 #include "pkl.h"
 #include "pkl-gen.h"
@@ -101,9 +100,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_program)
            && PKL_AST_CODE (PKL_AST_PROGRAM_ELEMS (PKL_PASS_NODE)) == PKL_AST_EXP_STMT))
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
-  PKL_GEN_PAYLOAD->routine = pkl_asm_finish (PKL_GEN_ASM,
-                                             1 /* prologue */,
-                                             &PKL_GEN_PAYLOAD->pointers);
+  PKL_GEN_PAYLOAD->program = pkl_asm_finish (PKL_GEN_ASM,
+                                             1 /* prologue */);
 }
 PKL_PHASE_END_HANDLER
 
@@ -302,18 +300,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_decl)
       {
         /* At this point the code for the function specification
            INITIAL has been assembled in the current macroassembler.
-           Finalize the routine and put it in a PVM closure, along
+           Finalize the program and put it in a PVM closure, along
            with the current environment.  */
 
-        void *pointers;
-        pvm_routine routine = pkl_asm_finish (PKL_GEN_ASM,
-                                              0 /* epilogue */,
-                                              &pointers);
+        pvm_program program = pkl_asm_finish (PKL_GEN_ASM,
+                                              0 /* epilogue */);
         pvm_val closure;
 
         PKL_GEN_POP_ASM;
-        jitter_routine_make_executable_if_needed (routine);
-        closure = pvm_make_cls (routine, pointers);
+        pvm_program_make_executable (program);
+        closure = pvm_make_cls (program);
 
         /*XXX*/
         /* pvm_routine_print (stdout, routine); */
@@ -452,7 +448,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           break;
         case PKL_AST_BUILTIN_GETENV:
           {
-            jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+            pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_GETENV);
@@ -514,7 +510,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
       /* Fallthrough.  */
     case PKL_AST_STRUCT_REF:
       {
-        jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+        pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
         valmapper = PVM_NULL; /* XXX PKL_AST_TYPE_S_VALMAPPER (lvalue_type) */
 
@@ -590,7 +586,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
            in the array.  */
         if (PKL_AST_TYPE_CODE (etype) == PKL_TYPE_ANY)
           {
-            jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+            pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);  /* INDEX VAL ARRAY */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TYPOF); /* INDEX VAL ARRAY ATYPE */
@@ -954,7 +950,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_try_until_stmt)
   pkl_ast_node try_until_stmt = PKL_PASS_NODE;
   pkl_ast_node code = PKL_AST_TRY_UNTIL_STMT_CODE (try_until_stmt);
   pkl_ast_node exp = PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt);
-  jitter_label loop = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label loop = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   /* Push the exception to catch.  */
   PKL_PASS_SUBPASS (exp);
@@ -1171,11 +1167,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
   pkl_ast_node func_arg = PKL_PASS_NODE;
   pkl_ast_node func_arg_initial = PKL_AST_FUNC_ARG_INITIAL (func_arg);
   pkl_ast_node func_arg_type = PKL_AST_FUNC_ARG_TYPE (func_arg);
-  jitter_label after_conv_label = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label after_conv_label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   if (func_arg_initial)
     {
-      jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+      pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
       /* If the value on the stack is `null', that means we need to
          use the default value for the argument.  */
@@ -1455,7 +1451,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
 
   if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_ANY)
     {
-      jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+      pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
       PKL_PASS_SUBPASS (to_type);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ISA);
@@ -2486,7 +2482,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       /* If the given structure is null, then create an empty AST
          struct of the right type.  */
       {
-        jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+        pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
         pkl_ast_node s = pkl_ast_make_struct (PKL_PASS_AST,
                                               0, NULL);
 
@@ -2877,7 +2873,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_and)
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);
 
-  jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   PKL_PASS_SUBPASS (op1);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label);
@@ -2899,7 +2895,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_or)
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);
 
-  jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   PKL_PASS_SUBPASS (op1);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
@@ -2986,7 +2982,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
          value.  */
       if (PKL_AST_TYPE_CODE (operand_type) == PKL_TYPE_ANY)
         {
-          jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+          pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TYISC);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label);
@@ -3049,7 +3045,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           /* Fallthrough.  */
         case PKL_TYPE_STRUCT:
           {
-            jitter_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
+            pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
             if (attr == PKL_AST_ATTR_OFFSET)
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
@@ -3198,8 +3194,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cond_exp)
   pkl_ast_node thenexp = PKL_AST_COND_EXP_THENEXP (cond_exp);
   pkl_ast_node elseexp = PKL_AST_COND_EXP_ELSEEXP (cond_exp);
 
-  jitter_label label1 = pkl_asm_fresh_label (PKL_GEN_ASM);
-  jitter_label label2 = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label label1 = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label label2 = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   PKL_PASS_SUBPASS (cond);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label1);

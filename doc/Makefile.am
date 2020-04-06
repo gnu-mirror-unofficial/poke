@@ -21,8 +21,8 @@ EXTRA_DIST = gen-pvm-insns.sh
 # The description of PVM instructions is generated from the
 # src/pvm.jitter file.
 
-pvm-insns.texi: $(top_srcdir)/src/pvm.jitter $(srcdir)/gen-pvm-insns.sh
-	$(srcdir)/gen-pvm-insns.sh $(top_srcdir)/src/pvm.jitter \
+pvm-insns.texi: $(top_srcdir)/lib/pvm.jitter $(srcdir)/gen-pvm-insns.sh
+	$(srcdir)/gen-pvm-insns.sh $(top_srcdir)/lib/pvm.jitter \
 	  > pvm-insns.texi
 
 # This rule generates a list of the node names from the manual.

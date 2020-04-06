@@ -19,8 +19,11 @@
 #include <config.h>
 #include <assert.h>
 #include <time.h>
+#include <stdlib.h> /* For system.  */
+#include "xalloc.h"
 
 #include "pk-utils.h"
+#include "pk-term.h"
 
 #include "findprog.h"
 #include "readline.h"

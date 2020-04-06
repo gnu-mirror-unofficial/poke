@@ -21,14 +21,18 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #include <errno.h>
 #include <readline.h>
+#include "xalloc.h"
 
 #include "ios.h"
-#include "poke.h"
 #include "pk-utils.h"
+#include "pk-term.h"
+
+#include "poke.h"
 #include "pk-cmd.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
