@@ -233,7 +233,7 @@ load_module (struct pkl_parser *parser,
         do
           {
             /* Ignore empty entries.  */
-            if (dir == '\0')
+            if (*dir == '\0')
               continue;
 
             /* Substitute %...% marks.  */

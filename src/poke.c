@@ -482,7 +482,7 @@ initialize_user ()
         char *config_filename = NULL;
 
         /* Ignore empty entries.  */
-        if (dir == '\0')
+        if (*dir == '\0')
           continue;
 
         /* Mount the full path and determine whether the resulting

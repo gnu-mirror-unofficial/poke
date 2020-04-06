@@ -1,3 +1,8 @@
+2020-04-06  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pkl-tab.y (load_module): Fix check for empty string.
+	* src/poke.c (initialize_user): Likewise.
+
 2020-04-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/pvm-val.c (pvm_print_val_1): Update to new interface.
