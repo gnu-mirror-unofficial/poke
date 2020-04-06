@@ -23,8 +23,7 @@
 
 #include "pk-utils.h"
 
-#include "poke.h" /* XXX for poke_vm and poke_compiler, this should go
-                     away.  */
+#include "poke.h" /* XXX for poke_compiler, this should go away.  */
 
 #include "pkl-asm.h"
 #include "pk-term.h"
@@ -535,8 +534,13 @@ print_unit_name (uint64_t unit)
     }
 }
 
+#define PVM_PRINT_VAL_1(...)                    \
+  pvm_print_val_1 (vm, depth, mode, base, indent, acutoff, flags, __VA_ARGS__)
+
 void
-pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
+pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
+                 int acutoff, uint32_t flags,
+                 pvm_val val, int ndepth)
 {
   const char *long64_fmt, *long_fmt;
   const char *ulong64_fmt, *ulong_fmt;
@@ -544,11 +548,8 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
   const char *uint32_fmt, *uint16_fmt, *uint8_fmt, *uint4_fmt, *uint_fmt;
 
   /* Extract configuration settings from FLAGS.  */
-  int depth = PVM_PRINT_F_GET_DEPTH (flags);
-  int mode = PVM_PRINT_F_GET_MODE (flags);
-  int indent = PVM_PRINT_F_GET_INDENT (flags);
-  int acutoff = PVM_PRINT_F_GET_ACUTOFF (flags);
-  int maps = PVM_PRINT_F_GET_MAPS (flags);
+  int maps = flags & PVM_PRINT_F_MAPS;
+  int pprint = flags & PVM_PRINT_F_PPRINT;
 
   /* Select the appropriate formatting templates for the given
      base.  */
@@ -819,7 +820,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
               break;
             }
 
-          pvm_print_val_1 (elem_value, base, flags, ndepth);
+          PVM_PRINT_VAL_1 (elem_value, ndepth);
         }
       pk_puts ("]");
 
@@ -829,7 +830,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
              create a real offset here.  */
           pk_puts (" @ ");
           pk_term_class ("offset");
-          pvm_print_val_1 (array_offset, base, flags, ndepth);
+          PVM_PRINT_VAL_1 (array_offset, ndepth);
           pk_puts ("#b");
           pk_term_end_class ("offset");
         }
@@ -841,15 +842,13 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
       size_t nelem, idx;
       pvm_val struct_type = PVM_VAL_SCT_TYPE (val);
       pvm_val struct_type_name = PVM_VAL_TYP_S_NAME (struct_type);
-      pvm_val pretty_printer = pvm_get_struct_method (val, "_print");
       pvm_val struct_offset = PVM_VAL_SCT_OFFSET (val);
 
       /* If the struct has a pretty printing method (called _print)
-         then use it, unless the PVM is configured to not do so.
-         XXX: avoid the global poke_vm here!  */
-      if (pvm_pretty_print (poke_vm) && pretty_printer != PVM_NULL)
+         then use it, unless the PVM is configured to not do so.  */
+      if (pprint)
         {
-          pvm_call_pretty_printer (val, pretty_printer);
+          pvm_call_pretty_printer (vm, val);
           return;
         }
 
@@ -894,7 +893,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
               pk_term_end_class ("struct-field-name");
               pk_puts ("=");
             }
-          pvm_print_val_1 (value, base, flags, ndepth + 1);
+          PVM_PRINT_VAL_1 (value, ndepth + 1);
         }
 
       if (mode == PVM_PRINT_TREE)
@@ -907,7 +906,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
              create a real offset here.  */
           pk_puts (" @ ");
           pk_term_class ("offset");
-          pvm_print_val_1 (struct_offset, base, flags, ndepth);
+          PVM_PRINT_VAL_1 (struct_offset, ndepth);
           pk_puts ("#b");
           pk_term_end_class ("offset");
         }
@@ -944,15 +943,15 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
           pk_term_end_class ("any");
           break;
         case PVM_TYPE_ARRAY:
-          pvm_print_val_1 (PVM_VAL_TYP_A_ETYPE (val), base, flags, ndepth);
+          PVM_PRINT_VAL_1 (PVM_VAL_TYP_A_ETYPE (val), ndepth);
           pk_puts ("[");
           if (PVM_VAL_TYP_A_BOUND (val) != PVM_NULL)
-            pvm_print_val_1 (PVM_VAL_TYP_A_BOUND (val), base, flags, ndepth);
+            PVM_PRINT_VAL_1 (PVM_VAL_TYP_A_BOUND (val), ndepth);
           pk_puts ("]");
           break;
         case PVM_TYPE_OFFSET:
           pk_puts ("[");
-          pvm_print_val_1 (PVM_VAL_TYP_O_BASE_TYPE (val), base, flags, ndepth);
+          PVM_PRINT_VAL_1 (PVM_VAL_TYP_O_BASE_TYPE (val), ndepth);
           pk_puts (" ");
           print_unit_name (PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (val)));
           pk_puts ("]");
@@ -967,9 +966,9 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
             for (i = 0; i < nargs; ++i)
               {
                 pvm_val atype = PVM_VAL_TYP_C_ATYPE (val, i);
-                pvm_print_val_1 (atype, base, flags, ndepth);
+                PVM_PRINT_VAL_1 (atype, ndepth);
               }
-            pvm_print_val_1 (PVM_VAL_TYP_C_RETURN_TYPE (val), 10, flags, ndepth);
+            PVM_PRINT_VAL_1 (PVM_VAL_TYP_C_RETURN_TYPE (val), ndepth);
             break;
           }
         case PVM_TYPE_STRUCT:
@@ -987,7 +986,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
                 if (i != 0)
                   pk_puts (" ");
 
-                pvm_print_val_1 (etype, base, flags, ndepth);
+                PVM_PRINT_VAL_1 (etype, ndepth);
                 if (ename != PVM_NULL)
                   pk_printf (" %s", PVM_VAL_STR (ename));
                 pk_puts (";");
@@ -1004,7 +1003,7 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
   else if (PVM_IS_OFF (val))
     {
       pk_term_class ("offset");
-      pvm_print_val_1 (PVM_VAL_OFF_MAGNITUDE (val), base, flags, ndepth);
+      PVM_PRINT_VAL_1 (PVM_VAL_OFF_MAGNITUDE (val), ndepth);
       pk_puts ("#");
       print_unit_name (PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (val)));
       pk_term_end_class ("offset");
@@ -1019,10 +1018,32 @@ pvm_print_val_1 (pvm_val val, int base, uint32_t flags, int ndepth)
     assert (0);
 }
 
+#undef PVM_PRINT_VAL_1
+
 void
-pvm_print_val (pvm_val val, int base, uint32_t flags)
+pvm_print_val (pvm vm, pvm_val val)
 {
-  pvm_print_val_1 (val, base, flags, 0);
+  pvm_print_val_1 (vm,
+                   pvm_odepth (vm), pvm_omode (vm),
+                   pvm_obase (vm), pvm_oindent (vm),
+                   pvm_oacutoff (vm),
+                   (pvm_omaps (vm) << (PVM_PRINT_F_MAPS - 1)
+                    | (pvm_pretty_print (vm) << (PVM_PRINT_F_PPRINT - 1))),
+                   val,
+                   0 /* ndepth */);
+}
+
+void
+pvm_print_val_with_params (pvm vm, pvm_val val,
+                           int depth,int mode, int base,
+                           int indent, int acutoff,
+                           uint32_t flags)
+{
+  pvm_print_val_1 (vm,
+                   depth, mode, base, indent, acutoff,
+                   flags,
+                   val,
+                   0 /* ndepth */);
 }
 
 pvm_val
@@ -1134,12 +1155,18 @@ pvm_print_string (pvm_val string)
    corresponding to the struct VAL.  */
 
 int
-pvm_call_pretty_printer (pvm_val val, pvm_val cls)
+pvm_call_pretty_printer (pvm vm, pvm_val val)
 {
   pvm_routine routine;
   int ret;
-  pkl_asm pasm = pkl_asm_new (NULL /* ast */,
-                              poke_compiler, 1 /* prologue */);
+  pvm_val cls = pvm_get_struct_method (val, "_print");
+  pkl_asm pasm;
+
+  if (cls == PVM_NULL)
+    return PVM_EXIT_OK;
+
+  pasm = pkl_asm_new (NULL /* ast */,
+                      poke_compiler, 1 /* prologue */);
 
   /* Remap the struct.  XXX this shouldn't be needed, because it won't
      have any effect in not-mapped structs.  What we need to do is to
@@ -1155,7 +1182,7 @@ pvm_call_pretty_printer (pvm_val val, pvm_val cls)
   /* Run the routine in the poke VM.  */
   routine = pkl_asm_finish (pasm, 1 /* epilogue */, NULL /* pointers */);
   jitter_routine_make_executable_if_needed (routine);
-  ret = pvm_run (poke_vm, routine, NULL);
+  ret = pvm_run (vm, routine, NULL);
   pvm_destroy_routine (routine);
 
   return (ret == PVM_EXIT_OK);

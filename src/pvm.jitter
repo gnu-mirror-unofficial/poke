@@ -88,9 +88,6 @@ early-header-c
 #   include "pk-term.h"
 #   include "pk-utils.h"
 
-    /* Globals.  */
-    extern int poke_obase;
-
     /* Exception handlers, that are installed in the "exceptionstack".
 
        EXCEPTION is the exception type, either one of the E_* values defined
@@ -492,7 +489,15 @@ printer-c
     pvm_literal_printer (FILE *out, jitter_uint val)
     {
       fflush (out);
-      pvm_print_val ((pvm_val) val, poke_obase, 0);
+      pvm_print_val_with_params (NULL /* not used since no
+                                         pretty-print */,
+                                 (pvm_val) val,
+                                 1 /* depth */,
+                                 PVM_PRINT_FLAT,
+                                 16 /* base */,
+                                 0 /* indent */,
+                                 2 /* acutoff */,
+                                 0 /* flags */);
       pk_term_flush ();
     }
 
@@ -510,8 +515,16 @@ printer-c
     {
       fflush (out);
       pk_printf ("%%lo(0x%" JITTER_PRIx") (", lo);
-      pvm_print_val (((pvm_val) printer_hi << 32) | lo,
-                      poke_obase, 0);
+
+      pvm_print_val_with_params (NULL /* not used since no
+                                         pretty-print */,
+                                 ((pvm_val) printer_hi << 32) | lo,
+                                 1 /* depth */,
+                                 PVM_PRINT_FLAT,
+                                 16 /* base */,
+                                 0 /* indent */,
+                                 2 /* acutoff */,
+                                 0 /* flags */);
       pk_puts (")");
       pk_term_flush ();
       printer_hi = 0;
@@ -577,6 +590,7 @@ state-struct-backing-c
       enum pvm_exit_code exit_code;
       pvm_val result_value;
       jitter_stack_height canary;
+      pvm vm;
   end
 end
 
@@ -588,6 +602,7 @@ state-struct-runtime-c
       uint32_t nenc;
       uint32_t pretty_print;
       enum pvm_omode omode;
+      int obase;
       int omaps;
       uint32_t odepth;
       uint32_t oindent;
@@ -597,6 +612,7 @@ end
 
 state-initialization-c
   code
+      jitter_state_backing->vm = NULL;
       jitter_state_backing->canary = NULL;
       jitter_state_backing->exit_code = PVM_EXIT_OK;
       jitter_state_backing->result_value = PVM_NULL;
@@ -604,6 +620,7 @@ state-initialization-c
       jitter_state_runtime->nenc = IOS_NENC_2;
       jitter_state_runtime->pretty_print = 0;
       jitter_state_runtime->omode = PVM_PRINT_FLAT;
+      jitter_state_runtime->obase = 10;
       jitter_state_runtime->omaps = 0;
       jitter_state_runtime->odepth = 0;
       jitter_state_runtime->oindent = 2;
@@ -1153,16 +1170,16 @@ end
 
 instruction printv (?n,?n)
   code
-    int mode = (int) JITTER_ARGN0;
-    int depth = (int) JITTER_ARGN1;
-    int indent = jitter_state_runtime.oindent;
-    int maps = jitter_state_runtime.omaps;
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int back_omode = pvm_omode (vm);
+    int back_odepth = pvm_odepth (vm);
 
-    pvm_print_val (JITTER_TOP_STACK (), poke_obase,
-                   PVM_PRINT_F_MODE (mode)
-                   | PVM_PRINT_F_MAPS (maps)
-                   | PVM_PRINT_F_DEPTH (depth)
-                   | PVM_PRINT_F_INDENT (indent));
+    pvm_set_omode (vm, (int) JITTER_ARGN0);
+    pvm_set_odepth (vm, (int) JITTER_ARGN1);
+    pvm_print_val (jitter_original_state->pvm_state_backing.vm,
+                   JITTER_TOP_STACK ());
+    pvm_set_omode (vm, back_omode);
+    pvm_set_odepth (vm, back_odepth);
 
     JITTER_DROP_STACK ();
   end
@@ -4652,7 +4669,8 @@ instruction strace (?n)
                  jitter_original_state->pvm_state_backing.canary)))
         {
           assert (i < 1024);
-          pvm_print_val (JITTER_TOP_STACK (), poke_obase, PVM_PRINT_F_MAPS (1));
+          pvm_print_val (jitter_original_state->pvm_state_backing.vm,
+                         JITTER_TOP_STACK ());
           pk_puts ("\n");
           tmp[i++] = JITTER_TOP_STACK ();
           JITTER_DROP_STACK ();

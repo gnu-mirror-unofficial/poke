@@ -95,11 +95,11 @@ enum pvm_exit_code
 #define PVM_E_INVAL        14
 #define PVM_E_INVAL_MSG "invalid argument"
 
+typedef struct pvm *pvm;
+
 /* Note that the jitter-generated header should be included this late
    in the file because it uses some stuff defined above.  */
 #include "pvm-vm.h"
-
-typedef struct pvm *pvm;
 
 /* Initialize a new Poke Virtual Machine and return it.  */
 
@@ -132,6 +132,9 @@ void pvm_set_nenc (pvm pvm, enum ios_nenc nenc);
 int pvm_pretty_print (pvm pvm);
 void pvm_set_pretty_print (pvm pvm, int flag);
 
+int pvm_obase (pvm apvm);
+void pvm_set_obase (pvm apvm, int obase);
+
 enum pvm_omode pvm_omode (pvm apvm);
 void pvm_set_omode (pvm apvm, enum pvm_omode omode);
 
@@ -159,5 +162,47 @@ void pvm_assert (int expression);
 /* This is defined in the late-c block in pvm.jitter.  */
 
 void pvm_handle_signal (int signal_number);
+
+/* Call the pretty printer of the given value VAL.  */
+
+int pvm_call_pretty_printer (pvm vm, pvm_val val);
+
+/* Print a PVM value.
+
+   DEPTH is a number that specifies the maximum depth used when
+   printing composite values, i.e. arrays and structs.  If it is 0
+   then it means there is no maximum depth.
+
+   MODE is one of the PVM_PRINT_* values defined in pvm_omode, and
+   specifies the output mode to use when printing the value.
+
+   BASE is the numeration base to use when printing numbers.  It may
+   be one of 2, 8, 10 or 16.
+
+   INDENT is the step value to use when indenting nested structured
+   when printin in tree mode.
+
+   ACUTOFF is the maximum number of elements of arrays to print.
+   Elements beyond are not printed.
+
+   FLAGS is a 32-bit unsigned integer, that encodes certain properties
+   to be used while printing:
+
+   If PVM_PRINT_F_MAPS is specified then the attributes of mapped
+   values (notably their offsets) are also printed out.  When
+   PVM_PRINT_F_MAPS is not specified, mapped values are printed
+   exactly the same way than non-mapped values.
+
+   If PVM_PRINT_F_PPRINT is specified then pretty-printers are used to
+   print struct values, if they are defined.  */
+
+#define PVM_PRINT_F_MAPS   1
+#define PVM_PRINT_F_PPRINT 2
+
+void pvm_print_val (pvm vm, pvm_val val);
+void pvm_print_val_with_params (pvm vm, pvm_val val,
+                                int depth,int mode, int base,
+                                int indent, int acutoff,
+                                uint32_t flags);
 
 #endif /* ! PVM_H */

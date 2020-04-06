@@ -81,11 +81,6 @@ char *poke_picklesdir;
 int poke_exit_p;
 int poke_exit_code;
 
-/* The following global indicates the numeration base used when
-   printing PVM values at the REPL.  It defaults to decimal (10).  */
-
-int poke_obase = 10;
-
 /* The following global is the poke compiler.  */
 pkl_compiler poke_compiler;
 

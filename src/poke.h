@@ -34,7 +34,6 @@ extern pvm poke_vm;
 extern char *poke_datadir;
 extern char *poke_infodir;
 extern char *poke_picklesdir;
-extern int poke_obase;
 
 void pk_print_version ();
 

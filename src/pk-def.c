@@ -54,7 +54,7 @@ print_var_decl (pkl_ast_node decl, void *data)
   /* Print the name and the current value of the variable.  */
   pk_puts (PKL_AST_IDENTIFIER_POINTER (decl_name));
   pk_puts ("\t\t");
-  pvm_print_val (val, poke_obase, 0);
+  pvm_print_val (poke_vm, val);
   pk_puts ("\t\t");
 
   /* Print information about the site where the variable was

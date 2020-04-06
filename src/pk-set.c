@@ -39,7 +39,7 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    pk_printf ("%d\n", poke_obase);
+    pk_printf ("%d\n", pvm_obase (poke_vm));
   else
     {
       int base = PK_CMD_ARG_INT (argv[0]);
@@ -53,7 +53,7 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      poke_obase = base;
+      pvm_set_obase (poke_vm, base);
     }
 
   return 1;

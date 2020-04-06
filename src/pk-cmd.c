@@ -669,12 +669,7 @@ pk_cmd_exec (const char *str)
 
           if (val != PVM_NULL)
             {
-              pvm_print_val (val, poke_obase,
-                             PVM_PRINT_F_MODE (pvm_omode (poke_vm))
-                             | PVM_PRINT_F_MAPS (pvm_omaps (poke_vm))
-                             | PVM_PRINT_F_DEPTH (pvm_odepth (poke_vm))
-                             | PVM_PRINT_F_INDENT (pvm_oindent (poke_vm))
-                             | PVM_PRINT_F_ACUTOFF (pvm_oacutoff (poke_vm)));
+              pvm_print_val (poke_vm, val);
               pk_puts ("\n");
             }
         }

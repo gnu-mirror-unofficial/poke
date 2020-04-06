@@ -31,6 +31,8 @@
   ((PVM)->pvm_state.pvm_state_backing.result_value)
 #define PVM_STATE_EXIT_CODE(PVM)                        \
   ((PVM)->pvm_state.pvm_state_backing.exit_code)
+#define PVM_STATE_VM(PVM)                               \
+  ((PVM)->pvm_state.pvm_state_backing.vm)
 #define PVM_STATE_ENV(PVM)                              \
   ((PVM)->pvm_state.pvm_state_runtime.env)
 #define PVM_STATE_ENDIAN(PVM)                           \
@@ -41,6 +43,8 @@
   ((PVM)->pvm_state.pvm_state_runtime.pretty_print)
 #define PVM_STATE_OMODE(PVM)                            \
   ((PVM)->pvm_state.pvm_state_runtime.omode)
+#define PVM_STATE_OBASE(PVM)                            \
+  ((PVM)->pvm_state.pvm_state_runtime.obase)
 #define PVM_STATE_OMAPS(PVM)                            \
   ((PVM)->pvm_state.pvm_state_runtime.omaps)
 #define PVM_STATE_ODEPTH(PVM)                           \
@@ -87,6 +91,7 @@ pvm_init (void)
   /* Initialize the global environment.  Note we do this after
      registering GC roots, since we are allocating memory.  */
   PVM_STATE_ENV (apvm) = pvm_env_new ();
+  PVM_STATE_VM (apvm) = apvm;
 
   return apvm;
 }
@@ -188,6 +193,18 @@ void
 pvm_set_omode (pvm apvm, enum pvm_omode omode)
 {
   PVM_STATE_OMODE (apvm) = omode;
+}
+
+int
+pvm_obase (pvm apvm)
+{
+  return PVM_STATE_OBASE (apvm);
+}
+
+void
+pvm_set_obase (pvm apvm, int obase)
+{
+  PVM_STATE_OBASE (apvm) = obase;
 }
 
 int
