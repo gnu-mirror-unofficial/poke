@@ -48,4 +48,7 @@ uint64_t pk_upow (uint64_t base, uint32_t exp);
 /* Print the give unsigned 64-bit integer in binary.  */
 void pk_print_binary (uint64_t val, int size, int sign);
 
+/* Concatenate string arguments into an malloc'ed string. */
+char *pk_str_concat(const char *s0, ...);
+
 #endif /* ! PK_UTILS_H */

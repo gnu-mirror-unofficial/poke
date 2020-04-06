@@ -25,6 +25,10 @@
 #include <sys/stat.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
+#include <stdarg.h> /* va_... */
+#include <stddef.h> /* size_t */
+#include <string.h> /* strcpy */
+#include <xalloc.h> /* xmalloc */
 
 #include "pk-term.h"
 #include "pk-utils.h"
@@ -122,4 +126,34 @@ pk_print_binary (uint64_t val, int size, int sign)
       }
       pk_puts ("N");
     }
+}
+
+/* Concatenate 2+ strings.
+ * Last argument must be NULL.
+ * Returns the malloc'ed concatenated string.
+ */
+char *
+pk_str_concat(const char *s0, ...)
+{
+  va_list args;
+  size_t len = 0;
+  const char *s;
+
+  va_start (args, s0);
+  for (s = s0; s; s = va_arg (args, const char *))
+    len += strlen (s);
+  va_end (args);
+
+  char *res = xmalloc (len + 1);
+  char *d = res;
+
+  va_start (args, s0);
+  for (s = s0; s; s = va_arg (args, const char *))
+    {
+      strcpy (d, s);
+      d += strlen (s);
+    }
+  va_end (args);
+
+  return res;
 }
