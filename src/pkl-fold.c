@@ -582,12 +582,8 @@ EMUL_UU (bnoto) { return ~op; }
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
                                                                         \
-          res = xmalloc (strlen (PKL_AST_STRING_POINTER (op1))          \
-                         + strlen (PKL_AST_STRING_POINTER (op2))        \
-                         + 1);                                          \
-                                                                        \
-          strcpy (res, PKL_AST_STRING_POINTER (op1));                   \
-          strcat (res, PKL_AST_STRING_POINTER (op2));                   \
+          res = pk_str_concat (PKL_AST_STRING_POINTER (op1),            \
+                               PKL_AST_STRING_POINTER (op2), NULL);     \
                                                                         \
           new = pkl_ast_make_string (PKL_PASS_AST, res);                \
           free (res);                                                   \

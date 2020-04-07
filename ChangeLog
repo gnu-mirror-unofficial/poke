@@ -1,3 +1,9 @@
+2020-04-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pkl-fold.c (OP_BINARY_SSS): Use pk_str_concat instead of
+	strlen/xmalloc/strcpy/strcat.
+	* src/pkl.c (pkl_new): Likewise.
+
 2020-04-06  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/poke.c (initialize): Use pk_str_concat instead of

@@ -79,11 +79,7 @@ pkl_new (pvm vm, const char *rt_path)
   /* Bootstrap the compiler.  An error bootstraping is an internal
      error and should be reported as such.  */
   {
-    char *poke_rt_pk;
-
-    poke_rt_pk = xmalloc (strlen (rt_path) + strlen ("/pkl-rt.pk") + 1);
-    strcpy (poke_rt_pk, rt_path);
-    strcat (poke_rt_pk, "/pkl-rt.pk");
+    char *poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt.pk", NULL);
 
     if (!pkl_compile_file (compiler, poke_rt_pk))
       {
