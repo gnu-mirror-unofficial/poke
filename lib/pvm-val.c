@@ -855,7 +855,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         }
 
       nelem = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
-      
+
       pk_term_class ("struct");
 
       if (struct_type_name != PVM_NULL)
