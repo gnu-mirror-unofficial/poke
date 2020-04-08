@@ -796,7 +796,7 @@ pk_cmd_get_next_match (int *idx, const char *x, size_t len)
   /* Dot commands */
   for (const struct pk_cmd **c = dot_cmds + *idx;
        *c != &null_cmd;
-       (*idx)++)
+       (*idx)++, c++)
     {
       if (strncmp ((*c)->name, x + 1, len - 1) == 0)
         return xstrndup (x, len);

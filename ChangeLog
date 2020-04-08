@@ -1,3 +1,8 @@
+2020-04-08  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-cmd.c (pk_cmd_get_next_match): Fix endless loop
+	introduced in commit c576c04c3.
+
 2020-04-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pkl-fold.c (OP_BINARY_SSS): Use pk_str_concat instead of
