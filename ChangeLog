@@ -1,5 +1,10 @@
 2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pkl-asm.c (pkl_asm_insn): Clarify the situation on 32-bit
+	and add an assert.
+
+2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-diag.h: Really add file in git, grrr.
 	* lib/pkl-diag.c: Likewise.
 

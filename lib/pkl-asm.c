@@ -1224,7 +1224,14 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
             case 'v':
               {
                 pvm_val val = va_arg (valist, pvm_val);
-                /* XXX: this doesn't work in 32-bit  */
+
+                /* This is to be removed when Jitter is fixed so it
+                   can use 64-bit elements in 32-bit machines.  We
+                   have hacks to prevent the assert below in both
+                   pkl_asm_note and the push instructions.  */
+#if __WORDSIZE != 64
+                assert (0);
+#endif
                 pvm_program_append_val_parameter (pasm->program, val);
                 break;
               }
@@ -1234,9 +1241,6 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
                 pvm_program_append_unsigned_parameter (pasm->program, n);
                 break;
               }
-            case 'a':
-              assert (0); /* XXX */
-              break;
             case 'l':
               {
                 pvm_program_label label
@@ -1244,15 +1248,17 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
                 pvm_program_append_label_parameter (pasm->program, label);
                 break;
               }
-            case 'i':
-              assert (0); /* XXX */
-              break;
             case 'r':
               {
                 pvm_register reg = va_arg (valist, pvm_register);
                 pvm_program_append_register_parameter (pasm->program, reg);
                 break;
               }
+            case 'a':
+              /* Fallthrough.  */
+            case 'i':
+              assert (0);
+              break;
             }
         }
       va_end (valist);
@@ -1519,8 +1525,8 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
 void
 pkl_asm_note (pkl_asm pasm, const char *str)
 {
-  /* XXX: this doesn't work in 32-bit because of jitter's inability to
-     pass 64-bit pointers as arguments to instructions in 32-bit.  */
+  /* note doesn't work in 32-bit because of jitter's inability to pass
+     64-bit pointers as arguments to instructions in 32-bit.  */
 #if __WORDSIZE == 64
   pkl_asm_insn (pasm, PKL_INSN_NOTE, pvm_make_string (str));
 #endif
