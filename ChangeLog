@@ -1,5 +1,10 @@
 2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pkl-diag.h: Really add file in git, grrr.
+	* lib/pkl-diag.c: Likewise.
+
+2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/Makefile.am (libpoke_la_SOURCES): Add pkl_diag.h and
 	pkl_diag.c.
 	* lib/pkl-diag.h: New file.
