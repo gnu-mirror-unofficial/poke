@@ -1,6 +1,18 @@
 2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/Makefile.am (poke_CFLAGS): Remove LIBNBD_CFLAGS.
+	(poke_LDADD): Remove LIBNBD_LIBS.
+	* lib/Makefile.am (libpoke_la_CFLAGS): Add LIBNBD_CFLAGS.
+	(libpoke_la_LIBADD): Add LIBNBD_LIBS.
+
+2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pvm-program.c: Remove trailing whitespaces.
+
+2020-04-08  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-cmd.c (pk_cmd_get_next_match): Fix endless loop
+	introduced in commit c576c04c3.
 
 2020-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -12,11 +24,6 @@
 	* src/Makefile.am (poke_LDADD): Link with libpoke.
 	* configure.ac: Add lib/Makefile to AC_CONFIG_FILES.
 	* Makefile.am (SUBDIRS): Add lib.
-
-2020-04-08  Tim Rühsen  <tim.ruehsen@gmx.de>
-
-	* src/pk-cmd.c (pk_cmd_get_next_match): Fix endless loop
-	introduced in commit c576c04c3.
 
 2020-04-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 

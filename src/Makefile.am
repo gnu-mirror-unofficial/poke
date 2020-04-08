@@ -36,11 +36,10 @@ poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                 -DPKGDATADIR=\"$(pkgdatadir)\" \
                 -DPKGINFODIR=\"$(infodir)\" \
                 -DLOCALEDIR=\"$(localedir)\"
-poke_CFLAGS = -Wall $(LIBNBD_CFLAGS)
+poke_CFLAGS = -Wall
 # XXX remove JITTER_LDADD
 poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(top_builddir)/lib/libpoke.la \
-             $(LIBNBD_LIBS) \
              $(LTLIBREADLINE) \
              $(JITTER_LDADD)
 poke_LDFLAGS =
