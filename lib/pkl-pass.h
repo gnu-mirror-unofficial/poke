@@ -25,8 +25,10 @@
 #include <setjmp.h>
 #include <inttypes.h>
 #include <stdarg.h>
-#include "pkl-ast.h"
+
 #include "pkl.h"
+#include "pkl-diag.h"
+#include "pkl-ast.h"
 
 /* A `pass' is a complete run over a given AST.  A `phase' is an
    analysis or a transformation performed over a subset of the nodes

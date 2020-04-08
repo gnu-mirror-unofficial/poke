@@ -42,6 +42,7 @@
 #include "pk-utils.h"
 
 #include "pkl.h"
+#include "pkl-diag.h"
 #include "pkl-ast.h"
 #include "pkl-parser.h" /* For struct pkl_parser.  */
 

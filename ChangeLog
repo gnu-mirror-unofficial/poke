@@ -1,3 +1,25 @@
+2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/Makefile.am (libpoke_la_SOURCES): Add pkl_diag.h and
+	pkl_diag.c.
+	* lib/pkl-diag.h: New file.
+	(pkl_error): Moved from pkl.h.
+	(pkl_warning): Likewise.
+	(pkl_ice): Likewise.
+	* lib/pkl-diag.c: New file.
+	(pkl_detailed_location): Moved from pkl.c.
+	(pkl_error_internal): Likewise.
+	(pkl_error): Likewise.
+	(pkl_warning): Likewise.
+	* lib/pkl-anal.c: Include pkl-diag.h.
+	* lib/pkl-pass.h: Likewise.
+	* lib/pkl-typify.c: Likewise.
+	* lib/pkl-trans.c: Likewise.
+	* lib/pkl-tab.y: Likewise.
+	* lib/pkl-fold.c: Likewise.
+	* lib/pkl-lex.l: Likewise.
+	* HACKING (The Source Tree): Add pkl_diag.h and pkl_diag.c.
+
 2020-04-08  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* bootstrap.conf: Add gnulib module pathmax.

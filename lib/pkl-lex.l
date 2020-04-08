@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include "pkl-ast.h"
 #include "pkl-env.h"
+#include "pkl-diag.h"
 #include "pkl-parser.h"
 #define YYLTYPE pkl_ast_loc
 #define YYDEBUG 1

@@ -1689,6 +1689,9 @@ The code generator
 The macro-assembler
   ``lib/pkl-insn.def``, ``lib/pkl-asm.h``, ``lib/pkl-asm.c``,
   ``lib/pkl-asm.pks``
+
+Functions to emit diagnostics
+  ``lib/pkl-diag.h``, ``lib/pkl-diag.c``
   
 Our good friend ras
   ``lib/ras``

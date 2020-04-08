@@ -35,6 +35,7 @@ libpoke_la_SOURCES = pkl.h pkl.c \
                      pkl-tab.y pkl-lex.l \
                      pkl-gen.h pkl-gen.c \
                      pkl-asm.h pkl-asm.c \
+                     pkl-diag.h pkl-diag.c \
                      pkl-parser.h pkl-parser.c \
                      pkl-gen.pks pkl-asm.pks \
                      pkl-gen.pkc pkl-asm.pkc \

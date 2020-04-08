@@ -25,7 +25,6 @@
 
 #include <config.h>
 #include <stdio.h>
-#include <stdarg.h>
 
 #include "pvm.h"
 
@@ -197,15 +196,5 @@ void pkl_set_error_on_warning (pkl_compiler compiler,
 
 int pkl_quiet_p (pkl_compiler compiler);
 void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p);
-
-/* Diagnostic routines.  */
-/* XXX these should go in some internal header.  */
-
-void pkl_error (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
-                const char *fmt, ...);
-void pkl_warning (pkl_compiler compiler, pkl_ast ast,
-                  pkl_ast_loc loc, const char *fmt, ...);
-void pkl_ice (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
-              const char *fmt, ...);
 
 #endif /* ! PKL_H */

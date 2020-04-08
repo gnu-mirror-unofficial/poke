@@ -29,6 +29,7 @@
 #include "pk-utils.h"
 
 #include "pkl.h"
+#include "pkl-diag.h"
 #include "pkl-ast.h"
 #include "pkl-pass.h"
 #include "pkl-trans.h"
