@@ -458,22 +458,8 @@ pvm_sizeof (pvm_val val)
   else if (PVM_IS_OFF (val))
     return pvm_sizeof (PVM_VAL_OFF_MAGNITUDE (val));
   else if (PVM_IS_TYP (val))
-    {
-      size_t size;
-
-      /* XXX */
-      assert (0);
-      switch (PVM_VAL_TYP_CODE (val))
-        {
-        case PVM_TYPE_INTEGRAL:
-          size = PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (val));
-          break;
-        default:
-          assert (0);
-        };
-
-      return size;
-    }
+    /* By convention, type values have size zero.  */
+    return 0;
 
   assert (0);
   return 0;
