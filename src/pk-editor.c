@@ -24,6 +24,7 @@
 #include <assert.h>
 #include "xalloc.h"
 #include "findprog.h"
+#include "pathmax.h"
 
 #include "pk-utils.h"
 #include "pk-term.h"

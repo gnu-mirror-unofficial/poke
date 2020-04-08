@@ -1,3 +1,8 @@
+2020-04-08  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* bootstrap.conf: Add gnulib module pathmax.
+	* src/pk-editor.c: Include pathmax.h.
+
 2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pvm-val.c (pvm_print_val_1): Use default printer if no
