@@ -1,5 +1,11 @@
 2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pvm-val.c (pvm_print_val_1): Use default printer if no
+	pretty-printer is available in structs, even if pretty-print is
+	`yes'.
+
+2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/Makefile.am (poke_CFLAGS): Remove LIBNBD_CFLAGS.
 	(poke_LDADD): Remove LIBNBD_LIBS.
 	* lib/Makefile.am (libpoke_la_CFLAGS): Add LIBNBD_CFLAGS.

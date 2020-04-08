@@ -850,12 +850,12 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
          then use it, unless the PVM is configured to not do so.  */
       if (pprint)
         {
-          pvm_call_pretty_printer (vm, val);
-          return;
+          if (pvm_call_pretty_printer (vm, val))
+            return;
         }
 
       nelem = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
-
+      
       pk_term_class ("struct");
 
       if (struct_type_name != PVM_NULL)
@@ -1160,12 +1160,11 @@ int
 pvm_call_pretty_printer (pvm vm, pvm_val val)
 {
   pvm_program program;
-  int ret;
   pvm_val cls = pvm_get_struct_method (val, "_print");
   pkl_asm pasm;
 
   if (cls == PVM_NULL)
-    return PVM_EXIT_OK;
+    return 0;
 
   pasm = pkl_asm_new (NULL /* ast */,
                       pvm_compiler (vm), 1 /* prologue */);
@@ -1184,10 +1183,10 @@ pvm_call_pretty_printer (pvm vm, pvm_val val)
   /* Run the program in the poke VM.  */
   program = pkl_asm_finish (pasm, 1 /* epilogue */);
   pvm_program_make_executable (program);
-  ret = pvm_run (vm, program, NULL);
+  (void) pvm_run (vm, program, NULL);
   pvm_destroy_program (program);
 
-  return (ret == PVM_EXIT_OK);
+  return 1;
 }
 
 /* IMPORTANT: please keep pvm_make_exception in sync with the
