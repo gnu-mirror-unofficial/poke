@@ -344,10 +344,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
     }
   else
     {
+      pkl_ast_node var_decl = PKL_AST_VAR_DECL (var);
       pkl_ast_node var_type = PKL_AST_TYPE (var);
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
                     PKL_AST_VAR_BACK (var), PKL_AST_VAR_OVER (var));
+
+      /* If the declaration associated with the variable is in a
+         struct, then raise E_elem if the value is null :D */
+      if (PKL_AST_DECL_STRUCT_FIELD_P (var_decl))
+        {
+          pvm_program_label label
+            = pkl_asm_fresh_label (PKL_GEN_ASM);
+
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_exception (PVM_E_ELEM, PVM_E_ELEM_MSG));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
+          pkl_asm_label (PKL_GEN_ASM, label);
+        }
 
       /* If the value holds a value that could be mapped, then use the
          REMAP instruction.  */

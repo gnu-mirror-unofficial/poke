@@ -6,5 +6,5 @@
 defvar N = 5;
 deftype Foo = struct { byte a if N > 10; byte b if a == 0x10; };
 
-/* { dg-command { Foo {a=0x10UB,b=0x20UB} } } */
-/* { dg-output "Foo {b=0x20UB}" } */
+/* { dg-command { try Foo {a=0x10UB,b=0x20UB}; catch if E_elem { print "caught\n"; } } } */
+/* { dg-output "caught" } */

@@ -1330,6 +1330,7 @@ struct_type_field:
                                                 PKL_AST_DECL_KIND_VAR,
                                                 $3, dummy,
                                                 NULL /* source */);
+                      PKL_AST_DECL_STRUCT_FIELD_P (decl) = 1;
                       PKL_AST_LOC (decl) = @$;
 
                       if (!pkl_env_register (pkl_parser->env,

@@ -630,6 +630,9 @@
 ;;;
 ;;; `field' is a pkl_ast_node with the struct field being
 ;;; mapped.
+;;;
+;;; `vars_registered' is a size_t that contains the number
+;;; of field-variables registered so far.
 
         .macro struct_field_mapper
         ;; Increase OFF by the label, if the field has one.
@@ -643,6 +646,7 @@
                                         ; BOFF VAL
         dup                             ; BOFF VAL VAL
         regvar $val                     ; BOFF VAL
+        .c vars_registered++;
    .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (field) == NULL)
         push null
    .c else
@@ -665,6 +669,9 @@
         push null               ; BOFF null
         over                    ; BOFF null BOFF
         over                    ; BOFF null BOFF null
+        dup                     ; BOFF null BOFF null null
+        .c pkl_asm_insn (RAS_ASM, PKL_INSN_POPVAR,
+        .c               0 /* back */, 3 + vars_registered - 1 /* over */);
         swap                    ; BOFF null null BOFF
         ba .omitted_field
    .c }
@@ -730,6 +737,7 @@
         pushvar $boff           ; BOFF
         dup                     ; BOFF BOFF
         ;; Iterate over the elements of the struct type.
+ .c size_t vars_registered = 0;
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
  .c   if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
@@ -937,6 +945,7 @@
         ;; The struct is not mapped, so its offset is null.
         push null               ; null
         ;; Iterate over the fields of the struct type.
+ .c size_t vars_registered = 0;
  .c for (field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
         .label .alternative_failed
@@ -1007,6 +1016,7 @@
         drop                   ; ... ENAME EVAL
         dup                    ; ... ENAME EVAL EVAL
         regvar $val            ; ... ENAME EVAL
+   .c   vars_registered++;
         ;; If this is an optional field, evaluate the optcond.  If
         ;; it is false, then add an absent field, i.e. both the field
         ;; name and the field value are PVM_NULL.
@@ -1021,8 +1031,11 @@
         drop                    ; ENAME
         drop                    ; _
         pushvar $boff            ; BOFF
-        push null               ; BOFF ENAME EVAL
-        push null               ; BOFF ENAME EVAL
+        push null               ; BOFF null null
+        push null               ; BOFF null null
+        dup                     ; BOFF null null null
+        .c pkl_asm_insn (RAS_ASM, PKL_INSN_POPVAR,
+        .c               0 /* back */, 3 + vars_registered - 1 /* over */);
         ba .omitted_field
    .c }
    .c else

@@ -1,3 +1,29 @@
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-ast.h (struct pkl_ast_decl): New field `in_struct_p'.
+	(PKL_AST_DECL_IN_STRUCT_P): Define.
+	* lib/pkl-tab.y (struct_type_field_identifier): Annotate the
+	declarations of struct fields as struct fields.
+	* lib/pkl-gen.c (pkl_gen_ps_var): If the variable is a struct
+	field, raise E_elem if we get null as its value.
+	* lib/pkl-gen.pks (struct_constructor): Amend the regvar to
+	install null as the value of field-variables.
+	(struct_mapper): Likewise.
+	(struct_field_mapper): Likewise.
+	* testsuite/poke.pkl/optcond-5.pk: Amend.
+	* testsuite/poke.pkl/sref-4.pk: Likewise.
+	* testsuite/poke.map/map-optcond-6.pk: Likewise.
+	* testsuite/poke.map/map-optcond-7.pk: Likewise.
+	* testsuite/poke.pkl/optcond-6.pk: New test.
+	* testsuite/poke.pkl/optcond-7.pk: Likewise.
+	* testsuite/poke.pkl/optcond-8.pk: Likewise.
+	* testsuite/poke.pkl/optcond-9.pk: Likewise.
+	* testsuite/poke.map/map-optcond-9.pk: Likewise.
+	* testsuite/poke.pkl/optcond-11.pk: Likewise.
+	* testsuite/poke.map/map-optcond-11.pk: Likewise.
+	* testsuite/poke.pkl/optcond-10.pk: Likewise.
+	* testsuite/poke.map/map-optcond-10.pk: Likewise.
+
 2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-repl.c: Include xstrndup.h.

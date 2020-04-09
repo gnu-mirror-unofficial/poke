@@ -7,5 +7,5 @@
 defvar N = 5;
 deftype Foo = struct { byte a if N > 10; byte b : b > 20 if a == 0x10; };
 
-/* { dg-command { try Foo @ 0#B; catch if E_constraint { printf "caught\n"; }} } */
+/* { dg-command { try Foo @ 0#B; catch if E_elem { printf "caught\n"; }} } */
 /* { dg-output "caught" } */
