@@ -1,5 +1,15 @@
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pkl-ast.h (PKL_AST_COMP_STMT_NUMVARS): Define.
+	* lib/pkl-ast.c (pkl_ast_print_1): Print the numvars attribute of
+	comp_stmt nodes.
+	* lib/pkl-trans.c (pkl_trans1_ps_comp_stmt): New handler.
+	(pkl_phase_trans1): Register handler.
+	* lib/pkl-gen.c (pkl_gen_pr_comp_stmt): Pass the number of
+	variables defined in the compound statement as a hint to pushf.
+
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-insn.def (pushf): Get a numeric argument.
 	* lib/pvm.jitter (pushf): Likewise.
 	* lib/pvm.h (pvm_env_new): Get a `hint' argument.

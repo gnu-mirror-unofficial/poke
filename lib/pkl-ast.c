@@ -2830,6 +2830,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
 
       PRINT_COMMON_FIELDS;
       PRINT_AST_IMM (builtin, COMP_STMT_BUILTIN, "%d");
+      PRINT_AST_IMM (numvars, COMP_STMT_NUMVARS, "%d");
       IPRINTF ("stmts:\n");
       PRINT_AST_SUBAST_CHAIN (COMP_STMT_STMTS);
       break;

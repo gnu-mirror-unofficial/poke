@@ -908,6 +908,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
 }
 PKL_PHASE_END_HANDLER
 
+
+/* Annotate compount statement nodes with the number of variable and
+   function declarations occurring in the statement.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_comp_stmt)
+{
+  pkl_ast_node t, comp_stmt = PKL_PASS_NODE;
+  int numvars = 0;
+
+  for (t = PKL_AST_COMP_STMT_STMTS (comp_stmt);
+       t;
+       t = PKL_AST_CHAIN (t))
+    {
+      if (PKL_AST_CODE (t) == PKL_AST_DECL
+          && (PKL_AST_DECL_KIND (t) == PKL_AST_DECL_KIND_VAR
+              || PKL_AST_DECL_KIND (t) == PKL_AST_DECL_KIND_FUNC))
+        numvars++;
+    }
+
+  PKL_AST_COMP_STMT_NUMVARS (comp_stmt) = numvars;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_trans1 =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
@@ -922,6 +945,7 @@ struct pkl_phase pkl_phase_trans1 =
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_trans1_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_trans1_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans1_ps_array),
+   PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_trans1_ps_comp_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_trans1_ps_op_attr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_trans1_ps_type_struct),

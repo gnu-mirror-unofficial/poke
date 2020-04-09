@@ -383,8 +383,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_comp_stmt)
 
   if (PKL_AST_COMP_STMT_BUILTIN (comp_stmt) == PKL_AST_BUILTIN_NONE)
     /* Push a frame into the environment.  */
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, 0 /*XXX*/);
-
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF,
+                  PKL_AST_COMP_STMT_NUMVARS (comp_stmt));
 }
 PKL_PHASE_END_HANDLER
 

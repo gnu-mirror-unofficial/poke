@@ -1235,6 +1235,7 @@ pkl_ast_node pkl_ast_make_var (pkl_ast ast,
 
 #define PKL_AST_COMP_STMT_STMTS(AST) ((AST)->comp_stmt.stmts)
 #define PKL_AST_COMP_STMT_BUILTIN(AST) ((AST)->comp_stmt.builtin)
+#define PKL_AST_COMP_STMT_NUMVARS(AST) ((AST)->comp_stmt.numvars)
 
 #define PKL_AST_BUILTIN_NONE 0
 #define PKL_AST_BUILTIN_PRINT 1
@@ -1254,6 +1255,7 @@ struct pkl_ast_comp_stmt
 
   union pkl_ast_node *stmts;
   int builtin;
+  int numvars;
 };
 
 pkl_ast_node pkl_ast_make_comp_stmt (pkl_ast ast, pkl_ast_node stmts);
