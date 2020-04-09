@@ -477,9 +477,7 @@ pkl_resolve_module (pkl_compiler compiler,
                     const char *module,
                     int filename_p)
 {
-  char *filename = alloca (strlen (module) + 3 + 1);
-  char *module_filename = NULL;
-  char *load_path = NULL;
+  const char *load_path;
 
   /* Get the load path from the run-time environment.  */
   {
@@ -502,53 +500,33 @@ pkl_resolve_module (pkl_compiler compiler,
     load_path = PVM_VAL_STR (val);
   }
 
-  /* Derive the name of the file containing the module, if needed.  */
-  strcpy (filename, module);
-  if (!filename_p)
-    strcat (filename, ".pk");
-
   /* Traverse the directories in the load path and try to load the
      requested module.  */
   {
     char *full_filename;
-    char *saveptr = NULL;
-    char *path = xstrdup (load_path); /* Modified by strtok.  */
-    char *dir = strtok_r (path, ":", &saveptr);
+    const char *ext = filename_p ? "" : ".pk";
+    const char *s, *e;
 
-    if (dir)
+    for (s = load_path, e = s; *e; s = e + 1)
       {
-        do
-          {
-            /* Ignore empty entries.  */
-            if (*dir == '\0')
-              continue;
+        /* Ignore empty entries. */
+        if ((e = strchrnul (s, ':')) == s)
+          continue;
 
-            /* Substitute %...% marks.  */
-            if (STREQ (dir, "%DATADIR%"))
-              dir = PKGDATADIR;
+        if (!strncmp (s, "%DATADIR%", e - s))
+          full_filename = pk_str_concat (PKGDATADIR, s + sizeof ("%DATADIR%") - 1,
+                                         "/", module, ext, NULL);
+        else
+          asprintf (&full_filename, "%.*s/%s%s", (int) (e - s), s, module, ext);
 
-            /* Mount the full path and determine whether the resulting
-               file is readable.  */
-            full_filename = alloca (strlen (dir)
-                                    + 1 /* "/" */ + strlen (filename)
-                                    + 1);
-            strcpy (full_filename, dir);
-            strcat (full_filename, "/");
-            strcat (full_filename, filename);
+        if (pk_file_readable (full_filename) == NULL)
+          return full_filename;
 
-            if (pk_file_readable (full_filename) == NULL)
-              {
-                module_filename = xstrdup (full_filename);
-                break;
-              }
-          }
-        while ((dir = strtok_r (NULL, ":", &saveptr)) != NULL);
+        free (full_filename);
       }
-
-    free (path);
   }
 
-  return module_filename;
+  return NULL;
 }
 
 int

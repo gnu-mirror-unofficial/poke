@@ -1,3 +1,7 @@
+2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* lib/pkl.c (pkl_resolve_module): Use non-destructive parsing.
+
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Load Path): Mention POKE_LOAD_PATH.
