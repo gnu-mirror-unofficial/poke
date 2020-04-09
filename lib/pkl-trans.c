@@ -373,13 +373,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_op_attr)
 }
 PKL_PHASE_END_HANDLER
 
-/* Set the function's first optional argument.  */
+/* Set the function's first optional argument and count the number of
+   formal arguments.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_func)
 {
   pkl_ast_node func = PKL_PASS_NODE;
   pkl_ast_node func_args = PKL_AST_FUNC_ARGS (func);
   pkl_ast_node fa;
+  int nargs;
+
+  /* Count the number of formal arguments.   */
+  for (fa = func_args, nargs = 0; fa; fa = PKL_AST_CHAIN (fa))
+    nargs++;
+  PKL_AST_FUNC_NARGS (func) = nargs;
 
   /* Find the first optional formal argument, if any, and set
      first_opt_arg accordingly.  */

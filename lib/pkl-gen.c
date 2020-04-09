@@ -1107,37 +1107,29 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
 {
-  pkl_ast_node fa;
+  int nargs = PKL_AST_FUNC_NARGS (PKL_PASS_NODE);
 
   /* This is a function prologue.  */
   pkl_asm_note (PKL_GEN_ASM,
                 PKL_AST_FUNC_NAME (PKL_PASS_NODE));
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PROLOG);
 
-  /* Reverse the arguments.
-     XXX: compute the number of formals in transf.
-     XXX: use pick and roll when available.  */
-  {
-    int narg = 0;
-    for (fa = PKL_AST_FUNC_ARGS (PKL_PASS_NODE); fa; fa = PKL_AST_CHAIN (fa))
-      narg++;
-
-    if (narg == 2)
+  /* Reverse the arguments.  */
+  if (nargs == 2)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-    else if (narg == 3)
+  else if (nargs == 3)
       {
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
       }
-    else if (narg > 1)
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, narg);
-  }
+  else if (nargs > 1)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nargs);
 
   /* Push the function environment, for the arguments, if there are
      any.  The compound-statement that is the body for the function
      will create it's own frame.  */
   if (PKL_AST_FUNC_ARGS (PKL_PASS_NODE))
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, 0 /* XXX */);
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, nargs);
 
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this

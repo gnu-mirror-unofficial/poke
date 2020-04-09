@@ -572,6 +572,8 @@ pkl_ast_node pkl_ast_make_enum (pkl_ast ast,
    number of frames pushed to the environment at any moment.  After
    parsing, this field is not used anymore.
 
+   NARGS is the number of formal arguments.
+
    NAME is a C string containing the name used to declare the
    function.  */
 
@@ -581,6 +583,7 @@ pkl_ast_node pkl_ast_make_enum (pkl_ast ast,
 #define PKL_AST_FUNC_BODY(AST) ((AST)->func.body)
 #define PKL_AST_FUNC_NFRAMES(AST) ((AST)->func.nframes)
 #define PKL_AST_FUNC_NAME(AST) ((AST)->func.name)
+#define PKL_AST_FUNC_NARGS(AST) ((AST)->func.nargs)
 
 struct pkl_ast_func
 {
@@ -591,6 +594,7 @@ struct pkl_ast_func
   union pkl_ast_node *first_opt_arg;
   union pkl_ast_node *body;
 
+  int nargs;
   int nframes;
   char *name;
 };

@@ -2718,6 +2718,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
       IPRINTF ("FUNC::\n");
 
       PRINT_COMMON_FIELDS;
+      PRINT_AST_IMM (nargs, FUNC_NARGS, "%d");
       PRINT_AST_SUBAST (ret_type, FUNC_RET_TYPE);
       PRINT_AST_SUBAST_CHAIN (FUNC_ARGS);
       PRINT_AST_SUBAST (first_opt_arg, FUNC_FIRST_OPT_ARG);
