@@ -4413,6 +4413,10 @@ that is to add a command like this to your @file{pokerc} file:
 load_path = getenv ("HOME") + "/.poke.d:" + load_path
 @end example
 
+If the environment variable @code{POKE_LOAD_PATH} is defined in the
+environment, its value is added to @code{load_path} at poke startup
+time.
+
 @node Styling
 @section Styling
 @cindex styled output

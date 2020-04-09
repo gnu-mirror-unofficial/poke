@@ -1,5 +1,9 @@
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Load Path): Mention POKE_LOAD_PATH.
+
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl.c (pkl_load): New function.
 	(pkl_resolve_module): Likewise.
 	* lib/pkl-tab.y (load_module): Use pkl_resolve_module.
