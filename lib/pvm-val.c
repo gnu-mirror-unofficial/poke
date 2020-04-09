@@ -154,7 +154,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
       sct->methods[i].name = PVM_NULL;
       sct->methods[i].value = PVM_NULL;
     }
-  
+
   PVM_VAL_BOX_SCT (box) = sct;
   return PVM_BOX (box);
 }

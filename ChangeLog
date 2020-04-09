@@ -1,5 +1,9 @@
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pvm-val.c (pvm_print_val_1): Remove trailing whitespaces.
+
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pvm.h: Note that if both NAME and VALUE are PVM_NULL in a
 	struct field, the field is absent.
 	* lib/pvm-val.c (pvm_sizeof): Be aware of absent fields.
