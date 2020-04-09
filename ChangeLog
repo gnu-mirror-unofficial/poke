@@ -1,3 +1,13 @@
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl.c (pkl_load): New function.
+	(pkl_resolve_module): Likewise.
+	* lib/pkl-tab.y (load_module): Use pkl_resolve_module.
+	* src/pk-cmd.c (pk_cmd_init): Likewise.
+	* src/poke.c (poke_cmdsdir): Remove.
+	(initialize): Do not initialize poke_cmdsdir.
+	* run.in (POKECMDSDIR): Do not set POKECMDSDIR.
+
 2020-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pvm-val.c (pvm_sizeof): Return zero for type values.

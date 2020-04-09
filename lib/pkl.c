@@ -471,3 +471,97 @@ pkl_get_vm (pkl_compiler compiler)
 {
   return compiler->vm;
 }
+
+char *
+pkl_resolve_module (pkl_compiler compiler,
+                    const char *module,
+                    int filename_p)
+{
+  char *filename = alloca (strlen (module) + 3 + 1);
+  char *module_filename = NULL;
+  char *load_path = NULL;
+
+  /* Get the load path from the run-time environment.  */
+  {
+    pvm_val val;
+    pkl_ast_node tmp;
+    int back, over;
+
+    pkl_env compiler_env = pkl_get_env (compiler);
+    pvm_env runtime_env = pvm_get_env (pkl_get_vm (compiler));
+
+    tmp = pkl_env_lookup (compiler_env,
+                          PKL_ENV_NS_MAIN,
+                          "load_path",
+                          &back, &over);
+    assert (tmp != NULL);
+
+    val = pvm_env_lookup (runtime_env, back, over);
+    assert (val != PVM_NULL);
+
+    load_path = PVM_VAL_STR (val);
+  }
+
+  /* Derive the name of the file containing the module, if needed.  */
+  strcpy (filename, module);
+  if (!filename_p)
+    strcat (filename, ".pk");
+
+  /* Traverse the directories in the load path and try to load the
+     requested module.  */
+  {
+    char *full_filename;
+    char *saveptr = NULL;
+    char *path = xstrdup (load_path); /* Modified by strtok.  */
+    char *dir = strtok_r (path, ":", &saveptr);
+
+    if (dir)
+      {
+        do
+          {
+            /* Ignore empty entries.  */
+            if (*dir == '\0')
+              continue;
+
+            /* Substitute %...% marks.  */
+            if (STREQ (dir, "%DATADIR%"))
+              dir = PKGDATADIR;
+
+            /* Mount the full path and determine whether the resulting
+               file is readable.  */
+            full_filename = alloca (strlen (dir)
+                                    + 1 /* "/" */ + strlen (filename)
+                                    + 1);
+            strcpy (full_filename, dir);
+            strcat (full_filename, "/");
+            strcat (full_filename, filename);
+
+            if (pk_file_readable (full_filename) == NULL)
+              {
+                module_filename = xstrdup (full_filename);
+                break;
+              }
+          }
+        while ((dir = strtok_r (NULL, ":", &saveptr)) != NULL);
+      }
+
+    free (path);
+  }
+
+  return module_filename;
+}
+
+int
+pkl_load (pkl_compiler compiler, const char *module)
+{
+  char *module_filename = pkl_resolve_module (compiler,
+                                              module,
+                                              0 /* filename_p */);
+  if (!module_filename)
+    return 0;
+
+  if (!pkl_compile_file (compiler, module_filename))
+    return 0;
+
+  return 1;
+}

@@ -68,13 +68,6 @@ char *poke_datadir;
 
 char *poke_infodir;
 
-/* The following global contains the directory holding the source
-   files of the commands written in Poke.  In an installed program,
-   this is the same than poke_datadir, but the POKE_CMDSDIR
-   environment variable can be set to a different value, which is
-   mainly to run an uninstalled poke.  */
-char *poke_cmdsdir;
-
 /* The following global contains the directory holding pickles shipped
    with poke.  In an installed program, this is the same than
    poke_datadir, but the POKE_PICKLESDIR environment variable can be
@@ -386,10 +379,6 @@ initialize (int argc, char *argv[])
   poke_picklesdir = getenv ("POKEPICKLESDIR");
   if (poke_picklesdir == NULL)
     poke_picklesdir = poke_datadir;
-
-  poke_cmdsdir = getenv ("POKECMDSDIR");
-  if (poke_cmdsdir == NULL)
-    poke_cmdsdir = poke_datadir;
 
   poke_infodir = getenv ("POKEINFODIR");
   if (poke_infodir == NULL)

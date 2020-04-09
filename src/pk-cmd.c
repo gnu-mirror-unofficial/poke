@@ -741,8 +741,6 @@ pk_cmd_exec_script (const char *filename)
 void
 pk_cmd_init (void)
 {
-  char *poke_cmdfile;
-
   cmds_trie = pk_trie_from_cmds (dot_cmds);
   info_trie = pk_trie_from_cmds (info_cmds);
   help_trie = pk_trie_from_cmds (help_cmds);
@@ -751,18 +749,11 @@ pk_cmd_init (void)
   set_trie = pk_trie_from_cmds (set_cmds);
 
   /* Compile commands written in Poke.  */
-
-  /* XXX: replace with pkl_load ("pk-cmd.pk") */
-  if (asprintf (&poke_cmdfile, "%s/%s", poke_cmdsdir, "pk-cmd.pk") == -1)
+  if (!pkl_load (poke_compiler, "pk-cmd"))
     {
-      perror ("pk_cmd_init");
+      pk_puts ("poke: error: unable to load the pk-cmd module.\n");
       exit (EXIT_FAILURE);
     }
-
-  if (!pkl_compile_file (poke_compiler, poke_cmdfile))
-    exit (EXIT_FAILURE);
-
-  free (poke_cmdfile);
 }
 
 void

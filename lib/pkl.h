@@ -191,10 +191,27 @@ int pkl_error_on_warning (pkl_compiler compiler);
 void pkl_set_error_on_warning (pkl_compiler compiler,
                                int error_on_warning);
 
-/* Set/get the quiet_p flag in/from the copmiler.  If this flag is
+/* Set/get the quiet_p flag in/from the compiler.  If this flag is
    set, the compiler emits as few output as possible.  */
 
 int pkl_quiet_p (pkl_compiler compiler);
 void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p);
+
+/* Look for the module described by MODULE in the load_path of the
+   given COMPILER, and return the path to its containing file.
+
+   If the module is not found, return NULL.
+
+   If FILENAME_P is not zero MODULE is interpreted as a relative file
+   path instead of a module name.  */
+
+char *pkl_resolve_module (pkl_compiler compiler, const char *module,
+                          int filename_p);
+
+/* Load a module using the given compiler.
+   If the module cannot be loaded, return 1.
+   Otherwise, return 0.  */
+
+int pkl_load (pkl_compiler compiler, const char *module);
 
 #endif /* ! PKL_H */
