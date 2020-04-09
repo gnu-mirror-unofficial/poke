@@ -154,7 +154,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
       sct->methods[i].name = PVM_NULL;
       sct->methods[i].value = PVM_NULL;
     }
-
+  
   PVM_VAL_BOX_SCT (box) = sct;
   return PVM_BOX (box);
 }
@@ -174,7 +174,8 @@ pvm_ref_struct (pvm_val sct, pvm_val name)
 
   for (i = 0; i < nfields; ++i)
     {
-      if (fields[i].name != PVM_NULL
+      if (!PVM_VAL_SCT_FIELD_ABSENT_P (sct, i)
+          && fields[i].name != PVM_NULL
           && STREQ (PVM_VAL_STR (fields[i].name),
                     PVM_VAL_STR (name)))
         return fields[i].value;
@@ -369,7 +370,19 @@ pvm_elemsof (pvm_val val)
   if (PVM_IS_ARR (val))
     return PVM_VAL_ARR_NELEM (val);
   else if (PVM_IS_SCT (val))
-    return PVM_VAL_SCT_NFIELDS (val);
+    {
+      size_t nfields;
+      size_t i, present_fields = 0;
+
+      nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
+      for (i = 0; i < nfields; ++i)
+        {
+          if (!PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
+            present_fields++;
+        }
+
+      return pvm_make_ulong (present_fields, 64);
+    }
   else if (PVM_IS_STR (val))
     return pvm_make_ulong (strlen (PVM_VAL_STR (val)), 64);
   else
@@ -441,6 +454,9 @@ pvm_sizeof (pvm_val val)
           pvm_val elem_offset = PVM_VAL_SCT_FIELD_OFFSET (val, i);
           uint64_t elem_size_bits = pvm_sizeof (elem_value);
           uint64_t elem_offset_bits;
+
+          if (PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
+            continue;
 
           if (elem_offset == PVM_NULL)
             size += elem_size_bits;
@@ -827,7 +843,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
     }
   else if (PVM_IS_SCT (val))
     {
-      size_t nelem, idx;
+      size_t nelem, idx, nabsent;
       pvm_val struct_type = PVM_VAL_SCT_TYPE (val);
       pvm_val struct_type_name = PVM_VAL_TYP_S_NAME (struct_type);
       pvm_val struct_offset = PVM_VAL_SCT_OFFSET (val);
@@ -863,12 +879,19 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       pk_puts (" ");
       pk_printf ("{");
 
+      nabsent = 0;
       for (idx = 0; idx < nelem; ++idx)
         {
           pvm_val name = PVM_VAL_SCT_FIELD_NAME(val, idx);
           pvm_val value = PVM_VAL_SCT_FIELD_VALUE(val, idx);
 
-          if (idx != 0)
+          if (PVM_VAL_SCT_FIELD_ABSENT_P (val, idx))
+            {
+              nabsent++;
+              continue;
+            }
+
+          if ((idx - nabsent) != 0)
             pk_puts (",");
 
           if (mode == PVM_PRINT_TREE)

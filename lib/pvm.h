@@ -330,6 +330,9 @@ struct pvm_struct
    mapped then this is the cached value, which is returned by
    `sref'.
 
+   If both NAME and FIELD are PVM_NULL, the field is absent in the
+   struct.
+
    MODIFIED is a C boolean indicating whether the field value has
    been modified since struct creation, or since last mapping if the
    struct is mapped.  */
@@ -338,6 +341,9 @@ struct pvm_struct
 #define PVM_VAL_SCT_FIELD_NAME(V,I) (PVM_VAL_SCT_FIELD((V),(I)).name)
 #define PVM_VAL_SCT_FIELD_VALUE(V,I) (PVM_VAL_SCT_FIELD((V),(I)).value)
 #define PVM_VAL_SCT_FIELD_MODIFIED(V,I) (PVM_VAL_SCT_FIELD((V),(I)).modified)
+#define PVM_VAL_SCT_FIELD_ABSENT_P(V,I)         \
+  (PVM_VAL_SCT_FIELD_NAME ((V),(I)) == PVM_NULL \
+   && PVM_VAL_SCT_FIELD_VALUE ((V),(I)) == PVM_NULL)
 
 struct pvm_struct_field
 {

@@ -619,12 +619,11 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_MAPPER
-;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF NADDED )
+;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Map a struct field from the current IOS.
 ;;; SBOFF is the bit-offset of the beginning of the struct.
 ;;; NBOFF is the bit-offset marking the end of this field.
-;;; NADDED is an ulong<64> with the number of fields processed
 ;;; by this macro.  It is typically ulong<64>0 or ulong<64>1.
 ;;;
 ;;; The C environment required is:
@@ -651,7 +650,8 @@
                                         ; BOFF VAL STR
         swap                            ; BOFF STR VAL
         ;; If this is an optional field, evaluate the optcond.  If
-        ;; it is false, then do not add this field to the struct.
+        ;; it is false, then add an absent field, i.e. both the field
+        ;; name and the field value are PVM_NULL.
    .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field);
    .c if (optcond)
         .c {
@@ -662,7 +662,10 @@
         drop                    ; BOFF STR VAL
         drop                    ; BOFF STR
         drop                    ; BOFF
-        push ulong<64>0         ; BOFF NADDED
+        push null               ; BOFF null
+        over                    ; BOFF null BOFF
+        over                    ; BOFF null BOFF null
+        swap                    ; BOFF null null BOFF
         ba .omitted_field
    .c }
    .c else
@@ -684,7 +687,6 @@
         tor                    ; STR VAL BOFF
         nrot                   ; BOFF STR VAL
         fromr                  ; BOFF STR VAL NBOFF
-        push ulong<64>1        ; BOFF STR VAL NBOFF NADDED
 .omitted_field:
         .end
 
@@ -751,16 +753,17 @@
         pushvar $ios             ; ...[EBOFF ENAME EVAL] NEBOFF IOS
         swap                     ; ...[EBOFF ENAME EVAL] IOS NEBOFF
         pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEBOFF OFF
-        .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEBOFF NADDED
+        .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   if (PKL_AST_TYPE_S_UNION (type_struct))
  .c   {
         pope
         pope
  .c   }
         ;; Increase the number of fields.
-        pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NADDED NFIELD
+        pushvar $nfield         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD
+        push ulong<64>1         ; ...[EBOFF ENAME EVAL] NEBOFF NFIELD 1UL
         addlu
-        nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+NADDED)
+        nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
         popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
         ;; If the struct is pinned, replace NEBOFF with BOFF
  .c   if (PKL_AST_TYPE_S_PINNED (type_struct))
@@ -1005,7 +1008,8 @@
         dup                    ; ... ENAME EVAL EVAL
         regvar $val            ; ... ENAME EVAL
         ;; If this is an optional field, evaluate the optcond.  If
-        ;; it is false, then do not add this field to the struct.
+        ;; it is false, then add an absent field, i.e. both the field
+        ;; name and the field value are PVM_NULL.
    .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field);
    .c if (optcond)
    .c {
@@ -1016,6 +1020,9 @@
         drop                    ; ENAME EVAL
         drop                    ; ENAME
         drop                    ; _
+        pushvar $boff            ; BOFF
+        push null               ; BOFF ENAME EVAL
+        push null               ; BOFF ENAME EVAL
         ba .omitted_field
    .c }
    .c else
@@ -1060,6 +1067,7 @@
    .c }
         popvar $boff           ; ... ENAME EVAL NEBOFF
         nrot                   ; ... NEBOFF ENAME EVAL
+.omitted_field:
         ;; Increase the number of fields.
         pushvar $nfield        ; ... NEBOFF ENAME EVAL NFIELD
         push ulong<64>1        ; ... NEBOFF ENAME EVAL NFIELD 1
@@ -1074,7 +1082,6 @@
         drop                    ; ... ENAME
         drop                    ; ... EVAL
    .c }
-.omitted_field:
  .c }
  .c if (PKL_AST_TYPE_S_UNION (type_struct))
  .c {
@@ -1129,10 +1136,14 @@
 ;;; `field' is a pkl_ast_node with the type of the field to write.
 
         .macro struct_field_writer
+        ;; Do not write absent fields.
+        srefia                  ; IOS SCT I ABSENT_P
+        bnzi .omitted_field
+        drop                    ; IOS SCT
         ;; The field is written out only if it hasn't
         ;; been modified since the last mapping.
         smodi                   ; IOS SCT I MODIFIED
-        bzi .unmodified
+        bzi .omitted_field
         drop                    ; IOS SCT I
         srefi                   ; IOS SCT I EVAL
         nrot                    ; IOS EVAL SCT I
@@ -1146,7 +1157,7 @@
         .c PKL_GEN_PAYLOAD->in_writer = 0;
         .c PKL_GEN_PAYLOAD->endian = endian; }
         ba .next
-.unmodified:
+.omitted_field:
         drop                    ; IOS SCT I
         drop                    ; IOS SCT
         drop                    ; IOS

@@ -3684,7 +3684,8 @@ end
 #
 # Given a struct and a field name, push the value contained in the
 # referred struct field on the stack.  If the struct does not have a
-# field with the given name, then raise PVM_E_ELEM.
+# field with the given name, or if the field is absent from the struct
+# value then raise PVM_E_ELEM.
 #
 # Stack: ( SCT STR -- SCT STR VAL )
 # Exceptions: PVM_E_ELEM
@@ -3704,7 +3705,8 @@ end
 #
 # Given a struct and a field name, push the value contained in the
 # struct field on the stack.  If the struct does not have a field with
-# the given name, then push PVM_NULL.
+# the given name, or if the field is absent from the struct value then
+# push PVM_NULL.
 #
 # Stack: ( SCT STR -- SCT STR VAL )
 
@@ -3738,6 +3740,31 @@ instruction srefi ()
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_VALUE (sct,
                                                PVM_VAL_ULONG (index)));
+  end
+end
+
+# Instruction: srefia
+#
+# Given a struct and an index, push 1 if the field occupying the
+# position specified by the index in the given struct is absent.  Push
+# 0 otherwise.  If the struct doesn't have that many fields, raise
+# PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( SCT ULONG -- SCT ULONG INT )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction srefia ()
+  code
+    pvm_val sct = JITTER_UNDER_TOP_STACK ();
+    pvm_val index = JITTER_TOP_STACK ();
+
+    if (PVM_VAL_ULONG (index) < 0
+        || (PVM_VAL_ULONG (index) >=
+            PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
+      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+
+    JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_ABSENT_P (sct,
+                                                   PVM_VAL_ULONG (index)));
   end
 end
 

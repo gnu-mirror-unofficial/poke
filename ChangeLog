@@ -1,5 +1,24 @@
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pvm.h: Note that if both NAME and VALUE are PVM_NULL in a
+	struct field, the field is absent.
+	* lib/pvm-val.c (pvm_sizeof): Be aware of absent fields.
+	(pvm_print_val_1): Likewise.
+	(pvm_elemsof): Likewise.
+	(pvm_ref_struct): Return NULL if the referred field is absent.
+	* lib/pkl-gen.pks (struct_constructor): Support optional fields.
+	(struct_mapper): Likewise.
+	(struct_field_mapper): Likewise.
+	(struct_field_writer): Likewise.
+	* lib/pkl-insn.def (srefia): New instruction.
+	* lib/pvm.jitter (srefia): Likewise.
+	* testsuite/poke.pkl/attr-length-8.pk: New test.
+	* testsuite/poke.pkl/sref-3.pk: Likewise.
+	* testsuite/poke.pkl/sref-4.pk: Likewise.
+	* testsuite/poke.map/map-opcond-write-1.pk: Likewise.
+
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pvm-env.c: Include string.h
 	* lib/pkl-gen.c: Remove spurious XXX marks.
 
