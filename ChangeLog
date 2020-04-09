@@ -1,5 +1,10 @@
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pvm-env.c: Include string.h
+	* lib/pkl-gen.c: Remove spurious XXX marks.
+
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-ast.h (PKL_AST_FUNC_NARGS): Define.
 	* lib/pkl-ast.c (pkl_ast_print_1): Print the nargs attribute of
 	func nodes.

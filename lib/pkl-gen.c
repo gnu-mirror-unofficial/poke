@@ -1468,7 +1468,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
     {
       pkl_ast_node to_unit = PKL_AST_TYPE_O_UNIT (to_type);
 
-      /* XXX pass `unit' as an argument to OTO.  */
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
                     pvm_make_ulong (PKL_AST_INTEGER_VALUE (to_unit), 64));
       pkl_asm_insn (pasm, PKL_INSN_OTO, from_type, to_type);
@@ -2153,7 +2152,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
                                                       /* IOS CLS IOS OFF EBOUND CLS SBOUND */
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS CLS IOS OFF EBOUND SBOUND CLS */
-          /* XXX */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);  /* IOS CLS VAL */
 
           /* Install the mapper into the value.  */
