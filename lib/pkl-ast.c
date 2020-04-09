@@ -645,35 +645,24 @@ pkl_ast_dup_type (pkl_ast_node type)
 pkl_ast_node
 pkl_struct_type_traverse (pkl_ast_node type, const char *path)
 {
-  char *trunk, *sub, *base;
+  const char *s, *e;
 
   if (PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
     return NULL;
 
-  trunk = strndup (path, strlen (path) - strlen (strrchr (path, '.')));
-  base = strtok (trunk, ".");
-
-  /* Node in the form XX. Check to silence the compiler about base not used */
-  if (base == NULL)
+  for (s = path, e = s; *e; s = e + 1)
     {
-      free (trunk);
-      return type;
-    }
+      /* Ignore empty entries and ignore last part */
+      if ((e = strchrnul (s, ':')) == s || !*e)
+        continue;
 
-  while ((sub = strtok (NULL, ".")) != NULL)
-    {
-      pkl_ast_node ename;
-      pkl_ast_node etype, t;
-      char *field;
-
-      etype = NULL;
-
-      if (PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
-        goto out;
-
-      for (t = PKL_AST_TYPE_S_ELEMS (type); t;
+      for (pkl_ast_node t = PKL_AST_TYPE_S_ELEMS (type); t;
            t = PKL_AST_CHAIN (t))
         {
+          pkl_ast_node ename;
+          pkl_ast_node etype;
+          const char *field;
+
           if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
             continue;
 
@@ -682,22 +671,11 @@ pkl_struct_type_traverse (pkl_ast_node type, const char *path)
 
           field = PKL_AST_IDENTIFIER_POINTER (ename);
 
-          if (STREQ (field, sub))
-            {
-              type = etype;
-              break;
-            }
+          if (!strncmp (field, s, e - s) && !field[e - s])
+            return etype;
         }
-
-      if (type != etype)
-        goto out;
     }
 
-  free (trunk);
-  return type;
-
-out:
-  free (trunk);
   return NULL;
 }
 

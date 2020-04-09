@@ -1,3 +1,8 @@
+2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* lib/pkl-ast.c (pkl_struct_type_traverse): Use
+	non-destructive parsing without memory allocations.
+
 2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pvm.jitter (strace): Use pvm_print_val_with_params instead
