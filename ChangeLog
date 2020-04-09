@@ -1,5 +1,9 @@
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/eq-structs-9.pk: New test.
+
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-ast.h (struct pkl_ast_decl): New field `in_struct_p'.
 	(PKL_AST_DECL_IN_STRUCT_P): Define.
 	* lib/pkl-tab.y (struct_type_field_identifier): Annotate the
