@@ -1,5 +1,11 @@
 2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* lib/pk-utils.h: Add declaration of pk_str_replace.
+	* lib/pk-utils.c: Add implementation of pk_str_replace.
+	* lib/pkl.c (pkl_resolve_module): Make use of pk_str_replace.
+
+2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* lib/pkl.c (pkl_resolve_module): Use non-destructive parsing.
 
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>

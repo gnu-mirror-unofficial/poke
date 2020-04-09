@@ -157,3 +157,45 @@ pk_str_concat(const char *s0, ...)
 
   return res;
 }
+
+/* Replace all occurrences of SEARCH within IN by REPLACE.
+ * Return IN when SEARCH was not found, else
+ * return a new allocated string with the replaced sequences.
+ * Return NULL on allocation failure.
+ */
+char *
+pk_str_replace (const char *in, const char *search, const char *replace)
+{
+  const char *s, *e;
+  char *out, *d;
+  int num = 0;
+
+  /* count number of occurrences of 'search' within IN */
+  for (s = in; (s = strstr (s, search)); s++, num++)
+    ;
+
+  if (!num)
+    return (char *) in;
+
+  size_t search_len = strlen (search);
+  size_t replace_len = strlen (replace);
+  size_t in_len = strlen (in);
+
+  d = out = malloc (in_len + (replace_len - search_len) * num + 1);
+  if (!out)
+    return NULL;
+
+  for (s = in; (e = strstr (s, search)); s = e + search_len)
+    {
+      memcpy (d, s, e - s);
+      d += e - s;
+
+      memcpy (d, replace, replace_len);
+      d += replace_len;
+    }
+
+  /* copy rest of IN + trailing zero */
+  strcpy (d, s);
+
+  return out;
+}

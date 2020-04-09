@@ -478,6 +478,7 @@ pkl_resolve_module (pkl_compiler compiler,
                     int filename_p)
 {
   const char *load_path;
+  char *full_filename = NULL;
 
   /* Get the load path from the run-time environment.  */
   {
@@ -503,30 +504,31 @@ pkl_resolve_module (pkl_compiler compiler,
   /* Traverse the directories in the load path and try to load the
      requested module.  */
   {
-    char *full_filename;
     const char *ext = filename_p ? "" : ".pk";
     const char *s, *e;
 
-    for (s = load_path, e = s; *e; s = e + 1)
+    char *fixed_load_path = pk_str_replace (load_path, "%DATADIR%", PKGDATADIR);
+
+    for (s = fixed_load_path, e = s; *e; s = e + 1)
       {
         /* Ignore empty entries. */
         if ((e = strchrnul (s, ':')) == s)
           continue;
 
-        if (!strncmp (s, "%DATADIR%", e - s))
-          full_filename = pk_str_concat (PKGDATADIR, s + sizeof ("%DATADIR%") - 1,
-                                         "/", module, ext, NULL);
-        else
-          asprintf (&full_filename, "%.*s/%s%s", (int) (e - s), s, module, ext);
+        asprintf (&full_filename, "%.*s/%s%s", (int) (e - s), s, module, ext);
 
         if (pk_file_readable (full_filename) == NULL)
-          return full_filename;
+          break;
 
         free (full_filename);
+        full_filename = NULL;
       }
+
+    if (fixed_load_path != load_path)
+      free (fixed_load_path);
   }
 
-  return NULL;
+  return full_filename;
 }
 
 int

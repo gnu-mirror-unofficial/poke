@@ -53,4 +53,7 @@ void pk_print_binary (uint64_t val, int size, int sign);
 /* Concatenate string arguments into an malloc'ed string. */
 char *pk_str_concat(const char *s0, ...);
 
+/* Replace all occurrences of SEARCH within IN by REPLACE. */
+char *pk_str_replace (const char *in, const char *search, const char *replace);
+
 #endif /* ! PK_UTILS_H */
