@@ -1638,7 +1638,7 @@ pkl_asm_catch (pkl_asm pasm)
 
   if (pasm->level->node1)
     {
-      pkl_asm_insn (pasm, PKL_INSN_PUSHF);
+      pkl_asm_insn (pasm, PKL_INSN_PUSHF, 1);
       pkl_asm_insn (pasm, PKL_INSN_REGVAR);
     }
   else
@@ -1789,7 +1789,7 @@ pkl_asm_for_where (pkl_asm pasm)
 {
   pvm_program_append_label (pasm->program, pasm->level->label1);
 
-  pkl_asm_insn (pasm, PKL_INSN_PUSHF);
+  pkl_asm_insn (pasm, PKL_INSN_PUSHF, 1);
   pkl_asm_insn (pasm, PKL_INSN_PUSH, PVM_NULL);
   pkl_asm_insn (pasm, PKL_INSN_REGVAR);
   pkl_asm_insn (pasm, PKL_INSN_SEL);

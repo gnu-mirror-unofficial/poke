@@ -106,7 +106,7 @@
         ;; Note that we have to do the arithmetic in unit_types, then
         ;; convert to to_base_type, to assure that to_base_type can hold
         ;; the to_base_unit.  Otherwise weird division by zero occurs.
-        pushf
+        pushf 2
         regvar $tounit                          ; OFF
         ogetu                                   ; OFF FROMUNIT
         regvar $fromunit                        ; OFF
@@ -287,7 +287,7 @@
 ;;; = BOFF + the original offset of the element.
 
         .macro aelems
-        pushf
+        pushf 5
         sel                     ; ULONG BOFF ARR SEL
         regvar $nelem           ; ULONG BOFF ARR
         regvar $arr             ; ULONG BOFF
@@ -337,7 +337,7 @@
 ;;;  the operands.
 
         .macro aconc
-        pushf
+        pushf 2
         over                    ; ARR1 ARR2 ARR1
         over                    ; ARR1 ARR2 ARR1 ARR2
         typof                   ; ... ARR1 ARR2 ATYPE
@@ -390,7 +390,7 @@
 ;;;    a pkl_ast_node with the type of ARR.
 
         .macro atrim @array_type
-        pushf
+        pushf 3
         regvar $to
         regvar $from
         regvar $array
@@ -746,7 +746,7 @@
         ;; At this point both arrays are guaranteed to have the same
         ;; number of elements.  Check equality of the elements
         ;; themselves.
-        pushf
+        pushf 2
         sel                     ; ARR1 ARR2 SEL
         regvar $len
         push ulong<64>0         ; ARR1 ARR2 0UL

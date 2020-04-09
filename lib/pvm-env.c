@@ -19,7 +19,6 @@
 #include <config.h>
 
 #include <assert.h>
-#include <string.h>
 
 #include "pvm.h"
 #include "pvm-alloc.h"
@@ -27,15 +26,16 @@
 /* The variables in each frame are organized in an array that can be
    efficiently accessed using OVER.
 
+   Entries are allocated in steps of STEP variables.
+
    UP is a link to the immediately enclosing frame.  This is NULL for
    the top-level frame.  */
-
-#define MAX_VARS 1024
 
 struct pvm_env
 {
   int num_vars;
-  pvm_val vars[MAX_VARS];
+  int step;
+  pvm_val *vars;
 
   struct pvm_env *up;
 };
@@ -44,23 +44,20 @@ struct pvm_env
 /* The following functions are documentd in pvm-env.h */
 
 pvm_env
-pvm_env_new ()
+pvm_env_new (int hint)
 {
-  int i;
   pvm_env env = pvm_alloc (sizeof (struct pvm_env));
 
-  memset (env, 0, sizeof (struct pvm_env));
-
-  for (i = 0; i < MAX_VARS; ++i)
-    env->vars[i] = PVM_NULL;
-
+  env->step = hint == 0 ? 128 : hint;
+  env->num_vars = 0;
+  env->vars = NULL;
   return env;
 }
 
 pvm_env
-pvm_env_push_frame (pvm_env env)
+pvm_env_push_frame (pvm_env env, int hint)
 {
-  pvm_env frame = pvm_env_new ();
+  pvm_env frame = pvm_env_new (hint);
 
   frame->up = env;
   return frame;
@@ -76,7 +73,16 @@ pvm_env_pop_frame (pvm_env env)
 void
 pvm_env_register (pvm_env env, pvm_val val)
 {
-  assert (env->num_vars < MAX_VARS);
+  assert (env->step != 0);
+  if (env->num_vars % env->step == 0)
+    {
+      size_t size = ((env->num_vars + env->step)
+                     * sizeof (void*));
+      env->vars = pvm_realloc (env->vars, size);
+      memset (env->vars + env->num_vars, 0,
+              env->step * sizeof (void*));
+    }
+
   env->vars[env->num_vars++] = val;
 }
 

@@ -228,7 +228,7 @@
 #
 #   .function FOO
 #   prolog
-#   pushf
+#   pushf 0
 #   regvar      ; Argument2, 0,0
 #   regvar      ; Argument1, 0,1
 #   ...
@@ -243,7 +243,7 @@
 #
 #   .function FOO
 #   prolog
-#   pushf
+#   pushf 0
 #   regvar      ; Argument3, 0,0
 #   regvar      ; Argument2, 0,1
 #   regvar      ; Argument1, 0,2
@@ -263,7 +263,7 @@
 #
 #  .function FOO
 #  prolog
-#  pushf
+#  pushf 0
 #  regvar $arg2
 #  regvar $arg1
 #  ...
@@ -274,7 +274,7 @@
 #
 #  .function FOO
 #  prolog
-#  pushf
+#  pushf 0
 #  regvar $arg3
 #  regvar $arg2
 #  regvar $arg1
@@ -289,10 +289,10 @@
 # depending on the context.  For example, consider the following PVM
 # program:
 #
-# pushf
+# pushf 0
 # regvar        ; A
 # pushvar 0,0   ; A
-# pushf
+# pushf 0
 # pushvar 1,0   ; Also A!
 # popf 2
 #
@@ -302,10 +302,10 @@
 # and gets really confusing.  Once again, it is much better to let ras
 # do the tracking job:
 #
-# pushf
+# pushf 0
 # regvar %a
 # pushvar %a
-# pushf
+# pushf 0
 # pushvar %a
 # popf 2
 #

@@ -1,3 +1,17 @@
+2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-insn.def (pushf): Get a numeric argument.
+	* lib/pvm.jitter (pushf): Likewise.
+	* lib/pvm.h (pvm_env_new): Get a `hint' argument.
+	(pvm_env_push_frame): Likewise.
+	* lib/pvm-env.c	(pvm_env_new): Likewise.
+	(pvm_env_push_frame): Likewise.
+	(pvm_env_register): Allocate new space for entries as needed.
+	* lib/pvm.c (pvm_init): Pass a hint to pvm_env_new.
+	* lib/pkl-asm.pks: Add hints to pushf instructions.
+	* lib/pkl-gen.c: Likewise.
+	* lib/pkl-gen.pks: Likewise.
+
 2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* lib/pk-utils.h: Add declaration of pk_str_replace.

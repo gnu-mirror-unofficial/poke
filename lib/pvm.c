@@ -99,7 +99,7 @@ pvm_init (void)
 
   /* Initialize the global environment.  Note we do this after
      registering GC roots, since we are allocating memory.  */
-  PVM_STATE_ENV (apvm) = pvm_env_new ();
+  PVM_STATE_ENV (apvm) = pvm_env_new (0 /* hint */);
   PVM_STATE_VM (apvm) = apvm;
 
   return apvm;

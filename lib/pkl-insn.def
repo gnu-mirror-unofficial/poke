@@ -339,7 +339,7 @@ PKL_DEF_INSN (PKL_INSN_POKES, "", "pokes")
 
 /* Environment instructions.  */
 
-PKL_DEF_INSN (PKL_INSN_PUSHF, "", "pushf")
+PKL_DEF_INSN (PKL_INSN_PUSHF, "n", "pushf")
 PKL_DEF_INSN (PKL_INSN_POPF, "n", "popf")
 PKL_DEF_INSN (PKL_INSN_PUSHVAR,"nn", "pushvar")
 PKL_DEF_INSN (PKL_INSN_POPVAR, "nn", "popvar")

@@ -62,7 +62,7 @@
 
         .function array_mapper
         prolog
-        pushf
+        pushf 6
         regvar $sbound           ; Argument
         regvar $ebound           ; Argument
         regvar $boff             ; Argument
@@ -247,7 +247,7 @@
 
         .function array_valmapper
         prolog
-        pushf
+        pushf 8
         regvar $boff            ; Argument
         regvar $nval            ; Argument
         regvar $val             ; Argument
@@ -383,7 +383,7 @@
 
         .function array_writer
         prolog
-        pushf
+        pushf 3
         mgetios                 ; ARRAY IOS
         regvar $ios             ; ARRAY
         regvar $value           ; _
@@ -470,7 +470,7 @@
 
         .function array_constructor
         prolog
-        pushf                   ; EBOUND SBOUND
+        pushf 4                 ; EBOUND SBOUND
         ;; If both bounds are null, then ebound is 0.
         bn .sbound_nil
         ba .bounds_ready
@@ -718,7 +718,7 @@
 
         .function struct_mapper
         prolog
-        pushf
+        pushf 3
         drop                    ; sbound
         drop                    ; ebound
         regvar $boff
@@ -923,7 +923,7 @@
 
         .function struct_constructor
         prolog
-        pushf
+        pushf 3
         regvar $sct             ; SCT
         ;; Initialize $nfield to 0UL
         push ulong<64>0
@@ -1171,7 +1171,7 @@
 
         .function struct_writer
         prolog
-        pushf
+        pushf 1
         regvar $sct             ; Argument
 .c { uint64_t i;
  .c for (i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))

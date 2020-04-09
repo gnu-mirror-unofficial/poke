@@ -993,22 +993,25 @@ end
 
 ## Environment instructions
 
-# Instruction: pushf
+# Instruction: pushf N
 #
-# Push a new lexical frame.
+# Push a new lexical frame.  If the argument N is bigger than zero, it
+# indicates the number of entries in the frame.  If N is 0, it means
+# we don't know how many entries will be stored in the frame.
 #
 # Stack: ( -- )
 
-instruction pushf ()
+instruction pushf (?n popf_printer)
   code
     jitter_state_runtime.env
-       = pvm_env_push_frame (jitter_state_runtime.env);
+       = pvm_env_push_frame (jitter_state_runtime.env,
+                             JITTER_ARGN0);
   end
 end
 
-# Instruction: popf
+# Instruction: popf N
 #
-# Pop a lexical frame.
+# Pop N lexical frames.
 #
 # Stack: ( -- )
 

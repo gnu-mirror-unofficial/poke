@@ -383,7 +383,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_comp_stmt)
 
   if (PKL_AST_COMP_STMT_BUILTIN (comp_stmt) == PKL_AST_BUILTIN_NONE)
     /* Push a frame into the environment.  */
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF);
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, 0 /*XXX*/);
 
 }
 PKL_PHASE_END_HANDLER
@@ -1137,7 +1137,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
      any.  The compound-statement that is the body for the function
      will create it's own frame.  */
   if (PKL_AST_FUNC_ARGS (PKL_PASS_NODE))
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF);
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, 0 /* XXX */);
 
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this

@@ -753,18 +753,22 @@ void pvm_destroy_program (pvm_program program);
 typedef struct pvm_env *pvm_env;  /* Struct defined in pvm-env.c */
 
 /* Create a new run-time environment, containing an empty top-level
-   frame, and return it.  */
+   frame, and return it.
 
-pvm_env pvm_env_new (void);
+   HINT specifies the expected number of variables that will be
+   registered in this environment.  If HINT is 0 it indicates that we
+   can't provide an estimation.  */
+
+pvm_env pvm_env_new (int hint);
 
 /* Push a new empty frame to ENV and return the modified run-time
-   environment.  */
+   environment.
 
-/* XXX: allow to specify the number of variables in
-   pvm_env_push_frame, with a special value for `variable length' for
-   the toplevel */
+   HINT provides a hint on the number of entries that will be stored
+   in the frame.  If HINT is 0, it indicates the number can't be
+   estimated at all.  */
 
-pvm_env pvm_env_push_frame (pvm_env env);
+pvm_env pvm_env_push_frame (pvm_env env, int hint);
 
 /* Pop a frame from ENV and return the modified run-time environment.
    The popped frame will eventually be garbage-collected if there are
