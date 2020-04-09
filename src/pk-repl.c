@@ -29,6 +29,7 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #include "xalloc.h"
+#include "xstrndup.h"
 
 #include "poke.h"
 #include "pk-term.h"
@@ -198,12 +199,11 @@ space_substitute_redisplay (void)
 static int
 poke_getc (FILE *stream)
 {
-  char *line_to_point = xzalloc (rl_point + 1);
-  int end = rl_point ? rl_point - 1 : 0;
-  strncpy (line_to_point, rl_line_buffer, end);
-
+  char *line_to_point = xstrndup (rl_line_buffer, rl_point ? rl_point - 1 : 0);
   char *tok = strtok (line_to_point, "\t ");
   const struct pk_cmd *cmd = pk_cmd_find (tok);
+
+  free (line_to_point);
 
   if (cmd == NULL)
     rl_completion_entry_function = poke_completion_function;
@@ -218,7 +218,6 @@ poke_getc (FILE *stream)
              rl_completion_entry_function = null_completion_function;
          }
      }
-  free (line_to_point);
 
   int c =  rl_getc (stream);
 

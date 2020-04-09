@@ -1,3 +1,8 @@
+2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* src/pk-repl.c: Include xstrndup.h.
+	(poke_getc): Use xstrndup instead of xzmalloc+strncpy.
+
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pvm-val.c (pvm_print_val_1): Remove trailing whitespaces.
