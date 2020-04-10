@@ -804,8 +804,8 @@ denote the value of a single byte@footnote{Do not be fooled by the
 fact @command{dump} shows the hexadecimal digits in groups of four:
 this is just a visual aid and, as we shall see, it is possible to
 change the grouping by passing arguments to @command{dump}.}.  For
-example, the value of the fist byte in the third data row is 0x01, the
-value of the second bit 0x02, and so on.
+example, the value of the first byte in the third data row is 0x01,
+the value of the second byte 0x02, and so on.
 
 Using the ruler and the column of offsets, locating bytes in the data
 is very easy.  Lets say for example we are interested in the byte at

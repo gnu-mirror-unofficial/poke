@@ -1,3 +1,7 @@
+2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Dumping File Contents): Fix typos.
+
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/optcond-12.pk: New test.
