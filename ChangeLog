@@ -1,3 +1,8 @@
+2020-04-10  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* lib/pkl.c (pkl_new): Return NULL instead of calling exit.
+	* lib/pkl.h (pkl_new): Add function description.
+
 2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/Makefile.am (.pks.pkc): Cause make to stop with an error if

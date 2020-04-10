@@ -135,7 +135,20 @@ typedef struct pkl_compiler *pkl_compiler; /* This data structure is
 
 /* Initialization and finalization functions.  */
 
+/* Create and return a new compiler.
+
+   VM is the virtual machine that the compiler will use when it needs to
+   run Poke programs.  This happens, for example, when the compiler
+   bootstraps itself and loads libraries.
+
+   RT_PATH should contain the name of a directory where the compiler can
+   find its run-time support files.
+
+   If there is an error creating the compiler this function returns
+   NULL.  */
+
 pkl_compiler pkl_new (pvm vm, const char *rt_path);
+
 void pkl_free (pkl_compiler compiler);
 
 /* Compile a poke program from the given file FNAME.  Return 1 if the

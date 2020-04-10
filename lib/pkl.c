@@ -87,7 +87,7 @@ pkl_new (pvm vm, const char *rt_path)
         pk_term_end_class ("error");
         pk_puts ("compiler failed to bootstrap itself\n");
 
-        exit (EXIT_FAILURE);
+        return NULL;
       }
     free (poke_rt_pk);
 
@@ -99,7 +99,7 @@ pkl_new (pvm vm, const char *rt_path)
     char *poke_std_pk = pk_str_concat (rt_path, "/std.pk", NULL);
 
     if (!pkl_compile_file (compiler, poke_std_pk))
-      exit (EXIT_FAILURE);
+      return NULL;
     free (poke_std_pk);
   }
 
