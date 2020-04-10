@@ -1,5 +1,9 @@
 2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pvm-val.c (pvm_sizeof): Fix for absent struct fields.
+
+2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-insn.def (nnn): New instruction.
 	* lib/pvm.jitter (nnn): Likewise.
 	* lib/pkl-gen.pks (struct_comparator): Support absent fields in

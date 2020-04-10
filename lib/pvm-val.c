@@ -452,12 +452,13 @@ pvm_sizeof (pvm_val val)
         {
           pvm_val elem_value = PVM_VAL_SCT_FIELD_VALUE (val, i);
           pvm_val elem_offset = PVM_VAL_SCT_FIELD_OFFSET (val, i);
-          uint64_t elem_size_bits = pvm_sizeof (elem_value);
+          uint64_t elem_size_bits;
           uint64_t elem_offset_bits;
 
           if (PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
             continue;
 
+          elem_size_bits = pvm_sizeof (elem_value);
           if (elem_offset == PVM_NULL)
             size += elem_size_bits;
           else
