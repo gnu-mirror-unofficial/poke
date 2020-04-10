@@ -143,7 +143,7 @@ pvm_val pvm_make_ulong (uint64_t value, int size);
    all pointers are aligned to 8 bytes.  The allocator for the boxed
    values makes sure this is always the case.  */
 
-#define PVM_VAL_BOX(V) ((pvm_val_box) ((((uintptr_t) V) & ~0x7)))
+#define PVM_VAL_BOX(V) ((pvm_val_box) ((((uintptr_t) V) & ~0x7U)))
 
 /* This constructor should be used in order to build boxes.  */
 
