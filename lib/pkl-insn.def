@@ -175,6 +175,7 @@ PKL_DEF_INSN (PKL_INSN_NOT, "", "not")
 
 /* Comparison instructions.  */
 
+PKL_DEF_INSN (PKL_INSN_N, "", "nnn")
 PKL_DEF_INSN (PKL_INSN_NN, "", "nn")
 
 PKL_DEF_INSN (PKL_INSN_EQI, "", "eqi")
@@ -368,7 +369,7 @@ PKL_DEF_INSN (PKL_INSN_ENDSC, "", "endsc")
 
 /* Miscellaneous instructions.  */
 
-PKL_DEF_INSN (PKL_INSN_NOP, "v", "nop")
+PKL_DEF_INSN (PKL_INSN_NOP, "", "nop")
 PKL_DEF_INSN (PKL_INSN_NOTE, "v", "note")
 PKL_DEF_INSN (PKL_INSN_SIZ, "", "siz")
 PKL_DEF_INSN (PKL_INSN_STRACE, "n", "strace")

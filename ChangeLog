@@ -1,5 +1,15 @@
 2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pkl-insn.def (nnn): New instruction.
+	* lib/pvm.jitter (nnn): Likewise.
+	* lib/pkl-gen.pks (struct_comparator): Support absent fields in
+	structs.
+	* testsuite/poke.pkl/eq-structs-10.pk: New test.
+	* testsuite/poke.pkl/eq-structs-11.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-12.pk: Likewise.
+
+2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Dumping File Contents): Fix typos.
 
 2020-04-09  Jose E. Marchesi  <jemarch@gnu.org>

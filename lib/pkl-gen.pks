@@ -865,8 +865,6 @@
         ;; please adjust struct_comparator accordingly, and also follow
         ;; the instructions on the NOTE there.
 
-        ;; XXX support optional fields.
-
         .function struct_comparator
         prolog
 .c { uint64_t i; pkl_ast_node field;
@@ -890,6 +888,34 @@
         srefi                   ; SCT1 VAL1 SCT2 I VAL2
         nip                     ; SCT1 VAL1 SCT2 VAL2
         quake                   ; SCT1 SCT2 VAL1 VAL2
+ .c if (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field))
+ .c {
+        ;; If the field is optional, both VAL1 and VAL2 can be null.
+        ;; In that case the fields are considered equal only if they are
+        ;; both null.  We try to avoid conditional jumps here:
+        ;;
+        ;; val1n val2n  equal?  val1n+val2n  val1n+val2n-1
+        ;;   0     0    maybe        0
+        ;;   0     1    no           1              0 -\
+        ;;   1     0    no           1              0 --> desired truth
+        ;;   1     1    yes          2              1 -/  value
+        .label .do_compare
+        nnn                     ; SCT1 SCT2 VAL1 VAL2 VAL2N
+        rot                     ; SCT1 SCT2 VAL2 VAL2N VAL1
+        nnn                     ; SCT1 SCT2 VAL2 VAL2N VAL1 VAL1N
+        rot                     ; SCT1 SCT2 VAL2 VAL1 VAL1N VAL2N
+        addi
+        nip2                    ; SCT1 SCT2 VAL2 VAL1 (VAL1N+VAL2N)
+        quake                   ; SCT1 SCT2 VAL1 VAL2 (VAL1N+VAL2N)
+        bzi .do_compare
+        push int<32>1           ; SCT1 SCT2 VAL1 VAL2 (VAL1N+VAL2N) 1
+        subi
+        nip2                    ; SCT1 SCT2 VAL1 VAL2 (VAL1N+VAL2N-1)
+        nip2                    ; SCT1 SCT2 (VAL1N+VAL2N-1)
+        ba .done
+.do_compare:
+        drop                    ; SCT1 SCT2 VAL1 VAL2
+ .c }
         ;; Note that we cannot use EQ if the field is a struct itself,
         ;; because EQ uses comparators!  So we subpass instead.  :)
  .c     if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_STRUCT)

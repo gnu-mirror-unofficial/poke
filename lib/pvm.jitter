@@ -2132,6 +2132,20 @@ instruction nn ()
   end
 end
 
+# Instruction: nnn
+#
+# Push 1 on the stack if the value at the top of the stack equals
+# PVM_NULL.  Otherwise push 0.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction nnn ()
+  code
+     JITTER_PUSH_STACK (pvm_make_int (JITTER_TOP_STACK () == PVM_NULL,
+                                      32));
+  end
+end
+
 # Instruction: lti
 #
 # Push 1 on the stack if the integer at the under top is less that the
