@@ -396,6 +396,61 @@ Writing C
 In Poke we follow the GNU Coding Standards.  Please see
 http://www.gnu.org/prep/standards/.
 
+Additionally, we have a few conventions that we ask you to follow when
+hacking poke, in order to keep a coherent style when possible.  These
+are documented in the following subsections.
+
+Avoid bool
+..........
+
+C99 defines the type ``bool``.  However, in poke we prefer to use
+variables of type ``int`` in order to hold truth values.  We kindly
+ask you to do the same.
+
+When documenting functions that receive or return boolean values
+stored in integer variables, please remember that the interpretation
+of the truth values in C is: zero means false, and any value other
+than zero means true.  Avoid referring to 1 to mean true.
+
+Also, please never rely on a boolean to hold exactly 1 or any other
+particular non-zero value, to be interpreted as true.
+
+Use _p for Predicates
+.....................
+
+We use the venerable convention of using a suffix ``_p`` (for
+predicate) when naming variables and struct fiels that contain
+booleans.
+
+We do not always do this, but it is especially important in cases
+where the name of the variable is not indicative enough.
+
+Documenting Functions in Public Headers
+.......................................
+
+Function prototypes in headers must be documented using a comment
+block preceding the prototype.
+
+Start the comment block with a terse short sentence that states what
+the function does.  Then, document the arguments that the function
+takes, and the value it returns, if any.  When referring to arguments
+and other variables in the comment block, please use caps.
+
+Example::
+
+  /* Frobnicate a frob.
+
+     FROB is a frob that should have been previously initialized using
+     frob_new.
+  
+     LAZY_P is a boolean.  If true, FROB won't be frobnicated
+     immediately, but instead marked for later frobnication.
+  
+     If the frob cannot be frobnicated, this function returns NULL.
+     Otherwise the function returns the given frob.  */
+  
+  frob_t frobnicate (frob_t frob, int lazy_p);
+
 Writing Poke
 ~~~~~~~~~~~~
 
