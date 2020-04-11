@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)

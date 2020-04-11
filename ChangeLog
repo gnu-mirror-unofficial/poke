@@ -1,5 +1,9 @@
 2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pk-utils.c: Include stdlib.h.
+
+2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pvm.h (PVM_OK): Define.
 	(PVM_ERROR): Likewise.
 	* lib/pvm-val.c: Include pvm-program.h.
