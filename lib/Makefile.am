@@ -62,7 +62,7 @@ endif NBD
 
 .pks.pkc:
 	{ srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@; } \
-          || rm -f $@
+          || { rm -f $@ && false; }
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
 
 # XXX Adding pkl-lex.h shouldn't be necessary?

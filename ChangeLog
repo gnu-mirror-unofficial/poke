@@ -1,3 +1,8 @@
+2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/Makefile.am (.pks.pkc): Cause make to stop with an error if
+	ras fails.
+
 2020-04-11  Bruno Haible  <bruno@clisp.org>
 
 	Make 'git status' empty after "make distclean".
