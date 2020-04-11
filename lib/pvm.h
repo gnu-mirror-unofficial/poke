@@ -26,16 +26,21 @@
 
 #include "ios.h"
 
-/* The pvm_val type implements values that are native to the poke
-   virtual machine:
+/* **************** Status Codes **************** */
 
-   - Integers up to 32-bit.
-   - Long integers wider than 32-bit up to 64-bit.
-   - Strings.
-   - Arrays.
-   - Structs.
-   - Offsets.
-   - Closures.
+/* The following status codes are used in the several APIs defined
+   below in the file.  */
+
+#define PVM_OK      0 /* The operation was performed to completion, in
+                         the expected way.  */
+#define PVM_ERROR  -1 /* An unspecified error condition happened.  */
+#define PVM_EINVAL -3 /* Invalid argument.  */
+#define PVM_EINSN  -4 /* Malformed instruction.  */
+
+/* **************** PVM Values **************** */
+
+/* The pvm_val type implements values that are native to the poke
+   virtual machine.
 
    It is fundamental for pvm_val values to fit in 64 bits, in order to
    avoid expensive allocations and to also improve the performance of
@@ -43,75 +48,216 @@
 
 typedef uint64_t pvm_val;
 
-/*** PVM programs.  ***/
+/* PVM_NULL is an invalid pvm_val.  */
+
+#define PVM_NULL 0x7ULL
+
+/* **************** PVM Programs ****************  */
+
+/* PVM programs are sequences of instructions, labels and directives,
+   that can be run in the virtual machine.  */
 
 typedef struct pvm_program *pvm_program;
-typedef int pvm_program_label;
-typedef unsigned int pvm_register;
-typedef void *pvm_program_program_point; /* XXX better name */
 
-/* Create a new PVM program and return it.  */
+/* Each PVM program can contain zero or more labels.  Labels are used
+   as targets of branch instructions.  */
+
+typedef int pvm_program_label;
+
+/* The PVM features a set of registers.
+   XXX  */
+
+typedef unsigned int pvm_register;
+
+/* Create a new PVM program.
+
+   The created program is returned.  If there is a problem creating
+   the program then this function returns NULL.  */
+
 pvm_program pvm_program_new (void);
 
-/* Append an instruction to a PVM program.  */
-void pvm_program_append_instruction (pvm_program program,
-                                     const char *insn_name);
+/* Destroy the given PVM program.  */
 
-/* Append a `push' instruction to a PVM program.  */
-void pvm_program_append_push_instruction (pvm_program program,
-                                          pvm_val val);
+void pvm_destroy_program (pvm_program program);
 
-/* Append instruction parameters, of several kind, to a PVM
-   program.  */
+/* Make the given PVM program executable so it can be run in the PVM.
 
-void pvm_program_append_val_parameter (pvm_program program, pvm_val val);
-void pvm_program_append_unsigned_parameter (pvm_program program, unsigned int n);
-void pvm_program_append_register_parameter (pvm_program program, pvm_register reg);
-void pvm_program_append_label_parameter (pvm_program program, pvm_program_label label);
+   This function returns a status code indicating whether the
+   operation was successful or not.  */
 
-/* Get a fresh PVM program label.  */
-pvm_program_label pvm_program_fresh_label (pvm_program program);
-
-/* Append a label to the given PVM program.  */
-void pvm_program_append_label (pvm_program program, pvm_program_label label);
-
-/* Return the program point corresponding to the beginning of the
-   given program.  */
-pvm_program_program_point pvm_program_beginning (pvm_program program);
-
-/* Make the given PVM program executable.  */
-void pvm_program_make_executable (pvm_program program);
+int pvm_program_make_executable (pvm_program program);
 
 /* Print a native disassembly of the given program in the standard
    output.  */
+
 void pvm_disassemble_program_nat (pvm_program program);
 
 /* Print a disassembly of the given program in the standard
    output.  */
+
 void pvm_disassemble_program (pvm_program program);
 
-/* Destroy the given PVM program.  */
-void pvm_destroy_program (pvm_program program);
+/* **************** Assembling PVM Programs ****************  */
 
-/*** PVM values.  ***/
+/* Assembling a PVM program involves starting with an empty program
+   and then appending its components, like labels and instructions.
 
-pvm_val pvm_make_long (int64_t value, int size);
-pvm_val pvm_make_ulong (uint64_t value, int size);
+   For each instruction, you need to append its parameters before
+   appending the instruction itself.  For example, in order to build
+   an instruction `foo 1, 2', you would need to:
 
-pvm_val pvm_make_string (const char *value);
-void pvm_print_string (pvm_val string);
+     append parameter 1
+     append parameter 2
+     append instruction foo
 
-pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
+   All the append functions below return a status code.  */
 
-pvm_val pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type);
-pvm_val pvm_ref_struct (pvm_val sct, pvm_val name);
-int pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val);
-pvm_val pvm_get_struct_method (pvm_val sct, const char *name);
+/* Create a fresh label for the given program and return it.  This
+   label should be eventually appended to the program.  */
+
+pvm_program_label pvm_program_fresh_label (pvm_program program);
+
+/* Append a PVM value instruction parameter to a PVM program.
+
+   PROGRAM is the program in which to append the parameter.
+   VAL is the PVM value to use as the instruction parameter.  */
+
+int pvm_program_append_val_parameter (pvm_program program,
+                                      pvm_val val);
+
+/* Append an unsigned integer literal instruction parameter to a PVM
+   program.
+
+   PROGRAM is the program in which to append the parameter.
+   N is the literal to use as the instruction parameter.  */
+
+int pvm_program_append_unsigned_parameter (pvm_program program,
+                                           unsigned int n);
+
+/* Append a PVM register instruction parameter to a PVM program.
+
+   PROGRAM is the program in which to append the parameter.
+   REG is the PVM register to use as the instruction parameter.
+
+   If REG is not a valid register this function returns
+   PVM_EINVAL.  */
+
+int pvm_program_append_register_parameter (pvm_program program,
+                                           pvm_register reg);
+
+/* Appenda PVM label instruction parameter to a PVM program.
+
+   PROGRAM is the program in which to append the parameter.
+   LABEL is the PVM label to use as the instruction parameter.
+
+   If LABEL is not a label in PROGRAM, this function returns
+   PVM_EINVAL.  */
+
+int pvm_program_append_label_parameter (pvm_program program,
+                                        pvm_program_label label);
+
+/* Append an instruction to a PVM program.
+
+   PROGRAM is the program in which to append the instruction.
+   INSN_NAME is the name of the instruction to append.
+
+   If there is no instruction named INSN_NAME, this function returns
+   PVM_EINVAL.
+
+   If not all the parameters required by the instruction have been
+   already appended, this function returns PVM_EINSN.  */
+
+int pvm_program_append_instruction (pvm_program program,
+                                    const char *insn_name);
+
+/* Append a `push' instruction to a PVM program.
+
+   Due to a limitation of Jitter, we can't build push instructions the
+   usual way.  This function should be used instead.
+
+   PROGRAM is the program in which to append the instruction.
+   VAL is the PVM value that will be pushed by the instruction.  */
+
+int pvm_program_append_push_instruction (pvm_program program,
+                                         pvm_val val);
+
+/* Append a PVM label to a PVM program.
+
+   PROGRAM is the program in which to append the label.
+   LABEL is the PVM label to append.
+
+   If LABEL doesn't exist in PROGRAM this function return
+   PVM_EINVAL.  */
+
+int pvm_program_append_label (pvm_program program,
+                              pvm_program_label label);
+
+/* **************** Building PVM Values **************** */
+
+/* Make signed and unsigned integer PVM values.
+   SIZE is measured in bits and should be in the range 1 to 32.  */
 
 pvm_val pvm_make_int (int32_t value, int size);
 pvm_val pvm_make_uint (uint32_t value, int size);
 
+/* Make signed and unsigned long PVM values.
+   SIZE is measured in bits and should be in the range 1 to 64.  */
+
+pvm_val pvm_make_long (int64_t value, int size);
+pvm_val pvm_make_ulong (uint64_t value, int size);
+
+/* Make a string PVM value.  */
+
+pvm_val pvm_make_string (const char *value);
+
+/* Make an offset PVM value.
+
+   MAGNITUDE is a PVM integral value.
+
+   UNIT is an ulong<64> PVM value specifying the unit of the offset,
+   in terms of the basic unit which is the bit.  */
+
+pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
+
+/* Make an array PVM value.
+
+   NELEM is an ulong<64> PVM value specifying the number of elements
+   in the array.
+
+   TYPE is a type PVM value specifying the type of the array.
+
+   The elements in the created array are initialized to PVM_NULL.  */
+
+pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
+
+/* Make a struct PVM value.
+
+   NFIELDS is an ulong<64> PVM value specifying the number of fields
+   in the struct.  This can be ulong<64>0 for an empty struct.
+
+   NMETHODS is an ulong<64> PVM vlaue specifying the number of methods
+   in the struct.
+
+   TYPE is a type PVM value specifying the type of the struct.
+
+   The fields and methods in the created struct are initialized to
+   PVM_NULL.  */
+
+pvm_val pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type);
+
+/* Make a closure PVM value.
+   PROGRAM is a PVM program that conforms the body of the closure.  */
+
 pvm_val pvm_make_cls (pvm_program program);
+
+/*** PVM values.  ***/
+
+void pvm_print_string (pvm_val string);
+
+pvm_val pvm_ref_struct (pvm_val sct, pvm_val name);
+int pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val);
+pvm_val pvm_get_struct_method (pvm_val sct, const char *name);
+
 
 pvm_val pvm_make_integral_type (pvm_val size, pvm_val signed_p);
 pvm_val pvm_make_string_type (void);
@@ -129,13 +275,7 @@ pvm_val pvm_dup_type (pvm_val type);
 pvm_val pvm_typeof (pvm_val val);
 int pvm_type_equal (pvm_val type1, pvm_val type2);
 
-pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
-
 pvm_program pvm_val_cls_program (pvm_val cls);
-
-/* PVM_NULL is an invalid pvm_val.  */
-
-#define PVM_NULL 0x7ULL
 
 /* Return the size of VAL, in bits.  */
 uint64_t pvm_sizeof (pvm_val val);
@@ -156,7 +296,7 @@ pvm_val pvm_val_writer (pvm_val val);
 
 pvm_val pvm_make_exception (int code, char *message);
 
-/*** Run-Time environment.  ***/
+/* **************** The Run-Time Environment ****************  */
 
 /* The poke virtual machine (PVM) maintains a data structure called
    the run-time environment.  This structure contains run-time frames,

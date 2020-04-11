@@ -25,6 +25,7 @@
 
 #include "pkl.h"
 #include "pvm.h"
+#include "pvm-program.h"
 #include "pvm-val.h"
 
 #include "pkl-asm.h"

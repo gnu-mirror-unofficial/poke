@@ -111,16 +111,19 @@ pvm_program_fresh_label (pvm_program program)
   return program->next_label++;
 }
 
-void
+int
 pvm_program_append_label (pvm_program program,
                           pvm_program_label label)
 {
-  assert (label < program->next_label);
+  if (label >= program->next_label)
+    return PVM_EINVAL;
+
   pvm_routine_append_label (program->routine,
                             program->labels[label]);
+  return PVM_OK;
 }
 
-void
+int
 pvm_program_append_instruction (pvm_program program,
                                 const char *insn_name)
 {
@@ -129,11 +132,15 @@ pvm_program_append_instruction (pvm_program program,
      limitation in jitter gets fixed.  */
   assert (STRNEQ (insn_name, "push"));
 
+  /* XXX Jitter should provide error codes so we can return PVM_EINVAL
+     and PVM_EINSN properly.  */
   pvm_routine_append_instruction_name (program->routine,
                                        insn_name);
+
+  return PVM_OK;
 }
 
-void
+int
 pvm_program_append_push_instruction (pvm_program program,
                                      pvm_val val)
 {
@@ -173,37 +180,51 @@ pvm_program_append_push_instruction (pvm_program program,
                                                       (val & 0xffffffff)));
     }
 #endif
+
+  return PVM_OK;
 }
 
-void
+int
 pvm_program_append_val_parameter (pvm_program program, pvm_val val)
 {
   collect_value_pointers (program, val);
   pvm_routine_append_unsigned_literal_parameter (program->routine,
                                                  (jitter_uint) val);
+
+  return PVM_OK;
 }
 
-void
+int
 pvm_program_append_unsigned_parameter (pvm_program program,
                                        unsigned int n)
 {
   pvm_routine_append_unsigned_literal_parameter (program->routine,
                                                  (jitter_uint) n);
+
+  return PVM_OK;
 }
 
-void
+int
 pvm_program_append_register_parameter (pvm_program program,
                                        pvm_register reg)
 {
+  /* XXX Jitter should return an error code here so we can return
+     PVM_EINVAL whenever appropriate.  */
   PVM_ROUTINE_APPEND_REGISTER_PARAMETER (program->routine, r, reg);
+
+  return PVM_OK;
 }
 
-void
+int
 pvm_program_append_label_parameter (pvm_program program,
                                     pvm_program_label label)
 {
+  /* XXX Jitter should return an error code here so we can return
+     PVM_EINVAL whenever appropriate.  */
   pvm_routine_append_label_parameter (program->routine,
                                       program->labels[label]);
+
+  return PVM_OK;
 }
 
 pvm_program_program_point
@@ -212,10 +233,13 @@ pvm_program_beginning (pvm_program program)
   return (pvm_program_program_point) PVM_ROUTINE_BEGINNING (program->routine);
 }
 
-void
+int
 pvm_program_make_executable (pvm_program program)
 {
+  /* XXX Jitter should return an error code here.  */
   jitter_routine_make_executable_if_needed (program->routine);
+
+  return PVM_OK;
 }
 
 void

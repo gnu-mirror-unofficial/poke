@@ -1,6 +1,21 @@
 2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
-	* lib/pkl-gen.c: Likewise.
+	* lib/pvm.h (PVM_OK): Define.
+	(PVM_ERROR): Likewise.
+	* lib/pvm-val.c: Include pvm-program.h.
+	* lib/pvm-program.h: Move program point definitions here from
+	pvm.h.
+	* lib/pvm-program.c (pvm_program_append_instruction): Return
+	status codes.
+	(pvm_program_append_label): Likewise.
+	(pvm_program_append_label_parameter): Likewise.
+	(pvm_program_append_register_parameter): Likewise.
+	(pvm_program_append_unsigned_parameter): Liikewise.
+	(pvm_program_append_val_parameter): Likewise.
+	(pvm_program_append_push_instruction): Likewise.
+	(pvm_program_make_executable): Likewise.
+
+2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* HACKING: Updates on coding conventions.
 	* lib/pvm.h (pvm_obase): Document.
@@ -32,6 +47,7 @@
 	* lib/pvm-val.c: Likewise.
 	* lib/pvm-alloc.c: Likewise.
 	* lib/pvm.jitter: Likewise.
+	* lib/pkl-gen.c: Likewise.
 
 2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
