@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+MOSTLYCLEANFILES =
+CLEANFILES =
+DISTCLEANFILES =
+MAINTAINERCLEANFILES =
 
 dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk
 
@@ -47,5 +51,8 @@ poke_LDFLAGS =
 if HSERVER
   poke_LDADD += -lpthread
 endif
+
+# Created by doc/Makefile.am.
+MOSTLYCLEANFILES += nodelist
 
 # End of Makefile.am

@@ -15,6 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+MOSTLYCLEANFILES =
+CLEANFILES =
+DISTCLEANFILES =
+MAINTAINERCLEANFILES =
+
 dist_pkgdata_DATA = pkl-rt.pk std.pk
 
 lib_LTLIBRARIES = libpoke.la
@@ -68,6 +73,8 @@ BUILT_SOURCES = pkl-tab.h pkl-lex.c \
                 pvm-vm.h pvm-vm1.c pvm-vm2.c
 
 AM_YFLAGS = -d -t --report=state
+MOSTLYCLEANFILES += pkl-tab.output
+
 AM_LFLAGS = -d
 
 libpoke_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \

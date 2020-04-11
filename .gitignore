@@ -38,7 +38,6 @@ config.h.in
 /build-aux/install-sh
 /build-aux/missing
 /autom4te.cache/
-/doc/nodelist
 /doc/poke.info
 /doc/pokeint.info
 /doc/pkl.info
@@ -64,7 +63,6 @@ config.h.in
 /src/pkl-lex.h
 /src/pkl-tab.c
 /src/pkl-tab.h
-/src/pkl-tab.output
 /src/pvm-vm.h
 /src/pvm-vm1.c
 /src/pvm-vm2.c
