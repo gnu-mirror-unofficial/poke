@@ -56,8 +56,8 @@ libpoke_la_SOURCES += ios-dev-nbd.c
 endif NBD
 
 .pks.pkc:
-	srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@
-
+	{ srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@; } \
+          || rm -f $@
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
 
 # XXX Adding pkl-lex.h shouldn't be necessary?
