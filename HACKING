@@ -436,6 +436,11 @@ the function does.  Then, document the arguments that the function
 takes, and the value it returns, if any.  When referring to arguments
 and other variables in the comment block, please use caps.
 
+It is ok for single comment block to document more than one prototype.
+
+Please leave an empty line between the comment block and the function
+prototype.
+
 Example::
 
   /* Frobnicate a frob.
@@ -450,6 +455,7 @@ Example::
      Otherwise the function returns the given frob.  */
   
   frob_t frobnicate (frob_t frob, int lazy_p);
+  frob_t forbnicate_r (frob_t frob, int lazy_p);
 
 Writing Poke
 ~~~~~~~~~~~~

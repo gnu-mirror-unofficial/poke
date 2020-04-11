@@ -41,7 +41,7 @@ libpoke_la_SOURCES = pkl.h pkl.c \
                      pkl-gen.pkc pkl-asm.pkc \
                      pkl-insn.def pkl-ops.def pkl-attrs.def \
                      pvm.h pvm.c \
-                     pvm-val.c \
+                     pvm-val.c pvm-val.h \
                      pvm-env.c \
                      pvm-alloc.h pvm-alloc.c \
                      pvm-program.h pvm-program.c \

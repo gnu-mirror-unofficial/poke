@@ -26,6 +26,7 @@
 
 #include "pvm.h"
 #include "pvm-alloc.h"
+#include "pvm-val.h"
 
 #include "pvm-vm.h"
 

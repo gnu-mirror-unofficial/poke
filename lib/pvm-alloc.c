@@ -18,7 +18,9 @@
 
 #include <config.h>
 #include <gc/gc.h>
+
 #include "pvm.h"
+#include "pvm-val.h"
 
 void *
 pvm_alloc (size_t size)

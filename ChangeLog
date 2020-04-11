@@ -1,3 +1,38 @@
+2020-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-gen.c: Likewise.
+
+	* HACKING: Updates on coding conventions.
+	* lib/pvm.h (pvm_obase): Document.
+	(pvm_set_obase): Likewise.
+	(pvm_omode): Likewise.
+	(pvm_set_omode): Likewise.
+	(pvm_omaps): Likewise.
+	(pvm_set_omaps): Likewise.
+	(pvm_oindent): Likewise.
+	(pvm_set_oindent): Likewise.
+	(pvm_odepth): Likewise.
+	(pvm_set_odepth): Likewise.
+	(pvm_oacutoff): Likewise.
+	(pvm_set_oacutoff): Likewise.
+	(pvm_compiler): Likewise.
+	(pvm_set_compiler): Likewise.
+	(pvm_pretty_print): Likewise.
+	(pvm_set_pretty_print): Likewise.
+	(pvm_val_cls_program): New function.
+	* lib/pvm-val.c (pvm_val_cls_program): Likewise.
+	* src/pk-vm.c (pk_cmd_vm_disas_fun): Use pvm_val_cls_program
+	instead of PVM_VAL_CLS_PROGRAM.
+	(pk_cmd_vm_disas_map): Likewise.
+	(pk_cmd_vm_disas_writ): Likewise.
+	* lib/pvm-val.h: Reinstate.
+	* lib/Makefile.am (libpoke_la_SOURCES): Add pvm-val.h.
+	* lib/pkl.c: Include pvm-val.h
+	* lib/pvm-program.c: Likewise.
+	* lib/pvm-val.c: Likewise.
+	* lib/pvm-alloc.c: Likewise.
+	* lib/pvm.jitter: Likewise.
+
 2020-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* HACKING (Avoid bool): New subsection.

@@ -30,6 +30,7 @@
 #include "pk-term.h"
 
 #include "pkl.h"
+#include "pvm-val.h"
 
 #include "pkl-ast.h"
 #include "pkl-parser.h"

@@ -84,6 +84,7 @@ early-header-c
   code
 #   include <config.h>
 #   include "pvm.h"
+#   include "pvm-val.h"
 #   include "ios.h"
 #   include "pk-term.h"
 #   include "pk-utils.h"

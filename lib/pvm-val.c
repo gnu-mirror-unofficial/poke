@@ -25,6 +25,7 @@
 
 #include "pkl.h"
 #include "pvm.h"
+#include "pvm-val.h"
 
 #include "pkl-asm.h"
 
@@ -1235,4 +1236,10 @@ pvm_make_exception (int code, char *message)
     = pvm_make_string (message);
 
   return exception;
+}
+
+pvm_program
+pvm_val_cls_program (pvm_val cls)
+{
+  return PVM_VAL_CLS_PROGRAM (cls);
 }

@@ -90,7 +90,7 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   val = pvm_env_lookup (runtime_env, back, over);
   assert (val != PVM_NULL);
 
-  program = PVM_VAL_CLS_PROGRAM (val);
+  program = pvm_val_cls_program (val);
 
   if (uflags & PK_VM_DIS_F_NAT)
     pvm_disassemble_program_nat (program);
@@ -126,7 +126,7 @@ pk_cmd_vm_disas_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  program = PVM_VAL_CLS_PROGRAM (mapper);
+  program = pvm_val_cls_program (mapper);
 
   if (uflags & PK_VM_DIS_F_NAT)
     pvm_disassemble_program_nat (program);
@@ -163,7 +163,7 @@ pk_cmd_vm_disas_writ (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  program = PVM_VAL_CLS_PROGRAM (writer);
+  program = pvm_val_cls_program (writer);
 
   if (uflags & PK_VM_DIS_F_NAT)
     pvm_disassemble_program_nat (program);
