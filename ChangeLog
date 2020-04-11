@@ -4,11 +4,6 @@
 	(Use _p for Predicates): Likewise.
 	(Documenting Functions in Public Headers): Likewise.
 
-2020-04-10  Tim Rühsen  <tim.ruehsen@gmx.de>
-
-	* lib/pvm.h (PVM_VAL_BOX): Fix implicit signed
-	to unsigned conversion.
-
 2020-04-09  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* lib/pkl-ast.c (pkl_struct_type_traverse): Use
