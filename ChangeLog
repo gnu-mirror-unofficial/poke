@@ -1,5 +1,11 @@
 2020-04-11  Bruno Haible  <bruno@clisp.org>
 
+	Make 'git status' empty after "make distclean".
+	* .gitignore: Ignore generated files that are distributed in the
+	tarball.
+
+2020-04-11  Bruno Haible  <bruno@clisp.org>
+
 	Clean some generated files.
 	* lib/Makefile.am: Delete pkl-tab.output during 'make mostlyclean'.
 	* src/Makefile.am: Delete nodelist during 'make mostlyclean'.
