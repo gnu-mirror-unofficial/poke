@@ -1,5 +1,9 @@
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING (Writing REPL tests): Mention poke_send.
+
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke.exp (poke_send): New proc.
 	* testsuite/poke.repl/repl.exp (tab-completion-2): New test.
 	* HACKING (Command REPL tests): New subsection.

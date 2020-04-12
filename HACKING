@@ -654,7 +654,9 @@ poke_test_cmd CMD PATTERN
   virtual keystrokes.  Therefore, sending \t or \n has the same effect
   on the REPL than typing TAB or RET in the keyboard, respectively.
   PATTERN shouldn't include the prompt.
-
+poke_send INPUT PATTERN
+  Send INPUT to poke, and expect PATTERN as output.
+  
 Adding a new test to ``poke.repl`` involves editing
 ``poke.repl/repl.exp`` and adding some content there.  The following
 subsections detail how.
