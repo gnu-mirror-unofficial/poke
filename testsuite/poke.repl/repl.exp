@@ -26,7 +26,7 @@
 
 load_lib ${tool}.exp
 
-set test "slashes are preserved"
+set test "slashes-are-preserved-1"
 poke_start
 poke_test_cmd {4 / 2} {2}
 poke_exit
@@ -51,10 +51,4 @@ poke_start
 poke_send "while (1) {}\n" {}
 poke_send_signal INT
 poke_send {} "\r\n$poke_prompt"
-poke_exit
-
-set test "ctrl-c-returns-to-prompt-1"
-poke_start
-poke_send "while (1) {}\n" {}
-poke_send "\003" "\r\n$poke_prompt" ;# Ctrl-c
 poke_exit
