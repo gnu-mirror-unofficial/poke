@@ -775,26 +775,19 @@ pk_cmd_shutdown (void)
 char *
 pk_cmd_get_next_match (int *idx, const char *x, size_t len)
 {
-  /* Dot commands */
-  for (;;)
-    {
-      const struct pk_cmd **c = dot_cmds + *idx;
-      if (*c == &null_cmd)
-        break;
+  /* X must start with a dot */
+  if (len == 0 || *x != '.')
+    return NULL;
 
-      /* don't forget the null terminator of name */
-      const size_t name_len = strlen ((*c)->name);
-      char *name = xmalloc (name_len + 2);
-      name[0] = '.';
-      strncpy (name+1, (*c)->name, name_len + 1);
-      if (0 !=  strncmp (name, x, len))
-        {
-          free (name);
-          (*idx)++;
-          continue;
-        }
-      return name;
+  /* Dot commands */
+  for (const struct pk_cmd **c = dot_cmds + *idx;
+       *c != &null_cmd;
+       (*idx)++, c++)
+    {
+      if (strncmp ((*c)->name, x + 1, len - 1) == 0)
+        return pk_str_concat (".", (*c)->name, NULL);
     }
+
   return NULL;
 }
 
