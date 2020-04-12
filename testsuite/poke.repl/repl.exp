@@ -16,16 +16,24 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
 
+# When adding tests to this file:
+#
+# - Please use an unique description in each test so it is possible to
+#   unequivocally identify them from the FAIL output messages.
+#
+# - Try to keep each test as self-contained as possible.  This means
+#   starting and exitting poke in each test.
+
 load_lib ${tool}.exp
 
-poke_start
-
 set test "slashes are preserved"
+poke_start
 poke_test_cmd {4 / 2} {2}
+poke_exit
 
 set test "tab-completion-1"
+poke_start
 poke_test_cmd {.set obase 2} {}
 poke_test_cmd ".se\t obase 16" {}
 poke_test_cmd {.set obase} {16}
-
 poke_exit

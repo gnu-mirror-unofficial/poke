@@ -658,25 +658,20 @@ poke_test_cmd CMD PATTERN
 Adding a new test to ``poke.repl`` involves editing
 ``poke.repl/repl.exp`` and adding a new set of poke_test_cmd
 invocations, like this:
-
-  poke_start
-  
-  set test "slashes are preserved"
-  poke_test_cmd {4 / 2} {2}
   
   set test "tab-completion-1"
+  poke_start
   poke_test_cmd {.set obase 2} {}
   poke_test_cmd ".se\t obase 16" {}
   poke_test_cmd {.set obase} {16}
-  
   poke_exit
 
-The snippet above implements two tests in the same poke run.  First,
-poke is started, then the test "slashes are preserved" runs, then the
-test "tab-completion-1" runs.  Then poke is exitted.
+The snippet above implements a test named tab-completion-1 that runs
+poke and sends some commands to verify that .set is tab-completed
+successfully.  Then poke is exitted.
 
-If your test, for whatever reason, needs a fresh instance of poke, just
-poke_exit and then poke_start.
+See ``testsuite/poke.repl/repl.exp`` for more recommendations on
+writing tests there.
   
 Fuzzing poke
 ------------
