@@ -43,13 +43,25 @@ if ![info exists prompt] then {
 
 set timeout 3
 
+# poke_killed determines whether a poke got killed by the test
+# infrastructure, for example after poke hangs and causes a timeout.
+# Any further poke_test_cmd is failed until poke_exit resets this to
+# 0.
+
+set poke_killed 0
+
 #
 # poke_exit -- exit poke and cleanup
 #
 proc poke_exit {} {
-    send "exit\n"
-}
+    global poke_killed
 
+    if {$poke_killed} {
+        set poke_killed 0
+    } else {
+        send "exit\n"
+    }
+}
 
 proc poke_version {} {}
 
@@ -71,13 +83,18 @@ proc poke_test_cmd {cmd pattern} {
     global poke_prompt
     global spawn_id
     global test
+    global poke_killed
+
+    if {$poke_killed} {
+        fail "$test (killed)"
+        return
+    }
 
     if [string equal $pattern {}] then {
         set expected_pattern "\r\n$poke_prompt $"
     } else {
         set expected_pattern "\r\n$pattern\r\n$poke_prompt $"
     }
-
 
     send "$cmd\n"
     expect {
@@ -98,7 +115,9 @@ proc poke_test_cmd {cmd pattern} {
         }
 
         timeout {
-        fail "$test (timeout)"
+            exec kill -9 [exp_pid]
+            set poke_killed 1
+            fail "$test (timeout)"
         }
     }
 }
