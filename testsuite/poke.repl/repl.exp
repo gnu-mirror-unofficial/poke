@@ -51,6 +51,16 @@ poke_start
 poke_send ".doc Struct Co\t\t" "\r\nStruct Comparison    Struct Constructors"
 poke_exit
 
+set test "tab-completion-subcommand-3"
+poke_start
+for {set index 0}  {$index < 12}  {incr index} {
+    file tempfile file0
+    poke_test_cmd ".file $file0"  {}
+    file delete $file0
+}
+poke_send ".ios #1\t\t" "#1   #10  #11"
+poke_exit
+
 set test "sigint-returns-to-prompt-1"
 poke_start
 poke_send "while (1) {}\n" {}
