@@ -656,23 +656,56 @@ poke_test_cmd CMD PATTERN
   PATTERN shouldn't include the prompt.
 
 Adding a new test to ``poke.repl`` involves editing
-``poke.repl/repl.exp`` and adding a new set of poke_test_cmd
-invocations, like this:
+``poke.repl/repl.exp`` and adding some content there.  The following
+subsections detail how.
+
+Command REPL tests
+..................
+
+Some REPL tests need to check whether poke replies properly to some
+sent command.  The ``poke_test_cmd`` procedure defined in
+``testsuite/lib/poke.exp`` provides a convenient interface for this.
+
+For example::
   
-  set test "tab-completion-1"
+  set test "slashes are preserved"
   poke_start
-  poke_test_cmd {.set obase 2} {}
-  poke_test_cmd ".se\t obase 16" {}
-  poke_test_cmd {.set obase} {16}
+  poke_test_cmd {4 / 2} {2}
   poke_exit
 
-The snippet above implements a test named tab-completion-1 that runs
-poke and sends some commands to verify that .set is tab-completed
-successfully.  Then poke is exitted.
+The snippet above implements a test named "slashes are preserved" that
+runs poke and sends the command ``4 / 2`` with expected result ``2``.
 
-See ``testsuite/poke.repl/repl.exp`` for more recommendations on
-writing tests there.
+The dialogue when the test above is executed is::
+
+  (poke) 4 / 2
+  2
+  (poke) 
+
+General REPL tests
+..................
+
+Other REPL tests are not about executing commands.  Suppose for
+example we want to test whether tab-completion works.  We would write
+something like::
   
+  set test "tab-completion-2"
+  poke_start
+  poke_send ".e\t\t" "\r\n.editor  .exit *\r\n$poke_prompt .e"
+  poke_exit
+
+The test above uses the ``poke_send`` procedure, defined in
+``testsuite/lib/poke.exp``.  This procedure gets two arguments: the
+input that is sent to poke, and the expected output.  Note how usign
+``poke_send`` doesn't require poke to execute any command.
+
+Using ``poke_send`` is more laborious than using ``poke_test_cmd``: it
+is necessary to explicitly include the prompt in the expected output
+whenever needed.
+
+Note also how newlines are perceived by expect as the sequence
+``\r\n``.
+
 Fuzzing poke
 ------------
 

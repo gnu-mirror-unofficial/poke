@@ -1,5 +1,12 @@
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke.exp (poke_send): New proc.
+	* testsuite/poke.repl/repl.exp (tab-completion-2): New test.
+	* HACKING (Command REPL tests): New subsection.
+	(General REPL tests): Likewise.
+
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke.exp (poke_test_cmd): Fail and return if poke
 	has been killed.
 	(poke_killed): New global.

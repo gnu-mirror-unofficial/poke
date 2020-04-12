@@ -79,6 +79,28 @@ proc poke_start {} {
     }
 }
 
+proc poke_send {input pattern} {
+    global spawn_id
+    global test
+    global poke_killed
+    global poke_prompt
+
+    if {$poke_killed} {
+        fail "$test (killed)"
+        return
+    }
+
+    send "$input"
+    expect {
+        -re $pattern { pass "$test" }
+        timeout {
+            exec kill -9 [exp_pid]
+            set poke_killed 1
+            fail "$test (timeout)"
+        }
+    }
+}
+
 proc poke_test_cmd {cmd pattern} {
     global poke_prompt
     global spawn_id
@@ -98,22 +120,10 @@ proc poke_test_cmd {cmd pattern} {
 
     send "$cmd\n"
     expect {
-        -ex "internal compiler error" {
-            fail "$test (ICE)"
-        }
-        -re "\[0-9\]+:\[0-9\]+: error:" {
-            fail "$test (compilation error)"
-        }
-        -re "\[0-9\]+:\[0-9\]+: warning:" {
-            fail "$test (compilation warning)"
-        }
-
         -re $expected_pattern { pass "$test" }
-
         -re "$poke_prompt $" {
             fail "$test (bad match)"
         }
-
         timeout {
             exec kill -9 [exp_pid]
             set poke_killed 1

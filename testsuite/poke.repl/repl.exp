@@ -33,9 +33,12 @@ poke_exit
 
 set test "tab-completion-1"
 poke_start
-poke_test_cmd {.set obase 2} {}
-poke_test_cmd ".se\t obase 16" {}
-poke_test_cmd {.set obase} {16}
+poke_send ".se\t" ".set"
+poke_exit
+
+set test "tab-completion-2"
+poke_start
+poke_send ".e\t\t" "\r\n.editor  .exit *\r\n$poke_prompt .e"
 poke_exit
 
 set test "tab-completion-subcommand-1"
