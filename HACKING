@@ -55,6 +55,9 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        3.13  Continuous Integration
      4  Coding Style and Conventions
        4.1  Writing C
+         4.1.1  Avoid bool
+         4.1.2  Use _p for Predicates
+         4.1.3  Documenting Functions in Public Headers
        4.2  Writing Poke
        4.3  Writing RAS
      5  Writing Tests
@@ -66,6 +69,7 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        5.6  Using data files in tests
        5.7  Using NBD connections in tests
        5.8  Writing tests that depend on a certain capability
+       5.9  Writing REPL tests
      6  Fuzzing poke
        6.1  Grammarinator
      7  Deciding on What to Work on
@@ -633,6 +637,47 @@ libtextstyle
 nbd
   poke is built with NBD io space support, and dg-nbd works.
 
+Writing REPL tests
+~~~~~~~~~~~~~~~~~~
+
+Th the ``poke.repl`` testsuite is intended to test features in the
+interactive usage of poke.  Therefore, it is not dg-based.  Instead,
+it uses the services provided by ``testsuite/lib/poke.exp``.  In a
+nutshell, these services are:
+
+poke_start
+  Run a new poke process and wait at the prompt.
+poke_exit
+  Exit poke.
+poke_test_cmd CMD PATTERN
+  Send CMD to poke, and expect the result PATTERN.  CMD is sent as
+  virtual keystrokes.  Therefore, sending \t or \n has the same effect
+  on the REPL than typing TAB or RET in the keyboard, respectively.
+  PATTERN shouldn't include the prompt.
+
+Adding a new test to ``poke.repl`` involves editing
+``poke.repl/repl.exp`` and adding a new set of poke_test_cmd
+invocations, like this:
+
+  poke_start
+  
+  set test "slashes are preserved"
+  poke_test_cmd {4 / 2} {2}
+  
+  set test "tab-completion-1"
+  poke_test_cmd {.set obase 2} {}
+  poke_test_cmd ".se\t obase 16" {}
+  poke_test_cmd {.set obase} {16}
+  
+  poke_exit
+
+The snippet above implements two tests in the same poke run.  First,
+poke is started, then the test "slashes are preserved" runs, then the
+test "tab-completion-1" runs.  Then poke is exitted.
+
+If your test, for whatever reason, needs a fresh instance of poke, just
+poke_exit and then poke_start.
+  
 Fuzzing poke
 ------------
 

@@ -1,5 +1,9 @@
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING (Writing REPL tests): New section.
+
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.repl/repl.exp (tab-completion-1): New test.
 
 2020-04-10  Tim Rühsen  <tim.ruehsen@gmx.de>
