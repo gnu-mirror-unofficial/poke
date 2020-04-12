@@ -1,5 +1,10 @@
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.repl/repl.exp (sigint-returns-to-prompt-2): New
+	test.
+
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.repl/repl.exp (slashes-are-preserved-1): Renamed
 	from "slashes are preserved".
 	(ctrl-c-returns-to-prompt-1): Remove.
