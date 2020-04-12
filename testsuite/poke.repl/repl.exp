@@ -43,6 +43,5 @@ poke_exit
 
 set test "tab-completion-subcommand-1"
 poke_start
-poke_test_cmd ".set oba\t 2" {}
-poke_test_cmd {.set obase} {2}
+poke_send ".set oba\t" ".set obase"
 poke_exit
