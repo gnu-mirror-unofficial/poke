@@ -1,5 +1,9 @@
 2020-04-12  John Darrington <john@darrington.wattle.id.au>
 
+	* doc/poke.texi:  Don't capitalise or indent "Where ..."
+
+2020-04-12  John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-set.c (set_completion_function): Fix bug which was
 	exposed by recent test: tab-completion-subcommand-1.
 

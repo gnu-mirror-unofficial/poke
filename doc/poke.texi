@@ -3824,7 +3824,8 @@ switches to a previously opened file.  The syntax is:
 @end example
 
 @cindex tags, file ID tags
-Where @var{path} is a path to a file to open, which can be relative to
+@noindent
+where @var{path} is a path to a file to open, which can be relative to
 poke's current working directory or absolute.
 
 Tilde expansion is performed in @var{path}, much like it's done in the
@@ -3855,7 +3856,8 @@ buffer.  The syntax is:
 @end example
 
 @cindex tags, file ID tags
-Where @var{name} is the name of the buffer to create.  Note that poke
+@noindent
+where @var{name} is the name of the buffer to create.  Note that poke
 adds prefix and trailing asterisk characters, to differentiate file
 names from buffer names.
 
@@ -3875,7 +3877,8 @@ NBD server.  The syntax is:
 @end example
 
 @cindex tags, file ID tags
-Where @var{uri} is the name of the newly created buffer, matching the
+@noindent
+where @var{uri} is the name of the newly created buffer, matching the
 @url{https://github.com/NetworkBlockDevice/nbd/blob/master/doc/uri.md,
 NBD URI specification}.
 
@@ -3922,7 +3925,8 @@ is:
 .close @var{#tag}
 @end example
 
-Where @var{#tag} is a tag identifying an open IO stream.
+@noindent
+where @var{#tag} is a tag identifying an open IO stream.
 
 @node doc command
 @section @code{.doc}
@@ -4013,7 +4017,8 @@ global settings.  The syntax is:
 .set @var{setting} [@var{value}]
 @end example
 
-Where @var{setting} is an identifier identifying the setting to
+@noindent
+where @var{setting} is an identifier identifying the setting to
 inspect or modify.  If @var{value} is specified, then it is the new
 value for the setting.  If @var{value} is not specified the current
 value of the setting is displayed.
@@ -5069,7 +5074,8 @@ construction:
 defunit @var{name} = @var{constant_expression};
 @end example
 
-Where @var{name} is the name of the unit, and
+@noindent
+where @var{name} is the name of the unit, and
 @var{constant_expression} is a constant expression that should
 evaluate to an integral value.  The resulting value is always coerced
 into an unsigned 64-bit integer.
@@ -5518,7 +5524,8 @@ Array literals are constructed using the following syntax:
 [@var{exp},@var{exp}@dots{}]
 @end example
 
-Where @var{exp} is an arbitrary expression.
+@noindent
+where @var{exp} is an arbitrary expression.
 
 For example, @code{[1,2,3]} constructs an array of three signed 32-bit
 integers.  Likewise, @code{['a','b','c']} constructs an array of three
@@ -6095,7 +6102,8 @@ syntax:
 @var{field_type} @var{field_name} : @var{expression} ;
 @end example
 
-Where @var{expression} is an arbitrary Poke expression, that should
+@noindent
+where @var{expression} is an arbitrary Poke expression, that should
 evaluate to an integer value.  The result is interpreted as a boolean.
 @cindex ELF
 As an example, this is how the ELF magic number is checked for:
@@ -6408,7 +6416,8 @@ syntax is:
 deftype @var{name} = @var{type};
 @end example
 
-Where @var{name} is the name of the new type, and @var{type} is either
+@noindent
+where @var{name} is the name of the new type, and @var{type} is either
 a type specifier or the name of some other type.
 
 The supported type specifiers are:
@@ -6487,7 +6496,8 @@ The assignment statement has the form:
 @var{lvalue} = @var{exp};
 @end example
 
-Where @var{lvalue} is either:
+@noindent
+where @var{lvalue} is either:
 
 @itemize @bullet
 @item A variable.
@@ -6514,13 +6524,14 @@ Examples:
 @section Compound Statements
 @cindex compound statements
 @cindex statements, compound statements
-Compound statements have the form:
+Compound statements have the form
 
 @example
 @{ @var{stmt@dots{}} @}
 @end example
 
-Where @var{stmt@dots{}} is a list of statements, which can be themselves
+@noindent
+where @var{stmt@dots{}} is a list of statements, which can be themselves
 compound statements.  Compound statements are primarily used to
 sequence instructions like:
 
@@ -6551,18 +6562,18 @@ conditional operator, which are discussed in the sections below.
 @node if-else
 @subsection @code{if-else}
 @cindex conditional statements
-The @code{if-else} statement has the form:
+The @code{if-else} statement has the form
 
 @example
 if @var{exp} @var{if_stmt} [else @var{else_stmt}]
 @end example
 
-Where @var{exp} is an expression that should evaluate to a boolean
+@noindent
+where @var{exp} is an expression that should evaluate to a boolean
 value (@i{i.e.} to an integer), @var{if_stmt} is a statement that will
 be executed if @var{exp} holds true, and @var{else_stmt} is a
 statement that will be executed if @var{exp} holds false.  The
 @code{else} part of the statement is optional.
-
 
 @node Conditional Expression
 @subsection Conditional Expressions
@@ -6573,7 +6584,8 @@ Poke supports a ternary conditional expression that has the form:
 @var{condition} ? @var{true_expression} : @var{false_expression}
 @end example
 
-Where @var{condition} is an expression that should evaluate to a
+@noindent
+where @var{condition} is an expression that should evaluate to a
 boolean, and @var{true_expression} and @var{false_expression} are
 expressions that have exactly the same type.
 
@@ -6598,7 +6610,8 @@ The @code{while} statement has this form:
 while (@var{exp}) @var{stmt}
 @end example
 
-Where @var{exp} is an expression that should evaluate to a boolean
+@noindent
+where @var{exp} is an expression that should evaluate to a boolean
 (@i{i.e.} to an integer) and @var{stmt} is an statement that will be
 executed until @var{exp} holds false.
 
@@ -6624,7 +6637,8 @@ The @code{for-in} statement has this form:
 for (@var{formal} in @var{container} [where @var{exp}]) @var{stmt}
 @end example
 
-Where, in each iteration, the name @var{formal} will be associated
+@noindent
+where, in each iteration, the name @var{formal} will be associated
 with consecutive values of @var{container}, which shall be an
 expression evaluating to an array or a string.  @var{formal} is
 available in @var{stmt}, which is the statement executed in each
@@ -6690,7 +6704,8 @@ defun @var{name} = [(@var{formal},@dots{})] @var{ret_type}:
 @}
 @end example
 
-Where @var{name} is the name of the function, which uses the same
+@noindent
+where @var{name} is the name of the function, which uses the same
 namespace as variables and types and @var{ret_type} is the type of
 the value returned by the function.  If the function returns no value
 then it is @code{void}.
@@ -6701,7 +6716,8 @@ Each @var{formal} argument has the form:
 @var{type} @var{name} [= @var{exp}]
 @end example
 
-Where @var{type} is the type of the formal, @var{name} its name, and
+@noindent
+where @var{type} is the type of the formal, @var{name} its name, and
 @var{exp} is an optional expression that will be used to initialize
 the argument in case it is not specified when the function is called.
 
@@ -6797,7 +6813,8 @@ expression-as-statement context.  This alternate syntax is:
 @var{function_name} :@var{arg1} @var{val1}@dots{}
 @end example
 
-Where @var{arg1} is the name of an argument and @var{val1} the value
+@noindent
+where @var{arg1} is the name of an argument and @var{val1} the value
 to pass for that argument.  This is useful when using functions as
 commands in the REPL:
 
@@ -6824,7 +6841,8 @@ Function types are denoted like:
 (@var{type},@dots{})@var{ret_type}:
 @end example
 
-Where @var{type} are the types of the arguments and @var{ret_type} is
+@noindent
+where @var{type} are the types of the arguments and @var{ret_type} is
 the type of the value returned by the function.
 
 Optional arguments are marked with a @code{?} after the type.  For
@@ -7110,7 +7128,8 @@ IO device.  It has the following prototype:
 defun open = (string @var{handler}, uint<64> flags = 0) int<32>: @{ @dots{} @}
 @end example
 
-Where @var{handler} is a string identifying the IO device that will
+@noindent
+where @var{handler} is a string identifying the IO device that will
 serve the IO space.  This handler can be:
 
 @table @code
@@ -7176,7 +7195,8 @@ underlying IO device.  The prototype is:
 defun close = (int<32> @var{ios}) void: @{ @dots{} @}
 @end example
 
-Where @var{ios} is some previously created IO space.  All pending data
+@noindent
+where @var{ios} is some previously created IO space.  All pending data
 is written to the underlying IO device.
 
 If the IO space specified to @code{close} doesn't exist then an
@@ -7209,7 +7229,8 @@ new current IO space.  It has the following prototype:
 defun set_ios = (int<32> @var{ios}) int<32>: @{ @dots{} @}
 @end example
 
-Where @var{ios} is the IO space that will become the current IO
+@noindent
+where @var{ios} is the IO space that will become the current IO
 space.  If the IO space specified to @code{set_ios} doesn't exist,
 @code{E_no_ios} will be raised.
 
@@ -7636,7 +7657,7 @@ deftype Exception =
 @end example
 
 @noindent
-Where @code{code} identifies the type of the exception, and @code{msg}
+where @code{code} identifies the type of the exception, and @code{msg}
 is supposed to be a textual description of the exceptional situation.
 
 You can use codes @code{255} and higher for your own exceptions.  For
@@ -7710,7 +7731,8 @@ The simplest form of the statement is:
 try @var{stmt} catch @var{compound_stmt}
 @end example
 
-Where @var{stmt} is any statement and @var{compound_stmt} is a
+@noindent
+where @var{stmt} is any statement and @var{compound_stmt} is a
 compound statement.  First, @var{stmt} is executed.  If during its execution
 an exception is raised, then @var{compound_stmt} is executed.
 
@@ -7721,7 +7743,8 @@ exception:
 try @var{stmt} catch if @var{exp} @var{compound_stmt}
 @end example
 
-Where @var{exp} is an expression that should evaluate to an
+@noindent
+where @var{exp} is an expression that should evaluate to an
 @code{Exception}.  The handler @var{compound_stmt} will only be
 executed if that specific exception is caught.  Any other exception
 will be re-raised.
@@ -7732,7 +7755,8 @@ The third form of the statement is the most generic:
 try @var{stmt} catch (Exception @var{formal}) @var{compound_stmt}
 @end example
 
-Where @var{formal} is a formal argument that contains the exception
+@noindent
+where @var{formal} is a formal argument that contains the exception
 when @var{compound_stmt} is executed.
 
 @node try-until
@@ -7745,7 +7769,8 @@ some exception is caught.  The syntax is:
 try @var{stmt} until @var{exp}
 @end example
 
-Where @var{stmt} is the statement that will be executed repeatedly
+@noindent
+where @var{stmt} is the statement that will be executed repeatedly
 until some exception is raised.  If the raised exception has type
 @var{exp} then execution continues normally.  @var{exp} should be an
 expression that evaluates to an @code{Exception}.
@@ -7778,7 +7803,8 @@ However, it is also useful to explicitly raise exceptions.  The
 raise @var{exception};
 @end example
 
-Where @var{exception} is an integer.  This integer can be any number,
+@noindent
+where @var{exception} is an integer.  This integer can be any number,
 but most often is one of the @code{E_*} codes defined in Poke.
 
 @node Printing
@@ -7986,7 +8012,7 @@ load @var{module};
 @end example
 
 @noindent
-Where @var{module} is the name of the pickle to load.
+where @var{module} is the name of the pickle to load.
 
 For example, your Poke program may want to access some ELF data
 structures.  In that case, we can just do:
@@ -8269,7 +8295,8 @@ defun qsort = (any[] @var{array}, Comparator @var{cmp_f},
                long @var{right} = array'length - 1) void: @{ @dots{} @}
 @end example
 
-Where @var{array} is the array to sort, @var{cmp_f} is a comparator
+@noindent
+where @var{array} is the array to sort, @var{cmp_f} is a comparator
 function, @var{left} is the index of the first array element to
 include in the sorting, and @var{right} is the index of the last array
 element to include in the sorting.  Both @var{left} and @var{right}
