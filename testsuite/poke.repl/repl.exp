@@ -37,3 +37,9 @@ poke_test_cmd {.set obase 2} {}
 poke_test_cmd ".se\t obase 16" {}
 poke_test_cmd {.set obase} {16}
 poke_exit
+
+set test "tab-completion-subcommand-1"
+poke_start
+poke_test_cmd ".set oba\t 2" {}
+poke_test_cmd {.set obase} {2}
+poke_exit
