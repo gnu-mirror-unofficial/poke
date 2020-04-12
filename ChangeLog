@@ -1,3 +1,8 @@
+2020-04-12  John Darrington <john@darrington.wattle.id.au>
+
+	* doc/Makefile.am (nodelist): Change its directory.
+	* testsuite/poke.repl/repl.exp (tab-completion-subcommand-2): New test.
+
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/optcond-13.pk: New test.

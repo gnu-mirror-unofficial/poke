@@ -30,13 +30,14 @@ pvm-insns.texi: $(top_srcdir)/lib/pvm.jitter $(srcdir)/gen-pvm-insns.sh
 # work around some limitations of readline.
 # Look for the macro SPACE_SUBSTITUTE in pk-repl.c to see how this
 # is used.
-$(top_srcdir)/src/nodelist: $(srcdir)/poke.info
+$(top_srcdir)/lib/nodelist: $(srcdir)/poke.texi
 	chmod u+w ${dir $@}
 	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' > $@
+	test -s $@ || $(RM) $@
 
 INFO_DEPS = $(srcdir)/poke.info
 
-pkgdata_DATA = $(top_srcdir)/src/nodelist
+pkgdata_DATA = $(top_srcdir)/lib/nodelist
 
 clean-local:
 	rm -f pvm-insns.texi
