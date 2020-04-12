@@ -664,7 +664,7 @@ used to refer to the entities being edited with poke.  In this case
 the IO space being edited is a file, but we will see that is not
 always the case: poke can also edit other entities such as memory
 buffers and remote block-oriented devices over the network.  For now,
-lets keep in mind that IOS, or IO space, refers to the file being
+let's keep in mind that IOS, or IO space, refers to the file being
 edited.
 
 And why ``current''?  GNU poke is capable of editing several files
@@ -693,7 +693,7 @@ bytes.)
 
 Finally, the asterisk character at the left of the entry for
 @file{foo.o} identifies it as the current IO space.  To see this more
-clearly, lets open another file:
+clearly, let's open another file:
 
 @example
 (poke) .file bar.o
@@ -722,7 +722,7 @@ The current IOS is now `./foo.o'.
 
 @noindent
 We are back to @file{foo.o}.  Since we are not really interested in
-@file{bar.o}, lets close it:
+@file{bar.o}, let's close it:
 
 @example
 (poke) .close #1
@@ -759,11 +759,11 @@ these bytes: @command{dump}@footnote{Note that this is not a
 dot-command like @command{.file}, @command{.ios} or @command{.close}:
 @command{dump} does not start with a dot!  We will see later how
 dot-commands differ from ``normal commands'' like @command{dump}, but
-for now, lets ignore the distinction.}  .  It is called like that
+for now, let's ignore the distinction.}  .  It is called like that
 because it dumps ranges of bytes to the terminal, so the user can
 inspect them.
 
-So lets use our first poke command!  Fire up poke, open the file
+So let's use our first poke command!  Fire up poke, open the file
 @file{foo.o} as explained above, and execute the @command{dump}
 command:
 
@@ -808,7 +808,7 @@ example, the value of the first byte in the third data row is 0x01,
 the value of the second byte 0x02, and so on.
 
 Using the ruler and the column of offsets, locating bytes in the data
-is very easy.  Lets say for example we are interested in the byte at
+is very easy.  Let's say for example we are interested in the byte at
 offset 0x68: we use the first column to quickly find the row starting
 at 0x60, and the ruler to find the column marked with @code{88}.
 Cross column and row and... voila!  The byte in question has the value
@@ -917,7 +917,7 @@ chapter.  For a complete description of the command, see @ref{dump}.
 @node Poking Bytes
 @section Poking Bytes
 
-Lets look again at the first bytes of the file @file{foo.o}:
+Let's look again at the first bytes of the file @file{foo.o}:
 
 @example
 (poke) dump :size 64#B
@@ -1057,7 +1057,7 @@ save values under meaningful names, and access to them by name.  In
 poke we do that by storing the values in @dfn{variables}.
 
 Before being used, variables shall be defined using the @code{defvar}
-construction.  Lets get the byte at offset @code{64} bytes and save it
+construction.  Let's get the byte at offset @code{64} bytes and save it
 in a variable called @code{foo}:
 
 @example
@@ -1167,7 +1167,7 @@ by step.  First, we add the first two bytes:
 @end example
 
 @noindent
-Which is all right.  0xc4 is 0x7f plus 0x45.  But, lets add now the
+Which is all right.  0xc4 is 0x7f plus 0x45.  But, let's add now the
 third byte:
 
 @example
@@ -1186,7 +1186,7 @@ somehow, and since all we have in a file are bytes, the integers will
 have to be composed of them.
 
 Integers bigger than 255 can be encoded by interpreting consecutive
-byte values in a certain way.  First, lets consider a single byte.  If
+byte values in a certain way.  First, let's consider a single byte.  If
 we print a byte value using binary rather than binary or hexadecimal,
 we will observe that eight bits are what it takes to encode the
 numbers between 0 and 0xff (255) using a @dfn{natural binary
@@ -1244,7 +1244,7 @@ beginning of @file{foo.o}?
 0x7f45UH
 @end example
 
-Now, lets go back to the syntax we use to map a byte value.  In the
+Now, let's go back to the syntax we use to map a byte value.  In the
 invocation of the map operator @code{byte @@ 0#B} the operator at the
 left tells the operator what kind of value to map.  This is called a
 @dfn{type specifier}; @code{byte} is the type specifier for a single
@@ -1530,7 +1530,7 @@ map, we get unsigned values such as 0UB.  It follows that we need
 other type specifiers to map signed values.  These look like
 @code{int<8>} and @code{int<16>}.
 
-For example, lets map a signed 16-bit value from @file{foo.o}:
+For example, let's map a signed 16-bit value from @file{foo.o}:
 
 @example
 (poke) .set obase 10
@@ -1541,7 +1541,7 @@ For example, lets map a signed 16-bit value from @file{foo.o}:
 @noindent
 Note how the suffix of the value is now @code{H} and not @code{UH}.
 This means that the value is signed!  But in this case it is still
-positive, so lets try to get an actual negative value:
+positive, so let's try to get an actual negative value:
 
 @example
 (poke) defvar h = int<16> @@ 0#B
@@ -1568,7 +1568,7 @@ Likewise, adding two unsigned integers results in an unsigned integer:
 
 @noindent
 But, what happens if we mix signed and unsigned values in an
-expression?  Is the result signed, or unsigned?  Lets find out:
+expression?  Is the result signed, or unsigned?  Let's find out:
 
 @example
 (poke) 1U + 2
@@ -1641,7 +1641,7 @@ whole number of bytes.
 @subsection Incomplete Bytes
 
 Let's consider first weird numbers that span for more than one byte.
-For example, an unsigned integer of 12 bits.  Lets visualize the
+For example, an unsigned integer of 12 bits.  Let's visualize the
 written form of this number, i.e. the sequence of its constituent
 bytes as they appear in the underlying IO space:
 
@@ -1731,7 +1731,7 @@ of the result number:
 0b b7 b6 b5 b4 a7 a6 a5 a4 a3 a2 a1 a0
 @end example
 
-Lets see this in action.  Lets take a look to the value of the first
+Let's see this in action.  Let's take a look to the value of the first
 two bytes in @file{foo.o}, in binary:
 
 @example
@@ -1754,7 +1754,7 @@ Looking at these bytes as sequences of bits, we have:
 @end example
 
 @noindent
-Lets map our weird number at offset 0 bytes, using big endian:
+Let's map our weird number at offset 0 bytes, using big endian:
 
 @example
 (poke) .set endian big
@@ -1768,7 +1768,7 @@ the unsigned 12 bits number come from the byte at offset 0,
 i.e. @code{01111111}, whereas the least significant bits come from the
 byte at offset 1, i.e. @code{0100}.
 
-Now lets map it using little endian:
+Now let's map it using little endian:
 
 @example
 (poke) uint<12> @@ 0#B
@@ -1803,7 +1803,7 @@ uint<5>
 @end example
 
 @noindent
-Now lets view the byte as a sequence of bits:
+Now let's view the byte as a sequence of bits:
 
 @example
              byte
@@ -1822,7 +1822,7 @@ current endianness the value, in binary, is:
 0b b7 b6 b5 b4 b3
 @end example
 
-Lets see this in poke:
+Let's see this in poke:
 
 @example
 (poke) .set obase 2
@@ -1843,7 +1843,7 @@ between a signed number and an unsigned number is basically a
 different interpretation of the most significant byte.  Exactly the
 same applies to weird numbers.
 
-Lets summon our unsigned 12-bit integer at the beginning of the file
+Let's summon our unsigned 12-bit integer at the beginning of the file
 @file{foo.o}:
 
 @example
@@ -1855,7 +1855,7 @@ Lets summon our unsigned 12-bit integer at the beginning of the file
 @noindent
 The most significant byte of the resulting value (not of its written
 form) indicates that this number would be positive if we were mapping
-the corresponding signed value.  Lets see:
+the corresponding signed value.  Let's see:
 
 @example
 (poke) int<12> @@ 0#B
@@ -1865,7 +1865,7 @@ the corresponding signed value.  Lets see:
 (int<12>) 1151
 @end example
 
-Lets make it a bit more interesting, and change the value of the first
+Let's make it a bit more interesting, and change the value of the first
 byte in the file so we get a negative number:
 
 @example
@@ -1879,7 +1879,7 @@ byte in the file so we get a negative number:
 @end example
 
 @noindent
-Now, lets switch to little endian:
+Now, let's switch to little endian:
 
 @example
 (poke) .set endian little
@@ -2136,7 +2136,7 @@ specified in the command invocation.  For detailed information on the
 @section Saving Buffers in Files
 
 Another useful command when working with buffer IO spaces (and in
-general, with any IO space) is @command{save}.  Lets say we want to
+general, with any IO space) is @command{save}.  Let's say we want to
 save a copy of the header of an ELF file in another file.  We could do
 it the pokeish way:
 
@@ -2151,7 +2151,7 @@ The command above saves the first 64 bytes in the current IO space
 (which is backed by the file @file{foo.o}) into a new file
 @file{header.dat} in the current working directory.
 
-Lets now consider again the scenario where we are using a memory IO
+Let's now consider again the scenario where we are using a memory IO
 space as a scratch area.  It is late in the night and we are tired, so
 we would like to save the contents of the scratch buffer to a file, so
 we can continue our work tomorrow.  This is how we would do that:
@@ -2359,7 +2359,7 @@ lines and horizontal tabs.  @xref{String Literals}.
 
 @subsection Poking Strings
 
-Lets start with a fresh memory buffer IOS @code{*scratch*}:
+Let's start with a fresh memory buffer IOS @code{*scratch*}:
 
 @example
 (poke) .mem scratch
@@ -2630,7 +2630,7 @@ Therefore, each SBM pixel is encoded using three bytes:
 
 @subsection P is for poke
 
-Lets create our first SBM image, using poke.  The image we want to
+Let's create our first SBM image, using poke.  The image we want to
 encode is the very simple rendering of the letter @code{P} shown in
 the figure below.
 
@@ -2657,7 +2657,7 @@ pixels, the non painted pixels are called background pixels.
 @subsection Preparing the Canvas
 
 The first thing we need is some suitable IO space where to encode the
-image.  Lets fire up poke and create a memory buffer:
+image.  Let's fire up poke and create a memory buffer:
 
 @example
 $ poke
@@ -2798,7 +2798,7 @@ at the hexadecimal values of @code{bg} and @code{fg} above, note that
 0xff = 255, 0x63 = 99 and 0x47 = 71.  Each byte seems to be in the
 right position in the 24-bit containing number.  Now, poking a pixel
 at some given offset should be as easy as issugin would involve just
-one map operation, right?  Lets see, using some arbitrary offset 10#B:
+one map operation, right?  Let's see, using some arbitrary offset 10#B:
 
 @example
 (poke) uint<24> @@ 10#B = fg
@@ -2895,7 +2895,7 @@ arrays?  Yes, it is:
 The value above is an array of two arrays of two integers each.  If we
 wanted to map such an array, what would be the type specifier we would
 need to use?  It would be @code{int[2][2]}, which should be read from
-right-to-left as ``array of two arrays of two integers''.  Lets map
+right-to-left as ``array of two arrays of two integers''.  Let's map
 one from an arbitrary offset in our IO space:
 
 @example
@@ -2916,7 +2916,7 @@ pixels.  The first line in our image would be:
 @end example
 
 @noindent
-Lets complete the image lines:
+Let's complete the image lines:
 
 @example
 (poke) defvar l0 = [bga,fga,bga,fga,bga]
@@ -2935,7 +2935,7 @@ value, such as integers or strings.
 
 At this point, we could poke the pixels line-by-line.  What would be
 the type specifier for a line?   A line is an array of five arrays of
-3 bytes each, so the type specifier would be @code{byte[3][5]}.  Lets
+3 bytes each, so the type specifier would be @code{byte[3][5]}.  Let's
 do that:
 
 @example
@@ -2963,7 +2963,7 @@ can look at the image data as an array of lines.  But lines are
 themselves arrays of arrays... no matter, there is no limit on the
 number of arrays-of levels that you can nest.
 
-So, lets define our image as an array of the lines defined above:
+So, let's define our image as an array of the lines defined above:
 
 @example
 (poke) defvar image_data = [l0,l1,l2,l3,l4,l5]
@@ -2974,7 +2974,7 @@ So, lets define our image as an array of the lines defined above:
 @noindent
 What would be the type specifier for an image?  It would be an array
 of seven arrays of five arrays of three bytes each, in other words
-@code{byte[3][5][7]}.  Lets poke the pixels:
+@code{byte[3][5][7]}.  Let's poke the pixels:
 
 @example
 (poke) byte[3][5][6] @@ 5#B = image_data
@@ -3048,7 +3048,7 @@ it further!
 
 @subsection Reading a SBM File
 
-Lets open with poke the cute image we created in the last section,
+Let's open with poke the cute image we created in the last section,
 @file{p.sbm}:
 
 @example
@@ -3072,7 +3072,7 @@ shows 16 bytes per row, and our image has lines that are 15 bytes
 long.  This is a happy coincidence: you definitely shouldn't expect to
 see ASCII art in the dump output of SBM files in general! :)
 
-Now lets read the image's metadata from the header: pixels per line
+Now let's read the image's metadata from the header: pixels per line
 and how many lines are contained in the image:
 
 @example
@@ -3151,7 +3151,7 @@ The current IOS is now `*scratch*'.
 @end example
 
 @noindent
-Good.  Now lets map the contents of the image, both header information
+Good.  Now let's map the contents of the image, both header information
 and the sequence of pixels:
 
 @example
@@ -3161,7 +3161,7 @@ and the sequence of pixels:
 @end example
 
 @noindent
-Lets modify the image.  Since the dimensions of the new image are
+Let's modify the image.  Since the dimensions of the new image are
 exactly the same, the header remains the same.  It is the pixel
 sequence that is different.  We basically need to turn the pixels at
 coordinates @code{(4,2)}, @code{(5,3)} and @code{(6,3)} from
@@ -3258,7 +3258,7 @@ other situations these attributes are most useful.  We shall see that
 later.
 
 Well, at this point it should be clear how to paint pixels.  First,
-lets define our background and foreground pixels:
+let's define our background and foreground pixels:
 
 @example
 (poke) defvar bga = [255UB, 255UB, 255UB]
@@ -3312,7 +3312,7 @@ metadata accordingly.
 
 @subsection Shortening and Shifting Lines
 
-Lets think in term of lines.  In the original image, each line has 5
+Let's think in term of lines.  In the original image, each line has 5
 pixels, that we can enumerate as:
 
 @example
@@ -3331,7 +3331,7 @@ line | p1 | p2 | p3 |
      +----+----+----+
 @end example
 
-Lets get the first line from the original @code{image_data}:
+Let's get the first line from the original @code{image_data}:
 
 @example
 (poke) defvar l0 = image_data[0]
@@ -3415,7 +3415,7 @@ arrays of three bytes, like in the example.
 
 @subsection Saving the Result
 
-And finally, lets write out the new file as @file{r.sbm}:
+And finally, let's write out the new file as @file{r.sbm}:
 
 @example
 (poke) save :from 0#B :size 5#B + image_data'size :file "r.sbm"
@@ -3429,8 +3429,8 @@ And finally, lets write out the new file as @file{r.sbm}:
 While in the process of creating and manipulating SBM files we soon
 started talking about things like lines, pixel sequences, pixels,
 colors, and so on.  What is more, very naturally we started
-@emph{thinking} in terms of these entities: lets drop this or that
-line, or lets change the green level of this pixel.
+@emph{thinking} in terms of these entities: let's drop this or that
+line, or let's change the green level of this pixel.
 
 Consider for example RGB colors.  We know that each color is defined
 by three levels of light: red, green and blue.  These components are
@@ -3678,7 +3678,7 @@ we can use by just loading the file.
 Since there are many ways to understand the notion of ``color'', and
 also many ways to implement these many notions, it would be better to
 be more precise and call our file @file{rgb24.pk}, since the notion of
-color we are using is of that RGB24.  While doing so, lets also rename
+color we are using is of that RGB24.  While doing so, let's also rename
 the variables to reflect the fact they denote not just any kind of
 colors, but RGB24 colors:
 
@@ -6199,7 +6199,7 @@ Packet @{
 
 Unfortunately, such markers and magic numbers are not precisely very
 memorable.  To help with this, Poke has the notion of @dfn{type field
-initializers}.  Lets use one in our example:
+initializers}.  Let's use one in our example:
 
 @example
 deftype Packet =
