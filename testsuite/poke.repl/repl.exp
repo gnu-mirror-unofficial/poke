@@ -59,3 +59,24 @@ poke_send {foo} {}
 poke_send_signal INT
 poke_send {} "\r\n$poke_prompt"
 poke_exit
+
+set test "tab-completion-type-1"
+poke_start
+poke_test_cmd {deftype Foo1 = int;} {}
+poke_test_cmd {deftype Foo2 = int;} {}
+poke_send "Foo\t\t" "\r\nFoo1 +Foo2 *\r\n$poke_prompt Foo"
+poke_exit
+
+set test "tab-completion-var-1"
+poke_start
+poke_test_cmd {defvar foo1 = 10} {}
+poke_test_cmd {defvar foo2 = 20} {}
+poke_send "2 + foo\t\t" "\r\nfoo1 +foo2 *\r\n$poke_prompt 2 \\\+ foo"
+poke_exit
+
+set test "tab-completion-fun-1"
+poke_start
+poke_test_cmd {defun foo1 = void: {}} {}
+poke_test_cmd {defun foo2 = void: {}} {}
+poke_send "foo\t\t" "\r\nfoo1 +foo2 *\r\n$poke_prompt foo"
+poke_exit
