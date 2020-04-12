@@ -59,6 +59,7 @@ proc poke_exit {} {
     if {$poke_killed} {
         set poke_killed 0
     } else {
+        send "\n" ;# Discard any previous input.
         send "exit\n"
     }
 }

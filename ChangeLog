@@ -1,5 +1,10 @@
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke.exp (poke_exit): Make sure to discard any
+	previous input before issuing the `exit' command.
+
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (Writing REPL tests): Mention poke_send.
 
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
