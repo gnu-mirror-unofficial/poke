@@ -1,3 +1,9 @@
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-insn.def: Do not use a white space between PKL_DEF_INSN
+	and the open parenthesis in macro invocations, as a special case.
+	Add explicative note.
+
 2020-04-12  John Darrington <john@darrington.wattle.id.au>
 
 	* doc/Makefile.am (nodelist): Change its directory.
