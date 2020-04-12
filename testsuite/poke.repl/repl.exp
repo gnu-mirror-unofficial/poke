@@ -18,8 +18,14 @@
 
 load_lib ${tool}.exp
 
-set test "slashes are preserved"
-
 poke_start
+
+set test "slashes are preserved"
 poke_test_cmd {4 / 2} {2}
+
+set test "tab-completion-1"
+poke_test_cmd {.set obase 2} {}
+poke_test_cmd ".se\t obase 16" {}
+poke_test_cmd {.set obase} {16}
+
 poke_exit
