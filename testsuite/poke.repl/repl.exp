@@ -45,3 +45,16 @@ set test "tab-completion-subcommand-1"
 poke_start
 poke_send ".set oba\t" ".set obase"
 poke_exit
+
+set test "sigint-returns-to-prompt-1"
+poke_start
+poke_send "while (1) {}\n" {}
+poke_send_signal INT
+poke_send {} "\r\n$poke_prompt"
+poke_exit
+
+set test "ctrl-c-returns-to-prompt-1"
+poke_start
+poke_send "while (1) {}\n" {}
+poke_send "\003" "\r\n$poke_prompt" ;# Ctrl-c
+poke_exit

@@ -656,6 +656,8 @@ poke_test_cmd CMD PATTERN
   PATTERN shouldn't include the prompt.
 poke_send INPUT PATTERN
   Send INPUT to poke, and expect PATTERN as output.
+poke_send_signal SIGNAL
+  Send SIGNAL to poke.
   
 Adding a new test to ``poke.repl`` involves editing
 ``poke.repl/repl.exp`` and adding some content there.  The following

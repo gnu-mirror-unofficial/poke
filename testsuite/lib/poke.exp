@@ -102,6 +102,10 @@ proc poke_send {input pattern} {
     }
 }
 
+proc poke_send_signal {sig} {
+    exec kill -$sig [exp_pid]
+}
+
 proc poke_test_cmd {cmd pattern} {
     global poke_prompt
     global spawn_id

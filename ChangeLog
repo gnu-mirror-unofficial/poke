@@ -1,3 +1,12 @@
+2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/lib/poke.exp (poke_send_signal): New proc.
+	* testsuite/poke.repl/repl.exp (sigint-returns-to-prompt): New
+	test.
+	* testsuite/poke.repl/repl.exp (ctrl-c-returns-to-prompt):
+	Likewise.
+	* HACKING (Writing REPL tests): Document poke_send_signal.
+
 2020-04-12  John Darrington <john@darrington.wattle.id.au>
 
 	* doc/poke.texi:  Don't capitalise or indent "Where ..."
