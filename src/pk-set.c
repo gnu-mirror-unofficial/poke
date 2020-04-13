@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <string.h>
 #include <arpa/inet.h> /* For htonl */
+#include <stdlib.h>
 #include "xalloc.h"
 
 #include "pvm.h"
