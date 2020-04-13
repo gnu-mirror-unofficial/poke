@@ -62,3 +62,10 @@ html-local:
 	  $(builddir)/poke.html/index.html
 	sed -i -e 's#^<h3>\(.*name="FOOT.*\)</h3>#<strong>\1</strong>#' \
 	  $(builddir)/poke.html/*.html
+
+# Generation of the plain text manual.
+
+text: $(builddir)/poke.text
+
+$(builddir)/poke.text: poke.texi
+	$(MAKEINFO) --plaintext $(srcdir)/poke.texi > $(builddir)/poke.text

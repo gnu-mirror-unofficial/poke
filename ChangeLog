@@ -1,5 +1,10 @@
 2020-04-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/Makefile.am (text): New target.
+	($(builddir)/doc/poke.text): Likewise.
+
+2020-04-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-diag.c (pkl_detailed_location): Do not use off64_t.
 
 2020-04-13  Jose E. Marchesi  <jemarch@gnu.org>
