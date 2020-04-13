@@ -66,8 +66,8 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
       FILE *fd = ast->file;
       int c;
 
-      off64_t cur_pos = ftello (fd);
-      off64_t tmp;
+      off_t cur_pos = ftello (fd);
+      off_t tmp;
 
       /* Seek to the beginning of the file.  */
       tmp = fseeko (fd, 0, SEEK_SET);
