@@ -1,3 +1,7 @@
+2020-04-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/ras: Fix ambiguous grouping in regexps.
+
 2020-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pkl-insn.def: Do not use a white space between PKL_DEF_INSN

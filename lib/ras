@@ -441,12 +441,12 @@ BEGIN {
     if (system ("test -r " ideffile) == 1)
         fatal("fatal: cannot read instruction definition file " ideffile)
 
-    cmd = "cpp -D'PKL_DEF_INSN(M,A,N)=M A N' -P " ideffile
+    cmd = "cpp -D'PKL_DEF_INSN(M,A,N)=M:A:N' -P " ideffile
     while ((cmd | getline line) > 0)
     {
-        name = gensub (/(.*) (.*) (.*)/, "\\3", "g", line)
-        args = gensub (/(.*) (.*) (.*)/, "\\2", "g", line)
-        id = gensub (/(.*) (.*) (.*)/, "\\1", "g", line)
+        name = gensub (/.*:.*: *(".*") */, "\\1", "g", line)
+        args = gensub (/.*: *(".*") *:.*/, "\\1", "g", line)
+        id   = gensub (/ *([^ ]+) *:.*:.*/, "\\1", "g", line)
 
         # Remove leading and trailing double-quotes wherever
         # appropriate
