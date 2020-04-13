@@ -430,6 +430,46 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
   return 1;
 }
 
+static int
+pk_cmd_set_doc_viewer (int argc, struct pk_cmd_arg argv[],
+                       uint64_t uflags)
+{
+  /* set doc viewer {info,less} */
+
+  const char *arg;
+
+  /* Note that it is not possible to distinguish between no argument
+     and an empty unique string argument.  Therefore, argc should be
+     always 1 here, and we determine when no value was specified by
+     checking whether the passed string is empty or not.  */
+
+  if (argc != 1)
+    assert (0);
+
+  arg = PK_CMD_ARG_STR (argv[0]);
+
+  if (*arg == '\0')
+    {
+      pk_printf ("%s\n", poke_doc_viewer);
+    }
+  else
+    {
+      if (STRNEQ (arg, "info") && STRNEQ (arg, "less"))
+        {
+          pk_term_class ("error");
+          pk_puts ("error: ");
+          pk_term_end_class ("error");
+          pk_puts ("doc-viewer should be one of `info' or `less'.\n");
+          return 0;
+        }
+
+      free (poke_doc_viewer);
+      poke_doc_viewer = xstrdup (arg);
+    }
+
+  return 1;
+}
+
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 const struct pk_cmd set_oacutoff_cmd =
@@ -464,6 +504,10 @@ const struct pk_cmd set_error_on_warning_cmd =
   {"error-on-warning", "s?", "", 0, NULL, pk_cmd_set_error_on_warning,
    "set error-on-warning (yes|no)", NULL};
 
+const struct pk_cmd set_doc_viewer =
+  {"doc-viewer", "s?", "", 0, NULL, pk_cmd_set_doc_viewer,
+   "set doc-viewer (info|less)", NULL};
+
 const struct pk_cmd *set_cmds[] =
   {
    &set_oacutoff_cmd,
@@ -476,6 +520,7 @@ const struct pk_cmd *set_cmds[] =
    &set_nenc_cmd,
    &set_pretty_print_cmd,
    &set_error_on_warning_cmd,
+   &set_doc_viewer,
    &null_cmd
   };
 

@@ -76,38 +76,56 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     char *cmd = NULL;
     int bytes = 64;
 
-    const char info_prog_name[] = "info";
-    const char *ip = find_in_path (info_prog_name);
-    if (STREQ (ip, info_prog_name))
+    /* Unless the doc viewer is set to `less', try first to use
+       `info'.  */
+
+    if (STRNEQ (poke_doc_viewer, "less"))
       {
-        pk_term_class ("error");
-        pk_puts ("error: ");
-        pk_term_end_class ("error");
-        pk_puts ("the \"info\" program is not installed.\n");
-        return 0;
+        const char info_prog_name[] = "info";
+        const char *ip = find_in_path (info_prog_name);
+        if (STRNEQ (ip, info_prog_name))
+          {
+            do
+              {
+                size = bytes + 1;
+                cmd = xrealloc (cmd, size);
+                bytes = snprintf (cmd, size, "info -f \"%s/poke.info\"",
+                                  poke_infodir);
+              }
+            while (bytes >= size);
+
+            if (argv[0].type == PK_CMD_ARG_STR)
+              {
+                const char *node = argv[0].val.str;
+                cmd = xrealloc (cmd, bytes + 7 + strlen (node));
+                strcat (cmd, " -n \"");
+                strcat (cmd, node);
+                strcat (cmd, "\"");
+              }
+          }
       }
 
-    do
+    /* Fallback to `less' if no `info' was found.  */
+    if (cmd == NULL)
       {
-        size = bytes + 1;
-        cmd = xrealloc (cmd, size);
-        bytes = snprintf (cmd, size, "info -f \"%s/poke.info\"",
-                          poke_infodir);
-      }
-    while (bytes >= size);
+        const char info_prog_name[] = "less";
+        const char *ip = find_in_path (info_prog_name);
+        if (STREQ (ip, info_prog_name))
+          {
+            pk_term_class ("error");
+            pk_puts ("error: ");
+            pk_term_end_class ("error");
+            pk_puts ("a suitable documentation viewer is not installed.\n");
+            return 0;
+          }
 
-    if (argv[0].type == PK_CMD_ARG_STR)
-      {
-        const char *node = argv[0].val.str;
-        cmd = xrealloc (cmd, bytes + 7 + strlen (node));
-        strcat (cmd, " -n \"");
-        strcat (cmd, node);
-        strcat (cmd, "\"");
+        asprintf (&cmd, "less -p '%s' %s/poke.text",
+                  argv[0].val.str, poke_datadir);
+        assert (cmd != NULL);
       }
 
     /* Open the documentation at the requested page.  */
     ret = (0 == system (cmd));
-
     free (cmd);
   }
 

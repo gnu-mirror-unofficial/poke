@@ -65,7 +65,8 @@ html-local:
 
 # Generation of the plain text manual.
 
-text: $(builddir)/poke.text
+pkgdata_DATA += $(top_srcdir)/lib/poke.text
 
-$(builddir)/poke.text: poke.texi
-	$(MAKEINFO) --plaintext $(srcdir)/poke.texi > $(builddir)/poke.text
+$(top_srcdir)/lib/poke.text: poke.texi
+	$(MAKEINFO) --plaintext $(srcdir)/poke.texi \
+          > $(top_srcdir)/lib/poke.text

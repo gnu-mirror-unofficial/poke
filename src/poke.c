@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <locale.h>
+#include "xalloc.h"
 
 #ifdef HAVE_HSERVER
 #  include "pk-hserver.h"
@@ -75,6 +76,12 @@ char *poke_infodir;
    poke.  */
 
 char *poke_picklesdir;
+
+/* The following global contains the name of the program to use to
+   display documentation.  Valid values are `info' and `less'.  It
+   defaults to `info'.  */
+
+char *poke_doc_viewer = NULL;
 
 /* This is used by commands to indicate to the REPL that it must
    exit.  */
@@ -410,6 +417,9 @@ initialize (int argc, char *argv[])
   if (poke_hserver_p)
     pk_hserver_init ();
 #endif
+
+  /* Initialize the documentation viewer.  */
+  poke_doc_viewer = xstrdup ("info");
 }
 
 static void

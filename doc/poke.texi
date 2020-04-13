@@ -3942,10 +3942,24 @@ The syntax is:
 @noindent
 where @var{node} is an optional parameter which indicates the chapter
 or section at which the manual should be opened.
-This command uses the info program (@ref{Top,,, info, The GNU Texinfo Manual})
-to interactively present the manual.
-Hence, it will fail if info is not installed.
-If poke is not running interactively then @command{.doc} does nothing.
+
+This command uses whatever documentation viewer configured using
+@command{.set doc-viewer} whose valid options are either
+@command{info} and @command{less}.
+
+Unless @command{doc-viewer} is set to @command{less}, this command
+uses the info program (@ref{Top,,, info, The GNU Texinfo Manual}) to
+interactively present the manual.  If info is not installed, then less
+is tried next.
+
+When using less to display the documentation, the entry in the Table
+of Contents corresponding to the requested entry is highlighted.  Just
+press @key{/} and then @key{RET} to jump to the corresponding section
+in the manual.
+
+If neither info nor less are installed, the @command{.doc} command
+will fail.  If poke is not running interactively then @command{.doc}
+does nothing.
 
 
 @node editor command
