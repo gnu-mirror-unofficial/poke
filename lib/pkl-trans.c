@@ -706,6 +706,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
                 /* Empty classes are not allowed.  */
                 if (*p == ':')
                   {
+                    free (class);
                     msg = _("invalid format specifier");
                     goto invalid_tag;
                   }
@@ -721,6 +722,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
 
                 if (*p != ':')
                   {
+                    free (class);
                     msg = _("invalid format specifier");
                     goto invalid_tag;
                   }
@@ -733,6 +735,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
               {
                 if (nclasses == 0)
                   {
+                    free (class);
                     msg = _("unpaired styling class");
                     goto invalid_tag;
                   }
@@ -756,7 +759,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
                 if (arg == PKL_AST_PRINT_STMT_ARGS (print_stmt))
                   {
                     /* Prepend.  */
-                    PKL_AST_CHAIN (new_arg) = ASTREF (arg);
+                    PKL_AST_CHAIN (new_arg) = arg;
                     PKL_AST_PRINT_STMT_ARGS (print_stmt)
                       = ASTREF (new_arg);
                   }
@@ -780,7 +783,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
               }
 
             arg = new_arg;
-
 
             /* The type corresponding to a styling class format
                directive is `void'.  */
