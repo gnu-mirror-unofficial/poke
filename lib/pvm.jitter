@@ -128,8 +128,6 @@ end
 
 late-header-c
   code
-    extern jitter_uint printer_hi;
-
     /* Macros to raise an exception from within an instruction.  This
        is used in the RAISE instruction itself, and also in instructions
        that can fail, such as integer division or IO.
@@ -475,14 +473,14 @@ late-c
         VMPREFIX_STATE_TO_PENDING_NOTIFICATIONS (s) = true;
       }
     }
-
-    jitter_uint printer_hi;
   end
 end
 
 printer-c
   code
-    void
+    static jitter_uint printer_hi;
+
+    static void
     pvm_literal_printer_cast (FILE *out, jitter_uint val)
     {
       fflush (out);
@@ -490,7 +488,7 @@ printer-c
       pk_term_flush ();
     }
 
-    void
+    static void
     pvm_literal_printer (FILE *out, jitter_uint val)
     {
       fflush (out);
@@ -506,7 +504,7 @@ printer-c
       pk_term_flush ();
     }
 
-    void
+    static void
     pvm_literal_printer_hi (FILE *out, jitter_uint hi)
     {
       fflush (out);
@@ -515,7 +513,7 @@ printer-c
       printer_hi = hi; /* This sucks */
     }
 
-    void
+    static void
     pvm_literal_printer_lo (FILE *out, jitter_uint lo)
     {
       fflush (out);
@@ -535,7 +533,7 @@ printer-c
       printer_hi = 0;
     }
 
-    void
+    static void
     popf_printer (FILE *out, jitter_uint nframes)
     {
       fflush (out);
@@ -543,7 +541,7 @@ printer-c
       pk_term_flush ();
     }
 
-    void
+    static void
     bits_printer (FILE *out, jitter_uint val)
     {
       fflush (out);
@@ -551,7 +549,7 @@ printer-c
       pk_term_flush ();
     }
 
-    void
+    static void
     endian_printer (FILE *out, jitter_uint val)
     {
       fflush (out);
@@ -559,7 +557,7 @@ printer-c
       pk_term_flush ();
     }
 
-    void
+    static void
     nenc_printer (FILE *out, jitter_uint val)
     {
       fflush (out);

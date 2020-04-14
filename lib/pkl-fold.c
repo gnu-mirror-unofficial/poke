@@ -1129,7 +1129,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_fold =
+struct pkl_phase pkl_phase_fold
+  __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_fold_pr_type),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_fold_ps_cast),

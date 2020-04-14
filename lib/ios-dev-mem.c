@@ -114,7 +114,8 @@ ios_dev_mem_size (void *iod)
   return mio->size;
 }
 
-struct ios_dev_if ios_dev_mem =
+struct ios_dev_if ios_dev_mem
+  __attribute__ ((visibility ("hidden"))) =
   {
    .handler_normalize = ios_dev_mem_handler_normalize,
    .open = ios_dev_mem_open,

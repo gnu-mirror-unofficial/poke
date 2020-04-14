@@ -3217,7 +3217,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cond_exp)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_gen =
+struct pkl_phase pkl_phase_gen
+  __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_gen_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_gen_ps_decl),

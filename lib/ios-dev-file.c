@@ -187,7 +187,8 @@ ios_dev_file_size (void *iod)
   return st.st_size;
 }
 
-struct ios_dev_if ios_dev_file =
+struct ios_dev_if ios_dev_file
+  __attribute__ ((visibility ("hidden"))) =
   {
    .handler_normalize = ios_dev_file_handler_normalize,
    .open = ios_dev_file_open,

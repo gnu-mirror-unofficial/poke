@@ -49,7 +49,7 @@
 
 /* Roll out our own GCD from gnulib.  */
 #define WORD_T uint64_t
-#define GCD typify_gcd
+#define GCD  __attribute__((visibility ("hidden"))) typify_gcd
 #include <gcd.c>
 
 #define PKL_TYPIFY_PAYLOAD ((pkl_typify_payload) PKL_PASS_PAYLOAD)
@@ -2571,7 +2571,8 @@ expected %s got %s",
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_typify1 =
+struct pkl_phase pkl_phase_typify1
+  __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_typify_pr_type),
@@ -2689,7 +2690,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_op_sizeof)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_typify2 =
+struct pkl_phase pkl_phase_typify2
+  __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_typify_pr_type),

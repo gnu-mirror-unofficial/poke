@@ -1,5 +1,47 @@
 2020-04-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pvm-program.h (pvm_program_routine): Set ELF visibility to
+	hidden.
+	(pvm_program_beginning): Likewise.
+	* lib/pkl-fold.c (pkl_phase_fold): Likewise.
+	* lib/pkl-trans.c (pkl_phase_trans1): Likewise.
+	(pkl_phase_trans2): Likewise.
+	(pkl_phase_trans3): Likewise.
+	(pkl_phase_trans4): Likewise.
+	* lib/pkl-typify.c (pkl_phase_typify1): Likewise.
+	(pkl_phase_typify2): Likewise.
+	(GCD): Likewise.
+	* lib/pkl-promo.c (pkl_phase_promo): Likewise.
+	* lib/pkl-gen.c (pkl_phase_gen): Likewise.
+	* lib/pkl-anal.c (pkl_phase_anal1): Likewise.
+	(pkl_phase_anal2): Likewise.
+	(pkl_phase_analf): Likewise.
+	* lib/ios-dev-nbd.c (ios_dev_nbd): Likewise.
+	* lib/ios-dev-file.c (ios_dev_file): Likewise.
+	* lib/ios-dev-mem.c (ios_dev_mem): Likewise.
+	* lib/pvm-val.h (pvm_allocate_struct_attrs): Likewise.
+	(pvm_allocate_closure_attrs): Likewise.
+	* lib/pvm-alloc.h (pvm_alloc_initialize): Likewise.
+	(pvm_alloc_finalize): Likewise.
+	(pvm_alloc_add_gc_roots): Likewise.
+	(pvm_alloc_remove_gc_roots): Likewise.
+	(pvm_alloc): Likewise.
+	(pvm_realloc): Likewise.
+	(pvm_alloc_cls): Likewise.
+	(pvm_alloc_strdup): Likewise.
+	(pvm_alloc_gc): Likewise.
+	* lib/pvm.jitter (nenc_printer): Mark as static.
+	(endian_printer): Likewise.
+	(bits_printer): Likewise.
+	(popf_printer): Likewise.
+	(pvm_literal_printer_lo): Likewise.
+	(pvm_literal_printer_hi): Likewise.
+	(pvm_literal_printer): Likewise.
+	(pvm_literal_printer_cast): Likewise.
+	(printer_hi): Likewise.
+
+2020-04-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-trans.c (pkl_trans1_ps_print_stmt): Fix memory leak.
 
 2020-04-13  Jose E. Marchesi  <jemarch@gnu.org>

@@ -25,9 +25,11 @@ typedef void *pvm_program_program_point; /* XXX better name */
 
 /* Return the program point corresponding to the beginning of the
    given program.  */
-pvm_program_program_point pvm_program_beginning (pvm_program program);
+pvm_program_program_point pvm_program_beginning (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get the jitter routine associated with the program PROGRAM.  */
-pvm_routine pvm_program_routine (pvm_program program);
+pvm_routine pvm_program_routine (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 #endif /* ! PVM_PROGRAM_H */

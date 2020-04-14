@@ -156,7 +156,8 @@ ios_dev_nbd_size (void *iod)
   return nio->size;
 }
 
-struct ios_dev_if ios_dev_nbd =
+struct ios_dev_if ios_dev_nbd
+  __attribute__ ((visibility ("hidden"))) =
   {
    .handler_normalize = ios_dev_nbd_handler_normalize,
    .open = ios_dev_nbd_open,

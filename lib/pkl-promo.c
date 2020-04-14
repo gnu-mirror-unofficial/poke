@@ -1624,7 +1624,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_promo =
+struct pkl_phase pkl_phase_promo
+  __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_promo_pr_type),
 

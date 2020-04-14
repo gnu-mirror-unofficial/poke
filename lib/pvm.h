@@ -268,9 +268,6 @@ pvm_val pvm_make_struct_type (pvm_val nfields, pvm_val name,
 pvm_val pvm_make_offset_type (pvm_val base_type, pvm_val unit);
 pvm_val pvm_make_closure_type (pvm_val rtype, pvm_val nargs, pvm_val *atypes);
 
-void pvm_allocate_struct_attrs (pvm_val nfields, pvm_val **fnames, pvm_val **ftypes);
-void pvm_allocate_closure_attrs (pvm_val nargs, pvm_val **atypes);
-
 pvm_val pvm_dup_type (pvm_val type);
 pvm_val pvm_typeof (pvm_val val);
 int pvm_type_equal (pvm_val type1, pvm_val type2);
