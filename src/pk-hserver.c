@@ -32,8 +32,7 @@
 #include <netdb.h>
 #include <assert.h>
 
-#include "pk-term.h"
-#include "pk-utils.h"
+#include "poke.h"
 
 #include "pk-cmd.h"
 #include "pk-hserver.h"

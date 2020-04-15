@@ -24,11 +24,10 @@ dist_pkgdata_DATA = pkl-rt.pk std.pk
 
 lib_LTLIBRARIES = libpoke.la
 
-pkginclude_HEADERS = pkl.h pkl-ast.h \
-                     pvm.h \
-                     pk-term.h pk-utils.h
+include_HEADERS = libpoke.h
 
-libpoke_la_SOURCES = pkl.h pkl.c \
+libpoke_la_SOURCES = libpoke.h libpoke.c \
+                     pkl.h pkl.c \
                      pkl-ast.h pkl-ast.c \
                      pkl-env.h pkl-env.c \
                      pkl-pass.h pkl-pass.c \

@@ -25,11 +25,6 @@
 #include <stdlib.h>
 #include "xalloc.h"
 
-#include "pvm.h"
-#include "ios.h"
-#include "pk-term.h"
-#include "pk-utils.h"
-
 #include "poke.h"
 #include "pk-cmd.h"
 
@@ -41,7 +36,7 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    pk_printf ("%d\n", pvm_obase (poke_vm));
+    pk_printf ("%d\n", pk_obase (poke_compiler));
   else
     {
       int base = PK_CMD_ARG_INT (argv[0]);
@@ -55,7 +50,7 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_obase (poke_vm, base);
+      pk_set_obase (poke_compiler, base);
     }
 
   return 1;
@@ -70,31 +65,31 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
-      enum ios_endian endian = pvm_endian (poke_vm);
+      enum pk_endian endian = pk_endian (poke_compiler);
 
       switch (endian)
         {
-        case IOS_ENDIAN_LSB: pk_puts ("little\n"); break;
-        case IOS_ENDIAN_MSB: pk_puts ("big\n"); break;
+        case PK_ENDIAN_LSB: pk_puts ("little\n"); break;
+        case PK_ENDIAN_MSB: pk_puts ("big\n"); break;
         default:
           assert (0);
         }
     }
   else
     {
-      enum ios_endian endian;
+      enum pk_endian endian;
       const char *arg = PK_CMD_ARG_STR (argv[0]);
 
       if (STREQ (arg, "little"))
-        endian = IOS_ENDIAN_LSB;
+        endian = PK_ENDIAN_LSB;
       else if (STREQ (arg, "big"))
-        endian = IOS_ENDIAN_MSB;
+        endian = PK_ENDIAN_MSB;
       else if (STREQ (arg, "host"))
         {
 #ifdef WORDS_BIGENDIAN
-          endian = IOS_ENDIAN_MSB;
+          endian = PK_ENDIAN_MSB;
 #else
-          endian = IOS_ENDIAN_LSB;
+          endian = PK_ENDIAN_LSB;
 #endif
         }
       else if (STREQ (arg, "network"))
@@ -104,17 +99,17 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           if (canary == htonl (canary))
             {
 #ifdef WORDS_BIGENDIAN
-              endian = IOS_ENDIAN_MSB;
+              endian = PK_ENDIAN_MSB;
 #else
-              endian = IOS_ENDIAN_LSB;
+              endian = PK_ENDIAN_LSB;
 #endif
             }
           else
             {
 #ifdef WORDS_BIGENDIAN
-              endian = IOS_ENDIAN_LSB;
+              endian = PK_ENDIAN_LSB;
 #else
-              endian = IOS_ENDIAN_MSB;
+              endian = PK_ENDIAN_MSB;
 #endif
             }
         }
@@ -127,7 +122,7 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_endian (poke_vm, endian);
+      pk_set_endian (poke_compiler, endian);
     }
 
   return 1;
@@ -142,25 +137,25 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
-      enum ios_nenc nenc = pvm_nenc (poke_vm);
+      enum pk_nenc nenc = pk_nenc (poke_compiler);
 
       switch (nenc)
         {
-        case IOS_NENC_1: pk_puts ("1c\n"); break;
-        case IOS_NENC_2: pk_puts ("2c\n"); break;
+        case PK_NENC_1: pk_puts ("1c\n"); break;
+        case PK_NENC_2: pk_puts ("2c\n"); break;
         default:
           assert (0);
         }
     }
   else
     {
-      enum ios_nenc nenc;
+      enum pk_nenc nenc;
       const char *arg = PK_CMD_ARG_STR (argv[0]);
 
       if (STREQ (arg, "1c"))
-        nenc = IOS_NENC_1;
+        nenc = PK_NENC_1;
       else if (STREQ (arg, "2c"))
-        nenc = IOS_NENC_2;
+        nenc = PK_NENC_2;
       else
         {
           pk_term_class ("error");
@@ -170,7 +165,7 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_nenc (poke_vm, nenc);
+      pk_set_nenc (poke_compiler, nenc);
     }
 
   return 1;
@@ -195,7 +190,7 @@ pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (*arg == '\0')
     {
-      if (pvm_pretty_print (poke_vm))
+      if (pk_pretty_print (poke_compiler))
         pk_puts ("yes\n");
       else
         pk_puts ("no\n");
@@ -217,7 +212,7 @@ pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_pretty_print (poke_vm, do_pretty_print);
+      pk_set_pretty_print (poke_compiler, do_pretty_print);
     }
 
   return 1;
@@ -231,7 +226,7 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    pk_printf ("%d\n", pvm_oacutoff (poke_vm));
+    pk_printf ("%d\n", pk_oacutoff (poke_compiler));
   else
     {
       int cutoff = PK_CMD_ARG_INT (argv[0]);
@@ -245,7 +240,7 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_oacutoff (poke_vm, cutoff);
+      pk_set_oacutoff (poke_compiler, cutoff);
     }
 
   return 1;
@@ -259,7 +254,7 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert(argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    pk_printf ("%d\n", pvm_odepth (poke_vm));
+    pk_printf ("%d\n", pk_odepth (poke_compiler));
   else
     {
       int odepth = PK_CMD_ARG_INT (argv[0]);
@@ -273,7 +268,7 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_odepth (poke_vm, odepth);
+      pk_set_odepth (poke_compiler, odepth);
     }
 
   return 1;
@@ -286,18 +281,24 @@ pk_cmd_set_oindent (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   assert(argc == 1);
 
-  int oindent = PK_CMD_ARG_INT (argv[0]);
-
-  if (oindent < 1 || oindent > 10)
+  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+    pk_printf ("%d\n", pk_oindent (poke_compiler));
+  else
     {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_puts (_(" oindent should be >=1 and <= 10.\n"));
-      return 0;
+      int oindent = PK_CMD_ARG_INT (argv[0]);
+
+      if (oindent < 1 || oindent > 10)
+        {
+          pk_term_class ("error");
+          pk_puts ("error: ");
+          pk_term_end_class ("error");
+          pk_puts (_(" oindent should be >=1 and <= 10.\n"));
+          return 0;
+        }
+
+      pk_set_oindent (poke_compiler, oindent);
     }
 
-  pvm_set_oindent (poke_vm, oindent);
   return 1;
 }
 
@@ -310,20 +311,20 @@ pk_cmd_set_omaps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
-      if (pvm_omaps (poke_vm))
+      if (pk_omaps (poke_compiler))
         pk_puts ("yes\n");
       else
         pk_puts ("no\n");
     }
   else
     {
-      int omaps = 0;
+      int omaps_p = 0;
       const char *arg = PK_CMD_ARG_STR (argv[0]);
 
       if (STREQ (arg, "yes"))
-        omaps = 1;
+        omaps_p = 1;
       else if (STREQ (arg, "no"))
-        omaps = 0;
+        omaps_p = 0;
       else
         {
           pk_term_class ("error");
@@ -333,7 +334,7 @@ pk_cmd_set_omaps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_omaps (poke_vm, omaps);
+      pk_set_omaps (poke_compiler, omaps_p);
     }
 
   return 1;
@@ -344,18 +345,18 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set omode {normal|tree}  */
 
-  enum pvm_omode omode;
+  enum pk_omode omode;
 
   assert(argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {
-      omode = pvm_omode (poke_vm);
+      omode = pk_omode (poke_compiler);
 
       switch (omode)
         {
-        case PVM_PRINT_FLAT: pk_puts ("flat\n"); break;
-        case PVM_PRINT_TREE: pk_puts ("tree\n"); break;
+        case PK_PRINT_FLAT: pk_puts ("flat\n"); break;
+        case PK_PRINT_TREE: pk_puts ("tree\n"); break;
         default:
           assert (0);
         }
@@ -365,9 +366,9 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       const char *arg = PK_CMD_ARG_STR (argv[0]);
 
       if (STREQ (arg, "flat"))
-        omode = PVM_PRINT_FLAT;
+        omode = PK_PRINT_FLAT;
       else if (STREQ (arg, "tree"))
-        omode = PVM_PRINT_TREE;
+        omode = PK_PRINT_TREE;
       else
         {
           pk_term_class ("error");
@@ -377,7 +378,7 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           return 0;
         }
 
-      pvm_set_omode (poke_vm, omode);
+      pk_set_omode (poke_compiler, omode);
     }
 
   return 1;
@@ -403,7 +404,7 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 
   if (*arg == '\0')
     {
-      if (pkl_error_on_warning (poke_compiler))
+      if (pk_error_on_warning (poke_compiler))
         pk_puts ("yes\n");
       else
         pk_puts ("no\n");
@@ -425,7 +426,7 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
           return 0;
         }
 
-      pkl_set_error_on_warning (poke_compiler, error_on_warning);
+      pk_set_error_on_warning (poke_compiler, error_on_warning);
     }
 
   return 1;

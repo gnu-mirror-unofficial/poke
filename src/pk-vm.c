@@ -19,9 +19,6 @@
 #include <config.h>
 #include <assert.h>
 
-#include "pvm.h"
-#include "pk-term.h"
-
 #include "poke.h"
 #include "pk-cmd.h"
 
@@ -33,18 +30,24 @@ pk_cmd_vm_disas_exp (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* disassemble expression EXP.  */
 
-  pvm_program program;
+  int ret;
+  const char *expr;
 
   assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_EXP);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
 
-  program = PK_CMD_ARG_EXP (argv[0]);
+  expr = PK_CMD_ARG_STR (argv[0]);
+  ret = pk_disassemble_expression (poke_compiler, expr,
+                                   uflags & PK_VM_DIS_F_NAT);
 
-  if (uflags & PK_VM_DIS_F_NAT)
-    pvm_disassemble_program_nat (program);
-  else
-    pvm_disassemble_program (program);
-
+  if (ret == PK_ERROR)
+    {
+      pk_term_class ("error");
+      pk_puts ("error: ");
+      pk_term_end_class ("error");
+      pk_puts ("invalid expression\n");
+      return 0;
+    }
   return 1;
 }
 
@@ -53,24 +56,17 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* disassemble function FNAME.  */
 
+  int ret;
   const char *fname;
-  pkl_ast_node decl;
-  pvm_program program;
-  int back, over;
-  pvm_val val;
-
-  pkl_env compiler_env = pkl_get_env (poke_compiler);
-  pvm_env runtime_env = pvm_get_env (poke_vm);
 
   assert (argc == 1);
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
 
   fname = PK_CMD_ARG_STR (argv[0]);
+  ret = pk_disassemble_function (poke_compiler, fname,
+                                 uflags & PK_VM_DIS_F_NAT);
 
-  decl = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
-                         fname, &back, &over);
-
-  if (decl == NULL)
+  if (ret == PK_ERROR)
     {
       pk_term_class ("error");
       pk_puts ("error: ");
@@ -78,106 +74,14 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       pk_printf ("no such function `%s'\n", fname);
       return 0;
     }
-  else if (PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_FUNC)
-    {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_printf ("`%s' is not a function\n", fname);
-      return 0;
-    }
-
-  val = pvm_env_lookup (runtime_env, back, over);
-  assert (val != PVM_NULL);
-
-  program = pvm_val_cls_program (val);
-
-  if (uflags & PK_VM_DIS_F_NAT)
-    pvm_disassemble_program_nat (program);
-  else
-    pvm_disassemble_program (program);
 
   return 1;
 }
-
-static int
-pk_cmd_vm_disas_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
-{
-  /* disassemble mapper EXP */
-
-  pvm_val exp;
-  pvm_val mapper;
-  pvm_program program;
-
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_EXP);
-
-  program = PK_CMD_ARG_EXP (argv[0]);
-  if (pvm_run (poke_vm, program, &exp) != PVM_EXIT_OK)
-    return 0;
-
-  mapper = pvm_val_mapper (exp);
-  if (mapper == PVM_NULL)
-    {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_printf ("the given value is not mapped\n");
-      return 0;
-    }
-
-  program = pvm_val_cls_program (mapper);
-
-  if (uflags & PK_VM_DIS_F_NAT)
-    pvm_disassemble_program_nat (program);
-
-  else
-    pvm_disassemble_program (program);
-
-  return 1;
-}
-
-static int
-pk_cmd_vm_disas_writ (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
-{
-  /* disassemble writer EXP */
-
-  pvm_val exp;
-  pvm_val writer;
-  pvm_program program;
-
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_EXP);
-
-  program = PK_CMD_ARG_EXP (argv[0]);
-  if (pvm_run (poke_vm, program, &exp) != PVM_EXIT_OK)
-    return 0;
-
-  writer = pvm_val_writer (exp);
-  if (writer == PVM_NULL)
-    {
-      pk_term_class ("error");
-      pk_puts ("error: ");
-      pk_term_end_class ("error");
-      pk_printf ("the given value is not mapped\n");
-      return 0;
-    }
-
-  program = pvm_val_cls_program (writer);
-
-  if (uflags & PK_VM_DIS_F_NAT)
-    pvm_disassemble_program_nat (program);
-  else
-    pvm_disassemble_program (program);
-
-  return 1;
-}
-
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 const struct pk_cmd vm_disas_exp_cmd =
-  {"expression", "e", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_exp,
+  {"expression", "s", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_exp,
    "vm disassemble expression[/n] EXP\n\
 Flags:\n\
   n (do a native disassemble)", NULL};
@@ -188,24 +92,10 @@ const struct pk_cmd vm_disas_fun_cmd =
 Flags:\n\
   n (do a native disassemble)", NULL};
 
-const struct pk_cmd vm_disas_map_cmd =
-  {"mapper", "e", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_map,
-   "vm disassemble mapper[/n] EXPRESSION\n\
-Flags:\n\
-  n (do a native disassemble)", NULL};
-
-const struct pk_cmd vm_disas_wri_cmd =
-  {"writter", "e", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_writ,
-   "vm disassemble writer[/n] EXPRESSION\n\
-Flags:\n\
-  n (do a native disassemble)", NULL};
-
 const struct pk_cmd *vm_disas_cmds[] =
   {
    &vm_disas_exp_cmd,
    &vm_disas_fun_cmd,
-   &vm_disas_map_cmd,
-   &vm_disas_wri_cmd,
    &null_cmd
   };
 

@@ -65,7 +65,7 @@
 
 /* Convert a YYLTYPE value into an AST location and return it.  */
 
-void
+static void
 pkl_tab_error (YYLTYPE *llocp,
                struct pkl_parser *pkl_parser,
                char const *err)
@@ -78,7 +78,7 @@ pkl_tab_error (YYLTYPE *llocp,
 
    Return 0 if there was an error registering, 1 otherwise.  */
 
-int
+static int
 pkl_register_arg (struct pkl_parser *parser, pkl_ast_node arg)
 {
   pkl_ast_node arg_decl;
@@ -111,12 +111,13 @@ pkl_register_arg (struct pkl_parser *parser, pkl_ast_node arg)
   return 1;
 }
 
+#if 0
 /* Register a list of arguments in the compile-time environment.  This
    is used by function specifiers and try-catch statements.
 
    Return 0 if there was an error registering, 1 otherwise.  */
 
-int
+static int
 pkl_register_args (struct pkl_parser *parser, pkl_ast_node arg_list)
 {
   pkl_ast_node arg;
@@ -153,6 +154,7 @@ pkl_register_args (struct pkl_parser *parser, pkl_ast_node arg_list)
 
   return 1;
 }
+#endif
 
 /* Register N dummy entries in the compilation environment.  */
 

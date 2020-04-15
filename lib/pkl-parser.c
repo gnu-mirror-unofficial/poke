@@ -51,7 +51,7 @@ pkl_parser_init (void)
 
 /* Free resources used by a parser, exceptuating the AST.  */
 
-void
+static void
 pkl_parser_free (struct pkl_parser *parser)
 {
   pkl_tab_lex_destroy (parser->scanner);

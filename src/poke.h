@@ -20,7 +20,7 @@
 #define POKE_H
 
 #include <config.h>
-#include "pkl.h"
+#include "libpoke.h"
 
 extern int poke_interactive_p;
 extern int poke_quiet_p;
@@ -29,8 +29,7 @@ extern int poke_exit_p;
 extern int poke_hserver_p;
 #endif
 extern int poke_exit_code;
-extern pkl_compiler poke_compiler;
-extern pvm poke_vm;
+extern pk_compiler poke_compiler;
 extern char *poke_datadir;
 extern char *poke_infodir;
 extern char *poke_picklesdir;

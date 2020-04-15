@@ -28,52 +28,11 @@
 #include <readline.h>
 #include "xalloc.h"
 
-#include "ios.h"
-#include "pk-utils.h"
-#include "pk-term.h"
-
 #include "poke.h"
 #include "pk-cmd.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif
-
-static char *
-ios_completion_function (const char *x, int state)
-{
-  static ios io;
-  if (state == 0)
-    {
-      io = ios_begin ();
-    }
-  else
-    {
-      io = ios_next (io);
-    }
-
-  int len  = strlen (x);
-  while (1)
-    {
-      if (ios_end (io))
-        break;
-
-      char buf[16];
-      snprintf (buf, 16, "#%d", ios_get_id (io));
-
-      int match = strncmp (buf, x, len);
-      if (match != 0)
-        {
-          io = ios_next (io);
-          continue;
-        }
-
-      return strdup (buf);
-    }
-
-  return NULL;
-}
-
-
 
 static int
 pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -81,24 +40,24 @@ pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* ios #ID */
 
   int io_id;
-  ios io;
+  pk_ios io;
 
   assert (argc == 1);
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG);
 
   io_id = PK_CMD_ARG_TAG (argv[0]);
-  io = ios_search_by_id (io_id);
+  io = pk_ios_search_by_id (poke_compiler, io_id);
   if (io == NULL)
     {
       pk_printf (_("No IOS with tag #%d\n"), io_id);
       return 0;
     }
 
-  ios_set_cur (io);
+  pk_ios_set_cur (poke_compiler, io);
 
   if (poke_interactive_p && !poke_quiet_p)
     pk_printf (_("The current IOS is now `%s'.\n"),
-               ios_handler (ios_cur ()));
+               pk_ios_handler (pk_ios_cur (poke_compiler)));
   return 1;
 }
 
@@ -121,7 +80,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (ios_search (filename) != NULL)
+  if (pk_ios_search (poke_compiler, filename) != NULL)
     {
       printf (_("File %s already opened.  Use `.ios #N' to switch.\n"),
               filename);
@@ -129,7 +88,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   errno = 0;
-  if (IOS_ERROR == ios_open (filename, 0, 1))
+  if (PK_IOS_ERROR == pk_ios_open (poke_compiler, filename, 0, 1))
     {
       pk_printf (_("Error opening %s: %s\n"), filename,
                  strerror (errno));
@@ -138,7 +97,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (poke_interactive_p && !poke_quiet_p)
     pk_printf (_("The current IOS is now `%s'.\n"),
-               ios_handler (ios_cur ()));
+               pk_ios_handler (pk_ios_cur (poke_compiler)));
 
   return 1;
 }
@@ -147,18 +106,18 @@ static int
 pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* close [#ID]  */
-  ios io;
+  pk_ios io;
   int changed;
 
   assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    io = ios_cur ();
+    io = pk_ios_cur (poke_compiler);
   else
     {
       int io_id = PK_CMD_ARG_TAG (argv[0]);
 
-      io = ios_search_by_id (io_id);
+      io = pk_ios_search_by_id (poke_compiler, io_id);
       if (io == NULL)
         {
           pk_printf (_("No such file #%d\n"), io_id);
@@ -166,18 +125,18 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
     }
 
-  changed = (io == ios_cur ());
-  ios_close (io);
+  changed = (io == pk_ios_cur (poke_compiler));
+  pk_ios_close (poke_compiler, io);
 
   if (changed)
     {
-      if (ios_cur () == NULL)
+      if (pk_ios_cur (poke_compiler) == NULL)
         puts (_("No more IO spaces."));
       else
         {
           if (poke_interactive_p && !poke_quiet_p)
             pk_printf (_("The current file is now `%s'.\n"),
-                       ios_handler (ios_cur ()));
+                       pk_ios_handler (pk_ios_cur (poke_compiler)));
         }
     }
 
@@ -185,17 +144,17 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static void
-print_info_ios (ios io, void *data)
+print_info_ios (pk_ios io, void *data)
 {
-  uint64_t flags = ios_flags (io);
+  uint64_t flags = pk_ios_flags (io);
   char mode[3];
-  mode[0] = flags & IOS_F_READ ? 'r' : ' ';
-  mode[1] = flags & IOS_F_WRITE ? 'w' : ' ';
+  mode[0] = flags & PK_IOS_F_READ ? 'r' : ' ';
+  mode[1] = flags & PK_IOS_F_WRITE ? 'w' : ' ';
   mode[2] = '\0';
 
   pk_printf ("%s#%d\t%s\t",
-             io == ios_cur () ? "* " : "  ",
-             ios_get_id (io),
+             io == pk_ios_cur (poke_compiler) ? "* " : "  ",
+             pk_ios_get_id (io),
              mode);
 
 #if HAVE_HSERVER
@@ -203,18 +162,18 @@ print_info_ios (ios io, void *data)
     char *cmd;
     char *hyperlink;
 
-    asprintf (&cmd, "0x%08jx#B", ios_size (io) / 8);
+    asprintf (&cmd, "0x%08jx#B", pk_ios_size (io) / 8);
     hyperlink = pk_hserver_make_hyperlink ('i', cmd);
     free (cmd);
 
     pk_term_hyperlink (hyperlink, NULL);
-    pk_printf ("0x%08jx#B", ios_size (io) / 8);
+    pk_printf ("0x%08jx#B", pk_ios_size (io) / 8);
     pk_term_end_hyperlink ();
 
     free (hyperlink);
   }
 #else
-  pk_printf ("0x%08jx#B", ios_size (io) / 8);
+  pk_printf ("0x%08jx#B", pk_ios_size (io) / 8);
 #endif
   pk_puts ("\t");
 
@@ -223,18 +182,18 @@ print_info_ios (ios io, void *data)
     char *cmd;
     char *hyperlink;
 
-    asprintf (&cmd, ".ios #%d", ios_get_id (io));
+    asprintf (&cmd, ".ios #%d", pk_ios_get_id (io));
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
 
     pk_term_hyperlink (hyperlink, NULL);
-    pk_puts (ios_handler (io));
+    pk_puts (pk_ios_handler (io));
     pk_term_end_hyperlink ();
 
     free (hyperlink);
   }
 #else
-  pk_puts (ios_handler (io));
+  pk_puts (pk_ios_handler (io));
 #endif
 
   pk_puts ("\n");
@@ -246,7 +205,7 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 0);
 
   pk_printf (_("  Id\tMode\tSize\t\tName\n"));
-  ios_map (print_info_ios, NULL);
+  pk_ios_map (poke_compiler, print_info_ios, NULL);
 
   return 1;
 }
@@ -281,7 +240,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     goto no_file;
 
-  if (!pkl_compile_file (poke_compiler, filename))
+  if (!pk_compile_file (poke_compiler, filename))
     /* Note that the compiler emits it's own error messages.  */
     goto error;
 
@@ -315,7 +274,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (ios_search (mem_name) != NULL)
+  if (pk_ios_search (poke_compiler, mem_name) != NULL)
     {
       printf (_("Buffer %s already opened.  Use `.ios #N' to switch.\n"),
               mem_name);
@@ -323,7 +282,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (IOS_ERROR == ios_open (mem_name, 0, 1))
+  if (PK_IOS_ERROR == pk_ios_open (poke_compiler, mem_name, 0, 1))
     {
       pk_printf (_("Error creating memory IOS %s\n"), mem_name);
       free (mem_name);
@@ -334,7 +293,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (poke_interactive_p && !poke_quiet_p)
     pk_printf (_("The current IOS is now `%s'.\n"),
-               ios_handler (ios_cur ()));
+               pk_ios_handler (pk_ios_cur (poke_compiler)));
 
   return 1;
 }
@@ -352,7 +311,7 @@ pk_cmd_nbd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   const char *arg_str = PK_CMD_ARG_STR (argv[0]);
   char *nbd_name = xstrdup (arg_str);
 
-  if (ios_search (nbd_name) != NULL)
+  if (pk_ios_search (poke_compiler, nbd_name) != NULL)
     {
       printf (_("Buffer %s already opened.  Use `.ios #N' to switch.\n"),
               nbd_name);
@@ -360,7 +319,7 @@ pk_cmd_nbd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (IOS_ERROR == ios_open (nbd_name, 0, 1))
+  if (PK_IOS_ERROR == pk_ios_open (poke_compiler, nbd_name, 0, 1))
     {
       pk_printf (_("Error creating NBD IOS %s\n"), nbd_name);
       free (nbd_name);
@@ -369,11 +328,17 @@ pk_cmd_nbd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (poke_interactive_p && !poke_quiet_p)
     pk_printf (_("The current IOS is now `%s'.\n"),
-               ios_handler (ios_cur ()));
+               pk_ios_handler (pk_ios_cur (poke_compiler)));
 
   return 1;
 }
 #endif /* HAVE_LIBNBD */
+
+static char *
+ios_completion_function (const char *x, int state)
+{
+  return pk_ios_completion_function (poke_compiler, x, state);
+}
 
 const struct pk_cmd ios_cmd =
   {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};

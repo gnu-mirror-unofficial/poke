@@ -262,8 +262,8 @@ struct pkl_ast_common
 };
 
 pkl_ast_node pkl_ast_chainon (pkl_ast_node ast1,
-                              pkl_ast_node ast2);
-
+                              pkl_ast_node ast2)
+  __attribute__ ((visibility ("hidden")));
 
 typedef struct pkl_ast *pkl_ast; /* Forward declaration. */
 
@@ -282,7 +282,8 @@ struct pkl_ast_program
 };
 
 pkl_ast_node pkl_ast_make_program (pkl_ast ast,
-                                   pkl_ast_node declarations);
+                                   pkl_ast_node declarations)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_IDENTIFIER nodes represent identifiers in PKL programs.
 
@@ -309,7 +310,8 @@ struct pkl_ast_identifier
 };
 
 pkl_ast_node pkl_ast_make_identifier (pkl_ast ast,
-                                      const char *str);
+                                      const char *str)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_INTEGER nodes represent integer constants in poke programs.
 
@@ -326,7 +328,8 @@ struct pkl_ast_integer
 };
 
 pkl_ast_node pkl_ast_make_integer (pkl_ast ast,
-                                   uint64_t value);
+                                   uint64_t value)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_STRING nodes represent string literals in PKL programs.
 
@@ -344,7 +347,8 @@ struct pkl_ast_string
 };
 
 pkl_ast_node pkl_ast_make_string (pkl_ast ast,
-                                  const char *str);
+                                  const char *str)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_ARRAY nodes represent array literals.  Each array holds a
    sequence of elements, all of them having the same type.  There must
@@ -367,7 +371,8 @@ struct pkl_ast_array
 pkl_ast_node pkl_ast_make_array (pkl_ast ast,
                                  size_t nelem,
                                  size_t ninitializer,
-                                 pkl_ast_node initializers);
+                                 pkl_ast_node initializers)
+  __attribute__ ((visibility ("hidden")));
 
 
 /* PKL_AST_ARRAY_INITIALIZER nodes represent initializers in array
@@ -387,7 +392,8 @@ struct pkl_ast_array_initializer
 
 pkl_ast_node pkl_ast_make_array_initializer (pkl_ast ast,
                                              pkl_ast_node index,
-                                             pkl_ast_node exp);
+                                             pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 
 /* PKL_AST_STRUCT nodes represent struct literals.  */
@@ -405,7 +411,8 @@ struct pkl_ast_struct
 
 pkl_ast_node pkl_ast_make_struct (pkl_ast ast,
                                   size_t nelem,
-                                  pkl_ast_node elems);
+                                  pkl_ast_node elems)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_STRUCT_FIELD nodes represent elements in struct
    literals.
@@ -428,7 +435,8 @@ struct pkl_ast_struct_field
 
 pkl_ast_node pkl_ast_make_struct_field (pkl_ast ast,
                                         pkl_ast_node name,
-                                        pkl_ast_node exp);
+                                        pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_EXP nodes represent unary and binary expressions,
    consisting on an operator and one or two operators, respectively.
@@ -463,11 +471,14 @@ struct pkl_ast_exp
 
 pkl_ast_node pkl_ast_make_unary_exp (pkl_ast ast,
                                      enum pkl_ast_op code,
-                                     pkl_ast_node op);
+                                     pkl_ast_node op)
+  __attribute__ ((visibility ("hidden")));
+
 pkl_ast_node pkl_ast_make_binary_exp (pkl_ast ast,
                                       enum pkl_ast_op code,
                                       pkl_ast_node op1,
-                                      pkl_ast_node op2);
+                                      pkl_ast_node op2)
+  __attribute__ ((visibility ("hidden")));
 
 const char *pkl_attr_name (enum pkl_ast_attr attr);
 
@@ -497,7 +508,8 @@ struct pkl_ast_cond_exp
 pkl_ast_node pkl_ast_make_cond_exp (pkl_ast ast,
                                     pkl_ast_node cond,
                                     pkl_ast_node thenexp,
-                                    pkl_ast_node elseexp);
+                                    pkl_ast_node elseexp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_ENUMERATOR nodes represent the definition of a constant
    into an enumeration.
@@ -523,7 +535,8 @@ struct pkl_ast_enumerator
 
 pkl_ast_node pkl_ast_make_enumerator (pkl_ast ast,
                                       pkl_ast_node identifier,
-                                      pkl_ast_node value);
+                                      pkl_ast_node value)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_ENUM nodes represent enumerations, having semantics much
    like the C enums.
@@ -548,7 +561,8 @@ struct pkl_ast_enum
 
 pkl_ast_node pkl_ast_make_enum (pkl_ast ast,
                                 pkl_ast_node tag,
-                                pkl_ast_node values);
+                                pkl_ast_node values)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_FUNC nodes represent a function definition.
 
@@ -602,7 +616,11 @@ struct pkl_ast_func
 pkl_ast_node pkl_ast_make_func (pkl_ast ast,
                                 pkl_ast_node ret_type,
                                 pkl_ast_node args,
-                                pkl_ast_node body);
+                                pkl_ast_node body)
+  __attribute__ ((visibility ("hidden")));
+
+int pkl_ast_func_all_optargs (pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_FUNC_ARG nodes represent a formal argument in a function
    definition.
@@ -636,7 +654,8 @@ struct pkl_ast_func_arg
 pkl_ast_node pkl_ast_make_func_arg (pkl_ast ast,
                                     pkl_ast_node type,
                                     pkl_ast_node identifier,
-                                    pkl_ast_node init);
+                                    pkl_ast_node init)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_TRIMMER nodes represent a trim of an array, or a string.
 
@@ -668,7 +687,8 @@ struct pkl_ast_trimmer
 pkl_ast_node pkl_ast_make_trimmer (pkl_ast ast,
                                    pkl_ast_node entity,
                                    pkl_ast_node from,
-                                   pkl_ast_node to);
+                                   pkl_ast_node to)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_INDEXER nodes represent references to an array element.
 
@@ -689,7 +709,8 @@ struct pkl_ast_indexer
 
 pkl_ast_node pkl_ast_make_indexer (pkl_ast ast,
                                      pkl_ast_node array,
-                                     pkl_ast_node index);
+                                     pkl_ast_node index)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_STRUCT_REF nodes represent references to a struct
    element.  */
@@ -707,7 +728,8 @@ struct pkl_ast_struct_ref
 
 pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
                                       pkl_ast_node sct,
-                                      pkl_ast_node identifier);
+                                      pkl_ast_node identifier)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_STRUCT_TYPE_FIELD nodes represent the field part of a
    struct type.
@@ -763,7 +785,8 @@ pkl_ast_node pkl_ast_make_struct_type_field (pkl_ast ast,
                                              pkl_ast_node initializer,
                                              pkl_ast_node label,
                                              int endian,
-                                             pkl_ast_node optcond);
+                                             pkl_ast_node optcond)
+   __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_FUNC_TYPE_ARG nodes represent the arguments part of a
    function type.
@@ -792,7 +815,8 @@ struct pkl_ast_func_type_arg
 };
 
 pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
-                                         pkl_ast_node type, pkl_ast_node name);
+                                         pkl_ast_node type, pkl_ast_node name)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_TYPE nodes represent type expressions.
 
@@ -938,31 +962,71 @@ struct pkl_ast_type
   } val;
 };
 
-pkl_ast_node pkl_ast_make_named_type (pkl_ast ast, pkl_ast_node name);
-pkl_ast_node pkl_ast_make_integral_type (pkl_ast ast, size_t size, int signed_p);
-pkl_ast_node pkl_ast_make_void_type (pkl_ast ast);
-pkl_ast_node pkl_ast_make_string_type (pkl_ast ast);
-pkl_ast_node pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound);
-pkl_ast_node pkl_ast_make_struct_type (pkl_ast ast, size_t nelem, size_t nfield, size_t ndecl,
-                                       pkl_ast_node elems, int pinned, int union_p);
-pkl_ast_node pkl_ast_make_offset_type (pkl_ast ast, pkl_ast_node base_type, pkl_ast_node unit);
-pkl_ast_node pkl_ast_make_function_type (pkl_ast ast, pkl_ast_node rtype,
-                                         size_t narg, pkl_ast_node args);
-pkl_ast_node pkl_ast_make_any_type (pkl_ast);
+pkl_ast_node pkl_ast_make_named_type (pkl_ast ast, pkl_ast_node name)
+  __attribute__ ((visibility ("hidden")));
 
-pkl_ast_node pkl_ast_dup_type (pkl_ast_node type);
-int pkl_ast_type_equal (pkl_ast_node t1, pkl_ast_node t2);
+pkl_ast_node pkl_ast_make_integral_type (pkl_ast ast, size_t size, int signed_p)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_void_type (pkl_ast ast)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_string_type (pkl_ast ast)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype,
+                                      pkl_ast_node bound)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_struct_type (pkl_ast ast, size_t nelem, size_t nfield,
+                                       size_t ndecl, pkl_ast_node elems,
+                                       int pinned, int union_p)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_offset_type (pkl_ast ast, pkl_ast_node base_type,
+                                       pkl_ast_node unit)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_function_type (pkl_ast ast, pkl_ast_node rtype,
+                                         size_t narg, pkl_ast_node args)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_any_type (pkl_ast)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_dup_type (pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
+
+int pkl_ast_type_equal (pkl_ast_node t1, pkl_ast_node t2)
+  __attribute__ ((visibility ("hidden")));
+
+int pkl_ast_type_mappable_p (pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
+
+int pkl_ast_type_is_exception (pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
+
 int pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
-                              int promote_array_of_any);
-pkl_ast_node pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type);
-int pkl_ast_type_is_complete (pkl_ast_node type);
-void pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name);
-char *pkl_type_str (pkl_ast_node type, int use_given_name);
-int pkl_ast_func_all_optargs (pkl_ast_node type);
-int pkl_ast_type_mappable_p (pkl_ast_node type);
-pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
-int pkl_ast_type_is_exception (pkl_ast_node type);
-void pkl_ast_array_type_remove_bounders (pkl_ast_node type);
+                              int promote_array_of_any)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
+
+int pkl_ast_type_is_complete (pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
+
+void pkl_ast_array_type_remove_bounders (pkl_ast_node type)
+  __attribute__ ((visibility ("hidden")));
+
+void pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
+  __attribute__ ((visibility ("hidden")));
+
+char *pkl_type_str (pkl_ast_node type, int use_given_name)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_DECL nodes represent the declaration of a named entity:
    function, type, variable....
@@ -1020,7 +1084,8 @@ struct pkl_ast_decl
 
 pkl_ast_node pkl_ast_make_decl (pkl_ast ast, int kind,
                                 pkl_ast_node name, pkl_ast_node initial,
-                                const char *source);
+                                const char *source)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_OFFSET nodes represent poke object constructions.
 
@@ -1049,7 +1114,8 @@ struct pkl_ast_offset
 
 pkl_ast_node pkl_ast_make_offset (pkl_ast ast,
                                   pkl_ast_node magnitude,
-                                  pkl_ast_node unit);
+                                  pkl_ast_node unit)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_CAST nodes represent casts at the language level.
 
@@ -1070,7 +1136,8 @@ struct pkl_ast_cast
 
 pkl_ast_node pkl_ast_make_cast (pkl_ast ast,
                                 pkl_ast_node type,
-                                pkl_ast_node exp);
+                                pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_ISA nodes represent an application of the ISA operator.
 
@@ -1090,7 +1157,8 @@ struct pkl_ast_isa
 
 pkl_ast_node pkl_ast_make_isa (pkl_ast ast,
                                pkl_ast_node type,
-                               pkl_ast_node exp);
+                               pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_MAP nodes represent maps, i.e. the mapping of some type at
    some offset in IO space.
@@ -1119,7 +1187,8 @@ struct pkl_ast_map
 pkl_ast_node pkl_ast_make_map (pkl_ast ast,
                                pkl_ast_node type,
                                pkl_ast_node ios,
-                               pkl_ast_node offset);
+                               pkl_ast_node offset)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_SCONS nodes represent struct constructors.
 
@@ -1140,7 +1209,8 @@ struct pkl_ast_scons
 
 pkl_ast_node pkl_ast_make_scons (pkl_ast ast,
                                  pkl_ast_node type,
-                                 pkl_ast_node value);
+                                 pkl_ast_node value)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_FUNCALL nodes represent the invocation of a function.
 
@@ -1164,7 +1234,8 @@ struct pkl_ast_funcall
 
 pkl_ast_node pkl_ast_make_funcall (pkl_ast ast,
                                    pkl_ast_node function,
-                                   pkl_ast_node args);
+                                   pkl_ast_node args)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_FUNCALL_ARG nodes represent actual arguments in function
    calls.
@@ -1193,7 +1264,8 @@ struct pkl_ast_funcall_arg
 };
 
 pkl_ast_node pkl_ast_make_funcall_arg (pkl_ast ast, pkl_ast_node exp,
-                                       pkl_ast_node name);
+                                       pkl_ast_node name)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_VAR nodes represent variable references.
 
@@ -1231,7 +1303,8 @@ struct pkl_ast_var
 pkl_ast_node pkl_ast_make_var (pkl_ast ast,
                                pkl_ast_node name,
                                pkl_ast_node initial,
-                               int back, int over);
+                               int back, int over)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_COMPOUND_STMT nodes represent compound statements in the
    language.
@@ -1267,8 +1340,11 @@ struct pkl_ast_comp_stmt
   int numvars;
 };
 
-pkl_ast_node pkl_ast_make_comp_stmt (pkl_ast ast, pkl_ast_node stmts);
-pkl_ast_node pkl_ast_make_builtin (pkl_ast ast, int builtin);
+pkl_ast_node pkl_ast_make_comp_stmt (pkl_ast ast, pkl_ast_node stmts)
+  __attribute__ ((visibility ("hidden")));
+
+pkl_ast_node pkl_ast_make_builtin (pkl_ast ast, int builtin)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_NULL_STMT nodes represent the "null statement".  It can
    appear anywhere an statement is expected, but it has no effect.  */
@@ -1278,7 +1354,8 @@ struct pkl_ast_null_stmt
   struct pkl_ast_common common;
 };
 
-pkl_ast_node pkl_ast_make_null_stmt (pkl_ast ast);
+pkl_ast_node pkl_ast_make_null_stmt (pkl_ast ast)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_ASS_STMT nodes represent assignment statements in the
    language.
@@ -1308,9 +1385,8 @@ struct pkl_ast_ass_stmt
 };
 
 pkl_ast_node pkl_ast_make_ass_stmt (pkl_ast ast,
-                                    pkl_ast_node lvalue, pkl_ast_node exp);
-
-int pkl_ast_lvalue_p (pkl_ast_node node);
+                                    pkl_ast_node lvalue, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_IF_STMT nodes represent conditional statements, with an
    optional `else' part.
@@ -1337,7 +1413,11 @@ struct pkl_ast_if_stmt
 pkl_ast_node pkl_ast_make_if_stmt (pkl_ast ast,
                                    pkl_ast_node exp,
                                    pkl_ast_node then_stmt,
-                                   pkl_ast_node else_stmt);
+                                   pkl_ast_node else_stmt)
+  __attribute__ ((visibility ("hidden")));
+
+int pkl_ast_lvalue_p (pkl_ast_node node)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_LOOP_STMT nodes represent iterative statements.
 
@@ -1368,7 +1448,8 @@ struct pkl_ast_loop_stmt
 pkl_ast_node pkl_ast_make_loop_stmt (pkl_ast ast,
                                      pkl_ast_node iterator,
                                      pkl_ast_node condition,
-                                     pkl_ast_node body);
+                                     pkl_ast_node body)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_LOOP_STMT_ITERATOR nodes represent an iterator in a loop
    statement.
@@ -1392,7 +1473,8 @@ struct pkl_ast_loop_stmt_iterator
 
 pkl_ast_node pkl_ast_make_loop_stmt_iterator (pkl_ast ast,
                                               pkl_ast_node decl,
-                                              pkl_ast_node container);
+                                              pkl_ast_node container)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_RETURN_STMT nodes represent return statements.
 
@@ -1422,8 +1504,11 @@ struct pkl_ast_return_stmt
   int ndrops;
 };
 
-pkl_ast_node pkl_ast_make_return_stmt (pkl_ast ast, pkl_ast_node exp);
-void pkl_ast_finish_returns (pkl_ast_node function);
+pkl_ast_node pkl_ast_make_return_stmt (pkl_ast ast, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
+
+void pkl_ast_finish_returns (pkl_ast_node function)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_EXP_STMT nodes represent "expression statements".
 
@@ -1437,7 +1522,8 @@ struct pkl_ast_exp_stmt
   union pkl_ast_node *exp;
 };
 
-pkl_ast_node pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp);
+pkl_ast_node pkl_ast_make_exp_stmt (pkl_ast ast, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_TRY_UNTIL_STMT nodes represent try-until statements.
 
@@ -1459,7 +1545,8 @@ struct pkl_ast_try_until_stmt
 };
 
 pkl_ast_node pkl_ast_make_try_until_stmt (pkl_ast ast,
-                                          pkl_ast_node code, pkl_ast_node exp);
+                                          pkl_ast_node code, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_TRY_CATCH_STMT nodes represent try-catch statements, which
    are used in order to support exception handlers.
@@ -1495,7 +1582,8 @@ struct pkl_ast_try_catch_stmt
 
 pkl_ast_node pkl_ast_make_try_catch_stmt (pkl_ast ast,
                                           pkl_ast_node code, pkl_ast_node handler,
-                                          pkl_ast_node arg, pkl_ast_node exp);
+                                          pkl_ast_node arg, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_PRINT_STMT nodes represent `print' statements.
 
@@ -1539,7 +1627,8 @@ struct pkl_ast_print_stmt
 };
 
 pkl_ast_node pkl_ast_make_print_stmt (pkl_ast ast,
-                                      pkl_ast_node fmt, pkl_ast_node args);
+                                      pkl_ast_node fmt, pkl_ast_node args)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_PRINT_STMT_ARG nodes represent expression arguments to
    `printf' statements.
@@ -1593,7 +1682,8 @@ struct pkl_ast_print_stmt_arg
   union pkl_ast_node *exp;
 };
 
-pkl_ast_node pkl_ast_make_print_stmt_arg (pkl_ast ast, pkl_ast_node exp);
+pkl_ast_node pkl_ast_make_print_stmt_arg (pkl_ast ast, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_BREAK_STMT nodes represent `break' statements.  Each break
    statement is associated to a loop or switch node.
@@ -1614,8 +1704,11 @@ struct pkl_ast_break_stmt
   int nframes;
 };
 
-pkl_ast_node pkl_ast_make_break_stmt (pkl_ast ast);
-void pkl_ast_finish_breaks (pkl_ast_node entity, pkl_ast_node stmt);
+pkl_ast_node pkl_ast_make_break_stmt (pkl_ast ast)
+  __attribute__ ((visibility ("hidden")));
+
+void pkl_ast_finish_breaks (pkl_ast_node entity, pkl_ast_node stmt)
+  __attribute__ ((visibility ("hidden")));
 
 /* PKL_AST_RAISE_STMT nodes represent `raise' statements, which are
    used in order to raise exceptions at the program level.
@@ -1631,7 +1724,8 @@ struct pkl_ast_raise_stmt
   union pkl_ast_node *exp;
 };
 
-pkl_ast_node pkl_ast_make_raise_stmt (pkl_ast ast, pkl_ast_node exp);
+pkl_ast_node pkl_ast_make_raise_stmt (pkl_ast ast, pkl_ast_node exp)
+  __attribute__ ((visibility ("hidden")));
 
 /* Finally, the `pkl_ast_node' type, which represents an AST node of
    any type.  */
@@ -1716,24 +1810,25 @@ struct pkl_ast
   char *filename;
 };
 
-pkl_ast pkl_ast_init (void);
-void pkl_ast_free (pkl_ast ast);
-void pkl_ast_node_free (pkl_ast_node ast);
-void pkl_ast_node_free_chain (pkl_ast_node ast);
+pkl_ast pkl_ast_init (void)
+  __attribute__ ((visibility ("hidden")));
 
-#ifdef PKL_DEBUG
+void pkl_ast_free (pkl_ast ast)
+  __attribute__ ((visibility ("hidden")));
 
-/* The following function dumps a human-readable description of the
-   tree headed by the node AST.  It is used for debugging
-   purposes.  */
+void pkl_ast_node_free (pkl_ast_node ast)
+  __attribute__ ((visibility ("hidden")));
 
-void pkl_ast_print (FILE *fd, pkl_ast_node ast);
+void pkl_ast_node_free_chain (pkl_ast_node ast)
+  __attribute__ ((visibility ("hidden")));
 
 /* Reverse the order of elements chained by CHAIN, and return the new
    head of the chain (old last element).  */
 
-pkl_ast_node pkl_ast_reverse (pkl_ast_node ast);
+pkl_ast_node pkl_ast_reverse (pkl_ast_node ast)
+  __attribute__ ((visibility ("hidden")));
 
-#endif
+void pkl_ast_print (FILE *fd, pkl_ast_node ast)
+  __attribute__ ((visibility ("hidden")));
 
 #endif /* ! PKL_AST_H */

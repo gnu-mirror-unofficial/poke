@@ -21,28 +21,18 @@
 
 #include <config.h>
 
-#include "pvm.h"
-#include "ios.h"
-#include "pk-utils.h"
+#include "poke.h"
 
 enum pk_cmd_arg_type
 {
   PK_CMD_ARG_NULL,
-  PK_CMD_ARG_EXP,
-  PK_CMD_ARG_DEF,
-  PK_CMD_ARG_STMT,
   PK_CMD_ARG_INT,
-  PK_CMD_ARG_ADDR,
   PK_CMD_ARG_STR,
   PK_CMD_ARG_TAG
 };
 
 #define PK_CMD_ARG_TYPE(arg) ((arg).type)
-#define PK_CMD_ARG_EXP(arg) ((arg).val.program)
-#define PK_CMD_ARG_DEF(arg) ((arg).val.program)
-#define PK_CMD_ARG_STMT(arg) ((arg).val.program)
 #define PK_CMD_ARG_INT(arg) ((arg).val.integer)
-#define PK_CMD_ARG_ADDR(arg) ((arg).val.addr)
 #define PK_CMD_ARG_STR(arg) ((arg).val.str)
 #define PK_CMD_ARG_TAG(arg) ((arg).val.tag)
 
@@ -51,9 +41,7 @@ struct pk_cmd_arg
   enum pk_cmd_arg_type type;
   union
   {
-    pvm_program program;
     int64_t integer;
-    ios_off addr;
     char *str;
     int64_t tag;
   } val;

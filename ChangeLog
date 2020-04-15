@@ -1,3 +1,161 @@
+2020-04-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/poke.h (poke_compiler): Switch to type pk_compiler.
+	(poke_vm): Remove extern.
+	Do not include pkl.h.
+	Include libpoke.h.
+
+	* src/poke.c (finalize): Use pk_free_compiler.
+	(initialize): Use pk_compiler_new.
+	(poke_compiler): Switch to type pk_compiler.
+	(poke_vm): Remove global.
+
+	* lib/libpoke.h (pk_compiler): New type.
+	* lib/libpoke.c (pk_compiler_new): New function.
+	(pk_compiler_free): Likewise.
+
+2020-04-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/libpoke.h: New file.
+	* lib/libpoke.c: Likewise.
+	* lib/Makefile.am (include_HEADERS): Distribute libpoke.h.
+	(libpoke_la_SOURCES): Add libpoke.h and libpoke.c and remove
+	pkl-compiler.h.
+	* lib/pkl-compiler.h: Remove.
+	* lib/pvm.h: Mark function prototypes as hidden.
+	* lib/pkl.h: Likewise.
+	* lib/ios.h: Likewise.
+
+2020-04-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl.h: Fix typo.
+
+2020-04-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-compiler.h: New file.
+	* lib/pkl-asm.c: Include pkl-compiler.h
+
+2020-04-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-tab.y (pkl_tab_error): Mark as static.
+	(pkl_register_arg): Likewise.
+	(pkl_register_args): likewise.
+	* lib/pkl-ast.h (pkl_ast_chainon): Set ELF visibility to hidden.
+	(pkl_ast_make_program): Likewise.
+	(pkl_ast_make_identifier): Likewise.
+	(pkl_ast_make_integer): Likewise.
+	(pkl_ast_make_string): Likewise.
+	(pkl_ast_make_array): Likewise.
+	(pkl_ast_make_array_initializer): Likewise.
+	(pkl_ast_make_struct): Likewise.
+	(pkl_ast_make_struct_field): Likewise.
+	(pkl_ast_make_unary_exp): Likewise.
+	(pkl_ast_make_binary_exp): Likewise.
+	(pkl_ast_make_cond_exp): Likewise.
+	(pkl_ast_make_enumerator): Likewise.
+	(pkl_ast_make_enum): Likewise.
+	(pkl_ast_make_func): Likewise.
+	(pkl_ast_make_func_arg): Likewise.
+	(pkl_ast_make_trimmer): Likewise.
+	(pkl_ast_make_indexer): Likewise.
+	(pkl_ast_make_struct_ref): Likewise.
+	(pkl_ast_make_struct_field_type): Likewise.
+	(pkl_ast_make_func_type_arg): Likewise.
+	(pkl_ast_make_named_type): Likewise.
+	(pkl_ast_make_integral_type): Likewise.
+	(pkl_ast_make_void_type): Likewise.
+	(pkl_ast_make_string_type): Likewise.
+	(pkl_ast_make_array_type): Likewise.
+	(pkl_ast_make_struct_type): Likewise.
+	(pkl_ast_make_offset_type): Likewise.
+	(pkl_ast_make_function_type): Likewise.
+	(pkl_ast_make_any_type): Likewise.
+	(pkl_ast_dup_type): Likewise.
+	(pkl_ast_type_promoteable): Likewise.
+	(pkl_ast_sizeof_type): Likewise.
+	(pkl_ast_type_is_complete): Likewise.
+	(pkl_ast_array_type_remove_bounders): Likewise.
+	(pkl_ast_make_decl): Likewise.
+	(pkl_ast_make_offset): Likewise.
+	(pkl_ast_make_cast): Likewise.
+	(pkl_ast_make_isa): Likewise.
+	(pkl_ast_make_map): Likewise.
+	(pkl_ast_make_scons): Likewise.
+	(pkl_ast_make_funcall): Likewise.
+	(pkl_ast_make_funcall_arg): Likewise.
+	(pkl_ast_make_var): Likewise.
+	(pkl_ast_make_comp_stmt): Likewise.
+	(pkl_ast_make_builtin): Likewise.
+	(pkl_ast_make_null_stmt): Likewise.
+	(pkl_ast_make_ass_stmt): Likewise.
+	(pkl_ast_make_if_stmt): Likewise.
+	(pkl_ast_make_loop_stmt): Likewise.
+	(pkl_ast_make_loop_stmt_iterator): Likewise.
+	(pkl_ast_make_return_stmt): Likewise.
+	(pkl_ast_finish_returns): Likewise.
+	(pkl_ast_make_exp_stmt): Likewise.
+	(pkl_ast_make_try_until_stmt): Likewise.
+	(pkl_ast_make_try_catch_stmt): Likewise.
+	(pkl_ast_make_print_stmt): Likewise.
+	(pkl_ast_make_print_stmt_arg): Likewise.
+	(pkl_ast_make_break_stmt): Likewise.
+	(pkl_ast_finish_breaks): Likewise.
+	(pkl_ast_make_raise_stmt): Likewise.
+	(pkl_ast_init): Likewise.
+	(pkl_ast_free): Likewise.
+	(pkl_ast_node_free): Likewise.
+	(pkl_ast_node_free_chain): Likewise.
+	(pkl_ast_reverse): Likewise.
+	(pkl_ast_type_equal): Likewise.
+	(pkl_ast_type_is_exception): Likewise.
+	(pkl_ast_lvalue_p): Likewise.
+	(pkl_ast_print): Likewise.
+	(pkl_print_type): Likewise.
+	(pkl_type_str): Likewise.
+	(pkl_ast_func_all_optargs): Likewise.
+	(pkl_ast_type_mappable_p): Likewise.
+	* lib/pkl-env.h (pkl_env_free): Likewise.
+	(pkl_env_free): Likewise.
+	(pkl_env_push_frame): Likewise.
+	(pkl_env_pop_frame): Likewise.
+	(pkl_env_register): Likewise.
+	(pkl_env_toplevel_p): Likewise.
+	(pkl_env_dup_toplevel): Likewise.
+	* lib/pkl-diag.h (pkl_error): Likewise.
+	(pkl_warning): Likewise.
+	(pkl_ice): Likewise.
+	* lib/pkl-asm.h (pkl_asm_new): Likewise.
+	(pkl_asm_finish): Likewise.
+	(pkl_asm_insn): Likewise.
+	(pkl_asm_call): Likewise.
+	(pkl_asm_if): Likewise.
+	(pkl_asm_then): Likewise.
+	(pkl_asm_else): Likewise.
+	(pkl_asm_endif): Likewise.
+	(pkl_asm_while): Likewise.
+	(pkl_asm_loop): Likewise.
+	(pkl_asm_endloop): Likewise.
+	(pkl_asm_for): Likewise.
+	(pkl_asm_for_where): Likewise.
+	(pkl_asm_for_loop): Likewise.
+	(pkl_asm_for_endloop): Likewise.
+	(pkl_asm_try): Likewise.
+	(pkl_asm_catch): Likewise.
+	(pkl_asm_endtry): Likewise.
+	(pkl_asm_break_label): Likewise.
+	(pkl_asm_note): Likewise.
+	(pkl_asm_fresh_label): Likewise.
+	(pkl_asm_label): Likewise.
+	* lib/pkl-parser.h (pkl_parse_file): Likewise.
+	(pkl_parse_buffer): Likewise.
+	* lib/pkl-pass.h (pkl_do_pass): Likewise.
+	(pkl_do_subpass): Likewise.
+	* lib/pkl.h (pkl_struct_type_traverse): Moved from pkl-ast.h.
+	* lib/Makefile.am (pkginclude_HEADERS): Do not distribute
+	pkl-ast.h.
+	* lib/pkl-env.c: Include pkl-ast.h
+	* lib/pkl-diag.h: Likewise.
+
 2020-04-26  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-hserver.c (pk_hserver_init): Change signature to take void.

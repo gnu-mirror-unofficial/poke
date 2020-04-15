@@ -32,7 +32,6 @@
 #include "xstrndup.h"
 
 #include "poke.h"
-#include "pk-term.h"
 #include "pk-cmd.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
@@ -41,106 +40,16 @@
 static sigjmp_buf ctrlc_buf;
 
 static char *
-pkl_complete_struct (int *idx, const char *x, size_t len, int state)
-{
-  static pkl_ast_node type;
-  pkl_ast_node t;
-  size_t trunk_len;
-  int j;
-
-  if (state == 0)
-    {
-      pkl_env compiler_env;
-      int back, over;
-      char *base;
-
-      compiler_env = pkl_get_env (poke_compiler);
-      base = strndup (x, len - strlen (strchr (x, '.')));
-
-      type = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
-                             base, &back, &over);
-      free (base);
-
-      if (type == NULL || PKL_AST_DECL_KIND (type) != PKL_AST_DECL_KIND_VAR)
-        return NULL;
-
-      type = PKL_AST_TYPE (PKL_AST_DECL_INITIAL (type));
-      type = pkl_struct_type_traverse (type, x);
-      if (type == NULL)
-        return NULL;
-    }
-
-  trunk_len = len - strlen (strrchr (x, '.')) - 1;
-
-  t = PKL_AST_TYPE_S_ELEMS (type);
-
-  for (j = 0; j < (*idx); j++)
-    t = PKL_AST_CHAIN (t);
-
-  for (; t; t = PKL_AST_CHAIN (t), (*idx)++)
-    {
-      pkl_ast_node ename;
-      char *field;
-
-      if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
-        continue;
-
-      ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
-
-      if (ename)
-          field = PKL_AST_IDENTIFIER_POINTER (ename);
-      else
-          field = "<unnamed field>";
-
-      if (strncmp (x + trunk_len, field, len - trunk_len) == 0)
-        {
-          char *name;
-
-          if (asprintf (&name, "%.*s%s", (int) trunk_len, x, field) == -1)
-            return NULL;
-
-          (*idx)++;
-          return name;
-        }
-    }
-
-  return NULL;
-}
-
-static char *
 poke_completion_function (const char *x, int state)
 {
   static int idx = 0;
-  static struct pkl_ast_node_iter iter;
-  pkl_env env = pkl_get_env (poke_compiler);
-  if (state == 0)
-    {
-      pkl_env_iter_begin (env, &iter);
-      idx = 0;
-    }
-  else
-    {
-      if (pkl_env_iter_end (env, &iter))
-        idx++;
-      else
-        pkl_env_iter_next (env, &iter);
-    }
+  char *function_name = pk_completion_function (poke_compiler,
+                                                x, state);
 
-  size_t len = strlen (x);
+  if (function_name == NULL)
+    function_name = pk_cmd_get_next_match (&idx, x, strlen (x));
 
-  if ((x[0] != '.') && (strchr(x, '.') != NULL))
-    return pkl_complete_struct (&idx, x, len, state);
-
-  char *function_name;
-  function_name = pkl_env_get_next_matching_decl (env, &iter, x, len);
-  if (function_name)
-    return function_name;
-
-  function_name = pk_cmd_get_next_match (&idx, x, len);
-  if (function_name)
-    return function_name;
-
-  return NULL;
+  return function_name;
 }
 
 static char *

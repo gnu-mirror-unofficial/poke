@@ -32,12 +32,6 @@
 #  include "pk-hserver.h"
 #endif
 
-#include "pkl.h"
-#include "pvm.h"
-#include "ios.h"
-#include "pk-utils.h"
-#include "pk-term.h"
-
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-repl.h"
@@ -90,15 +84,12 @@ int poke_exit_p;
 int poke_exit_code;
 
 /* The following global is the poke compiler.  */
-pkl_compiler poke_compiler;
+pk_compiler poke_compiler;
 
 /* The following global indicates whether to load a user
    initialization file.  It defaults to 1.  */
 
 int poke_load_init_file = 1;
-
-/* the following global is the poke virtual machine.  */
-pvm poke_vm;
 
 /* Command line options management.  */
 
@@ -239,10 +230,8 @@ finalize (void)
   if (poke_hserver_p)
     pk_hserver_shutdown ();
 #endif
-  ios_shutdown ();
   pk_cmd_shutdown ();
-  pkl_free (poke_compiler);
-  pvm_shutdown (poke_vm);
+  pk_compiler_free (poke_compiler);
   pk_term_shutdown ();
 }
 
@@ -271,7 +260,7 @@ parse_args (int argc, char *argv[])
           break;
         case QUIET_ARG:
           poke_quiet_p = 1;
-          pkl_set_quiet_p (poke_compiler, 1);
+          pk_set_quiet_p (poke_compiler, 1);
           break;
         case 'q':
         case NO_INIT_FILE_ARG:
@@ -279,7 +268,7 @@ parse_args (int argc, char *argv[])
           break;
         case 'l':
         case LOAD_ARG:
-          if (!pkl_compile_file (poke_compiler, optarg))
+          if (!pk_compile_file (poke_compiler, optarg))
             goto exit_success;
 
           break;
@@ -316,7 +305,7 @@ parse_args (int argc, char *argv[])
     {
       char *filename = argv[optind++];
 
-      if (ios_open (filename, 0, 1) == IOS_ERROR)
+      if (pk_ios_open (poke_compiler, filename, 0, 1) == PK_IOS_ERROR)
         {
           if (!poke_quiet_p)
             pk_printf (_("cannot open file %s\n"), filename);
@@ -346,7 +335,7 @@ parse_args (int argc, char *argv[])
         {
         case 'L':
           poke_interactive_p = 0;
-          if (!pkl_compile_file (poke_compiler, optarg))
+          if (!pk_compile_file (poke_compiler, optarg))
             goto exit_success;
           break;
         default:
@@ -396,21 +385,12 @@ initialize (int argc, char *argv[])
   /* Initialize the terminal output.  */
   pk_term_init (argc, argv);
 
-  /* Initialize the Poke Virtual Machine.  Note this should be done
-     before initializing the compiler, since the later constructs and
-     runs pvm programs internally.  */
-  poke_vm = pvm_init ();
-
   /* Initialize the poke incremental compiler.  */
-  poke_compiler = pkl_new (poke_vm, poke_datadir);
-  pvm_set_compiler (poke_vm, poke_compiler);
+  poke_compiler = pk_compiler_new (poke_datadir);
 
   /* Initialize the command subsystem.  This should be done even if
      called non-interactively.  */
   pk_cmd_init ();
-
-  /* Initialize the IO subsystem.  Ditto.  */
-  ios_init ();
 
 #ifdef HAVE_HSERVER
   poke_hserver_p = poke_interactive_p && pk_term_color_p ();

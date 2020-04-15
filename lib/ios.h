@@ -26,8 +26,11 @@
 /* The following two functions intialize and shutdown the IO poke
    subsystem.  */
 
-void ios_init (void);
-void ios_shutdown (void);
+void ios_init (void)
+  __attribute__ ((visibility ("hidden")));
+
+void ios_shutdown (void)
+    __attribute__ ((visibility ("hidden")));
 
 /* "IO spaces" are the entities used in poke in order to abstract the
    heterogeneous devices that are suitable to be edited, such as
@@ -144,70 +147,84 @@ typedef int64_t ios_off;
    If no IOS_F_READ or IOS_F_WRITE flags are specified, then the IOS
    will be opened in whatever mode makes more sense.  */
 
-int ios_open (const char *handler, uint64_t flags, int set_cur);
+int ios_open (const char *handler, uint64_t flags, int set_cur)
+  __attribute__ ((visibility ("hidden")));
 
 /* Close the given IO space, freing all used resources and flushing
    the space cache associated with the space.  */
 
-void ios_close (ios io);
+void ios_close (ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the flags which are active in a given IO.  Note that this
    doesn't necessarily correspond to the flags passed when opening the
    IO space: some IOD backends modify them.  */
 
-uint64_t ios_flags (ios io);
+uint64_t ios_flags (ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* The following function returns the handler operated by the given IO
    space.  */
 
-const char *ios_handler (ios io);
+const char *ios_handler (ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the current IO space, or NULL if there are no open
    spaces.  */
 
-ios ios_cur (void);
+ios ios_cur (void)
+  __attribute__ ((visibility ("hidden")));
 
 /* Set the current IO space to IO.  */
 
-void ios_set_cur (ios io);
+void ios_set_cur (ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the IO space operating the given HANDLER.  Return NULL if no
    such space exists.  */
 
-ios ios_search (const char *handler);
+ios ios_search (const char *handler)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the IO space having the given ID.  Return NULL if no such
    space exists.  */
 
-ios ios_search_by_id (int id);
+ios ios_search_by_id (int id)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the ID of the given IO space.  */
 
-int ios_get_id (ios io);
+int ios_get_id (ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the first IO space.  */
 
-ios ios_begin (void);
+ios ios_begin (void)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the space following IO.  */
 
-ios ios_next (const ios io);
+ios ios_next (const ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return true iff IO is past the last one.  */
 
-bool ios_end (const ios io);
-
+bool ios_end (const ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* Map over all the open IO spaces executing a handler.  */
 
 typedef void (*ios_map_fn) (ios io, void *data);
-void ios_map (ios_map_fn cb, void *data);
+
+void ios_map (ios_map_fn cb, void *data)
+  __attribute__ ((visibility ("hidden")));
 
 /* **************** IOS properties************************  */
 
 /* Return the size of the given IO, in bits.  */
 
-uint64_t ios_size (ios io);
+uint64_t ios_size (ios io)
+  __attribute__ ((visibility ("hidden")));
 
 /* The IOS bias is added to every offset used in a read/write
    operation.  It is signed and measured in bits.  By default it is
@@ -216,8 +233,11 @@ uint64_t ios_size (ios io);
    The following functions set and get the bias of a given IO
    space.  */
 
-ios_off ios_get_bias (ios io);
-void ios_set_bias (ios io, ios_off bias);
+ios_off ios_get_bias (ios io)
+  __attribute__ ((visibility ("hidden")));
+
+void ios_set_bias (ios io, ios_off bias)
+  __attribute__ ((visibility ("hidden")));
 
 /* **************** Object read/write API ****************  */
 
@@ -282,7 +302,8 @@ int ios_read_int (ios io, ios_off offset, int flags,
                   int bits,
                   enum ios_endian endian,
                   enum ios_nenc nenc,
-                  int64_t *value);
+                  int64_t *value)
+  __attribute__ ((visibility ("hidden")));
 
 /* Read an unsigned integer of size BITS located at the given OFFSET,
    and put its value in VALUE.  It is assumed the integer is encoded
@@ -291,13 +312,15 @@ int ios_read_int (ios io, ios_off offset, int flags,
 int ios_read_uint (ios io, ios_off offset, int flags,
                    int bits,
                    enum ios_endian endian,
-                   uint64_t *value);
+                   uint64_t *value)
+  __attribute__ ((visibility ("hidden")));
 
 /* Read a NULL-terminated string of bytes located at the given OFFSET,
    and put its value in VALUE.  It is up to the caller to free the
    memory occupied by the returned string, when no longer needed.  */
 
-int ios_read_string (ios io, ios_off offset, int flags, char **value);
+int ios_read_string (ios io, ios_off offset, int flags, char **value)
+  __attribute__ ((visibility ("hidden")));
 
 /* Write the signed integer of size BITS in VALUE to the space IO, at
    the given OFFSET.  Use the byte endianness ENDIAN and encoding NENC
@@ -307,7 +330,8 @@ int ios_write_int (ios io, ios_off offset, int flags,
                    int bits,
                    enum ios_endian endian,
                    enum ios_nenc nenc,
-                   int64_t value);
+                   int64_t value)
+  __attribute__ ((visibility ("hidden")));
 
 /* Write the unsigned integer of size BITS in VALUE to the space IO,
    at the given OFFSET.  Use the byte endianness ENDIAN when writing
@@ -316,13 +340,15 @@ int ios_write_int (ios io, ios_off offset, int flags,
 int ios_write_uint (ios io, ios_off offset, int flags,
                     int bits,
                     enum ios_endian endian,
-                    uint64_t value);
+                    uint64_t value)
+  __attribute__ ((visibility ("hidden")));
 
 /* Write the NULL-terminated string in VALUE to the space IO, at the
    given OFFSET.  */
 
 int ios_write_string (ios io, ios_off offset, int flags,
-                      const char *value);
+                      const char *value)
+  __attribute__ ((visibility ("hidden")));
 
 /* **************** Update API **************** */
 

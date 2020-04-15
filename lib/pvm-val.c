@@ -544,7 +544,7 @@ print_unit_name (uint64_t unit)
 #define PVM_PRINT_VAL_1(...)                    \
   pvm_print_val_1 (vm, depth, mode, base, indent, acutoff, flags, __VA_ARGS__)
 
-void
+static void
 pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
                  int acutoff, uint32_t flags,
                  pvm_val val, int ndepth)

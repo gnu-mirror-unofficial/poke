@@ -26,6 +26,7 @@
 #include "pkl.h"
 #include "pk-utils.h"
 
+#include "pkl-ast.h"
 #include "pkl-env.h"
 
 /* The declarations are organized in a hash table, chained in their

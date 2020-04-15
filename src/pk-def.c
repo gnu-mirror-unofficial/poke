@@ -17,89 +17,47 @@
  */
 
 #include <config.h>
-#include <assert.h>
 #include <string.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
-
-#include "pkl.h"
-#include "pvm.h"
-#include "pk-term.h"
 
 #include "poke.h"
 #include "pk-cmd.h"
 
 static void
-print_var_decl (pkl_ast_node decl, void *data)
+print_var_decl (int kind,
+                const char *source,
+                const char *name,
+                const char *type,
+                int first_line, int last_line,
+                int first_column, int last_column,
+                void *data)
 {
-  pkl_ast_node decl_name = PKL_AST_DECL_NAME (decl);
-  pkl_ast_loc loc = PKL_AST_LOC (decl);
-  char *source =  PKL_AST_DECL_SOURCE (decl);
-  int back, over;
-  pvm_val val;
-
-  pkl_env compiler_env = pkl_get_env (poke_compiler);
-  pvm_env runtime_env = pvm_get_env (poke_vm);
-  pkl_ast_node tmp;
-
-  assert (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_VAR);
-  tmp = pkl_env_lookup (compiler_env,
-                        PKL_ENV_NS_MAIN,
-                        PKL_AST_IDENTIFIER_POINTER (decl_name),
-                        &back, &over);
-  assert (tmp != NULL);
-
-  val = pvm_env_lookup (runtime_env, back, over);
-  assert (val != PVM_NULL);
-
-  /* Print the name and the current value of the variable.  */
-  pk_puts (PKL_AST_IDENTIFIER_POINTER (decl_name));
-  pk_puts ("\t\t");
-  pvm_print_val (poke_vm, val);
+  pk_puts (name);
   pk_puts ("\t\t");
 
-  /* Print information about the site where the variable was
-     declared.  */
   if (source)
-    pk_printf ("%s:%d\n", basename (source), loc.first_line);
+    pk_printf ("%s:%d\n", basename (source), first_line);
   else
     pk_puts ("<stdin>\n");
 }
 
 static void
-print_fun_decl (pkl_ast_node decl, void *data)
+print_fun_decl (int kind,
+                const char *source,
+                const char *name,
+                const char *type,
+                int first_line, int last_line,
+                int first_column, int last_column,
+                void *data)
 {
-  pkl_ast_node decl_name = PKL_AST_DECL_NAME (decl);
-  pkl_ast_node func = PKL_AST_DECL_INITIAL (decl);
-  pkl_ast_loc loc = PKL_AST_LOC (decl);
-  char *source =  PKL_AST_DECL_SOURCE (decl);
-  int back, over;
-
-  pkl_env compiler_env = pkl_get_env (poke_compiler);
-  pkl_ast_node tmp;
-
-  /* Skip mappers, i.e. function declarations whose initials are
-     actually struct types, and not function literals.  */
-
-  if (PKL_AST_CODE (func) != PKL_AST_FUNC)
-    return;
-
-  tmp = pkl_env_lookup (compiler_env,
-                        PKL_ENV_NS_MAIN,
-                        PKL_AST_IDENTIFIER_POINTER (decl_name),
-                        &back, &over);
-  assert (tmp != NULL);
-
-  /* Print the name and the type of the function.  */
-  pk_puts (PKL_AST_IDENTIFIER_POINTER (decl_name));
+  pk_puts (name);
   pk_puts ("  ");
-  pkl_print_type (stdout, PKL_AST_TYPE (func), 1);
+  pk_puts (type);
   pk_puts ("  ");
 
-  /* Print information about the site where the function was
-     declared.  */
   if (source)
-    pk_printf ("%s:%d\n", basename (source), loc.first_line);
+    pk_printf ("%s:%d\n", basename (source), first_line);
   else
     pk_puts ("<stdin>\n");
 }
@@ -107,18 +65,15 @@ print_fun_decl (pkl_ast_node decl, void *data)
 static int
 pk_cmd_info_var (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  pk_puts (_("Name\t\tValue\t\t\tDeclared at\n"));
-  pkl_env_map_decls (pkl_get_env (poke_compiler), PKL_AST_DECL_KIND_VAR,
-                     print_var_decl, NULL);
+  pk_puts (_("Name\t\tDeclared at\n"));
+  pk_decl_map (poke_compiler, PK_DECL_KIND_VAR, print_var_decl, NULL);
   return 1;
 }
 
 static int
 pk_cmd_info_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  pkl_env_map_decls (pkl_get_env (poke_compiler), PKL_AST_DECL_KIND_FUNC,
-                     print_fun_decl, NULL);
-
+  pk_decl_map (poke_compiler, PK_DECL_KIND_FUNC, print_fun_decl, NULL);
   return 1;
 }
 

@@ -74,28 +74,33 @@ typedef unsigned int pvm_register;
    The created program is returned.  If there is a problem creating
    the program then this function returns NULL.  */
 
-pvm_program pvm_program_new (void);
+pvm_program pvm_program_new (void)
+  __attribute__ ((visibility ("hidden")));
 
 /* Destroy the given PVM program.  */
 
-void pvm_destroy_program (pvm_program program);
+void pvm_destroy_program (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make the given PVM program executable so it can be run in the PVM.
 
    This function returns a status code indicating whether the
    operation was successful or not.  */
 
-int pvm_program_make_executable (pvm_program program);
+int pvm_program_make_executable (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /* Print a native disassembly of the given program in the standard
    output.  */
 
-void pvm_disassemble_program_nat (pvm_program program);
+void pvm_disassemble_program_nat (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /* Print a disassembly of the given program in the standard
    output.  */
 
-void pvm_disassemble_program (pvm_program program);
+void pvm_disassemble_program (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /* **************** Assembling PVM Programs ****************  */
 
@@ -115,7 +120,8 @@ void pvm_disassemble_program (pvm_program program);
 /* Create a fresh label for the given program and return it.  This
    label should be eventually appended to the program.  */
 
-pvm_program_label pvm_program_fresh_label (pvm_program program);
+pvm_program_label pvm_program_fresh_label (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /* Append a PVM value instruction parameter to a PVM program.
 
@@ -123,7 +129,8 @@ pvm_program_label pvm_program_fresh_label (pvm_program program);
    VAL is the PVM value to use as the instruction parameter.  */
 
 int pvm_program_append_val_parameter (pvm_program program,
-                                      pvm_val val);
+                                      pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Append an unsigned integer literal instruction parameter to a PVM
    program.
@@ -132,7 +139,8 @@ int pvm_program_append_val_parameter (pvm_program program,
    N is the literal to use as the instruction parameter.  */
 
 int pvm_program_append_unsigned_parameter (pvm_program program,
-                                           unsigned int n);
+                                           unsigned int n)
+  __attribute__ ((visibility ("hidden")));
 
 /* Append a PVM register instruction parameter to a PVM program.
 
@@ -143,7 +151,8 @@ int pvm_program_append_unsigned_parameter (pvm_program program,
    PVM_EINVAL.  */
 
 int pvm_program_append_register_parameter (pvm_program program,
-                                           pvm_register reg);
+                                           pvm_register reg)
+  __attribute__ ((visibility ("hidden")));
 
 /* Appenda PVM label instruction parameter to a PVM program.
 
@@ -154,7 +163,8 @@ int pvm_program_append_register_parameter (pvm_program program,
    PVM_EINVAL.  */
 
 int pvm_program_append_label_parameter (pvm_program program,
-                                        pvm_program_label label);
+                                        pvm_program_label label)
+  __attribute__ ((visibility ("hidden")));
 
 /* Append an instruction to a PVM program.
 
@@ -168,7 +178,8 @@ int pvm_program_append_label_parameter (pvm_program program,
    already appended, this function returns PVM_EINSN.  */
 
 int pvm_program_append_instruction (pvm_program program,
-                                    const char *insn_name);
+                                    const char *insn_name)
+  __attribute__ ((visibility ("hidden")));
 
 /* Append a `push' instruction to a PVM program.
 
@@ -179,7 +190,8 @@ int pvm_program_append_instruction (pvm_program program,
    VAL is the PVM value that will be pushed by the instruction.  */
 
 int pvm_program_append_push_instruction (pvm_program program,
-                                         pvm_val val);
+                                         pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Append a PVM label to a PVM program.
 
@@ -190,25 +202,33 @@ int pvm_program_append_push_instruction (pvm_program program,
    PVM_EINVAL.  */
 
 int pvm_program_append_label (pvm_program program,
-                              pvm_program_label label);
+                              pvm_program_label label)
+  __attribute__ ((visibility ("hidden")));
 
 /* **************** Building PVM Values **************** */
 
 /* Make signed and unsigned integer PVM values.
    SIZE is measured in bits and should be in the range 1 to 32.  */
 
-pvm_val pvm_make_int (int32_t value, int size);
-pvm_val pvm_make_uint (uint32_t value, int size);
+pvm_val pvm_make_int (int32_t value, int size)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_make_uint (uint32_t value, int size)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make signed and unsigned long PVM values.
    SIZE is measured in bits and should be in the range 1 to 64.  */
 
-pvm_val pvm_make_long (int64_t value, int size);
-pvm_val pvm_make_ulong (uint64_t value, int size);
+pvm_val pvm_make_long (int64_t value, int size)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_make_ulong (uint64_t value, int size)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make a string PVM value.  */
 
-pvm_val pvm_make_string (const char *value);
+pvm_val pvm_make_string (const char *value)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make an offset PVM value.
 
@@ -217,7 +237,8 @@ pvm_val pvm_make_string (const char *value);
    UNIT is an ulong<64> PVM value specifying the unit of the offset,
    in terms of the basic unit which is the bit.  */
 
-pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
+pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make an array PVM value.
 
@@ -228,7 +249,8 @@ pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
 
    The elements in the created array are initialized to PVM_NULL.  */
 
-pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
+pvm_val pvm_make_array (pvm_val nelem, pvm_val type)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make a struct PVM value.
 
@@ -243,55 +265,88 @@ pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
    The fields and methods in the created struct are initialized to
    PVM_NULL.  */
 
-pvm_val pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type);
+pvm_val pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
+  __attribute__ ((visibility ("hidden")));
 
 /* Make a closure PVM value.
    PROGRAM is a PVM program that conforms the body of the closure.  */
 
-pvm_val pvm_make_cls (pvm_program program);
+pvm_val pvm_make_cls (pvm_program program)
+  __attribute__ ((visibility ("hidden")));
 
 /*** PVM values.  ***/
 
-void pvm_print_string (pvm_val string);
+void pvm_print_string (pvm_val string)
+  __attribute__ ((visibility ("hidden")));
 
-pvm_val pvm_ref_struct (pvm_val sct, pvm_val name);
-int pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val);
-pvm_val pvm_get_struct_method (pvm_val sct, const char *name);
+pvm_val pvm_ref_struct (pvm_val sct, pvm_val name)
+  __attribute__ ((visibility ("hidden")));
 
+int pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
-pvm_val pvm_make_integral_type (pvm_val size, pvm_val signed_p);
-pvm_val pvm_make_string_type (void);
-pvm_val pvm_make_any_type (void);
-pvm_val pvm_make_array_type (pvm_val type, pvm_val bound);
+pvm_val pvm_get_struct_method (pvm_val sct, const char *name)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_make_integral_type (pvm_val size, pvm_val signed_p)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_make_string_type (void)
+  __attribute__ ((visibility ("hidden")));
+pvm_val pvm_make_any_type (void)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_make_array_type (pvm_val type, pvm_val bound)
+  __attribute__ ((visibility ("hidden")));
+
 pvm_val pvm_make_struct_type (pvm_val nfields, pvm_val name,
-                              pvm_val *fnames, pvm_val *ftypes);
-pvm_val pvm_make_offset_type (pvm_val base_type, pvm_val unit);
-pvm_val pvm_make_closure_type (pvm_val rtype, pvm_val nargs, pvm_val *atypes);
+                              pvm_val *fnames, pvm_val *ftypes)
+  __attribute__ ((visibility ("hidden")));
 
-pvm_val pvm_dup_type (pvm_val type);
-pvm_val pvm_typeof (pvm_val val);
-int pvm_type_equal (pvm_val type1, pvm_val type2);
+pvm_val pvm_make_offset_type (pvm_val base_type, pvm_val unit)
+  __attribute__ ((visibility ("hidden")));
+pvm_val pvm_make_closure_type (pvm_val rtype, pvm_val nargs,
+                               pvm_val *atypes)
+  __attribute__ ((visibility ("hidden")));
 
-pvm_program pvm_val_cls_program (pvm_val cls);
+pvm_val pvm_dup_type (pvm_val type)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_typeof (pvm_val val)
+  __attribute__ ((visibility ("hidden")));
+
+int pvm_type_equal (pvm_val type1, pvm_val type2)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_program pvm_val_cls_program (pvm_val cls)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the size of VAL, in bits.  */
-uint64_t pvm_sizeof (pvm_val val);
+
+uint64_t pvm_sizeof (pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* For strings, arrays and structs, return the number of
    elements/fields stored, as an unsigned 64-bits long.  Return 1
    otherwise.  */
-pvm_val pvm_elemsof (pvm_val val);
+
+pvm_val pvm_elemsof (pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the mapper function for the given value, and the writer
    function.  If the value is not mapped, return PVM_NULL.  */
 
-pvm_val pvm_val_mapper (pvm_val val);
-pvm_val pvm_val_writer (pvm_val val);
+pvm_val pvm_val_mapper (pvm_val val)
+  __attribute__ ((visibility ("hidden")));
+
+pvm_val pvm_val_writer (pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return a PVM value for an exception with the given CODE and
    MESSAGE.  */
 
-pvm_val pvm_make_exception (int code, char *message);
+pvm_val pvm_make_exception (int code, char *message)
+  __attribute__ ((visibility ("hidden")));
 
 /* **************** The Run-Time Environment ****************  */
 
@@ -334,7 +389,8 @@ typedef struct pvm_env *pvm_env;  /* Struct defined in pvm-env.c */
    registered in this environment.  If HINT is 0 it indicates that we
    can't provide an estimation.  */
 
-pvm_env pvm_env_new (int hint);
+pvm_env pvm_env_new (int hint)
+  __attribute__ ((visibility ("hidden")));
 
 /* Push a new empty frame to ENV and return the modified run-time
    environment.
@@ -343,35 +399,41 @@ pvm_env pvm_env_new (int hint);
    in the frame.  If HINT is 0, it indicates the number can't be
    estimated at all.  */
 
-pvm_env pvm_env_push_frame (pvm_env env, int hint);
+pvm_env pvm_env_push_frame (pvm_env env, int hint)
+  __attribute__ ((visibility ("hidden")));
 
 /* Pop a frame from ENV and return the modified run-time environment.
    The popped frame will eventually be garbage-collected if there are
    no more references to it.  Trying to pop the top-level frame is an
    error.  */
 
-pvm_env pvm_env_pop_frame (pvm_env env);
+pvm_env pvm_env_pop_frame (pvm_env env)
+  __attribute__ ((visibility ("hidden")));
 
 /* Create a new variable in the current frame of ENV, whose value is
    VAL.  */
 
-void pvm_env_register (pvm_env env, pvm_val val);
+void pvm_env_register (pvm_env env, pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return the value for the variable occupying the position BACK, OVER
    in the run-time environment ENV.  Return PVM_NULL if the variable
    is not found.  */
 
-pvm_val pvm_env_lookup (pvm_env env, int back, int over);
+pvm_val pvm_env_lookup (pvm_env env, int back, int over)
+  __attribute__ ((visibility ("hidden")));
 
 /* Set the value of the variable occupying the position BACK, OVER in
    the run-time environment ENV to VAL.  */
 
-void pvm_env_set_var (pvm_env env, int back, int over, pvm_val val);
+void pvm_env_set_var (pvm_env env, int back, int over, pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Return 1 if the given run-time environment ENV contains only one
    frame.  Return 0 otherwise.  */
 
-int pvm_env_toplevel_p (pvm_env env);
+int pvm_env_toplevel_p (pvm_env env)
+  __attribute__ ((visibility ("hidden")));
 
 /*** Other Definitions.  ***/
 
@@ -447,15 +509,18 @@ typedef struct pvm *pvm;
 
 /* Initialize a new Poke Virtual Machine and return it.  */
 
-pvm pvm_init (void);
+pvm pvm_init (void)
+  __attribute__ ((visibility ("hidden")));
 
 /* Finalize a Poke Virtual Machine, freeing all used resources.  */
 
-void pvm_shutdown (pvm pvm);
+void pvm_shutdown (pvm pvm)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get the current run-time environment of PVM.  */
 
-pvm_env pvm_get_env (pvm pvm);
+pvm_env pvm_get_env (pvm pvm)
+  __attribute__ ((visibility ("hidden")));
 
 /* Run a PVM program in a virtual machine.
 
@@ -467,7 +532,8 @@ pvm_env pvm_get_env (pvm pvm);
 
 enum pvm_exit_code pvm_run (pvm vm,
                             pvm_program program,
-                            pvm_val *res);
+                            pvm_val *res)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get/set the current byte endianness of a virtual machine.
 
@@ -477,8 +543,11 @@ enum pvm_exit_code pvm_run (pvm vm,
    ENDIAN should be one of IOS_ENDIAN_LSB (for little-endian) or
    IOS_ENDIAN_MSB (for big-endian).  */
 
-enum ios_endian pvm_endian (pvm pvm);
-void pvm_set_endian (pvm pvm, enum ios_endian endian);
+enum ios_endian pvm_endian (pvm pvm)
+  __attribute__ ((visibility ("hidden")));
+
+void pvm_set_endian (pvm pvm, enum ios_endian endian)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get/set the current negative encoding of a virtual machine.
 
@@ -487,8 +556,11 @@ void pvm_set_endian (pvm pvm, enum ios_endian endian);
 
    NENC should be one of the IOS_NENC_* values defined in ios.h */
 
-enum ios_nenc pvm_nenc (pvm pvm);
-void pvm_set_nenc (pvm pvm, enum ios_nenc nenc);
+enum ios_nenc pvm_nenc (pvm pvm)
+  __attribute__ ((visibility ("hidden")));
+
+void pvm_set_nenc (pvm pvm, enum ios_nenc nenc)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get/set the pretty-print flag in a virtual machine.
 
@@ -496,8 +568,11 @@ void pvm_set_nenc (pvm pvm, enum ios_nenc nenc);
    methods when printing struct PVM values.  This requires the
    presence of a compiler associated with the VM.  */
 
-int pvm_pretty_print (pvm pvm);
-void pvm_set_pretty_print (pvm pvm, int pretty_print_p);
+int pvm_pretty_print (pvm pvm)
+  __attribute__ ((visibility ("hidden")));
+
+void pvm_set_pretty_print (pvm pvm, int pretty_print_p)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get/set the output parameters configured in a virtual machine.
 
@@ -519,23 +594,40 @@ void pvm_set_pretty_print (pvm pvm, int pretty_print_p);
    array PVM values.  A value of 0 indicates to print all the elements
    of arrays.  */
 
-int pvm_obase (pvm vm);
-void pvm_set_obase (pvm vm, int obase);
+int pvm_obase (pvm vm)
+  __attribute__ ((visibility ("hidden")));
 
-enum pvm_omode pvm_omode (pvm vm);
-void pvm_set_omode (pvm vm, enum pvm_omode omode);
+void pvm_set_obase (pvm vm, int obase)
+  __attribute__ ((visibility ("hidden")));
 
-int pvm_omaps (pvm vm);
-void pvm_set_omaps (pvm vm, int omaps);
+enum pvm_omode pvm_omode (pvm vm)
+  __attribute__ ((visibility ("hidden")));
 
-unsigned int pvm_oindent (pvm vm);
-void pvm_set_oindent (pvm vm, unsigned int oindent);
+void pvm_set_omode (pvm vm, enum pvm_omode omode)
+  __attribute__ ((visibility ("hidden")));
 
-unsigned int pvm_odepth (pvm vm);
-void pvm_set_odepth (pvm vm, unsigned int odepth);
+int pvm_omaps (pvm vm)
+  __attribute__ ((visibility ("hidden")));
 
-unsigned int pvm_oacutoff (pvm vm);
-void pvm_set_oacutoff (pvm vm, unsigned int cutoff);
+void pvm_set_omaps (pvm vm, int omaps)
+  __attribute__ ((visibility ("hidden")));
+
+unsigned int pvm_oindent (pvm vm)
+  __attribute__ ((visibility ("hidden")));
+
+void pvm_set_oindent (pvm vm, unsigned int oindent)
+  __attribute__ ((visibility ("hidden")));
+
+unsigned int pvm_odepth (pvm vm)
+  __attribute__ ((visibility ("hidden")));
+
+void pvm_set_odepth (pvm vm, unsigned int odepth)
+  __attribute__ ((visibility ("hidden")));
+
+unsigned int pvm_oacutoff (pvm vm)
+  __attribute__ ((visibility ("hidden")));
+void pvm_set_oacutoff (pvm vm, unsigned int cutoff)
+  __attribute__ ((visibility ("hidden")));
 
 /* Get/set the compiler associated to a virtual machine.
 
@@ -547,22 +639,28 @@ void pvm_set_oacutoff (pvm vm, unsigned int cutoff);
 
 typedef struct pkl_compiler *pkl_compiler;
 
-pkl_compiler pvm_compiler (pvm vm);
-void pvm_set_compiler (pvm vm, pkl_compiler compiler);
+pkl_compiler pvm_compiler (pvm vm)
+  __attribute__ ((visibility ("hidden")));
+
+void pvm_set_compiler (pvm vm, pkl_compiler compiler)
+  __attribute__ ((visibility ("hidden")));
 
 /* The following function is to be used in pvm.jitter, because the
    system `assert' may expand to a macro and is therefore
    non-wrappeable.  */
 
-void pvm_assert (int expression);
+void pvm_assert (int expression)
+  __attribute__ ((visibility ("hidden")));
 
 /* This is defined in the late-c block in pvm.jitter.  */
 
-void pvm_handle_signal (int signal_number);
+void pvm_handle_signal (int signal_number)
+  __attribute__ ((visibility ("hidden")));
 
 /* Call the pretty printer of the given value VAL.  */
 
-int pvm_call_pretty_printer (pvm vm, pvm_val val);
+int pvm_call_pretty_printer (pvm vm, pvm_val val)
+  __attribute__ ((visibility ("hidden")));
 
 /* Print a PVM value.
 
@@ -596,10 +694,13 @@ int pvm_call_pretty_printer (pvm vm, pvm_val val);
 #define PVM_PRINT_F_MAPS   1
 #define PVM_PRINT_F_PPRINT 2
 
-void pvm_print_val (pvm vm, pvm_val val);
+void pvm_print_val (pvm vm, pvm_val val)
+  __attribute__ ((visibility ("hidden")));
+
 void pvm_print_val_with_params (pvm vm, pvm_val val,
                                 int depth,int mode, int base,
                                 int indent, int acutoff,
-                                uint32_t flags);
+                                uint32_t flags)
+  __attribute__ ((visibility ("hidden")));
 
 #endif /* ! PVM_H */

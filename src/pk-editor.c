@@ -26,9 +26,6 @@
 #include "findprog.h"
 #include "pathmax.h"
 
-#include "pk-utils.h"
-#include "pk-term.h"
-
 #include "poke.h"
 #include "pk-cmd.h"
 

@@ -33,14 +33,8 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
-#include "pkl.h"
-#include "ios.h"
-#include "pk-term.h"
-
 #include "poke.h"
-#include "pkl-parser.h"
 #include "pk-cmd.h"
-
 
 /* Table of supported commands.  */
 
@@ -371,32 +365,6 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 
               switch (*a)
                 {
-                case 'e':
-                  {
-                    /* Compile a poke program.  */
-                    pvm_program program;
-                    const char *end;
-                    const char *program_string;
-
-                    program_string = p;
-                    program = pkl_compile_expression (poke_compiler,
-                                                      program_string, &end);
-                    if (program != NULL)
-                      {
-                        argv[argc].val.program = program;
-                        match = 1;
-
-                        argv[argc].type = PK_CMD_ARG_EXP;
-                        p = end;
-                      }
-                    else
-                      /* The compiler should have emitted diagnostic
-                         messages, so don't bother the user with the
-                         usage message.  */
-                      besilent = 1;
-
-                    break;
-                  }
                 case 'i':
                 case 'n':
                   /* Parse an integer or natural.  */
@@ -408,20 +376,6 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
                       if (*p == ',' || *p == '\0')
                         {
                           argv[argc].type = PK_CMD_ARG_INT;
-                          match = 1;
-                        }
-                    }
-
-                  break;
-                case 'a':
-                  /* Parse an address.  */
-                  p = skip_blanks (p);
-                  if (pk_atoi (&p, &(argv[argc].val.addr)))
-                    {
-                      p = skip_blanks (p);
-                      if (*p == ',' || *p == '\0')
-                        {
-                          argv[argc].type = PK_CMD_ARG_ADDR;
                           match = 1;
                         }
                     }
@@ -543,7 +497,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 
   /* Process command flags.  */
   if (cmd->flags & PK_CMD_F_REQ_IO
-      && ios_cur () == NULL)
+      && pk_ios_cur (poke_compiler) == NULL)
     {
       pk_puts (_("This command requires an IO space.  Use the `file' command."));
       return 0;
@@ -551,9 +505,9 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 
   if (cmd->flags & PK_CMD_F_REQ_W)
     {
-      ios cur_io = ios_cur ();
+      pk_ios cur_io = pk_ios_cur (poke_compiler);
       if (cur_io == NULL
-          || !(ios_flags (cur_io) & IOS_F_READ))
+          || !(pk_ios_flags (cur_io) & PK_IOS_F_READ))
         {
           pk_puts (_("This command requires a writable IO space."));
           return 0;
@@ -570,10 +524,6 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
     {
       if (argv[i].type == PK_CMD_ARG_STR)
         free (argv[i].val.str);
-      if (argv[i].type == PK_CMD_ARG_EXP
-          || argv[i].type == PK_CMD_ARG_DEF
-          || argv[i].type == PK_CMD_ARG_STMT)
-        pvm_destroy_program (argv[i].val.program);
     }
 
   if (!besilent)
@@ -615,7 +565,6 @@ pk_cmd_exec (const char *str)
     {
       const char *ecmd = cmd, *end;
       char *cmd_alloc = NULL;
-      pvm_val val;
       int what; /* 0 -> declaration, 1 -> statement */
       int retval = 1;
 
@@ -645,23 +594,20 @@ pk_cmd_exec (const char *str)
       if (what == 0)
         {
           /* Declaration.  */
-          if (!pkl_compile_buffer (poke_compiler, ecmd, &end)) {
-            retval = 0;
-            goto cleanup;
-          }
+          if (!pk_compile_buffer (poke_compiler, ecmd, &end))
+            {
+              retval = 0;
+              goto cleanup;
+            }
         }
       else
         {
           /* Statement.  */
-          if (!pkl_compile_statement (poke_compiler, ecmd, &end, &val)) {
-            retval = 0;
-            goto cleanup;
-          }
-
-          if (val != PVM_NULL)
+          if (!pk_compile_statement (poke_compiler, ecmd, &end))
             {
-              pvm_print_val (poke_vm, val);
-              pk_puts ("\n");
+              printf ("PF\n");
+              retval = 0;
+              goto cleanup;
             }
         }
 
@@ -746,7 +692,7 @@ pk_cmd_init (void)
   set_trie = pk_trie_from_cmds (set_cmds);
 
   /* Compile commands written in Poke.  */
-  if (!pkl_load (poke_compiler, "pk-cmd"))
+  if (!pk_load (poke_compiler, "pk-cmd"))
     {
       pk_puts ("poke: error: unable to load the pk-cmd module.\n");
       exit (EXIT_FAILURE);
