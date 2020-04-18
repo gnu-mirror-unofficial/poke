@@ -1,3 +1,10 @@
+2020-04-18  John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi (Array maps bounded by number of elements): New node.
+	* doc/poke.texi (Array maps bounded by size): New node.
+	* doc/poke.texi (Unbounded array maps): New node.
+	* doc/poke.texi (Mapped bounds in bounded arrays): New node.
+
 2020-04-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pvm-program.h (pvm_program_routine): Set ELF visibility to

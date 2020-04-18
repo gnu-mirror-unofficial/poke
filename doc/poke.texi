@@ -7398,7 +7398,16 @@ XXX
 Arrays can be mapped in IO space in three different ways, depending on
 the characteristics of the type provided to the mapping operator.
 
+@menu
+* Array maps bounded by number of elements::
+* Array maps bounded by size::
+* Unbounded array maps::
+* Mapped bounds in bounded arrays::
+@end menu
+
+@node Array maps bounded by number of elements
 @subsubsection Array maps bounded by number of elements
+
 When an array type bounded by number of elements is used in a mapping
 operation, the resulting mapped array is also bounded by number of
 elements.
@@ -7436,6 +7445,7 @@ Likewise, if a constraint fails while performing the mapping (while
 mapping an array of structs, for example) an exception is raised and
 the map is aborted.
 
+@node Array maps bounded by size
 @subsubsection Array maps bounded by size
 
 While dealing with binary formats, it often happens that the number of
@@ -7526,6 +7536,7 @@ Like in mappings bounded by number of elements, if a constraint fails
 while performing the mapping, an exception is raised and the map is
 aborted.
 
+@node Unbounded array maps
 @subsubsection Unbounded array maps
 
 We mentioned above that if an end-of-file condition happens while
@@ -7570,6 +7581,7 @@ the blocks, the constraint in the @code{magic} field will fail and
 will delimit the map that way (provided the binary format is well
 designed.)
 
+@node Mapped bounds in bounded arrays
 @subsubsection Mapped bounds in bounded arrays
 
 When an array map is bounded, be it by number of elements or by size,
