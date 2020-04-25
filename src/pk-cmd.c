@@ -638,10 +638,7 @@ pk_cmd_exec (const char *str)
       if (strncmp (ecmd, "defun ", 6) != 0
           && strncmp (ecmd, "defun\t", 6) != 0)
         {
-          size_t len = strlen (cmd);
-          cmd_alloc = xmalloc (len + 2);
-          memcpy (cmd_alloc, cmd, len);
-          memcpy (cmd_alloc + len, ";", 2); /* incl. trailing 0 */
+          cmd_alloc = pk_str_concat (cmd, ";", NULL);
           ecmd = cmd_alloc;
         }
 

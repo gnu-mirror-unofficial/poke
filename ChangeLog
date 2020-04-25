@@ -1,5 +1,9 @@
 2020-04-25  John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-cmd.c (pk_cmd_exec): Use pk_str_concat.
+
+2020-04-25  John Darrington <john@darrington.wattle.id.au>
+
 	* src/poke.c (parse_args): Remove redundant variable "ret".
 	* src/poke.c (initialize_user): Ditto.
 
