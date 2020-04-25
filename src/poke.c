@@ -283,8 +283,7 @@ parse_args (int argc, char *argv[])
         case CMD_ARG:
           {
             poke_interactive_p = 0;
-            int ret = pk_cmd_exec (optarg);
-            if (!ret)
+            if (!pk_cmd_exec (optarg))
               goto exit_failure;
             break;
           }
@@ -292,8 +291,7 @@ parse_args (int argc, char *argv[])
         case SCRIPT_ARG:
           {
             poke_interactive_p = 0;
-            int ret = pk_cmd_exec_script (optarg);
-            if (!ret)
+            if (!pk_cmd_exec_script (optarg))
               goto exit_failure;
             break;
           }
@@ -431,13 +429,11 @@ initialize_user ()
 
   if (homedir != NULL)
     {
-      int ret;
       char *pokerc = pk_str_concat (homedir, "/.pokerc", NULL);
 
       if (pk_file_readable (pokerc) == NULL)
         {
-          ret = pk_cmd_exec_script (pokerc);
-          if (!ret)
+          if (!pk_cmd_exec_script (pokerc))
             exit (EXIT_FAILURE);
           else
             return;
