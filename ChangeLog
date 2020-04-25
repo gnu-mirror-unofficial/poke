@@ -1,5 +1,9 @@
 2020-04-25  John Darrington <john@darrington.wattle.id.au>
 
+	* src/poke.c (pk_print_version): Add comment for translators.
+
+2020-04-25  John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-cmd.c (pk_cmd_exec): Use pk_str_concat.
 
 2020-04-25  John Darrington <john@darrington.wattle.id.au>

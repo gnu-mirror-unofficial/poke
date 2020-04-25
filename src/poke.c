@@ -208,6 +208,10 @@ pk_print_version ()
      as done here, to avoid having to retranslate the message when a new
      year comes around.  */
   pk_term_class ("copyright");
+  /* TRANSLATORS:
+     If your target locale supports it, you can translate (C) to the
+     copyright symbol (U+00A9 in Unicode), but there is no obligation
+     to do this.  In other cases it's probably best to leave it untranslated.  */
   pk_printf (_("\
 %s (C) %s Jose E. Marchesi.\n\
 License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019, 2020");
