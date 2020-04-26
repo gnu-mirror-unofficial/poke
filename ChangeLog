@@ -1,3 +1,13 @@
+2020-04-26  John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-hserver.c (pk_hserver_init): Change signature to take void.
+	* src/pk-hserver.c (pk_hserver_shutdown): Ditto
+	* src/poke.c (print_help): Ditto
+	* src/poke.c (pk_print_version): Ditto
+	* src/poke.c (finalize): Ditto
+	* src/poke.c (initialize_user): Ditto
+	* src/poke.h (initialize_user): Ditto
+
 2020-04-25  John Darrington <john@darrington.wattle.id.au>
 
 	* src/poke.c (pk_print_version): Add comment for translators.

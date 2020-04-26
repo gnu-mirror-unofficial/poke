@@ -263,7 +263,7 @@ hserver_thread_worker (void *data)
 }
 
 void
-pk_hserver_init ()
+pk_hserver_init (void)
 {
   int ret;
   int i;
@@ -307,7 +307,7 @@ pk_hserver_init ()
 }
 
 void
-pk_hserver_shutdown ()
+pk_hserver_shutdown (void)
 {
   int ret;
   void *res;

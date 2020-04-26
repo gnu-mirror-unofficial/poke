@@ -131,7 +131,7 @@ static const struct option long_options[] =
 };
 
 static void
-print_help ()
+print_help (void)
 {
   /* TRANSLATORS: --help output, GNU poke synopsis.
      no-wrap */
@@ -191,7 +191,7 @@ Report bugs to: %s\n"), PACKAGE_BUGREPORT);
 }
 
 void
-pk_print_version ()
+pk_print_version (void)
 {
   pk_term_class ("logo");
   pk_puts ("     _____\n");
@@ -233,7 +233,7 @@ Perpetrated by Jose E. Marchesi.\n"));
 }
 
 static void
-finalize ()
+finalize (void)
 {
 #ifdef HAVE_HSERVER
   if (poke_hserver_p)
@@ -425,7 +425,7 @@ initialize (int argc, char *argv[])
 }
 
 static void
-initialize_user ()
+initialize_user (void)
 {
   /* Load the user's initialization file ~/.pokerc, if it exists in
      the HOME directory.  */

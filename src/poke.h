@@ -37,6 +37,6 @@ extern char *poke_picklesdir;
 extern char *poke_cmdsdir;
 extern char *poke_doc_viewer;
 
-void pk_print_version ();
+void pk_print_version (void);
 
 #endif /* !POKE_H */
