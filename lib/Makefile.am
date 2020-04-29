@@ -24,7 +24,7 @@ dist_pkgdata_DATA = pkl-rt.pk std.pk
 
 lib_LTLIBRARIES = libpoke.la
 
-include_HEADERS = libpoke.h
+include_HEADERS = libpoke.h pk-utils.h pk-term.h
 
 libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pkl.h pkl.c \
