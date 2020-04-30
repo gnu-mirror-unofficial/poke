@@ -1,3 +1,7 @@
+2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* HACKING: Add lib/libpoke.[ch] to the source tree appendix.
+
 2020-04-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/Makefile.am (include_HEADERS): Add missing pk-utils.h and

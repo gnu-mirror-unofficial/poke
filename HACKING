@@ -1785,10 +1785,19 @@ The poke library
 The source files for ``libpoke`` are located in the ``lib/``
 subdirectory.
 
+Public Library Services
+.......................
+
+Public Headers
+  ``lib/libpoke.h``
+
+Public Library Services
+  ``lib/libpoke.c``
+
 The Compiler
 ............
 
-Public Headers
+Internal Public Headers
   ``lib/pkl.h``, ``lib/pkl-ast.h``
 
 Support for abstract syntax trees
@@ -1840,7 +1849,7 @@ Compiler run-time library
 The Poke Virtual Machine
 ........................
 
-Public Headers
+Internal Public Headers
   ``lib/pvm.h``
 
 Virtual machine driver
