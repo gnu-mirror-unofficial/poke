@@ -1,5 +1,9 @@
 2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING: Document lib/pkt.h.
+
+2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/libpoke.h (pk_compiler_new): Remove the term_payload
 	argument.
 	* lib/libpoke.c (pk_compiler_new): Likewise.

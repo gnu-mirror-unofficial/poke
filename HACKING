@@ -1894,6 +1894,12 @@ Utility Services
 Utility functions used by everyone else
   ``lib/pk-utils.h``, ``lib/pk-utils.c``
 
+Internal Services
+.................
+
+Macros to output to terminal
+  ``lib/pkt.h``
+
 The poke utility
 ~~~~~~~~~~~~~~~~
 
