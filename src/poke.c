@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <locale.h>
+#include <textstyle.h>
 #include "xalloc.h"
 
 #ifdef HAVE_HSERVER
@@ -35,6 +36,7 @@
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-repl.h"
+#include "pk-term.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */
@@ -235,6 +237,20 @@ finalize (void)
   pk_term_shutdown ();
 }
 
+/* Callbacks for the terminal output in libpoke.  */
+
+static struct pk_term_if poke_term_if =
+  {
+    .flush_fn = pk_term_flush,
+    .puts_fn = pk_puts,
+    .printf_fn = pk_printf,
+    .indent_fn = pk_term_indent,
+    .class_fn = pk_term_class,
+    .end_class_fn = pk_term_end_class,
+    .hyperlink_fn = pk_term_hyperlink,
+    .end_hyperlink_fn = pk_term_end_hyperlink
+  };
+
 static void
 parse_args (int argc, char *argv[])
 {
@@ -386,7 +402,8 @@ initialize (int argc, char *argv[])
   pk_term_init (argc, argv);
 
   /* Initialize the poke incremental compiler.  */
-  poke_compiler = pk_compiler_new (poke_datadir);
+  poke_compiler = pk_compiler_new (poke_datadir,
+                                   &poke_term_if, NULL);
 
   /* Initialize the command subsystem.  This should be done even if
      called non-interactively.  */

@@ -1,5 +1,37 @@
 2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/libpoke.c (pk_compiler_new): Get new arguments term_if and
+	term_payload.
+	* lib/libpoke.h (pk_term_flush_fn): New type.
+	(pk_term_puts_fn): Likewise.
+	(pk_term_printf_fn): Likewise.
+	(pk_term_class_fn): Likewise.
+	(pk_term_end_class_fn): Likewise.
+	(pk_term_hyperlink_fn): Likewise.
+	(pk_term_end_hyperlink_fn): Likewise.
+	* src/pk-term.h: Moved from lib.
+	* src/pk-term.c: Likewise.
+	* src/Makefile.am (poke_SOURCES): Add pk-term.h and pk-term.c.
+	(poke_LDADD): Add libtextstyle.
+	* lib/Makefile.am (libpoke_la_LIBADD): Remove libtextstyle.
+	* lib/Makefile.am (libpoke_la_SOURCES): Remove pk-term.h and
+	pk-term.c.
+	(include_HEADERS): Remove pk-term.h.
+	* HACKING: Updated to reflect relocated sources.
+	* lib/pkt.h: New file.
+	* src/pk-cmd.c: Include pk-term.h.
+	* src/poke.c: Likewise.
+	* src/pk-vm.c: Likewise.
+	* src/pk-set.c: Likewise.
+	* src/pk-repl.c: Likewise.
+	* src/pk-misc.c: Likewise.
+	* src/pk-ios.c: Likewise.
+	* src/pk-hserver.c: Likewise.
+	* src/pk-editor.c: Likewise.
+	* src/pk-def.c: Likewise.
+
+2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING: Add lib/libpoke.[ch] to the source tree appendix.
 
 2020-04-29  Jose E. Marchesi  <jemarch@gnu.org>

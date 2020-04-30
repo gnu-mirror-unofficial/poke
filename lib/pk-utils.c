@@ -31,7 +31,7 @@
 #include <string.h> /* strcpy */
 #include <xalloc.h> /* xmalloc */
 
-#include "pk-term.h"
+#include "pkt.h"
 #include "pk-utils.h"
 
 char *

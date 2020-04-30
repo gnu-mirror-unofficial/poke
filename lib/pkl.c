@@ -26,8 +26,8 @@
 #include <string.h>
 #include <xalloc.h>
 
+#include "pkt.h"
 #include "pk-utils.h"
-#include "pk-term.h"
 
 #include "pkl.h"
 #include "pvm-val.h"

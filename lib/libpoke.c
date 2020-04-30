@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "pkt.h"
 #include "pkl.h"
 #include "pkl-ast.h" /* XXX */
 #include "pkl-env.h" /* XXX */
@@ -33,14 +34,20 @@ struct pk_compiler
   pvm vm;
 };
 
+struct pk_term_if libpoke_term_if
+__attribute__ ((visibility ("hidden")));
+
 pk_compiler
-pk_compiler_new (const char *rtpath)
+pk_compiler_new (const char *rtpath,
+                 struct pk_term_if *term_if,
+                 void *term_payload)
 {
   pk_compiler pkc
     = malloc (sizeof (struct pk_compiler));
 
   if (pkc)
     {
+      libpoke_term_if = *term_if;
       pkc->vm = pvm_init ();
       pkc->compiler = pkl_new (pkc->vm, rtpath);
       pvm_set_compiler (pkc->vm, pkc->compiler);

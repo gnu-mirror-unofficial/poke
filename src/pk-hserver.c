@@ -37,6 +37,7 @@
 #include "pk-cmd.h"
 #include "pk-hserver.h"
 #include "pk-repl.h"
+#include "pk-term.h"
 
 /* The app:// protocol defines a maximum length of messages of two
    kilobytes.  */

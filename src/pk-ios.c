@@ -30,6 +30,7 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
+#include "pk-term.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif

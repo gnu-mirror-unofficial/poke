@@ -22,7 +22,6 @@
 #include <config.h>
 
 #include "pk-utils.h"
-#include "pk-term.h"
 
 typedef struct pk_compiler *pk_compiler;
 typedef struct pk_ios *pk_ios;
@@ -34,15 +33,56 @@ typedef struct pk_ios *pk_ios;
 #define PK_OK 0
 #define PK_ERROR 1
 
+/* Terminal output callbacks.  */
+
+struct pk_term_if
+{
+  /* Flush the output in the terminal.  */
+  void (*flush_fn) (void);
+
+  /* Output a NULL-terminated C string.  */
+  void (*puts_fn) (const char *str);
+
+  /* Output a formatted string.  */
+  void (*printf_fn) (const char *format, ...);
+
+  /* Output LVL levels of indentation, using STEP white chars in each
+     indentation level.  */
+  void (*indent_fn) (unsigned int lvl, unsigned int step);
+
+  /* Mark the beginning of a styling class with name CLASS.  */
+  void (*class_fn) (const char *class);
+
+  /* Mark the end of a styling class with name CLASS.  */
+  void (*end_class_fn) (const char *class);
+
+  /* Mark the beginning of an hyperlink with url URL and identifier
+     ID.  The identifier can be NULL.  */
+  void (*hyperlink_fn) (const char *url, const char *id);
+
+  /* Mark the end of the current hyperlink.  */
+  void (*end_hyperlink_fn) (void);
+};
+
 /* Create and return a new Poke incremental compiler.
 
    RTPATH should contain the name of a directory where the compiler
    can find its run-time support files.
 
+   TERM_IF is a pointer to a struct pk_term_if containing pointers to
+   functions providing the output routines to be used by the
+   incremental compiler.
+
+   TERM_PAYLOAD is a payload that will be passed to the callbacks in
+   TERM_IF.  This payload is not used by libpoke other than for
+   passing it back.
+
    If there is an error creating the compiler this function returns
    NULL.  */
 
-pk_compiler pk_compiler_new (const char *rtpath);
+pk_compiler pk_compiler_new (const char *rtpath,
+                             struct pk_term_if *term_if,
+                             void *term_payload);
 
 /* Destroy an instance of a Poke incremental compiler.
 

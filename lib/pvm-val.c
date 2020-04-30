@@ -23,16 +23,14 @@
 #include <inttypes.h>
 #include "xalloc.h"
 
+#include "pkt.h"
 #include "pkl.h"
 #include "pvm.h"
 #include "pvm-program.h"
 #include "pvm-val.h"
-
 #include "pkl-asm.h"
-
 #include "pvm-alloc.h"
 #include "pk-utils.h"
-#include "pk-term.h"
 
 pvm_val
 pvm_make_int (int32_t value, int size)

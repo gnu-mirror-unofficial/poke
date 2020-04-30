@@ -23,6 +23,7 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
+#include "pk-term.h"
 
 static void
 print_var_decl (int kind,

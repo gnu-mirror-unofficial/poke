@@ -86,7 +86,7 @@ early-header-c
 #   include "pvm.h"
 #   include "pvm-val.h"
 #   include "ios.h"
-#   include "pk-term.h"
+#   include "pkt.h"
 #   include "pk-utils.h"
 
     /* Exception handlers, that are installed in the "exceptionstack".

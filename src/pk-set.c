@@ -27,6 +27,7 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
+#include "pk-term.h"
 
 static int
 pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)

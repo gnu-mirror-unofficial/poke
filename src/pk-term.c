@@ -26,7 +26,7 @@
 
 /* The following global is the libtextstyle output stream to use to
    emit contents to the terminal.  */
-styled_ostream_t pk_ostream;
+static styled_ostream_t pk_ostream;
 
 void
 pk_term_init (int argc, char *argv[])

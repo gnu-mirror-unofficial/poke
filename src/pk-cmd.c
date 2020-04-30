@@ -35,6 +35,7 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
+#include "pk-term.h"
 
 /* Table of supported commands.  */
 

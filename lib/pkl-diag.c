@@ -23,9 +23,9 @@
 #include "tmpdir.h"
 #include "tempname.h"
 
+#include "pkt.h"
 #include "pkl.h"
 #include "pkl-diag.h"
-#include "pk-term.h"
 
 static void
 pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,

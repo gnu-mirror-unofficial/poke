@@ -1888,12 +1888,6 @@ Poke Standard Library
 Standard library
   ``lib/std.pk``
 
-Terminal Services
-.................
-
-Terminal stuff
-  ``lib/pk-term.h``, ``lib/pk-term.c``
-
 Utility Services
 ................
 
@@ -1911,6 +1905,9 @@ Infrastructure for writing poke commands
 
 REPL
   ``src/pk-repl.h, ``src/pk-repl.c``
+
+Terminal stuff
+  ``lib/pk-term.h``, ``lib/pk-term.c``
 
 Terminal Hyperlinks Server
   ``src/pk-hserver.h``, ``src/pk-hserver.c``

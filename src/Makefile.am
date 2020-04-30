@@ -24,6 +24,7 @@ dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk
 
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \
+               pk-term.c pk-term.h \
                pk-repl.c pk-repl.h \
                pk-cmd.c pk-cmd.h \
                pk-ios.c \
@@ -45,7 +46,8 @@ poke_CFLAGS = -Wall
 poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(top_builddir)/lib/libpoke.la \
              $(LTLIBREADLINE) \
-             $(JITTER_LDADD)
+             $(JITTER_LDADD) \
+             $(LIBTEXTSTYLE)
 poke_LDFLAGS =
 
 if HSERVER

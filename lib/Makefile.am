@@ -24,9 +24,10 @@ dist_pkgdata_DATA = pkl-rt.pk std.pk
 
 lib_LTLIBRARIES = libpoke.la
 
-include_HEADERS = libpoke.h pk-utils.h pk-term.h
+include_HEADERS = libpoke.h pk-utils.h
 
 libpoke_la_SOURCES = libpoke.h libpoke.c \
+                     pkt.h \
                      pkl.h pkl.c \
                      pkl-ast.h pkl-ast.c \
                      pkl-env.h pkl-env.c \
@@ -52,7 +53,6 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pvm.jitter \
                      ios.c ios.h ios-dev.h \
                      ios-dev-file.c ios-dev-mem.c \
-                     pk-term.c pk-term.h \
                      pk-utils.h pk-utils.c
 
 if NBD
@@ -84,8 +84,7 @@ libpoke_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
 libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
 libpoke_la_LIBADD = libpvmjitter.la \
                     $(BDW_GC_LIBS) \
-                    $(LIBNBD_LIBS) \
-                    $(LIBTEXTSTYLE)
+                    $(LIBNBD_LIBS)
 libpoke_la_LDFLAGS =
 
 # Integration with jitter.
