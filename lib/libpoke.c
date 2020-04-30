@@ -39,8 +39,7 @@ __attribute__ ((visibility ("hidden")));
 
 pk_compiler
 pk_compiler_new (const char *rtpath,
-                 struct pk_term_if *term_if,
-                 void *term_payload)
+                 struct pk_term_if *term_if)
 {
   pk_compiler pkc
     = malloc (sizeof (struct pk_compiler));

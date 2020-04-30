@@ -73,16 +73,11 @@ struct pk_term_if
    functions providing the output routines to be used by the
    incremental compiler.
 
-   TERM_PAYLOAD is a payload that will be passed to the callbacks in
-   TERM_IF.  This payload is not used by libpoke other than for
-   passing it back.
-
    If there is an error creating the compiler this function returns
    NULL.  */
 
 pk_compiler pk_compiler_new (const char *rtpath,
-                             struct pk_term_if *term_if,
-                             void *term_payload);
+                             struct pk_term_if *term_if);
 
 /* Destroy an instance of a Poke incremental compiler.
 

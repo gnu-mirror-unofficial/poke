@@ -403,7 +403,7 @@ initialize (int argc, char *argv[])
 
   /* Initialize the poke incremental compiler.  */
   poke_compiler = pk_compiler_new (poke_datadir,
-                                   &poke_term_if, NULL);
+                                   &poke_term_if);
 
   /* Initialize the command subsystem.  This should be done even if
      called non-interactively.  */

@@ -1,5 +1,12 @@
 2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/libpoke.h (pk_compiler_new): Remove the term_payload
+	argument.
+	* lib/libpoke.c (pk_compiler_new): Likewise.
+	* src/poke.c (initialize): Likewise.
+
+2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/libpoke.c (pk_compiler_new): Get new arguments term_if and
 	term_payload.
 	* lib/libpoke.h (pk_term_flush_fn): New type.
