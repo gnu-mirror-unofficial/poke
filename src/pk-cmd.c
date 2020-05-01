@@ -606,7 +606,6 @@ pk_cmd_exec (const char *str)
           /* Statement.  */
           if (!pk_compile_statement (poke_compiler, ecmd, &end))
             {
-              printf ("PF\n");
               retval = 0;
               goto cleanup;
             }

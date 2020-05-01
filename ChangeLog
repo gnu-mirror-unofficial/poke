@@ -1,5 +1,20 @@
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/color.pk: New file.
+	* pickles/Makefile.am (dist_pkgdata_DATA): Add color.pk.
+	* testsuite/poke.color/color.exp: New testsuite.
+	* testsuite/poke.color/color-1.pk: New test.
+	* testsuite/poke.color/color-2.pk: Likewise.
+	* testsuite/poke.color/color-3.pk: Likewise.
+	* testsuite/poke.color/color-4.pk: Likewise.
+	* doc/poke.texi (Colors): New chapter.
+	(The Color Registry): New section.
+	* HACKING (Testing Pickles): New section.
+	(Writing Documentation): New chapter.
+	(Documenting Pickles): New section.
+
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING: update the libtool call for gdb line.
 
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>

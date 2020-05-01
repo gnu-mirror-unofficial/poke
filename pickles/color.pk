@@ -1,0 +1,647 @@
+/* colors.pk - Standard colors for GNU poke.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This pickle defines a registry of standard color names, and
+   facilities to define user-defined colors.  */
+
+/* The variable `color_num_colors' keeps the number of colors
+   currently defined in the registry.  */
+
+defvar color_num_colors = 0;
+
+/* The `color_register' function allocates a new color number in the
+   registry.  It updates color_num_colors accordingly.  The user can
+   define her own colors using this function, after loading this file.
+   These colors will be allocated at the end of the color space.  */
+
+defun color_register = int:
+  {
+    defvar c = color_num_colors;
+    color_num_colors = color_num_colors + 1;
+    return c;
+  }
+
+/* Register a set of standard colors.
+
+   These colors are based on the x11 color definition set.
+
+   New standard colors should be added at the end of the enumeration.
+   Once a color is defined here, it should never go away and its
+   position in the enumeration should never change.
+
+   Non-standard colors can be defined at the end of the register.  See
+   above.  */
+
+defvar color_snow = color_register;
+defvar color_ghost_white = color_register;
+defvar color_white_smoke = color_register;
+defvar color_gainsboro = color_register;
+defvar color_floral_white = color_register;
+defvar color_old_lace = color_register;
+defvar color_linen = color_register;
+defvar color_antique_white = color_register;
+defvar color_papaya_whip = color_register;
+defvar color_blanched_almond = color_register;
+defvar color_bisque = color_register;
+defvar color_peach_puff = color_register;
+defvar color_navajo_white = color_register;
+defvar color_moccasin = color_register;
+defvar color_cornsilk = color_register;
+defvar color_ivory = color_register;
+defvar color_lemon_chiffon = color_register;
+defvar color_seashell = color_register;
+defvar color_honeydew = color_register;
+defvar color_mint_cream = color_register;
+defvar color_azure = color_register;
+defvar color_alice_blue = color_register;
+defvar color_lavender = color_register;
+defvar color_lavender_blush = color_register;
+defvar color_misty_rose = color_register;
+defvar color_white = color_register;
+defvar color_black = color_register;
+defvar color_dark_slate_gray = color_register;
+defvar color_dark_slate_grey = color_register;
+defvar color_dim_gray = color_register;
+defvar color_dim_grey = color_register;
+defvar color_slate_gray = color_register;
+defvar color_slate_grey = color_register;
+defvar color_light_slate_gray = color_register;
+defvar color_light_slate_grey = color_register;
+defvar color_gray = color_register;
+defvar color_grey = color_register;
+defvar color_light_grey = color_register;
+defvar color_light_gray = color_register;
+defvar color_midnight_blue = color_register;
+defvar color_navy = color_register;
+defvar color_navy_blue = color_register;
+defvar color_cornflower_blue = color_register;
+defvar color_dark_slate_blue = color_register;
+defvar color_slate_blue = color_register;
+defvar color_medium_slate_blue = color_register;
+defvar color_light_slate_blue = color_register;
+defvar color_medium_blue = color_register;
+defvar color_royal_blue = color_register;
+defvar color_blue = color_register;
+defvar color_dodger_blue = color_register;
+defvar color_deep_sky_blue = color_register;
+defvar color_sky_blue = color_register;
+defvar color_light_sky_blue = color_register;
+defvar color_steel_blue = color_register;
+defvar color_light_steel_blue = color_register;
+defvar color_light_blue = color_register;
+defvar color_powder_blue = color_register;
+defvar color_pale_turquoise = color_register;
+defvar color_dark_turquoise = color_register;
+defvar color_medium_turquoise = color_register;
+defvar color_turquoise = color_register;
+defvar color_cyan = color_register;
+defvar color_light_cyan = color_register;
+defvar color_cadet_blue = color_register;
+defvar color_medium_aquamarine = color_register;
+defvar color_aquamarine = color_register;
+defvar color_dark_green = color_register;
+defvar color_dark_olive_green = color_register;
+defvar color_dark_sea_green = color_register;
+defvar color_sea_green = color_register;
+defvar color_medium_sea_green = color_register;
+defvar color_light_sea_green = color_register;
+defvar color_pale_green = color_register;
+defvar color_spring_green = color_register;
+defvar color_lawn_green = color_register;
+defvar color_green = color_register;
+defvar color_chartreuse = color_register;
+defvar color_medium_spring_green = color_register;
+defvar color_green_yellow = color_register;
+defvar color_lime_green = color_register;
+defvar color_yellow_green = color_register;
+defvar color_forest_green = color_register;
+defvar color_olive_drab = color_register;
+defvar color_dark_khaki = color_register;
+defvar color_khaki = color_register;
+defvar color_pale_goldenrod = color_register;
+defvar color_light_goldenrod_yellow = color_register;
+defvar color_light_yellow = color_register;
+defvar color_yellow = color_register;
+defvar color_gold = color_register;
+defvar color_light_goldenrod = color_register;
+defvar color_goldenrod = color_register;
+defvar color_dark_goldenrod = color_register;
+defvar color_rosy_brown = color_register;
+defvar color_indian_red = color_register;
+defvar color_saddle_brown = color_register;
+defvar color_sienna = color_register;
+defvar color_peru = color_register;
+defvar color_burlywood = color_register;
+defvar color_beige = color_register;
+defvar color_wheat = color_register;
+defvar color_sandy_brown = color_register;
+defvar color_tan = color_register;
+defvar color_chocolate = color_register;
+defvar color_firebrick = color_register;
+defvar color_brown = color_register;
+defvar color_dark_salmon = color_register;
+defvar color_salmon = color_register;
+defvar color_light_salmon = color_register;
+defvar color_orange = color_register;
+defvar color_dark_orange = color_register;
+defvar color_coral = color_register;
+defvar color_light_coral = color_register;
+defvar color_tomato = color_register;
+defvar color_orange_red = color_register;
+defvar color_red = color_register;
+defvar color_hot_pink = color_register;
+defvar color_deep_pink = color_register;
+defvar color_pink = color_register;
+defvar color_light_pink = color_register;
+defvar color_pale_violet_red = color_register;
+defvar color_maroon = color_register;
+defvar color_medium_violet_red = color_register;
+defvar color_violet_red = color_register;
+defvar color_magenta = color_register;
+defvar color_violet = color_register;
+defvar color_plum = color_register;
+defvar color_orchid = color_register;
+defvar color_medium_orchid = color_register;
+defvar color_dark_orchid = color_register;
+defvar color_dark_violet = color_register;
+defvar color_blue_violet = color_register;
+defvar color_purple = color_register;
+defvar color_medium_purple = color_register;
+defvar color_thistle = color_register;
+defvar color_snow1 = color_register;
+defvar color_snow2 = color_register;
+defvar color_snow3 = color_register;
+defvar color_snow4 = color_register;
+defvar color_seashell1 = color_register;
+defvar color_seashell2 = color_register;
+defvar color_seashell3 = color_register;
+defvar color_seashell4 = color_register;
+defvar color_bisque1 = color_register;
+defvar color_bisque2 = color_register;
+defvar color_bisque3 = color_register;
+defvar color_bisque4 = color_register;
+defvar color_cornsilk1 = color_register;
+defvar color_cornsilk2 = color_register;
+defvar color_cornsilk3 = color_register;
+defvar color_cornsilk4 = color_register;
+defvar color_ivory1 = color_register;
+defvar color_ivory2 = color_register;
+defvar color_ivory3 = color_register;
+defvar color_ivory4 = color_register;
+defvar color_honeydew1 = color_register;
+defvar color_honeydew2 = color_register;
+defvar color_honeydew3 = color_register;
+defvar color_honeydew4 = color_register;
+defvar color_azure1 = color_register;
+defvar color_azure2 = color_register;
+defvar color_azure3 = color_register;
+defvar color_azure4 = color_register;
+defvar color_blue1 = color_register;
+defvar color_blue2 = color_register;
+defvar color_blue3 = color_register;
+defvar color_blue4 = color_register;
+defvar color_turquoise1 = color_register;
+defvar color_turquoise2 = color_register;
+defvar color_turquoise3 = color_register;
+defvar color_turquoise4 = color_register;
+defvar color_cyan1 = color_register;
+defvar color_cyan2 = color_register;
+defvar color_cyan3 = color_register;
+defvar color_cyan4 = color_register;
+defvar color_aquamarine1 = color_register;
+defvar color_aquamarine2 = color_register;
+defvar color_aquamarine3 = color_register;
+defvar color_aquamarine4 = color_register;
+defvar color_green1 = color_register;
+defvar color_green2 = color_register;
+defvar color_green3 = color_register;
+defvar color_green4 = color_register;
+defvar color_chartreuse1 = color_register;
+defvar color_chartreuse2 = color_register;
+defvar color_chartreuse3 = color_register;
+defvar color_chartreuse4 = color_register;
+defvar color_khaki1 = color_register;
+defvar color_khaki2 = color_register;
+defvar color_khaki3 = color_register;
+defvar color_khaki4 = color_register;
+defvar color_yellow1 = color_register;
+defvar color_yellow2 = color_register;
+defvar color_yellow3 = color_register;
+defvar color_yellow4 = color_register;
+defvar color_gold1 = color_register;
+defvar color_gold2 = color_register;
+defvar color_gold3 = color_register;
+defvar color_gold4 = color_register;
+defvar color_goldenrod1 = color_register;
+defvar color_goldenrod2 = color_register;
+defvar color_goldenrod3 = color_register;
+defvar color_goldenrod4 = color_register;
+defvar color_sienna1 = color_register;
+defvar color_sienna2 = color_register;
+defvar color_sienna3 = color_register;
+defvar color_sienna4 = color_register;
+defvar color_burlywood1 = color_register;
+defvar color_burlywood2 = color_register;
+defvar color_burlywood3 = color_register;
+defvar color_burlywood4 = color_register;
+defvar color_wheat1 = color_register;
+defvar color_wheat2 = color_register;
+defvar color_wheat3 = color_register;
+defvar color_wheat4 = color_register;
+defvar color_tan1 = color_register;
+defvar color_tan2 = color_register;
+defvar color_tan3 = color_register;
+defvar color_tan4 = color_register;
+defvar color_chocolate1 = color_register;
+defvar color_chocolate2 = color_register;
+defvar color_chocolate3 = color_register;
+defvar color_chocolate4 = color_register;
+defvar color_firebrick1 = color_register;
+defvar color_firebrick2 = color_register;
+defvar color_firebrick3 = color_register;
+defvar color_firebrick4 = color_register;
+defvar color_brown1 = color_register;
+defvar color_brown2 = color_register;
+defvar color_brown3 = color_register;
+defvar color_brown4 = color_register;
+defvar color_salmon1 = color_register;
+defvar color_salmon2 = color_register;
+defvar color_salmon3 = color_register;
+defvar color_salmon4 = color_register;
+defvar color_orange1 = color_register;
+defvar color_orange2 = color_register;
+defvar color_orange3 = color_register;
+defvar color_orange4 = color_register;
+defvar color_coral1 = color_register;
+defvar color_coral2 = color_register;
+defvar color_coral3 = color_register;
+defvar color_coral4 = color_register;
+defvar color_tomato1 = color_register;
+defvar color_tomato2 = color_register;
+defvar color_tomato3 = color_register;
+defvar color_tomato4 = color_register;
+defvar color_red1 = color_register;
+defvar color_red2 = color_register;
+defvar color_red3 = color_register;
+defvar color_red4 = color_register;
+defvar color_pink1 = color_register;
+defvar color_pink2 = color_register;
+defvar color_pink3 = color_register;
+defvar color_pink4 = color_register;
+defvar color_maroon1 = color_register;
+defvar color_maroon2 = color_register;
+defvar color_maroon3 = color_register;
+defvar color_maroon4 = color_register;
+defvar color_magenta1 = color_register;
+defvar color_magenta2 = color_register;
+defvar color_magenta3 = color_register;
+defvar color_magenta4 = color_register;
+defvar color_orchid1 = color_register;
+defvar color_orchid2 = color_register;
+defvar color_orchid3 = color_register;
+defvar color_orchid4 = color_register;
+defvar color_plum1 = color_register;
+defvar color_plum2 = color_register;
+defvar color_plum3 = color_register;
+defvar color_plum4 = color_register;
+defvar color_purple1 = color_register;
+defvar color_purple2 = color_register;
+defvar color_purple3 = color_register;
+defvar color_purple4 = color_register;
+defvar color_thistle1 = color_register;
+defvar color_thistle2 = color_register;
+defvar color_thistle3 = color_register;
+defvar color_thistle4 = color_register;
+defvar color_gray0 = color_register;
+defvar color_grey0 = color_register;
+defvar color_gray1 = color_register;
+defvar color_grey1 = color_register;
+defvar color_gray2 = color_register;
+defvar color_grey2 = color_register;
+defvar color_gray3 = color_register;
+defvar color_grey3 = color_register;
+defvar color_gray4 = color_register;
+defvar color_grey4 = color_register;
+defvar color_gray5 = color_register;
+defvar color_grey5 = color_register;
+defvar color_gray6 = color_register;
+defvar color_grey6 = color_register;
+defvar color_gray7 = color_register;
+defvar color_grey7 = color_register;
+defvar color_gray8 = color_register;
+defvar color_grey8 = color_register;
+defvar color_gray9 = color_register;
+defvar color_grey9 = color_register;
+defvar color_gray10 = color_register;
+defvar color_grey10 = color_register;
+defvar color_gray11 = color_register;
+defvar color_grey11 = color_register;
+defvar color_gray12 = color_register;
+defvar color_grey12 = color_register;
+defvar color_gray13 = color_register;
+defvar color_grey13 = color_register;
+defvar color_gray14 = color_register;
+defvar color_grey14 = color_register;
+defvar color_gray15 = color_register;
+defvar color_grey15 = color_register;
+defvar color_gray16 = color_register;
+defvar color_grey16 = color_register;
+defvar color_gray17 = color_register;
+defvar color_grey17 = color_register;
+defvar color_gray18 = color_register;
+defvar color_grey18 = color_register;
+defvar color_gray19 = color_register;
+defvar color_grey19 = color_register;
+defvar color_gray20 = color_register;
+defvar color_grey20 = color_register;
+defvar color_gray21 = color_register;
+defvar color_grey21 = color_register;
+defvar color_gray22 = color_register;
+defvar color_grey22 = color_register;
+defvar color_gray23 = color_register;
+defvar color_grey23 = color_register;
+defvar color_gray24 = color_register;
+defvar color_grey24 = color_register;
+defvar color_gray25 = color_register;
+defvar color_grey25 = color_register;
+defvar color_gray26 = color_register;
+defvar color_grey26 = color_register;
+defvar color_gray27 = color_register;
+defvar color_grey27 = color_register;
+defvar color_gray28 = color_register;
+defvar color_grey28 = color_register;
+defvar color_gray29 = color_register;
+defvar color_grey29 = color_register;
+defvar color_gray30 = color_register;
+defvar color_grey30 = color_register;
+defvar color_gray31 = color_register;
+defvar color_grey31 = color_register;
+defvar color_gray32 = color_register;
+defvar color_grey32 = color_register;
+defvar color_gray33 = color_register;
+defvar color_grey33 = color_register;
+defvar color_gray34 = color_register;
+defvar color_grey34 = color_register;
+defvar color_gray35 = color_register;
+defvar color_grey35 = color_register;
+defvar color_gray36 = color_register;
+defvar color_grey36 = color_register;
+defvar color_gray37 = color_register;
+defvar color_grey37 = color_register;
+defvar color_gray38 = color_register;
+defvar color_grey38 = color_register;
+defvar color_gray39 = color_register;
+defvar color_grey39 = color_register;
+defvar color_gray40 = color_register;
+defvar color_grey40 = color_register;
+defvar color_gray41 = color_register;
+defvar color_grey41 = color_register;
+defvar color_gray42 = color_register;
+defvar color_grey42 = color_register;
+defvar color_gray43 = color_register;
+defvar color_grey43 = color_register;
+defvar color_gray44 = color_register;
+defvar color_grey44 = color_register;
+defvar color_gray45 = color_register;
+defvar color_grey45 = color_register;
+defvar color_gray46 = color_register;
+defvar color_grey46 = color_register;
+defvar color_gray47 = color_register;
+defvar color_grey47 = color_register;
+defvar color_gray48 = color_register;
+defvar color_grey48 = color_register;
+defvar color_gray49 = color_register;
+defvar color_grey49 = color_register;
+defvar color_gray50 = color_register;
+defvar color_grey50 = color_register;
+defvar color_gray51 = color_register;
+defvar color_grey51 = color_register;
+defvar color_gray52 = color_register;
+defvar color_grey52 = color_register;
+defvar color_gray53 = color_register;
+defvar color_grey53 = color_register;
+defvar color_gray54 = color_register;
+defvar color_grey54 = color_register;
+defvar color_gray55 = color_register;
+defvar color_grey55 = color_register;
+defvar color_gray56 = color_register;
+defvar color_grey56 = color_register;
+defvar color_gray57 = color_register;
+defvar color_grey57 = color_register;
+defvar color_gray58 = color_register;
+defvar color_grey58 = color_register;
+defvar color_gray59 = color_register;
+defvar color_grey59 = color_register;
+defvar color_gray60 = color_register;
+defvar color_grey60 = color_register;
+defvar color_gray61 = color_register;
+defvar color_grey61 = color_register;
+defvar color_gray62 = color_register;
+defvar color_grey62 = color_register;
+defvar color_gray63 = color_register;
+defvar color_grey63 = color_register;
+defvar color_gray64 = color_register;
+defvar color_grey64 = color_register;
+defvar color_gray65 = color_register;
+defvar color_grey65 = color_register;
+defvar color_gray66 = color_register;
+defvar color_grey66 = color_register;
+defvar color_gray67 = color_register;
+defvar color_grey67 = color_register;
+defvar color_gray68 = color_register;
+defvar color_grey68 = color_register;
+defvar color_gray69 = color_register;
+defvar color_grey69 = color_register;
+defvar color_gray70 = color_register;
+defvar color_grey70 = color_register;
+defvar color_gray71 = color_register;
+defvar color_grey71 = color_register;
+defvar color_gray72 = color_register;
+defvar color_grey72 = color_register;
+defvar color_gray73 = color_register;
+defvar color_grey73 = color_register;
+defvar color_gray74 = color_register;
+defvar color_grey74 = color_register;
+defvar color_gray75 = color_register;
+defvar color_grey75 = color_register;
+defvar color_gray76 = color_register;
+defvar color_grey76 = color_register;
+defvar color_gray77 = color_register;
+defvar color_grey77 = color_register;
+defvar color_gray78 = color_register;
+defvar color_grey78 = color_register;
+defvar color_gray79 = color_register;
+defvar color_grey79 = color_register;
+defvar color_gray80 = color_register;
+defvar color_grey80 = color_register;
+defvar color_gray81 = color_register;
+defvar color_grey81 = color_register;
+defvar color_gray82 = color_register;
+defvar color_grey82 = color_register;
+defvar color_gray83 = color_register;
+defvar color_grey83 = color_register;
+defvar color_gray84 = color_register;
+defvar color_grey84 = color_register;
+defvar color_gray85 = color_register;
+defvar color_grey85 = color_register;
+defvar color_gray86 = color_register;
+defvar color_grey86 = color_register;
+defvar color_gray87 = color_register;
+defvar color_grey87 = color_register;
+defvar color_gray88 = color_register;
+defvar color_grey88 = color_register;
+defvar color_gray89 = color_register;
+defvar color_grey89 = color_register;
+defvar color_gray90 = color_register;
+defvar color_grey90 = color_register;
+defvar color_gray91 = color_register;
+defvar color_grey91 = color_register;
+defvar color_gray92 = color_register;
+defvar color_grey92 = color_register;
+defvar color_gray93 = color_register;
+defvar color_grey93 = color_register;
+defvar color_gray94 = color_register;
+defvar color_grey94 = color_register;
+defvar color_gray95 = color_register;
+defvar color_grey95 = color_register;
+defvar color_gray96 = color_register;
+defvar color_grey96 = color_register;
+defvar color_gray97 = color_register;
+defvar color_grey97 = color_register;
+defvar color_gray98 = color_register;
+defvar color_grey98 = color_register;
+defvar color_gray99 = color_register;
+defvar color_grey99 = color_register;
+defvar color_gray100 = color_register;
+defvar color_grey100 = color_register;
+defvar color_dark_grey = color_register;
+defvar color_dark_gray = color_register;
+defvar color_dark_blue = color_register;
+defvar color_dark_cyan = color_register;
+defvar color_dark_magenta = color_register;
+defvar color_dark_red = color_register;
+defvar color_light_green = color_register;
+
+/* color_LAST marks the first of the colors that is non-standard.
+   Pickles maintaining tables indexed by standard color codes should
+   use the range [0..color_LAST).  */
+
+defvar color_LAST = color_num_colors;
+
+/* Table with printable names of standard colors.  */
+
+defvar color_std_names =
+  ["snow",  "ghost white",  "white smoke",  "gainsboro",
+   "floral white", "old lace",  "linen",  "antique white",
+   "papaya whip",  "blanched almond", "bisque", "peach puff",
+   "navajo white",  "moccasin",  "cornsilk",  "ivory",
+   "lemon chiffon", "seashell",  "honeydew",  "mint cream",
+   "azure",  "alice blue",  "lavender",  "lavender blush",
+   "misty rose",  "white",  "black",  "dark slate gray",
+   "dark slate grey",  "dim gray",  "dim grey",  "slate gray",
+   "slate grey", "light slate gray", "light slate grey", "gray",
+   "grey", "light grey", "light gray", "midnight blue", "navy",
+   "navy blue", "cornflower blue", "dark slate blue", "slate blue",
+   "medium slate blue", "light slate blue", "medium blue", "royal blue",
+   "blue", "dodger blue", "deep sky blue", "sky blue", "light sky blue",
+   "steel blue", "light steel blue", "light blue", "powder blue",
+   "pale turquoise", "dark turquoise", "medium turquoise", "turquoise",
+   "cyan", "light cyan", "cadet blue", "medium aquamarine", "aquamarine",
+   "dark green", "dark olive green", "dark sea green", "sea green",
+   "medium sea green", "light sea green", "pale green", "spring green",
+   "lawn green",  "green", "chartreuse", "medium spring green",
+   "green yellow", "lime green", "yellow green", "forest green",
+   "olive drab", "dark khaki", "khaki", "pale goldenrod",
+   "light goldenrod yellow", "light yellow", "yellow", "gold",
+   "light goldenrod", "goldenrod", "dark goldenrod", "rosy brown",
+   "indian red", "saddle brown", "sienna", "peru", "burlywood", "beige",
+   "wheat", "sandy brown", "tan", "chocolate", "firebrick", "brown",
+   "dark salmon", "salmon", "light salmon", "orange", "dark orange",
+   "coral", "light coral", "tomato", "orange red", "red", "hot pink",
+   "deep pink", "pink", "light pink", "pale violet red", "maroon",
+   "medium violet red", "violet red", "magenta", "violet", "plum",
+   "orchid", "medium orchid", "dark orchid", "dark violet", "blue violet",
+   "purple", "medium purple", "thistle", "snow1", "snow2", "snow3", "snow4",
+   "seashell1", "seashell2", "seashell3", "seashell4", "bisque1", "bisque2",
+   "bisque3", "bisque4", "cornsilk1", "cornsilk2", "cornsilk3", "cornsilk4",
+   "ivory1", "ivory2", "ivory3", "ivory4", "honeydew1", "honeydew2",
+   "honeydew3", "honeydew4", "azure1", "azure2", "azure3", "azure4", "blue1",
+   "blue2", "blue3", "blue4", "turquoise1", "turquoise2", "turquoise3",
+   "turquoise4", "cyan1", "cyan2", "cyan3", "cyan4", "aquamarine1",
+   "aquamarine2", "aquamarine3", "aquamarine4", "green1", "green2", "green3",
+   "green4", "chartreuse1", "chartreuse2", "chartreuse3", "chartreuse4",
+   "khaki1", "khaki2", "khaki3", "khaki4", "yellow1", "yellow2", "yellow3",
+   "yellow4", "gold1", "gold2", "gold3", "gold4", "goldenrod1",
+   "goldenrod2", "goldenrod3", "goldenrod4", "sienna1", "sienna2", "sienna3",
+   "sienna4", "burlywood1", "burlywood2", "burlywood3", "burlywood4",
+   "wheat1", "wheat2", "wheat3", "wheat4", "tan1", "tan2", "tan3", "tan4",
+   "chocolate1", "chocolate2", "chocolate3", "chocolate4", "firebrick1",
+   "firebrick2", "firebrick3", "firebrick4", "brown1", "brown2", "brown3",
+   "brown4", "salmon1", "salmon2", "salmon3", "salmon4", "orange1", "orange2",
+   "orange3",  "orange4", "coral1", "coral2", "coral3", "coral4", "tomato1",
+   "tomato2", "tomato3", "tomato4", "red1", "red2", "red3", "red4",
+   "pink1", "pink2", "pink3", "pink4", "maroon1", "maroon2", "maroon3",
+   "maroon4", "magenta1", "magenta2", "magenta3", "magenta4", "orchid1",
+   "orchid2","orchid3", "orchid4", "plum1", "plum2", "plum3", "plum4",
+   "purple1", "purple2", "purple3", "purple4", "thistle1", "thistle2",
+   "thistle3", "thistle4", "gray0", "grey0", "gray1", "grey1", "gray2", "grey2",
+   "gray3", "grey3", "gray4", "grey4", "gray5", "grey5", "gray6", "grey6",
+   "gray7", "grey7", "gray8", "grey8", "gray9", "grey9", "gray10", "grey10",
+   "gray11", "grey11", "gray12", "grey12", "gray13", "grey13", "gray14", "grey14",
+   "gray15", "grey15", "gray16", "grey16", "gray17", "grey17", "gray18", "grey18",
+   "gray19", "grey19", "gray20", "grey20", "gray21", "grey21", "gray22", "grey22",
+   "gray23", "grey23", "gray24", "grey24", "gray25", "grey25", "gray26", "grey26",
+   "gray27", "grey27", "gray28", "grey28", "gray29", "grey29", "gray30", "grey30",
+   "gray31", "grey31", "gray32", "grey32", "gray33", "grey33", "gray34", "grey34",
+   "gray35", "grey35", "gray36", "grey36", "gray37", "grey37", "gray38", "grey38",
+   "gray39", "grey39", "gray40", "grey40", "gray41", "grey41", "gray42", "grey42",
+   "gray43", "grey43", "gray44", "grey44", "gray45", "grey45", "gray46", "grey46",
+   "gray47", "grey47", "gray48", "grey48", "gray49", "grey49", "gray50", "grey50",
+   "gray51", "grey51", "gray52", "grey52", "gray53", "grey53", "gray54", "grey54",
+   "gray55", "grey55", "gray56", "grey56", "gray57", "grey57", "gray58", "grey58",
+   "gray59", "grey59", "gray60", "grey60", "gray61", "grey61", "gray62", "grey62",
+   "gray63", "grey63", "gray64", "grey64", "gray65", "grey65", "gray66", "grey66",
+   "gray67", "grey67", "gray68", "grey68", "gray69", "grey69", "gray70", "grey70",
+   "gray71", "grey71", "gray72", "grey72", "gray73", "grey73", "gray74", "grey74",
+   "gray75", "grey75", "gray76", "grey76", "gray77", "grey77", "gray78", "grey78",
+   "gray79", "grey79", "gray80", "grey80", "gray81", "grey81", "gray82", "grey82",
+   "gray83", "grey83", "gray84", "grey84", "gray85", "grey85", "gray86", "grey86",
+   "gray87", "grey87", "gray88", "grey88", "gray89", "grey89", "gray90", "grey90",
+   "gray91", "grey91", "gray92", "grey92", "gray93", "grey93", "gray94", "grey94",
+   "gray95", "grey95", "gray96", "grey96", "gray97", "grey97", "gray98", "grey98",
+   "gray99", "grey99", "gray100", "grey100", "dark grey", "dark gray", "dark blue",
+   "dark cyan", "dark magenta", "dark red", "light green"
+   ];
+
+/* Sanity check.  */
+
+if (color_std_names'length != color_num_colors)
+  raise Exception {code= EC_generic,
+                   msg = "integrity error in color_name"};
+
+/* Return the printable name of the given color code.  */
+
+defun color_name = (int color) string:
+  {
+    if (color < color_LAST)
+      return color_std_names[color];
+    else if (color < color_num_colors)
+      return "user-defined color";
+    else
+      raise E_out_of_bounds;
+  }

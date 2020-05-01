@@ -61,69 +61,75 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        4.2  Writing Poke
        4.3  Writing RAS
      5  Writing Tests
-       5.1  Test framework
-       5.2  Naming Tests
-       5.3  Always set obase
-       5.4  Put each test in its own file
-       5.5  dg-output may require a newline
-       5.6  Using data files in tests
-       5.7  Using NBD connections in tests
-       5.8  Writing tests that depend on a certain capability
-       5.9  Writing REPL tests
-     6  Fuzzing poke
-       6.1  Grammarinator
-     7  Deciding on What to Work on
-     8  Submitting a Patch
-     9  Maintenance
-    10  Poke Architecture
-    11  The Poke Compiler
-      11.1  Compiler Overview
-      11.2  The bison Parser in pkl-tab.y
-      11.3  The AST
-        11.3.1  Loop Statements
-      11.4  Compiler Passes and Phases
-        11.4.1  Naming Conventions for Phases
-        11.4.2  Naming Conventions for Handlers
-        11.4.3  Transformation Phases
-        11.4.4  Analysis Phases
-        11.4.5  Type System Phases
-        11.4.6  Front and Middle End Handlers should be Re-entrant
-      11.5  The Type System
-        11.5.1  Type Expressions
-      11.6  Adding Compiler Built-Ins
-    12  The Poke Virtual Machine
-      12.1  Exception Handling
-      12.2  Signal Handling
-      12.3  Offsets and bit-offsets in the PVM
-    13  Memory Management
-      13.1  Using ASTREF
-      13.2  Using ASTDEREF
-      13.3  PVM values in PVM programs
-      13.4  PVM values in AST nodes
-    14  Terminal Handling
-      14.1  pk-term
-      14.2  Styling Classes
-      14.3  Debugging Styling
-    15  Debugging Poke
-      15.1  Building with Debugging support
-      15.2  Invoking GDB to debug an uninstalled poke
-      15.3  Using GDB extensions
-      15.4  Valgrind and Poke
-      15.5  Debugging PVM Assembly Code
-    16  Future Developments
-    17  Appendix: The Source Tree
-      17.1  The poke library
-        17.1.1  The Compiler
-        17.1.2  The Poke Virtual Machine
-        17.1.3  The IO Subsystem
-        17.1.4  Poke Standard Library
-        17.1.5  Terminal Services
-        17.1.6  Utility Services
-      17.2  The poke utility
-      17.3  Pickles
-      17.4  Test Suite
-      17.5  Documentation
-      17.6  Other Stuff
+       5. 1  Test framework
+       5. 2  Naming Tests
+       5. 3  Always set obase
+       5. 4  Put each test in its own file
+       5. 5  dg-output may require a newline
+       5. 6  Using data files in tests
+       5. 7  Using NBD connections in tests
+       5. 8  Writing tests that depend on a certain capability
+       5. 9  Writing REPL tests
+       5.10  Testing Pickles
+         5.10.1  Command REPL tests
+         5.10.2  General REPL tests
+     6  Writing Documentation
+       6.1  Documenting Pickles
+     7  Fuzzing poke
+       7.1  Grammarinator
+     8  Deciding on What to Work on
+     9  Submitting a Patch
+    10  Maintenance
+    11  Poke Architecture
+    12  The Poke Compiler
+      12.1  Compiler Overview
+      12.2  The bison Parser in pkl-tab.y
+      12.3  The AST
+        12.3.1  Loop Statements
+      12.4  Compiler Passes and Phases
+        12.4.1  Naming Conventions for Phases
+        12.4.2  Naming Conventions for Handlers
+        12.4.3  Transformation Phases
+        12.4.4  Analysis Phases
+        12.4.5  Type System Phases
+        12.4.6  Front and Middle End Handlers should be Re-entrant
+      12.5  The Type System
+        12.5.1  Type Expressions
+      12.6  Adding Compiler Built-Ins
+    13  The Poke Virtual Machine
+      13.1  Exception Handling
+      13.2  Signal Handling
+      13.3  Offsets and bit-offsets in the PVM
+    14  Memory Management
+      14.1  Using ASTREF
+      14.2  Using ASTDEREF
+      14.3  PVM values in PVM programs
+      14.4  PVM values in AST nodes
+    15  Terminal Handling
+      15.1  pk-term
+      15.2  Styling Classes
+      15.3  Debugging Styling
+    16  Debugging Poke
+      16.1  Building with Debugging support
+      16.2  Invoking GDB to debug an uninstalled poke
+      16.3  Using GDB extensions
+      16.4  Valgrind and Poke
+      16.5  Debugging PVM Assembly Code
+    17  Future Developments
+    18  Appendix: The Source Tree
+      18.1  The poke library
+        18.1.1  Public Library Services
+        18.1.2  The Compiler
+        18.1.3  The Poke Virtual Machine
+        18.1.4  The IO Subsystem
+        18.1.5  Poke Standard Library
+        18.1.6  Utility Services
+        18.1.7  Internal Services
+      18.2  The poke utility
+      18.3  Pickles
+      18.4  Test Suite
+      18.5  Documentation
+      18.6  Other Stuff
 
 
 Nomenclature
@@ -663,6 +669,12 @@ Adding a new test to ``poke.repl`` involves editing
 ``poke.repl/repl.exp`` and adding some content there.  The following
 subsections detail how.
 
+Testing Pickles
+~~~~~~~~~~~~~~~
+
+Each pickle in ``pickles/FOO.pk`` shall have a testsuite in
+``testsuite/poke.FOO`` with a driver ``testsuite/poke.FOO/FOO.exp``.
+
 Command REPL tests
 ..................
 
@@ -709,6 +721,23 @@ whenever needed.
 
 Note also how newlines are perceived by expect as the sequence
 ``\r\n``.
+
+Writing Documentation
+---------------------
+
+Documenting Pickles
+~~~~~~~~~~~~~~~~~~~
+
+The chapter ``Pickles`` in the Poke manual contains several sections
+organized in thematic areas.  When adding a new pickle, find the area
+appropriate for the abstractions provided by the pickle (or create one
+if it doesn't exist already) and add a section for it.
+
+Please make sure to document any dependency of your pickle to other
+pickles.
+
+Keep a tutorial-like tone: for fine details, the user can always go
+and look to the pickle directly.
 
 Fuzzing poke
 ------------

@@ -51,8 +51,10 @@ Documentation License''.
 Using poke
 * Basic Editing::		Poking bits, bytes and simple data.
 * Structuring Data::		Poking your own abstractions.
-
 * Debugging Poke Programs::	When something goes wrong.
+
+Pickles
+* Colors::			Editing colors.
 
 Reference Material
 * Dot-Commands::                Commanding the tool.
@@ -118,6 +120,9 @@ Structuring Data
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
+
+Colors
+* The Color Registry::		The @file{color} pickle.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -3899,6 +3904,79 @@ Expands to a string with the name of the file currently being compiled.  If the
 program is read from the standard input (like in the REPL) then this
 is @code{"<stdin>"}.
 @end table
+
+@node Colors
+@chapter Colors
+
+Colors are often found in binary data, encoded in several different
+ways.  GNU poke provides several pickles that makes it easier to work
+with these colors.
+
+@menu
+* The Color Registry::		The @file{color} pickle.
+@end menu
+
+@node The Color Registry
+@section The Color Registry
+
+The @file{color} pickle provides a registry of @dfn{standard colors},
+organized as an space of integers.  Each integer identifies a standard
+color, which are accessible as variables named @code{color_*} after
+the pickle is loaded.  Example:
+
+@example
+(poke) load color
+(poke) color_tomato
+114
+@end example
+
+The purpose of having this register is to have a global namespace for
+colors that can be used in different pickles.  The position of each
+color in the registry is totally unrelated to how the color may be
+encoded.  Other pickles, as we shall see below, contain tables
+associating standard colors with their encoding, such as RGB.
+
+If you want to add a new color that is not in the standard collection,
+you can use the @code{color_register} function, which gets no
+arguments:
+
+@example
+(poke) defvar mycolor = color_register
+(poke) mycolor
+490
+@end example
+
+The total number of registered colors is recorded in the variable
+@code{color_num_colors}.  You can use it to iterate on all the colors
+in the register, from @code{0} to @code{color_num_colors - 1}.
+
+The index in the registry of the first user-defined color is hold in
+the variable @code{color_LAST}.   For example, if you wanted to store
+a frob per standard color, you would do it like:
+
+@example
+(poke) defvar color_frobs = Frob[color_LAST]
+@end example
+
+The pickle also provides a function @code{color_name} that, given a
+color code, returns a printable name for the color, i.e. a string
+describing it.  For user-defined colors, this string is fixed:
+
+@example
+(poke) color_name (23)
+"lavender blush"
+(poke) color_name (color_register)
+"user-defined color"
+@end example
+
+@noindent
+If a non-existent color code is passed to @code{color_name} the
+function raises @code{E_out_of_bounds}:
+
+@example
+(poke) color_name (color_num_colors)
+unhandled out of bounds exception
+@end example
 
 @node Dot-Commands
 @chapter Dot-Commands
