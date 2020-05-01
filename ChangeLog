@@ -1,3 +1,8 @@
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-gen.c (pkl_gen_pr_loop_stmt): Optimize while(0) and
+	while(1).
+
 2020-05-01  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* po/POTFILES.in: Move lib/pk-term.[ch] to src/
