@@ -686,6 +686,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_if_stmt)
   pkl_ast_node if_then_stmt = PKL_AST_IF_STMT_THEN_STMT (if_stmt);
   pkl_ast_node if_else_stmt = PKL_AST_IF_STMT_ELSE_STMT (if_stmt);
 
+  if (PKL_AST_CODE (if_exp) == PKL_AST_INTEGER)
+    {
+      uint64_t exp_value = PKL_AST_INTEGER_VALUE (if_exp);
+
+      if (exp_value == 0)
+        {
+          if (if_else_stmt)
+            PKL_PASS_SUBPASS (if_else_stmt);
+        }
+      else
+        {
+          PKL_PASS_SUBPASS (if_then_stmt);
+        }
+
+      PKL_PASS_BREAK;
+    }
+  
   pkl_asm_if (PKL_GEN_ASM, if_exp);
   {
     PKL_PASS_SUBPASS (if_exp);
