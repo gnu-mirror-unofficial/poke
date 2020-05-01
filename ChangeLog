@@ -1,5 +1,10 @@
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pkl-gen.c (pkl_gen_pr_comp_stmt): Optimize empty compound
+	statements away.
+
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-gen.c (pkl_gen_pr_loop_stmt): Optimize while(0) and
 	while(1).
 

@@ -397,9 +397,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_comp_stmt)
   pkl_ast_node comp_stmt = PKL_PASS_NODE;
 
   if (PKL_AST_COMP_STMT_BUILTIN (comp_stmt) == PKL_AST_BUILTIN_NONE)
-    /* Push a frame into the environment.  */
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF,
-                  PKL_AST_COMP_STMT_NUMVARS (comp_stmt));
+    {
+      /* If the compound statement is empty, do not generate
+         anything.  */
+      if (PKL_AST_COMP_STMT_STMTS (comp_stmt) == NULL)
+        PKL_PASS_BREAK;
+
+      /* Push a frame into the environment.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF,
+                    PKL_AST_COMP_STMT_NUMVARS (comp_stmt));
+    }
 }
 PKL_PHASE_END_HANDLER
 
