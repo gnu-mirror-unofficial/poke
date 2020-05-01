@@ -2,5 +2,5 @@
 
 load color;
 
-/* { dg-command "color_snow" } */
+/* { dg-command "color_white" } */
 /* { dg-output "0" } */

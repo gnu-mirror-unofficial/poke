@@ -2,5 +2,5 @@
 
 load color;
 
-/* { dg-command "color_name (color_snow)" } */
-/* { dg-output {"snow"} } */
+/* { dg-command "color_name (color_tomato)" } */
+/* { dg-output {"tomato"} } */

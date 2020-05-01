@@ -123,6 +123,7 @@ Debugging Poke Programs
 
 Colors
 * The Color Registry::		The @file{color} pickle.
+* RGB24 Encoding::		Encoding colors with three bytes.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -3914,6 +3915,7 @@ with these colors.
 
 @menu
 * The Color Registry::		The @file{color} pickle.
+* RGB24 Encoding::		Encoding colors with three bytes.
 @end menu
 
 @node The Color Registry
@@ -3977,6 +3979,43 @@ function raises @code{E_out_of_bounds}:
 (poke) color_name (color_num_colors)
 unhandled out of bounds exception
 @end example
+
+@node RGB24 Encoding
+@section RGB24 Encoding
+
+The @dfn{RGB24} encoding encodes each color as a triplet of @dfn{color
+beans}, each beam indicating a level of red, green and blue
+respectively.
+
+Types are provided for both the color beams, and the triplets:
+
+@example
+deftype RGB24_Color_Beam = uint<8>;
+deftype RGB24_Color = RGB24_Color_Beam[3];
+@end example
+
+@noindent
+The indexes @code{RGB24_RED}, @code{RGB24_GREEN} and @code{RGB24_BLUE}
+can be used to access to an specific beam of a given color:
+
+@example
+(poke) rgb24_color[color_tomato][RGB24_GREEN]
+99UB
+@end example
+
+The @file{rgb24} pickle also provides a table associating poke
+standard colors (@pxref{The Color Registry}) with their RGB24
+encodings.  Once the pickle is loaded, this table is available in the
+variable @code{rgb24_color}.  The table is to be indexed by color
+codes:
+
+@example
+(poke) load rgb24
+(poke) rgb24_color[color_tomato]
+[255UB,99UB,71UB]
+@end example
+
+
 
 @node Dot-Commands
 @chapter Dot-Commands

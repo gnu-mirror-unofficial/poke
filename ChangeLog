@@ -1,5 +1,14 @@
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/color.pk: Reduce, and add comments.
+	* pickles/rgb24.pk: New file.
+	* pickles/Makefile.am (dist_pkgdata_DATA): Add rgb24.pk.
+	* testsuite/poke.rgb24/rgb24.exp: New testsuite.
+	* testsuite/poke.rgb24/rgb24-1.pk: New test.
+	* doc/poke.texi (RGB24 Encoding): New section.
+
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/color.pk: New file.
 	* pickles/Makefile.am (dist_pkgdata_DATA): Add color.pk.
 	* testsuite/poke.color/color.exp: New testsuite.
