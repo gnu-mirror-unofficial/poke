@@ -3957,7 +3957,7 @@ the variable @code{color_LAST}.   For example, if you wanted to store
 a frob per standard color, you would do it like:
 
 @example
-(poke) defvar color_frobs = Frob[color_LAST]
+(poke) deftype Frobs = Frob[color_LAST]
 @end example
 
 The pickle also provides a function @code{color_name} that, given a

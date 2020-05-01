@@ -1,5 +1,9 @@
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (The Color Registry): Fix example.
+
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/color.pk: Reduce, and add comments.
 	* pickles/rgb24.pk: New file.
 	* pickles/Makefile.am (dist_pkgdata_DATA): Add rgb24.pk.
