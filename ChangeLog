@@ -1,5 +1,10 @@
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/libpoke.c (pk_disassemble_function): Do not destroy the
+	disassembled program.
+
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-gen.c (pkl_gen_pr_comp_stmt): Optimize empty compound
 	statements away.
 

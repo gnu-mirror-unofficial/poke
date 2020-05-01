@@ -278,7 +278,6 @@ pk_disassemble_function (pk_compiler pkc,
   else
     pvm_disassemble_program (program);
 
-  pvm_destroy_program (program);
   return PK_OK;
 }
 
