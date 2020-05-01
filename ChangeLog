@@ -1,5 +1,9 @@
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING: update the libtool call for gdb line.
+
+2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Poking Structs): New section.
 
 2020-05-01  Jose E. Marchesi  <jemarch@gnu.org>
