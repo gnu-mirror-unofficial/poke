@@ -702,7 +702,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_if_stmt)
 
       PKL_PASS_BREAK;
     }
-  
+
   pkl_asm_if (PKL_GEN_ASM, if_exp);
   {
     PKL_PASS_SUBPASS (if_exp);
