@@ -1,3 +1,7 @@
+2020-05-01  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* po/POTFILES.in: Move lib/pk-term.[ch] to src/
+
 2020-04-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* HACKING: Document lib/pkt.h.

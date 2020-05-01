@@ -30,8 +30,6 @@ lib/pkl-trans.c
 lib/pkl-trans.h
 lib/pkl-typify.c
 lib/pkl-typify.h
-lib/pk-term.c
-lib/pk-term.h
 lib/pk-utils.c
 lib/pk-utils.h
 lib/pvm-alloc.c
@@ -56,6 +54,8 @@ src/pk-misc.c
 src/pk-repl.c
 src/pk-repl.h
 src/pk-set.c
+src/pk-term.c
+src/pk-term.h
 src/pk-vm.c
 src/poke.c
 src/poke.h
