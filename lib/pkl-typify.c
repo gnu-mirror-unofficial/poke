@@ -1355,14 +1355,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
       && (PKL_AST_FUNCALL_NARG (funcall) >
           PKL_AST_TYPE_F_NARG (funcall_function_type)))
     {
-      char *function_name = PKL_AST_FUNC_NAME (funcall_function);
       char *function_type_str = pkl_type_str (funcall_function_type,
                                               0 /* use_given_name */);
 
       PKL_ERROR (PKL_AST_LOC (funcall_function),
-                 "too many arguments passed to function %s\n\
+                 "too many arguments passed to function\n\
 with prototype %s",
-                 function_name != NULL ? function_name : "",
                  function_type_str);
       free (function_type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
@@ -2642,7 +2640,11 @@ struct pkl_phase pkl_phase_typify1
 
 
 
-/* Determine the completeness of a type node.  */
+/* Determine the completeness of a type node.
+
+   Also, since this is the last phase in the compiler front-end, mark
+   the type as processed, to avoid useless and potentially harmful
+   re-compilations.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
 {
@@ -2651,6 +2653,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY
       || PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT)
   PKL_AST_TYPE_COMPLETE (type) = pkl_ast_type_is_complete (type);
+
+  PKL_AST_TYPE_COMPILED (PKL_PASS_NODE) = 1;
 }
 PKL_PHASE_END_HANDLER
 
@@ -2689,6 +2693,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_op_sizeof)
   PKL_AST_TYPE_COMPLETE (op) = pkl_ast_type_is_complete (op);
 }
 PKL_PHASE_END_HANDLER
+
 
 struct pkl_phase pkl_phase_typify2
   __attribute__ ((visibility ("hidden"))) =

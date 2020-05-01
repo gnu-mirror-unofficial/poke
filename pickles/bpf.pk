@@ -198,6 +198,13 @@ defun bpf_opcode_class = (BPF_Insn_Opcode opcode) BPF_Insn_Class:
     }
   }
 
+defun bpf_opcode_imm64_p = (BPF_Insn_Opcode opcode) BPF_Insn_Class:
+  {
+    return (bpf_opcode_class (opcode) == BPF_INSN_CLASS_LD
+            && opcode.ldst.mode == BPF_LDST_INSN_MODE_IMM
+            && opcode.ldst.size == BPF_LDST_INSN_SIZE_DW);
+  }
+
 deftype BPF_Insn_Regs =
   struct
   {
@@ -214,13 +221,6 @@ deftype BPF_Insn =
     BPF_Insn_Regs regs;
     BPF_Insn_Offset offset;
 
-    defun imm64_p = int:
-      {
-        return (bpf_opcode_class (opcode) == BPF_INSN_CLASS_LD
-                && opcode.ldst.mode == BPF_LDST_INSN_MODE_IMM
-                && opcode.ldst.size == BPF_LDST_INSN_SIZE_DW);
-      }
-
     union
     {
       struct
@@ -235,14 +235,14 @@ deftype BPF_Insn =
            printf "%<integer:%v%>", hi::lo;
            print ">";
           }
-      } imm64 : imm64_p;
+      } imm64 : bpf_opcode_imm64_p (opcode);
 
       int<32> imm32;
     } imm;
 
     defun imm_value = int<64>:
       {
-       if (imm64_p)
+        if (bpf_opcode_imm64_p (opcode))
          return imm.imm64.hi::imm.imm64.lo;
        else
          return imm.imm32;

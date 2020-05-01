@@ -1,3 +1,51 @@
+2020-05-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lib/pkl-anal.c (pkl_anal1_ps_var): New handler.
+	(pkl_phase_anal1): Register handler.
+	* lib/pkl-trans.h (struct pkl_trans_payload): New field
+	`function_back'.
+	* lib/pkl-ast.h (PKL_AST_FUNC_METHOD_P): Define.
+	(struct pkl_ast_func): New field method_p.
+	(PKL_AST_VAR_FUNCTION): Define.
+	(PKL_AST_VAR_FUNCTION_BACK): Likewise.
+	(struct pkl_ast_var): New fields `function' and `function_back'.
+	* lib/pkl-ast.c (pkl_ast_print_1): Print the method_p attribute of
+	function ast nodes.
+	* lib/pkl-tab.y (function_specifier): Always introduce a lexical
+	environment for function arguments.
+	* lib/pkl-trans.c (pkl_trans1_pr_decl): Annotate functions as
+	methods whenever appropriate.
+	(PKL_TRANS_PUSH_FUNCTION): reset the function_back to 0.
+	(PKL_TRANS_FUNCTION_BACK): Define.
+	(PKL_TRANS_INCR_FUNCTION_BACK): Likewise.
+	(PKL_TRANS_DECR_FUNCTION_BACK): Likewise.
+	(pkl_trans1_pr_comp_stmt): New handler.
+	* lib/pkl-gen.c (pkl_gen_pr_func): Acknowledge the implicit first
+	argument in methods.
+	(pkl_gen_ps_func): Likewise.
+	* lib/pvm-val.c (pvm_call_pretty_printer): Pass the struct as an
+	argument to the pretty-printer.
+	* pickles/bpf.pk: Adap to obey new rules for methods.
+	* testsuite/poke.pkl/struct-method-2.pk: New test.
+	* testsuite/poke.pkl/struct-method-3.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-4.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-5.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-6.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/struct-types-5.pk: Adapt.
+	* testsuite/poke.pkl/struct-types-4.pk: Likewise.
+	* testsuite/poke.map/maps-unions-6.pk: Likewise.
+	* testsuite/poke.map/maps-structs-12.pk: Likewise.
+	* testsuite/poke.map/maps-structs-methods-10.pk: Likewise.
+	* testsuite/poke.map/maps-structs-methods-9.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-8.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-7.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-6.pk (Foo): Likewise.
+
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
 	* src/pk-editor.c (pk_cmd_editor): Remove useless code.

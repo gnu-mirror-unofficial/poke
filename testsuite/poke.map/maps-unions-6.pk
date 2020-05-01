@@ -5,10 +5,10 @@
 /* { dg-command { .set obase 16 } } */
 
 defvar n = 8;
+defun x = int: { return n; }
 deftype Foo =
   union
   {
-    defun x = int: { return n; }
     byte b : n < 10;
     int c : x < 20;
   };

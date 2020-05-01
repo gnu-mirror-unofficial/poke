@@ -2262,7 +2262,9 @@ pkl_ast_finish_breaks (pkl_ast_node entity, pkl_ast_node stmt)
 }
 
 /* Annotate FUNCTIONs return statements with the function and their
-   nest level within the function.  */
+   nest level within the function.
+
+   XXX: move to handlers in trans1.  */
 
 static void
 pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
@@ -2697,6 +2699,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
 
       PRINT_COMMON_FIELDS;
       PRINT_AST_IMM (nargs, FUNC_NARGS, "%d");
+      PRINT_AST_IMM (method_p, FUNC_METHOD_P, "%d");
       PRINT_AST_SUBAST (ret_type, FUNC_RET_TYPE);
       PRINT_AST_SUBAST_CHAIN (FUNC_ARGS);
       PRINT_AST_SUBAST (first_opt_arg, FUNC_FIRST_OPT_ARG);

@@ -438,6 +438,63 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_decl)
 }
 PKL_PHASE_END_HANDLER
 
+/* Variable references to struct methods are not allowed outside
+   functions, i.e. in contexts like constraint expressions and
+   optional field conditions.
+
+   Likewise, variable references to struct fields or methods are not
+   allowed inside regular functions.
+
+   Also, only references to fields of the struct for which the
+   function is a method are allowed.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_var)
+{
+  pkl_ast_node var = PKL_PASS_NODE;
+  pkl_ast_node var_decl = PKL_AST_VAR_DECL (var);
+  pkl_ast_node var_function = PKL_AST_VAR_FUNCTION (var);
+
+  if (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
+      && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl))
+      && var_function == NULL)
+    {
+      PKL_ERROR (PKL_AST_LOC (var),
+                 "invalid reference to method");
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if ((PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
+       || (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
+           && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl))))
+      && var_function)
+    {
+      if (!PKL_AST_FUNC_METHOD_P (var_function))
+        {
+          PKL_ERROR (PKL_AST_LOC (var),
+                     "references to struct fields are only valid in methods");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      else
+        {
+          /* Make sure the referred field/method pertain to the struct
+             type for which this is a method.  */
+          int back = PKL_AST_VAR_BACK (var);
+          int function_back = PKL_AST_VAR_FUNCTION_BACK (var);
+
+          if (back != (function_back + 1))
+            {
+              PKL_ERROR (PKL_AST_LOC (var),
+                         "referred field not in this struct");
+              PKL_ANAL_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_anal1
   __attribute__ ((visibility ("hidden"))) =
   {
@@ -450,6 +507,7 @@ struct pkl_phase pkl_phase_anal1
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_anal1_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_anal1_ps_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_anal1_ps_decl),
+   PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_anal1_ps_var),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),

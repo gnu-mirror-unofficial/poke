@@ -312,7 +312,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_decl)
         closure = pvm_make_cls (program);
 
         /*XXX*/
-        /* pvm_routine_print (stdout, routine); */
+        //        pvm_disassemble_program (program);
 
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, closure);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
@@ -346,13 +346,53 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
     {
       pkl_ast_node var_decl = PKL_AST_VAR_DECL (var);
       pkl_ast_node var_type = PKL_AST_TYPE (var);
-
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
-                    PKL_AST_VAR_BACK (var), PKL_AST_VAR_OVER (var));
+      pkl_ast_node var_function = PKL_AST_VAR_FUNCTION (var);
 
       /* If the declaration associated with the variable is in a
-         struct, then raise E_elem if the value is null :D */
-      if (PKL_AST_DECL_STRUCT_FIELD_P (var_decl))
+         struct _and_ we are in a method body.
+
+         Instead of accessing the variable in the lexical environment,
+         we push the implicit struct and sref it with the name of the
+         variable.  The implicit struct is the last argument to the
+         current function.  */
+      if (var_function
+          && PKL_AST_FUNC_METHOD_P (var_function)
+          && (PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
+              || (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
+                  && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl)))))
+        {
+          pkl_ast_node var_name = PKL_AST_VAR_NAME (var);
+          int var_function_back = PKL_AST_VAR_FUNCTION_BACK (var);
+
+          assert (var_name != NULL);
+
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
+                        var_function_back,
+                        PKL_AST_FUNC_NARGS (var_function)); /* SCT */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_string (PKL_AST_IDENTIFIER_POINTER (var_name)));
+                                                            /* SCT STR */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREF);        /* SCT STR VAL */
+
+          if (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC)
+            /* Method call: leave the implicit struct so it is passed
+               as the last argument to the method.  */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+          else
+            /* Normal field.  */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
+        }
+      else
+        /* Normal variable.  */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
+                      PKL_AST_VAR_BACK (var), PKL_AST_VAR_OVER (var));
+
+      /* If the declaration associated with the variable is in a
+         struct and we are not in a method, i.e. we are in a context
+         like a constraint expression or an optional field condition,
+         then raise E_elem if the value is null.  */
+      if (PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
+          && !var_function)
         {
           pvm_program_label label
             = pkl_asm_fresh_label (PKL_GEN_ASM);
@@ -1147,7 +1187,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
   }
 
   /* Push the closure for FUNCTION and call the bloody function.  */
+  PKL_GEN_PAYLOAD->in_funcall = 1;
   PKL_PASS_SUBPASS (PKL_AST_FUNCALL_FUNCTION (funcall));
+  PKL_GEN_PAYLOAD->in_funcall = 0;
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
 
   PKL_PASS_BREAK;
@@ -1164,11 +1206,18 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
 {
-  int nargs = PKL_AST_FUNC_NARGS (PKL_PASS_NODE);
+  pkl_ast_node function = PKL_PASS_NODE;
+  pkl_ast_node function_type = PKL_AST_TYPE (function);
+  int nargs = PKL_AST_FUNC_NARGS (function);
+  int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
+
+  /* Acknowledge the implicit first argument in methods.  */
+  if (method_p)
+    nargs++;
 
   /* This is a function prologue.  */
   pkl_asm_note (PKL_GEN_ASM,
-                PKL_AST_FUNC_NAME (PKL_PASS_NODE));
+                PKL_AST_FUNC_NAME (function));
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PROLOG);
 
   /* Reverse the arguments.  */
@@ -1182,17 +1231,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   else if (nargs > 1)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nargs);
 
-  /* Push the function environment, for the arguments, if there are
-     any.  The compound-statement that is the body for the function
-     will create it's own frame.  */
-  if (PKL_AST_FUNC_ARGS (PKL_PASS_NODE))
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, nargs);
-
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this
      environment.  */
   {
-    pkl_ast_node rtype = PKL_AST_FUNC_RET_TYPE (PKL_PASS_NODE);
+    pkl_ast_node rtype = PKL_AST_FUNC_RET_TYPE (function);
 
     if (PKL_AST_TYPE_CODE (rtype) == PKL_TYPE_ARRAY
         && PKL_AST_TYPE_A_BOUNDER (rtype) == PVM_NULL)
@@ -1202,6 +1245,52 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
         PKL_GEN_PAYLOAD->in_array_bounder = 0;
       }
   }
+
+  /* Push the function environment, for the arguments.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, nargs);
+
+  /* Process the function formal arguments.  */
+  {
+    pkl_ast_node arg;
+
+    for (arg = PKL_AST_FUNC_ARGS (function);
+         arg;
+         arg = PKL_AST_CHAIN (arg))
+      {
+        PKL_PASS_SUBPASS (arg);
+      }
+  }
+
+  /* If in a method, register the implicit argument.  XXX: move to an
+     AST node between the function arguments and the function body,
+     and avoid subpasses in this handler.  */
+  if (method_p)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
+
+  /* Function body.  */
+  PKL_PASS_SUBPASS (PKL_AST_FUNC_BODY (function));
+
+  /* Function epilogue.  */
+
+  /* In a void function, return PVM_NULL in the stack.  Otherwise, it
+     is a run-time error to reach this point.  */
+  if (PKL_AST_TYPE_CODE (PKL_AST_TYPE_F_RTYPE (function_type))
+      == PKL_TYPE_VOID)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+  else
+    {
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_MSG));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
+    }
+
+  /* Pop the function's argument environment, if any, and return.  */
+  if (PKL_AST_FUNC_ARGS (function) || method_p)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+
+
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1263,41 +1352,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
 
   PKL_PASS_BREAK;
-}
-PKL_PHASE_END_HANDLER
-
-/*
- * | [TYPE]
- * | [FUNC_ARG]
- * | ...
- * | BODY
- * FUNC
- */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
-{
-  /* Function epilogue.  */
-
-  pkl_ast_node function = PKL_PASS_NODE;
-  pkl_ast_node function_type = PKL_AST_TYPE (function);
-
-
-  /* In a void function, return PVM_NULL in the stack.  Otherwise, it
-     is a run-time error to reach this point.  */
-  if (PKL_AST_TYPE_CODE (PKL_AST_TYPE_F_RTYPE (function_type))
-      == PKL_TYPE_VOID)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-  else
-    {
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_MSG));
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
-    }
-
-  /* Pop the function's argument environment, if any, and return.  */
-  if (PKL_AST_FUNC_ARGS (function))
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
 }
 PKL_PHASE_END_HANDLER
 
@@ -1889,7 +1943,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct_ref)
       pkl_ast_node struct_ref_type = PKL_AST_TYPE (struct_ref);
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREF);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
+      /* If the parent is a funcall, then leave both the struct and
+         the closure.  */
+      if (PKL_GEN_PAYLOAD->in_funcall && !PKL_PASS_PARENT)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
 
       /* To cover cases where the referenced struct is not mapped, but
          the value stored in it is a mapped value, we issue a
@@ -3283,7 +3342,6 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL_ARG, pkl_gen_ps_funcall_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNCALL, pkl_gen_pr_funcall),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC, pkl_gen_pr_func),
-   PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_gen_ps_func),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC_ARG, pkl_gen_pr_func_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC_TYPE_ARG, pkl_gen_pr_func_type_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_gen_pr_type),

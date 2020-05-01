@@ -98,6 +98,8 @@ struct pkl_gen_payload
   int in_lvalue;
   int in_comparator;
   int in_array_bounder;
+  int in_method_arguments;
+  int in_funcall;
   int endian;
   int constructor_depth;
   int mapper_depth;

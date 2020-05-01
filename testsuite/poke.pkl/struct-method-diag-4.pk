@@ -1,0 +1,19 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  struct
+  {
+    int i;
+    defun foo = int:
+      {
+        defun bar = int:
+        {
+          return i; /* { dg-error "fields.*methods" } */
+        }
+
+        return bar + 20;
+      }
+  };
+
+/* { dg-command {} } */
+/* { dg-output "" } */

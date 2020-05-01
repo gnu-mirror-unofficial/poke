@@ -81,10 +81,38 @@ static int pkl_trans_in_functions (pkl_ast_node functions[],
                           PKL_TRANS_PAYLOAD->next_function,       \
                           (function))
 
+#define PKL_TRANS_FUNCTION                                              \
+  (PKL_TRANS_PAYLOAD->next_function == 0                                \
+   ? NULL                                                               \
+   : PKL_TRANS_PAYLOAD->functions[PKL_TRANS_PAYLOAD->next_function - 1])
+
+#define PKL_TRANS_FUNCTION_BACK                                         \
+  (PKL_TRANS_PAYLOAD->next_function == 0                                \
+   ? 0                                                                  \
+   : PKL_TRANS_PAYLOAD->function_back[PKL_TRANS_PAYLOAD->next_function - 1])
+
+#define PKL_TRANS_INCR_FUNCTION_BACK                                    \
+  do                                                                    \
+  {                                                                     \
+    if (PKL_TRANS_PAYLOAD->next_function > 0)                           \
+      PKL_TRANS_PAYLOAD->function_back[PKL_TRANS_PAYLOAD->next_function - 1]++; \
+  }                                                                     \
+  while (0)
+
+#define PKL_TRANS_DECR_FUNCTION_BACK                                    \
+  do                                                                    \
+  {                                                                     \
+    if (PKL_TRANS_PAYLOAD->next_function > 0)                           \
+      PKL_TRANS_PAYLOAD->function_back[PKL_TRANS_PAYLOAD->next_function - 1]--; \
+  }                                                                     \
+  while (0)
+
 #define PKL_TRANS_PUSH_FUNCTION(function)                               \
   do                                                                    \
     {                                                                   \
       assert (PKL_TRANS_PAYLOAD->next_function < PKL_TRANS_MAX_FUNCTION_NEST); \
+      PKL_TRANS_PAYLOAD->function_back[PKL_TRANS_PAYLOAD->next_function] \
+        = 0;                                                            \
       PKL_TRANS_PAYLOAD->functions[PKL_TRANS_PAYLOAD->next_function++]  \
         = (function);                                                   \
     }                                                                   \
@@ -108,19 +136,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans_pr_program)
 }
 PKL_PHASE_END_HANDLER
 
-/* The following handlers are used to set the compiled flag in type
-   AST nodes.  This is to avoid re-processing them.  */
+/* The following handler is used to set the compiled flag in type AST
+   nodes.  This is to avoid re-processing them.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_trans_pr_type)
 {
   if (PKL_AST_TYPE_COMPILED (PKL_PASS_NODE))
     PKL_PASS_BREAK;
-}
-PKL_PHASE_END_HANDLER
-
-PKL_PHASE_BEGIN_HANDLER (pkl_trans_ps_type)
-{
-  PKL_AST_TYPE_COMPILED (PKL_PASS_NODE) = 1;
 }
 PKL_PHASE_END_HANDLER
 
@@ -210,7 +232,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_pr_decl)
   pkl_ast_node decl = PKL_PASS_NODE;
 
   if (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_FUNC)
-    PKL_TRANS_PUSH_FUNCTION (PKL_AST_DECL_INITIAL (decl));
+    {
+      pkl_ast_node func = PKL_AST_DECL_INITIAL (decl);
+
+      /* Determine whether the function is a method, and annotate the
+         AST node accordingly.  */
+      if (PKL_PASS_PARENT
+          && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_TYPE
+          && PKL_AST_TYPE_CODE (PKL_PASS_PARENT) == PKL_TYPE_STRUCT)
+        PKL_AST_FUNC_METHOD_P (func) = 1;
+
+      /* Add this function to the pass stack of functions.  */
+      PKL_TRANS_PUSH_FUNCTION (func);
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -228,6 +262,10 @@ PKL_PHASE_END_HANDLER
    the declaration.  This is to avoid loops in the AST reference
    counting.
 
+   Variables are annotated with the enclosing function, and with their
+   lexical nesting level with respect the beginning of the enclosing
+   function.
+
    Variables that refer to parameterless functions are transformed
    into funcalls to these functions, but only if the variables are not
    part of funcall themselves! :) */
@@ -236,6 +274,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_var)
 {
   pkl_ast_node var = PKL_PASS_NODE;
   pkl_ast_node decl = PKL_AST_VAR_DECL (var);
+
+  PKL_AST_VAR_FUNCTION (var) = PKL_TRANS_FUNCTION;
+  PKL_AST_VAR_FUNCTION_BACK (var) = PKL_TRANS_FUNCTION_BACK;
 
   if (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_FUNC)
     PKL_AST_VAR_IS_RECURSIVE (var)
@@ -917,9 +958,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
 }
 PKL_PHASE_END_HANDLER
 
+/* Compound statements introduce a lexical level.  Update the function
+   back.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_pr_comp_stmt)
+{
+  PKL_TRANS_INCR_FUNCTION_BACK;
+}
+PKL_PHASE_END_HANDLER
 
 /* Annotate compount statement nodes with the number of variable and
-   function declarations occurring in the statement.  */
+   function declarations occurring in the statement.
+
+   Update the function back.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_comp_stmt)
 {
@@ -937,6 +988,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_comp_stmt)
     }
 
   PKL_AST_COMP_STMT_NUMVARS (comp_stmt) = numvars;
+  PKL_TRANS_DECR_FUNCTION_BACK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -955,6 +1007,7 @@ struct pkl_phase pkl_phase_trans1
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_trans1_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_trans1_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans1_ps_array),
+   PKL_PHASE_PR_HANDLER (PKL_AST_COMP_STMT, pkl_trans1_pr_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_trans1_ps_comp_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_trans1_ps_op_attr),
@@ -1255,5 +1308,4 @@ struct pkl_phase pkl_phase_trans4
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans4_ps_array),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
-   PKL_PHASE_PS_HANDLER (PKL_AST_TYPE, pkl_trans_ps_type),
   };

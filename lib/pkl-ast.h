@@ -589,7 +589,10 @@ pkl_ast_node pkl_ast_make_enum (pkl_ast ast,
    NARGS is the number of formal arguments.
 
    NAME is a C string containing the name used to declare the
-   function.  */
+   function.
+
+   If the function is a method defined in a struct type, then METHOD_P
+   is not 0.  */
 
 #define PKL_AST_FUNC_RET_TYPE(AST) ((AST)->func.ret_type)
 #define PKL_AST_FUNC_ARGS(AST) ((AST)->func.args)
@@ -598,6 +601,7 @@ pkl_ast_node pkl_ast_make_enum (pkl_ast ast,
 #define PKL_AST_FUNC_NFRAMES(AST) ((AST)->func.nframes)
 #define PKL_AST_FUNC_NAME(AST) ((AST)->func.name)
 #define PKL_AST_FUNC_NARGS(AST) ((AST)->func.nargs)
+#define PKL_AST_FUNC_METHOD_P(AST) ((AST)->func.method_p)
 
 struct pkl_ast_func
 {
@@ -611,6 +615,7 @@ struct pkl_ast_func
   int nargs;
   int nframes;
   char *name;
+  int method_p;
 };
 
 pkl_ast_node pkl_ast_make_func (pkl_ast ast,
@@ -1281,13 +1286,22 @@ pkl_ast_node pkl_ast_make_funcall_arg (pkl_ast ast, pkl_ast_node exp,
    the OVERth variable declaration in the frame.
 
    IS_RECURSIVE is a boolean indicating whether the variable
-   references the declaration of the containing function.  */
+   references the declaration of the containing function.
+
+   FUNCTION is the function immediately enclosing the variable
+   reference, or NULL.
+
+   FUNCTION_BACK is the lexical depth relative to the immediately
+   enclosing function.  This field is meaningful only if FUNCTION is
+   not NULL.  */
 
 #define PKL_AST_VAR_NAME(AST) ((AST)->var.name)
 #define PKL_AST_VAR_DECL(AST) ((AST)->var.decl)
 #define PKL_AST_VAR_BACK(AST) ((AST)->var.back)
 #define PKL_AST_VAR_OVER(AST) ((AST)->var.over)
 #define PKL_AST_VAR_IS_RECURSIVE(AST) ((AST)->var.is_recursive)
+#define PKL_AST_VAR_FUNCTION(AST) ((AST)->var.function)
+#define PKL_AST_VAR_FUNCTION_BACK(AST) ((AST)->var.function_back)
 
 struct pkl_ast_var
 {
@@ -1298,6 +1312,9 @@ struct pkl_ast_var
   int back;
   int over;
   int is_recursive;
+
+  union pkl_ast_node *function;
+  int function_back;
 };
 
 pkl_ast_node pkl_ast_make_var (pkl_ast ast,

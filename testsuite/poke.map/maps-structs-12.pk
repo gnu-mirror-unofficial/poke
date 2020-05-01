@@ -6,8 +6,7 @@ deftype Packet =
   {
     byte a;
     defvar x = -1;
-    defun f = (int i) int: { return a + i + x; }
-    byte b : b == f (0x10) + 1;
+    byte b : b == a + 0x10 + x + 1;
   };
 
 /* { dg-command {.set obase 16 } } */

@@ -1021,11 +1021,15 @@ function_specifier:
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-	| simple_type_specifier ':' comp_stmt
+	| simple_type_specifier ':' pushlevel comp_stmt
         	{
                   $$ = pkl_ast_make_func (pkl_parser->ast,
-                                          $1, NULL, $3);
+                                          $1, NULL, $4);
                   PKL_AST_LOC ($$) = @$;
+
+                  /* Pop the frame introduced by `pushlevel'
+                     above.  */
+                  pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
         ;
 
