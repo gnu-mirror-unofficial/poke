@@ -114,6 +114,7 @@ Structuring Data
 * Modifying SBM Images::	Modifying existing data.
 * Defining Types::		Abstracting data structures.
 * Pickles::			Pickling useful abstractions.
+* Poking Structs::		Abstracting heterogeneous data.
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
@@ -2531,7 +2532,7 @@ This is achieved by defining data structures.
 * Modifying SBM Images:: Modifying existing data.
 * Defining Types::	Abstracting data structures.
 * Pickles::		Pickling useful abstractions.
-@c * Poking Structs::
+* Poking Structs::	Abstracting heterogeneous data.
 @end menu
 
 @node The SBM Format
@@ -3745,6 +3746,130 @@ by adding a load command to our @code{.pokerc}.  For example:
 [...]
 .load ~/.poke.d/mydefs.pk
 @end example
+
+@node Poking Structs
+@section Poking Structs
+
+@subsection Heterogeneous Related Data
+
+Lets recap the structure of the header of a Stupid Bitmap:
+
+@example
+                SBM header
++-------+-------+-------+-------+-------+
+|  'S'  |  'B'  |  'M'  |  ppl  | lines |
++-------+-------+-------+-------+-------+
+  byte0   byte1   byte2   byte3   byte4
+@end example
+
+@noindent
+The header is composed by five fields, which actually compose three
+different logical @dfn{fields}: a magic number, the number of pixels
+per line, and the number of lines.
+
+We could of course abstract the header using an array of five bytes,
+like this:
+
+@example
+deftype SBM_Header = byte[5];
+@end example
+
+However, this would not capture the properties of the fields
+themselves, which would need to be remember by the user: which of
+these five bytes correspond to the magic number?  Is the pixels per
+line number signed or unsigned? etc.
+
+Poke provides a much better way to abstract collections of
+heterogeneous data: @dfn{struct types}.  Using a struct type we can
+abstract the SBM header like this:
+
+@example
+deftype SBM_Header =
+ struct
+ @{
+   byte[3] magic;
+   uint<8> ppl;
+   uint<8> lines;
+ @}
+@end example
+
+Note how the struct has three named fields: @code{magic}, @code{ppl}
+and @code{lines}.  @code{magic} is an array of three bytes, while
+@code{ppl} and @code{lines} are both unsigned integers.
+
+@subsection Mapping Structs
+
+Once defined, struct types can be referred by name.  For example, we
+can map the SBM header at the beginning of our file @file{p.sbm} like
+this:
+
+@example
+(poke) SBM_Header @@ 0#B
+SBM_Header @{
+  magic=[0x53UB,0x42UB,0x4dUB],
+  ppl=0x5UB,
+  lines=0x7UB
+@}
+@end example
+
+@noindent
+The value resulting from the mapping is a struct value.  The fields of
+struct values are accessed using the familiar dot-notation:
+
+@example
+(poke) defvar header = SBM_Header @@ 0#B
+(poke) header.ppl * header.lines
+35UB
+@end example
+
+@noindent
+The total number of pixels in the image are 35.  Note how both
+@code{header.ppl} and @code{header.lines} are indeed unsigned byte
+values, and thus the result of the multiplication is also an unsigned
+byte.  This could be problematic if the image contained more than 255
+pixels, but this can be prevented by using a cast:
+
+@example
+(poke) header.ppl as uint * header.lines
+35U
+@end example
+
+@noindent
+Now the second operand @code{header.lines} is promoted to a 32-bit
+unsigned value before the multiplication is performed.  Consequently,
+the result of the operation is also 32-bit wide.
+
+@subsection Modifying Mapped Structs
+
+Remember when we wanted to crop a SBM image by removing the first and
+last row?  We updated the header in a byte by byte manner, like this:
+
+@example
+(poke) byte @@ 3#B = 3
+(poke) byte @@ 4#B = 7
+@end example
+
+@noindent
+Now that we have the header mapped in a variable, updating it is much
+more easy and convenient.  The dot-notation is used to update the
+contents of a struct field, by placing it at the left hand side of an
+assignment:
+
+@example
+(poke) header.ppl = 3
+(poke) header.lines = 7
+@end example
+
+@noindent
+This updates the pixel per line and the number of lines, in the IO
+space:
+
+@example
+(poke) dump :size 5#B
+76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+00000000: 5342 4d03 07                             SBM..
+@end example
+
 
 @node Debugging Poke Programs
 @chapter Debugging Poke Programs
