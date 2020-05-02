@@ -1,3 +1,21 @@
+2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* libpoke/libpoke.h: Remove include of pk-utils.h.
+	Add include of stdint.h.
+	* libpoke/Makefile.am: Add libpokeutils.la to ib_LTLIBRARIES.
+	Remove pk-utils.h pk-utils.c from libpoke_la_SOURCES.
+	Add libpokeutils.la to libpoke_la_LIBADD.
+	Add assignments for libpokeutils_la.
+	* poke/Makefile.am: Add libpokeutils.la to poke_LDADD.
+	* poke/pk-cmd.c: Add include of pk-utils.h.
+	* poke/pk-cmd.h: Add include of stddef.h.
+	* poke/pk-editor.c: Add include of pk-utils.h.
+	* poke/pk-info.c: Likewise.
+	* poke/pk-ios.c: Likewise.
+	* poke/pk-misc.c: Likewise.
+	* poke/pk-set.c: Likewise.
+	* poke/poke.c: Likewise.
+
 2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/std.pk (stoca): Define.

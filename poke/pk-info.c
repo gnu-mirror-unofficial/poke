@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "pk-cmd.h"
+#include "pk-utils.h"
 
 extern struct pk_cmd null_cmd;       /* pk-cmd.c  */
 extern struct pk_cmd info_ios_cmd;   /* pk-ios.c  */

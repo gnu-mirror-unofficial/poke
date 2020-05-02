@@ -21,6 +21,7 @@
 
 #include <config.h>
 
+#include <stddef.h>
 #include "poke.h"
 
 enum pk_cmd_arg_type

@@ -22,9 +22,9 @@ MAINTAINERCLEANFILES =
 
 dist_pkgdata_DATA = pkl-rt.pk std.pk
 
-lib_LTLIBRARIES = libpoke.la
+lib_LTLIBRARIES = libpokeutils.la libpoke.la
 
-include_HEADERS = libpoke.h pk-utils.h
+include_HEADERS = libpoke.h
 
 libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pkt.h \
@@ -52,8 +52,7 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pvm-program.h pvm-program.c \
                      pvm.jitter \
                      ios.c ios.h ios-dev.h \
-                     ios-dev-file.c ios-dev-mem.c \
-                     pk-utils.h pk-utils.c
+                     ios-dev-file.c ios-dev-mem.c
 
 if NBD
 libpoke_la_SOURCES += ios-dev-nbd.c
@@ -82,7 +81,7 @@ libpoke_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                       -DPKGINFODIR=\"$(infodir)\" \
                       -DLOCALEDIR=\"$(localedir)\"
 libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
-libpoke_la_LIBADD = libpvmjitter.la \
+libpoke_la_LIBADD = libpokeutils.la libpvmjitter.la \
                     $(BDW_GC_LIBS) \
                     $(LIBNBD_LIBS)
 libpoke_la_LDFLAGS =
@@ -103,5 +102,11 @@ BUILT_SOURCES += pvm-vm.h pvm-vm1.c pvm-vm2.c
 
 pvm-vm.h pvm-vm1.c pvm-vm2.c: pvm.jitter
 	$(JITTER) $(srcdir)/pvm.jitter --output $(builddir)
+
+libpokeutils_la_SOURCES = pk-utils.c pk-utils.h pkt.h
+libpokeutils_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
+libpokeutils_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl
+libpokeutils_la_LIBADD = ../gl/libgnu.la
+libpokeutils_la_LDFLAGS =
 
 # End of Makefile.am

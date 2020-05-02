@@ -37,6 +37,7 @@
 #include "pk-cmd.h"
 #include "pk-repl.h"
 #include "pk-term.h"
+#include "pk-utils.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */

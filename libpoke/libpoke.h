@@ -21,7 +21,7 @@
 
 #include <config.h>
 
-#include "pk-utils.h"
+#include <stdint.h>
 
 typedef struct pk_compiler *pk_compiler;
 typedef struct pk_ios *pk_ios;
