@@ -1,4 +1,4 @@
-lib/pkl-lex.c
-lib/pkl-lex.h
-lib/pkl-tab.y
-lib/ios.c
+libpoke/pkl-lex.c
+libpoke/pkl-lex.h
+libpoke/pkl-tab.y
+libpoke/ios.c
