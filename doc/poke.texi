@@ -5153,7 +5153,7 @@ or as mere results of shifting and masking.
 This worked well.  The language evolved to be able to express many
 different aspects of these formats in a very nice way, like
 variable-length data and holes in structures.  Consider the following
-definition in what actually is @strong{not} valid today's Poke:
+definition, which is @strong{not} valid in today's Poke:
 
 @example
 deftype Data =
@@ -7108,6 +7108,7 @@ example, the type of the @code{atoi} function with declaration:
 defun atoi = (string s, int b = 10) long: @{ @dots{} @}
 @end example
 
+@noindent
 is @code{(string,int?)long:}.
 
 If the function has variadic arguments, the position of the variadic
@@ -7118,6 +7119,7 @@ example, the type of a @code{printf} function with declaration:
 defun printf (string fmt, args@dots{}) void: @{ @dots{} @}
 @end example
 
+@noindent
 is @code{(string,@dots{})void:}.
 
 @node Endianness

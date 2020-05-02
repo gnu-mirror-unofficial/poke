@@ -1,5 +1,9 @@
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
+	* doc/poke.texi: Don't indent in the middle of a paragraph
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-repl.c (escape_metacharacters): Add comment.
 
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
