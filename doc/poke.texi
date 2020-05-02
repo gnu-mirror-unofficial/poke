@@ -3758,7 +3758,7 @@ by adding a load command to our @code{.pokerc}.  For example:
 
 @subsection Heterogeneous Related Data
 
-Lets recap the structure of the header of a Stupid Bitmap:
+Let's recap the structure of the header of a Stupid Bitmap:
 
 @example
                 SBM header
