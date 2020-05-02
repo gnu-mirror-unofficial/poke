@@ -1,5 +1,13 @@
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
+	* doc/poke.texi: Use @dots{} instead of ...
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
+	* doc/poke.texi: Add italic markup on latin loan words.
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
 	* doc/poke.texi: Don't indent in the middle of a paragraph
 
 2020-05-02  John Darrington <john@darrington.wattle.id.au>

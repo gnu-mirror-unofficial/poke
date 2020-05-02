@@ -694,7 +694,7 @@ that identifies the IOS.  In this example, the tag corresponding to
 us the size of the file, in hexadecimal.
 
 You may wonder what is that weird suffix @code{#B}.  It is an unit,
-and tells us that the size @code{0x398} is measured in bytes, i.e. the
+and tells us that the size @code{0x398} is measured in bytes, @i{i.e.} the
 size of @file{foo.o} is @code{0x398} bytes (or, in decimal, @code{920}
 bytes.)
 
@@ -862,7 +862,7 @@ argument's value.  Again, the suffix @code{#B} tells poke we want to
 dump 64 bytes, not 64 kilobits or 64 potatoes.
 
 Another interesting aspect of our first dump (ahem) is that the dumped
-bytes start from the beginning of the file, i.e. the offset of the
+bytes start from the beginning of the file, @i{i.e.} the offset of the
 first byte is 0x0.  Certainly there should be other areas of the file
 with interesting contents for us to inspect.  To that purpose, we can
 use yet another option, @code{:from}:
@@ -878,7 +878,7 @@ use yet another option, @code{:from}:
 
 The command above asks poke to ``dump 64 bytes starting at 128 bytes
 from the beginning of the file''.  Note how the first row of bytes
-start at offset @code{0x80}, i.e. @code{128} in decimal.
+start at offset @code{0x80}, @i{i.e.} @code{128} in decimal.
 
 @cindex commands, customizing
 Passing options to commands is easy and natural, but we may find
@@ -1211,7 +1211,7 @@ This is the reason why people say bytes are ``composed'' by eight
 bits, or that the width of a byte is eight bits.  But this way of
 talking doesn't really reflect the view that the operating system has
 of devices like files or memory buffers: both disk and memory
-controllers provide and consume bytes, i.e. little unsigned numbers in
+controllers provide and consume bytes, @i{i.e.} little unsigned numbers in
 the range @code{0..255}.  At that level, bytes are indivisible.  We
 will see later that poke provides ways to work on the ``sub-byte''
 level, but that is just really an artifact to make our life easier:
@@ -1223,7 +1223,7 @@ numbers, in the range
 @code{0b00000000_00000000..0b11111111_11111111}@footnote{poke allows
 to insert underscore characters @code{_} anywhere in number literals.
 The only purpose of these characters is to improve readability, and
-they are totally ignored by poke, i.e. they do not alter the value of
+they are totally ignored by poke, @i{i.e.} they do not alter the value of
 the number.}, or @code{0x0000..0xffff} in hexadecimal.  poke provides
 a bit-concatenation operator @code{::} that does exactly that:
 
@@ -1332,7 +1332,7 @@ for @code{uint<8>}.  Similarly, @code{ushort} is a synonym for
 @code{uint<16>}, @code{uint} is a synonym for @code{uint<32>} and
 @code{ulong} is a synonym for @code{uint<64>}.  Try them!
 
-GNU poke supports integers up to eight bytes, i.e. up to 64-bits.
+GNU poke supports integers up to eight bytes, @i{i.e.} up to 64-bits.
 This may change in the future, as we are planning to support
 arbitrarily large integers.
 
@@ -1366,7 +1366,7 @@ form and value stands: for example, the value of 0x123 is calculated
 as @code{1*16^2+2*16^1+3*16^0}.
 
 The ``higher'' a digit is in the polynomial, the @dfn{more
-significant} it is, i.e. the more weight it has on the value of the
+significant} it is, @i{i.e.} the more weight it has on the value of the
 number where it appears.  In the written number @code{123}, for
 example, the digit 1 is the @dfn{most significant} digit of the
 number, and the digit 3 is the @dfn{least significant} digit.
@@ -1393,13 +1393,13 @@ In the last section we tried to compose bigger integers by
 concatenating bytes together and interpreting the result.  In doing
 so, we assumed (quite naturally) that in the written form of the
 resulting integer the bytes are ordered in the same order than they
-appear in the file, i.e. we assume that the written form of the number
+appear in the file, @i{i.e.} we assume that the written form of the number
 @code{b1*256^2+b2*256^1+b3*256^0} would be @code{b1b2b3}, where
 @code{b1}, @code{b2} and @code{b3} are bytes.  In other words, given a
 written form @code{b1b2b3}, @code{b1} would be the most significant
 byte (digit) and @code{b3} would be the least significant byte
 (digit).  In our world of IO spaces, the ``written form'' is the
-disposition of the bytes in the IO space (file, memory buffer, etc)
+disposition of the bytes in the IO space (file, memory buffer, @i{etc})
 being edited.
 
 That interpretation of the written form is exactly what the
@@ -1420,13 +1420,13 @@ However, much like in certain human languages the written form is read
 from right to left, some computers also read numbers from right to
 left in their ``written form''.  Actually, turns out that @emph{most}
 modern computers do it like that.  This means that, in these
-computers, given the written form @code{b1b2b3} (i.e. given a file
+computers, given the written form @code{b1b2b3} (@i{i.e.} given a file
 where @code{b1} comes first, followed by @code{b2} and then @code{b3})
 the most significant byte is @code{b3} and the least significant byte
 is @code{b1}.  Therefore, the value of the number would be
 @code{b3*256^2+b2*256^1+b3*256^0}.
 
-So, given the written form of a bigger number @code{b1b2b3} (i.e. some
+So, given the written form of a bigger number @code{b1b2b3} (@i{i.e.} some
 ordering of bytes implied by the file they are stored in) there are at
 least two ways to interpret them to calculate the value of the number.
 When the written form is read from left to right, we talk about a
@@ -1456,7 +1456,7 @@ do that, like in:
 
 @noindent
 Poke should somehow decide what kind of interpretation to use,
-i.e. how to read the ``written form'' of the number.  As you can see
+@i{i.e.} how to read the ``written form'' of the number.  As you can see
 from the example, poke uses the left-to-right interpretation, or
 big-endian, by default.  But you can change it using a new
 dot-command: @command{.set endian}:
@@ -1490,7 +1490,7 @@ to whatever endianness is in the system.  You do it this way:
 
 @subsection Negative Encodings
 
-Up to this point we have worked with unsigned integers, i.e. whole
+Up to this point we have worked with unsigned integers, @i{i.e.} whole
 numbers which are zero or bigger than zero.  Much like it happened
 with endianness, the interpretation of the value of several bytes as a
 negative number depends on the specific interpretation.
@@ -1585,7 +1585,7 @@ expression?  Is the result signed, or unsigned?  Let's find out:
 @noindent
 Looks like combining an unsigned value with a signed value gives us an
 unsigned value.  This actually applies to all the operators that work
-on integer values: multiplication, division, exponentiation, etc.
+on integer values: multiplication, division, exponentiation, @i{etc}.
 
 @cindex casts
 What actually happens is that the signed operand is converted to an
@@ -1649,7 +1649,7 @@ whole number of bytes.
 
 Let's consider first weird numbers that span for more than one byte.
 For example, an unsigned integer of 12 bits.  Let's visualize the
-written form of this number, i.e. the sequence of its constituent
+written form of this number, @i{i.e.} the sequence of its constituent
 bytes as they appear in the underlying IO space:
 
 @example
@@ -1687,7 +1687,7 @@ this:
 @noindent
 Note how we decided to number the bits in descending order from left
 to right.  This is because these bits correspond to the base of the
-polynomial equivalent to the binary value of the byte, i.e. the value
+polynomial equivalent to the binary value of the byte, @i{i.e.} the value
 of the byte is
 @code{b7*2^7+b6*2^6+b5*2^5+b4*2^4+b3*2^3+b2*2^2+b1*2^1+b0*2^0}.  In
 other words: at the bit level poke always uses a big endian
@@ -1772,8 +1772,8 @@ Let's map our weird number at offset 0 bytes, using big endian:
 @noindent
 That matches what we explained before: the most significant bits of
 the unsigned 12 bits number come from the byte at offset 0,
-i.e. @code{01111111}, whereas the least significant bits come from the
-byte at offset 1, i.e. @code{0100}.
+@i{i.e.} @code{01111111}, whereas the least significant bits come from the
+byte at offset 1, @i{i.e.} @code{0100}.
 
 Now let's map it using little endian:
 
@@ -1784,10 +1784,10 @@ Now let's map it using little endian:
 
 @noindent
 This time the most significant bits of the unsigned 12 bits number
-come from the byte at offset 1, i.e. @code{0100}, whereas the least
-significant bits come from the byte at offset 0, i.e. @code{01111111}.
+come from the byte at offset 1, @i{i.e.} @code{0100}, whereas the least
+significant bits come from the byte at offset 0, @i{i.e.} @code{01111111}.
 
-An important thing to note is that non-weird numbers, i.e. numbers
+An important thing to note is that non-weird numbers, @i{i.e.} numbers
 built with a whole number of bytes, are basically a particular case of
 weird numbers where the last byte in the written form (in the IO
 space) provides all its bits.  The rules are exactly the same in all
@@ -1969,11 +1969,11 @@ aligned to byte boundaries, and work with them.
 However, when one tries to determine the correspondence between a
 given poke value and the underlying bytes in the IO device, things can
 get complicated.  This is particularly true when we map what we called
-``weird numbers'', i.e. numbers with partial bytes.  As we saw, the
+``weird numbers'', @i{i.e.} numbers with partial bytes.  As we saw, the
 rules to build these numbers were expressed in terms of bytes.
 
 In order to ease the visualization of the process used to build
-integer values (especially if they are weird numbers, i.e. integers
+integer values (especially if they are weird numbers, @i{i.e.} integers
 with partial bytes) one can imagine an additional layer of ``virtual
 bytes'' above the space of bits provided by the IO space.
 Graphically:
@@ -1991,7 +1991,7 @@ IO device     |     0x7f      |      0x45     |      0x4c     |
 It is very important to understand that the IO space is an abstraction
 provided by poke.  The underlying file, or memory buffer, or whatever,
 is actually a sequence of bytes; poke translates the operations on
-integers, bits, bytes, etc into the corresponding byte operations,
+integers, bits, bytes, @i{etc} into the corresponding byte operations,
 which are far from trivial.  Fortunately, you can let poke to do that
 dirty job for you, and abstract yourself from that complexity.
 
@@ -2183,14 +2183,14 @@ space identifier returns its size.
 Computers understand text as a sequence of @dfn{codes}, which are
 numbers identifying some particular @dfn{character}.  A character can
 represent things like letters, digits, ideograms, word separators,
-religious symbols, etc.  Collections of character codes are called
+religious symbols, @i{etc}.  Collections of character codes are called
 @dfn{character sets}.
 
 @cindex ASCII
 @cindex Latin-1
 Some character sets try to cover one or a few similar written
 languages.  This is the case of ASCII and ISO Latin-1, for example.
-These character sets are small, i.e. just a few hundred codes.
+These character sets are small, @i{i.e.} just a few hundred codes.
 
 @cindex Unicode
 Other character sets are much more ambitious.  This is the case of
@@ -2221,7 +2221,7 @@ the Basic Multilingual Plane, and contains all the characters that
 most people will ever need.  There are also variable-length encodings
 of Unicode, that try to use as less bytes as possible to encode any
 given code.  A particularly clever encoding of Unicode, designed by
-Rob Pike, is backwards compatible with the ASCII encoding, i.e. it
+Rob Pike, is backwards compatible with the ASCII encoding, @i{i.e.} it
 encodes all the ASCII codes in one byte each, and the values of these
 byte are the same than in ASCII.  This clever encoding is called
 UTF-8.
@@ -2472,7 +2472,7 @@ a character to a string, we would get an error:
 @end example
 
 @noindent
-It is possible to transform a character value (i.e. a byte value) into
+It is possible to transform a character value (@i{i.e.} a byte value) into
 a string composed by that character using a cast:
 
 @example
@@ -2500,7 +2500,7 @@ retrieve individual characters:
 @end example
 
 @noindent
-Note how the indexing is zero-based, i.e. the first position in the
+Note how the indexing is zero-based, @i{i.e.} the first position in the
 string is referred as @code{[0]}, the second position with @code{[1]},
 and so on.
 
@@ -2655,7 +2655,7 @@ the figure below.
 
 @noindent
 The image has seven lines, and there are five pixels per line,
-i.e. the dimension of the image in pixels is 5x7.  Also, the pixels
+@i{i.e.} the dimension of the image in pixels is 5x7.  Also, the pixels
 denoted by asterisks are red, whereas the pixels denoted with empty
 spaces are white.  In other words, our image uses a red foreground
 over a write background.  The ``painted'' pixels are called foreground
@@ -2815,7 +2815,7 @@ one map operation, right?  Let's see, using some arbitrary offset 10#B:
 @end example
 
 @noindent
-If your current endianness is little (i.e. you are running on a x86
+If your current endianness is little (@i{i.e.} you are running on a x86
 system or similar) you will get the dump above.  The bytes are
 reversed, and consequently the resulting pixel has the wrong color.
 Our little trick didn't work :(
@@ -2835,7 +2835,7 @@ like this:
 @end example
 
 @noindent
-All the elements on an array should be of the same kind, i.e. of the
+All the elements on an array should be of the same kind, @i{i.e.} of the
 same type.  Therefore, this is not allowed:
 
 @example
@@ -3465,7 +3465,7 @@ Poke provides a way to assign names to type specifiers:
 
 @noindent
 The definition above tells poke that a RGB color beam is composed by a
-byte, i.e. an unsigned 8-bit integer.  Any type specifier can be used
+byte, @i{i.e.} an unsigned 8-bit integer.  Any type specifier can be used
 at the right side of the assignment sign, and also names of already
 defined types.  From this point on, we can map in terms of color
 beams:
@@ -6574,7 +6574,7 @@ XXX
 @subsection Optional Fields
 @cindex struct fields
 
-Sometimes a field in a struct is optional, i.e. it exists or not
+Sometimes a field in a struct is optional, @i{i.e.} it exists or not
 depending on some criteria.  A good example of this is the ``extended
 header'' in a MP3 id3v2 tag.  From the specification:
 
