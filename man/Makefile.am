@@ -27,8 +27,8 @@ common_mandeps = $(top_srcdir)/configure.ac
 # the binary when any source file changes, only the main one.
 # Use -o so that the `missing' program can infer the output file.
 
-poke.1: $(top_srcdir)/src/poke.c $(common_mandeps)
-	$(MAKE) $(AM_MAKEFLAGS) $(builddir)/../src/poke$(EXEEXT)
+poke.1: $(top_srcdir)/poke/poke.c $(common_mandeps)
+	$(MAKE) $(AM_MAKEFLAGS) $(builddir)/../poke/poke$(EXEEXT)
 	$(top_builddir)/run \
            $(HELP2MAN) -p poke --name="The GNU extensible binary editor" \
-		$(builddir)/../src/poke$(EXEEXT) -o $@
+		$(builddir)/../poke/poke$(EXEEXT) -o $@

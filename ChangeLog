@@ -1,3 +1,17 @@
+2020-05-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke: renamed from src.
+	* libpoke: renamed from lib.
+	* Makefile.am (SUBDIRS): Update accordingly.
+	* configure.ac: Likewise.
+	* doc/Makefile.am: Likewise.
+	* poke/Makefile.am: Likewise.
+	* run.in: Likewise.
+	* testsuite/lib/poke.exp: Likewise.
+	* testsuite/Makefile.am: Likewise.
+	* HACKING: Likewise.
+	* .gitignore: Likewise.
+
 2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* lib/pk-utils.c: Remove pkt.h from includes.

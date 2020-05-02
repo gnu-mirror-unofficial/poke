@@ -89,7 +89,7 @@ the GCC testing infrastructure.
 #C1 Make poke_interactive_p available to Poke programs
 ------------------------------------------------------
 
-The global variable ``poke_interactive_p`` defined in ``src/poke.c``
+The global variable ``poke_interactive_p`` defined in ``poke/poke.c``
 tells whether poke is running interactively, i.e. if the standard
 input and output are connected to a tty.
 

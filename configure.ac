@@ -23,7 +23,7 @@ AC_INIT([GNU poke], [0.1-beta], [poke-devel@gnu.org], [poke],
 
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADERS(src/config.h)
+AC_CONFIG_HEADERS(poke/config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
 # Include the Autoconf macros from Jitter.
@@ -128,8 +128,8 @@ fi
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
-                lib/Makefile
-                src/Makefile
+                libpoke/Makefile
+                poke/Makefile
                 pickles/Makefile
                 doc/Makefile
                 man/Makefile

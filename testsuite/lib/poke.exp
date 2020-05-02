@@ -31,7 +31,7 @@ load_lib dejagnu.exp
 
 global POKE
 if ![info exists POKE] {
-    set POKE ${objdir}/../src/poke
+    set POKE ${objdir}/../poke/poke
 }
 
 # prompt is the poke prompt to expect from the program.  As this can

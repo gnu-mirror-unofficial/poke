@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = jitter gl pickles lib src doc man testsuite etc po
+SUBDIRS = jitter gl pickles libpoke poke doc man testsuite etc po
 
 noinst_SCRIPTS = run
 
@@ -12,7 +12,7 @@ AM_DISTCHECK_CONFIGURE_FLAGS = --with-jitter=$(WITH_JITTER) \
 # Support for generating a cyclomatic complexity report using the
 # pmccabe tool.
 
-CYCLO_SRCS = ${top_srcdir}/src/*.[ch]
+CYCLO_SRCS = ${top_srcdir}/poke/*.[ch] $(top_srcdir)/libpoke/*.[ch]
 
 cyclo-$(PACKAGE).html: $(CYCLO_SRCS)
 	$(PMCCABE) $(CYCLO_SRCS) \

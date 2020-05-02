@@ -29,12 +29,12 @@ s=$(cd @abs_srcdir@ && pwd)
 b=$(cd @abs_builddir@ && pwd)
 
 # setup to run uninstalled poke
-PATH=$b/src:$PATH
-POKEDATADIR=$s/lib
+PATH=$b/poke:$PATH
+POKEDATADIR=$s/libpoke
 POKEINFODIR=$s/doc
 POKEPICKLESDIR=$s/pickles
 POKESTYLESDIR=$s/etc
-POKE_LOAD_PATH=$s/src
+POKE_LOAD_PATH=$s/poke
 export PATH POKEDATADIR POKEPICKLESDIR POKECMDSDIR POKESTYLESDIR POKEINFODIR
 export POKE_LOAD_PATH
 

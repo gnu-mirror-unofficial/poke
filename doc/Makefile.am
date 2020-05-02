@@ -19,10 +19,10 @@ poke_TEXINFOS = fdl.texi pvm-insns.texi
 EXTRA_DIST = gen-pvm-insns.sh
 
 # The description of PVM instructions is generated from the
-# src/pvm.jitter file.
+# libpoke/pvm.jitter file.
 
-pvm-insns.texi: $(top_srcdir)/lib/pvm.jitter $(srcdir)/gen-pvm-insns.sh
-	$(srcdir)/gen-pvm-insns.sh $(top_srcdir)/lib/pvm.jitter \
+pvm-insns.texi: $(top_srcdir)/libpoke/pvm.jitter $(srcdir)/gen-pvm-insns.sh
+	$(srcdir)/gen-pvm-insns.sh $(top_srcdir)/libpoke/pvm.jitter \
 	  > pvm-insns.texi
 
 # This rule generates a list of the node names from the manual.
@@ -30,14 +30,14 @@ pvm-insns.texi: $(top_srcdir)/lib/pvm.jitter $(srcdir)/gen-pvm-insns.sh
 # work around some limitations of readline.
 # Look for the macro SPACE_SUBSTITUTE in pk-repl.c to see how this
 # is used.
-$(top_srcdir)/lib/nodelist: $(srcdir)/poke.texi
+$(top_srcdir)/libpoke/nodelist: $(srcdir)/poke.texi
 	chmod u+w ${dir $@}
 	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' > $@
 	test -s $@ || $(RM) $@
 
 INFO_DEPS = $(srcdir)/poke.info
 
-pkgdata_DATA = $(top_srcdir)/lib/nodelist
+pkgdata_DATA = $(top_srcdir)/libpoke/nodelist
 
 clean-local:
 	rm -f pvm-insns.texi
@@ -65,8 +65,8 @@ html-local:
 
 # Generation of the plain text manual.
 
-pkgdata_DATA += $(top_srcdir)/lib/poke.text
+pkgdata_DATA += $(top_srcdir)/libpoke/poke.text
 
-$(top_srcdir)/lib/poke.text: poke.texi
+$(top_srcdir)/libpoke/poke.text: poke.texi
 	$(MAKEINFO) --plaintext $(srcdir)/poke.texi \
-          > $(top_srcdir)/lib/poke.text
+          > $(top_srcdir)/libpoke/poke.text

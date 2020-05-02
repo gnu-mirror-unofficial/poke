@@ -1096,7 +1096,7 @@ gen
   there is only one phase in this category.
 
 The phases in category ``NAME`` are implemented in the source files
-``src/pkl-NAME.[ch]``.
+``libpoke/pkl-NAME.[ch]``.
 
 
 Naming Conventions for Handlers
@@ -1297,10 +1297,10 @@ Exception Handling
 ~~~~~~~~~~~~~~~~~~
 
 Exception types or codes are signed 32-bit integers, and are defined
-in ``src/pkl-rt.pk`` as ``EC_*`` variables.
+in ``libpoke/pkl-rt.pk`` as ``EC_*`` variables.
 
 The exceptions themselves are struct values of type Exception, also
-defined in ``src/pkl-rt.pk``.
+defined in ``libpoke/pkl-rt.pk``.
 
 There are two ways an exception can be raised in the PVM:
 
@@ -1319,10 +1319,11 @@ In either case, the treatment of a raised exception is the same:
 3. Repeat.
 
 The default exception handler, which catches "unhandled" exceptions,
-is installed by the macro-assembler in ``src/pkl-asm.c:pkl_asm_new``
-and ``src/pkl-asm.c:pkl_asm_finish``.  It calls the function
+is installed by the macro-assembler in
+``libpoke/pkl-asm.c:pkl_asm_new`` and
+``libpoke/pkl-asm.c:pkl_asm_finish``.  It calls the function
 ``_pkl_exception_handler``, that is defined in the compiler runtime in
-``src/pkl-rt.pkl``.
+``libpoke/pkl-rt.pkl``.
 
 Signal Handling
 ~~~~~~~~~~~~~~~
@@ -1655,10 +1656,10 @@ enabled dispatch.
 Invoking GDB to debug an uninstalled poke
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since we are using libtool, ``$(builddir)/src/poke`` is a shell
+Since we are using libtool, ``$(builddir)/poke/poke`` is a shell
 script.  In order to debug the uninstalled poke, you can do::
 
-  $ ./libtool --mode=execute ./run gdb src/poke
+  $ ./libtool --mode=execute ./run gdb poke/poke
 
 Using GDB extensions
 ~~~~~~~~~~~~~~~~~~~~
@@ -1707,7 +1708,7 @@ Debugging PVM Assembly Code
 
 Hacking some areas of the compiler, such as the code generator pass,
 involves meta-programming PVM assembler.  It is easy to find examples
-anywhere in ``src/pkl-gen.c``::
+anywhere in ``libpoke/pkl-gen.c``::
 
   pkl_asm_insn (pasm, PKL_INSN_ROT);
   pkl_asm_insn (pasm, PKL_INSN_MULLU);
@@ -1811,147 +1812,147 @@ Appendix: The Source Tree
 The poke library
 ~~~~~~~~~~~~~~~~
 
-The source files for ``libpoke`` are located in the ``lib/``
+The source files for ``libpoke`` are located in the ``libpoke/``
 subdirectory.
 
 Public Library Services
 .......................
 
 Public Headers
-  ``lib/libpoke.h``
+  ``libpoke/libpoke.h``
 
 Public Library Services
-  ``lib/libpoke.c``
+  ``libpoke/libpoke.c``
 
 The Compiler
 ............
 
 Internal Public Headers
-  ``lib/pkl.h``, ``lib/pkl-ast.h``
+  ``libpoke/pkl.h``, ``libpoke/pkl-ast.h``
 
 Support for abstract syntax trees
-  ``lib/pkl-ast.c``, ``lib/pkl-ops.def``,
-  ``lib/pkl-attrs.def``
+  ``libpoke/pkl-ast.c``, ``libpoke/pkl-ops.def``,
+  ``libpoke/pkl-attrs.def``
 
 The compiler driver
-  ``lib/pkl.c``, ``lib/pkl-pass.c``,
-  ``lib/pkl-pass.h``
+  ``libpoke/pkl.c``, ``libpoke/pkl-pass.c``,
+  ``libpoke/pkl-pass.h``
    
 The lexer, and parser
-  ``lib/pkl-lex.l``, ``lib/pkl-tab.y``, ``lib/pkl-parser.c``,
-  ``lib/pkl-parser.h``
+  ``libpoke/pkl-lex.l``, ``libpoke/pkl-tab.y``, ``libpoke/pkl-parser.c``,
+  ``libpoke/pkl-parser.h``
    
 Compile-time lexical environment
-  ``lib/pkl-env.h, ``lib/pkl-env.c``
+  ``libpoke/pkl-env.h, ``libpoke/pkl-env.c``
 
 Analysis phases
-  ``lib/pkl-anal.c``, ``lib/pkl-anal.h``
+  ``libpoke/pkl-anal.c``, ``libpoke/pkl-anal.h``
 
 Transformation phases
-  ``lib/pkl-trans.c``, ``lib/pkl-trans.h``
+  ``libpoke/pkl-trans.c``, ``libpoke/pkl-trans.h``
 
 Type system related phases
-  ``lib/pkl-typify.c``, ``lib/pkl-typify.h``
+  ``libpoke/pkl-typify.c``, ``libpoke/pkl-typify.h``
 
 Constant folding phase
-  ``lib/pkl-fold.c``, ``lib/pkl-fold.h``
+  ``libpoke/pkl-fold.c``, ``libpoke/pkl-fold.h``
 
 Coercions phases
-  ``lib/pkl-promo.c``, ``lib/pkl-promo.h``
+  ``libpoke/pkl-promo.c``, ``libpoke/pkl-promo.h``
 
 The code generator
-  ``lib/pkl-gen.h``, ``lib/pkl-gen.c``, ``lib/pkl-gen.pks``
+  ``libpoke/pkl-gen.h``, ``libpoke/pkl-gen.c``, ``libpoke/pkl-gen.pks``
   
 The macro-assembler
-  ``lib/pkl-insn.def``, ``lib/pkl-asm.h``, ``lib/pkl-asm.c``,
-  ``lib/pkl-asm.pks``
+  ``libpoke/pkl-insn.def``, ``libpoke/pkl-asm.h``, ``libpoke/pkl-asm.c``,
+  ``libpoke/pkl-asm.pks``
 
 Functions to emit diagnostics
-  ``lib/pkl-diag.h``, ``lib/pkl-diag.c``
+  ``libpoke/pkl-diag.h``, ``libpoke/pkl-diag.c``
   
 Our good friend ras
-  ``lib/ras``
+  ``libpoke/ras``
 
 Compiler run-time library
-  ``lib/pkl-rt.pk``
+  ``libpoke/pkl-rt.pk``
 
 The Poke Virtual Machine
 ........................
 
 Internal Public Headers
-  ``lib/pvm.h``
+  ``libpoke/pvm.h``
 
 Virtual machine driver
-  ``lib/pvm.c``
+  ``libpoke/pvm.c``
 
 Virtual machine values
-  ``lib/pvm-val.c``
+  ``libpoke/pvm-val.c``
 
 Virtual machine programs.
-  ``lib/pvm-program.c``, ``lib/pvm-program.h``
+  ``libpoke/pvm-program.c``, ``libpoke/pvm-program.h``
 
 Memory allocator with garbage collection
-  ``lib/pvm-alloc.c``, ``lib/pvm-alloc.h``
+  ``libpoke/pvm-alloc.c``, ``libpoke/pvm-alloc.h``
 
 Run-time environment
-  ``lib/pvm-env.c``, ``lib/pvm-env.h``
+  ``libpoke/pvm-env.c``, ``libpoke/pvm-env.h``
 
 Virtual machine instructions
-  ``lib/pvm.jitter``
+  ``libpoke/pvm.jitter``
 
 The IO Subsystem
 ................
 
 Support for IO spaces
-  ``lib/ios.h``, ``lib/ios.c``
+  ``libpoke/ios.h``, ``libpoke/ios.c``
 
 Support for IO devices
-  ``lib/ios-dev.h``
+  ``libpoke/ios-dev.h``
 
 Supported IO devices
-  ``lib/ios-dev-file.c``, ``lib/ios-dev-mem.c``, `lib/ios-dev-nbd.c``
+  ``libpoke/ios-dev-file.c``, ``libpoke/ios-dev-mem.c``, `libpoke/ios-dev-nbd.c``
 
 Poke Standard Library
 .....................
 
 Standard library
-  ``lib/std.pk``
+  ``libpoke/std.pk``
 
 Utility Services
 ................
 
 Utility functions used by everyone else
-  ``lib/pk-utils.h``, ``lib/pk-utils.c``
+  ``libpoke/pk-utils.h``, ``libpoke/pk-utils.c``
 
 Internal Services
 .................
 
 Macros to output to terminal
-  ``lib/pkt.h``
+  ``libpoke/pkt.h``
 
 The poke utility
 ~~~~~~~~~~~~~~~~
 
 Main program
-  ``src/poke.h``, ``src/poke.c``
+  ``poke/poke.h``, ``poke/poke.c``
 
 Infrastructure for writing poke commands
-  ``src/pk-cmd.h``, ``src/pk-cmd.c``
+  ``poke/pk-cmd.h``, ``poke/pk-cmd.c``
 
 REPL
-  ``src/pk-repl.h, ``src/pk-repl.c``
+  ``poke/pk-repl.h, ``poke/pk-repl.c``
 
 Terminal stuff
-  ``lib/pk-term.h``, ``lib/pk-term.c``
+  ``libpoke/pk-term.h``, ``libpoke/pk-term.c``
 
 Terminal Hyperlinks Server
-  ``src/pk-hserver.h``, ``src/pk-hserver.c``
+  ``poke/pk-hserver.h``, ``poke/pk-hserver.c``
 
 Commands
-  ``src/pk-def.c``, ``src/pk-dump.pk``, ``src/pk-file.c``,
-  ``src/pk-help.c``, ``src/pk-info.c``, ``src/pk-misc.h``,
-  ``src/pk-set.c``, ``src/pk-vm.c``, ``src/pk-save.pk``,
-  ``src/pk-copy.pk``
+  ``poke/pk-def.c``, ``poke/pk-dump.pk``, ``poke/pk-file.c``,
+  ``poke/pk-help.c``, ``poke/pk-info.c``, ``poke/pk-misc.h``,
+  ``poke/pk-set.c``, ``poke/pk-vm.c``, ``poke/pk-save.pk``,
+  ``poke/pk-copy.pk``
 
 Pickles
 ~~~~~~~
