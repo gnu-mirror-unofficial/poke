@@ -71,9 +71,7 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      supposed to be in interactive mode, then do nothing.  */
   if (poke_interactive_p)
   {
-    int size = 0;
     char *cmd = NULL;
-    int bytes = 64;
 
     /* Unless the doc viewer is set to `less', try first to use
        `info'.  */
@@ -84,6 +82,8 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         const char *ip = find_in_path (info_prog_name);
         if (STRNEQ (ip, info_prog_name))
           {
+	    int size = 0;
+	    int bytes = 64;
             do
               {
                 size = bytes + 1;

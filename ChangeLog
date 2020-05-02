@@ -1,3 +1,7 @@
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
+	* src/pk-misc.c (pk_cmd_doc): Reduce scope of local variables.
+
 2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* src/pk-repl.c (pk_repl): Remove unused variable.
