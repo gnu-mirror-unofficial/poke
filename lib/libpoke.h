@@ -151,12 +151,29 @@ int pk_disassemble_expression (pk_compiler pkc, const char *str,
 
 void pk_set_quiet_p (pk_compiler pkc, int quiet_p);
 
-/* XXX document.  */
+/* This function is called repeatedly by the readline library, when
+   generating potential command line completions.  It returns
+   command line completion based upon the current state of PKC.
+   This function does not consider dot-commands for completion.
 
+   TEXT is the partial word to be completed.  STATE is zero the first
+   time the function is called and non-zero for each subsequent call.
+
+   On each call, the function returns a potential completion.  It
+   returns NULL to indicate that there are no more possibilities left. */
 char *pk_completion_function (pk_compiler pkc,
-                              const char *x, int state);
+                              const char *text, int state);
 
-/* XXX document.  */
+/* This function provides command line completion when the tag of an
+   IOS is an appropriate completion.
+
+   TEXT is the partial word to be completed.  STATE is zero the first
+   time the function is called and non-zero for each subsequent call.
+
+   On each call, the function returns the tag of an IOS for which
+   that tag and TEXT share a common substring. It returns NULL to
+   indicate that there are no more such tags.
+ */
 char *pk_ios_completion_function (pk_compiler pkc,
                                   const char *x, int state);
 

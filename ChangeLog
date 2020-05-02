@@ -1,5 +1,14 @@
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
+	* lib/libpoke.c (pk_completion_function): Improve comments and
+	parameter naming.
+	* lib/libpoke.c (pk_ios_completion_function): Ditto.
+	* lib/libpoke.h (pk_completion_function): Ditto.
+	* lib/libpoke.h (pk_ios_completion_function): Ditto.
+	* src/pk-rep.c (poke_completion_function): Ditto.
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
 	* src/pk-cmd.c (pk_cmd_get_next_match): Remove parameter
 	idx and use a static local instead.
 	* src/pk-cmd.h (pk_cmd_get_next_match): Remove parameter

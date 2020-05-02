@@ -40,18 +40,30 @@
 
 static sigjmp_buf ctrlc_buf;
 
-static char *
-poke_completion_function (const char *x, int state)
-{
-  char *function_name = pk_completion_function (poke_compiler,
-                                                x, state);
+/* This function is called repeatedly by the readline library, when
+   generating potential command line completions.
 
+   TEXT is the partial word to be completed.  STATE is zero the first
+   time the function is called and a positive non-zero integer for
+   each subsequent call.
+
+   On each call, the function returns a potential completion.  It
+   returns NULL to indicate that there are no more possibilities left. */
+static char *
+poke_completion_function (const char *text, int state)
+{
+  /* First try to complete with "normal" commands.  */
+  char *function_name = pk_completion_function (poke_compiler,
+                                                text, state);
+
+  /* Then try with dot-commands. */
   if (function_name == NULL)
-    function_name = pk_cmd_get_next_match (x, strlen (x));
+    function_name = pk_cmd_get_next_match (text, strlen (text));
 
   return function_name;
 }
 
+/*  A trivial completion function.  No completions are possible.  */
 static char *
 null_completion_function (const char *x, int state)
 {

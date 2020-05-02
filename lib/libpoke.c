@@ -181,12 +181,20 @@ complete_struct (pk_compiler pkc,
   return NULL;
 }
 
+/* This function is called repeatedly by the readline library, when
+   generating potential command line completions.  It returns
+   command line completion based upon the current state of PKC.
+
+   TEXT is the partial word to be completed.  STATE is zero the first
+   time the function is called and non-zero for each subsequent call.
+
+   On each call, the function returns a potential completion.  It
+   returns NULL to indicate that there are no more possibilities left. */
 char *
 pk_completion_function (pk_compiler pkc,
-                        const char *x, int state)
+                        const char *text, int state)
 {
   char *function_name;
-  /* XXX put state in pkc instead of a global.  */
   static int idx = 0;
   static struct pkl_ast_node_iter iter;
   pkl_env env = pkl_get_env (pkc->compiler);
@@ -203,20 +211,29 @@ pk_completion_function (pk_compiler pkc,
         pkl_env_iter_next (env, &iter);
     }
 
-  size_t len = strlen (x);
+  size_t len = strlen (text);
 
-  if ((x[0] != '.') && (strchr(x, '.') != NULL))
-    return complete_struct (pkc, &idx, x, len, state);
+  if ((text[0] != '.') && (strchr (text, '.') != NULL))
+    return complete_struct (pkc, &idx, text, len, state);
 
-  function_name = pkl_env_get_next_matching_decl (env, &iter, x, len);
+  function_name = pkl_env_get_next_matching_decl (env, &iter, text, len);
   return function_name;
 }
 
+/* This function provides command line completion when the tag of an
+   IOS is an appropriate completion.
+
+   TEXT is the partial word to be completed.  STATE is zero the first
+   time the function is called and non-zero for each subsequent call.
+
+   On each call, the function returns the tag of an IOS for which
+   that tag and TEXT share a common substring. It returns NULL to
+   indicate that there are no more such tags.
+ */
 char *
-pk_ios_completion_function (pk_compiler pkc,
-                            const char *x, int state)
+pk_ios_completion_function (pk_compiler pkc __attribute__ ((unused)),
+                            const char *text, int state)
 {
-  /* XXX put state in pkc instead of a global.  */
   static ios io;
   if (state == 0)
     {
@@ -227,7 +244,7 @@ pk_ios_completion_function (pk_compiler pkc,
       io = ios_next (io);
     }
 
-  int len  = strlen (x);
+  int len  = strlen (text);
   while (1)
     {
       if (ios_end (io))
@@ -236,7 +253,7 @@ pk_ios_completion_function (pk_compiler pkc,
       char buf[16];
       snprintf (buf, 16, "#%d", ios_get_id (io));
 
-      int match = strncmp (buf, x, len);
+      int match = strncmp (buf, text, len);
       if (match != 0)
         {
           io = ios_next (io);
