@@ -21,22 +21,12 @@
 
 remote="$1"
 url="$2"
+do_syntaxcheck=0
 
 # This script executes at the top of the git tree.  Try to find the
 # build directory... but ignore jitter's.
 builddir=$(dirname "`find . -name config.log | grep -v jitter | head -1`")
 cd $builddir
-
-echo "Checking syntax... "
-out=`make syntax-check`
-if test $? != 0; then
-  (
-  echo "$out" | grep ':'
-  echo
-  echo "*** Syntax check needs to succeed before pushing is allowed."
-  ) >&2
-  exit 1
-fi
 
 z40=0000000000000000000000000000000000000000
 
@@ -56,8 +46,6 @@ do
 			range="$remote_sha..$local_sha"
 		fi
 
-		echo $range
-
 		# Check for ChangeLog being in each commits
 		changelog=`git diff-tree --no-commit-id --name-only -r "$range" | grep '^ChangeLog$'`
 		if [ -z "$changelog" ]; then
@@ -72,7 +60,22 @@ do
 			echo >&2 "Found WIP commit in $local_ref, not pushing"
 			exit 1
 		fi
+
+		do_syntaxcheck=1
 	fi
 done
+
+if [ $do_syntaxcheck != 0 ]; then
+	echo "Checking syntax... "
+	out=`make syntax-check`
+	if test $? != 0; then
+		(
+		echo "$out" | grep ':'
+		echo
+		echo "*** Syntax check needs to succeed before pushing is allowed."
+		) >&2
+		exit 1
+	fi
+fi
 
 exit 0
