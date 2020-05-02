@@ -47,8 +47,8 @@ char *pk_file_readable (const char *filename);
 int64_t pk_ipow (int64_t base, uint32_t exp);
 uint64_t pk_upow (uint64_t base, uint32_t exp);
 
-/* Print the give unsigned 64-bit integer in binary.  */
-void pk_print_binary (uint64_t val, int size, int sign);
+/* Print the given unsigned 64-bit integer in binary. */
+void pk_print_binary (void (*puts_fn) (const char *str), uint64_t val, int size, int sign);
 
 /* Concatenate string arguments into an malloc'ed string. */
 char *pk_str_concat(const char *s0, ...);

@@ -399,7 +399,7 @@ late-header-c
       }                                                                     \
       else if (JITTER_ARGN1 == 2)                                           \
       {                                                                     \
-        pk_print_binary (val, JITTER_ARGN0, 1);                             \
+        pk_print_binary (pk_puts, val, JITTER_ARGN0, 1);                    \
         JITTER_DROP_STACK ();                                               \
         break;                                                              \
       }                                                                     \
@@ -444,7 +444,7 @@ late-header-c
       }                                                                     \
       else if (JITTER_ARGN1 == 2)                                           \
       {                                                                     \
-        pk_print_binary (val, JITTER_ARGN0, 1);                             \
+        pk_print_binary (pk_puts, val, JITTER_ARGN0, 1);                    \
         JITTER_DROP_STACK ();                                               \
         break;                                                              \
       }                                                                     \

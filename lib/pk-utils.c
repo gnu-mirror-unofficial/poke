@@ -31,7 +31,6 @@
 #include <string.h> /* strcpy */
 #include <xalloc.h> /* xmalloc */
 
-#include "pkt.h"
 #include "pk-utils.h"
 
 char *
@@ -86,47 +85,35 @@ PK_POW (pk_upow, uint64_t)
 #undef PK_POW
 
 void
-pk_print_binary (uint64_t val, int size, int sign)
+pk_print_binary (
+  void (*puts_fn) (const char *str),
+  uint64_t val, int size, int sign)
 {
   char b[65];
 
   if (size != 64 && size != 32 && size != 16 && size != 8
       && size != 4)
-    pk_printf ("(%sint<%d>) ", sign ? "" : "u", size);
+    {
+      snprintf (b, sizeof(b), "(%sint<%d>) ", sign ? "" : "u", size);
+      puts_fn (b);
+    }
 
   for (int z = 0; z < size; z++) {
     b[size-1-z] = ((val >> z) & 0x1) + '0';
   }
   b[size] = '\0';
 
-  pk_printf ("0b%s", b);
+  puts_fn ("0b");
+  puts_fn (b);
 
   if (size == 64)
-    {
-      if (!sign)
-        pk_puts ("U");
-      pk_puts ("L");
-    }
+    puts_fn (sign ? "L" : "UL");
   else if (size == 16)
-    {
-      if (!sign)
-        pk_puts ("U");
-      pk_puts ("H");
-    }
+    puts_fn (sign ? "H" : "UH");
   else if (size == 8)
-    {
-      if (!sign)
-        pk_puts ("U");
-      pk_puts ("B");
-    }
+    puts_fn (sign ? "B" : "UB");
   else if (size == 4)
-    {
-      {
-        if (!sign)
-          pk_puts ("U");
-      }
-      pk_puts ("N");
-    }
+    puts_fn (sign ? "N" : "UN");
 }
 
 /* Concatenate 2+ strings.

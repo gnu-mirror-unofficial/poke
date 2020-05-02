@@ -1,3 +1,14 @@
+2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* lib/pk-utils.c: Remove pkt.h from includes.
+	(pk_print_binary): Add string output function as first param.
+	* lib/pk-utils.h (pk_print_binary): Likewise.
+	* lib/pvm-val.c (pvm_print_val_1): Add pk_puts as first param
+	when calling pk_print_binary.
+	* lib/pvm.jitter: Likewise.
+
+2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 2020-05-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lib/pvm.jitter (PVM_POKE): Use the current IO space if PVM_NULL
