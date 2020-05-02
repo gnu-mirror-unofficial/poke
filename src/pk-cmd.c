@@ -265,7 +265,6 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
     goto usage;                                                                \
   } while (1)
   int ret = 1;
-  size_t i;
   char cmd_name[MAX_CMD_NAME];
   const char *p;
   const struct pk_cmd *cmd;
@@ -282,9 +281,8 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
     return 0;
 
   /* Get the command name.  */
-  i = 0;
   memset (cmd_name, 0, MAX_CMD_NAME);
-  while (isalnum (*p) || *p == '_' || *p == '-' || *p == ':')
+  for (int i = 0; isalnum (*p) || *p == '_' || *p == '-' || *p == ':';)
     {
       if (i >= MAX_CMD_NAME - 1)
         {
@@ -521,7 +519,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
   besilent = 1;
   usage:
   /* Free arguments occupying memory.  */
-  for (i = 0; i < argc; ++i)
+  for (int i = 0; i < argc; ++i)
     {
       if (argv[i].type == PK_CMD_ARG_STR)
         free (argv[i].val.str);
