@@ -549,6 +549,10 @@ extern struct pk_trie *set_trie; /* pk-set.c */
 
 static struct pk_trie *cmds_trie;
 
+#define IS_COMMAND(input, cmd) \
+  (strncmp ((input), (cmd), sizeof (cmd) - 1) == 0 \
+   && ((input)[sizeof (cmd) - 1] == ' ' || (input)[sizeof (cmd) - 1] == '\t'))
+
 int
 pk_cmd_exec (const char *str)
 {
@@ -567,25 +571,17 @@ pk_cmd_exec (const char *str)
       int what; /* 0 -> declaration, 1 -> statement */
       int retval = 1;
 
-      if (strncmp (ecmd, "defun ", 6) == 0
-          || strncmp (ecmd, "defun\t", 6) == 0)
+      if (IS_COMMAND(ecmd, "defun"))
         what = 0;
       else
         {
-          if (strncmp (ecmd, "defvar ", 7) == 0
-              || strncmp (ecmd, "defvar\t", 7) == 0
-              || strncmp (ecmd, "deftype ", 8) == 0
-              || strncmp (ecmd, "deftype\t", 8) == 0
-              || strncmp (ecmd, "defunit ", 8) == 0
-              || strncmp (ecmd, "defunit\t", 8) == 0)
+          if (IS_COMMAND(ecmd, "defvar")
+           || IS_COMMAND(ecmd, "deftype")
+           || IS_COMMAND(ecmd, "defunit"))
             what = 0;
           else
             what = 1;
-        }
 
-      if (strncmp (ecmd, "defun ", 6) != 0
-          && strncmp (ecmd, "defun\t", 6) != 0)
-        {
           cmd_alloc = pk_str_concat (cmd, ";", NULL);
           ecmd = cmd_alloc;
         }
@@ -614,6 +610,8 @@ pk_cmd_exec (const char *str)
       return retval;
     }
 }
+#undef IS_COMMAND
+
 
 int
 pk_cmd_exec_script (const char *filename)
