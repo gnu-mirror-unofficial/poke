@@ -105,7 +105,7 @@ Basic Editing
 * Buffers as IO Spaces::	Poking memory buffers.
 * Copying Bytes::		Moving data between IO spaces.
 * Saving Buffers in Files::	From memory to files.
-* Character Sets::		ASCII, Unicode, ...
+* Character Sets::		ASCII, Unicode, @dots{}
 * From Bytes to Characters::	Working with ASCII codes
 * ASCII Strings::		NULL-terminated strings.
 * From Strings to Characters::	Indexing strings.
@@ -577,7 +577,7 @@ integers, and the like.
 * Buffers as IO Spaces::	Poking memory buffers.
 * Copying Bytes::		Moving data between IO spaces.
 * Saving Buffers in Files::	From memory to files.
-* Character Sets::		ASCII, Unicode, ...
+* Character Sets::		ASCII, Unicode, @dots{}
 * From Bytes to Characters::	Working with ASCII codes
 * ASCII Strings::		NULL-terminated strings.
 * From Strings to Characters::	Indexing strings.
@@ -647,7 +647,7 @@ in:
 
 @example
 $ poke foo.o
-[...]
+[@dots{}]
 (poke)
 @end example
 
@@ -656,7 +656,7 @@ The other way is to fire up poke without arguments, and then use the
 
 @example
 $ poke
-[...]
+[@dots{}]
 (poke) .file foo.o
 The current IOS is now `./foo.o'.
 @end example
@@ -739,7 +739,7 @@ We are back to @file{foo.o}.  Since we are not really interested in
 @end example
 
 @noindent
-Awesome.  Now we can focus on @file{foo.o}'s contents...
+Awesome.  Now we can focus on @file{foo.o}'s contents@dots{}
 
 @node Dumping File Contents
 @section Dumping File Contents
@@ -818,7 +818,7 @@ Using the ruler and the column of offsets, locating bytes in the data
 is very easy.  Let's say for example we are interested in the byte at
 offset 0x68: we use the first column to quickly find the row starting
 at 0x60, and the ruler to find the column marked with @code{88}.
-Cross column and row and... voila!  The byte in question has the value
+Cross column and row and@dots{} voila!  The byte in question has the value
 0x85.  The reverse process is just as easy.  What is the offset of the
 first 0x40 in the file?  Try it!
 
@@ -839,7 +839,7 @@ Something to notice in the @command{dump} output above is that these
 are not, by any mean, the complete contents of the file @file{foo.o}.
 The @command{.info ios} dot-command informed us in the last section
 that @file{foo.o} contains 920 bytes, of which the @command{dump}
-command only showed us... @code{0x80} bytes, or @code{128} bytes in
+command only showed us@dots{} @code{0x80} bytes, or @code{128} bytes in
 decimal.
 
 @command{dump} is certainly capable of showing more (and less) than
@@ -2149,7 +2149,7 @@ it the pokeish way:
 
 @example
 $ poke foo.o
-[...]
+[@dots{}]
 (poke) save :from 0#B :size 64#B :file "header.dat"
 @end example
 
@@ -2276,7 +2276,7 @@ that digits all have consecutive codes, so we can do:
 Now that we know that @code{b} is a digit, how could we calculate its
 digit value?  If we look at the ASCII table again, we will find that
 the character codes for digits are not only consecutive: they are also
-ordered in ascending order @code{0}, @code{1}, ...  Therefore, we can
+ordered in ascending order @code{0}, @code{1}, @dots{}  Therefore, we can
 do:
 
 @example
@@ -2555,7 +2555,7 @@ provides information to determine how many pixels fit in each line:
 
 @example
  <--- line_width  --->
-| pixel | pixel | ... | pixel | pixel | ... | ...
+| pixel | pixel | @dots{} | pixel | pixel | @dots{} | @dots{}
 |        line 1       |         line 2      |
 @end example
 
@@ -2668,7 +2668,7 @@ image.  Let's fire up poke and create a memory buffer:
 
 @example
 $ poke
-[...]
+[@dots{}]
 (poke) .mem image
 The current IOS is now `*image*'.
 (poke) dump
@@ -2919,7 +2919,7 @@ pixels.  The first line in our image would be:
 @example
 (poke) defvar l0 = [bga,fga,fga,bga,bga]
 (poke) l0
-[[255UB,255UB,255UB],[255UB,99UB,71UB],...]
+[[255UB,255UB,255UB],[255UB,99UB,71UB],@dots{}]
 @end example
 
 @noindent
@@ -2957,7 +2957,7 @@ do that:
 
 @noindent
 Not bad, we went from poking 105 bytes in the IO space to poking six
-lines.  But we can still do better...
+lines.  But we can still do better@dots{}
 
 @subsection Poking Images
 
@@ -2967,7 +2967,7 @@ increase the offset of every poke.  This is inconvenient.
 In the same way than a sequence of bytes can be abstracted in a line,
 a sequence of lines can be abstracted in an image.  It follows that we
 can look at the image data as an array of lines.  But lines are
-themselves arrays of arrays... no matter, there is no limit on the
+themselves arrays of arrays@dots{} no matter, there is no limit on the
 number of arrays-of levels that you can nest.
 
 So, let's define our image as an array of the lines defined above:
@@ -2975,7 +2975,7 @@ So, let's define our image as an array of the lines defined above:
 @example
 (poke) defvar image_data = [l0,l1,l2,l3,l4,l5]
 (poke) image_data
-[[[255UB,255UB,255UB],[255UB,99UB,71UB],[255UB,99UB,71UB]...]...]
+[[[255UB,255UB,255UB],[255UB,99UB,71UB],[255UB,99UB,71UB]@dots{}]@dots{}]
 @end example
 
 @noindent
@@ -3003,7 +3003,7 @@ We know that the SBM image starts at offset 0#B, but what is the size
 of its entire binary representation?  The header is easy: it spans for
 5 bytes.  The size of the sequence of pixels can be derived from the
 pixels per line byte, and the number of lines byte.  We know that each
-pixel occupies 3 bytes, so calculating...
+pixel occupies 3 bytes, so calculating@dots{}
 
 @example
 (poke) defvar ppl = byte @@ 3#B
@@ -3060,7 +3060,7 @@ Let's open with poke the cute image we created in the last section,
 
 @example
 $ poke p.sbm
-[...]
+[@dots{}]
 (poke) dump
 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 5342 4d05 07ff ffff ff63 47ff 6347 ffff  SBM......cG.cG..
@@ -3099,7 +3099,7 @@ type specifier:
 @example
 (poke) defvar image_data = byte[3][ppl][lines] @@ 5#B
 (poke) image_data
-[[[255UB,255UB,255UB],[255UB,99UB,71UB], ...]...]
+[[[255UB,255UB,255UB],[255UB,99UB,71UB], @dots{}]@dots{}]
 @end example
 
 @subsection Painting Pixels
@@ -3137,7 +3137,7 @@ to a memory IO space to avoid overwriting @file{p.sbm}:
 
 @example
 $ poke p.sbm
-[...]
+[@dots{}]
 (poke) .mem scratch
 The current IOS is now `*scratch*'.
 (poke) .info ios
@@ -3343,7 +3343,7 @@ Let's get the first line from the original @code{image_data}:
 @example
 (poke) defvar l0 = image_data[0]
 (poke) l0
-[[255UB,255UB,255UB],[255UB,99UB,71UB],...]
+[[255UB,255UB,255UB],[255UB,99UB,71UB],@dots{}]
 @end example
 
 @noindent
@@ -3722,7 +3722,7 @@ it:
 @example
 load rgb24;
 
-[... SBM definitions ...]
+[@dots{} SBM definitions @dots{}]
 @end example
 
 @noindent
@@ -3749,7 +3749,7 @@ by adding a load command to our @code{.pokerc}.  For example:
 
 @example
 # My poke configuration - jemarch
-[...]
+[@dots{}]
 .load ~/.poke.d/mydefs.pk
 @end example
 
@@ -4320,7 +4320,7 @@ values >=1 and <= 10 are valid. Default value is '2'.
 @item oacutoff
 @cindex array cutoff
 When displaying an array as struct field, display only the elements up to the
-@code{cutoff} index and display @code{...} after that. Value of @code{0}
+@code{cutoff} index and display @code{@dots{}} after that. Value of @code{0}
 means no limit. This cutoff value is not used when directly displaying arrays
 content.
 @item omaps
@@ -5110,7 +5110,7 @@ very central concept in poke.
 * Why Offsets::			Byte-oriented or bit-oriented?
 * Offset Literals::		Denoting offsets in Poke.
 * Offset Units::		Pears and potatoes.
-* Offset Types::		offset<...>.
+* Offset Types::		offset<@dots{}>.
 * Casting Offsets::		Converting offsets.
 * Offset Operations::		Operating with offsets.
 * Offset Attributes::           Accessing properties of offset values.
@@ -6235,7 +6235,7 @@ zero, like this:
 (poke) Packet @{@}
 Packet @{
   flags=0x0UH,
-  data=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...]
+  data=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,@dots{}]
 @}
 @end example
 
@@ -6246,7 +6246,7 @@ fields:
 (poke) Packet @{ flags = 0x8 @}
 Packet @{
   flags=0x8UH,
-  data=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...]
+  data=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,@dots{}]
 @}
 @end example
 
@@ -8168,7 +8168,7 @@ structures.  Example:
 
 @example
 (poke) printf ("%1v\n", struct @{ s = struct @{ i = 10 @},  l = 20L @});
-struct @{s=struct @{...@},l=0x14L@}
+struct @{s=struct @{@dots{}@},l=0x14L@}
 @end example
 
 By default, the depth level is @code{0}, which means no limit.
@@ -8292,7 +8292,7 @@ structures.  In that case, we can just do:
 
 load elf;
 
-/* ... code  ... */
+/* @dots{} code  @dots{} */
 @end example
 
 When asked to open a module, poke assumes it is implemented in a file
