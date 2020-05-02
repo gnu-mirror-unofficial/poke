@@ -1211,7 +1211,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   int nargs = PKL_AST_FUNC_NARGS (function);
   int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
 
-  /* Acknowledge the implicit first argument in methods.  */
+  /* Acknowledge the implicit last argument in methods.  */
   if (method_p)
     nargs++;
 

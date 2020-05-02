@@ -1,5 +1,9 @@
 2020-05-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* lib/pkl-gen.c (pkl_gen_pr_func): Fix typo in comment.
+
+2020-05-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* lib/pkl-anal.c (pkl_anal1_ps_var): New handler.
 	(pkl_phase_anal1): Register handler.
 	* lib/pkl-trans.h (struct pkl_trans_payload): New field
