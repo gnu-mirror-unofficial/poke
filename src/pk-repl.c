@@ -212,6 +212,9 @@ poke_sigint_handler (int status)
   siglongjmp(ctrlc_buf, 1);
 }
 
+/* Return a copy of TEXT, with every instance of the space character
+   prepended with the backslash character.   The caller is responsible
+   for freeing the result.  */
 static char *
 escape_metacharacters (char *text, int match_type, char *qp)
 {

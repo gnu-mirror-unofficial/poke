@@ -1,5 +1,9 @@
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-repl.c (escape_metacharacters): Add comment.
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
 	* lib/libpoke.c (pk_completion_function): Improve comments and
 	parameter naming.
 	* lib/libpoke.c (pk_ios_completion_function): Ditto.
