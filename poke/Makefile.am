@@ -36,7 +36,7 @@ if HSERVER
 endif
 
 poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
-                -I$(top_srcdir)/lib -I$(top_builddir)/lib \
+                -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke \
                 -DJITTER_VERSION=\"$(JITTER_VERSION)\" \
                 -DPKGDATADIR=\"$(pkgdatadir)\" \
                 -DPKGINFODIR=\"$(infodir)\" \
