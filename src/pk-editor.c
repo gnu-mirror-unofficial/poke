@@ -66,7 +66,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   /* Get a temporary file.  */
-  if ((des = path_search (tmpfile, PATH_MAX, NULL, "poke", true) == -1)
+  if (((des = path_search (tmpfile, PATH_MAX, NULL, "poke", true)) == -1)
       || ((des = mkstemp (tmpfile)) == -1))
     {
       pk_term_class ("error");
@@ -116,7 +116,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       newline[i] = '\0';
       fclose (f);
 
-      if (newline && *newline != '\0')
+      if (*newline != '\0')
         {
           pk_puts ("(poke) ");
           pk_puts (newline);
