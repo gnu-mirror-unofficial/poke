@@ -572,11 +572,11 @@ pk_cmd_exec (const char *str)
         what = 0;
       else
         {
-          if (strncmp (ecmd, "defvar ", 6) == 0
-              || strncmp (ecmd, "defvar\t", 6) == 0
+          if (strncmp (ecmd, "defvar ", 7) == 0
+              || strncmp (ecmd, "defvar\t", 7) == 0
               || strncmp (ecmd, "deftype ", 8) == 0
               || strncmp (ecmd, "deftype\t", 8) == 0
-              || strncmp (ecmd, "defunit", 7) == 0
+              || strncmp (ecmd, "defunit ", 8) == 0
               || strncmp (ecmd, "defunit\t", 8) == 0)
             what = 0;
           else
