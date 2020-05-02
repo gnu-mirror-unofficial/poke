@@ -202,17 +202,18 @@ deftype ID3V1_Tag =
 
     defun _print = void:
       {
-        print "#<";
-        printf "genre: %u8d", genre;
-        print ",title: " + catos (title);
-        print ",artist: " + catos (artist);
-        print ",album: " + catos (album);
-        print ",year: " + catos (year);
-        try print ",comment: " + catos (data.comment);
+        print "#<\n";
+        printf "  genre: %<integer:%u8d%>\n", genre;
+        printf "  title: %<string:%s%>\n", catos (title);
+        printf "  artist: %<string:%s%>\n", catos (artist);
+        printf "  album: %<string:%s%>\n", catos (album);
+        printf "  year: %<integer:%s%>\n", catos (year);
+        try {data.comment;
+             printf "  comment:%<string:%s%>\n", catos (data.comment);}
         catch if E_elem
         {
-          print ",comment: " + catos (data.extended.comment);
-          printf ",track: %u8d", data.extended.track;
+          printf "  comment: %<string:%s%>\n", catos (data.extended.comment);
+          printf "  track: %<integer:%u8d%>\n", data.extended.track;
         }
         print ">";
       }
