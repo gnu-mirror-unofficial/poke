@@ -631,10 +631,44 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
   switch (PKL_AST_CODE (lvalue))
     {
     case PKL_AST_VAR:
-      /* Stack: VAL */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPVAR,
-                    PKL_AST_VAR_BACK (lvalue), PKL_AST_VAR_OVER (lvalue));
-      break;
+      {
+        /* Stack: VAL */
+
+        pkl_ast_node var = lvalue;
+        pkl_ast_node var_decl = PKL_AST_VAR_DECL (var);
+        pkl_ast_node var_function = PKL_AST_VAR_FUNCTION (var);
+
+        /* If the declaration associated with the variable is in a
+           struct _and_ we are in a method body, we update the
+           implicit struct argument.  */
+        if (var_function
+            && PKL_AST_FUNC_METHOD_P (var_function)
+            && (PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
+                || (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
+                    && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl)))))
+          {
+            pkl_ast_node var_name = PKL_AST_VAR_NAME (var);
+            int var_function_back = PKL_AST_VAR_FUNCTION_BACK (var);
+
+            assert (var_name != NULL);
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
+                          var_function_back,
+                          PKL_AST_FUNC_NARGS (var_function)); /* VAL SCT */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          pvm_make_string (PKL_AST_IDENTIFIER_POINTER (var_name)));
+                                                              /* VAL SCT STR */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);         /* SCT STR VAL */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSET);        /* SCT */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          }
+        else
+          /* Normal variable.  */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPVAR,
+                        PKL_AST_VAR_BACK (lvalue), PKL_AST_VAR_OVER (lvalue));
+        break;
+      }
     case PKL_AST_INDEXER:
       {
         /* Stack: VAL ARRAY INDEX */
