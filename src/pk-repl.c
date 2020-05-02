@@ -270,7 +270,6 @@ pk_repl (void)
 
   while (!poke_exit_p)
     {
-      int ret;
       char *line;
 
       while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
@@ -302,9 +301,7 @@ pk_repl (void)
       add_history (line);
 #endif
 
-      ret = pk_cmd_exec (line);
-      if (!ret)
-        /* Avoid gcc warning here.  */ ;
+      pk_cmd_exec (line);
       free (line);
     }
 #if defined HAVE_READLINE_HISTORY_H

@@ -1,5 +1,9 @@
 2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* src/pk-repl.c (pk_repl): Remove unused variable.
+
+2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* src/pk-cmd.c (pk_cmd_exec_1): Narrow variable scope
 	and fix compiler warning with it.
 
