@@ -1,5 +1,9 @@
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
+	* doc/poke.texi (Conditional Expressions): Add indeces.
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
 	* doc/poke.texi: Use @dots{} instead of ...
 
 2020-05-02  John Darrington <john@darrington.wattle.id.au>

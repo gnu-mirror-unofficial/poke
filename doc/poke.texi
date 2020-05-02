@@ -6833,6 +6833,10 @@ statement that will be executed if @var{exp} holds false.  The
 
 @node Conditional Expression
 @subsection Conditional Expressions
+@cindex conditional expressions
+@cindex ternary conditional operator
+@cindex @code{@?}
+@cindex @code{:}
 
 Poke supports a ternary conditional expression that has the form:
 
