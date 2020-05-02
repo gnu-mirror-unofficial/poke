@@ -711,25 +711,23 @@ pk_cmd_shutdown (void)
 }
 
 
-/*  Return the name of the next command that matches X,LEN.  IDX is  a
-    pointer to in integer used  to index into the set of matches.
+/*  Return the name of the next command that matches (X, LEN).
     Returns the name of the next command in the set, or NULL if there
     are no more. The returned value must be freed by the caller.  */
 char *
-pk_cmd_get_next_match (int *idx, const char *x, size_t len)
+pk_cmd_get_next_match (const char *x, size_t len)
 {
-  /* X must start with a dot */
-  if (len == 0 || *x != '.')
-    return NULL;
+  static int idx = 0;
 
   /* Dot commands */
-  for (const struct pk_cmd **c = dot_cmds + *idx;
+  for (const struct pk_cmd **c = dot_cmds + idx++;
        *c != &null_cmd;
-       (*idx)++, c++)
+       c++)
     {
-      if (strncmp ((*c)->name, x + 1, len - 1) == 0)
-        return pk_str_concat (".", (*c)->name, NULL);
+      if (len == 0 || strncmp ((*c)->name, x + 1, len - 1) == 0)
+	return pk_str_concat (".", (*c)->name, NULL);
     }
+  idx = 0;
 
   return NULL;
 }

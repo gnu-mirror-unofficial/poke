@@ -43,12 +43,11 @@ static sigjmp_buf ctrlc_buf;
 static char *
 poke_completion_function (const char *x, int state)
 {
-  static int idx = 0;
   char *function_name = pk_completion_function (poke_compiler,
                                                 x, state);
 
   if (function_name == NULL)
-    function_name = pk_cmd_get_next_match (&idx, x, strlen (x));
+    function_name = pk_cmd_get_next_match (x, strlen (x));
 
   return function_name;
 }

@@ -1,5 +1,14 @@
 2020-05-02  John Darrington <john@darrington.wattle.id.au>
 
+	* src/pk-cmd.c (pk_cmd_get_next_match): Remove parameter
+	idx and use a static local instead.
+	* src/pk-cmd.h (pk_cmd_get_next_match): Remove parameter
+	idx.
+	* src/pk-repl.c (poke_completion_function): Adjust call
+	to pk_cmd_get_next_match.
+
+2020-05-02  John Darrington <john@darrington.wattle.id.au>
+
 	* doc/poke.texi (Poking Structs): Replace "Lets" with "Let's".
 	* cfg.mk (sc_jemarchism.z): New rule.
 	* cfg.mk (local-checks-available): Add it.
