@@ -18,168 +18,53 @@
 
 /* Implemented as specified in http://id3.org/id3v1.html  */
 
-defvar id3v1_num_genres = 0;
+/* Table containing the names of the different supported genres.  Note
+   that there are 255 possible genres, because the code 255 denotes
+   no-genre according to the spec.  */
 
-defun id3v1_new_genre = int:
-  {
-    defvar g = id3v1_num_genres;
-    id3v1_num_genres = id3v1_num_genres + 1;
-    return g;
-  }
+defvar id3v1_genres =
+  ["blues", "classic rock", "country", "dance", "disco", "funk",
+   "grunge", "hip-hop", "jazz", "metal", "new age", "oldies",
+   "other", "pop", "rhythm and blues", "rap", "reggae", "rock",
+   "techno", "industrial", "alternative", "ska", "death metal",
+   "pranks", "soundtrack", "euro-techno", "ambient", "trip-hop",
+   "vocal", "jazz and funk", "fusion",  "trance", "classical",
+   "instrumental", "acid", "house", "game", "sound clip", "gospel",
+   "noise", "alternative rock", "bass", "soul", "punk", "space",
+   "meditative", "instrumental pop", "instrumental rock", "ethnic",
+   "gothic", "darkwave", "techno-industrial", "electronic",
+   "pop-folk", "eurodance", "dream", "southern rock", "comedy",
+   "cult", "gangsta", "top 40", "christian rap", "pop/funk",
+   "jungle music", "native US", "cabaret", "new wave",
+   "psychedelic", "rave",   "showtunes", "trailer", "lo-fi",
+   "tribal", "acid punk", "acid jazz", "polka", "retro",
+   "musical", "rock n roll", "hard rock",
+   .[254] = ""];
 
-defvar ID3V1_GENRE_BLUES = id3v1_new_genre;
-defvar ID3V1_GENRE_CLASSIC_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_COUNTRY = id3v1_new_genre;
-defvar ID3V1_GENRE_DANCE = id3v1_new_genre;
-defvar ID3V1_GENRE_DISCO = id3v1_new_genre;
-defvar ID3V1_GENRE_FUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_GRUNGE = id3v1_new_genre;
-defvar ID3V1_GENRE_HIP_HOP = id3v1_new_genre;
-defvar ID3V1_GENRE_JAZZ = id3v1_new_genre;
-defvar ID3V1_GENRE_METAL = id3v1_new_genre;
-defvar ID3V1_GENRE_NEW_AGE = id3v1_new_genre;
-defvar ID3V1_GENRE_OLDIES = id3v1_new_genre;
-defvar ID3V1_GENRE_OTHER = id3v1_new_genre;
-defvar ID3V1_GENRE_POP = id3v1_new_genre;
-defvar ID3V1_GENRE_R_AND_B = id3v1_new_genre;
-defvar ID3V1_GENRE_RAP = id3v1_new_genre;
-defvar ID3V1_GENRE_REGGAE = id3v1_new_genre;
-defvar ID3V1_GENRE_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_TECHNO = id3v1_new_genre;
-defvar ID3V1_GENRE_INDUSTRIAL = id3v1_new_genre;
-defvar ID3V1_GENRE_ALTERNATIVE = id3v1_new_genre;
-defvar ID3V1_GENRE_SKA = id3v1_new_genre;
-defvar ID3V1_GENRE_DEATH_METAL = id3v1_new_genre;
-defvar ID3V1_GENRE_PRANKS = id3v1_new_genre;
-defvar ID3V1_GENRE_SOUNDTRACK = id3v1_new_genre;
-defvar ID3V1_GENRE_EURO_TECHNO = id3v1_new_genre;
-defvar ID3V1_GENRE_AMBIENT = id3v1_new_genre;
-defvar ID3V1_GENRE_TRIP_HOP = id3v1_new_genre;
-defvar ID3V1_GENRE_VOCAL = id3v1_new_genre;
-defvar ID3V1_GENRE_JAZZ_FUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_FUSION = id3v1_new_genre;
-defvar ID3V1_GENRE_TRANCE = id3v1_new_genre;
-defvar ID3V1_GENRE_LASSICAL = id3v1_new_genre;
-defvar ID3V1_GENRE_INSTRUMENTAL = id3v1_new_genre;
-defvar ID3V1_GENRE_ACID = id3v1_new_genre;
-defvar ID3V1_GENRE_HOUSE = id3v1_new_genre;
-defvar ID3V1_GENRE_GAME = id3v1_new_genre;
-defvar ID3V1_GENRE_SOUND_CLIP = id3v1_new_genre;
-defvar ID3V1_GENRE_GOSPEL = id3v1_new_genre;
-defvar ID3V1_GENRE_NOISE  = id3v1_new_genre;
-defvar ID3V1_GENRE_ALTERNROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_BASS = id3v1_new_genre;
-defvar ID3V1_GENRE_SOUL = id3v1_new_genre;
-defvar ID3V1_GENRE_PUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_SPACE = id3v1_new_genre;
-defvar ID3V1_GENRE_MEDITATIVE = id3v1_new_genre;
-defvar ID3V1_GENRE_INSTRUMENTAL_POP = id3v1_new_genre;
-defvar ID3V1_GENRE_INSTRUMENTAL_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_ETHNIC = id3v1_new_genre;
-defvar ID3V1_GENRE_GOTHIC = id3v1_new_genre;
-defvar ID3V1_GENRE_DARKWAVE = id3v1_new_genre;
-defvar ID3V1_GENRE_TECHNO_INDUSTRIAL = id3v1_new_genre;
-defvar ID3V1_GENRE_ELECTRONIC = id3v1_new_genre;
-defvar ID3V1_GENRE_POP_FOLK = id3v1_new_genre;
-defvar ID3V1_GENRE_EURODANCE = id3v1_new_genre;
-defvar ID3V1_GENRE_DREAM  = id3v1_new_genre;
-defvar ID3V1_GENRE_SOUTHERN_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_COMEDY = id3v1_new_genre;
-defvar ID3V1_GENRE_CULT = id3v1_new_genre;
-defvar ID3V1_GENRE_GANGSTA = id3v1_new_genre;
-defvar ID3V1_GENRE_TOP_40 = id3v1_new_genre;
-defvar ID3V1_GENRE_CHRISTIAN_RAP = id3v1_new_genre;
-defvar ID3V1_GENRE_POP_FUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_JUNGLE  = id3v1_new_genre;
-defvar ID3V1_GENRE_NATIVE_AMERICAN = id3v1_new_genre;
-defvar ID3V1_GENRE_CABARET = id3v1_new_genre;
-defvar ID3V1_GENRE_NEW_WAVE = id3v1_new_genre;
-defvar ID3V1_GENRE_PSYCHADELIC = id3v1_new_genre;
-defvar ID3V1_GENRE_RAVE = id3v1_new_genre;
-defvar ID3V1_GENRE_SHOWTUNES = id3v1_new_genre;
-defvar ID3V1_GENRE_TRAILER = id3v1_new_genre;
-defvar ID3V1_GENRE_LO_FI  = id3v1_new_genre;
-defvar ID3V1_GENRE_TRIBAL = id3v1_new_genre;
-defvar ID3V1_GENRE_ACID_PUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_ACID_JAZZ = id3v1_new_genre;
-defvar ID3V1_GENRE_POLKA = id3v1_new_genre;
-defvar ID3V1_GENRE_RETRO = id3v1_new_genre;
-defvar ID3V1_GENRE_MUSICAL = id3v1_new_genre;
-defvar ID3V1_GENRE_ROCK_N_ROLL = id3v1_new_genre;
-defvar ID3V1_GENRE_HARD_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_FOLK = id3v1_new_genre;
-defvar ID3V1_GENRE_FOLK_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_NATIONAL_FOLK = id3v1_new_genre;
-defvar ID3V1_GENRE_SWING = id3v1_new_genre;
-defvar ID3V1_GENRE_FAST_FUSION = id3v1_new_genre;
-defvar ID3V1_GENRE_BEBOB = id3v1_new_genre;
-defvar ID3V1_GENRE_LATIN = id3v1_new_genre;
-defvar ID3V1_GENRE_REVIVAL = id3v1_new_genre;
-defvar ID3V1_GENRE_CELTIC = id3v1_new_genre;
-defvar ID3V1_GENRE_BLUEGRASS = id3v1_new_genre;
-defvar ID3V1_GENRE_AVANTGARDE = id3v1_new_genre;
-defvar ID3V1_GENRE_GOTHIC_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_PROGRESSIVE_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_PSYCHEDELIC_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_SYMPHONIC_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_SLOW_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_BIG_BAND = id3v1_new_genre;
-defvar ID3V1_GENRE_CHORUS = id3v1_new_genre;
-defvar ID3V1_GENRE_EASY_LISTENING = id3v1_new_genre;
-defvar ID3V1_GENRE_ACOUSTIC = id3v1_new_genre;
-defvar ID3V1_GENRE_HUMOUR = id3v1_new_genre;
-defvar ID3V1_GENRE_SPEECH = id3v1_new_genre;
-defvar ID3V1_GENRE_CHANSON = id3v1_new_genre;
-defvar ID3V1_GENRE_OPERA = id3v1_new_genre;
-defvar ID3V1_GENRE_CHAMBER_MUSIC = id3v1_new_genre;
-defvar ID3V1_GENRE_SONATA = id3v1_new_genre;
-defvar ID3V1_GENRE_SYMPHONY = id3v1_new_genre;
-defvar ID3V1_GENRE_BOOTY_BASS = id3v1_new_genre;
-defvar ID3V1_GENRE_PRIMUS = id3v1_new_genre;
-defvar ID3V1_GENRE_PORN_GROOVE = id3v1_new_genre;
-defvar ID3V1_GENRE_SATIRE = id3v1_new_genre;
-defvar ID3V1_GENRE_SLOW_JAM = id3v1_new_genre;
-defvar ID3V1_GENRE_CLUB = id3v1_new_genre;
-defvar ID3V1_GENRE_TANGO = id3v1_new_genre;
-defvar ID3V1_GENRE_SAMBA = id3v1_new_genre;
-defvar ID3V1_GENRE_FOLKLORE = id3v1_new_genre;
-defvar ID3V1_GENRE_BALLAD = id3v1_new_genre;
-defvar ID3V1_GENRE_POWER_BALLAD = id3v1_new_genre;
-defvar ID3V1_GENRE_RHYTHMIC_SOUL = id3v1_new_genre;
-defvar ID3V1_GENRE_FREESTYLE = id3v1_new_genre;
-defvar ID3V1_GENRE_DUET = id3v1_new_genre;
-defvar ID3V1_GENRE_PUNK_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_DRUM_SOLO = id3v1_new_genre;
-defvar ID3V1_GENRE_A_CAPELLA = id3v1_new_genre;
-defvar ID3V1_GENRE_EURO_HOUSE = id3v1_new_genre;
-defvar ID3V1_GENRE_DANCE_HALL = id3v1_new_genre;
-defvar ID3V1_GENRE_GOA = id3v1_new_genre;
-defvar ID3V1_GENRE_DRUM_AND_BASS = id3v1_new_genre;
-defvar ID3V1_GENRE_CLUB_HOUSE = id3v1_new_genre;
-defvar ID3V1_GENRE_HARDCORE = id3v1_new_genre;
-defvar ID3V1_GENRE_TERROR = id3v1_new_genre;
-defvar ID3V1_GENRE_INDIE = id3v1_new_genre;
-defvar ID3V1_GENRE_BRITPOP = id3v1_new_genre;
-defvar ID3V1_GENRE_NEGERPUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_POLSK_PUNK = id3v1_new_genre;
-defvar ID3V1_GENRE_BEAT = id3v1_new_genre;
-defvar ID3V1_GENRE_CHRISTIAN = id3v1_new_genre;
-defvar ID3V1_GENRE_HEAVY_METAL = id3v1_new_genre;
-defvar ID3V1_GENRE_BLACK_METAL = id3v1_new_genre;
-defvar ID3V1_GENRE_CROSSOVER = id3v1_new_genre;
-defvar ID3V1_GENRE_CONTEMPORARY = id3v1_new_genre;
-defvar ID3V1_GENRE_CHRISTIAN_ROCK = id3v1_new_genre;
-defvar ID3V1_GENRE_MERENGUE = id3v1_new_genre;
-defvar ID3V1_GENRE_SALSA = id3v1_new_genre;
-defvar ID3V1_GENRE_THRASH_METAL = id3v1_new_genre;
-defvar ID3V1_GENRE_ANIME = id3v1_new_genre;
-defvar ID3V1_GENRE_JPOP = id3v1_new_genre;
-defvar ID3V1_GENRE_SYNTHPOP = id3v1_new_genre;
+/* Given a genre name, return its code.  Raise E_inval if the genre is
+   not found.  */
+
+defun id3v1_search_genre = (string name) uint<8>:
+{
+  defvar i = 0;
+  while (i < id3v1_genres'length)
+    {
+      if (id3v1_genres[i] == name)
+        return i;
+      i = i + 1;
+    }
+
+  raise Exception { code = EC_inval,
+                    msg = "cannot find ID3V1 genre" };
+}
+
+/* The ID3V1_Tag type denotes an ID3 tag.  */
 
 deftype ID3V1_Tag =
   struct
   {
     char[3] id = ['T', 'A', 'G'];
+
     char[30] title;
     char[30] artist;
     char[30] album;
@@ -200,10 +85,47 @@ deftype ID3V1_Tag =
 
     uint<8> genre;
 
+    /* Setters and getters.  */
+
+    defun get_title = string: { return rtrim (catos (title)); }
+    defun set_title = (string val) void: { stoca (val, title, ' '); }
+    defun get_artist = string: { return rtrim (catos (artist)); }
+    defun set_artist = (string val) void: { stoca (val, artist, ' '); }
+    defun get_album = string: { return rtrim (catos (album)); }
+    defun set_album = (string val) void: { stoca (val, album, ' '); }
+    defun get_year = int: { return atoi (catos (year)); }
+
+    defun get_comment = string:
+      {
+        try return rtrim (catos (data.comment));
+        catch if E_elem { return rtrim (catos (data.extended.comment)); };
+      }
+    defun set_comment = (string val) void:
+      {
+        try stoca (val, data.comment, ' ');
+        catch if E_elem { stoca (val, data.extended.comment, ' '); }
+      }
+
+    defun get_genre = string:
+      {
+        if (genre == 255)
+          raise E_generic;
+        return id3v1_genres[genre];
+      }
+
+    defun set_genre = (string val) void:
+      {
+        genre = id3v1_search_genre (val);
+      }
+
+    /* Pretty printer.  */
     defun _print = void:
       {
         print "#<\n";
-        printf "  genre: %<integer:%u8d%>\n", genre;
+        if (genre == 255)
+          printf "  genre: %<integer:%u8d%>\n", genre;
+        else
+          printf "  genre: %s\n", id3v1_genres[genre];
         printf "  title: %<string:%s%>\n", catos (title);
         printf "  artist: %<string:%s%>\n", catos (artist);
         printf "  album: %<string:%s%>\n", catos (album);

@@ -55,6 +55,7 @@ Using poke
 
 Pickles
 * Colors::			Editing colors.
+* Audio::			Poking audio files.
 
 Advanced Pokology
 * Writing Pickles::		Sharing your abstractions the sane way.
@@ -126,7 +127,10 @@ Colors
 * The Color Registry::		The @file{color} pickle.
 * RGB24 Encoding::		Encoding colors with three bytes.
 
-Advanced Pokololy
+Audio
+* MP3::				Editing MP3 files.
+
+Advanced Pokology
 * Writing Pickles::		Sharing your abstractions the sane way.
 
 Dot-Commands
@@ -4017,6 +4021,121 @@ codes:
 (poke) load rgb24
 (poke) rgb24_color[color_tomato]
 [255UB,99UB,71UB]
+@end example
+
+@node Audio
+@chapter Audio
+
+@menu
+* MP3::				Editing MP3 files.
+@end menu
+
+@node MP3
+@section MP3
+
+@menu
+* ID3V1 Tags::			The @file{id3v1} pickle.
+@end menu
+
+@node ID3V1 Tags
+@subsection ID3V1 Tags
+
+The @file{id3v1} pickle provides abstractions in order to edit the
+metadata stored in a MP3 file.
+
+@subsubsection Song Genres
+
+The ID3V1 tags support the notion of @dfn{song genre}.  The space for
+genres is from 0 to 254.  The genre code 255 is reserved to mean ``no
+genre''.
+
+The table @code{id3v1_genres} can be indexed with a code in order to
+get the corresponding genre name:
+
+@example
+(poke) id3v1_genres[14]
+"rhythm and blues"
+@end example
+
+Conversely, the function @code{id3v1_search_genre} gives us the code
+of a genre, given its name.  The prototype of this function is:
+
+@example
+defun id3v1_search_genre = (string name) uint<8>:
+@end example
+
+@noindent
+For example:
+
+@example
+(poke) id3v1_search_genre ("rock")
+17UB
+@end example
+
+If @code{id3v1_search_genre} is given a name that doesn't correspond
+with any genre in the genres table, then @code{E_inval} is raised.
+
+@subsubsection The ID3V1_Tag Type
+
+The main data structure defined in the @file{id3v1} pickle is
+@code{ID3V1_Tag}, which corresponds to a ID3V1 tag (surprise!).
+
+Tags comprise the following information:
+
+@itemize @minus
+@item The title of the song, which is limited to 30 bytes.
+@item The artist, which is limited to 30 bytes.
+@item The album, which is limited to 30 bytes.
+@item The year, which is encoded as text in 4 bytes, each byte
+containing the ASCII code for the corresponding digit.
+@item A comment, which is limited to either 28 or 30 bytes, depending
+whether the tag contains track information or not.
+@item An optional track, which is an unsigned 8-bit number.
+@end itemize
+
+The specification does not mention any specific encoding for the
+entries that store text (such as title or artist), but it is safe to
+assume some ASCII-compatible encoding is used.
+
+The text entries are stored as arrays of characters, and they are
+@emph{not} finished by NULL characters.  Instead the arrays of
+characters are filled with whitespaces (ASCII code 0x20) at the
+right.  For example, the artist name Picasso encoded in ID3V1 would
+be:
+
+@example
+['P','i','c','a','s','s','o',' ',' ', ..., ' ']
+@end example
+
+In order to ease the manipulation of the text fields, setters and
+getters are provided in order to handle these values as strings and
+not as whitespace-filled arrays of characters.  Example:
+
+@example
+(poke) tag.title
+[48UB,49UB,32UB,45UB,32UB,...]
+(poke) tag.get_title
+"01 - Eclipse De Mar"
+@end example
+
+@noindent
+Also for setters:
+
+@example
+(poke) tag.set_title ("Join us Now")
+(poke) tag.title
+[74UB,111UB,105UB,110UB,32UB,...]
+@end example
+
+Setters and getters are also provided in order to manipulate the year
+as an integer value:
+
+@example
+(poke) tag.year
+[0x31UB,0x39UB,0x38UB,0x30UB]
+(poke) tag.get_year
+1980
+(poke) tag.set_year (1988)
 @end example
 
 @node Writing Pickles

@@ -1,3 +1,20 @@
+2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/id3v1.pk (ID3V1_Tag): Add setter and getter methods.
+	* testsuite/poke.id3v1/id3v1.exp: New testsuite.
+	* testsuite/poke.id3v1/id3v1-1.pk: New test.
+	* testsuite/poke.id3v1/id3v1-2.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-3.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-4.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-5.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-6.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-7.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-8.pk: Likewise.
+	* testsuite/poke.id3v1/id3v1-9.pk: Likewise.
+	* doc/poke.texi (Audio): New chapter.
+	(MP3): New section.
+	(ID3V1 Tags): New subsection.
+
 2020-05-03  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* libpoke/Makefile.am: Add libgnu.la to libpoke_la_LIBADD.
