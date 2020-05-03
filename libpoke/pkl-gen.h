@@ -100,6 +100,7 @@ struct pkl_gen_payload
   int in_array_bounder;
   int in_method_arguments;
   int in_funcall;
+  int generating_pvm_struct_type;
   int endian;
   int constructor_depth;
   int mapper_depth;

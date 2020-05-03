@@ -1,3 +1,13 @@
+2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.h (struct pkl_gen_payload): New field
+	generating_pvm_struct_type.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Break the pass if
+	generating a pvm struct type.
+	(pkl_gen_pr_type_struct): Set generating_pvm_struct_type.
+	(pkl_gen_ps_type_struct): Clear generating_pvm_struct_type.
+	* testsuite/poke.pkl/arrays-13.pk: New test.
+
 2020-05-03  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* libutils/Makefile.am: New file.

@@ -254,6 +254,7 @@ pkl_compile_buffer (pkl_compiler compiler,
   if (program == NULL)
     goto error;
 
+  //  pvm_disassemble_program (program);
   pvm_program_make_executable (program);
 
   /* Execute the program in the poke vm.  */
