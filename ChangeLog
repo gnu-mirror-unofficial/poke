@@ -1,5 +1,9 @@
 2020-05-03  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* libutils/Makefile.am: New file.
+
+2020-05-03  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* Makefile.am: Add libutils to SUBDIRS.
 	* configure.ac: Add libutils/Makefile to AC_CONFIG_FILES.
 	* libutils/Makefile.am: New file.
