@@ -33,10 +33,11 @@ PATH=$b/poke:$PATH
 POKEDATADIR=$s/libpoke
 POKEINFODIR=$s/doc
 POKEPICKLESDIR=$s/pickles
+POKEDOCDIR=$b/doc
 POKESTYLESDIR=$s/etc
 POKE_LOAD_PATH=$s/poke
 export PATH POKEDATADIR POKEPICKLESDIR POKECMDSDIR POKESTYLESDIR POKEINFODIR
-export POKE_LOAD_PATH
+export POKE_LOAD_PATH POKEDOCDIR
 
 # Cheap way to find some use-after-free and uninit read problems with glibc
 MALLOC_CHECK_=1

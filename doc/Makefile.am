@@ -30,17 +30,14 @@ pvm-insns.texi: $(top_srcdir)/libpoke/pvm.jitter $(srcdir)/gen-pvm-insns.sh
 # work around some limitations of readline.
 # Look for the macro SPACE_SUBSTITUTE in pk-repl.c to see how this
 # is used.
-$(top_srcdir)/libpoke/nodelist: $(srcdir)/poke.texi
-	chmod u+w ${dir $@}
-	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' > $@
-	test -s $@ || $(RM) $@
+nodelist: $(srcdir)/poke.texi
+	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' \
+          > nodelist
+	test -s nodelist || $(RM) nodelist
 
 INFO_DEPS = $(srcdir)/poke.info
 
-pkgdata_DATA = $(top_srcdir)/libpoke/nodelist
-
-clean-local:
-	rm -f pvm-insns.texi
+pkgdata_DATA = nodelist
 
 # Generation of the HTML manual.
 #
@@ -65,8 +62,11 @@ html-local:
 
 # Generation of the plain text manual.
 
-pkgdata_DATA += $(top_srcdir)/libpoke/poke.text
+pkgdata_DATA += poke.text
 
-$(top_srcdir)/libpoke/poke.text: poke.texi
+poke.text: $(srcdir)/poke.texi
 	$(MAKEINFO) --plaintext $(srcdir)/poke.texi \
-          > $(top_srcdir)/libpoke/poke.text
+          > poke.text
+
+clean-local:
+	rm -f pvm-insns.texi nodelist poke.text

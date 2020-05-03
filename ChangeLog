@@ -1,5 +1,19 @@
 2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/Makefile.am (poke.text): Generate in builddir, not in
+	srcdir.
+	(nodelist): Likewise.  Also avoid $@.
+	(clean-local): Remove nodelist and poke.text.
+	* poke/poke.c (poke_docdir): New variable.
+	(initialize): Initialize poke_docdir.
+	* poke/pk-misc.c (doc_completion_function): Use poke_docdir to
+	find the nodelist file.
+	(pk_cmd_doc): Likewise for the poke.text file.
+	* run.in (POKEDOCDIR): Set to top_builddir/doc.
+	* testsuite/Makefile.am (check-DEJAGNU): Set POKEDOCDIR.
+
+2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-trans.c (pkl_trans3_ps_of_sizeof): Remove stale
 	debugging trace.
 

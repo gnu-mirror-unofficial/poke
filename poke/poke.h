@@ -33,6 +33,7 @@ extern pk_compiler poke_compiler;
 extern char *poke_datadir;
 extern char *poke_infodir;
 extern char *poke_picklesdir;
+extern char *poke_docdir;
 extern char *poke_cmdsdir;
 extern char *poke_doc_viewer;
 

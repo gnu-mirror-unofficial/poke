@@ -120,7 +120,7 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           }
 
         asprintf (&cmd, "less -p '%s' %s/poke.text",
-                  argv[0].val.str, poke_datadir);
+                  argv[0].val.str, poke_docdir);
         assert (cmd != NULL);
       }
 
@@ -185,7 +185,7 @@ doc_completion_function (const char *x, int state)
     {
       int n_nodes = 0;
       char nlfile[256];
-      snprintf (nlfile, 256, "%s/nodelist", poke_datadir);
+      snprintf (nlfile, 256, "%s/nodelist", poke_docdir);
       FILE *fp = fopen (nlfile, "r");
       if (fp == NULL)
         return NULL;

@@ -74,6 +74,14 @@ char *poke_infodir;
 
 char *poke_picklesdir;
 
+/* The following global contains the directory holding the help
+   support files.  In an installed poke, this is the same than
+   poke_datadir, but the POKE_DOCDIR environment variable can be set
+   to a different value, which is mainly to run an uninstalled
+   poke.  */
+
+char *poke_docdir;
+
 /* The following global contains the name of the program to use to
    display documentation.  Valid values are `info' and `less'.  It
    defaults to `info'.  */
@@ -394,6 +402,10 @@ initialize (int argc, char *argv[])
   poke_picklesdir = getenv ("POKEPICKLESDIR");
   if (poke_picklesdir == NULL)
     poke_picklesdir = poke_datadir;
+
+  poke_docdir = getenv ("POKEDOCDIR");
+  if (poke_docdir == NULL)
+    poke_docdir = poke_datadir;
 
   poke_infodir = getenv ("POKEINFODIR");
   if (poke_infodir == NULL)

@@ -31,6 +31,7 @@ check-DEJAGNU: site.exp
           POKEPICKLESDIR="$(top_srcdir)/pickles" \
           POKEDATADIR="$(top_srcdir)/libpoke" \
           POKECMDSDIR="$(top_srcdir)/poke" \
+          POKEDOCDIR="$(top_builddir)/doc" \
           POKE_LOAD_PATH="$(top_srcdir)/poke" \
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
 			$(RUNTESTFLAGS); \
