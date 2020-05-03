@@ -1,5 +1,10 @@
 2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans3_ps_of_sizeof): Remove stale
+	debugging trace.
+
+2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.h (struct pkl_gen_payload): New field
 	generating_pvm_struct_type.
 	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Break the pass if

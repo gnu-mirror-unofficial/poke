@@ -1267,7 +1267,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_op_sizeof)
 
   pkl_ast_node_free (PKL_PASS_NODE);
   PKL_PASS_NODE = offset;
-  pkl_ast_print (stdout, offset);
   PKL_PASS_RESTART = 1;
 }
 PKL_PHASE_END_HANDLER
