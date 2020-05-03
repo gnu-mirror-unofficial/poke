@@ -158,11 +158,9 @@ static void
 pk_trie_expand_cmds (struct pk_trie *root,
                      struct pk_trie *trie)
 {
-  size_t i;
-  struct pk_trie *t;
-
   if (trie->cmd != NULL)
     {
+      struct pk_trie *t;
       t = trie->parent;
       while (t != root && t->num_children == 1)
         {
@@ -171,11 +169,14 @@ pk_trie_expand_cmds (struct pk_trie *root,
         }
     }
   else
-    for (i = 0; i < 256; i++)
-      {
-        if (trie->children[i] != NULL)
-          pk_trie_expand_cmds (root, trie->children[i]);
-      }
+    {
+      size_t i;
+      for (i = 0; i < 256; i++)
+	{
+	  if (trie->children[i] != NULL)
+	    pk_trie_expand_cmds (root, trie->children[i]);
+	}
+    }
 }
 
 static struct pk_trie *
