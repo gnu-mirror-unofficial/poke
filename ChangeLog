@@ -1,3 +1,7 @@
+2020-05-03  John Darrington <john@darrington.wattle.id.au>
+
+	* poke/pk-cmd.c (pk_cmd_get_next_match): Fix bug in completer.
+
 2020-05-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/id3v1.pk (ID3V1_Tag): Text-stylize the output of the

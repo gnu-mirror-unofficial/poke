@@ -707,20 +707,24 @@ pk_cmd_shutdown (void)
 }
 
 
-/*  Return the name of the next command that matches (X, LEN).
+/*  Return the name of the next dot command that matches the first
+    LEN characters of TEXT.
     Returns the name of the next command in the set, or NULL if there
-    are no more. The returned value must be freed by the caller.  */
+    are no more.  The returned value must be freed by the caller.  */
 char *
-pk_cmd_get_next_match (const char *x, size_t len)
+pk_cmd_get_next_match (const char *text, size_t len)
 {
   static int idx = 0;
+
+  if (len > 0 && text[0] != '.')
+    return NULL;
 
   /* Dot commands */
   for (const struct pk_cmd **c = dot_cmds + idx++;
        *c != &null_cmd;
        c++)
     {
-      if (len == 0 || strncmp ((*c)->name, x + 1, len - 1) == 0)
+      if (len == 0 || strncmp ((*c)->name, text + 1, len - 1) == 0)
 	return pk_str_concat (".", (*c)->name, NULL);
     }
   idx = 0;
