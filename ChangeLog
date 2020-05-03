@@ -1,3 +1,8 @@
+2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Writing Pickles): New chapter.
+	(Setters and Getters): Likewise.
+
 2020-05-03  John Darrington <john@darrington.wattle.id.au>
 
 	* poke/pk-cmd.c: Reduce scope of local variables.

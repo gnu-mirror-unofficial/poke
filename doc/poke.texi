@@ -56,6 +56,9 @@ Using poke
 Pickles
 * Colors::			Editing colors.
 
+Advanced Pokology
+* Writing Pickles::		Sharing your abstractions the sane way.
+
 Reference Material
 * Dot-Commands::                Commanding the tool.
 * Commands::			Commands for editing data.
@@ -63,10 +66,8 @@ Reference Material
 * The Poke Language::		All you wanted to know about Poke.
 * The Standard Library::	Standard goodies for Poke programs.
 
-Advanced Pokology
-* Hacking Poke::		Extending poke.
-
 Internals
+* Hacking Poke::		Extending poke.
 * The Poke Virtual Machine::	The PVM and its mysteries.
 
 Appendices
@@ -124,6 +125,9 @@ Debugging Poke Programs
 Colors
 * The Color Registry::		The @file{color} pickle.
 * RGB24 Encoding::		Encoding colors with three bytes.
+
+Advanced Pokololy
+* Writing Pickles::		Sharing your abstractions the sane way.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -4015,7 +4019,329 @@ codes:
 [255UB,99UB,71UB]
 @end example
 
+@node Writing Pickles
+@chapter Writing Pickles
 
+GNU poke encourages the user to write little pieces of code in order
+to face spontaneous needs and fix situations.  Is that name in the
+file encoded in a fixed array of characters padded with white spaces?
+No problem, just write a three lines function so you can update the
+file using a comfortable NULL-terminated string.  Better than waiting
+for some poke maintainer to add that function for you, isn't it?
+
+Just save your functions in some personal @file{.pk} file that you
+load at startup, and your magic tricks bag will increase in time,
+making your poking more and more efficient.
+
+However, when it comes to share the code with other people, it is
+important to follow certain conventions in order to achieve certain
+uniformity.  This makes it easier for other people to discover what
+your hack provides, and how it works.  It is this consistency, and
+these conventions, that makes some random @file{.pk} file a
+@dfn{pickle}.
+
+This guide contains guidelines and recommendations for the pickle's
+writer.
+
+@menu
+* Pretty-printers::		Conventions for pretty-printed output.
+* Setters and Getters::		Anatomy getters and setters.
+@end menu
+
+@node Pretty-printers
+@section Pretty-printers
+
+@subsection Convention for pretty-printed Output
+
+Very often the structure of the data encoded in binary is not very
+intelligible.  This is because it is usual for binary formats to be
+designed with other goals in mind other than being readable by humans:
+compactness, detailness, etc.
+
+In our pickle we of course want to provide access to the very finer
+detail of the data structures.  However, we also want for the user to
+be able to peruse the data visually, and only look at the fine detail
+on demand.
+
+Consider for example an ID3V1 tag data from some MP3 file.   This is
+the result of mapping a @code{ID3V1_Tag}:
+
+@example
+ID3V1_Tag @{
+  id=[0x54UB,0x41UB,0x47UB],
+  title=[0x30UB,0x31UB,0x20UB,0x2dUB,0x20UB,...],
+  artist=[0x4aUB,0x6fUB,0x61UB,0x71UB,0x75UB,...],
+  album=[0x4dUB,0x65UB,0x6eUB,0x74UB,0x69UB,...],
+  year=[0x20UB,0x20UB,0x20UB,0x20UB],
+  data=struct @{
+    extended=struct @{
+      comment=[0x20UB,0x20UB,0x20UB,0x20UB,0x20UB,...],
+      zero=0x0UB,
+      track=0x1UB
+    @}
+  @},
+  genre=0xffUB
+@}
+@end example
+
+Not very revealing.  Fortunately, poke supports pretty printers.  If a
+struct type has a method called @code{_print}, it will be used by poke
+as a pretty printer if the @option{pretty-print} option is set:
+
+@example
+(poke) .set pretty-print yes
+@end example
+
+By convention, the output of pretty-printers should always start with
+@code{#<} and end with @code{>}.  The convention makes it explicit for
+the user that everything she sees between @code{#<} and @code{>} is
+pretty-printed, and do @emph{not} necessarily reflect the physical
+structure of the data.  Also some information may be missing.  In
+order to get an exact and complete description of the data, the user
+should @command{.set pretty-print no} and evaluate the value again at
+the prompt.
+
+For example, in the following BPF instructions it is obvious at first
+sight that the shown register values are pretty-printed:
+
+@example
+BPF_Insn = @{
+  ...
+  regs=BPF_Regs @{
+     src=#<%r3>,
+     dst=#<%r0>
+  @}
+  ...
+@}
+@end example
+
+If the pretty-printed representation spans for more than one line,
+please place the opening @code{#<} in its own line, then the lines
+with the data, and finally @code{>} in its own line, starting at
+column 0.
+
+Example of the MP3 tag above, this time pretty-printed:
+
+@example
+#<
+  genre: 255
+  title: 01 - Eclipse De Mar
+  artist: Joaquin Sabina
+  album: Mentiras Piadosas
+  year:
+  comment:
+  track: 1
+>
+@end example
+
+@subsection Pretty Printing Optional Fields
+
+Let's say we are writing a pretty-printer method for a struct type
+that has an optional field.  Like for example:
+
+@example
+deftype Packet =
+  struct
+  @{
+    byte magic : magic in [MAGIC1,MAGIC2];
+    byte n;
+    byte[n] payload;
+    PacketTrailer trailer if magic == MAGIC2;
+  @}
+@end example
+
+@noindent
+In this case, the struct value will have a @code{trailer}
+conditionally, which has to be tackled on the pretty-printer
+somehow.
+
+An approach that often works good is to replicate the logic in the
+optional field condition expression, like this:
+
+@example
+  struct
+  @{
+    byte magic : magic in [MAGIC1,MAGIC2];
+    [...]
+    PacketTrailer trailer if packet_magic2_p (magic);
+
+    defun _print = void:
+    @{
+      [...]
+      if (magic == MAGIC2)
+        pretty_print_trailer;
+    @}
+  @}
+@end example
+
+@noindent
+This works well in this simple example.  In case the expression is big
+and complicated, we can avoid rewriting the same expression by
+encapsulating the logic in a function:
+
+@example
+defun packet_magic2_p = int: @{ return magic == MAGIC2; @}
+deftype Packet =
+  struct
+  @{
+    byte magic : magic in [MAGIC1,MAGIC2];
+    [...]
+    PacketTrailer trailer if packet_magic2_p (magic);
+
+    defun _print = void:
+    @{
+      [...]
+      if (packet_magic2_p (magic))
+        pretty_print_trailer;
+    @}
+  @}
+@end example
+
+@noindent
+However, this may feel weird, as the internal logic of the type
+somehow leaks its natural boundary into the external function
+@code{packet_magic2_p}.
+
+An alternative is to use the following idiom, that checks whether the
+field actually exists in the struct:
+
+@example
+deftype Packet =
+  struct
+  @{
+    byte magic : magic in [MAGIC1,MAGIC2];
+    [...]
+    PacketTrailer trailer if packet_magic2_p (magic);
+
+    defun _print = void:
+    @{
+      [...]
+      try pretty_print_trailer;
+      catch if E_elem @{@}
+    @}
+  @}
+@end example
+
+@noindent
+This approach also works with unions:
+
+@example
+deftype ID3V1_Tag =
+  struct
+  @{
+    [...]
+    union
+    @{
+      /* ID3v1.1  */
+      struct
+      @{
+        char[28] comment;
+        byte zero = 0;
+        byte track : track != 0;
+      @} extended;
+      /* ID3v1  */
+      char[30] comment;
+    @} data;
+    [...]
+
+    defun _print = void:
+    @{
+      [...]
+      try print "  comment: " + catos (data.comment) + "\n";
+      catch if E_elem
+      @{
+        print "  comment: " + catos (data.extended.comment) + "\n";
+        printf "  track: %u8d", data.extended.track;
+      @}
+    @}
+  @}
+@end example
+
+@node Setters and Getters
+@section Setters and Getters
+
+Given a struct value, the obvious way to access the value of a field
+is to just refer to it using dot-notation.
+
+For example, for the following struct type:
+
+@example
+deftype ID3V1_Tag =
+  struct
+  @{
+    [...]
+    char[30] title;
+    char[30] artist;
+    char[30] album;
+    char[4] year;
+    [...]
+  @}
+@end example
+
+Suppose the find out the year in the tag is wrong, off by two years:
+the song was release in 1980, not in 1978!.  Unfortunately, due to the
+bizarre way the year is stored in the file (as a sequence of digits
+encoded in ASCII, non-NULL terminated) we cannot just write:
+
+@example
+(poke) tag.year = tag.year + 2
+error
+@end example
+
+Instead, we can use facilities from the standard library and a bit of
+programming:
+
+@example
+(poke) stoca (format ("%d", atoi (catos (tag.year)) + 2), tag.year)
+@end example
+
+The above line basically transforms the data we want to operate on
+(the tag year) from the stored representation into a more useful
+representation (from an array of character digits to an integer) then
+operates with it (adds two) then converts back to the stored
+representation.  Let's call this ``more useful'' representation the
+``preferred representation''.
+
+A well written pickle should provide @dfn{getter} and @dfn{setter}
+methods for fields in struct types for which the stored representation
+is not the preferred representation.  By convention, getter and setter
+methods have the following form:
+
+@example
+defun get_@var{field} @var{preferred_type}: @{ ... @}
+defun set_@var{field} (@var{preferred_type} val) void: @{ ... @}
+@end example
+
+@noindent
+Using the @code{get_} and @code{set_} prefixes consistently is very
+important, because the pokist using your pickle can easily find out
+the available methods for some given value using tab-completion in the
+REPL.
+
+For example, let's add setter and getter methods for the field
+@code{year} in the ID3V1 tag struct above:
+
+@example
+deftype ID3V1_Tag =
+  struct
+  @{
+    [...]
+    char[4] year;
+
+    defun get_year = int: @{ return atoi (catos (year)); @}
+    defun set_year = (int val) void:
+    @{
+      defvar str = format "%d", val;
+      stoca (str, year);
+    @}
+    [...]
+  @}
+@end example
+
+What constitutes the preferred representation of a field is up to the
+criteria of the pickle writer.  For the tag above, I would say the
+preferred representations for the title, artist, album and year are
+string for title, artist and album, and an integer for the year.
 
 @node Dot-Commands
 @chapter Dot-Commands
