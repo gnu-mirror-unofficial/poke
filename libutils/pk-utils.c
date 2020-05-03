@@ -85,8 +85,9 @@ PK_POW (pk_upow, uint64_t)
 #undef PK_POW
 
 void
-pk_print_binary (void (*puts_fn) (const char *str),
-                 uint64_t val, int size, int sign)
+pk_print_binary (
+  void (*puts_fn) (const char *str),
+  uint64_t val, int size, int sign)
 {
   char b[65];
 
