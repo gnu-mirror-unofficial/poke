@@ -30,8 +30,6 @@ libpoke/pkl-trans.c
 libpoke/pkl-trans.h
 libpoke/pkl-typify.c
 libpoke/pkl-typify.h
-libpoke/pk-utils.c
-libpoke/pk-utils.h
 libpoke/pvm-alloc.c
 libpoke/pvm-alloc.h
 libpoke/pvm.c
@@ -40,6 +38,9 @@ libpoke/pvm.h
 libpoke/pvm-program.c
 libpoke/pvm-program.h
 libpoke/pvm-val.c
+
+libutils/pk-utils.c
+libutils/pk-utils.h
 
 poke/pk-cmd.c
 poke/pk-cmd.h

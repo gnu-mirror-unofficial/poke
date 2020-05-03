@@ -1,3 +1,15 @@
+2020-05-03  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* Makefile.am: Add libutils to SUBDIRS.
+	* configure.ac: Add libutils/Makefile to AC_CONFIG_FILES.
+	* libutils/Makefile.am: New file.
+	* libpoke/pk-utils.c: Move to libutils/.
+	* libpoke/pk-utils.h: Likewise.
+	* libpoke/Makefile.am: Use libutils/libutils.la instead of
+	libpoke/libpokeutils.la.
+	* poke/Makefile.am: Likewise.
+	* po/POTFILES.in: Add libutils/pk-utils.[ch].
+
 2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/id3v1.pk (ID3V1_Tag): Add setter and getter methods.

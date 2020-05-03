@@ -22,7 +22,7 @@ MAINTAINERCLEANFILES =
 
 dist_pkgdata_DATA = pkl-rt.pk std.pk
 
-lib_LTLIBRARIES = libpokeutils.la libpoke.la
+lib_LTLIBRARIES = libpoke.la
 
 include_HEADERS = libpoke.h
 
@@ -76,12 +76,13 @@ MOSTLYCLEANFILES += pkl-tab.output
 AM_LFLAGS = -d
 
 libpoke_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
+                      -I$(top_builddir)/libutils -I$(top_srcdir)/libutils \
                       -DPKL_DEBUG \
                       -DPKGDATADIR=\"$(pkgdatadir)\" \
                       -DPKGINFODIR=\"$(infodir)\" \
                       -DLOCALEDIR=\"$(localedir)\"
 libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
-libpoke_la_LIBADD = ../gl/libgnu.la libpokeutils.la libpvmjitter.la \
+libpoke_la_LIBADD = ../gl/libgnu.la ../libutils/libutils.la libpvmjitter.la \
                     $(BDW_GC_LIBS) \
                     $(LIBNBD_LIBS)
 libpoke_la_LDFLAGS =
@@ -102,11 +103,5 @@ BUILT_SOURCES += pvm-vm.h pvm-vm1.c pvm-vm2.c
 
 pvm-vm.h pvm-vm1.c pvm-vm2.c: pvm.jitter
 	$(JITTER) $(srcdir)/pvm.jitter --output $(builddir)
-
-libpokeutils_la_SOURCES = pk-utils.c pk-utils.h pkt.h
-libpokeutils_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
-libpokeutils_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl
-libpokeutils_la_LIBADD = ../gl/libgnu.la
-libpokeutils_la_LDFLAGS =
 
 # End of Makefile.am
