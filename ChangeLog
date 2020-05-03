@@ -1,5 +1,14 @@
 2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/std.pk (stoca): Define.
+	* testsuite/poke.std/stoca-1.pk: New test.
+	* testsuite/poke.std/stoca-2.pk: Likewise.
+	* testsuite/poke.std/stoca-3.pk: Likewise.
+	* testsuite/poke.std/stoca-4.pk: Likewise.
+	* doc/poke.texi (stoca): New section.
+
+2020-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Writing Pickles): New chapter.
 	(Setters and Getters): Likewise.
 

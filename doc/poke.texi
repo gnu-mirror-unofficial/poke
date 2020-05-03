@@ -8783,6 +8783,7 @@ useful conversions.
 
 @menu
 * catos::		converting characters arrays into string.
+* stoca::		filling character arrays from strings.
 * atoi::		converting strings to integers.
 @end menu
 
@@ -8814,6 +8815,23 @@ Note that if the passed array contains a @code{NULL} character
 (poke) catos (['f','o','o','\0','b','a','r'])
 "foo"
 @end example
+
+@node stoca
+@subsection @code{stoca}
+@cindex @code{stoca}
+@cindex converting, strings to arrays
+Sometimes we want to store strings in character arrays.  The standard
+function @code{stoca} provides the following interface:
+
+@example
+defun stoca = (string s, char[] ca, char fill = 0) void: @{ @dots{} @}
+@end example
+
+It fills the given array @var{ca} with the contents of the string
+@var{s}.  If the string doesn't fit in the array, then
+@code{E_out_of_bounds} is raised.  If the length of the string is less
+than the length of the array, the extra characters are set to the
+@var{fill} character, which defaults to @code{\0}.
 
 @node atoi
 @subsection @code{atoi}

@@ -80,6 +80,19 @@ defun catos = (char[] chars) string:
    return s;
   }
 
+defun stoca = (string s, char[] ca, char fill = 0) void:
+  {
+    if (s'length > ca'length)
+      raise E_out_of_bounds;
+
+    defvar i = 0;
+    while (i < ca'length)
+      {
+        ca[i] = i < s'length ? s[i] : fill;
+        i = i + 1;
+      }
+  }
+
 defun atoi = (string s, int b = 10) long:
   {
     defvar result = 0;
