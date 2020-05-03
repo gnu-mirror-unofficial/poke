@@ -1,3 +1,8 @@
+2020-05-03  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* libpoke/Makefile.am: Add libgnu.la to libpoke_la_LIBADD.
+	* libpoke/pkl-fold.c: Use fold_gcd instead gcd.
+
 2020-05-02  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* libpoke/libpoke.h: Remove include of pk-utils.h.

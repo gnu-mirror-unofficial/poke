@@ -35,7 +35,7 @@
 
 /* Roll out our own GCD from gnulib.  */
 #define WORD_T uint64_t
-#define GCD gcd
+#define GCD fold_gcd
 #include <gcd.c>
 
 #define PKL_FOLD_PAYLOAD ((pkl_fold_payload) PKL_PASS_PAYLOAD)
@@ -127,7 +127,7 @@ EMUL_III (le) { return op1 <= op2; }
 EMUL_UUU (ge) { return op1 >= op2; }
 EMUL_III (ge) { return op1 >= op2; }
 
-EMUL_UUU (gcd) { return gcd (op1, op2); }
+EMUL_UUU (gcd) { return fold_gcd (op1, op2); }
 EMUL_III (gcd) { assert (0); return 0; }
 
 EMUL_UUU (sl) { return op1 << op2; }

@@ -81,7 +81,7 @@ libpoke_la_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                       -DPKGINFODIR=\"$(infodir)\" \
                       -DLOCALEDIR=\"$(localedir)\"
 libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
-libpoke_la_LIBADD = libpokeutils.la libpvmjitter.la \
+libpoke_la_LIBADD = ../gl/libgnu.la libpokeutils.la libpvmjitter.la \
                     $(BDW_GC_LIBS) \
                     $(LIBNBD_LIBS)
 libpoke_la_LDFLAGS =
