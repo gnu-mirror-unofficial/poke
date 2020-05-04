@@ -4,7 +4,7 @@ deftype Foo =
   struct
   {
     int i : i != 20 if i > 0;
-    defun foo = int: { {return i;} }
+    method foo = int: { {return i;} }
   };
 
 /* { dg-command { (Foo {i = 2}).foo } } */

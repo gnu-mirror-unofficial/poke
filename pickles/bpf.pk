@@ -229,7 +229,7 @@ deftype BPF_Insn =
         uint<32>;
         uint<32> hi;
 
-        defun _print = void:
+        method _print = void:
           {
            print "#<";
            printf "%<integer:%v%>", hi::lo;
@@ -240,7 +240,7 @@ deftype BPF_Insn =
       int<32> imm32;
     } imm;
 
-    defun imm_value = int<64>:
+    method imm_value = int<64>:
       {
         if (bpf_opcode_imm64_p (opcode))
          return imm.imm64.hi::imm.imm64.lo;

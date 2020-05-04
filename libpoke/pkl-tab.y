@@ -63,6 +63,11 @@
 
 #define PKL_AST_CHILDREN_STEP 12
 
+/* These are used in the defun_or_method rule.  */
+
+#define IS_DEFUN 0
+#define IS_METHOD 1
+
 /* Convert a YYLTYPE value into an AST location and return it.  */
 
 static void
@@ -296,7 +301,7 @@ load_module (struct pkl_parser *parser,
 %token ASSERT
 %token ERR
 %token INTCONSTR UINTCONSTR OFFSETCONSTR
-%token DEFUN DEFSET DEFTYPE DEFVAR DEFUNIT
+%token DEFUN DEFSET DEFTYPE DEFVAR DEFUNIT METHOD
 %token RETURN BREAK
 %token STRING
 %token TRY CATCH RAISE
@@ -373,7 +378,6 @@ load_module (struct pkl_parser *parser,
 %type <ast> integral_type_specifier offset_type_specifier array_type_specifier
 %type <ast> function_type_specifier function_type_arg_list function_type_arg
 %type <ast> struct_type_specifier
-%type <integer> struct_type_pinned integral_type_sign struct_or_union builtin endianness
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
 %type <ast> struct_type_field_constraint_or_init struct_type_field_label
 %type <ast> struct_type_field_optcond
@@ -381,6 +385,8 @@ load_module (struct pkl_parser *parser,
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
 %type <ast> comp_stmt stmt_decl_list stmt print_stmt_arg_list
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
+%type <integer> struct_type_pinned integral_type_sign struct_or_union
+%type <integer> builtin endianness defun_or_method
 
 /* The following two tokens are used in order to support several start
    rules: one is for parsing an expression, declaration or sentence,
@@ -1474,7 +1480,7 @@ struct_type_field_optcond:
  */
 
 declaration:
-        DEFUN identifier
+        defun_or_method identifier
                 {
                   /* In order to allow for the function to be called
                      from within itself (recursive calls) we should
@@ -1526,6 +1532,11 @@ declaration:
                      their function and their lexical nest level
                      within the function.  */
                   pkl_ast_finish_returns ($5);
+
+                  /* Annotate the function to be a method whenever
+                     appropriate.  */
+                  if ($1 == IS_METHOD)
+                    PKL_AST_FUNC_METHOD_P ($5) = 1;
 
                   /* XXX: move to trans1.  */
                   PKL_AST_FUNC_NAME ($5)
@@ -1609,6 +1620,11 @@ declaration:
                     }
                 }
         ;
+
+defun_or_method:
+	  DEFUN		{ $$ = IS_DEFUN; }
+	| METHOD	{ $$ = IS_METHOD; }
+	;
 
 /*
  * Statements.

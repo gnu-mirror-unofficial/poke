@@ -4,16 +4,13 @@ deftype Foo =
   struct
   {
     int i;
-    defun foo = int:
+    method foo = int:
       {
         defun bar = int:
         {
-          return i; /* { dg-error "fields.*methods" } */
+          return i; /* { dg-error "invalid.*field" } */
         }
 
         return bar + 20;
       }
   };
-
-/* { dg-command {} } */
-/* { dg-output "" } */

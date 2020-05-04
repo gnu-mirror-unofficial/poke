@@ -72,7 +72,7 @@ deftype Elf64_Sym =
     } st_info;
 
     uint<8> st_other;
-    defun st_visibility = uint<3>:
+    method st_visibility = uint<3>:
       {
        return st_other & 0x3;
       }

@@ -3,7 +3,7 @@
 deftype Foo =
   struct
   {
-    defun foo = (int x) int: { return x + 10; }
+    method foo = (int x) int: { return x + 10; }
     int i : i !=
       foo (i); /* { dg-error "method" } */
   };

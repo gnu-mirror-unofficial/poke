@@ -136,7 +136,7 @@ deftype BTF_Type =
       {
         BTF_Param[info.vlen] params;
 
-        defun vararg_p = int:
+        method vararg_p = int:
           {
            defvar last_param = params[info.vlen - 1];
            return (last_param.name == 0#B && last_param.type == 0);

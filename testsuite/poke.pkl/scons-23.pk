@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Bar = struct { defun n = int: { return 10; } };
+deftype Bar = struct { method n = int: { return 10; } };
 defvar bar = Bar {};
 deftype Foo = struct { int i; long j : j != bar.n (); };
 

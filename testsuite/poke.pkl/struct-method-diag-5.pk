@@ -8,7 +8,7 @@ deftype Foo =
     struct
     {
       byte x;
-      defun foo = byte:
+      method foo = byte:
         {
           return (x
                   + j /* { dg-error "field" } */
@@ -17,5 +17,5 @@ deftype Foo =
     } je;
 
     byte y : y > je.foo;
-    defun bar = byte: { return je.foo; }
+    method bar = byte: { return je.foo; }
   };

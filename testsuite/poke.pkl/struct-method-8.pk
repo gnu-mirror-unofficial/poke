@@ -4,7 +4,7 @@ deftype Foo =
   struct
   {
     byte a;
-    defun set_a = (byte n) void:
+    method set_a = (byte n) void:
       {
         defvar x = 1;
         a = n + x;

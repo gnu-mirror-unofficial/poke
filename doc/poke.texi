@@ -4284,7 +4284,7 @@ optional field condition expression, like this:
     [...]
     PacketTrailer trailer if packet_magic2_p (magic);
 
-    defun _print = void:
+    method _print = void:
     @{
       [...]
       if (magic == MAGIC2)
@@ -4307,7 +4307,7 @@ deftype Packet =
     [...]
     PacketTrailer trailer if packet_magic2_p (magic);
 
-    defun _print = void:
+    method _print = void:
     @{
       [...]
       if (packet_magic2_p (magic))
@@ -4332,7 +4332,7 @@ deftype Packet =
     [...]
     PacketTrailer trailer if packet_magic2_p (magic);
 
-    defun _print = void:
+    method _print = void:
     @{
       [...]
       try pretty_print_trailer;
@@ -4363,7 +4363,7 @@ deftype ID3V1_Tag =
     @} data;
     [...]
 
-    defun _print = void:
+    method _print = void:
     @{
       [...]
       try print "  comment: " + catos (data.comment) + "\n";
@@ -4427,8 +4427,8 @@ is not the preferred representation.  By convention, getter and setter
 methods have the following form:
 
 @example
-defun get_@var{field} @var{preferred_type}: @{ ... @}
-defun set_@var{field} (@var{preferred_type} val) void: @{ ... @}
+method get_@var{field} @var{preferred_type}: @{ ... @}
+method set_@var{field} (@var{preferred_type} val) void: @{ ... @}
 @end example
 
 @noindent
@@ -4447,8 +4447,8 @@ deftype ID3V1_Tag =
     [...]
     char[4] year;
 
-    defun get_year = int: @{ return atoi (catos (year)); @}
-    defun set_year = (int val) void:
+    method get_year = int: @{ return atoi (catos (year)); @}
+    method set_year = (int val) void:
     @{
       defvar str = format "%d", val;
       stoca (str, year);
@@ -6593,7 +6593,7 @@ They contain heterogeneous collections of values.
 * Optional Fields::		Fields that may or may not exist.
 * Casting Structs::		Converting structs from one type to another.
 * Declarations in Structs::	Declaring stuff within a struct.
-* Methods::			Declaring functions within a struct.
+* Methods::			Declaring struct methods.
 * Struct Attributes::		Accessing properties of struct values.
 @end menu
 
@@ -9086,7 +9086,7 @@ deftype POSIX_Time@var{size} = struct
 @{
   uint<@var{size}>  seconds;
 
-  defun _print = void:
+  method _print = void:
   @{ @dots{} @}
 @}
 @end example

@@ -5,7 +5,7 @@ deftype Foo =
   struct
   {
     int i;
-    defun foo = int:
+    method foo = int:
       {
         defvar m = 2;
         defun bar = int:

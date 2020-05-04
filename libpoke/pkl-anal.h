@@ -22,9 +22,28 @@
 #include <config.h>
 #include "pkl-pass.h"
 
+/* The following struct defines the payload of the analysis phases.
+
+   ERRORS is the number of errors detected while running the phase.
+
+   CONTEXT is a stack of mutually-exclusive contexts, that encode
+   context information for some of the handlers.
+
+   If NEXT_CONTEXT is 0 then we are not in any particular context
+   (NO_CONTEXT) otherwise NEXT_CONTEXT - 1 is the index of the current
+   context in the array CONTEXT.  */
+
+#define PKL_ANAL_MAX_CONTEXT_NEST 32
+
+#define PKL_ANAL_NO_CONTEXT 0
+#define PKL_ANAL_CONTEXT_STRUCT_TYPE 1
+#define PKL_ANAL_CONTEXT_METHOD 2
+
 struct pkl_anal_payload
 {
   int errors;
+  int context[PKL_ANAL_MAX_CONTEXT_NEST];
+  int next_context;
 };
 
 typedef struct pkl_anal_payload *pkl_anal_payload;
@@ -32,5 +51,11 @@ typedef struct pkl_anal_payload *pkl_anal_payload;
 extern struct pkl_phase pkl_phase_anal1;
 extern struct pkl_phase pkl_phase_anal2;
 extern struct pkl_phase pkl_phase_analf;
+
+static inline void
+pkl_anal_init_payload (pkl_anal_payload payload)
+{
+  memset (payload, 0, sizeof (struct pkl_anal_payload));
+}
 
 #endif /* PKL_ANAL_H */

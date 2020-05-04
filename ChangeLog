@@ -1,5 +1,111 @@
 2020-05-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-anal.h (struct pkl_anal_payload): New fields context
+	and next_context.
+	(pkl_anal_init_payload): Define.
+	(PKL_ANAL_NO_CONTEXT): Likewise.
+	(PKL_ANAL_CONTEXT_STRUCT_TYPE): Likewise.
+	(PKL_ANAL_CONTEXT_METHOD): Likewise.
+	* libpoke/pkl.c (rest_of_compilation): Use pkl_anal_init_payload.
+	* libpoke/pkl-lex.l: Process METHOD.
+	* lib/pkl-tab.y (declaration): Use defun_or_method and annotate
+	function nodes as methods accordingly.
+	(defun_or_method): New rule.
+	(IS_DEFUN): Define.
+	(IS_METHOD): Likewise.
+	* libpoke/pkl-ast.h (PKL_AST_DECL_IN_STRUCT_P): Define.
+	(struct pkl_ast_decl): New field in_struct_p.
+	* libpoke/pkl-trans.c (pkl_trans1_pr_decl): Do not annotate
+	functions as methods.
+	Annotate declarations in struct types.
+	* libpoke/std.pk (POSIX_Time64): Turn defun into method.
+	(POSIX_Time32): Likewise.
+	* pickles/id3v1.pk: Likewise.
+	* pickles/bpf.pk: Likewise.
+	* pickles/btf.pk: Likewise.
+	* pickles/ctf.pk: Likewise.
+	* pickles/elf.pk: Likewise.
+	* pickles/leb128.pk: Likewise.
+	* libpoke/pkl-anal.c (pkl_anal1_pr_decl): New handler.
+	(pkl_phase_anal1): Register handler.
+	(pkl_anal1_ps_var): methods can only be referenced as variables
+	from other methods, nor other defuns.  Allow for regular functions
+	to refer to struct fields as variables.
+	(pkl_anal1_ps_ass_stmt): New handler.
+	(pkl_phase_anal1): Install handler.
+	(pkl_anal1_ps_type_struct): Update error message to reflect
+	methods.
+	(PKL_ANAL_CONTEXT): Define.
+	(PKL_ANAL_CONTEXT_PUSH_STRUCT_TYPE): Likewise.
+	(PKL_ANAL_POP_CONTEXT): Likewise.
+	(pkl_anal1_pr_type_struct): New handler.
+	(pkl_anal1_ps_type_struct): Pop analysis context.
+	(pkl_anal1_pr_func): New handler.
+	(pkl_phase_anal1): Register new handlers.
+	* libpoke/pkl-gen.pks (struct_mapper): Do not register regular
+	defuns as methods.
+	(struct_constructor): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_ref): Do not allow
+	referring to non-methods in srefs.
+	* doc/poke.texi: Update.
+	* testsuite/poke.map/maps-structs-methods-11.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-10.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-9.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-8.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-7.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-6.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-5.pk (ULEB_128): Likewise.
+	* testsuite/poke.map/maps-structs-methods-4.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-3.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-2.pk (Foo): Likewise.
+	* testsuite/poke.map/maps-structs-methods-1.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-pretty-print-4.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-pretty-print-3.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-pretty-print-2.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-pretty-print-1.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-6.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-5.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-4.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-3.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-2.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-1.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-8.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-7.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-6.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-5.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-4.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-3.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-2.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-1.pk (Foo): Likewise.
+	* testsuite/poke.pkl/scons-23.pk (Bar): Likewise.
+	* testsuite/poke.pkl/scons-19.pk (Foo): Likewise.
+	* testsuite/poke.pkl/scons-18.pk (BPF_Reg): Likewise.
+	* testsuite/poke.pkl/optcond-17.pk (Foo): Likewise.
+	* testsuite/poke.pkl/optcond-16.pk (Foo): Likewise.
+	* testsuite/poke.pkl/optcond-12.pk (Foo): Likewise.
+	* testsuite/poke.pkl/struct-method-diag-7.pk: New test.
+	* testsuite/poke.pkl/struct-method-diag-8.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-9.pk: Likewise.
+	* testsuite/poke.pkl/sref-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/sref-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/struct-types-defun-1.pk: Likeiwse.
+	* testsuite/poke.pkl/struct-types-defun-2.pk: Likewise.
+	* testsuite/poke.pkl/struct-types-defun-3.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-10.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-11.pk: Likewise.
+	* testsuite/poke.pkl/optcond-18.pk: Likewise.
+	* testsuite/poke.pkl/optcond-19.pk: Likewise.
+	* testsuite/poke.pkl/optcond-20.pk: Likewise.
+	* testsuite/poke.pkl/struct-pretty-print-5.pk: Likewise.
+	* testsuite/poke.pkl/struct-types-defun-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/struct-types-defun-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-9.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-12.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-13.pk: Likewise.
+	* testsuite/poke.pkl/struct-method-diag-14.pk: Likewise.
+
+2020-05-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (initialize): Exit if there is an error initializing
 	the poke incremental compiler.
 	* libpoke/libpoke.c (pk_compiler_new): Acknowledge errors from

@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo = struct { int i; defun foo = void: { printf "%v\n", i; } };
+deftype Foo = struct { int i; method foo = void: { printf "%v\n", i; } };
 
 /* { dg-command { .set pretty-print yes } } */
 /* { dg-command { defvar f = Foo { i = 33 } } } */

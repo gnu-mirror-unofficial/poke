@@ -334,7 +334,7 @@ deftype POSIX_Time32 = struct
 {
   uint<32>  seconds;
 
-  defun _print = void:
+  method _print = void:
   {
     print "#<";
     ptime (seconds);
@@ -346,7 +346,7 @@ deftype POSIX_Time64 = struct
 {
   uint<64>  seconds;
 
-  defun _print = void:
+  method _print = void:
   {
     print "#<";
     ptime (seconds);

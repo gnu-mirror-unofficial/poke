@@ -7,12 +7,12 @@ deftype Foo =
     struct
     {
       byte a;
-      defun geta = (args...) int: { return a + args[1] as int; }
+      method geta = (args...) int: { return a + args[1] as int; }
     } prefix;
     defvar xxx = 10;
     byte b;
     byte c;
-    defun bar = int: { return prefix.geta (0,1); }
+    method bar = int: { return prefix.geta (0,1); }
   };
 
 /* { dg-command {.set obase 10 } } */

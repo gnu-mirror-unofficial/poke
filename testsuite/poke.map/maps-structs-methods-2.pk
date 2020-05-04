@@ -7,7 +7,7 @@ deftype Foo =
     byte a;
     byte b;
     byte c;
-    defun foo = (int i) int: { return a * i; }
+    method foo = (int i) int: { return a * i; }
   };
 
 /* { dg-command {.set obase 10 } } */

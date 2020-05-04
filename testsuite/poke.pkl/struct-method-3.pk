@@ -3,9 +3,8 @@
 deftype Foo =
   struct
   {
-    defvar n = 10;
     int i;
-    defun foo = int: { return n + i; }
+    method foo = int: { defvar n = 10; return n + i; }
   };
 
 /* { dg-command { (Foo {i = 2}).foo } } */

@@ -13,7 +13,7 @@ deftype ULEB_128 =
     ULEB_128_Byte[] variable;
     byte last;
 
-    defun value = uint<64>:
+    method value = uint<64>:
       {
        defvar result = 0UL;
        defvar shift = 0;
@@ -29,7 +29,7 @@ deftype ULEB_128 =
        return result;
       }
 
-    defun _print = void:
+    method _print = void:
       {
        defvar val = 0UL;
 

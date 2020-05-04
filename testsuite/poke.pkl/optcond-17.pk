@@ -7,7 +7,7 @@ deftype Foo =
   struct
   {
     int a if a > 10;
-    defun foo = int: { return a; }
+    method foo = int: { return a; }
   };
 
 /* { dg-command { defvar f = Foo { a = 101 } } } */

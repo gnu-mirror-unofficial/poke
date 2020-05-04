@@ -87,39 +87,39 @@ deftype ID3V1_Tag =
 
     /* Setters and getters.  */
 
-    defun get_title = string: { return rtrim (catos (title)); }
-    defun set_title = (string val) void: { stoca (val, title, ' '); }
-    defun get_artist = string: { return rtrim (catos (artist)); }
-    defun set_artist = (string val) void: { stoca (val, artist, ' '); }
-    defun get_album = string: { return rtrim (catos (album)); }
-    defun set_album = (string val) void: { stoca (val, album, ' '); }
-    defun get_year = int: { return atoi (catos (year)); }
+    method get_title = string: { return rtrim (catos (title)); }
+    method set_title = (string val) void: { stoca (val, title, ' '); }
+    method get_artist = string: { return rtrim (catos (artist)); }
+    method set_artist = (string val) void: { stoca (val, artist, ' '); }
+    method get_album = string: { return rtrim (catos (album)); }
+    method set_album = (string val) void: { stoca (val, album, ' '); }
+    method get_year = int: { return atoi (catos (year)); }
 
-    defun get_comment = string:
+    method get_comment = string:
       {
         try return rtrim (catos (data.comment));
         catch if E_elem { return rtrim (catos (data.extended.comment)); };
       }
-    defun set_comment = (string val) void:
+    method set_comment = (string val) void:
       {
         try stoca (val, data.comment, ' ');
         catch if E_elem { stoca (val, data.extended.comment, ' '); }
       }
 
-    defun get_genre = string:
+    method get_genre = string:
       {
         if (genre == 255)
           raise E_generic;
         return id3v1_genres[genre];
       }
 
-    defun set_genre = (string val) void:
+    method set_genre = (string val) void:
       {
         genre = id3v1_search_genre (val);
       }
 
     /* Pretty printer.  */
-    defun _print = void:
+    method _print = void:
       {
         print "#<\n";
         if (genre == 255)

@@ -4,13 +4,12 @@
 deftype Foo =
   struct
   {
-    defvar xxx = 10;
     byte a;
     byte b;
     byte c;
-    defun bar = int: { return xxx; }
-    defun foo = (int i) int: { return a * i + bar; }
-    defun setc = (byte x) void: { c = x; }
+    method bar = int: { defvar xxx = 10; return xxx; }
+    method foo = (int i) int: { return a * i + bar; }
+    method setc = (byte x) void: { c = x; }
   };
 
 /* { dg-command {.set obase 10 } } */

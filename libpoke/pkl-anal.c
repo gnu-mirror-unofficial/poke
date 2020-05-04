@@ -45,6 +45,26 @@
 
 #define PKL_ANAL_PAYLOAD ((pkl_anal_payload) PKL_PASS_PAYLOAD)
 
+#define PKL_ANAL_CONTEXT                                                \
+  (PKL_ANAL_PAYLOAD->next_context == 0                                  \
+   ? -1                                                                 \
+   : PKL_ANAL_PAYLOAD->context[PKL_ANAL_PAYLOAD->next_context - 1])
+
+#define PKL_ANAL_PUSH_CONTEXT(CTX)                                      \
+  do                                                                    \
+    {                                                                   \
+      assert (PKL_ANAL_PAYLOAD->next_context < PKL_ANAL_MAX_CONTEXT_NEST); \
+      PKL_ANAL_PAYLOAD->context[PKL_ANAL_PAYLOAD->next_context++]       \
+        = (CTX);                                                        \
+    } while (0)
+
+#define PKL_ANAL_POP_CONTEXT                            \
+  do                                                    \
+    {                                                   \
+      assert (PKL_ANAL_PAYLOAD->next_context > 0);      \
+      PKL_ANAL_PAYLOAD->next_context--;                 \
+    } while (0)
+
 /* The following handler is used in all anal phases, and initializes
    the phase payload.  */
 
@@ -106,12 +126,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_struct)
 }
 PKL_PHASE_END_HANDLER
 
+/* Type structs introduce a context.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_pr_type_struct)
+{
+  PKL_ANAL_PUSH_CONTEXT (PKL_ANAL_CONTEXT_STRUCT_TYPE);
+}
+PKL_PHASE_END_HANDLER
+
 /* In struct TYPE nodes, check that no duplicated named element are
    declared in the type.  This covers both declared entities and
    struct fields.
 
    Also, declarations in unions are only allowed before any of the
-   alternatives.  */
+   alternatives.
+
+   Also, pop the analysis context.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
 {
@@ -130,7 +160,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
               && PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
             {
               PKL_ERROR (PKL_AST_LOC (t),
-                         "declarations are not supported after union fields");
+                         "declarations and methods are not supported\n"
+                         "after union fields");
               PKL_ANAL_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
@@ -165,6 +196,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
             }
         }
     }
+
+  PKL_ANAL_POP_CONTEXT;
 }
 PKL_PHASE_END_HANDLER
 
@@ -259,8 +292,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_funcall)
 }
 PKL_PHASE_END_HANDLER
 
+/* Methods introduce an analysis context.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_pr_func)
+{
+  if (PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE))
+    PKL_ANAL_PUSH_CONTEXT (PKL_ANAL_CONTEXT_METHOD);
+}
+PKL_PHASE_END_HANDLER
+
 /* Check that all optional formal arguments in a function specifier
-   are at the end of the arguments list, and other checks.  */
+   are at the end of the arguments list, and other checks.
+
+   Also, pop the analysis context if this was a method.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_func)
 {
@@ -292,6 +336,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_func)
           PKL_PASS_ERROR;
         }
     }
+
+  if (PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE))
+    PKL_ANAL_POP_CONTEXT;
 }
 PKL_PHASE_END_HANDLER
 
@@ -415,6 +462,32 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_op_sl)
 }
 PKL_PHASE_END_HANDLER
 
+/* Methods can only be defined in a struct type.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_pr_decl)
+{
+  pkl_ast_node decl = PKL_PASS_NODE;
+
+  if (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_FUNC)
+    {
+      pkl_ast_node func = PKL_AST_DECL_INITIAL (decl);
+
+      if (PKL_AST_FUNC_METHOD_P (func)
+          && (!PKL_PASS_PARENT
+              || (PKL_AST_CODE (PKL_PASS_PARENT) != PKL_AST_TYPE
+                  || PKL_AST_TYPE_CODE (PKL_PASS_PARENT) != PKL_TYPE_STRUCT)))
+        {
+          pkl_ast_node decl_name = PKL_AST_DECL_NAME (decl);
+
+          PKL_ERROR (PKL_AST_LOC (decl_name),
+                     "methods are only allowed inside struct types");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /* The initializing expressions in unit declarations should be integer
    nodes.  Note this handler runs after the unit is
    constant-folded.  */
@@ -438,58 +511,111 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_decl)
 }
 PKL_PHASE_END_HANDLER
 
-/* Variable references to struct methods are not allowed outside
-   functions, i.e. in contexts like constraint expressions and
-   optional field conditions.
-
-   Likewise, variable references to struct fields or methods are not
-   allowed inside regular functions.
-
-   Also, only references to fields of the struct for which the
-   function is a method are allowed.  */
-
 PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_var)
 {
   pkl_ast_node var = PKL_PASS_NODE;
   pkl_ast_node var_decl = PKL_AST_VAR_DECL (var);
   pkl_ast_node var_function = PKL_AST_VAR_FUNCTION (var);
 
-  if (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
-      && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl))
-      && var_function == NULL)
+  const int in_method_p
+    = var_function && PKL_AST_FUNC_METHOD_P (var_function);
+  const int var_is_method_p
+    = (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
+       && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl)));
+  const int var_is_field_p
+    = PKL_AST_DECL_STRUCT_FIELD_P (var_decl);
+
+  /* Only methods can call other methods.  */
+  if (var_is_method_p && !in_method_p)
     {
       PKL_ERROR (PKL_AST_LOC (var),
-                 "invalid reference to method");
+                 "invalid reference to struct method");
       PKL_ANAL_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
 
-  if ((PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
-       || (PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC
-           && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (var_decl))))
-      && var_function)
+  /* Methods are not allowed to refer to variables and functions
+     defined in struct types.  */
+  if (in_method_p
+      && !var_is_method_p
+      && PKL_AST_DECL_IN_STRUCT_P (var_decl))
     {
-      if (!PKL_AST_FUNC_METHOD_P (var_function))
+      const char *what
+        = ((PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC)
+           ? "function"
+           : "variable");
+
+      PKL_ERROR (PKL_AST_LOC (var),
+                 "invalid reference to struct %s", what);
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  /* A method can only refer to struct fields and methods defined in
+     the same struct.  */
+  if (in_method_p
+      && (var_is_field_p || var_is_method_p))
+    {
+      const char *what
+        = var_is_method_p ? "method" : "field";
+
+      int back = PKL_AST_VAR_BACK (var);
+      int function_back = PKL_AST_VAR_FUNCTION_BACK (var);
+
+      if (back != (function_back + 1))
         {
           PKL_ERROR (PKL_AST_LOC (var),
-                     "references to struct fields are only valid in methods");
+                     "referred %s not in this struct", what);
           PKL_ANAL_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
-      else
-        {
-          /* Make sure the referred field/method pertain to the struct
-             type for which this is a method.  */
-          int back = PKL_AST_VAR_BACK (var);
-          int function_back = PKL_AST_VAR_FUNCTION_BACK (var);
+    }
 
-          if (back != (function_back + 1))
-            {
-              PKL_ERROR (PKL_AST_LOC (var),
-                         "referred field not in this struct");
-              PKL_ANAL_PAYLOAD->errors++;
-              PKL_PASS_ERROR;
-            }
+  /* Functions defined inside methods are not allowed to refer to
+     struct fields and methods.
+
+     Note that the case for methods is already handled above, but it
+     doesn't harm to replicate the logic here.  Just make sure the
+     error message is the same.  */
+
+  if ((var_is_field_p || var_is_method_p)
+      && var_function
+      && !in_method_p
+      && PKL_ANAL_CONTEXT == PKL_ANAL_CONTEXT_METHOD)
+    {
+      const char *what
+        = var_is_method_p ? "method" : "field";
+
+      PKL_ERROR (PKL_AST_LOC (var),
+                 "invalid reference to struct %s", what);
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
+/* It is an error to set a struct field as a variable if we are not in
+   a method.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_ass_stmt)
+{
+  pkl_ast_node ass_stmt = PKL_PASS_NODE;
+  pkl_ast_node ass_stmt_lvalue = PKL_AST_ASS_STMT_LVALUE (ass_stmt);
+
+  if (PKL_AST_CODE (ass_stmt_lvalue) == PKL_AST_VAR)
+    {
+      pkl_ast_node var = ass_stmt_lvalue;
+      pkl_ast_node var_decl = PKL_AST_VAR_DECL (var);
+      pkl_ast_node var_function = PKL_AST_VAR_FUNCTION (var);
+
+      if (var_function
+          && PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
+          && !PKL_AST_FUNC_METHOD_P (var_function))
+        {
+          PKL_ERROR (PKL_AST_LOC (var),
+                     "invalid assignment to struct field");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
         }
     }
 }
@@ -503,12 +629,16 @@ struct pkl_phase pkl_phase_anal1
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_anal1_ps_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_BREAK_STMT, pkl_anal1_ps_break_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL, pkl_anal1_ps_funcall),
+   PKL_PHASE_PR_HANDLER (PKL_AST_FUNC, pkl_anal1_pr_func),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_anal1_ps_func),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_anal1_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_anal1_ps_offset),
+   PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_anal1_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_anal1_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_anal1_ps_var),
+   PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_anal1_ps_ass_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
+   PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_pr_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_anal1_ps_type_offset),

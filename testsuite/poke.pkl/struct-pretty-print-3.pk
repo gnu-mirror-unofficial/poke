@@ -5,7 +5,7 @@ deftype Foo =
   struct
   {
     byte b;
-    defun _print = void: { printf "<%u8d>", b; }
+    method _print = void: { printf "<%u8d>", b; }
   };
 
 /* { dg-command {.set pretty-print yes}  } */

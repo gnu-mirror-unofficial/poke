@@ -3,7 +3,7 @@
 deftype Foo =
   struct
   {
-    defun size = uint<16>: { return 5; }
+    method size = uint<16>: { return 5; }
   };
 
 defvar f = Foo {};

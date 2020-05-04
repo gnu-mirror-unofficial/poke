@@ -3,12 +3,12 @@
 deftype Foo =
   struct
   {
-    defun foo = void: {}
-    defun bar = void:
+    method foo = void: {}
+    method bar = void:
       {
         defun baz = void:
         {
-          foo; /* { dg-error "references" } */
+          foo; /* { dg-error "invalid reference" } */
         }
       }
   };

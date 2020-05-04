@@ -26,13 +26,13 @@ deftype ULEB128 =
       struct
       {
         byte b : b < 0x7f;
-        defun _print = void: { printf "%v", b; }
+        method _print = void: { printf "%v", b; }
       };
 
     ULEB_128_Byte[] variable;
     byte last;
 
-    defun value = uint<64>:
+    method value = uint<64>:
       {
        defvar shift = 0;
        defvar result = 0UL;
@@ -52,7 +52,7 @@ deftype ULEB128 =
        return result;
       }
 
-    defun _print = void:
+    method _print = void:
       {
        defvar val = 0UL;
 

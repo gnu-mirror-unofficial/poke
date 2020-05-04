@@ -7,7 +7,7 @@ deftype Foo =
     byte a;
     byte b;
     byte c;
-    defun _print = void: { printf "b is '%c'\n", b; }
+    method _print = void: { printf "b is '%c'\n", b; }
   };
 
 /* { dg-command {.set obase 16 } } */

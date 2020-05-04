@@ -77,7 +77,7 @@ deftype CTF_Name =
     offset<uint<31>,B> offset
        @ get_endian == ENDIAN_LITTLE ? 0#b : 31#b;
 
-    defun _print = void:
+    method _print = void:
       {
        print "#<";
        printf "%u1d,%u31d", stid, offset/#B;
@@ -144,7 +144,7 @@ deftype CTF_Info =
     uint<25> vlen
       @ get_endian == ENDIAN_BIG ? 7#b : 0#b;
 
-    defun _print = void:
+    method _print = void:
       {
        print "#<";
        printf "%s", ctf_kind_str[kind];
@@ -248,7 +248,7 @@ deftype CTF_Type =
           uint32 lsizehi;
           uint32 lsizelo;
 
-          defun _print = void:
+          method _print = void:
             {
              print "#<";
              printf "%v", lsizehi::lsizelo;

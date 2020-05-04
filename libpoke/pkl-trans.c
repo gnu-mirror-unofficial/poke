@@ -231,16 +231,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_pr_decl)
 {
   pkl_ast_node decl = PKL_PASS_NODE;
 
+  if (PKL_PASS_PARENT
+      && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_TYPE
+      && PKL_AST_TYPE_CODE (PKL_PASS_PARENT) == PKL_TYPE_STRUCT)
+    /* Annotate this declaration to be in a struct type.  */
+    PKL_AST_DECL_IN_STRUCT_P (decl) = 1;
+
   if (PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_FUNC)
     {
       pkl_ast_node func = PKL_AST_DECL_INITIAL (decl);
-
-      /* Determine whether the function is a method, and annotate the
-         AST node accordingly.  */
-      if (PKL_PASS_PARENT
-          && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_TYPE
-          && PKL_AST_TYPE_CODE (PKL_PASS_PARENT) == PKL_TYPE_STRUCT)
-        PKL_AST_FUNC_METHOD_P (func) = 1;
 
       /* Add this function to the pass stack of functions.  */
       PKL_TRANS_PUSH_FUNCTION (func);

@@ -201,6 +201,7 @@ D [0-9]
 "if"		{ return IF; }
 "sizeof"	{ return SIZEOF; }
 "defun"		{ return DEFUN; }
+"method"	{ return METHOD; }
 "deftype"	{ return DEFTYPE; }
 "defvar"	{ return DEFVAR; }
 "defunit"	{ return DEFUNIT; }

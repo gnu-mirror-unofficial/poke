@@ -119,9 +119,9 @@ rest_of_compilation (pkl_compiler compiler,
 {
   struct pkl_gen_payload gen_payload;
 
-  struct pkl_anal_payload anal1_payload = { 0 };
-  struct pkl_anal_payload anal2_payload = { 0 };
-  struct pkl_anal_payload analf_payload = { 0 };
+  struct pkl_anal_payload anal1_payload;
+  struct pkl_anal_payload anal2_payload;
+  struct pkl_anal_payload analf_payload;
 
   struct pkl_trans_payload trans1_payload;
   struct pkl_trans_payload trans2_payload;
@@ -183,6 +183,9 @@ rest_of_compilation (pkl_compiler compiler,
   };
 
   /* Initialize payloads.  */
+  pkl_anal_init_payload (&anal1_payload);
+  pkl_anal_init_payload (&anal2_payload);
+  pkl_anal_init_payload (&analf_payload);
   pkl_trans_init_payload (&trans1_payload);
   pkl_trans_init_payload (&trans2_payload);
   pkl_trans_init_payload (&trans3_payload);

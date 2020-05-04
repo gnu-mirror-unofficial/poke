@@ -1068,6 +1068,7 @@ pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path)
 #define PKL_AST_DECL_ORDER(AST) ((AST)->decl.order)
 #define PKL_AST_DECL_SOURCE(AST) ((AST)->decl.source)
 #define PKL_AST_DECL_STRUCT_FIELD_P(AST) ((AST)->decl.struct_field_p)
+#define PKL_AST_DECL_IN_STRUCT_P(AST) ((AST)->decl.in_struct_p)
 
 #define PKL_AST_DECL_KIND_ANY 0
 #define PKL_AST_DECL_KIND_VAR 1
@@ -1081,6 +1082,7 @@ struct pkl_ast_decl
 
   int kind;
   int struct_field_p;
+  int in_struct_p;
   char *source;
   union pkl_ast_node *name;
   union pkl_ast_node *initial;
