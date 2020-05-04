@@ -95,3 +95,26 @@ poke_test_cmd {defun foo1 = void: {}} {}
 poke_test_cmd {defun foo2 = void: {}} {}
 poke_send "foo\t\t" "\r\nfoo1 +foo2 *\r\n$poke_prompt foo"
 poke_exit
+
+set test "tab-completion-struct-field-1"
+poke_start
+poke_test_cmd {deftype Foo = struct { int aa; int ab; }} {}
+poke_test_cmd {defvar f = Foo {}} {}
+poke_send "f.a\t\t" "\r\nf.aa +f.ab *\r\n$poke_prompt f.a"
+poke_exit
+
+set test "tab-completion-struct-field-2"
+poke_start
+poke_test_cmd {deftype Foo = struct { int aa; method ab = void: {} }} {}
+poke_test_cmd {defvar f = Foo {}} {}
+poke_send "f.a\t\t" "\r\nf.aa +f.ab *\r\n$poke_prompt f.a"
+poke_exit
+
+set test "tab-completion-struct-field-3"
+poke_start
+poke_test_cmd {deftype Foo = struct { int aa; method ab = void: {} }} {}
+poke_test_cmd {deftype Bar = struct { Foo foo; }} {}
+poke_test_cmd {deftype Baz = struct { Bar bar; }} {}
+poke_test_cmd {defvar f = Baz {}} {}
+poke_send "f.bar.foo.a\t\t" "\r\nf.bar.foo.aa +f.bar.foo.ab *\r\n$poke_prompt f.bar.foo.a"
+poke_exit

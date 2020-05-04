@@ -1,5 +1,16 @@
 2020-05-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.c (complete_struct): Fix completion of normal
+	fields, and add support for completing method names as well.
+	* libpoke/pkl-ast.c (pkl_struct_type_traverse): Revert changes
+	from commit 9e0206681.
+	* testsuite/poke.repl/repl.exp (tab-completion-struct-field-1):
+	New test.
+	(tab-completion-struct-field-2): Likewise.
+	(tab-completion-struct-field-3): Likewise.
+
+2020-05-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-anal.h (struct pkl_anal_payload): New fields context
 	and next_context.
 	(pkl_anal_init_payload): Define.

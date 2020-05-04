@@ -155,7 +155,7 @@ complete_struct (pk_compiler pkc,
         return NULL;
     }
 
-  trunk_len = len - strlen (strrchr (x, '.')) - 1;
+  trunk_len = len - strlen (strrchr (x, '.')) + 1;
 
   t = PKL_AST_TYPE_S_ELEMS (type);
 
@@ -165,27 +165,33 @@ complete_struct (pk_compiler pkc,
   for (; t; t = PKL_AST_CHAIN (t), (*idx)++)
     {
       pkl_ast_node ename;
-      char *field;
+      char *elem;
 
-      if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
-        continue;
-
-      ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
-
-      if (ename)
-          field = PKL_AST_IDENTIFIER_POINTER (ename);
-      else
-          field = "<unnamed field>";
-
-      if (strncmp (x + trunk_len, field, len - trunk_len) == 0)
+      if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD
+        || PKL_AST_CODE (t) == PKL_AST_DECL
+          && PKL_AST_DECL_KIND (t) == PKL_AST_DECL_KIND_FUNC
+          && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (t)))
         {
-          char *name;
+          if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
+            ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
+          else
+            ename = PKL_AST_DECL_NAME (t);
 
-          if (asprintf (&name, "%.*s%s", (int) trunk_len, x, field) == -1)
-            return NULL;
+          if (ename)
+            elem = PKL_AST_IDENTIFIER_POINTER (ename);
+          else
+            elem = "<unnamed field>";
 
-          (*idx)++;
-          return name;
+          if (strncmp (x + trunk_len, elem, len - trunk_len) == 0)
+            {
+              char *name;
+
+              if (asprintf (&name, "%.*s%s", (int) trunk_len, x, elem) == -1)
+                return NULL;
+
+              (*idx)++;
+              return name;
+            }
         }
     }
 
