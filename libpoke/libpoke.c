@@ -48,12 +48,22 @@ pk_compiler_new (const char *rtpath,
   if (pkc)
     {
       libpoke_term_if = *term_if;
+
       pkc->vm = pvm_init ();
+      if (pkc->vm == NULL)
+        goto error;
       pkc->compiler = pkl_new (pkc->vm, rtpath);
+      if (pkc->compiler == NULL)
+        goto error;
+
       pvm_set_compiler (pkc->vm, pkc->compiler);
     }
 
   return pkc;
+
+ error:
+  free (pkc);
+  return NULL;
 }
 
 void
