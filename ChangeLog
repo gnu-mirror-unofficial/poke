@@ -1,3 +1,11 @@
+2020-05-05  Darshit Shah  <darnir@gnu.org>
+
+  * m4/libtextstyle-hyperlink.m4: Use an action-if-true to prevent adding it to LIBS
+  AC_SEARCH_LIBS will add the library to LIBS if action-if-true is empty.
+  We prevent that by adding an action-if-true, and manually including
+  LTLIBTEXTSTYLE in the libraries for Poke. This allows libpoke.so to be
+  build without linking against libtextstle.
+
 2020-05-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.c (complete_struct): Add parentheses in
