@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = jitter gl pickles libutils libpoke poke doc man testsuite etc po
+SUBDIRS = jitter gl pickles gl-libutils libutils libpoke poke doc man testsuite etc po
 
 noinst_SCRIPTS = run
 

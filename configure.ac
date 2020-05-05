@@ -24,7 +24,7 @@ AC_INIT([GNU poke], [0.1-beta], [poke-devel@gnu.org], [poke],
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(poke/config.h)
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIRS([m4 m4/libutils])
 
 # Include the Autoconf macros from Jitter.
 m4_include([m4/jitter.m4])
@@ -35,6 +35,7 @@ dnl AB_INIT
 
 AC_PROG_CC
 gl_EARLY
+libutils_EARLY
 
 LT_INIT
 AC_PROG_CC_C99
@@ -128,6 +129,7 @@ fi
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
+                gl-libutils/Makefile
                 libutils/Makefile
                 libpoke/Makefile
                 poke/Makefile

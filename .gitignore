@@ -21,6 +21,7 @@ config.h.in
 /config.status
 /configure.lineno
 /gl
+/gl-libutils
 /po/.gitignore
 /po/.reference
 /po/LINGUAS

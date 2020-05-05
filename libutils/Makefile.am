@@ -25,8 +25,8 @@ lib_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = pk-utils.c pk-utils.h
 libutils_la_CFLAGS = -Wall -Wextra
 libutils_la_CPPFLAGS = -D_GNU_SOURCE \
-                       -I$(top_builddir)/gl -I$(top_srcdir)/gl
-libutils_la_LIBADD = ../gl/libgnu.la
+                       -I$(top_builddir)/gl-libutils -I$(top_srcdir)/gl-libutils
+libutils_la_LIBADD = ../gl-libutils/libgnu.la
 libutils_la_LDFLAGS =
 
 # End of Makefile.am
