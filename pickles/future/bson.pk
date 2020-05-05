@@ -51,10 +51,7 @@ deftype BSON_String =
   struct
   {
     int32 size;
-    /* XXX substitute the following with an anonymous pinned struct
-       when struct flattening is implemented.  */
-    string value;
-    char[size] chars : chars[size - 1] == '\0' @ size'size;
+    string value : value'size == size - 1;
   };
 
 deftype BSON_Regexp =
@@ -91,7 +88,6 @@ deftype BSON_Elem =
       byte tag : tag == 0x03;
       string name;
       BSON_Doc value;
-      int value;
     } doc;
 
     struct
@@ -99,7 +95,6 @@ deftype BSON_Elem =
       byte tag : tag == 0x04;
       string name;
       BSON_Doc value;
-      int value;
     } array;
     */
     
