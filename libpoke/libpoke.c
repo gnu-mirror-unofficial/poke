@@ -168,9 +168,9 @@ complete_struct (pk_compiler pkc,
       char *elem;
 
       if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD
-        || PKL_AST_CODE (t) == PKL_AST_DECL
-          && PKL_AST_DECL_KIND (t) == PKL_AST_DECL_KIND_FUNC
-          && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (t)))
+          || (PKL_AST_CODE (t) == PKL_AST_DECL
+              && PKL_AST_DECL_KIND (t) == PKL_AST_DECL_KIND_FUNC
+              && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (t))))
         {
           if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
             ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
