@@ -22,6 +22,7 @@ config.h.in
 /configure.lineno
 /gl
 /gl-libutils
+/gl-libpoke
 /po/.gitignore
 /po/.reference
 /po/LINGUAS

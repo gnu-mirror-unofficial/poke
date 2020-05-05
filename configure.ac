@@ -36,6 +36,7 @@ dnl AB_INIT
 AC_PROG_CC
 gl_EARLY
 libutils_EARLY
+libpoke_EARLY
 
 LT_INIT
 AC_PROG_CC_C99
@@ -130,6 +131,7 @@ dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
                 gl-libutils/Makefile
+                gl-libpoke/Makefile
                 libutils/Makefile
                 libpoke/Makefile
                 poke/Makefile
