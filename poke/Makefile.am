@@ -31,10 +31,6 @@ poke_SOURCES = poke.c poke.h \
                pk-info.c pk-misc.c pk-help.c pk-vm.c \
                pk-def.c pk-set.c pk-editor.c
 
-if HSERVER
-  poke_SOURCES += pk-hserver.h pk-hserver.c
-endif
-
 poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                 -I$(top_srcdir)/libutils -I$(top_builddir)/libutils \
                 -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke \
@@ -53,6 +49,7 @@ poke_LDADD = $(top_builddir)/gl/libgnu.la \
 poke_LDFLAGS =
 
 if HSERVER
+  poke_SOURCES += pk-hserver.h pk-hserver.c
   poke_LDADD += -lpthread
 endif
 
