@@ -1,3 +1,7 @@
+2020-05-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bootstrap.conf (libutils_modules): Add xalloc.
+
 2020-05-05  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* .gitignore: Add /gl-libutils.
