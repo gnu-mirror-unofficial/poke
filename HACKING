@@ -225,7 +225,7 @@ like ``[COMMITTED]``.  Also, make sure to include the patch itself.
 The Bugzilla
 ~~~~~~~~~~~~
 
-We maintain a bugs database in http://www.sourceware.org/bugzilla.
+We maintain a bugs database in https://www.sourceware.org/bugzilla.
 Our component is ``poke``.  If you find a bug and you don't want or
 you can't work on it, please file a bug there providing as much
 details as you can.
@@ -321,7 +321,7 @@ library is not found, then a dummy version of it from gnulib is used
 instead... that does not do any styling!
 
 At the moment libtextstyle lives in a subdirectory of GNU gettext.
-See http://www.gnu.org/s/gettext for more information.
+See https://www.gnu.org/s/gettext for more information.
 
 libnbd
 ~~~~~~
@@ -404,7 +404,7 @@ Writing C
 ~~~~~~~~~
 
 In Poke we follow the GNU Coding Standards.  Please see
-http://www.gnu.org/prep/standards/.
+https://www.gnu.org/prep/standards/.
 
 Additionally, we have a few conventions that we ask you to follow when
 hacking poke, in order to keep a coherent style when possible.  These

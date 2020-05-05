@@ -1,3 +1,7 @@
+2020-05-04  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* HACKING: Fix some URLs from http: to https:
+
 2020-05-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.c (complete_struct): Fix completion of normal
