@@ -20,6 +20,7 @@
 #define PVM_VAL_H
 
 #include <config.h>
+#include <stdint.h>
 
 /* The least-significative bits of pvm_val are reserved for the tag,
    which specifies the type of the value.  */

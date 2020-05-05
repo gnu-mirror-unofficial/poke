@@ -1,5 +1,35 @@
 2020-05-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add pk-val.c
+	* libpoke/pvm-val.h: Include stdint.h.
+	* libpoke/pk-val.c: New file.
+	* libpoke/libpoke.h (pk_val): New type.
+	(PK_NULL): Define.
+	(pk_make_int): Likewise.
+	(pk_int_value): Likewise.
+	(pk_int_size): Likewise.
+	(pk_make_uint): Likewise.
+	(pk_uint_value): Likewise.
+	(pk_uint_size): Likewise.
+	(pk_make_string): Likewise.
+	(pk_string_str): Likewise.
+	(pk_make_offset): Likewise.
+	(pk_offset_magnitude): Likewise.
+	(pk_offset_unit): Likewise.
+	(pk_val_mapped_p): Likewise.
+	(pk_val_ios): Likewise.
+	(pk_val_offset): Likewise.
+	(PK_UNKNOWN): Likewise.
+	(PK_INT): Likewise.
+	(PK_UINT): Likewise.
+	(PK_STRING): Likewise.
+	(PK_OFFSET): Likewise.
+	(PK_ARRAY): Likewise.
+	(PK_STRUCT): Likewise.
+	(pk_val_type): Likewise.
+
+2020-05-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-misc.c: Renamed from pk-misc.c.
 	* poke/pk-cmd-info.c: Likewise.
 	* poke/pk-cmd-ios.c: Likewise.

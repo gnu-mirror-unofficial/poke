@@ -324,4 +324,123 @@ void pk_set_nenc (pk_compiler pkc, enum pk_nenc nenc);
 int pk_pretty_print (pk_compiler pkc);
 void pk_set_pretty_print (pk_compiler pkc, int pretty_print_p);
 
+/*** API for manipulating poke values.  ***/
+
+typedef uint64_t pk_val;
+
+/* PK_NULL is an invalid pk_val.  */
+
+#define PK_NULL 0x7ULL
+
+/* Signed integers.  */
+
+/* Build and return a poke integer.
+
+   VALUE is the numerical value for the new integer.
+   SIZE is the number of bits composing the integer.
+
+   Return PK_NULL if SIZE exceeds the maximum number of bits supported
+   in poke integers.  */
+
+pk_val pk_make_int (int64_t value, int size);
+
+/* Return the numerical value stored in the given poke integer.
+   VAL should be a poke value of the right type.  */
+
+int64_t pk_int_value (pk_val val);
+
+/* Return the size (in bits) of the given poke integer.
+   VAL should be a poke value of the right type.  */
+
+int pk_int_size (pk_val val);
+
+/* Unsigned integers.  */
+
+/* Build and return a poke unsigned integer.
+
+   VALUE is the numerical value for the new integer.
+   SIZE is the number of bits composing the integer.
+
+   Return NULL if SIZE exceeds the maximum number of bits supported in
+   poke integers.  */
+
+pk_val pk_make_uint (uint64_t value, int size);
+
+/* Return the numerical value stored in the given poke unsigned
+   integer.
+
+   VAL should be a poke value of the right type.  */
+
+uint64_t pk_uint_value (pk_val val);
+
+/* Return the size (in bits) of the given poke unsigned integer.
+   VAL should be a poke value of the right type.  */
+
+int pk_uint_size (pk_val val);
+
+/* Strings.  */
+
+/* Build and return a poke string.
+
+   STR is a NULL-terminated string, a copy of which will become the
+   value of the poke string.  */
+
+pk_val pk_make_string (const char *str);
+
+/* Return a NULL-terminated string with the value of the given poke
+   string.  */
+
+const char *pk_string_str (pk_val val);
+
+/* Offsets.  */
+
+/* Build and return a poke offset.
+
+   MAGNITUDE is either a poke integer or a poke unsigned integer, with
+   the magnitude of the offset.
+
+   UNIT is an unsigned poke integer specifying the unit of the offset,
+   i.e. the multiple of the base unit, which is the bit.  */
+
+pk_val pk_make_offset (pk_val magnitude, pk_val unit);
+
+/* Return the magnitude of the given poke offset.  */
+
+pk_val pk_offset_magnitude (pk_val val);
+
+/* Return the unit of the given poke offset.  */
+
+pk_val pk_offset_unit (pk_val val);
+
+/* Mapped values.  */
+
+/* Return a boolean indicating whether the given value is mapped or
+   not.  */
+
+int pk_val_mapped_p (pk_val val);
+
+/* Return the IOS identifier, an int<32>, in which the given value is
+   mapped.  If the value is not mapped, PK_NULL.  */
+
+pk_val pk_val_ios (pk_val val);
+
+/* Return the offset in which the given value is mapped.
+   If the value is not mapped, return PK_NULL.  */
+
+pk_val pk_val_offset (pk_val val);
+
+/* Other operations on values.  */
+
+/* Return the type of the given value.  */
+
+#define PK_UNKNOWN 0
+#define PK_INT     1
+#define PK_UINT    2
+#define PK_STRING  3
+#define PK_OFFSET  4
+#define PK_ARRAY   5
+#define PK_STRUCT  6
+
+int pk_val_type (pk_val val);
+
 #endif /* ! LIBPOKE_H */

@@ -29,6 +29,7 @@ lib_LTLIBRARIES = libpoke.la
 include_HEADERS = libpoke.h
 
 libpoke_la_SOURCES = libpoke.h libpoke.c \
+                     pk-val.c \
                      pkt.h \
                      pkl.h pkl.c \
                      pkl-ast.h pkl-ast.c \
