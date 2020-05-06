@@ -24,7 +24,6 @@
 #include <string.h>
 #include <xalloc.h>
 #include <stdlib.h>
-#include "xstrndup.h"
 
 #include "pk-utils.h"
 
@@ -572,7 +571,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
   if (*p != '%')
     {
       p = strchrnul (fmt, '%');
-      PKL_AST_PRINT_STMT_PREFIX (print_stmt) = xstrndup (fmt, p - fmt);
+      PKL_AST_PRINT_STMT_PREFIX (print_stmt) = strndup (fmt, p - fmt);
+      if (!PKL_AST_PRINT_STMT_PREFIX (print_stmt))
+        PKL_ICE (PKL_AST_LOC (print_stmt), _("out of memory"));
     }
 
   /* Process the format string.  */
@@ -841,7 +842,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
       if (*p != '\0' && *p != '%')
         {
           char *end = strchrnul (p, '%');
-          PKL_AST_PRINT_STMT_ARG_SUFFIX (arg) = xstrndup (p, end - p);
+          PKL_AST_PRINT_STMT_ARG_SUFFIX (arg) = strndup (p, end - p);
+          if (!PKL_AST_PRINT_STMT_ARG_SUFFIX (arg))
+            PKL_ICE (PKL_AST_LOC (print_stmt), _("out of memory"));
           p = end;
         }
     }
