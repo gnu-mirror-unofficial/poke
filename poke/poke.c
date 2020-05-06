@@ -35,6 +35,7 @@
 #include "pk-cmd.h"
 #include "pk-repl.h"
 #include "pk-utils.h"
+#include "pk-mi.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */
@@ -46,6 +47,10 @@ int poke_interactive_p;
    or not.  */
 int poke_hserver_p;
 #endif
+
+/* The following global indicates whether the MI shall be used.  */
+
+int poke_mi_p;
 
 /* The following global indicates whether poke should be as terse as
    possible in its output.  This is useful when running poke from
@@ -112,7 +117,8 @@ enum
   NO_INIT_FILE_ARG,
   SCRIPT_ARG,
   COLOR_ARG,
-  STYLE_ARG
+  STYLE_ARG,
+  MI_ARG,
 };
 
 static const struct option long_options[] =
@@ -126,6 +132,7 @@ static const struct option long_options[] =
   {"no-init-file", no_argument, NULL, NO_INIT_FILE_ARG},
   {"color", required_argument, NULL, COLOR_ARG},
   {"style", required_argument, NULL, STYLE_ARG},
+  {"mi", no_argument, NULL, MI_ARG},
   {NULL, 0, NULL, 0},
 };
 
@@ -163,6 +170,11 @@ Commanding poke from the command line:\n\
 Styling text output:\n\
       --color=(yes|no|auto|html|test) emit styled output.\n\
       --style=STYLE_FILE              style file to use when styling.\n"));
+
+  pk_puts ("\n");
+  pk_puts (_("\
+Machine interface:\n\
+      --mi                            use the MI in stdin/stdout.\n"));
 
   pk_puts ("\n");
   /* TRANSLATORS: --help output, less used GNU poke arguments.
@@ -258,11 +270,38 @@ static struct pk_term_if poke_term_if =
   };
 
 static void
-parse_args (int argc, char *argv[])
+parse_args_1 (int argc, char *argv[])
 {
   char c;
   int ret;
 
+  while ((ret = getopt_long (argc,
+                             argv,
+                             "ql:c:s:L:",
+                             long_options,
+                             NULL)) != -1)
+    {
+      c = ret;
+      switch (c)
+        {
+#ifdef POKE_MI
+        case MI_ARG:
+          poke_mi_p = 1;
+          break;
+#endif
+        default:
+          break;
+        }
+    }
+}
+
+static void
+parse_args_2 (int argc, char *argv[])
+{
+  char c;
+  int ret;
+
+  optind = 1;
   while ((ret = getopt_long (argc,
                              argv,
                              "ql:c:s:L:",
@@ -292,7 +331,6 @@ parse_args (int argc, char *argv[])
         case LOAD_ARG:
           if (!pk_compile_file (poke_compiler, optarg))
             goto exit_success;
-
           break;
         case 'c':
         case CMD_ARG:
@@ -313,6 +351,11 @@ parse_args (int argc, char *argv[])
           /* -L is handled below.  */
         case 'L':
           break;
+#ifdef POKE_MI
+        case MI_ARG:
+          /* These are handled in parse_args_1.  */
+          break;
+#endif
           /* libtextstyle arguments are handled in pk-term.c, not
              here.   */
         case COLOR_ARG:
@@ -422,7 +465,9 @@ initialize (int argc, char *argv[])
   pk_cmd_init ();
 
 #ifdef HAVE_HSERVER
-  poke_hserver_p = poke_interactive_p && pk_term_color_p ();
+  poke_hserver_p = (poke_interactive_p
+                    && pk_term_color_p ()
+                    && !poke_mi_p);
 
   /* Initialize and start the terminal hyperlinks server.  */
   if (poke_hserver_p)
@@ -511,18 +556,30 @@ initialize_user (void)
 int
 main (int argc, char *argv[])
 {
+  /* First round of argument parsing: everything that can impact the
+     initialization.  */
+  parse_args_1 (argc, argv);
+
   /* Initialization.  */
   initialize (argc, argv);
 
-  /* Parse args, loading files, opening files for IO, etc etc */
-  parse_args (argc, argv);
+  /* Second round of argument parsing: loading files, opening files
+     for IO, etc etc */
+  parse_args_2 (argc, argv);
 
   /* User's initialization.  */
   if (poke_load_init_file)
     initialize_user ();
 
-  /* Enter the REPL.  */
-  if (poke_interactive_p)
+  /* Enter the REPL or MI.  */
+#ifdef POKE_MI
+  if (poke_mi_p)
+    {
+      if (!pk_mi ())
+        poke_exit_code = EXIT_FAILURE;
+    }
+  else if (poke_interactive_p)
+#endif
     pk_repl ();
 
   /* Cleanup.  */

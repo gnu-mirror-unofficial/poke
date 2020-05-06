@@ -80,6 +80,19 @@ dnl The Boehm-Weiser garbage collector
 PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES(BDW_GC,[bdw-gc])
 
+dnl The JSON-C library for the machine-interface
+
+PKG_CHECK_MODULES(JSON_C,[json-c],[have_json_c=yes],[have_json_c=no])
+AC_ARG_ENABLE([mi],
+              AS_HELP_STRING([--enable-mi],
+                             [Enable the poke Machine-Interface (default is YES)]),
+              [mi_enabled=$enableval], [mi_enabled=$have_json_c])
+AM_CONDITIONAL([POKE_MI], [test "x$mi_enabled" = "xyes"])
+if test "x$mi_enabled" = "xyes"; then
+  AC_DEFINE([POKE_MI], 1,
+            [Defined if building poke with the machine-interface enabled])
+fi
+
 dnl Jitter
 
 AC_JITTER_SUBPACKAGE([jitter])
@@ -159,6 +172,11 @@ fi
 if test "x$libnbd_enabled" != "xyes"; then
    AC_MSG_WARN([building poke without NBD io space support.
      Install libnbd to use it.])
+fi
+
+if test "x$mi_enabled" = "xno"; then
+   AC_MSG_WARN([building poke without the machine interface support.
+     Install libjson-c and use --enable-mi to activate it.])
 fi
 
 dnl Report errors

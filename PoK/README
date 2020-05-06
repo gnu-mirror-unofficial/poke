@@ -1,0 +1,14 @@
+PoK - Proof of Koncept of a graphical interface for GNU poke.
+
+PoK is a prototype that we use in order to explore the best ways for a
+graphical tool to interact with poke.  It is also a good mean to make
+sure that poke's machine interface (MI) is complete and effective.
+
+It follows that eye-candy is not a priority for this prototype:
+functionality prime.  If you want to write a proper graphical poke
+editor, you are welcome to use PoK as a source of inspiration on what
+kind of mechanisms and abstractions you want to provide, and on how
+you can interact with poke via the MI.
+
+Of course PoK may be useful to do some serious poking in a graphical
+way, but if so, that's just by pure chance! ;)

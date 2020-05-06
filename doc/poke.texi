@@ -190,6 +190,7 @@ The Standard Library
 
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
+* The Machine-Interface::	Communicating your program with poke.
 
 The Poke Virtual Machine
 * PVM Instructions::		Virtual Machine instructions.
@@ -9126,12 +9127,136 @@ defun ptime = (uint<64> seconds) void:
 
 @menu
 * Writing Commands::		Extending poke with new commands.
+* The Machine-Interface::	Communicating your program with poke.
 @end menu
 
 @node Writing Commands
 @section Writing Commands
 
 XXX
+
+@node The Machine-Interface
+@section The Machine-Interface
+
+GNU poke can be executed in a special mode in which it communicates
+with a client using a machine-friendly interface.  This makes it
+possible to write programs like graphical user interfaces, testing
+programs and the like.  This section describes this operation mode and
+provides a full description of the interface, for client application
+writers.
+
+@menu
+* MI overview::			Description of the MI.
+* Running poke in MI mode::	Running poke with --mi
+* MI transport::		Frame messages.
+* MI protocol::			Messages, requests, responses, events.
+@end menu
+
+@node MI overview
+@subsection MI overview
+
+A @dfn{client application} can communicate with poke through the
+machine-interface:
+
+@example
++--------+       MI     +--------+
+| client |------ O------|  poke  |
++--------+              +--------+
+@end example
+
+There are two ways in which the communication can be performed:
+through pipes and through TCP network connections.
+
+When using the pipe operation mode, the client application runs poke
+as a sub process.  Data is obtained from poke reading from its
+standard output, and data is fed to poke writing to its standard
+input:
+
+@example
++--------+        stdin +--------+
+| client |------------->|  poke  |
++--------+              +--------+
+    ^                       | stdout
+    |                       |
+    +-----------------------+
+@end example
+
+When using the TCP network operation mode the client uses a
+bidirectional socket to communicate with a running poke process.  This
+has the advantage of allowing having poke and the client application
+running on different machines:
+
+@example
++--------+ socket    (----)__     socket +--------+
+| client |<-------->( network )<-------->|  poke  |
++--------+           (-------)           +--------+
+@end example
+
+@node Running poke in MI mode
+@subsection Running poke in MI mode
+
+The following poke command-line options are relevant to the
+machine-interface.
+
+@table @samp
+@item --mi
+Run poke in Machine-Interface mode.
+@item --mi-socket=@var{port}
+Use a network TCP socket to communicate with the client.  @var{port}
+is the port to use, or zero.  If zero, then poke chooses a port on its
+own.  In both cases, poke prints the port used when it starts.
+@end table
+
+If not using network sockets, poke starts talking MI immediately using
+the standard input and standard output:
+
+@example
+$ poke --mi
+^@@^@@^@@G@{"poke_mi":0,"type":2,"data":@{"type":0,"args":@{"version":"0.1-beta"@}@}@}
+@end example
+
+When using sockets, poke prints the number of the socket where it is
+listening for requests in the standard output:
+
+@example
+$ poke --mi --mi-socket=0
+1234
+@end example
+
+@node MI transport
+@subsection MI transport
+
+At the lowest level the communication is performed in terms of
+@dfn{frame messages}.
+
+The layout of each message is:
+
+@example
+deftype PMI_FrameMessage =
+ struct
+ @{
+    big uint<4> size : size <= 2048;
+    byte[size] payload;
+ @}
+@end example
+
+@noindent
+Where @var{size} is the length of the payload, measured in bytes.  The
+maximum length of a frame message payload is two kilobytes.
+
+@node MI protocol
+@subsection MI protocol
+
+@c XXX Document requests, responses and events.
+
+@dfn{Requests} are initiated by the client.  Once a request is sent,
+it will trigger a response.  The response is paired with the
+triggering request by the request's sequence number.
+
+@dfn{Responses} are initiated by poke, in response to a request
+received from the client.
+
+@dfn{Events} are initiated by poke.
 
 @node The Poke Virtual Machine
 @chapter The Poke Virtual Machine

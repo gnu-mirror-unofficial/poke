@@ -48,6 +48,15 @@ poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(LIBTEXTSTYLE)
 poke_LDFLAGS =
 
+# Machine inteface
+if POKE_MI
+poke_SOURCES += pk-mi.c pk-mi.h \
+                pk-mi-msg.c pk-mi-msg.h \
+                pk-mi-json.c pk-mi-json.h
+poke_CFLAGS += $(JSON_C_CFLAGS)
+poke_LDADD += $(JSON_C_LIBS)
+endif
+
 if HSERVER
   poke_SOURCES += pk-hserver.h pk-hserver.c
   poke_LDADD += -lpthread
