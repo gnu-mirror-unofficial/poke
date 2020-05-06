@@ -29,7 +29,6 @@
 #include <stdarg.h> /* va_... */
 #include <stddef.h> /* size_t */
 #include <string.h> /* strcpy */
-#include <xalloc.h> /* xmalloc */
 
 #include "pk-utils.h"
 
@@ -117,7 +116,7 @@ pk_print_binary (void (*puts_fn) (const char *str),
 
 /* Concatenate 2+ strings.
  * Last argument must be NULL.
- * Returns the malloc'ed concatenated string.
+ * Returns the malloc'ed concatenated string or NULL when out of memory.
  */
 char *
 pk_str_concat(const char *s0, ...)
@@ -125,17 +124,19 @@ pk_str_concat(const char *s0, ...)
   va_list args;
   size_t len = 0;
   const char *s;
+  char *d, *res;
 
   va_start (args, s0);
   for (s = s0; s; s = va_arg (args, const char *))
     len += strlen (s);
   va_end (args);
 
-  char *res = xmalloc (len + 1);
-  char *d = res;
+  res = malloc (len + 1);
+  if (!res)
+    return NULL;
 
   va_start (args, s0);
-  for (s = s0; s; s = va_arg (args, const char *))
+  for (d = res, s = s0; s; s = va_arg (args, const char *))
     {
       strcpy (d, s);
       d += strlen (s);

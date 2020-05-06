@@ -1,3 +1,8 @@
+2020-05-06  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* bootstrap.conf: Remove xalloc from libutils_modules.
+	* libutils/pk-utils.c (pk_str_concat): Use malloc instead of xmalloc.
+
 2020-05-05  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* .gitignore: Add /gl-libpoke.
