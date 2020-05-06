@@ -446,6 +446,11 @@ initialize_user (void)
   if (homedir != NULL)
     {
       char *pokerc = pk_str_concat (homedir, "/.pokerc", NULL);
+      if (!pokerc)
+        {
+          pk_printf (_("out of memory\n"));
+          exit (EXIT_FAILURE);
+        }
 
       if (pk_file_readable (pokerc) == NULL)
         {
@@ -479,6 +484,11 @@ initialize_user (void)
       xdg_config_dirs = "/etc/xdg";
 
     char *config_path = pk_str_concat (xdg_config_dirs, ":", xdg_config_home, NULL);
+    if (!config_path)
+      {
+        pk_printf (_("out of memory\n"));
+        exit (EXIT_FAILURE);
+      }
 
     char *dir = strtok (config_path, ":");
     do
@@ -490,6 +500,11 @@ initialize_user (void)
         /* Mount the full path and determine whether the resulting
            file is readable. */
         char *config_filename = pk_str_concat (dir, "/poke/pokerc.conf", NULL);
+        if (!config_filename)
+          {
+            pk_printf (_("out of memory\n"));
+            exit (EXIT_FAILURE);
+          }
 
         if (pk_file_readable (config_filename) == NULL)
           {

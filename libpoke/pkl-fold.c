@@ -20,6 +20,8 @@
 
 #include <config.h>
 
+#include <gettext.h>
+#define _(str) gettext (str)
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
@@ -586,6 +588,8 @@ EMUL_UU (bnoto) { return ~op; }
                                                                         \
           res = pk_str_concat (PKL_AST_STRING_POINTER (op1),            \
                                PKL_AST_STRING_POINTER (op2), NULL);     \
+          if (!res)                                                     \
+            PKL_ICE (PKL_AST_LOC (op1), _("out of memory"));            \
                                                                         \
           new = pkl_ast_make_string (PKL_PASS_AST, res);                \
           free (res);                                                   \

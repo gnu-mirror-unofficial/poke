@@ -1,5 +1,13 @@
 2020-05-06  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* libpoke/pkl-fold.c (OP_BINARY_SSS): Check return value of
+	pk_str_concat.
+	* libpoke/pkl.c (pkl_new): Likewise.
+	* poke/pk-cmd.c (pk_cmd_exec): Likewise.
+	* poke/poke.c (initialize_user): Likewise.
+
+2020-05-06  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* bootstrap.conf: Remove xalloc from libutils_modules.
 	* libutils/pk-utils.c (pk_str_concat): Use malloc instead of xmalloc.
 

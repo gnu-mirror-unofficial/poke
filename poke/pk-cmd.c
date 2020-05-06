@@ -585,6 +585,13 @@ pk_cmd_exec (const char *str)
             what = 1;
 
           cmd_alloc = pk_str_concat (cmd, ";", NULL);
+          if (!cmd_alloc)
+            {
+              pk_printf (_("out of memory\n"));
+              retval = 0;
+              goto cleanup;
+            }
+
           ecmd = cmd_alloc;
         }
 

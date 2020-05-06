@@ -79,6 +79,8 @@ pkl_new (pvm vm, const char *rt_path)
      error and should be reported as such.  */
   {
     char *poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt.pk", NULL);
+    if (!poke_rt_pk)
+      goto out_of_memory;
 
     if (!pkl_compile_file (compiler, poke_rt_pk))
       {
@@ -97,6 +99,8 @@ pkl_new (pvm vm, const char *rt_path)
   /* Load the standard library.  */
   {
     char *poke_std_pk = pk_str_concat (rt_path, "/std.pk", NULL);
+    if (!poke_std_pk)
+      goto out_of_memory;
 
     if (!pkl_compile_file (compiler, poke_std_pk))
       return NULL;
@@ -104,6 +108,14 @@ pkl_new (pvm vm, const char *rt_path)
   }
 
   return compiler;
+
+out_of_memory:
+  pk_term_class ("error");
+  pk_puts ("error: ");
+  pk_term_end_class ("error");
+  pk_puts ("out of memory\n");
+
+  return NULL;
 }
 
 void
