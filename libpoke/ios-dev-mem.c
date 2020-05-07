@@ -40,7 +40,7 @@ static char *
 ios_dev_mem_handler_normalize (const char *handler)
 {
   if (handler[0] == '*' && handler[strlen (handler) - 1] == '*')
-    return xstrdup (handler);
+    return strdup (handler);
   return NULL;
 }
 

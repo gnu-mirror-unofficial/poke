@@ -1,3 +1,11 @@
+2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* libpoke/ios.c (ios_open): Initialize error varaible.
+	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize):
+	Return NULL on memory allocation error.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_handler_normalize): Likewise.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_handler_normalize): Likewise.
+
 2020-05-06  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* bootstrap.conf: Remove xstrndup from libpoke_modules.

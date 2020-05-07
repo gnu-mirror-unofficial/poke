@@ -25,7 +25,6 @@
 
 #include <fcntl.h>
 #include <stdio.h>
-#include <assert.h>
 #include <xalloc.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -56,9 +55,11 @@ ios_dev_file_handler_normalize (const char *handler)
   char *ret;
 
   if (handler[0] == '/' || strspn (handler, safe) == strlen (handler))
-    return xstrdup (handler);
+    return strdup (handler);
+
   if (asprintf (&ret, "./%s", handler) == -1)
-    assert (0);
+    return NULL;
+
   return ret;
 }
 

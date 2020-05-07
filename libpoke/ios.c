@@ -120,7 +120,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
 {
   struct ios *io = NULL;
   struct ios_dev_if **dev_if = NULL;
-  int error, ret;
+  int error = IOD_ERROR, ret;
 
   /* Allocate and initialize the new IO space.  */
   io = xmalloc (sizeof (struct ios));

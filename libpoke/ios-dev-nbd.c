@@ -50,7 +50,7 @@ ios_dev_nbd_handler_normalize (const char *handler)
 {
   if (startswith (handler, "nbd://")
       || startswith (handler, "nbd+unix://"))
-    return xstrdup (handler);
+    return strdup (handler);
   return NULL;
 }
 
