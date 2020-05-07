@@ -25,7 +25,6 @@
 
 #include <fcntl.h>
 #include <stdio.h>
-#include <xalloc.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -66,7 +65,7 @@ ios_dev_file_handler_normalize (const char *handler)
 static void *
 ios_dev_file_open (const char *handler, uint64_t flags, int *error)
 {
-  struct ios_dev_file *fio;
+  struct ios_dev_file *fio = NULL;
   FILE *f;
   const char *mode;
   uint8_t flags_mode = flags & IOS_FLAGS_MODE;
@@ -106,19 +105,35 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
     }
 
   if (!f)
-    {
-      if (error != NULL)
-        *error = IOD_ERROR;
+    goto err;
 
-      return NULL;
-    }
+  fio = malloc (sizeof (struct ios_dev_file));
+  if (!fio)
+    goto err;
 
-  fio = xmalloc (sizeof (struct ios_dev_file));
+  fio->filename = strdup (handler);
+  if (!fio->filename)
+    goto err;
+
   fio->file = f;
-  fio->filename = xstrdup (handler);
   fio->flags = flags;
 
   return fio;
+
+err:
+  if (fio)
+    {
+      free (fio->filename);
+      free (fio);
+    }
+
+  if (f)
+    fclose (f);
+
+  if (error != NULL)
+    *error = IOD_ERROR;
+
+  return NULL;
 }
 
 static int
