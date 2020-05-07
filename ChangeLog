@@ -1,5 +1,12 @@
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* poke/poke.h: New function pk_assert_alloc.
+	Include stdlib.h, gettext.h and pk-term.h.
+	* poke/poke.c (initialize_user): Make use of pk_assert_alloc.
+	Remove including gettext.h and pk-term.h.
+
+2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* libpoke/ios.c (ios_open): Initialize error varaible.
 	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize):
 	Return NULL on memory allocation error.

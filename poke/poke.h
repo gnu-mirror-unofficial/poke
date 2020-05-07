@@ -20,6 +20,12 @@
 #define POKE_H
 
 #include <config.h>
+
+#include <stdlib.h> /* EXIT_FAILURE */
+#include <gettext.h>
+#define _(str) dgettext (PACKAGE, str)
+
+#include "pk-term.h"
 #include "libpoke.h"
 
 extern int poke_interactive_p;
@@ -38,5 +44,15 @@ extern char *poke_cmdsdir;
 extern char *poke_doc_viewer;
 
 void pk_print_version (void);
+
+static inline void
+pk_assert_alloc (const void *m)
+{
+  if (!m)
+    {
+      pk_printf (_("out of memory\n"));
+      exit (EXIT_FAILURE);
+    }
+}
 
 #endif /* !POKE_H */

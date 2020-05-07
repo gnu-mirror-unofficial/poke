@@ -21,8 +21,6 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <gettext.h>
-#define _(str) dgettext (PACKAGE, str)
 #include <unistd.h>
 #include <string.h>
 #include <locale.h>
@@ -36,7 +34,6 @@
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-repl.h"
-#include "pk-term.h"
 #include "pk-utils.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
@@ -446,11 +443,7 @@ initialize_user (void)
   if (homedir != NULL)
     {
       char *pokerc = pk_str_concat (homedir, "/.pokerc", NULL);
-      if (!pokerc)
-        {
-          pk_printf (_("out of memory\n"));
-          exit (EXIT_FAILURE);
-        }
+      pk_assert_alloc (pokerc);
 
       if (pk_file_readable (pokerc) == NULL)
         {
@@ -484,11 +477,7 @@ initialize_user (void)
       xdg_config_dirs = "/etc/xdg";
 
     char *config_path = pk_str_concat (xdg_config_dirs, ":", xdg_config_home, NULL);
-    if (!config_path)
-      {
-        pk_printf (_("out of memory\n"));
-        exit (EXIT_FAILURE);
-      }
+    pk_assert_alloc (config_path);
 
     char *dir = strtok (config_path, ":");
     do
@@ -500,11 +489,7 @@ initialize_user (void)
         /* Mount the full path and determine whether the resulting
            file is readable. */
         char *config_filename = pk_str_concat (dir, "/poke/pokerc.conf", NULL);
-        if (!config_filename)
-          {
-            pk_printf (_("out of memory\n"));
-            exit (EXIT_FAILURE);
-          }
+        pk_assert_alloc (config_filename);
 
         if (pk_file_readable (config_filename) == NULL)
           {
