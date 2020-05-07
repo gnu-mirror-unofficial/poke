@@ -1,5 +1,11 @@
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_open): Replace
+	xmalloc and xstrdup by malloc and strdup.
+	Remove include xalloc.h.
+
+2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* libpoke/ios-dev-file.c (ios_dev_file_open): Replace
 	xmalloc and xstrdup by malloc and strdup.
 	Remove include xalloc.h.

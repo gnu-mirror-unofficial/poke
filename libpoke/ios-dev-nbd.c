@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <xalloc.h>
 
 #include <libnbd.h>
 
@@ -94,9 +93,15 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
   if (size < 0)
     goto err;
 
-  nio = xmalloc (sizeof *nio);
+  nio = malloc (sizeof *nio);
+  if (!nio)
+    goto err;
+
+  nio->uri = strdup (handler);
+  if (!nio->uri)
+    goto err;
+
   nio->nbd = nbd;
-  nio->uri = xstrdup (handler);
   nio->size = size;
   nio->flags = flags;
 
@@ -106,7 +111,15 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
   /* Worth logging nbd_get_error ()?  */
   if (error)
     *error = err;
+
+  if (nio)
+    {
+      free (nio->uri);
+      free (nio);
+    }
+
   nbd_close (nbd);
+
   return NULL;
 }
 
