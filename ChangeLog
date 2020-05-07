@@ -1,5 +1,11 @@
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* poke/pk-ios.c (pk_cmd_load_file): Amend OOM message to
+	be the same everywhere ("No memory" to "Out of memory").
+	(pk_cmd_mem): Likewise.
+
+2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* poke/pk-cmd.c: Do not include gettext.h and pk-term.h.
 	* poke/pk-def.c: Likewise.
 	* poke/pk-ios.c: Likewise.
