@@ -20,7 +20,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <xalloc.h>
 
 #include "ios.h"
 #include "ios-dev.h"
@@ -47,10 +46,18 @@ ios_dev_mem_handler_normalize (const char *handler)
 static void *
 ios_dev_mem_open (const char *handler, uint64_t flags, int *error)
 {
-  struct ios_dev_mem *mio;
+  struct ios_dev_mem *mio = malloc (sizeof (struct ios_dev_mem));
 
-  mio = xmalloc (sizeof (struct ios_dev_mem));
-  mio->pointer = xzalloc (MEM_STEP);
+  if (!mio)
+    return NULL;
+
+  mio->pointer = calloc (MEM_STEP, 1);
+  if (!mio->pointer)
+    {
+      free (mio);
+      return NULL;
+    }
+
   mio->size = MEM_STEP;
   mio->flags = flags;
 
@@ -97,12 +104,22 @@ ios_dev_mem_pwrite (void *iod, const void *buf, size_t count,
 
   if (offset + count > mio->size + MEM_STEP)
     return IOD_EOF;
+
   if (offset + count > mio->size) {
-    mio->pointer = xrealloc (mio->pointer,
-                             mio->size + MEM_STEP);
+    void *pointer_bak = mio->pointer;
+
+    mio->pointer = realloc (mio->pointer, mio->size + MEM_STEP);
+    if (!mio->pointer)
+      {
+        /* Restore pointer after failed realloc and return error. */
+        mio->pointer = pointer_bak;
+        return IOD_ERROR;
+      }
+
     memset (&mio->pointer[mio->size], 0, MEM_STEP);
     mio->size += MEM_STEP;
   }
+
   memcpy (&mio->pointer[offset], buf, count);
   return 0;
 }
