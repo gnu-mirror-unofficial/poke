@@ -27,7 +27,6 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
-#include "pk-term.h"
 #include "pk-utils.h"
 
 static int

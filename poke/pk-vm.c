@@ -21,7 +21,6 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
-#include "pk-term.h"
 
 #define PK_VM_DIS_UFLAGS "n"
 #define PK_VM_DIS_F_NAT 0x1

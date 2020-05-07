@@ -18,12 +18,9 @@
 
 #include <config.h>
 #include <string.h>
-#include <gettext.h>
-#define _(str) dgettext (PACKAGE, str)
 
 #include "poke.h"
 #include "pk-cmd.h"
-#include "pk-term.h"
 
 static void
 print_var_decl (int kind,

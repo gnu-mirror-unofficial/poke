@@ -30,12 +30,9 @@
 #include <xalloc.h>
 #include <xstrndup.h>
 #include <ctype.h>
-#include <gettext.h>
-#define _(str) dgettext (PACKAGE, str)
 
 #include "poke.h"
 #include "pk-cmd.h"
-#include "pk-term.h"
 #include "pk-utils.h"
 
 /* Table of supported commands.  */

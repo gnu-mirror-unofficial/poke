@@ -1,5 +1,17 @@
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* poke/pk-cmd.c: Do not include gettext.h and pk-term.h.
+	* poke/pk-def.c: Likewise.
+	* poke/pk-ios.c: Likewise.
+	* poke/pk-repl.c: Likewise.
+	* poke/pk-set.c: Likewise.
+	* poke/pk-editor.c: Do not include pk-term.h.
+	* poke/pk-hserver.c: Likewise.
+	* poke/pk-misc.c: Likewise.
+	* poke/pk-vm.c: Likewise.
+
+2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* poke/poke.h: New function pk_assert_alloc.
 	Include stdlib.h, gettext.h and pk-term.h.
 	* poke/poke.c (initialize_user): Make use of pk_assert_alloc.

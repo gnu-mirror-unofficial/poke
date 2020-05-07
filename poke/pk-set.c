@@ -17,8 +17,6 @@
  */
 
 #include <config.h>
-#include <gettext.h>
-#define _(str) dgettext (PACKAGE, str)
 #include <assert.h>
 #include <string.h>
 #include <arpa/inet.h> /* For htonl */
@@ -27,7 +25,6 @@
 
 #include "poke.h"
 #include "pk-cmd.h"
-#include "pk-term.h"
 #include "pk-utils.h"
 
 static int
