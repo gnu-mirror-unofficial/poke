@@ -1575,7 +1575,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_field)
     = PKL_AST_TYPE (struct_field_exp);
 
   /* The type of a STRUCT_FIELD in a struct initializer is the type of
-     it's expression.  */
+     its expression.  */
   PKL_AST_TYPE (struct_field) = ASTREF (struct_field_exp_type);
 }
 PKL_PHASE_END_HANDLER
@@ -1880,7 +1880,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt)
 PKL_PHASE_END_HANDLER
 
 /* Determine the type of an iterator declaration from the type of the
-   container and install a dummy value with the right type in it's
+   container and install a dummy value with the right type in its
    initializer.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt_iterator)
@@ -2382,7 +2382,7 @@ expected %s, got %s",
 PKL_PHASE_END_HANDLER
 
 /* Check that the type of the expression in a `return' statement
-   matches the return type of it's containing function.  */
+   matches the return type of its containing function.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_return_stmt)
 {

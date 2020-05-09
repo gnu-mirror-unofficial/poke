@@ -551,7 +551,7 @@ However, this is not a good idea.  If some of the "subtests" fail, it
 becomes difficult to determine which one is the culprit looking at the
 test log file.
 
-It is better to put each test in it's own file: ``foo-1.pk``,
+It is better to put each test in its own file: ``foo-1.pk``,
 ``foo-2.pk`` and so on.
 
 dg-output may require a newline
@@ -1230,7 +1230,7 @@ A *struct type*
 
 A *function type*
   Type expressions for functions are characterized by a type
-  expression denoting the types of it's arguments and the type of the
+  expression denoting the types of its arguments and the type of the
   value returned by the function.  We denote them using the following
   sexp-like notation:
 
@@ -1398,7 +1398,7 @@ Using ASTREF
 
 The AST uses reference counting in order to manage the memory used by
 the nodes.  Every time you store a pointer to an AST node, you should
-use the macro ``ASTREF`` in order to increase it's counter::
+use the macro ``ASTREF`` in order to increase its counter::
 
   pkl_ast_node foo = ASTREF (node);
 
@@ -1764,7 +1764,7 @@ For example, lets say that we are hunting some segmentation fault.  We
 highly suspect the code generated in the first example in this
 section, above.  Of the three instructions, ``mullu`` is the only one
 that could conceivably generate a segfault, so we add a stack trace
-instruction right before it to inspect it's two arguments::
+instruction right before it to inspect its two arguments::
 
   pkl_asm_insn (pasm, PKL_INSN_ROT);
   pkl_asm_insn (pasm, PKL_INSN_STRACE, 2); /* XXX remove me */

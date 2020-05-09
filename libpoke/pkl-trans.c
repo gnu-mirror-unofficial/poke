@@ -1169,7 +1169,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_cast)
 PKL_PHASE_END_HANDLER
 
 /* In offset types having another type as their unit, replace it with
-   it's size in bits.  Emit a diagnostic if the type is not
+   its size in bits.  Emit a diagnostic if the type is not
    complete.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_offset_type)

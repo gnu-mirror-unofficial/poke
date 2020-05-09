@@ -1360,7 +1360,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
       pkl_asm_label (PKL_GEN_ASM, label);
     }
 
-  /* If the argument is an array, check/cast to it's type, in order to
+  /* If the argument is an array, check/cast to its type, in order to
      perform whatever needed run-time checks.  This is done here and
      not in a cast at funcall time because the argument's type is
      evaluated in the function's lexical environment.  As per promo,

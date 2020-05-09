@@ -1107,7 +1107,7 @@ pkl_ast_type_is_complete (pkl_ast_node type)
 }
 
 /* Print a textual description of TYPE to the file OUT.  If TYPE is a
-   named type then it's given name is preferred if USE_GIVEN_NAME is
+   named type then its given name is preferred if USE_GIVEN_NAME is
    1.  */
 
 void

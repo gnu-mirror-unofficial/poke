@@ -206,7 +206,7 @@ pkl_asm_insn_atoa (pkl_asm pasm,
       from_bound = PKL_AST_TYPE_A_BOUND (from_type);
     }
 
-  /* If the array element is also an array, then convert each of it's
+  /* If the array element is also an array, then convert each of its
      elements, recursively.  */
   if (PKL_AST_TYPE_CODE (to_type_etype) == PKL_TYPE_ARRAY)
     {

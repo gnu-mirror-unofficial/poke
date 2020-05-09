@@ -240,7 +240,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     goto no_file;
 
   if (!pk_compile_file (poke_compiler, filename))
-    /* Note that the compiler emits it's own error messages.  */
+    /* Note that the compiler emits its own error messages.  */
     goto error;
 
   if (filename != arg)
