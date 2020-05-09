@@ -197,7 +197,7 @@ doc_completion_function (const char *x, int state)
             {
               nodelist = xrealloc (nodelist, ++n_nodes * sizeof (*nodelist));
               lineptr [strlen (lineptr) - 1] = '\0';
-              nodelist[n_nodes - 1] = strdup (lineptr);
+              nodelist[n_nodes - 1] = xstrdup (lineptr);
             }
         }
       fclose (fp);
@@ -225,7 +225,7 @@ doc_completion_function (const char *x, int state)
           idx++;
           continue;
         }
-      return strdup (name);
+      return xstrdup (name);
     }
 
   return NULL;

@@ -447,7 +447,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
                         GOTO_USAGE();
                       }
 
-                    char *filename = strdup (exp_result.we_wordv[0]);
+                    char *filename = xstrdup (exp_result.we_wordv[0]);
                     wordfree (&exp_result);
 
                     argv[argc].type = PK_CMD_ARG_STR;

@@ -95,7 +95,7 @@ static void
 space_substitute_redisplay (void)
 {
   /* Take a copy of the line_buffer.  */
-  char *olb = strdup (rl_line_buffer);
+  char *olb = xstrdup (rl_line_buffer);
 
   for (char *x = rl_line_buffer; *x ; x++)
     {

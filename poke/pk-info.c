@@ -19,6 +19,7 @@
 #include <config.h>
 #include "pk-cmd.h"
 #include "pk-utils.h"
+#include "xalloc.h"
 
 extern struct pk_cmd null_cmd;       /* pk-cmd.c  */
 extern struct pk_cmd info_ios_cmd;   /* pk-ios.c  */
@@ -57,7 +58,7 @@ info_completion_function (const char *x, int state)
           idx++;
           continue;
         }
-      return strdup ((*c)->name);
+      return xstrdup ((*c)->name);
     }
 
   return NULL;
