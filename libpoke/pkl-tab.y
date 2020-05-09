@@ -207,6 +207,11 @@ load_module (struct pkl_parser *parser,
     /* No file found.  */
     return 1;
 
+  printf ("JAJA\n");
+  if (pkl_module_loaded_p (parser->compiler, module_filename))
+    /* Module already loaded.  */
+    return 0;
+
   fd = fopen (module_filename, "rb");
   if (!fd)
     {

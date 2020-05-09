@@ -26,6 +26,8 @@
 #include <string.h>
 #include <xalloc.h>
 
+#include "dirname.h"
+
 #include "pkt.h"
 #include "pk-utils.h"
 
@@ -56,6 +58,7 @@ struct pkl_compiler
   int compiling;
   int error_on_warning;
   int quiet_p;
+  char **modules;
 };
 
 pkl_compiler
@@ -74,6 +77,9 @@ pkl_new (pvm vm, const char *rt_path)
 
   /* Be verbose by default :) */
   compiler->quiet_p = 0;
+
+  /* No modules loaded initially.  */
+  compiler->modules = NULL;
 
   /* Bootstrap the compiler.  An error bootstraping is an internal
      error and should be reported as such.  */
@@ -487,6 +493,16 @@ pvm
 pkl_get_vm (pkl_compiler compiler)
 {
   return compiler->vm;
+}
+
+int
+pkl_module_loaded_p (pkl_compiler compiler, const char *path)
+{
+  printf ("PATH: '%s'\n", path);
+  printf ("MODULE DIRNAME: '%s'\n", mdir_name (path));
+  printf ("MODULE LAST COMPONENT: '%s'\n", last_component (path));
+  printf ("MODULE BASENAME: '%s'\n", basename (path));
+  return 0;
 }
 
 char *

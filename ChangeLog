@@ -1,5 +1,15 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (libpoke_modules): Import the dirname gnulib
+	module.
+	* libpoke/pkl.c (struct pkl_compiler): New field `modules'.
+	(pkl_new): Initialize `modules'.
+	* libpoke/pkl.h (pkl_module_loaded_p): Define.
+	* libpoke/pkl-tab.y (load_module): Do not attempt to re-load
+	already loaded modules.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* MI foundations.
 
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
