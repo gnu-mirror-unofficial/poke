@@ -31,8 +31,10 @@ poke_SOURCES = poke.c poke.h \
                pk-info.c pk-misc.c pk-help.c pk-vm.c \
                pk-def.c pk-set.c pk-editor.c
 
+poke_SOURCES += ../common/pk-utils.c ../common/pk-utils.h
+
 poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
-                -I$(top_srcdir)/libutils -I$(top_builddir)/libutils \
+                -I$(top_srcdir)/common \
                 -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke \
                 -DJITTER_VERSION=\"$(JITTER_VERSION)\" \
                 -DPKGDATADIR=\"$(pkgdatadir)\" \
@@ -41,7 +43,6 @@ poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
 poke_CFLAGS = -Wall
 # XXX remove JITTER_LDADD
 poke_LDADD = $(top_builddir)/gl/libgnu.la \
-             $(top_builddir)/libutils/libutils.la \
              $(top_builddir)/libpoke/libpoke.la \
              $(LTLIBREADLINE) \
              $(JITTER_LDADD) \

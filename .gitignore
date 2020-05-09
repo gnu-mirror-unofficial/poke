@@ -21,7 +21,6 @@ config.h.in
 /config.status
 /configure.lineno
 /gl
-/gl-libutils
 /gl-libpoke
 /po/.gitignore
 /po/.reference

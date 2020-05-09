@@ -1,5 +1,20 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* Makefile.am (SUBDIRS): Remove libutils-gl and libutils.
+	* configure.ac (AC_CONFIG_FILES): Remove libutils files.
+	(AC_CONFIG_MACRO_DIRS): Do not add m4/libutils.
+	Do not call libutils_EARLY.
+	* libutils/Makefile.am: Remove.
+	* bootstrap.conf (bootstrap_post_import_hook): Do not create a
+	gl-libutils gnulib.
+	* libpoke/Makefile.am (libpoke_la_LIBADD): Remove libutils.la.
+	* poke/Makefile.am (poke_LDADD): Likewise.
+	* common: Renamed from libutils.
+	* HACKING: Update.
+	* .gitignore: Update.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (libpoke_modules): Import the dirname gnulib
 	module.
 	* libpoke/pkl.h (pkl_module_loaded_p): Define.

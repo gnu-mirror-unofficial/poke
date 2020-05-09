@@ -39,8 +39,8 @@ libpoke/pvm-program.c
 libpoke/pvm-program.h
 libpoke/pvm-val.c
 
-libutils/pk-utils.c
-libutils/pk-utils.h
+common/pk-utils.c
+common/pk-utils.h
 
 poke/pk-cmd.c
 poke/pk-cmd.h
