@@ -518,6 +518,11 @@ pk_mi_msg_number (pk_mi_msg msg)
   return PK_MI_MSG_NUMBER (msg);
 }
 
+void
+pk_mi_set_msg_number (pk_mi_msg msg, pk_mi_seqnum number)
+{
+  PK_MI_MSG_NUMBER (msg) = number;
+}
 
 enum pk_mi_req_type
 pk_mi_msg_req_type (pk_mi_msg msg)

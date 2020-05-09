@@ -34,6 +34,10 @@ set MI_RESP_TYPE_EXIT 0
 
 set MI_EVENT_TYPE_INITIALIZED 0
 
+# Global with the next message sequence number to use
+
+set pok_msg_number -1
+
 # pok_msg_make_request REQ_TYPE ARGS...
 #
 # Create a new MI message of type REQUEST with request type REQ_TYPE
@@ -41,11 +45,13 @@ set MI_EVENT_TYPE_INITIALIZED 0
 
 proc pok_msg_make_request {req_type args} {
     global MI_MSG_TYPE_REQUEST
+    global pok_msg_number
 
     return [dict create \
-                poke_mi 0 \
-                type $MI_MSG_TYPE_REQUEST \
-                data [dict create type $req_type]]
+                 poke_mi 0 \
+                 seq [incr pok_msg_number] \
+                 type $MI_MSG_TYPE_REQUEST \
+                 data [dict create type $req_type]]
 }
 
 # pok_msg_to_json MSG
@@ -60,7 +66,8 @@ proc pok_msg_to_json {msg} {
         if {[string equal $k data]} {
             set v [pok_msg_to_json $v]
         } elseif {[string equal $k type]
-                  || [string equal $k poke_mi]} {
+                  || [string equal $k poke_mi]
+                  || [string equal $k seq]} {
             set v $v
         } else {
             set v [::json::write string $v]

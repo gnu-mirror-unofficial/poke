@@ -88,6 +88,16 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
     json_object_object_add (json, "poke_mi", str);
   }
 
+  /* Add the number.  */
+  {
+    json_object *number
+      = json_object_new_int (pk_mi_msg_number (msg));
+
+    if (!number)
+      goto out_of_memory;
+    json_object_object_add (json, "seq", number);
+  }
+
   /* Add the type.  */
   {
     json_object *integer = json_object_new_int (msg_type);
@@ -227,6 +237,7 @@ static pk_mi_msg
 pk_mi_json_object_to_msg (json_object *json)
 {
   enum pk_mi_msg_type msg_type;
+  int msg_number;
   json_object *obj;
   pk_mi_msg msg = NULL;
 
@@ -243,6 +254,18 @@ pk_mi_json_object_to_msg (json_object *json)
       return NULL;
     if (json_object_get_int (api_ver) != MI_VERSION)
       return NULL;
+  }
+
+  /* Get the message number.  */
+  {
+    json_object *number;
+
+    if (!json_object_object_get_ex (json, "seq", &number))
+      return NULL;
+    if (!json_object_is_type (number, json_type_int))
+      return NULL;
+
+    msg_number = json_object_get_int (number);
   }
 
   /* Get the message type.  */
@@ -392,6 +415,7 @@ pk_mi_json_object_to_msg (json_object *json)
       return NULL;
     }
 
+  pk_mi_set_msg_number (msg, msg_number);
   return msg;
 }
 

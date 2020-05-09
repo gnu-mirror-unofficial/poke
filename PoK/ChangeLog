@@ -1,5 +1,11 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pok-msg.tcl (pok_msg_make_request): Add a sequence number to
+	the created message.
+	(pok_msg_to_json): seq message fields are integers.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pok-msg.tcl: New file.
 	(pok_msg_to_json): Moved from pok-poke.tcl.
 	* src/pok.tcl: Source pok-poke.tcl

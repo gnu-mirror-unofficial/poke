@@ -1,5 +1,13 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-mi-msg.h (pk_mi_set_msg_number): Define.
+	* poke/pk-mi-msg.c (pk_mi_set_msg_number): Likewise.
+	* poke/pk-mi-json.c (pk_mi_msg_to_json_object): Add the message
+	number to the json structure.
+	(pk_mi_json_object_to_msg): Likewise.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/Makefile.am (AUTOMAKE_OPTIONS): Use the subdir-objects
 	automake option.
 	* poke/Makefile.am (AUTOMAKE_OPTIONS): Likewise.
