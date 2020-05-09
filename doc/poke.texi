@@ -67,6 +67,8 @@ Reference Material
 * The Poke Language::		All you wanted to know about Poke.
 * The Standard Library::	Standard goodies for Poke programs.
 
+* The Machine-Interface::	Communicating your program with poke.
+
 Internals
 * Hacking Poke::		Extending poke.
 * The Poke Virtual Machine::	The PVM and its mysteries.
@@ -190,7 +192,12 @@ The Standard Library
 
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
-* The Machine-Interface::	Communicating your program with poke.
+
+The Machine-Interface
+* MI overview::			Description of the MI.
+* Running poke in MI mode::	Running poke with --mi
+* MI transport::		Frame messages.
+* MI protocol::			Messages, requests, responses, events.
 
 The Poke Virtual Machine
 * PVM Instructions::		Virtual Machine instructions.
@@ -9122,21 +9129,8 @@ defun ptime = (uint<64> seconds) void:
 @{ @dots{} @}
 @end example
 
-@node Hacking Poke
-@chapter Hacking Poke
-
-@menu
-* Writing Commands::		Extending poke with new commands.
-* The Machine-Interface::	Communicating your program with poke.
-@end menu
-
-@node Writing Commands
-@section Writing Commands
-
-XXX
-
 @node The Machine-Interface
-@section The Machine-Interface
+@chapter The Machine-Interface
 
 GNU poke can be executed in a special mode in which it communicates
 with a client using a machine-friendly interface.  This makes it
@@ -9153,7 +9147,7 @@ writers.
 @end menu
 
 @node MI overview
-@subsection MI overview
+@section MI overview
 
 A @dfn{client application} can communicate with poke through the
 machine-interface:
@@ -9193,7 +9187,7 @@ running on different machines:
 @end example
 
 @node Running poke in MI mode
-@subsection Running poke in MI mode
+@section Running poke in MI mode
 
 The following poke command-line options are relevant to the
 machine-interface.
@@ -9224,7 +9218,7 @@ $ poke --mi --mi-socket=0
 @end example
 
 @node MI transport
-@subsection MI transport
+@section MI transport
 
 At the lowest level the communication is performed in terms of
 @dfn{frame messages}.
@@ -9245,7 +9239,7 @@ Where @var{size} is the length of the payload, measured in bytes.  The
 maximum length of a frame message payload is two kilobytes.
 
 @node MI protocol
-@subsection MI protocol
+@section MI protocol
 
 @c XXX Document requests, responses and events.
 
@@ -9257,6 +9251,85 @@ triggering request by the request's sequence number.
 received from the client.
 
 @dfn{Events} are initiated by poke.
+
+@menu
+* MI Requests::
+* MI Responses::
+* MI Events::
+@end menu
+
+@node MI Requests
+@subsection MI Requests
+
+@menu
+* Request EXIT::	ask poke to exit.
+@end menu
+
+@node Request EXIT
+@subsubsection Request EXIT
+
+This request asks poke to exit in an orderly way.  It has no
+arguments.
+
+@node MI Responses
+@subsection MI Responses
+
+@menu
+* Response EXIT::	poke confirms it will exit.
+@end menu
+
+@node Response EXIT
+@subsubsection Response EXIT
+
+This is the response to the EXIT request.
+
+Attributes:
+
+@table @var
+@item success_p
+If @code{true}, poke will exit.  If @code{false}, something prevents
+poke to exit.
+@item errmsg
+If @var{success_p} is @code{false}, this attribute contains a string
+indicating the reason why poke refuses to exit.
+@end table
+
+@node MI Events
+@subsection MI Events
+
+@menu
+* Event INITIALIZE::	poke has been initialized.
+@end menu
+
+@node Event INITIALIZE
+@subsubsection Event INITIALIZE
+
+This event is sent by poke when it finishes initializing and is ready
+to receive requests.
+
+Arguments:
+
+@table @var
+@item mi_version
+An integer with the version of the MI protocol that this poke instance
+speaks.
+@item version
+A string with the printable representation of the version of the poke
+instance.  This is intended to be used for the client to show to the
+users.
+@end table
+
+@node Hacking Poke
+@chapter Hacking Poke
+
+@menu
+* Writing Commands::		Extending poke with new commands.
+@end menu
+
+@node Writing Commands
+@section Writing Commands
+
+XXX
 
 @node The Poke Virtual Machine
 @chapter The Poke Virtual Machine

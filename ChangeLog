@@ -1,5 +1,14 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (MI Requests): New section.
+	(MI Responses): Likewise.
+	(MI Events): Likewise.
+	(Event INITIALIZE): Likewise.
+	(Request EXIT): Likewise.
+	(Response EXIT): Likewise.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-mi-msg.h (pk_mi_msg_event_initialized_mi_version):
 	Define.
 	* poke/pk-mi-msg.c (pk_mi_msg_event_initialized_mi_version):
