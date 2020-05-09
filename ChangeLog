@@ -2,11 +2,17 @@
 
 	* bootstrap.conf (libpoke_modules): Import the dirname gnulib
 	module.
-	* libpoke/pkl.c (struct pkl_compiler): New field `modules'.
-	(pkl_new): Initialize `modules'.
 	* libpoke/pkl.h (pkl_module_loaded_p): Define.
-	* libpoke/pkl-tab.y (load_module): Do not attempt to re-load
-	already loaded modules.
+	* libpoke/pkl.c (struct pkl_compiler): New fields `modules' and
+	`num_modules'.
+	(pkl_new): Initialize `modules' and `num_modules'.
+	(pkl_load): Do not re-load already loaded modules.
+	(pkl_add_module): New function.
+	(pkl_free): Free memory occupied by the list of loaded modules.
+	* libpoke/pkl-tab.y (load_module): Likewise.
+	* testsuite/poke.pkl/load-3.pk: Amended.
+	* poke/pk-ios.c (pk_cmd_load_file): Use pk_load instead of
+	pk_compile_file.
 
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 

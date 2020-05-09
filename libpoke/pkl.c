@@ -58,7 +58,9 @@ struct pkl_compiler
   int compiling;
   int error_on_warning;
   int quiet_p;
+#define PKL_MODULES_STEP 8
   char **modules;
+  int num_modules;
 };
 
 pkl_compiler
@@ -80,6 +82,7 @@ pkl_new (pvm vm, const char *rt_path)
 
   /* No modules loaded initially.  */
   compiler->modules = NULL;
+  compiler->num_modules = 0;
 
   /* Bootstrap the compiler.  An error bootstraping is an internal
      error and should be reported as such.  */
@@ -127,7 +130,12 @@ out_of_memory:
 void
 pkl_free (pkl_compiler compiler)
 {
+  size_t i;
+
   pkl_env_free (compiler->env);
+  for (i = 0; i < compiler->num_modules; ++i)
+    free (compiler->modules[i]);
+  free (compiler->modules);
   free (compiler);
 }
 
@@ -495,13 +503,35 @@ pkl_get_vm (pkl_compiler compiler)
   return compiler->vm;
 }
 
+void
+pkl_add_module (pkl_compiler compiler, const char *path)
+{
+  const char *module = last_component (path);
+
+  if (compiler->num_modules % PKL_MODULES_STEP == 0)
+    {
+      size_t size = ((compiler->num_modules + PKL_MODULES_STEP)
+                     * sizeof (char*));
+      compiler->modules = realloc (compiler->modules, size);
+      memset (compiler->modules + compiler->num_modules, 0,
+              PKL_MODULES_STEP * sizeof (char*));
+    }
+
+  compiler->modules[compiler->num_modules++] = strdup (module);
+}
+
 int
 pkl_module_loaded_p (pkl_compiler compiler, const char *path)
 {
-  printf ("PATH: '%s'\n", path);
-  printf ("MODULE DIRNAME: '%s'\n", mdir_name (path));
-  printf ("MODULE LAST COMPONENT: '%s'\n", last_component (path));
-  printf ("MODULE BASENAME: '%s'\n", basename (path));
+  const char *basename = last_component (path);
+  int i;
+
+  for (i = 0; i < compiler->num_modules; ++i)
+    {
+      if (STREQ (compiler->modules[i], basename))
+        return 1;
+    }
+
   return 0;
 }
 
@@ -573,8 +603,14 @@ pkl_load (pkl_compiler compiler, const char *module)
   if (!module_filename)
     return 0;
 
+  if (pkl_module_loaded_p (compiler, module_filename))
+    return 1;
+
   if (!pkl_compile_file (compiler, module_filename))
-    return 0;
+    {
+      pkl_add_module (compiler, module_filename);
+      return 0;
+    }
 
   return 1;
 }

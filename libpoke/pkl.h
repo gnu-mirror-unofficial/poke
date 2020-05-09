@@ -171,17 +171,25 @@ char *pkl_resolve_module (pkl_compiler compiler, const char *module,
                           int filename_p)
   __attribute__ ((visibility ("hidden")));
 
+/* Load a module using the given compiler.
+   If the module cannot be loaded, return 1.
+   Otherwise, return 0.  */
+
+int pkl_load (pkl_compiler compiler, const char *module)
+  __attribute__ ((visibility ("hidden")));
+
+/* XXX the functions below are really internal to PKL.  */
+
 /* Given the path to a module file, determine the module is already
    loaded in the given compiler.  */
 
 int pkl_module_loaded_p (pkl_compiler compiler, const char *path)
   __attribute__ ((visibility ("hidden")));
 
-/* Load a module using the given compiler.
-   If the module cannot be loaded, return 1.
-   Otherwise, return 0.  */
+/* Add the module in the given path to the list of modules loaded in
+   the compiler.  */
 
-int pkl_load (pkl_compiler compiler, const char *module)
+void pkl_add_module (pkl_compiler compiler, const char *path)
   __attribute__ ((visibility ("hidden")));
 
 #endif /* ! PKL_H */

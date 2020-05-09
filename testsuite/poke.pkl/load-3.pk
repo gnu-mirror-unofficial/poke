@@ -1,6 +1,8 @@
 /* { dg-do run } */
 /* { dg-data {a*} {foo = foo + 1;} foo.pk } */
 
+/* Check that foo.pk is not loaded twice.  */
+
 defvar foo = 0;
 
 /* { dg-command { load foo } } */
@@ -8,4 +10,4 @@ defvar foo = 0;
 /* { dg-output "1" } */
 /* { dg-command { load foo } } */
 /* { dg-command { foo } } */
-/* { dg-output "\n2" } */
+/* { dg-output "\n1" } */

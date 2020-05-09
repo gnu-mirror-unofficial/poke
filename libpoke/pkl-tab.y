@@ -207,10 +207,12 @@ load_module (struct pkl_parser *parser,
     /* No file found.  */
     return 1;
 
-  printf ("JAJA\n");
   if (pkl_module_loaded_p (parser->compiler, module_filename))
-    /* Module already loaded.  */
-    return 0;
+    {
+      /* Module already loaded.  */
+      *node = NULL;
+      return 0;
+    }
 
   fd = fopen (module_filename, "rb");
   if (!fd)
@@ -230,6 +232,9 @@ load_module (struct pkl_parser *parser,
       free (module_filename);
       return 2;
     }
+
+  /* Add the module to the compiler's list of loaded modules.  */
+  pkl_add_module (parser->compiler, module_filename);
 
   /* However, the AST nodes shall be appended explicitly, which is
      achieved by returning them to the caller in the NODE
