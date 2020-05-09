@@ -159,6 +159,7 @@ AC_CONFIG_FILES(Makefile
                 poke/Makefile
                 gui/Makefile
                 pickles/Makefile
+                maps/Makefile
                 doc/Makefile
                 man/Makefile
                 po/Makefile.in

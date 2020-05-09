@@ -1,0 +1,7 @@
+# Map file for MP3 files.
+
+load mp3;
+load id3v1;
+
+%%
+tag, ID3V1_Tag, iosize - 128#B

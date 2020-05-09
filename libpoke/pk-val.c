@@ -139,7 +139,18 @@ pk_val_ios (pk_val val)
 pk_val
 pk_val_offset (pk_val val)
 {
-  return PVM_VAL_OFFSET (val);
+  /* The offset in the PVM value is a bit-offset.  Convert to a proper
+     offset.  */
+  uint64_t bit_offset = PVM_VAL_ULONG (PVM_VAL_OFFSET (val));
+
+  /* XXX "upunit" properly so we get a nice unit, not just bytes or
+     bits.  */
+  if (bit_offset % 8 == 0)
+    return pvm_make_offset (pvm_make_ulong (bit_offset / 8, 64),
+                            pvm_make_ulong (8, 32));
+  else
+    return pvm_make_offset (PVM_VAL_OFFSET (val),
+                            pvm_make_ulong (1, 32));
 }
 
 int

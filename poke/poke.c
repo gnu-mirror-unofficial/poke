@@ -37,6 +37,7 @@
 #include "pk-repl.h"
 #include "pk-utils.h"
 #include "pk-mi.h"
+#include "pk-map.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */
@@ -260,6 +261,7 @@ finalize (void)
     pk_hserver_shutdown ();
 #endif
   pk_cmd_shutdown ();
+  pk_map_shutdown ();
   pk_compiler_free (poke_compiler);
   pk_term_shutdown ();
 }
@@ -476,6 +478,9 @@ initialize (int argc, char *argv[])
                                    &poke_term_if);
   if (poke_compiler == NULL)
     exit (EXIT_FAILURE);
+
+  /* Initialize the global map.  */
+  pk_map_init ();
 
   /* Initialize the command subsystem.  This should be done even if
      called non-interactively.  */

@@ -37,23 +37,24 @@
 
 /* Table of supported commands.  */
 
-extern const struct pk_cmd ios_cmd; /* pk-ios.c */
-extern const struct pk_cmd file_cmd; /* pk-ios.c  */
-extern const struct pk_cmd mem_cmd; /* pk-ios.c */
+extern const struct pk_cmd ios_cmd; /* pk-cmd-ios.c */
+extern const struct pk_cmd file_cmd; /* pk-cmd-ios.c  */
+extern const struct pk_cmd mem_cmd; /* pk-cmd-ios.c */
 #ifdef HAVE_LIBNBD
-extern const struct pk_cmd nbd_cmd; /* pk-ios.c */
+extern const struct pk_cmd nbd_cmd; /* pk-cmd-ios.c */
 #endif
-extern const struct pk_cmd close_cmd; /* pk-file.c */
-extern const struct pk_cmd load_cmd; /* pk-file.c */
-extern const struct pk_cmd info_cmd; /* pk-info.c  */
-extern const struct pk_cmd exit_cmd; /* pk-misc.c  */
-extern const struct pk_cmd version_cmd; /* pk-misc.c */
-extern const struct pk_cmd doc_cmd; /* pk-misc.c */
-extern const struct pk_cmd jmd_cmd; /* pk-misc.c */
-extern const struct pk_cmd help_cmd; /* pk-help.c */
-extern const struct pk_cmd vm_cmd; /* pk-vm.c  */
-extern const struct pk_cmd set_cmd; /* pk-set.c */
-extern const struct pk_cmd editor_cmd; /* pk-editor.c */
+extern const struct pk_cmd close_cmd; /* pk-cmd-file.c */
+extern const struct pk_cmd load_cmd; /* pk-cmd-file.c */
+extern const struct pk_cmd info_cmd; /* pk-cmd-info.c  */
+extern const struct pk_cmd exit_cmd; /* pk-cmd-misc.c  */
+extern const struct pk_cmd version_cmd; /* pk-cmd-misc.c */
+extern const struct pk_cmd doc_cmd; /* pk-cmd-misc.c */
+extern const struct pk_cmd jmd_cmd; /* pk-cmd-misc.c */
+extern const struct pk_cmd help_cmd; /* pk-cmd-help.c */
+extern const struct pk_cmd vm_cmd; /* pk-cmd-vm.c  */
+extern const struct pk_cmd set_cmd; /* pk-cmd-set.c */
+extern const struct pk_cmd editor_cmd; /* pk-cmd-editor.c */
+extern const struct pk_cmd map_cmd; /* pk-cmd-map.c */
 
 const struct pk_cmd null_cmd = {};
 
@@ -71,6 +72,7 @@ static const struct pk_cmd *dot_cmds[] =
     &help_cmd,
     &vm_cmd,
     &set_cmd,
+    &map_cmd,
     &editor_cmd,
     &mem_cmd,
 #ifdef HAVE_LIBNBD
@@ -497,7 +499,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
   if (cmd->flags & PK_CMD_F_REQ_IO
       && pk_ios_cur (poke_compiler) == NULL)
     {
-      pk_puts (_("This command requires an IO space.  Use the `file' command."));
+      pk_puts (_("This command requires an IO space.  Use the `file' command.\n"));
       return 0;
     }
 
@@ -531,20 +533,23 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 #undef GOTO_USAGE
 }
 
-extern const struct pk_cmd *info_cmds[]; /* pk-info.c  */
-extern struct pk_trie *info_trie; /* pk-info.c  */
+extern const struct pk_cmd *info_cmds[]; /* pk-cmd-info.c  */
+extern struct pk_trie *info_trie; /* pk-cmd-info.c  */
 
-extern const struct pk_cmd *help_cmds[]; /* pk-help.c */
-extern struct pk_trie *help_trie; /* pk-help.c */
+extern const struct pk_cmd *help_cmds[]; /* pk-cmd-help.c */
+extern struct pk_trie *help_trie; /* pk-cmd-help.c */
 
-extern const struct pk_cmd *vm_cmds[]; /* pk-vm.c  */
-extern struct pk_trie *vm_trie;  /* pk-vm.c  */
+extern const struct pk_cmd *vm_cmds[]; /* pk-cmd-vm.c  */
+extern struct pk_trie *vm_trie;  /* pk-cmd-vm.c  */
 
-extern const struct pk_cmd *vm_disas_cmds[];  /* pk-vm.c */
-extern struct pk_trie *vm_disas_trie; /* pk-vm.c */
+extern const struct pk_cmd *vm_disas_cmds[];  /* pk-cmd-vm.c */
+extern struct pk_trie *vm_disas_trie; /* pk-cmd-vm.c */
 
-extern const struct pk_cmd *set_cmds[]; /* pk-set.c */
-extern struct pk_trie *set_trie; /* pk-set.c */
+extern const struct pk_cmd *set_cmds[]; /* pk-cmd-set.c */
+extern struct pk_trie *set_trie; /* pk-cmd-set.c */
+
+extern const struct pk_cmd *map_cmds[]; /* pk-cmd-map.c */
+extern struct pk_trie *map_trie; /* pk-cmd-map.c */
 
 static struct pk_trie *cmds_trie;
 
@@ -692,6 +697,7 @@ pk_cmd_init (void)
   vm_trie = pk_trie_from_cmds (vm_cmds);
   vm_disas_trie = pk_trie_from_cmds (vm_disas_cmds);
   set_trie = pk_trie_from_cmds (set_cmds);
+  map_trie = pk_trie_from_cmds (map_cmds);
 
   /* Compile commands written in Poke.  */
   if (!pk_load (poke_compiler, "pk-cmd"))
@@ -710,6 +716,7 @@ pk_cmd_shutdown (void)
   pk_trie_free (vm_trie);
   pk_trie_free (vm_disas_trie);
   pk_trie_free (set_trie);
+  pk_trie_free (map_trie);
 }
 
 

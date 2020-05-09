@@ -502,6 +502,51 @@ pk_decl_map (pk_compiler pkc, int kind,
 }
 
 int
+pk_decl_p (pk_compiler pkc, const char *name, int kind)
+{
+  pkl_env compiler_env = pkl_get_env (pkc->compiler);
+
+  pkl_ast_node decl = pkl_env_lookup (compiler_env,
+                                      PKL_ENV_NS_MAIN,
+                                      name,
+                                      NULL, NULL);
+
+  int pkl_kind;
+  switch (kind)
+    {
+    case PK_DECL_KIND_VAR: pkl_kind = PKL_AST_DECL_KIND_VAR; break;
+    case PK_DECL_KIND_FUNC: pkl_kind = PKL_AST_DECL_KIND_FUNC; break;
+    case PK_DECL_KIND_TYPE: pkl_kind = PKL_AST_DECL_KIND_TYPE; break;
+    default:
+      return 0;
+    }
+
+  if (decl && PKL_AST_DECL_KIND (decl) == pkl_kind)
+    return 1;
+  else
+    return 0;
+}
+
+pk_val
+pk_decl_val (pk_compiler pkc, const char *name)
+{
+  pkl_env compiler_env = pkl_get_env (pkc->compiler);
+  pvm_env runtime_env = pvm_get_env (pkc->vm);
+  int back, over;
+
+  pkl_ast_node decl = pkl_env_lookup (compiler_env,
+                                      PKL_ENV_NS_MAIN,
+                                      name,
+                                      &back, &over);
+
+  if (decl == NULL
+      || PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR)
+    return PK_NULL;
+
+  return pvm_env_lookup (runtime_env, back, over);
+}
+
+int
 pk_obase (pk_compiler pkc)
 {
   return pvm_obase (pkc->vm);
@@ -678,4 +723,10 @@ void
 pk_set_pretty_print (pk_compiler pkc, int pretty_print_p)
 {
   pvm_set_pretty_print (pkc->vm, pretty_print_p);
+}
+
+void
+pk_print_val (pk_compiler pkc, pk_val val)
+{
+  pvm_print_val (pkc->vm, val);
 }

@@ -1,3 +1,29 @@
+2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.c (pk_print_val): New function.
+	* libpoke/libpoke.c (pk_decl_val): Define.
+	* (pk_decl_p): New function.
+	* poke/pk-map.c: New file.
+	* poke/pk-map.h: Likewise.
+	* poke/pk-cmd-map.c: Likewise.
+	* poke/poke.c (initialize): Call pk_map_init.
+	(finalize): Call pk_map_shutdown.
+	* poke/Makefile.am (poke_SOURCES): Add pk-map.c and pk-cmd-map.c
+	* poke/pk-cmd-info.c (info_cmds): Add info_map_cmd.
+	* maps/Makefile.am: New file.
+	* maps/elf.map: Likewise.
+	* maps/mp3.map: Likewise.
+	* Makefile.am (SUBDIRS): Add maps.
+	* configure.ac: Add maps/Makefile.
+	* etc/poke-map-mode.el: Likewise.
+	* testsuite/poke.cmd/maps-1.pk: New test.
+	* testsuite/poke.cmd/maps-2.pk: Likewise.
+	* testsuite/poke.cmd/maps-3.pk: Likewise.
+	* testsuite/poke.cmd/maps-4.pk: Likewise.
+	* testsuite/poke.cmd/maps-5.pk: Likewise.
+	* testsuite/poke.cmd/maps-6.pk: Likewise.
+	* HACKING: Updated.
+
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* gui/Makefile.am: Use dist_guifiles_DATA instead guifiles_DATA.

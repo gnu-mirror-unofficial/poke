@@ -16,6 +16,8 @@
 .struct-field-name { text-decoration : underline; }
 .integer { color : green; }
 
+.table_header { text-decoration: underline; }
+
 .dump-ruler { text-decoration: underline; }
 .dump-address { color : green; }
 .dump-ascii { color : brown; }

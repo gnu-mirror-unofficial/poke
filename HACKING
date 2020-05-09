@@ -1986,6 +1986,9 @@ Commands
   ``poke/pk-set.c``, ``poke/pk-vm.c``, ``poke/pk-save.pk``,
   ``poke/pk-copy.pk``
 
+Maps Support
+  ``poke/pk-map.c``, ``poke/pk-map.h``
+
 Pickles
 ~~~~~~~
 
@@ -2031,6 +2034,9 @@ Suppression list for memcheck
 
 Emacs mode for editing RAS files
   ``etc/poke-ras-mode.el``
+
+Emacs mode for editing poke MAP files
+  ``etc/poke-map-mode.el``
 
 Antlr4 grammar for Poke.
  ``etc/poke.g4``

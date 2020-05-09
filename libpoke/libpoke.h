@@ -25,7 +25,7 @@
 
 typedef struct pk_compiler *pk_compiler;
 typedef struct pk_ios *pk_ios;
-
+typedef uint64_t pk_val;
 
 /* The following status codes are returned by many of the functions in
    this interface.  */
@@ -274,6 +274,18 @@ typedef void (*pk_map_decl_fn) (int kind,
 void pk_decl_map (pk_compiler pkc, int kind,
                   pk_map_decl_fn handler, void *data);
 
+/* Determine whether there is a declaration with the given name, of
+   the given type.  */
+
+int pk_decl_p (pk_compiler pkc, const char *name, int kind);
+
+/* Given the name of a variable declared in the compiler, return its
+   value.
+
+   If there is no variable defined with name NAME, return PK_NULL.  */
+
+pk_val pk_decl_val (pk_compiler pkc, const char *name);
+
 /* Get and set properties of the incremental compiler.  */
 
 int pk_obase (pk_compiler pkc);
@@ -325,8 +337,6 @@ int pk_pretty_print (pk_compiler pkc);
 void pk_set_pretty_print (pk_compiler pkc, int pretty_print_p);
 
 /*** API for manipulating poke values.  ***/
-
-typedef uint64_t pk_val;
 
 /* PK_NULL is an invalid pk_val.  */
 
@@ -442,5 +452,9 @@ pk_val pk_val_offset (pk_val val);
 #define PK_STRUCT  6
 
 int pk_val_type (pk_val val);
+
+/* Print the given value.   */
+
+void pk_print_val (pk_compiler pkc, pk_val val);
 
 #endif /* ! LIBPOKE_H */

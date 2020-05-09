@@ -1,0 +1,7 @@
+# Map file for ELF files
+
+load elf;
+
+%%
+ehdr, Elf64_Ehdr, 0x0
+shdr, Elf64_Shdr[ehdr.e_shnum], ehdr.e_shoff
