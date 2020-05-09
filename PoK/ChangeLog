@@ -1,5 +1,9 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pok-gui.tcl (pok_gui_init): .ibar should not expand.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pok.tcl: Do not package require BWidget.
 	* src/pok-gui.tcl: Rewrite to not use bwidget.
 	(pok_gui_create_mainmenu): Likewise.

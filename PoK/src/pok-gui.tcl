@@ -160,5 +160,5 @@ proc pok_gui_init {} {
     label .ibar.poke_version -relief sunken -textvariable poke_version -padx 2
     pack .ibar.poke_version -side right
     pack .ibar.gnu_poke -side right
-    pack .ibar -side bottom -fill x -expand true
+    pack .ibar -side bottom -fill x -expand false
 }
