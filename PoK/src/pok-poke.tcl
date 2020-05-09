@@ -16,14 +16,6 @@
 # along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set MI_MSG_TYPE_REQUEST 0
-set MI_MSG_TYPE_RESPONSE 1
-set MI_MSG_TYPE_EVENT 2
-
-set MI_REQ_TYPE_EXIT 0
-set MI_RESP_TYPE_EXIT 0
-set MI_EVENT_TYPE_INITIALIZED 0
-
 set poke_version {}
 
 set poke_confirmed_exit 0
@@ -41,7 +33,7 @@ proc pok_dispatch_msg_frame {frame_msg} {
     set msg [::json::json2dict $frame_msg]
 
     if {$pok_debug_mi_p} {
-        puts "MI: recv: $msg"
+        puts -nonewline "MI: recv: $frame_msg"
     }
 
     # Just ignore malformed packets.
@@ -205,27 +197,12 @@ proc pok_send_msg {msg} {
 
     global pok_debug_mi_p
 
-    if {$pok_debug_mi_p} {
-        puts "MI: sent: $msg"
-    }
-
     set json [pok_msg_to_json $msg]
     pok_send_frame_msg $json
-}
 
-proc pok_msg_to_json {msg} {
-
-    ::json::write object {*}[dict map {k v} $msg {
-
-        if {[string equal $k data]} {
-            set v [pok_msg_to_json $v]
-        } elseif {[string equal $k type]
-                  || [string equal $k poke_mi]} {
-            set v $v
-        } else {
-            set v [::json::write string $v]
-        }
-    }]
+    if {$pok_debug_mi_p} {
+        puts "MI: sent: $json"
+    }
 }
 
 set poke_initialized_p 0
@@ -240,7 +217,6 @@ proc pok_start_poke {} {
     set poke_channel [open "|poke --mi" r+]
     set poke_pid [pid $poke_channel]
 
-    # XXX no line buffering
     fconfigure $poke_channel -buffering none -translation binary \
         -blocking 0
     fileevent $poke_channel readable [list pok_read_from_poke]
@@ -249,18 +225,14 @@ proc pok_start_poke {} {
     tkwait variable poke_initialized_p
 }
 
-global poke_confirmed_exit 0
+set poke_confirmed_exit 0
 
 proc pok_shutdown_poke {} {
 
     global poke_confirmed_exit
-    global MI_MSG_TYPE_REQUEST
     global MI_REQ_TYPE_EXIT
 
-    set msg [dict create \
-                 poke_mi 0 \
-                 type $MI_MSG_TYPE_REQUEST \
-                 data [dict create type $MI_REQ_TYPE_EXIT]]
+    set msg [pok_msg_make_request $MI_REQ_TYPE_EXIT]
     pok_send_msg $msg
 
     # Wait for poke to confirm it can exit

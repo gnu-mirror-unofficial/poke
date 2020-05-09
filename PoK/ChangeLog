@@ -1,3 +1,12 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pok-msg.tcl: New file.
+	(pok_msg_to_json): Moved from pok-poke.tcl.
+	* src/pok.tcl: Source pok-poke.tcl
+	* src/pok-poke.tcl (pok_shutdown_poke): Use pok_msg_make_request.
+	(pok_dispatch_msg_frame): Print json instead of dicts in --debug-mi.
+	(pok_send_msg): Likewise.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* New ChangeLog.

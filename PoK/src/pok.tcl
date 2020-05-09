@@ -66,6 +66,7 @@ package require json::write
 
 # Source internal sources.
 source src/pok-gui.tcl
+source src/pok-msg.tcl
 source src/pok-poke.tcl
 
 # Start!
