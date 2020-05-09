@@ -45,7 +45,7 @@ proc pok_process_cmd_line_args {} {
 
 proc pok_init {} {
     pok_process_cmd_line_args
-    pok_gui_init .pok
+    pok_gui_init
     pok_start_poke
 }
 
@@ -60,7 +60,6 @@ proc pok_quit {} {
 
 # Load external packages.
 
-package require BWidget
 package require json
 package require json::write
 

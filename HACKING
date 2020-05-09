@@ -1636,12 +1636,8 @@ The main purpose of PoK is twofold:
 PoK Dependencies
 ~~~~~~~~~~~~~~~~
 
-PoK is written in Tcl/Tk.  To run it, you need:
-
-- Recent versions of Tcl and Tk installed in your system.
-
-- The bwidget package installed in your system.  It is available in both
-  Debian-based and RPM-based distros.
+PoK is written in Tcl/Tk.  To run it, you just need tcl and tk
+installed in your system.
 
 Running PoK
 ~~~~~~~~~~~

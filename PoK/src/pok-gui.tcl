@@ -80,17 +80,12 @@ proc pok_gui_create_scrolled_text {widget args} {
 
 proc pok_gui_about {} {
 
-    Dialog .about -side bottom -anchor e \
-        -separator yes -title "About PoK" \
-        -modal local
+    toplevel .about
 
-    .about add -text Ok \
-        -text "Ok" \
-        -command { destroy .about }
+    frame .about.f
 
-    ScrolledWindow .about.sw -scrollbar both -auto both
-    text .about.sw.text
-    .about.sw.text insert 1.0 {
+    text .about.f.text
+    .about.f.text insert 1.0 {
 Proof Of Koncept of a graphical interface for GNU poke.
 
 PoK is a prototype that we use in order to explore the best ways for a
@@ -106,54 +101,64 @@ you can interact with poke via the MI.
 Of course PoK may be useful to do some serious poking in a graphical
 way, but if so, that's just by pure chance! ;)
     }
-    .about.sw.text configure -state disabled
-    .about.sw setwidget .about.sw.text
-    pack .about.sw -side top
+    .about.f.text configure -state disabled
+    pack .about.f.text -side top -fill both -expand true
 
-    .about draw 1
+    button .about.f.ok -text Ok -command {destroy .about}
+    pack .about.f.ok -side bottom
+    pack .about.f -expand true -fill both
+
+    focus .about
+    grab .about
+    tkwait window .about
 }
 
 # pok_gui_create_mainmenu
 #
-# Create and populate the main menu.
+# Create and populate the main menu of PoK.
 
 proc pok_gui_create_mainmenu {} {
 
-    set mainmenu {
-        "&File" {} {} 0 {
-            {separator}
-            {command "&Exit PoK" {} "exit the application" {Ctrl e} -command pok_quit}
-        }
-        "&Help" {} {} 0 {
-            {separator}
-            {command "&About" {} "About PoK" {} -command pok_gui_about}
-        }
-    }
+    set m .menu
 
-    return $mainmenu
+    menu ${m}
+    . config -menu ${m}
+
+    # File menu
+    menu ${m}.file
+    ${m}.file add command -label "Exit PoK" -command pok_quit
+
+    # Help menu
+    menu ${m}.help
+    ${m}.help add command -label "About PoK" -command pok_gui_about
+
+    ${m} add cascade -label File -menu ${m}.file
+    ${m} add cascade -label Help -menu ${m}.help
 }
 
-# pok_gui_init WIDGET
+# pok_gui_init
 #
-# Initializes the PoK widgets, into WIDGET.
+# Create the PoK graphical user interface.
 
-proc pok_gui_init {widget} {
+proc pok_gui_init {} {
 
-    set mainframe $widget
+    set mainframe .
 
     wm title . "PoK - GNU poke"
 
-    # Create the mainframe.
-    MainFrame $mainframe -separator both \
-        -menu [pok_gui_create_mainmenu]
-
-    $mainframe addindicator -text "GNU poke"
-    $mainframe addindicator -textvariable poke_version
+    # Create the main menu
+    pok_gui_create_mainmenu
 
     # Create the edition text widget.
-    set textframe [$mainframe getframe]
-    pok_gui_create_scrolled_text $textframe
+    frame .textframe
+    pok_gui_create_scrolled_text .textframe
+    pack .textframe -side top -fill both -expand true
 
-    pack $textframe -side top -fill both -expand true
-    pack $mainframe -fill both -expand true
+    # Create the indicators bar.
+    frame .ibar
+    label .ibar.gnu_poke -relief sunken -text "GNU poke"  -padx 2
+    label .ibar.poke_version -relief sunken -textvariable poke_version -padx 2
+    pack .ibar.poke_version -side right
+    pack .ibar.gnu_poke -side right
+    pack .ibar -side bottom -fill x -expand true
 }
