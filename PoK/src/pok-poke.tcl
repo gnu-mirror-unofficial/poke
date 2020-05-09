@@ -214,10 +214,10 @@ proc pok_start_poke {} {
     global poke_pid
     global poke_initialized_p
 
-    set poke_channel [open "|poke --mi 2> ~/foomi" r+]
+    set poke_channel [open "|poke --mi" r+]
     set poke_pid [pid $poke_channel]
 
-    fconfigure $poke_channel -buffering none -translation binary \
+    fconfigure $poke_channel -buffering none -encoding binary \
         -blocking 0
     fileevent $poke_channel readable [list pok_read_from_poke]
 
