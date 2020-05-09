@@ -122,6 +122,7 @@ const char *pk_mi_msg_resp_errmsg (pk_mi_msg msg);
 
 enum pk_mi_event_type pk_mi_msg_event_type (pk_mi_msg msg);
 const char *pk_mi_msg_event_initialized_version (pk_mi_msg msg);
+int pk_mi_msg_event_initialized_mi_version (pk_mi_msg msg);
 
 /*** Other operations on messages.  ***/
 

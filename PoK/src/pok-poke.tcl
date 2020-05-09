@@ -16,6 +16,9 @@
 # along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+# Version of the poke MI protocol that we speak.
+set poke_mi_version 0
+
 set poke_version {}
 
 set poke_confirmed_exit 0
@@ -23,6 +26,7 @@ set poke_confirmed_exit 0
 proc pok_dispatch_msg_frame {frame_msg} {
 
     global pok_debug_mi_p
+    global poke_mi_version
 
     global MI_MSG_TYPE_REQUEST
     global MI_MSG_TYPE_RESPONSE
@@ -37,14 +41,6 @@ proc pok_dispatch_msg_frame {frame_msg} {
     }
 
     # Just ignore malformed packets.
-    if {![dict exists $msg poke_mi]} {
-        puts "error: ignoring malformed message from poke"
-        return
-    }
-    if {[dict get $msg poke_mi] != 0} {
-        puts "error: ignoring message with incorrect protocol from poke"
-        return
-    }
     if {![dict exists $msg type]} {
         puts "error: ignoring malformed message from poke"
         return
@@ -65,11 +61,18 @@ proc pok_dispatch_msg_frame {frame_msg} {
             global poke_version
             global poke_initialized_p
 
-            if {![dict exists $msg data args version]} {
+            if {![dict exists $msg data args version]
+                || ![dict exists $msg data args mi_version]} {
                 puts "error: ignoring malformed initialized event from poke"
                 return
             }
             set version [dict get $msg data args version]
+            set mi_version [dict get $msg data args mi_version]
+
+            # Check that the MI version is the same dialect we speak
+            if {[expr $mi_version != $poke_mi_version]} {
+                pok_gui_fatal "Mismatch in the poke MI version"
+            }
 
             set poke_version $version
             set poke_initialized_p 1

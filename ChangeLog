@@ -1,5 +1,19 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-mi-msg.h (pk_mi_msg_event_initialized_mi_version):
+	Define.
+	* poke/pk-mi-msg.c (pk_mi_msg_event_initialized_mi_version):
+	Likewise.
+	* poke/pk-mi-msg.c (PK_MI_EVENT_INITIALIZED_MI_VERSION): Define.
+	(struct pk_mi_event): New field args.initialized.mi_version.
+	(pk_mi_make_event_initialized): Set the MI version.
+	* poke/pk-mi-json.c (pk_mi_msg_to_json_object): Do not add a
+	poke_mi field.
+	(pk_mi_msg_to_json_object): Add mi_version as an argument to the
+	initialized event.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (PoK Depencencies): Update.
 
 	* poke/pk-mi-msg.h (pk_mi_set_msg_number): Define.

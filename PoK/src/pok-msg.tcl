@@ -48,7 +48,6 @@ proc pok_msg_make_request {req_type args} {
     global pok_msg_number
 
     return [dict create \
-                 poke_mi 0 \
                  seq [incr pok_msg_number] \
                  type $MI_MSG_TYPE_REQUEST \
                  data [dict create type $req_type]]

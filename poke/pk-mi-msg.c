@@ -22,6 +22,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "pk-mi.h" /* For MI_VERSION */
 #include "pk-mi-msg.h"
 
 /*** Data structures.  ***/
@@ -110,13 +111,17 @@ typedef struct pk_mi_resp *pk_mi_resp;
    PK_MI_EVENT_INITIALIZED indicates the client that poke is
    initialized and ready to process requests.  No request shall be
    sent to poke until this event is received.  This event is sent just
-   once.  This event has arguments:
+   once.  This event has the following arguments:
+
+      INITIALIZED_MI_VERSION is an integer specifying the version of
+      the MI protocol that this poke speaks.
 
       INITIALIZED_VERSION is a NULL-terminated string with the
       version of the poke program sending the event.
 */
 
 #define PK_MI_EVENT_TYPE(EVENT) ((EVENT)->type)
+#define PK_MI_EVENT_INITIALIZED_MI_VERSION(EVENT) ((EVENT)->args.initialized.mi_version)
 #define PK_MI_EVENT_INITIALIZED_VERSION(EVENT) ((EVENT)->args.initialized.version)
 
 struct pk_mi_event
@@ -126,6 +131,8 @@ struct pk_mi_event
   {
     struct
     {
+      /* MI version this poke speaks.  */
+      int mi_version;
       /* String with the version of poke.  */
       char *version;
     } initialized;
@@ -464,6 +471,7 @@ pk_mi_make_event_initialized (const char *version)
   if (!event)
     return NULL;
 
+  PK_MI_EVENT_INITIALIZED_MI_VERSION (event) = MI_VERSION;
   PK_MI_EVENT_INITIALIZED_VERSION (event) = strdup (version);
   if (!PK_MI_EVENT_INITIALIZED_VERSION (event))
     {
@@ -564,4 +572,10 @@ const char *
 pk_mi_msg_event_initialized_version (pk_mi_msg msg)
 {
   return PK_MI_EVENT_INITIALIZED_VERSION (PK_MI_MSG_EVENT (msg));
+}
+
+int
+pk_mi_msg_event_initialized_mi_version (pk_mi_msg msg)
+{
+  return PK_MI_EVENT_INITIALIZED_MI_VERSION (PK_MI_MSG_EVENT (msg));
 }

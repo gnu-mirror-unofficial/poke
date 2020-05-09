@@ -29,7 +29,7 @@
 
 /* Message::
    {
-     "poke_mi" : 0
+     "seq"  : integer
      "type" : MessageType
      "data" : Request | Response | Event
    }
@@ -78,15 +78,6 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
 
   if (!json)
     goto out_of_memory;
-
-  /* Add the API version.  */
-  {
-    json_object *str = json_object_new_int (MI_VERSION);
-
-    if (!str)
-      goto out_of_memory;
-    json_object_object_add (json, "poke_mi", str);
-  }
 
   /* Add the number.  */
   {
@@ -200,11 +191,17 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
         {
         case PK_MI_EVENT_INITIALIZED:
           {
-            json_object *args, *version;
+            json_object *args, *version, *mi_version;
 
             args = json_object_new_object ();
             if (!args)
               goto out_of_memory;
+
+            mi_version
+              = json_object_new_int (pk_mi_msg_event_initialized_mi_version (msg));
+            if (!mi_version)
+              goto out_of_memory;
+            json_object_object_add (args, "mi_version", mi_version);
 
             version
               = json_object_new_string (pk_mi_msg_event_initialized_version (msg));
@@ -243,18 +240,6 @@ pk_mi_json_object_to_msg (json_object *json)
 
   if (!json_object_is_type (json, json_type_object))
     return NULL;
-
-  /* Check the API version.  */
-  {
-    json_object *api_ver;
-
-    if (!json_object_object_get_ex (json, "poke_mi", &api_ver))
-      return NULL;
-    if (!json_object_is_type (api_ver, json_type_int))
-      return NULL;
-    if (json_object_get_int (api_ver) != MI_VERSION)
-      return NULL;
-  }
 
   /* Get the message number.  */
   {
