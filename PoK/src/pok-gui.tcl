@@ -37,6 +37,18 @@ proc pok_gui_open_file {} {
     }
 }
 
+# pok_gui_fatal MSG
+#
+# Report MSG as a fatal error in a dialog and terminate the process
+# immediately.
+
+proc pok_gui_fatal {msg} {
+
+    tk_messageBox -type ok -icon error \
+        -message "fatal error: $msg"
+    exit
+}
+
 # pok_gui_create_scrolled_text FRAME ARGS
 #
 # Create a scrolled text widget

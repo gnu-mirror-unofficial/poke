@@ -121,9 +121,7 @@ proc pok_read_from_poke {} {
 
     if { [eof $poke_channel] } {
         catch {close $poke_channel}
-        # XXX dialog to tell the user that poke died.
-        puts "error: poke died!"
-        return
+        pok_gui_fatal "poke died!"
     }
 
     if { [expr $poke_in_msg_size_bytes_read < 4] } {

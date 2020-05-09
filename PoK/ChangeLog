@@ -1,5 +1,10 @@
 2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/pok-gui.tcl (pok_gui_fatal): Define.
+	* src/pok-poke.tcl (pok_read_from_poke): Use pok_gui_fatal.
+
+2020-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/pok-poke.tcl (pok_start_poke): Use binary encoding in the
 	poke channel.
 
