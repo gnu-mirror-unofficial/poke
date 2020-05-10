@@ -578,9 +578,10 @@ main (int argc, char *argv[])
       if (!pk_mi ())
         poke_exit_code = EXIT_FAILURE;
     }
-  else if (poke_interactive_p)
+  else
 #endif
-    pk_repl ();
+    if (poke_interactive_p)
+      pk_repl ();
 
   /* Cleanup.  */
   finalize ();
