@@ -1,4 +1,4 @@
-# pok-msg.tcl -- poke MI messages
+# mi-msg.tcl -- poke MI messages
 
 # Copyright (C) 2020 Jose E. Marchesi
 

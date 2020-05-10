@@ -47,13 +47,14 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        3. 5  Boehm GC
        3. 6  Jitter
        3. 7  JSON-C
-       3. 8  libtextstyle
-       3. 9  libnbd
-       3.10  Building
-       3.11  Building a 32-bit poke
-       3.12  Gettext
-       3.13  Running an Uninstalled Poke
-       3.14  Continuous Integration
+       3. 8  Tcl and Tk
+       3. 9  libtextstyle
+       3.10  libnbd
+       3.11  Building
+       3.12  Building a 32-bit poke
+       3.13  Gettext
+       3.14  Running an Uninstalled Poke
+       3.15  Continuous Integration
      4  Coding Style and Conventions
        4.1  Writing C
          4.1.1  Avoid bool
@@ -110,30 +111,27 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
       15.1  pk-term
       15.2  Styling Classes
       15.3  Debugging Styling
-    16  The PoK GUI
-      16.1  PoK Dependencies
-      16.2  Running PoK
-    17  Debugging Poke
-      17.1  Building with Debugging support
-      17.2  Invoking GDB to debug an uninstalled poke
-      17.3  Using GDB extensions
-      17.4  Valgrind and Poke
-      17.5  Debugging PVM Assembly Code
-    18  Future Developments
-    19  Appendix: The Source Tree
-      19.1  Common Code
-      19.2  The poke library
-        19.2.1  Public Library Services
-        19.2.2  The Compiler
-        19.2.3  The Poke Virtual Machine
-        19.2.4  The IO Subsystem
-        19.2.5  Poke Standard Library
-        19.2.6  Internal Services
-      19.3  The poke utility
-      19.4  Pickles
-      19.5  Test Suite
-      19.6  Documentation
-      19.7  Other Stuff
+    16  Debugging Poke
+      16.1  Building with Debugging support
+      16.2  Invoking GDB to debug an uninstalled poke
+      16.3  Using GDB extensions
+      16.4  Valgrind and Poke
+      16.5  Debugging PVM Assembly Code
+    17  Future Developments
+    18  Appendix: The Source Tree
+      18.1  Common Code
+      18.2  The poke library
+        18.2.1  Public Library Services
+        18.2.2  The Compiler
+        18.2.3  The Poke Virtual Machine
+        18.2.4  The IO Subsystem
+        18.2.5  Poke Standard Library
+        18.2.6  Internal Services
+      18.3  The poke utility
+      18.4  Pickles
+      18.5  Test Suite
+      18.6  Documentation
+      18.7  Other Stuff
 
 
 Nomenclature
@@ -325,6 +323,13 @@ parse and build JSON strings.
 
 If this library is not found, poke will build without MI support.
 
+Tcl and Tk
+~~~~~~~~~~
+
+The poke GUI uses Tcl and Tk, so you need to have the respective
+development packages installed in your system.  Any recent version
+will suffice.
+
 libtextstyle
 ~~~~~~~~~~~~
 
@@ -364,6 +369,12 @@ Finally::
   $ make
   $ make check
 
+Building the GUI
+~~~~~~~~~~~~~~~~
+
+The poke GUI is optional and is not built by default.  To enable it,
+just pass the ``--enable-gui`` option at configure time.
+  
 Building a 32-bit poke
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1620,38 +1631,6 @@ hierarchy of some given output is to run poke passing the
   [...]
   (poke) [1#B,2#B]
   <span class="array">[<span class="offset"><span class="integer">0x1</span>#B</span>,<span class="offset"><span class="integer">0x2</span>#B</span>]</span><br/>(poke) 
-
-The PoK GUI
------------
-
-The directory PoK contains a testing/proof-of-concept GUI for poke, that
-uses the MI interface.  PoK is an acronym for "Proof of Koncept" :)
-
-The main purpose of PoK is twofold:
-
-- To explore the best way for a graphical tool to interact with poke.
-
-- To make sure poke's machine interface (MI) is complete and effective.
-
-PoK Dependencies
-~~~~~~~~~~~~~~~~
-
-PoK is written in Tcl/Tk.  To run it, you just need tcl and tk
-installed in your system.
-
-Running PoK
-~~~~~~~~~~~
-Running PoK::
-
-  $ cd PoK
-  $ ./pok
-
-Note that PoK will use the ``poke`` program in the path.  This probably
-means an installed poke.  If you want to run the uninstalled poke, do
-something like this instead::
-
-  $ cd PoK
-  $ ../build/run ./pok
 
 Debugging Poke
 --------------

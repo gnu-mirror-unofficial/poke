@@ -35,7 +35,6 @@ dnl AB_INIT
 
 AC_PROG_CC
 gl_EARLY
-libpoke_EARLY
 
 LT_INIT
 AC_PROG_CC_C99
@@ -139,12 +138,39 @@ if test "x$hserver_enabled" = "xyes"; then
             [Defined if the hyperlinks server is available])
 fi
 
+dnl The GUI is optional, and depends on the availability of Tcl and
+dnl Tk.
+
+AC_ARG_ENABLE([gui],
+              AS_HELP_STRING([--enable-gui],
+                             [Enable the GUI (default is NO)]),
+              [gui_enabled=$enableval], [gui_enabled=no])
+
+if test "x$gui_enabled" = "xyes"; then
+
+   TEA_PATH_TCLCONFIG
+   TEA_LOAD_TCLCONFIG
+
+   TEA_PATH_TKCONFIG
+   TEA_LOAD_TKCONFIG
+
+   dnl XXX these subst should be done by the TEA_LOAD_* macros above.
+   AC_SUBST([TCL_INCLUDE_SPEC])
+   AC_SUBST([TK_INCLUDE_SPEC])
+   AC_SUBST([TCL_LIB_SPEC])
+   AC_SUBST([TK_LIB_SPEC])
+fi
+
+AM_CONDITIONAL([GUI], [test "x$gui_enabled" = "xyes"])
+
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
                 gl-libpoke/Makefile
+                gl-gui/Makefile
                 libpoke/Makefile
                 poke/Makefile
+                gui/Makefile
                 pickles/Makefile
                 doc/Makefile
                 man/Makefile

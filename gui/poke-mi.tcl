@@ -25,7 +25,7 @@ set poke_confirmed_exit 0
 
 proc pok_dispatch_msg_frame {frame_msg} {
 
-    global pok_debug_mi_p
+    global poke_debug_mi_p
     global poke_mi_version
 
     global MI_MSG_TYPE_REQUEST
@@ -36,7 +36,7 @@ proc pok_dispatch_msg_frame {frame_msg} {
 
     set msg [::json::json2dict $frame_msg]
 
-    if {$pok_debug_mi_p} {
+    if {$poke_debug_mi_p} {
         puts -nonewline "MI: recv: $frame_msg"
     }
 
@@ -196,12 +196,12 @@ proc pok_send_frame_msg {payload} {
 
 proc pok_send_msg {msg} {
 
-    global pok_debug_mi_p
+    global poke_debug_mi_p
 
     set json [pok_msg_to_json $msg]
     pok_send_frame_msg $json
 
-    if {$pok_debug_mi_p} {
+    if {$poke_debug_mi_p} {
         puts "MI: sent: $json"
     }
 }

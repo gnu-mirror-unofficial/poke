@@ -1,4 +1,4 @@
-# pok-gui.tcl -- PoK gui widgets
+# poke-widgets.tcl -- Interface widget facilities
 
 # Copyright (C) 2020 Jose E. Marchesi
 
@@ -86,20 +86,10 @@ proc pok_gui_about {} {
 
     text .about.f.text
     .about.f.text insert 1.0 {
-Proof Of Koncept of a graphical interface for GNU poke.
-
-PoK is a prototype that we use in order to explore the best ways for a
-graphical tool to interact with poke.  It is also a good mean to make
-sure that poke's machine interface (MI) is complete and effective.
-
-It follows that eye-candy is not a priority for this prototype:
-functionality prime.  If you want to write a proper graphical poke
-editor, you are welcome to use PoK as a source of inspiration on what
-kind of mechanisms and abstractions you want to provide, and on how
-you can interact with poke via the MI.
-
-Of course PoK may be useful to do some serious poking in a graphical
-way, but if so, that's just by pure chance! ;)
+GNU poke is an interactive, extensible editor for binary data.  Not
+limited to editing basic entities such as bits and bytes, it provides
+a full-fledged procedural, interactive programming language designed
+to describe data structures and to operate on them.
     }
     .about.f.text configure -state disabled
     pack .about.f.text -side top -fill both -expand true
@@ -115,7 +105,7 @@ way, but if so, that's just by pure chance! ;)
 
 # pok_gui_create_mainmenu
 #
-# Create and populate the main menu of PoK.
+# Create and populate the main menu.
 
 proc pok_gui_create_mainmenu {} {
 
@@ -126,11 +116,11 @@ proc pok_gui_create_mainmenu {} {
 
     # File menu
     menu ${m}.file
-    ${m}.file add command -label "Exit PoK" -command pok_quit
+    ${m}.file add command -label "Exit" -command pok_quit
 
     # Help menu
     menu ${m}.help
-    ${m}.help add command -label "About PoK" -command pok_gui_about
+    ${m}.help add command -label "About poke" -command pok_gui_about
 
     ${m} add cascade -label File -menu ${m}.file
     ${m} add cascade -label Help -menu ${m}.help
@@ -138,13 +128,13 @@ proc pok_gui_create_mainmenu {} {
 
 # pok_gui_init
 #
-# Create the PoK graphical user interface.
+# Create the graphical user interface.
 
 proc pok_gui_init {} {
 
     set mainframe .
 
-    wm title . "PoK - GNU poke"
+    wm title . "GNU poke"
 
     # Create the main menu
     pok_gui_create_mainmenu

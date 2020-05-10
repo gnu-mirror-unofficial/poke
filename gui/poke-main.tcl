@@ -1,4 +1,4 @@
-# pok.tcl -- a GNU poke GUI Proof Of Koncept
+# main.tcl -- main file for the poke GUI
 
 # Main file.
 
@@ -18,33 +18,11 @@
 # along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-# pok_process_cmd_line_args
-#
-# Process the arguments passed in the command line.
-
-set pok_debug_mi_p 0
-
-proc pok_process_cmd_line_args {} {
-
-    global argv
-    global argc
-
-    global pok_debug_mi_p
-
-    # Process command-line options
-    foreach arg $argv {
-        if {[string equal $arg "--debug-mi"]} {
-            set pok_debug_mi_p 1
-        }
-    }
-}
-
 # pok_init
 #
 # Initialize PoK and launch the gui.
 
 proc pok_init {} {
-    pok_process_cmd_line_args
     pok_gui_init
     pok_start_poke
 }
@@ -63,10 +41,11 @@ proc pok_quit {} {
 package require json
 package require json::write
 
-# Source internal sources.
-source src/pok-gui.tcl
-source src/pok-msg.tcl
-source src/pok-poke.tcl
+# Load scripts.
+
+source [file join $poke_guidir poke-mi.tcl]
+source [file join $poke_guidir poke-mi-msg.tcl]
+source [file join $poke_guidir poke-widgets.tcl]
 
 # Start!
 pok_init
