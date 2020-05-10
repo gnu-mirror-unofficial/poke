@@ -132,7 +132,7 @@ parse_args (int argc, char *argv[])
  exit_success:
   exit (EXIT_SUCCESS);
 }
-  
+
 int
 load_script (const char *script)
 {
@@ -152,6 +152,12 @@ main (int argc, char *argv[])
   parse_args (argc, argv);
   tcl_interpreter = Tcl_CreateInterp ();
 
+  /* i18n */
+  setlocale (LC_ALL, "");
+  bindtextdomain (PACKAGE, LOCALEDIR);
+  textdomain (PACKAGE);
+
+  /* Initialize the Tcl/Tk environment.  */
   if (Tcl_Init (tcl_interpreter) == TCL_ERROR)
     goto tcl_error;
 
@@ -186,6 +192,6 @@ main (int argc, char *argv[])
   fprintf (stderr, "poke-gui: error: %s\n",
            Tcl_GetStringResult (tcl_interpreter));
   Tcl_DeleteInterp (tcl_interpreter);
-  
+
   return 1;
 }

@@ -32,7 +32,8 @@ poke_gui_SOURCES = poke-gui.c
 
 poke_gui_CPPFLAGS = -I$(top_builddir)/common -I$(top_srcdir)/gl-gui \
                     $(TCL_INCLUDE_SPEC) $(TK_INCLUDE_SPEC) \
-                    -DPOKEGUIDIR=\"$(guifilesdir)\"
+                    -DPOKEGUIDIR=\"$(guifilesdir)\" \
+                    -DLOCALEDIR=\"$(localedir)\"
 poke_gui_CFLAGS = -Wall
 poke_gui_LDADD = $(TCL_LIB_SPEC) $(TK_LIB_SPEC) \
                  $(top_builddir)/gl-gui/libgnu.la
