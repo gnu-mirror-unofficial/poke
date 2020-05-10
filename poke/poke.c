@@ -26,6 +26,7 @@
 #include <locale.h>
 #include <textstyle.h>
 #include "xalloc.h"
+#include <assert.h>
 
 #ifdef HAVE_HSERVER
 #  include "pk-hserver.h"
@@ -49,8 +50,16 @@ int poke_hserver_p;
 #endif
 
 /* The following global indicates whether the MI shall be used.  */
-
 int poke_mi_p;
+
+#ifdef POKE_MI
+/* This build of poke supports mi if the user wants it.  */
+static const int mi_supported_p = 1;
+#else
+/* This build of poke does not support mi.  */
+static const int mi_supported_p = 0;
+int pk_mi (void) {assert (0); return 0;}
+#endif
 
 /* The following global indicates whether poke should be as terse as
    possible in its output.  This is useful when running poke from
@@ -284,11 +293,18 @@ parse_args_1 (int argc, char *argv[])
       c = ret;
       switch (c)
         {
-#ifdef POKE_MI
         case MI_ARG:
-          poke_mi_p = 1;
+	  if (!mi_supported_p)
+	    {
+	      fputs (_("MI is not built into this instance of poke\n"),
+		     stderr);
+	      exit (EXIT_FAILURE);
+	    }
+	  else
+	    {
+	      poke_mi_p = 1;
+	    }
           break;
-#endif
         default:
           break;
         }
@@ -351,11 +367,9 @@ parse_args_2 (int argc, char *argv[])
           /* -L is handled below.  */
         case 'L':
           break;
-#ifdef POKE_MI
         case MI_ARG:
           /* These are handled in parse_args_1.  */
           break;
-#endif
           /* libtextstyle arguments are handled in pk-term.c, not
              here.   */
         case COLOR_ARG:
@@ -572,16 +586,13 @@ main (int argc, char *argv[])
     initialize_user ();
 
   /* Enter the REPL or MI.  */
-#ifdef POKE_MI
   if (poke_mi_p)
     {
       if (!pk_mi ())
         poke_exit_code = EXIT_FAILURE;
     }
-  else
-#endif
-    if (poke_interactive_p)
-      pk_repl ();
+  else if (poke_interactive_p)
+    pk_repl ();
 
   /* Cleanup.  */
   finalize ();

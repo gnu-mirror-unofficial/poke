@@ -1,3 +1,8 @@
+2020-05-10  John Darrington <john@darrington.wattle.id.au>
+
+	* poke/poke.c (mi_supported_p): New variable.
+	* poke/poke.c (POKE_MI): Evaluate this macro once only.
+
 2020-05-10  Bruno Haible  <bruno@clisp.org>
 
 	Fix wrong rpath in poke/.libs/lt-poke.
