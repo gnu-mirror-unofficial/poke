@@ -86,10 +86,22 @@ proc pk_gui_about {} {
 
     text .about.f.text
     .about.f.text insert 1.0 {
+     _____
+ ---'   __\_______
+            ______)  GNU poke
+            __)
+           __)
+ ---._______)
+
 GNU poke is an interactive, extensible editor for binary data.  Not
 limited to editing basic entities such as bits and bytes, it provides
 a full-fledged procedural, interactive programming language designed
 to describe data structures and to operate on them.
+
+Copyright (C) 2019, 2020 Jose E. Marchesi.
+License GPLv3+: GNU GPL version 3 or later.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
     }
     .about.f.text configure -state disabled
     pack .about.f.text -side top -fill both -expand true
