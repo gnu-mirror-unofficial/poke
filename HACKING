@@ -372,8 +372,11 @@ Finally::
 Building the GUI
 ~~~~~~~~~~~~~~~~
 
-The poke GUI is optional and is not built by default.  To enable it,
-just pass the ``--enable-gui`` option at configure time.
+The poke GUI is optional and it is built by default, provided the
+required dependencies are found at configure time.
+
+To disable building the GUI, pass the ``--disable-gui`` option at
+configure time.
   
 Building a 32-bit poke
 ~~~~~~~~~~~~~~~~~~~~~~

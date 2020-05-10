@@ -141,25 +141,12 @@ fi
 dnl The GUI is optional, and depends on the availability of Tcl and
 dnl Tk.
 
+POKE_TCLTK
+
 AC_ARG_ENABLE([gui],
               AS_HELP_STRING([--enable-gui],
-                             [Enable the GUI (default is NO)]),
-              [gui_enabled=$enableval], [gui_enabled=no])
-
-if test "x$gui_enabled" = "xyes"; then
-
-   TEA_PATH_TCLCONFIG
-   TEA_LOAD_TCLCONFIG
-
-   TEA_PATH_TKCONFIG
-   TEA_LOAD_TKCONFIG
-
-   dnl XXX these subst should be done by the TEA_LOAD_* macros above.
-   AC_SUBST([TCL_INCLUDE_SPEC])
-   AC_SUBST([TK_INCLUDE_SPEC])
-   AC_SUBST([TCL_LIB_SPEC])
-   AC_SUBST([TK_LIB_SPEC])
-fi
+                             [Enable the GUI (default is YES)]),
+              [gui_enabled=$enableval], [gui_enabled=$has_tcltk])
 
 AM_CONDITIONAL([GUI], [test "x$gui_enabled" = "xyes"])
 
@@ -200,6 +187,11 @@ fi
 if test "x$mi_enabled" = "xno"; then
    AC_MSG_WARN([building poke without the machine interface support.
      Install libjson-c and use --enable-mi to activate it.])
+fi
+
+if test "x$gui_enabled" = "xno"; then
+   AC_MSG_WARN([building poke without GUI support.
+     Install tcl-dev and tk-dev and use --enable-gui to activate it.])
 fi
 
 dnl Report errors
