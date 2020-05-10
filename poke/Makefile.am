@@ -48,10 +48,10 @@ poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(top_builddir)/libpoke/libpoke.la \
              $(LTLIBREADLINE) \
              $(JITTER_LDADD) \
-             $(LIBTEXTSTYLE)
+             $(LTLIBTEXTSTYLE)
 poke_LDFLAGS =
 
-# Machine inteface
+# Machine interface
 if POKE_MI
 poke_SOURCES += pk-mi.c pk-mi.h \
                 pk-mi-msg.c pk-mi-msg.h \
