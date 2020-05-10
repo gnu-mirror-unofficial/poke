@@ -1,4 +1,4 @@
-# mi-msg.tcl -- poke MI messages
+# pk-mi-msg.tcl -- poke MI messages
 
 # Copyright (C) 2020 Jose E. Marchesi
 
@@ -36,34 +36,34 @@ set MI_EVENT_TYPE_INITIALIZED 0
 
 # Global with the next message sequence number to use
 
-set pok_msg_number -1
+set pk_msg_number -1
 
-# pok_msg_make_request REQ_TYPE ARGS...
+# pk_msg_make_request REQ_TYPE ARGS...
 #
 # Create a new MI message of type REQUEST with request type REQ_TYPE
 # and request arguments ARGS, which should be a dictionary
 
-proc pok_msg_make_request {req_type args} {
+proc pk_msg_make_request {req_type args} {
     global MI_MSG_TYPE_REQUEST
-    global pok_msg_number
+    global pk_msg_number
 
     return [dict create \
-                 seq [incr pok_msg_number] \
+                 seq [incr pk_msg_number] \
                  type $MI_MSG_TYPE_REQUEST \
                  data [dict create type $req_type]]
 }
 
-# pok_msg_to_json MSG
+# pk_msg_to_json MSG
 #
 # Return a string with the JSON representation of the given message
 # MSG.
 
-proc pok_msg_to_json {msg} {
+proc pk_msg_to_json {msg} {
 
     ::json::write indented 0
     ::json::write object {*}[dict map {k v} $msg {
         if {[string equal $k data]} {
-            set v [pok_msg_to_json $v]
+            set v [pk_msg_to_json $v]
         } elseif {[string equal $k type]
                   || [string equal $k poke_mi]
                   || [string equal $k seq]} {

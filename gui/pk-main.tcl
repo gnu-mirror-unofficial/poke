@@ -1,4 +1,4 @@
-# main.tcl -- main file for the poke GUI
+# pk-main.tcl -- main file for the poke GUI
 
 # Main file.
 
@@ -18,21 +18,21 @@
 # along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-# pok_init
+# pk_init
 #
 # Initialize PoK and launch the gui.
 
-proc pok_init {} {
-    pok_gui_init
-    pok_start_poke
+proc pk_init {} {
+    pk_gui_init
+    pk_start_poke
 }
 
-# pok_quit
+# pk_quit
 #
 # Exit PoK.
 
-proc pok_quit {} {
-    pok_shutdown_poke
+proc pk_quit {} {
+    pk_shutdown_poke
     exit
 }
 
@@ -43,9 +43,9 @@ package require json::write
 
 # Load scripts.
 
-source [file join $poke_guidir poke-mi.tcl]
-source [file join $poke_guidir poke-mi-msg.tcl]
-source [file join $poke_guidir poke-widgets.tcl]
+source [file join $poke_guidir pk-mi.tcl]
+source [file join $poke_guidir pk-mi-msg.tcl]
+source [file join $poke_guidir pk-gui.tcl]
 
 # Start!
-pok_init
+pk_init

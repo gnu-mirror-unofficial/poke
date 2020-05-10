@@ -1,5 +1,9 @@
 2020-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gui: rename scripts.
+
+2020-05-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* m4/tcl.m4: Strip from unneeded macros.
 	(POKE_TCLTK): New macro.
 	* configure: Use POKE_TCLTK.

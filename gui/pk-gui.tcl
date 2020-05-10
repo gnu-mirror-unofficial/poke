@@ -1,4 +1,4 @@
-# poke-widgets.tcl -- Interface widget facilities
+# pk-gui.tcl -- Interface widget facilities
 
 # Copyright (C) 2020 Jose E. Marchesi
 
@@ -16,11 +16,11 @@
 # along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-# pok_gui_select_file
+# pk_gui_select_file
 #
 # Pop up a file selection widget and ask for a file.
 
-proc pok_gui_open_file {} {
+proc pk_gui_open_file {} {
 
     set f [tk_getOpenFile -initialdir "." \
                -title "Open a file"]
@@ -37,23 +37,23 @@ proc pok_gui_open_file {} {
     }
 }
 
-# pok_gui_fatal MSG
+# pk_gui_fatal MSG
 #
 # Report MSG as a fatal error in a dialog and terminate the process
 # immediately.
 
-proc pok_gui_fatal {msg} {
+proc pk_gui_fatal {msg} {
 
     tk_messageBox -type ok -icon error \
         -message "fatal error: $msg"
     exit
 }
 
-# pok_gui_create_scrolled_text FRAME ARGS
+# pk_gui_create_scrolled_text FRAME ARGS
 #
 # Create a scrolled text widget
 
-proc pok_gui_create_scrolled_text {widget args} {
+proc pk_gui_create_scrolled_text {widget args} {
 
     # Create the text widget
     eval {text ${widget}.text \
@@ -74,11 +74,11 @@ proc pok_gui_create_scrolled_text {widget args} {
     grid columnconfigure ${widget} 0 -weight 1
 }
 
-# pok_gui_about
+# pk_gui_about
 #
 # Show an "about" window.
 
-proc pok_gui_about {} {
+proc pk_gui_about {} {
 
     toplevel .about
 
@@ -103,11 +103,11 @@ to describe data structures and to operate on them.
     tkwait window .about
 }
 
-# pok_gui_create_mainmenu
+# pk_gui_create_mainmenu
 #
 # Create and populate the main menu.
 
-proc pok_gui_create_mainmenu {} {
+proc pk_gui_create_mainmenu {} {
 
     set m .menu
 
@@ -116,32 +116,32 @@ proc pok_gui_create_mainmenu {} {
 
     # File menu
     menu ${m}.file
-    ${m}.file add command -label "Exit" -command pok_quit
+    ${m}.file add command -label "Exit" -command pk_quit
 
     # Help menu
     menu ${m}.help
-    ${m}.help add command -label "About poke" -command pok_gui_about
+    ${m}.help add command -label "About poke" -command pk_gui_about
 
     ${m} add cascade -label File -menu ${m}.file
     ${m} add cascade -label Help -menu ${m}.help
 }
 
-# pok_gui_init
+# pk_gui_init
 #
 # Create the graphical user interface.
 
-proc pok_gui_init {} {
+proc pk_gui_init {} {
 
     set mainframe .
 
     wm title . "GNU poke"
 
     # Create the main menu
-    pok_gui_create_mainmenu
+    pk_gui_create_mainmenu
 
     # Create the edition text widget.
     frame .textframe
-    pok_gui_create_scrolled_text .textframe
+    pk_gui_create_scrolled_text .textframe
     pack .textframe -side top -fill both -expand true
 
     # Create the indicators bar.

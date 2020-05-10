@@ -178,7 +178,7 @@ main (int argc, char *argv[])
               TCL_GLOBAL_ONLY);
 
   /* Load the scripts.  */
-  if (load_script ("poke-main.tcl") == TCL_ERROR)
+  if (load_script ("pk-main.tcl") == TCL_ERROR)
     goto tcl_error;
 
   /* Enter the event loop.  */

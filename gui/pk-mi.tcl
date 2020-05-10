@@ -1,4 +1,4 @@
-# pok-poke.tcl -- Control the inferior poke
+# pk-mi.tcl -- Control the inferior poke
 
 # Copyright (C) 2020 Jose E. Marchesi
 
@@ -23,7 +23,7 @@ set poke_version {}
 
 set poke_confirmed_exit 0
 
-proc pok_dispatch_msg_frame {frame_msg} {
+proc pk_dispatch_msg_frame {frame_msg} {
 
     global poke_debug_mi_p
     global poke_mi_version
@@ -71,7 +71,7 @@ proc pok_dispatch_msg_frame {frame_msg} {
 
             # Check that the MI version is the same dialect we speak
             if {[expr $mi_version != $poke_mi_version]} {
-                pok_gui_fatal "Mismatch in the poke MI version"
+                pk_gui_fatal "Mismatch in the poke MI version"
             }
 
             set poke_version $version
@@ -114,7 +114,7 @@ set poke_in_msg_bytes_read 0
 
 set poke_msg_size 0
 
-proc pok_read_from_poke {} {
+proc pk_read_from_poke {} {
     global poke_channel
     global poke_in_msg_size
     global poke_in_msg
@@ -124,7 +124,7 @@ proc pok_read_from_poke {} {
 
     if { [eof $poke_channel] } {
         catch {close $poke_channel}
-        pok_gui_fatal "poke died!"
+        pk_gui_fatal "poke died!"
     }
 
     if { [expr $poke_in_msg_size_bytes_read < 4] } {
@@ -163,7 +163,7 @@ proc pok_read_from_poke {} {
         global poke_confirmed_exit
 
         # Frame message is ready.  Process it.
-        pok_dispatch_msg_frame ${poke_in_msg}
+        pk_dispatch_msg_frame ${poke_in_msg}
         if {$poke_confirmed_exit} {
             catch {close $poke_channel}
             return
@@ -178,7 +178,7 @@ proc pok_read_from_poke {} {
     }
 }
 
-proc pok_send_frame_msg {payload} {
+proc pk_send_frame_msg {payload} {
 
     global poke_channel
 
@@ -194,12 +194,12 @@ proc pok_send_frame_msg {payload} {
     flush $poke_channel
 }
 
-proc pok_send_msg {msg} {
+proc pk_send_msg {msg} {
 
     global poke_debug_mi_p
 
-    set json [pok_msg_to_json $msg]
-    pok_send_frame_msg $json
+    set json [pk_msg_to_json $msg]
+    pk_send_frame_msg $json
 
     if {$poke_debug_mi_p} {
         puts "MI: sent: $json"
@@ -209,7 +209,7 @@ proc pok_send_msg {msg} {
 set poke_initialized_p 0
 set poke_version {}
 
-proc pok_start_poke {} {
+proc pk_start_poke {} {
 
     global poke_channel
     global poke_pid
@@ -220,7 +220,7 @@ proc pok_start_poke {} {
 
     fconfigure $poke_channel -buffering none -encoding binary \
         -blocking 0
-    fileevent $poke_channel readable [list pok_read_from_poke]
+    fileevent $poke_channel readable [list pk_read_from_poke]
 
     # Wait for the INITIALIZED event from poke.
     tkwait variable poke_initialized_p
@@ -228,13 +228,13 @@ proc pok_start_poke {} {
 
 set poke_confirmed_exit 0
 
-proc pok_shutdown_poke {} {
+proc pk_shutdown_poke {} {
 
     global poke_confirmed_exit
     global MI_REQ_TYPE_EXIT
 
-    set msg [pok_msg_make_request $MI_REQ_TYPE_EXIT]
-    pok_send_msg $msg
+    set msg [pk_msg_make_request $MI_REQ_TYPE_EXIT]
+    pk_send_msg $msg
 
     # Wait for poke to confirm it can exit
     tkwait variable poke_confirmed_exit
