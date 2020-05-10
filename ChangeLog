@@ -1,6 +1,12 @@
 2020-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* m4/tcl.m4: New file.
+	* .x-sc_m4_quote_check: New file.
+	* .x-sc_prohibit_always_true_header_tests: Likewise.
+	* .x-sc_prohibit_magic_number_exit: Likewise.
+	* .x-sc_prohibit_test_minus_ao: Likewise.
+	* .x-sc_useless_cpp_parens: Likewise.
+	* .x-sc_space_tab: Add m4/tcl.m4.
 
 2020-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 

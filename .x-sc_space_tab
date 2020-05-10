@@ -2,3 +2,4 @@ libpoke/pkl-lex.c
 libpoke/pkl-lex.h
 libpoke/pkl-tab.y
 libpoke/ios.c
+m4/tcl.m4
