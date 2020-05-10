@@ -1,5 +1,9 @@
 2020-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* m4/tcl.m4: New file.
+
+2020-05-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* Makefile.am (-DLOCALEDIR): Add to CPPFLAGS.
 	* poke-gui.c (print_version): Call bindtextdomain.
 
