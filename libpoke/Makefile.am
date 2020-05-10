@@ -79,6 +79,13 @@ MOSTLYCLEANFILES += pkl-tab.output
 
 AM_LFLAGS = -d
 
+# Libtool's library version information for libpoke.
+# See the libtool documentation, section "Library interface versions".
+# Before making a release, use gnulib/build-aux/libtool-next-version.
+LTV_CURRENT=0
+LTV_REVISION=0
+LTV_AGE=0
+
 libpoke_la_CPPFLAGS = -I$(top_builddir)/gl-libpoke -I$(top_srcdir)/gl-libpoke \
                       -I$(top_srcdir)/common \
                       -DPKL_DEBUG \
@@ -89,7 +96,7 @@ libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
 libpoke_la_LIBADD = ../gl-libpoke/libgnu.la libpvmjitter.la \
                     $(BDW_GC_LIBS) \
                     $(LIBNBD_LIBS)
-libpoke_la_LDFLAGS =
+libpoke_la_LDFLAGS = -version-info $(LTV_CURRENT):$(LTV_REVISION):$(LTV_AGE)
 
 # Integration with jitter.
 

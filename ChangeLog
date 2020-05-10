@@ -1,3 +1,9 @@
+2020-05-10  Bruno Haible  <bruno@clisp.org>
+
+	Prepare for versioning of libpoke.
+	* libpoke/Makefile.am (LTV_*): New variables.
+	(libpoke_la_LDFLAGS): Add -version-info option.
+
 2020-05-10  John Darrington <john@darrington.wattle.id.au>
 
 	* poke/poke.c (mi_supported_p): New variable.
