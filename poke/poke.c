@@ -79,9 +79,9 @@ char *poke_infodir;
 
 /* The following global contains the directory holding pickles shipped
    with poke.  In an installed program, this is the same than
-   poke_datadir, but the POKE_PICKLESDIR environment variable can be
-   set to a different value, which is mainly to run an uninstalled
-   poke.  */
+   poke_datadir/pickles, but the POKE_PICKLESDIR environment variable
+   can be set to a different value, which is mainly to run an
+   uninstalled poke.  */
 
 char *poke_picklesdir;
 
@@ -455,7 +455,10 @@ initialize (int argc, char *argv[])
 
   poke_picklesdir = getenv ("POKEPICKLESDIR");
   if (poke_picklesdir == NULL)
-    poke_picklesdir = poke_datadir;
+    {
+      poke_picklesdir = pk_str_concat (poke_datadir, "/pickles", NULL);
+      pk_assert_alloc (poke_picklesdir);
+    }
 
   poke_docdir = getenv ("POKEDOCDIR");
   if (poke_docdir == NULL)
