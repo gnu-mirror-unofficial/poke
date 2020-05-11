@@ -29,9 +29,9 @@ poke_SOURCES = poke.c poke.h \
                pk-term.c pk-term.h \
                pk-repl.c pk-repl.h \
                pk-cmd.c pk-cmd.h \
-               pk-ios.c \
-               pk-info.c pk-misc.c pk-help.c pk-vm.c \
-               pk-def.c pk-set.c pk-editor.c
+               pk-cmd-ios.c pk-cmd-info.c pk-cmd-misc.c \
+               pk-cmd-help.c pk-cmd-def.c pk-cmd-vm.c \
+               pk-cmd-set.c pk-cmd-editor.c
 
 poke_SOURCES += ../common/pk-utils.c ../common/pk-utils.h
 

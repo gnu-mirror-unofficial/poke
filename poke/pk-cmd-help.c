@@ -1,4 +1,4 @@
-/* pk-help.c - `help' command.  */
+/* pk-cmd-help.c - `help' command.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 

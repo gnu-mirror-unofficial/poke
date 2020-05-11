@@ -1,4 +1,4 @@
-/* pk-info.c - `info' command.  */
+/* pk-cmd-info.c - `info' command.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 

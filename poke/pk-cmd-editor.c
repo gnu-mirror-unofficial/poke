@@ -1,4 +1,4 @@
-/* pk-file.c - Command to invoke an external editor.  */
+/* pk-cmd-editor.c - Command to invoke an external editor.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 

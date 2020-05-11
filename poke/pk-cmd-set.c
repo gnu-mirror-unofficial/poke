@@ -1,4 +1,4 @@
-/* pk-set.c - Commands to show and set properties.  */
+/* pk-cmd-set.c - Commands to show and set properties.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 

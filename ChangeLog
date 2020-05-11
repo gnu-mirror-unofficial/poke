@@ -1,5 +1,17 @@
 2020-05-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-misc.c: Renamed from pk-misc.c.
+	* poke/pk-cmd-info.c: Likewise.
+	* poke/pk-cmd-ios.c: Likewise.
+	* poke/pk-cmd-help.c: Likewise.
+	* poke/pk-cmd-vm.c: Likewise.
+	* poke/pk-cmd-set.c: Likewise.
+	* poke/pk-cmd-editor.c: Likewise.
+	* poke/pk-cmd-def.c: Likewise.
+	* poke/Makefile.am (poke_SOURCES): Rename files.
+
+2020-05-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/Makefile.am (picklesdir): Define.
 	(dist_pickles_DATA): Change from dist_pkgdata_DATA.
 	* poke/poke.c (initialize): Set poke_picklesdir to

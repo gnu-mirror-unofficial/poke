@@ -1,4 +1,4 @@
-/* pk-vm.c - PVM related commands.  */
+/* pk-cmd-vm.c - PVM related commands.  */
 
 /* Copyright (C) 2019, 2020 Jose E. Marchesi */
 
