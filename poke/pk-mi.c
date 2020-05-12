@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <fcntl.h>
 
 #include "pk-mi-msg.h"
 #include "pk-mi-json.h"
@@ -159,6 +160,33 @@ pk_mi_send_frame_msg (const char *payload)
   fflush (stdout);
 }
 
+/* Set fd to non-blocking and return old flags or -1 on error. */
+static int pk_mi_fd_set_nonblocking(int fd)
+{
+  int flags = fcntl (fd, F_GETFL, 0);
+
+  if (flags >= 0 && (flags & O_NONBLOCK) == 0)
+    {
+      if (fcntl (fd, F_SETFL, flags | O_NONBLOCK))
+        flags = -1;
+    }
+
+  if (flags < 0)
+    perror ("fcntl");
+
+  return flags;
+}
+
+/* Restore flags to fd if it was set to blocking previously. */
+static void pk_mi_fd_restore_blocking(int fd, int flags)
+{
+  if (flags >= 0 && (flags & O_NONBLOCK) == 0)
+    {
+      if (fcntl (fd, F_SETFL, flags) < 0)
+        perror ("fcntl");
+    }
+}
+
 /* This global is used to finalize the MI loop.  */
 static int pk_mi_exit_p;
 
@@ -166,11 +194,20 @@ static int
 pk_mi_loop (int fd)
 {
   fd_set active_fd_set, read_fd_set;
+  int old_flags;
+  int ret;
 
   FD_ZERO (&active_fd_set);
   FD_SET (fd, &active_fd_set);
 
+  /* Make sure that fd is non-blocking.
+   * From 'man 2 select':
+   *  On Linux, select() may report a socket file descriptor as
+   *  "ready for reading", while nevertheless a subsequent read blocks." */
+  old_flags = pk_mi_fd_set_nonblocking (fd);
+
   pk_mi_exit_p = 0;
+
   while (1)
     {
       read_fd_set = active_fd_set;
@@ -183,19 +220,32 @@ pk_mi_loop (int fd)
 
       if (FD_ISSET (fd, &read_fd_set))
         {
-          int ret = pk_mi_read_from_client (fd);
+          ret = pk_mi_read_from_client (fd);
 
           if (pk_mi_exit_p)
-            /* Client requested us to close the connection.  */
-            return 1;
+            {
+              /* Client requested us to close the connection.  */
+              ret = 1;
+              break;
+            }
           else if (ret == -1)
-            /* Client closed the connection.  */
-            return 1;
+            {
+              /* Client closed the connection.  */
+              ret = 1;
+              break;
+            }
           else if (ret == -2)
-            /* Protocol error.  */
-            return 0;
+            {
+              /* Protocol error.  */
+              ret = 0;
+              break;
+            }
         }
     }
+
+  pk_mi_fd_restore_blocking (fd, old_flags);
+
+  return ret;
 }
 
 /* Message sender.  */

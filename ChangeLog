@@ -1,3 +1,9 @@
+2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* poke/pk-mi.c (pk_mi_fd_set_nonblocking): New function.
+	(pk_mi_fd_restore_blocking): New function.
+	(pk_mi_loop): Set fd to blocking and restore before returning.
+
 2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-map.h (pk_map_remove): New prototype.
