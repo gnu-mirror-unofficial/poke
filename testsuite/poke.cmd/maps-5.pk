@@ -5,9 +5,9 @@
 /* { dg-command { defvar quux = int[2] @ 2#B } } */
 /* { dg-command { defvar jorl = byte[1] @ 17#b } } */
 /* { dg-command { .map create foo,#0 } } */
-/* { dg-command { .map add foo, quux } } */
-/* { dg-command { .map add foo, bar } } */
-/* { dg-command { .map add foo, jorl } } */
+/* { dg-command { .map entry add foo, quux } } */
+/* { dg-command { .map entry add foo, bar } } */
+/* { dg-command { .map entry add foo, jorl } } */
 /* { dg-command { .map show foo } } */
 /* { dg-output "Offset\t\tVariable" } */
 /* { dg-output "\n0UL#B\t\tbar" } */

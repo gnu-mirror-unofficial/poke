@@ -551,6 +551,9 @@ extern struct pk_trie *set_trie; /* pk-cmd-set.c */
 extern const struct pk_cmd *map_cmds[]; /* pk-cmd-map.c */
 extern struct pk_trie *map_trie; /* pk-cmd-map.c */
 
+extern const struct pk_cmd *map_entry_cmds[]; /* pk-cmd-map.c  */
+extern struct pk_trie *map_entry_trie; /* pk-cmd-map.c  */
+
 static struct pk_trie *cmds_trie;
 
 #define IS_COMMAND(input, cmd) \
@@ -698,6 +701,7 @@ pk_cmd_init (void)
   vm_disas_trie = pk_trie_from_cmds (vm_disas_cmds);
   set_trie = pk_trie_from_cmds (set_cmds);
   map_trie = pk_trie_from_cmds (map_cmds);
+  map_entry_trie = pk_trie_from_cmds (map_entry_cmds);
 
   /* Compile commands written in Poke.  */
   if (!pk_load (poke_compiler, "pk-cmd"))
@@ -717,6 +721,7 @@ pk_cmd_shutdown (void)
   pk_trie_free (vm_disas_trie);
   pk_trie_free (set_trie);
   pk_trie_free (map_trie);
+  pk_trie_free (map_entry_trie);
 }
 
 

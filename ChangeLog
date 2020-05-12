@@ -1,3 +1,15 @@
+2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-map.c (map_entry_add_cmd): Rename from map_add_cmd.
+	(map_entry_remove_cmd): Rename from map_remove_cmd.
+	(map_entry_cmds): Define.
+	(map_entry_cmd): Likewise.
+	* poke/pk-cmd.c (pk_cmd_init): Initialize map_entry_trie.
+	(pk_cmd_shutdown): Free map_entry_trie.
+	* testsuite/poke.cmd/maps-4.pk: Adapt.
+	* testsuite/poke.cmd/maps-6.pk: Likewise.
+	* testsuite/poke.cmd/maps-5.pk: Likewise.
+
 2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* poke/pk-mi.c (pk_mi_read_from_client): Fix nbytes to ssize_t.

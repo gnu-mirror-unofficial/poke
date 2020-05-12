@@ -125,9 +125,9 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
-pk_cmd_map_add (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+pk_cmd_map_entry_add (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* map add MAPNAME, VARNAME [,#IOS]  */
+  /* map entry add MAPNAME, VARNAME [,#IOS]  */
 
   int ios_id;
   const char *mapname;
@@ -194,9 +194,9 @@ pk_cmd_map_add (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
-pk_cmd_map_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* map remove MAPNAME, VARNAME [,#IOS]  */
+  /* map entry remove MAPNAME, VARNAME [,#IOS]  */
 
   int ios_id;
   const char *mapname;
@@ -293,18 +293,31 @@ map_completion_function (const char *x, int state)
   return pk_ios_completion_function (poke_compiler, x, state);
 }
 
+const struct pk_cmd map_entry_add_cmd =
+  {"add", "s,s,?t", 0, 0, NULL, pk_cmd_map_entry_add, "add MAPNAME, VARNAME [,#IOS]",
+   NULL};
+
+const struct pk_cmd map_entry_remove_cmd =
+  {"remove", "s,s,?t", 0, 0, NULL, pk_cmd_map_entry_remove, "remove MAPNAME, VARNAME [,#IOS]",
+   NULL};
+
+extern struct pk_cmd null_cmd; /* pk-cmd.c  */
+
+const struct pk_cmd *map_entry_cmds[] =
+{
+  &map_entry_add_cmd,
+  &map_entry_remove_cmd,
+  &null_cmd,
+};
+
 struct pk_trie *map_trie;
+struct pk_trie *map_entry_trie;
+
+const struct pk_cmd map_entry_cmd =
+  {"entry", "", 0, 0, &map_entry_trie, NULL, "map entry (add|remove)", NULL};
 
 const struct pk_cmd map_create_cmd =
   {"create", "s,?t", 0, 0, NULL, pk_cmd_map_create, "create MAPNAME [,#IOS]",
-   NULL};
-
-const struct pk_cmd map_add_cmd =
-  {"add", "s,s,?t", 0, 0, NULL, pk_cmd_map_add, "add MAPNAME, VARNAME [,#IOS]",
-   NULL};
-
-const struct pk_cmd map_remove_cmd =
-  {"remove", "s,s,?t", 0, 0, NULL, pk_cmd_map_remove, "remove MAPNAME, VARNAME [,#IOS]",
    NULL};
 
 const struct pk_cmd map_show_cmd =
@@ -319,21 +332,18 @@ const struct pk_cmd map_save_cmd =
   {"save", "?f", 0, 0, NULL, pk_cmd_map_save, "save [FILENAME]",
    rl_filename_completion_function};
 
-extern struct pk_cmd null_cmd; /* pk-cmd.c  */
-
 const struct pk_cmd *map_cmds[] =
 {
   &map_create_cmd,
-  &map_add_cmd,
-  &map_remove_cmd,
   &map_show_cmd,
   &map_load_cmd,
   &map_save_cmd,
+  &map_entry_cmd,
   &null_cmd,
 };
 
 const struct pk_cmd map_cmd =
-  {"map", "", "", 0, &map_trie, NULL, "map (create|show|add|remove|load|save)",
+  {"map", "", "", 0, &map_trie, NULL, "map (create|show|entry|load|save)",
    NULL};
 
 const struct pk_cmd info_maps_cmd =
