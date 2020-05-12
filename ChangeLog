@@ -1,3 +1,7 @@
+2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Struct Constructors): Fix typo in example.
+
 2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* cfg.mk: Add sc_jemarchism_file_fd syntax-check rule.

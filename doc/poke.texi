@@ -6723,7 +6723,7 @@ struct type:
 deftype BPF_Reg =
   struct
   @{
-   uint<4> code < 11;
+   uint<4> code : code < 11;
   @};
 @end example
 
