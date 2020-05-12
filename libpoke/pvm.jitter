@@ -70,7 +70,7 @@ wrapped-functions
   ios_read_string
   ios_write_string
   random
-  getenv
+  secure_getenv
 end
 
 #wrapped-globals
@@ -80,9 +80,14 @@ end
 
 ## Embedded C code.
 
-early-header-c
+initial-header-c
   code
 #   include <config.h>
+  end
+end
+
+early-header-c
+  code
 #   include "pvm.h"
 #   include "pvm-val.h"
 #   include "ios.h"
@@ -111,6 +116,18 @@ early-header-c
       pvm_program_point code;
       pvm_env env;
     };
+  end
+end
+
+initial-vm1-c
+  code
+#   include <config.h>
+  end
+end
+
+initial-vm2-c
+  code
+#   include <config.h>
   end
 end
 
