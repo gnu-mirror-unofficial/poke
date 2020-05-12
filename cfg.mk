@@ -13,4 +13,10 @@ sc_jemarchism.z:
 	halt='found use of "lets" in Texinfo source'			\
 	  $(_sc_search_regexp)
 
+sc_jemarchism_file_fd:
+	@prohibit='FILE \*fd[,;]'                        \
+	exclude=cfg.mk                                   \
+	halt='do not use FILE *fd, use FILE *fp instead' \
+	  $(_sc_search_regexp)
+
 local-checks-available=sc_jemarchism

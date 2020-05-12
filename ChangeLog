@@ -1,5 +1,9 @@
 2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* cfg.mk: Add sc_jemarchism_file_fd syntax-check rule.
+
+2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* libpoke/pkl-ast.c (pkl_ast_lvalue_p): Rename 'FILE *fd'
 	to 'FILE *fp'.
 	(pkl_ast_print_1): Likewise.
