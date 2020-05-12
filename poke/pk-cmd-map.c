@@ -68,6 +68,47 @@ pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_map_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* map remove MAPNAME [,#IOS] */
+
+  int ios_id;
+  const char *mapname;
+
+  assert (argc == 2);
+
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  mapname = PK_CMD_ARG_STR (argv[0]);
+
+  if (strlen (mapname) == 0)
+    {
+      pk_printf (_("Invalid name for map\n"));
+      return 0;
+    }
+
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+  else
+    {
+      ios_id = PK_CMD_ARG_TAG (argv[1]);
+      if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
+        {
+          pk_printf (_("No such IOS #%d\n"), ios_id);
+          return 0;
+        }
+    }
+
+  if (!pk_map_remove (ios_id, mapname))
+    {
+      pk_printf (_("No such map `%s' in IOS #%d\n"),
+                 mapname, ios_id);
+      return 0;
+    }
+
+  return 1;
+}
+
+static int
 pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* map show MAPNAME [,#IOS] */
@@ -320,6 +361,10 @@ const struct pk_cmd map_create_cmd =
   {"create", "s,?t", 0, 0, NULL, pk_cmd_map_create, "create MAPNAME [,#IOS]",
    NULL};
 
+const struct pk_cmd map_remove_cmd =
+  {"remove", "s,?t", 0, 0, NULL, pk_cmd_map_remove, "remove MAPNAME [,#IOS]",
+   NULL};
+
 const struct pk_cmd map_show_cmd =
   {"show", "s,?t", 0, 0, NULL, pk_cmd_map_show, "show MAPNAME [,#IOS]",
    NULL};
@@ -335,6 +380,7 @@ const struct pk_cmd map_save_cmd =
 const struct pk_cmd *map_cmds[] =
 {
   &map_create_cmd,
+  &map_remove_cmd,
   &map_show_cmd,
   &map_load_cmd,
   &map_save_cmd,

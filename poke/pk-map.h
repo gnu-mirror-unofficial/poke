@@ -89,19 +89,31 @@ typedef struct pk_map *pk_map;
 
 /* Create a new empty map, associated to a given IO space.
 
+   IOS_ID is the id of an existing IO space.
+
    MAPNAME is a NULL-terminated string with the name of the map.
 
    SOURCE is a NULL-terminated string with the source of the map.
    This is either the path of the file from which the map was loaded,
    or NULL if the map was created interactively.
 
-   IOS_ID is the id of an existing IO space.
-
    If there is already a map named MAPNAME associated with the given
    IO space, this function returns 0.  Otherwise this function returns
    1.  */
 
 int pk_map_create (int ios_id, const char *mapname, const char *source);
+
+/* Remove a map.
+
+  IOS_ID is the id of an existing IO space.
+
+  MAPNAME is a NULL-terminated string with the name of the map to
+  remove.
+
+  If there is no map named MAPNAME associated with the given IO space,
+  this function returns 0.  Otherwise this function returns 1.  */
+
+int pk_map_remove (int ios_id, const char *mapname);
 
 /* Add a new entry to a map.
 

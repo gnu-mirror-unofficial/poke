@@ -1,5 +1,17 @@
 2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map.h (pk_map_remove): New prototype.
+	* poke/pk-map.c (pk_map_remove): Define.
+	(free_map): Likewise.
+	* poke/pk-cmd-map.c (pk_cmd_map_remove): Define.
+	(map_remove_cmd): Define.
+	(map_cmds): Add map_remove_cmd.
+	* testsuite/poke.cmd/maps-7.pk: New test.
+	* testsuite/poke.cmd/maps-8.pk: Likewise.
+	* testsuite/poke.cmd/maps-9.pk: Likewise.
+
+2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-map.c (map_entry_add_cmd): Rename from map_add_cmd.
 	(map_entry_remove_cmd): Rename from map_remove_cmd.
 	(map_entry_cmds): Define.

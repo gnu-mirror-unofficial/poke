@@ -70,6 +70,22 @@ free_entry (pk_map_entry entry)
   free (entry);
 }
 
+static void
+free_map (pk_map map)
+{
+  pk_map_entry entry, tmp;
+
+  for (entry = PK_MAP_ENTRIES (map); entry; entry = tmp)
+    {
+      tmp = PK_MAP_CHAIN (entry);
+      free_entry (entry);
+    }
+
+  free (PK_MAP_NAME (map));
+  free (PK_MAP_SOURCE (map));
+  free (map);
+}
+
 static pk_map
 search_map (pk_map_ios map_ios, const char *mapname)
 {
@@ -192,6 +208,40 @@ pk_map_create (int ios_id, const char *mapname,
     PK_MAP_CHAIN (map) = PK_MAP_IOS_MAPS (map_ios);
     PK_MAP_IOS_MAPS (map_ios) = map;
   }
+
+  return 1;
+}
+
+int
+pk_map_remove (int ios_id, const char *mapname)
+{
+  pk_map_ios map_ios;
+  pk_map prev, map;
+
+  /* Search for the right map_ios in poke_maps.  */
+  map_ios = search_map_ios (ios_id);
+
+  if (!map_ios)
+    return 0;
+
+  for (prev = NULL, map = PK_MAP_IOS_MAPS (map_ios);
+       map;
+       prev = map, map = PK_MAP_CHAIN (map))
+    {
+      if (STREQ (PK_MAP_NAME (map), mapname))
+        break;
+    }
+
+  if (map == NULL)
+    /* Map not found.  */
+    return 0;
+
+  if (prev)
+    PK_MAP_CHAIN (prev) = PK_MAP_CHAIN (map);
+  else
+    PK_MAP_IOS_MAPS (map_ios) = PK_MAP_CHAIN (map);
+
+  free_map (map);
 
   return 1;
 }
