@@ -72,8 +72,7 @@ pk_mi_read_from_client (int filedes)
   static unsigned int msg_size = 0;
 
   char buffer[MAXMSG];
-  int nbytes;
-  size_t i;
+  ssize_t i, nbytes;
 
   if (in_msg_size_bytes_read < 4)
     {
@@ -240,7 +239,9 @@ pk_mi_dispatch_msg (pk_mi_msg msg)
         }
     }
   else
-    /* XXX Send a message dropped event  */;
+    {
+      /* XXX Send a message dropped event  */
+    }
 
   pk_mi_msg_free (msg);
 }
