@@ -1,3 +1,8 @@
+2020-05-12  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios.c (ios_close): Update the current IOS
+	only when closing the current IOS.
+
 2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/Makefile.am (libpvmjitter_la_CPPFLAGS): Do not

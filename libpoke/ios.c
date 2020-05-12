@@ -194,10 +194,12 @@ ios_close (ios io)
         ;
       tmp->next = io->next;
     }
-  free (io);
 
   /* Set the new current IO.  */
-  cur_io = io_list;
+  if (io == cur_io)
+    cur_io = io_list;
+
+  free (io);
 }
 
 uint64_t
