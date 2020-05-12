@@ -198,7 +198,7 @@ load_module (struct pkl_parser *parser,
 {
   char *module_filename = NULL;
   pkl_ast ast;
-  FILE *fd;
+  FILE *fp;
 
   module_filename = pkl_resolve_module (parser->compiler,
                                         module,
@@ -214,8 +214,8 @@ load_module (struct pkl_parser *parser,
       return 0;
     }
 
-  fd = fopen (module_filename, "rb");
-  if (!fd)
+  fp = fopen (module_filename, "rb");
+  if (!fp)
     {
       free (module_filename);
       return 1;
@@ -224,11 +224,11 @@ load_module (struct pkl_parser *parser,
   /* Parse the file, using the given environment.  The declarations
      found in the parsed file are appended to that environment, so
      nothing extra should be done about that.  */
-  if (pkl_parse_file (parser->compiler, &parser->env, &ast, fd,
+  if (pkl_parse_file (parser->compiler, &parser->env, &ast, fp,
                       module_filename)
       != 0)
     {
-      fclose (fd);
+      fclose (fp);
       free (module_filename);
       return 2;
     }
@@ -245,7 +245,7 @@ load_module (struct pkl_parser *parser,
   PKL_AST_PROGRAM_ELEMS (ast->ast) = NULL;
   pkl_ast_free (ast);
 
-  fclose (fd);
+  fclose (fp);
   free (module_filename);
   return 0;
 }

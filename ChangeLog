@@ -1,5 +1,20 @@
 2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* libpoke/pkl-ast.c (pkl_ast_lvalue_p): Rename 'FILE *fd'
+	to 'FILE *fp'.
+	(pkl_ast_print_1): Likewise.
+	(pkl_ast_print): Likewise.
+	* libpoke/pkl-ast.h (pkl_ast_print): Likewise.
+	* libpoke/pkl-diag.c (pkl_detailed_location): Likewise.
+	* libpoke/pkl-parser.c (pkl_parse_file): Likewise.
+	* libpoke/pkl-parser.h (pkl_parse_file): Likewise.
+	* libpoke/pkl-tab.y (load_module): Likewise.
+	* libpoke/pkl.c (pkl_compile_file): Likewise.
+	* poke/pk-cmd-editor.c (pk_cmd_editor): Likewise.
+	* poke/pk-cmd.c (pk_cmd_exec_script): Likewise.
+
+2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* poke/pk-mi.c (pk_mi_fd_set_nonblocking): New function.
 	(pk_mi_fd_restore_blocking): New function.
 	(pk_mi_loop): Set fd to blocking and restore before returning.

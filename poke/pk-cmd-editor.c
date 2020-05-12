@@ -37,7 +37,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char *cmdline;
   char tmpfile[1024];
   int des;
-  FILE *f;
+  FILE *fp;
 
   /* Do nothing (succesfully) if not in interactive mode.  */
   if (!poke_interactive_p)
@@ -94,14 +94,14 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* If the editor returned success and a file got created, read the
      contents of the file, turn newlines into spaces and execute
      it.  */
-  if ((f = fopen (tmpfile, "r")) != NULL)
+  if ((fp = fopen (tmpfile, "r")) != NULL)
     {
       const int STEP = 128;
       char *newline = xmalloc (STEP);
       size_t size, i = 0;
       int c;
 
-      for (size = STEP; (c = fgetc (f)) != EOF; i++)
+      for (size = STEP; (c = fgetc (fp)) != EOF; i++)
         {
           if (i % STEP == 0)
             {
@@ -114,7 +114,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           newline[i] = c;
         }
       newline[i] = '\0';
-      fclose (f);
+      fclose (fp);
 
       if (*newline != '\0')
         {

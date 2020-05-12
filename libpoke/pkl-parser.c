@@ -68,7 +68,7 @@ pkl_parser_free (struct pkl_parser *parser)
 
 int
 pkl_parse_file (pkl_compiler compiler, pkl_env *env,
-                pkl_ast *ast, FILE *fd, const char *fname)
+                pkl_ast *ast, FILE *fp, const char *fname)
 {
   int ret;
   struct pkl_parser *parser;
@@ -80,9 +80,9 @@ pkl_parse_file (pkl_compiler compiler, pkl_env *env,
   parser->bootstrapped = pkl_bootstrapped_p (compiler);
 
   parser->env = *env;
-  parser->ast->file = fd;
+  parser->ast->file = fp;
   parser->ast->filename = xstrdup (fname);
-  pkl_tab_set_in (fd, parser->scanner);
+  pkl_tab_set_in (fp, parser->scanner);
   ret = pkl_tab_parse (parser);
   *ast = parser->ast;
   *env = parser->env;

@@ -63,17 +63,17 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
     }
   else
     {
-      FILE *fd = ast->file;
+      FILE *fp = ast->file;
       int c;
 
-      off_t cur_pos = ftello (fd);
+      off_t cur_pos = ftello (fp);
       off_t tmp;
 
       /* Seek to the beginning of the file.  */
-      tmp = fseeko (fd, 0, SEEK_SET);
+      tmp = fseeko (fp, 0, SEEK_SET);
       assert (tmp == 0);
 
-      while ((c = fgetc (fd)) != EOF)
+      while ((c = fgetc (fp)) != EOF)
         {
           if (c == '\n')
             {
@@ -91,7 +91,7 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
                 {
                   if (c != '\n')
                     pk_printf ("%c", c);
-                  c = fgetc (fd);
+                  c = fgetc (fp);
                 }
               while (c != EOF && c != '\0' && c != '\n');
               break;
@@ -99,7 +99,7 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
         }
 
       /* Restore the file position so parsing can continue.  */
-      tmp = fseeko (fd, cur_pos, SEEK_SET);
+      tmp = fseeko (fp, cur_pos, SEEK_SET);
       assert (tmp == 0);
     }
 

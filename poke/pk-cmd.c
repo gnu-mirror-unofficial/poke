@@ -630,9 +630,9 @@ pk_cmd_exec (const char *str)
 int
 pk_cmd_exec_script (const char *filename)
 {
-  FILE *fd = fopen (filename, "r");
+  FILE *fp = fopen (filename, "r");
 
-  if (fd == NULL)
+  if (fp == NULL)
     {
       perror (filename);
       return 1;
@@ -650,7 +650,7 @@ pk_cmd_exec_script (const char *filename)
 
       /* Read a line from the file.  */
       errno = 0;
-      ssize_t n = getline (&line, &line_len, fd);
+      ssize_t n = getline (&line, &line_len, fp);
 
       if (n == -1)
         {
@@ -682,12 +682,12 @@ pk_cmd_exec_script (const char *filename)
     }
 
   free (line);
-  fclose (fd);
+  fclose (fp);
   return 1;
 
  error:
   free (line);
-  fclose (fd);
+  fclose (fp);
   return 0;
 }
 

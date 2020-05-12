@@ -2423,10 +2423,10 @@ pkl_ast_lvalue_p (pkl_ast_node node)
       int i;                                    \
       for (i = 0; i < indent; i++)              \
         if (indent >= 2 && i % 2 == 0)          \
-          fprintf (fd, "|");                    \
+          fprintf (fp, "|");                    \
         else                                    \
-          fprintf (fd, " ");                    \
-      fprintf (fd, __VA_ARGS__);                \
+          fprintf (fp, " ");                    \
+      fprintf (fp, __VA_ARGS__);                \
     } while (0)
 
 #define PRINT_AST_IMM(NAME,MACRO,FMT)                    \
@@ -2441,7 +2441,7 @@ pkl_ast_lvalue_p (pkl_ast_node node)
   do                                                            \
     {                                                           \
       IPRINTF (#NAME ":\n");                                    \
-      pkl_ast_print_1 (fd, PKL_AST_##MACRO (ast), indent + 2);  \
+      pkl_ast_print_1 (fp, PKL_AST_##MACRO (ast), indent + 2);  \
     }                                                           \
   while (0)
 
@@ -2462,13 +2462,13 @@ pkl_ast_lvalue_p (pkl_ast_node node)
        child;                                   \
        child = PKL_AST_CHAIN (child))           \
     {                                           \
-      pkl_ast_print_1 (fd, child, indent + 2);  \
+      pkl_ast_print_1 (fp, child, indent + 2);  \
     }
 
 /* Auxiliary function used by `pkl_ast_print', defined below.  */
 
 static void
-pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
+pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
 {
   pkl_ast_node child;
   size_t i;
@@ -2550,7 +2550,7 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
         PRINT_AST_IMM (numops, EXP_NUMOPS, "%d");
         IPRINTF ("operands:\n");
         for (i = 0; i < PKL_AST_EXP_NUMOPS (ast); i++)
-          pkl_ast_print_1 (fd, PKL_AST_EXP_OPERAND (ast, i),
+          pkl_ast_print_1 (fp, PKL_AST_EXP_OPERAND (ast, i),
                          indent + 2);
         break;
       }
@@ -2956,9 +2956,9 @@ pkl_ast_print_1 (FILE *fd, pkl_ast_node ast, int indent)
    compiler.  */
 
 void
-pkl_ast_print (FILE *fd, pkl_ast_node ast)
+pkl_ast_print (FILE *fp, pkl_ast_node ast)
 {
-  pkl_ast_print_1 (fd, ast, 0);
+  pkl_ast_print_1 (fp, ast, 0);
 }
 
 #undef IPRINTF

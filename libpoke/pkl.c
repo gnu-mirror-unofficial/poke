@@ -396,20 +396,20 @@ pkl_compile_file (pkl_compiler compiler, const char *fname)
   int ret;
   pkl_ast ast = NULL;
   pvm_program program;
-  FILE *fd;
+  FILE *fp;
   pkl_env env = NULL;
 
   compiler->compiling = PKL_COMPILING_PROGRAM;
 
-  fd = fopen (fname, "rb");
-  if (!fd)
+  fp = fopen (fname, "rb");
+  if (!fp)
     {
       perror (fname);
       return 0;
     }
 
   env = pkl_env_dup_toplevel (compiler->env);
-  ret = pkl_parse_file (compiler, &env,  &ast, fd, fname);
+  ret = pkl_parse_file (compiler, &env,  &ast, fp, fname);
   if (ret == 1)
     /* Parse error.  */
     goto error;
@@ -424,7 +424,7 @@ pkl_compile_file (pkl_compiler compiler, const char *fname)
     goto error;
 
   pvm_program_make_executable (program);
-  fclose (fd);
+  fclose (fp);
 
   /* Execute the program in the poke vm.  */
   {
@@ -442,7 +442,7 @@ pkl_compile_file (pkl_compiler compiler, const char *fname)
   return 1;
 
  error:
-  fclose (fd);
+  fclose (fp);
  error_no_close:
   pkl_env_free (env);
   return 0;
