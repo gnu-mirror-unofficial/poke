@@ -1,3 +1,7 @@
+2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* pickles/Makefile.am: Add id3v1.pk to dist_pickles_DATA.
+
 2020-05-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.c (pk_print_val): New function.
@@ -24,7 +28,7 @@
 	* testsuite/poke.cmd/maps-6.pk: Likewise.
 	* HACKING: Updated.
 
-2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
+2020-05-12  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* gui/Makefile.am: Use dist_guifiles_DATA instead guifiles_DATA.
 
