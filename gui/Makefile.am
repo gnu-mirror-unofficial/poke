@@ -24,7 +24,7 @@ if GUI
 
 guifilesdir = $(pkgdatadir)/gui
 
-guifiles_DATA = pk-main.tcl pk-gui.tcl pk-mi.tcl pk-mi-msg.tcl
+dist_guifiles_DATA = pk-main.tcl pk-gui.tcl pk-mi.tcl pk-mi-msg.tcl
 
 bin_PROGRAMS = poke-gui
 
