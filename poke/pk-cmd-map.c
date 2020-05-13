@@ -284,7 +284,36 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static int
 pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* XXX writeme  */
+  /* map load FILENAME [,#IOS] */
+
+  int ios_id;
+  const char *filename;
+  char *emsg;
+
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  filename = PK_CMD_ARG_STR (argv[0]);
+
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+  else
+    {
+      ios_id = PK_CMD_ARG_TAG (argv[1]);
+      if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
+        {
+          pk_printf (_("No such IOS #%d\n"), ios_id);
+          return 0;
+        }
+    }
+
+  if (!pk_map_load_file (ios_id, filename, &emsg))
+    {
+      pk_printf ("%s", emsg);
+      if (emsg[strlen (emsg) - 1] != '\n')
+        pk_puts ("\n");
+      return 0;
+    }
+
   return 1;
 }
 
@@ -298,7 +327,7 @@ pk_cmd_map_save (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static int
 pk_cmd_info_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* info maps [#IOS] */
+  /* info maps [,#IOS] */
   int ios_id;
   pk_map maps, map;
 
@@ -316,11 +345,14 @@ pk_cmd_info_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
     }
 
-  pk_term_class ("table_header");
-  pk_puts ("IOS\tName\t\tSource\n");
-  pk_term_end_class ("table_header");
-
   maps = pk_map_get_maps (ios_id);
+  if (maps)
+    {
+      pk_term_class ("table_header");
+      pk_puts ("IOS\tName\t\tSource\n");
+      pk_term_end_class ("table_header");
+    }
+
   for (map = maps; map; map = PK_MAP_CHAIN (map))
     pk_printf ("#%d\t%s\t\t%s\n", ios_id, PK_MAP_NAME (map),
                PK_MAP_SOURCE (map) ? PK_MAP_SOURCE (map) : "<stdin>");
@@ -370,7 +402,7 @@ const struct pk_cmd map_show_cmd =
    NULL};
 
 const struct pk_cmd map_load_cmd =
-  {"load", "f", 0, 0, NULL, pk_cmd_map_load, "load FILENAME",
+  {"load", "f,?t", 0, PK_CMD_F_REQ_IO, NULL, pk_cmd_map_load, "load FILENAME [,#IOS]",
    rl_filename_completion_function};
 
 const struct pk_cmd map_save_cmd =

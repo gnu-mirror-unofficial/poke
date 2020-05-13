@@ -32,7 +32,8 @@ poke_SOURCES = poke.c poke.h \
                pk-cmd-ios.c pk-cmd-info.c pk-cmd-misc.c \
                pk-cmd-help.c pk-cmd-def.c pk-cmd-vm.c \
                pk-cmd-set.c pk-cmd-editor.c pk-cmd-map.c \
-               pk-map.c pk-map.h
+               pk-map.c pk-map.h pk-map-parser.h \
+               pk-map-tab.y pk-map-lex.l
 
 poke_SOURCES += ../common/pk-utils.c ../common/pk-utils.h
 
@@ -51,6 +52,13 @@ poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(JITTER_LDADD) \
              $(LTLIBTEXTSTYLE)
 poke_LDFLAGS =
+
+AM_YFLAGS = -d -t --report=state
+AM_LFLAGS = -d
+
+EXTRA_DIST = pk-map-lex.h
+
+BUILT_SOURCES = pk-map-tab.h pk-map-lex.c
 
 # Machine interface
 if POKE_MI

@@ -144,9 +144,6 @@ int pk_map_add_entry (int ios_id, const char *mapname,
 int pk_map_remove_entry (int ios_id, const char *mapname,
                          const char *varname);
 
-int pk_map_load_file (const char *path);
-int pk_map_save_file (const char *path);
-
 /* Initialize the global map.   */
 
 void pk_map_init (void);
@@ -167,5 +164,23 @@ pk_map pk_map_get_maps (int ios_id);
    Return the map if found.  NULL otherwise.  */
 
 pk_map pk_map_search (int ios_id, const char *name);
+
+/* Load a map from the given file.
+
+   IOS_ID is the IO space where to install the loaded map.
+
+   PATH is the path to the file to load.
+
+   ERRMSG, if not NULL, is a string where an error message is stored
+   when the function returns 0.  This string should be fred by the
+   caller.
+
+   If there is an error loading the file, return 0.
+   Otherwise return 1.  */
+
+int pk_map_load_file (int ios_id, const char *path, char **errmsg);
+
+/* XXX writeme  */
+int pk_map_save_file (const char *path);
 
 #endif /* ! PK_MAP_H */

@@ -41,8 +41,8 @@
    to bootstrap itself defining some variables, types and functions,
    that compose the run-time environment.
 
-   Then, subsequent calls to `pkl_compile_buffer' and
-   `pkl_compile_file (..., PKL_PROGRAM, ...)' expands the
+   Then, subsequent calls to `pkl_execute_buffer' and
+   `pkl_execute_file (..., PKL_PROGRAM, ...)' expands the
    internally-maintained program, with definitions of variables,
    types, function etc from the user.
 
@@ -51,8 +51,8 @@
    can be executed in a virtual machine.  It is up to the user to free
    the returned PVM program when it is not useful anymore.
 
-   `pkl_compile_buffer', `pkl_compile_file' and
-   `pkl_compile_expression' can be called any number of times, in any
+   `pkl_execute_buffer', `pkl_execute_file' and
+   `pkl_execute_expression' can be called any number of times, in any
    possible combination.
 
    Finally, `pkl_free' should be invoked when the compiler is no
@@ -82,31 +82,39 @@ pkl_compiler pkl_new (pvm vm, const char *rt_path)
 void pkl_free (pkl_compiler compiler)
   __attribute__ ((visibility ("hidden")));
 
-/* Compile a poke program from the given file FNAME.  Return 1 if the
-   compilation was successful, 0 otherwise.  */
+/* Compile an execute a Poke program from the given file FNAME.
+   Return 1 if the compilation was successful, 0 otherwise.  */
 
-int pkl_compile_file (pkl_compiler compiler, const char *fname)
+int pkl_execute_file (pkl_compiler compiler, const char *fname)
   __attribute__ ((visibility ("hidden")));
 
-/* Compile a Poke program from a NULL-terminated string BUFFER.
-   Return 0 in case of a compilation error, 1 otherwise.  If not NULL,
-   END is set to the first character in BUFFER that is not part of the
-   compiled entity.  */
+/* Compile and execute Poke program from a NULL-terminated string
+   BUFFER.  Return 0 in case of a compilation error, 1 otherwise.  If
+   not NULL, END is set to the first character in BUFFER that is not
+   part of the compiled entity.  */
 
-int pkl_compile_buffer (pkl_compiler compiler, const char *buffer,
+int pkl_execute_buffer (pkl_compiler compiler, const char *buffer,
                         const char **end)
   __attribute__ ((visibility ("hidden")));
 
-/* Like pkl_compile_buffer but compile a single Poke statement, which
-   may generate a value in VAL if it is an "expression statement".  */
+/* Like pkl_execute_buffer, but compile and execute a single Poke
+   expression, that generates a value in VAL. */
 
-int pkl_compile_statement (pkl_compiler compiler, const char *buffer, const char **end,
+int pkl_execute_expression (pkl_compiler compiler,
+                            const char *buffer, const char **end,
+                            pvm_val *val)
+  __attribute__ ((visibility ("hidden")));
+
+/* Like pkl_execute_expression but compile and execute a single Poke statement,
+   which may generate a value in VAL if it is an "expression
+   statement".  Otherwise VAL is set to PVM_NULL.  */
+
+int pkl_execute_statement (pkl_compiler compiler, const char *buffer, const char **end,
                            pvm_val *val)
   __attribute__ ((visibility ("hidden")));
 
-/* Like pkl_compile_buffer, but compile a Poke expression and return a
-   PVM program that evaluates to the expression.  In case of error
-   return NULL.  */
+/* Compile a single Poke expression and return the resulting PVM
+   program.  */
 
 pvm_program pkl_compile_expression (pkl_compiler compiler,
                                     const char *buffer, const char **end)

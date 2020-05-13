@@ -1,7 +1,16 @@
-# Map file for ELF files
+/* Map file for ELF files -*- mode: poke-map -*- */
 
 load elf;
 
 %%
-ehdr, Elf64_Ehdr, 0x0
-shdr, Elf64_Shdr[ehdr.e_shnum], ehdr.e_shoff
+
+%entry
+%var ehdr
+%type Elf64_Ehdr
+%offset 0#B
+
+%entry
+%condition ehdr.e_shnum > 0
+%var shdr
+%type Elf64_Shdr[ehdr.e_shnum]
+%offset ehdr.e_shoff

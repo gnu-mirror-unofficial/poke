@@ -29,6 +29,7 @@
 #include <stdarg.h> /* va_... */
 #include <stddef.h> /* size_t */
 #include <string.h> /* strcpy */
+#include <ctype.h> /* isspace */
 
 #include "pk-utils.h"
 
@@ -186,4 +187,16 @@ pk_str_replace (const char *in, const char *search, const char *replace)
   strcpy (d, s);
 
   return out;
+}
+
+void
+pk_str_trim (char **str)
+{
+  char *end;
+
+  while (isspace (**str))
+    (*str)++;
+  end = *str + strlen (*str);
+  while (isspace (*--end));
+  *(end + 1) = '\0';
 }

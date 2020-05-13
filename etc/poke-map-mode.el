@@ -30,6 +30,8 @@
 
 \\{poke-map-mode-map}"
   (defconst poke-map-font-lock-keywords
-    '(("^#.*$" 0 font-lock-comment-face nil)))
+    '(("^#.*$" 0 font-lock-comment-face nil)
+      ("^%[%a-zA-Z0-9_]*" 0 font-lock-preprocessor-face nil)
+      ("%>" 0 font-lock-preprocessor-face nil)))
   (setq font-lock-defaults
         '(poke-map-font-lock-keywords t nil nil)))

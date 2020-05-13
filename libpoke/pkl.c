@@ -91,7 +91,7 @@ pkl_new (pvm vm, const char *rt_path)
     if (!poke_rt_pk)
       goto out_of_memory;
 
-    if (!pkl_compile_file (compiler, poke_rt_pk))
+    if (!pkl_execute_file (compiler, poke_rt_pk))
       {
         pk_term_class ("error");
         pk_puts ("internal error: ");
@@ -111,7 +111,7 @@ pkl_new (pvm vm, const char *rt_path)
     if (!poke_std_pk)
       goto out_of_memory;
 
-    if (!pkl_compile_file (compiler, poke_std_pk))
+    if (!pkl_execute_file (compiler, poke_std_pk))
       return NULL;
     free (poke_std_pk);
   }
@@ -257,7 +257,7 @@ rest_of_compilation (pkl_compiler compiler,
 }
 
 int
-pkl_compile_buffer (pkl_compiler compiler,
+pkl_execute_buffer (pkl_compiler compiler,
                     const char *buffer, const char **end)
 {
   pkl_ast ast = NULL;
@@ -307,7 +307,7 @@ pkl_compile_buffer (pkl_compiler compiler,
 }
 
 int
-pkl_compile_statement (pkl_compiler compiler,
+pkl_execute_statement (pkl_compiler compiler,
                        const char *buffer, const char **end,
                        pvm_val *val)
 {
@@ -350,7 +350,6 @@ pkl_compile_statement (pkl_compiler compiler,
   return 0;
 }
 
-
 pvm_program
 pkl_compile_expression (pkl_compiler compiler,
                         const char *buffer, const char **end)
@@ -360,10 +359,49 @@ pkl_compile_expression (pkl_compiler compiler,
   int ret;
   pkl_env env = NULL;
 
+   compiler->compiling = PKL_COMPILING_EXPRESSION;
+   env = pkl_env_dup_toplevel (compiler->env);
+
+   /* Parse the input program into an AST.  */
+   ret = pkl_parse_buffer (compiler, &env, &ast,
+                           PKL_PARSE_EXPRESSION,
+                           buffer, end);
+   if (ret == 1)
+     /* Parse error.  */
+     goto error;
+   else if (ret == 2)
+     /* Memory exhaustion.  */
+     printf (_("out of memory\n"));
+
+   program = rest_of_compilation (compiler, ast);
+   if (program == NULL)
+     goto error;
+
+   pkl_env_free (compiler->env);
+   compiler->env = env;
+   pvm_program_make_executable (program);
+
+  return program;
+
+ error:
+  pkl_env_free (env);
+  return NULL;
+}
+
+int
+pkl_execute_expression (pkl_compiler compiler,
+                        const char *buffer, const char **end,
+                        pvm_val *val)
+{
+  pkl_ast ast = NULL;
+  pvm_program program;
+  int ret;
+  pkl_env env = NULL;
+
   compiler->compiling = PKL_COMPILING_EXPRESSION;
   env = pkl_env_dup_toplevel (compiler->env);
 
-  /* Parse the input program into an AST.  */
+  /* Parse the input routine into an AST.  */
   ret = pkl_parse_buffer (compiler, &env, &ast,
                           PKL_PARSE_EXPRESSION,
                           buffer, end);
@@ -378,20 +416,24 @@ pkl_compile_expression (pkl_compiler compiler,
   if (program == NULL)
     goto error;
 
-  pkl_env_free (compiler->env);
-  compiler->env = env;
   pvm_program_make_executable (program);
 
-  return program;
+  /* Execute the routine in the poke vm.  */
+  if (pvm_run (compiler->vm, program, val) != PVM_EXIT_OK)
+    goto error;
+
+  pvm_destroy_program (program);
+  pkl_env_free (compiler->env);
+  compiler->env = env;
+  return 1;
 
  error:
   pkl_env_free (env);
-  return NULL;
+  return 0;
 }
 
-
 int
-pkl_compile_file (pkl_compiler compiler, const char *fname)
+pkl_execute_file (pkl_compiler compiler, const char *fname)
 {
   int ret;
   pkl_ast ast = NULL;
@@ -606,7 +648,7 @@ pkl_load (pkl_compiler compiler, const char *module)
   if (pkl_module_loaded_p (compiler, module_filename))
     return 1;
 
-  if (!pkl_compile_file (compiler, module_filename))
+  if (!pkl_execute_file (compiler, module_filename))
     {
       pkl_add_module (compiler, module_filename);
       return 0;

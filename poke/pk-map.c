@@ -18,12 +18,19 @@
 
 #include <config.h>
 
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
 #include <xalloc.h>
+#include <assert.h>
+
+#include "dirname.h"
 
 #include "poke.h"
 #include "pk-utils.h"
 #include "pk-term.h"
 #include "pk-map.h"
+#include "pk-map-parser.h"
 
 /* Maps for a given IOS.
 
@@ -375,19 +382,152 @@ pk_map_get_maps (int ios_id)
   return NULL;
 }
 
-#if 0
-void
-pk_map_print_maps (int ios_id)
+static int
+pk_map_load_parsed_map (int ios_id, const char *mapname,
+                        const char *filename,
+                        pk_map_parsed_map map)
 {
-  pk_printf ("Maps for IOS #%d\n", ios_id);
+  pk_map_parsed_entry entry;
 
-  pk_term_class ("header");
-  pk_puts ("Name\n");
-  pk_term_end_class ("header");
+  /* First, compile the prologue.  */
+  /* XXX set error location and disable verbose error messages in
+     poke_compiler.  */
+  if (!pk_compile_buffer (poke_compiler,
+                          PK_MAP_PARSED_MAP_PROLOGUE (map),
+                          NULL))
+    return 0;
 
-  /* First, print the global map.  */
-  pk_puts ("<global>\n");
+  /* Process the map entries and create the mapped global
+     variables.  */
 
-  pk_puts ("\n");
+  for (entry = PK_MAP_PARSED_MAP_ENTRIES (map);
+       entry;
+       entry = PK_MAP_PARSED_ENTRY_CHAIN (entry))
+    {
+      pk_val val;
+      int process_p = 1;
+      const char *condition = PK_MAP_PARSED_ENTRY_CONDITION (entry);
+
+      /* Evaluate the condition.  */
+      if (condition)
+        {
+          /* XXX set error location... */
+          if (!pk_compile_expression (poke_compiler,
+                                      condition,
+                                      NULL /* end */,
+                                      &val))
+            return 0;
+
+          if (pk_val_type (val) != PK_INT && pk_val_type (val) != PK_UINT)
+            {
+              /* XXX error location.  */
+              pk_printf ("error: invalid condition expression\n");
+              return 0;
+            }
+
+          if (!(pk_val_type (val) == PK_INT
+                ? pk_int_value (val) : pk_uint_value (val)))
+            {
+              process_p = 0;
+              /* Process this entry.  */
+              printf ("SKIPPING ENTRY\n");
+            }
+        }
+
+      PK_MAP_PARSED_ENTRY_SKIPPED_P (entry) = !process_p;
+      if (process_p)
+        {
+          const char *var = PK_MAP_PARSED_ENTRY_VAR (entry);
+          const char *type = PK_MAP_PARSED_ENTRY_TYPE (entry);
+          const char *offset = PK_MAP_PARSED_ENTRY_OFFSET (entry);
+
+          /* XXX set error location with compiler pragmas... */
+          char *defvar_str
+            = pk_str_concat ("defvar ", var, " = ", type, " @ ", offset, ";", NULL);
+
+          /* XXX what about constraints?  */
+          if (!pk_compile_buffer (poke_compiler,
+                                  defvar_str,
+                                  NULL /* end */))
+            return 0;
+        }
+    }
+
+  /* Now create the map and its entries.  */
+  if (!pk_map_create (ios_id, mapname, filename))
+    return 0;
+
+  for (entry = PK_MAP_PARSED_MAP_ENTRIES (map);
+       entry;
+       entry = PK_MAP_PARSED_ENTRY_CHAIN (entry))
+    {
+      if (!PK_MAP_PARSED_ENTRY_SKIPPED_P (entry))
+        {
+          char *var = PK_MAP_PARSED_ENTRY_VAR (entry);
+          pk_val offset;
+
+          pk_str_trim (&var);
+          offset = pk_decl_val (poke_compiler, var);
+          assert (offset != PK_NULL);
+          offset = pk_val_offset (offset);
+
+          if (!pk_map_add_entry (ios_id, mapname, var, offset))
+            {
+              pk_map_remove (ios_id, mapname);
+              return 0;
+            }
+        }
+    }
+
+  return 1;
 }
-#endif
+
+int
+pk_map_load_file (int ios_id,
+                    const char *path, char **errmsg)
+{
+  char *emsg;
+  FILE *fp;
+  pk_map_parsed_map parsed_map;
+
+  /* Open the file whose contents are to be parsed.  */
+  if ((emsg = pk_file_readable (path)) != NULL)
+    {
+      *errmsg = emsg;
+      return 0;
+    }
+
+  fp = fopen (path, "r");
+  if (!fp)
+    {
+      *errmsg = strerror (errno);
+      return 0;
+    }
+
+  /* Parse the file contents and close the file.  */
+  parsed_map = pk_map_parse_file (path, fp);
+  if (!parsed_map)
+    {
+      *errmsg = "";
+      return 0;
+    }
+
+  if (fclose (fp) == EOF)
+    {
+      *errmsg = strerror (errno);
+      return 0;
+    }
+
+  /* XXX */
+  //  pk_map_print_parsed_map (parsed_map);
+
+  /* Process the result.  */
+  /* XXX remove .map from mapname */
+  if (!pk_map_load_parsed_map (ios_id,
+                               last_component (path) /* mapname */,
+                               path,
+                               parsed_map))
+    return 0;
+
+  return 1;
+}

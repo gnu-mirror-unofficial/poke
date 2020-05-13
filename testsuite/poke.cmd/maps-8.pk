@@ -13,4 +13,4 @@
 /* { dg-output "\n#0\tbar\t\t<stdin>" } */
 /* { dg-command { .map remove bar } } */
 /* { dg-command { .info maps } } */
-/* { dg-output "\nIOS\tName\t\tSource" } */
+/* { dg-output "" } */

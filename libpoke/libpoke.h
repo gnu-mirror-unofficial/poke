@@ -106,11 +106,23 @@ int pk_compile_buffer (pk_compiler pkc, const char *buffer,
                        const char **end);
 
 /* Like pk_compile_buffer but compile and execute a single Poke
-   statement, which may print the value of a result value, if it is an
-   "expression statement".  */
+   statement, which may evaluate to a value if it is an "expression
+   statement".
+
+   VAL, if given, is a pointer to a pk_val variable that is set to the
+   result value of an expression-statement, or to PK_NULL.  */
 
 int pk_compile_statement (pk_compiler pkc, const char *buffer,
-                          const char **end);
+                          const char **end, pk_val *val);
+
+/* Like pk_compile_buffer but compile and execute a single Poke
+   expression, which evaluates to a value.
+
+   VAL, if given, is a pointer to a pk_val variable that is set to the
+   result value of executing the expression.  */
+
+int pk_compile_expression (pk_compiler pkc, const char *buffer,
+                           const char **end, pk_val *val);
 
 /* Load a module using the given compiler.
 

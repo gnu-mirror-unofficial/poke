@@ -120,6 +120,20 @@ pk_printf (const char *format, ...)
 }
 
 void
+pk_vprintf (const char *format, va_list ap)
+{
+  char *str;
+  int r;
+
+  r = vasprintf (&str, format, ap);
+  assert (r != -1);
+
+  ostream_write_str (pk_ostream, str);
+  free (str);
+}
+
+
+void
 pk_term_indent (unsigned int lvl,
                 unsigned int step)
 {

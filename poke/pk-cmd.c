@@ -612,10 +612,18 @@ pk_cmd_exec (const char *str)
       else
         {
           /* Statement.  */
-          if (!pk_compile_statement (poke_compiler, ecmd, &end))
+          pk_val val;
+
+          if (!pk_compile_statement (poke_compiler, ecmd, &end, &val))
             {
               retval = 0;
               goto cleanup;
+            }
+
+          if (val != PK_NULL)
+            {
+              pk_print_val (poke_compiler, val);
+              pk_puts ("\n");
             }
         }
 

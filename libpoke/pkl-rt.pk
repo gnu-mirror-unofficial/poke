@@ -25,7 +25,7 @@ defun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
 defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
 defun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
 defun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
-defun iosize = (int<32> ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
+defun iosize = (int<32> ios = get_ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
 defun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
 
 defvar ENDIAN_LITTLE = 0;

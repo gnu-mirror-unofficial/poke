@@ -81,34 +81,44 @@ pk_compiler_free (pk_compiler pkc)
 int
 pk_compile_file (pk_compiler pkc, const char *filename)
 {
-  return pkl_compile_file (pkc->compiler, filename);
+  return pkl_execute_file (pkc->compiler, filename);
 }
 
 int
 pk_compile_buffer (pk_compiler pkc, const char *buffer,
                    const char **end)
 {
-  return pkl_compile_buffer (pkc->compiler, buffer, end);
+  return pkl_execute_buffer (pkc->compiler, buffer, end);
 }
 
 int
 pk_compile_statement (pk_compiler pkc, const char *buffer,
-                      const char **end)
+                      const char **end, pk_val *valp)
 {
   pvm_val val;
 
-  if (pkl_compile_statement (pkc->compiler, buffer, end, &val))
-    {
-      if (val != PVM_NULL)
-        {
-          pvm_print_val (pkc->vm, val);
-          pk_puts ("\n");
-        }
+  if (!pkl_execute_statement (pkc->compiler, buffer, end, &val))
+    return 0;
 
-      return 1;
-    }
+  if (valp)
+    *valp = val;
 
-  return 0;
+  return 1;
+}
+
+int
+pk_compile_expression (pk_compiler pkc, const char *buffer,
+                       const char **end, pk_val *valp)
+{
+  pvm_val val;
+
+  if (!pkl_execute_expression (pkc->compiler, buffer, end, &val))
+    return 0;
+
+  if (valp)
+    *valp = val;
+
+  return 1;
 }
 
 int

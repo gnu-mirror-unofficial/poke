@@ -13,4 +13,4 @@
 /* { dg-output "\n#0\tfoo\t\t<stdin>" } */
 /* { dg-command { .map remove foo } } */
 /* { dg-command { .info maps } } */
-/* { dg-output "\nIOS\tName\t\tSource" } */
+/* { dg-output "" } */
