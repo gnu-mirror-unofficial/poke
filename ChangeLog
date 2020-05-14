@@ -1,3 +1,12 @@
+2020-05-14  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* libpoke/ios.c: Remove include xalloc.h.
+	(ios_open): Use malloc with error checking.
+	(realloc_string): New helper function.
+	(ios_read_string): Use realloc_string instead xrealloc.
+	* libpoke/ios.h: New define IOS_ENOMEM.
+	* libpoke/pvm.jitter: Raise PVM_E_IO when out of memory.
+
 2020-05-07  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* libpoke/ios-dev-mem.c (ios_dev_mem_open): Replace

@@ -316,6 +316,8 @@ late-header-c
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
             PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);                            \
+         else if (ret == IOS_ENOMEM)                                         \
+            PVM_RAISE (PVM_E_IO, "out of memory");                           \
          else                                                                \
             PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);                              \
          JITTER_TOP_STACK () = PVM_NULL;                                     \
@@ -4617,6 +4619,8 @@ instruction peeks ()
     {
       if (ret == IOS_EIOFF)
          PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);
+      else if (ret == IOS_ENOMEM)
+         PVM_RAISE (PVM_E_IO, "out of memory");
       else
          PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
       JITTER_TOP_STACK () = PVM_NULL;

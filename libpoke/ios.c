@@ -17,7 +17,6 @@
  */
 
 #include <config.h>
-#include <xalloc.h>
 #include <gettext.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -118,12 +117,15 @@ ios_shutdown (void)
 int
 ios_open (const char *handler, uint64_t flags, int set_cur)
 {
-  struct ios *io = NULL;
+  struct ios *io;
   struct ios_dev_if **dev_if = NULL;
   int error = IOD_ERROR, ret;
 
   /* Allocate and initialize the new IO space.  */
-  io = xmalloc (sizeof (struct ios));
+  io = malloc (sizeof (struct ios));
+  if (!io)
+    return IOS_ENOMEM;
+
   io->id = ios_next_id++;
   io->next = NULL;
   io->bias = 0;
@@ -884,11 +886,23 @@ ios_read_uint (ios io, ios_off offset, int flags,
   return ios_read_int_common (io, offset, flags, bits, endian, value);
 }
 
+static int realloc_string (char **str, size_t newsize)
+{
+  char *newstr = realloc (*str, newsize);
+
+  if (!newstr)
+    return IOS_ENOMEM;
+
+  *str = newstr;
+  return IOS_OK;
+}
+
 int
 ios_read_string (ios io, ios_off offset, int flags, char **value)
 {
   char *str = NULL;
   size_t i = 0;
+  int ret;
 
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
@@ -902,11 +916,17 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
       do
         {
           if (i % 128 == 0)
-            str = xrealloc (str, i + 128 * sizeof (char));
+            {
+              if ((ret = realloc_string (&str, i + 128 * sizeof (char))) < 0)
+                goto error;
+            }
 
           if (io->dev_if->pread (io->dev, &str[i], 1,
                                  offset / 8 + i) == IOD_EOF)
-            return IOS_EIOFF;
+            {
+              ret = IOS_EIOFF;
+              goto error;
+            }
         }
       while (str[i++] != '\0');
     }
@@ -918,17 +938,19 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
 
       do
         {
-          int ret;
           uint64_t abyte;
 
           if (i % 128 == 0)
-            str = xrealloc (str, i + 128 * sizeof (char));
+            {
+              if ((ret = realloc_string (&str, i + 128 * sizeof (char))) < 0)
+                goto error;
+            }
 
           ret = ios_read_uint (io, offset, flags, 8,
                                IOS_ENDIAN_MSB, /* Arbitrary.  */
                                &abyte);
           if (ret == IOS_EIOFF)
-            return ret;
+            goto error;
 
           str[i] = (char) abyte;
           offset += 8;
@@ -938,6 +960,10 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
 
   *value = str;
   return IOS_OK;
+
+error:
+  free (str);
+  return ret;
 }
 
 static inline int
