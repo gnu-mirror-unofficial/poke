@@ -1,5 +1,10 @@
 2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map-tab.y (pk_map_parse_file): Fix call to
+	pk_map_tab_set_extra.
+
+2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt.pk (iosize): Argument defaults to the current
 	IOS.
 	* poke/pk-cmd.c (pk_cmd_exec): Use new interface of

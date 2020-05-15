@@ -375,7 +375,7 @@ pk_map_parse_file (const char *filename, FILE *fp)
   map_parser.filename = filename;
 
   pk_map_tab_lex_init (&map_parser.lexer);
-  pkl_tab_set_extra (&map_parser, map_parser.lexer);
+  pk_map_tab_set_extra (&map_parser, map_parser.lexer);
   pk_map_tab_set_in (fp, map_parser.lexer);
   ret = pk_map_tab_parse (&map_parser);
   pk_map_tab_lex_destroy (map_parser.lexer);
