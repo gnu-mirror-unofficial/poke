@@ -24,7 +24,6 @@
 #include <stdio.h> /* For fopen, etc */
 #include <stdlib.h>
 #include <string.h>
-#include <xalloc.h>
 
 #include "dirname.h"
 
@@ -67,7 +66,10 @@ pkl_compiler
 pkl_new (pvm vm, const char *rt_path)
 {
   pkl_compiler compiler
-    = xzalloc (sizeof (struct pkl_compiler));
+    = calloc (1, sizeof (struct pkl_compiler));
+
+  if (!compiler)
+    goto out_of_memory;
 
   /* Create the top-level compile-time environment.  This will be used
      for as long as the incremental compiler lives.  */
@@ -93,11 +95,14 @@ pkl_new (pvm vm, const char *rt_path)
 
     if (!pkl_execute_file (compiler, poke_rt_pk))
       {
+        free (poke_rt_pk);
+
         pk_term_class ("error");
         pk_puts ("internal error: ");
         pk_term_end_class ("error");
         pk_puts ("compiler failed to bootstrap itself\n");
 
+        pkl_free (compiler);
         return NULL;
       }
     free (poke_rt_pk);
@@ -112,13 +117,21 @@ pkl_new (pvm vm, const char *rt_path)
       goto out_of_memory;
 
     if (!pkl_execute_file (compiler, poke_std_pk))
-      return NULL;
+      {
+        free (poke_std_pk);
+        pkl_free (compiler);
+        return NULL;
+      }
+
     free (poke_std_pk);
   }
 
   return compiler;
 
 out_of_memory:
+  if (compiler)
+    pkl_free (compiler);
+
   pk_term_class ("error");
   pk_puts ("error: ");
   pk_term_end_class ("error");
