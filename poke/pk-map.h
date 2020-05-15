@@ -171,9 +171,9 @@ pk_map pk_map_search (int ios_id, const char *name);
 
    PATH is the path to the file to load.
 
-   ERRMSG, if not NULL, is a string where an error message is stored
-   when the function returns 0.  This string should be fred by the
-   caller.
+   ERRMSG, if not NULL, is a string where either NULL or an error
+   message is stored when the function returns 0.  This string should
+   be fred by the caller.
 
    If there is an error loading the file, return 0.
    Otherwise return 1.  */

@@ -308,9 +308,12 @@ pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (!pk_map_load_file (ios_id, filename, &emsg))
     {
-      pk_printf ("%s", emsg);
-      if (emsg[strlen (emsg) - 1] != '\n')
-        pk_puts ("\n");
+      if (emsg)
+        {
+          pk_printf ("%s", emsg);
+          if (emsg[strlen (emsg) - 1] != '\n')
+            pk_puts ("\n");
+        }
       return 0;
     }
 
