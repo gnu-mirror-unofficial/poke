@@ -137,7 +137,7 @@ deftype Elf64_File =
     Elf64_Shdr[ehdr.e_shnum] shdr @ ehdr.e_shoff
       if ehdr.e_shnum > 0;
 
-    /* Given an offset in the ELF file's tring table, return the
+    /* Given an offset in the ELF file's string table, return the
        string.  */
     method get_string = (offset<Elf_Word,B> offset) string:
       {
