@@ -40,7 +40,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
-#include <xalloc.h>
 #include <assert.h>
 #include <stdlib.h>
 #include "pkl-ast.h"

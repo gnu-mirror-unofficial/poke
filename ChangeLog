@@ -1,3 +1,7 @@
+2020-05-15  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* (libpoke/pkl-lex.l): Remove include xalloc.h.
+
 2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf.pk (Elf64_File): Rename from Elf64.
