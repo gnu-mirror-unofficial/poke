@@ -1,5 +1,14 @@
 2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64.get_string): New mehod.
+	(Elf64.get_section_by_name): Likewise.
+	(Elf64.get_section_by_type): Likewise.
+	(elf_string): Delete function.
+	(elf_get_section_by_name): Likewise.
+	(elf_get_section_by_type): Likewise.
+
+2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-trans.c (pkl_trans1_ps_loop_stmt_iterator): New
 	handler.
 	(pkl_trans1_ps_loop_stmt): Likewise.
