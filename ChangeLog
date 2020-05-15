@@ -1,5 +1,14 @@
 2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans1_ps_loop_stmt_iterator): New
+	handler.
+	(pkl_trans1_ps_loop_stmt): Likewise.
+	(pkl_phase_trans1): Register handlers.
+	* testsuite/poke.pkl/struct-method-10.pk: New test.
+	* testsuite/poke.pkl/struct-method-11.pk: Likewise.
+
+2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.h: Document in the docstring of the function
 	pk_map_load_file that ERRMSG can be set to NULL even if an error
 	code is returned.

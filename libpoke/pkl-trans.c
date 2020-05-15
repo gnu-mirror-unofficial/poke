@@ -969,6 +969,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_pr_comp_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* FOR-IN statements introduce a lexical level if they use an
+   iterator.  Update the function back.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_loop_stmt_iterator)
+{
+  PKL_TRANS_INCR_FUNCTION_BACK;
+}
+PKL_PHASE_END_HANDLER
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_loop_stmt)
+{
+  pkl_ast_node stmt = PKL_PASS_NODE;
+
+
+  if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
+    PKL_TRANS_DECR_FUNCTION_BACK;
+}
+PKL_PHASE_END_HANDLER
+
 /* Annotate compount statement nodes with the number of variable and
    function declarations occurring in the statement.
 
@@ -1011,6 +1030,8 @@ struct pkl_phase pkl_phase_trans1
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans1_ps_array),
    PKL_PHASE_PR_HANDLER (PKL_AST_COMP_STMT, pkl_trans1_pr_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_trans1_ps_comp_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT_ITERATOR, pkl_trans1_ps_loop_stmt_iterator),
+   PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT, pkl_trans1_ps_loop_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_trans1_ps_op_attr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_trans1_ps_type_struct),
