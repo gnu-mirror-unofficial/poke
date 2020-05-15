@@ -1,5 +1,10 @@
 2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_File): Rename from Elf64.
+	* maps/elf.map: Updated accordingly.
+
+2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64.get_string): New mehod.
 	(Elf64.get_section_by_name): Likewise.
 	(Elf64.get_section_by_type): Likewise.

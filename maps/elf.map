@@ -6,5 +6,5 @@ load elf;
 
 %entry
 %var elf
-%type Elf64
+%type Elf64_File
 %offset 0#B

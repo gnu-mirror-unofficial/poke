@@ -129,7 +129,7 @@ deftype Elf64_Ehdr =
     Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
   };
 
-deftype Elf64 =
+deftype Elf64_File =
   struct
   {
     Elf64_Ehdr ehdr;
