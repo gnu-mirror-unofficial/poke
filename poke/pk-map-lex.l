@@ -64,9 +64,9 @@
      yylloc->first_line = yylloc->last_line;            \
      yylloc->first_column = yylloc->last_column;        \
                                                         \
-     for(i = 0; yytext[i] != '\0'; i++)                 \
+     for (i = 0; yytext[i] != '\0'; i++)                \
        {                                                \
-         if(yytext[i] == '\n')                          \
+         if (yytext[i] == '\n')                         \
            {                                            \
              yylloc->last_line++;                       \
              yylloc->last_column = 1;                   \

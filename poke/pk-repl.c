@@ -205,8 +205,8 @@ poke_sigint_handler (int status)
   rl_free_line_state ();
   rl_cleanup_after_signal ();
   rl_line_buffer[rl_point = rl_end = rl_mark = 0] = 0;
-  printf("\n");
-  siglongjmp(ctrlc_buf, 1);
+  printf ("\n");
+  siglongjmp (ctrlc_buf, 1);
 }
 
 /* Return a copy of TEXT, with every instance of the space character
@@ -269,7 +269,7 @@ pk_repl (void)
     {
       char *line;
 
-      while ( sigsetjmp( ctrlc_buf, 1 ) != 0 );
+      while (sigsetjmp (ctrlc_buf, 1) != 0);
 
       pk_term_flush ();
       rl_completion_entry_function = poke_completion_function;

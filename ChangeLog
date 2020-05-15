@@ -1,3 +1,24 @@
+2020-05-15  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* cfg.mk: New syntax rule sc_rockdabootism_missing_space.
+	* common/pk-utils.c (pk_print_binary): Add missing space before
+	opening bracket.
+	* common/pk-utils.h (pk_str_concat): Likewise.
+	* libpoke/ios.c (ios_read_int_common): Likewise.
+	(ios_read_int). Likewise.
+	* libpoke/pvm-val.c (pvm_print_val_1): Likewise.
+	* poke/pk-cmd-set.c (pk_cmd_set_odepth): Likewise.
+	(pk_cmd_set_oindent): Likewise.
+	(pk_cmd_set_omode): Likewise.
+	* poke/pk-hserver.c (pk_hserver_make_hyperlink): Likewise.
+	* poke/pk-mi.c (pk_mi_fd_set_nonblocking): Likewise.
+	(pk_mi_fd_restore_blocking): Likewise.
+	* poke/pk-repl.c (poke_sigint_handler): Likewise.
+	(pk_repl): Likewise.
+	* libpoke/pkl-lex.l: Likewise.
+	* poke/pk-map-lex.l: Likewise.
+	* poke/poke.c: Slightly amend comment.
+
 2020-05-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf.pk (Elf64): New type.

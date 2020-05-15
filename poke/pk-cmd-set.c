@@ -250,7 +250,7 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set odepth [DEPTH]  */
 
-  assert(argc == 1);
+  assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     pk_printf ("%d\n", pk_odepth (poke_compiler));
@@ -278,7 +278,7 @@ pk_cmd_set_oindent (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set oindent [INDENT]  */
 
-  assert(argc == 1);
+  assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     pk_printf ("%d\n", pk_oindent (poke_compiler));
@@ -346,7 +346,7 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   enum pk_omode omode;
 
-  assert(argc == 1);
+  assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     {

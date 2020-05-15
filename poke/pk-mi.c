@@ -161,7 +161,7 @@ pk_mi_send_frame_msg (const char *payload)
 }
 
 /* Set fd to non-blocking and return old flags or -1 on error. */
-static int pk_mi_fd_set_nonblocking(int fd)
+static int pk_mi_fd_set_nonblocking (int fd)
 {
   int flags = fcntl (fd, F_GETFL, 0);
 
@@ -178,7 +178,7 @@ static int pk_mi_fd_set_nonblocking(int fd)
 }
 
 /* Restore flags to fd if it was set to blocking previously. */
-static void pk_mi_fd_restore_blocking(int fd, int flags)
+static void pk_mi_fd_restore_blocking (int fd, int flags)
 {
   if (flags >= 0 && (flags & O_NONBLOCK) == 0)
     {
@@ -202,7 +202,7 @@ pk_mi_loop (int fd)
 
   /* Make sure that fd is non-blocking.
    * From 'man 2 select':
-   *  On Linux, select() may report a socket file descriptor as
+   *  On Linux, select may report a socket file descriptor as
    *  "ready for reading", while nevertheless a subsequent read blocks." */
   old_flags = pk_mi_fd_set_nonblocking (fd);
 

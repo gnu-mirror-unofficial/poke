@@ -74,7 +74,7 @@ int poke_quiet_p;
 char *poke_datadir;
 
 /* The following global contains the directory holding the program's
-   info file(s).  */
+   info files.  */
 
 char *poke_infodir;
 

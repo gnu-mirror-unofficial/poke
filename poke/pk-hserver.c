@@ -342,13 +342,13 @@ pk_hserver_make_hyperlink (char type,
 
   token = pk_hserver_get_token ();
 
-  if (asprintf(&str, "app://%s:%d/%d/%c/%s",
-               hostname,
-               hserver_port,
-               token,
-               type,
-               cmd
-               ) == -1)
+  if (asprintf (&str, "app://%s:%d/%d/%c/%s",
+                hostname,
+                hserver_port,
+                token,
+                type,
+                cmd
+                ) == -1)
     {
       return NULL;
     }

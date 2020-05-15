@@ -820,7 +820,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
           if ((acutoff != 0) && (acutoff <= idx))
             {
               pk_term_class ("ellipsis");
-              pk_puts("...");
+              pk_puts ("...");
               pk_term_end_class ("ellipsis");
               break;
             }

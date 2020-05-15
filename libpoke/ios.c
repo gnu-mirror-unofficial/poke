@@ -665,7 +665,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
     return IOS_OK;
 
   default:
-    assert(0);
+    assert (0);
   }
 }
 
@@ -783,8 +783,8 @@ ios_read_int (ios io, ios_off offset, int flags,
     }
 
   /* Fall into the case for the unaligned and the sizes other than 8x.  */
-  int ret_val = ios_read_int_common(io, offset, flags, bits, endian,
-                                    (uint64_t *) value);
+  int ret_val = ios_read_int_common (io, offset, flags, bits, endian,
+                                     (uint64_t *) value);
   if (ret_val == IOS_OK)
     {
       *value <<= 64 - bits;

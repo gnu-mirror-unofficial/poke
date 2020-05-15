@@ -93,7 +93,7 @@ pk_print_binary (void (*puts_fn) (const char *str),
   if (size != 64 && size != 32 && size != 16 && size != 8
       && size != 4)
     {
-      snprintf (b, sizeof(b), "(%sint<%d>) ", sign ? "" : "u", size);
+      snprintf (b, sizeof (b), "(%sint<%d>) ", sign ? "" : "u", size);
       puts_fn (b);
     }
 
@@ -120,7 +120,7 @@ pk_print_binary (void (*puts_fn) (const char *str),
  * Returns the malloc'ed concatenated string or NULL when out of memory.
  */
 char *
-pk_str_concat(const char *s0, ...)
+pk_str_concat (const char *s0, ...)
 {
   va_list args;
   size_t len = 0;
