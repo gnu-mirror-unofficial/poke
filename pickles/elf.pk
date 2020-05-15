@@ -129,6 +129,15 @@ deftype Elf64_Ehdr =
     Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
   };
 
+deftype Elf64 =
+  struct
+  {
+    Elf64_Ehdr ehdr;
+
+    Elf64_Shdr[ehdr.e_shnum] shdr @ ehdr.e_shoff
+      if ehdr.e_shnum > 0;
+  };
+
 /* Given an ELF header and an offset in the file's string table,
    return the string.  A different string table can be passed
    optionally.  */

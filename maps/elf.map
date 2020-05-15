@@ -5,12 +5,6 @@ load elf;
 %%
 
 %entry
-%var ehdr
-%type Elf64_Ehdr
+%var elf
+%type Elf64
 %offset 0#B
-
-%entry
-%condition ehdr.e_shnum > 0
-%var shdr
-%type Elf64_Shdr[ehdr.e_shnum]
-%offset ehdr.e_shoff
