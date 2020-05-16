@@ -1,3 +1,12 @@
+2020-05-16  Tim Rühsen  <tim.ruehsen@gmx.de>
+
+	* libpoke/pkl-parser.c: Remove include xalloc.h.
+	(pkl_parser_init): Use calloc instead of xzalloc.
+	(pkl_parse_file): Use strdup instead of xstrdup.
+	Allocate and check memory early in the function.
+	(pkl_parse_buffer): Use strdup instead of xstrdup.
+	Allocate and check memory early in the function.
+
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* maps/Makefile.am (dist_maps_DATA): Distribute mp3.map.

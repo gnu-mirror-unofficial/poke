@@ -18,7 +18,6 @@
 
 #include <config.h>
 
-#include <xalloc.h>
 #include <string.h>
 #include <assert.h>
 
@@ -34,7 +33,9 @@ pkl_parser_init (void)
 {
   struct pkl_parser *parser;
 
-  parser = xzalloc (sizeof (struct pkl_parser));
+  parser = calloc (1, sizeof (struct pkl_parser));
+  if (!parser)
+    return NULL;
 
   pkl_tab_lex_init (&(parser->scanner));
   pkl_tab_set_extra (parser, parser->scanner);
@@ -73,16 +74,24 @@ pkl_parse_file (pkl_compiler compiler, pkl_env *env,
 {
   int ret;
   struct pkl_parser *parser;
+  char *filename = strdup (fname);
+  char *ast_filename = strdup (fname);
+
+  if (!filename || !ast_filename)
+    goto out_of_memory;
 
   parser = pkl_parser_init ();
-  parser->filename = xstrdup (fname);
+  if (!parser)
+    goto out_of_memory;
+
+  parser->filename = filename;
   parser->start_token = START_PROGRAM;
   parser->compiler = compiler;
   parser->bootstrapped = pkl_bootstrapped_p (compiler);
 
   parser->env = *env;
   parser->ast->file = fp;
-  parser->ast->filename = xstrdup (fname);
+  parser->ast->filename = ast_filename;
   pkl_tab_set_in (fp, parser->scanner);
   ret = pkl_tab_parse (parser);
   *ast = parser->ast;
@@ -97,6 +106,11 @@ pkl_parse_file (pkl_compiler compiler, pkl_env *env,
   pkl_parser_free (parser);
 
   return ret;
+
+out_of_memory:
+  free (ast_filename);
+  free (filename);
+  return 2;
 }
 
 /* Parse the contents of BUFFER as a PKL program, or an expression
@@ -112,8 +126,15 @@ pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
   YY_BUFFER_STATE yybuffer;
   struct pkl_parser *parser;
   int ret;
+  char *buffer_dup = strdup (buffer);
+
+  if (!buffer_dup)
+    goto out_of_memory;
 
   parser = pkl_parser_init ();
+  if (!parser)
+    goto out_of_memory;
+
   parser->interactive = 1;
   parser->compiler = compiler;
   parser->bootstrapped = pkl_bootstrapped_p (compiler);
@@ -134,7 +155,7 @@ pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
   /* XXX */
   /* pkl_tab_debug = 1; */
   parser->env = *env;
-  parser->ast->buffer = xstrdup (buffer);
+  parser->ast->buffer = buffer_dup;
   ret = pkl_tab_parse (parser);
   *ast = parser->ast;
   *env = parser->env;
@@ -151,4 +172,8 @@ pkl_parse_buffer (pkl_compiler compiler, pkl_env *env,
   pkl_parser_free (parser);
 
   return ret;
+
+out_of_memory:
+  free (buffer_dup);
+  return 2;
 }
