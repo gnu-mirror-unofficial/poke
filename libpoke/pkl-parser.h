@@ -32,7 +32,10 @@
    AST is the abstract syntax tree created by the bison parser.
 
    BOOTSTRAPPED is 1 if the compiler has been bootstrapped.  0
-   otherwise.  */
+   otherwise.
+
+   IN_METHOD_P is 1 if we are parsing the declaration of a struct
+   method.  0 otherwise.  */
 
 struct pkl_parser
 {
@@ -45,6 +48,7 @@ struct pkl_parser
   int start_token;
   size_t nchars;
   int bootstrapped;
+  int in_method_decl_p;
 };
 
 /* Public interface.  */

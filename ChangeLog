@@ -1,5 +1,23 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-parser.h (struct pkl_parser): New field
+	in_method_decl_p.
+	* libpoke/pkl-parser.c (pkl_parser_init): Initialize
+	in_method_decl_p.
+	* libpoke/pkl-tab.y (pushlevel_args): New rule.
+	(function_specifier): Use pushlevel_args.
+	(declaration): Set in_method_decl_p.
+	* libpoke/pkl-gen.c (pkl_gen_ps_var): The implicit struct argument
+	is the first formatl argument registered in the function, not the
+	last.
+	(pkl_gen_pr_ass_stmt): Likewise.
+	(pkl_gen_pr_func): Adapt to the fact the implicit argument is the
+	last actual passed but the firts formal registered.
+	* testsuite/poke.pkl/struct-method-15.pk: New test.
+	* testsuite/poke.pkl/struct-method-diag-15.pk: Likewise.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/struct-method-12.pk: New test.
 	* testsuite/poke.pkl/struct-method-13.pk: Likewise.
 	* testsuite/poke.pkl/struct-method-14.pk: Likewise.

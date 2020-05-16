@@ -45,6 +45,7 @@ pkl_parser_init (void)
   parser->filename = NULL;
   parser->nchars = 0;
   parser->bootstrapped = 0;
+  parser->in_method_decl_p = 0;
 
   return parser;
 }

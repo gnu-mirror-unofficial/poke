@@ -1026,8 +1026,22 @@ array_initializer:
  * Functions.
  */
 
+pushlevel_args:
+	  %empty
+		{
+                  /* Push the lexical frame for the function's
+                     arguments.  */
+                  pkl_parser->env = pkl_env_push_frame (pkl_parser->env);
+
+                  /* If in a method, register a dummy for the initial
+                     implicit argument.  */
+                  if (pkl_parser->in_method_decl_p)
+                    pkl_register_dummies (pkl_parser, 1);
+                }
+	;
+
 function_specifier:
-	  '(' pushlevel function_arg_list ')' simple_type_specifier ':' comp_stmt
+	  '(' pushlevel_args function_arg_list ')' simple_type_specifier ':' comp_stmt
         	{
                   $$ = pkl_ast_make_func (pkl_parser->ast,
                                           $5, $3, $7);
@@ -1037,7 +1051,7 @@ function_specifier:
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-	| simple_type_specifier ':' pushlevel comp_stmt
+	| simple_type_specifier ':' pushlevel_args comp_stmt
         	{
                   $$ = pkl_ast_make_func (pkl_parser->ast,
                                           $1, NULL, $4);
@@ -1521,6 +1535,11 @@ declaration:
                          instruction instead of a REGVAR.  */
                       YYERROR;
                     }
+
+                  /* function_specifier needs to know whether we are
+                     in a function declaration or a method
+                     declaration.  */
+                  pkl_parser->in_method_decl_p = ($1 == IS_METHOD);
                 }
         '=' function_specifier
         	{
@@ -1551,6 +1570,8 @@ declaration:
                   /* XXX: move to trans1.  */
                   PKL_AST_FUNC_NAME ($5)
                     = xstrdup (PKL_AST_IDENTIFIER_POINTER ($2));
+
+                  pkl_parser->in_method_decl_p = 0;
                 }
         | DEFVAR identifier '=' expression ';'
         	{

@@ -359,8 +359,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
 
          Instead of accessing the variable in the lexical environment,
          we push the implicit struct and sref it with the name of the
-         variable.  The implicit struct is the last argument to the
-         current function.  */
+         variable.  The implicit struct is the first argument passed
+         to the current function.  */
       if (var_function
           && PKL_AST_FUNC_METHOD_P (var_function)
           && (PKL_AST_DECL_STRUCT_FIELD_P (var_decl)
@@ -373,8 +373,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
           assert (var_name != NULL);
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
-                        var_function_back,
-                        PKL_AST_FUNC_NARGS (var_function)); /* SCT */
+                        var_function_back, 0);              /* SCT */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                         pvm_make_string (PKL_AST_IDENTIFIER_POINTER (var_name)));
                                                             /* SCT STR */
@@ -659,8 +658,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
             assert (var_name != NULL);
 
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR,
-                          var_function_back,
-                          PKL_AST_FUNC_NARGS (var_function)); /* VAL SCT */
+                          var_function_back, 0);              /* VAL SCT */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                           pvm_make_string (PKL_AST_IDENTIFIER_POINTER (var_name)));
                                                               /* VAL SCT STR */
@@ -1251,16 +1249,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   int nargs = PKL_AST_FUNC_NARGS (function);
   int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
 
-  /* Acknowledge the implicit last argument in methods.  */
-  if (method_p)
-    nargs++;
-
   /* This is a function prologue.  */
   pkl_asm_note (PKL_GEN_ASM,
                 PKL_AST_FUNC_NAME (function));
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PROLOG);
 
-  /* Reverse the arguments.  */
+  /* Reverse the arguments.
+
+     Note that in methods the implicit struct argument is passed as
+     the last actual.  However, we have to process it as the _first_
+     formal.  We achieve this by not reversing it, saving it in the
+     return stack temporarily.  */
+
+  if (method_p)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
+
   if (nargs == 2)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
   else if (nargs == 3)
@@ -1270,6 +1273,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
       }
   else if (nargs > 1)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nargs);
+
+  if (method_p)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
 
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this
@@ -1287,7 +1293,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   }
 
   /* Push the function environment, for the arguments.  */
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF, nargs);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF,
+                method_p ? nargs + 1 : nargs);
+
+  /* If in a method, register the implicit argument.  XXX: move to an
+     AST node between the function arguments and the function body,
+     and avoid subpasses in this handler.  */
+  if (method_p)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
 
   /* Process the function formal arguments.  */
   {
@@ -1300,12 +1313,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
         PKL_PASS_SUBPASS (arg);
       }
   }
-
-  /* If in a method, register the implicit argument.  XXX: move to an
-     AST node between the function arguments and the function body,
-     and avoid subpasses in this handler.  */
-  if (method_p)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
 
   /* Function body.  */
   PKL_PASS_SUBPASS (PKL_AST_FUNC_BODY (function));
