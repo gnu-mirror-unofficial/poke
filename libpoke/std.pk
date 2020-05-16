@@ -127,6 +127,22 @@ defun atoi = (string s, int b = 10) long:
 
 /*** String functions.  */
 
+/* Return the index in the string S of the first occurence of the
+   character C.  If C is not in S then return the size of S.  */
+
+defun strchr = (string s, uint<8> c) int<32>:
+  {
+    defvar i = 0;
+    for (t in s)
+      {
+        if (s[i] == c)
+          break;
+        i = i + 1;
+      }
+
+    return i;
+  }
+
 /* Return S with leading whitespace omitted.  */
 defun ltrim = (string s) string:
   {

@@ -8995,6 +8995,7 @@ work on strings:
 @menu
 * ltrim::		Remove leading whitespace.
 * rtrim::		Remove trailing whitespace.
+* strchr::		Locate a character in a string.
 @end menu
 
 @node ltrim
@@ -9020,6 +9021,20 @@ defun rtrim = (string s) string: @{ @dots{} @}
 @end example
 
 It returns a copy of the input string @code{s} with any trailing whitespace removed.
+
+@node strchr
+@subsection @code{strchr}
+@cindex @code{strchr}
+@cindex character, locating in a string
+The standard function @code{strchr} provides the following interface:
+
+@example
+defun strchr = (string s, uint<8> c) int<32>: @{ @dots{} @}
+@end example
+
+It returns the index of the first occurrence of the character @var{c}
+in the string @var{s}.  If the character is not found in the string,
+this function returns the length of the string.
 
 @node Sorting Functions
 @section Sorting Functions
