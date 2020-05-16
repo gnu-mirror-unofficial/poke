@@ -601,7 +601,8 @@ void
 pk_fatal (const char *errmsg)
 {
   pk_printf ("fatal error: %s\n", errmsg);
-  pk_printf ("This is a bug. Please report it to %s", PACKAGE_BUGREPORT);
+  pk_printf ("This is a bug. Please report it to %s\n",
+             PACKAGE_BUGREPORT);
   exit (EXIT_FAILURE);
 }
 

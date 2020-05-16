@@ -1,5 +1,9 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (pk_fatal): Add missing newline after message error.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.h (pk_fatal): Prototype.
 	* poke/poke.c (pk_fatal): New function.
 	* poke/pk-map.h (pk_map_resolve_map): Prototype.
