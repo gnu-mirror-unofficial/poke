@@ -1,5 +1,19 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd.c (pk_cmd_init): Use pk_fatal.
+	* poke/poke.c (initialize): Likewise.
+	* poke/pk-term.c (pk_term_init): Likewise.
+	* poke/pk-mi.c (pk_mi_read_from_client): Likewise.
+	* poke/pk-hserver.c (make_socket): Likewise.
+	(hserver_thread_worker): Likewise.
+	(pk_hserver_init): Likewise.
+	(pk_hserver_shutdown): Likewise.
+	(pk_hserver_make_hyperlink): Likewise.
+	* poke/pk-mi.c (pk_mi_loop): Likewise.
+	(pk_mi_send): Likewise.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (pk_fatal): Add missing newline after message error.
 
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>

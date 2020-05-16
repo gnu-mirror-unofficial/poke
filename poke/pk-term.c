@@ -24,6 +24,8 @@
 #include <unistd.h> /* For isatty */
 #include <textstyle.h>
 
+#include "poke.h"
+
 /* The following global is the libtextstyle output stream to use to
    emit contents to the terminal.  */
 static styled_ostream_t pk_ostream;
@@ -41,7 +43,7 @@ pk_term_init (int argc, char *argv[])
       if (strncmp (arg, "--color=", 8) == 0)
         {
           if (handle_color_option (arg + 8))
-            exit (EXIT_FAILURE);
+            pk_fatal ("handle_color_option failed");
         }
       else if (strncmp (arg, "--style=", 8) == 0)
         handle_style_option (arg + 8);

@@ -492,14 +492,12 @@ initialize (int argc, char *argv[])
   poke_compiler = pk_compiler_new (poke_datadir,
                                    &poke_term_if);
   if (poke_compiler == NULL)
-    exit (EXIT_FAILURE);
+    pk_fatal ("creating the incremental compiler");
 
   /* Load poke.pk  */
   if (!pk_load (poke_compiler, "poke"))
-    {
-      pk_puts ("poke: error: unable to load the poke module.\n");
-      exit (EXIT_FAILURE);
-    }
+    pk_fatal ("unable to load the poke module");
+
 
   /* Initialize the global map.  */
   pk_map_init ();
@@ -600,7 +598,8 @@ initialize_user (void)
 void
 pk_fatal (const char *errmsg)
 {
-  pk_printf ("fatal error: %s\n", errmsg);
+  if (errmsg)
+    pk_printf ("fatal error: %s\n", errmsg);
   pk_printf ("This is a bug. Please report it to %s\n",
              PACKAGE_BUGREPORT);
   exit (EXIT_FAILURE);

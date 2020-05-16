@@ -713,10 +713,7 @@ pk_cmd_init (void)
 
   /* Compile commands written in Poke.  */
   if (!pk_load (poke_compiler, "pk-cmd"))
-    {
-      pk_puts ("poke: error: unable to load the pk-cmd module.\n");
-      exit (EXIT_FAILURE);
-    }
+    pk_fatal ("unable to load the pk-cmd module");
 }
 
 void

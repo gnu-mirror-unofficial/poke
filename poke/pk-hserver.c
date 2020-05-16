@@ -87,7 +87,7 @@ make_socket (uint16_t port)
   if (sock < 0)
     {
       perror ("socket");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
 
   /* Give the socket a name. */
@@ -97,7 +97,7 @@ make_socket (uint16_t port)
   if (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
     {
       perror ("bind");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
 
   return sock;
@@ -131,7 +131,8 @@ read_from_client (int filedes)
     {
       /* Read error. */
       perror ("read");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
+      return 0;
     }
   else if (nbytes == 0)
     /* End-of-file. */
@@ -218,7 +219,7 @@ hserver_thread_worker (void *data)
       if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout) < 0)
         {
           perror ("select");
-          exit (EXIT_FAILURE);
+          pk_fatal (NULL);
         }
 
       /* Service all the sockets with input pending. */
@@ -236,7 +237,7 @@ hserver_thread_worker (void *data)
                 if (new < 0)
                   {
                     perror ("accept");
-                    exit (EXIT_FAILURE);
+                    pk_fatal (NULL);
                   }
                 FD_SET (new, &active_fd_set);
               }
@@ -277,7 +278,7 @@ pk_hserver_init (void)
   if (listen (hserver_socket, 1) < 0)
     {
       perror ("listen");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
 
   /* Get a suitable ephemeral port and initialize hserver_port and
@@ -287,7 +288,7 @@ pk_hserver_init (void)
   if (getsockname (hserver_socket, &clientname, &size) != 0)
     {
       perror ("getsockname");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
   hserver_port = ntohs (clientname.sin_port);
 
@@ -301,7 +302,7 @@ pk_hserver_init (void)
     {
       errno = ret;
       perror ("pthread_create");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
 }
 
@@ -320,7 +321,7 @@ pk_hserver_shutdown (void)
     {
       errno = ret;
       perror ("pthread_join");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
 }
 
@@ -335,7 +336,7 @@ pk_hserver_make_hyperlink (char type,
   if (gethostname (hostname, sizeof (hostname)) != 0)
     {
       perror ("gethostname");
-      exit (EXIT_FAILURE);
+      pk_fatal (NULL);
     }
 
   assert (type == 'i' || type == 'e');

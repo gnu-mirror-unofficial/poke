@@ -26,6 +26,8 @@
 #include <assert.h>
 #include <fcntl.h>
 
+#include "poke.h"
+
 #include "pk-mi-msg.h"
 #include "pk-mi-json.h"
 
@@ -141,7 +143,7 @@ pk_mi_read_from_client (int filedes)
   return -2;
 
  fatal:
-  exit (EXIT_FAILURE);
+  pk_fatal (NULL);
   return -1;
 }
 
@@ -215,7 +217,7 @@ pk_mi_loop (int fd)
                   NULL /* timeout */) < 0)
         {
           perror ("select");
-          exit (EXIT_FAILURE);
+          pk_fatal (NULL);
         }
 
       if (FD_ISSET (fd, &read_fd_set))
@@ -256,10 +258,7 @@ pk_mi_send (pk_mi_msg msg)
   const char *payload = pk_mi_msg_to_json (msg);
 
   if (!payload)
-    {
-      fprintf (stderr, "internal error: converting msg to json\n");
-      exit (EXIT_FAILURE);
-    }
+    pk_fatal ("converting MI msg to json");
 
   pk_mi_send_frame_msg (payload);
 }
