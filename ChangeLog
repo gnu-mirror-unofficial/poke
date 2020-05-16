@@ -1,3 +1,22 @@
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf.pk (Elf64_Rel): New type.
+	(SHT_REL): Define.
+	(SHF_WRITE): Likewise.
+	(SHF_ALLOC): Likewise.
+	(SHF_EXECINSTR): Likewise.
+	(SHF_MERGE): Likewise.
+	(SHF_STRINGS): Likewise.
+	(SHF_INFO_LINK): Likewise.
+	(SHF_LINK_ORDER): Likewise.
+	(SHF_OS_NONCONFORMING): Likewise.
+	(SHF_GROUP): Likewise.
+	(SHF_TLS): Likewise.
+	(SHF_COMPRESSED): Likewise.
+	(SHF_MASKOS): Likewise.
+	(SHF_MASKPROC): Likewise.
+	(Elf64_SectionFlags): New type.
+
 2020-05-15  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* libpoke/pkl.c: Remove include xalloc.h.

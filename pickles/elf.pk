@@ -36,15 +36,40 @@ deftype Elf64_Sxword = int<64>;
 deftype Elf64_Addr = offset<uint<64>,B>;
 deftype Elf64_Off = offset<uint<64>,B>;
 
-defvar SHT_STRTAB = 3;
-defvar SHT_RELA = 4;
-defvar SHT_DYNSYM = 11;
+/****** Relocation Entries.  ******/
+
+/* r_sym is the symbol table index with respect to which the
+   relocation must be made.
+
+   r_type is the type of relocation to apply, which is
+   architecture-specific.  See the elf-ARCH pickles.  */
+
+deftype Elf64_RelInfo =
+  struct
+  {
+    uint<32> r_sym @ get_endian == ENDIAN_BIG ? 0#b : 32#b;
+    uint<32> r_type @ get_endian == ENDIAN_BIG ? 32#b : 0#b;
+  };
+
+/* r_offset holds a section offset in relocatable files, a virtual
+   address in executable and shared object files.
+
+   r_addend holds a constant value to be added to the relocation's
+   value.  In architectures using Rel relocations this addend is
+   somehow stored in the relocation's memory location.  */
+
+deftype Elf64_Rel =
+  struct
+  {
+    Elf64_Addr r_offset;
+    Elf64_RelInfo r_info;
+  };
 
 deftype Elf64_Rela =
   struct
   {
     Elf64_Addr r_offset;
-    Elf64_Xword r_info;
+    Elf64_RelInfo r_info;
     Elf64_Sxword r_addend;
   };
 
@@ -82,12 +107,86 @@ deftype Elf64_Sym =
     Elf64_Xword st_size;
   };
 
+/****** Sections.  ******/
+
+/* Section types.  */
+
+defvar SHT_STRTAB = 3;
+defvar SHT_RELA = 4;
+defvar SHT_REL = 9;
+defvar SHT_DYNSYM = 11;
+
+/* Section Attribute Flags.  */
+
+defvar SHF_WRITE = 0x1;
+defvar SHF_ALLOC = 0x2;
+defvar SHF_EXECINSTR = 0x4;
+defvar SHF_MERGE = 0x10;
+defvar SHF_STRINGS = 0x20;
+defvar SHF_INFO_LINK = 0x40;
+defvar SHF_LINK_ORDER = 0x80;
+defvar SHF_OS_NONCONFORMING = 0x100;
+defvar SHF_GROUP = 0x200;
+defvar SHF_TLS = 0x400;
+defvar SHF_COMPRESSED = 0x800;
+defvar SHF_MASKOS = 0x0ff0_0000;
+defvar SHF_MASKPROC = 0xf000_0000;
+
+deftype Elf64_SectionFlags =
+  struct
+  {
+    Elf64_Xword flags;
+
+    method _print = void:
+      {
+        print "#<";
+        if (flags & SHF_WRITE)
+          print "WRITE ";
+        if (flags & SHF_ALLOC)
+          print "ALLOC ";
+        if (flags & SHF_EXECINSTR)
+          print "EXECINSTR ";
+        if (flags & SHF_MERGE)
+          print "MERGE ";
+        if (flags & SHF_STRINGS)
+          print "STRINGS ";
+        if (flags & SHF_INFO_LINK)
+          print "INFO_LINK ";
+        if (flags & SHF_LINK_ORDER)
+          print "LINK_ORDER ";
+        if (flags & SHF_OS_NONCONFORMING)
+          print "OS_NONCONFORMING ";
+        if (flags & SHF_GROUP)
+          print "GROUP ";
+        if (flags & SHF_TLS)
+          print "TLS ";
+        if (flags & SHF_COMPRESSED)
+          print "COMPRESSED ";
+        if (flags & SHF_MASKOS)
+          /* XXX call os-specific printer in elf-OS.pk */
+          ;
+        if (flags & SHF_MASKPROC)
+          /* XXX call arch-specific printer in elf-ARCH.pk */
+          ;
+        print ">";
+      }
+  };
+
+/* sh_name specifies the name of the section.  It is an index into the
+   file's string table.
+
+   sh_type is the type of the section, one of the SHT_* values defined
+   above.
+
+   sh_flags is the ORed value of the 1-bit flags SHF_* defined
+   above.  */
+
 deftype Elf64_Shdr =
   struct
   {
     offset<Elf_Word,B> sh_name;
     Elf_Word sh_type;
-    Elf64_Xword sh_flags;
+    Elf64_SectionFlags sh_flags;
     Elf64_Addr sh_addr;
     Elf64_Off sh_offset;
     offset<Elf64_Xword,B> sh_size;
