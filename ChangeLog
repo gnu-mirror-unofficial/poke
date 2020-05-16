@@ -1,5 +1,13 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.h (pk_fatal): Prototype.
+	* poke/poke.c (pk_fatal): New function.
+	* poke/pk-map.h (pk_map_resolve_map): Prototype.
+	* poke/pk-map.c (pk_map_resolve_map): New function.
+	* poke/pk-cmd-map.c (pk_cmd_map_load): use pk_map_resolve_map.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* run.in (POKEMAPSDIR): Define.
 	* poke/poke.h (poke_mapsdir): Define.
 	* poke/poke.c (poke_mapsdir): New global.

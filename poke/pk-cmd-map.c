@@ -284,15 +284,15 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static int
 pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* map load FILENAME [,#IOS] */
+  /* map load MAPNAME [,#IOS] */
 
-  int ios_id;
-  const char *filename;
+  int ios_id, filename_p;
+  const char *mapname, *filename;
   char *emsg;
 
   assert (argc == 2);
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  filename = PK_CMD_ARG_STR (argv[0]);
+  mapname = PK_CMD_ARG_STR (argv[0]);
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
@@ -306,6 +306,15 @@ pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
     }
 
+  filename_p = (mapname[0] == '.' || mapname[0] == '/');
+  filename = pk_map_resolve_map (mapname, filename_p);
+  if (!filename)
+    {
+      pk_printf (_("No such map `%s'\n"), mapname);
+      return 0;
+    }
+
+  /* XXX pass the mapname.  */
   if (!pk_map_load_file (ios_id, filename, &emsg))
     {
       if (emsg)
@@ -405,7 +414,8 @@ const struct pk_cmd map_show_cmd =
    NULL};
 
 const struct pk_cmd map_load_cmd =
-  {"load", "f,?t", 0, PK_CMD_F_REQ_IO, NULL, pk_cmd_map_load, "load FILENAME [,#IOS]",
+  {"load", "s,?t", 0, PK_CMD_F_REQ_IO, NULL, pk_cmd_map_load, "load MAPNAME [,#IOS]",
+   /* XXX use a completion function for maps.  */
    rl_filename_completion_function};
 
 const struct pk_cmd map_save_cmd =

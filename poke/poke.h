@@ -45,6 +45,7 @@ extern char *poke_cmdsdir;
 extern char *poke_doc_viewer;
 
 void pk_print_version (void);
+void pk_fatal (const char *errmsg);
 
 static inline void
 pk_assert_alloc (const void *m)

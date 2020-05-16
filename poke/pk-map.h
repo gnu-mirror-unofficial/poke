@@ -165,6 +165,16 @@ pk_map pk_map_get_maps (int ios_id);
 
 pk_map pk_map_search (int ios_id, const char *name);
 
+/* Resolve the name of a map file.
+
+   If FILENAME_P is 1 then MAPNAME refers to a file, like `foo.map'.
+   Otherwise MAPNAME contains the name of a map, like `foo'.
+
+   Return the full path to the file containing the map.  If no file is
+   found, then return NULL.  */
+
+char *pk_map_resolve_map (const char *mapname, int filename_p);
+
 /* Load a map from the given file.
 
    IOS_ID is the IO space where to install the loaded map.

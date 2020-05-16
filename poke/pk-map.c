@@ -531,3 +531,50 @@ pk_map_load_file (int ios_id,
 
   return 1;
 }
+
+char *
+pk_map_resolve_map (const char *mapname, int filename_p)
+{
+  pk_val val;
+  const char *map_load_path;
+  char *full_filename = NULL;
+
+  val = pk_decl_val (poke_compiler, "map_load_path");
+  if (val == PK_NULL)
+    pk_fatal ("couldn't get `map_load_path'");
+
+  if (pk_val_type (val) != PK_STRING)
+    pk_fatal ("map_load_path should be a string");
+
+  map_load_path = pk_string_str (val);
+
+  /* Traverse the directories in the load path and try to load the
+     requested map.  */
+  {
+    const char *ext = filename_p ? "" : ".map";
+    const char *s, *e;
+
+    char *fixed_load_path
+      = pk_str_replace (map_load_path, "%DATADIR%", PKGDATADIR);
+
+    for (s = fixed_load_path, e = s; *e; s = e + 1)
+      {
+        /* Ignore empty entries. */
+        if ((e = strchrnul (s, ':')) == s)
+          continue;
+
+        asprintf (&full_filename, "%.*s/%s%s", (int) (e - s), s, mapname, ext);
+
+        if (pk_file_readable (full_filename) == NULL)
+          break;
+
+        free (full_filename);
+        full_filename = NULL;
+      }
+
+    if (fixed_load_path != map_load_path)
+      free (fixed_load_path);
+  }
+
+  return full_filename;
+}
