@@ -139,36 +139,38 @@ deftype Elf64_SectionFlags =
 
     method _print = void:
       {
-        print "#<";
+        defvar s = "";
+
         if (flags & SHF_WRITE)
-          print "WRITE ";
+          s = s + "WRITE,";
         if (flags & SHF_ALLOC)
-          print "ALLOC ";
+          s = s + "ALLOC,";
         if (flags & SHF_EXECINSTR)
-          print "EXECINSTR ";
+          s = s + "EXECINSTR,";
         if (flags & SHF_MERGE)
-          print "MERGE ";
+          s = s + "MERGE,";
         if (flags & SHF_STRINGS)
-          print "STRINGS ";
+          s = s + "STRINGS,";
         if (flags & SHF_INFO_LINK)
-          print "INFO_LINK ";
+          s = s + "INFO_LINK,";
         if (flags & SHF_LINK_ORDER)
-          print "LINK_ORDER ";
+          s = s + "LINK_ORDER,";
         if (flags & SHF_OS_NONCONFORMING)
-          print "OS_NONCONFORMING ";
+          s = s + "OS_NONCONFORMING,";
         if (flags & SHF_GROUP)
-          print "GROUP ";
+          s = s + "GROUP,";
         if (flags & SHF_TLS)
-          print "TLS ";
+          s = s + "TLS,";
         if (flags & SHF_COMPRESSED)
-          print "COMPRESSED ";
+          s = s + "COMPRESSED,";
         if (flags & SHF_MASKOS)
           /* XXX call os-specific printer in elf-OS.pk */
           ;
         if (flags & SHF_MASKPROC)
           /* XXX call arch-specific printer in elf-ARCH.pk */
           ;
-        print ">";
+
+        print "#<" + rtrim (s, ",") + ">";
       }
   };
 
