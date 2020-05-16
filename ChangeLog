@@ -1,5 +1,12 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl.h (pkl_defvar): Prototype.
+	* libpoke/pkl.c (pkl_defvar): Define.
+	* libpoke/libpoke.h (pk_defvar): Prototype.
+	* libpoke/libpoke.c (pk_defvar): Define.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_SectionFlags): Improve pretty-printer.
 
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>

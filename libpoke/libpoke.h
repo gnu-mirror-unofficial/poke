@@ -298,6 +298,14 @@ int pk_decl_p (pk_compiler pkc, const char *name, int kind);
 
 pk_val pk_decl_val (pk_compiler pkc, const char *name);
 
+/* Declare a variable in the global environment of the given
+   incremental compiler.
+
+   If the operation is successful, return 1.  If a variable with name
+   VARNAME already exists in the environment, return 0.  */
+
+int pk_defvar (pk_compiler pkc, const char *varname, pk_val val);
+
 /* Get and set properties of the incremental compiler.  */
 
 int pk_obase (pk_compiler pkc);

@@ -186,6 +186,14 @@ char *pkl_resolve_module (pkl_compiler compiler, const char *module,
 int pkl_load (pkl_compiler compiler, const char *module)
   __attribute__ ((visibility ("hidden")));
 
+/* Declare a variable in the global environmnt.
+
+   If there is already a variable defined with the given name, return
+   0.  Otherwise return 1.  */
+
+int pkl_defvar (pkl_compiler compiler,
+                const char *varname, pvm_val val);
+
 /* XXX the functions below are really internal to PKL.  */
 
 /* Given the path to a module file, determine the module is already

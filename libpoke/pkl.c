@@ -669,3 +669,73 @@ pkl_load (pkl_compiler compiler, const char *module)
 
   return 1;
 }
+
+int
+pkl_defvar (pkl_compiler compiler,
+            const char *varname, pvm_val val)
+{
+  pkl_ast ast = NULL;
+  pkl_ast_node name = NULL;
+  pkl_ast_node initial = NULL;
+  pkl_ast_node initial_type = NULL;
+  pkl_ast_node decl = NULL;
+
+  ast = pkl_ast_init ();
+  if (!ast)
+    goto error;
+
+  name = pkl_ast_make_identifier (ast, varname);
+  if (!name)
+    goto error;
+
+  /* The type of the initial.  */
+  /* XXX: move this to a pvm_val_to_ast_type function.  */
+  if (PVM_IS_INT (val))
+    initial_type = pkl_ast_make_integral_type (ast,
+                                               PVM_VAL_INT_SIZE (val),
+                                               1);
+  else if (PVM_IS_UINT (val))
+    initial_type = pkl_ast_make_integral_type (ast,
+                                               PVM_VAL_UINT_SIZE (val),
+                                               0);
+  else if (PVM_IS_LONG (val))
+    initial_type = pkl_ast_make_integral_type (ast,
+                                               PVM_VAL_LONG_SIZE (val),
+                                               1);
+  else if (PVM_IS_ULONG (val))
+    initial_type = pkl_ast_make_integral_type (ast,
+                                               PVM_VAL_ULONG_SIZE (val),
+                                               0);
+  else if (PVM_IS_STR (val))
+    initial_type = pkl_ast_make_string_type (ast);
+  else
+    /* XXX support offsets, arrays and structs.  */
+    assert (0);
+    
+  /* Initial is a dummy, with the right type.  */
+  initial = pkl_ast_make_integer (ast, 0);
+  if (!initial)
+    goto error;
+  PKL_AST_TYPE (initial) = ASTREF (initial_type);
+  
+  decl = pkl_ast_make_decl (ast,
+                            PKL_AST_DECL_KIND_VAR,
+                            name,
+                            initial,
+                            "<libpoke>");
+  if (!decl)
+    goto error;
+
+  if (!pkl_env_register (compiler->env,
+                         PKL_ENV_NS_MAIN,
+                         varname,
+                         decl))
+    /* A variable with the given name is already registered.  */
+    goto error;
+
+  return 1;
+
+ error:
+  pkl_ast_free (ast);
+  return 0;
+}

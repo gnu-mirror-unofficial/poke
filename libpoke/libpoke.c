@@ -557,6 +557,18 @@ pk_decl_val (pk_compiler pkc, const char *name)
 }
 
 int
+pk_defvar (pk_compiler pkc, const char *varname, pk_val val)
+{
+  pvm_env runtime_env = pvm_get_env (pkc->vm);
+
+  if (!pkl_defvar (pkc->compiler, varname, val))
+    return 0;
+  pvm_env_register (runtime_env, val);
+
+  return 1;
+}
+
+int
 pk_obase (pk_compiler pkc)
 {
   return pvm_obase (pkc->vm);
