@@ -86,6 +86,14 @@ char *poke_infodir;
 
 char *poke_picklesdir;
 
+/* The following global contains the directory holding the standard
+   map files.  In an installed poke, this is the same than
+   poke_datadir/maps, but the POKE_MAPSDIR environment variable can be
+   set to a different value, which is mainly to run an uinstalled
+   poke.  */
+
+char *poke_mapsdir;
+
 /* The following global contains the directory holding the help
    support files.  In an installed poke, this is the same than
    poke_datadir, but the POKE_DOCDIR environment variable can be set
@@ -462,6 +470,13 @@ initialize (int argc, char *argv[])
       pk_assert_alloc (poke_picklesdir);
     }
 
+  poke_mapsdir = getenv ("POKEMAPSDIR");
+  if (poke_mapsdir == NULL)
+    {
+      poke_mapsdir = pk_str_concat (poke_datadir, "/maps", NULL);
+      pk_assert_alloc (poke_mapsdir);
+    }
+
   poke_docdir = getenv ("POKEDOCDIR");
   if (poke_docdir == NULL)
     poke_docdir = poke_datadir;
@@ -478,6 +493,13 @@ initialize (int argc, char *argv[])
                                    &poke_term_if);
   if (poke_compiler == NULL)
     exit (EXIT_FAILURE);
+
+  /* Load poke.pk  */
+  if (!pk_load (poke_compiler, "poke"))
+    {
+      pk_puts ("poke: error: unable to load the poke module.\n");
+      exit (EXIT_FAILURE);
+    }
 
   /* Initialize the global map.  */
   pk_map_init ();

@@ -711,13 +711,13 @@ pkl_defvar (pkl_compiler compiler,
   else
     /* XXX support offsets, arrays and structs.  */
     assert (0);
-    
+
   /* Initial is a dummy, with the right type.  */
   initial = pkl_ast_make_integer (ast, 0);
   if (!initial)
     goto error;
   PKL_AST_TYPE (initial) = ASTREF (initial_type);
-  
+
   decl = pkl_ast_make_decl (ast,
                             PKL_AST_DECL_KIND_VAR,
                             name,

@@ -1961,7 +1961,7 @@ The poke utility
 ~~~~~~~~~~~~~~~~
 
 Main program
-  ``poke/poke.h``, ``poke/poke.c``
+  ``poke/poke.h``, ``poke/poke.c``, ``poke/poke.pk``
 
 Infrastructure for writing poke commands
   ``poke/pk-cmd.h``, ``poke/pk-cmd.c``

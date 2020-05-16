@@ -1,5 +1,16 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* run.in (POKEMAPSDIR): Define.
+	* poke/poke.h (poke_mapsdir): Define.
+	* poke/poke.c (poke_mapsdir): New global.
+	(initialize): Initialize the value of poke_mapsdir.
+	(initialize): Load poke.pk.
+	* poke/poke.pk: New file.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add poke.pk.
+	* HACKING: Update to mention poke.pk.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl.h (pkl_defvar): Prototype.
 	* libpoke/pkl.c (pkl_defvar): Define.
 	* libpoke/libpoke.h (pk_defvar): Prototype.
