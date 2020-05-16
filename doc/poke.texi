@@ -8993,8 +8993,8 @@ The Poke standard library provides the following functions to do
 work on strings:
 
 @menu
-* ltrim::		Remove leading whitespace.
-* rtrim::		Remove trailing whitespace.
+* ltrim::		Remove leading characters.
+* rtrim::		Remove trailing characters.
 * strchr::		Locate a character in a string.
 @end menu
 
@@ -9005,10 +9005,11 @@ work on strings:
 The standard function @code{ltrim} provides the following interface:
 
 @example
-defun ltrim = (string s) string: @{ @dots{} @}
+defun ltrim = (string s, string cs = " \t") string: @{ @dots{} @}
 @end example
 
-It returns a copy of the input string @code{s} with any leading whitespace removed.
+It returns a copy of the input string @code{s} with any leading
+character that also appears in @var{cs} removed.
 
 @node rtrim
 @subsection @code{rtrim}
@@ -9017,10 +9018,11 @@ It returns a copy of the input string @code{s} with any leading whitespace remov
 The standard function @code{rtrim} provides the following interface:
 
 @example
-defun rtrim = (string s) string: @{ @dots{} @}
+defun rtrim = (string s, string cs = " \t") string: @{ @dots{} @}
 @end example
 
-It returns a copy of the input string @code{s} with any trailing whitespace removed.
+It returns a copy of the input string @code{s} with any trailing
+character that also appears in @var{cs} removed.
 
 @node strchr
 @subsection @code{strchr}

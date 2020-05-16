@@ -143,27 +143,31 @@ defun strchr = (string s, uint<8> c) int<32>:
     return i;
   }
 
-/* Return S with leading whitespace omitted.  */
-defun ltrim = (string s) string:
+/* Return S with leading characters belonging to the given set
+   omitted.  By default the omitted characters are whitespaces.  */
+defun ltrim = (string s, string cs = " \t") string:
   {
+    defvar cs_length = cs'length;
     defvar result = "";
     for (c in s)
       {
-	if ((c != ' ' && c != '\t') || result != "")
+	if (strchr (cs, c) == cs_length || result != "")
 	  result = result + c as string;
       }
     return result;
   }
 
-/* Return S with trailing whitespace omitted.  */
-defun rtrim = (string s) string:
+/* Return S with trailing character belonging tot he given set
+   omitted.  By default the omitted characters are whitespaces.  */
+defun rtrim = (string s, string cs = " \t") string:
   {
+    defvar cs_length = cs'length;
     defvar result = "";
     defvar i = s'length;
     while (i > 0)
     {
       defvar c = s[i - 1];
-      if ((c != ' ' && c != '\t') || result != "")
+      if (strchr (cs, c) == cs_length || result != "")
         result = c as string + result;
       i = i - 1;
     }

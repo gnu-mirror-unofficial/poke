@@ -1,5 +1,18 @@
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/std.pk (ltrim): Support character sets.
+	(rtrim): Likewise.
+	* doc/poke.texi (ltrim): Update.
+	(rtrim): Likewise.
+	* testsuite/poke.std/ltrim-1.pk: Renamed from ltrim.pk.
+	* testsuite/poke.std/rtrim-1.pk: Renamed from rtrim.pk.
+	* testsuite/poke.std/ltrim-2.pk: New test.
+	* testsuite/poke.std/rtrim-2.pk: Likewise.
+	* testsuite/poke.std/ltrim-3.pk: Likewise.
+	* testsuite/poke.std/rtrim-3.pk: Likewise.
+
+2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/std.pk (strchr): New function.
 	* doc/poke.texi (strchr): New section.
 	* testsuite/poke.std/strchr-3.pk: Likewise.
