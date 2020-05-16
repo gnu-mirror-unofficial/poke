@@ -18,7 +18,6 @@
 
 #include <config.h>
 
-#include <xalloc.h>
 #include <string.h>
 #include <assert.h>
 #include <signal.h>
@@ -74,7 +73,9 @@ struct pvm
 pvm
 pvm_init (void)
 {
-  pvm apvm = xzalloc (sizeof (struct pvm));
+  pvm apvm = calloc (1, sizeof (struct pvm));
+  if (!apvm)
+    return NULL;
 
   /* Initialize the memory allocation subsystem.  */
   pvm_alloc_initialize ();

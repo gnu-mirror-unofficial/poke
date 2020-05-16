@@ -1,5 +1,10 @@
 2020-05-16  Tim Rühsen  <tim.ruehsen@gmx.de>
 
+	* libpoke/pvm.c: Remove include xalloc.h.
+	(pvm_init): Use calloc instead of xzalloc.
+
+2020-05-16  Tim Rühsen  <tim.ruehsen@gmx.de>
+
 	* libpoke/pkl-parser.c: Remove include xalloc.h.
 	(pkl_parser_init): Use calloc instead of xzalloc.
 	(pkl_parse_file): Use strdup instead of xstrdup.
