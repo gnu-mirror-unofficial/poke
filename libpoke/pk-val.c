@@ -154,22 +154,115 @@ pk_val_offset (pk_val val)
 }
 
 int
-pk_val_type (pk_val val)
+pk_type_code (pk_val val)
 {
-  if (PVM_IS_INT (val) || PVM_IS_LONG (val))
-    return PK_INT;
-  else if (PVM_IS_UINT (val) || PVM_IS_ULONG (val))
-    return PK_UINT;
-  else if (PVM_IS_STR (val))
-    return PK_STRING;
-  else if (PVM_IS_OFF (val))
-    return PK_OFFSET;
-  else if (PVM_IS_ARR (val))
-    return PK_ARRAY;
-  else if (PVM_IS_SCT (val))
-    return PK_STRUCT;
-  else if (PVM_IS_CLS (val))
-    return PK_CLOSURE;
-  else
-    return PK_UNKNOWN;
+  switch (PVM_VAL_TYP_CODE (val))
+    {
+    case PVM_TYPE_INTEGRAL:
+      return PK_INT;
+    case PVM_TYPE_STRING:
+      return PK_STRING;
+    case PVM_TYPE_ARRAY:
+      return PK_ARRAY;
+    case PVM_TYPE_STRUCT:
+      return PK_STRUCT;
+    case PVM_TYPE_OFFSET:
+      return PK_OFFSET;
+    case PVM_TYPE_CLOSURE:
+      return PK_CLOSURE;
+    case PVM_TYPE_ANY:
+      return PK_ANY;
+    default:
+      return PK_UNKNOWN;
+    }
+}
+
+pk_val
+pk_make_array (pk_val nelem, pk_val array_type)
+{
+  return pvm_make_array (nelem, array_type);
+}
+
+pk_val
+pk_make_integral_type (pk_val size, pk_val signed_p)
+{
+  return pvm_make_integral_type (size, signed_p);
+}
+
+pk_val
+pk_integral_type_size (pk_val type)
+{
+  return PVM_VAL_TYP_I_SIZE (type);
+}
+
+pk_val
+pk_integral_type_signed_p (pk_val type)
+{
+  return PVM_VAL_TYP_I_SIGNED (type);
+}
+
+pk_val
+pk_make_string_type (void)
+{
+  return pvm_make_string_type ();
+}
+
+pk_val
+pk_make_offset_type (pk_val base_type, pk_val unit)
+{
+  return pvm_make_offset_type (base_type, unit);
+}
+
+pk_val
+pk_offset_type_base_type (pk_val type)
+{
+  return PVM_VAL_TYP_O_BASE_TYPE (type);
+}
+
+pk_val
+pk_offset_type_unit (pk_val type)
+{
+  return PVM_VAL_TYP_O_UNIT (type);
+}
+
+pk_val
+pk_make_any_type (void)
+{
+  return pvm_make_any_type ();
+}
+
+pk_val
+pk_make_array_type (pk_val etype, pk_val bound)
+{
+  return pvm_make_array_type (etype, bound);
+}
+
+pk_val
+pk_array_type_etype (pk_val type)
+{
+  return PVM_VAL_TYP_A_ETYPE (type);
+}
+
+pk_val
+pk_array_type_bound (pk_val type)
+{
+  return PVM_VAL_TYP_A_BOUND (type);
+}
+
+pk_val
+pk_typeof (pk_val val)
+{
+  return pvm_typeof (val);
+}
+
+pk_val
+pk_array_elem_val (pk_val array, uint64_t idx)
+{
+  return PVM_VAL_ARR_ELEM_VALUE (array, idx);
+}
+
+pk_val
+pk_array_elem_boffset (pk_val array, uint64_t idx)
+{
+  return PVM_VAL_ARR_ELEM_OFFSET (array, idx);
 }

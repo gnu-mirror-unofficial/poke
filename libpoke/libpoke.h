@@ -459,6 +459,106 @@ pk_val pk_offset_magnitude (pk_val val);
 
 pk_val pk_offset_unit (pk_val val);
 
+/* Arrays.  */
+
+/* Build and return a poke array.
+
+   NELEM is the number of the elements in the array.
+   ARRAY_TYPE is the type of the array.
+
+   The new array is created containing PK_NULL values.  */
+
+pk_val pk_make_array (pk_val nelem, pk_val array_type);
+
+/* Get the value of the element of an array.
+
+   ARRAY is the array value.
+   IDX is the index of the element in the array.  */
+
+pk_val pk_array_elem_val (pk_val array, uint64_t idx);
+
+/* Get the bit-offset of the element of an array, relative to the
+   beginning of the array.
+
+   ARRAY is the array value.
+   IDX is the index of the element in the array.
+
+   The returned bit-offset is an uint<64>.  */
+
+pk_val pk_array_elem_val_boffset (pk_val array, uint64_t idx);
+
+/* Integral types.  */
+
+/* Build and return an integral type.
+
+   SIZE is an uint<64> with the size, in bits, of the integral type.
+   SIGNED_P is an int<32> with a boolean specifying whether the type
+   is signed or not.  */
+
+pk_val pk_make_integral_type (pk_val size, pk_val signed_p);
+
+/* Return an uint<64> containing the size, in bits, of the given
+   integral type.  */
+
+pk_val pk_integral_type_size (pk_val type);
+
+/* Return an int<32> with a boolean specifying whether the given
+   integral type is signed or not.  */
+
+pk_val pk_integral_type_signed_p (pk_val type);
+
+/* The string type.  */
+
+/* Build and return the string type.  */
+
+pk_val pk_make_string_type (void);
+
+/* The `any' type.  */
+
+/* Build and return the `any' type.  */
+
+pk_val pk_make_any_type (void);
+
+/* Offset types.  */
+
+/* Build and return an offset type.
+
+   BASE_TYPE is an integral type denoting the type of the base value
+   of the offset.
+
+   UNIT is an uint<64> with the unit of the offset type.  The unit is
+   a multiple of the base unit, which is the bit.  */
+
+pk_val pk_make_offset_type (pk_val base_type, pk_val unit);
+
+/* Get the base type of a given offset type.  */
+
+pk_val pk_offset_type_base_type (pk_val type);
+
+/* Get the unit of a given offset type.  */
+
+pk_val pk_offset_type_unit (pk_val type);
+
+/* Array types.  */
+
+/* Build and return an array type.
+
+   ETYPE is the type of the elements of the array.
+
+   BOUND is an uint<64> with the number of elements of the
+   array... XXX or a closure?? cant remember. At the moment the PKL
+   compiler generates PVM_NULL for this... */
+
+pk_val pk_make_array_type (pk_val etype, pk_val bound);
+
+/* Get the type of the elements of the given array type.  */
+
+pk_val pk_array_type_etype (pk_val type);
+
+/* Get the bound of the given array type.  */
+
+pk_val pk_array_type_bound (pk_val type);
+
 /* Mapped values.  */
 
 /* Return a boolean indicating whether the given value is mapped or
@@ -480,6 +580,10 @@ pk_val pk_val_offset (pk_val val);
 
 /* Return the type of the given value.  */
 
+pk_val pk_typeof (pk_val val);
+
+/* Given a type value, return its code.  */
+
 #define PK_UNKNOWN 0
 #define PK_INT     1
 #define PK_UINT    2
@@ -488,8 +592,9 @@ pk_val pk_val_offset (pk_val val);
 #define PK_ARRAY   5
 #define PK_STRUCT  6
 #define PK_CLOSURE 7
+#define PK_ANY     8
 
-int pk_val_type (pk_val val);
+int pk_type_code (pk_val val);
 
 /* Print the given value.   */
 

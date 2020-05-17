@@ -1,5 +1,44 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map.c (pk_map_load_parsed_map): Use pk_type_code and
+	pk_typeof.
+	(pk_map_resolve_map): Likewise.
+	(pk_map_load_parsed_map): Likewise.
+	* libpoke/libpoke.h (pk_make_array): Prototype.
+	(pk_make_integral_type): Likewise.
+	(pk_integral_type_size): Likewise.
+	(pk_integral_type_signed_p): Likewise.
+	(pk_make_string_type): Likewise.
+	(pk_make_offset_type): Likewise.
+	(pk_offset_type_base_type): Likewise.
+	(pk_offset_type_unit): Likewise.
+	(pk_make_any_type): Likewise.
+	(pk_make_array_type): Likewise.
+	(pk_array_type_etype): Likewise.
+	(pk_array_type_bound): Likewise.
+	(pk_val_typeof): Likewise.
+	(pk_type_code): Rename from pk_val_type.
+	(pk_array_elem_val): Prototype.
+	(pk_array_elem_boffset): Likewise.
+	* libpoke/pk-val.c (pk_make_integral_type): New function.
+	(pk_integral_type_size): Likewise.
+	(pk_integral_type_signed_p): Likewise.
+	(pk_make_array): Likewise.
+	(pk_make_string_type): Likewise.
+	(pk_make_offset_type): Likewise.
+	(pk_offset_type_base_type): Likewise.
+	(pk_offset_type_unit): Likewise.
+	(pk_make_any_type): Likewise.
+	(pk_make_array_type): Likewise.
+	(pk_array_type_etype): Likewise.
+	(pk_array_type_bound): Likewise.
+	(pk_val_typeof): Likewise.
+	(pk_type_code): Rename from pk_val_type.
+	(pk_array_elem_val): New function.
+	(pk_array_elem_boffset): Likewise.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl.h (pkl_compile_call): Prototype.
 	* libpoke/pkl.c (pkl_compile_call): Define.
 	* libpoke/libpoke.h (PK_CLOSURE): Define.
