@@ -1,5 +1,19 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-ios.h: New file.
+	* poke/pk-ios.c: Likewise.
+	* poke/Makefile.am (poke_SOURCES): Add pk-ios.h and pk-ios.c.
+	* poke/pk-cmd-ios.c (pk_cmd_file): Use pk_open_ios.
+	* poke/poke.c (NO_AUTO_MAP_ARG): Define.
+	(long_options): Add no-auto-map info.
+	(parse_args_1): Handle NO_AUTO_MAP_ARG.
+	(parse_args_2): Likewise.
+	(print_help): Document --no-auto-map.
+	(parse_args_2): Use pk_open_ios to open files specified in the
+	command line.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (poke_auto_map_p): Define.
 	* poke/poke.h: Likewise.
 	* poke/pk-cmd-set.c (set_auto_map): Define.

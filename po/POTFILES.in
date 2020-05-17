@@ -64,5 +64,7 @@ poke/pk-repl.c
 poke/pk-repl.h
 poke/pk-term.c
 poke/pk-term.h
+poke/pk-ios.c
+poke/pk-ios.h
 poke/poke.c
 poke/poke.h

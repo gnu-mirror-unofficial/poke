@@ -33,6 +33,7 @@ poke_SOURCES = poke.c poke.h \
                pk-cmd-ios.c pk-cmd-info.c pk-cmd-misc.c \
                pk-cmd-help.c pk-cmd-def.c pk-cmd-vm.c \
                pk-cmd-set.c pk-cmd-editor.c pk-cmd-map.c \
+               pk-ios.c pk-ios.h \
                pk-map.c pk-map.h pk-map-parser.h \
                pk-map-tab.y pk-map-lex.l
 

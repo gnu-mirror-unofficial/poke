@@ -24,13 +24,13 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <readline.h>
-#include <regex.h>
 #include "xalloc.h"
 
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-map.h"
 #include "pk-utils.h"
+#include "pk-ios.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif
@@ -88,98 +88,15 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  errno = 0;
-  if (PK_IOS_ERROR == pk_ios_open (poke_compiler, filename, 0, 1))
+  if (PK_IOS_ERROR == pk_open_ios (filename, 1 /* set_cur_p */))
     {
-      pk_printf (_("Error opening %s: %s\n"), filename,
-                 strerror (errno));
+      pk_term_class ("error");
+      pk_puts ("error: ");
+      pk_term_end_class ("error");
+
+      pk_printf (_("opening %s\n"), filename);
       return 0;
     }
-
-  /* Process the auto-map for this file.  */
-  if (poke_auto_map_p)
-  {
-    int i;
-    pk_val auto_map;
-    pk_val nelem;
-
-    auto_map = pk_decl_val (poke_compiler, "auto_map");
-    if (auto_map == PK_NULL)
-      pk_fatal ("auto_map is PK_NULL");
-
-    nelem = pk_array_nelem (auto_map);
-    for (i = 0; i < pk_uint_value (nelem); ++i)
-      {
-        pk_val auto_map_entry;
-        pk_val regex, mapname;
-        regex_t regexp;
-        regmatch_t matches;
-
-        auto_map_entry = pk_array_elem_val (auto_map, i);
-        if (pk_type_code (pk_typeof (auto_map_entry)) != PK_ARRAY
-            || pk_uint_value (pk_array_nelem (auto_map_entry)) != 2)
-          pk_fatal ("invalid entry in auto_val");
-
-        regex = pk_array_elem_val (auto_map_entry, 0);
-        if (pk_type_code (pk_typeof (regex)) != PK_STRING)
-          pk_fatal ("regexp should be a string in an auto_val entry");
-
-        mapname = pk_array_elem_val (auto_map_entry, 1);
-        if (pk_type_code (pk_typeof (mapname)) != PK_STRING)
-          pk_fatal ("mapname should be a string in an auto_val entry");
-
-        if (regcomp (&regexp, pk_string_str (regex),
-                     REG_EXTENDED | REG_NOSUB) != 0)
-          {
-            pk_term_class ("error");
-            pk_puts ("error: ");
-            pk_term_end_class ("error");
-
-            pk_printf ("invalid regexp `%s' in auto_map.  Skipping entry.\n",
-                       pk_string_str (regex));
-            continue;
-          }
-
-        if (regexec (&regexp, filename, 1, &matches, 0) == 0)
-          {
-            /* Load the map.  */
-
-            const char *map_filename
-              = pk_map_resolve_map (pk_string_str (mapname),
-                                    0 /* filename_p */);
-
-            if (!map_filename)
-              {
-                pk_term_class ("error");
-                pk_puts ("warning: ");
-                pk_term_end_class ("error");
-
-                pk_printf ("auto-map: unknown map `%s'",
-                           pk_string_str (mapname));
-                regfree (&regexp);
-                break;
-              }
-
-            if (!pk_map_load_file (pk_ios_get_id (pk_ios_cur (poke_compiler)),
-                                   map_filename,
-                                   NULL))
-              {
-                pk_term_class ("error");
-                pk_puts ("error: ");
-                pk_term_end_class ("error");
-
-                pk_printf ("auto-map: loading `%s'\n", pk_string_str (mapname));
-                regfree (&regexp);
-                break;
-              }
-
-            if (poke_interactive_p && !poke_quiet_p)
-              pk_printf ("auto-map: map `%s' loaded\n", pk_string_str (mapname));
-          }
-
-        regfree (&regexp);
-      }
-  }
 
   return 1;
 }

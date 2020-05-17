@@ -38,6 +38,7 @@
 #include "pk-utils.h"
 #include "pk-mi.h"
 #include "pk-map.h"
+#include "pk-ios.h"
 
 /* poke can be run either interactively (from a tty) or in batch mode.
    The following predicate records this.  */
@@ -142,6 +143,7 @@ enum
   COLOR_ARG,
   STYLE_ARG,
   MI_ARG,
+  NO_AUTO_MAP_ARG,
 };
 
 static const struct option long_options[] =
@@ -156,6 +158,7 @@ static const struct option long_options[] =
   {"color", required_argument, NULL, COLOR_ARG},
   {"style", required_argument, NULL, STYLE_ARG},
   {"mi", no_argument, NULL, MI_ARG},
+  {"no-auto-map", no_argument, NULL, NO_AUTO_MAP_ARG},
   {NULL, 0, NULL, 0},
 };
 
@@ -204,6 +207,7 @@ Machine interface:\n\
      no-wrap */
   pk_puts (_("\
   -q, --no-init-file                  do not load an init file.\n\
+      --no-auto-map                   disable auto-map.\n\
       --quiet                         be as terse as possible.\n\
       --help                          print a help message and exit.\n\
       --version                       show version and exit.\n"));
@@ -320,6 +324,9 @@ parse_args_1 (int argc, char *argv[])
 	      poke_mi_p = 1;
 	    }
           break;
+        case NO_AUTO_MAP_ARG:
+          poke_auto_map_p = 0;
+          break;
         default:
           break;
         }
@@ -383,6 +390,8 @@ parse_args_2 (int argc, char *argv[])
         case 'L':
           break;
         case MI_ARG:
+          /* Fallthrough.  */
+        case NO_AUTO_MAP_ARG:
           /* These are handled in parse_args_1.  */
           break;
           /* libtextstyle arguments are handled in pk-term.c, not
@@ -398,13 +407,16 @@ parse_args_2 (int argc, char *argv[])
   if (optind < argc)
     {
       char *filename = argv[optind++];
+      int xxx = poke_auto_map_p;
 
-      if (pk_ios_open (poke_compiler, filename, 0, 1) == PK_IOS_ERROR)
+      poke_auto_map_p = 0; /* XXX */
+      if (pk_open_ios (filename, 1 /* set_cur_p */) == PK_IOS_ERROR)
         {
           if (!poke_quiet_p)
             pk_printf (_("cannot open file %s\n"), filename);
           goto exit_failure;
         }
+      poke_auto_map_p = xxx; /* XXX */
 
       optind++;
     }
