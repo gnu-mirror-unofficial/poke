@@ -168,6 +168,8 @@ pk_val_type (pk_val val)
     return PK_ARRAY;
   else if (PVM_IS_SCT (val))
     return PK_STRUCT;
+  else if (PVM_IS_CLS (val))
+    return PK_CLOSURE;
   else
     return PK_UNKNOWN;
 }

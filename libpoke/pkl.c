@@ -552,6 +552,33 @@ pkl_set_quiet_p (pkl_compiler compiler, int quiet_p)
   compiler->quiet_p = quiet_p;
 }
 
+pvm_program
+pkl_compile_call (pkl_compiler compiler, pvm_val cls, pvm_val *ret,
+                  va_list ap)
+{
+  pvm_program program;
+  pkl_asm pasm;
+  pvm_val arg;
+
+  pasm = pkl_asm_new (NULL /* ast */, compiler, 1 /* prologue */);
+
+  /* Push the arguments for the function.  */
+  do
+    {
+      arg = va_arg (ap, pvm_val);
+      if (arg != PVM_NULL)
+        pkl_asm_insn (pasm, PKL_INSN_PUSH, arg);
+    }
+  while (arg != PVM_NULL);
+
+  /* Call the closure.  */
+  pkl_asm_insn (pasm, PKL_INSN_PUSH, cls);
+  pkl_asm_insn (pasm, PKL_INSN_CALL);
+
+  program = pkl_asm_finish (pasm, 1 /* epilogue */);
+  return program;
+}
+
 pvm
 pkl_get_vm (pkl_compiler compiler)
 {

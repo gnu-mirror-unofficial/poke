@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "pvm.h"
 
@@ -118,6 +119,23 @@ int pkl_execute_statement (pkl_compiler compiler, const char *buffer, const char
 
 pvm_program pkl_compile_expression (pkl_compiler compiler,
                                     const char *buffer, const char **end)
+  __attribute__ ((visibility ("hidden")));
+
+/* Compile a program that calls to a function.
+
+   CLS is the closure with the function to call.
+
+   RET is set to the value returned by the function, or to PK_NULL if
+   it is a void function.
+
+   AP contains a list of PVM values to be passed to the function as
+   arguments, terminated by PVM_NULL.
+
+   Return the compiled PVM program, or NULL if there is a problem
+   performing the operation.  */
+
+pvm_program pkl_compile_call (pkl_compiler compiler, pvm_val cls, pvm_val *ret,
+                              va_list ap)
   __attribute__ ((visibility ("hidden")));
 
 /* Return the VM associated with COMPILER.  */

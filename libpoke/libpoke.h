@@ -22,6 +22,7 @@
 #include <config.h>
 
 #include <stdint.h>
+#include <stdarg.h>
 
 typedef struct pk_compiler *pk_compiler;
 typedef struct pk_ios *pk_ios;
@@ -306,6 +307,22 @@ pk_val pk_decl_val (pk_compiler pkc, const char *name);
 
 int pk_defvar (pk_compiler pkc, const char *varname, pk_val val);
 
+/* Call a Poke function.
+
+   CLS is the closure for the function to call.
+
+   RET is set to the value returned by the function, or to PK_NULL if
+   it is a void function.
+
+   A variable number of function arguments follow, terminated by
+   PK_NULL.
+
+   Return 0 if there is a problem performing the operation, or if the
+   execution of the function results in an unhandled exception.
+   Return 1 otherwise.  */
+
+int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...);
+
 /* Get and set properties of the incremental compiler.  */
 
 int pk_obase (pk_compiler pkc);
@@ -470,6 +487,7 @@ pk_val pk_val_offset (pk_val val);
 #define PK_OFFSET  4
 #define PK_ARRAY   5
 #define PK_STRUCT  6
+#define PK_CLOSURE 7
 
 int pk_val_type (pk_val val);
 

@@ -1,3 +1,12 @@
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl.h (pkl_compile_call): Prototype.
+	* libpoke/pkl.c (pkl_compile_call): Define.
+	* libpoke/libpoke.h (PK_CLOSURE): Define.
+	(pk_call): Prototype.
+	* libpoke/libpoke.c (pk_call): Define.
+	* libpoke/pk-val.c (pk_val_type): Handle CLS values.
+
 2020-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd.c (pk_cmd_init): Use pk_fatal.
