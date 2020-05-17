@@ -1,3 +1,4 @@
 poke/pk-cmd.c
 poke/pk-repl.c
+poke/pk-map.c
 libpoke/pvm.jitter

@@ -1,5 +1,21 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl.c (pkl_lexical_cuckolding_p): Define.
+	(pkl_set_lexical_cuckolding_p): Likewise.
+	(pkl_set_alien_token_fn): Likewise.
+	(pkl_alien_token_fn): Likewise.
+	(struct pkl_compiler): New fields `lexical_cuckolding_p' and
+	`alien_token_fn'.
+	* libpoke/libpoke.c (pk_set_lexical_cuckolding_p): Define.
+	(pk_set_alien_token_fn): Likewise.
+	* poke/pk-cmd.c (pk_cmd_exec): Activate the lexical cuckolding
+	when executing Poke code in the REPL.
+	* poke/pk-map.c (pk_map_alien_token_handler): Define.
+	(pk_map_init): Install pk_map_alien_token_handler in
+	poke_compiler.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* maps/mp3.map: Fix tag.
 
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>

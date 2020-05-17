@@ -49,6 +49,14 @@
 #define PKL_COMPILING_PROGRAM    1
 #define PKL_COMPILING_STATEMENT  2
 
+
+/* The `pkl_compiler' struct holds the compiler state.
+
+   LEXICAL_CUCKOLDING_P is 1 if alien tokens are to be recognized.
+
+   ALIEN_TOKEN_FN is the user-provided handler for alien tokens.  This
+   field is NULL if the user didn't register a handler.  */
+
 struct pkl_compiler
 {
   pkl_env env;  /* Compiler environment.  */
@@ -60,6 +68,8 @@ struct pkl_compiler
 #define PKL_MODULES_STEP 8
   char **modules;
   int num_modules;
+  int lexical_cuckolding_p;
+  pkl_alien_token_handler_fn alien_token_fn;
 };
 
 pkl_compiler
@@ -550,6 +560,32 @@ void
 pkl_set_quiet_p (pkl_compiler compiler, int quiet_p)
 {
   compiler->quiet_p = quiet_p;
+}
+
+int
+pkl_lexical_cuckolding_p (pkl_compiler compiler)
+{
+  return compiler->lexical_cuckolding_p;
+}
+
+void
+pkl_set_lexical_cuckolding_p (pkl_compiler compiler,
+                              int lexical_cuckolding_p)
+{
+  compiler->lexical_cuckolding_p = lexical_cuckolding_p;
+}
+
+pkl_alien_token_handler_fn
+pkl_alien_token_fn (pkl_compiler compiler)
+{
+  return compiler->alien_token_fn;
+}
+
+void
+pkl_set_alien_token_fn (pkl_compiler compiler,
+                        pkl_alien_token_handler_fn cb)
+{
+  compiler->alien_token_fn = cb;
 }
 
 pvm_program

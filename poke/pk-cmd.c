@@ -600,6 +600,7 @@ pk_cmd_exec (const char *str)
           ecmd = cmd_alloc;
         }
 
+      pk_set_lexical_cuckolding_p (poke_compiler, 1);
       if (what == 0)
         {
           /* Declaration.  */
@@ -626,6 +627,7 @@ pk_cmd_exec (const char *str)
               pk_puts ("\n");
             }
         }
+      pk_set_lexical_cuckolding_p (poke_compiler, 0);
 
     cleanup:
       free (cmd_alloc);

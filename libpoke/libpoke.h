@@ -164,6 +164,25 @@ int pk_disassemble_expression (pk_compiler pkc, const char *str,
 
 void pk_set_quiet_p (pk_compiler pkc, int quiet_p);
 
+/* Install a handler for alien tokens in the incremental compiler.
+   The handler gets a string with the token identifier (for $foo it
+   would get `foo') and should return a string containing the
+   resolving identifier.  If the handler returns NULL, then the alien
+   token is not recognized as such in the compiler.  */
+
+typedef char *(*pk_alien_token_handler_fn) (const char *id);
+void pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb);
+
+/* Set the LEXICAL_CUCKOLDING_P flag in the compiler.  If this flag is
+   set, alien tokens are recognized and processed by calling the
+   handler installed by pk_set_alien_token_fn.
+
+   Note that the flag will be honored only if the user has installed a
+   handler for alien tokens.  */
+
+void pk_set_lexical_cuckolding_p (pk_compiler pkc,
+                                  int lexical_cuckolding_p);
+
 /* Complete the name of a variable, function or type declared in the
    global environment of the given icnremental compiler.
 

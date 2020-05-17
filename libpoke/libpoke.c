@@ -133,6 +133,18 @@ pk_set_quiet_p (pk_compiler pkc, int quiet_p)
   pkl_set_quiet_p (pkc->compiler, quiet_p);
 }
 
+void
+pk_set_lexical_cuckolding_p (pk_compiler pkc, int lexical_cuckolding_p)
+{
+  pkl_set_lexical_cuckolding_p (pkc->compiler, lexical_cuckolding_p);
+}
+
+void
+pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb)
+{
+  pkl_set_alien_token_fn (pkc->compiler, cb);
+}
+
 static char *
 complete_struct (pk_compiler pkc,
                  int *idx, const char *x, size_t len, int state)

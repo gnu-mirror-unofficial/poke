@@ -185,6 +185,27 @@ int pkl_quiet_p (pkl_compiler compiler)
 void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p)
   __attribute__ ((visibility ("hidden")));
 
+/* Get/install a handler for alien tokens.  */
+
+typedef char *(*pkl_alien_token_handler_fn) (const char *id);
+
+pkl_alien_token_handler_fn pkl_alien_token_fn (pkl_compiler compiler);
+
+void pkl_set_alien_token_fn (pkl_compiler compiler,
+                             pkl_alien_token_handler_fn cb)
+  __attribute__ ((visibility ("hidden")));
+
+/* Set/get the lexical_cuckolding_p flag in/from the compiler.  If
+   this flag is set, the compiler will recognize alien tokens and
+   call-back to the client for their resolution.  */
+
+int pkl_lexical_cuckolding_p (pkl_compiler compiler)
+    __attribute__ ((visibility ("hidden")));
+
+void pkl_set_lexical_cuckolding_p (pkl_compiler compiler,
+                                   int lexical_cuckolding_p)
+    __attribute__ ((visibility ("hidden")));
+
 /* Look for the module described by MODULE in the load_path of the
    given COMPILER, and return the path to its containing file.
 

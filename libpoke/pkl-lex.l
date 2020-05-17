@@ -42,6 +42,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include <stdlib.h>
+#include "pkl.h"
 #include "pkl-ast.h"
 #include "pkl-env.h"
 #include "pkl-diag.h"
@@ -133,6 +134,7 @@ IS		   ((u|U)|(u|U)?(l|L|B|h|H|n|N)|(l|L|B|h|H|n|N)(u|U))
 
 L [a-zA-Z_]
 D [0-9]
+A $
 
 %x C_COMMENT
 %x SHEBANG_COMMENT
@@ -295,6 +297,29 @@ D [0-9]
 "~"		{ return '~'; }
 "."		{ return '.'; }
 "@"		{ return '@'; }
+
+{A}({L}|{D})({L}|{D})* {
+  pkl_alien_token_handler_fn cb
+    = pkl_alien_token_fn (yyextra->compiler);
+
+  if (pkl_lexical_cuckolding_p (yyextra->compiler)
+      && cb != NULL)
+    {
+      char *id = (*cb) (yytext + 1);
+
+      if (id)
+        {
+          yylval->ast = pkl_ast_make_identifier (yyextra->ast,
+                                                 id);
+          free (id);
+          return IDENTIFIER;
+        }
+    }
+
+  /* Lexical cuckolding is not enabled.  */
+  yylloc->last_column -= strlen (yytext);
+  REJECT;
+}
 
 '{L}({L}|{D})* {
   yylval->ast = pkl_ast_make_identifier (yyextra->ast, yytext + 1);

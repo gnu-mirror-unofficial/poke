@@ -139,10 +139,57 @@ entry_name_to_varname (pk_map map, const char *name)
   return varname;
 }
 
+static char *
+pk_map_alien_token_handler (const char *id)
+{
+  char *map_name = NULL;
+  char *entry_name = NULL;
+  pk_ios cur_ios;
+
+  cur_ios = pk_ios_cur (poke_compiler);
+  if (!cur_ios)
+    return NULL;
+
+  entry_name = strstr (id, "__");
+  if (entry_name)
+    {
+      pk_map map;
+      int ios_id;
+
+      map_name = xmalloc (entry_name - id + 1);
+      strncpy (map_name, id, entry_name - id);
+      map_name[entry_name - id] = '\0';
+      entry_name += 2;
+      ios_id = pk_ios_get_id (cur_ios);
+
+      map = pk_map_search (ios_id, map_name);
+      if (map)
+        {
+          pk_map_entry entry;
+
+          for (entry = PK_MAP_ENTRIES (map);
+               entry;
+               entry = PK_MAP_ENTRY_CHAIN (entry))
+            {
+              if (STREQ (PK_MAP_ENTRY_NAME (entry), entry_name))
+                return xstrdup (PK_MAP_ENTRY_VARNAME (entry));
+            }
+        }
+
+      free (map_name);
+    }
+
+  return NULL;
+}
+
 void
 pk_map_init (void)
 {
   poke_maps = NULL;
+
+  /* Install the handler for alien variables that recognizes map
+     entries.  */
+  pk_set_alien_token_fn (poke_compiler, pk_map_alien_token_handler);
 }
 
 void
