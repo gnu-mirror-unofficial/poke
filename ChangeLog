@@ -1,5 +1,11 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map.c (pk_map_load_file): Derive the name of the new map
+	from the filename.
+	* poke/pk-cmd-map.c (pk_cmd_map_load): Remove spurious comment.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (poke_prompt_maps): Define.
 	* poke/pk-repl.c (pk_prompt): New function.
 	* poke/pk-cmd-set.c (set_prompt_maps): Define.

@@ -23,7 +23,6 @@
 #include <string.h>
 #include <xalloc.h>
 #include <assert.h>
-
 #include "dirname.h"
 
 #include "poke.h"
@@ -482,9 +481,9 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
 
 int
 pk_map_load_file (int ios_id,
-                    const char *path, char **errmsg)
+                  const char *path, char **errmsg)
 {
-  char *emsg;
+  char *emsg, *mapname;
   FILE *fp;
   pk_map_parsed_map parsed_map;
 
@@ -520,13 +519,21 @@ pk_map_load_file (int ios_id,
   //  pk_map_print_parsed_map (parsed_map);
 
   /* Process the result.  */
-  /* XXX remove .map from mapname */
+  mapname = xstrdup (last_component (path));
+  if (strlen (mapname) > 4
+      && STREQ (mapname + strlen (mapname) - 4, ".map"))
+    mapname[strlen (mapname) - 4] = '\0';
+
   if (!pk_map_load_parsed_map (ios_id,
-                               last_component (path) /* mapname */,
+                               mapname,
                                path,
                                parsed_map))
-    return 0;
+    {
+      free (mapname);
+      return 0;
+    }
 
+  free (mapname);
   return 1;
 }
 

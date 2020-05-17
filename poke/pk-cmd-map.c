@@ -324,7 +324,6 @@ pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  /* XXX pass the mapname.  */
   if (!pk_map_load_file (ios_id, filename, &emsg))
     {
       if (emsg)
