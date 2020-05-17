@@ -5,6 +5,6 @@ load id3v1;
 %%
 
 %entry
-%var tag
+%name tag
 %type ID3V1_Tag
 %offset iosize - 128#B

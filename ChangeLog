@@ -1,5 +1,9 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* maps/mp3.map: Fix tag.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.h (struct pk_map): New field `id'.
 	(struct pk_map_entry): New field `name'.
 	(PK_MAP_ENTRY_NAME): Define.
