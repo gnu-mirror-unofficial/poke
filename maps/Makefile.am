@@ -1,3 +1,3 @@
 mapsdir = $(pkgdatadir)/maps
 
-dist_maps_DATA = elf.map
+dist_maps_DATA = elf.map mp3.map

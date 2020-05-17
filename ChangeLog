@@ -1,5 +1,9 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* maps/Makefile.am (dist_maps_DATA): Distribute mp3.map.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.c (pk_map_load_parsed_map): Use pk_type_code and
 	pk_typeof.
 	(pk_map_resolve_map): Likewise.
