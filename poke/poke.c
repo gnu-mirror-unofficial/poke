@@ -115,9 +115,9 @@ char *poke_doc_viewer = NULL;
 int poke_auto_map_p = 1;
 
 /* The following global determines whether map information shall be
-   included in the REPL prompt.  Defaults to `no'.  */
+   included in the REPL prompt.  Defaults to `yes'.  */
 
-int poke_prompt_maps_p = 0;
+int poke_prompt_maps_p = 1;
 
 /* This is used by commands to indicate to the REPL that it must
    exit.  */

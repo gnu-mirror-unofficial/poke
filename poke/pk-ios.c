@@ -107,7 +107,7 @@ pk_open_ios (const char *handler, int set_cur_p)
                 break;
               }
 
-            if (poke_interactive_p && !poke_quiet_p)
+            if (poke_interactive_p && !poke_quiet_p && !poke_prompt_maps_p)
               pk_printf ("auto-map: map `%s' loaded\n", pk_string_str (mapname));
           }
 

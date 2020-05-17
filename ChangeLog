@@ -1,5 +1,11 @@
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c: Make poke_prompt_maps_p to default to yes.
+	* poke/pk-ios.c (pk_open_ios): Do not emit an "auto-map: loaded"
+	message if prompt-maps is enabled.
+
+2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.c (pk_map_add_entry): Get both name and varname as
 	arguments.
 	(pk_map_load_parsed_map): Adjust call accordingly.
