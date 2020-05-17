@@ -487,6 +487,19 @@ pk_map_load_file (int ios_id,
   FILE *fp;
   pk_map_parsed_map parsed_map;
 
+  /* Do not attempt to load the mapfile if there is already a map with
+     the same name defined in the IO space.  */
+  mapname = xstrdup (last_component (path));
+  if (strlen (mapname) > 4
+      && STREQ (mapname + strlen (mapname) - 4, ".map"))
+    mapname[strlen (mapname) - 4] = '\0';
+
+  if (pk_map_search (ios_id, mapname) != NULL)
+    {
+      *errmsg = "map already loaded";
+      return 0;
+    }
+
   /* Open the file whose contents are to be parsed.  */
   if ((emsg = pk_file_readable (path)) != NULL)
     {
@@ -498,6 +511,7 @@ pk_map_load_file (int ios_id,
   if (!fp)
     {
       *errmsg = strerror (errno);
+      free (mapname);
       return 0;
     }
 
@@ -512,6 +526,7 @@ pk_map_load_file (int ios_id,
   if (fclose (fp) == EOF)
     {
       *errmsg = strerror (errno);
+      free (mapname);
       return 0;
     }
 
@@ -519,11 +534,6 @@ pk_map_load_file (int ios_id,
   //  pk_map_print_parsed_map (parsed_map);
 
   /* Process the result.  */
-  mapname = xstrdup (last_component (path));
-  if (strlen (mapname) > 4
-      && STREQ (mapname + strlen (mapname) - 4, ".map"))
-    mapname[strlen (mapname) - 4] = '\0';
-
   if (!pk_map_load_parsed_map (ios_id,
                                mapname,
                                path,
