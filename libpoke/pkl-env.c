@@ -60,7 +60,9 @@ struct pkl_env
 
 /* The hash tables above are handled using the following
    functions.  */
-
+#ifdef __clang__
+__attribute__ ((no_sanitize ("integer")))
+#endif
 static int
 hash_string (const char *name)
 {
