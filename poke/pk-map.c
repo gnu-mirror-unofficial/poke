@@ -31,6 +31,11 @@
 #include "pk-map.h"
 #include "pk-map-parser.h"
 
+/* Unique map ID.
+   This number is unique per map in a poke session.  */
+
+static uint64_t next_map_id;
+
 /* Maps for a given IOS.
 
    IOS_ID is the identifier of the ios.
@@ -109,7 +114,7 @@ search_map (pk_map_ios map_ios, const char *mapname)
 }
 
 static pk_map_entry
-search_map_entry (pk_map map, const char *varname)
+search_map_entry (pk_map map, const char *name)
 {
   pk_map_entry map_entry;
 
@@ -117,11 +122,21 @@ search_map_entry (pk_map map, const char *varname)
        map_entry;
        map_entry = PK_MAP_ENTRY_CHAIN (map_entry))
     {
-      if (STREQ (PK_MAP_ENTRY_VARNAME (map_entry), varname))
+      if (STREQ (PK_MAP_ENTRY_NAME (map_entry), name))
         break;
     }
 
   return map_entry;
+}
+
+static char *
+entry_name_to_varname (pk_map map, const char *name)
+{
+  char *varname;
+
+  if (asprintf (&varname, "__map_entry_%lu_%s", PK_MAP_ID (map), name) == -1)
+    pk_fatal ("out of memory");
+  return varname;
 }
 
 void
@@ -201,6 +216,7 @@ pk_map_create (int ios_id, const char *mapname,
 
     /* Create an empty map and add it to the sequence.  */
     map = xmalloc (sizeof (struct pk_map));
+    PK_MAP_ID (map) = next_map_id++;
     PK_MAP_NAME (map) = xstrdup (mapname);
     if (source)
       PK_MAP_SOURCE (map) = xstrdup (source);
@@ -268,8 +284,9 @@ pk_map_search (int ios_id, const char *name)
 
 int
 pk_map_add_entry (int ios_id, const char *mapname,
-                  const char *varname, pk_val offset)
+                  const char *name, pk_val offset)
 {
+  char *varname;
   pk_map_ios map_ios;
   pk_map map;
   pk_map_entry entry;
@@ -282,13 +299,16 @@ pk_map_add_entry (int ios_id, const char *mapname,
   if (!map)
     return 0;
 
-  entry = search_map_entry (map, varname);
+  entry = search_map_entry (map, name);
   if (entry)
     return 0;
 
   /* Create a new entry and chain it in the map.  The entries are kept
      sorted by offset.  */
   entry = xmalloc (sizeof (struct pk_map_entry));
+  PK_MAP_ENTRY_NAME (entry) = xstrdup (name);
+
+  varname = entry_name_to_varname (map, name);
   PK_MAP_ENTRY_VARNAME (entry) = xstrdup (varname);
   PK_MAP_ENTRY_OFFSET (entry) = offset;
 
@@ -329,7 +349,7 @@ pk_map_add_entry (int ios_id, const char *mapname,
 
 int
 pk_map_remove_entry (int ios_id, const char *mapname,
-                     const char *varname)
+                     const char *entryname)
 {
   pk_map_ios map_ios;
   pk_map map;
@@ -347,7 +367,7 @@ pk_map_remove_entry (int ios_id, const char *mapname,
        entry;
        prev = entry, entry = PK_MAP_ENTRY_CHAIN (entry))
     {
-      if (STREQ (PK_MAP_ENTRY_VARNAME (entry), varname))
+      if (STREQ (PK_MAP_ENTRY_NAME (entry), entryname))
         {
           if (prev)
             PK_MAP_ENTRY_CHAIN (prev) = PK_MAP_ENTRY_CHAIN (entry);
@@ -393,6 +413,12 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
                           NULL))
     return 0;
 
+  /* Create the map.
+     We need to do it this early because we need a map for
+     entry_name_to_varname below. */
+  if (!pk_map_create (ios_id, mapname, filename))
+    return 0;
+
   /* Process the map entries and create the mapped global
      variables.  */
 
@@ -434,41 +460,47 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
       PK_MAP_PARSED_ENTRY_SKIPPED_P (entry) = !process_p;
       if (process_p)
         {
-          const char *var = PK_MAP_PARSED_ENTRY_VAR (entry);
+          const char *name = PK_MAP_PARSED_ENTRY_NAME (entry);
           const char *type = PK_MAP_PARSED_ENTRY_TYPE (entry);
           const char *offset = PK_MAP_PARSED_ENTRY_OFFSET (entry);
+          pk_map new_map = pk_map_search (ios_id, mapname);
+
+          PK_MAP_PARSED_ENTRY_VARNAME (entry)
+            = entry_name_to_varname (new_map, name);
 
           /* XXX set error location with compiler pragmas... */
           char *defvar_str
-            = pk_str_concat ("defvar ", var, " = ", type, " @ ", offset, ";", NULL);
+            = pk_str_concat ("defvar ",
+                             PK_MAP_PARSED_ENTRY_VARNAME (entry),
+                             " = ", type, " @ ", offset, ";", NULL);
 
           /* XXX what about constraints?  */
           if (!pk_compile_buffer (poke_compiler,
                                   defvar_str,
                                   NULL /* end */))
-            return 0;
+            {
+              free_map (new_map);
+              return 0;
+            }
         }
     }
 
-  /* Now create the map and its entries.  */
-  if (!pk_map_create (ios_id, mapname, filename))
-    return 0;
-
+  /* Add the map entries.  */
   for (entry = PK_MAP_PARSED_MAP_ENTRIES (map);
        entry;
        entry = PK_MAP_PARSED_ENTRY_CHAIN (entry))
     {
       if (!PK_MAP_PARSED_ENTRY_SKIPPED_P (entry))
         {
-          char *var = PK_MAP_PARSED_ENTRY_VAR (entry);
+          char *name = PK_MAP_PARSED_ENTRY_NAME (entry);
+          char *varname = PK_MAP_PARSED_ENTRY_VARNAME (entry);
           pk_val offset;
 
-          pk_str_trim (&var);
-          offset = pk_decl_val (poke_compiler, var);
+          offset = pk_decl_val (poke_compiler, varname);
           assert (offset != PK_NULL);
           offset = pk_val_offset (offset);
 
-          if (!pk_map_add_entry (ios_id, mapname, var, offset))
+          if (!pk_map_add_entry (ios_id, mapname, name, offset))
             {
               pk_map_remove (ios_id, mapname);
               return 0;
@@ -519,7 +551,8 @@ pk_map_load_file (int ios_id,
   parsed_map = pk_map_parse_file (path, fp);
   if (!parsed_map)
     {
-      *errmsg = "";
+      if (errmsg)
+        *errmsg = "";
       return 0;
     }
 

@@ -31,7 +31,8 @@ struct pk_map_parser_loc
 
 /* Maps and map entries.  */
 
-#define PK_MAP_PARSED_ENTRY_VAR(ENTRY) ((ENTRY)->var)
+#define PK_MAP_PARSED_ENTRY_NAME(ENTRY) ((ENTRY)->name)
+#define PK_MAP_PARSED_ENTRY_VARNAME(ENTRY) ((ENTRY)->varname)
 #define PK_MAP_PARSED_ENTRY_TYPE(ENTRY) ((ENTRY)->type)
 #define PK_MAP_PARSED_ENTRY_OFFSET(ENTRY) ((ENTRY)->offset)
 #define PK_MAP_PARSED_ENTRY_CONDITION(ENTRY) ((ENTRY)->condition)
@@ -42,7 +43,8 @@ struct pk_map_parser_loc
 struct pk_map_parsed_entry
 {
   struct pk_map_parser_loc loc;
-  char *var;
+  char *name;
+  char *varname;
   char *type;
   char *offset;
   char *condition;
@@ -97,7 +99,7 @@ struct pk_map_parser
    They always start at the beginning of a line.  */
 
 #define TAG_UNKNOWN     0
-#define TAG_VAR         1
+#define TAG_NAME        1
 #define TAG_TYPE        2
 #define TAG_OFFSET      3
 #define TAG_CONDITION   4

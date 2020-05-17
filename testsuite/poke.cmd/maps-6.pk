@@ -10,13 +10,13 @@
 /* { dg-command { .map entry add foo, jorl } } */
 /* { dg-command { .map entry remove foo, bar } } */
 /* { dg-command { .map show foo } } */
-/* { dg-output "Offset\t\tVariable" } */
-/* { dg-output "\n2UL#B\t\tquux" } */
-/* { dg-output "\n17UL#b\t\tjorl" } */
+/* { dg-output "Offset\t\t\Name\t\t\Variable" } */
+/* { dg-output "\n2UL#B\t\tquux\t\t__map_entry_0_quux" } */
+/* { dg-output "\n17UL#b\t\tjorl\t\t__map_entry_0_jorl" } */
 /* { dg-command { .map entry remove foo, quux } } */
 /* { dg-command { .map show foo } } */
-/* { dg-output "\nOffset\t\tVariable" } */
-/* { dg-output "\n17UL#b\t\tjorl" } */
+/* { dg-output "\nOffset\t\tName\t\tVariable" } */
+/* { dg-output "\n17UL#b\t\tjorl\t\t__map_entry_0_jorl" } */
 /* { dg-command { .map entry remove foo, jorl } } */
 /* { dg-command { .map show foo } } */
-/* { dg-output "\nOffset\t\tVariable" } */
+/* { dg-output "\nOffset\t\tName\t\tVariable" } */

@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include "xalloc.h"
 
+#include "pk-utils.h"
 #include "pk-term.h"
 #include "pk-map.h"
 #include "pk-map-parser.h"
@@ -50,15 +51,18 @@
 /* Routines to build parsed maps and parsed map entries.  */
 
 static pk_map_parsed_entry
-make_map_entry (const char *var,
+make_map_entry (const char *name,
                 const char *condition,
                 const char *type,
                 const char *offset)
 {
   pk_map_parsed_entry entry
     = xmalloc (sizeof (struct pk_map_parsed_entry));
+  char *ename = xstrdup (name);
 
-  PK_MAP_PARSED_ENTRY_VAR (entry) = xstrdup (var);
+  pk_str_trim (&ename);
+  PK_MAP_PARSED_ENTRY_NAME (entry) = ename;
+  PK_MAP_PARSED_ENTRY_VARNAME (entry) = NULL;
   PK_MAP_PARSED_ENTRY_TYPE (entry) = xstrdup (type);
   PK_MAP_PARSED_ENTRY_OFFSET (entry) = xstrdup (offset);
   PK_MAP_PARSED_ENTRY_CHAIN (entry) = NULL;
@@ -300,7 +304,7 @@ map_entries:
 map_entry:
 	  ENTRY tagged_value_list
           	{
-                  tagged_value var = get_tagged_value ($2, TAG_VAR);
+                  tagged_value name = get_tagged_value ($2, TAG_NAME);
                   tagged_value type = get_tagged_value ($2, TAG_TYPE);
                   tagged_value offset = get_tagged_value ($2, TAG_OFFSET);
                   tagged_value condition = get_tagged_value ($2, TAG_CONDITION);
@@ -310,10 +314,10 @@ map_entry:
                     YYERROR;
 
                   /* Check for mandatory attributes in the entry.  */
-                  if (!var || !type || !offset)
+                  if (!name || !type || !offset)
                     {
-                      if (!var)
-                        pk_map_printf_error (map_parser, @$, "entry lacks a %var");
+                      if (!name)
+                        pk_map_printf_error (map_parser, @$, "entry lacks a %name");
                       else if (!type)
                         pk_map_printf_error (map_parser, @$, "entry lacks a %type");
                       else if (!offset)
@@ -325,9 +329,9 @@ map_entry:
                     }
 
                   /* For condition and offset, compile.  */
-                  /* For var and type, keep strings.  */
+                  /* For name and type, keep strings.  */
 
-                  $$ = make_map_entry (var->data,
+                  $$ = make_map_entry (name->data,
                                        condition ? condition->data : NULL,
                                        type->data,
                                        offset->data);
@@ -348,7 +352,7 @@ tagged_value:
           {
             if ($1 == TAG_UNKNOWN)
               {
-                pk_map_printf_error (map_parser, @$, "unknown tag");
+                pk_map_printf_error (map_parser, @$, "unknown tag\n");
                 YYERROR;
               }
 
@@ -420,7 +424,7 @@ pk_map_print_parsed_map (pk_map_parsed_map parsed_map)
       printf ("  loc: ");
       pk_map_print_loc (PK_MAP_PARSED_ENTRY_LOC (entry));
       printf ("\n");
-      printf ("  var: %s", PK_MAP_PARSED_ENTRY_VAR (entry));
+      printf ("  name: %s", PK_MAP_PARSED_ENTRY_NAME (entry));
       printf ("  type: %s", PK_MAP_PARSED_ENTRY_TYPE (entry));
       printf ("  offset: %s", PK_MAP_PARSED_ENTRY_OFFSET (entry));
       if (PK_MAP_PARSED_ENTRY_CONDITION (entry))

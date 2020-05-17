@@ -156,7 +156,7 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   /* Print out this map entries.  */
   pk_term_class ("table_header");
-  pk_puts ("Offset\t\tVariable\n");
+  pk_puts ("Offset\t\tName\t\tVariable\n");
   pk_term_end_class ("table_header");
 
   {
@@ -168,7 +168,9 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       {
         pk_print_val (poke_compiler,
                       PK_MAP_ENTRY_OFFSET (entry));
-        pk_printf ("\t\t%s\n", PK_MAP_ENTRY_VARNAME (entry));
+        pk_printf ("\t\t%s\t\t%s\n",
+                   PK_MAP_ENTRY_NAME (entry),
+                   PK_MAP_ENTRY_VARNAME (entry));
       }
   }
 
@@ -251,7 +253,7 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   int ios_id;
   const char *mapname;
-  const char *varname;
+  const char *entryname;
 
   /* Get arguments.  */
   assert (argc == 3);
@@ -259,7 +261,7 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
   mapname = PK_CMD_ARG_STR (argv[0]);
-  varname = PK_CMD_ARG_STR (argv[1]);
+  entryname = PK_CMD_ARG_STR (argv[1]);
 
   if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
     ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
@@ -281,10 +283,10 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (!pk_map_remove_entry (ios_id, mapname, varname))
+  if (!pk_map_remove_entry (ios_id, mapname, entryname))
     {
-      pk_printf (_("No such variable `%s' in map `%s'\n"),
-                 varname, mapname);
+      pk_printf (_("no entry `%s' in map `%s'\n"),
+                 entryname, mapname);
       return 0;
     }
 

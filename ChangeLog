@@ -1,5 +1,21 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map.h (struct pk_map): New field `id'.
+	(struct pk_map_entry): New field `name'.
+	(PK_MAP_ENTRY_NAME): Define.
+	* poke/pk-map.c (next_map_id): New variable.
+	(pk_map_create): Allocate a new map ID and initialize the new map
+	with it.
+	(search_map_entry): Search entries by name, not varnames.
+	(pk_map_add_entry): Initialize the map entry name.
+	(entry_name_to_varname): New function.
+	(pk_map_remove_entry): Delete by entry name, not variable name.
+	* testsuite/poke.cmd/maps-4.pk: Adapt.
+	* testsuite/poke.cmd/maps-5.pk: Likewise.
+	* testsuite/poke.cmd/maps-6.pk: Likewise.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.c (pk_map_load_file): Make sure a map is not already
 	loaded with the same name.
 

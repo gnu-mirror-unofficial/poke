@@ -33,20 +33,25 @@
 /* Each map entry corresponds to a mapped value in the top-level
    environment.
 
+   NAME is the name of the entry.  There cannot be two entries in the
+   same map with the same name.
+
    VARNAME is the name of a mapped variable defined in the poke
-   top-level environment.  Therefore there cannot be two map entries
-   with the same name.
+   top-level environment.  This name is derived from the entry name
+   and the containing map ID.
 
    OFFSET is the offset where the entry is mapped.
 
    CHAIN is a pointer to another map entry, or NULL.  */
 
+#define PK_MAP_ENTRY_NAME(ENTRY) ((ENTRY)->name)
 #define PK_MAP_ENTRY_VARNAME(ENTRY) ((ENTRY)->varname)
 #define PK_MAP_ENTRY_OFFSET(ENTRY) ((ENTRY)->offset)
 #define PK_MAP_ENTRY_CHAIN(ENTRY) ((ENTRY)->chain)
 
 struct pk_map_entry
 {
+  char *name;
   char *varname;
   pk_val offset;
   struct pk_map_entry *chain;
@@ -55,6 +60,8 @@ struct pk_map_entry
 typedef struct pk_map_entry *pk_map_entry;
 
 /* Poke maps are ordered sets of map entries.
+
+   ID is an unique number identifying the map in the poke session.
 
    NAME is the name of the map.
 
@@ -66,6 +73,7 @@ typedef struct pk_map_entry *pk_map_entry;
 
    CHAIN is a pointer to another pk map, or NULL.  */
 
+#define PK_MAP_ID(MAP) ((MAP)->id)
 #define PK_MAP_NAME(MAP) ((MAP)->name)
 #define PK_MAP_SOURCE(MAP) ((MAP)->source)
 #define PK_MAP_ENTRIES(MAP) ((MAP)->entries)
@@ -73,6 +81,7 @@ typedef struct pk_map_entry *pk_map_entry;
 
 struct pk_map
 {
+  uint64_t id;
   char *name;
   char *source;
   struct pk_map_entry *entries;
@@ -119,14 +128,14 @@ int pk_map_remove (int ios_id, const char *mapname);
 
    IOS_ID is the id of the IO space associated with the map.
    MAPNAME is the name of the map to which the entry will be added.
-   VARNAME is the name of a variable.
+   NAME is the name of the new entry.
    OFFSET is the offset where the variable is mapped.
 
    If there is already an entry with the given VARNAME in the given
    map MAPNAME, then return 0.  Return 1 otherwise.  */
 
 int pk_map_add_entry (int ios_id, const char *mapname,
-                      const char *varname, pk_val offset);
+                      const char *name, pk_val offset);
 
 /* Remove an entry from a map.
 

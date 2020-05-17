@@ -81,8 +81,8 @@
 static int
 strtotag (const char *str)
 {
-    if (STREQ (str, "var"))
-      return TAG_VAR;
+    if (STREQ (str, "name"))
+      return TAG_NAME;
     else if (STREQ (str, "type"))
       return TAG_TYPE;
     else if (STREQ (str, "offset"))
