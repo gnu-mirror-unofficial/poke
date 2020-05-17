@@ -97,6 +97,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   /* Process the auto-map for this file.  */
+  if (poke_auto_map_p)
   {
     int i;
     pk_val auto_map;

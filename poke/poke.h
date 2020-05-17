@@ -43,6 +43,7 @@ extern char *poke_mapsdir;
 extern char *poke_docdir;
 extern char *poke_cmdsdir;
 extern char *poke_doc_viewer;
+extern int poke_auto_map_p;
 
 void pk_print_version (void);
 void pk_fatal (const char *errmsg);

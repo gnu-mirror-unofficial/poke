@@ -1,5 +1,14 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (poke_auto_map_p): Define.
+	* poke/poke.h: Likewise.
+	* poke/pk-cmd-set.c (set_auto_map): Define.
+	(set_cmds): Add set_auto_map.
+	(pk_cmd_set_auto_map): New function.
+	* poke/pk-cmd-ios.c (pk_cmd_file): Acknowledge poke_auto_map_p.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h (pk_array_nelem): Prototype.
 	* libpoke/pk-val.c (pk_array_nelem): New function.
 	* poke/poke.pk (auto_map): Define.

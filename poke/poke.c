@@ -108,6 +108,11 @@ char *poke_docdir;
 
 char *poke_doc_viewer = NULL;
 
+/* The following global determines whether auto-maps shall be
+   acknowleged when loading files or not.  Defaults to `yes'.  */
+
+int poke_auto_map_p = 1;
+
 /* This is used by commands to indicate to the REPL that it must
    exit.  */
 
