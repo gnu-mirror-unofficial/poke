@@ -1,3 +1,14 @@
+2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-map.c (pk_map_add_entry): Get both name and varname as
+	arguments.
+	(pk_map_load_parsed_map): Adjust call accordingly.
+	* poke/pk-cmd-map.c (pk_cmd_map_entry_add): LIkewise.
+	(pk_cmd_map_show): Do now show a Variable column.
+	* testsuite/poke.cmd/maps-4.pk: Adapt accordingly.
+	* testsuite/poke.cmd/maps-5.pk: Likewise.
+	* testsuite/poke.cmd/maps-6.pk: Likewise.
+
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl.c (pkl_lexical_cuckolding_p): Define.

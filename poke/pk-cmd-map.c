@@ -156,7 +156,7 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   /* Print out this map entries.  */
   pk_term_class ("table_header");
-  pk_puts ("Offset\t\tName\t\tVariable\n");
+  pk_puts ("Offset\t\tName\n");
   pk_term_end_class ("table_header");
 
   {
@@ -168,9 +168,8 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       {
         pk_print_val (poke_compiler,
                       PK_MAP_ENTRY_OFFSET (entry));
-        pk_printf ("\t\t%s\t\t%s\n",
-                   PK_MAP_ENTRY_NAME (entry),
-                   PK_MAP_ENTRY_VARNAME (entry));
+        pk_printf ("\t\t%s\n",
+                   PK_MAP_ENTRY_NAME (entry));
       }
   }
 
@@ -236,7 +235,8 @@ pk_cmd_map_entry_add (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   /* Ok, add the entry.  */
-  if (!pk_map_add_entry (ios_id, mapname, varname, pk_val_offset (val)))
+  if (!pk_map_add_entry (ios_id, mapname,
+                         varname, varname, pk_val_offset (val)))
     {
       pk_printf ("The entry `%s' already exists in map `%s'\n",
                  varname, mapname);

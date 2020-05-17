@@ -129,13 +129,15 @@ int pk_map_remove (int ios_id, const char *mapname);
    IOS_ID is the id of the IO space associated with the map.
    MAPNAME is the name of the map to which the entry will be added.
    NAME is the name of the new entry.
+   VARNAME is the name of the variable associated with the entry.
    OFFSET is the offset where the variable is mapped.
 
    If there is already an entry with the given VARNAME in the given
    map MAPNAME, then return 0.  Return 1 otherwise.  */
 
 int pk_map_add_entry (int ios_id, const char *mapname,
-                      const char *name, pk_val offset);
+                      const char *name, const char *varname,
+                      pk_val offset);
 
 /* Remove an entry from a map.
 

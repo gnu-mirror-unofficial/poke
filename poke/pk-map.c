@@ -331,9 +331,9 @@ pk_map_search (int ios_id, const char *name)
 
 int
 pk_map_add_entry (int ios_id, const char *mapname,
-                  const char *name, pk_val offset)
+                  const char *name, const char *varname,
+                  pk_val offset)
 {
-  char *varname;
   pk_map_ios map_ios;
   pk_map map;
   pk_map_entry entry;
@@ -354,8 +354,6 @@ pk_map_add_entry (int ios_id, const char *mapname,
      sorted by offset.  */
   entry = xmalloc (sizeof (struct pk_map_entry));
   PK_MAP_ENTRY_NAME (entry) = xstrdup (name);
-
-  varname = entry_name_to_varname (map, name);
   PK_MAP_ENTRY_VARNAME (entry) = xstrdup (varname);
   PK_MAP_ENTRY_OFFSET (entry) = offset;
 
@@ -547,7 +545,8 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           assert (offset != PK_NULL);
           offset = pk_val_offset (offset);
 
-          if (!pk_map_add_entry (ios_id, mapname, name, offset))
+          if (!pk_map_add_entry (ios_id, mapname, name,
+                                 varname, offset))
             {
               pk_map_remove (ios_id, mapname);
               return 0;

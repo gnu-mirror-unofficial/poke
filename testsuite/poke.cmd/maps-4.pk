@@ -5,5 +5,5 @@
 /* { dg-command { .map create foo,#0 } } */
 /* { dg-command { .map entry add foo, bar } } */
 /* { dg-command { .map show foo } } */
-/* { dg-output "Offset\t\tName\t\tVariable" } */
-/* { dg-output "\n0UL#B\t\tbar\t\t__map_entry_0_bar" } */
+/* { dg-output "Offset\t\tName" } */
+/* { dg-output "\n0UL#B\t\tbar" } */
