@@ -46,7 +46,17 @@ pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    {
+      pk_ios cur_ios = pk_ios_cur (poke_compiler);
+
+      if (!cur_ios)
+        {
+          pk_printf (_("No current IOS\n"));
+          return 0;
+        }
+
+      ios_id = pk_ios_get_id (cur_ios);
+    }
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[1]);

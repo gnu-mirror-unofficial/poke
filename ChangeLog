@@ -1,5 +1,15 @@
 2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (poke_prompt_maps): Define.
+	* poke/pk-repl.c (pk_prompt): New function.
+	* poke/pk-cmd-set.c (set_prompt_maps): Define.
+	(set_cmds): Add set_prompt_maps.
+	(pk_cmd_set_prompt_maps): New function.
+	* poke/pk-cmd-map.c (pk_cmd_map_create): Do not assume a current
+	IOS exists.
+
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-ios.h: New file.
 	* poke/pk-ios.c: Likewise.
 	* poke/Makefile.am (poke_SOURCES): Add pk-ios.h and pk-ios.c.

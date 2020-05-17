@@ -34,6 +34,8 @@
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif
+#include "pk-utils.h"
+#include "pk-map.h"
 
 static sigjmp_buf ctrlc_buf;
 
@@ -231,6 +233,39 @@ escape_metacharacters (char *text, int match_type, char *qp)
   return s;
 }
 
+static char *
+pk_prompt (void)
+{
+  char *prompt = "";
+
+  if (poke_prompt_maps_p)
+    {
+      pk_ios cur_ios;
+
+      cur_ios = pk_ios_cur (poke_compiler);
+      if (cur_ios)
+        {
+          pk_map maps
+            = pk_map_get_maps (pk_ios_get_id (cur_ios));
+
+          if (maps)
+            {
+              pk_map map;
+
+              prompt = pk_str_concat (prompt, "[", NULL);
+              for (map = maps; map; map = PK_MAP_CHAIN (map))
+                prompt = pk_str_concat (prompt, PK_MAP_NAME (map),
+                                        PK_MAP_CHAIN (map) != NULL ? "," : NULL,
+                                        NULL);
+              prompt = pk_str_concat (prompt, "]", NULL);
+            }
+        }
+    }
+
+  prompt = pk_str_concat (prompt, "(poke) ", NULL);
+  return prompt;
+}
+
 void
 pk_repl (void)
 {
@@ -267,13 +302,16 @@ pk_repl (void)
 
   while (!poke_exit_p)
     {
+      char *prompt;
       char *line;
 
       while (sigsetjmp (ctrlc_buf, 1) != 0);
 
       pk_term_flush ();
       rl_completion_entry_function = poke_completion_function;
-      line = readline ("(poke) ");
+      prompt = pk_prompt ();
+      line = readline (prompt);
+      free (prompt);
       if (line == NULL)
         {
           /* EOF in stdin (probably Ctrl-D).  */

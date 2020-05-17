@@ -214,6 +214,49 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_set_prompt_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set prompt-maps {yes,no} */
+
+  const char *arg;
+
+  /* Note that it is not possible to distinguish between no argument
+     and an empty unique string argument.  Therefore, argc should be
+     always 1 here, and we determine when no value was specified by
+     checking whether the passed string is empty or not.  */
+
+  if (argc != 1)
+    assert (0);
+
+  arg = PK_CMD_ARG_STR (argv[0]);
+
+  if (*arg == '\0')
+    {
+      if (poke_prompt_maps_p)
+        pk_puts ("yes\n");
+      else
+        pk_puts ("no\n");
+    }
+  else
+    {
+      if (STREQ (arg, "yes"))
+        poke_prompt_maps_p = 1;
+      else if (STREQ (arg, "no"))
+        poke_prompt_maps_p = 0;
+      else
+        {
+          pk_term_class ("error");
+          pk_puts ("error: ");
+          pk_term_end_class ("error");
+          pk_puts (" prompt-maps should be one of `yes' or `no'\n");
+          return 0;
+        }
+    }
+
+  return 1;
+}
+
+static int
 pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set pretty-print {yes,no}  */
@@ -556,6 +599,10 @@ const struct pk_cmd set_auto_map =
   {"auto-map", "s?", "", 0, NULL, pk_cmd_set_auto_map,
    "set auto-map (yes|no)", NULL};
 
+const struct pk_cmd set_prompt_maps =
+  {"prompt-maps", "s?", "", 0, NULL, pk_cmd_set_prompt_maps,
+   "set prompt-maps (yes|no)", NULL};
+
 const struct pk_cmd *set_cmds[] =
   {
    &set_oacutoff_cmd,
@@ -570,6 +617,7 @@ const struct pk_cmd *set_cmds[] =
    &set_error_on_warning_cmd,
    &set_doc_viewer,
    &set_auto_map,
+   &set_prompt_maps,
    &null_cmd
   };
 
