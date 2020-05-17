@@ -256,6 +256,12 @@ pk_typeof (pk_val val)
 }
 
 pk_val
+pk_array_nelem (pk_val array)
+{
+  return PVM_VAL_ARR_NELEM (array);
+}
+
+pk_val
 pk_array_elem_val (pk_val array, uint64_t idx)
 {
   return PVM_VAL_ARR_ELEM_VALUE (array, idx);

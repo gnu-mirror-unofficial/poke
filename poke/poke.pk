@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**** Set the default load path for maps ***/
+/**** Set the default load path for maps ****/
 
 defvar map_load_path = "";
 
@@ -37,3 +37,15 @@ catch if E_inval { }
 
 /* Add the current working directory.  */
 map_load_path = ".:" + map_load_path;
+
+/**** auto_map ****/
+
+/* The auto_map is an array associating file names with maps.
+
+   Each entry in the array is an array whose first element is a
+   regular expression, and the second element is the name of a
+   map.  */
+
+defvar auto_map = [[".*.mp3$", "mp3"],
+                   [".*.o$", "elf"],
+                   ["a.out$", "elf"]];

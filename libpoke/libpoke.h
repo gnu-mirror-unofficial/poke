@@ -470,6 +470,11 @@ pk_val pk_offset_unit (pk_val val);
 
 pk_val pk_make_array (pk_val nelem, pk_val array_type);
 
+/* Get the number of elements in the given array value, as an
+   uint<64>.  */
+
+pk_val pk_array_nelem (pk_val array);
+
 /* Get the value of the element of an array.
 
    ARRAY is the array value.

@@ -183,10 +183,7 @@ pk_map_create (int ios_id, const char *mapname,
       PK_MAP_IOS_MAPS (map_ios) = NULL;
 
       PK_MAP_IOS_CHAIN (map_ios) = poke_maps;
-      if (poke_maps)
-        PK_MAP_IOS_CHAIN (poke_maps) = map_ios;
-      else
-        poke_maps = map_ios;
+      poke_maps = map_ios;
     }
 
   /* Create a new map and add it to the chain of maps in the

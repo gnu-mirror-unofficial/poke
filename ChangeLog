@@ -1,3 +1,11 @@
+2020-05-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h (pk_array_nelem): Prototype.
+	* libpoke/pk-val.c (pk_array_nelem): New function.
+	* poke/poke.pk (auto_map): Define.
+	* poke/pk-cmd-ios.c (pk_cmd_file): Process auto maps.
+	* poke/pk-map.c (pk_map_create): Fix chaining of map-ios.
+
 2020-05-17  Bruno Haible  <bruno@clisp.org>
 
 	build: Bump minimum needed Automake version.
