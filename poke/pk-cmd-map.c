@@ -37,7 +37,7 @@ pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 2);
 
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  mapname = PK_CMD_ARG_STR (argv[0]);
+  mapname = pk_map_normalize_name (PK_CMD_ARG_STR (argv[0]));
 
   if (strlen (mapname) == 0)
     {

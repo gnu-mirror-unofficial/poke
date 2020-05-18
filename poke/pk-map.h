@@ -204,4 +204,8 @@ int pk_map_load_file (int ios_id, const char *path, char **errmsg);
 /* XXX writeme  */
 int pk_map_save_file (const char *path);
 
+/* Given a string, normalize it to be a valid name for a map.  */
+
+char *pk_map_normalize_name (const char *str);
+
 #endif /* ! PK_MAP_H */

@@ -557,6 +557,48 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
   return 1;
 }
 
+char *
+pk_map_normalize_name (const char *str)
+{
+  char *mapname, *p;
+
+  mapname = xstrdup (str);
+
+  /* Strip the ".map" extension.  */
+  if (strlen (mapname) > 4
+      && STREQ (mapname + strlen (mapname) - 4, ".map"))
+    mapname[strlen (mapname) - 4] = '\0';
+
+  /* Normalize the name.  */
+
+  /* First turn any character not in [0-9a-zA-Z_] into _ */
+  for (p = mapname; *p != '\0'; ++p)
+    {
+      if ((*p >= '0' && *p <= '9')
+          || (*p >= 'a' && *p <= 'z')
+          || (*p >= 'A' && *p <= 'Z')
+          || (*p == '_'))
+        continue;
+
+      *p = '_';
+    }
+
+  /* Then translate any sequence of more than one _ into a single _  */
+  for (p = mapname; *p != '\0'; ++p)
+    {
+      if (*p == '_')
+        {
+          char *q, *s;
+
+          for (q = p + 1; *q == '_';)
+            for (s = q; *s != '\0'; ++s)
+              *(s - 1) = *s;
+        }
+    }
+
+  return mapname;
+}
+
 int
 pk_map_load_file (int ios_id,
                   const char *path, char **errmsg)
@@ -567,11 +609,7 @@ pk_map_load_file (int ios_id,
 
   /* Do not attempt to load the mapfile if there is already a map with
      the same name defined in the IO space.  */
-  mapname = xstrdup (last_component (path));
-  if (strlen (mapname) > 4
-      && STREQ (mapname + strlen (mapname) - 4, ".map"))
-    mapname[strlen (mapname) - 4] = '\0';
-
+  mapname = pk_map_normalize_name (last_component (path));
   if (pk_map_search (ios_id, mapname) != NULL)
     {
       *errmsg = "map already loaded";
