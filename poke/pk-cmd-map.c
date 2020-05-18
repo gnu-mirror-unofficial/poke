@@ -156,7 +156,7 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   /* Print out this map entries.  */
   pk_term_class ("table_header");
-  pk_puts ("Offset\t\tName\n");
+  pk_puts ("Offset\t\tEntry\n");
   pk_term_end_class ("table_header");
 
   {
@@ -168,7 +168,8 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       {
         pk_print_val (poke_compiler,
                       PK_MAP_ENTRY_OFFSET (entry));
-        pk_printf ("\t\t%s\n",
+        pk_printf ("\t\t%s::%s\n",
+                   mapname,
                    PK_MAP_ENTRY_NAME (entry));
       }
   }

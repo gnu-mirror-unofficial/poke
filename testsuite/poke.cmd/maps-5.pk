@@ -9,7 +9,7 @@
 /* { dg-command { .map entry add foo, bar } } */
 /* { dg-command { .map entry add foo, jorl } } */
 /* { dg-command { .map show foo } } */
-/* { dg-output "Offset\t\tName" } */
-/* { dg-output "\n0UL#B\t\tbar" } */
-/* { dg-output "\n2UL#B\t\tquux" } */
-/* { dg-output "\n17UL#b\t\tjorl" } */
+/* { dg-output "Offset\t\tEntry" } */
+/* { dg-output "\n0UL#B\t\tfoo::bar" } */
+/* { dg-output "\n2UL#B\t\tfoo::quux" } */
+/* { dg-output "\n17UL#b\t\tfoo::jorl" } */
