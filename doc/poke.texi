@@ -1241,12 +1241,12 @@ to insert underscore characters @code{_} anywhere in number literals.
 The only purpose of these characters is to improve readability, and
 they are totally ignored by poke, @i{i.e.} they do not alter the value of
 the number.}, or @code{0x0000..0xffff} in hexadecimal.  poke provides
-a bit-concatenation operator @code{::} that does exactly that:
+a bit-concatenation operator @code{:::} that does exactly that:
 
 @example
 (poke) 0x1UB
 0b00000001UB
-(poke) 0x1UB :: 0x1UB
+(poke) 0x1UB ::: 0x1UB
 0b0000000100000001UH
 @end example
 
@@ -5476,7 +5476,7 @@ in descending precedence order:
 @item Bitwise inclusive OR @code{|}.
 @cindex inclusive OR
 @cindex OR
-@item Bitwise concatenation @code{::}.
+@item Bitwise concatenation @code{:::}.
 @cindex concatenation, bitwise
 @end itemize
 

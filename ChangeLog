@@ -1,5 +1,19 @@
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-lex.l: Change bit-concatenation operator from :: to
+	:::.
+	* doc/poke.texi (From Bytes to Integers): Update accordingly.
+	(Bitwise Operators): Likewise.
+	* testsuite/poke.pkl/bconc-7.pk: Likewise.
+	* testsuite/poke.pkl/bconc-6.pk: Likewise.
+	* testsuite/poke.pkl/bconc-5.pk: Likewise.
+	* testsuite/poke.pkl/bconc-4.pk: Likewise.
+	* testsuite/poke.pkl/bconc-3.pk: Likewise.
+	* testsuite/poke.pkl/bconc-2.pk: Likewise.
+	* testsuite/poke.pkl/bconc-1.pk: Likewise.
+
+2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.c (pk_map_normalize_name): New function.
 	(pk_map_load_file): Use pk_map_normalize_name.
 	* poke/pk-cmd-map.c (pk_cmd_map_create): Likewise.

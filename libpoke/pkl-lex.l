@@ -257,7 +257,7 @@ A $
 "&="		{ return BANDA; }
 "|="		{ return IORA; }
 "^="		{ return XORA; }
-"::"		{ return BCONC; }
+":::"		{ return BCONC; }
 
 "||"		{ return OR; }
 "&&"		{ return AND; }

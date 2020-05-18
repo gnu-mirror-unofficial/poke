@@ -4,9 +4,9 @@ defvar x = 0xabUH;
 
 /* { dg-command { .set obase 16 } } */
 
-/* { dg-command { 0xcdUH::x } } */
+/* { dg-command { 0xcdUH:::x } } */
 /* { dg-output "0xcd00abU" } */
 
 /* For constant folding:  */
-/* { dg-command { 0xcdUH::0xabUH } } */
+/* { dg-command { 0xcdUH:::0xabUH } } */
 /* { dg-output "\n0xcd00abU" } */
