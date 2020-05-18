@@ -1,5 +1,9 @@
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk (auto_map): Escape . in regexps.
+
+2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-map.c (pk_cmd_map_show): Include the map name while
 	listing entries.
 	* testsuite/poke.cmd/maps-4.pk: Adapt accordingly.
