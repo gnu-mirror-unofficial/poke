@@ -1,5 +1,13 @@
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-lex.l: Support :: separators in alien token
+	identifiers.
+	* poke/pk-map.c (pk_map_alien_token_handler): Use :: to separate
+	mapname from entryname in alien tokens.
+	(pk_map_normalize_name): Do not reduce sequences of _'s.
+
+2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-lex.l: Change bit-concatenation operator from :: to
 	:::.
 	* doc/poke.texi (From Bytes to Integers): Update accordingly.

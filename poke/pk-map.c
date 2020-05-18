@@ -146,11 +146,23 @@ pk_map_alien_token_handler (const char *id)
   char *entry_name = NULL;
   pk_ios cur_ios;
 
+  /* No point on going ahead if there is no current IOS.  */
   cur_ios = pk_ios_cur (poke_compiler);
   if (!cur_ios)
     return NULL;
 
-  entry_name = strstr (id, "__");
+  /* The format of the identifier should be:
+
+     $MAPNAME::ENTRYNAME
+
+     i.e. the identifier should have two components.  Verify this
+     holds for ID, and extract the fields.  */
+
+  entry_name = strstr (id, "::");
+  if (strstr (entry_name + 2, "::"))
+    /* Too many components.  */
+    return NULL;
+
   if (entry_name)
     {
       pk_map map;
@@ -569,9 +581,8 @@ pk_map_normalize_name (const char *str)
       && STREQ (mapname + strlen (mapname) - 4, ".map"))
     mapname[strlen (mapname) - 4] = '\0';
 
-  /* Normalize the name.  */
-
-  /* First turn any character not in [0-9a-zA-Z_] into _ */
+  /* Normalize the name, which basically consists on turning any
+     character not in [0-9a-zA-Z_] into _ */
   for (p = mapname; *p != '\0'; ++p)
     {
       if ((*p >= '0' && *p <= '9')
@@ -581,19 +592,6 @@ pk_map_normalize_name (const char *str)
         continue;
 
       *p = '_';
-    }
-
-  /* Then translate any sequence of more than one _ into a single _  */
-  for (p = mapname; *p != '\0'; ++p)
-    {
-      if (*p == '_')
-        {
-          char *q, *s;
-
-          for (q = p + 1; *q == '_';)
-            for (s = q; *s != '\0'; ++s)
-              *(s - 1) = *s;
-        }
     }
 
   return mapname;

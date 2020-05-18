@@ -135,6 +135,7 @@ IS		   ((u|U)|(u|U)?(l|L|B|h|H|n|N)|(l|L|B|h|H|n|N)(u|U))
 L [a-zA-Z_]
 D [0-9]
 A $
+S ::
 
 %x C_COMMENT
 %x SHEBANG_COMMENT
@@ -298,7 +299,7 @@ A $
 "."		{ return '.'; }
 "@"		{ return '@'; }
 
-{A}({L}|{D})({L}|{D})* {
+{A}({L}|{D})({L}|{D}|({S}({L}|{D})))* {
   pkl_alien_token_handler_fn cb
     = pkl_alien_token_fn (yyextra->compiler);
 
