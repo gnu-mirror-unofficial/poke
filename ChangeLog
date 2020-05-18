@@ -1,5 +1,12 @@
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map.c (entry_name_to_varname): Use cur_map_id instead of
+	a map.
+	(pk_map_load_parsed_map): Do not create the map until all the
+	variables are defined without error.
+
+2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk (auto_map): Escape . in regexps.
 
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>

@@ -130,11 +130,11 @@ search_map_entry (pk_map map, const char *name)
 }
 
 static char *
-entry_name_to_varname (pk_map map, const char *name)
+entry_name_to_varname (const char *name)
 {
   char *varname;
 
-  if (asprintf (&varname, "__map_entry_%lu_%s", PK_MAP_ID (map), name) == -1)
+  if (asprintf (&varname, "__map_entry_%lu_%s", next_map_id, name) == -1)
     pk_fatal ("out of memory");
   return varname;
 }
@@ -470,12 +470,6 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
                           NULL))
     return 0;
 
-  /* Create the map.
-     We need to do it this early because we need a map for
-     entry_name_to_varname below. */
-  if (!pk_map_create (ios_id, mapname, filename))
-    return 0;
-
   /* Process the map entries and create the mapped global
      variables.  */
 
@@ -495,14 +489,14 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
                                       condition,
                                       NULL /* end */,
                                       &val))
-            return 0;
+            goto error;
 
           if (pk_type_code (pk_typeof (val)) != PK_INT
               && pk_type_code (pk_typeof (val)) != PK_UINT)
             {
               /* XXX error location.  */
               pk_printf ("error: invalid condition expression\n");
-              return 0;
+              goto error;
             }
 
           if (!(pk_type_code (pk_typeof (val)) == PK_INT
@@ -520,10 +514,9 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           const char *name = PK_MAP_PARSED_ENTRY_NAME (entry);
           const char *type = PK_MAP_PARSED_ENTRY_TYPE (entry);
           const char *offset = PK_MAP_PARSED_ENTRY_OFFSET (entry);
-          pk_map new_map = pk_map_search (ios_id, mapname);
 
           PK_MAP_PARSED_ENTRY_VARNAME (entry)
-            = entry_name_to_varname (new_map, name);
+            = entry_name_to_varname (name);
 
           /* XXX set error location with compiler pragmas... */
           char *defvar_str
@@ -535,12 +528,13 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           if (!pk_compile_buffer (poke_compiler,
                                   defvar_str,
                                   NULL /* end */))
-            {
-              free_map (new_map);
-              return 0;
-            }
+            goto error;
         }
     }
+
+  /* Create the map.  */
+  if (!pk_map_create (ios_id, mapname, filename))
+    return 0;
 
   /* Add the map entries.  */
   for (entry = PK_MAP_PARSED_MAP_ENTRIES (map);
@@ -559,14 +553,14 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
 
           if (!pk_map_add_entry (ios_id, mapname, name,
                                  varname, offset))
-            {
-              pk_map_remove (ios_id, mapname);
-              return 0;
-            }
+            goto error;
         }
     }
 
   return 1;
+
+ error:
+  return 0;
 }
 
 char *
