@@ -1,3 +1,10 @@
+2020-05-19  Luca Saiu  <positron@gnu.org>
+
+	* libpoke/Makefile.am (libpvmjitter_la_LIBADD): Use the new
+	JITTER_LIBADD rather than JITTER_LDADD.
+	* poke/Makefile.am (poke_LDADD): Likewise.  Remove now-obsolete
+	XXX comment.
+
 2020-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-map.c (entry_name_to_varname): Use cur_map_id instead of

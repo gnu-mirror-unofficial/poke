@@ -106,7 +106,7 @@ libpvmjitter_la_SOURCES = pvm-vm.h pvm-vm1.c pvm-vm2.c
 libpvmjitter_la_CPPFLAGS = $(libpoke_la_CPPFLAGS) $(JITTER_CPPFLAGS)
 libpvmjitter_la_CFLAGS = $(libpoke_la_CFLAGS) $(JITTER_CFLAGS)
 libpvmjitter_la_LDFLAGS = $(JITTER_LDFLAGS)
-libpvmjitter_la_LIBADD = $(JITTER_LDADD)
+libpvmjitter_la_LIBADD = $(JITTER_LIBADD)
 
 libpoke_la_CPPFLAGS += $(JITTER_CPPFLAGS)
 
