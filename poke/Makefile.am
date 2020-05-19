@@ -50,7 +50,6 @@ poke_CFLAGS = -Wall
 poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(top_builddir)/libpoke/libpoke.la \
              $(LTLIBREADLINE) \
-             $(JITTER_LIBADD) \
              $(LTLIBTEXTSTYLE)
 poke_LDFLAGS =
 
