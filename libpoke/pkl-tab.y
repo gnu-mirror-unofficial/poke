@@ -39,6 +39,8 @@
 #include <xalloc.h>
 #include <assert.h>
 #include <string.h>
+#include <gettext.h>
+#define _(str) gettext (str)
 
 #include "pk-utils.h"
 
@@ -286,70 +288,107 @@ load_module (struct pkl_parser *parser,
 
 /* Primaries.  */
 
-%token <ast> INTEGER
+%token <ast> INTEGER     _("integer literal")
 %token INTEGER_OVERFLOW
-%token <ast> CHAR
-%token <ast> STR
-%token <ast> IDENTIFIER
-%token <ast> TYPENAME
-%token <ast> UNIT
+%token <ast> CHAR        _("character literal")
+%token <ast> STR         _("string")
+%token <ast> IDENTIFIER  _("identifier")
+%token <ast> TYPENAME    _("type name")
+%token <ast> UNIT        _("offset unit")
 
 /* Reserved words.  */
 
-%token ENUM
-%token <integer> PINNED
-%token STRUCT
-%token <integer> UNION
-%token CONST
-%token CONTINUE
-%token ELSE
-%token IF
-%token WHILE
-%token UNTIL
-%token FOR
-%token IN
-%token WHERE
-%token SIZEOF
-%token ASSERT
-%token ERR ALIEN
-%token INTCONSTR UINTCONSTR OFFSETCONSTR
-%token DEFUN DEFSET DEFTYPE DEFVAR DEFUNIT METHOD
-%token RETURN BREAK
-%token STRING
-%token TRY CATCH RAISE
-%token VOID
-%token ANY
-%token ISA
-%token PRINT
-%token PRINTF
-%token UNMAP
-%token LOAD
+%token ENUM              _("keyword `enum'")
+%token <integer> PINNED  _("keyword `pinned'")
+%token STRUCT            _("keyword `struct'")
+token <integer> UNION    _("keyword `union'")
+%token CONST             _("keyword `const'")
+%token CONTINUE          _("keyword `continue'")
+%token ELSE              _("keyword `else'")
+%token IF                _("keyword `if'")
+%token WHILE             _("keyword `while")
+%token UNTIL             _("keyword `until'")
+%token FOR               _("keyword `for'")
+%token IN                _("keyword `in'")
+%token WHERE             _("keyword `where'")
+%token SIZEOF            _("keyword `sizeof'")
+%token ASSERT            _("keyword `assert'")
+%token ERR               _("token")
+%token ALIEN
+%token INTCONSTR         _("int type constructor")
+%token UINTCONSTR        _("uint type constructor")
+%token OFFSETCONSTR      _("offset type constructor")
+%token DEFUN             _("keyword `defun'")
+%token DEFSET            _("keyword `defset'")
+%token DEFTYPE           _("keyword `deftype'")
+%token DEFVAR            _("keyword `defvar'")
+%token DEFUNIT           _("keyword `defunit'")
+%token METHOD            _("keyword `method'")
+%token RETURN            _("keyword `return'")
+%token BREAK             _("keyword `break'")
+%token STRING            _("string type specifier")
+%token TRY               _("keyword `try'")
+%token CATCH             _("keyword `catch'")
+%token RAISE             _("keyword `raise'")
+%token VOID              _("void type specifier")
+%token ANY               _("any type specifier")
+%token PRINT             _("keyword `print'")
+%token PRINTF            _("keyword `printf'")
+%token LOAD              _("keyword `load'")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE BUILTIN_GETENV
-
-/* ATTRIBUTE operator.  */
-
-%token <ast> ATTR
 
 /* Compiler builtins.  */
 
 /* Opcodes.  */
 
-%token <opcode> MULA
-%token <opcode> DIVA
-%token <opcode> MODA
-%token <opcode> ADDA
-%token <opcode> SUBA
-%token <opcode> SLA
-%token <opcode> SRA
-%token <opcode> BANDA
-%token <opcode> XORA
-%token <opcode> IORA
+%token <opcode> MULA    _("multiply-and-assign operator")
+%token <opcode> DIVA    _("divide-and-assing operator")
+%token <opcode> MODA    _("modulus-and-assign operator")
+%token <opcode> ADDA    _("add-and-assing operator")
+%token <opcode> SUBA    _("subtract-and-assign operator")
+%token <opcode> SLA     _("shift-left-and-assign operator")
+%token <opcode> SRA     _("shift-right-and-assign operator")
+%token <opcode> BANDA   _("bit-and-and-assign operator")
+%token <opcode> XORA    _("bit-xor-and-assign operator")
+%token <opcode> IORA    _("bit-or-and-assign operator")
 
-%token BIG LITTLE
-%token SIGNED UNSIGNED
-%token THREEDOTS
+%token OR               _("logical or operator")
+%token AND              _("logical and operator")
+%token '|'              _("bit-wise or operator")
+%token '^'              _("bit-wise xor operator")
+%token '&'              _("bit-wise and operator")
+%token EQ               _("equality operator")
+%token NE               _("inequality operator")
+%token LE               _("less-or-equal operator")
+%token GE               _("bigger-or-equal-than operator")
+%token '<'              _("less-than operator")
+%token '>'              _("bigger-than operator")
+%token SL               _("left shift operator")
+%token SR               _("right shift operator")
+%token '+'              _("addition operator")
+%token '-'              _("subtraction operator")
+%token '*'              _("multiplication operator")
+%token '/'              _("division operator")
+%token CEILDIV          _("ceiling division operator")
+%token '%'              _("modulus operator")
+%token POW              _("power operator")
+%token BCONC            _("bit-concatenation operator")
+%token '@'              _("map operator")
+%token INC              _("increment operator")
+%token DEC              _("decrement operator")
+%token AS               _("cast operator")
+%token ISA              _("type identification operator")
+%token '.'              _("dot operator")
+%token <ast> ATTR       _("attribute")
+%token UNMAP            _("unmap operator")
+
+%token BIG              _("keyword `big'")
+%token LITTLE           _("keyword `little'")
+%token SIGNED           _("keyword `signed'")
+%token UNSIGNED         _("keyword `unsigned'")
+%token THREEDOTS        _("varargs indicator")
 
 /* This is for the dangling ELSE.  */
 
