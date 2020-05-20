@@ -187,7 +187,8 @@ void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p)
 
 /* Get/install a handler for alien tokens.  */
 
-typedef char *(*pkl_alien_token_handler_fn) (const char *id);
+typedef char *(*pkl_alien_token_handler_fn) (const char *id,
+                                             char **errmsg);
 
 pkl_alien_token_handler_fn pkl_alien_token_fn (pkl_compiler compiler);
 

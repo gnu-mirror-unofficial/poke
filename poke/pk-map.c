@@ -140,16 +140,18 @@ entry_name_to_varname (const char *name)
 }
 
 static char *
-pk_map_alien_token_handler (const char *id)
+pk_map_alien_token_handler (const char *id, char **errmsg)
 {
   char *map_name = NULL;
   char *entry_name = NULL;
   pk_ios cur_ios;
 
+  *errmsg = NULL;
+
   /* No point on going ahead if there is no current IOS.  */
   cur_ios = pk_ios_cur (poke_compiler);
   if (!cur_ios)
-    return NULL;
+    goto error;
 
   /* The format of the identifier should be:
 
@@ -159,9 +161,8 @@ pk_map_alien_token_handler (const char *id)
      holds for ID, and extract the fields.  */
 
   entry_name = strstr (id, "::");
-  if (strstr (entry_name + 2, "::"))
-    /* Too many components.  */
-    return NULL;
+  if (!entry_name || strstr (entry_name + 2, "::"))
+    goto error;
 
   if (entry_name)
     {
@@ -189,8 +190,11 @@ pk_map_alien_token_handler (const char *id)
         }
 
       free (map_name);
+
     }
 
+ error:
+  *errmsg = xstrdup ("invalid map entry");
   return NULL;
 }
 

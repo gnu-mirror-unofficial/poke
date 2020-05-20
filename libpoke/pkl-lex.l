@@ -301,13 +301,14 @@ S ::
 "@"		{ return '@'; }
 
 {A}({L}|{D})({L}|{D}|({S}({L}|{D})))* {
+  char *errmsg;
   pkl_alien_token_handler_fn cb
     = pkl_alien_token_fn (yyextra->compiler);
 
   if (pkl_lexical_cuckolding_p (yyextra->compiler)
       && cb != NULL)
     {
-      char *id = (*cb) (yytext + 1);
+      char *id = (*cb) (yytext + 1, &errmsg);
 
       if (id)
         {
@@ -318,9 +319,8 @@ S ::
         }
 
       /* Error from alien handler.  */
-      /* XXX save an error description in yyextra->alienerrmsg
-         and use it in yyreport_syntax_error.  */
-      return ERR;
+      yyextra->alien_errmsg = errmsg;
+      return ALIEN;
     }
 
   /* Lexical cuckolding is not enabled.  */

@@ -1,5 +1,19 @@
 2020-05-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (parse.error): Use customized syntax errors.
+	(yyreport_syntax_error): Define.
+	(ALIEN): New token.
+	* libpoke/pkl-parser.h (struct pkl_parser): New field
+	`alien_errmsg'.
+	* libpoke/pkl-lex.l: Set the alien error message and return ALIEN
+	for alien tokens not accepted by the client.
+	* libpoke/libpoke.h: Get an ERRMSG argument in
+	pk_alien_token_handler_fn.
+	* libpoke/pkl.h: Likewise.
+	* poke/pk-map.c (pk_map_alien_token_handler): Adapt accordingly.
+
+2020-05-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* HACKING (Bison): Document requirement.
 	* bootstrap.conf (buildreq): Require bison >= 3.6.0.
 	* libpoke/pkl-tab.y: Port to bison 3.6.

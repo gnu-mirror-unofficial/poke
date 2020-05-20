@@ -49,6 +49,7 @@ struct pkl_parser
   size_t nchars;
   int bootstrapped;
   int in_method_decl_p;
+  char *alien_errmsg;
 };
 
 /* Public interface.  */

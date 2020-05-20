@@ -18,7 +18,7 @@
 
 %define api.pure full
 %define parse.lac full
-%define parse.error verbose
+%define parse.error custom
  /* %deinfe parse.error custom */
 %locations
 %define api.prefix {pkl_tab_}
@@ -64,25 +64,8 @@
 
 #define PKL_AST_CHILDREN_STEP 12
 
-/* These are used in the defun_or_method rule.  */
 
-#define IS_DEFUN 0
-#define IS_METHOD 1
-
-#if 0
-/* Handle syntax errors.  */
-
-typedef struct yypcontext_t *yypcontext_;
-
-int
-pkl_tab_syntax_error (const yypcontext_t *ctx)
-{
-  printf ("syntax error\n");
-  return 0;
-}
-#endif
-
-/* Convert a YYLTYPE value into an AST location and return it.  */
+/* Emit an error.  */
 
 static void
 pkl_tab_error (YYLTYPE *llocp,
@@ -91,6 +74,11 @@ pkl_tab_error (YYLTYPE *llocp,
 {
     pkl_error (pkl_parser->compiler, pkl_parser->ast, *llocp, "%s", err);
 }
+
+/* These are used in the defun_or_method rule.  */
+
+#define IS_DEFUN 0
+#define IS_METHOD 1
 
 /* Register an argument in the compile-time environment.  This is used
    by function specifiers and try-catch statements.
@@ -323,7 +311,7 @@ load_module (struct pkl_parser *parser,
 %token WHERE
 %token SIZEOF
 %token ASSERT
-%token ERR
+%token ERR ALIEN
 %token INTCONSTR UINTCONSTR OFFSETCONSTR
 %token DEFUN DEFSET DEFTYPE DEFVAR DEFUNIT METHOD
 %token RETURN BREAK
@@ -2039,3 +2027,71 @@ enumerator:
 */
 
 %%
+
+/* Handle syntax errors.  */
+
+int
+yyreport_syntax_error (const yypcontext_t *ctx,
+                       struct pkl_parser *pkl_parser)
+{
+  int res = 0;
+  char *errmsg;
+  yysymbol_kind_t lookahead = yypcontext_token (ctx);
+
+  errmsg = strdup ("syntax error");
+  if (!errmsg)
+    return YYENOMEM;
+
+  /* if the unexpected token is alien, then report
+     pkl_parser->alien_err_msg.  */
+  if (lookahead == YYSYMBOL_ALIEN)
+    {
+      pkl_tab_error (yypcontext_location (ctx),
+                     pkl_parser,
+                     pkl_parser->alien_errmsg);
+      free (pkl_parser->alien_errmsg);
+      pkl_parser->alien_errmsg = NULL;
+    }
+  else
+    {
+      /* report tokens expected at this point.  */
+      yysymbol_kind_t expected[YYNTOKENS];
+      int nexpected = yypcontext_expected_tokens (ctx, expected, YYNTOKENS);
+
+      if (nexpected < 0)
+        /* forward errors to yyparse.  */
+        res = nexpected;
+      else
+        {
+          /* XXX use expected?  */
+#if 0
+          int i;
+
+          for (i = 0; i < nexpected; ++i)
+            {
+              char *tmp = pk_str_concat (errmsg,
+                                         i == 0 ? ": expected " : " or ",
+                                         yysymbol_name (expected[i]),
+                                         NULL);
+              free (errmsg);
+              errmsg = tmp;
+            }
+#endif
+          /* XXX use a table with better names for tokens.  */
+          if (lookahead != YYSYMBOL_YYEMPTY)
+            {
+              char *tmp = pk_str_concat (errmsg,
+                                         ": unexpected ",
+                                         yysymbol_name (lookahead),
+                                         NULL);
+              free (errmsg);
+              errmsg = tmp;
+            }
+
+          pkl_tab_error (yypcontext_location (ctx), pkl_parser, errmsg);
+          free (errmsg);
+        }
+    }
+
+  return res;
+}

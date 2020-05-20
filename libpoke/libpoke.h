@@ -168,9 +168,11 @@ void pk_set_quiet_p (pk_compiler pkc, int quiet_p);
    The handler gets a string with the token identifier (for $foo it
    would get `foo') and should return a string containing the
    resolving identifier.  If the handler returns NULL, then the alien
-   token is not recognized as such in the compiler.  */
+   token is not recognized as such in the compiler and ERRMSG points
+   to an explicative error message.  */
 
-typedef char *(*pk_alien_token_handler_fn) (const char *id);
+typedef char *(*pk_alien_token_handler_fn) (const char *id,
+                                            char **errmsg);
 void pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb);
 
 /* Set the LEXICAL_CUCKOLDING_P flag in the compiler.  If this flag is
