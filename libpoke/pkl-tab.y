@@ -19,8 +19,9 @@
 %define api.pure full
 %define parse.lac full
 %define parse.error verbose
+ /* %deinfe parse.error custom */
 %locations
-%name-prefix "pkl_tab_"
+%define api.prefix {pkl_tab_}
 
 %lex-param {void *scanner}
 %parse-param {struct pkl_parser *pkl_parser}
@@ -48,7 +49,7 @@
 
 #include "pvm.h"
 
-#define YYLTYPE pkl_ast_loc
+#define PKL_TAB_LTYPE pkl_ast_loc
 #define YYDEBUG 1
 #include "pkl-tab.h"
 #include "pkl-lex.h"
@@ -67,6 +68,19 @@
 
 #define IS_DEFUN 0
 #define IS_METHOD 1
+
+#if 0
+/* Handle syntax errors.  */
+
+typedef struct yypcontext_t *yypcontext_;
+
+int
+pkl_tab_syntax_error (const yypcontext_t *ctx)
+{
+  printf ("syntax error\n");
+  return 0;
+}
+#endif
 
 /* Convert a YYLTYPE value into an AST location and return it.  */
 

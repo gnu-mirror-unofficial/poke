@@ -19,7 +19,8 @@
 %define api.pure full
 %define parse.error verbose
 %locations
-%name-prefix "pk_map_tab_"
+ /* %name-prefix "pk_map_tab_"*/
+%define api.prefix {pk_map_tab_}
 
 %lex-param {void *scanner}
 %parse-param {struct pk_map_parser *map_parser}
@@ -42,7 +43,7 @@
 #include "pk-map.h"
 #include "pk-map-parser.h"
 
-#define YYLTYPE struct pk_map_parser_loc
+#define PK_MAP_TAB_LTYPE struct pk_map_parser_loc
 #include "pk-map-tab.h"
 #include "pk-map-lex.h"
 

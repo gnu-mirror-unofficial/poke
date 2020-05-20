@@ -47,6 +47,7 @@
 #include "pkl-env.h"
 #include "pkl-diag.h"
 #include "pkl-parser.h"
+#define YYSTYPE PKL_TAB_STYPE
 #define YYLTYPE pkl_ast_loc
 #define YYDEBUG 1
 #include <pkl-tab.h>
@@ -315,6 +316,11 @@ S ::
           free (id);
           return IDENTIFIER;
         }
+
+      /* Error from alien handler.  */
+      /* XXX save an error description in yyextra->alienerrmsg
+         and use it in yyreport_syntax_error.  */
+      return ERR;
     }
 
   /* Lexical cuckolding is not enabled.  */

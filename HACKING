@@ -43,18 +43,20 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        3. 1  Autotools
        3. 2  Dejagnu
        3. 3  Flex
-       3. 4  readline
-       3. 5  Boehm GC
-       3. 6  Jitter
-       3. 7  JSON-C
-       3. 8  Tcl and Tk
-       3. 9  libtextstyle
-       3.10  libnbd
-       3.11  Building
-       3.12  Building a 32-bit poke
-       3.13  Gettext
-       3.14  Running an Uninstalled Poke
-       3.15  Continuous Integration
+       3. 4  Bison
+       3. 5  readline
+       3. 6  Boehm GC
+       3. 7  Jitter
+       3. 8  JSON-C
+       3. 9  Tcl and Tk
+       3.10  libtextstyle
+       3.11  libnbd
+       3.12  Building
+       3.13  Building the GUI
+       3.14  Building a 32-bit poke
+       3.15  Gettext
+       3.16  Running an Uninstalled Poke
+       3.17  Continuous Integration
      4  Coding Style and Conventions
        4.1  Writing C
          4.1.1  Avoid bool
@@ -274,6 +276,13 @@ Flex
 You will need a recent version of flex, since we are using some recent
 options like "reentrant" or "bison-bridge".  flex version 2.6.1 works
 fine.
+
+Bison
+~~~~~
+
+In order to improve the user's experience, we are using fairly recent
+versions of bison.  Bison 3.6.0 or later is required to boostrap and
+build poke from git.
 
 readline
 ~~~~~~~~

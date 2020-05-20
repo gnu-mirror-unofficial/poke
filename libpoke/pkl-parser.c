@@ -24,6 +24,8 @@
 #include "pkl-ast.h"
 #include "pkl-parser.h"
 #include "pkl-tab.h"
+#define YYSTYPE PKL_TAB_STYPE /* XXX */
+#define YYLTYPE PKL_TAB_LTYPE /* XXX */
 #include "pkl-lex.h"
 
 /* Allocate and initialize a parser.  */

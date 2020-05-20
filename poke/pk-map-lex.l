@@ -40,7 +40,8 @@
 
 #include "pk-utils.h" /* For STREQ */
 #include "pk-map-parser.h"
-#define YYLTYPE struct pk_map_parser_loc
+#define YYLTYPE PK_MAP_TAB_LTYPE
+#define YYSTYPE PK_MAP_TAB_STYPE
 #include "pk-map-tab.h"
 
 #define YY_FATAL_ERROR(msg)                             \
