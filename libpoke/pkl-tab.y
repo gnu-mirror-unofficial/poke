@@ -2085,6 +2085,8 @@ yyreport_syntax_error (const yypcontext_t *ctx,
                                          yysymbol_name (lookahead),
                                          NULL);
               free (errmsg);
+              if (!tmp)
+                return YYENOMEM;
               errmsg = tmp;
             }
 

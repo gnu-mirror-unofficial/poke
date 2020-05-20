@@ -1,5 +1,10 @@
 2020-05-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (yyreport_syntax_error): Handle out-of-memory
+	condition.
+
+2020-05-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (parse.error): Use customized syntax errors.
 	(yyreport_syntax_error): Define.
 	(ALIEN): New token.
