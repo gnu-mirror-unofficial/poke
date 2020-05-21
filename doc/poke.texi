@@ -271,9 +271,11 @@ The following options are available.
 @itemx --load=@var{file}
 Load the given file as a Poke program.  Any number of @samp{-l}
 options can be specified, and they are loaded in the given order.
-@item -L
-Load the given file as a Poke program and exit.  This is commonly used
-along with a shebang to implement Poke scripts.
+@item -L @var{file}
+Load the given file as a Poke program and exit.  The rest of the
+command-line is not processed by poke, and is available to the Poke
+script in the @code{argv} variable.  This is commonly used along with
+a shebang to implement Poke scripts.
 @item -c
 @itemx --command=@var{cmd}
 Execute the given command.  Any number of @samp{-c} options can be
@@ -557,6 +559,17 @@ if they were normal programs.  Example of a script:
 !#
 
 print "Hello world!\n";
+@end example
+
+The resulting script can process command-line options by accessing the
+@code{argv} array.  The following Poke script prints the arguments:
+
+@example
+#!/usr/bin/poke -L
+!#
+
+for (arg in argv)
+  printf ("Argument: %s\n", arg);
 @end example
 
 If you want to pass additional flags to the poke command, you need to
