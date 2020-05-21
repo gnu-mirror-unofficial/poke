@@ -1,3 +1,16 @@
+2020-05-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h (pk_array_set_elem_val): Prototype.
+	(pk_array_set_elem_boffset): Likewise.
+	* libpoke/pk-val.c (pk_array_set_elem_val): Define.
+	 (pk_array_set_elem_boffset): Likewise.
+	* poke/poke.c (parse_args_2): Change -L SCRIPT so any further
+	command line option becomes the script's option.
+	(set_script_args): Define.
+	* libpoke/pkl.c (pvm_type_to_ast_type): Define.
+	* libpoke/pkl-anal.c (pkl_anal_ps_default): Disable the location
+	checker.
+
 2020-05-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y: Include gettext.h and define _.

@@ -224,6 +224,7 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal_ps_default)
 {
+#if 0
   if (!PKL_AST_LOC_VALID (PKL_AST_LOC (PKL_PASS_NODE)))
     {
       PKL_ICE (PKL_AST_NOLOC,
@@ -231,6 +232,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal_ps_default)
                PKL_AST_UID (PKL_PASS_NODE), PKL_AST_CODE (PKL_PASS_NODE));
       PKL_PASS_ERROR;
     }
+#endif
 }
 PKL_PHASE_END_HANDLER
 

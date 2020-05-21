@@ -733,6 +733,56 @@ pkl_load (pkl_compiler compiler, const char *module)
   return 1;
 }
 
+static pkl_ast_node
+pvm_type_to_ast_type (pkl_ast ast, pvm_val type)
+{
+  switch (PVM_VAL_TYP_CODE (type))
+    {
+    case PVM_TYPE_INTEGRAL:
+      return pkl_ast_make_integral_type (ast,
+                                         PVM_VAL_TYP_I_SIZE (type),
+                                         PVM_VAL_TYP_I_SIGNED (type));
+      break;
+    case PVM_TYPE_STRING:
+      return pkl_ast_make_string_type (ast);
+      break;
+    case PVM_TYPE_ARRAY:
+      {
+        pkl_ast_node elem_type
+          =pvm_type_to_ast_type (ast, PVM_VAL_TYP_A_ETYPE (type));
+        pkl_ast_node bound = NULL;  /* XXX no bound in pvm types for now.  */
+
+        return pkl_ast_make_array_type (ast, elem_type, bound);
+        break;
+      }
+    case PVM_TYPE_OFFSET:
+      {
+        pkl_ast_node base_type
+          = pvm_type_to_ast_type (ast, PVM_VAL_TYP_O_BASE_TYPE (type));
+        pkl_ast_node unit
+          = pkl_ast_make_integer (ast, PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (type)));
+
+        return pkl_ast_make_offset_type (ast, base_type, unit);
+        break;
+      }
+    case PVM_TYPE_ANY:
+      return pkl_ast_make_any_type (ast);
+      break;
+    case PVM_TYPE_STRUCT:
+      /* XXX writeme */
+      assert (0);
+      break;
+    case PVM_TYPE_CLOSURE:
+      /* XXX writeme */
+      assert (0);
+      break;
+    default:
+      break;
+    }
+
+  return NULL;
+}
+
 int
 pkl_defvar (pkl_compiler compiler,
             const char *varname, pvm_val val)
@@ -752,35 +802,18 @@ pkl_defvar (pkl_compiler compiler,
     goto error;
 
   /* The type of the initial.  */
-  /* XXX: move this to a pvm_val_to_ast_type function.  */
-  if (PVM_IS_INT (val))
-    initial_type = pkl_ast_make_integral_type (ast,
-                                               PVM_VAL_INT_SIZE (val),
-                                               1);
-  else if (PVM_IS_UINT (val))
-    initial_type = pkl_ast_make_integral_type (ast,
-                                               PVM_VAL_UINT_SIZE (val),
-                                               0);
-  else if (PVM_IS_LONG (val))
-    initial_type = pkl_ast_make_integral_type (ast,
-                                               PVM_VAL_LONG_SIZE (val),
-                                               1);
-  else if (PVM_IS_ULONG (val))
-    initial_type = pkl_ast_make_integral_type (ast,
-                                               PVM_VAL_ULONG_SIZE (val),
-                                               0);
-  else if (PVM_IS_STR (val))
-    initial_type = pkl_ast_make_string_type (ast);
-  else
-    /* XXX support offsets, arrays and structs.  */
-    assert (0);
+  initial_type = pvm_type_to_ast_type (ast, pvm_typeof (val));
+  if (!initial_type)
+    goto error;
 
+  /* This ast is not to be compiled.  */
+  PKL_AST_TYPE_COMPILED (initial_type) = 1;
   /* Initial is a dummy, with the right type.  */
   initial = pkl_ast_make_integer (ast, 0);
   if (!initial)
     goto error;
-  PKL_AST_TYPE (initial) = ASTREF (initial_type);
 
+  PKL_AST_TYPE (initial) = ASTREF (initial_type);
   decl = pkl_ast_make_decl (ast,
                             PKL_AST_DECL_KIND_VAR,
                             name,

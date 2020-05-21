@@ -303,6 +303,38 @@ static struct pk_term_if poke_term_if =
   };
 
 static void
+set_script_args (int argc, char *argv[])
+{
+  int i, nargs;
+  uint64_t index, boffset;
+  pk_val argv_array;
+
+  /* Look for -L SCRIPT */
+  for (i = 0; i < argc; ++i)
+    if (STREQ (argv[i], "-L"))
+      break;
+
+  /* Any argument after SCRIPT is an argument for the script.  */
+  i = i + 2;
+  nargs = argc - i;
+  argv_array = pk_make_array (pk_make_uint (nargs, 64),
+                              pk_make_array_type (pk_make_string_type (),
+                                                  PK_NULL /* bound */));
+
+  for (index = 0, boffset = 0; i < argc; ++i, ++index)
+    {
+      pk_array_set_elem_val (argv_array, index,
+                             pk_make_string (argv[i]));
+      pk_array_set_elem_boffset (argv_array, index,
+                                 pk_make_uint (boffset, 64));
+      boffset = (boffset
+                 + (strlen (argv[i]) + 1) * 8);
+    }
+
+  pk_defvar (poke_compiler, "argv", argv_array);
+}
+
+static void
 parse_args_1 (int argc, char *argv[])
 {
   char c;
@@ -329,6 +361,8 @@ parse_args_1 (int argc, char *argv[])
 	      poke_mi_p = 1;
 	    }
           break;
+        case 'L':
+          return;
         case NO_AUTO_MAP_ARG:
           poke_auto_map_p = 0;
           break;
@@ -391,9 +425,18 @@ parse_args_2 (int argc, char *argv[])
               goto exit_failure;
             break;
           }
-          /* -L is handled below.  */
         case 'L':
-          break;
+          {
+            /* Build argv in the compiler, with the rest of the
+               command-line arguments.  Then execute the script and
+               return.  */
+            set_script_args (argc, argv);
+            poke_interactive_p = 0;
+            if (!pk_compile_file (poke_compiler, optarg))
+              goto exit_success;
+            return;
+            break;
+          }
         case MI_ARG:
           /* Fallthrough.  */
         case NO_AUTO_MAP_ARG:
@@ -430,28 +473,6 @@ parse_args_2 (int argc, char *argv[])
     {
       print_help ();
       goto exit_failure;
-    }
-
-  /* Second round: handle command line arguments that need the data
-     files opened.  */
-  optind = 1;
-  while ((ret = getopt_long (argc,
-                             argv,
-                             "ql:c:s:L:",
-                             long_options,
-                             NULL)) != -1)
-    {
-      c = ret;
-      switch (c)
-        {
-        case 'L':
-          poke_interactive_p = 0;
-          if (!pk_compile_file (poke_compiler, optarg))
-            goto exit_success;
-          break;
-        default:
-          break;
-        }
     }
 
   return;

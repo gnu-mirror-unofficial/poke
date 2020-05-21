@@ -267,8 +267,20 @@ pk_array_elem_val (pk_val array, uint64_t idx)
   return PVM_VAL_ARR_ELEM_VALUE (array, idx);
 }
 
+void
+pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val)
+{
+  PVM_VAL_ARR_ELEM_VALUE (array, idx) = val;
+}
+
 pk_val
 pk_array_elem_boffset (pk_val array, uint64_t idx)
 {
   return PVM_VAL_ARR_ELEM_OFFSET (array, idx);
+}
+
+void
+pk_array_set_elem_boffset (pk_val array, uint64_t idx, pk_val boffset)
+{
+  PVM_VAL_ARR_ELEM_OFFSET (array, idx) = boffset;
 }

@@ -503,6 +503,17 @@ pk_val pk_array_nelem (pk_val array);
 
 pk_val pk_array_elem_val (pk_val array, uint64_t idx);
 
+/* Set the value of the element of an array.
+
+   ARRAY is the array value.
+   IDX is the index of the element whose value is set.
+   VAL is the new value for the array element.
+
+   Note that the type of the element is not checked by this function,
+   so be careful.  */
+
+void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val);
+
 /* Get the bit-offset of the element of an array, relative to the
    beginning of the array.
 
@@ -511,7 +522,16 @@ pk_val pk_array_elem_val (pk_val array, uint64_t idx);
 
    The returned bit-offset is an uint<64>.  */
 
-pk_val pk_array_elem_val_boffset (pk_val array, uint64_t idx);
+pk_val pk_array_elem_boffset (pk_val array, uint64_t idx);
+
+/* Set the bit-offset of the element of an array, relative to the
+   beginning of the array.
+
+   ARRAY is the array value.
+   IDX is the index of the element in the array.
+   BOFFSET is an uint<64> value with the bit-offset of the element.  */
+
+void pk_array_set_elem_boffset (pk_val array, uint64_t idx, pk_val boffset);
 
 /* Integral types.  */
 
