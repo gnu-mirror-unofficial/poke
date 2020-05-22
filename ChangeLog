@@ -1,5 +1,10 @@
 2020-05-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/eq-integers-5.pk: New test.
+	* testsuite/poke.pkl/eq-offsets-8.pk: Likewise.
+
+2020-05-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl.h (pkl_execute_file): Add argument exit_status.
 	* libpoke/libpoke.h (pk_compile_file): Likewise.
 	* libpoke/pkl.c (pkl_execute_file): Likewise.
