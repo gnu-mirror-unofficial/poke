@@ -84,9 +84,13 @@ void pkl_free (pkl_compiler compiler)
   __attribute__ ((visibility ("hidden")));
 
 /* Compile an execute a Poke program from the given file FNAME.
-   Return 1 if the compilation was successful, 0 otherwise.  */
+   Return 1 if the compilation was successful, 0 otherwise.
 
-int pkl_execute_file (pkl_compiler compiler, const char *fname)
+   If EXIT_STATUS is not NULL, set it to the status in which the
+   executed program terminated.  */
+
+int pkl_execute_file (pkl_compiler compiler, const char *fname,
+                      int *exit_status)
   __attribute__ ((visibility ("hidden")));
 
 /* Compile and execute Poke program from a NULL-terminated string

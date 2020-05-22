@@ -406,7 +406,8 @@ parse_args_2 (int argc, char *argv[])
           break;
         case 'l':
         case LOAD_ARG:
-          if (!pk_compile_file (poke_compiler, optarg))
+          if (!pk_compile_file (poke_compiler, optarg,
+                                NULL /* exit_status */))
             goto exit_success;
           break;
         case 'c':
@@ -427,14 +428,18 @@ parse_args_2 (int argc, char *argv[])
           }
         case 'L':
           {
+            int exit_status;
+
             /* Build argv in the compiler, with the rest of the
                command-line arguments.  Then execute the script and
                return.  */
             set_script_args (argc, argv);
             poke_interactive_p = 0;
-            if (!pk_compile_file (poke_compiler, optarg))
+            if (!pk_compile_file (poke_compiler, optarg, &exit_status))
               goto exit_success;
-            return;
+
+            finalize ();
+            exit (exit_status);
             break;
           }
         case MI_ARG:

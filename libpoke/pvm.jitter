@@ -186,11 +186,17 @@ late-header-c
  } while (0)
 
 
-#define PVM_RAISE(CODE,STR)                                           \
+#define PVM_RAISE(CODE,STR,ESTATUS)                                   \
  do                                                                   \
  {                                                                    \
-   pvm_val exception = pvm_make_exception ((CODE),(STR));             \
+   pvm_val exception = pvm_make_exception ((CODE),(STR),(ESTATUS));   \
    PVM_RAISE_DIRECT (exception);                                      \
+ } while (0)
+
+#define PVM_RAISE_DFL(BASE)                                           \
+ do                                                                   \
+ {                                                                    \
+   PVM_RAISE (BASE,BASE##_MSG,BASE##_ESTATUS);                        \
  } while (0)
 
     /* Macros to implement different kind of instructions.  These are to
@@ -232,7 +238,7 @@ late-header-c
 # define PVM_CHECKED_BINOP(TYPEA,TYPEB,TYPER,TYPERLC,OP)                     \
    if (PVM_VAL_##TYPEB (JITTER_TOP_STACK ()) == 0)                           \
    {                                                                         \
-      PVM_RAISE (PVM_E_DIV_BY_ZERO, PVM_E_DIV_BY_ZERO_MSG);                  \
+      PVM_RAISE_DFL (PVM_E_DIV_BY_ZERO);                                     \
    }                                                                         \
    else                                                                      \
    {                                                                         \
@@ -248,7 +254,7 @@ late-header-c
                                                                              \
      if (PVM_VAL_##TYPEB (JITTER_TOP_STACK ()) >= size)                      \
      {                                                                       \
-        PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);            \
+        PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);                                 \
      }                                                                       \
      else                                                                    \
      {                                                                       \
@@ -309,17 +315,17 @@ late-header-c
        io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));      \
                                                                              \
      if (io == NULL)                                                         \
-       PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);                           \
+       PVM_RAISE_DFL (PVM_E_NO_IOS);                                         \
                                                                              \
      JITTER_DROP_STACK ();                                                   \
      if ((ret = ios_read_##IOTYPE (IOARGS)) != IOS_OK)                       \
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
-            PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);                            \
+            PVM_RAISE_DFL (PVM_E_EOF);                                       \
          else if (ret == IOS_ENOMEM)                                         \
-            PVM_RAISE (PVM_E_IO, "out of memory");                           \
+            PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);         \
          else                                                                \
-            PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);                              \
+            PVM_RAISE_DFL (PVM_E_IO);                                        \
          JITTER_TOP_STACK () = PVM_NULL;                                     \
        }                                                                     \
      else                                                                    \
@@ -349,16 +355,16 @@ late-header-c
        io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));            \
                                                                              \
      if (io == NULL)                                                         \
-       PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);                           \
+       PVM_RAISE_DFL (PVM_E_NO_IOS);                                         \
      JITTER_DROP_STACK ();                                                   \
                                                                              \
      offset = PVM_VAL_ULONG (offset_val);                                    \
      if ((ret = ios_write_##IOTYPE (IOARGS)) != IOS_OK)                      \
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
-            PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);                            \
+            PVM_RAISE_DFL (PVM_E_EOF);                                       \
          else                                                                \
-            PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);                              \
+            PVM_RAISE_DFL (PVM_E_IO);                                        \
        }                                                                     \
    } while (0)
 
@@ -772,7 +778,7 @@ instruction sync ()
        As soon as we support exception arguments, we shall
        pass the mask of signals to the signal handler.  */
     if (JITTER_PENDING_NOTIFICATIONS)
-      PVM_RAISE (PVM_E_SIGNAL, PVM_E_SIGNAL_MSG);
+      PVM_RAISE_DFL (PVM_E_SIGNAL);
   end
 end
 
@@ -803,9 +809,9 @@ instruction open ()
      int ret = ios_open (filename, flags, 0);
 
      if (ret == IOS_EFLAGS)
-       PVM_RAISE (PVM_E_IOFLAGS, PVM_E_IOFLAGS_MSG);
+       PVM_RAISE_DFL (PVM_E_IOFLAGS);
      else if (ret == IOS_ERROR)
-       PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
+       PVM_RAISE_DFL (PVM_E_IO);
 
      JITTER_DROP_STACK ();
      JITTER_TOP_STACK () = pvm_make_int (ret, 32);
@@ -829,7 +835,7 @@ instruction close ()
     ios io = ios_search_by_id (io_id);
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
+      PVM_RAISE_DFL (PVM_E_IO);
 
     ios_close (io);
     JITTER_DROP_STACK ();
@@ -850,7 +856,7 @@ instruction pushios ()
     ios cur_io = ios_cur ();
 
     if (cur_io == NULL)
-       PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+       PVM_RAISE_DFL (PVM_E_NO_IOS);
     JITTER_PUSH_STACK (pvm_make_int (ios_get_id (cur_io), 32));
   end
 end
@@ -869,7 +875,7 @@ instruction popios ()
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
     ios_set_cur (io);
     JITTER_DROP_STACK ();
   end
@@ -889,7 +895,7 @@ instruction iosize ()
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
 
     JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_size (io), 64),
                                         pvm_make_ulong (1, 64)));
@@ -915,7 +921,7 @@ instruction iogetb ()
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
 
     JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_get_bias (io), 64),
                                         pvm_make_ulong (1, 64)));
@@ -943,7 +949,7 @@ instruction iosetb ()
     JITTER_DROP_STACK ();
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
 
     ios_set_bias (io,
                   (PVM_VAL_INTEGRAL (PVM_VAL_OFF_MAGNITUDE (bias))
@@ -3347,7 +3353,7 @@ instruction strref () # ( STR ULONG -- STR ULONG VAL )
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             strlen (PVM_VAL_STR (string))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (pvm_make_uint (PVM_VAL_STR (string)[PVM_VAL_ULONG (index)],
                                       8));
@@ -3369,7 +3375,7 @@ instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
     if (PVM_VAL_ULONG (from) >= strlen (PVM_VAL_STR (str))
         || PVM_VAL_ULONG (to) >= strlen (PVM_VAL_STR (str))
         || PVM_VAL_ULONG (from) > PVM_VAL_ULONG (to))
-        PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+        PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     s = pvm_alloc (slen + 1);
     strncpy (s,
@@ -3503,7 +3509,7 @@ instruction aset ()
     arr = JITTER_TOP_STACK ();
 
     if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     /* If the array is bounded by size, check whether the new value
        results in a different size.  */
@@ -3526,7 +3532,7 @@ instruction aset ()
         if (new_size_bits != old_size_bits)
          {
            PVM_VAL_ARR_ELEM_VALUE (arr, idx) = oval;
-           PVM_RAISE (PVM_E_CONV, PVM_E_CONV_MSG);
+           PVM_RAISE_DFL (PVM_E_CONV);
          }
       }
    else
@@ -3554,7 +3560,7 @@ instruction aseto ()
     arr = JITTER_TOP_STACK ();
 
     if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;
   end
@@ -3578,7 +3584,7 @@ instruction aref ()
 
     if ((PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (array))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_VAL_ARR_ELEM_VALUE (array,
                                                PVM_VAL_ULONG (index)));
@@ -3604,7 +3610,7 @@ instruction arefo ()
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (array))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_VAL_ARR_ELEM_OFFSET (array,
                                                 PVM_VAL_ULONG (index)));
@@ -3714,7 +3720,7 @@ instruction sset ()
 
     sct = JITTER_TOP_STACK ();
     if (!pvm_set_struct (sct, name, val))
-       PVM_RAISE (PVM_E_ELEM, PVM_E_ELEM_MSG);
+       PVM_RAISE_DFL (PVM_E_ELEM);
   end
 end
 
@@ -3734,7 +3740,7 @@ instruction sref ()
                                   JITTER_TOP_STACK ());
 
     if (val == PVM_NULL)
-      PVM_RAISE (PVM_E_ELEM, PVM_E_ELEM_MSG);
+      PVM_RAISE_DFL (PVM_E_ELEM);
     JITTER_PUSH_STACK (val);
   end
 end
@@ -3774,7 +3780,7 @@ instruction srefi ()
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_VALUE (sct,
                                                PVM_VAL_ULONG (index)));
@@ -3799,7 +3805,7 @@ instruction srefia ()
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_ABSENT_P (sct,
                                                    PVM_VAL_ULONG (index)));
@@ -3823,7 +3829,7 @@ instruction srefio ()
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_OFFSET (sct,
                                                  PVM_VAL_ULONG (index)));
@@ -3848,7 +3854,7 @@ instruction smodi ()
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
-      PVM_RAISE (PVM_E_OUT_OF_BOUNDS, PVM_E_OUT_OF_BOUNDS_MSG);
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_MODIFIED (sct,
                                                    PVM_VAL_ULONG (index)));
@@ -4612,17 +4618,17 @@ instruction peeks ()
     io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
 
     JITTER_DROP_STACK ();
     if ((ret = ios_read_string (io, offset, 0 /* flags */, &ios_str)) != IOS_OK)
     {
       if (ret == IOS_EIOFF)
-         PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);
+         PVM_RAISE_DFL (PVM_E_EOF);
       else if (ret == IOS_ENOMEM)
-         PVM_RAISE (PVM_E_IO, "out of memory");
+         PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);
       else
-         PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
+         PVM_RAISE_DFL (PVM_E_IO);
       JITTER_TOP_STACK () = PVM_NULL;
     }
     else
@@ -4651,15 +4657,15 @@ instruction pokes ()
     io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
     if (io == NULL)
-      PVM_RAISE (PVM_E_NO_IOS, PVM_E_NO_IOS_MSG);
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
 
     JITTER_DROP_STACK ();
     if ((ret = ios_write_string (io, offset, 0 /* flags */, str)) != IOS_OK)
     {
       if (ret == IOS_EIOFF)
-         PVM_RAISE (PVM_E_EOF, PVM_E_EOF_MSG);
+         PVM_RAISE_DFL (PVM_E_EOF);
       else
-         PVM_RAISE (PVM_E_IO, PVM_E_IO_MSG);
+         PVM_RAISE_DFL (PVM_E_IO);
     }
   end
 end

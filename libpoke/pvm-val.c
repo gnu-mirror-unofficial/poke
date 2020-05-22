@@ -1199,13 +1199,14 @@ pvm_call_pretty_printer (pvm vm, pvm_val val)
    definition of the struct Exception in pkl-rt.pk.  */
 
 pvm_val
-pvm_make_exception (int code, char *message)
+pvm_make_exception (int code, char *message, int exit_status)
 {
-  pvm_val nfields = pvm_make_ulong (2, 64);
+  pvm_val nfields = pvm_make_ulong (3, 64);
   pvm_val nmethods = pvm_make_ulong (0, 64);
   pvm_val struct_name = pvm_make_string ("Exception");
   pvm_val code_name = pvm_make_string ("code");
   pvm_val msg_name = pvm_make_string ("msg");
+  pvm_val exit_status_name = pvm_make_string ("exit_status");
   pvm_val *field_names, *field_types, type;
   pvm_val exception;
 
@@ -1229,6 +1230,10 @@ pvm_make_exception (int code, char *message)
   PVM_VAL_SCT_FIELD_NAME (exception, 1) = msg_name;
   PVM_VAL_SCT_FIELD_VALUE (exception, 1)
     = pvm_make_string (message);
+
+  PVM_VAL_SCT_FIELD_NAME (exception, 2) = exit_status_name;
+  PVM_VAL_SCT_FIELD_VALUE (exception, 2)
+    = pvm_make_int (exit_status, 32);
 
   return exception;
 }

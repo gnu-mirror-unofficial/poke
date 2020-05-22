@@ -88,10 +88,14 @@ void pk_compiler_free (pk_compiler pkc);
 
 /* Compile a Poke program from the given file FILENAME.
 
+   If not NULL, *EXIT_STATUS is set to the status resulting from the
+   execution of the program.
+
    Return 0 in case of a compilation error, a non-zero value
    otherwise.  */
 
-int pk_compile_file (pk_compiler pkc, const char *filename);
+int pk_compile_file (pk_compiler pkc, const char *filename,
+                     int *exit_status);
 
 /* Compile a Poke program from a memory buffer.
 

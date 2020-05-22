@@ -79,9 +79,11 @@ pk_compiler_free (pk_compiler pkc)
 }
 
 int
-pk_compile_file (pk_compiler pkc, const char *filename)
+pk_compile_file (pk_compiler pkc, const char *filename,
+                 int *exit_status)
 {
-  return pkl_execute_file (pkc->compiler, filename);
+  return pkl_execute_file (pkc->compiler, filename,
+                           exit_status);
 }
 
 int

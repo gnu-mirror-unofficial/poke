@@ -1113,7 +1113,8 @@ pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
 
       /* Install the default signal handler.  */
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
-                    pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG));
+                    pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG,
+                                        PVM_E_GENERIC_ESTATUS));
       pkl_asm_insn (pasm, PKL_INSN_PUSHE, pasm->error_label);
       pkl_asm_note (pasm, "#end prologue");
     }
@@ -1147,20 +1148,22 @@ pkl_asm_finish (pkl_asm pasm, int epilogue)
          assembly.  Otherwise, call the _pkl_exception_handler
          function which is part of the compiler run-time.  */
       if (pkl_bootstrapped_p (pasm->compiler))
-          pkl_asm_call (pasm, "_pkl_exception_handler");
+        pkl_asm_call (pasm, "_pkl_exception_handler");
       else
         {
           pkl_asm_insn (pasm, PKL_INSN_DROP); /* Discard the exception.  */
           pkl_asm_insn (pasm, PKL_INSN_PUSH,
                         pvm_make_string ("unhandled exception while bootstrapping\n"));
           pkl_asm_insn (pasm, PKL_INSN_PRINTS);
-
+          pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (PVM_EXIT_ERROR, 32));
         }
 
-      /* Set the exit status to ERROR and exit the PVM.  */
-      pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (PVM_EXIT_ERROR, 32));
-      pkl_asm_insn (pasm, PKL_INSN_EXIT);
+      /* The exit status is now on the stack.  Add the result value of
+         the execution, which in this case is null. */
+      pkl_asm_insn (pasm, PKL_INSN_PUSH, PVM_NULL);
+      pkl_asm_insn (pasm, PKL_INSN_SWAP);
 
+      pkl_asm_insn (pasm, PKL_INSN_EXIT);
       pkl_asm_note (pasm, "#end epilogue");
     }
 

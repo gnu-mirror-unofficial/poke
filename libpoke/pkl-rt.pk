@@ -60,11 +60,13 @@ deftype Exception =
   {
     int<32> code;
     string msg;
+    int<32> exit_status;
   };
 
 /* Standard exception codes.
    Note that user-defined exceptions must have codes starting with
-   255.  */
+   255.
+   Note also that EC_generic _must_ be zero.  */
 
 defvar EC_generic       = 0;
 defvar EC_div_by_zero   = 1;
@@ -86,37 +88,37 @@ defvar EC_exit          = 15;
 /* Standard exceptions.  */
 
 defvar E_generic
-  = Exception {code = EC_generic, msg = "generic"};
+  = Exception {code = EC_generic, msg = "generic", exit_status = 1};
 defvar E_div_by_zero
-  = Exception {code = EC_div_by_zero, msg = "division by zero"};
+  = Exception {code = EC_div_by_zero, msg = "division by zero", exit_status = 1};
 defvar E_no_ios
-  = Exception {code = EC_no_ios, msg = "no IOS"};
+  = Exception {code = EC_no_ios, msg = "no IOS", exit_status = 1};
 defvar E_no_return
-  = Exception {code = EC_no_return, msg = "no return"};
+  = Exception {code = EC_no_return, msg = "no return", exit_status = 1};
 defvar E_out_of_bounds
-  = Exception {code = EC_out_of_bounds, msg = "out of bounds"};
+  = Exception {code = EC_out_of_bounds, msg = "out of bounds", exit_status = 1};
 defvar E_map_bounds
-  = Exception {code = EC_map_bounds, msg = "out of map bounds"};
+  = Exception {code = EC_map_bounds, msg = "out of map bounds", exit_status = 1};
 defvar E_eof
-  = Exception {code = EC_eof, msg = "EOF"};
+  = Exception {code = EC_eof, msg = "EOF", exit_status = 0 };
 defvar E_map
-  = Exception {code = EC_map, msg = "no map"};
+  = Exception {code = EC_map, msg = "no map", exit_status = 1};
 defvar E_conv
-  = Exception {code = EC_conv, msg = "conversion error"};
+  = Exception {code = EC_conv, msg = "conversion error", exit_status = 1};
 defvar E_elem
-  = Exception {code = EC_elem, msg = "invalid element"};
+  = Exception {code = EC_elem, msg = "invalid element", exit_status = 1};
 defvar E_constraint
-  = Exception {code = EC_constraint, msg = "constraint violation"};
+  = Exception {code = EC_constraint, msg = "constraint violation", exit_status = 1};
 defvar E_io
-  = Exception {code = EC_io, msg = "generic IO"};
+  = Exception {code = EC_io, msg = "generic IO", exit_status = 1};
 defvar E_signal
-  = Exception {code = EC_signal};
+  = Exception {code = EC_signal, exit_status = 1};
 defvar E_io_flags
-  = Exception {code = EC_io_flags, msg = "invalid IO flags"};
+  = Exception {code = EC_io_flags, msg = "invalid IO flags", exit_status = 1};
 defvar E_inval
-  = Exception {code = EC_inval, msg = "invalid argument"};
+  = Exception {code = EC_inval, msg = "invalid argument", exit_status = 1};
 defvar E_exit
-  = Exception {code = EC_exit, msg = "exit"};
+  = Exception {code = EC_exit, msg = "exit", exit_status = 0};
 
 /* Default exception handler.
 
@@ -124,27 +126,25 @@ defvar E_exit
    or be ready to underflow the exception handlers stack and face some
    ugly shit.  You have been warned!  */
 
-defun _pkl_exception_handler = (Exception exception) void:
+defun _pkl_exception_handler = (Exception exception) int<32>:
   {
-   if (exception.code == EC_exit)
-     return; /* XXX exit status.  */
+   if (exception.code != EC_exit && exception.code != EC_signal)
+     {
+       print ("unhandled "
+              + (exception.msg == "" ? "unknown" : exception.msg)
+              + " exception\n");
+     }
 
-   if (exception.code == EC_signal)
-     return;
-
-   print ("unhandled "
-          + (exception.msg == "" ? "unknown" : exception.msg)
-          + " exception\n");
+   return exception.exit_status;
   }
 
-/* Exit a Poke program with the given exit code.  This is equivalent
+/* Exit a Poke program with the given exit status code.  This is equivalent
    to raise an E_exit exception, but provides a more conventional
    syntax.  */
 
-defun exit = (int<32> exit_code) void:
+defun exit = (int<32> exit_code = 0) void:
   {
-    /* XXX E_exit { status = exit_code } */
-    raise E_exit;
+    raise Exception { code = EC_exit, exit_status = exit_code };
   }
 
 /* Find the greatest common divisor of two unsigned 64-bit integrals A

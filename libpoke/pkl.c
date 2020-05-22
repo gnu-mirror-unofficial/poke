@@ -103,7 +103,7 @@ pkl_new (pvm vm, const char *rt_path)
     if (!poke_rt_pk)
       goto out_of_memory;
 
-    if (!pkl_execute_file (compiler, poke_rt_pk))
+    if (!pkl_execute_file (compiler, poke_rt_pk, NULL))
       {
         free (poke_rt_pk);
 
@@ -126,7 +126,7 @@ pkl_new (pvm vm, const char *rt_path)
     if (!poke_std_pk)
       goto out_of_memory;
 
-    if (!pkl_execute_file (compiler, poke_std_pk))
+    if (!pkl_execute_file (compiler, poke_std_pk, NULL))
       {
         free (poke_std_pk);
         pkl_free (compiler);
@@ -456,7 +456,8 @@ pkl_execute_expression (pkl_compiler compiler,
 }
 
 int
-pkl_execute_file (pkl_compiler compiler, const char *fname)
+pkl_execute_file (pkl_compiler compiler, const char *fname,
+                  int *exit_status)
 {
   int ret;
   pkl_ast ast = NULL;
@@ -494,11 +495,10 @@ pkl_execute_file (pkl_compiler compiler, const char *fname)
   /* Execute the program in the poke vm.  */
   {
     pvm_val val;
+    int status = pvm_run (compiler->vm, program, &val);
 
-    if (pvm_run (compiler->vm, program, &val) != PVM_EXIT_OK)
-      goto error_no_close;
-
-    /* Discard the value.  */
+    if (exit_status)
+      *exit_status = status;
   }
 
   pvm_destroy_program (program);
@@ -508,7 +508,6 @@ pkl_execute_file (pkl_compiler compiler, const char *fname)
 
  error:
   fclose (fp);
- error_no_close:
   pkl_env_free (env);
   return 0;
 }
@@ -724,7 +723,7 @@ pkl_load (pkl_compiler compiler, const char *module)
   if (pkl_module_loaded_p (compiler, module_filename))
     return 1;
 
-  if (!pkl_execute_file (compiler, module_filename))
+  if (!pkl_execute_file (compiler, module_filename, NULL))
     {
       pkl_add_module (compiler, module_filename);
       return 0;
