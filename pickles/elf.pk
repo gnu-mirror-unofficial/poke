@@ -198,6 +198,10 @@ deftype Elf64_Shdr =
     offset<Elf64_Xword,b> sh_entsize;
   };
 
+defvar ELFDATANONE = 0;
+defvar ELFDATA2LSB = 1;
+defvar ELFDATA2MSB = 2;
+
 deftype Elf64_Ehdr =
   struct
   {
@@ -205,7 +209,8 @@ deftype Elf64_Ehdr =
     {
       byte[4] ei_mag = [0x7fUB, 'E', 'L', 'F'];
       byte ei_class;
-      byte ei_data;
+      byte ei_data :
+        (ei_data == ELFDATA2LSB) ? set_endian (ENDIAN_LITTLE) : set_endian (ENDIAN_BIG);
       byte ei_version;
       byte ei_osabi;
       byte ei_abiversion;
