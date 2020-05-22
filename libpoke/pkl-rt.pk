@@ -81,6 +81,7 @@ defvar EC_io            = 11;
 defvar EC_signal        = 12;
 defvar EC_io_flags      = 13;
 defvar EC_inval         = 14;
+defvar EC_exit          = 15;
 
 /* Standard exceptions.  */
 
@@ -114,6 +115,8 @@ defvar E_io_flags
   = Exception {code = EC_io_flags, msg = "invalid IO flags"};
 defvar E_inval
   = Exception {code = EC_inval, msg = "invalid argument"};
+defvar E_exit
+  = Exception {code = EC_exit, msg = "exit"};
 
 /* Default exception handler.
 
@@ -123,12 +126,25 @@ defvar E_inval
 
 defun _pkl_exception_handler = (Exception exception) void:
   {
+   if (exception.code == EC_exit)
+     return; /* XXX exit status.  */
+
    if (exception.code == EC_signal)
      return;
 
    print ("unhandled "
           + (exception.msg == "" ? "unknown" : exception.msg)
           + " exception\n");
+  }
+
+/* Exit a Poke program with the given exit code.  This is equivalent
+   to raise an E_exit exception, but provides a more conventional
+   syntax.  */
+
+defun exit = (int<32> exit_code) void:
+  {
+    /* XXX E_exit { status = exit_code } */
+    raise E_exit;
   }
 
 /* Find the greatest common divisor of two unsigned 64-bit integrals A

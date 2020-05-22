@@ -505,6 +505,9 @@ enum pvm_exit_code
 #define PVM_E_INVAL        14
 #define PVM_E_INVAL_MSG "invalid argument"
 
+#define PVM_E_EXIT         15
+#define PVM_E_EXIT_MSG ""
+
 typedef struct pvm *pvm;
 
 /* Initialize a new Poke Virtual Machine and return it.  */
