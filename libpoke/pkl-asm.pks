@@ -110,26 +110,23 @@
         regvar $tounit                          ; OFF
         ogetu                                   ; OFF FROMUNIT
         regvar $fromunit                        ; OFF
-        ;; Get the magnitude of the offset and convert it to the new
-        ;; magnitude type.
+        ;; Get the magnitude of the offset and convert it to the
+        ;; unit type, which is uint<64>.
         ogetm                                   ; OFF OFFM
-        nton @from_base_type, @to_base_type     ; OFF OFFM OFFMC
+        nton @from_base_type, @unit_type        ; OFF OFFM OFFMC
         nip                                     ; OFF OFFMC
         ;; Now do the same for the unit.
         pushvar $fromunit                       ; OFF OFFMC OFFU
-        nton @unit_type, @to_base_type          ; OFF OFFMC OFFU OFFUC
-        nip                                     ; OFF OFFMC OFFUC
-        mul @to_base_type                       ; OFF OFFMC OFFUC (OFFMC*OFFUC)
+        mul @unit_type                          ; OFF OFFMC OFFU (OFFMC*OFFUC)
         nip2                                    ; OFF (OFFMC*OFFUC)
         ;; Convert the new unit.
         pushvar $tounit                         ; OFF (OFFMC*OFFUC) TOUNIT
-        nton @unit_type, @to_base_type          ; OFF (OFFMC*OFFUNC) TOUNIT TOUNITC
-        nip                                     ; OFF (OFFMC*OFFUNC) TOUNITC
-        div @to_base_type
-        nip2                                    ; OFF (OFFMC*OFFUNC/TOUNITC)
-        swap                                    ; (OFFMC*OFFUNC/TOUNITC) OFF
-        pushvar $tounit                         ; (OFFMC*OFFUNC/TOUNITC) OFF TOUNIT
-        nip                                     ; (OFFMC*OFFUNC/TOUNITC) TOUNIT
+        div @unit_type
+        nip2                                    ; OFF (OFFMC*OFFUC/TOUNIT)
+        ;; Convert to the new unit
+        nton @unit_type, @to_base_type          ; OFF (OFFMC*OFFUC/TOUNIT) OFFC
+        nip2                                    ; OFFC
+        pushvar $tounit                         ; OFFC TOUNIT
         mko                                     ; OFFC
         popf 1
         .end
