@@ -663,17 +663,16 @@ pkl_resolve_module (pkl_compiler compiler,
   /* Get the load path from the run-time environment.  */
   {
     pvm_val val;
-    pkl_ast_node tmp;
     int back, over;
 
     pkl_env compiler_env = pkl_get_env (compiler);
     pvm_env runtime_env = pvm_get_env (pkl_get_vm (compiler));
 
-    tmp = pkl_env_lookup (compiler_env,
-                          PKL_ENV_NS_MAIN,
-                          "load_path",
-                          &back, &over);
-    assert (tmp != NULL);
+    if (NULL == pkl_env_lookup (compiler_env,
+                                PKL_ENV_NS_MAIN,
+                                "load_path",
+                                &back, &over))
+      return NULL;
 
     val = pvm_env_lookup (runtime_env, back, over);
     assert (val != PVM_NULL);

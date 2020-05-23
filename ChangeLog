@@ -1,3 +1,9 @@
+2020-05-23  John Darrington <john@darrington.wattle.id.au>
+
+	* poke/poke.c (pk_fatal): Call abort instead of exit.
+	* libpoke/pkl.c (pklresolve_module): On lookup failure,
+	return NULL instead of asserting.
+
 2020-05-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-asm.pks (offset_cast): Operate with integers of
