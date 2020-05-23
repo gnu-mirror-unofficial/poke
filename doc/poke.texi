@@ -3812,7 +3812,7 @@ deftype SBM_Header = byte[5];
 However, this would not capture the properties of the fields
 themselves, which would need to be remember by the user: which of
 these five bytes correspond to the magic number?  Is the pixels per
-line number signed or unsigned? etc.
+line number signed or unsigned? @i{etc}.
 
 Poke provides a much better way to abstract collections of
 heterogeneous data: @dfn{struct types}.  Using a struct type we can
@@ -3990,8 +3990,8 @@ a frob per standard color, you would do it like:
 @end example
 
 The pickle also provides a function @code{color_name} that, given a
-color code, returns a printable name for the color, i.e. a string
-describing it.  For user-defined colors, this string is fixed:
+color code, returns a printable name for the color, @i{i.e.} a string
+describing it.  For user defined colors, this string is fixed:
 
 @example
 (poke) color_name (23)
@@ -4196,7 +4196,7 @@ writer.
 Very often the structure of the data encoded in binary is not very
 intelligible.  This is because it is usual for binary formats to be
 designed with other goals in mind other than being readable by humans:
-compactness, detailness, etc.
+compactness, detailness, @i{etc}.
 
 In our pickle we of course want to provide access to the very finer
 detail of the data structures.  However, we also want for the user to

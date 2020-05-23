@@ -25,3 +25,17 @@ sc_rockdabootism_missing_space:
 	exclude="([a-z]+\(3\)\.|poke\(wo\)men)" \
 	halt='missing space before ('           \
 	$(_sc_search_regexp)
+
+sc_unitalicised_ie:
+	@prohibit='i\.e\.'				  \
+	in_vc_files='$(texinfo_suffix_re_)'		  \
+	exclude='@i{i\.e\.}'                              \
+	halt='found unitalicised "i.e." in Texinfo source.  Use @i{i.e.}' \
+	  $(_sc_search_regexp)
+
+sc_unitalicised_etc:
+	@prohibit='\betc\b'				  \
+	in_vc_files='$(texinfo_suffix_re_)'		  \
+	exclude='@i{etc}'                              \
+	halt='found unitalicised "etc" in Texinfo source.  Use @i{etc}' \
+	  $(_sc_search_regexp)
