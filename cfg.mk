@@ -39,3 +39,9 @@ sc_unitalicised_etc:
 	exclude='@i{etc}'                              \
 	halt='found unitalicised "etc" in Texinfo source.  Use @i{etc}' \
 	  $(_sc_search_regexp)
+
+sc_tabs_in_source:
+	@prohibit='	'                    \
+	in_vc_files='\.[chly]$$'                 \
+	halt='found tabs in source.  Use spaces instead.'           \
+	$(_sc_search_regexp)
