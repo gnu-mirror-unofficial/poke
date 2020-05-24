@@ -172,10 +172,10 @@ pk_trie_expand_cmds (struct pk_trie *root,
     {
       size_t i;
       for (i = 0; i < 256; i++)
-	{
-	  if (trie->children[i] != NULL)
-	    pk_trie_expand_cmds (root, trie->children[i]);
-	}
+        {
+          if (trie->children[i] != NULL)
+            pk_trie_expand_cmds (root, trie->children[i]);
+        }
     }
 }
 
@@ -750,7 +750,7 @@ pk_cmd_get_next_match (const char *text, size_t len)
        c++)
     {
       if (len == 0 || strncmp ((*c)->name, text + 1, len - 1) == 0)
-	return pk_str_concat (".", (*c)->name, NULL);
+        return pk_str_concat (".", (*c)->name, NULL);
     }
   idx = 0;
 

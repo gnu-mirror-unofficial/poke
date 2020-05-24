@@ -350,16 +350,16 @@ parse_args_1 (int argc, char *argv[])
       switch (c)
         {
         case MI_ARG:
-	  if (!mi_supported_p)
-	    {
-	      fputs (_("MI is not built into this instance of poke\n"),
-		     stderr);
-	      exit (EXIT_FAILURE);
-	    }
-	  else
-	    {
-	      poke_mi_p = 1;
-	    }
+          if (!mi_supported_p)
+            {
+              fputs (_("MI is not built into this instance of poke\n"),
+                     stderr);
+              exit (EXIT_FAILURE);
+            }
+          else
+            {
+              poke_mi_p = 1;
+            }
           break;
         case 'L':
           return;

@@ -635,14 +635,14 @@ set_completion_function (const char *x, int state)
     {
       const struct pk_cmd *c = set_cmds[idx];
       if (c == &null_cmd)
-	break;
+        break;
 
       int match = strncmp (c->name, x, len);
       if (match != 0)
-	{
-	  idx++;
-	  continue;
-	}
+        {
+          idx++;
+          continue;
+        }
 
       return xstrdup (c->name);
     }

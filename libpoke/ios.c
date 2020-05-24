@@ -30,20 +30,20 @@
 #include "ios.h"
 #include "ios-dev.h"
 
-#define IOS_GET_C_ERR_CHCK(c, io, off)				\
-  {								\
-    uint8_t ch;							\
-    int ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off); 	\
-    if (ret == IOD_EOF)						\
-      return IOS_EIOFF;						\
-    (c) = ch;							\
+#define IOS_GET_C_ERR_CHCK(c, io, off)                                \
+  {                                                                \
+    uint8_t ch;                                                        \
+    int ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off);         \
+    if (ret == IOD_EOF)                                                \
+      return IOS_EIOFF;                                                \
+    (c) = ch;                                                        \
   }
 
-#define IOS_PUT_C_ERR_CHCK(c, io, len, off)		\
-  {							\
-    if ((io)->dev_if->pwrite ((io)->dev, c, len, off)	\
-        == IOD_EOF)					\
-      return IOS_EIOBJ;					\
+#define IOS_PUT_C_ERR_CHCK(c, io, len, off)                \
+  {                                                        \
+    if ((io)->dev_if->pwrite ((io)->dev, c, len, off)        \
+        == IOD_EOF)                                        \
+      return IOS_EIOBJ;                                        \
   }
 
 /* The following struct implements an instance of an IO space.
@@ -298,12 +298,12 @@ ios_map (ios_map_fn cb, void *data)
 }
 
 /* Set all except the lowest SIGNIFICANT_BITS of VALUE to zero.  */
-#define IOS_CHAR_GET_LSB(value, significant_bits)		\
+#define IOS_CHAR_GET_LSB(value, significant_bits)                \
   (*(value) &= 0xFFU >> (CHAR_BIT - (significant_bits)))
 
 /* Set all except the highest SIGNIFICANT_BITS of the lowest
    significant byte of VALUE to zero.  */
-#define IOS_CHAR_GET_MSB(value, significant_bits)		\
+#define IOS_CHAR_GET_MSB(value, significant_bits)                \
   (*(value) &= 0xFFU << (CHAR_BIT - (significant_bits)))
 
 static inline int

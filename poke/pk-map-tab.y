@@ -287,24 +287,24 @@ pk_map_tab_error (YYLTYPE *llocp, struct pk_map_parser *map_parser, char const *
 %%
 
 map:
-	  DATA SEP map_entries
-		{
+          DATA SEP map_entries
+                {
                   /* XXX sort the entries?  Maybe not.  */
                   $$ = make_map ("XXX", $1, $3);
                   $$->loc = @$;
                   map_parser->map = ($$);
                 }
-	;
+        ;
 
 map_entries:
-	  %empty
-		{ $$ = NULL; }
+          %empty
+                { $$ = NULL; }
         | map_entries map_entry
-        	{ $$ = map_entry_chainon ($1, $2); }
+                { $$ = map_entry_chainon ($1, $2); }
 
 map_entry:
-	  ENTRY tagged_value_list
-          	{
+          ENTRY tagged_value_list
+                  {
                   tagged_value name = get_tagged_value ($2, TAG_NAME);
                   tagged_value type = get_tagged_value ($2, TAG_TYPE);
                   tagged_value offset = get_tagged_value ($2, TAG_OFFSET);
@@ -339,17 +339,17 @@ map_entry:
                   $$->loc = @$;
                   free_tagged_value_chain ($2);
                 }
-	;
+        ;
 
 tagged_value_list:
-	  %empty
-		{ $$ = NULL; }
+          %empty
+                { $$ = NULL; }
         | tagged_value_list tagged_value
-        	{ $$ = tagged_value_chainon ($1, $2); }
-	;
+                { $$ = tagged_value_chainon ($1, $2); }
+        ;
 
 tagged_value:
-	  TAG DATA
+          TAG DATA
           {
             if ($1 == TAG_UNKNOWN)
               {

@@ -125,13 +125,13 @@ NEWLINE            \n
 BLANK              [ \t]
 LETTER             [a-zA-Z]
 FIELD_NAME         {LETTER}[a-zA-Z0-9_]*
-CHAR		   '(.|\\[ntr\\]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
+CHAR                   '(.|\\[ntr\\]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
 STRING             \"([^"]|\\(.|\n))*\"
-HEXCST		   0[xX][0-9a-fA-F][0-9a-fA-F_]*
-BINCST		   0[bB][01][01_]*
+HEXCST                   0[xX][0-9a-fA-F][0-9a-fA-F_]*
+BINCST                   0[bB][01][01_]*
 OCTCST             0[oO][0-7_]*
 DECCST             [0-9][0-9_]*
-IS		   ((u|U)|(u|U)?(l|L|B|h|H|n|N)|(l|L|B|h|H|n|N)(u|U))
+IS                   ((u|U)|(u|U)?(l|L|B|h|H|n|N)|(l|L|B|h|H|n|N)(u|U))
 
 L [a-zA-Z_]
 D [0-9]
@@ -154,9 +154,9 @@ S ::
   }
 %}
 
-{NEWLINE}	{ /* Ignore newlines.  */  }
-{BLANK}		{ /* Ignore whitespace.  */ }
-\f		{ /* Ignore form feed ^L characters.  */ }
+{NEWLINE}        { /* Ignore newlines.  */  }
+{BLANK}                { /* Ignore whitespace.  */ }
+\f                { /* Ignore form feed ^L characters.  */ }
 
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
@@ -168,9 +168,9 @@ S ::
 <SHEBANG_COMMENT>.    {  }
 <SHEBANG_COMMENT>\n   {  }
 
-"//"[^\n]*	{ /* Partial-line comment.  */ }
+"//"[^\n]*        { /* Partial-line comment.  */ }
 
-"__LINE__"	{
+"__LINE__"        {
   pkl_ast_node type
     = pkl_ast_make_integral_type (yyextra->ast, 64, 0);
   yylval->ast = pkl_ast_make_integer (yyextra->ast,
@@ -180,7 +180,7 @@ S ::
   return INTEGER;
 }
 
-"__FILE__"	{
+"__FILE__"        {
   pkl_ast_node type
     = pkl_ast_make_string_type (yyextra->ast);
 
@@ -192,38 +192,38 @@ S ::
   return STR;
  }
 
-"pinned"	{ return PINNED; }
-"struct"	{ return STRUCT; }
-"union"		{ return UNION; }
-"else"		{ return ELSE; }
-"while"		{ return WHILE; }
-"until"		{ return UNTIL; }
-"for"		{ return FOR; }
-"in"		{ return IN; }
-"where"		{ return WHERE; }
-"if"		{ return IF; }
-"sizeof"	{ return SIZEOF; }
-"defun"		{ return DEFUN; }
-"method"	{ return METHOD; }
-"deftype"	{ return DEFTYPE; }
-"defvar"	{ return DEFVAR; }
-"defunit"	{ return DEFUNIT; }
-"break"		{ return BREAK; }
+"pinned"        { return PINNED; }
+"struct"        { return STRUCT; }
+"union"                { return UNION; }
+"else"                { return ELSE; }
+"while"                { return WHILE; }
+"until"                { return UNTIL; }
+"for"                { return FOR; }
+"in"                { return IN; }
+"where"                { return WHERE; }
+"if"                { return IF; }
+"sizeof"        { return SIZEOF; }
+"defun"                { return DEFUN; }
+"method"        { return METHOD; }
+"deftype"        { return DEFTYPE; }
+"defvar"        { return DEFVAR; }
+"defunit"        { return DEFUNIT; }
+"break"                { return BREAK; }
 "return"        { return RETURN; }
-"string"	{ return STRING; }
-"as"		{ return AS; }
-"try"		{ return TRY; }
-"catch"		{ return CATCH; }
-"raise"		{ return RAISE; }
-"void"		{ return VOID; }
-"any"		{ return ANY; }
-"print"		{ return PRINT; }
-"printf"	{ return PRINTF; }
-"isa"		{ return ISA; }
-"unmap"		{ return UNMAP; }
-"big"		{ return BIG; }
-"little"	{ return LITTLE; }
-"load"		{ return LOAD; }
+"string"        { return STRING; }
+"as"                { return AS; }
+"try"                { return TRY; }
+"catch"                { return CATCH; }
+"raise"                { return RAISE; }
+"void"                { return VOID; }
+"any"                { return ANY; }
+"print"                { return PRINT; }
+"printf"        { return PRINTF; }
+"isa"                { return ISA; }
+"unmap"                { return UNMAP; }
+"big"                { return BIG; }
+"little"        { return LITTLE; }
+"load"                { return LOAD; }
 "__PKL_BUILTIN_RAND__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_RAND; }
 "__PKL_BUILTIN_GET_ENDIAN__" {
@@ -247,58 +247,58 @@ S ::
 "int<"          { return INTCONSTR; }
 "offset<"       { return OFFSETCONSTR; }
 
-"..."		{ return THREEDOTS; }
+"..."                { return THREEDOTS; }
 
-"*="		{ return MULA; }
-"/="		{ return DIVA; }
-"%="		{ return MODA; }
-"+="		{ return ADDA; }
-"-="		{ return SUBA; }
-"<-="		{ return SLA; }
-"->="		{ return SRA; }
-"&="		{ return BANDA; }
-"|="		{ return IORA; }
-"^="		{ return XORA; }
-":::"		{ return BCONC; }
+"*="                { return MULA; }
+"/="                { return DIVA; }
+"%="                { return MODA; }
+"+="                { return ADDA; }
+"-="                { return SUBA; }
+"<-="                { return SLA; }
+"->="                { return SRA; }
+"&="                { return BANDA; }
+"|="                { return IORA; }
+"^="                { return XORA; }
+":::"                { return BCONC; }
 
-"||"		{ return OR; }
-"&&"		{ return AND; }
-"=="		{ return EQ; }
-"!="		{ return NE; }
-"<="		{ return LE; }
-">="		{ return GE; }
-"<<."		{ return SL; }
-".>>"		{ return SR; }
-"++"		{ return INC; }
-"--"		{ return DEC; }
+"||"                { return OR; }
+"&&"                { return AND; }
+"=="                { return EQ; }
+"!="                { return NE; }
+"<="                { return LE; }
+">="                { return GE; }
+"<<."                { return SL; }
+".>>"                { return SR; }
+"++"                { return INC; }
+"--"                { return DEC; }
 
-"["		{ return '['; }
-"]"		{ return ']'; }
-"("		{ return '('; }
-")"		{ return ')'; }
-"{"		{ return '{'; }
-"}"		{ return '}'; }
-","		{ return ','; }
-"="		{ return '='; }
-"?"		{ return '?'; }
-";"		{ return ';'; }
-":"		{ return ':'; }
-"|"		{ return '|'; }
-"^"		{ return '^'; }
-"&"		{ return '&'; }
-"<"		{ return '<'; }
-">"		{ return '>'; }
-"+"		{ return '+'; }
-"-"		{ return '-'; }
-"**"		{ return POW; }
-"*"		{ return '*'; }
-"/^"		{ return CEILDIV; }
-"/"		{ return '/'; }
-"%"		{ return '%'; }
-"!"		{ return '!'; }
-"~"		{ return '~'; }
-"."		{ return '.'; }
-"@"		{ return '@'; }
+"["                { return '['; }
+"]"                { return ']'; }
+"("                { return '('; }
+")"                { return ')'; }
+"{"                { return '{'; }
+"}"                { return '}'; }
+","                { return ','; }
+"="                { return '='; }
+"?"                { return '?'; }
+";"                { return ';'; }
+":"                { return ':'; }
+"|"                { return '|'; }
+"^"                { return '^'; }
+"&"                { return '&'; }
+"<"                { return '<'; }
+">"                { return '>'; }
+"+"                { return '+'; }
+"-"                { return '-'; }
+"**"                { return POW; }
+"*"                { return '*'; }
+"/^"                { return CEILDIV; }
+"/"                { return '/'; }
+"%"                { return '%'; }
+"!"                { return '!'; }
+"~"                { return '~'; }
+"."                { return '.'; }
+"@"                { return '@'; }
 
 {A}({L}|{D})({L}|{D}|({S}({L}|{D})))* {
   char *errmsg;

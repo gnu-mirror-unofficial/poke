@@ -452,53 +452,53 @@ token <integer> UNION    _("keyword `union'")
 %% /* The grammar follows.  */
 
 pushlevel:
-	  %empty
-		{
+          %empty
+                {
                   pkl_parser->env = pkl_env_push_frame (pkl_parser->env);
                 }
         ;
 
 
 /*poplevel:
- 	  %empty
-		{
+           %empty
+                {
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-	;
+        ;
 */
 start:
-	  START_EXP expression
-          	{
+          START_EXP expression
+                  {
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                 }
         | START_EXP expression ','
-          	{
+                  {
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                   YYACCEPT;
                 }
         | START_DECL declaration
-        	{
-                  $$ = pkl_ast_make_program (pkl_parser->ast, $2);
-                  PKL_AST_LOC ($$) = @$;
-                  pkl_parser->ast->ast = ASTREF ($$);
-                }
-        | START_DECL declaration ','
-        	{
-                  $$ = pkl_ast_make_program (pkl_parser->ast, $2);
-                  PKL_AST_LOC ($$) = @$;
-                  pkl_parser->ast->ast = ASTREF ($$);
-                }
-	| START_STMT stmt
                 {
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                 }
-	| START_STMT stmt ';'
+        | START_DECL declaration ','
+                {
+                  $$ = pkl_ast_make_program (pkl_parser->ast, $2);
+                  PKL_AST_LOC ($$) = @$;
+                  pkl_parser->ast->ast = ASTREF ($$);
+                }
+        | START_STMT stmt
+                {
+                  $$ = pkl_ast_make_program (pkl_parser->ast, $2);
+                  PKL_AST_LOC ($$) = @$;
+                  pkl_parser->ast->ast = ASTREF ($$);
+                }
+        | START_STMT stmt ';'
                 {
                   /* This rule is to allow the presence of an extra
                      ';' after the sentence.  This to allow the poke
@@ -508,20 +508,20 @@ start:
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                 }
-	| START_STMT load
+        | START_STMT load
                 {
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                 }
-	| START_STMT load ';'
+        | START_STMT load ';'
                 {
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
                 }
         | START_PROGRAM program
-        	{
+                {
                   $$ = pkl_ast_make_program (pkl_parser->ast, $2);
                   PKL_AST_LOC ($$) = @$;
                   pkl_parser->ast->ast = ASTREF ($$);
@@ -529,33 +529,33 @@ start:
         ;
 
 program:
-	  %empty
-		{
+          %empty
+                {
                   $$ = NULL;
                 }
-	| program_elem_list
+        | program_elem_list
         ;
 
 program_elem_list:
-	  program_elem
+          program_elem
         | program_elem_list program_elem
-        	{
+                {
                   if ($2 != NULL)
                     $$ = pkl_ast_chainon ($1, $2);
                   else
                     $$ = $1;
                 }
-	;
+        ;
 
 program_elem:
-	  declaration
+          declaration
         | stmt
         | load
         ;
 
 load:
-	LOAD IDENTIFIER ';'
-        	{
+        LOAD IDENTIFIER ';'
+                {
                   int ret = load_module (pkl_parser,
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          &$$, 0 /* filename_p */);
@@ -574,8 +574,8 @@ load:
                   $2 = ASTREF ($2);
                   pkl_ast_node_free ($2);
                 }
-	| LOAD STR ';'
-        	{
+        | LOAD STR ';'
+                {
                   int ret = load_module (pkl_parser,
                                          PKL_AST_STRING_POINTER ($2),
                                          &$$, 1 /* filename_p */);
@@ -594,14 +594,14 @@ load:
                   $2 = ASTREF ($2);
                   pkl_ast_node_free ($2);
                 }
-	;
+        ;
 
 /*
  * Identifiers.
  */
 
 identifier:
-	  TYPENAME
+          TYPENAME
         | IDENTIFIER
         ;
 
@@ -610,167 +610,167 @@ identifier:
  */
 
 expression:
-	  primary
+          primary
         | unary_operator expression %prec UNARY
-          	{
+                  {
                   $$ = pkl_ast_make_unary_exp (pkl_parser->ast,
                                                $1, $2);
                   PKL_AST_LOC ($$) = @1;
                 }
-	| SIZEOF '(' simple_type_specifier ')' %prec HYPERUNARY
-        	{
+        | SIZEOF '(' simple_type_specifier ')' %prec HYPERUNARY
+                {
                   $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_SIZEOF, $3);
                   PKL_AST_LOC ($$) = @1;
                 }
         | expression ATTR
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_ATTR,
                                                 $1, $2);
                   PKL_AST_LOC ($2) = @2;
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '+' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_ADD,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '-' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_SUB,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '*' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_MUL,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '/' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_DIV,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression CEILDIV expression
-        	{
+        | expression CEILDIV expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_CEILDIV, $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression POW expression
-        	{
+        | expression POW expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_POW, $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '%' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_MOD,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression SL expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_SL,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression SR expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_SR,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression EQ expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_EQ,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression NE expression
-        	{
+        | expression NE expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_NE,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '<' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_LT,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '>' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_GT,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression LE expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_LE,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression GE expression
-        	{
+        | expression GE expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_GE,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '|' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_IOR,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression '^' expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_XOR,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression '&' expression
-        	{
+        | expression '&' expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_BAND,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression AND expression
-        	{
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_AND,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression OR expression
-        	{
+        | expression OR expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_OR,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression IN expression
-        	{
+        | expression IN expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_IN,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression AS simple_type_specifier
-        	{
+        | expression AS simple_type_specifier
+                {
                   $$ = pkl_ast_make_cast (pkl_parser->ast, $3, $1);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression ISA simple_type_specifier
-        	{
+        | expression ISA simple_type_specifier
+                {
                   $$ = pkl_ast_make_isa (pkl_parser->ast, $3, $1);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| expression '?' expression ':' expression
-        	{
+        | expression '?' expression ':' expression
+                {
                   $$ = pkl_ast_make_cond_exp (pkl_parser->ast,
                                               $1, $3, $5);
                   PKL_AST_LOC ($$) = @$;
                 }
         | TYPENAME '{' struct_field_list opt_comma '}'
-          	{
+                  {
                   pkl_ast_node type;
                   pkl_ast_node astruct;
 
@@ -805,9 +805,9 @@ expression:
                                            type,
                                            astruct);
                   PKL_AST_LOC ($$) = @$;
-        	}
+                }
         | UNIT
-		{
+                {
                   if ($1 == NULL)
                     {
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
@@ -822,7 +822,7 @@ expression:
                     PKL_AST_LOC ($$) = @$;
                 }
         | expression UNIT
-        	{
+                {
                   if ($2 == NULL)
                     {
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
@@ -836,13 +836,13 @@ expression:
                         PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
                     PKL_AST_LOC ($$) = @$;
                 }
-	| bconc
+        | bconc
         | map
         ;
 
 bconc:
-	  expression BCONC expression
-        	{
+          expression BCONC expression
+                {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_BCONC,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
@@ -855,24 +855,24 @@ map:
                     $$ = pkl_ast_make_map (pkl_parser->ast, $1, NULL, $3);
                     PKL_AST_LOC ($$) = @$;
                 }
-	| simple_type_specifier '@' expression ':' expression %prec ELSE
-         	{
+        | simple_type_specifier '@' expression ':' expression %prec ELSE
+                 {
                     $$ = pkl_ast_make_map (pkl_parser->ast, $1, $3, $5);
                     PKL_AST_LOC ($$) = @$;
                 }
 ;
 
 unary_operator:
-	  '-'		{ $$ = PKL_AST_OP_NEG; }
-	| '+'		{ $$ = PKL_AST_OP_POS; }
-	| '~'		{ $$ = PKL_AST_OP_BNOT; }
-	| '!'		{ $$ = PKL_AST_OP_NOT; }
-	| UNMAP		{ $$ = PKL_AST_OP_UNMAP; }
-	;
+          '-'                { $$ = PKL_AST_OP_NEG; }
+        | '+'                { $$ = PKL_AST_OP_POS; }
+        | '~'                { $$ = PKL_AST_OP_BNOT; }
+        | '!'                { $$ = PKL_AST_OP_NOT; }
+        | UNMAP                { $$ = PKL_AST_OP_UNMAP; }
+        ;
 
 primary:
           IDENTIFIER
-          	{
+                  {
                   /* Search for a variable definition in the
                      compile-time environment, and create a
                      PKL_AST_VAR node with it's lexical environment,
@@ -900,14 +900,14 @@ primary:
                                          back, over);
                   PKL_AST_LOC ($$) = @1;
                 }
-	| INTEGER
+        | INTEGER
                 {
                   $$ = $1;
                   PKL_AST_LOC ($$) = @$;
                   PKL_AST_LOC (PKL_AST_TYPE ($$)) = @$;
                 }
         | INTEGER_OVERFLOW
-        	{
+                {
                   $$ = NULL; /* To avoid bison warning.  */
                   pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
                              "integer literal is too big");
@@ -926,12 +926,12 @@ primary:
                   PKL_AST_LOC (PKL_AST_TYPE ($$)) = @$;
                 }
         | '(' expression ')'
-        	{
+                {
                   $$ = $2;
                 }
         | array
         | primary '.' identifier
-		{
+                {
                     $$ = pkl_ast_make_struct_ref (pkl_parser->ast, $1, $3);
                     PKL_AST_LOC ($3) = @3;
                     PKL_AST_LOC ($$) = @$;
@@ -942,54 +942,54 @@ primary:
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '[' expression ':' expression ']' %prec '.'
-        	{
+                {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
                                              $1, $3, $5);
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '[' ':' ']' %prec '.'
-        	{
+                {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
                                              $1, NULL, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '[' ':' expression ']' %prec '.'
-        	{
+                {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
                                              $1, NULL, $4);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| primary '[' expression ':' ']' %prec '.'
-        	{
+        | primary '[' expression ':' ']' %prec '.'
+                {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
                                              $1, $3, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| funcall
-	;
+        | funcall
+        ;
 
 funcall:
           primary '(' funcall_arg_list ')' %prec '.'
-          	{
+                  {
                   $$ = pkl_ast_make_funcall (pkl_parser->ast,
                                              $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 funcall_arg_list:
-	  %empty
-		{ $$ = NULL; }
-	| funcall_arg
+          %empty
+                { $$ = NULL; }
+        | funcall_arg
         | funcall_arg_list ',' funcall_arg
-        	{
+                {
                   $$ = pkl_ast_chainon ($1, $3);
                 }
         ;
 
 funcall_arg:
-	   expression
-          	{
+           expression
+                  {
                   $$ = pkl_ast_make_funcall_arg (pkl_parser->ast,
                                                  $1, NULL /* name */);
                   PKL_AST_LOC ($$) = @$;
@@ -997,30 +997,30 @@ funcall_arg:
         ;
 
 opt_comma:
-	  %empty
-	| ','
+          %empty
+        | ','
         ;
 
 struct_field_list:
-	  %empty
-		{ $$ = NULL; }
+          %empty
+                { $$ = NULL; }
         | struct_field
         | struct_field_list ',' struct_field
-		{
+                {
                   $$ = pkl_ast_chainon ($1, $3);
                 }
         ;
 
 struct_field:
-	  expression
-          	{
+          expression
+                  {
                     $$ = pkl_ast_make_struct_field (pkl_parser->ast,
                                                     NULL /* name */,
                                                     $1);
                     PKL_AST_LOC ($$) = @$;
                 }
         | identifier '=' expression
-	        {
+                {
                     $$ = pkl_ast_make_struct_field (pkl_parser->ast,
                                                     $1,
                                                     $3);
@@ -1030,33 +1030,33 @@ struct_field:
         ;
 
 array:
-	  '[' array_initializer_list opt_comma ']'
-        	{
+          '[' array_initializer_list opt_comma ']'
+                {
                     $$ = pkl_ast_make_array (pkl_parser->ast,
                                              0 /* nelem */,
                                              0 /* ninitializer */,
                                              $2);
                     PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 array_initializer_list:
-	  array_initializer
+          array_initializer
         | array_initializer_list ',' array_initializer
-          	{
+                  {
                   $$ = pkl_ast_chainon ($1, $3);
                 }
         ;
 
 array_initializer:
-	  expression
-          	{
+          expression
+                  {
                     $$ = pkl_ast_make_array_initializer (pkl_parser->ast,
                                                          NULL, $1);
                     PKL_AST_LOC ($$) = @$;
                 }
         | '.' '[' expression ']' '=' expression
-        	{
+                {
                     $$ = pkl_ast_make_array_initializer (pkl_parser->ast,
                                                          $3, $6);
                     PKL_AST_LOC ($$) = @$;
@@ -1068,8 +1068,8 @@ array_initializer:
  */
 
 pushlevel_args:
-	  %empty
-		{
+          %empty
+                {
                   /* Push the lexical frame for the function's
                      arguments.  */
                   pkl_parser->env = pkl_env_push_frame (pkl_parser->env);
@@ -1079,11 +1079,11 @@ pushlevel_args:
                   if (pkl_parser->in_method_decl_p)
                     pkl_register_dummies (pkl_parser, 1);
                 }
-	;
+        ;
 
 function_specifier:
-	  '(' pushlevel_args function_arg_list ')' simple_type_specifier ':' comp_stmt
-        	{
+          '(' pushlevel_args function_arg_list ')' simple_type_specifier ':' comp_stmt
+                {
                   $$ = pkl_ast_make_func (pkl_parser->ast,
                                           $5, $3, $7);
                   PKL_AST_LOC ($$) = @$;
@@ -1092,8 +1092,8 @@ function_specifier:
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-	| simple_type_specifier ':' pushlevel_args comp_stmt
-        	{
+        | simple_type_specifier ':' pushlevel_args comp_stmt
+                {
                   $$ = pkl_ast_make_func (pkl_parser->ast,
                                           $1, NULL, $4);
                   PKL_AST_LOC ($$) = @$;
@@ -1107,14 +1107,14 @@ function_specifier:
 function_arg_list:
           function_arg
         | function_arg ',' function_arg_list
-          	{
+                  {
                   $$ = pkl_ast_chainon ($1, $3);
                 }
         ;
 
 function_arg:
-	  simple_type_specifier identifier function_arg_initial
-          	{
+          simple_type_specifier identifier function_arg_initial
+                  {
                   $$ = pkl_ast_make_func_arg (pkl_parser->ast,
                                               $1, $2, $3);
                   PKL_AST_LOC ($2) = @2;
@@ -1123,8 +1123,8 @@ function_arg:
                   if (!pkl_register_arg (pkl_parser, $$))
                       YYERROR;
                 }
-	| identifier THREEDOTS
-        	{
+        | identifier THREEDOTS
+                {
                   pkl_ast_node type
                     = pkl_ast_make_any_type (pkl_parser->ast);
                   pkl_ast_node array_type
@@ -1149,8 +1149,8 @@ function_arg:
         ;
 
 function_arg_initial:
-	%empty			{ $$ = NULL; }
-	| '=' expression	{ $$ = $2; }
+        %empty                        { $$ = NULL; }
+        | '=' expression        { $$ = $2; }
       ;
 
 /*
@@ -1158,14 +1158,14 @@ function_arg_initial:
  */
 
 type_specifier:
-	  simple_type_specifier
+          simple_type_specifier
         | struct_type_specifier
         | function_type_specifier
         ;
 
 simple_type_specifier:
-	  TYPENAME
-          	{
+          TYPENAME
+                  {
                   pkl_ast_node decl = pkl_env_lookup (pkl_parser->env,
                                                       PKL_ENV_NS_MAIN,
                                                       PKL_AST_IDENTIFIER_POINTER ($1),
@@ -1177,23 +1177,23 @@ simple_type_specifier:
                   $1 = ASTREF ($1); pkl_ast_node_free ($1);
                 }
         | ANY
-        	{
+                {
                   $$ = pkl_ast_make_any_type (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| VOID
-        	{
+        | VOID
+                {
                   $$ = pkl_ast_make_void_type (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
                 }
         | STRING
-        	{
+                {
                   $$ = pkl_ast_make_string_type (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| integral_type_specifier
-	| offset_type_specifier
-	| array_type_specifier
+        | integral_type_specifier
+        | offset_type_specifier
+        | array_type_specifier
         ;
 
 integral_type_specifier:
@@ -1206,12 +1206,12 @@ integral_type_specifier:
                     $2 = ASTREF ($2); pkl_ast_node_free ($2);
                     PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 integral_type_sign:
-          INTCONSTR	{ $$ = 1; }
-	| UINTCONSTR	{ $$ = 0; }
-	;
+          INTCONSTR        { $$ = 1; }
+        | UINTCONSTR        { $$ = 0; }
+        ;
 
 offset_type_specifier:
           OFFSETCONSTR simple_type_specifier ',' identifier '>'
@@ -1246,57 +1246,57 @@ offset_type_specifier:
                   PKL_AST_LOC ($$) = @$;
                 }
         | OFFSETCONSTR simple_type_specifier ',' INTEGER '>'
-        	{
+                {
                     $$ = pkl_ast_make_offset_type (pkl_parser->ast,
                                                    $2, $4);
                     PKL_AST_LOC (PKL_AST_TYPE ($4)) = @4;
                     PKL_AST_LOC ($4) = @4;
                     PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 array_type_specifier:
-	  simple_type_specifier '[' ']'
-        	{
+          simple_type_specifier '[' ']'
+                {
                   $$ = pkl_ast_make_array_type (pkl_parser->ast, $1,
                                                 NULL /* bound */);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| simple_type_specifier '[' expression ']'
-        	{
+        | simple_type_specifier '[' expression ']'
+                {
                   $$ = pkl_ast_make_array_type (pkl_parser->ast, $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 function_type_specifier:
-	   '(' function_type_arg_list ')' simple_type_specifier
-        	{
+           '(' function_type_arg_list ')' simple_type_specifier
+                {
                   $$ = pkl_ast_make_function_type (pkl_parser->ast,
                                                    $4, 0 /* narg */,
                                                    $2);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| '(' ')' simple_type_specifier
-        	{
+        | '(' ')' simple_type_specifier
+                {
                   $$ = pkl_ast_make_function_type (pkl_parser->ast,
                                                    $3, 0 /* narg */,
                                                    NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 function_type_arg_list:
-	   function_type_arg
+           function_type_arg
         |  function_type_arg ',' function_type_arg_list
-		{
+                {
                   $$ = pkl_ast_chainon ($1, $3);
                 }
-	;
+        ;
 
 function_type_arg:
-	  simple_type_specifier
-          	{
+          simple_type_specifier
+                  {
                   $$ = pkl_ast_make_func_type_arg (pkl_parser->ast,
                                                    $1, NULL /* name */);
                   PKL_AST_LOC ($$) = @$;
@@ -1309,7 +1309,7 @@ function_type_arg:
                   PKL_AST_FUNC_TYPE_ARG_OPTIONAL ($$) = 1;
                 }
         | THREEDOTS
-        	{
+                {
                   pkl_ast_node type
                     = pkl_ast_make_any_type (pkl_parser->ast);
                   pkl_ast_node array_type
@@ -1324,11 +1324,11 @@ function_type_arg:
                   PKL_AST_LOC ($$) = @$;
                   PKL_AST_FUNC_TYPE_ARG_VARARG ($$) = 1;
                 }
-	;
+        ;
 
 struct_type_specifier:
-	  pushlevel struct_type_pinned struct_or_union '{' '}'
-          	{
+          pushlevel struct_type_pinned struct_or_union '{' '}'
+                  {
                     $$ = pkl_ast_make_struct_type (pkl_parser->ast,
                                                    0 /* nelem */,
                                                    0 /* nfield */,
@@ -1344,13 +1344,13 @@ struct_type_specifier:
                     pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
         | pushlevel struct_type_pinned struct_or_union '{'
-        	{
+                {
                   /* Register dummies for the locals used in
                      pkl-gen.pks:struct_mapper.  */
                   pkl_register_dummies (pkl_parser, 3);
                 }
           struct_type_elem_list '}'
-        	{
+                {
                     $$ = pkl_ast_make_struct_type (pkl_parser->ast,
                                                    0 /* nelem */,
                                                    0 /* nfield */,
@@ -1365,33 +1365,33 @@ struct_type_specifier:
         ;
 
 struct_or_union:
-	  STRUCT	{ $$ = 0; }
-	| UNION		{ $$ = 1; }
+          STRUCT        { $$ = 0; }
+        | UNION                { $$ = 1; }
         ;
 
 struct_type_pinned:
-	%empty		{ $$ = 0; }
-	| PINNED	{ $$ = 1; }
+        %empty                { $$ = 0; }
+        | PINNED        { $$ = 1; }
         ;
 
 struct_type_elem_list:
-	  struct_type_field
+          struct_type_field
         | declaration
         | struct_type_elem_list declaration
-          	{ $$ = pkl_ast_chainon ($1, $2); }
+                  { $$ = pkl_ast_chainon ($1, $2); }
         | struct_type_elem_list struct_type_field
-        	{ $$ = pkl_ast_chainon ($1, $2); }
+                { $$ = pkl_ast_chainon ($1, $2); }
         ;
 
 endianness:
-	  %empty	{ $$ = PKL_AST_ENDIAN_DFL; }
-	| LITTLE	{ $$ = PKL_AST_ENDIAN_LSB; }
-	| BIG		{ $$ = PKL_AST_ENDIAN_MSB; }
+          %empty        { $$ = PKL_AST_ENDIAN_DFL; }
+        | LITTLE        { $$ = PKL_AST_ENDIAN_LSB; }
+        | BIG                { $$ = PKL_AST_ENDIAN_MSB; }
         ;
 
 struct_type_field:
-	  endianness type_specifier struct_type_field_identifier
-          	{
+          endianness type_specifier struct_type_field_identifier
+                  {
                   if ($3 != NULL)
                     {
                       /* Register a variable IDENTIFIER in the current
@@ -1424,7 +1424,7 @@ struct_type_field:
                 }
           struct_type_field_constraint_or_init struct_type_field_label
           struct_type_field_optcond ';'
-          	{
+                  {
                   pkl_ast_node constraint = NULL;
                   pkl_ast_node initializer = NULL;
 
@@ -1492,34 +1492,34 @@ struct_type_field:
         ;
 
 struct_type_field_identifier:
-	  %empty	{ $$ = NULL; }
-	| identifier	{ $$ = $1; }
-	;
+          %empty        { $$ = NULL; }
+        | identifier        { $$ = $1; }
+        ;
 
 struct_type_field_label:
-	  %empty
-		{
+          %empty
+                {
                   $$ = NULL;
                 }
                 | '@' expression
-        	{
+                {
                   $$ = $2;
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 struct_type_field_constraint_or_init:
-	  %empty
-		{
+          %empty
+                {
                   $$ = NULL;
                 }
           | ':' expression
-          	{
+                  {
                   $$ = $2;
                   PKL_AST_LOC ($$) = @$;
                 }
-	  | '=' expression
-          	{
+          | '=' expression
+                  {
                   $$ = $2;
                   /* Use use the flag to distinguish between
                      constraint and initializer.  */
@@ -1529,16 +1529,16 @@ struct_type_field_constraint_or_init:
           ;
 
 struct_type_field_optcond:
-	  %empty
-		{
+          %empty
+                {
                   $$ = NULL;
                 }
-	| IF expression
-        	{
+        | IF expression
+                {
                   $$ = $2;
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 /*
  * Declarations.
@@ -1583,7 +1583,7 @@ declaration:
                   pkl_parser->in_method_decl_p = ($1 == IS_METHOD);
                 }
         '=' function_specifier
-        	{
+                {
                   /* Complete the declaration registered above with
                      it's initial value, which is the specifier of the
                      function being defined.  */
@@ -1615,7 +1615,7 @@ declaration:
                   pkl_parser->in_method_decl_p = 0;
                 }
         | DEFVAR identifier '=' expression ';'
-        	{
+                {
                   $$ = pkl_ast_make_decl (pkl_parser->ast,
                                           PKL_AST_DECL_KIND_VAR, $2, $4,
                                           pkl_parser->filename);
@@ -1636,7 +1636,7 @@ declaration:
                     }
                 }
         | DEFTYPE identifier '=' type_specifier ';'
-        	{
+                {
                   $$ = pkl_ast_make_decl (pkl_parser->ast,
                                           PKL_AST_DECL_KIND_TYPE, $2, $4,
                                           pkl_parser->filename);
@@ -1658,8 +1658,8 @@ declaration:
                       YYERROR;
                     }
                 }
-	| DEFUNIT identifier '=' expression ';'
-        	{
+        | DEFUNIT identifier '=' expression ';'
+                {
                   /* We need to cast the expression to uint<64> here,
                      instead of pkl-promo, because the installed
                      initializer is used as earlier as in the
@@ -1694,16 +1694,16 @@ declaration:
         ;
 
 defun_or_method:
-	  DEFUN		{ $$ = IS_DEFUN; }
-	| METHOD	{ $$ = IS_METHOD; }
-	;
+          DEFUN                { $$ = IS_DEFUN; }
+        | METHOD        { $$ = IS_METHOD; }
+        ;
 
 /*
  * Statements.
  */
 
 comp_stmt:
-	  pushlevel '{' '}'
+          pushlevel '{' '}'
             {
               $$ = pkl_ast_make_comp_stmt (pkl_parser->ast, NULL);
               PKL_AST_LOC ($$) = @$;
@@ -1730,47 +1730,47 @@ comp_stmt:
         ;
 
 builtin:
-	  BUILTIN_RAND		{ $$ = PKL_AST_BUILTIN_RAND; }
-	| BUILTIN_GET_ENDIAN	{ $$ = PKL_AST_BUILTIN_GET_ENDIAN; }
-	| BUILTIN_SET_ENDIAN	{ $$ = PKL_AST_BUILTIN_SET_ENDIAN; }
+          BUILTIN_RAND                { $$ = PKL_AST_BUILTIN_RAND; }
+        | BUILTIN_GET_ENDIAN        { $$ = PKL_AST_BUILTIN_GET_ENDIAN; }
+        | BUILTIN_SET_ENDIAN        { $$ = PKL_AST_BUILTIN_SET_ENDIAN; }
         | BUILTIN_GET_IOS       { $$ = PKL_AST_BUILTIN_GET_IOS; }
         | BUILTIN_SET_IOS       { $$ = PKL_AST_BUILTIN_SET_IOS; }
-	| BUILTIN_OPEN		{ $$ = PKL_AST_BUILTIN_OPEN; }
-	| BUILTIN_CLOSE		{ $$ = PKL_AST_BUILTIN_CLOSE; }
-	| BUILTIN_IOSIZE	{ $$ = PKL_AST_BUILTIN_IOSIZE; }
-	| BUILTIN_GETENV	{ $$ = PKL_AST_BUILTIN_GETENV; }
-	;
+        | BUILTIN_OPEN                { $$ = PKL_AST_BUILTIN_OPEN; }
+        | BUILTIN_CLOSE                { $$ = PKL_AST_BUILTIN_CLOSE; }
+        | BUILTIN_IOSIZE        { $$ = PKL_AST_BUILTIN_IOSIZE; }
+        | BUILTIN_GETENV        { $$ = PKL_AST_BUILTIN_GETENV; }
+        ;
 
 stmt_decl_list:
-	  stmt
+          stmt
         | stmt_decl_list stmt
-          	{ $$ = pkl_ast_chainon ($1, $2); }
+                  { $$ = pkl_ast_chainon ($1, $2); }
         | declaration
         | stmt_decl_list declaration
-          	{ $$ = pkl_ast_chainon ($1, $2); }
-	;
+                  { $$ = pkl_ast_chainon ($1, $2); }
+        ;
 
 stmt:
           comp_stmt
         | ';'
-          	{
+                  {
                   $$ = pkl_ast_make_null_stmt (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '=' expression ';'
-          	{
+                  {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| bconc '=' expression ';'
-        	{
+        | bconc '=' expression ';'
+                {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| map '=' expression ';'
-        	{
+        | map '=' expression ';'
+                {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
                   PKL_AST_LOC ($$) = @$;
@@ -1787,8 +1787,8 @@ stmt:
                                              $3, $5, $7);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| WHILE '(' expression ')' stmt
-        	{
+        | WHILE '(' expression ')' stmt
+                {
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
                                                NULL, /* iterator */
                                                $3,   /* condition */
@@ -1799,8 +1799,8 @@ stmt:
                      their lexical level within this loop.  */
                   pkl_ast_finish_breaks ($$, $5);
                 }
-	| FOR '(' IDENTIFIER IN expression pushlevel
-        	{
+        | FOR '(' IDENTIFIER IN expression pushlevel
+                {
                   /* Push a new lexical level and register a variable
                      with name IDENTIFIER.  Note that the variable is
                      created with a dummy INITIAL, as there is none.  */
@@ -1823,8 +1823,8 @@ stmt:
                     /* This should never happen.  */
                     assert (0);
                 }
-	  ')' stmt
-        	{
+          ')' stmt
+                {
                   pkl_ast_node iterator
                     = pkl_ast_make_loop_stmt_iterator (pkl_parser->ast,
                                                        $<ast>7, /* decl */
@@ -1848,8 +1848,8 @@ stmt:
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-	| FOR '(' IDENTIFIER IN expression pushlevel
-        	{
+        | FOR '(' IDENTIFIER IN expression pushlevel
+                {
                   /* XXX: avoid code replication here.  */
 
                   /* Push a new lexical level and register a variable
@@ -1874,8 +1874,8 @@ stmt:
                     /* This should never happen.  */
                     assert (0);
                 }
-	  WHERE expression ')' stmt
-        	{
+          WHERE expression ')' stmt
+                {
                   pkl_ast_node iterator
                     = pkl_ast_make_loop_stmt_iterator (pkl_parser->ast,
                                                        $<ast>7, /* decl */
@@ -1898,12 +1898,12 @@ stmt:
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
         | BREAK ';'
-		{
+                {
                   $$ = pkl_ast_make_break_stmt (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
                 }
         | RETURN ';'
-        	{
+                {
                   $$ = pkl_ast_make_return_stmt (pkl_parser->ast,
                                                  NULL);
                   PKL_AST_LOC ($$) = @$;
@@ -1915,19 +1915,19 @@ stmt:
                   PKL_AST_LOC ($$) = @$;
                 }
         | TRY stmt CATCH comp_stmt
-        	{
+                {
                   $$ = pkl_ast_make_try_catch_stmt (pkl_parser->ast,
                                                     $2, $4, NULL, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| TRY stmt CATCH IF expression comp_stmt
-        	{
+        | TRY stmt CATCH IF expression comp_stmt
+                {
                   $$ = pkl_ast_make_try_catch_stmt (pkl_parser->ast,
                                                     $2, $6, NULL, $5);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| TRY stmt CATCH  '(' pushlevel function_arg ')' comp_stmt
-		{
+        | TRY stmt CATCH  '(' pushlevel function_arg ')' comp_stmt
+                {
                   $$ = pkl_ast_make_try_catch_stmt (pkl_parser->ast,
                                                     $2, $8, $6, NULL);
                   PKL_AST_LOC ($$) = @$;
@@ -1937,37 +1937,37 @@ stmt:
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
         | TRY stmt UNTIL expression ';'
-        	{
+                {
                   $$ = pkl_ast_make_try_until_stmt (pkl_parser->ast,
                                                     $2, $4);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| RAISE ';'
-        	{
+        | RAISE ';'
+                {
                   $$ = pkl_ast_make_raise_stmt (pkl_parser->ast,
                                                 NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| RAISE expression ';'
-        	{
+        | RAISE expression ';'
+                {
                   $$ = pkl_ast_make_raise_stmt (pkl_parser->ast,
                                                 $2);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression ';'
-        	{
+                {
                   $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
                                               $1);
                   PKL_AST_LOC ($$) = @$;
                 }
         | PRINT expression ';'
-        	{
+                {
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
                                                 NULL /* fmt */, $2);
                   PKL_AST_LOC ($$) = @$;
                 }
-	| PRINTF STR print_stmt_arg_list ';'
-        	{
+        | PRINTF STR print_stmt_arg_list ';'
+                {
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
                                                 $2, $3);
                   PKL_AST_LOC ($2) = @2;
@@ -1976,7 +1976,7 @@ stmt:
                   PKL_AST_LOC ($$) = @$;
                 }
         | PRINTF '(' STR print_stmt_arg_list ')' ';'
-        	{
+                {
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
                                                 $3, $4);
                   PKL_AST_LOC ($3) = @3;
@@ -1984,8 +1984,8 @@ stmt:
                     PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
                   PKL_AST_LOC ($$) = @$;
                 }
-	| funcall_stmt ';'
-        	{
+        | funcall_stmt ';'
+                {
                   $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
                                               $1);
                   PKL_AST_LOC ($$) = @$;
@@ -1993,46 +1993,46 @@ stmt:
         ;
 
 print_stmt_arg_list:
-	  %empty
-		{
+          %empty
+                {
                   $$ = NULL;
                 }
         | print_stmt_arg_list ',' expression
-        	{
+                {
                   pkl_ast_node arg
                     = pkl_ast_make_print_stmt_arg (pkl_parser->ast, $3);
                   PKL_AST_LOC (arg) = @3;
 
                   $$ = pkl_ast_chainon ($1, arg);
                 }
-	;
+        ;
 
 funcall_stmt:
-	primary funcall_stmt_arg_list
-        	{
+        primary funcall_stmt_arg_list
+                {
                   $$ = pkl_ast_make_funcall (pkl_parser->ast,
                                              $1, $2);
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 funcall_stmt_arg_list:
-	  funcall_stmt_arg
+          funcall_stmt_arg
         | funcall_stmt_arg_list funcall_stmt_arg
-        	{
+                {
                   $$ = pkl_ast_chainon ($1, $2);
                 }
         ;
 
 funcall_stmt_arg:
-	  ':' IDENTIFIER expression
-          	{
+          ':' IDENTIFIER expression
+                  {
                   $$ = pkl_ast_make_funcall_arg (pkl_parser->ast,
                                                  $3, $2);
                   PKL_AST_LOC ($2) = @2;
                   PKL_AST_LOC ($$) = @$;
                 }
-	;
+        ;
 
 /*
  * Enumerations.
@@ -2040,8 +2040,8 @@ funcall_stmt_arg:
 
 /*
 enum_specifier:
-	  ENUM IDENTIFIER '{' enumerator_list '}'
-          	{
+          ENUM IDENTIFIER '{' enumerator_list '}'
+                  {
                   if (! enum_specifier_action (pkl_parser,
                                                &$$,
                                                $IDENTIFIER, &@IDENTIFIER,
@@ -2052,17 +2052,17 @@ enum_specifier:
         ;
 
 enumerator_list:
-	  enumerator
-	| enumerator_list ',' enumerator
-          	{ $$ = pkl_ast_chainon ($1, $3); }
-	;
+          enumerator
+        | enumerator_list ',' enumerator
+                  { $$ = pkl_ast_chainon ($1, $3); }
+        ;
 
 enumerator:
-	  IDENTIFIER
+          IDENTIFIER
                 { $$ = pkl_ast_make_enumerator ($1, NULL, NULL); }
         | IDENTIFIER '=' constant_expression
                 { $$ = pkl_ast_make_enumerator ($1, $3, NULL); }
-	;
+        ;
 */
 
 %%

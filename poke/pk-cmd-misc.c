@@ -82,8 +82,8 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         const char *ip = find_in_path (info_prog_name);
         if (STRNEQ (ip, info_prog_name))
           {
-	    int size = 0;
-	    int bytes = 64;
+            int size = 0;
+            int bytes = 64;
             do
               {
                 size = bytes + 1;
