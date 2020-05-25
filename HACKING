@@ -1065,9 +1065,7 @@ are represented as::
 
 Compiler Passes and Phases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-These are the phases currently implemented in the poke compiler (the
-phases marked with a * are optional)::
+These are the phases currently implemented in the poke compiler::
 
     [parser]
     --- Front-end pass
@@ -1076,24 +1074,25 @@ phases marked with a * are optional)::
     typify1    Type analysis and transformation 1.
     promo      Operand promotion phase.
     trans2     Transformation phase 2.
-  * fold       Constant folding.
-    typify2    Type analysis and transformation 2.
+    fold       Constant folding.
     trans3     Transformation phase 3.
+    typify2    Type analysis and transformation 2.
     anal2      Analysis phase 2.
     --- Middle-end pass
+    fold       Constant folding.
     trans4     Transformation phase 4.
-    --- Back-end pass
     analf      Analysis final phase.
+    --- Back-end pass
     gen        Code generation.
 
 The phases above are organized in several passes:
 
 Pass1
-  anal1 typify1 promo trans2 fold typify2 trans3 anal2
+  trans1 anal1 typify1 promo trans2 fold trans3 typify2 anal2
 Pass2
-  trans4
+  fold trans4 analf
 Pass3
-  analf gen
+  gen
 
 Naming Conventions for Phases
 .............................
@@ -1169,18 +1168,121 @@ Transformation Phases
 trans1
   - Finishes strings by expanding \-sequences, emitting diagnostics if
     an invalid \-sequence is found.
+  - Computes and set the number of elements in STRUCT nodes.
+  - Computes and sets the number of elements, fields and declarations
+    in struct TYPE nodes.
+  - Completes offsets with implicit magnitude by adding a magnitude of
+    int<32>1.
+  - Calculates the number of arguments in FUNCALL nodes.
+  - Annotates declaration nodes as being directly contained in struct
+    type nodes.
+  - Annotates variables that refer to recursive function calls as
+    recursive.
+  - Annotates variables with the enclosing function, and with their
+    lexical nesting level with respect the beginning of the enclosing
+    function.
+  - Variables that refer to parameterless functions are transformed
+    into funcalls to these functions.
+  - Finalizes ATTR node by determining the operation corresponding to
+    the attribute name, turning the IDENTIFIERxEXP binary expression
+    into an unary expression.
+  - Annotates a function's first optional argument and the number of
+    formal arguments.
+  - Completes function types with their number of formal arguments,
+    annotates its first optional argument, and determines whether the
+    function type gets a vararg.
+  - Completes trimmers with implicit indexes, i.e. [N:], [:N] or [:],
+    by adding the missing index as an appropriate expression.
+  - Decodes format strings in printf statements.
+  - Computes and sets the indexes of all the elements of an ARRAY node
+    (array literal) and sets the size of the array.
+  - Annotates compound statements with the number of variable and
+    function declarations occurring within the statement.
+
+trans2
+  - Annotates expression nodes that are literals, i.e. expressions
+    whose values can be computed at compile-time.
+  - Annotates offsets, arrays, indexers, trimmers, structs, struct
+    references, and casts as literals.
+  - Turn struct references that refer to parameterless methods into
+    funcalls to these methods.
+  - In offsets whose units are type names, make sure these types are
+    copmlete and replace the unit with an expression that evaluates to
+    the size of the unit type, in bits.
+
+trans3
+  - SIZEOF nodes whose operand is a complete type are replaced with an
+    offset.
 
 trans4
-  - Reverses the list of actual arguments in function calls, so the
-    code generator tackles them in the right (reversed) order, as it
-    is expected by the callee.
+  - Reverses the list of initializers in array literals.
 
 Analysis Phases
 ...............
 
 anal1
-  - Checks that every return statement is linked to a function.
-  - Checks that no return statement is linked to a void function.
+  - Checks that the elements in struct literals have unique names.
+  - Checks that the elements in struct types have unique names.
+  - Checks that declarations in unions appear before any of the
+    alternatives.
+  - Checks that builtin compound statements don't contain statements.
+  - Check that the actual arguments passed to a funcall are all either
+    named or none named.
+  - Check that named arguments to funcalls are passed only once.
+  - Check that all optional formal arguments in a function specifier
+    are located at the end of the arguments list.
+  - Check that function specifiers have at most one vararg argument,
+    and that it is located at the end of the formal arguments list.
+  - Check that function types have at most one vararg argument, and
+    that it is located at the end of the formal arguments list.
+  - Check that every BREAK statement have a containing statement.
+  - Check that every RETURN statement have a containing function.
+  - If the unit in an offset type specifier is specified using an
+    integral constant, this constant should be bigger than zero.
+  - The unit of an offset literal, if expressed as an integral, shall
+    be bigger than zero.
+  - Check that the bit count operator in left shift operations are
+    less than the number of bits of the shifted operand.  This is
+    checked in cases where the bit count is constant.
+  - Methods can only be defined in a struct type.
+  - The initializing expressions in unit declarations should be
+    integer nodes.
+  - Only methods can call other methods.
+  - Methods are not allowed to refer to variables and functions
+    defined in struct types.
+  - A method can only refer to struct fields and methods defined in
+    the same struct type.
+  - Functions recursively defined inside methods are not allowed to
+    refer to struct fields and methods.
+  - Only methods can assign struct fields as variables.
+
+anal2
+  - Every expression, array and struct node should be annotated with a
+    type, and the type's completeness should have been determined.
+  - The magnitude in  offset literals should be an integral
+    expression.
+  - The magnitude in offset literals should have a type and its
+    completeness should be known.
+  - A return statement returning a value is not allowed in a void
+    function.
+  - An expressionless return statement is invalid in a non-void
+    function.
+  - A funcall to a void function is only allowed in an
+    expression-statement.
+  - Endianness specifiers in struct fields are only valid when applied
+    to integral types.
+  - In unions, alternatives appearing after an alternative with no
+    constraint expression, or a constant expression known to be true,
+    are unreachable.  Warn about this.
+  - If an union alternative has a constraint known to be false, it is
+    never taken.  Warn about this.
+  - Optional fields are not supported in unions.
+  - The indexes in array initializers should be constant.
+
+analf
+  - Every array initializer should have an index.
+  - Check that the left-hand side of assignment statements are of the
+    right kind.
 
 Type System Phases
 ..................
