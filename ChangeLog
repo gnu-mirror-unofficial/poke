@@ -1,3 +1,10 @@
+2020-05-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/ctf.pk (CTF_Type): Fix application of bit-concatenation
+	in pretty_printer.
+	(ctf_string): Use an Elf64_File instead of a header.
+	(ctf_get_header): Likewise.
+
 2020-05-17  Tim Rühsen  <tim.ruehsen@gmx.de>
 
 	* gnulib: Update to master

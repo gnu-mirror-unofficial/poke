@@ -251,7 +251,7 @@ deftype CTF_Type =
           method _print = void:
             {
              print "#<";
-             printf "%v", lsizehi::lsizelo;
+             printf "%v", lsizehi:::lsizelo;
              print ">";
             }
         } huge;
@@ -271,20 +271,20 @@ deftype CTF_Type =
     } data;
   };
 
-defun ctf_string = (Elf64_Ehdr ehdr,
+defun ctf_string = (Elf64_File elf,
                     CTF_Header header,
                     CTF_Name name) string:
 {
  if (name.stid == CTF_STRTAB_0)
    return string @ (header.cth_stroff + name.offset);
  else
-   return elf_string (ehdr, name.offset);
+   return elf.get_string (name.offset);
 }
 
-defun ctf_get_header = (Elf64_Ehdr elf) CTF_Header:
+defun ctf_get_header = (Elf64_File elf) CTF_Header:
 {
   return CTF_Header
-   @ (elf_section_by_name (elf, ".ctf")).sh_offset;
+   @ (elf.get_section_by_name (".ctf")).sh_offset;
 }
 
 defun ctf_get_types = (CTF_Header ctf) CTF_Type[]:
