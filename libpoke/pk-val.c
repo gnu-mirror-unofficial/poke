@@ -109,7 +109,12 @@ pk_string_str (pk_val val)
 pk_val
 pk_make_offset (pk_val magnitude, pk_val unit)
 {
-  return pvm_make_offset (magnitude, unit);
+  if (!PVM_IS_INTEGRAL (magnitude)
+      || !PVM_IS_ULONG (unit)
+      || PVM_VAL_ULONG_SIZE (unit) != 64)
+    return PK_NULL;
+  else
+    return pvm_make_offset (magnitude, unit);
 }
 
 pk_val

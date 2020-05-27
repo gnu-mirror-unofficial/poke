@@ -471,8 +471,11 @@ const char *pk_string_str (pk_val val);
    MAGNITUDE is either a poke integer or a poke unsigned integer, with
    the magnitude of the offset.
 
-   UNIT is an unsigned poke integer specifying the unit of the offset,
-   i.e. the multiple of the base unit, which is the bit.  */
+   UNIT is an unsigned 64-bit poke integer specifying the unit of the
+   offset, i.e. the multiple of the base unit, which is the bit.
+
+   If any of the arguments is not of the right type return PK_NULL.
+   Otherwise return the created offset.  */
 
 pk_val pk_make_offset (pk_val magnitude, pk_val unit);
 
