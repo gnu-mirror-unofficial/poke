@@ -47,7 +47,7 @@ extern int poke_auto_map_p;
 extern int poke_prompt_maps_p;
 
 void pk_print_version (void);
-void pk_fatal (const char *errmsg);
+void pk_fatal (const char *errmsg) __attribute__ ((noreturn));
 
 static inline void
 pk_assert_alloc (const void *m)

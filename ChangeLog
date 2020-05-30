@@ -1,3 +1,7 @@
+2020-05-30  John Darrington <john@darrington.wattle.id.au>
+
+	* poke/poke.h (pk_fatal): Add noreturn attribute.
+
 2020-05-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pk-val.c (pk_make_offset): Return PK_NULL if the
