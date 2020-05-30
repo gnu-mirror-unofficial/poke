@@ -95,7 +95,7 @@ Introduction
 * Commanding poke::		Interactive and non-interactive usage.
 
 Basic Editing
-* Binary Files::		Text vs. binary.
+* Binary Files::		Text vs.@: binary.
 * Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
@@ -233,7 +233,7 @@ thingies, it is gonna get very confusing very soon!
 First of all we have @command{poke}, the program.  Since ``poke'' is a
 very common English word, when the context is not clear we either use
 the full denomination @command{GNU poke}, or quote the word using some
-other mean.
+other notation.
 
 Then we have @dfn{Poke}, with upper case P, which is the name of the
 domain-specific programming language implemented by @command{poke},
@@ -275,7 +275,7 @@ options can be specified, and they are loaded in the given order.
 Load the given file as a Poke program and exit.  The rest of the
 command-line is not processed by poke, and is available to the Poke
 script in the @code{argv} variable.  This is commonly used along with
-a shebang to implement Poke scripts.
+a shebang (@pxref{Shebang}) to implement Poke scripts.
 @item -c
 @itemx --command=@var{cmd}
 Execute the given command.  Any number of @samp{-c} options can be
@@ -363,8 +363,11 @@ These are explained in the following sections.
 @node Evaluation
 @subsection Evaluation
 
-Both Poke expressions and statements can be introduced at the REPL.
-When a trailing semicolon is required, it can be omitted.
+You can evaluate a Poke statement by typing it at the REPL's prompt.
+Only a single statement (including expression statements
+(@pxref{Expression Statements}) and compound statements
+(@pxref{Compound Statements})) can be evaluted this way.  It need
+not be terminated by a semicolon.
 
 When an expression is evaluated, the result of the expression is
 printed back to you.  For example:
@@ -379,8 +382,9 @@ Packet @{i=1179403647,j=65794L@}
 @end example
 
 @cindex statements
-When a statement is executed in the REPL no result is printed, but of
-course the statement can print on its own:
+When a statement other than an expression statement is executed in the
+REPL no result is printed, but of course the statement can print on its
+own:
 
 @example
 (poke) defun do_foo = void: @{@}
@@ -412,7 +416,7 @@ which are written in Poke.
 
 @subsubsection Dot-Commands
 @cindex dot-commands
-Dot-commands are so called because their name start with the dot
+Dot-commands are so called because their names start with the dot
 character (@code{.}).  They can feature subcommands.  Example:
 
 @example
@@ -592,7 +596,7 @@ poke, in terms of fundamental predefined entities: bits, bytes,
 integers, and the like.
 
 @menu
-* Binary Files::		Text vs. binary.
+* Binary Files::		Text vs.@: binary.
 * Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
 * Poking Bytes::		Reading, manipulating and writing bytes.
@@ -722,7 +726,7 @@ that identifies the IOS.  In this example, the tag corresponding to
 @file{foo.o} allows both reading and writing.  The third column tells
 us the size of the file, in hexadecimal.
 
-You may wonder what is that weird suffix @code{#B}.  It is an unit,
+You may wonder what is that weird suffix @code{#B}.  It is a unit,
 and tells us that the size @code{0x398} is measured in bytes, @i{i.e.} the
 size of @file{foo.o} is @code{0x398} bytes (or, in decimal, @code{920}
 bytes.)
@@ -1236,7 +1240,7 @@ encoding}:
 0b11111111UB
 @end example
 
-This is the reason why people say bytes are ``composed'' by eight
+This is the reason why people say bytes are ``composed'' of eight
 bits, or that the width of a byte is eight bits.  But this way of
 talking doesn't really reflect the view that the operating system has
 of devices like files or memory buffers: both disk and memory
@@ -1271,7 +1275,7 @@ traditional way to call an integer that is encoded using two bytes, or
 16 bits.
 
 So, using our method of encoding bigger numbers concatenating bytes,
-what would be the ``half'' integer composed by two bytes at the
+what would be the ``half'' integer composed of two bytes at the
 beginning of @file{foo.o}?
 
 @example
@@ -1299,7 +1303,7 @@ achieving exactly the same result than if we were using @code{byte}:
 @end example
 
 You may be wondering: is it possible to use a similar type specifier
-for mapping bigger integers, like these ``halfs'' that are composed by
+for mapping bigger integers, like these ``halves'' that are composed of
 two bytes?  Yeah, it is indeed possible:
 
 @example
@@ -1376,7 +1380,7 @@ between its value (such as 123) and its @dfn{written form} that we
 would use when writing the number on a piece of paper, such as
 @code{123}.
 
-The written form of a number is composed by digits, arranged in
+The written form of a number is composed of digits, arranged in
 certain order.  We all know that the ordering of the digits in the
 written form of a number is important: if we write @code{123} we are
 referring to a different value than if we write @code{321}.  The
@@ -1401,7 +1405,7 @@ example, the digit 1 is the @dfn{most significant} digit of the
 number, and the digit 3 is the @dfn{least significant} digit.
 
 This distinction between the written form of a number and its value is
-very important.  Just like in certain languages letters are are read
+very important.  Just like in certain languages letters are read
 right-to-left (Arabic) or even down-to-up (Japanese) we could
 certainly conceive a language in which the digits of numbers were
 arranged from right-to-left instead of left-to-right.  In that
@@ -1463,7 +1467,7 @@ When the written form is read from left to right, we talk about a
 right to left, we talk about a @dfn{little endian} interpretation.
 
 Given the first three bytes in @code{foo.o}, we can determine the
-value of the integer composed by these three bytes in both
+value of the integer composed of these three bytes in both
 interpretations:
 
 @example
@@ -1657,7 +1661,7 @@ integer, in bits.  We have used bit-sizes that are multiple of 8,
 which is the size of a byte.  So, why is this so?  Why is @code{N} not
 measured in bytes instead?
 
-The reason is that poke is not limited to integers composed by a whole
+The reason is that poke is not limited to integers composed of a whole
 number of bytes. You can actually have integers having @emph{any}
 number of bits, between 1 and 64.  So yes, @code{int<3>} is a type
 specifier for signed 3-bit integers, and @code{uint<17>} is a type
@@ -1703,7 +1707,7 @@ However, we can create the useful fiction that each byte is composed
 by @dfn{bits}, which are the digits in the binary representation of
 the byte value.
 
-So, we can look at a byte as composed by a group of eight bits, like
+So, we can look at a byte as composed of a group of eight bits, like
 this:
 
 @example
@@ -2117,7 +2121,7 @@ The current IOS is now `./foo.o'.
 @end example
 
 @noindent
-The header of an ELF file is composed by the first 64 bytes in the
+The header of an ELF file comprises the first 64 bytes in the
 file:
 
 @example
@@ -2502,7 +2506,7 @@ a character to a string, we would get an error:
 
 @noindent
 It is possible to transform a character value (@i{i.e.} a byte value) into
-a string composed by that character using a cast:
+a string composed of that character using a cast:
 
 @example
 (poke) 'a' as string
@@ -2626,7 +2630,7 @@ well :)
 @subsection SBM header
 
 A SBM file starts with a header that contains a ``magic number''
-composed by the three bytes 'S' (0x53UB), 'B' (0x42UB) and 'M'
+composed of the three bytes 'S' (0x53UB), 'B' (0x42UB) and 'M'
 (0x4dUB).  The next two bytes indicate the number of pixels per line,
 and the number of lines, respectively.  In summary:
 
@@ -3324,7 +3328,7 @@ coordinates:
 @subsection Cropping the R
 
 Looking at our new image, we realize that the first and the last
-column are all all background pixels.  We know that the recutils
+column are all background pixels.  We know that the recutils
 project is always short of resources, so we would like to modify the
 image to remove these columns, @dfn{cropping} it so it looks like
 this:
@@ -3493,7 +3497,7 @@ Poke provides a way to assign names to type specifiers:
 @end example
 
 @noindent
-The definition above tells poke that a RGB color beam is composed by a
+The definition above tells poke that a RGB color beam is composed of a
 byte, @i{i.e.} an unsigned 8-bit integer.  Any type specifier can be used
 at the right side of the assignment sign, and also names of already
 defined types.  From this point on, we can map in terms of color
@@ -3798,7 +3802,7 @@ Let's recap the structure of the header of a Stupid Bitmap:
 @end example
 
 @noindent
-The header is composed by five fields, which actually compose three
+The header is composed of five fields, which actually compose three
 different logical @dfn{fields}: a magic number, the number of pixels
 per line, and the number of lines.
 
@@ -4053,6 +4057,7 @@ codes:
 
 @node MP3
 @section MP3
+@cindex MP3
 
 @menu
 * ID3V1 Tags::			The @file{id3v1} pickle.
@@ -4195,8 +4200,8 @@ writer.
 
 Very often the structure of the data encoded in binary is not very
 intelligible.  This is because it is usual for binary formats to be
-designed with other goals in mind other than being readable by humans:
-compactness, detailness, @i{etc}.
+designed with goals in mind other than being readable by humans:
+compactness, detail @i{etc}.
 
 In our pickle we of course want to provide access to the very finer
 detail of the data structures.  However, we also want for the user to
@@ -4542,7 +4547,7 @@ shell.  This means you can include special characters like @code{~}
 @code{"} in case it includes leading or trailing blank characters,
 @i{etc}.
 
-When a new file is opened it becomes the current IO space.  On that
+When a new file is opened it becomes the current IO space.  From that
 point on, every map executed in the REPL or while loading a Poke
 program will operate on that IO space:
 
@@ -8422,7 +8427,7 @@ containers, like arrays and strings.
 End of file exception.  This can be raised when mapping in the IO
 space.
 @item E_elem
-Invalid element exception.  This is can be raised when accessing union
+Invalid element exception.  This is raised when attempting to access union
 fields that do not exist.
 @item E_constraint
 Constraint violation exception.  This is raised when a constraint
