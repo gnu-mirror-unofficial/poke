@@ -51,7 +51,7 @@ uint64_t pk_upow (uint64_t base, uint32_t exp);
 void pk_print_binary (void (*puts_fn) (const char *str), uint64_t val, int size, int sign);
 
 /* Concatenate string arguments into an malloc'ed string. */
-char *pk_str_concat (const char *s0, ...);
+char *pk_str_concat (const char *s0, ...) __attribute__ ((sentinel));
 
 /* Replace all occurrences of SEARCH within IN by REPLACE. */
 char *pk_str_replace (const char *in, const char *search, const char *replace);

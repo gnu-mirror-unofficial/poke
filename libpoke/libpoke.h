@@ -346,7 +346,8 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val);
    execution of the function results in an unhandled exception.
    Return 1 otherwise.  */
 
-int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...);
+int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...)
+  __attribute__ ((sentinel));
 
 /* Get and set properties of the incremental compiler.  */
 
