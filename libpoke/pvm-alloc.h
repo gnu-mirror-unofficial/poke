@@ -47,6 +47,8 @@ void pvm_alloc_remove_gc_roots (void *pointer, size_t nelems)
    NULL.  */
 
 void *pvm_alloc (size_t size)
+  __attribute__ ((malloc))
+  __attribute__ ((alloc_size (1)))
   __attribute__ ((visibility ("hidden")));
 
 /* Reallocate the given pointer to occupy SIZE bytes and return a
@@ -54,6 +56,8 @@ void *pvm_alloc (size_t size)
    realloc(3).  On error, return NULL.  */
 
 void *pvm_realloc (void *ptr, size_t size)
+  __attribute__ ((malloc))
+  __attribute__ ((alloc_size (2)))
   __attribute__ ((visibility ("hidden")));
 
 /* Allocate a pvm_cls struct and return a pointer to the allocated
@@ -61,12 +65,14 @@ void *pvm_realloc (void *ptr, size_t size)
    needs additional information to free these structs.  */
 
 void *pvm_alloc_cls (void)
+  __attribute__ ((malloc))
   __attribute__ ((visibility ("hidden")));
 
 /* Allocate and return a copy of the given STRING.  This call has the
    same semantics than strdup(3).  */
 
 char *pvm_alloc_strdup (const char *string)
+  __attribute__ ((malloc))
   __attribute__ ((visibility ("hidden")));
 
 /* Forced collection.  */
