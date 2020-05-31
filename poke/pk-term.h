@@ -38,7 +38,8 @@ extern void pk_term_flush (void);
 extern void pk_puts (const char *str);
 
 /* Print a formatted string to the terminal.  */
-extern void pk_printf (const char *format, ...);
+extern void pk_printf (const char *format, ...)
+  __attribute__ ((format (printf, 1, 2)));
 extern void pk_vprintf (const char *format, va_list ap);
 
 /* Print indentation.  */
