@@ -133,7 +133,7 @@ deftype BPF_Reg =
   {
    uint<4> code;
 
-   defun _print = void:
+   method _print = void:
    {
     print "#<";
     if (code < BPF_R9)
@@ -155,7 +155,7 @@ deftype BPF_Insn_Opcode =
         BPF_Insn_Source src;
         BPF_Insn_Class class : bpf_class_is_alujmp (class);
 
-        defun _print = void:
+        method _print = void:
           {
            print "#<";
            if (class in [BPF_INSN_CLASS_ALU, BPF_INSN_CLASS_ALU64])
@@ -172,7 +172,7 @@ deftype BPF_Insn_Opcode =
         BPF_Insn_Data_Size size;
         BPF_Insn_Class class;
 
-        defun _print = void:
+        method _print = void:
           {
            print "#<";
            if (class == BPF_INSN_CLASS_LDX)
