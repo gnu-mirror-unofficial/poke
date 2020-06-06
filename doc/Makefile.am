@@ -51,8 +51,6 @@ pkgdata_DATA = nodelist
 #   like a bug, since the "Footnotes" heading is <h4> itself.  Using a
 #   header for this is ugly anyway.
 
-AM_MAKEINFOHTMLFLAGS = --css-ref='http://www.jemarch.net/homepage.css'
-
 html-local:
 	sed -i -e '/^<h2.*contents-heading.*/,/<a name="Top">.*/d' \
                -e 's/^<h1.*settitle.*//' \

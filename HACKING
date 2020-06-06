@@ -373,7 +373,16 @@ Then, you can run ``configure``::
 
   $ mkdir build/ && cd build
   $ ../configure
-  
+
+Here, you can give as arguments to 'configure'
+  - configure options, as listen in the 'configure --help' output,
+  - Makefile variable assignments for building the binaries, as
+    described in the INSTALL file,
+  - Makefile variable assignments for building the documentation,
+    for example
+      MAKEINFOFLAGS="--css-ref=http://www.jemarch.net/homepage.css"
+    to get HTML documentation styled like the "Applied Pokology" blog.
+
 Finally::
 
   $ make
