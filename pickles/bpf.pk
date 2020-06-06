@@ -232,7 +232,7 @@ deftype BPF_Insn =
         method _print = void:
           {
            print "#<";
-           printf "%<integer:%v%>", hi::lo;
+           printf "%<integer:%v%>", hi:::lo;
            print ">";
           }
       } imm64 : bpf_opcode_imm64_p (opcode);
@@ -243,7 +243,7 @@ deftype BPF_Insn =
     method imm_value = int<64>:
       {
         if (bpf_opcode_imm64_p (opcode))
-         return imm.imm64.hi::imm.imm64.lo;
+         return imm.imm64.hi:::imm.imm64.lo;
        else
          return imm.imm32;
       }
