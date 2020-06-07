@@ -521,6 +521,9 @@ Example::
 Writing Poke
 ~~~~~~~~~~~~
 
+We recommend to use the Emacs mode in ``etc/poke-mode.el`` to
+write ``.pk`` files.
+
 - Do not separate magnitudes and units when writing offsets.  Do it
   like this::
 
