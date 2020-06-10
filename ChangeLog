@@ -1,3 +1,9 @@
+2020-06-10  Aurélien Aptel  <aaptel@suse.com>
+
+	* HACKING (Maintainers): New section.
+	(Write After Approval): Add Aurélien Aptel.
+	* AUTHORS: Likewise.
+
 2020-06-08  Aurélien Aptel  <aaptel@suse.com>
 
 	* etc/poke-mode.el: New file.
