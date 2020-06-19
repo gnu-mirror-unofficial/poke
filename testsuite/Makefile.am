@@ -35,6 +35,7 @@ check-DEJAGNU: site.exp
           POKEDOCDIR="$(top_builddir)/doc" \
           POKE_LOAD_PATH="$(top_srcdir)/poke" \
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
+                        SHELL="$(SHELL)" \
 			$(RUNTESTFLAGS); \
 	else \
 	  >&2 echo "WARNING: could not find \`runtest'"; \
