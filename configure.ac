@@ -33,6 +33,8 @@ m4_include([m4/jitter.m4])
 dnl Autobuild
 dnl AB_INIT
 
+AC_DEFINE([PACKAGE_BUGZILLA],["https://sourceware.org/bugzilla/describecomponents.cgi?product=poke"],[URL for entering bugs in the project's bugzilla])
+
 AC_PROG_CC
 gl_EARLY
 

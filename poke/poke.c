@@ -224,7 +224,9 @@ Machine interface:\n\
      address for translation bugs.
      no-wrap */
   pk_printf (_("\
-Report bugs to: %s\n"), PACKAGE_BUGREPORT);
+Report bugs in the bug tracker at\n\
+  <%s>\n\
+  or by email to <%s>.\n"), PACKAGE_BUGZILLA, PACKAGE_BUGREPORT);
 #ifdef PACKAGE_PACKAGER_BUG_REPORTS
   printf (_("Report %s bugs to: %s\n"), PACKAGE_PACKAGER,
           PACKAGE_PACKAGER_BUG_REPORTS);

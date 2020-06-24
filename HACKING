@@ -350,6 +350,9 @@ details as you can.
 Also, feel free to assign unasigned bugs to yourself.  You will have
 to open an account in bugzilla for that.
 
+If the bugzilla URL ever changes it should be updated in
+``configure.ac``.
+
 Dealing with spam in the Bugzilla
 .................................
 
