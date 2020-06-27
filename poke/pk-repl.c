@@ -329,14 +329,14 @@ pk_repl (void)
         }
 
       /* Ignore empty lines.  */
-      if (*line == '\0')
-        continue;
-
+      if (*line != '\0')
+        {
 #if defined HAVE_READLINE_HISTORY_H
-      add_history (line);
+          add_history (line);
 #endif
 
-      pk_cmd_exec (line);
+          pk_cmd_exec (line);
+        }
       free (line);
     }
 #if defined HAVE_READLINE_HISTORY_H
