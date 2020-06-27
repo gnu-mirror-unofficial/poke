@@ -37,7 +37,10 @@
 #include "pk-utils.h"
 #include "pk-map.h"
 
-static sigjmp_buf ctrlc_buf;
+/* The non-local entry point for reentering the REPL.  */
+static sigjmp_buf /*volatile*/ ctrlc_buf;
+/* When nonzero, ctrlc_buf contains a valid value.  */
+static int volatile ctrlc_buf_valid;
 
 /* This function is called repeatedly by the readline library, when
    generating potential command line completions.
@@ -202,13 +205,28 @@ banner (void)
 }
 
 static void
-poke_sigint_handler (int status)
+poke_sigint_handler (int sig)
 {
-  rl_free_line_state ();
-  rl_cleanup_after_signal ();
-  rl_line_buffer[rl_point = rl_end = rl_mark = 0] = 0;
-  printf ("\n");
-  siglongjmp (ctrlc_buf, 1);
+  if (ctrlc_buf_valid)
+    {
+      /* Abort the current command, and return to the REPL.  */
+      rl_free_line_state ();
+      rl_cleanup_after_signal ();
+      rl_line_buffer[rl_point = rl_end = rl_mark = 0] = 0;
+      printf ("\n");
+      siglongjmp (ctrlc_buf, 1);
+    }
+  else
+    {
+      /* The default behaviour for SIGINT is to terminate the process.
+         Let's do that here.  */
+      struct sigaction sa;
+      sa.sa_handler = SIG_DFL;
+      sa.sa_flags = 0;
+      sigemptyset (&sa.sa_mask);
+      sigaction (SIGINT, &sa, NULL);
+      raise (SIGINT);
+    }
 }
 
 /* Return a copy of TEXT, with every instance of the space character
@@ -271,12 +289,17 @@ pk_repl (void)
 {
   banner ();
 
-  /* Arrange for the current line to be cancelled on SIGINT.  */
+  /* Arrange for the current line to be cancelled on SIGINT.
+     Since some library code is also interested in SIGINT
+     (GNU libtextstyle, via gnulib module fatal-signal), it is better
+     to install it once, rather than to install and uninstall it once
+     in each round of the REP loop below.  */
+  ctrlc_buf_valid = 0;
   struct sigaction sa;
   sa.sa_handler = poke_sigint_handler;
   sa.sa_flags = 0;
   sigemptyset (&sa.sa_mask);
-  sigaction (SIGINT, &sa, 0);
+  sigaction (SIGINT, &sa, NULL);
 
 #if defined HAVE_READLINE_HISTORY_H
   char *poke_history = NULL;
@@ -300,12 +323,13 @@ pk_repl (void)
   rl_filename_quote_characters = " ";
   rl_filename_quoting_function = escape_metacharacters;
 
+  sigsetjmp (ctrlc_buf, 1);
+  ctrlc_buf_valid = 1;
+
   while (!poke_exit_p)
     {
       char *prompt;
       char *line;
-
-      while (sigsetjmp (ctrlc_buf, 1) != 0);
 
       pk_term_flush ();
       rl_completion_entry_function = poke_completion_function;
@@ -345,6 +369,8 @@ pk_repl (void)
     free (poke_history);
   }
 #endif
+
+  ctrlc_buf_valid = 0;
 }
 
 static int saved_point;
