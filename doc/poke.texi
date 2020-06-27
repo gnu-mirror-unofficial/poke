@@ -5714,7 +5714,7 @@ deftype BitData =
   @};
 @end example
 
-Yeah@dots{} exactly.  The @key{*} and @key{8}> keys in the keyboards of
+Yeah@dots{} exactly.  The @key{*} and @key{8} keys in the keyboards of
 the poke users would wear out very fast, not to mention their patience
 as well.  Also, should I provide both @code{sizeof} and
 @code{bitsizeof} operators?  Nasty.
@@ -5739,7 +5739,7 @@ have units.
 It makes full sense when you come to think about it.  For a program
 like poke, it is only natural to talk about different memory units,
 like bits, bytes, kilobytes, megabits, and so on.  Bits and bytes are
-just too common units.  Apart from allowing me to express values in
+just two common units.  Apart from allowing me to express values in
 different units, this approach also has other benefits as we will see
 shortly.
 
@@ -6205,7 +6205,7 @@ Gives the number of characters composing the string, not counting the
 terminating null.  Examples:
 
 @example
-(poke) "foo"length
+(poke) "foo"'length
 3UL
 (poke) ""'length
 0UL
