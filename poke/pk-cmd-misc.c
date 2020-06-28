@@ -219,13 +219,10 @@ doc_completion_function (const char *x, int state)
       if (name == NULL)
         break;
 
-      int match = strncmp (name, x, len);
-      if (match != 0)
-        {
-          idx++;
-          continue;
-        }
-      return xstrdup (name);
+      if (strncmp (name, x, len) == 0)
+        return xstrdup (name);
+
+      idx++;
     }
 
   return NULL;

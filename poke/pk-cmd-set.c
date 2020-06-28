@@ -637,14 +637,10 @@ set_completion_function (const char *x, int state)
       if (c == &null_cmd)
         break;
 
-      int match = strncmp (c->name, x, len);
-      if (match != 0)
-        {
-          idx++;
-          continue;
-        }
+      if (strncmp (c->name, x, len) == 0)
+        return xstrdup (c->name);
 
-      return xstrdup (c->name);
+      idx++;
     }
 
   return NULL;

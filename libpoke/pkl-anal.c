@@ -98,28 +98,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_struct)
   for (t = elems; t; t = PKL_AST_CHAIN (t))
     {
       pkl_ast_node ename = PKL_AST_STRUCT_FIELD_NAME (t);
-      pkl_ast_node u;
 
-      if (ename == NULL)
-        continue;
-
-      for (u = elems; u != t; u = PKL_AST_CHAIN (u))
+      if (ename != NULL)
         {
-          pkl_ast_node uname = PKL_AST_STRUCT_FIELD_NAME (u);
+          pkl_ast_node u;
 
-          if (uname == NULL)
-            continue;
-
-          if (STREQ (PKL_AST_IDENTIFIER_POINTER (ename),
-                     PKL_AST_IDENTIFIER_POINTER (uname)))
+          for (u = elems; u != t; u = PKL_AST_CHAIN (u))
             {
-              PKL_ERROR (PKL_AST_LOC (u),
-                         "duplicated struct element '%s'",
-                         PKL_AST_IDENTIFIER_POINTER (uname));
-              PKL_ANAL_PAYLOAD->errors++;
-              PKL_PASS_ERROR;
-              /* Do not report more duplicates in this struct.  */
-              break;
+              pkl_ast_node uname = PKL_AST_STRUCT_FIELD_NAME (u);
+
+              if (uname != NULL)
+                if (STREQ (PKL_AST_IDENTIFIER_POINTER (ename),
+                           PKL_AST_IDENTIFIER_POINTER (uname)))
+                  {
+                    PKL_ERROR (PKL_AST_LOC (u),
+                               "duplicated struct element '%s'",
+                               PKL_AST_IDENTIFIER_POINTER (uname));
+                    PKL_ANAL_PAYLOAD->errors++;
+                    PKL_PASS_ERROR;
+                    /* Do not report more duplicates in this struct.  */
+                    break;
+                  }
             }
         }
     }
@@ -809,49 +808,45 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
 
   for (t = struct_type_elems; t; t = PKL_AST_CHAIN (t))
     {
-      pkl_ast_node constraint;
-      pkl_ast_node elem_type;
-      pkl_ast_node optcond;
-
       /* Process only struct type fields.  */
-      if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
-        continue;
-
-      constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (t);
-      optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t);
-      elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
-
-      if (optcond)
+      if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
         {
-          PKL_ERROR (PKL_AST_LOC (t),
-                     "optional fields are not allowed in unions");
-          PKL_ANAL_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
+          pkl_ast_node constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (t);
+          pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t);
+          pkl_ast_node elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
 
-      if (last_unconditional_alternative)
-        {
-          PKL_WARNING (PKL_AST_LOC (t),
-                       "unreachable alternative in union");
-          break;
-        }
+          if (optcond)
+            {
+              PKL_ERROR (PKL_AST_LOC (t),
+                         "optional fields are not allowed in unions");
+              PKL_ANAL_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
 
-      if (!constraint
-          && PKL_AST_TYPE_CODE (elem_type) != PKL_TYPE_STRUCT)
-        last_unconditional_alternative = t;
+          if (last_unconditional_alternative)
+            {
+              PKL_WARNING (PKL_AST_LOC (t),
+                           "unreachable alternative in union");
+              break;
+            }
 
-      if (constraint
-          && (PKL_AST_CODE (constraint) == PKL_AST_INTEGER
-              && PKL_AST_INTEGER_VALUE (constraint) != 0))
-        last_unconditional_alternative = t;
+          if (!constraint
+              && PKL_AST_TYPE_CODE (elem_type) != PKL_TYPE_STRUCT)
+            last_unconditional_alternative = t;
 
-      if (constraint
-          && PKL_AST_CODE (constraint) == PKL_AST_INTEGER
-          && PKL_AST_INTEGER_VALUE (constraint) == 0)
-        {
-          PKL_WARNING (PKL_AST_LOC (t),
-                       "unreachable alternative in union");
-          break;
+          if (constraint
+              && (PKL_AST_CODE (constraint) == PKL_AST_INTEGER
+                  && PKL_AST_INTEGER_VALUE (constraint) != 0))
+            last_unconditional_alternative = t;
+
+          if (constraint
+              && PKL_AST_CODE (constraint) == PKL_AST_INTEGER
+              && PKL_AST_INTEGER_VALUE (constraint) == 0)
+            {
+              PKL_WARNING (PKL_AST_LOC (t),
+                           "unreachable alternative in union");
+              break;
+            }
         }
     }
 }

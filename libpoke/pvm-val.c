@@ -452,21 +452,20 @@ pvm_sizeof (pvm_val val)
         {
           pvm_val elem_value = PVM_VAL_SCT_FIELD_VALUE (val, i);
           pvm_val elem_offset = PVM_VAL_SCT_FIELD_OFFSET (val, i);
-          uint64_t elem_size_bits;
-          uint64_t elem_offset_bits;
 
-          if (PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
-            continue;
-
-          elem_size_bits = pvm_sizeof (elem_value);
-          if (elem_offset == PVM_NULL)
-            size += elem_size_bits;
-          else
+          if (! PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
             {
-              elem_offset_bits = PVM_VAL_ULONG (elem_offset);
+              uint64_t elem_size_bits = pvm_sizeof (elem_value);
+
+              if (elem_offset == PVM_NULL)
+                size += elem_size_bits;
+              else
+                {
+                  uint64_t elem_offset_bits = PVM_VAL_ULONG (elem_offset);
 
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
-              size = MAX (size, elem_offset_bits - sct_offset_bits + elem_size_bits);
+                  size = MAX (size, elem_offset_bits - sct_offset_bits + elem_size_bits);
+                }
             }
         }
 
@@ -887,25 +886,24 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
           pvm_val value = PVM_VAL_SCT_FIELD_VALUE(val, idx);
 
           if (PVM_VAL_SCT_FIELD_ABSENT_P (val, idx))
+            nabsent++;
+          else
             {
-              nabsent++;
-              continue;
+              if ((idx - nabsent) != 0)
+                pk_puts (",");
+
+              if (mode == PVM_PRINT_TREE)
+                pk_term_indent (ndepth + 1, indent);
+
+              if (name != PVM_NULL)
+                {
+                  pk_term_class ("struct-field-name");
+                  pk_printf ("%s", PVM_VAL_STR (name));
+                  pk_term_end_class ("struct-field-name");
+                  pk_puts ("=");
+                }
+              PVM_PRINT_VAL_1 (value, ndepth + 1);
             }
-
-          if ((idx - nabsent) != 0)
-            pk_puts (",");
-
-          if (mode == PVM_PRINT_TREE)
-            pk_term_indent (ndepth + 1, indent);
-
-          if (name != PVM_NULL)
-            {
-              pk_term_class ("struct-field-name");
-              pk_printf ("%s", PVM_VAL_STR (name));
-              pk_term_end_class ("struct-field-name");
-              pk_puts ("=");
-            }
-          PVM_PRINT_VAL_1 (value, ndepth + 1);
         }
 
       if (mode == PVM_PRINT_TREE)

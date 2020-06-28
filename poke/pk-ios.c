@@ -73,45 +73,48 @@ pk_open_ios (const char *handler, int set_cur_p)
 
             pk_printf ("invalid regexp `%s' in auto_map.  Skipping entry.\n",
                        pk_string_str (regex));
-            continue;
           }
-
-        if (regexec (&regexp, handler, 1, &matches, 0) == 0)
+        else
           {
-            /* Load the map.  */
-
-            const char *map_handler
-              = pk_map_resolve_map (pk_string_str (mapname),
-                                    0 /* handler_p */);
-
-            if (!map_handler)
+            if (regexec (&regexp, handler, 1, &matches, 0) == 0)
               {
-                pk_term_class ("error");
-                pk_puts ("warning: ");
-                pk_term_end_class ("error");
+                /* Load the map.  */
 
-                pk_printf ("auto-map: unknown map `%s'",
-                           pk_string_str (mapname));
-                regfree (&regexp);
-                break;
+                const char *map_handler
+                  = pk_map_resolve_map (pk_string_str (mapname),
+                                        0 /* handler_p */);
+
+                if (!map_handler)
+                  {
+                    pk_term_class ("error");
+                    pk_puts ("warning: ");
+                    pk_term_end_class ("error");
+
+                    pk_printf ("auto-map: unknown map `%s'",
+                               pk_string_str (mapname));
+                    regfree (&regexp);
+                    break;
+                  }
+
+                if (!pk_map_load_file (ios_id, map_handler, NULL))
+                  {
+                    pk_term_class ("error");
+                    pk_puts ("error: ");
+                    pk_term_end_class ("error");
+
+                    pk_printf ("auto-map: loading `%s'\n",
+                               pk_string_str (mapname));
+                    regfree (&regexp);
+                    break;
+                  }
+
+                if (poke_interactive_p && !poke_quiet_p && !poke_prompt_maps_p)
+                  pk_printf ("auto-map: map `%s' loaded\n",
+                             pk_string_str (mapname));
               }
 
-            if (!pk_map_load_file (ios_id, map_handler, NULL))
-              {
-                pk_term_class ("error");
-                pk_puts ("error: ");
-                pk_term_end_class ("error");
-
-                pk_printf ("auto-map: loading `%s'\n", pk_string_str (mapname));
-                regfree (&regexp);
-                break;
-              }
-
-            if (poke_interactive_p && !poke_quiet_p && !poke_prompt_maps_p)
-              pk_printf ("auto-map: map `%s' loaded\n", pk_string_str (mapname));
+            regfree (&regexp);
           }
-
-        regfree (&regexp);
       }
   }
 

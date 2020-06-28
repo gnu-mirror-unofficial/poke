@@ -373,12 +373,10 @@ pkl_env_get_next_matching_decl (pkl_env env, struct pkl_ast_node_iter *iter,
 
       pkl_ast_node decl_name = PKL_AST_DECL_NAME (iter->node);
       const char *cmdname = PKL_AST_IDENTIFIER_POINTER (decl_name);
-      if (0 != strncmp (cmdname, name, len))
-        {
-          pkl_env_iter_next (env, iter);
-          continue;
-        }
-      return strdup (cmdname);
+      if (strncmp (cmdname, name, len) == 0)
+        return strdup (cmdname);
+
+      pkl_env_iter_next (env, iter);
     }
   return NULL;
 }

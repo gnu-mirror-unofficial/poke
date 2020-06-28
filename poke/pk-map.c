@@ -583,13 +583,11 @@ pk_map_normalize_name (const char *str)
      character not in [0-9a-zA-Z_] into _ */
   for (p = mapname; *p != '\0'; ++p)
     {
-      if ((*p >= '0' && *p <= '9')
-          || (*p >= 'a' && *p <= 'z')
-          || (*p >= 'A' && *p <= 'Z')
-          || (*p == '_'))
-        continue;
-
-      *p = '_';
+      if (!((*p >= '0' && *p <= '9')
+            || (*p >= 'a' && *p <= 'z')
+            || (*p >= 'A' && *p <= 'Z')
+            || (*p == '_')))
+        *p = '_';
     }
 
   return mapname;

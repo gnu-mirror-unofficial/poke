@@ -620,24 +620,24 @@ initialize_user (void)
     do
       {
         /* Ignore empty entries.  */
-        if (*dir == '\0')
-          continue;
-
-        /* Mount the full path and determine whether the resulting
-           file is readable. */
-        char *config_filename = pk_str_concat (dir, "/poke/pokerc.conf", NULL);
-        pk_assert_alloc (config_filename);
-
-        if (pk_file_readable (config_filename) == NULL)
+        if (*dir != '\0')
           {
-            /* Load the configuration file.  */
-            int ret = pk_cmd_exec_script (config_filename);
-            if (!ret)
-              exit (EXIT_FAILURE);
-            break;
-          }
+            /* Mount the full path and determine whether the resulting
+               file is readable. */
+            char *config_filename = pk_str_concat (dir, "/poke/pokerc.conf", NULL);
+            pk_assert_alloc (config_filename);
 
-        free (config_filename);
+            if (pk_file_readable (config_filename) == NULL)
+              {
+                /* Load the configuration file.  */
+                int ret = pk_cmd_exec_script (config_filename);
+                if (!ret)
+                  exit (EXIT_FAILURE);
+                break;
+              }
+
+            free (config_filename);
+          }
       }
     while ((dir = strtok (NULL, ":")) != NULL);
 

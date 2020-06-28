@@ -55,12 +55,10 @@ info_completion_function (const char *x, int state)
       if (*c == &null_cmd)
         break;
 
-      if (0 != strncmp ((*c)->name, x, len))
-        {
-          idx++;
-          continue;
-        }
-      return xstrdup ((*c)->name);
+      if (strncmp ((*c)->name, x, len) == 0)
+        return xstrdup ((*c)->name);
+
+      idx++;
     }
 
   return NULL;

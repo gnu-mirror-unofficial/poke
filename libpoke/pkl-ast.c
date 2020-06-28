@@ -674,18 +674,18 @@ pkl_struct_type_traverse (pkl_ast_node type, const char *path)
       for (t = PKL_AST_TYPE_S_ELEMS (type); t;
            t = PKL_AST_CHAIN (t))
         {
-          if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
-            continue;
-
-          ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
-          etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
-
-          field = PKL_AST_IDENTIFIER_POINTER (ename);
-
-          if (STREQ (field, sub))
+          if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
             {
-              type = etype;
-              break;
+              ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
+              etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
+
+              field = PKL_AST_IDENTIFIER_POINTER (ename);
+
+              if (STREQ (field, sub))
+                {
+                  type = etype;
+                  break;
+                }
             }
         }
 
@@ -953,23 +953,24 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
 
         for (t = PKL_AST_TYPE_S_ELEMS (type); t; t = PKL_AST_CHAIN (t))
           {
-            pkl_ast_node elem_type;
+            if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
+              {
+                pkl_ast_node elem_type;
 
-            if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
-              continue;
+                /* Struct fields with labels are not expected, as these
+                   cannot appear in complete struct types.  Ditto for
+                   optional fields.  */
+                assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
+                assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
 
-            /* Struct fields with labels are not expected, as these
-               cannot appear in complete struct types.  Ditto for
-               optional fields.  */
-            assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
-            assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
-
-            elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
-            res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
-                                           res,
-                                           pkl_ast_sizeof_type (ast, elem_type));
-            PKL_AST_TYPE (res) = ASTREF (res_type);
-            PKL_AST_LOC (res) = PKL_AST_LOC (type);
+                elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
+                res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
+                                               res,
+                                               pkl_ast_sizeof_type (ast,
+                                                                    elem_type));
+                PKL_AST_TYPE (res) = ASTREF (res_type);
+                PKL_AST_LOC (res) = PKL_AST_LOC (type);
+              }
           }
 
         break;
@@ -1175,20 +1176,17 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
         for (t = PKL_AST_TYPE_S_ELEMS (type); t;
              t = PKL_AST_CHAIN (t))
           {
-            pkl_ast_node ename;
-            pkl_ast_node etype;
+            if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
+              {
+                pkl_ast_node ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
+                pkl_ast_node etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
 
-            if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
-              continue;
-
-            ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
-            etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
-
-            pkl_print_type (out, etype, use_given_name);
-            if (ename)
-              fprintf (out, " %s",
-                       PKL_AST_IDENTIFIER_POINTER (ename));
-            fputc (';', out);
+                pkl_print_type (out, etype, use_given_name);
+                if (ename)
+                  fprintf (out, " %s",
+                           PKL_AST_IDENTIFIER_POINTER (ename));
+                fputc (';', out);
+              }
           }
         fputs ("}", out);
         break;

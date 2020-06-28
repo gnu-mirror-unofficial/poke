@@ -294,14 +294,10 @@ pk_ios_completion_function (pk_compiler pkc __attribute__ ((unused)),
       char buf[16];
       snprintf (buf, 16, "#%d", ios_get_id (io));
 
-      int match = strncmp (buf, text, len);
-      if (match != 0)
-        {
-          io = ios_next (io);
-          continue;
-        }
+      if (strncmp (buf, text, len) == 0)
+        return strdup (buf);
 
-      return strdup (buf);
+      io = ios_next (io);
     }
 
   return NULL;

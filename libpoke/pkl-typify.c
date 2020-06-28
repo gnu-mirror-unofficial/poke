@@ -1507,7 +1507,6 @@ with prototype %s",
         {
           /* This is an optional argument that hasn't been specified.
              Do not check.  */
-          continue;
         }
       else
         {
@@ -1530,9 +1529,9 @@ expected %s, got %s",
               PKL_TYPIFY_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
-        }
 
-      narg++;
+          narg++;
+        }
     }
 
   /* Set the type of the funcall itself.  */
@@ -1627,8 +1626,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_ref)
           pkl_ast_node func = PKL_AST_DECL_INITIAL (t);
           type = PKL_AST_TYPE (func);
         }
-      else
-        continue;
     }
 
   if (type == NULL)
@@ -1780,41 +1777,41 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_scons)
            type_elem;
            type_elem = PKL_AST_CHAIN (type_elem))
         {
-          pkl_ast_node type_elem_name;
-
           /* Process only struct type fields.  */
-          if (PKL_AST_CODE (type_elem) != PKL_AST_STRUCT_TYPE_FIELD)
-            continue;
-
-          type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
-          if (type_elem_name
-              && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
-                        PKL_AST_IDENTIFIER_POINTER (elem_name)))
+          if (PKL_AST_CODE (type_elem) == PKL_AST_STRUCT_TYPE_FIELD)
             {
-              pkl_ast_node type_elem_type
-                = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
+              pkl_ast_node type_elem_name;
 
-              found = 1;
-
-              if (!pkl_ast_type_promoteable (elem_type, type_elem_type,
-                                             0 /* promote array of any */))
+              type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
+              if (type_elem_name
+                  && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
+                            PKL_AST_IDENTIFIER_POINTER (elem_name)))
                 {
-                  char *expected_type = pkl_type_str (type_elem_type, 1);
-                  char *found_type = pkl_type_str (elem_type, 1);
+                  pkl_ast_node type_elem_type
+                    = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
 
-                  PKL_ERROR (PKL_AST_LOC (elem_exp),
-                             "invalid initializer for `%s' in constructor\n\
+                  found = 1;
+
+                  if (!pkl_ast_type_promoteable (elem_type, type_elem_type,
+                                                 0 /* promote array of any */))
+                    {
+                      char *expected_type = pkl_type_str (type_elem_type, 1);
+                      char *found_type = pkl_type_str (elem_type, 1);
+
+                      PKL_ERROR (PKL_AST_LOC (elem_exp),
+                                 "invalid initializer for `%s' in constructor\n\
 expected %s, got %s",
-                             PKL_AST_IDENTIFIER_POINTER (elem_name),
-                             expected_type, found_type);
+                                 PKL_AST_IDENTIFIER_POINTER (elem_name),
+                                 expected_type, found_type);
 
-                  free (expected_type);
-                  free (found_type);
-                  PKL_TYPIFY_PAYLOAD->errors++;
-                  PKL_PASS_ERROR;
+                      free (expected_type);
+                      free (found_type);
+                      PKL_TYPIFY_PAYLOAD->errors++;
+                      PKL_PASS_ERROR;
+                    }
+
+                  break;
                 }
-
-              break;
             }
         }
 
@@ -1944,33 +1941,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_print_stmt)
            type = PKL_AST_CHAIN (type))
         {
           pkl_ast_node arg_exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
-          pkl_ast_node arg_type;
 
           /* Skip arguments without associated values.  */
-          if (!arg_exp)
-            continue;
-
-          arg_type = PKL_AST_TYPE (arg_exp);
-          if (!pkl_ast_type_equal (arg_type, type))
+          if (arg_exp)
             {
-              if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY
-                  || (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
-                      && PKL_AST_TYPE_CODE (arg_type) == PKL_TYPE_INTEGRAL))
-                /* Integers can be promoted.  Ditto for any.  */
-                ;
-              else
-                {
-                  char *found_type = pkl_type_str (arg_type, 1);
-                  char *expected_type = pkl_type_str (type, 1);
+              pkl_ast_node arg_type = PKL_AST_TYPE (arg_exp);
 
-                  PKL_ERROR (PKL_AST_LOC (arg),
-                             "printf argument is of an invalid type\n\
+              if (!pkl_ast_type_equal (arg_type, type))
+                {
+                  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY
+                      || (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
+                          && PKL_AST_TYPE_CODE (arg_type) == PKL_TYPE_INTEGRAL))
+                    /* Integers can be promoted.  Ditto for any.  */
+                    ;
+                  else
+                    {
+                      char *found_type = pkl_type_str (arg_type, 1);
+                      char *expected_type = pkl_type_str (type, 1);
+
+                      PKL_ERROR (PKL_AST_LOC (arg),
+                                 "printf argument is of an invalid type\n\
 expected %s, got %s",
-                             expected_type, found_type);
-                  free (found_type);
-                  free (expected_type);
-                  PKL_TYPIFY_PAYLOAD->errors++;
-                  PKL_PASS_ERROR;
+                                 expected_type, found_type);
+                      free (found_type);
+                      free (expected_type);
+                      PKL_TYPIFY_PAYLOAD->errors++;
+                      PKL_PASS_ERROR;
+                    }
                 }
             }
         }

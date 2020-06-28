@@ -637,6 +637,16 @@ pk_cmd_exec (const char *str)
 #undef IS_COMMAND
 
 
+static int
+is_blank_line (const char *line)
+{
+  const char *c = line;
+  while (*c != '\0' && (*c == ' ' || *c == '\t'))
+    c++;
+  return (*c == '\0');
+}
+
+
 int
 pk_cmd_exec_script (const char *filename)
 {
@@ -674,21 +684,13 @@ pk_cmd_exec_script (const char *filename)
 
       /* If the line is empty, or it starts with '#', or it contains
          just blank characters, just ignore it.  */
-      if (line[0] == '#' || line[0] == '\0')
-        continue;
-      else
+      if (!(line[0] == '#' || line[0] == '\0' || is_blank_line (line)))
         {
-          char *c = line;
-          while (*c != '\0' && (*c == ' ' || *c == '\t'))
-            c++;
-          if (*c == '\0')
-            continue;
+          /* Execute the line.  */
+          ret = pk_cmd_exec (line);
+          if (!ret)
+            goto error;
         }
-
-      /* Execute the line.  */
-      ret = pk_cmd_exec (line);
-      if (!ret)
-        goto error;
     }
 
   free (line);

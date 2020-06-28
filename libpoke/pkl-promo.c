@@ -937,68 +937,65 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
     {
       pkl_ast_node fa_type = PKL_AST_FUNC_ARG_TYPE (fa);
       pkl_ast_node aa_exp = PKL_AST_FUNCALL_ARG_EXP (aa);
-      pkl_ast_node aa_type;
       int restart = 0;
 
       /* Ignore non-specified actuals for optional formals.  */
-      if (!aa_exp)
-        continue;
-
-      aa_type =  PKL_AST_TYPE (aa_exp);
-
-      /* Do not promote varargs.  */
-      if (PKL_AST_FUNC_TYPE_ARG_VARARG (fa))
-        continue;
-
-      /* At this point it is assured that the types of the actual
-         argument and the formal argument are promoteable, or typify
-         wouldn't have allowed it to pass.  */
-
-      /* If both types are equivalent, then we are done.  */
-      if (pkl_ast_type_equal (fa_type, aa_type))
-        continue;
-
-      /* A promotion is needed.  */
-      switch (PKL_AST_TYPE_CODE (fa_type))
+      if (aa_exp)
         {
-        case PKL_TYPE_ANY:
-          break;
-        case PKL_TYPE_ARRAY:
-          /* Array promotion of arguments is performed in the function
-             prologue, not here.  This is because the target type is
-             defined in the function's environment.  */
-          break;
-        case PKL_TYPE_INTEGRAL:
-          if (!promote_integral (PKL_PASS_AST,
-                                 PKL_AST_TYPE_I_SIZE (fa_type),
-                                 PKL_AST_TYPE_I_SIGNED (fa_type),
-                                 &PKL_AST_FUNCALL_ARG_EXP (aa),
-                                 &restart))
-            goto error;
-          break;
-        case PKL_TYPE_OFFSET:
-          {
-            pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (fa_type);
-            pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (fa_type);
+          pkl_ast_node aa_type = PKL_AST_TYPE (aa_exp);
 
-            size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-            int sign = PKL_AST_TYPE_I_SIGNED (base_type);
+          /* Do not promote varargs.  */
+          if (! PKL_AST_FUNC_TYPE_ARG_VARARG (fa))
+            {
+              /* At this point it is assured that the types of the actual
+                 argument and the formal argument are promoteable, or typify
+                 wouldn't have allowed it to pass.  */
 
-            if (!promote_offset (PKL_PASS_AST,
-                                 size, sign, unit,
-                                 &PKL_AST_FUNCALL_ARG_EXP (aa),
-                                 &restart))
-              goto error;
-          }
-          break;
-        default:
-          PKL_ICE (PKL_AST_LOC (funcall),
-                   "funcall contains non-promoteable arguments at promo time");
-          PKL_PASS_ERROR;
-          break;
+              /* If both types are equivalent, then we are done.  */
+              if (! pkl_ast_type_equal (fa_type, aa_type))
+                /* A promotion is needed.  */
+                switch (PKL_AST_TYPE_CODE (fa_type))
+                  {
+                  case PKL_TYPE_ANY:
+                    break;
+                  case PKL_TYPE_ARRAY:
+                    /* Array promotion of arguments is performed in the function
+                       prologue, not here.  This is because the target type is
+                       defined in the function's environment.  */
+                    break;
+                  case PKL_TYPE_INTEGRAL:
+                    if (!promote_integral (PKL_PASS_AST,
+                                           PKL_AST_TYPE_I_SIZE (fa_type),
+                                           PKL_AST_TYPE_I_SIGNED (fa_type),
+                                           &PKL_AST_FUNCALL_ARG_EXP (aa),
+                                           &restart))
+                      goto error;
+                    break;
+                  case PKL_TYPE_OFFSET:
+                    {
+                      pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (fa_type);
+                      pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (fa_type);
+
+                      size_t size = PKL_AST_TYPE_I_SIZE (base_type);
+                      int sign = PKL_AST_TYPE_I_SIGNED (base_type);
+
+                      if (!promote_offset (PKL_PASS_AST,
+                                           size, sign, unit,
+                                           &PKL_AST_FUNCALL_ARG_EXP (aa),
+                                           &restart))
+                        goto error;
+                    }
+                    break;
+                  default:
+                    PKL_ICE (PKL_AST_LOC (funcall),
+                             "funcall contains non-promoteable arguments at promo time");
+                    PKL_PASS_ERROR;
+                    break;
+                  }
+
+              PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
+            }
         }
-
-      PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
     }
 
   PKL_PASS_DONE;
@@ -1111,31 +1108,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_print_stmt)
        arg = PKL_AST_CHAIN (arg), type = PKL_AST_CHAIN (type))
     {
       pkl_ast_node arg_exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
-      pkl_ast_node exp_type;
 
       /* Skip arguments without associated values.  Also skip
          arguments with declared type ANY (%v) */
-      if (!arg_exp
-          || PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)
-        continue;
-
-      exp_type = PKL_AST_TYPE (arg_exp);
-      if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_INTEGRAL)
+      if (arg_exp
+          && PKL_AST_TYPE_CODE (type) != PKL_TYPE_ANY)
         {
-          int restart = 0;
+          pkl_ast_node exp_type = PKL_AST_TYPE (arg_exp);
 
-          if (!promote_integral (PKL_PASS_AST,
-                                 PKL_AST_TYPE_I_SIZE (type),
-                                 PKL_AST_TYPE_I_SIGNED (type),
-                                 &PKL_AST_PRINT_STMT_ARG_EXP (arg),
-                                 &restart))
+          if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_INTEGRAL)
             {
-              PKL_ICE (PKL_AST_LOC (arg),
-                       "couldn't promote printf argument initializer");
-                  PKL_PASS_ERROR;
-            }
+              int restart = 0;
 
-          PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
+              if (!promote_integral (PKL_PASS_AST,
+                                     PKL_AST_TYPE_I_SIZE (type),
+                                     PKL_AST_TYPE_I_SIGNED (type),
+                                     &PKL_AST_PRINT_STMT_ARG_EXP (arg),
+                                     &restart))
+                {
+                  PKL_ICE (PKL_AST_LOC (arg),
+                           "couldn't promote printf argument initializer");
+                      PKL_PASS_ERROR;
+                }
+
+              PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
+            }
         }
     }
 }
@@ -1552,62 +1549,62 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
           pkl_ast_node type_elem_name;
 
           /* Process only struct type fields.  */
-          if (PKL_AST_CODE (type_elem) != PKL_AST_STRUCT_TYPE_FIELD)
-            continue;
-
-          type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
-          if (type_elem_name
-              && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
-                        PKL_AST_IDENTIFIER_POINTER (elem_name)))
+          if (PKL_AST_CODE (type_elem) == PKL_AST_STRUCT_TYPE_FIELD)
             {
-              pkl_ast_node type_elem_type
-                = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
-
-              if (!pkl_ast_type_equal (elem_type, type_elem_type)
-                  || (PKL_AST_TYPE_CODE (type_elem_type) == PKL_TYPE_ARRAY))
+              type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
+              if (type_elem_name
+                  && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
+                            PKL_AST_IDENTIFIER_POINTER (elem_name)))
                 {
-                  int restart = 0;
+                  pkl_ast_node type_elem_type
+                    = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
 
-                  switch (PKL_AST_TYPE_CODE (type_elem_type))
+                  if (!pkl_ast_type_equal (elem_type, type_elem_type)
+                      || (PKL_AST_TYPE_CODE (type_elem_type) == PKL_TYPE_ARRAY))
                     {
-                    case PKL_TYPE_INTEGRAL:
-                      if (!promote_integral (PKL_PASS_AST,
-                                             PKL_AST_TYPE_I_SIZE (type_elem_type),
-                                             PKL_AST_TYPE_I_SIGNED (type_elem_type),
-                                             &PKL_AST_STRUCT_FIELD_EXP (elem),
-                                             &restart))
-                        goto error;
+                      int restart = 0;
 
-                      PKL_PASS_RESTART |= restart;
-                      break;
-                    case PKL_TYPE_OFFSET:
-                      {
-                        pkl_ast_node base_type
-                          = PKL_AST_TYPE_O_BASE_TYPE (type_elem_type);
-                        pkl_ast_node unit
-                          = PKL_AST_TYPE_O_UNIT (type_elem_type);
+                      switch (PKL_AST_TYPE_CODE (type_elem_type))
+                        {
+                        case PKL_TYPE_INTEGRAL:
+                          if (!promote_integral (PKL_PASS_AST,
+                                                 PKL_AST_TYPE_I_SIZE (type_elem_type),
+                                                 PKL_AST_TYPE_I_SIGNED (type_elem_type),
+                                                 &PKL_AST_STRUCT_FIELD_EXP (elem),
+                                                 &restart))
+                            goto error;
 
-                        size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-                        int sign = PKL_AST_TYPE_I_SIGNED (base_type);
+                          PKL_PASS_RESTART |= restart;
+                          break;
+                        case PKL_TYPE_OFFSET:
+                          {
+                            pkl_ast_node base_type
+                              = PKL_AST_TYPE_O_BASE_TYPE (type_elem_type);
+                            pkl_ast_node unit
+                              = PKL_AST_TYPE_O_UNIT (type_elem_type);
 
-                        if (!promote_offset (PKL_PASS_AST,
-                                             size, sign, unit,
-                                             &PKL_AST_STRUCT_FIELD_EXP (elem),
-                                             &restart))
-                          goto error;
+                            size_t size = PKL_AST_TYPE_I_SIZE (base_type);
+                            int sign = PKL_AST_TYPE_I_SIGNED (base_type);
 
-                        PKL_PASS_RESTART |= restart;
-                        break;
-                      }
-                    case PKL_TYPE_ARRAY:
-                      /* Array promotion of scons initializers is
-                         performed in the constructor, not here.  This
-                         is because the target type's bounder shall be
-                         created in the constructor's environment.  */
-                      break;
-                    default:
-                      assert (0);
-                      break;
+                            if (!promote_offset (PKL_PASS_AST,
+                                                 size, sign, unit,
+                                                 &PKL_AST_STRUCT_FIELD_EXP (elem),
+                                                 &restart))
+                              goto error;
+
+                            PKL_PASS_RESTART |= restart;
+                            break;
+                          }
+                        case PKL_TYPE_ARRAY:
+                          /* Array promotion of scons initializers is
+                             performed in the constructor, not here.  This
+                             is because the target type's bounder shall be
+                             created in the constructor's environment.  */
+                          break;
+                        default:
+                          assert (0);
+                          break;
+                        }
                     }
                 }
             }
