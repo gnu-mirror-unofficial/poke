@@ -19,6 +19,7 @@
 #include <config.h>
 
 #include <signal.h>
+#include <pthread.h>
 #include <unistd.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -37,9 +38,12 @@
 #include "pk-utils.h"
 #include "pk-map.h"
 
+/* The thread that contains the non-local entry point for reentering
+   the REPL.  */
+static pthread_t volatile ctrlc_thread;
 /* The non-local entry point for reentering the REPL.  */
 static sigjmp_buf /*volatile*/ ctrlc_buf;
-/* When nonzero, ctrlc_buf contains a valid value.  */
+/* When nonzero, ctrlc_thread and ctrlc_buf contain valid values.  */
 static int volatile ctrlc_buf_valid;
 
 /* This function is called repeatedly by the readline library, when
@@ -204,17 +208,36 @@ banner (void)
 
 }
 
-static void
+static _GL_ASYNC_SAFE void
 poke_sigint_handler (int sig)
 {
   if (ctrlc_buf_valid)
     {
       /* Abort the current command, and return to the REPL.  */
-      rl_free_line_state ();
-      rl_cleanup_after_signal ();
-      rl_line_buffer[rl_point = rl_end = rl_mark = 0] = 0;
-      printf ("\n");
-      siglongjmp (ctrlc_buf, 1);
+      if (!pthread_equal (pthread_self (), ctrlc_thread))
+        {
+          /* We are not in the thread that established the jmp_buf for
+             returning to the REPL.  Redirect the signal to that thread,
+             and decline responsibility for future deliveries of this
+             signal.  */
+          sigset_t mask;
+          if (sigemptyset (&mask) == 0
+              && sigaddset (&mask, SIGINT) == 0)
+            pthread_sigmask (SIG_BLOCK, &mask, NULL);
+
+          pthread_kill (ctrlc_thread, SIGINT);
+        }
+      else
+        {
+          /* We are in the thread that established the jmp_buf for returning
+             to the REPL.  Put the readline library into a sane state, then
+             unwind the stack.  */
+          rl_free_line_state ();
+          rl_cleanup_after_signal ();
+          rl_line_buffer[rl_point = rl_end = rl_mark = 0] = 0;
+          printf ("\n");
+          siglongjmp (ctrlc_buf, 1);
+        }
     }
   else
     {
@@ -323,6 +346,7 @@ pk_repl (void)
   rl_filename_quote_characters = " ";
   rl_filename_quoting_function = escape_metacharacters;
 
+  ctrlc_thread = pthread_self ();
   sigsetjmp (ctrlc_buf, 1);
   ctrlc_buf_valid = 1;
 
