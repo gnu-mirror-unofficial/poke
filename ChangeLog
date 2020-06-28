@@ -1,3 +1,12 @@
+2020-06-28  Luca Saiu  <positron@gnu.org>
+
+	do not rely on the unreliable "optimize" GCC function attribute
+	* libpoke/pvm-env.c (pvm_env_back): New static function.
+	(pvm_env_lookup, pvm_env_set_var): Rewrite avoiding recursion,
+	and factor the common logic using the new static function.
+	Remove __attribute__((optimize ("optimize-sibling-calls"))).
+	Remove comment, now obsolete.
+
 2020-06-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac (PACKAGE_BUGZILLA): ac_define.
