@@ -692,7 +692,7 @@ BEGIN {
 # .loop
 /^[ \t]*\.loop[ \t]*(;.*)?$/ {
     out("\t}                                                         \\")
-    out("\tpkl_asm_loop (RAS_ASM);                               \\")
+    out("\tpkl_asm_while_loop (RAS_ASM);                               \\")
     out("\t{                                                         \\")
     next
 }
@@ -700,7 +700,7 @@ BEGIN {
 # .endloop
 /^[ \t]*\.endloop[ \t]*(;.*)?$/ {
     out("\t}                                                         \\")
-    out("\tpkl_asm_endloop (RAS_ASM);                            \\")
+    out("\tpkl_asm_while_endloop (RAS_ASM);                            \\")
     next
 }
 

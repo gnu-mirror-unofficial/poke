@@ -1665,6 +1665,37 @@ pkl_asm_endtry (pkl_asm pasm)
   pkl_asm_poplevel (pasm);
 }
 
+/* The following functions implement simple unrestricted loops.  The
+   code generated is:
+
+   label1:
+   ... loop body ...
+   SYNC
+   BA label1;
+   break_label:
+*/
+
+void
+pkl_asm_loop (pkl_asm pasm)
+{
+  pkl_asm_pushlevel (pasm, PKL_ASM_ENV_LOOP);
+
+  pasm->level->label1 = pvm_program_fresh_label (pasm->program);
+  pasm->level->break_label = pvm_program_fresh_label (pasm->program);
+  pvm_program_append_label (pasm->program, pasm->level->label1);
+}
+
+void
+pkl_asm_endloop (pkl_asm pasm)
+{
+  pkl_asm_insn (pasm, PKL_INSN_SYNC);
+  pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);
+  pvm_program_append_label (pasm->program, pasm->level->break_label);
+
+  /* Cleanup and pop the current level.  */
+  pkl_asm_poplevel (pasm);
+}
+
 /* The following functions implement while loops.  The code generated
    is:
 
@@ -1693,7 +1724,7 @@ pkl_asm_while (pkl_asm pasm)
 }
 
 void
-pkl_asm_loop (pkl_asm pasm)
+pkl_asm_while_loop (pkl_asm pasm)
 {
   pkl_asm_insn (pasm, PKL_INSN_BZI, pasm->level->label2);
   /* Pop the loop condition from the stack.  */
@@ -1701,7 +1732,7 @@ pkl_asm_loop (pkl_asm pasm)
 }
 
 void
-pkl_asm_endloop (pkl_asm pasm)
+pkl_asm_while_endloop (pkl_asm pasm)
 {
   pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);

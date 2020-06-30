@@ -120,26 +120,41 @@ void pkl_asm_else (pkl_asm pasm)
 void pkl_asm_endif (pkl_asm pasm)
   __attribute__ ((visibility ("hidden")));
 
+/* Simple loops.
+ *
+ * pkl_asm_loop (pasm);
+ *
+ *   ... loop body ...
+ *
+ * pkl_asm_endloop (pasm);
+ */
+
+void pkl_asm_loop (pkl_asm pasm)
+  __attribute__ ((visibility ("hidden")));
+
+void pkl_asm_endloop (pkl_asm pasm)
+  __attribute__ ((visibility ("hidden")));
+
 /* While loops.
  *
  * pkl_asm_while (pasm);
  *
  *   ... condition ...
  *
- * pkl_asm_loop (pasm);
+ * pkl_asm_while_loop (pasm);
  *
  *   ... loop body ...
  *
- * pkl_asm_end_loop (pasm);
+ * pkl_asm_while_endloop (pasm);
  */
 
 void pkl_asm_while (pkl_asm pasm)
   __attribute__ ((visibility ("hidden")));
 
-void pkl_asm_loop (pkl_asm pasm)
+void pkl_asm_while_loop (pkl_asm pasm)
   __attribute__ ((visibility ("hidden")));
 
-void pkl_asm_endloop (pkl_asm pasm)
+void pkl_asm_while_endloop (pkl_asm pasm)
   __attribute__ ((visibility ("hidden")));
 
 /* For-in-where loops.

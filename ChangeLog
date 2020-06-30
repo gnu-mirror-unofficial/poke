@@ -1,3 +1,20 @@
+2020-06-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_loop_stmt): Use pkl_asm_while_loop
+	and pkl_asm_while_endloop.
+	* libpoke/ras: Likewise.
+	* libpoke/pkl-asm.h (pkl_asm_while_loop): Renamed from
+	pkl_asm_loop.
+	(pkl_asm_while_endloop): Renamed from pkl_asm_endloop.
+	(pkl_asm_loop): New prototype.
+	(pkl_asm_endloop): Likewise.
+	* libpoke/pkl-asm.c (pkl_asm_while_loop): Likewise.
+	(pkl_asm_while_endloop): Likewise.
+	(pkl_asm_loop): New function.
+	(pkl_asm_endloop): Likewise.
+
+	* testsuite/poke.pkl/while-2.pk: New test.
+
 2020-06-28  Luca Saiu  <positron@gnu.org>
 
 	do not rely on the unreliable "optimize" GCC function attribute

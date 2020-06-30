@@ -852,12 +852,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_loop_stmt)
             ; /* while (0) is optimized away.  */
           else
             {
-              pvm_program_label loop = pkl_asm_fresh_label (PKL_GEN_ASM);
-
-              pkl_asm_label (PKL_GEN_ASM, loop);
+              pkl_asm_loop (PKL_GEN_ASM);
               PKL_PASS_SUBPASS (body);
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SYNC);
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, loop);
+              pkl_asm_endloop (PKL_GEN_ASM);
             }
         }
       else
@@ -866,11 +863,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_loop_stmt)
           {
             PKL_PASS_SUBPASS (condition);
           }
-          pkl_asm_loop (PKL_GEN_ASM);
+          pkl_asm_while_loop (PKL_GEN_ASM);
           {
             PKL_PASS_SUBPASS (body);
           }
-          pkl_asm_endloop (PKL_GEN_ASM);
+          pkl_asm_while_endloop (PKL_GEN_ASM);
         }
     }
   else if (iterator && container)
