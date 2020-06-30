@@ -8534,6 +8534,10 @@ try
 @} until E_eof;
 @end example
 
+@cindex @code{break}
+It is possible to leave the loop from within @var{stmt} using the
+@code{break} statement.
+
 @node raise
 @subsection @code{raise}
 @cindex @code{raise}

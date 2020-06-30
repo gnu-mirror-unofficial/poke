@@ -1086,16 +1086,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_try_until_stmt)
   pkl_ast_node try_until_stmt = PKL_PASS_NODE;
   pkl_ast_node code = PKL_AST_TRY_UNTIL_STMT_CODE (try_until_stmt);
   pkl_ast_node exp = PKL_AST_TRY_UNTIL_STMT_EXP (try_until_stmt);
-  pvm_program_label loop = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   /* Push the exception to catch.  */
   PKL_PASS_SUBPASS (exp);
   pkl_asm_try (PKL_GEN_ASM, NULL);
   {
-    pkl_asm_label (PKL_GEN_ASM, loop);
+    pkl_asm_loop (PKL_GEN_ASM);
     PKL_PASS_SUBPASS (code);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SYNC);
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, loop);
+    pkl_asm_endloop (PKL_GEN_ASM);
   }
   pkl_asm_catch (PKL_GEN_ASM);
   {

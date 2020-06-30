@@ -1,5 +1,18 @@
 2020-06-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (expression): Finish break statements in the
+	try-until body.
+	* libpoke/pkl-gen.c (pkl_gen_pr_try_until_stmt): Use
+	pkl_asm_loop/pkl_asm_endloop to support `break' statements in the
+	body.
+	* doc/poke.texi (try-until): Mention that `break' is allowed in
+	try-until loops.
+	* testsuite/poke.pkl/try-until-4.pk: New test.
+	* testsuite/poke.pkl/try-until-6.pk: Likewise.
+	* testsuite/poke.pkl/try-until-5.pk: Likewise.
+
+2020-06-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_loop_stmt): Use pkl_asm_while_loop
 	and pkl_asm_while_endloop.
 	* libpoke/ras: Likewise.

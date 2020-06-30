@@ -1941,6 +1941,10 @@ stmt:
                   $$ = pkl_ast_make_try_until_stmt (pkl_parser->ast,
                                                     $2, $4);
                   PKL_AST_LOC ($$) = @$;
+
+                  /* Annotate the contained BREAK statements with
+                     their lexical level within this loop.  */
+                  pkl_ast_finish_breaks ($$, $2);
                 }
         | RAISE ';'
                 {
