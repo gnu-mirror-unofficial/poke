@@ -507,7 +507,9 @@ pk_val pk_array_nelem (pk_val array);
 /* Get the value of the element of an array.
 
    ARRAY is the array value.
-   IDX is the index of the element in the array.  */
+   IDX is the index of the element in the array.  
+   
+   If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_array_elem_val (pk_val array, uint64_t idx);
 
@@ -518,7 +520,9 @@ pk_val pk_array_elem_val (pk_val array, uint64_t idx);
    VAL is the new value for the array element.
 
    Note that the type of the element is not checked by this function,
-   so be careful.  */
+   so be careful.  
+   
+   If IDX is invalid, array remains unchanged. */
 
 void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val);
 
@@ -528,7 +532,9 @@ void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val);
    ARRAY is the array value.
    IDX is the index of the element in the array.
 
-   The returned bit-offset is an uint<64>.  */
+   The returned bit-offset is an uint<64>.  
+   
+   If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_array_elem_boffset (pk_val array, uint64_t idx);
 
@@ -537,7 +543,9 @@ pk_val pk_array_elem_boffset (pk_val array, uint64_t idx);
 
    ARRAY is the array value.
    IDX is the index of the element in the array.
-   BOFFSET is an uint<64> value with the bit-offset of the element.  */
+   BOFFSET is an uint<64> value with the bit-offset of the element.  
+   
+   If IDX is invalid, array remains unchanged. */
 
 void pk_array_set_elem_boffset (pk_val array, uint64_t idx, pk_val boffset);
 

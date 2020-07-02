@@ -1,5 +1,17 @@
 2020-07-02  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
+	* libpoke/libpoke.h (pk_array_elem_val): Prototype documentation
+	now describes what happens in case invalid IDX is passed.
+	(pk_array_set_elem_val): Likewise.
+	(pk_array_elem_boffset): Likewise.
+	(pk_array_set_elem_boffset): Likewise.
+	* libpoke/pk-val.c (pk_array_elem_val): Check for IDX.
+	(pk_array_set_elem_val): Likewise.
+	(pk_array_elem_boffset): Likewise.
+	(pk_array_set_elem_boffset): Likewise.
+
+2020-07-02  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
 	* etc/pk-mi-json-schema.json : JSON Schema
 
 2020-06-30  Jose E. Marchesi  <jemarch@gnu.org>
