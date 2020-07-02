@@ -183,6 +183,60 @@ pk_type_code (pk_val val)
 }
 
 pk_val
+pk_make_struct (pk_val nfields, pk_val type)
+{
+  return pvm_make_struct(nfields, pvm_make_ulong (0, 64), type);
+}
+
+pk_val
+pk_struct_nfields (pk_val sct) 
+{
+  return PVM_VAL_SCT_NFIELDS (sct);
+}
+
+pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx)
+{ 
+  if (idx < pk_uint_value (pk_struct_nfields (sct)))
+    return PVM_VAL_SCT_FIELD_OFFSET (sct, idx); 
+  else
+    return PK_NULL;
+}
+   
+void pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset)
+{
+  if (idx < pk_uint_value (pk_struct_nfields (sct)))
+    PVM_VAL_SCT_FIELD_OFFSET (sct, idx) = boffset;
+}
+
+pk_val pk_struct_field_name (pk_val sct, uint64_t idx)
+{ 
+  if (idx < pk_uint_value (pk_struct_nfields (sct)))
+    return PVM_VAL_SCT_FIELD_NAME (sct, idx); 
+  else
+    return PK_NULL;
+}
+
+void pk_struct_set_field_name (pk_val sct, uint64_t idx, pk_val name)
+{
+  if (idx < pk_uint_value (pk_struct_nfields (sct)))
+    PVM_VAL_SCT_FIELD_NAME (sct, idx) = name;
+}
+
+pk_val pk_struct_field_value (pk_val sct, uint64_t idx)
+{ 
+  if (idx < pk_uint_value (pk_struct_nfields (sct)))
+    return PVM_VAL_SCT_FIELD_VALUE (sct, idx);
+  else
+    return PK_NULL;
+}
+
+void pk_struct_set_field_value (pk_val sct, uint64_t idx, pk_val value)
+{
+  if (idx < pk_uint_value (pk_struct_nfields (sct)))
+    PVM_VAL_SCT_FIELD_VALUE (sct, idx) = value;
+}
+
+pk_val
 pk_make_array (pk_val nelem, pk_val array_type)
 {
   return pvm_make_array (nelem, array_type);

@@ -488,6 +488,93 @@ pk_val pk_offset_magnitude (pk_val val);
 
 pk_val pk_offset_unit (pk_val val);
 
+/* Structs. */
+
+/* Build and return a poke struct.
+   
+   NFIELDS is an uint<64> PK value specifying the number of fields
+   in the struct.  This can be uint<64>0 for an empty struct.
+
+   TYPE is a type PK value specifying the type of the struct.
+
+   The fields and methods in the created struct are initialized to
+   PK_NULL.*/
+
+pk_val pk_make_struct (pk_val nfields, pk_val type);
+
+/* Get the number of fields of a struct. */
+
+pk_val pk_struct_nfields (pk_val sct);
+
+/* Get the bit-offset of the field of a struct, relative to the
+   beginning of the struct.
+
+   SCT is the struct value.
+   IDX is the index of the field in the struct.
+
+   The returned bit-offset is an uint<64>.  
+   
+   If IDX is invalid, PK_NULL is returned. */
+
+pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx);
+
+/* Set the bit-offset of the field of an struct, relative to the
+   beginning of the struct.
+
+   ARRAY is the struct value.
+   
+   IDX is the index of the field in the struct.
+   
+   BOFFSET is an uint<64> value with the bit-offset of the field.  
+   
+   If IDX is invalid, struct remains unchanged. */
+
+void pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset);
+
+/* Get the NAME of the struct field.
+   
+   SCT is the struct value.
+   
+   IDX is the index of the field in the struct. 
+   
+   If IDX is invalid, PK_NULL is returned. */
+
+pk_val pk_struct_field_name (pk_val sct, uint64_t idx);
+
+/* Set the NAME of the struct field. 
+   
+   SCT is the struct value.
+   
+   IDX is the index of the field in the struct.
+   
+   NAME is the string name for this field. 
+   
+   If IDX is invalid, struct remains unchanged. */
+
+void pk_struct_set_field_name (pk_val sct, uint64_t idx, pk_val name);
+
+/* Get the VALUE of the struct field. 
+   
+   SCT is the struct value.
+   
+   IDX is the index of the field in the struct. 
+   
+   If IDX is invalid, PK_NULL is returned. */
+
+pk_val pk_struct_field_value (pk_val sct, uint64_t idx);
+
+/* Set the VALUE of the struct field.
+
+   SCT is the struct value.
+   
+   IDX is the index of the field in the struct.
+   
+   VALUE is the new value for this field. 
+   
+   If IDX is invalid, struct remains unchanged. */
+
+void pk_struct_set_field_value (pk_val sct, uint64_t idx, pk_val value);
+
 /* Arrays.  */
 
 /* Build and return a poke array.
@@ -629,7 +716,7 @@ pk_val pk_array_type_bound (pk_val type);
 int pk_val_mapped_p (pk_val val);
 
 /* Return the IOS identifier, an int<32>, in which the given value is
-   mapped.  If the value is not mapped, PK_NULL.  */
+   mapped.  If the value is not mapped, return PK_NULL.  */
 
 pk_val pk_val_ios (pk_val val);
 

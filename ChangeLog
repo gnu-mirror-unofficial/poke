@@ -1,5 +1,24 @@
 2020-07-02  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
+	* libpoke/libpoke.h (pk_make_struct): Prototype.
+	(pk_struct_nfields): Likewise.
+	(pk_struct_field_boffset): Likewise.
+	(pk_struct_set_field_boffset): Likewise.
+	(pk_struct_field_name): Likewise.
+	(pk_struct_set_field_name): Likewise.
+	(pk_struct_field_value): Likewise.
+	(pk_struct_set_field_value): Likewise.
+	* libpoke/pk-val.c (pk_make_struct): Define.
+	(pk_struct_nfields): Likewise.
+	(pk_struct_field_boffset): Likewise.
+	(pk_struct_set_field_boffset): Likewise.
+	(pk_struct_field_name): Likewise.
+	(pk_struct_set_field_name): Likewise.
+	(pk_struct_field_value): Likewise.
+	(pk_struct_set_field_value): Likewise.
+
+2020-07-02  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
 	* libpoke/libpoke.h (pk_array_elem_val): Prototype documentation
 	now describes what happens in case invalid IDX is passed.
 	(pk_array_set_elem_val): Likewise.
