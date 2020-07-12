@@ -82,6 +82,7 @@ struct ios_dev_if
 
   /* If called on a in-stream, free the buffer before OFFSET.  If called on
      an out-stream, flush the data till OFFSET and free the buffer before
-     OFFSET.  Otherwise, do not do anything.  */
+     OFFSET.  Otherwise, do not do anything.  Return IOS_OK ın success and
+     an error code on failure.  */
   int (*flush) (void *dev, ios_dev_off offset);
 };

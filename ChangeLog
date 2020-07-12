@@ -1,3 +1,12 @@
+2020-07-12  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios.h (ios_flush): New.
+	* libpoke/ios.c (ios_flush): New.
+	* libpoke/ios-dev.h (struct ios_dev_if): Add new member "flush".
+	* libpoke/ios-dev-file.c (ios_dev_file_flush): New.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_flush): New.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_flush): New.
+
 2020-07-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pk-val.c: Remove trailing whitespace.
