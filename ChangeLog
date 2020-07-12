@@ -1,3 +1,14 @@
+2020-07-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_FORGET): Define.
+	* libpoke/pkl-tab.y (BUILTIN_FORGET): Define.
+	(builtin): Handle BUILTIN_FORGET.
+	* libpoke/pkl-lex.l: Handle __PKL_BUILTIN_FORGET__.
+	* libpoke/pkl-rt.pk (flush): Define.
+	* doc/poke.texi (flush): New section.
+	* libpoke/pkl-insn.def (PKL_INSN_FLUSH): Define.
+	* libpoke/pvm.jitter (flush): New instruction.
+
 2020-07-12  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize): Add

@@ -7845,6 +7845,7 @@ memory of some process.
 @menu
 * open::			Creating IO spaces.
 * close::			Destroying IO spaces.
+* flush::			Flushing IO spaces.
 * get_ios::			Getting the current IO space.
 * set_ios::			Setting the current IO space.
 * iosize::			Getting the size of an IO space.
@@ -7934,6 +7935,28 @@ is written to the underlying IO device.
 
 If the IO space specified to @code{close} doesn't exist then an
 @code{E_no_ios} exception is raised.
+
+@node flush
+@subsubsection @code{flush}
+@cindex @code{flush}
+
+The builtin @code{flush} performs a ``flushing'' operation on a given
+IO space.  The prototype is:
+
+@example
+defun flush = (int<32> @var{ios}, offset<uint<64>,1> @var{offset}) void:
+@end example
+
+Where @var{ios} is the IOS identifier where to perform the flush.  The
+semantics associated with the ``flushing'' operation depends on the
+kind of IO space:
+
+@itemize @bullet
+@item Read-only stream IOS will discard already mapped input up to
+@var{offset}.  Any further attempt of mapping data at that area will
+cause an @var{E_eof} exception (for Early Of File ;)).
+@item Flushing is a no-operation for other kind of IO spaces.
+@end itemize
 
 @node get_ios
 @subsubsection @code{get_ios}

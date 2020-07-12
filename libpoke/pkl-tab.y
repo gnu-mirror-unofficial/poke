@@ -337,7 +337,7 @@ token <integer> UNION    _("keyword `union'")
 %token LOAD              _("keyword `load'")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
-%token BUILTIN_IOSIZE BUILTIN_GETENV
+%token BUILTIN_IOSIZE BUILTIN_GETENV BUILTIN_FORGET
 
 /* Compiler builtins.  */
 
@@ -1739,6 +1739,7 @@ builtin:
         | BUILTIN_CLOSE                { $$ = PKL_AST_BUILTIN_CLOSE; }
         | BUILTIN_IOSIZE        { $$ = PKL_AST_BUILTIN_IOSIZE; }
         | BUILTIN_GETENV        { $$ = PKL_AST_BUILTIN_GETENV; }
+        | BUILTIN_FORGET        { $$ = PKL_AST_BUILTIN_FORGET; }
         ;
 
 stmt_decl_list:

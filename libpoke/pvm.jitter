@@ -842,6 +842,35 @@ instruction close ()
   end
 end
 
+# Instruction: flush
+#
+#
+# Flush an IO space.  The descriptor of the space to flush, and the
+# bit-offset up to which perform the flushing are provided on the stack.
+#
+# If the specified IO space doesn't exist, this instruction raises
+# PVM_E_IO.
+#
+# Stack: ( INT ULONG -- )
+# Exceptions: PVM_E_IO
+
+instruction flush ()
+  code
+    ios_off offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());
+    int io_id = PVM_VAL_INT (JITTER_UNDER_TOP_STACK ());
+    ios io = ios_search_by_id (io_id);
+
+    if (io == NULL)
+      PVM_RAISE_DFL (PVM_E_IO);
+
+    if (ios_flush (io, offset) != IOS_OK)
+      PVM_RAISE_DFL (PVM_E_IO);
+
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+  end
+end
+
 # Instruction: pushios
 #
 # Push the descriptor of the current IO space on the stack, as a
