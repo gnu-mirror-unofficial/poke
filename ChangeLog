@@ -1,5 +1,15 @@
 2020-07-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/Makefile.am (EXTRA_DIST): Add libpoke.
+	* testsuite/poke.libpoke/libpoke.exp: New file.
+	* testsuite/poke.libpoke/Makefile.am: Likewise.
+	* testsuite/poke.libpoke/values.c: Likewise.
+	* testsuite/poke.libpoke/term-if.h: Likewise.
+	* configure.ac: AC_CONFIG testsuite/libpoke/Makefile.
+	* HACKING (Unit Tests): New section.
+
+2020-07-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_FORGET): Define.
 	* libpoke/pkl-tab.y (BUILTIN_FORGET): Define.
 	(builtin): Handle BUILTIN_FORGET.

@@ -166,7 +166,8 @@ AC_CONFIG_FILES(Makefile
                 man/Makefile
                 po/Makefile.in
                 etc/Makefile
-                testsuite/Makefile)
+                testsuite/Makefile
+                testsuite/poke.libpoke/Makefile)
 AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
 AC_OUTPUT

@@ -1,0 +1,7 @@
+load_lib "dejagnu.exp"
+
+# Execute the test cases, and analyse the output
+if { [host_execute "poke.libpoke/values"] ne "" } {
+    perror "values had an execution error" 0
+}
+
