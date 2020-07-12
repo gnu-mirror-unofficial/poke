@@ -45,7 +45,7 @@ startswith (const char *str, const char *prefix)
 }
 
 static char *
-ios_dev_nbd_handler_normalize (const char *handler)
+ios_dev_nbd_handler_normalize (const char *handler, uint64_t flags)
 {
   if (startswith (handler, "nbd://")
       || startswith (handler, "nbd+unix://"))

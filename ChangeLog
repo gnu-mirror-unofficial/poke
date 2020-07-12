@@ -1,5 +1,15 @@
 2020-07-12  Egeyar Bagcioglu  <egeyar@gmail.com>
 
+	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize): Add
+	parameter "flags".
+	* libpoke/ios-dev-mem.c (ios_dev_mem_handler_normalize): Likewise.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_handler_normalize): Likewise.
+	* libpoke/ios-dev.h (struct ios_dev_if): Add parameter "flags" to
+	handler_normalize.
+	* libpoke/ios.c (ios_open): Pass "flags" to handler_normalize.
+
+2020-07-12  Egeyar Bagcioglu  <egeyar@gmail.com>
+
 	* libpoke/ios.h (ios_flush): New.
 	* libpoke/ios.c (ios_flush): New.
 	* libpoke/ios-dev.h (struct ios_dev_if): Add new member "flush".

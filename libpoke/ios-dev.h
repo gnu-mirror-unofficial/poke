@@ -46,7 +46,7 @@ struct ios_dev_if
      device spec by this backend, and if so, return its normalized
      form (caller will free).  If not, return NULL.  */
 
-  char *(*handler_normalize) (const char *handler);
+  char *(*handler_normalize) (const char *handler, uint64_t flags);
 
   /* Open a device using the provided HANDLER.  Return the opened
      device, or NULL if there was an error.  In case of invalid flags,

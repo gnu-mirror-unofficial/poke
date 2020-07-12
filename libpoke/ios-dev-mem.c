@@ -36,7 +36,7 @@ struct ios_dev_mem
 #define MEM_STEP (512 * 8)
 
 static char *
-ios_dev_mem_handler_normalize (const char *handler)
+ios_dev_mem_handler_normalize (const char *handler, uint64_t flags)
 {
   if (handler[0] == '*' && handler[strlen (handler) - 1] == '*')
     return strdup (handler);

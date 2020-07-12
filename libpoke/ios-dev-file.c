@@ -41,7 +41,7 @@ struct ios_dev_file
 };
 
 static char *
-ios_dev_file_handler_normalize (const char *handler)
+ios_dev_file_handler_normalize (const char *handler, uint64_t flags)
 {
   /* This backend is special, in the sense it accepts any handler.
      However, we want to ensure that the ios name is unambiguous from

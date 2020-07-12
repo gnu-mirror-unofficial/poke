@@ -134,7 +134,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
      handler.  */
   for (dev_if = ios_dev_ifs; *dev_if; ++dev_if)
     {
-      io->handler = (*dev_if)->handler_normalize (handler);
+      io->handler = (*dev_if)->handler_normalize (handler, flags);
       if (io->handler)
         break;
     }
