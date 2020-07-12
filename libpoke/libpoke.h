@@ -491,7 +491,7 @@ pk_val pk_offset_unit (pk_val val);
 /* Structs. */
 
 /* Build and return a poke struct.
-   
+
    NFIELDS is an uint<64> PK value specifying the number of fields
    in the struct.  This can be uint<64>0 for an empty struct.
 
@@ -512,8 +512,8 @@ pk_val pk_struct_nfields (pk_val sct);
    SCT is the struct value.
    IDX is the index of the field in the struct.
 
-   The returned bit-offset is an uint<64>.  
-   
+   The returned bit-offset is an uint<64>.
+
    If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx);
@@ -522,43 +522,43 @@ pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx);
    beginning of the struct.
 
    ARRAY is the struct value.
-   
+
    IDX is the index of the field in the struct.
-   
-   BOFFSET is an uint<64> value with the bit-offset of the field.  
-   
+
+   BOFFSET is an uint<64> value with the bit-offset of the field.
+
    If IDX is invalid, struct remains unchanged. */
 
 void pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset);
 
 /* Get the NAME of the struct field.
-   
+
    SCT is the struct value.
-   
-   IDX is the index of the field in the struct. 
-   
+
+   IDX is the index of the field in the struct.
+
    If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_struct_field_name (pk_val sct, uint64_t idx);
 
-/* Set the NAME of the struct field. 
-   
+/* Set the NAME of the struct field.
+
    SCT is the struct value.
-   
+
    IDX is the index of the field in the struct.
-   
-   NAME is the string name for this field. 
-   
+
+   NAME is the string name for this field.
+
    If IDX is invalid, struct remains unchanged. */
 
 void pk_struct_set_field_name (pk_val sct, uint64_t idx, pk_val name);
 
-/* Get the VALUE of the struct field. 
-   
+/* Get the VALUE of the struct field.
+
    SCT is the struct value.
-   
-   IDX is the index of the field in the struct. 
-   
+
+   IDX is the index of the field in the struct.
+
    If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_struct_field_value (pk_val sct, uint64_t idx);
@@ -566,11 +566,11 @@ pk_val pk_struct_field_value (pk_val sct, uint64_t idx);
 /* Set the VALUE of the struct field.
 
    SCT is the struct value.
-   
+
    IDX is the index of the field in the struct.
-   
-   VALUE is the new value for this field. 
-   
+
+   VALUE is the new value for this field.
+
    If IDX is invalid, struct remains unchanged. */
 
 void pk_struct_set_field_value (pk_val sct, uint64_t idx, pk_val value);
@@ -594,8 +594,8 @@ pk_val pk_array_nelem (pk_val array);
 /* Get the value of the element of an array.
 
    ARRAY is the array value.
-   IDX is the index of the element in the array.  
-   
+   IDX is the index of the element in the array.
+
    If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_array_elem_val (pk_val array, uint64_t idx);
@@ -607,8 +607,8 @@ pk_val pk_array_elem_val (pk_val array, uint64_t idx);
    VAL is the new value for the array element.
 
    Note that the type of the element is not checked by this function,
-   so be careful.  
-   
+   so be careful.
+
    If IDX is invalid, array remains unchanged. */
 
 void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val);
@@ -619,8 +619,8 @@ void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val);
    ARRAY is the array value.
    IDX is the index of the element in the array.
 
-   The returned bit-offset is an uint<64>.  
-   
+   The returned bit-offset is an uint<64>.
+
    If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_array_elem_boffset (pk_val array, uint64_t idx);
@@ -630,8 +630,8 @@ pk_val pk_array_elem_boffset (pk_val array, uint64_t idx);
 
    ARRAY is the array value.
    IDX is the index of the element in the array.
-   BOFFSET is an uint<64> value with the bit-offset of the element.  
-   
+   BOFFSET is an uint<64> value with the bit-offset of the element.
+
    If IDX is invalid, array remains unchanged. */
 
 void pk_array_set_elem_boffset (pk_val array, uint64_t idx, pk_val boffset);

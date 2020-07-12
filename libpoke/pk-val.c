@@ -185,23 +185,23 @@ pk_type_code (pk_val val)
 pk_val
 pk_make_struct (pk_val nfields, pk_val type)
 {
-  return pvm_make_struct(nfields, pvm_make_ulong (0, 64), type);
+  return pvm_make_struct (nfields, pvm_make_ulong (0, 64), type);
 }
 
 pk_val
-pk_struct_nfields (pk_val sct) 
+pk_struct_nfields (pk_val sct)
 {
   return PVM_VAL_SCT_NFIELDS (sct);
 }
 
 pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx)
-{ 
+{
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
-    return PVM_VAL_SCT_FIELD_OFFSET (sct, idx); 
+    return PVM_VAL_SCT_FIELD_OFFSET (sct, idx);
   else
     return PK_NULL;
 }
-   
+
 void pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
@@ -209,9 +209,9 @@ void pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset)
 }
 
 pk_val pk_struct_field_name (pk_val sct, uint64_t idx)
-{ 
+{
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
-    return PVM_VAL_SCT_FIELD_NAME (sct, idx); 
+    return PVM_VAL_SCT_FIELD_NAME (sct, idx);
   else
     return PK_NULL;
 }
@@ -223,7 +223,7 @@ void pk_struct_set_field_name (pk_val sct, uint64_t idx, pk_val name)
 }
 
 pk_val pk_struct_field_value (pk_val sct, uint64_t idx)
-{ 
+{
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     return PVM_VAL_SCT_FIELD_VALUE (sct, idx);
   else
@@ -323,7 +323,7 @@ pk_array_nelem (pk_val array)
 pk_val
 pk_array_elem_val (pk_val array, uint64_t idx)
 {
-  if (idx < pk_uint_value (pk_array_nelem (array))) 
+  if (idx < pk_uint_value (pk_array_nelem (array)))
     return PVM_VAL_ARR_ELEM_VALUE (array, idx);
   else
     return PK_NULL;
@@ -332,14 +332,14 @@ pk_array_elem_val (pk_val array, uint64_t idx)
 void
 pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val)
 {
-  if (idx < pk_uint_value (pk_array_nelem (array))) 
+  if (idx < pk_uint_value (pk_array_nelem (array)))
     PVM_VAL_ARR_ELEM_VALUE (array, idx) = val;
 }
 
 pk_val
 pk_array_elem_boffset (pk_val array, uint64_t idx)
 {
-  if (idx < pk_uint_value (pk_array_nelem (array))) 
+  if (idx < pk_uint_value (pk_array_nelem (array)))
     return PVM_VAL_ARR_ELEM_OFFSET (array, idx);
   else
     return PK_NULL;
@@ -348,6 +348,6 @@ pk_array_elem_boffset (pk_val array, uint64_t idx)
 void
 pk_array_set_elem_boffset (pk_val array, uint64_t idx, pk_val boffset)
 {
-  if (idx < pk_uint_value (pk_array_nelem (array))) 
+  if (idx < pk_uint_value (pk_array_nelem (array)))
     PVM_VAL_ARR_ELEM_OFFSET (array, idx) = boffset;
 }
