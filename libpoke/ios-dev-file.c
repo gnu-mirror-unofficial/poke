@@ -203,6 +203,12 @@ ios_dev_file_size (void *iod)
   return st.st_size;
 }
 
+static int
+ios_dev_file_flush (void *iod, ios_dev_off offset)
+{
+  return IOS_OK;
+}
+
 struct ios_dev_if ios_dev_file
   __attribute__ ((visibility ("hidden"))) =
   {
@@ -213,4 +219,5 @@ struct ios_dev_if ios_dev_file
    .pwrite = ios_dev_file_pwrite,
    .get_flags = ios_dev_file_get_flags,
    .size = ios_dev_file_size,
+   .flush = ios_dev_file_flush
   };

@@ -352,6 +352,14 @@ int ios_write_string (ios io, ios_off offset, int flags,
                       const char *value)
   __attribute__ ((visibility ("hidden")));
 
+/* If the current IOD is a write stream, write out the data in the buffer
+   till OFFSET.  If the current IOD is a stream IOD, free (if allowed by the
+   embedded buffering strategy) bytes up to OFFSET.  This function has no
+   impact when called on other IO devices.  */
+
+int ios_flush (ios io, ios_off offset)
+  __attribute__ ((visibility ("hidden")));
+
 /* **************** Update API **************** */
 
 /* XXX: writeme.  */

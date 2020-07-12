@@ -1517,3 +1517,9 @@ ios_size (ios io)
 {
   return io->dev_if->size (io->dev) * 8;
 }
+
+int
+ios_flush (ios io, ios_off offset)
+{
+  return io->dev_if->flush (io->dev, offset);
+}

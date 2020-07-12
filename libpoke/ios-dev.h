@@ -79,4 +79,9 @@ struct ios_dev_if
   /* Return the size of the device, in bytes.  */
 
   ios_dev_off (*size) (void *dev);
+
+  /* If called on a in-stream, free the buffer before OFFSET.  If called on
+     an out-stream, flush the data till OFFSET and free the buffer before
+     OFFSET.  Otherwise, do not do anything.  */
+  int (*flush) (void *dev, ios_dev_off offset);
 };
