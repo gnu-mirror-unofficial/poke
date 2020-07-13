@@ -35,7 +35,6 @@ void
 pk_printf (const char *format, ...)
 {
   va_list ap;
-  int r;
 
   va_start (ap, format);
   vprintf (format, ap);
