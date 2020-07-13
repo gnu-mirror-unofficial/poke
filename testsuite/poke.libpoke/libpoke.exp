@@ -4,4 +4,3 @@ load_lib "dejagnu.exp"
 if { [host_execute "poke.libpoke/values"] ne "" } {
     perror "values had an execution error" 0
 }
-

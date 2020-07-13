@@ -171,7 +171,8 @@ AC_CONFIG_FILES(Makefile
                 po/Makefile.in
                 etc/Makefile
                 testsuite/Makefile
-                testsuite/poke.libpoke/Makefile)
+                testsuite/poke.libpoke/Makefile
+                testsuite/poke.mi-json/Makefile)
 AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
 AC_OUTPUT

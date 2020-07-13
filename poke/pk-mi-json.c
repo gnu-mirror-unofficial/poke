@@ -429,9 +429,6 @@ pk_mi_json_to_msg (const char *str)
     return NULL;
 
   json = json_tokener_parse_ex (tokener, str, strlen (str));
-  if (!json)
-    pk_printf ("internal error: %s\n",
-               json_tokener_error_desc (json_tokener_get_error (tokener)));
   json_tokener_free (tokener);
 
   if (json)

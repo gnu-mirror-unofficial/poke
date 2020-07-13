@@ -13,10 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = poke.libpoke
+SUBDIRS = poke.libpoke poke.mi-json
 
 EXTRA_DIST = config lib poke.cmd poke.color poke.id3v1 poke.map poke.pkl \
-             poke.repl poke.rgb24 poke.std libpoke
+             poke.repl poke.rgb24 poke.std poke.libpoke poke.mi-json
 
 AUTOMAKE_OPTIONS = dejagnu
 

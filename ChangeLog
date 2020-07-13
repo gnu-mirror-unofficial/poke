@@ -1,3 +1,15 @@
+2020-07-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* .x-sc_bindtextdomain: New file.
+	* testsuite/poke.mi-json/Makefile.am: New file.
+	* testsuite/poke.mi-json/mi-json.c: Likewise.
+	* testsuite/poke.mi-json/json.exp: Likewise.
+	* configure.ac: AC_CONFIG testsuite/poke.mi-json/Makefile.
+	* testsuite/Makefile.am (SUBDIRS): Add poke.mi-json.
+	* poke/pk-mi-json.c (pk_mi_json_to_msg): Do not print tokener
+	diagnostics.
+	* HACKING (Test Suite): Update.
+
 2020-07-13  Bruno Haible  <bruno@clisp.org>
 
 	Fix build failure during "make check".

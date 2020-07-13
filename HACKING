@@ -2172,6 +2172,12 @@ Standard library test suite
 Tests for Poke commands
   ``testsuite/poke.cmd/cmd.exp``, ``testsuite/poke.cmd/*.pk``
 
+Unit tests for the libpoke API
+  ``testsuite/poke.libpoke/*``
+
+Unit tests for the pk-mi-json module
+  ``testsuite/poke.mi-json/*``
+
 Documentation
 ~~~~~~~~~~~~~
 The Poke book
