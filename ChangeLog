@@ -1,3 +1,9 @@
+2020-07-13  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize): Move
+	the file name normalization logic from here ...
+	* libpoke/ios-dev.h (IOS_FILE_HANDLER_NORMALIZE): ... to here.
+
 2020-07-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* .x-sc_bindtextdomain: New file.

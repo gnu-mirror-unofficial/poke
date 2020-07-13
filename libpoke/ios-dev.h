@@ -86,3 +86,21 @@ struct ios_dev_if
      an error code on failure.  */
   int (*flush) (void *dev, ios_dev_off offset);
 };
+
+#define IOS_FILE_HANDLER_NORMALIZE(handler, newhandler)			\
+do {									\
+  /* File devices are special, in the sense that they accept any	\
+     handler. However, we want to ensure that the ios name is		\
+     unambiguous from other ios devices, by prepending ./ to relative	\
+     names that might otherwise be confusing.  */			\
+  static const char safe[] =						\
+    "abcdefghijklmnopqrstuvwxyz"					\
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"					\
+    "0123456789/+_-";							\
+									\
+  if (handler[0] == '/' || strspn (handler, safe) == strlen (handler))	\
+    (newhandler) = strdup ((handler));					\
+									\
+  if (asprintf (&(newhandler), "./%s", (handler)) == -1)		\
+    (newhandler) = NULL;						\
+} while (0)
