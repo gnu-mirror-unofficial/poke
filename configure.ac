@@ -37,6 +37,8 @@ AC_DEFINE([PACKAGE_BUGZILLA],["https://sourceware.org/bugzilla/describecomponent
 
 AC_PROG_CC
 gl_EARLY
+libpoke_EARLY
+gui_EARLY
 
 LT_INIT
 AC_PROG_CC_C99
@@ -56,6 +58,8 @@ AC_CANONICAL_HOST
 canonical=$host
 
 gl_INIT
+libpoke_INIT
+gui_INIT
 
 # GNU help2man creates man pages from --help output; in many cases, this
 # is sufficient, and obviates the need to maintain man pages separately.

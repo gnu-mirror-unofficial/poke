@@ -1,3 +1,12 @@
+2020-07-13  Bruno Haible  <bruno@clisp.org>
+
+	Fix build failure during "make check".
+	* bootstrap.conf (libpoke_modules): Add vasprintf-posix.
+	(ACLOCAL_FLAGS): New variable.
+	* Makefile.am (ACLOCAL_AMFLAGS): Add -I options for the second and third
+	gnulib-tool invocation.
+	* configure.ac: Invoke libpoke_EARLY, gui_EARLY, libpoke_INIT, gui_INIT.
+
 2020-07-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/Makefile.am (EXTRA_DIST): Add libpoke.
