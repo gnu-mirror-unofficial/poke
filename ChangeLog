@@ -1,3 +1,8 @@
+2020-07-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_map): Fix subpassing on the map
+	offset when it is on the left side of an assignment.
+
 2020-07-13  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize): Move

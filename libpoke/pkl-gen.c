@@ -1721,7 +1721,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
+      PKL_GEN_PAYLOAD->in_lvalue = 0;
       PKL_PASS_SUBPASS (map_offset);
+      PKL_GEN_PAYLOAD->in_lvalue = 1;
     }
   else
     {
