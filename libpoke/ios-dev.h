@@ -100,7 +100,6 @@ do {									\
 									\
   if (handler[0] == '/' || strspn (handler, safe) == strlen (handler))	\
     (newhandler) = strdup ((handler));					\
-									\
-  if (asprintf (&(newhandler), "./%s", (handler)) == -1)		\
+  else if (asprintf (&(newhandler), "./%s", (handler)) == -1)		\
     (newhandler) = NULL;						\
 } while (0)
