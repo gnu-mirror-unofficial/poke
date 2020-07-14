@@ -688,6 +688,90 @@ pk_val pk_offset_type_base_type (pk_val type);
 
 pk_val pk_offset_type_unit (pk_val type);
 
+/* Struct types. */
+
+/* Build and return a struct type.
+
+   NFIELDS is the number of struct fields on this struct.
+   
+   NAME is a string containing the name of a struct type.
+   
+   FNAMES is a C array containing the name of each struct field.
+
+   FTYPES is a C array containing the types of each struct field. */
+
+pk_val pk_make_struct_type (pk_val nfields, 
+pk_val name, pk_val *fnames, 
+            pk_val *ftypes);
+
+/* Get the type of a struct.  */
+
+pk_val pk_struct_type (pk_val sct);
+
+/* Allocate space for struct fields names and field types. */
+
+void pk_allocate_struct_attrs (pk_val nfields, 
+pk_val **fnames, pk_val **ftypes);
+
+/* Get the name of a struct type.  
+
+   If the struct type is anonymous, PK_NULL is returned.  */
+
+pk_val pk_struct_type_name (pk_val type);
+
+/* Get the number of fields of a struct type.  
+
+   The returned value is an uint<64> */
+
+pk_val pk_struct_type_nfields (pk_val type);
+
+/* Get the name of a field in a struct type. 
+   
+   TYPE is a struct type.
+   
+   IDX is the index of the field in a struct type. 
+   
+   If IDX is invalid, PK_NULL is returned.  
+   
+   If the struct field is anonymous, PK_NULL is returned.  */
+
+pk_val pk_struct_type_fname (pk_val type, uint64_t idx);
+
+/* Set the name of a field of a struct type.  
+   
+   TYPE is a struct type.
+   
+   IDX is the index of the field in a struct type. 
+   
+   NAME is a string containing the name of the field in a struct type. 
+   
+   If IDX is invalid, type remains unchanged.  */
+
+void pk_struct_type_set_fname (pk_val type, uint64_t idx, pk_val field_name);
+
+/* Get type of a field in the struct.
+  
+   TYPE is a struct type.
+   
+   IDX is the index of the struct field.  
+   
+   If IDX is invalid, PK_NULL is returned.  */   
+
+pk_val pk_struct_type_ftype (pk_val type, uint64_t idx);
+
+/* Set the type of a field of a struct type.  
+   
+   TYPE is a struct type.
+   
+   IDX is the index of the field in a struct type.
+   
+   TYPE is the type of the field in a struct type. 
+   
+   If IDX is invalid, type remains unchanged.  */
+
+void pk_struct_type_set_ftype 
+(pk_val type, uint64_t idx, pk_val field_type);
+
 /* Array types.  */
 
 /* Build and return an array type.
