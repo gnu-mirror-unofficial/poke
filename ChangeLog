@@ -1,3 +1,8 @@
+2020-07-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pk-val.c: Remove trailing spaces.
+	* libpoke/libpoke.h: Likewise.
+
 2020-07-14  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
 	*libpoke/libpoke.h (pk_make_struct_type): Prototype.
