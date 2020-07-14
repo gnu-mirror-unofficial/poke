@@ -42,7 +42,7 @@ pk_fatal (const char *msg)
 {
   if (msg)
     printf ("fatal error: %s\n", msg);
-  exit (1);
+  exit (EXIT_FAILURE);
 }
 
 int
