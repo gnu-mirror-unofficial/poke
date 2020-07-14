@@ -1,3 +1,8 @@
+2020-07-14  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	*etc/pk-mi-json-schema.json (json schema) : Fixed indentation style
+	and change to PokeValue properties.
+
 2020-07-14  Bruno Haible  <bruno@clisp.org>
 
 	Fix build failure during "make check" without libjson-c.
