@@ -1,6 +1,6 @@
 2020-07-14  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
-	*etc/pk-mi-json-schema.json (json schema) : Fixed indentation style
+	* etc/pk-mi-json-schema.json (json schema) : Fixed indentation style
 	and change to PokeValue properties.
 
 2020-07-14  Bruno Haible  <bruno@clisp.org>
@@ -18,7 +18,7 @@
 
 2020-07-14  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
-	*libpoke/libpoke.h (pk_make_struct_type): Prototype.
+	* libpoke/libpoke.h (pk_make_struct_type): Prototype.
 	(pk_struct_type): Likewise.
 	(pk_allocate_struct_attrs): Likewise.
 	(pk_struct_type_name): Likewise.
@@ -27,7 +27,7 @@
 	(pk_struct_type_set_fname): Likewise.
 	(pk_struct_type_ftype): Likewise.
 	(pk_struct_type_set_ftype): Likewise.
-	*libpoke/pk-val.c (pk_make_struct_type): Define.
+	* libpoke/pk-val.c (pk_make_struct_type): Define.
 	(pk_struct_type): Likewise.
 	(pk_allocate_struct_attrs): Likewise.
 	(pk_struct_type_name): Likewise.
