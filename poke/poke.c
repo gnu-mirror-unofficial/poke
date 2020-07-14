@@ -258,7 +258,7 @@ pk_print_version (void)
      copyright symbol (U+00A9 in Unicode), but there is no obligation
      to do this.  In other cases it's probably best to leave it untranslated.  */
   pk_printf (_("\
-%s (C) %s Jose E. Marchesi.\n\
+%s (C) %s The poke authors.\n\
 License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019, 2020");
   pk_term_hyperlink ("http://gnu.org/licenses/gpl.html", NULL);
   pk_puts (" <http://gnu.org/licenses/gpl.html>");
