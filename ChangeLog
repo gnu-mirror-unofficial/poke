@@ -1,3 +1,24 @@
+2020-07-14  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	*libpoke/libpoke.h (pk_make_struct_type): Prototype.
+	(pk_struct_type): Likewise.
+	(pk_allocate_struct_attrs): Likewise.
+	(pk_struct_type_name): Likewise.
+	(pk_struct_type_nfields): Likewise.
+	(pk_struct_type_fname): Likewise.
+	(pk_struct_type_set_fname): Likewise.
+	(pk_struct_type_ftype): Likewise.
+	(pk_struct_type_set_ftype): Likewise.
+	*libpoke/pk-val.c (pk_make_struct_type): Define.
+	(pk_struct_type): Likewise.
+	(pk_allocate_struct_attrs): Likewise.
+	(pk_struct_type_name): Likewise.
+	(pk_struct_type_nfields): Likewise.
+	(pk_struct_type_fname): Likewise.
+	(pk_struct_type_set_fname): Likewise.
+	(pk_struct_type_ftype): Likewise.
+	(pk_struct_type_set_ftype): Likewise.
+
 2020-07-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.mi-json/mi-json.c (pk_fatal): Use EXIT_FAILURE

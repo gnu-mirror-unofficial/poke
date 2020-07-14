@@ -290,6 +290,68 @@ pk_make_any_type (void)
   return pvm_make_any_type ();
 }
 
+pk_val 
+pk_make_struct_type (pk_val nfields, pk_val name, pk_val *fnames, pk_val *ftypes)
+{
+  return pvm_make_struct_type (nfields, name, fnames, ftypes);
+}
+
+pk_val
+pk_struct_type (pk_val sct)
+{
+  return PVM_VAL_SCT_TYPE (sct);
+}
+
+void
+pk_allocate_struct_attrs (pk_val nfields, pk_val **fnames, pk_val **ftypes) 
+{
+  pvm_allocate_struct_attrs (nfields, fnames, ftypes);
+}
+
+pk_val
+pk_struct_type_name (pk_val type)
+{
+  return PVM_VAL_TYP_S_NAME (type);
+}
+
+pk_val 
+pk_struct_type_nfields (pk_val type)
+{
+  return PVM_VAL_TYP_S_NFIELDS (type);
+}
+
+pk_val 
+pk_struct_type_fname (pk_val type, uint64_t idx)
+{
+  if (idx < pk_uint_value (pk_struct_type_nfields (type)))
+    return PVM_VAL_TYP_S_FNAME (type, idx);
+  else 
+    return PK_NULL;
+}
+
+void
+pk_struct_type_set_fname (pk_val type, uint64_t idx, pk_val field_name)
+{
+  if (idx < pk_uint_value (pk_struct_type_nfields (type)))
+    PVM_VAL_TYP_S_FNAME (type, idx) = field_name;
+}
+
+pk_val 
+pk_struct_type_ftype (pk_val type, uint64_t idx)
+{ 
+  if (idx < pk_uint_value (pk_struct_type_nfields (type)))
+    return PVM_VAL_TYP_S_FTYPE (type, idx);
+  else
+    return PK_NULL;
+}
+
+void
+pk_struct_type_set_ftype (pk_val type, uint64_t idx, pk_val field_type)
+{
+  if (idx < pk_uint_value (pk_struct_type_nfields (type)))
+    PVM_VAL_TYP_S_FTYPE (type, idx) = field_type;
+}
+
 pk_val
 pk_make_array_type (pk_val etype, pk_val bound)
 {
