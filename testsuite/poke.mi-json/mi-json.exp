@@ -1,6 +1,9 @@
 load_lib "dejagnu.exp"
 
-# Execute the test cases, and analyse the output
-if { [host_execute "poke.mi-json/mi-json"] ne "" } {
-    perror "mi-json had an execution error" 0
+# Skip this test if poke.mi-json/mi-json wasn't built.
+if { [file exists "poke.mi-json/mi-json"] } {
+    # Execute the test cases, and analyse the output
+    if { [host_execute "poke.mi-json/mi-json"] ne "" } {
+        perror "mi-json had an execution error" 0
+    }
 }

@@ -15,6 +15,8 @@
 
 AUTOMAKE_OPTIONS = subdir-objects
 
+if POKE_MI
+
 check_PROGRAMS = mi-json
 
 mi_json_SOURCES = mi-json.c \
@@ -26,3 +28,5 @@ mi_json_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
 
 mi_json_CFLAGS = $(JSON_C_CFLAGS)
 mi_json_LDADD = $(JSON_C_LIBS) $(top_builddir)/gl/libgnu.la
+
+endif
