@@ -82,7 +82,7 @@ AX_CHECK_AWK_GENSUB([], AC_MSG_ERROR([$AWK does not support gensub.]))
 dnl The Boehm-Weiser garbage collector
 
 PKG_PROG_PKG_CONFIG
-PKG_CHECK_MODULES(BDW_GC,[bdw-gc])
+PKG_CHECK_MODULES(BDW_GC,[bdw-gc],[have_gc=yes],[have_gc=no])
 
 dnl The JSON-C library for the machine-interface
 
@@ -204,6 +204,10 @@ if test "x$gui_enabled" = "xno"; then
 fi
 
 dnl Report errors
+
+if test "x$have_gc" = "xno"; then
+   AC_MSG_ERROR([can't find the Boehm GC library.  Please install it.])
+fi
 
 if test "x$gl_cv_lib_readline" = "xno"; then
    AC_MSG_ERROR([can't find an usable libreadline.  Please install one.])
