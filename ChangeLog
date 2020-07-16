@@ -1,5 +1,28 @@
 2020-07-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_Phdr): Define.
+	(Elf64_File): Add field phdr.
+	(PT_NULL): Define.
+	(PT_LOAD): Likewise.
+	(PT_DYNAMIC): Likewise.
+	(PT_INTERP): Likewise.
+	(PT_NOTE): Likewise.
+	(PT_SHLIB): Likewise.
+	(PT_PHDR): Likewise.
+	(PT_TLS): Likewise.
+	(PT_LOOS): Likewise.
+	(PT_HIOS): Likewise.
+	(PT_LOPROC): Likewise.
+	(PT_HIPROC): Likewise.
+	(Elf64_SegmentFlags): Likewise.
+	(PF_X): Likewise.
+	(PF_W): Likewise.
+	(PF_R): Likewise.
+	(PF_MASKOS): Likewise.
+	(PF_MASKPROC): Likewise.
+
+2020-07-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Fail if an usable Boehm GC library is not found at
 	configure time.
 

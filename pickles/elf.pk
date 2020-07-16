@@ -198,6 +198,70 @@ deftype Elf64_Shdr =
     offset<Elf64_Xword,b> sh_entsize;
   };
 
+/****** Segments.  ******/
+
+/* Segment types.  */
+
+defvar PT_NULL = 0;
+defvar PT_LOAD = 1;
+defvar PT_DYNAMIC = 2;
+defvar PT_INTERP = 3;
+defvar PT_NOTE = 4;
+defvar PT_SHLIB = 5;
+defvar PT_PHDR = 6;
+defvar PT_TLS = 7;
+defvar PT_LOOS = 0x6000_0000;
+defvar PT_HIOS = 0x6fff_ffff;
+defvar PT_LOPROC = 0x7000_0000;
+defvar PT_HIPROC = 0x7fff_ffff;
+
+/* Segment Flags.  */
+
+defvar PF_X = 0x1;
+defvar PF_W = 0x2;
+defvar PF_R = 0x4;
+defvar PF_MASKOS = 0x0ff0_0000;
+defvar PF_MASKPROC = 0xf000_0000;
+
+deftype Elf64_SegmentFlags =
+  struct
+  {
+    Elf_Word flags;
+
+    method _print = void:
+      {
+        defvar s = "";
+
+        if (flags & PF_R)
+          s = s + "R,";
+        if (flags & PF_W)
+          s = s + "W,";
+        if (flags & PF_X)
+          s = s + "X,";
+        if (flags & PF_MASKOS)
+          /* XXX call os-specific printer in elf-OS.pk */
+          ;
+        if (flags & PF_MASKPROC)
+          /* XXX call arch-specific printer in elf-ARCH.pk */
+          ;
+
+        print "#<" + rtrim (s, ",") + ">";
+      }
+  };
+
+deftype Elf64_Phdr =
+  struct
+  {
+    Elf_Word p_type;
+    Elf64_SegmentFlags p_flags;
+    Elf64_Off p_offset;
+    Elf64_Addr p_vaddr;
+    Elf64_Addr p_paddr;
+    Elf64_Xword p_filesz;
+    Elf64_Xword p_memsz;
+    Elf64_Xword p_align;
+  };
+
 defvar ELFDATANONE = 0;
 defvar ELFDATA2LSB = 1;
 defvar ELFDATA2MSB = 2;
@@ -242,6 +306,9 @@ deftype Elf64_File =
 
     Elf64_Shdr[ehdr.e_shnum] shdr @ ehdr.e_shoff
       if ehdr.e_shnum > 0;
+
+    Elf64_Phdr[ehdr.e_phnum] phdr @ ehdr.e_phoff
+      if ehdr.e_phnum > 0;
 
     /* Given an offset in the ELF file's string table, return the
        string.  */
