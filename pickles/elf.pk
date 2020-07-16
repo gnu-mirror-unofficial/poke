@@ -332,7 +332,7 @@ deftype Elf64_File =
 
     /* Given a section type (SHT_* value) return the section header
        corresponding to the first section in the ELF file featuring
-       that name.  In case no such section exists, raise a generic
+       that type.  In case no such section exists, raise a generic
        error exception.  */
     method get_section_by_type = (Elf_Word type) Elf64_Shdr:
       {
