@@ -324,9 +324,8 @@ deftype Elf64_File =
        exception.  */
     method get_section_by_name = (string name) Elf64_Shdr:
       {
-        for (s in shdr)
-          if (get_string (s.sh_name) == name)
-            return s;
+        for (s in shdr where get_string (s.sh_name) == name)
+          return s;
 
         raise E_generic;
       }
