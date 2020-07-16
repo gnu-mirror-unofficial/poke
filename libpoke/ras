@@ -303,10 +303,10 @@
 # do the tracking job:
 #
 # pushf 0
-# regvar %a
-# pushvar %a
+# regvar $a
+# pushvar $a
 # pushf 0
-# pushvar %a
+# pushvar $a
 # popf 2
 #
 # Summarizing: ultimately it is up to you to decide when to use
