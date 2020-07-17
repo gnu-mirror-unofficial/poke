@@ -149,7 +149,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
     = PKL_AST_TYPE_S_ELEMS (struct_type);
   pkl_ast_node t;
 
-  if (PKL_AST_TYPE_S_UNION (struct_type))
+  if (PKL_AST_TYPE_S_UNION_P (struct_type))
     {
       int found_field = 0;
 
@@ -803,7 +803,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
   pkl_ast_node t;
   pkl_ast_node last_unconditional_alternative = NULL;
 
-  if (!PKL_AST_TYPE_S_UNION (struct_type))
+  if (!PKL_AST_TYPE_S_UNION_P (struct_type))
     PKL_PASS_DONE;
 
   for (t = struct_type_elems; t; t = PKL_AST_CHAIN (t))

@@ -893,7 +893,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
 #define PKL_AST_TYPE_S_ELEMS(AST) ((AST)->type.val.sct.elems)
 #define PKL_AST_TYPE_S_PINNED(AST) ((AST)->type.val.sct.pinned)
-#define PKL_AST_TYPE_S_UNION(AST) ((AST)->type.val.sct.union_p)
+#define PKL_AST_TYPE_S_UNION_P(AST) ((AST)->type.val.sct.union_p)
 #define PKL_AST_TYPE_S_MAPPER(AST) ((AST)->type.val.sct.mapper)
 #define PKL_AST_TYPE_S_WRITER(AST) ((AST)->type.val.sct.writer)
 #define PKL_AST_TYPE_S_CONSTRUCTOR(AST) ((AST)->type.val.sct.constructor)

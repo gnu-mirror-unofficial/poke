@@ -751,7 +751,7 @@
  .c   }
         .label .alternative_failed
         .label .eof_in_alternative
- .c   if (PKL_AST_TYPE_S_UNION (type_struct))
+ .c   if (PKL_AST_TYPE_S_UNION_P (type_struct))
  .c   {
         push PVM_E_EOF
         pushe .eof_in_alternative
@@ -762,7 +762,7 @@
         swap                     ; ...[EBOFF ENAME EVAL] IOS NEBOFF
         pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEBOFF OFF
         .e struct_field_mapper   ; ...[EBOFF ENAME EVAL] NEBOFF
- .c   if (PKL_AST_TYPE_S_UNION (type_struct))
+ .c   if (PKL_AST_TYPE_S_UNION_P (type_struct))
  .c   {
         pope
         pope
@@ -779,7 +779,7 @@
         drop
         pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
  .c   }
- .c   if (PKL_AST_TYPE_S_UNION (type_struct))
+ .c   if (PKL_AST_TYPE_S_UNION_P (type_struct))
  .c   {
         ;; Union field successfully mapped.  We are done.
         ba .union_fields_done
@@ -796,7 +796,7 @@
         drop                    ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c }
- .c if (PKL_AST_TYPE_S_UNION (type_struct))
+ .c if (PKL_AST_TYPE_S_UNION_P (type_struct))
  .c {
         ;; No valid alternative found in union.
         push PVM_E_CONSTRAINT
@@ -1079,7 +1079,7 @@
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
         bnzi .constraint_ok
         drop
-   .c   if (PKL_AST_TYPE_S_UNION (type_struct))
+   .c   if (PKL_AST_TYPE_S_UNION_P (type_struct))
    .c   {
         ;; Alternative failed: try next alternative.
         ba .alternative_failed
@@ -1114,7 +1114,7 @@
         addlu
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
-   .c if (PKL_AST_TYPE_S_UNION (type_struct))
+   .c if (PKL_AST_TYPE_S_UNION_P (type_struct))
    .c {
         ;; Union field successfully constructed.  We are done.
         ba .union_fields_done
@@ -1123,7 +1123,7 @@
         drop                    ; ... EVAL
    .c }
  .c }
- .c if (PKL_AST_TYPE_S_UNION (type_struct))
+ .c if (PKL_AST_TYPE_S_UNION_P (type_struct))
  .c {
         ;; No valid alternative found in union.
         push PVM_E_CONSTRAINT

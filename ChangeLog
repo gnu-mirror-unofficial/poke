@@ -1,5 +1,18 @@
 2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_UNION_P): Renamed from
+	PKL_AST_TYPE_S_UNION.
+	* libpoke/pkl-ast.c (pkl_ast_make_struct_type): Update
+	accordingly.
+	(pkl_ast_dup_type): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Likewise.
+	* libpoke/pkl-gen.pks (struct_mapper): Likewise.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_type_struct): Likewise.
+	(pkl_anal2_ps_type_struct): Likewise.
+
+2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Unions can't
 	be integral.
 	* testsuite/poke.pkl/int-struct-type-diag-11.pk: New test.
