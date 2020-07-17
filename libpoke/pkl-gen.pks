@@ -854,7 +854,7 @@
 ;;; ( SCT SCT -- INT )
 ;;;
 ;;; Assemble a function that, given two structs of a given type,
-;;; return 1 if the two structs are equal, 0 otherwise.
+;;; returns 1 if the two structs are equal, 0 otherwise.
 ;;;
 ;;; The C environment erquired is:
 ;;;
