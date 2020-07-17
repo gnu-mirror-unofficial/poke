@@ -1661,7 +1661,9 @@ PKL_PHASE_END_HANDLER
 
 /* The fields in an integral struct type shall be all of integral
    types (including other integral structs) and the total int size
-   shall match the sum of the sizes of all the fields.  */
+   shall match the sum of the sizes of all the fields.
+
+   Also, labels are not allowed in integral structs.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
 {
@@ -1705,6 +1707,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
                   PKL_TYPIFY_PAYLOAD->errors++;
                   PKL_PASS_ERROR;
                 }
+            }
+
+          if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field))
+            {
+              PKL_ERROR (PKL_AST_LOC (field),
+                         "labels are not allowed in integral structs");
+              PKL_TYPIFY_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
             }
 
           if (itype)

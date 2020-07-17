@@ -1,0 +1,15 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  struct uint<33>
+  {
+    struct int<16>
+    {
+      struct int<15>
+      {
+        int<15> c @ 0#B; /* { dg-error "labels are not allowed" } */
+      } b;
+      uint<1> bit;
+    } a;
+    int<17> b;
+  };

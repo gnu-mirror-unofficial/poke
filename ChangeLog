@@ -1,5 +1,11 @@
 2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct): Do not allow
+	labels in fields in integral structs.
+	* testsuite/poke.pkl/int-struct-type-diag-10.pk: New test.
+
+2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (sct): New field sct.itype.
 	(PKL_AST_TYPE_S_ITYPE): Define
 	* libpoke/pkl-ast.c (pkl_ast_make_struct_type): Get itype as
