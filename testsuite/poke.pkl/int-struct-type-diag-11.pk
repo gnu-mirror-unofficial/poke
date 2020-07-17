@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+deftype Foo =  /* { dg-error "integral" } */
+  union int<32>
+  {
+  };

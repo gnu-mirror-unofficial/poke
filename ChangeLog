@@ -1,5 +1,11 @@
 2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Unions can't
+	be integral.
+	* testsuite/poke.pkl/int-struct-type-diag-11.pk: New test.
+
+2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_struct): Do not allow
 	labels in fields in integral structs.
 	* testsuite/poke.pkl/int-struct-type-diag-10.pk: New test.

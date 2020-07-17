@@ -1678,6 +1678,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
       /* This checks that the itype of the struct type is correct.  */
       PKL_PASS_SUBPASS (struct_type_itype);
 
+      if (PKL_AST_TYPE_S_UNION (struct_type))
+        {
+          PKL_ERROR (PKL_AST_LOC (struct_type),
+                     "unions can't be integral");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+
       for (field = PKL_AST_TYPE_S_ELEMS (struct_type);
            field;
            field = PKL_AST_CHAIN (field))
