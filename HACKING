@@ -72,14 +72,15 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        5. 3  Naming Tests
        5. 4  Always set obase
        5. 5  Put each test in its own file
-       5. 6  dg-output may require a newline
-       5. 7  Using data files in tests
-       5. 8  Using NBD connections in tests
-       5. 9  Writing tests that depend on a certain capability
-       5.10  Writing REPL tests
-       5.11  Testing Pickles
-         5.11.1  Command REPL tests
-         5.11.2  General REPL tests
+       5. 6  List the test files in testsuite/Makefile.am
+       5. 7  dg-output may require a newline
+       5. 8  Using data files in tests
+       5. 9  Using NBD connections in tests
+       5.10  Writing tests that depend on a certain capability
+       5.11  Writing REPL tests
+       5.12  Testing Pickles
+         5.12.1  Command REPL tests
+         5.12.2  General REPL tests
      6  Writing Documentation
        6.1  Documenting Pickles
      7  Fuzzing poke
@@ -634,6 +635,12 @@ test log file.
 
 It is better to put each test in its own file: ``foo-1.pk``,
 ``foo-2.pk`` and so on.
+
+List the test files in testsuite/Makefile.am
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+So that the tests get distributed, you need to list each newly added
+test file in testsuite/Makefile.am.
 
 dg-output may require a newline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

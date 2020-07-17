@@ -1,3 +1,12 @@
+2020-07-17  Bruno Haible  <bruno@clisp.org>
+
+	Fix build failure during "make distcheck".
+	* testsuite/Makefile.am (EXTRA_DIST): Remove all directories. Add
+	individual files instead.
+	* testsuite/poke.libpoke/Makefile.am (EXTRA_DIST): Add libpoke.exp.
+	* testsuite/poke.mi-json/Makefile.am (EXTRA_DIST): Add mi-json.exp.
+	* HACKING: Mention that test files beed to be listed.
+
 2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_UNION_P): Renamed from

@@ -15,6 +15,9 @@
 
 AUTOMAKE_OPTIONS = subdir-objects
 
+EXTRA_DIST = \
+  mi-json.exp
+
 if POKE_MI
 
 check_PROGRAMS = mi-json
