@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  struct int<32>
+  {
+    int<32> foo; struct {} bar; /* { dg-error "invalid field" } */
+  };

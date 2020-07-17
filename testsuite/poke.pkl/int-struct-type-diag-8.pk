@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  struct uint<32> /* { dg-error "total size" } */
+  {
+    struct int<16> { int<16> a; } a;
+    int<17> b;
+  };

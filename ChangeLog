@@ -1,3 +1,26 @@
+2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.h (sct): New field sct.itype.
+	(PKL_AST_TYPE_S_ITYPE): Define
+	* libpoke/pkl-ast.c (pkl_ast_make_struct_type): Get itype as
+	argument.
+	(pkl_ast_print_1): Print out itype.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct): Pass itype to
+	pkl_ast_make_struct_type.
+	(pkl_typify1_ps_type_struct): New handler.
+	(pkl_phase_typify1): Install handler.
+	* libpoke/pkl-tab.y (integral_struct): New rule.
+	(struct_type_specifier): Support for integral structs.
+	* testsuite/poke.pkl/int-struct-type-diag-1.pk: New test.
+	* testsuite/poke.pkl/int-struct-type-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-9.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-8.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-7.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-6.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-3.pk: Likewise.
+
 2020-07-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf.pk (Elf64_File.get_section_by_name): Optimize

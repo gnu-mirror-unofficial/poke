@@ -436,6 +436,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
 %type <ast> comp_stmt stmt_decl_list stmt print_stmt_arg_list
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
+%type <ast> integral_struct
 %type <integer> struct_type_pinned integral_type_sign struct_or_union
 %type <integer> builtin endianness defun_or_method
 
@@ -1327,12 +1328,14 @@ function_type_arg:
         ;
 
 struct_type_specifier:
-          pushlevel struct_type_pinned struct_or_union '{' '}'
+          pushlevel struct_type_pinned struct_or_union
+          integral_struct '{' '}'
                   {
                     $$ = pkl_ast_make_struct_type (pkl_parser->ast,
                                                    0 /* nelem */,
                                                    0 /* nfield */,
                                                    0 /* ndecl */,
+                                                   $4,
                                                    NULL /* elems */,
                                                    $2, $3);
                     PKL_AST_LOC ($$) = @$;
@@ -1343,7 +1346,8 @@ struct_type_specifier:
                        rule.  */
                     pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-        | pushlevel struct_type_pinned struct_or_union '{'
+        | pushlevel struct_type_pinned struct_or_union
+          integral_struct '{'
                 {
                   /* Register dummies for the locals used in
                      pkl-gen.pks:struct_mapper.  */
@@ -1355,7 +1359,8 @@ struct_type_specifier:
                                                    0 /* nelem */,
                                                    0 /* nfield */,
                                                    0 /* ndecl */,
-                                                   $6,
+                                                   $4,
+                                                   $7,
                                                    $2, $3);
                     PKL_AST_LOC ($$) = @$;
 
@@ -1366,13 +1371,17 @@ struct_type_specifier:
 
 struct_or_union:
           STRUCT        { $$ = 0; }
-        | UNION                { $$ = 1; }
+        | UNION         { $$ = 1; }
         ;
 
 struct_type_pinned:
-        %empty                { $$ = 0; }
+        %empty          { $$ = 0; }
         | PINNED        { $$ = 1; }
         ;
+
+integral_struct:
+        %empty                    { $$ = NULL; }
+        | integral_type_specifier { $$ = $1; }
 
 struct_type_elem_list:
           struct_type_field

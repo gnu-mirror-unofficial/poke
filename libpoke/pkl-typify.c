@@ -1233,6 +1233,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
                                    PKL_AST_STRUCT_NELEM (node),
                                    PKL_AST_STRUCT_NELEM (node), /* nfield */
                                    0, /* ndecl */
+                                   NULL, /* itype */
                                    struct_field_types,
                                    0 /* pinned */,
                                    0 /* union */);
@@ -1654,6 +1655,69 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_integral)
                  "the width of an integral type should be in the [1,64] range");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
+/* The fields in an integral struct type shall be all of integral
+   types (including other integral structs) and the total int size
+   shall match the sum of the sizes of all the fields.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
+{
+  pkl_ast_node struct_type = PKL_PASS_NODE;
+  pkl_ast_node struct_type_itype = PKL_AST_TYPE_S_ITYPE (struct_type);
+  pkl_ast_node field;
+
+  if (struct_type_itype)
+    {
+      int fields_int_size = 0;
+
+      /* This checks that the itype of the struct type is correct.  */
+      PKL_PASS_SUBPASS (struct_type_itype);
+
+      for (field = PKL_AST_TYPE_S_ELEMS (struct_type);
+           field;
+           field = PKL_AST_CHAIN (field))
+        {
+          pkl_ast_node itype = NULL;
+
+          if (PKL_AST_CODE (field) == PKL_AST_STRUCT_TYPE_FIELD)
+            {
+              pkl_ast_node ftype
+                = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
+
+              switch (PKL_AST_TYPE_CODE (ftype))
+                {
+                case PKL_TYPE_INTEGRAL:
+                  itype = ftype;
+                  break;
+                case PKL_TYPE_STRUCT:
+                  if (PKL_AST_TYPE_S_ITYPE (ftype))
+                    {
+                      itype = PKL_AST_TYPE_S_ITYPE (ftype);
+                      break;
+                    }
+                  /* Fallthrough.  */
+                default:
+                  PKL_ERROR (PKL_AST_LOC (field),
+                             "invalid field in integral struct");
+                  PKL_TYPIFY_PAYLOAD->errors++;
+                  PKL_PASS_ERROR;
+                }
+            }
+
+          if (itype)
+            fields_int_size += PKL_AST_TYPE_I_SIZE (itype);
+        }
+
+      if (fields_int_size != PKL_AST_TYPE_I_SIZE (struct_type_itype))
+        {
+          PKL_ERROR (PKL_AST_LOC (struct_type_itype),
+                     "invalid total size in integral struct type");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
     }
 }
 PKL_PHASE_END_HANDLER
@@ -2633,6 +2697,7 @@ struct pkl_phase pkl_phase_typify1
 
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_typify1_ps_type_integral),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_typify1_ps_type_array),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_typify1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_typify1_ps_type_offset),
   };
 

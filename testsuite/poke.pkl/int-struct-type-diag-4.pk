@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  struct int<32>
+  {
+    int<32> i;
+    int<32>[] je; /* { dg-error "invalid field" } */
+  };
