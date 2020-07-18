@@ -1,5 +1,10 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi: Fix references to prototypes to not include a
+	trailing colon.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* .x-sc_prohibit_magic_number_exit: Whitelist utils/*.
 
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>

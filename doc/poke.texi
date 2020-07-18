@@ -4876,7 +4876,7 @@ defun dump = (off64 from = pk_dump_offset,
               off64 group_by = pk_dump_group_by,
               int cluster_by = pk_dump_cluster_by,
               int ruler = pk_dump_ruler,
-              int ascii = pk_dump_ascii) void:
+              int ascii = pk_dump_ascii) void
 @end example
 
 @noindent
@@ -5012,7 +5012,7 @@ defun copy = (int from_ios = get_ios,
               int to_ios = get_ios,
               off64 from = 0#B,
               off64 to = 0#B,
-              off64 size = 0#B) void:
+              off64 size = 0#B) void
 @end example
 
 @noindent
@@ -5044,7 +5044,7 @@ defun save = (int ios = get_ios,
               string file = "",
               off64 from = 0#B,
               off64 size = 0#B,
-              int append = 0) void:
+              int append = 0) void
 @end example
 
 @noindent
@@ -7896,7 +7896,7 @@ The @code{open} builtin allows you to create new IO spaces, by opening an
 IO device.  It has the following prototype:
 
 @example
-defun open = (string @var{handler}, uint<64> flags = 0) int<32>: @{ @dots{} @}
+defun open = (string @var{handler}, uint<64> flags = 0) int<32>
 @end example
 
 @noindent
@@ -7963,7 +7963,7 @@ The @code{close} builtin allows you to destroy IO spaces, closing the
 underlying IO device.  The prototype is:
 
 @example
-defun close = (int<32> @var{ios}) void: @{ @dots{} @}
+defun close = (int<32> @var{ios}) void
 @end example
 
 @noindent
@@ -7981,7 +7981,7 @@ The builtin @code{flush} performs a ``flushing'' operation on a given
 IO space.  The prototype is:
 
 @example
-defun flush = (int<32> @var{ios}, offset<uint<64>,1> @var{offset}) void:
+defun flush = (int<32> @var{ios}, offset<uint<64>,1> @var{offset}) void
 @end example
 
 Where @var{ios} is the IOS identifier where to perform the flush.  The
@@ -8005,7 +8005,7 @@ dot-command).  The builtin @code{get_ios} returns this space.  It has
 the following prototype:
 
 @example
-defun get_ios = int<32>: @{ @dots{} @}
+defun get_ios = int<32>
 @end example
 
 If there is no IO space, @code{get_ios} will raise the @code{E_no_ios}
@@ -8019,7 +8019,7 @@ The @code{set_ios} builtin allows you to set a specific IO space as the
 new current IO space.  It has the following prototype:
 
 @example
-defun set_ios = (int<32> @var{ios}) int<32>: @{ @dots{} @}
+defun set_ios = (int<32> @var{ios}) int<32>
 @end example
 
 @noindent
@@ -8038,7 +8038,7 @@ The @code{iosize} builtin returns the size of a given IO space, as an
 offset.  It has the following prototype:
 
 @example
-defun iosize = (int<32> ios) offset<uint<64>,1>: @{ @dots{} @}
+defun iosize = (int<32> ios) offset<uint<64>,1>
 @end example
 
 If the IO space specified to @code{iosize} doesn't exist,
@@ -8125,7 +8125,7 @@ library.  The prototype is:
 
 @example
 defun qsort = (any[] array, Comparator cmp_f,
-               long left = 0, long right = array'length - 1) void:
+               long left = 0, long right = array'length - 1) void
 @end example
 
 @noindent
@@ -9152,7 +9152,7 @@ The standard function @code{qsort} has the following prototype:
 @example
 defun qsort = (any[] @var{array}, Comparator @var{cmp_f},
                long @var{left} = 0,
-               long @var{right} = array'length - 1) void: @{ @dots{} @}
+               long @var{right} = array'length - 1) void
 @end example
 
 @noindent
@@ -9166,7 +9166,7 @@ The comparator function @var{cmp_f} should have the following
 prototype:
 
 @example
-deftype Comparator = (any,any):int;
+deftype Comparator = (any,any):int
 @end example
 
 @node CRC Functions
