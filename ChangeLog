@@ -1,5 +1,9 @@
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/Makefile.am (EXTRA_DIST): Add missing tests.
+
+2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (struct_type_specifier): Register one more
 	dummy.
 	* libpoke/pkl-gen.pks (struct_mapper): Support for mapping
@@ -22,7 +26,7 @@
 	* testsuite/poke.map/maps-int-structs-3.pk: Likewise.
 	* testsuite/poke.map/maps-int-structs-6.pk: Likewise.
 	* testsuite/poke.map/maps-int-structs-7.pk: Likewise.
-	* testsuite/poke.map/mpas-int-structs-8.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-8.pk: Likewise.
 	* testsuite/poke.map/maps-int-structs-9.pk: Likewise.
 
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
