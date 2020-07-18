@@ -1,0 +1,59 @@
+#!/usr/local/bin/poke -L
+!#
+
+/* elfextractor - Extract sections from ELF64 files. */
+
+/* Copyright (C) 2019, 2020 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load elf;
+
+if (!(argv'length in [1,2]))
+  {
+    print "Usage: elfextractor FILE [SECTION_NAME]\n";
+    exit (1);
+  }
+
+defvar file_name = argv[0];
+defvar section_name = (argv'length > 1) ? argv[1] : "";
+
+try
+  {
+    defvar fd = open (file_name, IOS_M_RDONLY);
+    defvar elf = Elf64_File @ fd : 0#B;
+
+    for (shdr in elf.shdr where shdr.sh_type != 0x0)
+      {
+        defvar sname = elf.get_string (shdr.sh_name);
+
+        if (section_name == "" || sname == section_name)
+          save :ios elf'ios :file file_name + sname
+               :from shdr.sh_offset :size shdr.sh_size;
+      }
+
+    close (fd);
+  }
+catch (Exception e)
+  {
+    if (e == E_constraint)
+      printf ("error: `%s' is not a valid ELF64 file\n", file_name);
+    else if (e == E_io)
+      printf ("error: couldn't open file `%s'\n", file_name);
+    else
+      raise e;
+
+    exit (1);
+  }

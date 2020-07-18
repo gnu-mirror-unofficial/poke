@@ -1,5 +1,10 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* utils/elfextractor: New file.
+	* HACKING (Poke Utilities): New section.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (From Bytes to Integers): Reflect new syntax for
 	bit-concatenation.
 	(Big and Little Endians): Likewise.
