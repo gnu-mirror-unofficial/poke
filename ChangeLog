@@ -1,5 +1,12 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (gnulib_modules): Import glob module.
+	* poke/pk-cmd.c (pk_cmd_exec_1): Use the more portable `glob' than
+	`wordexp'.
+	* testsuite/poke.cmd/file-relative.pk: Do not quote the file name.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-promo.c (pkl_promo_ps_struct_type_field): Promote
 	struct field labels to offset<uint<64>,b>.
 	* libpoke/pkl-gen.pks (handle_struct_field_label): Simplify
