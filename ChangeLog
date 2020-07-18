@@ -1,5 +1,11 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (From Bytes to Integers): Reflect new syntax for
+	bit-concatenation.
+	(Big and Little Endians): Likewise.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Unions): Note about placing most common
 	alternatives first in unions.
 

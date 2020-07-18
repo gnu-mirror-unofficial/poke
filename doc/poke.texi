@@ -1280,7 +1280,7 @@ beginning of @file{foo.o}?
 
 @example
 (poke) .set obase 16
-(poke) (byte @@ 0#B)::(byte @@ 1#B)
+(poke) (byte @@ 0#B):::(byte @@ 1#B)
 0x7f45UH
 @end example
 
@@ -1319,7 +1319,7 @@ in a x86 machine or other systems using little-endian.  Otherwise,
 just continue reading the next section :)}
 
 @example
-(poke) (byte @@ 0#B)::(byte @@ 1#B)
+(poke) (byte @@ 0#B):::(byte @@ 1#B)
 0x7f45UH
 (poke) uint<16> @@ 0#B
 0x457fUH
@@ -1445,7 +1445,7 @@ bit-concatenation operator implements:
 (poke) defvar b1 = byte @@ 0#B
 (poke) defvar b2 = byte @@ 1#B
 (poke) defvar b3 = byte @@ 2#B
-(poke) b1::b2::b3
+(poke) b1:::b2:::b3
 (uint<24>) 0x7f454c
 @end example
 
@@ -1471,9 +1471,9 @@ value of the integer composed of these three bytes in both
 interpretations:
 
 @example
-(poke) b1::b2::b3
+(poke) b1:::b2:::b3
 (uint<24>) 0x7f454c
-(poke) b3::b2::b1
+(poke) b3:::b2:::b1
 (uint<24>) 0x4c457f
 @end example
 
