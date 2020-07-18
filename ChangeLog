@@ -1,5 +1,11 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/Makefile.am (EXTRA_DIST): Add poke.cmd/extract-1.pk,
+	poke.map/maps-structs-labels-2.pk, poke.pkl/funcall-15.pk and
+	poke.pkl/funcall-16.pk.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-extract.pk: New file.
 	* poke/pk-cmd.pk: Load pk-extract.pk.
 	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-extract.pk.

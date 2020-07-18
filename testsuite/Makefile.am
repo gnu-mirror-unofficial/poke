@@ -60,6 +60,7 @@ EXTRA_DIST = \
   poke.cmd/dump-6.pk \
   poke.cmd/dump-7.pk \
   poke.cmd/dump-8.pk \
+  poke.cmd/extract-1.pk \
   poke.cmd/file-mode.pk \
   poke.cmd/file-relative.pk \
   poke.cmd/ios-1.pk \
@@ -247,6 +248,7 @@ EXTRA_DIST = \
   poke.map/maps-structs-init-1.pk \
   poke.map/maps-structs-init-2.pk \
   poke.map/maps-structs-labels-1.pk \
+  poke.map/maps-structs-labels-2.pk \
   poke.map/maps-structs-methods-1.pk \
   poke.map/maps-structs-methods-2.pk \
   poke.map/maps-structs-methods-3.pk \
@@ -760,6 +762,8 @@ EXTRA_DIST = \
   poke.pkl/funcall-12.pk \
   poke.pkl/funcall-13.pk \
   poke.pkl/funcall-14.pk \
+  poke.pkl/funcall-15.pk \
+  poke.pkl/funcall-16.pk \
   poke.pkl/funcall-def-2.pk \
   poke.pkl/funcall-def-3.pk \
   poke.pkl/funcall-def-4.pk \
