@@ -70,6 +70,7 @@ wrapped-functions
   ios_read_string
   ios_write_string
   random
+  srandom
   secure_getenv
 end
 
@@ -4854,10 +4855,18 @@ end
 #
 # Push a pseudo-random integer to the stack.
 #
-# Stack: ( -- INT )
+# If the argument is 0U then it is ignored.  Otherwise it is
+# used to set the seed for a new sequence of pseudo-random numbers.
+#
+# Stack: ( UINT -- INT )
 
 instruction rand ()
   code
+    unsigned int seed = PVM_VAL_UINT (JITTER_TOP_STACK ());
+
+    if (seed != 0)
+      srandom (seed);
+    JITTER_DROP_STACK ();
     JITTER_PUSH_STACK (pvm_make_int (random (), 32));
   end
 end

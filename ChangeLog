@@ -1,5 +1,14 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (rand): Take an additional argument in the
+	stack for the seed.
+	* libpoke/pkl-rt.pk (rand): Redefine the builtin `rand' to take an
+	optional argument for the seed.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Likewise.
+	* doc/poke.texi (rand): New section.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* utils/elfextractor: New file.
 	* HACKING (Poke Utilities): New section.
 

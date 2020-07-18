@@ -8872,6 +8872,7 @@ system.  These are described in the subsections below.
 
 @menu
 * getenv::		Environment variables.
+* rand::		Pseudo-random numbers.
 @end menu
 
 @node getenv
@@ -8887,6 +8888,21 @@ defun getenv (string name) string:
 Given the name of an environment variable, it returns a string with
 its value.  If the variable is not defined in the environment, then
 the @code{E_inval} exception is raised.
+
+@node rand
+@subsection rand
+
+The @code{rand} built-in function has the form:
+
+@example
+defun rand = (uint<32> seed = 0) int<32>:
+@end example
+
+@noindent
+It returns a pseudo-random number in the range of the unsigned 32-bit
+integers.  If a @var{seed} different to zero is provided, it is used
+to initialize a new sequence of pseudo-random numbers (which includes
+the one returned.)
 
 @node The Standard Library
 @chapter The Standard Library
