@@ -1,5 +1,10 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ops.def: Remove unused ELEMSOF and TYPEOF operator
+	definitions.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Casting Structs): Expand a little.
 
 2020-07-17  Jose E. Marchesi  <jemarch@gnu.org>
