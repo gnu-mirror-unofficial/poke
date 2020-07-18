@@ -7108,6 +7108,33 @@ The semantics of the cast are exactly the same than constructing a
 struct of the target type using the struct provided as an expression
 to the cast.
 
+This means that some fields in the original struct may be ``lost''
+when the struct is converted to the new type.  Consider the following
+two definitions:
+
+@example
+deftype Foo = struct @{ int i; long j; @};
+deftype Bar = struct @{ int i; @}
+@end example
+
+Let's cast some values and see what we obtain:
+
+@example
+(poke) Bar @{@}
+Bar @{
+  i=0x0
+@}
+(poke) Bar @{@} as Foo
+Foo @{
+  i=0x0,
+  j=0x0L
+@}
+(poke) Foo @{@} as Bar
+Bar @{
+  i=0x0
+@}
+@end example
+
 @node Declarations in Structs
 @subsection Declarations in Structs
 
