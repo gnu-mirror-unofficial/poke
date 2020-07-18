@@ -41,9 +41,9 @@
 
 #define IOS_PUT_C_ERR_CHCK(c, io, len, off)                \
   {                                                        \
-    if ((io)->dev_if->pwrite ((io)->dev, c, len, off)        \
+    if ((io)->dev_if->pwrite ((io)->dev, c, len, off)      \
         == IOD_EOF)                                        \
-      return IOS_EIOBJ;                                        \
+      return IOS_EIOFF;                                    \
   }
 
 /* The following struct implements an instance of an IO space.
@@ -1119,7 +1119,7 @@ ios_write_int_fast (ios io, ios_off offset, int flags,
     }
 
   if (io->dev_if->pwrite (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
-    return IOS_EIOBJ;
+    return IOS_EIOFF;
   return IOS_OK;
 }
 

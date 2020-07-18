@@ -1,5 +1,18 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ios-dev.h (IOD_ERROR): Redefine to -1.
+	(IOD_EOF): Redefine to -2.
+	(IOD_EINVAL): Redefine to -3.
+	* libpoke/ios.h: Remove IOS_EIOBJ.
+	* libpoke/ios.c (IOS_PUT_C_ERR_CHCK): Replace IOS_EIOBJ with
+	IOS_EIBOFF.
+	(ios_write_int_fast): Likewise.
+	* libpoke/pvm.jitter: Likewise.
+	* testsuite/poke.pkl/ios-mem-5.pk: Update accordingly.
+	* TODO: Update.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-copy.pk (copy): Make argument `to' to default to `from',
 	and do not move data around if to == from and to_ios == from_ios.
 	* doc/poke.texi (copy): Reflect change in documentation.

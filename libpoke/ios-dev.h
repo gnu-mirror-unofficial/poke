@@ -30,12 +30,13 @@ typedef uint64_t ios_dev_off;
 
 /* The following macros are part of the device interface.  */
 
-#define IOD_EOF -1
+
 
 /* Error codes to be used in the interface below.  */
 
-#define IOD_ERROR  1 /* Generic error.     */
-#define IOD_EINVAL 2 /* Invalid argument.  */
+#define IOD_ERROR  -1 /* Generic error.     */
+#define IOD_EOF    -2
+#define IOD_EINVAL -3 /* Invalid argument.  */
 
 /* Each IO backend should implement a device interface, by filling an
    instance of the struct defined below.  */

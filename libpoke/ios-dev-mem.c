@@ -105,20 +105,21 @@ ios_dev_mem_pwrite (void *iod, const void *buf, size_t count,
   if (offset + count > mio->size + MEM_STEP)
     return IOD_EOF;
 
-  if (offset + count > mio->size) {
-    void *pointer_bak = mio->pointer;
+  if (offset + count > mio->size)
+    {
+      void *pointer_bak = mio->pointer;
 
-    mio->pointer = realloc (mio->pointer, mio->size + MEM_STEP);
-    if (!mio->pointer)
-      {
-        /* Restore pointer after failed realloc and return error. */
-        mio->pointer = pointer_bak;
-        return IOD_ERROR;
-      }
+      mio->pointer = realloc (mio->pointer, mio->size + MEM_STEP);
+      if (!mio->pointer)
+        {
+          /* Restore pointer after failed realloc and return error. */
+          mio->pointer = pointer_bak;
+          return IOD_ERROR;
+        }
 
-    memset (&mio->pointer[mio->size], 0, MEM_STEP);
-    mio->size += MEM_STEP;
-  }
+      memset (&mio->pointer[mio->size], 0, MEM_STEP);
+      mio->size += MEM_STEP;
+    }
 
   memcpy (&mio->pointer[offset], buf, count);
   return 0;
