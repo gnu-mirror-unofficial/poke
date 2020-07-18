@@ -1,5 +1,10 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Unions): Note about placing most common
+	alternatives first in unions.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (primary): Allow funcall statements.
 	* testsuite/poke.pkl/funcall-15.pk: New test.
 	* testsuite/poke.pkl/funcall-16.pk: Likewise.

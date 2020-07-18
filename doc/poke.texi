@@ -7041,6 +7041,9 @@ deftype Ctf_Stype_V1 =
 @cindex unions
 XXX
 
+For performance purposes, it is good to always place the most common
+alternatives first in unions.
+
 @node Optional Fields
 @subsection Optional Fields
 @cindex struct fields
