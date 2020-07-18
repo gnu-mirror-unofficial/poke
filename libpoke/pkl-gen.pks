@@ -849,7 +849,7 @@
 ;;; Assemble a function that, given two structs of a given type,
 ;;; returns 1 if the two structs are equal, 0 otherwise.
 ;;;
-;;; The C environment erquired is:
+;;; The C environment required is:
 ;;;
 ;;; `type_struct' is a pkl_ast_node with the types of the structs
 ;;;  being compared.

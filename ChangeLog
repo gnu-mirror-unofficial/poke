@@ -1,5 +1,9 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks: Typo in comment fixed.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ios-dev.h (IOD_ERROR): Redefine to -1.
 	(IOD_EOF): Redefine to -2.
 	(IOD_EINVAL): Redefine to -3.
