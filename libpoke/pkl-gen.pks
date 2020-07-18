@@ -581,14 +581,12 @@
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
                                 ; SBOFF LOFF
+        ;; Note that this relies on the field label offset to
+        ;; be offset<uint<64>,b>.  This is guaranteed by promo.
         ogetm                   ; SBOFF LOFF LOFFM
-        swap                    ; SBOFF LOFFM LOFF
-        ogetu                   ; SBOFF LOFFM LOFF LOFFU
-        nip                     ; SBOFF LOFFM LOFFU
-        mullu
-        nip2                    ; SBOFF (LOFFM*LOFFU)
+        nip                     ; SBOFF LOFFM
         addlu
-        nip2                    ; (SBOFF+LOFFM*LOFFU)
+        nip2                    ; (SBOFF+LOFFM)
    .c }
         .end
 

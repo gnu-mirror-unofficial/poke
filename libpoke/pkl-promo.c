@@ -1298,7 +1298,10 @@ PKL_PHASE_END_HANDLER
    booleans.  Ditto for optconds.
 
    Also, the initializer in a struct type field should be promoted to
-   the field type.  */
+   the field type.
+
+   Struct field labels are promoted to offset<uint<64>,b>, in order to
+   make the mapper code more efficient.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
 {
@@ -1433,10 +1436,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
         {
         case PKL_TYPE_OFFSET:
           {
-            pkl_ast_node label_type_unit = PKL_AST_TYPE_O_UNIT (label_type);
+            pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
             if (!promote_offset (PKL_PASS_AST,
-                                 64, 0, label_type_unit,
+                                 64, 0, unit_bit,
                                  &PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem),
                                  &restart))
               {
@@ -1445,6 +1448,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                 PKL_PASS_ERROR;
               }
 
+            ASTREF (unit_bit); pkl_ast_node_free (unit_bit);
             break;
           }
         default:

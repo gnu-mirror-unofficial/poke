@@ -1,5 +1,13 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-promo.c (pkl_promo_ps_struct_type_field): Promote
+	struct field labels to offset<uint<64>,b>.
+	* libpoke/pkl-gen.pks (handle_struct_field_label): Simplify
+	assuming that the label unit is bits.
+	* testsuite/poke.map/maps-structs-labels-2.pk (Foo): New test.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi: Fix references to prototypes to not include a
 	trailing colon.
 
