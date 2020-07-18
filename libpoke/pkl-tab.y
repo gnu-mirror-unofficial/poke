@@ -967,6 +967,10 @@ primary:
                   PKL_AST_LOC ($$) = @$;
                 }
         | funcall
+        | '(' funcall_stmt ')'
+                {
+                  $$ = $2;
+                }
         ;
 
 funcall:

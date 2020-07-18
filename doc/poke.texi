@@ -7564,8 +7564,8 @@ bar ()
 bar
 @end example
 
-There is an alternate syntax that can only be used in an
-expression-as-statement context.  This alternate syntax is:
+There is an alternate syntax that can be used in both expressions and
+expression-statements.  This alternate syntax is:
 
 @example
 @var{function_name} :@var{arg1} @var{val1}@dots{}
@@ -7587,6 +7587,13 @@ two calls are equivalent:
 @example
 dump :from 12#B :size 16#B
 dump :size 16#B :from 12#B
+@end example
+
+If this alternate syntax for function calls is to be used in an
+expression, it is necessary to surround it with parenthesis:
+
+@example
+2 + (gcd :a 1024 :b 8)
 @end example
 
 @node Function Types
