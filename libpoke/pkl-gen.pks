@@ -821,11 +821,6 @@
         ;; The lexical address of this method is 0,B where B is 3 +
         ;; element order.  This 3 should be updated if the lexical
         ;; structure of this function changes.
-        ;;
-        ;; XXX note that here we really want to duplicate the
-        ;; environment of the closure, to avoid all the methods
-        ;; to share an environment.  PVM instruction for that?
-        ;; Sounds good.
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
  .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (PKL_AST_DECL_NAME (field))));
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 3 + i);

@@ -1200,7 +1200,6 @@ simple_type_specifier:
 integral_type_specifier:
           integral_type_sign INTEGER '>'
                 {
-                    /* XXX: $3 can be any expression!.  */
                     $$ = pkl_ast_make_integral_type (pkl_parser->ast,
                                                      PKL_AST_INTEGER_VALUE ($2),
                                                      $1);
@@ -1574,15 +1573,9 @@ declaration:
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          $<ast>$))
                     {
-                      /* XXX: in the top-level, rename the old
-                         declaration to "" and add the new one.  */
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
                                  "function or variable `%s' already defined",
                                  PKL_AST_IDENTIFIER_POINTER ($2));
-                      /* XXX: also, annotate the decl to be renaming a
-                         toplevel variable, so the code generator can
-                         do the right thing: to generate a POPVAR
-                         instruction instead of a REGVAR.  */
                       YYERROR;
                     }
 
@@ -1636,8 +1629,6 @@ declaration:
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          $$))
                     {
-                      /* XXX: in the top-level, rename the old
-                         declaration to "" and add the new one.  */
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
                                  "the variable `%s' is already defined",
                                  PKL_AST_IDENTIFIER_POINTER ($2));
@@ -1659,8 +1650,6 @@ declaration:
                                          PKL_AST_IDENTIFIER_POINTER ($2),
                                          $$))
                     {
-                      /* XXX: in the top-level, rename the old
-                         declaration to "" and add the new one.  */
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
                                  "the type `%s' is already defined",
                                  PKL_AST_IDENTIFIER_POINTER ($2));

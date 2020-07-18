@@ -19,7 +19,7 @@
 #include <config.h>
 
 #include "pvm.h"
-#include "pvm-val.h" /* XXX */
+#include "pvm-val.h"
 #include "libpoke.h"
 
 pk_val
