@@ -1,0 +1,14 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+deftype Foo = struct uint<32> { int<16> a; uint<16> b; };
+
+/* { dg-command { .set obase 16 } } */
+
+/* { dg-command { .set endian little } } */
+/* { dg-command { Foo @ 0#B } } */
+/* { dg-output "Foo {a=0x4030H,b=0x2010UH}" } */
+
+/* { dg-command { .set endian big } } */
+/* { dg-command { Foo @ 0#B } } */
+/* { dg-output "\nFoo {a=0x1020H,b=0x3040UH}" } */

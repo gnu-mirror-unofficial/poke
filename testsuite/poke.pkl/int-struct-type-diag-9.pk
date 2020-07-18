@@ -1,15 +1,10 @@
 /* { dg-do compile } */
 
 deftype Foo =
-  struct uint<32> /* { dg-error "total size" } */
-  {
-    struct int<16>
+  struct uint<32>
+  { struct int<15> /* { dg-error "invalid field" } */
     {
-      struct int<15>
-      {
-        int<15> c;
-      } b;
-      uint<1> bit;
+      int<15> c;
     } a;
     int<17> b;
   };

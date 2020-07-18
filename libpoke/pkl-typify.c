@@ -1660,8 +1660,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_integral)
 PKL_PHASE_END_HANDLER
 
 /* The fields in an integral struct type shall be all of integral
-   types (including other integral structs) and the total int size
-   shall match the sum of the sizes of all the fields.
+   types (_not_ including other integral structs) and the total int
+   size shall match the sum of the sizes of all the fields.
 
    Also, labels are not allowed in integral structs.  */
 
@@ -1690,43 +1690,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
            field;
            field = PKL_AST_CHAIN (field))
         {
-          pkl_ast_node itype = NULL;
-
           if (PKL_AST_CODE (field) == PKL_AST_STRUCT_TYPE_FIELD)
             {
               pkl_ast_node ftype
                 = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
 
-              switch (PKL_AST_TYPE_CODE (ftype))
+              if (PKL_AST_TYPE_CODE (ftype) != PKL_TYPE_INTEGRAL)
                 {
-                case PKL_TYPE_INTEGRAL:
-                  itype = ftype;
-                  break;
-                case PKL_TYPE_STRUCT:
-                  if (PKL_AST_TYPE_S_ITYPE (ftype))
-                    {
-                      itype = PKL_AST_TYPE_S_ITYPE (ftype);
-                      break;
-                    }
-                  /* Fallthrough.  */
-                default:
                   PKL_ERROR (PKL_AST_LOC (field),
                              "invalid field in integral struct");
                   PKL_TYPIFY_PAYLOAD->errors++;
                   PKL_PASS_ERROR;
                 }
-            }
 
-          if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field))
-            {
-              PKL_ERROR (PKL_AST_LOC (field),
-                         "labels are not allowed in integral structs");
-              PKL_TYPIFY_PAYLOAD->errors++;
-              PKL_PASS_ERROR;
-            }
+              if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field))
+                {
+                  PKL_ERROR (PKL_AST_LOC (field),
+                             "labels are not allowed in integral structs");
+                  PKL_TYPIFY_PAYLOAD->errors++;
+                  PKL_PASS_ERROR;
+                }
 
-          if (itype)
-            fields_int_size += PKL_AST_TYPE_I_SIZE (itype);
+              fields_int_size += PKL_AST_TYPE_I_SIZE (ftype);
+            }
         }
 
       if (fields_int_size != PKL_AST_TYPE_I_SIZE (struct_type_itype))

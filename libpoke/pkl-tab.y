@@ -1354,7 +1354,7 @@ struct_type_specifier:
                 {
                   /* Register dummies for the locals used in
                      pkl-gen.pks:struct_mapper.  */
-                  pkl_register_dummies (pkl_parser, 3);
+                  pkl_register_dummies (pkl_parser, 4);
                 }
           struct_type_elem_list '}'
                 {

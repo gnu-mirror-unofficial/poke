@@ -1,0 +1,21 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x80 0x23 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+/* First two bytes in base 2: 1000_0000 0010_0011 */
+
+deftype Foo =
+  struct int<16>
+  {
+    int<1> s;
+    uint<15> m;
+  };
+
+/* { dg-command { .set obase 2 } } */
+
+/* { dg-command { .set endian little } } */
+/* { dg-command { Foo @ 0#B } } */
+/* { dg-output "Foo {s=\\(int<1>\\) 0b0,m=\\(uint<15>\\) 0b010001110000000}" } */
+
+/* { dg-command { .set endian big } } */
+/* { dg-command { Foo @ 0#B } } */
+/* { dg-output "\nFoo {s=\\(int<1>\\) 0b1,m=\\(uint<15>\\) 0b000000000100011}" } */
