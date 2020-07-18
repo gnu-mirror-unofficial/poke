@@ -1,5 +1,13 @@
 2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-extract.pk: New file.
+	* poke/pk-cmd.pk: Load pk-extract.pk.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-extract.pk.
+	* doc/poke.texi (extract): New section.
+	* testsuite/poke.cmd/extract-1.pk: New test.
+
+2020-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Import glob module.
 	* poke/pk-cmd.c (pk_cmd_exec_1): Use the more portable `glob' than
 	`wordexp'.

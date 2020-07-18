@@ -153,6 +153,7 @@ Commands
 * dump::			Binary dumps.
 * copy::			Copying data around.
 * save::			Save data into a file.
+* extract::			Extract contents of values to buffers.
 
 Configuration
 * pokerc::			User's initialization file.
@@ -4860,6 +4861,7 @@ If @var{status} is omitted, then the exit status zero will be returned.
 * dump::			Binary dumps.
 * copy::			Copying data around.
 * save::			Save data into a file.
+* extract::			Extract contents of values to memory IOS.
 @end menu
 
 @node dump
@@ -5073,6 +5075,24 @@ By default @command{save} will truncate the output file, if it exists,
 before starting writing.  If the argument @command{append} is
 set as true, however, it will append to the existing contents of the
 file.  In this case, the file should exist.
+
+@node extract
+@section @command{extract}
+@cindex @command{extract}
+
+Use the @command{extract} command in order to create a temporary
+memory IO space with the contents of a mapped value.
+
+This command the has the following prototype:
+
+@example
+defun extract = (any val, string to) void
+@end example
+
+@noindent
+Where @var{val} is a mapped value, and @var{to} is the name of the
+memory IOS to create (or use).  The contents of @var{val} are copied
+to the beginning of the memory IOS @code{*@var{to}*}.
 
 @node Configuration
 @chapter Configuration
