@@ -5013,7 +5013,7 @@ This command has the following prototype:
 defun copy = (int from_ios = get_ios,
               int to_ios = get_ios,
               off64 from = 0#B,
-              off64 to = 0#B,
+              off64 to = from,
               off64 size = 0#B) void
 @end example
 
@@ -5026,8 +5026,9 @@ copy.  By default, this region is taken from the current IO space, but
 this can be overwritten using the optional @code{from_ios} argument.
 
 The argument @code{to} tells @command{copy} where to copy the stuff.
-Again, this offset is applied to the current IO space by default, but
-this can be overwritten using the @code{to_ios} argument.
+It defaults to @code{from}.  Again, this offset is applied to the
+current IO space by default, but this can be overwritten using the
+@code{to_ios} argument.
 
 Note that it is allowed for the source and destination ranges to
 overlap.
