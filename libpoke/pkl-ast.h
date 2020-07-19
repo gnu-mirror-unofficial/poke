@@ -853,7 +853,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    type, NFIELD is the number of fields, and NDECL is the number of
    declarations.  ELEMS is a chain of elements, which can be
    PKL_AST_STRUCT_TYPE_FIELD or PKL_AST_DECL nodes, potentially mixed.
-   PINNED is 1 if the struct is pinned, 0 otherwise.  MAPPER, WRITER
+   PINNED_P is 1 if the struct is pinned, 0 otherwise.  MAPPER, WRITER
    CONSTRUCTOR and COMPARATOR are used to hold closures, or PVM_NULL.
    INT_TYPE, if not NULL, is an AST node with an integral type, that
    defines the nature of this struct type as integral.
@@ -892,7 +892,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
 #define PKL_AST_TYPE_S_ELEMS(AST) ((AST)->type.val.sct.elems)
-#define PKL_AST_TYPE_S_PINNED(AST) ((AST)->type.val.sct.pinned)
+#define PKL_AST_TYPE_S_PINNED_P(AST) ((AST)->type.val.sct.pinned_p)
 #define PKL_AST_TYPE_S_UNION_P(AST) ((AST)->type.val.sct.union_p)
 #define PKL_AST_TYPE_S_MAPPER(AST) ((AST)->type.val.sct.mapper)
 #define PKL_AST_TYPE_S_WRITER(AST) ((AST)->type.val.sct.writer)
@@ -945,7 +945,7 @@ struct pkl_ast_type
       size_t ndecl;
       union pkl_ast_node *elems;
       union pkl_ast_node *itype;
-      int pinned;
+      int pinned_p;
       int union_p;
       pvm_val mapper;
       pvm_val writer;
@@ -990,7 +990,7 @@ pkl_ast_node pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype,
 pkl_ast_node pkl_ast_make_struct_type (pkl_ast ast, size_t nelem, size_t nfield,
                                        size_t ndecl, pkl_ast_node itype,
                                        pkl_ast_node elems,
-                                       int pinned, int union_p)
+                                       int pinned_p, int union_p)
   __attribute__ ((visibility ("hidden")));
 
 pkl_ast_node pkl_ast_make_offset_type (pkl_ast ast, pkl_ast_node base_type,

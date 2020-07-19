@@ -932,7 +932,7 @@
         nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
         popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
         ;; If the struct is pinned, replace NEBOFF with BOFF
- .c   if (PKL_AST_TYPE_S_PINNED (type_struct))
+ .c   if (PKL_AST_TYPE_S_PINNED_P (type_struct))
  .c   {
         drop
         pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
@@ -1248,7 +1248,7 @@
         ;; Increase off with the siz of the last element.  Note
         ;; the offset starts at 0 since this struct is not mapped,
         ;; unless the struct is pinned.
-   .c if (PKL_AST_TYPE_S_PINNED (type_struct))
+   .c if (PKL_AST_TYPE_S_PINNED_P (type_struct))
    .c {
         push uint<64>0         ; ... ENAME EVAL EBOFF
         dup                    ; ... ENAME EVAL EBOFF NEBOFF

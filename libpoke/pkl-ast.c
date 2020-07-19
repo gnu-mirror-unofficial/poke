@@ -417,7 +417,7 @@ pkl_ast_make_struct_type (pkl_ast ast,
                           size_t ndecl,
                           pkl_ast_node itype,
                           pkl_ast_node struct_type_elems,
-                          int pinned, int union_p)
+                          int pinned_p, int union_p)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
 
@@ -429,7 +429,7 @@ pkl_ast_make_struct_type (pkl_ast ast,
     PKL_AST_TYPE_S_ELEMS (type) = ASTREF (struct_type_elems);
   if (itype)
     PKL_AST_TYPE_S_ITYPE (type) = ASTREF (itype);
-  PKL_AST_TYPE_S_PINNED (type) = pinned;
+  PKL_AST_TYPE_S_PINNED_P (type) = pinned_p;
   PKL_AST_TYPE_S_UNION_P (type) = union_p;
   PKL_AST_TYPE_S_MAPPER (type) = PVM_NULL;
   PKL_AST_TYPE_S_WRITER (type) = PVM_NULL;
@@ -597,7 +597,7 @@ pkl_ast_dup_type (pkl_ast_node type)
             = pkl_ast_chainon (PKL_AST_TYPE_S_ELEMS (new),
                                struct_type_elem);
           PKL_AST_TYPE_S_ELEMS (new) = ASTREF (PKL_AST_TYPE_S_ELEMS (type));
-          PKL_AST_TYPE_S_PINNED (new) = PKL_AST_TYPE_S_PINNED (type);
+          PKL_AST_TYPE_S_PINNED_P (new) = PKL_AST_TYPE_S_PINNED_P (type);
           PKL_AST_TYPE_S_UNION_P (new) = PKL_AST_TYPE_S_UNION_P (type);
         }
       break;
@@ -2654,7 +2654,7 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
               PRINT_AST_SUBAST (etype, TYPE_A_ETYPE);
               break;
             case PKL_TYPE_STRUCT:
-              PRINT_AST_IMM (pinned, TYPE_S_PINNED, "%d");
+              PRINT_AST_IMM (pinned_p, TYPE_S_PINNED_P, "%d");
               PRINT_AST_IMM (union_p, TYPE_S_UNION_P, "%d");
               PRINT_AST_IMM (nelem, TYPE_S_NELEM, "%zu");
               PRINT_AST_IMM (nfield, TYPE_S_NFIELD, "%zu");
