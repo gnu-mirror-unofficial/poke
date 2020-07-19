@@ -1324,7 +1324,7 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_INSERTER
-;;;       @struct_itype
+;;;                       @struct_itype @field_type #ivalw #fieldw
 ;;; ( IVAL SCT I -- NIVAL )
 ;;;
 ;;; Macro that given a struct, a field index and an ival, inserts
