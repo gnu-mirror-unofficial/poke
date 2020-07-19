@@ -1,5 +1,26 @@
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (elf_stv_names): Define.
+	(STT_NOTYPE): Likewise.
+	(STT_OBJECT): Likewise.
+	(STT_FUNC): Likewise.
+	(STT_SECTION): Likewise.
+	(STT_FILE): Likewise.
+	(STT_COMMON): Likewise.
+	(STT_TLS): Likewise.
+	(STT_NUM): Likewise.
+	(STT_LOOS): Likewise.
+	(STT_GNU_IFUNC): Likewise.
+	(STT_HIOS): Likewise.
+	(STT_LOPROC): Likewise.
+	(STT_HIPROC): Likewise.
+	(elf_stt_names): Likewise.
+	(elf_stb_names): Likewise.
+	(Elf64_Sym): Pretty-printers for st_info and st_other.
+	* TODO: Update.
+
+2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_field_inserter): Remove description
 	of the no-longer required C environment for this macro.
 	* libpoke/ras: Document how macro/function arguments can be
