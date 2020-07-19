@@ -841,7 +841,7 @@
         regvar $nfield
         ;; If the struct is integral, map the integer from which the
         ;; value of the fields will be derived.  Otherwise, just register
-        ;; a dummy 0UL that will never be used.
+        ;; a dummy value that will never be used.
   .c if (PKL_AST_TYPE_S_ITYPE (type_struct))
   .c {
         pushvar $ios
@@ -850,7 +850,7 @@
   .c }
   .c else
   .c {
-        push ulong<64>0
+        push null
   .c }
         regvar $ivalue
         pushvar $boff           ; BOFF
