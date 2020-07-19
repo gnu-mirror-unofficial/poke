@@ -90,7 +90,7 @@ deftype Elf64_Sym =
   struct
   {
     offset<Elf_Word,B> st_name;
-    struct uint<8>
+    struct
     {
       uint<4> st_bind;
       uint<4> st_type;

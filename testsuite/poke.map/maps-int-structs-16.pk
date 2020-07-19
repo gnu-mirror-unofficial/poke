@@ -4,17 +4,18 @@
 /* Writing integral structs with optional fields.  */
 
 deftype Foo =
-  struct int<32>
+  struct int<40>
   {
     int<16> a;
-    offset<uint<16>,B> b if a == 0x4030;
+    offset<uint<16>,B> b;
+    int<8> c;
   };
 
 /* { dg-command { .set obase 16 } } */
 
 /* { dg-command { .set endian little } } */
 /* { dg-command { defvar f = Foo @ 0#B } } */
-/* { dg-command { f.b = 0x2211#B } } */
+/* { dg-command { f.b = 0x2211UH#B } } */
 
-/* { dg-command { dump :from 0#B :size 4#B :group_by 1#B :ruler 0 :ascii 0 } } */
-/* { dg-output "00000000: 11 22 30 40" } */
+/* { dg-command { dump :from 0#B :size 5#B :group_by 1#B :ruler 0 :ascii 0 } } */
+/* { dg-output "00000000: 10 11 22 40 50" } */

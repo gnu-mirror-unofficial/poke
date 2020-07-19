@@ -1,5 +1,12 @@
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.map/maps-int-structs-14.pk: Avoid cast.
+	* testsuite/poke.map/maps-int-structs-16.pk: Likewise.
+	* pickles/elf.pk (Elf64_Sym): st_info should not be an integral
+	struct.
+
+2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_writer): Support integral structs.
 	(struct_field_inserter): New macro.
 	* libpoke/pvm.jitter (srefia): Fix instruction.
