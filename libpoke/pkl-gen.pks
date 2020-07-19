@@ -1324,7 +1324,7 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_INSERTER
-;;;       @struct_itype 
+;;;       @struct_itype
 ;;; ( IVAL SCT I -- NIVAL )
 ;;;
 ;;; Macro that given a struct, a field index and an ival, inserts
@@ -1372,7 +1372,7 @@
         push #fieldw            ; SCT I EVAL (IVALW-EOFF) FIELDW [IVAL EVAL]
         sublu
         nip2                    ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL EVAL]
-        ;; Convert EVAL to the struct itype        
+        ;; Convert EVAL to the struct itype
         fromr                   ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
  .c   if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
  .c   {
@@ -1468,14 +1468,14 @@
         push null
         ;; If the struct is integral, initialize $ivalue to
         ;; 0, of the corresponding type.  We use a constructor
-        ;; to generate it. 
+        ;; to generate it.
   .c if (PKL_AST_TYPE_S_ITYPE (type_struct))
-  .c {        
+  .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
-  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct));        
+  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct));
   .c    PKL_GEN_PAYLOAD->in_constructor = 0;
   .c    PKL_GEN_PAYLOAD->in_writer = 1;
   .c }
@@ -1491,7 +1491,7 @@
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
                                 ; SCT I
  .c  if (PKL_AST_TYPE_S_ITYPE (type_struct))
- .c  {        
+ .c  {
  .c     pkl_ast_node struct_itype = PKL_AST_TYPE_S_ITYPE (type_struct);
  .c     pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
  .c     size_t struct_itype_size = PKL_AST_TYPE_I_SIZE (struct_itype);
