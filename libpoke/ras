@@ -110,6 +110,10 @@
 # is copied verbatim and ras knows nothing about its contents, so
 # please be careful.
 #
+# Note that macro and function arguments (like @this or @that) can be
+# referred in literal C code as this_arg and that_arg, respectively,
+# i.e. adding a suffix `_arg' to the argument name.
+#
 # Loops
 # -----
 #

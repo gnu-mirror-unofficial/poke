@@ -1,5 +1,12 @@
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_field_inserter): Remove description
+	of the no-longer required C environment for this macro.
+	* libpoke/ras: Document how macro/function arguments can be
+	referred inside literal C directives.
+
+2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.map/maps-int-structs-14.pk: Avoid cast.
 	* testsuite/poke.map/maps-int-structs-16.pk: Likewise.
 	* pickles/elf.pk (Elf64_Sym): st_info should not be an integral

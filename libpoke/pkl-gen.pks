@@ -1343,13 +1343,6 @@
 ;;;
 ;;; #fieldw is an ulong<64> value with the width (in bits) of the
 ;;; field being extracted.
-;;;
-;;; C environment required:
-;;;
-;;; `type_struct' is an AST node with the type of the struct being
-;;;  written.
-;;;
-;;; `field' is a pkl_ast_node with the type of the field to write.
 
         .macro struct_field_inserter @struct_itype @field_type #ivalw #fieldw
         ;; Do not insert absent fields.
