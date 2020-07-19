@@ -3831,14 +3831,15 @@ instruction srefia ()
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
+    int absent_p;
 
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
             PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
       PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
-    JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_ABSENT_P (sct,
-                                                   PVM_VAL_ULONG (index)));
+    absent_p = PVM_VAL_SCT_FIELD_ABSENT_P (sct, PVM_VAL_ULONG (index));
+    JITTER_PUSH_STACK (pvm_make_int (absent_p, 32));
   end
 end
 

@@ -904,7 +904,6 @@
  .c        = (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_OFFSET
  .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (field_type))
  .c           : PKL_AST_TYPE_I_SIZE (field_type));
-
         ;; Note that at this point the field is assured to be
         ;; an integral type, as per typify.
         rot                      ; ...[EBOFF ENAME EVAL] NEBOFF OFF IOS
@@ -1324,6 +1323,91 @@
         return
         .end
 
+;;; RAS_MACRO_STRUCT_FIELD_INSERTER
+;;;       @struct_itype 
+;;; ( IVAL SCT I -- NIVAL )
+;;;
+;;; Macro that given a struct, a field index and an ival, inserts
+;;; the value of the field in the ival and pushes the new ival.
+;;;
+;;; Macro-arguments:
+;;;
+;;; @struct_itype is the AST node with the type of the struct being
+;;; processed.
+;;;
+;;; @field_type is the AST node with the type of the field being
+;;; extracted.
+;;;
+;;; #ivalw is an ulong<64> value with the width (in bits) of the
+;;; integral value corresponding to the entire integral struct.
+;;;
+;;; #fieldw is an ulong<64> value with the width (in bits) of the
+;;; field being extracted.
+;;;
+;;; C environment required:
+;;;
+;;; `type_struct' is an AST node with the type of the struct being
+;;;  written.
+;;;
+;;; `field' is a pkl_ast_node with the type of the field to write.
+
+        .macro struct_field_inserter @struct_itype @field_type #ivalw #fieldw
+        ;; Do not insert absent fields.
+        srefia                  ; IVAL SCT I ABSENT_P
+        bnzi .omitted_field
+        drop                    ; IVAL SCT
+        ;; Insert the value of the field in IVAL:
+        ;;
+        ;; IVAL = IVAL | (EVAL << (ival_width - EOFF - field_width))
+        ;;
+        rot                     ; SCT I IVAL
+        tor                     ; SCT I [IVAL]
+        srefi                   ; SCT I EVAL [IVAL]
+        tor                     ; SCT I [IVAL EVAL]
+        srefio                  ; SCT I EOFF [IVAL EVAL]
+        push #ivalw             ; SCT I EOFF IVALW [IVAL EVAL]
+        swap                    ; SCT I IVALW EOFF [IVAL EVAL]
+        sublu
+        nip2                    ; SCT I (IVALW-EOFF) [IVAL EVAL]
+        push #fieldw            ; SCT I EVAL (IVALW-EOFF) FIELDW [IVAL EVAL]
+        sublu
+        nip2                    ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL EVAL]
+        ;; Convert EVAL to the struct itype        
+        fromr                   ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
+ .c   if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
+ .c   {
+        ;; EVAL is an offset, but we are interested in its magnitude.
+        ogetm
+        nip                     ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_NTON,
+ .c                   PKL_AST_TYPE_O_BASE_TYPE (field_type_arg),
+ .c                   struct_itype_arg);
+ .c   }
+ .c   else
+ .c   {
+        nton @field_type, @struct_itype
+ .c   }
+        nip                     ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
+        swap                    ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL]
+        lutoiu 32
+        nip                     ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL]
+        sl @struct_itype
+        nip2                    ; SCT I (EVAL<<(IVALW-EOFF-FIELDW)) [IVAL]
+        fromr                   ; SCT I (EVAL<<(IVALW-EOFF-FIELDW)) IVAL
+        bor @struct_itype
+        nip2                    ; SCT I ((EVAL<<(IVALW-EOFF-FIELDW))|IVAL)
+        nip2                    ; ((EVAL<<(IVALW-EOFF-FIELDW))|IVAL)
+        ba .next
+.omitted_field:
+        ;; Field ommitted => IVAL stays unmodified.
+        ;; XXX this doens't work with absent fields, as it results
+        ;; on zeroes in the portions occupied by the absent field.
+        drop                    ; IVAL SCT I
+        drop                    ; IVAL SCT
+        drop                    ; IVAL
+.next:
+        .end
+
 ;;; RAS_MACRO_STRUCT_FIELD_WRITER
 ;;; ( IOS SCT I -- )
 ;;;
@@ -1379,8 +1463,23 @@
 
         .function struct_writer
         prolog
-        pushf 1
+        pushf 2
         regvar $sct             ; Argument
+        push null
+        ;; If the struct is integral, initialize $ivalue to
+        ;; 0, of the corresponding type.  We use a constructor
+        ;; to generate it. 
+  .c if (PKL_AST_TYPE_S_ITYPE (type_struct))
+  .c {        
+        ;; Note that the constructor consumes the null
+        ;; on the stack.
+  .c    PKL_GEN_PAYLOAD->in_writer = 0;
+  .c    PKL_GEN_PAYLOAD->in_constructor = 1;
+  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct));        
+  .c    PKL_GEN_PAYLOAD->in_constructor = 0;
+  .c    PKL_GEN_PAYLOAD->in_writer = 1;
+  .c }
+        regvar $ivalue
 .c { uint64_t i;
  .c for (i = 0, field = type_struct_elems; field; field = PKL_AST_CHAIN (field))
  .c {
@@ -1389,14 +1488,47 @@
         ;; Poke this struct field, but only if it has been modified
         ;; since the last mapping.
         pushvar $sct            ; SCT
-        mgetios                 ; SCT IOS
-        swap                    ; IOS SCT
-        .c pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
-                                ; IOS SCT I
-        .e struct_field_writer
- .c   i = i + 1;
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
+                                ; SCT I
+ .c  if (PKL_AST_TYPE_S_ITYPE (type_struct))
+ .c  {        
+ .c     pkl_ast_node struct_itype = PKL_AST_TYPE_S_ITYPE (type_struct);
+ .c     pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
+ .c     size_t struct_itype_size = PKL_AST_TYPE_I_SIZE (struct_itype);
+ .c     size_t field_type_size
+ .c        = (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_OFFSET
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (field_type))
+ .c           : PKL_AST_TYPE_I_SIZE (field_type));
+        pushvar $ivalue          ; SCT I IVAL
+        nrot                     ; IVAL SCT I
+ .c     RAS_MACRO_STRUCT_FIELD_INSERTER (struct_itype,
+ .c                                      field_type,
+ .c                                      pvm_make_ulong (struct_itype_size, 64),
+ .c                                      pvm_make_ulong (field_type_size, 64));
+                                 ; NIVAL
+        popvar $ivalue           ; _
+ .c  }
+ .c  else
+ .c  {
+        swap                    ; I SCT
+        mgetios                 ; I SCT IOS
+        swap                    ; I IOS SCT
+        rot                     ; IOS SCT I
+        .e struct_field_writer  ; _
+ .c  }
+ .c    i = i + 1;
  .c }
-.c }
+        .c }
+        ;; If the struct is integral, poke the ival.
+ .c if (PKL_AST_TYPE_S_ITYPE (type_struct))
+ .c {
+        pushvar $sct            ; SCT
+        mgetios                 ; SCT IOS
+        nip                     ; IOS
+        push ulong<64>0         ; IOS 0UL
+        pushvar $ivalue         ; IOS 0UL IVAL
+ .c     PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct));
+ .c }
         popf 1
         push null
         return

@@ -5,9 +5,9 @@ deftype Foo = struct int<32> { int<16> a; uint<16> b; };
 
 /* { dg-command { .set obase 16 } } */
 
-/* { dg-command { .set endian little } } */
+/* { dg-command { .set endian big } } */
 /* { dg-command { defvar f = Foo @ 0#B } } */
-/* { dg-command { f.b = 0x2211 } } */
+/* { dg-command { f.b = 0x3344 } } */
 
 /* { dg-command { dump :from 0#B :size 4#B :group_by 1#B :ruler 0 :ascii 0 } } */
-/* { dg-output "00000000: 11 22 30 40" } */
+/* { dg-output "00000000: 10 20 33 44" } */
