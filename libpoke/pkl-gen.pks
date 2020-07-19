@@ -727,29 +727,44 @@
         ;; (ival_width - field_width) - (field_offset - struct_offset)
         ;;
         over                            ; IVAL BOFF SBOFF BOFF
-        over                            ; IVAL BOFF SBOFF BOFF SBOFF
+        swap                            ; IVAL BOFF BOFF SBOFF
         sublu
-        nip2                            ; IVAL BOFF SBOFF (BOFF-SBOFF)
-        push #ivalw                     ; IVAL BOFF SBOFF (BOFF-SBOFF) IVALW
-        push #fieldw                    ; IVAL BOFF SBOFF (BOFF-SBOFF) IVALW FIELDW
+        nip2                            ; IVAL BOFF (BOFF-SBOFF)
+        push #ivalw                     ; IVAL BOFF (BOFF-SBOFF) IVALW
+        push #fieldw                    ; IVAL BOFF (BOFF-SBOFF) IVALW FIELDW
         sublu
-        nip2                            ; IVAL BOFF SBOFF (BOFF-SBOFF) (IVALW-FIELDW)
-        swap                            ; IVAL BOFF SBOFF (IVALW-FIELDW) (BOFF-SBOFF)
+        nip2                            ; IVAL BOFF (BOFF-SBOFF) (IVALW-FIELDW)
+        swap                            ; IVAL BOFF (IVALW-FIELDW) (BOFF-SBOFF)
         sublu
-        nip2                            ; IVAL BOFF SBOFF ((IVALW-FIELDW)-(BOFF-SBOFF))
-        nrot                            ; IVAL SCOUNT BOFF SBOFF
-        ;; Increase OFF by the label, if the field has one.
-        ;; XXX for the moment no labels are allowed in integral
-        ;; structs.
-        ;; .e handle_struct_field_label    ; IVAL SCOUNT BOFF
-        drop                            ; IVAL SCOUNT BOFF
-        nrot                            ; BOFF IVAL SCOUNT
+        nip2                            ; IVAL BOFF ((IVALW-FIELDW)-(BOFF-SBOFF))
+        quake                           ; BOFF IVAL SCOUNT
         lutoiu 32
         nip                             ; BOFF IVAL SCOUNT(U)
+        ;; Using the calculated bit-count, extract the value of the
+        ;; field from the struct ival.  The resulting value is converted
+        ;; to the type of the field. (base type if the field is offset.)
         sr @struct_itype
         nip2                            ; BOFF VAL
+   .c if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
+   .c   pkl_asm_insn (RAS_ASM, PKL_INSN_NTON,
+   .c                 struct_itype_arg,
+   .c                 PKL_AST_TYPE_O_BASE_TYPE (field_type_arg));
+   .c else
+   .c {
         nton @struct_itype, @field_type
+   .c }
         nip                             ; BOFF VALC
+        ;; At this point we have either the value of the field is in the
+        ;; stack.  If the field is an offset, construct it.
+   .c if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
+   .c {
+   .c   pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (field_type_arg) ;
+   .c
+   .c   pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
+   .c                 pvm_make_ulong (PKL_AST_INTEGER_VALUE (unit), 64));
+                                        ; BOFF MVALC UNIT
+        mko                             ; BOFF VALC
+   .c }
         dup                             ; BOFF VALC VALC
         regvar $val                     ; BOFF VALC
         .c vars_registered++;
@@ -885,7 +900,10 @@
  .c     pkl_ast_node struct_itype = PKL_AST_TYPE_S_ITYPE (type_struct);
  .c     pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
  .c     size_t struct_itype_size = PKL_AST_TYPE_I_SIZE (struct_itype);
- .c     size_t field_type_size = PKL_AST_TYPE_I_SIZE (field_type);
+ .c     size_t field_type_size
+ .c        = (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_OFFSET
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (field_type))
+ .c           : PKL_AST_TYPE_I_SIZE (field_type));
 
         ;; Note that at this point the field is assured to be
         ;; an integral type, as per typify.

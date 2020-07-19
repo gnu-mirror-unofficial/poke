@@ -70,12 +70,10 @@ defvar ctf_kind_str =
    "typedef", "volatile", "const", "restrict"];
 
 deftype CTF_Name =
-  struct
+  struct uint<32>
   {
-    uint<1> stid
-       @ get_endian == ENDIAN_LITTLE ? 31#b : 0#b;
-    offset<uint<31>,B> offset
-       @ get_endian == ENDIAN_LITTLE ? 0#b : 31#b;
+    uint<1> stid;
+    offset<uint<31>,B> offset;
 
     method _print = void:
       {

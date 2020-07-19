@@ -1659,9 +1659,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_integral)
 }
 PKL_PHASE_END_HANDLER
 
-/* The fields in an integral struct type shall be all of integral
-   types (_not_ including other integral structs) and the total int
-   size shall match the sum of the sizes of all the fields.
+/* The fields in an integral struct type shall be all of integral or
+   offset types (_not_ including other integral structs) and the total
+   int size shall match the sum of the sizes of all the fields.
+
+   The total size declared in the integral struct should exactly match
+   the size of all the contained fields.
 
    Also, labels are not allowed in integral structs.  */
 
@@ -1695,7 +1698,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
               pkl_ast_node ftype
                 = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
 
-              if (PKL_AST_TYPE_CODE (ftype) != PKL_TYPE_INTEGRAL)
+              if (PKL_AST_TYPE_CODE (ftype) != PKL_TYPE_INTEGRAL
+                  && PKL_AST_TYPE_CODE (ftype) != PKL_TYPE_OFFSET)
                 {
                   PKL_ERROR (PKL_AST_LOC (field),
                              "invalid field in integral struct");
@@ -1711,7 +1715,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
                   PKL_PASS_ERROR;
                 }
 
-              fields_int_size += PKL_AST_TYPE_I_SIZE (ftype);
+              if (PKL_AST_TYPE_CODE (ftype) == PKL_TYPE_INTEGRAL)
+                fields_int_size += PKL_AST_TYPE_I_SIZE (ftype);
+              else
+                {
+                  pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (ftype);
+                  fields_int_size += PKL_AST_TYPE_I_SIZE (base_type);
+                }
             }
         }
 

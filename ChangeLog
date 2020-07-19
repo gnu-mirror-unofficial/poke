@@ -1,5 +1,18 @@
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Handle offset
+	fields.
+	* libpoke/pkl-gen.pks (struct_mapper): Support offset fields in
+	integral structs.
+	(struct_field_extractor): Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-12.pk: New test.
+	* testsuite/poke.map/maps-int-structs-11.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-10.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* pickles/ctf.pk (CTF_Name): Turn into an integral struct.
+
+2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_RelInfo): Turn into an integral struct.
 	(st_info): Likewise.
 	* pickles/ctf.pk (CTF_Type_Id): Likewise.
