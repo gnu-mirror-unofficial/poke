@@ -45,10 +45,10 @@ deftype Elf64_Off = offset<uint<64>,B>;
    architecture-specific.  See the elf-ARCH pickles.  */
 
 deftype Elf64_RelInfo =
-  struct
+  struct uint<64>
   {
-    uint<32> r_sym @ get_endian == ENDIAN_BIG ? 0#b : 32#b;
-    uint<32> r_type @ get_endian == ENDIAN_BIG ? 32#b : 0#b;
+    uint<32> r_sym;
+    uint<32> r_type;
   };
 
 /* r_offset holds a section offset in relocatable files, a virtual
@@ -90,10 +90,10 @@ deftype Elf64_Sym =
   struct
   {
     offset<Elf_Word,B> st_name;
-    struct
+    struct uint<8>
     {
-      uint<4> st_bind @ get_endian == ENDIAN_BIG ? 0#b : 4#b;
-      uint<4> st_type @ get_endian == ENDIAN_BIG ? 4#b : 0#b;
+      uint<4> st_bind;
+      uint<4> st_type;
     } st_info;
 
     uint<8> st_other;

@@ -1,5 +1,12 @@
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_RelInfo): Turn into an integral struct.
+	(st_info): Likewise.
+	* pickles/ctf.pk (CTF_Type_Id): Likewise.
+	(CTF_Info): Likewise.
+
+2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_mapper): Use null as a dummy and not
 	an uint<64>0.
 
