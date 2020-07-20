@@ -34,7 +34,7 @@
         msetios
         .end
 
-;;; RAS_FUNCTION_ARRAY_MAPPER
+;;; RAS_FUNCTION_ARRAY_MAPPER @array_type
 ;;; ( IOS BOFF EBOUND SBOUND -- ARR )
 ;;;
 ;;; Assemble a function that maps an array value at the given
@@ -56,11 +56,11 @@
 ;;; Only one of EBOUND or SBOUND simultanously are supported.
 ;;; Note that OFF should be of type offset<uint<64>,*>.
 ;;;
-;;; The C environment required is:
+;;; Macro arguments:
 ;;;
-;;; `array_type' is a pkl_ast_node with the array type being mapped.
+;;; @array_type is a pkl_ast_node with the array type being mapped.
 
-        .function array_mapper
+        .function array_mapper @array_type
         prolog
         pushf 6
         regvar $sbound           ; Argument
@@ -82,7 +82,7 @@
         ;; evaluating the boundary expression in the array type
         ;; twice.
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
                                 ; OFF ETYPE
         pushvar $ebound         ; OFF ETYPE EBOUND
@@ -127,7 +127,7 @@
         pushe .constraint_error
         pushvar $ios            ; ... EBOFF EBOFF IOS
         swap                    ; ... EBOFF IOS EBOFF
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
         pope
         pope
         ;; Update the current offset with the size of the value just
@@ -233,7 +233,7 @@
         raise
         .end
 
-;;; RAS_FUNCTION_ARRAY_VALMAPPER
+;;; RAS_FUNCTION_ARRAY_VALMAPPER @array_type
 ;;; ( VAL NVAL BOFF -- ARR )
 ;;;
 ;;; Assemble a function that "valmaps" a given NVAL at the given
@@ -244,8 +244,12 @@
 ;;; NVAL violate the bounds of the map.
 ;;;
 ;;; Note that OFF should be of type offset<uint<64>,*>.
+;;;
+;;; Macro arguments:
+;;;
+;;; @array_type is a pkl_ast_node with the array type being mapped.
 
-        .function array_valmapper
+        .function array_valmapper @array_type
         prolog
         pushf 8
         regvar $boff            ; Argument
@@ -294,7 +298,7 @@
         ;; evaluating the boundary expression in the array type
         ;; twice.
         .c PKL_GEN_PAYLOAD->in_valmapper = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
         .c PKL_GEN_PAYLOAD->in_valmapper = 1;
                                 ; BOFF ETYPE
         pushvar $ebound         ; BOFF ETYPE EBOUND
@@ -324,7 +328,7 @@
         aref                    ; ... EBOFF ENVAL EBOFF VAL EIDX OVAL
         nip2                    ; ... EBOFF ENVAL EBOFF OVAL
         nrot                    ; ... EBOFF OVAL ENVAL EBOFF
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
                                 ; ... EBOFF EVAL
         ;; Update the current offset with the size of the value just
         ;; peeked.
@@ -373,15 +377,20 @@
         raise
         .end
 
-;;; RAS_FUNCTION_ARRAY_WRITER
+;;; RAS_FUNCTION_ARRAY_WRITER @array_type
 ;;; ( VAL -- )
 ;;;
 ;;; Assemble a function that pokes a mapped array value.
 ;;;
 ;;; Note that it is important for the elements of the array to be
 ;;; poked in order.
+;;;
+;;; Macro arguments:
+;;;
+;;; @array_type is an AST node with the type of the array being
+;;; written.
 
-        .function array_writer
+        .function array_writer @array_type
         prolog
         pushf 3
         mgetios                 ; ARRAY IOS
@@ -409,7 +418,7 @@
         pushvar $ios            ; EBOFF VAL IOS
         nrot                    ; IOS EOFF VAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
         .c PKL_GEN_PAYLOAD->in_writer = 0;
                                 ; _
         ;; Increase the current index and process the next
@@ -425,7 +434,7 @@
         return
         .end                    ; array_writer
 
-;;; RAS_FUNCTION_ARRAY_BOUNDER
+;;; RAS_FUNCTION_ARRAY_BOUNDER @array_type
 ;;; ( _ -- BOUND )
 ;;;
 ;;; Assemble a function that returns the boundary of an array type.
@@ -435,16 +444,16 @@
 ;;; Note how this function doesn't introduce any lexical level.  This
 ;;; is important, so keep it this way!
 ;;;
-;;; The C environment required is:
+;;; Macro arguments:
 ;;;
-;;; `array_type' is a pkl_ast_node with the type of ARR.
+;;; @array_type is a pkl_ast_node with the type of ARR.
 
-        .function array_bounder
+        .function array_bounder @array_type
         prolog
-        .c if (PKL_AST_TYPE_A_BOUND (array_type))
+        .c if (PKL_AST_TYPE_A_BOUND (array_type_arg))
         .c {
         .c   PKL_GEN_PAYLOAD->in_array_bounder = 0;
-        .c   PKL_PASS_SUBPASS (PKL_AST_TYPE_A_BOUND (array_type)) ;
+        .c   PKL_PASS_SUBPASS (PKL_AST_TYPE_A_BOUND (array_type_arg)) ;
         .c   PKL_GEN_PAYLOAD->in_array_bounder = 1;
         .c }
         .c else
@@ -452,7 +461,7 @@
         return
         .end
 
-;;; RAS_FUNCTION_ARRAY_CONSTRUCTOR
+;;; RAS_FUNCTION_ARRAY_CONSTRUCTOR @array_type
 ;;; ( EBOUND SBOUND -- ARR )
 ;;;
 ;;; Assemble a function that constructs an array value of a given
@@ -464,11 +473,11 @@
 ;;;
 ;;; Empty arrays are always constructed for unbounded arrays.
 ;;;
-;;; The C environment required is:
+;;; Macro arguments:
 ;;;
-;;; `array_type' is a pkl_ast_node with the array type being constructed.
+;;; @array_type is a pkl_ast_node with the array type being constructed.
 
-        .function array_constructor
+        .function array_constructor @array_type
         prolog
         pushf 4                 ; EBOUND SBOUND
         ;; If both bounds are null, then ebound is 0.
@@ -497,7 +506,7 @@
         push null               ; null
         ;; Build the type of the constructed array.
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
                                 ; null ATYPE
         ;; Ok, loop to add elements to the constructed array.
@@ -522,7 +531,7 @@
         pushvar $eboff          ; ... EBOFF
         pushvar $eidx           ; ... EBOFF EIDX
         push null               ; ... EBOFF null
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
                                 ; ... EBOFF EIDX EVAL
         ;; Update the bit offset.
         siz                     ; ... EBOFF EIDX EVAL ESIZ
@@ -706,10 +715,6 @@
 ;;; field being extracted.
 ;;;
 ;;; The C environment required is:
-;;;
-;;; `type_struct' is a pkl_ast_node with the struct type being
-;;;  processed.
-;;;
 ;;;
 ;;; `vars_registered' is a size_t that contains the number
 ;;; of field-variables registered so far.

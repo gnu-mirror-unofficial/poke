@@ -227,7 +227,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_A_WRITER (array_type) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_writer = 1;
-                RAS_FUNCTION_ARRAY_WRITER (writer_closure);
+                RAS_FUNCTION_ARRAY_WRITER (writer_closure, array_type);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
@@ -239,7 +239,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_A_MAPPER (array_type) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_mapper = 1;
-                RAS_FUNCTION_ARRAY_MAPPER (mapper_closure);
+                RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
@@ -251,7 +251,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_A_CONSTRUCTOR (array_type) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_constructor = 1;
-                RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor_closure);           /* CLS */
+                RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor_closure,
+                                                array_type);           /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                      /* _ */
@@ -2206,7 +2207,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
              current environment.  This is used when assigning array
              values to mapped arrays.  */
                                                                      /* VAL NVAL OFF */
-          RAS_FUNCTION_ARRAY_VALMAPPER (mapper_closure);
+          RAS_FUNCTION_ARRAY_VALMAPPER (mapper_closure, array_type);
 
           /* Install the current environment in the valmapper closure,
              arrange the arguments (including the attributes of VAL's
@@ -2229,7 +2230,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
                                                                      /* VAL OFF */
           PKL_GEN_PAYLOAD->in_valmapper = 0;
           PKL_GEN_PAYLOAD->in_mapper = 1;
-          RAS_FUNCTION_ARRAY_MAPPER (mapper_closure);
+          RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
           PKL_GEN_PAYLOAD->in_mapper = 0;
           PKL_GEN_PAYLOAD->in_valmapper = 1;
 
@@ -2281,7 +2282,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
                  current environment.  */
               pvm_val mapper_closure;
 
-              RAS_FUNCTION_ARRAY_MAPPER (mapper_closure);
+              RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
 
               /* Complete the mapper closure with the current
                  environment.  */
@@ -2350,7 +2351,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           pvm_val writer_closure;
 
           /* Compile a writer function to a closure.  */
-          RAS_FUNCTION_ARRAY_WRITER (writer_closure);
+          RAS_FUNCTION_ARRAY_WRITER (writer_closure, array_type);
 
           /* Complete the writer closure with the current
              environment.  */
@@ -2380,7 +2381,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
         {
-          RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure);
+          RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure, array_type);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, bounder_closure); /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                   /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                  /* _ */
@@ -2452,7 +2453,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor); /* EBOUND SBOUND CLS */
       else
         {
-          RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor);
+          RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor, array_type);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
         }
