@@ -989,7 +989,8 @@
  .c     i++;
  .c }
         ;; Push the number of methods.
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (nmethod, 64));
+        .let #nmethods = pvm_make_ulong (nmethod, 64)
+        push #nmethods
  .c }
         ;;  Push the number of fields
         pushvar $nfield         ; BOFF [EBOFF STR VAL]... NFIELD
@@ -1030,12 +1031,12 @@
  .c       @field;
  .c       @field = PKL_AST_CHAIN (@field), ++i)
  .c  {
+        .let #i = pvm_make_ulong (i, 64)
  .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c       continue;
         ;; Compare the fields of both structs.
         tor                     ; SCT1 [SCT2]
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
-                                ; SCT1 I [SCT2]
+        push #i                 ; SCT1 I [SCT2]
         srefi                   ; SCT1 I VAL1 [SCT2]
         swap                    ; SCT1 VAL1 I [SCT2]
         fromr                   ; SCT1 VAL1 I SCT2
@@ -1079,8 +1080,8 @@
  .c       PKL_PASS_SUBPASS (field_type);
  .c     else
  .c     {
- .c       pkl_asm_insn (RAS_ASM, PKL_INSN_EQ,
- .c                     PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        eq @field_type
  .c     }
         nip2                    ; SCT1 SCT2 (VAL1==VAL2)
         bzi .done
@@ -1151,9 +1152,8 @@
  .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
  .c   if (field_name)
  .c   {
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
- .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name)));
-                               ; ... SCT ENAME
+        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
+        push #field_name_str   ; ... SCT ENAME
         ;; Get the value of the field in $sct.
         srefnt                 ; ... SCT ENAME EVAL
  .c   }
@@ -1316,7 +1316,8 @@
  .c     i++;
  .c }
         ;; Push the number of methods.
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (nmethod, 64));
+        .let #nmethod = pvm_make_ulong (nmethod, 64)
+        push #nmethod
  .c }
         ;; Push the number of fields, create the struct and return it.
         pushvar $nfield        ; null [OFF STR VAL]... NFIELD
@@ -1376,11 +1377,10 @@
  .c   if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
  .c   {
         ;; EVAL is an offset, but we are interested in its magnitude.
+        .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@field_type)
         ogetm
         nip                     ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_NTON,
- .c                   PKL_AST_TYPE_O_BASE_TYPE (@field_type),
- .c                   @struct_itype);
+        nton @base_type, @struct_itype
  .c   }
  .c   else
  .c   {
@@ -1482,13 +1482,13 @@
  .c      @field;
  .c      @field = PKL_AST_CHAIN (@field))
  .c {
+        .let #i = pvm_make_ulong (i, 64)
  .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c       continue;
         ;; Poke this struct field, but only if it has been modified
         ;; since the last mapping.
         pushvar $sct            ; SCT
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
-                                ; SCT I
+        push #i                 ; SCT I
  .c  if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c  {
         .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct);

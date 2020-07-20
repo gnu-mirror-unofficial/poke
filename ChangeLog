@@ -1,3 +1,10 @@
+2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_field_inserter): Simplify code.
+	(struct_mapper): Likewise.
+	(struct_comparator): Likewise.
+	(struct_constructor): Likewise.
+
 2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/ras: Rename .arg to .let, support initialization
