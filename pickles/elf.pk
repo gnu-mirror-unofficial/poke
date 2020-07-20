@@ -45,7 +45,7 @@ deftype Elf64_Off = offset<uint<64>,B>;
    architecture-specific.  See the elf-ARCH pickles.  */
 
 deftype Elf64_RelInfo =
-  struct uint<64>
+  struct Elf64_Xword
   {
     uint<32> r_sym;
     uint<32> r_type;

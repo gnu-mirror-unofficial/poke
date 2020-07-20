@@ -853,6 +853,8 @@ EXTRA_DIST = \
   poke.pkl/in-diag-1.pk \
   poke.pkl/in-diag-2.pk \
   poke.pkl/in-diag-3.pk \
+  poke.pkl/int-struct-1.pk \
+  poke.pkl/int-struct-2.pk \
   poke.pkl/int-struct-type-diag-1.pk \
   poke.pkl/int-struct-type-diag-2.pk \
   poke.pkl/int-struct-type-diag-3.pk \
@@ -866,6 +868,7 @@ EXTRA_DIST = \
   poke.pkl/int-struct-type-diag-11.pk \
   poke.pkl/int-struct-type-diag-12.pk \
   poke.pkl/int-struct-type-diag-13.pk \
+  poke.pkl/int-struct-type-diag-14.pk \
   poke.pkl/int-type-diag-1.pk \
   poke.pkl/int-type-diag-2.pk \
   poke.pkl/int-type.pk \

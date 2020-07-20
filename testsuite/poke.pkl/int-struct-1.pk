@@ -1,0 +1,10 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  struct uint<32>
+  {
+    int<16> a;
+    uint<8> b;
+    uint<4> c;
+    int<4>  d;
+  };

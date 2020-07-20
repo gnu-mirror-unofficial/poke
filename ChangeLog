@@ -1,3 +1,16 @@
+2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y (integral_struct): Accept any
+	simple_type_specifier after struct.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Make sure the
+	type associated with an integral struct is itself integral.
+	* pickles/elf.pk (Elf64_RelInfo): Use Elf64_Xword as the integer
+	type of the struct.
+	* testsuite/poke.pkl/int-struct-type-diag-14.pk: New test.
+	* testsuite/poke.pkl/int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2020-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf.pk (elf_stv_names): Define.

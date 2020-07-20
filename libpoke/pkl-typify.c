@@ -1659,7 +1659,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_integral)
 }
 PKL_PHASE_END_HANDLER
 
-/* The fields in an integral struct type shall be all of integral or
+/* The type associated with an integral struct shall be integral.
+
+   The fields in an integral struct type shall be all of integral or
    offset types (_not_ including other integral structs) and the total
    int size shall match the sum of the sizes of all the fields.
 
@@ -1681,6 +1683,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
 
       /* This checks that the itype of the struct type is correct.  */
       PKL_PASS_SUBPASS (struct_type_itype);
+
+      if (PKL_AST_TYPE_CODE (struct_type_itype)
+          != PKL_TYPE_INTEGRAL)
+        {
+          PKL_ERROR (PKL_AST_LOC (struct_type_itype),
+                     "expected an integral type");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
 
       if (PKL_AST_TYPE_S_UNION_P (struct_type))
         {

@@ -1383,8 +1383,9 @@ struct_type_pinned:
         ;
 
 integral_struct:
-        %empty                    { $$ = NULL; }
-        | integral_type_specifier { $$ = $1; }
+        %empty           { $$ = NULL; }
+        | simple_type_specifier { $$ = $1; }
+        ;
 
 struct_type_elem_list:
           struct_type_field
