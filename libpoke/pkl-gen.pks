@@ -747,9 +747,11 @@
         sr @struct_itype
         nip2                            ; BOFF VAL
    .c if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
-   .c   pkl_asm_insn (RAS_ASM, PKL_INSN_NTON,
-   .c                 struct_itype_arg,
-   .c                 PKL_AST_TYPE_O_BASE_TYPE (field_type_arg));
+   .c {
+        .arg @base_type
+   .c   base_type_arg = PKL_AST_TYPE_O_BASE_TYPE (field_type_arg);
+        nton @struct_itype, @base_type
+   .c }
    .c else
    .c {
         nton @struct_itype, @field_type

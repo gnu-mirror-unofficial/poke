@@ -1,5 +1,10 @@
 2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_field_extractor): Use an .arg for
+	the base type of offset fields.
+
+2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ras: Support for .arg directives.
 	* libpoke/pkl-gen.pks: Make use of them.
 
