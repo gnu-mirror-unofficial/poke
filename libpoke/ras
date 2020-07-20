@@ -46,11 +46,29 @@
 # If FILE is not specified then ras will read the assembly program in
 # the standard input.
 #
-# In the C code, define the assembler to be used by RAS and include
-# the compiled pkc files.  Then use the macros at pleasure.  For
-# example:
+# In the C code, it is necessary to define a few cpp constants that
+# are needed by RAS before #including the compiled pkc files.  These
+# are:
+#
+# RAS_ASM
+#    This is the assembler used by RAS in order to assemble
+#    instructions.  It should expand to the top of a stack of
+#    assemblers.
+#
+# RAS_PUSH_ASM (ASM)
+#    This macro is invoked by RAS when it creates a new assembler
+#    and wants to push it in the stack of assemblers.
+#
+# RAS_POP_ASM
+#    This macro is invoked by RAS when it no longer needs the
+#    current assembler.
+#
+# Example;
 #
 #  #define RAS_ASM PKL_GEN_ASM
+#  #define RAS_PUSH_ASM PKL_GEN_PUSH_ASM
+#  #define RAS_POP_ASM PKL_GEN_POP_ASM
+#
 #  #include <pkl-gen.pkc>
 #
 #  ...
@@ -597,10 +615,10 @@ BEGIN {
     out("\tdo {                                         \\")
     out("\tpvm_program program;                         \\")
     out("\t                                             \\")
-    out("\tPKL_GEN_PUSH_ASM (pkl_asm_new (PKL_PASS_AST, \\")
-    out("\t                               PKL_GEN_PAYLOAD->compiler, \\")
-    out("\t                               0 /* prologue */));        \\")
-    out("\t                                                          \\")
+    out("\tRAS_PUSH_ASM (pkl_asm_new (PKL_PASS_AST,              \\")
+    out("\t                           PKL_GEN_PAYLOAD->compiler, \\")
+    out("\t                           0 /* prologue */));        \\")
+    out("\t                                                      \\")
     out("---LABELDECLS---")
 
     current_entity = "function"
@@ -619,7 +637,7 @@ BEGIN {
         out("\t{                                                       \\")
         out("\t  program = pkl_asm_finish (RAS_ASM,                    \\")
         out("\t                            0 /* epilogue */);          \\")
-        out("\t  PKL_GEN_POP_ASM;                                      \\")
+        out("\t  RAS_POP_ASM;                                          \\")
         out("\t  pvm_program_make_executable (program);                \\")
         out("\t  (CLOSURE) = pvm_make_cls (program);                   \\")
         out("\t}                                                       \\")

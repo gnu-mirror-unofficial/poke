@@ -1,5 +1,12 @@
 2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Use RAS_PUSH_ASM and RAS_POP_ASM instead of the
+	PKL_GEN_ macros.
+	* libpoke/pkl-gen.c (RAS_PUSH_ASM): Define.
+	(RAS_POP_ASM): Likewise.
+
+2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (integral_struct): Accept any
 	simple_type_specifier after struct.
 	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Make sure the

@@ -65,6 +65,8 @@
    to use the main assembler in the GEN payload.  Then just include
    the assembled macros in this file.  */
 #define RAS_ASM PKL_GEN_ASM
+#define RAS_PUSH_ASM PKL_GEN_PUSH_ASM
+#define RAS_POP_ASM PKL_GEN_POP_ASM
 #include "pkl-gen.pkc"
 
 /*
