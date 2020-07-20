@@ -140,8 +140,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             pvm_val comparator_closure;
 
             pkl_ast_node type_struct = initial;
-            pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (type_struct);
-            pkl_ast_node field;
 
             /* Compile the struct closures, complete them using the
                current environment and install them in the AST node.
@@ -150,7 +148,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_S_WRITER (type_struct) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_writer = 1;
-                RAS_FUNCTION_STRUCT_WRITER (writer_closure);
+                RAS_FUNCTION_STRUCT_WRITER (writer_closure, type_struct);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
@@ -162,7 +160,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_S_MAPPER (type_struct) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_mapper = 1;
-                RAS_FUNCTION_STRUCT_MAPPER (mapper_closure);
+                RAS_FUNCTION_STRUCT_MAPPER (mapper_closure, type_struct);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
@@ -174,7 +172,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_S_CONSTRUCTOR (type_struct) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_constructor = 1;
-                RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);          /* CLS */
+                RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure,
+                                                 type_struct);          /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                      /* _ */
@@ -186,7 +185,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             if (PKL_AST_TYPE_S_COMPARATOR (type_struct) == PVM_NULL)
               {
                 PKL_GEN_PAYLOAD->in_comparator = 1;
-                RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure);           /* CLS */
+                RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure,
+                                                type_struct);           /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
@@ -2565,8 +2565,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
     {
       /* Stack: IOS OFF */
       pkl_ast_node type_struct = PKL_PASS_NODE;
-      pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (type_struct);
-      pkl_ast_node field;
 
       pvm_val type_struct_mapper = PKL_AST_TYPE_S_MAPPER (type_struct);
       pvm_val type_struct_writer = PKL_AST_TYPE_S_WRITER (type_struct);
@@ -2589,7 +2587,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
              current environment.  */
           pvm_val mapper_closure;
 
-          RAS_FUNCTION_STRUCT_MAPPER (mapper_closure);
+          RAS_FUNCTION_STRUCT_MAPPER (mapper_closure, type_struct);
                                                                      /* IOS IOS OFF */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* IOS IOS OFF CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* IOS IOS OFF CLS */
@@ -2626,7 +2624,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
              current environment.  */
           pvm_val writer_closure;
 
-          RAS_FUNCTION_STRUCT_WRITER (writer_closure);
+          RAS_FUNCTION_STRUCT_WRITER (writer_closure, type_struct);
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* VAL CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* VAL CLS */
@@ -2642,9 +2640,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
     {
       /* Stack: SCT */
       pkl_ast_node type_struct = PKL_PASS_NODE;
-      pkl_ast_node type_struct_elems = PKL_AST_TYPE_S_ELEMS (type_struct);
       pvm_val type_struct_constructor = PKL_AST_TYPE_S_CONSTRUCTOR (type_struct);
-      pkl_ast_node field;
 
       /* If the given structure is null, then create an empty AST
          struct of the right type.  */
@@ -2676,7 +2672,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
              current environment.  */
           pvm_val constructor_closure;
 
-          RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure);
+          RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure, type_struct);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC); /* SCT CLS */
         }
@@ -2702,7 +2698,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
         {
           /* Compile a comparator function and complete it using the
              current environment.  */
-          RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure);
+          RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure, type_struct);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
         }
