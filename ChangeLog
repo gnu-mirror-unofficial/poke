@@ -1,7 +1,9 @@
 2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
-	* libpoke/pkl-gen.pks (struct_field_extractor): Use an .arg for
-	the base type of offset fields.
+	* libpoke/ras: Rename .arg to .let, support initialization
+	expressions, and substitute RAS variables in literal C.
+	* libpoke/pkl-gen.pks (struct_field_extractor): Make use of these
+	new goodies.
 
 2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 

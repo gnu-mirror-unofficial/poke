@@ -82,7 +82,7 @@
         ;; evaluating the boundary expression in the array type
         ;; twice.
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
                                 ; OFF ETYPE
         pushvar $ebound         ; OFF ETYPE EBOUND
@@ -127,7 +127,7 @@
         pushe .constraint_error
         pushvar $ios            ; ... EBOFF EBOFF IOS
         swap                    ; ... EBOFF IOS EBOFF
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         pope
         pope
         ;; Update the current offset with the size of the value just
@@ -298,7 +298,7 @@
         ;; evaluating the boundary expression in the array type
         ;; twice.
         .c PKL_GEN_PAYLOAD->in_valmapper = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_valmapper = 1;
                                 ; BOFF ETYPE
         pushvar $ebound         ; BOFF ETYPE EBOUND
@@ -328,7 +328,7 @@
         aref                    ; ... EBOFF ENVAL EBOFF VAL EIDX OVAL
         nip2                    ; ... EBOFF ENVAL EBOFF OVAL
         nrot                    ; ... EBOFF OVAL ENVAL EBOFF
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
                                 ; ... EBOFF EVAL
         ;; Update the current offset with the size of the value just
         ;; peeked.
@@ -418,7 +418,7 @@
         pushvar $ios            ; EBOFF VAL IOS
         nrot                    ; IOS EOFF VAL
         .c PKL_GEN_PAYLOAD->in_writer = 1;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_writer = 0;
                                 ; _
         ;; Increase the current index and process the next
@@ -450,10 +450,10 @@
 
         .function array_bounder @array_type
         prolog
-        .c if (PKL_AST_TYPE_A_BOUND (array_type_arg))
+        .c if (PKL_AST_TYPE_A_BOUND (@array_type))
         .c {
         .c   PKL_GEN_PAYLOAD->in_array_bounder = 0;
-        .c   PKL_PASS_SUBPASS (PKL_AST_TYPE_A_BOUND (array_type_arg)) ;
+        .c   PKL_PASS_SUBPASS (PKL_AST_TYPE_A_BOUND (@array_type)) ;
         .c   PKL_GEN_PAYLOAD->in_array_bounder = 1;
         .c }
         .c else
@@ -506,7 +506,7 @@
         push null               ; null
         ;; Build the type of the constructed array.
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
                                 ; null ATYPE
         ;; Ok, loop to add elements to the constructed array.
@@ -531,7 +531,7 @@
         pushvar $eboff          ; ... EBOFF
         pushvar $eidx           ; ... EBOFF EIDX
         push null               ; ... EBOFF null
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
                                 ; ... EBOFF EIDX EVAL
         ;; Update the bit offset.
         siz                     ; ... EBOFF EIDX EVAL ESIZ
@@ -580,13 +580,13 @@
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 
         .macro handle_struct_field_label @field
-   .c if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field_arg ) == NULL)
+   .c if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (@field) == NULL)
         drop                    ; BOFF
    .c else
    .c {
         nip                     ; SBOFF
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (@field));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
                                 ; SBOFF LOFF
         ;; Note that this relies on the field label offset to
@@ -613,10 +613,10 @@
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 
         .macro check_struct_field_constraint @field
-   .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field_arg) != NULL)
+   .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
    .c {
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
         bnzi .constraint_ok
         drop
@@ -644,7 +644,7 @@
         ;; If this is an optional field, evaluate the optcond.  If
         ;; it is false, then add an absent field, i.e. both the field
         ;; name and the field value are PVM_NULL.
-   .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field_arg);
+   .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (@field);
    .c if (optcond)
         .c {
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
@@ -746,10 +746,9 @@
         ;; to the type of the field. (base type if the field is offset.)
         sr @struct_itype
         nip2                            ; BOFF VAL
-   .c if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
+   .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
    .c {
-        .arg @base_type
-   .c   base_type_arg = PKL_AST_TYPE_O_BASE_TYPE (field_type_arg);
+        .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@field_type)
         nton @struct_itype, @base_type
    .c }
    .c else
@@ -759,22 +758,20 @@
         nip                             ; BOFF VALC
         ;; At this point we have either the value of the field is in the
         ;; stack.  If the field is an offset, construct it.
-   .c if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
+   .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
    .c {
-        .arg #unit
-   .c   unit_arg
-   .c    = pvm_make_ulong (PKL_AST_INTEGER_VALUE (PKL_AST_TYPE_O_UNIT (field_type_arg)),
-   .c                                             64);
+        .let @offset_unit = PKL_AST_TYPE_O_UNIT (@field_type)
+        .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (@offset_unit), 64)
         push #unit                      ; BOFF MVALC UNIT
         mko                             ; BOFF VALC
    .c }
         dup                             ; BOFF VALC VALC
         regvar $val                     ; BOFF VALC
         .c vars_registered++;
-   .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (field_arg) == NULL)
+   .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field) == NULL)
         push null
    .c else
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (field_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field));
                                         ; BOFF VALC STR
         swap                            ; BOFF STR VALC
         ;; Evaluate the field's opcond and constraints
@@ -805,18 +802,18 @@
                                         ; IOS BOFF
         dup                             ; IOS BOFF BOFF
         nrot                            ; BOFF IOS BOFF
-        .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field_arg);
-        .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field_arg);
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg));
+        .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
+        .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
         .c PKL_GEN_PAYLOAD->endian = endian; }
                                         ; BOFF VAL
         dup                             ; BOFF VAL VAL
         regvar $val                     ; BOFF VAL
         .c vars_registered++;
-   .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (field_arg) == NULL)
+   .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field) == NULL)
         push null
    .c else
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (field_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field));
                                         ; BOFF VAL STR
         swap                            ; BOFF STR VAL
         ;; Evaluate the field's opcond and constraints
@@ -859,11 +856,11 @@
         ;; If the struct is integral, map the integer from which the
         ;; value of the fields will be derived.  Otherwise, just register
         ;; a dummy value that will never be used.
-  .c if (PKL_AST_TYPE_S_ITYPE (type_struct_arg))
+  .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
   .c {
         pushvar $ios
         pushvar $boff
-  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct_arg));
+  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
   .c }
   .c else
   .c {
@@ -873,24 +870,24 @@
         pushvar $boff           ; BOFF
         dup                     ; BOFF BOFF
         ;; Iterate over the elements of the struct type.
-        .arg @field
+        .let @field
  .c size_t vars_registered = 0;
- .c for (field_arg = PKL_AST_TYPE_S_ELEMS (type_struct_arg);
- .c      field_arg;
- .c      field_arg = PKL_AST_CHAIN (field_arg))
+ .c for (@field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
  .c {
- .c   if (PKL_AST_CODE (field_arg) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c   if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
  .c     PKL_GEN_PAYLOAD->in_mapper = 0;
- .c     PKL_PASS_SUBPASS (field_arg);
+ .c     PKL_PASS_SUBPASS (@field);
  .c     PKL_GEN_PAYLOAD->in_mapper = 1;
  .c
  .c     continue;
  .c   }
         .label .alternative_failed
         .label .eof_in_alternative
- .c   if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+ .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
         push PVM_E_EOF
         pushe .eof_in_alternative
@@ -900,20 +897,16 @@
         pushvar $ios             ; ...[EBOFF ENAME EVAL] NEBOFF IOS
         swap                     ; ...[EBOFF ENAME EVAL] IOS NEBOFF
         pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEBOFF OFF
- .c   if (PKL_AST_TYPE_S_ITYPE (type_struct_arg))
+ .c   if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c   {
-        .arg @struct_itype
-        .arg @field_type
-        .arg #ivalw
-        .arg #fieldw
- .c     struct_itype_arg = PKL_AST_TYPE_S_ITYPE (type_struct_arg);
- .c     field_type_arg = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg);
- .c     ivalw_arg = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (struct_itype_arg), 64);
+        .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct);
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field);
+        .let #ivalw = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@struct_itype), 64);
  .c     size_t field_type_size
- .c        = (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET
- .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (field_type_arg))
- .c           : PKL_AST_TYPE_I_SIZE (field_type_arg));
- .c     fieldw_arg = pvm_make_ulong (field_type_size, 64);
+ .c        = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (@field_type))
+ .c           : PKL_AST_TYPE_I_SIZE (@field_type));
+        .let #fieldw = pvm_make_ulong (field_type_size, 64);
         ;; Note that at this point the field is assured to be
         ;; an integral type, as per typify.
         rot                      ; ...[EBOFF ENAME EVAL] NEBOFF OFF IOS
@@ -927,7 +920,7 @@
         .e struct_field_mapper @field
                                 ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
- .c   if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+ .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
         pope
         pope
@@ -939,12 +932,12 @@
         nip2                    ; ...[EBOFF ENAME EVAL] NEBOFF (NFIELD+1UL)
         popvar $nfield          ; ...[EBOFF ENAME EVAL] NEBOFF
         ;; If the struct is pinned, replace NEBOFF with BOFF
- .c   if (PKL_AST_TYPE_S_PINNED_P (type_struct_arg))
+ .c   if (PKL_AST_TYPE_S_PINNED_P (@type_struct))
  .c   {
         drop
         pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
  .c   }
- .c   if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+ .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
         ;; Union field successfully mapped.  We are done.
         ba .union_fields_done
@@ -952,7 +945,7 @@
         ;; If we got EOF in an union alternative, and this is the last
         ;; alternative in the union, re-raise it.  Otherwise just
         ;; try the next alternative.
-     .c if (PKL_AST_CHAIN (field_arg) == NULL)
+     .c if (PKL_AST_CHAIN (@field) == NULL)
      .c {
         raise
      .c }
@@ -961,7 +954,7 @@
         drop                    ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c }
- .c if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+ .c if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c {
         ;; No valid alternative found in union.
         push PVM_E_CONSTRAINT
@@ -973,23 +966,24 @@
         ;; in the stack.
         ;; Iterate over the methods of the struct type.
  .c { int i; int nmethod;
- .c for (nmethod = 0, i = 0, field_arg = PKL_AST_TYPE_S_ELEMS (type_struct_arg);
- .c      field_arg;
- .c      field_arg = PKL_AST_CHAIN (field_arg))
+ .c for (nmethod = 0, i = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
  .c {
- .c   if (PKL_AST_CODE (field_arg) != PKL_AST_DECL
- .c       || PKL_AST_DECL_KIND (field_arg) != PKL_AST_DECL_KIND_FUNC
- .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (field_arg)))
+ .c   if (PKL_AST_CODE (@field) != PKL_AST_DECL
+ .c       || PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_FUNC
+ .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@field)))
  .c   {
- .c     if (PKL_AST_DECL_KIND (field_arg) != PKL_AST_DECL_KIND_TYPE)
+ .c     if (PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_TYPE)
  .c       i++;
  .c     continue;
  .c   }
         ;; The lexical address of this method is 0,B where B is 4 +
         ;; element order.  This 4 should be updated if the lexical
         ;; structure of this function changes.
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
- .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (PKL_AST_DECL_NAME (field_arg))));
+        .let @decl_name = PKL_AST_DECL_NAME (@field)
+        .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
+        push #name_str
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 4 + i);
  .c     nmethod++;
  .c     i++;
@@ -1001,7 +995,7 @@
         pushvar $nfield         ; BOFF [EBOFF STR VAL]... NFIELD
         ;; Finally, push the struct type and call mksct.
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
-        .c PKL_PASS_SUBPASS (type_struct_arg);
+        .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
                                 ; BOFF [EBOFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
@@ -1031,12 +1025,12 @@
         .function struct_comparator @type_struct
         prolog
  .c { uint64_t i;
-        .arg @field
- .c  for (i = 0, field_arg = PKL_AST_TYPE_S_ELEMS (type_struct_arg);
- .c       field_arg;
- .c       field_arg = PKL_AST_CHAIN (field_arg), ++i)
+        .let @field
+ .c  for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c       @field;
+ .c       @field = PKL_AST_CHAIN (@field), ++i)
  .c  {
- .c     if (PKL_AST_CODE (field_arg) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c       continue;
         ;; Compare the fields of both structs.
         tor                     ; SCT1 [SCT2]
@@ -1049,7 +1043,7 @@
         srefi                   ; SCT1 VAL1 SCT2 I VAL2
         nip                     ; SCT1 VAL1 SCT2 VAL2
         quake                   ; SCT1 SCT2 VAL1 VAL2
- .c if (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field_arg))
+ .c if (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (@field))
  .c {
         ;; If the field is optional, both VAL1 and VAL2 can be null.
         ;; In that case the fields are considered equal only if they are
@@ -1080,13 +1074,13 @@
         ;; Note that we cannot use EQ if the field is a struct itself,
         ;; because EQ uses comparators!  So we subpass instead.  :)
  .c     pkl_ast_node field_type
- .c       = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg) ;
+ .c       = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field) ;
  .c     if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_STRUCT)
  .c       PKL_PASS_SUBPASS (field_type);
  .c     else
  .c     {
  .c       pkl_asm_insn (RAS_ASM, PKL_INSN_EQ,
- .c                     PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg));
+ .c                     PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
  .c     }
         nip2                    ; SCT1 SCT2 (VAL1==VAL2)
         bzi .done
@@ -1133,28 +1127,28 @@
         push null               ; null
         ;; Iterate over the fields of the struct type.
  .c size_t vars_registered = 0;
-        .arg @field
- .c for (field_arg = PKL_AST_TYPE_S_ELEMS (type_struct_arg);
- .c      field_arg;
- .c      field_arg = PKL_AST_CHAIN (field_arg))
+        .let @field
+ .c for (@field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
  .c {
         .label .alternative_failed
         .label .constraint_ok
         .label .optcond_ok
         .label .omitted_field
         .label .got_value
- .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg);
- .c   if (PKL_AST_CODE (field_arg) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field);
+ .c   if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
  .c     PKL_GEN_PAYLOAD->in_constructor = 0;
- .c     PKL_PASS_SUBPASS (field_arg);
+ .c     PKL_PASS_SUBPASS (@field);
  .c     PKL_GEN_PAYLOAD->in_constructor = 1;
  .c
  .c     continue;
  .c   }
         pushvar $sct           ; ... [EBOFF ENAME EVAL] SCT
- .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (field_arg);
+ .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
  .c   if (field_name)
  .c   {
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
@@ -1173,7 +1167,7 @@
         ;; initializer.
         bnn .got_value         ; ... SCT ENAME null
  .c pkl_ast_node field_initializer
- .c    = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (field_arg);
+ .c    = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (@field);
  .c if (field_initializer)
  .c {
         drop
@@ -1211,7 +1205,7 @@
         ;; If this is an optional field, evaluate the optcond.  If
         ;; it is false, then add an absent field, i.e. both the field
         ;; name and the field value are PVM_NULL.
-   .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field_arg);
+   .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (@field);
    .c if (optcond)
    .c {
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
@@ -1236,14 +1230,14 @@
 .optcond_ok:
         drop                    ; BOFF STR VAL
         ;; Evaluate the constraint expression.
-   .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field_arg) != NULL)
+   .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
    .c {
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (field_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field));
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
         bnzi .constraint_ok
         drop
-   .c   if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+   .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
    .c   {
         ;; Alternative failed: try next alternative.
         ba .alternative_failed
@@ -1256,7 +1250,7 @@
         ;; Increase off with the siz of the last element.  Note
         ;; the offset starts at 0 since this struct is not mapped,
         ;; unless the struct is pinned.
-   .c if (PKL_AST_TYPE_S_PINNED_P (type_struct_arg))
+   .c if (PKL_AST_TYPE_S_PINNED_P (@type_struct))
    .c {
         push uint<64>0         ; ... ENAME EVAL EBOFF
         dup                    ; ... ENAME EVAL EBOFF NEBOFF
@@ -1278,7 +1272,7 @@
         addlu
         nip2                   ; ... NEBOFF ENAME EVAL (NFIELD+1UL)
         popvar $nfield         ; ... NEBOFF ENAME EVAL
-   .c if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+   .c if (PKL_AST_TYPE_S_UNION_P (@type_struct))
    .c {
         ;; Union field successfully constructed.  We are done.
         ba .union_fields_done
@@ -1287,7 +1281,7 @@
         drop                    ; ... EVAL
    .c }
  .c }
- .c if (PKL_AST_TYPE_S_UNION_P (type_struct_arg))
+ .c if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c {
         ;; No valid alternative found in union.
         push PVM_E_CONSTRAINT
@@ -1296,15 +1290,15 @@
 .union_fields_done:
         ;; Handle the methods.
  .c { int i; int nmethod;
- .c for (nmethod = 0, i = 0, field_arg = PKL_AST_TYPE_S_ELEMS (type_struct_arg);
- .c      field_arg;
- .c      field_arg = PKL_AST_CHAIN (field_arg))
+ .c for (nmethod = 0, i = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
  .c {
- .c   if (PKL_AST_CODE (field_arg) != PKL_AST_DECL
- .c       || PKL_AST_DECL_KIND (field_arg) != PKL_AST_DECL_KIND_FUNC
- .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (field_arg)))
+ .c   if (PKL_AST_CODE (@field) != PKL_AST_DECL
+ .c       || PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_FUNC
+ .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@field)))
  .c   {
- .c     if (PKL_AST_DECL_KIND (field_arg) != PKL_AST_DECL_KIND_TYPE)
+ .c     if (PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_TYPE)
  .c       i++;
  .c     continue;
  .c   }
@@ -1314,8 +1308,9 @@
         ;;
         ;; XXX push the closure specified in the struct constructor
         ;; instead, if appropriate.
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH,
- .c                   pvm_make_string (PKL_AST_IDENTIFIER_POINTER (PKL_AST_DECL_NAME (field_arg))));
+        .let @decl_name = PKL_AST_DECL_NAME (@field)
+        .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
+        push #name_str
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 4 + i);
  .c     nmethod++;
  .c     i++;
@@ -1326,7 +1321,7 @@
         ;; Push the number of fields, create the struct and return it.
         pushvar $nfield        ; null [OFF STR VAL]... NFIELD
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
-        .c PKL_PASS_SUBPASS (type_struct_arg);
+        .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
                                 ; null [OFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
@@ -1378,14 +1373,14 @@
         nip2                    ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL EVAL]
         ;; Convert EVAL to the struct itype
         fromr                   ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
- .c   if (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET)
+ .c   if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
  .c   {
         ;; EVAL is an offset, but we are interested in its magnitude.
         ogetm
         nip                     ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_NTON,
- .c                   PKL_AST_TYPE_O_BASE_TYPE (field_type_arg),
- .c                   struct_itype_arg);
+ .c                   PKL_AST_TYPE_O_BASE_TYPE (@field_type),
+ .c                   @struct_itype);
  .c   }
  .c   else
  .c   {
@@ -1436,10 +1431,10 @@
         srefio                  ; IOS EVAL SCT I EBOFF
         nip2                    ; IOS EVAL EBOFF
         swap                    ; IOS EOFF EVAL
-        .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field_arg);
-        .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field_arg);
+        .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
+        .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_GEN_PAYLOAD->in_writer = 1;
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg));
+        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
         .c PKL_GEN_PAYLOAD->in_writer = 0;
         .c PKL_GEN_PAYLOAD->endian = endian; }
         ba .next
@@ -1469,45 +1464,41 @@
         ;; If the struct is integral, initialize $ivalue to
         ;; 0, of the corresponding type.  We use a constructor
         ;; to generate it.
-  .c if (PKL_AST_TYPE_S_ITYPE (type_struct_arg))
+  .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
   .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
-  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct_arg));
+  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
   .c    PKL_GEN_PAYLOAD->in_constructor = 0;
   .c    PKL_GEN_PAYLOAD->in_writer = 1;
   .c }
         regvar $ivalue
  .c {
  .c      uint64_t i;
-        .arg @field
- .c for (i = 0, field_arg = PKL_AST_TYPE_S_ELEMS (type_struct);
- .c      field_arg;
- .c      field_arg = PKL_AST_CHAIN (field_arg))
+        .let @field
+ .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
  .c {
- .c     if (PKL_AST_CODE (field_arg) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c       continue;
         ;; Poke this struct field, but only if it has been modified
         ;; since the last mapping.
         pushvar $sct            ; SCT
  .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSH, pvm_make_ulong (i, 64));
                                 ; SCT I
- .c  if (PKL_AST_TYPE_S_ITYPE (type_struct_arg))
+ .c  if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c  {
-        .arg @struct_itype
-        .arg @field_type
-        .arg #ivalw
-        .arg #fieldw
- .c     struct_itype_arg = PKL_AST_TYPE_S_ITYPE (type_struct_arg);
- .c     field_type_arg = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field_arg);
- .c     ivalw_arg = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (struct_itype_arg), 64);
+        .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct);
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field);
+        .let #ivalw = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@struct_itype), 64);
  .c     size_t field_type_size
- .c        = (PKL_AST_TYPE_CODE (field_type_arg) == PKL_TYPE_OFFSET
- .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (field_type_arg))
- .c           : PKL_AST_TYPE_I_SIZE (field_type_arg));
- .c     fieldw_arg = pvm_make_ulong (field_type_size, 64);
+ .c        = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (@field_type))
+ .c           : PKL_AST_TYPE_I_SIZE (@field_type));
+        .let #fieldw = pvm_make_ulong (field_type_size, 64);
         pushvar $ivalue          ; SCT I IVAL
         nrot                     ; IVAL SCT I
         .e struct_field_inserter @struct_itype, @field_type, #ivalw, #fieldw
@@ -1527,14 +1518,14 @@
  .c }
         .c }
         ;; If the struct is integral, poke the ival.
- .c if (PKL_AST_TYPE_S_ITYPE (type_struct_arg))
+ .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c {
         pushvar $sct            ; SCT
         mgetios                 ; SCT IOS
         nip                     ; IOS
         push ulong<64>0         ; IOS 0UL
         pushvar $ivalue         ; IOS 0UL IVAL
- .c     PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (type_struct_arg));
+ .c     PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
  .c }
         popf 1
         push null

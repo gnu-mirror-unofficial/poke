@@ -112,35 +112,43 @@
 #
 # In the C level, this will expand RAS_MACRO_NAME (ARG, ...)
 #
-# Creating Arguments
-# ------------------
+# RAS Macro Variables
+# -------------------
 #
 # Within the body of a macro or a function it may become necessary to
-# create an argument to pass to some other macro or function.  This
-# new argument is typically derived from another argument.  The .arg
-# directive allows to declare such arguments.
+# create a value to pass to some other macro or function.  This new
+# value is typically derived from another argument.
 #
-# For example:
+# RAS variables can be defined using the .let directive:
+#
+#     .let (@|#)VARNAME [= CEXPR]
+#
+# Where CEXPR is an optional C expression that that serves as the
+# initialization value.  The symbol used as a prefix identifies the
+# nature of the value stored in the RAS variable.  Supported symbols
+# are:
+#
+# @ for AST node values, i.e. values of type pkl_ast_node.
+# # for PVM values, i.e. values of type pvm_val.
+#
+# Usage example:
 #
 #     .function FOO @field
 #     [...]
 #
-#     .arg @field_type
-#  .c field_type = PKL_AST_TYPE (field_arg);
+#     .let @field_type = PKL_AST_TYPE (field_arg)
 #
 #      .e do_something @field_type
 #     .end
 #
-# Note how we create a new argument @field_type, derived from the
+# Note how we create a new RAS variable @field_type, derived from the
 # received argument @field.  Typically, inline C code is necessary to
-# initialize the value of the newly declared arguments.  The argument
-# C variable is named NAME_arg.
+# initialize the value of the newly declared variables.
 #
-# Both @foo and #foo kinds of arguments are supported.
-#
-# The .arg directive translates into the declaration of a C variable,
-# so they follow C visibility and scope rules, i.e. they can be nested
-# and they are visible only until the end of the current C block.
+# Keep in mind that the .let directive translates into the declaration
+# of a C variable, so they follow C visibility and scope rules,
+# i.e. they can be nested and they are visible only until the end of
+# the current C block.
 #
 # Calling Poke Functions
 # ----------------------
@@ -163,16 +171,16 @@
 # A typical example is to invoke a GEN subpass, like:
 #
 #  .c PKL_GEN_PAYLOAD->in_mapper = 0;
-#  .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (array_type));
+#  .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
 #  .c PKL_GEN_PAYLOAD->in_mapper = 1;
 #
-# The directives above will generate the literal C code.  The C code
-# is copied verbatim and ras knows nothing about its contents, so
-# please be careful.
+# The directives above will generate the literal C code, after
+# references to macro arguments (like @this or #that) are replaced.
 #
-# Note that macro and function arguments (like @this or @that) can be
-# referred in literal C code as this_arg and that_arg, respectively,
-# i.e. adding a suffix `_arg' to the argument name.
+# Note that macro and function arguments (like @this or #that) can
+# also be referred in literal C code as this_arg and that_arg,
+# respectively, i.e. adding a suffix `_arg' to the argument name.  But
+# it is always better to rely on the substitution done by RAS.
 #
 # Loops
 # -----
@@ -269,21 +277,21 @@
 #      ...
 #  .c }
 #
-# Variables
-# ---------
+# Lexical Variables
+# -----------------
 #
 # Wherever a lexical address (a pair of BACK, OVER numbers) is
 # expected in a program, ras allows you to specify a variable name
-# instead.  Variable names are identifiers that start with the $
-# character.
+# instead.  Lexical variable names are identifiers that start with the
+# $ character.
 #
 # For example, both forms of pushvar are allowed:
 #
 #   pushvar 0,3
 #   pushvar $foo
 #
-# Using variable names eases writing PVM assembly code by a lot, for
-# several reasons.
+# Using lexical variable names eases writing PVM assembly code by a
+# lot, for several reasons.
 #
 # First, the location of a given variable in a given lexical frame
 # depends on how many other variables have been registered before.
@@ -608,6 +616,9 @@ BEGIN {
 /^[ \t]*\.c( .*|)$/ {
     $0 = gensub (/\.c$/, "", "g", $0)
     $0 = gensub (/.*\.c (.*)$/, "\\1", "g", $0)
+    # Substitute macro arguments.
+    $0 = gensub (marg_re, "(\\2_arg)", "g", $0);
+
     out("\t" $0 " \\")
     next
 }
@@ -808,17 +819,23 @@ BEGIN {
     next
 }
 
-# .arg
-/^[ \t]*\.arg[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(;.*)?$/ {
-    kind = gensub (/^[ \t]*\.arg[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(;.*)?$/, \
+# .let
+/^[ \t]*\.let[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(= .*|)?$/ {
+    kind = gensub (/^[ \t]*\.let[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(= .*|)?$/,
                    "\\1", 1, $0)
-    varname = gensub (/^[ \t]*\.arg[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(;.*)?$/, \
+    varname = gensub (/^[ \t]*\.let[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(= .*|)?$/, \
                       "\\2", 1, $0) "_arg"
+    cinit = gensub  (/^[ \t]*\.let[ \t]+(@|#)([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(= .*|)?$/, \
+                      "\\3", 1, $0)
+    # Substitute macro arguments.
+    cinit = gensub (marg_re, "(\\2_arg)", "g", cinit);
+
     if (kind == "@")
         vartype = "pkl_ast_node"
     else
         vartype = "pvm_val"
-    out("\t" vartype " " varname "; \\")
+
+    out("\t" vartype " " varname " " cinit "; \\")
     next
 }
 
