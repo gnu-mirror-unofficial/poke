@@ -93,7 +93,7 @@
 # Likewise, functions can be defined using .function/.end pairs of
 # assembler directives:
 #
-#  .function NAME
+#  .function NAME [(@ARG|#ARG)]...
 #  ...
 #  .end
 #
@@ -615,15 +615,25 @@ BEGIN {
 }
 
 # .function NAME
-/^[ \t]*\.function[ \t]+[a-zA-Z][0-9a-zA-Z_]*[ \t]*(;.*)?$/ {
+/^[ \t]*\.function[ \t]+[a-zA-Z][0-9a-zA-Z_]*[ \t]*((@|#)[a-zA-Z_][0-9a-zA-Z_]*[ \t]*)*[ \t]*(;.*)?$/ {
     # Get the function name
     function_name = $2
     if (match (function_name, /^[a-zA-Z][0-9a-zA-Z_]*$/) == 0)
         fatal(FNR ": invalid function name. This should NOT happen.")
 
-    init_entity()
 
-    out("#define RAS_FUNCTION_" toupper($2) "(CLOSURE)  \\")
+    # Build the list of arguments
+    function_args=""
+    for (i = 3; i <= NF; i++)
+    {
+        if (match ($i, /^;.*$/) == 0)
+        {
+            function_args = function_args "," gensub (marg_re, "\\2_arg", "g", $i);
+        }
+    }
+
+    init_entity()
+    out("#define RAS_FUNCTION_" toupper($2) "(CLOSURE" function_args ") \\")
     out("\tdo {                                         \\")
     out("\tpvm_program program;                         \\")
     out("\t                                             \\")
