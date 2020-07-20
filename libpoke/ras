@@ -335,6 +335,18 @@
 # explicit lexical addresses instead of variable names.  But I
 # strongly recommend using variable names unless you have a _very_
 # good reason not to... like a gun aiming at your head for example.
+#
+# Calling Poke Functions
+# ----------------------
+#
+# The .call directive allows to call a compiled Poke function by name.
+# It has the following syntax:
+#
+# .call FUNCTION_NAME
+#
+# The called function should be defined in the global environment.
+# Most typically this directive is used to call functions defined in
+# the compiler's run-time library (pkl-rt.pk).
 
 ### Some useful misc functions, used in the rules below
 
@@ -746,6 +758,14 @@ BEGIN {
 
     labels[labelname] = labelname
     out("\tpkl_asm_label (RAS_ASM," labelname "_label); \\")
+    next
+}
+
+# .call
+/^[ \t]*\.call[ \t]+\.[a-zA-Z][0-9a-zA-Z_]*[ \t]*(;.*)?$/ {
+    fname = gensub (/^[ \t]*\.call[ \t]+\.([a-zA-Z][0-9a-zA-Z_]*)[ \t]*(;.*)?$/, \
+                    "\\1", 1, $0)
+    out("\tpkl_asm_call (RAS_ASM," fname "); \\")
     next
 }
 
