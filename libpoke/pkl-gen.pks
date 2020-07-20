@@ -1517,7 +1517,7 @@
  .c    i = i + 1;
  .c }
         .c }
-        ;; If the struct is integral, poke the ival.
+        ;; If the struct is integral, poke the resulting ival.
  .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c {
         pushvar $sct            ; SCT
