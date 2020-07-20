@@ -1,5 +1,10 @@
 2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Support for .arg directives.
+	* libpoke/pkl-gen.pks: Make use of them.
+
+2020-07-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (array_mapper): Use macro arguments to
 	access AST nodes instead of relying on the context.
 	(array_valmapper): Likewise.
