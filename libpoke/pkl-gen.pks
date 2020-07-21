@@ -1469,13 +1469,11 @@
   .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
-        ;; XXX how in the shit can in_writer be 0 here???
-  .c    int in_writer_p = PKL_GEN_PAYLOAD->in_writer;
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
   .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
   .c    PKL_GEN_PAYLOAD->in_constructor = 0;
-  .c    PKL_GEN_PAYLOAD->in_writer = in_writer_p;
+  .c    PKL_GEN_PAYLOAD->in_writer = 1;
   .c }
         regvar $ivalue
  .c {

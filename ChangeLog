@@ -1,5 +1,12 @@
 2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Handle gen
+	environment properly before and after calling
+	RAS_FUNCTION_STRUCT_WRITER.
+	(pkl_gen_pr_type_array): Ditto for RAS_FUNCTION_ARRAY_WRITER.
+
+2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.map/map-int-structs-17.pk: New test.
 	* testsuite/poke.map/map-int-structs-18.pk: Likewise.
 	* testsuite/poke.pkl/scons-int-struct-1.pk: Likewise.

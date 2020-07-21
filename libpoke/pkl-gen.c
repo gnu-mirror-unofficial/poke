@@ -2349,9 +2349,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       else
         {
           pvm_val writer_closure;
+          int in_valmapper_p = PKL_GEN_PAYLOAD->in_valmapper;
+          int in_mapper_p = PKL_GEN_PAYLOAD->in_mapper;
 
           /* Compile a writer function to a closure.  */
+          PKL_GEN_PAYLOAD->in_mapper = 0;
+          PKL_GEN_PAYLOAD->in_valmapper = 0;
+          PKL_GEN_PAYLOAD->in_writer = 1;
           RAS_FUNCTION_ARRAY_WRITER (writer_closure, array_type);
+          PKL_GEN_PAYLOAD->in_writer = 0;
+          PKL_GEN_PAYLOAD->in_valmapper = in_valmapper_p;
+          PKL_GEN_PAYLOAD->in_mapper = in_mapper_p;
 
           /* Complete the writer closure with the current
              environment.  */
@@ -2625,7 +2633,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
              current environment.  */
           pvm_val writer_closure;
 
+          PKL_GEN_PAYLOAD->in_mapper = 0;
+          PKL_GEN_PAYLOAD->in_writer = 1;
           RAS_FUNCTION_STRUCT_WRITER (writer_closure, type_struct);
+          PKL_GEN_PAYLOAD->in_writer = 0;
+          PKL_GEN_PAYLOAD->in_mapper = 1;
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* VAL CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* VAL CLS */
