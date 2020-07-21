@@ -1138,7 +1138,8 @@
         .label .optcond_ok
         .label .omitted_field
         .label .got_value
- .c   pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field);
+        .let @field_initializer = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (@field)
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
  .c   if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
@@ -1166,36 +1167,36 @@
         ;; obtained by subpassing in the value's type, or the field's
         ;; initializer.
         bnn .got_value         ; ... SCT ENAME null
- .c pkl_ast_node field_initializer
- .c    = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (@field);
- .c if (field_initializer)
+ .c if (@field_initializer)
  .c {
         drop
  .c     PKL_GEN_PAYLOAD->in_constructor = 0;
- .c     PKL_PASS_SUBPASS (field_initializer);
+ .c     PKL_PASS_SUBPASS (@field_initializer);
  .c     PKL_GEN_PAYLOAD->in_constructor = 1;
  .c }
  .c else
- .c     PKL_PASS_SUBPASS (field_type);
-                               ; ... SCT ENAME EVAL
+        ;; Note that the constructor consumes the `null' on the
+        ;; stack.
+ .c     PKL_PASS_SUBPASS (@field_type);
+                                ; ... SCT ENAME EVAL
 .got_value:
         ;; If the field type is an array, emit a cast here so array
         ;; bounds are checked.  This is not done in promo because the
         ;; array bounders shall be evaluated in this lexical
         ;; environment.
-   .c if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_ARRAY)
+   .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_ARRAY)
    .c {
    .c   /* Make sure the cast type has a bounder.  If it doesn't */
    .c   /*   compile and install one.  */
-   .c   if (PKL_AST_TYPE_A_BOUNDER (field_type) == PVM_NULL)
+   .c   if (PKL_AST_TYPE_A_BOUNDER (@field_type) == PVM_NULL)
    .c   {
    .c      PKL_GEN_PAYLOAD->in_array_bounder = 1;
-   .c      PKL_PASS_SUBPASS (field_type);
+   .c      PKL_PASS_SUBPASS (@field_type);
    .c      PKL_GEN_PAYLOAD->in_array_bounder = 0;
    .c    }
    .c
    .c   pkl_asm_insn (RAS_ASM, PKL_INSN_ATOA,
-   .c                 NULL /* from_type */, field_type);
+   .c                 NULL /* from_type */, @field_type);
    .c }
         rot                    ; ... ENAME EVAL SCT
         drop                   ; ... ENAME EVAL
@@ -1460,19 +1461,21 @@
         prolog
         pushf 2
         regvar $sct             ; Argument
-        push null
         ;; If the struct is integral, initialize $ivalue to
-        ;; 0, of the corresponding type.  We use a constructor
-        ;; to generate it.
-  .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
+        ;; 0, of the corresponding type.
+        .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct)
+        push null
+  .c if (@struct_itype)
   .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
+        ;; XXX how in the shit can in_writer be 0 here???
+  .c    int in_writer_p = PKL_GEN_PAYLOAD->in_writer;
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
   .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
   .c    PKL_GEN_PAYLOAD->in_constructor = 0;
-  .c    PKL_GEN_PAYLOAD->in_writer = 1;
+  .c    PKL_GEN_PAYLOAD->in_writer = in_writer_p;
   .c }
         regvar $ivalue
  .c {
@@ -1489,9 +1492,8 @@
         ;; since the last mapping.
         pushvar $sct            ; SCT
         push #i                 ; SCT I
- .c  if (PKL_AST_TYPE_S_ITYPE (@type_struct))
+ .c  if (@struct_itype)
  .c  {
-        .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct);
         .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field);
         .let #ivalw = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@struct_itype), 64);
  .c     size_t field_type_size
@@ -1518,14 +1520,14 @@
  .c }
         .c }
         ;; If the struct is integral, poke the resulting ival.
- .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
+ .c if (@struct_itype)
  .c {
         pushvar $sct            ; SCT
         mgetios                 ; SCT IOS
         nip                     ; IOS
         push ulong<64>0         ; IOS 0UL
         pushvar $ivalue         ; IOS 0UL IVAL
- .c     PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
+ .c     PKL_PASS_SUBPASS (@struct_itype);
  .c }
         popf 1
         push null
