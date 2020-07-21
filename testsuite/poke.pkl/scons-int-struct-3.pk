@@ -1,0 +1,15 @@
+/* { dg-do run } */
+
+deftype Foo =
+  struct
+  {
+    struct uint<32>
+    {
+      uint<16> a1;
+      uint<16> a2 = 0xf00f;
+    } a;
+  };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Foo {}} } */
+/* { dg-output {Foo {a=struct {a1=0x0UH,a2=0xf00fUH}}} } */

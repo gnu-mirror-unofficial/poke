@@ -1,5 +1,12 @@
 2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/scons-int-struct-3.pk: New test.
+	* testsuite/poke.map/maps-int-structs-19.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-20.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update with new tests.
+
+2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Handle gen
 	environment properly before and after calling
 	RAS_FUNCTION_STRUCT_WRITER.
