@@ -19,9 +19,27 @@
 #ifndef PK_MI_JSON
 #define PK_MI_JSON
 
+#include <stdlib.h>
 #include <config.h>
 
 #include "pk-mi-msg.h"
+#include "libpoke.h"
+
+#define PK_MI_CHECK(errmsg, A, M, ...) \
+   do                                  \
+    {                                  \
+      if (!(A))                        \
+        {                              \
+          if (errmsg == NULL) goto error;  \
+          assert (asprintf (errmsg, "[ERROR] " M , ##__VA_ARGS__) != -1); \
+        }                              \
+    }                                  \
+    while (0)
+
+#define PK_MI_DEBUG(M, ...)                  \
+      fprintf (stderr, "DEBUG %s:%d: " M "\n",\
+        __FILE__, __LINE__, ##__VA_ARGS__)
+
 
 /* Given a string containing a JSON message, parse it and return a MI
    message.
@@ -37,7 +55,58 @@ pk_mi_msg pk_mi_json_to_msg (const char *str);
 
 const char *pk_mi_msg_to_json (pk_mi_msg msg);
 
-/* XXX services to pk_val <-> json */
-/* XXX services to pk_type <-> json */
+/* Given a Poke value, return the json object associated with this val
+
+   VAL is the pk_val to be converted.
+
+   ERRMSG is a buffer to be allocated that contains any error messages.
+
+   If ERRMSG is NULL, nothing happens on the buffer.
+
+   In case of error returns NULL and sets errmsg appropriately.  */
+
+const char *pk_mi_val_to_json (pk_val val, char **errmsg);
+
+/* Given a json object, create the Poke value associated with it.
+
+   VALUE is the Poke value to be created.
+
+   STR is the string value of a pk_val to be converted.
+
+   ERRMSG is a buffer to be allocated that contains any error messages.
+
+   Its caller's responsibility to deallocate the buffer (ERRMSG).
+
+   If ERRMSG is NULL, nothing happens on the buffer.
+
+   In case of error returns -1 and sets errmsg appropriately.  */
+
+int pk_mi_json_to_val (pk_val *value, const char *str, char **errmsg);
+
+/* Given a pk val, return the json object associated with this val
+
+   VAL is the pk_val to be converted.
+
+   ERRMSG is a buffer to be allocated that contains any error messages.
+
+   Its caller's responsibility to deallocate the buffer (ERRMSG).
+
+   If ERRMSG is NULL, nothing happens on the buffer.
+
+   In case of error return NULL.  */
+
+const char *pk_mi_val_to_json (pk_val val, char **errmsg);
+
+/* Given a json object, return the pk val associated with it
+
+   STR is the string value of a pk_val to be converted.
+
+   ERRMSG is a buffer to be allocated that contains any error messages.
+
+   If ERRMSG is NULL, nothing happens on the buffer.
+
+   In case of error returns PK_NULL.  */
+
+pk_val pk_mi_json_to_val (const char *str, char **errmsg);
 
 #endif /* ! PK_MI_JSON */
