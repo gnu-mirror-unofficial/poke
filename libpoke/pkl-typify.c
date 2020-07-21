@@ -185,6 +185,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
 
         break;
       }
+    case PKL_TYPE_ANY:
+      goto invalid_operands;
+      break;
     default:
       assert (0);
     }

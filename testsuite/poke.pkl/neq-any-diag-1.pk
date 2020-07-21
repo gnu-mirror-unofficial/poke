@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+defun equalstructs = (any a, any b) int:
+  {
+    return a != b; /* { dg-error "invalid operands" } */
+  }

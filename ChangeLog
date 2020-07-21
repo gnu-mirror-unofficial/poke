@@ -1,5 +1,13 @@
 2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_op_rela): Do not allow
+	operands of type any.
+	* testsuite/poke.pkl/eq-any-diag-1.pk: New test.
+	* testsuite/poke.pkl/neq-any-diag-1.pk (equalstructs): Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update with new tests.
+
+2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-fold.c (pkl_fold_ps_cast): Fix masking of the
 	resulting magnitude of converted offsets.
 	* testsuite/poke.pkl/cast-offsets-5.pk: New test.
