@@ -995,19 +995,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
          is different.  */
       if (!pkl_ast_type_equal (from_base_type, to_base_type))
         {
-          int size = PKL_AST_TYPE_I_SIZE (to_base_type);
-          uint64_t mask = size < 64 ? (1LLU << size) -1 : 0LLU - 1;
-
           magnitude = pkl_ast_make_integer (PKL_PASS_AST,
-                                            PKL_AST_INTEGER_VALUE (magnitude) & mask);
+                                            PKL_AST_INTEGER_VALUE (magnitude));
           PKL_AST_TYPE (magnitude) = ASTREF (to_base_type);
           PKL_AST_LOC (magnitude) = PKL_AST_LOC (cast);
         }
 
       /* Transform magnitude to new unit.  */
-      PKL_AST_INTEGER_VALUE (magnitude)
-        = (PKL_AST_INTEGER_VALUE (magnitude)
-           /  PKL_AST_INTEGER_VALUE (unit));
+      {
+        int size = PKL_AST_TYPE_I_SIZE (to_base_type);
+        uint64_t mask = size < 64 ? (1LLU << size) -1 : 0LLU - 1;
+
+        PKL_AST_INTEGER_VALUE (magnitude)
+          = (PKL_AST_INTEGER_VALUE (magnitude)
+             /  PKL_AST_INTEGER_VALUE (unit)) & mask;
+      }
 
       new = pkl_ast_make_offset (PKL_PASS_AST,
                                  magnitude, unit);

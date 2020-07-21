@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+defvar x = 0x3344#B;
+
+/* { dg-command {.set obase 16} } */
+
+/* { dg-command { x as offset<uint<16>,B> } } */
+/* { dg-output "0x3344UH#B" } */
+
+/* For constant folding: */
+/* { dg-command { 0x3344#B as offset<uint<16>,B> } } */
+/* { dg-output "\n0x3344UH#B" } */

@@ -624,6 +624,8 @@ EXTRA_DIST = \
   poke.pkl/cast-offsets-1.pk \
   poke.pkl/cast-offsets-2.pk \
   poke.pkl/cast-offsets-3.pk \
+  poke.pkl/cast-offsets-4.pk \
+  poke.pkl/cast-offsets-5.pk \
   poke.pkl/cast-offsets-diag-1.pk \
   poke.pkl/cast-offsets-diag-2.pk \
   poke.pkl/cast-offsets-diag-3.pk \
@@ -637,7 +639,6 @@ EXTRA_DIST = \
   poke.pkl/cast-struct-diag-1.pk \
   poke.pkl/cast-struct-diag-2.pk \
   poke.pkl/cast-void-diag-1.pk \
-  poke.pkl/casts-offsets-4.pk \
   poke.pkl/cdiv-integers-1.pk \
   poke.pkl/cdiv-integers-2.pk \
   poke.pkl/cdiv-integers-3.pk \
