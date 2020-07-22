@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+deftype Foo =
+  struct int<64>
+  {
+    int<32> f1;
+    uint<32> f2;
+  };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { Foo { f1 = 1, f2 = 1 } as uint<64> + 2} } */
+/* { dg-output "0x100000003UL" } */

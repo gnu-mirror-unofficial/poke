@@ -435,12 +435,14 @@ pkl_ast_make_struct_type (pkl_ast ast,
   PKL_AST_TYPE_S_WRITER (type) = PVM_NULL;
   PKL_AST_TYPE_S_CONSTRUCTOR (type) = PVM_NULL;
   PKL_AST_TYPE_S_COMPARATOR (type) = PVM_NULL;
+  PKL_AST_TYPE_S_INTEGRATOR (type) = PVM_NULL;
 
   /* The closure slots are GC roots.  */
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_WRITER (type), 1);
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_MAPPER (type), 1);
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_CONSTRUCTOR (type), 1);
   pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_COMPARATOR (type), 1);
+  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_INTEGRATOR (type), 1);
 
   return type;
 }
@@ -1870,6 +1872,7 @@ pkl_ast_node_free (pkl_ast_node ast)
           pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_MAPPER (ast), 1);
           pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_CONSTRUCTOR (ast), 1);
           pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_COMPARATOR (ast), 1);
+          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_INTEGRATOR (ast), 1);
 
           for (t = PKL_AST_TYPE_S_ELEMS (ast); t; t = n)
             {

@@ -1,3 +1,25 @@
+2020-07-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_INTEGRATOR): Define.
+	(sct): New field integrator.
+	* libpoke/pkl-ast.c (pkl_ast_make_struct_type): Handle the
+	integrator.
+	(pkl_ast_node_free): Likewise.
+	* libpoke/pkl-gen.h: Note that IN_WRITER is also used for struct
+	integrators.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Compile integrators for
+	integral structs.
+	(pkl_gen_ps_cast): Handle casts from struct to integral.
+	* libpoke/pkl-gen.pks (struct_integrator): New RAS function.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Allow casts from
+	integral structs to integral types.
+	* testsuite/poke.pkl/cast-struct-diag-3.pk: New test.
+	* testsuite/poke.pkl/cast-int-struct-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update with new tests.
+	* doc/poke.texi (Casting Structs): Document casts from integral
+	struct to integral type.
+	(Integral Structs): Likewise.
+
 2020-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/scons-int-struct-3.pk: New test.

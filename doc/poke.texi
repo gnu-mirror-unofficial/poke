@@ -6636,6 +6636,7 @@ They contain heterogeneous collections of values.
 * Field Initializers::		Initial values for fields.
 * Field Labels::		Explicit offsets for fields.
 * Pinned Structs::		Fix the offset of fields.
+* Integral Structs::		Composite data stored in integers.
 * Unions::			Dealing with conditional data.
 * Optional Fields::		Fields that may or may not exist.
 * Casting Structs::		Converting structs from one type to another.
@@ -7057,6 +7058,128 @@ deftype Ctf_Stype_V1 =
   @};
 @end example
 
+@node Integral Structs
+@subsection Integral Structs
+@cindex integral structs
+
+When we structure data using Poke structs, arrays and the like, we
+often use the same structure than a C programmer would use.  For
+example, to model ELF RELA structures, which are defined in C like:
+
+@example
+typedef struct
+@{
+  Elf64_Addr   r_offset;  /* Address */
+  Elf64_Xword  r_info;    /* Relocation type and symbol index */
+  Elf64_Sxword r_addend;  /* Addend */
+@} Elf64_Rela;
+@end example
+
+@noindent
+we could use something like this in Poke:
+
+@example
+deftype Elf64_Rela =
+  struct
+  @{
+    Elf64_Addr r_offset;
+    Elf64_Xword r_info;
+    Elf64_Sxword r_addend;
+  @};
+@end example
+
+Here the Poke struct type is pretty equivalent to the C incarnation.
+In both cases the fields are always stored in the given order,
+regardless of endianness or any other consideration.
+
+However, there are situations where stored integral values are to be
+interpreted as composite data.  This is the case of the @code{r_info}
+field above, which is a 64-bit unsigned integer (@code{Elf64_Xword})
+which is itself composed by several fields, depicted here:
+
+@example
+ 63                                          0
++----------------------+----------------------+
+|       r_sym          |      r_type          |
++----------------------+----------------------+
+MSB                                         LSB
+@end example
+
+In order to support this kind of composition of integers, C
+programmers usually resort to either bit masking (most often) or to
+the often obscure and undefined behaviour-prone C bit fields.  In the
+case of ELF, the GNU implementations define a few macros to access
+these ``sub-fields'':
+
+@example
+#define ELF64_R_SYM(i)         ((i) >> 32)
+#define ELF64_R_TYPE(i)        ((i) & 0xffffffff)
+#define ELF64_R_INFO(sym,type) ((((Elf64_Xword) (sym)) << 32) + (type))
+@end example
+
+Where @code{ELF64_R_SYM} and @code{ELF64_R_TYPE} are used to extract
+the fields from an @code{r_info}, and @code{ELF64_R_INFO} is used to
+compose it.  This is typical of C data structures.
+
+We could of course mimic the C implementation in Poke:
+
+@example
+defun Elf64_R_Sym = (Elf64_Xword i) uint<32>:
+   @{ return i .>> 32; @}
+defun Elf64_R_Type = (Elf64_Xword i) uint<32>:
+   @{ return i & 0xffff_ffff; @}
+defun Elf64_R_Info = (uint<32> sym, uint<32> type) Elf64_Xword:
+   @{ return sym as Elf64_Xword <<. 32 + type; @}
+@end example
+
+However, this approach has a huge disadvantage: since we are not able
+to encode the logic of these ``sub-fields'' in proper Poke fields,
+they become second class citizens, with all that implies: no
+constraints on their own, can't be auto-completed, can't be assigned
+individually, @i{etc}.
+
+But we can use the so-called @dfn{integral structs}!  These are
+structs that are defined exactly like your garden variety Poke
+structs, with a small addition:
+
+@example
+deftype Elf64_RelInfo =
+  struct uint<64>
+  @{
+    uint<32> r_sym;
+    uint<32> r_type;
+  @};
+@end example
+
+Note the @code{uint<64>} addition after @code{struct}.  This can be
+any integer type (signed or unsigned).  The fields of an integral
+struct should be integral themselves (this includes both integers and
+offsets) and the total size occupied by the fields should be the same
+size than the one declared in the struct's integer type.  This is
+checked and enforced by the compiler.
+
+The Elf64 RELA in Poke can then be encoded like:
+
+@example
+deftype Elf64_Rela =
+  struct
+  @{
+    Elf64_Addr r_offset;
+    struct Elf64_Xword
+    @{
+      uint<32> r_sym;
+      uint<32> r_type;
+    @} r_info;
+    Elf64_Sxword r_addend;
+  @};
+@end example
+
+When an integral struct is mapped from some IO space, the total number
+of bytes occupied by the struct is read as a single integer value, and
+then the values of the fields are extracted from it.  A similar
+process is using when writing.  That is what makes it different with
+respect a normal Poke struct.
+
 @node Unions
 @subsection Unions
 @cindex unions
@@ -7157,6 +7280,29 @@ Foo @{
 Bar @{
   i=0x0
 @}
+@end example
+
+It is possible to cast an integral struct into an integral type.  The
+value to cast is extracted from the struct fields, and then it is
+converted to the target type.
+
+Given the following integral struct type:
+
+@example
+deftype Foo =
+  struct int<64>
+  @{
+    int<32> f1;
+    uint<32> f2;
+  @};
+@end example
+
+@noindent
+We can operate:
+
+@example
+(poke) Foo @{ f1 = 1, f2 = 1 @} as uint<64> + 2
+0x100000003UL
 @end example
 
 @node Declarations in Structs

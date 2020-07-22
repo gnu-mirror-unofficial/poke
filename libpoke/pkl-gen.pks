@@ -1471,7 +1471,7 @@
         ;; on the stack.
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
-  .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
+  .c    PKL_PASS_SUBPASS (@struct_itype);
   .c    PKL_GEN_PAYLOAD->in_constructor = 0;
   .c    PKL_GEN_PAYLOAD->in_writer = 1;
   .c }
@@ -1529,5 +1529,60 @@
  .c }
         popf 1
         push null
+        return
+        .end
+
+;;; RAS_FUNCTION_STRUCT_INTEGRATOR @type_struct
+;;; ( VAL -- IVAL )
+;;;
+;;; Assemble a function that, given an integral struct, returns
+;;; it's integral value.
+;;;
+;;; Macro-arguments:
+;;;
+;;; @type_struct is a pkl_ast_node with the type of the struct
+;;; passed in the stack.
+
+        .function struct_integrator @type_struct
+        prolog
+        pushf 2
+        regvar $sct             ; Argument
+        .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct)
+        push null
+        ;; Note that the constructor consumes the null
+        ;; on the stack.
+  .c    PKL_GEN_PAYLOAD->in_writer = 0;
+  .c    PKL_GEN_PAYLOAD->in_constructor = 1;
+  .c    PKL_PASS_SUBPASS (@struct_itype);
+  .c    PKL_GEN_PAYLOAD->in_constructor = 0;
+  .c    PKL_GEN_PAYLOAD->in_writer = 1;
+        regvar $ivalue
+        .let @field
+ .c      uint64_t i;
+ .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+        .let #i = pvm_make_ulong (i, 64)
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        pushvar $sct            ; SCT
+        push #i                 ; SCT I
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field);
+        .let #ivalw = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@struct_itype), 64);
+ .c     size_t field_type_size
+ .c        = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (@field_type))
+ .c           : PKL_AST_TYPE_I_SIZE (@field_type));
+        .let #fieldw = pvm_make_ulong (field_type_size, 64);
+        pushvar $ivalue          ; SCT I IVAL
+        nrot                     ; IVAL SCT I
+        .e struct_field_inserter @struct_itype, @field_type, #ivalw, #fieldw
+                                 ; NIVAL
+        popvar $ivalue           ; _
+ .c     i = i + 1;
+ .c }
+        pushvar $ivalue
+        popf 1
         return
         .end

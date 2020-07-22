@@ -460,13 +460,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
+  /* Structs can be casted to other structs.  Additionally, integral
+     structs can also be casted to integral types.  */
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT)
     {
-      PKL_ERROR (PKL_AST_LOC (type),
-                 "invalid cast, expected struct");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+          || (PKL_AST_TYPE_S_ITYPE (exp_type)
+              && PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL))
+        ;
+      else
+        {
+          PKL_ERROR (PKL_AST_LOC (type),
+                     "invalid cast, expected struct%s",
+                     PKL_AST_TYPE_S_ITYPE (exp_type) ? " or integer" : "");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
     }
 
   /* Only arrays can be casted to arrays.  Also, only array boundaries

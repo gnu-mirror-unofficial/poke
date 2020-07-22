@@ -854,9 +854,10 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    declarations.  ELEMS is a chain of elements, which can be
    PKL_AST_STRUCT_TYPE_FIELD or PKL_AST_DECL nodes, potentially mixed.
    PINNED_P is 1 if the struct is pinned, 0 otherwise.  MAPPER, WRITER
-   CONSTRUCTOR and COMPARATOR are used to hold closures, or PVM_NULL.
-   INT_TYPE, if not NULL, is an AST node with an integral type, that
-   defines the nature of this struct type as integral.
+   CONSTRUCTOR, COMPARATOR and INTEGRATOR are used to hold closures,
+   or PVM_NULL.  INT_TYPE, if not NULL, is an AST node with an
+   integral type, that defines the nature of this struct type as
+   integral.
 
    In offset types, BASE_TYPE is a PKL_AST_TYPE with the base type for
    the offset's magnitude, and UNIT is either a PKL_AST_IDENTIFIER
@@ -898,6 +899,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_S_WRITER(AST) ((AST)->type.val.sct.writer)
 #define PKL_AST_TYPE_S_CONSTRUCTOR(AST) ((AST)->type.val.sct.constructor)
 #define PKL_AST_TYPE_S_COMPARATOR(AST) ((AST)->type.val.sct.comparator)
+#define PKL_AST_TYPE_S_INTEGRATOR(AST) ((AST)->type.val.sct.integrator)
 #define PKL_AST_TYPE_S_ITYPE(AST) ((AST)->type.val.sct.itype)
 #define PKL_AST_TYPE_O_UNIT(AST) ((AST)->type.val.off.unit)
 #define PKL_AST_TYPE_O_BASE_TYPE(AST) ((AST)->type.val.off.base_type)
@@ -951,6 +953,7 @@ struct pkl_ast_type
       pvm_val writer;
       pvm_val constructor;
       pvm_val comparator;
+      pvm_val integrator;
     } sct;
 
     struct
