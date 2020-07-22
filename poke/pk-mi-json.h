@@ -19,9 +19,8 @@
 #ifndef PK_MI_JSON
 #define PK_MI_JSON
 
-#include <config.h>
-
 #include <stdlib.h>
+#include <config.h>
 
 #include "pk-mi-msg.h"
 #include "libpoke.h"
