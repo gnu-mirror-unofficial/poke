@@ -86,6 +86,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_not)
   pkl_ast_node op = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
   pkl_ast_node op_type = PKL_AST_TYPE (op);
 
+  /* Handle integral structs.  */
+  if (PKL_AST_TYPE_CODE (op_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op_type))
+    op_type = PKL_AST_TYPE_S_ITYPE (op_type);
+
   if (PKL_AST_TYPE_CODE (op_type) != PKL_TYPE_INTEGRAL)
     {
       PKL_ERROR (PKL_AST_LOC (op),
@@ -238,6 +243,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_boolean)
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);
   pkl_ast_node op2_type = PKL_AST_TYPE (op2);
 
+  /* Integral structs shall be considered as integers in this
+     context.  */
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
+
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op2_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
   if (PKL_AST_TYPE_CODE (op1_type) != PKL_TYPE_INTEGRAL
       || PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_INTEGRAL)
@@ -266,6 +280,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_first_operand)
 
   if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_UNMAP)
     {
+      /* Handle an integral struct operand.  */
+      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+          && PKL_AST_TYPE_S_ITYPE (type))
+        type = PKL_AST_TYPE_S_ITYPE (type);
+
       switch (PKL_AST_TYPE_CODE (type))
         {
         case PKL_TYPE_INTEGRAL:
@@ -553,6 +572,15 @@ PKL_PHASE_END_HANDLER
                                                                         \
     pkl_ast_node type;                                                  \
                                                                         \
+    /* Integral structs are integers for binary operators.  */          \
+    if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT                       \
+        && PKL_AST_TYPE_S_ITYPE (t1))                                   \
+      t1 = PKL_AST_TYPE_S_ITYPE (t1);                                   \
+                                                                        \
+    if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT                       \
+        && PKL_AST_TYPE_S_ITYPE (t2))                                   \
+      t2 = PKL_AST_TYPE_S_ITYPE (t2);                                   \
+                                                                        \
     if (PKL_AST_TYPE_CODE (t1) != PKL_AST_TYPE_CODE (t2))               \
       goto error;                                                       \
                                                                         \
@@ -771,6 +799,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
 
   pkl_ast_node type;
 
+  /* Integral structs shall be considered as integers in this
+     context.  */
+  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (t1))
+    t1 = PKL_AST_TYPE_S_ITYPE (t1);
+
+  if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (t2))
+    t2 = PKL_AST_TYPE_S_ITYPE (t2);
+
   /* The second argument should be an integral.  */
   if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)
     {
@@ -829,6 +867,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
   int t2_code = PKL_AST_TYPE_CODE (t2);
 
   pkl_ast_node type;
+
+  /* Integral structs shall be considered as integers in this
+     context.  */
+  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (t1))
+    t1 = PKL_AST_TYPE_S_ITYPE (t1);
+
+  if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (t2))
+    t2 = PKL_AST_TYPE_S_ITYPE (t2);
 
   if (t1_code == PKL_TYPE_STRING || t2_code == PKL_TYPE_STRING)
     {
@@ -970,6 +1018,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_bconc)
   pkl_ast_node t2 = PKL_AST_TYPE (op2);
 
   pkl_ast_node exp_type;
+
+  /* Integral structs shall be considered as integers in this
+     context.  */
+  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (t1))
+    t1 = PKL_AST_TYPE_S_ITYPE (t1);
+
+  if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (t2))
+    t2 = PKL_AST_TYPE_S_ITYPE (t2);
 
   /* This operation is only defined for integral arguments, of any
      width.  */
@@ -1968,16 +2026,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt)
   pkl_ast_node loop_stmt = PKL_PASS_NODE;
   pkl_ast_node condition = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
 
-  /* The type of the loop condition should be a boolean.  */
+  /* The type of the loop condition should be a boolean, i.e. a
+     promoteable integer or integral struct.  */
   if (condition)
     {
       pkl_ast_node condition_type;
 
       condition_type = PKL_AST_TYPE (condition);
 
-      if (PKL_AST_TYPE_CODE (condition_type) != PKL_TYPE_INTEGRAL
-          || PKL_AST_TYPE_I_SIZE (condition_type) != 32
-          || PKL_AST_TYPE_I_SIGNED (condition_type) != 1)
+      /* Allow an integral struct.  */
+      if (PKL_AST_TYPE_CODE (condition_type) == PKL_TYPE_STRUCT
+          && PKL_AST_TYPE_S_ITYPE (condition_type))
+        condition_type = PKL_AST_TYPE_S_ITYPE (condition_type);
+
+      if (PKL_AST_TYPE_CODE (condition_type) != PKL_TYPE_INTEGRAL)
         {
           PKL_ERROR (PKL_AST_LOC (condition),
                      "expected boolean expression");
@@ -2587,6 +2649,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_if_stmt)
   pkl_ast_node exp = PKL_AST_IF_STMT_EXP (if_stmt);
   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
+  /* Allow an integral struct.  */
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (exp_type))
+    exp_type = PKL_AST_TYPE_S_ITYPE (exp_type);
+
   if (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL)
     {
       PKL_ERROR (PKL_AST_LOC (exp),
@@ -2613,6 +2680,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
 
   pkl_ast_node then_type = PKL_AST_TYPE (then_exp);
   pkl_ast_node else_type = PKL_AST_TYPE (else_exp);
+
+  /* Allow an integral struct.  */
+  if (PKL_AST_TYPE_CODE (cond_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (cond_type))
+    cond_type = PKL_AST_TYPE_S_ITYPE (cond_type);
 
   if (!pkl_ast_type_equal (then_type, else_type))
     {

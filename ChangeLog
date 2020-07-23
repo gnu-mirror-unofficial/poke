@@ -1,5 +1,88 @@
 2020-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.c (pkl_ast_type_promoteable): Integral struct
+	types can be promoted to integral types.
+	* libpoke/pkl-typify.c (TYPIFY_BIN): Consider integral structs as
+	integers in binary operators.
+	(pkl_typify1_ps_bshift_pow): Likewise.
+	(pkl_typify1_ps_mul): Likewise.
+	(pkl_typify1_ps_op_bconc): Likewise.
+	(pkl_typify1_ps_op_boolean): Likewise.
+	(pkl_typify1_ps_first_operand): Likewise.
+	(pkl_typify1_ps_op_not): Likewise.
+	(pkl_typify1_ps_loop_stmt): Likewise.
+	(pkl_typify1_ps_if_stmt): Likewise.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_op_sl): Likewise.
+	* libpoke/pkl-promo.c (promote_integral): Support promoting
+	integral structs.
+	(pkl_promo_ps_op_mul): Likewise.
+	(pkl_promo_ps_op_rela): Likewise.
+	(pkl_promo_ps_op_div): Likewise.
+	(pkl_promo_ps_cond_exp): Likewise.
+	(pkl_promo_ps_struct_type_field): Likewise.
+	(pkl_phase_promo): Promote OP_NEG, OP_POS and OP_BNOT.
+	(pkl_promo_ps_op_bconc): New handler.
+	(pkl_promo_ps_if_stmt): Likewise.
+	(pkl_promo_ps_loop_stmt): Likewise.
+	(pkl_phase_promo): Install new handlers.
+	* testsuite/poke.pkl/add-int-struct-1.pk: New test.
+	* testsuite/poke.pkl/add-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/add-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/sub-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/sub-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/sub-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/mul-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/mul-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/mul-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/div-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/div-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/div-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/and-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/and-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/and-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/or-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/or-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/or-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/not-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/neg-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/pos-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/band-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/band-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/band-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/ior-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/ior-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/ior-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/bnot-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/xor-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/xor-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/xor-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/bconc-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/bconc-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/bconc-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/sl-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/sl-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/sr-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/sr-int-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/promo-int-struct-arg-1.pk: Likewise.
+	* testsuite/poke.pkl/promo-int-struct-return-1.pk: Likewise.
+	* testsuite/poke.pkl/if-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/while-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/while-3.pk: Likewise.
+	* testsuite/poke.pkl/for-in-5.pk: Likewise.
+	* testsuite/poke.pkl/for-in-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/cond-exp-int-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/cond-exp-int-struct-2.pk: Likewise.
+	* testsuite/poke.map/maps-int-struct-constraint-1.pk: Likewise.
+	* testsuite/poke.map/maps-int-struct-constraint-2.pk: Likewise.
+	* testsuite/poke.map/map-opcond-int-struct-1.pk: Likewise.
+	* testsuite/poke.map/map-opcond-int-struct-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update with new tests.
+
+2020-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_field_inserter): Take into account
 	the struct offse in calculations.
 	* testsuite/poke.pkl/cast-int-struct-2.pk: New test.

@@ -1,0 +1,22 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x60 0x50 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+deftype Foo =
+  struct int<32>
+  {
+    int<16> hi;
+    uint<16> lo;
+  };
+
+deftype Bar =
+  struct
+  {
+    uint<16> a;
+    uint<16> b if Foo { lo = a };
+  };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian big } } */
+/* { dg-command { Bar @ 1#B } } */
+/* { dg-output "Bar {a=0x2030UH,b=0x4060UH}" } */
+

@@ -124,6 +124,8 @@ EXTRA_DIST = \
   poke.map/map-optcond-9.pk \
   poke.map/map-optcond-10.pk \
   poke.map/map-optcond-11.pk \
+  poke.map/map-optcond-int-struct-1.pk \
+  poke.map/map-optcond-int-struct-2.pk \
   poke.map/map-size-1.pk \
   poke.map/mapped-attr.pk \
   poke.map/maps-arrays-1.pk \
@@ -281,6 +283,8 @@ EXTRA_DIST = \
   poke.map/maps-structs-methods-11.pk \
   poke.map/maps-structs-pinned-1.pk \
   poke.map/maps-structs-pinned-2.pk \
+  poke.map/maps-int-struct-constraint-1.pk \
+  poke.map/maps-int-struct-constraint-2.pk \
   poke.map/maps-trims-1.pk \
   poke.map/maps-uint-1.pk \
   poke.map/maps-uint-2.pk \
@@ -439,6 +443,9 @@ EXTRA_DIST = \
   poke.pkl/add-integers-2.pk \
   poke.pkl/add-integers-3.pk \
   poke.pkl/add-integers-4.pk \
+  poke.pkl/add-int-struct-1.pk \
+  poke.pkl/add-int-struct-2.pk \
+  poke.pkl/add-int-struct-3.pk \
   poke.pkl/add-offsets-1.pk \
   poke.pkl/add-offsets-2.pk \
   poke.pkl/add-offsets-3.pk \
@@ -466,6 +473,9 @@ EXTRA_DIST = \
   poke.pkl/and-14.pk \
   poke.pkl/and-15.pk \
   poke.pkl/and-diag-1.pk \
+  poke.pkl/and-int-struct-1.pk \
+  poke.pkl/and-int-struct-2.pk \
+  poke.pkl/and-int-struct-3.pk \
   poke.pkl/array-1.pk \
   poke.pkl/array-2.pk \
   poke.pkl/array-diag-3.pk \
@@ -558,6 +568,9 @@ EXTRA_DIST = \
   poke.pkl/attr-unit-1.pk \
   poke.pkl/band-integers-1.pk \
   poke.pkl/band-integers-2.pk \
+  poke.pkl/band-int-struct-1.pk \
+  poke.pkl/band-int-struct-2.pk \
+  poke.pkl/band-int-struct-3.pk \
   poke.pkl/band-offsets-1.pk \
   poke.pkl/band-offsets-2.pk \
   poke.pkl/bconc-1.pk \
@@ -567,11 +580,15 @@ EXTRA_DIST = \
   poke.pkl/bconc-5.pk \
   poke.pkl/bconc-6.pk \
   poke.pkl/bconc-7.pk \
+  poke.pkl/bconc-int-struct-1.pk \
+  poke.pkl/bconc-int-struct-2.pk \
+  poke.pkl/bconc-int-struct-3.pk \
   poke.pkl/bnot-diag-1.pk \
   poke.pkl/bnot-integers-1.pk \
   poke.pkl/bnot-integers-2.pk \
   poke.pkl/bnot-integers-3.pk \
   poke.pkl/bnot-integers-4.pk \
+  poke.pkl/bnot-int-struct-1.pk \
   poke.pkl/bnot-offsets-1.pk \
   poke.pkl/break-diag-1.pk \
   poke.pkl/break-for-1.pk \
@@ -651,6 +668,9 @@ EXTRA_DIST = \
   poke.pkl/cdiv-integers-2.pk \
   poke.pkl/cdiv-integers-3.pk \
   poke.pkl/cdiv-integers-diag-1.pk \
+  poke.pkl/cdiv-int-struct-1.pk \
+  poke.pkl/cdiv-int-struct-2.pk \
+  poke.pkl/cdiv-int-struct-3.pk \
   poke.pkl/cdiv-offsets-1.pk \
   poke.pkl/cdiv-offsets-2.pk \
   poke.pkl/cdiv-offsets-3.pk \
@@ -673,6 +693,8 @@ EXTRA_DIST = \
   poke.pkl/cond-exp-diag-1.pk \
   poke.pkl/cond-exp-diag-2.pk \
   poke.pkl/cond-exp-diag-3.pk \
+  poke.pkl/cond-exp-int-struct-1.pk \
+  poke.pkl/cond-exp-int-struct-2.pk \
   poke.pkl/csat-struct-6.pk \
   poke.pkl/defun-1.pk \
   poke.pkl/defun-2.pk \
@@ -701,6 +723,9 @@ EXTRA_DIST = \
   poke.pkl/div-integers-2.pk \
   poke.pkl/div-integers-3.pk \
   poke.pkl/div-integers-diag-1.pk \
+  poke.pkl/div-int-struct-1.pk \
+  poke.pkl/div-int-struct-2.pk \
+  poke.pkl/div-int-struct-3.pk \
   poke.pkl/div-offsets-1.pk \
   poke.pkl/div-offsets-2.pk \
   poke.pkl/div-offsets-3.pk \
@@ -767,6 +792,8 @@ EXTRA_DIST = \
   poke.pkl/for-in-2.pk \
   poke.pkl/for-in-3.pk \
   poke.pkl/for-in-4.pk \
+  poke.pkl/for-in-5.pk \
+  poke.pkl/for-in-int-struct-1.pk \
   poke.pkl/formfeedchar.pk \
   poke.pkl/fun-types-1.pk \
   poke.pkl/fun-types-2.pk \
@@ -853,6 +880,7 @@ EXTRA_DIST = \
   poke.pkl/if-diag-1.pk \
   poke.pkl/if-diag-2.pk \
   poke.pkl/if-diag-3.pk \
+  poke.pkl/if-int-struct-1.pk \
   poke.pkl/in-1.pk \
   poke.pkl/in-2.pk \
   poke.pkl/in-3.pk \
@@ -891,6 +919,9 @@ EXTRA_DIST = \
   poke.pkl/integers-diag-1.pk \
   poke.pkl/ior-integers-1.pk \
   poke.pkl/ior-integers-2.pk \
+  poke.pkl/ior-int-struct-1.pk \
+  poke.pkl/ior-int-struct-2.pk \
+  poke.pkl/ior-int-struct-3.pk \
   poke.pkl/ior-offsets-1.pk \
   poke.pkl/ior-offsets-2.pk \
   poke.pkl/ios-cur-1.pk \
@@ -971,6 +1002,9 @@ EXTRA_DIST = \
   poke.pkl/mul-integers-1.pk \
   poke.pkl/mul-integers-2.pk \
   poke.pkl/mul-integers-3.pk \
+  poke.pkl/mul-int-struct-1.pk \
+  poke.pkl/mul-int-struct-2.pk \
+  poke.pkl/mul-int-struct-3.pk \
   poke.pkl/mul-offsets-1.pk \
   poke.pkl/mul-offsets-2.pk \
   poke.pkl/mul-offsets-3.pk \
@@ -1004,6 +1038,7 @@ EXTRA_DIST = \
   poke.pkl/neg-diag-1.pk \
   poke.pkl/neg-integers-1.pk \
   poke.pkl/neg-integers-2.pk \
+  poke.pkl/neg-int-struct-1.pk \
   poke.pkl/neg-offsets-1.pk \
   poke.pkl/neq-any-diag-1.pk \
   poke.pkl/neq-integers-1.pk \
@@ -1020,6 +1055,7 @@ EXTRA_DIST = \
   poke.pkl/not-3.pk \
   poke.pkl/not-4.pk \
   poke.pkl/not-5.pk \
+  poke.pkl/not-int-struct-1.pk \
   poke.pkl/offset-arg-1.pk \
   poke.pkl/offset-arg-2.pk \
   poke.pkl/offset-type-diag-1.pk \
@@ -1072,9 +1108,13 @@ EXTRA_DIST = \
   poke.pkl/or-4.pk \
   poke.pkl/or-5.pk \
   poke.pkl/or-diag-1.pk \
+  poke.pkl/or-int-struct-1.pk \
+  poke.pkl/or-int-struct-2.pk \
+  poke.pkl/or-int-struct-3.pk \
   poke.pkl/pos-diag-1.pk \
   poke.pkl/pos-integers-1.pk \
   poke.pkl/pos-integers-2.pk \
+  poke.pkl/pos-int-struct-1.pk \
   poke.pkl/pos-offsets-1.pk \
   poke.pkl/pow-diag-1.pk \
   poke.pkl/pow-diag-2.pk \
@@ -1166,6 +1206,8 @@ EXTRA_DIST = \
   poke.pkl/promo-array-return-diag-1.pk \
   poke.pkl/promo-array-return-diag-2.pk \
   poke.pkl/promo-array-scons-diag-1.pk \
+  poke.pkl/promo-int-struct-arg-1.pk \
+  poke.pkl/promo-int-struct-return-1.pk \
   poke.pkl/promo-offset-arg-1.pk \
   poke.pkl/promo-offset-arg-2.pk \
   poke.pkl/promo-offset-return-1.pk \
@@ -1283,12 +1325,16 @@ EXTRA_DIST = \
   poke.pkl/sl-integers-10.pk \
   poke.pkl/sl-integers-11.pk \
   poke.pkl/sl-integers-12.pk \
+  poke.pkl/sl-int-struct-1.pk \
+  poke.pkl/sl-int-struct-2.pk \
   poke.pkl/sl-offsets-1.pk \
   poke.pkl/sl-offsets-2.pk \
   poke.pkl/sr-diag-1.pk \
   poke.pkl/sr-diag-2.pk \
   poke.pkl/sr-integers-1.pk \
   poke.pkl/sr-integers-2.pk \
+  poke.pkl/sr-int-struct-1.pk \
+  poke.pkl/sr-int-struct-2.pk \
   poke.pkl/sr-offsets-1.pk \
   poke.pkl/sr-offsets-2.pk \
   poke.pkl/sref-1.pk \
@@ -1373,6 +1419,9 @@ EXTRA_DIST = \
   poke.pkl/sub-integers-3.pk \
   poke.pkl/sub-integers-4.pk \
   poke.pkl/sub-integers-5.pk \
+  poke.pkl/sub-int-struct-1.pk \
+  poke.pkl/sub-int-struct-2.pk \
+  poke.pkl/sub-int-struct-3.pk \
   poke.pkl/sub-offsets-1.pk \
   poke.pkl/sub-offsets-2.pk \
   poke.pkl/sub-offsets-3.pk \
@@ -1456,9 +1505,14 @@ EXTRA_DIST = \
   poke.pkl/uu-line-1.pk \
   poke.pkl/while-1.pk \
   poke.pkl/while-2.pk \
+  poke.pkl/while-3.pk \
+  poke.pkl/while-int-struct-1.pk \
   poke.pkl/xor-diag-1.pk \
   poke.pkl/xor-integers-1.pk \
   poke.pkl/xor-integers-2.pk \
+  poke.pkl/xor-int-struct-1.pk \
+  poke.pkl/xor-int-struct-2.pk \
+  poke.pkl/xor-int-struct-3.pk \
   poke.pkl/xor-offsets-1.pk \
   poke.pkl/xor-offsets-2.pk \
   poke.repl/repl.exp \

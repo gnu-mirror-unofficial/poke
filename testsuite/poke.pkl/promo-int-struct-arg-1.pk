@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+defun foo = (int<32> arg) int: { return arg + 1; }
+deftype Foo = struct int<32> { int<16> hi; uint<16> lo; };
+
+/* { dg-command {.set obase 10} } */
+/* { dg-command { foo (Foo {hi = 0, lo = 2}) } } */
+/* { dg-output "3" } */

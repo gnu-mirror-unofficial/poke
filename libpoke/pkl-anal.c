@@ -452,6 +452,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_op_sl)
 
   assert (value_type != NULL);
 
+  /* The operand may be an integral struct, and promo hasn't been
+     performed yet for this node.  */
+  if (PKL_AST_TYPE_CODE (value_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (value_type))
+    value_type = PKL_AST_TYPE_S_ITYPE (value_type);
+
   if (PKL_AST_CODE (count) == PKL_AST_INTEGER
       && PKL_AST_INTEGER_VALUE (count) >= PKL_AST_TYPE_I_SIZE (value_type))
     {

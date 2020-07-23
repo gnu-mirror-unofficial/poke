@@ -910,8 +910,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_bconc)
   uint64_t result;
 
   assert (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
-          && PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_INTEGRAL
-          && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_INTEGRAL);
+          && (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_INTEGRAL
+              || (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+                  && PKL_AST_TYPE_S_ITYPE (op1_type)))
+          && (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_INTEGRAL
+              || (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+                  && PKL_AST_TYPE_S_ITYPE (op2_type))));
 
   if (PKL_AST_CODE (op1) != PKL_AST_INTEGER
       || PKL_AST_CODE (op2) != PKL_AST_INTEGER)

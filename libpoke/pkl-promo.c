@@ -43,11 +43,17 @@ promote_integral (pkl_ast ast,
 {
   pkl_ast_node type = PKL_AST_TYPE (*a);
 
+  /* Support promoting integral structs.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (type))
+    type = PKL_AST_TYPE_S_ITYPE (type);
+
   *restart = 0;
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
     {
       if (PKL_AST_TYPE_I_SIZE (type) != size
-          || PKL_AST_TYPE_I_SIGNED (type) != sign)
+          || PKL_AST_TYPE_I_SIGNED (type) != sign
+          || PKL_AST_TYPE_CODE (PKL_AST_TYPE (*a)) == PKL_TYPE_STRUCT)
         {
           pkl_ast_node desired_type
             = pkl_ast_make_integral_type (ast, size, sign);
@@ -219,6 +225,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
   pkl_ast_node op2_type = PKL_AST_TYPE (op2);
 
+  /* Support promoting integral structs.  */
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
+
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op2_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
+
   /* Note we discriminate on the first operand type in order to
      distinguish between configurations.  */
   switch (PKL_AST_TYPE_CODE (op1_type))
@@ -373,6 +388,52 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary_intoffstrarr)
 }
 PKL_PHASE_END_HANDLER
 
+/* Bit-concatenation is defined on the following configurations of
+   operand and result types:
+
+   INTEGRAL x INTEGRAL -> INTEGRAL
+
+   Since the operands can be of any integral type, this handler
+   focuses on promoting integral struct operands to their itype.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_bconc)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  int restart = 0;
+  int i;
+
+  for (i = 0; i < 2; ++i)
+    {
+      pkl_ast_node op = PKL_AST_EXP_OPERAND (exp, i);
+      pkl_ast_node op_type = PKL_AST_TYPE (op);
+
+      if (PKL_AST_TYPE_CODE (op_type) == PKL_TYPE_STRUCT)
+        {
+          pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (op_type);
+
+          /* Guaranteed as per typify.  */
+          assert (itype);
+
+          size_t size = PKL_AST_TYPE_I_SIZE (itype);
+          int signed_p = PKL_AST_TYPE_I_SIGNED (itype);
+
+          if (!promote_integral (PKL_PASS_AST,
+                                 size, signed_p,
+                                 &PKL_AST_EXP_OPERAND (exp, i),
+                                 &restart))
+            {
+              PKL_ICE (PKL_AST_LOC (exp),
+                       "couldn't promote operands of expression #%" PRIu64,
+                       PKL_AST_UID (exp));
+              PKL_PASS_ERROR;
+            }
+
+          PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /* Multiplication is defined on the following configurations of
    operand and result types:
 
@@ -405,6 +466,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_mul)
 
       pkl_ast_node op = PKL_AST_EXP_OPERAND (exp, i);
       pkl_ast_node op_type = PKL_AST_TYPE (op);
+
+      /* Handle integral struct operand.  */
+      if (PKL_AST_TYPE_CODE (op_type) == PKL_TYPE_STRUCT
+          && PKL_AST_TYPE_S_ITYPE (op_type))
+        op_type = PKL_AST_TYPE_S_ITYPE (op_type);
 
       if (PKL_AST_TYPE_CODE (op_type) == PKL_TYPE_INTEGRAL)
         {
@@ -496,6 +562,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
 
   if (PKL_AST_TYPE_CODE (op1_type) != PKL_AST_TYPE_CODE (op2_type))
     goto error;
+
+  /* Handle integral struct operands.  */
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
   switch (PKL_AST_TYPE_CODE (op1_type))
     {
@@ -1007,6 +1081,72 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
 }
 PKL_PHASE_END_HANDLER
 
+/* Promoting the condition of an IF statement to int<32> is not
+   strictly necessary (nor desirable) since the code generator will
+   generate the right compare-and-branch instruction.  However, we
+   still need to promote integral structs to their itype.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_if_stmt)
+{
+  pkl_ast_node if_stmt = PKL_PASS_NODE;
+  pkl_ast_node exp = PKL_AST_IF_STMT_EXP (if_stmt);
+  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
+
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (exp_type))
+    {
+      pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (exp_type);
+      size_t size = PKL_AST_TYPE_I_SIZE (itype);
+      int signed_p = PKL_AST_TYPE_I_SIGNED (itype);
+      int restart;
+
+      if (!promote_integral (PKL_PASS_AST,
+                             size, signed_p,
+                             &PKL_AST_IF_STMT_EXP (if_stmt),
+                             &restart))
+        {
+          PKL_ICE (PKL_AST_LOC (if_stmt),
+                   "couldn't promote condition of if-stmt #%" PRIu64,
+                   PKL_AST_UID (if_stmt));
+          PKL_PASS_ERROR;
+        }
+
+      PKL_PASS_RESTART = restart;
+    }
+}
+PKL_PHASE_END_HANDLER
+
+/* The condition in loop statements, if present, shall be promoted to
+   int<32>.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_loop_stmt)
+{
+  pkl_ast_node loop_stmt = PKL_PASS_NODE;
+  pkl_ast_node condition = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
+
+  if (condition)
+    {
+      int restart;
+
+      /* Note that the condition node is promoteable as per
+         typify.  */
+
+      if (!promote_integral (PKL_PASS_AST,
+                             32, 1,
+                             &PKL_AST_LOOP_STMT_CONDITION (loop_stmt),
+                             &restart))
+        {
+          PKL_ICE (PKL_AST_LOC (loop_stmt),
+                   "couldn't promote condition of lop-stmt #%" PRIu64,
+                   PKL_AST_UID (loop_stmt));
+          PKL_PASS_ERROR;
+        }
+
+      PKL_PASS_RESTART = restart;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /* The value returned from a function can be promoted in certain
    circumstances.  Do it!  */
 
@@ -1278,7 +1418,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cond_exp)
     pkl_ast_node cond_type = PKL_AST_TYPE (cond);
     int restart;
 
-    assert (PKL_AST_TYPE_CODE (cond_type) == PKL_TYPE_INTEGRAL);
+    assert (PKL_AST_TYPE_CODE (cond_type) == PKL_TYPE_INTEGRAL
+            || (PKL_AST_TYPE_CODE (cond_type) == PKL_TYPE_STRUCT
+                && PKL_AST_TYPE_S_ITYPE (cond_type)));
 
     if (!promote_integral (PKL_PASS_AST, 32, 1,
                            &PKL_AST_COND_EXP_COND (cond_exp),
@@ -1315,6 +1457,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
     {
       pkl_ast_node constraint_type = PKL_AST_TYPE (elem_constraint);
       int restart = 0;
+
+      if (PKL_AST_TYPE_CODE (constraint_type) == PKL_TYPE_STRUCT
+          && PKL_AST_TYPE_S_ITYPE (constraint_type))
+        constraint_type = PKL_AST_TYPE_S_ITYPE (constraint_type);
 
       switch (PKL_AST_TYPE_CODE (constraint_type))
         {
@@ -1404,6 +1550,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
     {
       pkl_ast_node optcond_type = PKL_AST_TYPE (elem_optcond);
       int restart = 0;
+
+      /* Handle integral structure.  */
+      if (PKL_AST_TYPE_CODE (optcond_type) == PKL_TYPE_STRUCT
+          && PKL_AST_TYPE_S_ITYPE (optcond_type))
+        optcond_type = PKL_AST_TYPE_S_ITYPE (optcond_type);
 
       switch (PKL_AST_TYPE_CODE (optcond_type))
         {
@@ -1644,10 +1795,14 @@ struct pkl_phase pkl_phase_promo
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_AND, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_OR, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_promo_ps_op_unary),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NEG, pkl_promo_ps_op_unary),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POS, pkl_promo_ps_op_unary),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BNOT, pkl_promo_ps_op_unary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_promo_ps_op_binary_intoffstrarr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_promo_ps_op_binary_intoffstrarr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_promo_ps_op_binary_intoffstrarr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_promo_ps_op_mul),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_promo_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_promo_ps_op_bshiftpow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_promo_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_promo_ps_op_div),
@@ -1661,6 +1816,8 @@ struct pkl_phase pkl_phase_promo
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_promo_ps_ass_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_promo_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_PRINT_STMT, pkl_promo_ps_print_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_IF_STMT, pkl_promo_ps_if_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT, pkl_promo_ps_loop_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_promo_ps_struct_type_field),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_promo_ps_cond_exp),
    PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_promo_ps_scons),

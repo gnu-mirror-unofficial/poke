@@ -1,0 +1,20 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x00 0x00 0x40  0x60 0x50 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+deftype Foo =
+  struct int<32>
+  {
+    int<16> hi;
+    uint<16> lo;
+  };
+
+deftype Bar =
+  struct
+  {
+    uint<16> f : Foo { hi = f };
+  };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian big } } */
+/* { dg-command { try Bar @ 1#B; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */

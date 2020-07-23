@@ -1,0 +1,13 @@
+/* { dg-do run } */
+
+deftype Foo = struct int<32> { int<16> hi; uint<16> lo; };
+defvar x = Foo { hi = 1, lo = 1 };
+
+/* { dg-command { .set obase 10 } } */
+
+/* { dg-command {  -x } } */
+/* { dg-output "-65537" } */
+
+/* For constant folding: */
+/* { dg-command { - Foo { hi = 1, lo = 1 } } } */
+/* { dg-output "\n-65537" } */

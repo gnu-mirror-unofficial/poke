@@ -909,6 +909,13 @@ pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
       //                                       promote_array_of_any);
     }
 
+  /* A struct type is promoteable to any integral type if the struct
+     itself is integral.  */
+  if (PKL_AST_TYPE_CODE (ft) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (ft)
+      && PKL_AST_TYPE_CODE (tt) == PKL_TYPE_INTEGRAL)
+    return 1;
+
   return 0;
 }
 

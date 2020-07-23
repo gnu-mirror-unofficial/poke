@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+deftype Foo = struct int<32> { int<16> hi; uint<16> lo; };
+
+/* { dg-command {  if (Foo { lo = 0 }) print ("yes\n"); else print ("no\n");} } */
+/* { dg-output "no" } */
+
+/* { dg-command {  if (Foo { lo = 10 }) print ("yes\n"); else print ("no\n");} } */
+/* { dg-output "\nyes" } */
