@@ -1,0 +1,21 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80 0x90 0xa0 0x20 0x30 0x40} } */
+
+deftype Elf64_RelInfo =
+  struct uint<32>
+  {
+    uint<16> r_sym;
+    uint<16> r_type;
+  };
+
+deftype Elf64_Rel =
+  struct
+  {
+    offset<uint<16>,B> r_offset;
+    Elf64_RelInfo r_info;
+  };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian little } } */
+/* { dg-command { (Elf64_Rel @ 1#B).r_info as uint<32> } } */
+/* { dg-output "0x70605040U" } */

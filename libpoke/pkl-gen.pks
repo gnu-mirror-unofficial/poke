@@ -1356,31 +1356,46 @@
         ;; Do not insert absent fields.
         srefia                  ; IVAL SCT I ABSENT_P
         bnzi .omitted_field
-        drop                    ; IVAL SCT
+        drop                    ; IVAL SCT I
         ;; Insert the value of the field in IVAL:
         ;;
-        ;; IVAL = IVAL | (EVAL << (ival_width - EOFF - field_width))
+        ;; IVAL = IVAL | (EVAL << (ival_width - REOFF - field_width))
         ;;
+        ;;  Where REOFF is the _relative_ bit-offset of the field in
+        ;;  the struct, i.e. EOFF - SOFF
         rot                     ; SCT I IVAL
         tor                     ; SCT I [IVAL]
         srefi                   ; SCT I EVAL [IVAL]
         tor                     ; SCT I [IVAL EVAL]
-        srefio                  ; SCT I EOFF [IVAL EVAL]
-        push #ivalw             ; SCT I EOFF IVALW [IVAL EVAL]
-        swap                    ; SCT I IVALW EOFF [IVAL EVAL]
+        swap                    ; I SCT [IVAL EVAL]
+        mgeto                   ; I SCT SOFF [IVAL EVAL]
+        ;; XXX: if NULL, put 0UL.  This check will go away when we
+        ;; add a separated flag for mapped values.
+        bnn .done
+        drop
+        push ulong<64>0
+.done:
+        tor                     ; I SCT [IVAL EVAL SOFF]
+        swap                    ; SCT I [IVAL EVAL SOFF]
+        srefio                  ; SCT I EOFF [IVAL EVAL SOFF]
+        fromr                   ; SCT I EOFF SOFF [IVAL EVAL]
         sublu
-        nip2                    ; SCT I (IVALW-EOFF) [IVAL EVAL]
-        push #fieldw            ; SCT I EVAL (IVALW-EOFF) FIELDW [IVAL EVAL]
+        nip2                    ; SCT I (EOFF-SOFF) [IVAL EVAL]
+        push #ivalw             ; SCT I REOFF IVALW [IVAL EVAL]
+        swap                    ; SCT I IVALW REOFF [IVAL EVAL]
         sublu
-        nip2                    ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL EVAL]
+        nip2                    ; SCT I (IVALW-REOFF) [IVAL EVAL]
+        push #fieldw            ; SCT I EVAL (IVALW-REOFF) FIELDW [IVAL EVAL]
+        sublu
+        nip2                    ; SCT I EVAL (IVALW-REOFF-FIELDW) [IVAL EVAL]
         ;; Convert EVAL to the struct itype
-        fromr                   ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
+        fromr                   ; SCT I (IVALW-REOFF-FIELDW) EVAL [IVAL]
  .c   if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
  .c   {
         ;; EVAL is an offset, but we are interested in its magnitude.
         .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@field_type)
         ogetm
-        nip                     ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
+        nip                     ; SCT I (IVALW-REOFF-FIELDW) EVAL [IVAL]
         nton @base_type, @struct_itype
  .c   }
  .c   else
