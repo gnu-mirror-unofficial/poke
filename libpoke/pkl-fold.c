@@ -218,7 +218,7 @@ EMUL_UU (bnoto) { return ~op; }
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (type))                             \
+          if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
             result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op));          \
           else                                                          \
             result = emul_u_##OP (PKL_AST_INTEGER_VALUE (op));          \
@@ -262,7 +262,7 @@ EMUL_UU (bnoto) { return ~op; }
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (type))                             \
+          if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
             result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op_magnitude));\
           else                                                          \
             result = emul_u_##OP (PKL_AST_INTEGER_VALUE (op_magnitude));\
@@ -325,7 +325,7 @@ EMUL_UU (bnoto) { return ~op; }
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (type))                             \
+          if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -389,7 +389,7 @@ EMUL_UU (bnoto) { return ~op; }
           op2_magnitude_bits = (PKL_AST_INTEGER_VALUE (op2_magnitude)   \
                                 * PKL_AST_INTEGER_VALUE (op2_unit));    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (type_base_type))                   \
+          if (PKL_AST_TYPE_I_SIGNED_P (type_base_type))                 \
             result = emul_s_##OP (op1_magnitude_bits,                   \
                                   op2_magnitude_bits);                  \
           else                                                          \
@@ -501,7 +501,7 @@ EMUL_UU (bnoto) { return ~op; }
           op_magnitude_bits = (PKL_AST_INTEGER_VALUE (op_magnitude)     \
                                * PKL_AST_INTEGER_VALUE (op_unit));      \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (op_type))                          \
+          if (PKL_AST_TYPE_I_SIGNED_P (op_type))                        \
             result = emul_s_##OP (op_magnitude_bits,                    \
                                   PKL_AST_INTEGER_VALUE (int_op));      \
           else                                                          \
@@ -549,7 +549,7 @@ EMUL_UU (bnoto) { return ~op; }
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED (type))                             \
+          if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
             result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op1),          \
                                   PKL_AST_INTEGER_VALUE (op2));         \
           else                                                          \
@@ -735,7 +735,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_pow)
           /* We cannot fold this expression.  */
           PKL_PASS_DONE;
 
-        if (PKL_AST_TYPE_I_SIGNED (op_type))
+        if (PKL_AST_TYPE_I_SIGNED_P (op_type))
           result = emul_s_powo (PKL_AST_INTEGER_VALUE (op_magnitude),
                                 PKL_AST_INTEGER_VALUE (int_op));
         else

@@ -882,7 +882,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_COMPLETE(AST) ((AST)->type.complete)
 #define PKL_AST_TYPE_COMPILED(AST) ((AST)->type.compiled)
 #define PKL_AST_TYPE_I_SIZE(AST) ((AST)->type.val.integral.size)
-#define PKL_AST_TYPE_I_SIGNED(AST) ((AST)->type.val.integral.signed_p)
+#define PKL_AST_TYPE_I_SIGNED_P(AST) ((AST)->type.val.integral.signed_p)
 #define PKL_AST_TYPE_A_BOUND(AST) ((AST)->type.val.array.bound)
 #define PKL_AST_TYPE_A_ETYPE(AST) ((AST)->type.val.array.etype)
 #define PKL_AST_TYPE_A_MAPPER(AST) ((AST)->type.val.array.mapper)

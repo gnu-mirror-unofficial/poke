@@ -19,4 +19,3 @@ deftype Bar =
 /* { dg-command { .set endian big } } */
 /* { dg-command { Bar @ 1#B } } */
 /* { dg-output "Bar {a=0x0UH}" } */
-

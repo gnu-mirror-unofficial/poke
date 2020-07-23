@@ -10,4 +10,3 @@ defvar x = Foo { hi = 1 };
 
 /* { dg-command { Foo { hi = 1 } ? 10 : 20 } } */
 /* { dg-output "\n10" } */
-

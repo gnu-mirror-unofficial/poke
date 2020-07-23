@@ -339,7 +339,7 @@ pkl_ast_make_integral_type (pkl_ast ast, size_t size, int signed_p)
   PKL_AST_TYPE_CODE (type) = PKL_TYPE_INTEGRAL;
   PKL_AST_TYPE_COMPLETE (type)
     = PKL_AST_TYPE_COMPLETE_YES;
-  PKL_AST_TYPE_I_SIGNED (type) = signed_p;
+  PKL_AST_TYPE_I_SIGNED_P (type) = signed_p;
   PKL_AST_TYPE_I_SIZE (type) = size;
   return type;
 }
@@ -541,7 +541,7 @@ pkl_ast_dup_type (pkl_ast_node type)
       break;
     case PKL_TYPE_INTEGRAL:
       PKL_AST_TYPE_I_SIZE (new) = PKL_AST_TYPE_I_SIZE (type);
-      PKL_AST_TYPE_I_SIGNED (new) = PKL_AST_TYPE_I_SIGNED (type);
+      PKL_AST_TYPE_I_SIGNED_P (new) = PKL_AST_TYPE_I_SIGNED_P (type);
       break;
     case PKL_TYPE_ARRAY:
       {
@@ -756,7 +756,7 @@ pkl_ast_type_equal (pkl_ast_node a, pkl_ast_node b)
       break;
     case PKL_TYPE_INTEGRAL:
       return (PKL_AST_TYPE_I_SIZE (a) == PKL_AST_TYPE_I_SIZE (b)
-              && PKL_AST_TYPE_I_SIGNED (a) == PKL_AST_TYPE_I_SIGNED (b));
+              && PKL_AST_TYPE_I_SIGNED_P (a) == PKL_AST_TYPE_I_SIGNED_P (b));
       break;
     case PKL_TYPE_ARRAY:
       {
@@ -1148,7 +1148,7 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
       fprintf (out, "any");
       break;
     case PKL_TYPE_INTEGRAL:
-      if (!PKL_AST_TYPE_I_SIGNED (type))
+      if (!PKL_AST_TYPE_I_SIGNED_P (type))
         fputc ('u', out);
       fprintf (out, "int<%zd>", PKL_AST_TYPE_I_SIZE (type));
       break;
@@ -2656,7 +2656,7 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
           switch (PKL_AST_TYPE_CODE (ast))
             {
             case PKL_TYPE_INTEGRAL:
-              PRINT_AST_IMM (signed_p, TYPE_I_SIGNED, "%d");
+              PRINT_AST_IMM (signed_p, TYPE_I_SIGNED_P, "%d");
               PRINT_AST_IMM (size, TYPE_I_SIZE, "%zu");
               break;
             case PKL_TYPE_ARRAY:

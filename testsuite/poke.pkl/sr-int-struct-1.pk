@@ -11,4 +11,3 @@ defvar x = Foo { hi = 0, lo = 2 };
 /* { dg-command { .set obase 16 } } */
 /* { dg-command { Foo { hi = 0, lo = 2 } .>> 1 } } */
 /* { dg-output "\n0x1" } */
-

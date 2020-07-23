@@ -1454,14 +1454,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_integer)
 
   if ((size - 1) & ~0x1f)
     {
-      if (PKL_AST_TYPE_I_SIGNED (type))
+      if (PKL_AST_TYPE_I_SIGNED_P (type))
         val = pvm_make_long (value, size);
       else
         val = pvm_make_ulong (value, size);
     }
   else
     {
-      if (PKL_AST_TYPE_I_SIGNED (type))
+      if (PKL_AST_TYPE_I_SIGNED_P (type))
         val = pvm_make_int (value, size);
       else
         val = pvm_make_uint (value, size);
@@ -2138,7 +2138,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
       int size = PKL_AST_TYPE_I_SIZE (integral_type);
       pvm_val zero;
 
-      if (PKL_AST_TYPE_I_SIGNED (integral_type))
+      if (PKL_AST_TYPE_I_SIGNED_P (integral_type))
         {
           if (size <= 32)
             zero = pvm_make_int (0, size);
@@ -2163,7 +2163,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
                                     64));
 
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
-                    pvm_make_uint (PKL_AST_TYPE_I_SIGNED (integral_type),
+                    pvm_make_uint (PKL_AST_TYPE_I_SIGNED_P (integral_type),
                                    32));
 
       pkl_asm_insn (pasm, PKL_INSN_MKTYI);
@@ -3229,7 +3229,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
       break;
     case PKL_AST_ATTR_SIGNED:
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-      if (PKL_AST_TYPE_I_SIGNED (operand_type))
+      if (PKL_AST_TYPE_I_SIGNED_P (operand_type))
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (1, 32));
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (0, 32));

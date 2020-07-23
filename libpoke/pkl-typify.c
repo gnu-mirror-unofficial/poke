@@ -447,7 +447,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   /* Only characters (uint<8>) can be casted to string.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRING
       && (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL
-          || PKL_AST_TYPE_I_SIGNED (exp_type) != 0
+          || PKL_AST_TYPE_I_SIGNED_P (exp_type) != 0
           || PKL_AST_TYPE_I_SIZE (exp_type) != 8))
     {
       char *found_type = pkl_type_str (exp_type, 1);
@@ -617,8 +617,8 @@ PKL_PHASE_END_HANDLER
 #define CASE_INTEGRAL                                                   \
   case PKL_TYPE_INTEGRAL:                                               \
   {                                                                     \
-    int signed_p = (PKL_AST_TYPE_I_SIGNED (t1)                          \
-                    && PKL_AST_TYPE_I_SIGNED (t2));                     \
+    int signed_p = (PKL_AST_TYPE_I_SIGNED_P (t1)                        \
+                    && PKL_AST_TYPE_I_SIGNED_P (t2));                   \
     int size = MAX (PKL_AST_TYPE_I_SIZE (t1),                           \
                     PKL_AST_TYPE_I_SIZE (t2));                          \
                                                                         \
@@ -638,10 +638,10 @@ PKL_PHASE_END_HANDLER
       {                                                                 \
         size_t base_type_1_size = PKL_AST_TYPE_I_SIZE (base_type_1);    \
         size_t base_type_2_size = PKL_AST_TYPE_I_SIZE (base_type_2);    \
-        int base_type_1_signed = PKL_AST_TYPE_I_SIGNED (base_type_1);   \
-        int base_type_2_signed = PKL_AST_TYPE_I_SIGNED (base_type_2);   \
+        int base_type_1_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_1); \
+        int base_type_2_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_2); \
                                                                         \
-        int signed_p = (base_type_1_signed && base_type_2_signed);      \
+        int signed_p = (base_type_1_signed_p && base_type_2_signed_p);  \
         int size = MAX (base_type_1_size, base_type_2_size);            \
                                                                         \
         type = pkl_ast_make_integral_type (PKL_PASS_AST,                \
@@ -700,8 +700,8 @@ TYPIFY_BIN (mod);
     pkl_ast_node unit;                                                  \
                                                                         \
     /* Promotion rules work like in integral operations.  */            \
-    int signed_p = (PKL_AST_TYPE_I_SIGNED (base_type_1)                 \
-                    && PKL_AST_TYPE_I_SIGNED (base_type_2));            \
+    int signed_p = (PKL_AST_TYPE_I_SIGNED_P (base_type_1)               \
+                    && PKL_AST_TYPE_I_SIGNED_P (base_type_2));          \
     int size                                                            \
       = MAX (PKL_AST_TYPE_I_SIZE (base_type_1),                         \
              PKL_AST_TYPE_I_SIZE (base_type_2));                        \
@@ -823,7 +823,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
     {
     case PKL_TYPE_INTEGRAL:
       {
-        int signed_p = PKL_AST_TYPE_I_SIGNED (t1);
+        int signed_p = PKL_AST_TYPE_I_SIGNED_P (t1);
         int size = PKL_AST_TYPE_I_SIZE (t1);
 
         type = pkl_ast_make_integral_type (PKL_PASS_AST,
@@ -911,8 +911,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
       offset_base_type = PKL_AST_TYPE_O_BASE_TYPE (offset_type);
 
       /* Promotion rules work like in integral operations.  */
-      signed_p = (PKL_AST_TYPE_I_SIGNED (offset_base_type)
-                  && PKL_AST_TYPE_I_SIGNED (int_type));
+      signed_p = (PKL_AST_TYPE_I_SIGNED_P (offset_base_type)
+                  && PKL_AST_TYPE_I_SIGNED_P (int_type));
       size = MAX (PKL_AST_TYPE_I_SIZE (offset_base_type),
                   PKL_AST_TYPE_I_SIZE (int_type));
 
@@ -1055,7 +1055,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_bconc)
   exp_type = pkl_ast_make_integral_type (PKL_PASS_AST,
                                          PKL_AST_TYPE_I_SIZE (t1)
                                          + PKL_AST_TYPE_I_SIZE (t2),
-                                         PKL_AST_TYPE_I_SIGNED (t1));
+                                         PKL_AST_TYPE_I_SIGNED_P (t1));
   PKL_AST_LOC (exp_type) = PKL_AST_LOC (exp);
 
   PKL_AST_TYPE (exp) = ASTREF (exp_type);
