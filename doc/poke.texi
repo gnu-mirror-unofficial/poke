@@ -2,7 +2,7 @@
 @comment %**start of header
 @setfilename poke.info
 @include version.texi
-@settitle The Poke Book
+@settitle GNU poke Manual
 @afourpaper
 @comment %**end of header
 
@@ -28,7 +28,7 @@ Documentation License''.
 @end direntry
 
 @titlepage
-@title The Poke Book
+@title GNU poke Manual
 @subtitle for version @value{VERSION}, @value{UPDATED}
 @author by Jose E. Marchesi
 @page
@@ -40,7 +40,7 @@ Documentation License''.
 
 @ifnottex
 @node Top
-@top The Poke Book
+@top GNU poke
 
 @insertcopying
 @end ifnottex
