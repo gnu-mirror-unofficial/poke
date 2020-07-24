@@ -256,7 +256,7 @@ pvm_make_integral_type (pvm_val size, pvm_val signed_p)
   pvm_val itype = pvm_make_type (PVM_TYPE_INTEGRAL);
 
   PVM_VAL_TYP_I_SIZE (itype) = size;
-  PVM_VAL_TYP_I_SIGNED (itype) = signed_p;
+  PVM_VAL_TYP_I_SIGNED_P (itype) = signed_p;
   return itype;
 }
 
@@ -931,7 +931,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         {
         case PVM_TYPE_INTEGRAL:
           {
-            if (!(PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED (val))))
+            if (!(PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED_P (val))))
               pk_puts ("u");
 
             switch (PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (val)))
@@ -1103,8 +1103,8 @@ pvm_type_equal (pvm_val type1, pvm_val type2)
       {
         size_t t1_size = PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (type1));
         size_t t2_size = PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (type2));
-        uint32_t t1_signed = PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED (type1));
-        uint32_t t2_signed = PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED (type2));
+        uint32_t t1_signed = PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED_P (type1));
+        uint32_t t2_signed = PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED_P (type2));
 
         return (t1_size == t2_size && t1_signed == t2_signed);
         break;

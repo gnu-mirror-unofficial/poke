@@ -1,5 +1,15 @@
 2020-07-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.h (PVM_VAL_TYP_I_SIGNED_P): Renamed from
+	PVM_VAL_TYP_I_SIGNED.
+	* libpoke/pkl.c (pvm_type_to_ast_type): Update accordingly.
+	* libpoke/pvm-val.c (pvm_make_integral_type): Likewise.
+	(pvm_print_val_1): Likewise.
+	(pvm_type_equal): Likewise.
+	* libpoke/pk-val.c (pk_integral_type_signed_p): Likewise.
+
+2020-07-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi: Change title.
 
 2020-07-24  Jose E. Marchesi  <jemarch@gnu.org>

@@ -257,7 +257,7 @@ pk_integral_type_size (pk_val type)
 pk_val
 pk_integral_type_signed_p (pk_val type)
 {
-  return PVM_VAL_TYP_I_SIGNED (type);
+  return PVM_VAL_TYP_I_SIGNED_P (type);
 }
 
 pk_val
