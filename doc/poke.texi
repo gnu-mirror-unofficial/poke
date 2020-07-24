@@ -7058,6 +7058,8 @@ deftype Ctf_Stype_V1 =
   @};
 @end example
 
+Note that integral structs cannot be pinned.  @xref{Integral Structs}.
+
 @node Integral Structs
 @subsection Integral Structs
 @cindex integral structs
@@ -7179,6 +7181,44 @@ of bytes occupied by the struct is read as a single integer value, and
 then the values of the fields are extracted from it.  A similar
 process is using when writing.  That is what makes it different with
 respect a normal Poke struct.
+
+It is possible to obtain the integral value corresponding to an
+integral struct using a cast to an integral type:
+
+@example
+(poke) deftype Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
+(poke) Foo @{ hi = 1 @} as int<32>
+0x10000
+@end example
+
+An useful idiom, that doesn't require to specify an explicit integral
+type, is this:
+
+@example
+(poke) deftype Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
+(poke) defvar x = Foo @ 0#B;
+(poke) +x
+0xfe00aa
+@end example
+
+These casts allow to ``integrate'' struct values explicitly, but the
+compiler also implicitly promotes integral struct values to integers
+in all contexts where an integer is expected:
+
+@itemize
+@item Operator to an addition, subtraction, multiplication, division,
+ceil division, bit left shift, bit right shift, bit-wise not, bit-wise
+and, bit-wise or, bit-wise xor, logical and, logical or, logical not,
+positive, negative, bit-concatenation, condition in conditional expression.
+@item Argument to a function whose formal expects an integer.
+@item Value returned from a function that returns an integer.
+@item Condition in loop statement.
+@item Constraint expression in a struct field.
+@item Expression in a conditional struct field.
+@end itemize
+
+Note that the above list doesn't include relational operators, since
+these operators work with struct values.
 
 @node Unions
 @subsection Unions

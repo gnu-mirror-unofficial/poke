@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+deftype Foo =
+  pinned struct int<32> /* { dg-error "pinned" } */
+  {
+    int<16> hi;
+    uint<16> lo;
+  };

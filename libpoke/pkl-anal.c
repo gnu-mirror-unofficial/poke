@@ -140,6 +140,8 @@ PKL_PHASE_END_HANDLER
    Also, declarations in unions are only allowed before any of the
    alternatives.
 
+   Integral structs cannot be pinned.
+
    Also, pop the analysis context.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
@@ -167,6 +169,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
           else
             found_field = 1;
         }
+    }
+
+  if (PKL_AST_TYPE_S_ITYPE (struct_type)
+      && PKL_AST_TYPE_S_PINNED_P (struct_type))
+    {
+      PKL_ERROR (PKL_AST_LOC (PKL_AST_TYPE_S_ITYPE (struct_type)),
+                 "integral structs cannot be pinned");
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
     }
 
   for (t = struct_type_elems; t; t = PKL_AST_CHAIN (t))
