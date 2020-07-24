@@ -1004,7 +1004,7 @@ expected %s, got %s",
 PKL_PHASE_END_HANDLER
 
 /* When applied to integral arguments, the type of a bit-concatenation
-   :: is an integral type with the following characteristics: the
+   ::: is an integral type with the following characteristics: the
    width of the operation is the sum of the widths of the operands,
    which in no case can exceed 64-bits.  The sign of the operation is
    the sign of the first argument.  */
