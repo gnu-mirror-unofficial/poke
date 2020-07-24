@@ -21,10 +21,7 @@
 
 #include <config.h>
 
-#include <stdlib.h>
-
 #include "pk-mi-msg.h"
-#include "libpoke.h"
 
 /* Given a string containing a JSON message, parse it and return a MI
    message.
@@ -40,34 +37,7 @@ pk_mi_msg pk_mi_json_to_msg (const char *str);
 
 const char *pk_mi_msg_to_json (pk_mi_msg msg);
 
-/* Given a json object, create the Poke value associated with it.
-
-   VALUE is the Poke value to be created.
-
-   STR is the string value of a pk_val to be converted.
-
-   ERRMSG is a buffer to be allocated that contains any error messages.
-
-   Its caller's responsibility to deallocate the buffer (ERRMSG).
-
-   If ERRMSG is NULL, nothing happens on the buffer.
-
-   In case of error returns -1 and sets errmsg appropriately.  */
-
-int pk_mi_json_to_val (pk_val *value, const char *str, char **errmsg);
-
-/* Given a pk val, return the json object associated with this val
-
-   VAL is the pk_val to be converted.
-
-   ERRMSG is a buffer to be allocated that contains any error messages.
-
-   Its caller's responsibility to deallocate the buffer (ERRMSG).
-
-   If ERRMSG is NULL, nothing happens on the buffer.
-
-   In case of error return NULL.  */
-
-const char *pk_mi_val_to_json (pk_val val, char **errmsg);
+/* XXX services to pk_val <-> json */
+/* XXX services to pk_type <-> json */
 
 #endif /* ! PK_MI_JSON */
