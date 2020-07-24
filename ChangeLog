@@ -1,3 +1,30 @@
+2020-07-24  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	* poke/pk-mi-json.h (pk_mi_val_to_json): Prototype.
+	(pk_mi_json_to_val): Prototype.
+	* poke/pk-mi-json.c (pk_mi_val_to_json): Define.
+	(pk_mi_json_to_val): Define.
+	(pk_mi_val_to_json): New function.
+	(pk_mi_val_to_json_1) : Likewise.
+	(pk_mi_int_to_json): Likewise.
+	(pk_mi_string_to_json): Likewise.
+	(pk_mi_offset_to_json): Likewise.
+	(pk_mi_mapping_to_json): Likewise.
+	(pk_mi_struct_to_json): Likewise.
+	(pk_mi_array_to_json): Likewise.
+	(pk_mi_null_to_json): Likewise.
+	(pk_mi_val_to_json): Likewise.
+	(pk_mi_val_to_json_1): Likewise.
+	(pk_mi_json_to_int): Likewise.
+	(pk_mi_json_to_uint): Likewise.
+	(pk_mi_json_to_string): Likewise.
+	(pk_mi_json_to_offset): Likewise.
+	(pk_mi_json_to_mapping): Likewise.
+	(pk_mi_json_to_struct): Likewise.
+	(pk_mi_json_to_array): Likewise.
+	(pk_mi_json_poke_value_type): Likewise.
+	(pk_mi_json_array_element_pair): Likewise.
+
 2020-07-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.h (PVM_VAL_TYP_I_SIGNED_P): Renamed from
