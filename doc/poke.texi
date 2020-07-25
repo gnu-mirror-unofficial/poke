@@ -3282,8 +3282,8 @@ application of a map operator, so:
 
 @noindent
 When a value is mapped, you can ask for the offset where it is mapped,
-and the IO space where it is mapped, using the attributes @code{'ios}
-and @code{'offset} attributes.  Therefore:
+and the IO space where it is mapped, using the attributes
+@code{'offset} and @code{'ios} respectively.  Therefore:
 
 @example
 (poke) image_data'ios
