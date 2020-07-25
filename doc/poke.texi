@@ -3597,8 +3597,8 @@ providing a Poke statement to be executed.
 
 So the REPL accepts @dfn{poke commands}, some of which happen to be
 Poke expressions, definitions or statements.  But we also have used
-dot-commands like @code{.file} or @code{.info}, that are not part of
-the Poke programming language.
+dot-commands like @code{.file} or @code{.info}.  These dot-commands
+are not part of the Poke programming language.
 
 Every time we insert a line in the REPL and hit @key{enter}, poke
 recognizes the nature of the line, and then does the right thing.  If
