@@ -3517,7 +3517,7 @@ Once a type is defined, the name can be used anywhere where a type
 specifier is expected.
 
 By the way, we mentioned many times how @code{byte} is a synonym for
-@code{uint<8}, @code{int} is a synonym for @code{int<32>} and so on.
+@code{uint<8>}, @code{int} is a synonym for @code{int<32>} and so on.
 These synonyms are actually result of type definitions that are in the
 poke @dfn{standard library}.  This library is loaded by poke at
 startup time.
