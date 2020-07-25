@@ -276,7 +276,7 @@ options can be specified, and they are loaded in the given order.
 Load the given file as a Poke program and exit.  The rest of the
 command-line is not processed by poke, and is available to the Poke
 script in the @code{argv} variable.  This is commonly used along with
-a shebang (@pxref{Shebang}) to implement Poke scripts.
+a shebang (@pxref{Scripts}) to implement Poke scripts.
 @item -c
 @itemx --command=@var{cmd}
 Execute the given command.  Any number of @samp{-c} options can be
@@ -315,8 +315,8 @@ way.  This chapter documents both possibilities.
 * The REPL::                  Using poke interactively.
 * Evaluation::		      Evaluating Poke.
 * Commands and Dot-Commands:: Two kinds of commands.
-* Scripts::		      Loading commands from files.
-* Shebang::		      Executing Poke programs in the command line.
+* Command Files::	      Loading commands from files.
+* Scripts::		      Executing Poke programs in the command line.
 @end menu
 
 @node The REPL
@@ -502,10 +502,10 @@ Note that the idea is to restrict the number of dot-commands to the
 absolutely minimum.  Most of the command-like functionality provided
 in poke shall be implemented as regular commands.
 
-@node Scripts
-@subsection Scripts
-@cindex scripts
-Script files contain poke commands.
+@node Command Files
+@subsection Command Files
+@cindex command files
+Command files contain poke commands.
 A poke command may be a dot command, a Poke statement or a Poke
 expression.
 Lines starting with @code{#} are comments will be ignored.   However a
@@ -525,17 +525,17 @@ dump :size 0x100#B :from 0x10#B
 4 == 4
 @end example
 
-A script file contains commands, not Poke code.  This means
-it gets read line by line and commands cannot occupy
-more than one line.  Hence the following is a valid script:
+A command file contains commands, not Poke code.  This means it gets
+read line by line and commands cannot occupy more than one line.
+Hence the following is a valid command file:
 
 @example
 deftype foo = struct @{int this; int that;@}
 @end example
 
 @noindent
-but this is not valid as a script file (although it is a valid Poke command)
-and will provoke an error:
+but this is not valid as a command file (although it is a valid Poke
+statement) and will provoke an error:
 
 @example
 deftype foo = struct
@@ -545,14 +545,15 @@ deftype foo = struct
 @}
 @end example
 
-Script files can be loaded at startup using the @code{-s} command
+Command files can be loaded at startup using the @code{-s} command
 line option (@pxref{Invoking poke}).
 The @file{~/.pokerc} startup file is also an example of a poke
-script (@pxref{pokerc}).
+command file (@pxref{pokerc}).
 
-@node Shebang
-@subsection Shebang
+@node Scripts
+@subsection Scripts
 @cindex shebang, @code{#!}
+@cindex scripts
 Following the example of Guile Scheme, the Poke syntax includes
 support for multi-line comments using the @code{#!} and @code{!#}
 delimiters.  This, along with the @code{-L} command line option,
