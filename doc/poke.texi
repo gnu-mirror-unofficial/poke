@@ -3751,7 +3751,7 @@ can be very simple, like the @file{rgb24.pk} sketched above, or fairly
 complicated like @file{dwarf.pk}.
 
 It is common for pickles to @code{load} other pickles.  For example,
-if we were to write a SBM pickle, we would load the RGB24 pikle from
+if we were to write a SBM pickle, we would load the RGB24 pickle from
 it:
 
 @example
