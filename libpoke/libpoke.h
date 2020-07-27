@@ -490,15 +490,15 @@ pk_val pk_offset_unit (pk_val val);
 
 /* Structs. */
 
-/* Build and return a poke struct.
+/* Build and return a Poke struct.
 
-   NFIELDS is an uint<64> PK value specifying the number of fields
+   NFIELDS is an uint<64> Poke value specifying the number of fields
    in the struct.  This can be uint<64>0 for an empty struct.
 
-   TYPE is a type PK value specifying the type of the struct.
+   TYPE is a type Poke value specifying the type of the struct.
 
    The fields and methods in the created struct are initialized to
-   PK_NULL.*/
+   PK_NULL.  */
 
 pk_val pk_make_struct (pk_val nfields, pk_val type);
 
