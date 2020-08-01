@@ -223,7 +223,7 @@ char *pk_ios_completion_function (pk_compiler pkc,
 const char *pk_ios_handler (pk_ios ios);
 
 /* Return the current IO space, or NULL if there are open spaces in
-   the given poke compiler.  */
+   the given Poke compiler.  */
 
 pk_ios pk_ios_cur (pk_compiler pkc);
 
@@ -232,12 +232,12 @@ pk_ios pk_ios_cur (pk_compiler pkc);
 void pk_ios_set_cur (pk_compiler pkc, pk_ios ios);
 
 /* Return the IO space operating the given HANDLER.  Return NULL if no
-   such space exist in the given poke incremental compiler.  */
+   such space exist in the given Poke incremental compiler.  */
 
 pk_ios pk_ios_search (pk_compiler pkc, const char *handler);
 
 /* Return the IO space having the given ID.  Return NULL if no such
-   space exist in the given poke incremental compiler.  */
+   space exist in the given Poke incremental compiler.  */
 
 pk_ios pk_ios_search_by_id (pk_compiler pkc, int id);
 
@@ -290,7 +290,7 @@ void pk_ios_map (pk_compiler pkc, pk_ios_map_fn cb, void *data);
 /* Map over the declarations defined in the given incremental
    compiler, executing a handler.
 
-   PKC is a poke incremental compiler.
+   PKC is a Poke incremental compiler.
 
    KIND is one of the PK_DECL_KIND_* values defined below.  It
    determines what subset of declarations will be processed by the
@@ -399,7 +399,7 @@ void pk_set_nenc (pk_compiler pkc, enum pk_nenc nenc);
 int pk_pretty_print (pk_compiler pkc);
 void pk_set_pretty_print (pk_compiler pkc, int pretty_print_p);
 
-/*** API for manipulating poke values.  ***/
+/*** API for manipulating Poke values.  ***/
 
 /* PK_NULL is an invalid pk_val.  */
 
@@ -407,72 +407,72 @@ void pk_set_pretty_print (pk_compiler pkc, int pretty_print_p);
 
 /* Signed integers.  */
 
-/* Build and return a poke integer.
+/* Build and return a Poke integer.
 
    VALUE is the numerical value for the new integer.
    SIZE is the number of bits composing the integer.
 
    Return PK_NULL if SIZE exceeds the maximum number of bits supported
-   in poke integers.  */
+   in Poke integers.  */
 
 pk_val pk_make_int (int64_t value, int size);
 
-/* Return the numerical value stored in the given poke integer.
-   VAL should be a poke value of the right type.  */
+/* Return the numerical value stored in the given Poke integer.
+   VAL should be a Poke value of the right type.  */
 
 int64_t pk_int_value (pk_val val);
 
-/* Return the size (in bits) of the given poke integer.
-   VAL should be a poke value of the right type.  */
+/* Return the size (in bits) of the given Poke integer.
+   VAL should be a Poke value of the right type.  */
 
 int pk_int_size (pk_val val);
 
 /* Unsigned integers.  */
 
-/* Build and return a poke unsigned integer.
+/* Build and return a Poke unsigned integer.
 
    VALUE is the numerical value for the new integer.
    SIZE is the number of bits composing the integer.
 
    Return NULL if SIZE exceeds the maximum number of bits supported in
-   poke integers.  */
+   Poke integers.  */
 
 pk_val pk_make_uint (uint64_t value, int size);
 
-/* Return the numerical value stored in the given poke unsigned
+/* Return the numerical value stored in the given Poke unsigned
    integer.
 
-   VAL should be a poke value of the right type.  */
+   VAL should be a Poke value of the right type.  */
 
 uint64_t pk_uint_value (pk_val val);
 
-/* Return the size (in bits) of the given poke unsigned integer.
-   VAL should be a poke value of the right type.  */
+/* Return the size (in bits) of the given Poke unsigned integer.
+   VAL should be a Poke value of the right type.  */
 
 int pk_uint_size (pk_val val);
 
 /* Strings.  */
 
-/* Build and return a poke string.
+/* Build and return a Poke string.
 
    STR is a NULL-terminated string, a copy of which will become the
-   value of the poke string.  */
+   value of the Poke string.  */
 
 pk_val pk_make_string (const char *str);
 
-/* Return a NULL-terminated string with the value of the given poke
+/* Return a NULL-terminated string with the value of the given Poke
    string.  */
 
 const char *pk_string_str (pk_val val);
 
 /* Offsets.  */
 
-/* Build and return a poke offset.
+/* Build and return a Poke offset.
 
-   MAGNITUDE is either a poke integer or a poke unsigned integer, with
+   MAGNITUDE is either a Poke integer or a Poke unsigned integer, with
    the magnitude of the offset.
 
-   UNIT is an unsigned 64-bit poke integer specifying the unit of the
+   UNIT is an unsigned 64-bit Poke integer specifying the unit of the
    offset, i.e. the multiple of the base unit, which is the bit.
 
    If any of the arguments is not of the right type return PK_NULL.
@@ -480,11 +480,11 @@ const char *pk_string_str (pk_val val);
 
 pk_val pk_make_offset (pk_val magnitude, pk_val unit);
 
-/* Return the magnitude of the given poke offset.  */
+/* Return the magnitude of the given Poke offset.  */
 
 pk_val pk_offset_magnitude (pk_val val);
 
-/* Return the unit of the given poke offset.  */
+/* Return the unit of the given Poke offset.  */
 
 pk_val pk_offset_unit (pk_val val);
 
@@ -577,7 +577,7 @@ void pk_struct_set_field_value (pk_val sct, uint64_t idx, pk_val value);
 
 /* Arrays.  */
 
-/* Build and return a poke array.
+/* Build and return a Poke array.
 
    NELEM is the number of the elements in the array.
    ARRAY_TYPE is the type of the array.
