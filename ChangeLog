@@ -1,7 +1,12 @@
+2020-08-01  Bruno Haible  <bruno@clisp.org>
+
+	Update after gnulib changed.
+	* configure.ac: Invoke gl_LIBTEXTSTYLE_OPTIONAL explicitly.
+
 2020-07-27  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
-    * etc/pk-mi-json-schema.json (json_schema): Indentation fixes.
-    * libpoke/libpoke.h (pk_make_struct): Fixed function documentation.
+	* etc/pk-mi-json-schema.json (json_schema): Indentation fixes.
+	* libpoke/libpoke.h (pk_make_struct): Fixed function documentation.
 
 2020-07-25  Jose E. Marchesi  <jemarch@gnu.org>
 
