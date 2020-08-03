@@ -1,3 +1,10 @@
+2020-08-03  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	* libpoke/pk-val.c (pk_type_code): Now return PK_UINT
+	if integral type is unsigned.
+	* etc/pk-mi-json-schema.json (json_schema) : Changed "offsets"
+	to "boffsets" on arrays and structs.
+
 2020-08-02  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
 	* libpoke/libpoke.h: Change poke to Poke on function documentations.

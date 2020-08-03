@@ -114,9 +114,16 @@
         "StructField" : {
             "type" : "object",
             "properties" : {
-                "offset" : {
+                "boffset" : {
                     "type" : "object",
-                    "$ref" : "#/definitions/Offset"
+                    "allOf" : [
+                        { "$ref" : "#/definitions/UnsignedInteger" }
+                    ],
+                    "properties" : {
+                        "size" : {
+                            "const" : 64
+                        }
+                    }
                 },
                 "name" : {
                     "type" : "object",
@@ -136,7 +143,7 @@
             },
             "maxProperties": 3,
             "required" : [
-                "offset",
+                "boffset",
                 "name",
                 "value"
             ]
@@ -220,15 +227,22 @@
                                     { "$ref": "#/definitions/Null" }
                                 ]
                             },
-                            "offset" : {
+                            "boffset" : {
                                 "type" : "object",
-                                "$ref" : "#/definitions/Offset"
+                                "allOf" : [
+                                    { "$ref" : "#/definitions/UnsignedInteger" }
+                                ],
+                                "properties" : {
+                                    "size" : {
+                                        "const" : 64
+                                    }
+                                }
                             }
                         },
                         "maxProperties" : 2,
                         "required" : [
                             "value",
-                            "offset"
+                            "boffset"
                         ]
                     }
                 },
