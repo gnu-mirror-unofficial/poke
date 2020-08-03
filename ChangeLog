@@ -1,5 +1,12 @@
 2020-08-03  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
+	* libpoke/pvm-val.c (pvm_typeof): pvm_integral_type now represents
+	signed_p as int.
+	(pvm_type_equal): Updated accordingly.
+	(pvm_print_val_1): Likewise.
+
+2020-08-03  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
 	* libpoke/pk-val.c (pk_type_code): Now return PK_UINT
 	if integral type is unsigned.
 	* etc/pk-mi-json-schema.json (json_schema) : Changed "offsets"

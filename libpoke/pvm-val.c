@@ -931,7 +931,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         {
         case PVM_TYPE_INTEGRAL:
           {
-            if (!(PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED_P (val))))
+            if (!(PVM_VAL_INT (PVM_VAL_TYP_I_SIGNED_P (val))))
               pk_puts ("u");
 
             switch (PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (val)))
@@ -1063,16 +1063,16 @@ pvm_typeof (pvm_val val)
 
   if (PVM_IS_INT (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_INT_SIZE (val), 64),
-                                   pvm_make_uint (1, 32));
+                                   pvm_make_int (1, 32));
   else if (PVM_IS_UINT (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_UINT_SIZE (val), 64),
-                                   pvm_make_uint (0, 32));
+                                   pvm_make_int (0, 32));
   else if (PVM_IS_LONG (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_LONG_SIZE (val), 64),
-                                   pvm_make_uint (1, 32));
+                                   pvm_make_int (1, 32));
   else if (PVM_IS_ULONG (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_ULONG_SIZE (val), 64),
-                                   pvm_make_uint (0, 32));
+                                   pvm_make_int (0, 32));
   else if (PVM_IS_STR (val))
     type = pvm_make_string_type ();
   else if (PVM_IS_OFF (val))
@@ -1103,8 +1103,8 @@ pvm_type_equal (pvm_val type1, pvm_val type2)
       {
         size_t t1_size = PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (type1));
         size_t t2_size = PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (type2));
-        uint32_t t1_signed = PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED_P (type1));
-        uint32_t t2_signed = PVM_VAL_UINT (PVM_VAL_TYP_I_SIGNED_P (type2));
+        uint32_t t1_signed = PVM_VAL_INT (PVM_VAL_TYP_I_SIGNED_P (type1));
+        uint32_t t2_signed = PVM_VAL_INT (PVM_VAL_TYP_I_SIGNED_P (type2));
 
         return (t1_size == t2_size && t1_signed == t2_signed);
         break;
