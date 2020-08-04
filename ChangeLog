@@ -1,3 +1,8 @@
+2020-08-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h: Document that PK_NULL should have the same
+	value than PVM_NULL.
+
 2020-08-03  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
 	* libpoke/pvm-val.c (pvm_typeof): pvm_integral_type now represents

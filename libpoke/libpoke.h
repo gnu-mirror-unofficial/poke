@@ -401,7 +401,8 @@ void pk_set_pretty_print (pk_compiler pkc, int pretty_print_p);
 
 /*** API for manipulating Poke values.  ***/
 
-/* PK_NULL is an invalid pk_val.  */
+/* PK_NULL is an invalid pk_val.
+   This value should be the same than PVM_NULL in pvm.h.  */
 
 #define PK_NULL 0x7ULL
 
