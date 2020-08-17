@@ -39,18 +39,23 @@ defvar BTF_KIND_DATASEC = 15;
 deftype BTF_Type_Id = uint<32>;
 
 deftype BTF_Int =
-  struct
+  struct uint<32>
   {
     uint<4>;
-    struct
-    {
-      uint<1> bool_p;
-      uint<1> char_p;
-      uint<1> signed_p;
-    } encoding;
+    uint<1>;
+    uint<1> bool_p;
+    uint<1> char_p;
+    uint<1> signed_p;
     uint<8> offset;
     uint<8>;
     uint<8> bits;
+
+    /* XXX turn `encoding' into a nested integral struct once we
+       support it in the compiler.  */
+    method encoding = uint<4>:
+    {
+      return bool_p:::char_p:::signed_p;
+    }
   };
 
 deftype BTF_Array =
@@ -94,7 +99,7 @@ deftype BTF_Type =
   {
     offset<uint<32>,B> name;
 
-    struct
+    struct uint<32>
     {
       uint<16> vlen;
       uint<8>;
