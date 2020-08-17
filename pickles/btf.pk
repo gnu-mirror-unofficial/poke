@@ -135,12 +135,6 @@ deftype BTF_Type =
       struct
       {
         BTF_Param[info.vlen] params;
-
-        method vararg_p = int:
-          {
-           defvar last_param = params[info.vlen - 1];
-           return (last_param.name == 0#B && last_param.type == 0);
-           }
       };
 
     union
@@ -156,6 +150,11 @@ deftype BTF_Type =
       struct {};
     } data;
 
+    method vararg_p = int:
+      {
+        defvar last_param = data.func_proto.params[info.vlen - 1];
+        return (last_param.name == 0#B && last_param.type == 0);
+      }
   };
 
 deftype BTF_Header =
