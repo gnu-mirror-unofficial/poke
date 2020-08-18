@@ -1193,7 +1193,7 @@ PKL_PHASE_END_HANDLER
    its size in bits.  Emit a diagnostic if the type is not
    complete.  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_offset_type)
+PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_type_offset)
 {
   pkl_ast_node type = PKL_PASS_NODE;
   pkl_ast_node unit_type = PKL_AST_TYPE_O_UNIT (type);
@@ -1238,7 +1238,7 @@ struct pkl_phase pkl_phase_trans2
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_trans2_ps_struct),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_REF, pkl_trans2_ps_struct_ref),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_trans2_ps_cast),
-   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_trans2_ps_offset_type),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_trans2_ps_type_offset),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_trans_pr_type),
   };
 

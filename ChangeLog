@@ -1,3 +1,12 @@
+2020-08-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-promo.c (pkl_promo_ps_type_offset): New handler.
+	(pkl_phase_promo): Use handler.
+	* libpoke/pkl-trans.c (pkl_trans2_ps_type_offset): Renamed from
+	pkl_trans2_ps_offset_type.
+	(pkl_phase_trans2): Likewise.
+	* testsuite/poke.pkl/offset-type-1.pk: New test.
+
 2020-08-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/btf.pk (BTF_Type): Make `info' an integral struct.

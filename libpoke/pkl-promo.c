@@ -831,6 +831,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_trimmer)
 }
 PKL_PHASE_END_HANDLER
 
+/* Handler for promoting the unit in offset type specifiers to 64
+   unsigned bit values.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_type_offset)
+{
+  int restart;
+  pkl_ast_node offset_type = PKL_PASS_NODE;
+  pkl_ast_node offset_type_unit = PKL_AST_TYPE_O_UNIT (offset_type);
+
+  if (PKL_AST_CODE (offset_type_unit) != PKL_AST_INTEGER)
+    PKL_PASS_DONE;
+
+  if (!promote_integral (PKL_PASS_AST, 64, 0,
+                         &PKL_AST_TYPE_O_UNIT (offset_type),
+                         &restart))
+    {
+      PKL_ICE (PKL_AST_LOC (offset_type_unit),
+               "couldn't promote offset type unit to uint<64>");
+      PKL_PASS_ERROR;
+    }
+
+  PKL_PASS_RESTART = restart;
+}
+PKL_PHASE_END_HANDLER
+
 /* Handler for promoting the array size in array type literals to 64
    unsigned bit values, or to offset<uint<64>,b> if they are
    offsets.  */
@@ -1822,4 +1847,5 @@ struct pkl_phase pkl_phase_promo
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_promo_ps_cond_exp),
    PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_promo_ps_scons),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_promo_ps_type_array),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_promo_ps_type_offset),
   };
