@@ -974,7 +974,8 @@
  .c       || PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_FUNC
  .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@field)))
  .c   {
- .c     if (PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_TYPE)
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_DECL
+ .c         || PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_TYPE)
  .c       i++;
  .c     continue;
  .c   }
@@ -1299,7 +1300,8 @@
  .c       || PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_FUNC
  .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@field)))
  .c   {
- .c     if (PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_TYPE)
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_DECL
+ .c         || PKL_AST_DECL_KIND (@field) != PKL_AST_DECL_KIND_TYPE)
  .c       i++;
  .c     continue;
  .c   }

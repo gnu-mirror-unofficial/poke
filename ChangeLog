@@ -1,9 +1,18 @@
 2020-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_constructor): Avoid invalid memory
+	access.
+	(struct_mapper): Likewise.
+	* testsuite/poke.pkl/scons-55.pk: New test.
+
+2020-08-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/btf.pk (BTF_Type): Fix ordering of fields in `info', and
 	add pretty-printer for `info'.
 	(BTF_KIND_UNKNOWN): Define.
 	(btf_kind_names): Likewise.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_type_struct): Allow methods
+	after union fields.
 
 2020-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
