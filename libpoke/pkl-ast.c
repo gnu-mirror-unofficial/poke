@@ -1080,7 +1080,8 @@ pkl_ast_type_is_complete (pkl_ast_node type)
             if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
                 && (PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem)
                     || PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem)
-                    || !pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))))
+                    || (pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))
+                        == PKL_AST_TYPE_COMPLETE_NO)))
               {
                 complete = PKL_AST_TYPE_COMPLETE_NO;
                 break;
