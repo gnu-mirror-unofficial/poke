@@ -1,0 +1,19 @@
+/* { dg-do run } */
+
+deftype Foo =
+  struct
+  {
+    struct int<32>
+    {
+      int<16> hi;
+      uint<16> lo;
+    } foo;
+  };
+
+/* { dg-command { .set obase 16 } } */
+
+/* { dg-command { defvar f = Foo { } } } */
+/* { dg-command { f.foo.hi = 1 } } */
+/* { dg-command { f.foo.lo = 2 } } */
+/* { dg-command { f.foo + 1 } } */
+/* { dg-output "0x10003" } */

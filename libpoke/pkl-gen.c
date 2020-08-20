@@ -1699,14 +1699,30 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
            && PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_STRUCT)
     {
       pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (from_type);
-      pvm_val integrator = PKL_AST_TYPE_S_INTEGRATOR (from_type);
 
       /* This is guaranteed as per typify.  */
       assert (itype);
-      /* This is guaranteed as per gen.  */
-      assert (integrator != PVM_NULL);
 
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, integrator);
+      /* Make sure the struct type has an integrator.  */
+      if (PKL_AST_TYPE_S_INTEGRATOR (from_type) == PVM_NULL)
+        {
+          pvm_val integrator_closure;
+
+          /* See note about in_writer in pkl_gen_pr_decl.  */
+          PKL_GEN_PAYLOAD->in_writer = 1;
+          RAS_FUNCTION_STRUCT_INTEGRATOR (integrator_closure,
+                                          from_type);           /* CLS */
+
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, integrator_closure); /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
+          PKL_GEN_PAYLOAD->in_writer = 0;
+
+          PKL_AST_TYPE_S_INTEGRATOR (from_type) = integrator_closure;
+        }
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    PKL_AST_TYPE_S_INTEGRATOR (from_type));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
       pkl_asm_insn (pasm, PKL_INSN_NTON, itype, to_type);
       pkl_asm_insn (pasm, PKL_INSN_NIP);
