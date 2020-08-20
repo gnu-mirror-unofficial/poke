@@ -20,6 +20,7 @@
    documented in https://www.kernel.org/doc/html/latest/bpf/btf.html
    (fetched 2019-10-25) */
 
+defvar BTF_KIND_UKNONWN = 0;
 defvar BTF_KIND_INT = 1;
 defvar BTF_KIND_PTR = 2;
 defvar BTF_KIND_ARRAY = 3;
@@ -35,6 +36,11 @@ defvar BTF_KIND_FUNC = 12;
 defvar BTF_KIND_FUNC_PROTO = 13;
 defvar BTF_KIND_VAR = 14;
 defvar BTF_KIND_DATASEC = 15;
+
+defvar btf_kind_names =
+  ["unkn", "int", "ptr", "array", "struct", "union", "enum",
+   "fwd", "typedef", "volatile", "const", "restrict", "func",
+   "func_proto", "var", "datasec"];
 
 deftype BTF_Type_Id = uint<32>;
 
@@ -101,11 +107,17 @@ deftype BTF_Type =
 
     struct uint<32>
     {
-      uint<16> vlen;
-      uint<8>;
-      uint<4> kind;
-      uint<3>;
       uint<1> kind_flag;
+      uint<3>;
+      uint<4> kind;
+      uint<8>;
+      uint<16> vlen;
+
+      method _print = void:
+        {
+          printf ("#<%s,kind_flag:%u32d,vlen:%v>",
+                  btf_kind_names[kind], kind_flag, vlen);
+        }
     } info;
 
     union
