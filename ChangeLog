@@ -1,5 +1,9 @@
 2020-08-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* cfg.mk (sc_tests_listed_in_makefile_am): New rule.
+
+2020-08-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/Makefile.am (EXTRA_DIST): Add trim-26.pk, scons-55.pk,
 	add-int-struct-4.pk, poke.pkl/offset-type-diag-6.pk,
 	offset-type-1.pk.
