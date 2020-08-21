@@ -1,5 +1,11 @@
 2020-08-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/Makefile.am (EXTRA_DIST): Add trim-26.pk, scons-55.pk,
+	add-int-struct-4.pk, poke.pkl/offset-type-diag-6.pk,
+	offset-type-1.pk.
+
+2020-08-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_trimmer): The type of a
 	trimmed array is unbounded.
 	* testsuite/poke.pkl/trim-26.pk: New test.

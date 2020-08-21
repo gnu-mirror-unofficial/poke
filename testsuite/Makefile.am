@@ -446,6 +446,7 @@ EXTRA_DIST = \
   poke.pkl/add-int-struct-1.pk \
   poke.pkl/add-int-struct-2.pk \
   poke.pkl/add-int-struct-3.pk \
+  poke.pkl/add-int-struct-4.pk \
   poke.pkl/add-offsets-1.pk \
   poke.pkl/add-offsets-2.pk \
   poke.pkl/add-offsets-3.pk \
@@ -1058,11 +1059,13 @@ EXTRA_DIST = \
   poke.pkl/not-int-struct-1.pk \
   poke.pkl/offset-arg-1.pk \
   poke.pkl/offset-arg-2.pk \
+  poke.pkl/offset-type-1.pk \
   poke.pkl/offset-type-diag-1.pk \
   poke.pkl/offset-type-diag-2.pk \
   poke.pkl/offset-type-diag-3.pk \
   poke.pkl/offset-type-diag-4.pk \
   poke.pkl/offset-type-diag-5.pk \
+  poke.pkl/offset-type-diag-6.pk \
   poke.pkl/offsets-1.pk \
   poke.pkl/offsets-2.pk \
   poke.pkl/offsets-3.pk \
@@ -1277,6 +1280,7 @@ EXTRA_DIST = \
   poke.pkl/scons-52.pk \
   poke.pkl/scons-53.pk \
   poke.pkl/scons-54.pk \
+  poke.pkl/scons-55.pk \
   poke.pkl/scons-diag-1.pk \
   poke.pkl/scons-diag-2.pk \
   poke.pkl/scons-diag-3.pk \
@@ -1456,6 +1460,7 @@ EXTRA_DIST = \
   poke.pkl/trim-23.pk \
   poke.pkl/trim-24.pk \
   poke.pkl/trim-25.pk \
+  poke.pkl/trim-26.pk \
   poke.pkl/trim-diag-1.pk \
   poke.pkl/trim-diag-2.pk \
   poke.pkl/trim-diag-3.pk \
