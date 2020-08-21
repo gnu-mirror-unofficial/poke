@@ -1,3 +1,9 @@
+2020-08-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_trimmer): The type of a
+	trimmed array is unbounded.
+	* testsuite/poke.pkl/trim-26.pk: New test.
+
 2020-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (struct_constructor): Avoid invalid memory

@@ -1176,9 +1176,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_array)
 }
 PKL_PHASE_END_HANDLER
 
-/* The type of a trim is the type of the trimmed entity.  The trimmer
-   indexes should be unsigned 64-bit integrals, but this phase lets
-   any integral pass to promo.  */
+/* The type of a trim is the type of the trimmed array, but unbounded.
+   For strings, the result is another string.  The trimmer indexes
+   should be unsigned 64-bit integrals, but this phase lets any
+   integral pass to promo.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
 {
@@ -1215,7 +1216,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
       PKL_PASS_ERROR;
     }
 
-  PKL_AST_TYPE (trimmer) = ASTREF (entity_type);
+  if (PKL_AST_TYPE_CODE (entity_type) == PKL_TYPE_ARRAY)
+  {
+    pkl_ast_node new_type;
+
+    new_type = pkl_ast_make_array_type (PKL_PASS_AST,
+                                        PKL_AST_TYPE_A_ETYPE (entity_type),
+                                        NULL /* bound */);
+    PKL_AST_LOC (new_type) = PKL_AST_LOC (entity_type);
+
+    PKL_AST_TYPE (trimmer) = ASTREF (new_type);
+  }
+  else
+    PKL_AST_TYPE (trimmer) = ASTREF (entity_type);
 }
 PKL_PHASE_END_HANDLER
 
