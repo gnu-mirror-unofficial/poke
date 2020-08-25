@@ -398,9 +398,9 @@ token <integer> UNION    _("keyword `union'")
 /* Operator tokens and their precedences, in ascending order.  */
 
 %right '?' ':'
-%left IN
 %left OR
 %left AND
+%left IN
 %left '|'
 %left '^'
 %left '&'
