@@ -164,7 +164,7 @@ pk_type_code (pk_val val)
   switch (PVM_VAL_TYP_CODE (val))
     {
     case PVM_TYPE_INTEGRAL:
-      if ((pk_int_value (pk_integral_type_signed_p (pk_typeof (val)))))
+      if ((pk_int_value (pk_integral_type_signed_p (val))))
         return PK_INT;
       else
         return PK_UINT;
