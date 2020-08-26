@@ -428,6 +428,9 @@ EXTRA_DIST = \
   poke.map/maps-unions-11.pk \
   poke.map/maps-unions-12.pk \
   poke.map/maps-unions-13.pk \
+  poke.map/maps-unions-method-1.pk \
+  poke.map/maps-unions-method-2.pk \
+  poke.map/maps-unions-method-3.pk \
   poke.map/trimmed-map.pk \
   poke.map/trimmed-map-2.pk \
   poke.map/trimmed-map-3.pk \
@@ -1303,6 +1306,10 @@ EXTRA_DIST = \
   poke.pkl/scons-union-6.pk \
   poke.pkl/scons-union-7.pk \
   poke.pkl/scons-union-8.pk \
+  poke.pkl/scons-union-method-1.pk \
+  poke.pkl/scons-union-method-2.pk \
+  poke.pkl/scons-union-method-3.pk \
+  poke.pkl/scons-union-method-4.pk \
   poke.pkl/set-endian-1.pk \
   poke.pkl/set-ios-1.pk \
   poke.pkl/sizeof-1.pk \
@@ -1501,6 +1508,7 @@ EXTRA_DIST = \
   poke.pkl/union-diag-5.pk \
   poke.pkl/union-diag-6.pk \
   poke.pkl/union-diag-7.pk \
+  poke.pkl/union-pretty-print-1.pk \
   poke.pkl/units-1.pk \
   poke.pkl/units-2.pk \
   poke.pkl/units-3.pk \

@@ -1,0 +1,14 @@
+/* { dg-do run } */
+
+deftype Foo =
+  union
+  {
+    method bar = int: { return 666; }
+    int i;
+    method foo = int: { return i; }
+  };
+
+/* { dg-command { (Foo { }).foo } } */
+/* { dg-output "0" } */
+/* { dg-command { (Foo { }).bar } } */
+/* { dg-output "\n666" } */

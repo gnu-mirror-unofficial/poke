@@ -1,0 +1,16 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80} } */
+
+/* { dg-command { .set endian big } } */
+/* { dg-command { .set obase 16 } } */
+
+deftype Foo =
+  union
+  {
+    int i : i < 10;
+    long l;
+    method foo = int: { return l; }
+  };
+
+/* { dg-command { (Foo @ 0#B).foo } } */
+/* { dg-output "0x50607080" } */

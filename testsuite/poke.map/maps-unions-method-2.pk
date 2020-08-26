@@ -1,0 +1,18 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80} } */
+
+/* { dg-command { .set endian big } } */
+/* { dg-command { .set obase 16 } } */
+
+deftype Foo =
+  union
+  {
+    method bar = int: { return 0xbeef; }
+    int i;
+    method foo = int: { return i; }
+  };
+
+/* { dg-command { (Foo @ 0#B).foo } } */
+/* { dg-output "0x10203040" } */
+/* { dg-command { (Foo @ 0#B).bar } } */
+/* { dg-output "\n0xbeef" } */

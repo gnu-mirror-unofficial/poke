@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+deftype Bar =
+  union {
+    method la = void: {}
+  };
+
+/* { dg-command { try Bar { }; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

@@ -1,0 +1,22 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80} } */
+
+/* { dg-command { .set endian big } } */
+/* { dg-command { .set obase 16 } } */
+
+deftype Bar =
+  union
+  {
+    int i : i == 0x50607080;
+    method foo = int: { return i; }
+    long l;
+  };
+
+/* { dg-command { (Bar @ 0#B).l } } */
+/* { dg-output "0x1020304050607080L" } */
+
+/* { dg-command { try (Bar @ 4#B).l; catch if E_elem { printf "caught\n"; } } } */
+/* { dg-output "\ncaught" } */
+
+/* { dg-command { (Bar @ 4#B).foo } } */
+/* { dg-output "\n0x50607080" } */

@@ -1,0 +1,18 @@
+/* { dg-do run } */
+
+deftype Bar =
+  union
+  {
+    int i : i > 0;
+    method foo = int: { return i; }
+    long l;
+  };
+
+/* { dg-command { (Bar { l = 2 }).l } } */
+/* { dg-output "2L" } */
+
+/* { dg-command { try (Bar { }).foo; catch if E_elem { printf "caught\n"; } } } */
+/* { dg-output "\ncaught" } */
+
+/* { dg-command { (Bar { i = 20 }).foo } } */
+/* { dg-output "\n20" } */

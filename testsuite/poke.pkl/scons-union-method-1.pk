@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+deftype Foo =
+  union
+  {
+    int i : i > 0;
+    long l;
+    method foo = int: { return l; }
+  };
+
+/* { dg-command { (Foo { l = 12 }).foo } } */
+/* { dg-output "12" } */

@@ -953,7 +953,27 @@
  .c   }
  .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
-        ;; Union field successfully mapped.  We are done.
+        ;; Union field successfully mapped.
+        ;;
+        ;; Now we need to register as many dummies in the lexical
+        ;; environment as remaining alternatives, and also definitions
+        ;; and methods, in order to obtain predictable lexical addresses
+        .let @tmp = PKL_AST_CHAIN (@field);
+ .c    for (; @tmp; @tmp = PKL_AST_CHAIN (@tmp))
+ .c    {
+ .c      if (PKL_AST_CODE (@tmp) == PKL_AST_STRUCT_TYPE_FIELD)
+ .c      {
+        push null
+        regvar $dummy
+ .c      }
+ .c      else
+ .c      {
+ .c     PKL_GEN_PAYLOAD->in_mapper = 0;
+ .c     PKL_PASS_SUBPASS (@tmp);
+ .c     PKL_GEN_PAYLOAD->in_mapper = 1;
+ .c      }
+ .c    }
+        ;; And we are done.
         ba .union_fields_done
 .eof_in_alternative:
         ;; If we got EOF in an union alternative, and this is the last
@@ -1342,7 +1362,27 @@
         popvar $nfield         ; ... NEBOFF ENAME EVAL
    .c if (PKL_AST_TYPE_S_UNION_P (@type_struct))
    .c {
-        ;; Union field successfully constructed.  We are done.
+        ;; Union field successfully constructed.
+        ;;
+        ;; Now we need to register as many dummies in the lexical
+        ;; environment as remaining alternatives, and also definitions
+        ;; and methods, in order to obtain predictable lexical addresses
+        .let @tmp = PKL_AST_CHAIN (@field);
+ .c    for (; @tmp; @tmp = PKL_AST_CHAIN (@tmp))
+ .c    {
+ .c      if (PKL_AST_CODE (@tmp) == PKL_AST_STRUCT_TYPE_FIELD)
+ .c      {
+        push null
+        regvar $dummy
+ .c      }
+ .c      else
+ .c      {
+ .c     PKL_GEN_PAYLOAD->in_constructor = 0;
+ .c     PKL_PASS_SUBPASS (@tmp);
+ .c     PKL_GEN_PAYLOAD->in_constructor = 1;
+ .c      }
+ .c    }
+        ;; And we are done :)
         ba .union_fields_done
 .alternative_failed:
         drop                    ; ... ENAME

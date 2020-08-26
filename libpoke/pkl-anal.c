@@ -138,7 +138,7 @@ PKL_PHASE_END_HANDLER
    struct fields.
 
    Also, declarations in unions are only allowed before any of the
-   alternatives.
+   alternatives, but methods can appear anywhere.
 
    Integral structs cannot be pinned.
 
@@ -158,11 +158,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
       for (t = struct_type_elems; t; t = PKL_AST_CHAIN (t))
         {
           if (found_field
-              && PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
+              && PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD
+              && !(PKL_AST_CODE (t) == PKL_AST_DECL
+                   && PKL_AST_DECL_KIND (t) == PKL_AST_DECL_KIND_FUNC
+                   && PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (t))))
             {
               PKL_ERROR (PKL_AST_LOC (t),
-                         "declarations and methods are not supported\n"
-                         "after union fields");
+                         "declarations are not supported after union fields");
               PKL_ANAL_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
