@@ -385,4 +385,13 @@ deftype Elf64_File =
 
         raise E_generic;
       }
+
+    /* Given a section name, return whether it exists in this
+       file.  */
+    method section_name_p = (string name) int:
+      {
+        try get_section_by_name (name);
+        catch if E_generic { return 0; }
+        return 1;
+      }
   };

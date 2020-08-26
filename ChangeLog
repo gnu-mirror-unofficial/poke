@@ -1,5 +1,9 @@
 2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_File.section_name_p): New method.
+
+2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_field_mapper): Keep the right
 	lexical environment when subpassing results in a constraint
 	exception.
