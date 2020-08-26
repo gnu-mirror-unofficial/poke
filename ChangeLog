@@ -1,5 +1,10 @@
 2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/bpf.pk (BPF_Insn_Opcode.class): Turn into method.
+	(BPF_Insn_Opcode.imm64): Likewise.
+
+2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-anal.c (pkl_anal1_ps_type_struct): Allow methods
 	anywhere in union types.  Declarations are still only allowed
 	before alternatives.
