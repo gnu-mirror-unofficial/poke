@@ -1,0 +1,18 @@
+/* { dg-do run } */
+
+deftype Bar =
+    struct
+    {
+      int marker : 0;
+    };
+
+deftype Foo =
+    union
+    {
+      Bar b;
+      offset<uint<32>,B> l32 : (l32 < 0xfffffff0#B);
+    };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { Foo {} } } */
+/* { dg-output {Foo {l32=0x0U#B}} } */

@@ -1,0 +1,20 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40} } */
+
+deftype Bar =
+    struct
+    {
+      int<64> marker : 0;
+    };
+
+deftype Foo =
+    union
+    {
+      Bar b;
+      offset<uint<64>,B> l32 : (l32 < 0xfffffff0#B);
+    };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian little } } */
+/* { dg-command { try Foo @ 0#B; catch if E_eof { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

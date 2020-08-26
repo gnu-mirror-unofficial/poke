@@ -1,3 +1,14 @@
+2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_field_mapper): Keep the right
+	lexical environment when subpassing results in a constraint
+	exception.
+	* testsuite/poke.map/maps-unions-11.pk: New test.
+	* testsuite/poke.map/maps-unions-12.pk: Likewise.
+	* testsuite/poke.map/maps-unions-13.pk: Likewise.
+	* testsuite/poke.pkl/scons-56.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2020-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y: IN has a bigger priority than AND and OR.

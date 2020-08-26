@@ -1,0 +1,20 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80} } */
+
+deftype Bar =
+    struct
+    {
+      int marker : 0;
+    };
+
+deftype Foo =
+    union
+    {
+      Bar b;
+      offset<uint<32>,B> l32 : (l32 < 0xfffffff0#B);
+    };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian little } } */
+/* { dg-command { Foo @ 0#B } } */
+/* { dg-output {Foo {l32=0x40302010U#B}} } */

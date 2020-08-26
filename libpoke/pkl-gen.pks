@@ -802,11 +802,25 @@
                                         ; IOS BOFF
         dup                             ; IOS BOFF BOFF
         nrot                            ; BOFF IOS BOFF
+        push PVM_E_CONSTRAINT
+        pushe .constraint_error_or_eof
+        push PVM_E_EOF
+        pushe .constraint_error_or_eof
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
         .c PKL_GEN_PAYLOAD->endian = endian; }
                                         ; BOFF VAL
+        pope
+        pope
+        ba .val_ok
+.constraint_error_or_eof:
+        ;; This is to keep the right lexical environment in
+        ;; case the subpass above raises a constraint exception.
+        push null
+        regvar $val
+        raise
+.val_ok:
         dup                             ; BOFF VAL VAL
         regvar $val                     ; BOFF VAL
         .c vars_registered++;
@@ -1096,6 +1110,49 @@
         return
         .end
 
+;;; RAS_MACRO_STRUCT_FIELD_CONSTRUCTOR
+;;; ( SCT -- VAL INT )
+;;;
+;;; Construct a struct field, given an initial SCT that may be NULL.
+;;; Push on the stack the constructed value, and an integer predicate
+;;; indicating whether the construction of the value was successful,
+;;; or resulted in a constraint error.
+;;;
+;;; Macro-arguments:
+;;;
+;;; @type_struct is an AST node denoting the type of the struct
+;;; being constructed.
+;;;
+;;; @field_type is an AST node denoting the type of the field to
+;;; construct.
+
+        .macro struct_field_constructor @type_struct @field_type
+                                ; SCT
+ .c if (PKL_AST_TYPE_S_UNION_P (@type_struct))
+ .c {
+        push PVM_E_CONSTRAINT
+        pushe .constraint_error
+ .c }
+ .c     PKL_PASS_SUBPASS (@field_type);
+                                ; VAL
+ .c if (PKL_AST_TYPE_S_UNION_P (@type_struct))
+ .c {
+        pope
+        ba .val_ok
+.constraint_error:
+        ;; This is to keep the right lexical environment in case the
+        ;; subpass above raises a constraint exception.
+        drop
+        push null
+        regvar $val
+        push int<32>0           ; 0
+        ba .done
+.val_ok:
+  .c }
+        push int<32>1           ; VAL 1
+.done:
+        .end
+
 ;;; RAS_FUNCTION_STRUCT_CONSTRUCTOR @type_struct
 ;;; ( SCT -- SCT )
 ;;;
@@ -1176,10 +1233,19 @@
  .c     PKL_GEN_PAYLOAD->in_constructor = 1;
  .c }
  .c else
-        ;; Note that the constructor consumes the `null' on the
-        ;; stack.
- .c     PKL_PASS_SUBPASS (@field_type);
-                                ; ... SCT ENAME EVAL
+ .c {
+        .e struct_field_constructor @type_struct, @field_type ; SCT ENAME EVAL INT
+ .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
+ .c   {
+        .label .alternative_ok
+        bnzi .alternative_ok
+        drop
+        drop
+        ba .alternative_failed
+.alternative_ok:
+ .c   }
+        drop                                    ; SCT ENAME EVAL
+  .c }
 .got_value:
         ;; If the field type is an array, emit a cast here so array
         ;; bounds are checked.  This is not done in promo because the
