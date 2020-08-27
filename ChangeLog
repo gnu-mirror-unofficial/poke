@@ -1,5 +1,9 @@
 2020-08-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gui/poke-gui.c: Include locale.h, for setlocale.
+
+2020-08-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/leb128.pk: Simplify pretty printing.
 
 2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
