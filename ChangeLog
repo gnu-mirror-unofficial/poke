@@ -1,3 +1,7 @@
+2020-08-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/leb128.pk: Simplify pretty printing.
+
 2020-08-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/bpf.pk (BPF_Insn_Opcode.class): Turn into method.

@@ -26,7 +26,6 @@ deftype ULEB128 =
       struct
       {
         byte b : b < 0x7f;
-        method _print = void: { printf "%v", b; }
       };
 
     ULEB_128_Byte[] variable;
@@ -61,7 +60,7 @@ deftype ULEB128 =
        {
          print "#<leb128:";
          for (b in variable)
-           printf "%v,", b;
+           printf "%v,", b.b;
          printf "%v", last;
          print ">";
          return;
