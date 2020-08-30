@@ -1,0 +1,390 @@
+/* dwarf.pk - DWARF implementation for GNU poke.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load leb128;
+
+/* Debugging Information Entries (DIEs)
+   
+   Tag + attributes.  */
+
+defvar DW_TAG_access_declaration = 0;
+defvar DW_TAG_array_type = 1;
+defvar DW_TAG_base_type = 2;
+defvar DW_TAG_catch_block = 3;
+defvar DW_TAG_catch_type = 4;
+defvar DW_TAG_common_block = 5;
+/* XXX ... */
+
+
+/* Attribute:
+   - attribute name.
+   - attribute value. */
+
+defvar DW_AT_abstract_origin = 0;
+defvar DW_AT_accessibility = 1;
+defvar DW_AT_address_class = 2;
+defvar DW_AT_allocated = 3;
+defvar DW_AT_artificial = 4;
+defvar DW_AT_associated = 5;
+defvar DW_AT_base_types = 6;
+defvar DW_AT_binary_scale = 7;
+defvar DW_AT_bit_offset = 8;
+defvar DW_AT_bit_size = 9;
+defvar DW_AT_bit_stride = 10;
+defvar DW_AT_byte_size = 11;
+defvar DW_AT_byte_stride = 12;
+defvar DW_AT_call_column = 13;
+defvar DW_AT_call_file = 14;
+defvar DW_AT_call_line = 15;
+defvar DW_AT_calling_convention = 16;
+defvar DW_AT_common_reference = 17;
+defvar DW_AT_comp_dir = 18;
+defvar DW_AT_const_value = 19;
+defvar DW_AT_const_expr = 20;
+defvar DW_AT_containing_type = 21;
+defvar DW_AT_count = 22;
+defvar DW_AT_data_bit_offset = 23;
+defvar DW_AT_data_location = 24;
+defvar DW_AT_data_member_location = 25;
+defvar DW_AT_decimal_scale = 26;
+defvar DW_AT_decimal_sign = 27;
+defvar DW_AT_decl_column = 28;
+defvar DW_AT_decl_file = 29;
+defvar DW_AT_decl_line = 30;
+defvar DW_AT_declaration = 31;
+defvar DW_AT_default_value = 32;
+defvar DW_AT_description = 33;
+/* XXX ... */
+
+/* Common stuff.  */
+
+defvar dwarf_bits = 32;
+defvar dwarf_version = 4;
+
+defun dwarf_set_bits = (int bits) int:
+  {
+    dwarf_bits = bits;
+    return 1;
+  }
+
+defun dwarf_set_version = (int ver) int:
+  {
+    dwarf_version = ver;
+    return 1;
+  }
+
+deftype Dwarf_Initial_Length =
+  union
+  {
+    struct
+    {
+      uint<32> marker : (marker == 0xffffffff
+                         && dwarf_set_bits (64));
+      offset<uint<64>,B> length;
+    } l64;
+
+    offset<uint<32>,B> l32 : (l32 < 0xfffffff0#B
+                              && dwarf_set_bits (32));
+
+    method _print = void:
+      {
+        print ("#<");
+        try printf ("%v", l64.length);
+        catch if E_elem { printf ("%v", l32); }
+        print (">");
+      }
+  };
+
+deftype Dwarf_Address =
+  union
+  {
+    uint<32> a32 : dwarf_bits == 32;
+    uint<64> a64;
+
+    method _print = void:
+      {
+        print ("#<");
+        try printf ("%v", a32);
+        catch if E_elem { printf ("%v", a64); }
+        print (">");
+      }
+  };
+
+deftype Dwarf_Section_Offset =
+  union
+  {
+    offset<uint<32>,B> o32 : dwarf_bits == 32;
+    offset<uint<64>,B> o64;
+
+    method _print = void:
+      {
+        print ("#<");
+        try printf ("%v", o32);
+        catch if E_elem { printf ("%v", o64); }
+        print (">");
+      }
+  };
+  
+/* DWARF expressions.  */
+
+/* Opcodes.  */
+
+defvar DW_OP_FIRST = 0x03;
+defvar DW_OP_addr = 0x03;
+defvar DW_OP_deref = 0x06;
+defvar DW_OP_const1u = 0x08;
+defvar DW_OP_const1s = 0x09;
+defvar DW_OP_const2u = 0x0a;
+defvar DW_OP_const2s = 0x0b;
+defvar DW_OP_const4u = 0x0c;
+defvar DW_OP_const4s = 0x0d;
+defvar DW_OP_const8u = 0x0e;
+defvar DW_OP_const8s = 0x0f;
+defvar DW_OP_constu = 0x10;
+defvar DW_OP_consts = 0x11;
+defvar DW_OP_dup = 0x12;
+defvar DW_OP_drop = 0x13;
+defvar DW_OP_over = 0x14;
+defvar DW_OP_pick = 0x15;
+defvar DW_OP_swap = 0x16;
+defvar DW_OP_rot = 0x17;
+defvar DW_OP_xderef = 0x18;
+defvar DW_OP_abs = 0x19;
+defvar DW_OP_and = 0x1a;
+defvar DW_OP_div = 0x1b;
+defvar DW_OP_minus = 0x1c;
+defvar DW_OP_mod = 0x1d;
+defvar DW_OP_mul = 0x1e;
+defvar DW_OP_neg = 0x1f;
+defvar DW_OP_not = 0x20;
+defvar DW_OP_or = 0x21;
+defvar DW_OP_plus = 0x22;
+defvar DW_OP_plus_uconst = 0x23;
+defvar DW_OP_shl = 0x24;
+defvar DW_OP_shr = 0x25;
+defvar DW_OP_shra = 0x26;
+defvar DW_OP_xor = 0x27;
+defvar DW_OP_skip = 0x2f;
+defvar DW_OP_bra = 0x28;
+defvar DW_OP_eq = 0x29;
+defvar DW_OP_ge = 0x2a;
+defvar DW_OP_gt = 0x2b;
+defvar DW_OP_le = 0x2c;
+defvar DW_OP_lt = 0x2d;
+defvar DW_OP_ne = 0x2e;
+/* Opcodes in the range DW_OP_lit0..DW_OP_lit31 are guaranteed to be
+   encoded using consecutive integers.  */
+defvar DW_OP_lit0 = 0x30;
+defvar DW_OP_lit1 = DW_OP_lit0 + 1;
+defvar DW_OP_lit2 = DW_OP_lit0 + 2;
+defvar DW_OP_lit3 = DW_OP_lit0 + 3;
+defvar DW_OP_lit4 = DW_OP_lit0 + 4;
+defvar DW_OP_lit5 = DW_OP_lit0 + 5;
+defvar DW_OP_lit6 = DW_OP_lit0 + 6;
+defvar DW_OP_lit7 = DW_OP_lit0 + 7;
+defvar DW_OP_lit8 = DW_OP_lit0 + 8;
+defvar DW_OP_lit9 = DW_OP_lit0 + 9;
+defvar DW_OP_lit10 = DW_OP_lit0 + 10;
+defvar DW_OP_lit11 = DW_OP_lit0 + 11;
+defvar DW_OP_lit12 = DW_OP_lit0 + 12;
+defvar DW_OP_lit13 = DW_OP_lit0 + 13;
+defvar DW_OP_lit14 = DW_OP_lit0 + 14;
+defvar DW_OP_lit15 = DW_OP_lit0 + 15;
+defvar DW_OP_lit16 = DW_OP_lit0 + 16;
+defvar DW_OP_lit17 = DW_OP_lit0 + 17;
+defvar DW_OP_lit18 = DW_OP_lit0 + 18;
+defvar DW_OP_lit19 = DW_OP_lit0 + 19;
+defvar DW_OP_lit20 = DW_OP_lit0 + 20;
+defvar DW_OP_lit21 = DW_OP_lit0 + 21;
+defvar DW_OP_lit22 = DW_OP_lit0 + 22;
+defvar DW_OP_lit23 = DW_OP_lit0 + 23;
+defvar DW_OP_lit24 = DW_OP_lit0 + 24;
+defvar DW_OP_lit25 = DW_OP_lit0 + 25;
+defvar DW_OP_lit26 = DW_OP_lit0 + 26;
+defvar DW_OP_lit27 = DW_OP_lit0 + 27;
+defvar DW_OP_lit28 = DW_OP_lit0 + 28;
+defvar DW_OP_lit29 = DW_OP_lit0 + 29;
+defvar DW_OP_lit30 = DW_OP_lit0 + 30;
+defvar DW_OP_lit31 = DW_OP_lit0 + 31;
+/* The same applies to the opcodes in the range
+   DW_OP_reg0..DW_OP_reg31.  */
+defvar DW_OP_reg0 = 0x50;
+defvar DW_OP_reg1 = DW_OP_reg0 + 1;
+defvar DW_OP_reg2 = DW_OP_reg0 + 2;
+defvar DW_OP_reg3 = DW_OP_reg0 + 3;
+defvar DW_OP_reg4 = DW_OP_reg0 + 4;
+defvar DW_OP_reg5 = DW_OP_reg0 + 5;
+defvar DW_OP_reg6 = DW_OP_reg0 + 6;
+defvar DW_OP_reg7 = DW_OP_reg0 + 7;
+defvar DW_OP_reg8 = DW_OP_reg0 + 8;
+defvar DW_OP_reg9 = DW_OP_reg0 + 9;
+defvar DW_OP_reg10 = DW_OP_reg0 + 10;
+defvar DW_OP_reg11 = DW_OP_reg0 + 11;
+defvar DW_OP_reg12 = DW_OP_reg0 + 12;
+defvar DW_OP_reg13 = DW_OP_reg0 + 13;
+defvar DW_OP_reg14 = DW_OP_reg0 + 14;
+defvar DW_OP_reg15 = DW_OP_reg0 + 15;
+defvar DW_OP_reg16 = DW_OP_reg0 + 16;
+defvar DW_OP_reg17 = DW_OP_reg0 + 17;
+defvar DW_OP_reg18 = DW_OP_reg0 + 18;
+defvar DW_OP_reg19 = DW_OP_reg0 + 19;
+defvar DW_OP_reg20 = DW_OP_reg0 + 20;
+defvar DW_OP_reg21 = DW_OP_reg0 + 21;
+defvar DW_OP_reg22 = DW_OP_reg0 + 22;
+defvar DW_OP_reg23 = DW_OP_reg0 + 23;
+defvar DW_OP_reg24 = DW_OP_reg0 + 24;
+defvar DW_OP_reg25 = DW_OP_reg0 + 25;
+defvar DW_OP_reg26 = DW_OP_reg0 + 26;
+defvar DW_OP_reg27 = DW_OP_reg0 + 27;
+defvar DW_OP_reg28 = DW_OP_reg0 + 28;
+defvar DW_OP_reg29 = DW_OP_reg0 + 29;
+defvar DW_OP_reg30 = DW_OP_reg0 + 30;
+defvar DW_OP_reg31 = DW_OP_reg0 + 31;
+/* The same applies to the opcodes in the range
+   DW_OP_breg0..DW_OP_breg31.  */
+defvar DW_OP_breg0 = 0x70;
+defvar DW_OP_breg1 = DW_OP_breg0 + 1;
+defvar DW_OP_breg2 = DW_OP_breg0 + 2;
+defvar DW_OP_breg3 = DW_OP_breg0 + 3;
+defvar DW_OP_breg4 = DW_OP_breg0 + 4;
+defvar DW_OP_breg5 = DW_OP_breg0 + 5;
+defvar DW_OP_breg6 = DW_OP_breg0 + 6;
+defvar DW_OP_breg7 = DW_OP_breg0 + 7;
+defvar DW_OP_breg8 = DW_OP_breg0 + 8;
+defvar DW_OP_breg9 = DW_OP_breg0 + 9;
+defvar DW_OP_breg10 = DW_OP_breg0 + 10;
+defvar DW_OP_breg11 = DW_OP_breg0 + 11;
+defvar DW_OP_breg12 = DW_OP_breg0 + 12;
+defvar DW_OP_breg13 = DW_OP_breg0 + 13;
+defvar DW_OP_breg14 = DW_OP_breg0 + 14;
+defvar DW_OP_breg15 = DW_OP_breg0 + 15;
+defvar DW_OP_breg16 = DW_OP_breg0 + 16;
+defvar DW_OP_breg17 = DW_OP_breg0 + 17;
+defvar DW_OP_breg18 = DW_OP_breg0 + 18;
+defvar DW_OP_breg19 = DW_OP_breg0 + 19;
+defvar DW_OP_breg20 = DW_OP_breg0 + 20;
+defvar DW_OP_breg21 = DW_OP_breg0 + 21;
+defvar DW_OP_breg22 = DW_OP_breg0 + 22;
+defvar DW_OP_breg23 = DW_OP_breg0 + 23;
+defvar DW_OP_breg24 = DW_OP_breg0 + 24;
+defvar DW_OP_breg25 = DW_OP_breg0 + 25;
+defvar DW_OP_breg26 = DW_OP_breg0 + 26;
+defvar DW_OP_breg27 = DW_OP_breg0 + 27;
+defvar DW_OP_breg28 = DW_OP_breg0 + 28;
+defvar DW_OP_breg29 = DW_OP_breg0 + 29;
+defvar DW_OP_breg30 = DW_OP_breg0 + 30;
+defvar DW_OP_breg31 = DW_OP_breg0 + 31;
+defvar DW_OP_regx = 0x90;
+defvar DW_OP_fbreg = 0x91;
+defvar DW_OP_bregx = 0x92;
+defvar DW_OP_piece = 0x93;
+defvar DW_OP_deref_size = 0x94;
+defvar DW_OP_xderef_size = 0x95;
+defvar DW_OP_nop = 0x96;
+defvar DW_OP_push_object_address = 0x97;
+defvar DW_OP_call2 = 0x98;
+defvar DW_OP_call4 = 0x99;
+defvar DW_OP_call_ref = 0x9a;
+defvar DW_OP_form_tls_address = 0x9b;
+defvar DW_OP_call_frame_cfa = 0x9c;
+defvar DW_OP_bit_piece = 0x9d;
+defvar DW_OP_implicit_value = 0x9e;
+defvar DW_OP_stack_value = 0x9f;
+defvar DW_OP_lo_user = 0xe0;
+defvar DW_OP_hi_user = 0xf;
+defvar DW_OP_LAST = DW_OP_hi_user;
+
+/* Each DWARF operation contains a 1-byte opcode that identifies the
+   operation, followed by a variable number of arguments.  */
+
+deftype Dwarf_Op =
+  struct
+  {
+    uint<8> code : code >= DW_OP_FIRST && code <= DW_OP_LAST;
+    union
+    {
+      uint<8>  u8 : code in [DW_OP_const1u, DW_OP_pick,
+                             DW_OP_deref_size, DW_OP_xderef_size];
+      int<8>   i8 : code == DW_OP_const1s;
+
+      uint<16> u16 : code in [DW_OP_const2u, DW_OP_call2];
+      int<16>  i16 : code in [DW_OP_const2s, DW_OP_skip, DW_OP_bra];
+
+      uint<32> u32 : code in [DW_OP_const4u, DW_OP_call4];
+      int<32>  i32 : code == DW_OP_const4s;
+
+      uint<64> u64 : code == DW_OP_const8u;
+      int<64>  i64 : code == DW_OP_const8s;
+
+      ULEB128 u128 : (code in [DW_OP_constu, DW_OP_plus_uconst,
+                               DW_OP_fbreg, DW_OP_regx, DW_OP_piece]
+                      || (code >= DW_OP_breg0 && code <= DW_OP_breg31));
+
+      struct
+      {
+        ULEB128 reg;
+        // LEB128 offset;
+      } reg_offset : code in [DW_OP_bregx, DW_OP_bit_piece];
+
+      struct
+      {
+        ULEB128 length;
+        byte[length.value] block;
+      } size : code == DW_OP_implicit_value;
+
+      Dwarf_Address addr : code == DW_OP_addr;
+      Dwarf_Section_Offset offset : code == DW_OP_call_ref;
+      
+      /* Other operations have no arguments.  */
+      struct {};
+    } arg;
+  };
+
+/* CFA expressions.   */
+
+deftype Dwarf_CFA_Expression =
+  struct
+  {
+    ULEB128 reg;
+    ULEB128 len;
+    Dwarf_Op[len.value()#B] exp;
+  };
+
+/* Contributions are stored in .debug_info sections.  */
+
+/* Compilation unit header.  */
+
+deftype Dwarf_CU_Header =
+  struct
+  {
+    /* Length of the .debug_info contribution for this CU, not
+       including the length field itself.  */
+    Dwarf_Initial_Length unit_length;
+
+    /* Version of the DWARF information for the compilation unit.  */
+    uint<16> version : (version in [2, 3, 4, 5]
+                        && dwarf_set_version (version));
+
+    /* Offset into the .debug_abbrev section that associates the
+       compilation unit with a particular set of debugging information
+       entry abbreviations.  */
+    Dwarf_Section_Offset debug_abbrev_offset;
+
+    /* Size of an address on the target architecture.  */
+    offset<uint<8>,B> address_size;
+  };

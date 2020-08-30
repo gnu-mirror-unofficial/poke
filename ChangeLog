@@ -1,3 +1,9 @@
+2020-08-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/future/dwarf.pk: Remove.
+	* pickles/dwarf.pk: Copied and adapted from future/dwarf.pk.
+	* maps/elf.map: Add debug_info.
+
 2020-08-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* gui/poke-gui.c: Include locale.h, for setlocale.
