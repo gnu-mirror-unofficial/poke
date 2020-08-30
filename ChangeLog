@@ -1,5 +1,9 @@
 2020-08-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/dwarf.pk: Add more constants.
+
+2020-08-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/future/dwarf.pk: Remove.
 	* pickles/dwarf.pk: Copied and adapted from future/dwarf.pk.
 	* maps/elf.map: Add debug_info.
