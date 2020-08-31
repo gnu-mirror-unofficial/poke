@@ -1,4 +1,4 @@
-/* dwarf-pubnames.pk - DWARF implementation for GNU poke. 
+/* dwarf-pubnames.pk - DWARF implementation for GNU poke.
                        Name lookup tables.  */
 
 /* Copyright (C) 2020 Jose E. Marchesi.  */

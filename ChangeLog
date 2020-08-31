@@ -1,5 +1,13 @@
 2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/dwarf-frame.pk (Dwarf_CFI): Adapt to use Dwarf_Op for
+	CFA_def_cfa_expression, CFA_expression and CFA_val_expression.
+	* pickles/dwarf-expr.pk: New file.
+	* pickles/dwarf.pk (DW_TAG_hi_user): Fix value.
+	Load dwarf-expr.pk.
+
+2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/dwarf-common.pk: New file.
 	* pickles/dwarf-frame.pk: Likewise.
 	* pickles/dwarf-pubnames.pk: Likewise.

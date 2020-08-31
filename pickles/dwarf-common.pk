@@ -1,4 +1,4 @@
-/* dwarf-common.pk - DWARF implementation for GNU poke. 
+/* dwarf-common.pk - DWARF implementation for GNU poke.
                      Common bits.  */
 
 /* Copyright (C) 2020 Jose E. Marchesi.  */
@@ -102,11 +102,4 @@ deftype Dwarf_Section_Offset =
         catch if E_elem { printf ("%v", o64); }
         print (">");
       }
-  };
-
-deftype Dwarf_Block =
-  struct
-  {
-    ULEB128 length;
-    byte[length.value] block;
   };

@@ -1,4 +1,4 @@
-/* dwarf-frame.pk - DWARF implementation for GNU poke. 
+/* dwarf-frame.pk - DWARF implementation for GNU poke.
                     Call Frame Information.  */
 
 /* Copyright (C) 2020 Jose E. Marchesi.  */
@@ -19,6 +19,7 @@
 
 load leb128;
 load "dwarf-common.pk";
+load "dwarf-expr.pk"; /* For Dwarf_Op  */
 
 /* Call Frame Instructions.  */
 
@@ -57,6 +58,7 @@ defvar DW_CFA_GNU_window_save = 0x2d;
 defvar DW_CFA_GNU_args_size = 0x2e;
 defvar DW_CFA_GNU_negative_offset_extended = 0x2f;
 defvar DW_CFA_high_user = 0x3f;
+
 
 deftype Dwarf_CFI =
   struct
@@ -106,14 +108,19 @@ deftype Dwarf_CFI =
       ULEB128 offset    : ecode == DW_CFA_def_cfa_offset;
       LEB128 soffset    : ecode == DW_CFA_def_cfa_offset_sf;
 
-      Dwarf_Block block : ecode == DW_CFA_def_cfa_expression;
+      struct
+      {
+        ULEB128 size;
+        Dwarf_Op[size.value#B] ops;
+      } exp             : ecode == DW_CFA_def_cfa_expression;
 
       struct
       {
         ULEB128 reg;
-        Dwarf_Block block;
-      } reg_block       : ecode in [DW_CFA_expression,
-                                    DW_CFA_val_expression];
+        ULEB128 size;
+        Dwarf_Op[size.value#B] ops;
+      } reg_exp       : ecode in [DW_CFA_expression,
+                                  DW_CFA_val_expression];
 
       /* Other instructions have no operands. */
       struct {};
