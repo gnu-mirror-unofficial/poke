@@ -1,5 +1,14 @@
 2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Fix handling of
+	payload->generating_pvm_struct_type.
+	Break pass whenever appropriate.
+	(pkl_gen_ps_type_struct): Likewise.
+	* testsuite/poke.pkl/scons-57.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/leb128.pk (LEB128): Define.
 	* pickles/dwarf.pk (Dwarf_Block): Define.
 	(Dwarf_CFI): Options for DW_CFA_def_cfa_expression,

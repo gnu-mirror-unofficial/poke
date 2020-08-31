@@ -26,7 +26,7 @@ load leb128;
  *     Dwarf_Type_Unit_Header
  * .debug_aranges
  * .debug_frame
- *     Dwarf_Call_Frame_Info
+ *     Dwarf_Call_Frame_Entry[]
  * .debug_abbrev
  * .debug_str
  * .debug_loc
@@ -842,7 +842,6 @@ deftype Dwarf_CIE =
     Dwarf_Initial_Length length;
 
     /* Constant used to distinguish CIEs from FDEs.  */
-    /* XXX */
     union
     {
       uint<32> u32 : (dwarf_bits == 32
@@ -852,7 +851,9 @@ deftype Dwarf_CIE =
 
     /* This version number is specific to the call frame information
        and is independent of the DWARF version number.  */
-    uint<8> version : version == 4;
+    uint<8> version : ((dwarf_version == 2 && version == 1)
+                       || (dwarf_version == 3 && version == 3)
+                       || (dwarf_version == 4 && version == 1 /* XXX 4 */));
 
     /* UTF-8 string that identifies the augmentation to this CIE or to
        the FDEs that use it.  If there is no augmentation this value
@@ -880,9 +881,17 @@ deftype Dwarf_CIE =
        represents the return address of the function.  */
     ULEB128 return_address_register;
 
-    /* XXX */
-    byte[] initial_instructions;
-    byte[] padding;
+    defvar insn_size = (length.value
+                        - cie_id'size
+                        - version'size
+                        - augmentation'size
+                        - address_size'size
+                        - segment_size'size
+                        - code_alignment_factor'size
+                        - data_alignment_factor'size
+                        - return_address_register'size);
+
+    Dwarf_CFI[insn_size] initial_instructions;
   };
 
 /* DWARF FDE.
@@ -915,18 +924,11 @@ deftype Dwarf_FDE =
 
 /* Call Frame Information.  */
 
-deftype Dwarf_Call_Frame_Info =
-  struct
+deftype Dwarf_Call_Frame_Entry =
+  union
   {
-    deftype Entry =
-      union
-      {
-        Dwarf_CIE cie;
-        Dwarf_FDE fde;
-      };
-
-    /* XXX how many? */
-    Entry[] entries;
+    Dwarf_CIE cie;
+    Dwarf_FDE fde;
   };
 
 /* Name Lookup Tables.

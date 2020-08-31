@@ -1508,8 +1508,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type)
   /* Type nodes are handled by the code generator only in certain
      circumstances.  In any other cases, break the pass to avoid
      post-order hooks to be invoked.  Note that this logic is
-     duplicated in pkl_gen_pr_type_array.  Please keep them
-     synchronized!  */
+     duplicated in pkl_gen_pr_type_array and pkl_gen_pr_type_struct.
+     Please keep them synchronized!  */
 
   if (PKL_GEN_PAYLOAD->in_struct_decl)
     PKL_PASS_DONE;
@@ -2532,7 +2532,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (PKL_PASS_NODE);
 
-      /* XXX this is replicating the logic in pkl_gen_pr_type.  */
+      /* XXX this is replicating the logic in pkl_gen_pr_type.  Will
+         go away once we execute more generic handlers first in
+         pre-order.  */
       if (PKL_PASS_PARENT)
         {
           switch (PKL_AST_CODE (PKL_PASS_PARENT))
@@ -2777,7 +2779,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
     /* We are generating a PVM struct type.  We set the following
        variable so the struct type elems that are declarations are not
        processed.  */
-    PKL_GEN_PAYLOAD->generating_pvm_struct_type = 1;
+    {
+      /* XXX this is replicating the logic in pkl_gen_pr_type.  Will
+         go away once we execute more generic handlers first in
+         pre-order.  */
+      if (PKL_PASS_PARENT)
+        {
+          switch (PKL_AST_CODE (PKL_PASS_PARENT))
+            {
+            case PKL_AST_TYPE:
+            case PKL_AST_STRUCT_TYPE_FIELD:
+              /* Process these.  */
+              break;
+            default:
+              PKL_PASS_BREAK;
+              break;
+            }
+        }
+
+      PKL_GEN_PAYLOAD->generating_pvm_struct_type++;
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -2803,7 +2824,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_struct)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYSCT);
-  PKL_GEN_PAYLOAD->generating_pvm_struct_type = 0;
+  PKL_GEN_PAYLOAD->generating_pvm_struct_type--;
 }
 PKL_PHASE_END_HANDLER
 

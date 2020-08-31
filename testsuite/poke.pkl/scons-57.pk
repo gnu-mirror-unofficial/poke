@@ -1,0 +1,17 @@
+/* { dg-do run } */
+
+deftype Ja =
+  struct
+  {
+    int extop;
+  };
+
+deftype Dwarf_CFI =
+  struct
+  {
+    Ja foo;
+    defvar pred = foo.extop;
+  };
+
+/* { dg-command { [Dwarf_CFI {}] } } */
+/* { dg-output {[Foo {foo=Ja {extop=0}}]} } */

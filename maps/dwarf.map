@@ -3,36 +3,36 @@
 load dwarf;
 load elf;
 
-defvar elf = Elf64_File @ 0#B;
+defvar _dwarf_map_elf = Elf64_File @ 0#B;
 
 %%
 
 %entry
 %name info
 %type Dwarf_CU_Header
-%condition elf.section_name_p (".debug_info")
-%offset elf.get_section_by_name (".debug_info").sh_offset
+%condition _dwarf_map_elf.section_name_p (".debug_info")
+%offset _dwarf_map_elf.get_section_by_name (".debug_info").sh_offset
 
 %entry
 %name types
 %type Dwarf_Type_Unit_Header
-%condition elf.section_name_p (".debug_types")
-%offset elf.get_section_by_name (".debug_types").sh_offset
+%condition _dwarf_map_elf.section_name_p (".debug_types")
+%offset _dwarf_map_elf.get_section_by_name (".debug_types").sh_offset
 
 %entry
 %name pubnames
 %type Dwarf_Name_Lookup_Table
-%condition elf.section_name_p (".debug_pubnames")
-%offset elf.get_section_by_name (".debug_pubnames").sh_offset
+%condition _dwarf_map_elf.section_name_p (".debug_pubnames")
+%offset _dwarf_map_elf.get_section_by_name (".debug_pubnames").sh_offset
 
 %entry
 %name pubtypes
 %type Dwarf_Name_Lookup_Table
-%condition elf.section_name_p (".debug_pubtypes")
-%offset elf.get_section_by_name (".debug_pubtypes").sh_offset
+%condition _dwarf_map_elf.section_name_p (".debug_pubtypes")
+%offset _dwarf_map_elf.get_section_by_name (".debug_pubtypes").sh_offset
 
 %entry
 %name frame
-%type Dwarf_Call_Frame_Info
-%condition elf.section_name_p (".debug_frame")
-%offset elf.get_section_by_name (".debug_frame").sh_offset
+%type Dwarf_Call_Frame_Entry[_dwarf_map_elf.get_section_by_name (".debug_frame").sh_size]
+%condition _dwarf_map_elf.section_name_p (".debug_frame")
+%offset _dwarf_map_elf.get_section_by_name (".debug_frame").sh_offset
