@@ -775,42 +775,42 @@ deftype Dwarf_CFI =
       uint<32> u32      : ecode == DW_CFA_advance_loc4;
       uint<64> u64      : ecode == DW_CFA_MIPS_advance_loc8;
 
-      /* struct */
-      /* { */
-      /*   ULEB128 reg; */
-      /*   ULEB128 off; */
-      /* } reg_offset      : ecode in [DW_CFA_offset_extended, */
-      /*                               DW_CFA_def_cfa, */
-      /*                               DW_CFA_val_offset]; */
+      struct
+      {
+        ULEB128 reg;
+        ULEB128 off;
+      } reg_offset      : ecode in [DW_CFA_offset_extended,
+                                    DW_CFA_def_cfa,
+                                    DW_CFA_val_offset];
 
-      /* struct */
-      /* { */
-      /*   ULEB128 reg; */
-      /*   /\* XXX signed.  *\/ */
-      /*   ULEB128 off; */
-      /* } reg_soffset     : ecode in [DW_CFA_offset_extended_sf, */
-      /*                               DW_CFA_def_cfa_sf, */
-      /*                               DW_CFA_val_offset_sf]; */
+      struct
+      {
+        ULEB128 reg;
+        /* XXX signed.  */
+        ULEB128 off;
+      } reg_soffset     : ecode in [DW_CFA_offset_extended_sf,
+                                    DW_CFA_def_cfa_sf,
+                                    DW_CFA_val_offset_sf];
 
-      /* ULEB128 reg       : ecode in [DW_CFA_restore_extended, */
-      /*                               DW_CFA_undefined, */
-      /*                               DW_CFA_same_value, */
-      /*                               DW_CFA_def_cfa_register]; */
+      ULEB128 reg       : ecode in [DW_CFA_restore_extended,
+                                    DW_CFA_undefined,
+                                    DW_CFA_same_value,
+                                    DW_CFA_def_cfa_register];
 
       ULEB128[2] regs   : ecode == DW_CFA_register;
 
-      // ULEB128 offset    : ecode == DW_CFA_def_cfa_offset;
+      ULEB128 offset    : ecode == DW_CFA_def_cfa_offset;
       /* XXX signed.  */
-      //      ULEB128 soffset   : ecode == DW_CFA_def_cfa_offset_sf;
+      ULEB128 soffset   : ecode == DW_CFA_def_cfa_offset_sf;
 
       /* XXX BLOCK block : ecode == DW_CFA_def_cfa_expression */
 
-      /* struct */
-      /* { */
-      /*   ULEB128 reg; */
-      /*   /\* XXX BLOCK block *\/ */
-      /* } reg_block       : ecode in [DW_CFA_expression, */
-      /*                               DW_CFA_val_expression]; */
+      struct
+      {
+        ULEB128 reg;
+        /* XXX BLOCK block */
+      } reg_block       : ecode in [DW_CFA_expression,
+                                    DW_CFA_val_expression];
 
       /* Other instructions have no operands. */
       struct {};

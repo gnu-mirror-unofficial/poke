@@ -1,5 +1,13 @@
 2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-anal.c (pkl_anal_ps_program): New handler.
+	(pkl_phase_anal1): Install handler.
+	(pkl_phase_anal2): Likewise.
+	(pkl_phase_analf): Likewise.
+	(pkl_anal1_pr_type_struct): Break phase if compiled.
+
+2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/dwarf.pk (Dwarf_Section_Offset): New method `value'.
 	(Dwarf_Type_Unit_Header): Define.
 	(Dwarf_CIE): Likewise.

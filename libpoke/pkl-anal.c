@@ -75,6 +75,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal_pr_program)
 }
 PKL_PHASE_END_HANDLER
 
+/* Sanity check for context management.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal_ps_program)
+{
+  assert (PKL_ANAL_PAYLOAD->next_context == 0);
+}
+PKL_PHASE_END_HANDLER
 
 /* The following handler is used in all the analysis phases to avoid
    re-analyzing already processed AST type nodes.  */
@@ -129,6 +136,12 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal1_pr_type_struct)
 {
+  /* XXX we need this break here because this handler is invoked
+     _before_ pkl_anal_pr_type.  This sucks, maybe we want to run
+     generic handler in pre-order FIRST :/ */
+  if (PKL_AST_TYPE_COMPILED (PKL_PASS_NODE))
+    PKL_PASS_BREAK;
+
   PKL_ANAL_PUSH_CONTEXT (PKL_ANAL_CONTEXT_STRUCT_TYPE);
 }
 PKL_PHASE_END_HANDLER
@@ -645,6 +658,7 @@ struct pkl_phase pkl_phase_anal1
   __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
+   PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_anal1_ps_struct),
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_anal1_ps_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_BREAK_STMT, pkl_anal1_ps_break_stmt),
@@ -906,6 +920,7 @@ struct pkl_phase pkl_phase_anal2
   __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
+   PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_EXP, pkl_anal2_ps_checktype),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_anal2_ps_checktype),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_anal2_ps_checktype),
@@ -958,6 +973,7 @@ struct pkl_phase pkl_phase_analf
   __attribute__ ((visibility ("hidden"))) =
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
+   PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_analf_ps_array_initializer),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_analf_ps_ass_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
