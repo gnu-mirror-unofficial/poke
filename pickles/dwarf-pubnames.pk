@@ -1,0 +1,63 @@
+/* dwarf-pubnames.pk - DWARF implementation for GNU poke. 
+                       Name lookup tables.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load leb128;
+load "dwarf-common.pk";
+
+/* The sections .debug_pubnames and .debug_pubtypes contain a name
+   lookup table each.  */
+
+deftype Dwarf_Name_Lookup_Table =
+  struct
+  {
+    /* Lenght of the set of entries for this CU, not including the
+       length field itself.  */
+    Dwarf_Initial_Length unit_length;
+
+    uint<16> version : (dwarf_version >= 3 && version == 2);
+
+    /* Offset into the .debug_info section of the CU header.  */
+    Dwarf_Section_Offset debug_info_offset;
+
+    /* Size of the contents of the .debug_info section generated to
+       represent this CU.  */
+    Dwarf_Initial_Length debug_info_length;
+
+    /* The header is followed by a set of entries, which are finished
+       by an offset containing the value 0.  */
+
+    deftype Global_Name =
+      struct
+      {
+        Dwarf_Section_Offset offset : offset.value != 0#B;
+        string name;
+      };
+
+    Global_Name[] names;
+    Dwarf_Section_Offset terminator : terminator.value == 0#B;
+
+    /* Return the offset in .debug_info of the object with name NAME.
+       If no such object is stored in the table, raise E_generic.  */
+    method lookup = (string str) offset<uint<64>,B>:
+      {
+        for (name in names where name.name == str)
+          return name.offset.value;
+        raise E_generic;
+      }
+  };

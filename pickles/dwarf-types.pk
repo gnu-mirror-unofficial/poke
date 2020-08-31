@@ -1,0 +1,51 @@
+/* dwarf-frame.pk - DWARF implementation for GNU poke. 
+                    Debug types.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load leb128;
+load "dwarf-common.pk";
+
+/* The Dwarf_Type_Unit_Header is the header for the series of DIEs
+   conforming a type that has been stored in the .debug_types
+   section.  */
+
+deftype Dwarf_Type_Unit_Header =
+  struct
+  {
+    /* Length of the .debug_types contribution for this CU, not
+       including the length field itself.  */
+    Dwarf_Initial_Length unit_length;
+
+    /* Version of the DWARF information in this CU.  */
+    uint<16> version : version == 4;
+
+    /* Offset into the .debug_abbrev section that associates this CU
+       with a particular set of debugging information entry
+       abbreviations.  */
+    Dwarf_Section_Offset debug_abbrev_offset;
+
+    /* Size of an address on the target architecture.  */
+    offset<uint<8>,B> address_size;
+
+    /* Unique signature of the type described in this type unit.  */
+    uint<64> type_signature;
+
+    /* Offset relative to the beginning of the type unit header,
+       referring to the DIE that describes the type.  */
+    Dwarf_Section_Offset type_offset;
+  };

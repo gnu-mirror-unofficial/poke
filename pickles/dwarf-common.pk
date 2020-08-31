@@ -1,0 +1,112 @@
+/* dwarf-common.pk - DWARF implementation for GNU poke. 
+                     Common bits.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load leb128;
+
+defvar dwarf_bits = 32;
+defvar dwarf_version = 4;
+
+defun dwarf_set_bits = (int bits) int:
+  {
+    dwarf_bits = bits;
+    return 1;
+  }
+
+defun dwarf_set_version = (int ver) int:
+  {
+    dwarf_version = ver;
+    return 1;
+  }
+
+deftype Dwarf_Initial_Length =
+  union
+  {
+    struct
+    {
+      uint<32> marker : (marker == 0xffff_ffff
+                         && dwarf_set_bits (64));
+      offset<uint<64>,B> length;
+    } l64;
+
+    offset<uint<32>,B> l32 : (l32 < 0xffff_fff0#B
+                              && dwarf_set_bits (32));
+
+    method value = offset<uint<64>,B>:
+      {
+        try return l32;
+        catch if E_elem { return l64.length; }
+      }
+
+    method _print = void:
+      {
+        print ("#<");
+        try printf ("%v", l64.length);
+        catch if E_elem { printf ("%v", l32); }
+        print (">");
+      }
+  };
+
+deftype Dwarf_Address =
+  union
+  {
+    uint<32> a32 : dwarf_bits == 32;
+    uint<64> a64;
+
+    method value = uint<64>:
+      {
+        try return a32;
+        catch if E_elem { return a64; }
+      }
+
+    method _print = void:
+      {
+        print ("#<");
+        try printf ("%v", a32);
+        catch if E_elem { printf ("%v", a64); }
+        print (">");
+      }
+  };
+
+deftype Dwarf_Section_Offset =
+  union
+  {
+    offset<uint<32>,B> o32 : dwarf_bits == 32;
+    offset<uint<64>,B> o64;
+
+    method value = offset<uint<64>,B>:
+      {
+        try return o32;
+        catch if E_elem { return o64; }
+      }
+
+    method _print = void:
+      {
+        print ("#<");
+        try printf ("%v", o32);
+        catch if E_elem { printf ("%v", o64); }
+        print (">");
+      }
+  };
+
+deftype Dwarf_Block =
+  struct
+  {
+    ULEB128 length;
+    byte[length.value] block;
+  };

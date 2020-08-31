@@ -1,0 +1,224 @@
+/* dwarf-frame.pk - DWARF implementation for GNU poke. 
+                    Call Frame Information.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load leb128;
+load "dwarf-common.pk";
+
+/* Call Frame Instructions.  */
+
+defvar DW_CFA_advance_loc = 0x40;
+defvar DW_CFA_offset = 0x80;
+defvar DW_CFA_restore = 0xc0;
+defvar DW_CFA_extended = 0;
+
+defvar DW_CFA_nop = 0x00;
+defvar DW_CFA_set_loc = 0x01;
+defvar DW_CFA_advance_loc1 = 0x02;
+defvar DW_CFA_advance_loc2 = 0x03;
+defvar DW_CFA_advance_loc4 = 0x04;
+defvar DW_CFA_offset_extended = 0x05;
+defvar DW_CFA_restore_extended = 0x06;
+defvar DW_CFA_undefined = 0x07;
+defvar DW_CFA_same_value = 0x08;
+defvar DW_CFA_register = 0x09;
+defvar DW_CFA_remember_state = 0x0a;
+defvar DW_CFA_restore_state = 0x0b;
+defvar DW_CFA_def_cfa = 0x0c;
+defvar DW_CFA_def_cfa_register = 0x0d;
+defvar DW_CFA_def_cfa_offset = 0x0e;
+defvar DW_CFA_def_cfa_expression = 0x0f;
+defvar DW_CFA_expression = 0x10;
+defvar DW_CFA_offset_extended_sf = 0x11;
+defvar DW_CFA_def_cfa_sf = 0x12;
+defvar DW_CFA_def_cfa_offset_sf = 0x13;
+defvar DW_CFA_val_offset = 0x14;
+defvar DW_CFA_val_offset_sf = 0x15;
+defvar DW_CFA_val_expression = 0x16;
+
+defvar DW_CFA_low_user = 0x1c;
+defvar DW_CFA_MIPS_advance_loc8 = 0x1d;
+defvar DW_CFA_GNU_window_save = 0x2d;
+defvar DW_CFA_GNU_args_size = 0x2e;
+defvar DW_CFA_GNU_negative_offset_extended = 0x2f;
+defvar DW_CFA_high_user = 0x3f;
+
+deftype Dwarf_CFI =
+  struct
+  {
+    struct uint<8>
+    {
+      uint<2> primary;
+      uint<6> extop;
+    } code;
+
+    defvar ecode = code.extop;
+
+    /* Off-opcode arguments follow.  */
+    union
+    {
+      ULEB128 u128      : ecode == DW_CFA_offset;
+      Dwarf_Address addr : ecode == DW_CFA_set_loc;
+      /* XXX: offsets for advance_locN? */
+      uint<8> u8        : ecode == DW_CFA_advance_loc1;
+      uint<16> u16      : ecode == DW_CFA_advance_loc2;
+      uint<32> u32      : ecode == DW_CFA_advance_loc4;
+      uint<64> u64      : ecode == DW_CFA_MIPS_advance_loc8;
+
+      struct
+      {
+        ULEB128 reg;
+        ULEB128 off;
+      } reg_offset      : ecode in [DW_CFA_offset_extended,
+                                    DW_CFA_def_cfa,
+                                    DW_CFA_val_offset];
+
+      struct
+      {
+        ULEB128 reg;
+        LEB128 off;
+      } reg_soffset     : ecode in [DW_CFA_offset_extended_sf,
+                                    DW_CFA_def_cfa_sf,
+                                    DW_CFA_val_offset_sf];
+
+      ULEB128 reg       : ecode in [DW_CFA_restore_extended,
+                                    DW_CFA_undefined,
+                                    DW_CFA_same_value,
+                                    DW_CFA_def_cfa_register];
+
+      ULEB128[2] regs   : ecode == DW_CFA_register;
+
+      ULEB128 offset    : ecode == DW_CFA_def_cfa_offset;
+      LEB128 soffset    : ecode == DW_CFA_def_cfa_offset_sf;
+
+      Dwarf_Block block : ecode == DW_CFA_def_cfa_expression;
+
+      struct
+      {
+        ULEB128 reg;
+        Dwarf_Block block;
+      } reg_block       : ecode in [DW_CFA_expression,
+                                    DW_CFA_val_expression];
+
+      /* Other instructions have no operands. */
+      struct {};
+    } ops;
+  };
+
+/* DWARF Common Information Entry (CIE)
+
+   There is at least one CIE in every non-empty .debug_frame
+   section.  */
+
+deftype Dwarf_CIE =
+  struct
+  {
+    /* Size of the CIE structure, not including the `length' field
+       itself.  */
+    Dwarf_Initial_Length length;
+
+    /* Constant used to distinguish CIEs from FDEs.  */
+    union
+    {
+      uint<32> u32 : (dwarf_bits == 32
+                      && u32 == 0xffff_ffff);
+      uint<64> u64 : u64 == 0xffff_ffff_ffff_ffff;
+    } cie_id;
+
+    /* This version number is specific to the call frame information
+       and is independent of the DWARF version number.  */
+    uint<8> version : ((dwarf_version == 2 && version == 1)
+                       || (dwarf_version == 3 && version == 3)
+                       || (dwarf_version == 4 && version == 4)
+                       || version == 1 /* GAS generates version 1.  */);
+
+    /* UTF-8 string that identifies the augmentation to this CIE or to
+       the FDEs that use it.  If there is no augmentation this value
+       is a zero byte.  */
+    string augmentation;
+
+    /* Size of a target address in this CIE and any FDEs that use it.
+       If a CU exists for this frame, its address size must match the
+       address size here.  */
+    offset<uint<8>,B> address_size;
+
+    /* Size of a segment selector in this CIE and any FDEs that use
+       it.  */
+    offset<uint<8>,B> segment_size;
+
+    /* A constant that is factored out of all advance location
+       instructions.  */
+    ULEB128 code_alignment_factor;
+
+    /* A constant that is factored out of certain offset
+       instructions.  */
+    LEB128 data_alignment_factor;
+
+    /* Constant that indicates which column in the rule table
+       represents the return address of the function.  */
+    ULEB128 return_address_register;
+
+    defvar insn_size = (length.value
+                        - cie_id'size
+                        - version'size
+                        - augmentation'size
+                        - address_size'size
+                        - segment_size'size
+                        - code_alignment_factor'size
+                        - data_alignment_factor'size
+                        - return_address_register'size);
+
+    Dwarf_CFI[insn_size] initial_instructions;
+  };
+
+/* DWARF FDE.
+   Description of a frame for a given function.  */
+
+deftype Dwarf_FDE =
+  struct
+  {
+    /* Size of the header and instruction stream for this function,
+       not including the `length' field itself.  */
+    Dwarf_Initial_Length length;
+
+    /* Offset into the .debug_frame section that denotes the CIE that
+       is associated with this FDE.  */
+    Dwarf_Section_Offset cie_pointer;
+
+    /* XXX initial_location (segment selector and target address)  */
+    Dwarf_Address initial_location;
+
+    /* Number of bytes of program instructions described by this
+       entry.  */
+    Dwarf_Address address_range;
+
+    defvar padding = (length.value
+                      - (cie_pointer'size + initial_location'size
+                         + address_range'size + address_range.value()#B));
+
+    Dwarf_CFI[address_range.value()#B + padding] instructions;
+  };
+
+/* Call Frame Information.  */
+
+deftype Dwarf_Call_Frame_Entry =
+  union
+  {
+    Dwarf_CIE cie;
+    Dwarf_FDE fde;
+  };
