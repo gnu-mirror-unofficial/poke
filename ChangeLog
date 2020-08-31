@@ -1,3 +1,12 @@
+2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/dwarf.pk (Dwarf_Section_Offset): New method `value'.
+	(Dwarf_Type_Unit_Header): Define.
+	(Dwarf_CIE): Likewise.
+	* maps/dwarf.map: New file.
+	* maps/elf.map: Move dwarf entries to dwarf.map.
+	* maps/Makefile.am (dist_maps_DATA): Add dwarf.map.
+
 2020-08-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/dwarf.pk: Add more constants.

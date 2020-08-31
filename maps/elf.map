@@ -1,6 +1,5 @@
 /* Map file for ELF files -*- mode: poke-map -*- */
 
-load dwarf;
 load elf;
 
 %%
@@ -9,9 +8,3 @@ load elf;
 %name file
 %type Elf64_File
 %offset 0#B
-
-%entry
-%name debug_info
-%type Dwarf_CU_Header
-%condition (Elf64_File @ 0#B).section_name_p (".debug_info")
-%offset (Elf64_File @ 0#B).get_section_by_name (".debug_info").sh_offset
