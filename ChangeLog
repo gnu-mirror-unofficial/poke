@@ -1,5 +1,11 @@
 2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/dwarf.pk (Dwarf_Name_Lookup_Table): pubnames and
+	pubtypes weren't available until DWARF 3.
+	(Dwarf_Name_Lookup_Table): New method `lookup'.
+
+2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Fix handling of
 	payload->generating_pvm_struct_type.
 	Break pass whenever appropriate.

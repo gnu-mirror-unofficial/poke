@@ -943,7 +943,7 @@ deftype Dwarf_Name_Lookup_Table =
        length field itself.  */
     Dwarf_Initial_Length unit_length;
 
-    uint<16> version : version == 2;
+    uint<16> version : (dwarf_version >= 3 && version == 2);
 
     /* Offset into the .debug_info section of the CU header.  */
     Dwarf_Section_Offset debug_info_offset;
@@ -964,6 +964,15 @@ deftype Dwarf_Name_Lookup_Table =
 
     Global_Name[] names;
     Dwarf_Section_Offset terminator : terminator.value == 0#B;
+
+    /* Return the offset in .debug_info of the object with name NAME.
+       If no such object is stored in the table, raise E_generic.  */
+    method lookup = (string str) offset<uint<64>,B>:
+      {
+        for (name in names where name.name == str)
+          return name.offset.value;
+        raise E_generic;
+      }
   };
 
 /* Type Unit Header.  */
