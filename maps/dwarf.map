@@ -30,3 +30,9 @@ defvar elf = Elf64_File @ 0#B;
 %type Dwarf_Name_Lookup_Table
 %condition elf.section_name_p (".debug_pubtypes")
 %offset elf.get_section_by_name (".debug_pubtypes").sh_offset
+
+%entry
+%name frame
+%type Dwarf_Call_Frame_Info
+%condition elf.section_name_p (".debug_frame")
+%offset elf.get_section_by_name (".debug_frame").sh_offset

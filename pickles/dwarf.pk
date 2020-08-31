@@ -26,6 +26,7 @@ load leb128;
  *     Dwarf_Type_Unit_Header
  * .debug_aranges
  * .debug_frame
+ *     Dwarf_Call_Frame_Info
  * .debug_abbrev
  * .debug_str
  * .debug_loc
@@ -409,13 +410,19 @@ deftype Dwarf_Initial_Length =
   {
     struct
     {
-      uint<32> marker : (marker == 0xffffffff
+      uint<32> marker : (marker == 0xffff_ffff
                          && dwarf_set_bits (64));
       offset<uint<64>,B> length;
     } l64;
 
-    offset<uint<32>,B> l32 : (l32 < 0xfffffff0#B
+    offset<uint<32>,B> l32 : (l32 < 0xffff_fff0#B
                               && dwarf_set_bits (32));
+
+    method value = offset<uint<64>,B>:
+      {
+        try return l32;
+        catch if E_elem { return l64.length; }
+      }
 
     method _print = void:
       {
@@ -466,6 +473,13 @@ deftype Dwarf_Section_Offset =
         catch if E_elem { printf ("%v", o64); }
         print (">");
       }
+  };
+
+deftype Dwarf_Block =
+  struct
+  {
+    ULEB128 length;
+    byte[length.value] block;
   };
 
 /* DWARF expressions.  */
@@ -686,7 +700,7 @@ deftype Dwarf_Op =
       struct
       {
         ULEB128 reg;
-        // LEB128 offset;
+        LEB128 offset;
       } reg_offset : code in [DW_OP_bregx, DW_OP_bit_piece];
 
       struct
@@ -786,8 +800,7 @@ deftype Dwarf_CFI =
       struct
       {
         ULEB128 reg;
-        /* XXX signed.  */
-        ULEB128 off;
+        LEB128 off;
       } reg_soffset     : ecode in [DW_CFA_offset_extended_sf,
                                     DW_CFA_def_cfa_sf,
                                     DW_CFA_val_offset_sf];
@@ -800,15 +813,14 @@ deftype Dwarf_CFI =
       ULEB128[2] regs   : ecode == DW_CFA_register;
 
       ULEB128 offset    : ecode == DW_CFA_def_cfa_offset;
-      /* XXX signed.  */
-      ULEB128 soffset   : ecode == DW_CFA_def_cfa_offset_sf;
+      LEB128 soffset    : ecode == DW_CFA_def_cfa_offset_sf;
 
-      /* XXX BLOCK block : ecode == DW_CFA_def_cfa_expression */
+      Dwarf_Block block : ecode == DW_CFA_def_cfa_expression;
 
       struct
       {
         ULEB128 reg;
-        /* XXX BLOCK block */
+        Dwarf_Block block;
       } reg_block       : ecode in [DW_CFA_expression,
                                     DW_CFA_val_expression];
 
@@ -862,7 +874,7 @@ deftype Dwarf_CIE =
 
     /* A constant that is factored out of certain offset
        instructions.  */
-    ULEB128 data_alignment_factor; /* XXX signed LEB128  */
+    LEB128 data_alignment_factor;
 
     /* Constant that indicates which column in the rule table
        represents the return address of the function.  */
@@ -894,11 +906,27 @@ deftype Dwarf_FDE =
        entry.  */
     Dwarf_Address address_range;
 
-    byte[address_range.value()#B] instructions;
+    defvar padding = (length.value
+                      - (cie_pointer'size + initial_location'size
+                         + address_range'size + address_range.value()#B));
 
-    /* Enough DW_CFA_nop instructions to make the size of this entry
-       match the `length' value above.  */
-    byte[] padding;
+    Dwarf_CFI[address_range.value()#B + padding] instructions;
+  };
+
+/* Call Frame Information.  */
+
+deftype Dwarf_Call_Frame_Info =
+  struct
+  {
+    deftype Entry =
+      union
+      {
+        Dwarf_CIE cie;
+        Dwarf_FDE fde;
+      };
+
+    /* XXX how many? */
+    Entry[] entries;
   };
 
 /* Name Lookup Tables.

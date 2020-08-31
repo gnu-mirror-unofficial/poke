@@ -1,5 +1,14 @@
 2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/leb128.pk (LEB128): Define.
+	* pickles/dwarf.pk (Dwarf_Block): Define.
+	(Dwarf_CFI): Options for DW_CFA_def_cfa_expression,
+	DW_CFA_expression and DW_CFA_val_expression.
+	(Dwarf_Call_Frame_Info): Define.
+	* maps/dwarf.map (frame): New entry.
+
+2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-anal.c (pkl_anal_ps_program): New handler.
 	(pkl_phase_anal1): Install handler.
 	(pkl_phase_anal2): Likewise.
