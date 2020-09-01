@@ -1,3 +1,11 @@
+2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-map.c (pk_cmd_map_show): Include the $ prefix in the
+	map entry names.
+	* testsuite/poke.cmd/maps-4.pk: Update accordingly.
+	* testsuite/poke.cmd/maps-5.pk: Likewise.
+	* testsuite/poke.cmd/maps-6.pk: Likewise.
+
 2020-08-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/dwarf-frame.pk (Dwarf_CFI): Adapt to use Dwarf_Op for
