@@ -1,4 +1,4 @@
-/* dwarf-expr.pk - DWARF implementation for GNU poke. 
+/* dwarf-expr.pk - DWARF implementation for GNU poke.
                    Expressions.  */
 
 /* Copyright (C) 2020 Jose E. Marchesi.  */
