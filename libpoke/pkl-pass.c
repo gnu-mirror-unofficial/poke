@@ -141,67 +141,104 @@ pkl_call_node_handlers (pkl_compiler compiler,
   int node_code = PKL_AST_CODE (node);
   int dobreak = 0;
 
-  /* Call the handlers defined for specific opcodes in the given
-     order.  */
-  if (node_code == PKL_AST_EXP)
+  if (order == PKL_PASS_POST_ORDER)
     {
-      int opcode = PKL_AST_EXP_CODE (node);
+      /* In post-order, less generic handlers should be executed
+         first.  */
 
-      switch (opcode)
+      /* Call the handlers defined for specific opcodes in the given
+         order.  */
+      if (node_code == PKL_AST_EXP)
         {
-#define PKL_DEF_OP(ocode, str)                                          \
-          case ocode:                                                   \
-            if (order == PKL_PASS_PRE_ORDER)                          \
-              PKL_CALL_PHASES (op, pr, ocode);                          \
-            else if (order == PKL_PASS_POST_ORDER)                   \
-              PKL_CALL_PHASES (op, ps, ocode);                          \
-            else                                                        \
-              assert (0);                                               \
-            break;
+          int opcode = PKL_AST_EXP_CODE (node);
+
+          switch (opcode)
+            {
+#define PKL_DEF_OP(ocode, str)                          \
+              case ocode:                               \
+                PKL_CALL_PHASES (op, ps, ocode);        \
+                break;
 #include "pkl-ops.def"
 #undef PKL_DEF_OP
-        default:
-          /* Unknown operation code.  */
-          assert (0);
+            default:
+              /* Unknown operation code.  */
+              assert (0);
+            }
+
+          /* The node may have been replaced by the handler above.
+             Refresh the code.  */
+          node_code = PKL_AST_CODE (node);
         }
 
-      /* The node may have been replaced by the handler above.
-         Refresh the code.  */
-      node_code = PKL_AST_CODE (node);
-    }
+      /* Call the phase handlers defined for specific types, in the given
+         order.  */
+      if (node_code == PKL_AST_TYPE)
+        {
+          int typecode = PKL_AST_TYPE_CODE (node);
 
-  /* Call the phase handlers defined for specific types, in the given
-     order.  */
-  if (node_code == PKL_AST_TYPE)
+          PKL_CALL_PHASES (type, ps, typecode);
+          /* The node may have been replaced by the handler above.
+             Refresh the code.  */
+          node_code = PKL_AST_CODE (node);
+        }
+
+      /* Call the phase handlers defined for node codes, in the given
+         order.  */
+      PKL_CALL_PHASES (code, ps, node_code);
+
+      /* Call the phase handlers defined as default.  */
+      PKL_CALL_PHASES_SINGLE (default_ps);
+    }
+  else if (order == PKL_PASS_PRE_ORDER)
     {
-      int typecode = PKL_AST_TYPE_CODE (node);
+      /* In pre-order, more generic handlers should be executed
+         first.  */
 
-      if (order == PKL_PASS_PRE_ORDER)
-        PKL_CALL_PHASES (type, pr, typecode);
-      else if (order == PKL_PASS_POST_ORDER)
-        PKL_CALL_PHASES (type, ps, typecode);
-      else
-        assert (0);
+      /* Call the phase handlers defined as default.  */
+      PKL_CALL_PHASES_SINGLE (default_pr);
 
-      /* The node may have been replaced by the handler above.
-         Refresh the code.  */
-      node_code = PKL_AST_CODE (node);
+      /* Call the phase handlers defined for node codes, in the given
+         order.  */
+      PKL_CALL_PHASES (code, pr, node_code);
+
+      /* Call the handlers defined for specific opcodes in the given
+         order.  */
+      if (node_code == PKL_AST_EXP)
+        {
+          int opcode = PKL_AST_EXP_CODE (node);
+
+          switch (opcode)
+            {
+#define PKL_DEF_OP(ocode, str)                          \
+              case ocode:                               \
+                PKL_CALL_PHASES (op, pr, ocode);        \
+                break;
+#include "pkl-ops.def"
+#undef PKL_DEF_OP
+            default:
+              /* Unknown operation code.  */
+              assert (0);
+            }
+
+          /* The node may have been replaced by the handler above.
+             Refresh the code.  */
+          node_code = PKL_AST_CODE (node);
+        }
+
+      /* Call the phase handlers defined for specific types, in the given
+         order.  */
+      if (node_code == PKL_AST_TYPE)
+        {
+          int typecode = PKL_AST_TYPE_CODE (node);
+
+          PKL_CALL_PHASES (type, pr, typecode);
+          /* The node may have been replaced by the handler above.
+             Refresh the code.  */
+          node_code = PKL_AST_CODE (node);
+        }
     }
-
-  /* Call the phase handlers defined for node codes, in the given
-     order.  */
-  if (order == PKL_PASS_PRE_ORDER)
-    PKL_CALL_PHASES (code, pr, node_code);
-  else if (order == PKL_PASS_POST_ORDER)
-    PKL_CALL_PHASES (code, ps, node_code);
   else
     assert (0);
-
-  /* Call the phase handlers defined as default.  */
-  if (order == PKL_PASS_PRE_ORDER)
-    PKL_CALL_PHASES_SINGLE(default_pr);
-  else if (order == PKL_PASS_PRE_ORDER)
-    PKL_CALL_PHASES_SINGLE(default_ps);
 
  restart:
  _exit:

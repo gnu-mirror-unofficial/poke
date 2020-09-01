@@ -77,11 +77,18 @@
      other handler (PR or PS) has been invoked.
 
    Note that if a given node class falls in several categories as
-   implemented in the handlers tables, the more particular handler
-   will be executed first, followed by the more general handlers.  For
-   example, for a PKL_AST_TYPE node with type code PKL_TYPE_ARRAY, the
-   handler in `type_handlers' will be invoked first, followed by the
-   handler in `code_handlers'.
+   implemented in the handlers tables, the order in which the
+   different kind of handlers are executed depend on the ordering:
+
+   - Pre-order handlers are executed from more generic to more
+     particular.  For example, for a PKL_AST_TYPE node with type code
+     PKL_TYPE_ARRAY, the handler in `code_pr_handlers' will be invoked
+     first, followed by the handler in `type_pr_handlers'.
+
+   - Post-order handlers are executed from more particular to more
+     generic.  For example, for a PKL_AST_TYPE node with the type code
+     PKL_TYPE_ARRAY, the handler in `type_ps_handlers' will be invoked
+     first, followed by the handler in `code_ps_handlers'.
 
    If the `else' handler is NULL and no other handler is executed,
    then no action is performed on a node other than traversing it.  */
