@@ -136,12 +136,6 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal1_pr_type_struct)
 {
-  /* XXX we need this break here because this handler is invoked
-     _before_ pkl_anal_pr_type.  This sucks, maybe we want to run
-     generic handler in pre-order FIRST :/ */
-  if (PKL_AST_TYPE_COMPILED (PKL_PASS_NODE))
-    PKL_PASS_BREAK;
-
   PKL_ANAL_PUSH_CONTEXT (PKL_ANAL_CONTEXT_STRUCT_TYPE);
 }
 PKL_PHASE_END_HANDLER

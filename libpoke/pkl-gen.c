@@ -1507,9 +1507,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type)
 {
   /* Type nodes are handled by the code generator only in certain
      circumstances.  In any other cases, break the pass to avoid
-     post-order hooks to be invoked.  Note that this logic is
-     duplicated in pkl_gen_pr_type_array and pkl_gen_pr_type_struct.
-     Please keep them synchronized!  */
+     post-order hooks to be invoked.  */
 
   if (PKL_GEN_PAYLOAD->in_struct_decl)
     PKL_PASS_DONE;
@@ -2532,23 +2530,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (PKL_PASS_NODE);
 
-      /* XXX this is replicating the logic in pkl_gen_pr_type.  Will
-         go away once we execute more generic handlers first in
-         pre-order.  */
-      if (PKL_PASS_PARENT)
-        {
-          switch (PKL_AST_CODE (PKL_PASS_PARENT))
-            {
-            case PKL_AST_TYPE:
-            case PKL_AST_STRUCT_TYPE_FIELD:
-              /* Process these.  */
-              break;
-            default:
-              PKL_PASS_BREAK;
-              break;
-            }
-        }
-
       PKL_PASS_SUBPASS (etype);
 
       /* XXX at the moment the run-time bound in array types is unused
@@ -2776,27 +2757,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       PKL_PASS_BREAK;
     }
   else
-    /* We are generating a PVM struct type.  We set the following
-       variable so the struct type elems that are declarations are not
-       processed.  */
     {
-      /* XXX this is replicating the logic in pkl_gen_pr_type.  Will
-         go away once we execute more generic handlers first in
-         pre-order.  */
-      if (PKL_PASS_PARENT)
-        {
-          switch (PKL_AST_CODE (PKL_PASS_PARENT))
-            {
-            case PKL_AST_TYPE:
-            case PKL_AST_STRUCT_TYPE_FIELD:
-              /* Process these.  */
-              break;
-            default:
-              PKL_PASS_BREAK;
-              break;
-            }
-        }
-
+      /* We are generating a PVM struct type.  We set the following
+         variable so the struct type elems that are declarations are
+         not processed.  */
       PKL_GEN_PAYLOAD->generating_pvm_struct_type++;
     }
 }

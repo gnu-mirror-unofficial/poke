@@ -1,5 +1,14 @@
 2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_type): Update comment.
+	(pkl_gen_pr_type_array): Duplicating logic from pkl_gen_pr_type is
+	no longer necessary.
+	(pkl_gen_pr_type_struct): Likewise.
+	* libpoke/pkl-anal.c (pkl_anal1_pr_type_struct): It is no longer
+	needed to break the pass here.
+
+2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-pass.c (pkl_call_node_handlers): Execute pre-order
 	handlers from more generic to more particular, and post-order
 	handlers from more particular to more generic.
