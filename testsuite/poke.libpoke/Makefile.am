@@ -23,6 +23,7 @@ values_SOURCES = $(COMMON) values.c
 
 values_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                   -I$(top_srcdir)/common \
+                  -DPKGDATADIR=\"$(pkgdatadir)\" \
                   -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
 
 values_LDADD = $(top_builddir)/gl/libgnu.la \

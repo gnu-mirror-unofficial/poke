@@ -1,0 +1,5 @@
+deftype Packet = struct { int i; long j; };
+##
+Packet { i = 1, j = 2 }
+##
+Packet { i = 2, j = 2 }

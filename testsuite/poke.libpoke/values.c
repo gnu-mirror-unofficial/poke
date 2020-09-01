@@ -18,7 +18,11 @@
 
 #include <config.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <dejagnu.h>
+#include <dirent.h>
 #include "libpoke.h"
 
 #include "term-if.h"
@@ -61,13 +65,222 @@ test_simple_values ()
 }
 
 int
+compile_initial_poke_code (FILE *ifp, pk_compiler pkc)
+{
+  ssize_t nread, s_nread = 0;
+  char *line = NULL, *poke_code = NULL;
+  size_t len = 0;
+  int error = 1;
+
+  while (1)
+    {
+      nread = getline (&line, &len, ifp);
+      if (nread == -1)
+        return 0;
+
+      /* If we reached the next section of the file, break.  */
+      if (nread == 3 && line[0] == '#' && line[1] == '#')
+        break;
+
+      line[nread - 1] = '\0';
+      s_nread += nread - 1;
+
+      if (poke_code == NULL)
+        {
+          poke_code = (char *) malloc (nread);
+          memcpy (poke_code, line, nread);
+        }
+      else
+        {
+          poke_code = (char *) realloc (poke_code, s_nread + 1);
+          strncat (poke_code, line, nread + 1);
+        }
+    }
+
+  if (ferror (ifp))
+    return 0;
+
+  if (poke_code)
+    {
+      error = pk_compile_buffer (pkc, poke_code, NULL);
+      free (poke_code);
+    }
+
+  free (line);
+  return error;
+}
+
+static int
+copy_line_to_expression (char **expr, char *line, size_t nbytes)
+{
+  if (*expr == NULL)
+    {
+      *expr = (char *) malloc (nbytes);
+      if (*expr == NULL)
+        goto error;
+
+      memcpy (*expr, line, nbytes);
+    }
+  else
+    {
+      *expr = (char *) realloc (*expr, nbytes);
+      if (*expr == NULL)
+        goto error;
+
+      strncat (*expr, line, strlen (line) + 1);
+    }
+
+  return 0;
+
+  error:
+    return -1;
+}
+
+/* Returns a C array containing the Poke values that were compiled.
+   Returns NULL on error.  */
+int
+compile_poke_expressions (FILE *ifp, pk_compiler pkc, pk_val *val1,
+                          pk_val *val2)
+{
+  ssize_t nread;
+  char *expr1 = NULL, *expr2 = NULL, *line = NULL;
+  size_t s_read = 0, len = 0;
+
+  /* Read the first expression of the file.  */
+  while (1)
+    {
+      nread = getline (&line, &len, ifp);
+      if (nread == -1)
+          goto error;
+
+      line[nread - 1] = '\0';
+      s_read += nread;
+
+      if (nread == 3 && line[0] == '#' && line[1] == '#')
+        break;
+
+      copy_line_to_expression (&expr1, line, s_read);
+    }
+
+  /* Read the second expression of the file.  */
+  s_read = 0;
+  while ((nread = getline (&line, &len, ifp)) != -1)
+    {
+      if (line[nread - 1] == '\n')
+        {
+          line[nread - 1] = '\0';
+          s_read += nread;
+        }
+      else
+        {
+          s_read += nread + 1;
+        }
+
+      copy_line_to_expression (&expr2, line, s_read);
+    }
+
+  if (pk_compile_expression (pkc, (const char *) expr1, NULL, val1) == 0
+      || pk_compile_expression (pkc, (const char *) expr2, NULL, val2) == 0)
+    goto error;
+
+  free (expr1);
+  free (expr2);
+  free (line);
+  return 1;
+
+  error:
+    free (expr1);
+    free (expr2);
+    free (line);
+    return 0;
+}
+
+#define STARTS_WITH(PREFIX, STR) (strncmp (PREFIX, STR, strlen (PREFIX)) == 0)
+
+void
+test_pk_equal_file (const char *filename, FILE *ifp)
+{
+  pk_val val1, val2;
+  pk_compiler pkc;
+  int equal;
+  char *poke_datadir;
+
+  poke_datadir = getenv ("POKEDATADIR");
+  if (poke_datadir == NULL)
+    poke_datadir = PKGDATADIR;
+
+  pkc = pk_compiler_new (poke_datadir, &poke_term_if);
+
+  if (!pkc)
+    goto error;
+
+  if (compile_initial_poke_code (ifp, pkc) == 0)
+    goto error;
+
+  if (compile_poke_expressions (ifp, pkc, &val1, &val2) == 0)
+    goto error;
+
+  /* (NOTE: kostas) We should have a way to discriminate if we should check
+      if 2 values should match or not.
+
+      Currently, this decision is taken based on the name of the file.
+
+      If file begins with pk_equal we should mark the test as "passed"
+      if the 2 values are equal.
+
+      If file begins with pk_nequal we should mark the test as "passed"
+      if the 2 values are non equal.  */
+
+  equal = pk_val_equal_p (val1, val2);
+  if (STARTS_WITH ("pk_equal", filename) && equal)
+    pass (filename);
+  else if (STARTS_WITH ("pk_nequal", filename) && !equal)
+    pass (filename);
+  else
+    fail (filename);
+
+  pk_compiler_free (pkc);
+  return;
+
+  error:
+    fail (filename);
+}
+
+void
+test_pk_val_equal_p ()
+{
+  FILE *ifp;
+  DIR *directory;
+  struct dirent *dir;
+  const char *extension;
+
+  directory = opendir (".");
+  if (directory)
+    {
+      while ((dir = readdir (directory)) != NULL)
+        {
+          /* If this file a .json file, proccess it.  */
+          extension = strrchr (dir->d_name, '.');
+          if (extension)
+            {
+              if (!strncmp (extension + 1, "test", 4))
+                {
+                  ifp = fopen (dir->d_name, "r");
+                  if (ifp)
+                    test_pk_equal_file (dir->d_name, ifp);
+                  fclose (ifp);
+                }
+            }
+        }
+      closedir (directory);
+    }
+}
+
+int
 main (int argc, char *argv[])
 {
-  pk_compiler pk_compiler = pk_compiler_new (".", &poke_term_if);
-
   test_simple_values ();
-
-  pk_compiler_free (pk_compiler);
+  test_pk_val_equal_p ();
 
   totals ();
   return 0;

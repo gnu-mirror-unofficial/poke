@@ -830,6 +830,12 @@ pk_val pk_typeof (pk_val val);
 
 int pk_type_code (pk_val val);
 
+/* Compare two Poke values.
+
+   Returns 1 if they match, 0 otherwise.  */
+
+int pk_val_equal_p (pk_val val1, pk_val val2);
+
 /* Print the given value.   */
 
 void pk_print_val (pk_compiler pkc, pk_val val);

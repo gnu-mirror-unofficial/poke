@@ -185,6 +185,12 @@ pk_type_code (pk_val val)
     }
 }
 
+int
+pk_val_equal_p (pk_val val1, pk_val val2)
+{
+  return pvm_val_equal_p (val1, val2);
+}
+
 pk_val
 pk_make_struct (pk_val nfields, pk_val type)
 {

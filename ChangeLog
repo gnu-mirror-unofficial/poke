@@ -1,3 +1,30 @@
+2020-09-01  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	* libpoke/libpoke.h (pk_val_equal_p): Prototype.
+	* libpoke/pk-val.c (pk_val_equal_p): Define.
+	* libpoke/pvm.h (pvm_val_equal_p): Prototype.
+	* libpoke/pvm-val.c (pvm_val_equal_p): Define.
+	* testsuite/poke.libpoke/values.c (test_pk_val_equal_p): New function.
+	(test_pk_equal_file): Likewise.
+	(copy_line_to_expression): Likewise.
+	(compile_poke_expressions): Likewise.
+	(compile_initial_poke_code): Likewise.
+	* testsuite/poke.libpoke/pk_equal_int.test: New test.
+	* testsuite/poke.libpoke/pk_equal_uint.test: New test.
+	* testsuite/poke.libpoke/pk_equal_str.test: New test.
+	* testsuite/poke.libpoke/pk_equal_off.test: New test.
+	* testsuite/poke.libpoke/pk_equal_sct.test: New test.
+	* testsuite/poke.libpoke/pk_equal_arr.test: New test.
+	* testsuite/poke.libpoke/pk_nequal_int.test: New test.
+	* testsuite/poke.libpoke/pk_nequal_uint.test: New test.
+	* testsuite/poke.libpoke/pk_nequal_str.test: New test.
+	* testsuite/poke.libpoke/pk_nequal_off.test: New test.
+	* testsuite/poke.libpoke/pk_nequal_sct.test: New test.
+	* testsuite/poke.libpoke/pk_nequal_arr.test: New test.
+	* testsuite/poke.libpoke/Makefile.am: Added PKGDATADIR.
+	* testsuite/Makefile.am (EXTRA_DIST): Updated with new tests.
+	* bootstrap.conf (gnulib_modules): Added new modules.
+
 2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_type): Update comment.

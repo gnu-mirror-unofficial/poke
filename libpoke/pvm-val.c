@@ -348,6 +348,141 @@ pvm_make_offset (pvm_val magnitude, pvm_val unit)
   return PVM_BOX (box);
 }
 
+int
+pvm_val_equal_p (pvm_val val1, pvm_val val2)
+{
+  if (val1 == PVM_NULL && val2 == PVM_NULL)
+    return 1;
+  else if (PVM_IS_INT (val1) && PVM_IS_INT (val2))
+    return (PVM_VAL_INT_SIZE (val1) == PVM_VAL_INT_SIZE (val2))
+           && (PVM_VAL_INT (val1) == PVM_VAL_INT (val2));
+  else if (PVM_IS_UINT (val1) && PVM_IS_UINT (val2))
+    return (PVM_VAL_UINT_SIZE (val1) == PVM_VAL_UINT_SIZE (val2))
+           && (PVM_VAL_UINT (val1) == PVM_VAL_UINT (val2));
+  else if (PVM_IS_LONG (val1) && PVM_IS_LONG (val2))
+    return (PVM_VAL_LONG_SIZE (val1) && PVM_VAL_LONG_SIZE (val2))
+           && (PVM_VAL_LONG (val1) == PVM_VAL_LONG (val2));
+  else if (PVM_IS_ULONG (val1) && PVM_IS_ULONG (val2))
+    return (PVM_VAL_ULONG_SIZE (val1) == PVM_VAL_ULONG_SIZE (val2))
+           && (PVM_VAL_ULONG (val1) == PVM_VAL_ULONG (val2));
+  else if (PVM_IS_STR (val1) && PVM_IS_STR (val2))
+    return STREQ (PVM_VAL_STR (val1), PVM_VAL_STR (val2));
+  else if (PVM_IS_OFF (val1) && PVM_IS_OFF (val2))
+    {
+      int pvm_off_mag_equal, pvm_off_unit_equal;
+
+      pvm_off_mag_equal = pvm_val_equal_p (PVM_VAL_OFF_MAGNITUDE (val1),
+                                           PVM_VAL_OFF_MAGNITUDE (val2));
+      pvm_off_unit_equal = pvm_val_equal_p (PVM_VAL_OFF_UNIT (val1),
+                                            PVM_VAL_OFF_UNIT (val2));
+
+      return pvm_off_mag_equal && pvm_off_unit_equal;
+    }
+  else if (PVM_IS_SCT (val1) && PVM_IS_SCT (val2))
+    {
+      size_t pvm_sct1_nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val1));
+      size_t pvm_sct2_nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val2));
+      size_t pvm_sct1_nmethods = PVM_VAL_ULONG (PVM_VAL_SCT_NMETHODS (val1));
+      size_t pvm_sct2_nmethods = PVM_VAL_ULONG (PVM_VAL_SCT_NMETHODS (val2));
+
+      if ((pvm_sct1_nfields != pvm_sct2_nfields)
+           || (pvm_sct1_nmethods != pvm_sct2_nmethods))
+          return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_SCT_IOS (val1), PVM_VAL_SCT_IOS (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_SCT_TYPE (val1), PVM_VAL_SCT_TYPE (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_SCT_OFFSET (val1),
+                            PVM_VAL_SCT_OFFSET (val2)))
+        return 0;
+
+      for (size_t i = 0 ; i < pvm_sct1_nfields ; i++)
+        {
+          if (PVM_VAL_SCT_FIELD_ABSENT_P (val1, i)
+              != PVM_VAL_SCT_FIELD_ABSENT_P (val2, i))
+              return 0;
+
+          if (!PVM_VAL_SCT_FIELD_ABSENT_P (val1, i))
+            {
+              if (!pvm_val_equal_p (PVM_VAL_SCT_FIELD_NAME (val1, i),
+                                    PVM_VAL_SCT_FIELD_NAME (val2, i)))
+                return 0;
+
+              if (!pvm_val_equal_p (PVM_VAL_SCT_FIELD_VALUE (val1, i),
+                                    PVM_VAL_SCT_FIELD_VALUE (val2, i)))
+                return 0;
+
+              if (!pvm_val_equal_p (PVM_VAL_SCT_FIELD_OFFSET (val1, i),
+                                    PVM_VAL_SCT_FIELD_OFFSET (val2, i)))
+                return 0;
+            }
+        }
+
+      for (size_t i = 0 ; i < pvm_sct1_nmethods ; i++)
+        {
+          if (!pvm_val_equal_p (PVM_VAL_SCT_METHOD_NAME (val1, i),
+                                PVM_VAL_SCT_METHOD_NAME (val2, i)))
+            return 0;
+        }
+
+      return 1;
+    }
+  else if (PVM_IS_ARR (val1) && PVM_IS_ARR (val2))
+    {
+      size_t pvm_arr1_nelems = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (val1));
+      size_t pvm_arr2_nelems = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (val2));
+
+      if (pvm_arr1_nelems != pvm_arr2_nelems)
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_TYPE (val1), PVM_VAL_ARR_TYPE (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_IOS (val1), PVM_VAL_ARR_IOS (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_OFFSET (val1),
+                            PVM_VAL_ARR_OFFSET (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_ELEMS_BOUND (val1),
+                            PVM_VAL_ARR_ELEMS_BOUND (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_SIZE_BOUND (val1),
+                            PVM_VAL_ARR_SIZE_BOUND (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_MAPPER (val1),
+                            PVM_VAL_ARR_MAPPER (val2)))
+        return 0;
+
+      if (!pvm_val_equal_p (PVM_VAL_ARR_WRITER (val1),
+                            PVM_VAL_ARR_WRITER (val2)))
+        return 0;
+
+      for (size_t i = 0 ; i < pvm_arr1_nelems ; i++)
+        {
+          if (!pvm_val_equal_p (PVM_VAL_ARR_ELEM_VALUE (val1, i),
+                                PVM_VAL_ARR_ELEM_VALUE (val2, i)))
+            return 0;
+
+          if (!pvm_val_equal_p (PVM_VAL_ARR_ELEM_OFFSET (val1, i),
+                                PVM_VAL_ARR_ELEM_OFFSET (val2, i)))
+            return 0;
+        }
+
+      return 1;
+    }
+  else if (PVM_IS_TYP (val1) && PVM_IS_TYP (val2))
+    return pvm_type_equal (val1, val2);
+  else
+    return 0;
+}
+
 void
 pvm_allocate_struct_attrs (pvm_val nfields,
                            pvm_val **fnames, pvm_val **ftypes)
