@@ -152,9 +152,9 @@ pkl_call_node_handlers (pkl_compiler compiler,
 #define PKL_DEF_OP(ocode, str)                                          \
           case ocode:                                                   \
             if (order == PKL_PASS_PRE_ORDER)                          \
-              PKL_CALL_PHASES (op, ps, ocode);                          \
-            else if (order == PKL_PASS_POST_ORDER)                   \
               PKL_CALL_PHASES (op, pr, ocode);                          \
+            else if (order == PKL_PASS_POST_ORDER)                   \
+              PKL_CALL_PHASES (op, ps, ocode);                          \
             else                                                        \
               assert (0);                                               \
             break;
@@ -177,9 +177,9 @@ pkl_call_node_handlers (pkl_compiler compiler,
       int typecode = PKL_AST_TYPE_CODE (node);
 
       if (order == PKL_PASS_PRE_ORDER)
-        PKL_CALL_PHASES (type, ps, typecode);
-      else if (order == PKL_PASS_POST_ORDER)
         PKL_CALL_PHASES (type, pr, typecode);
+      else if (order == PKL_PASS_POST_ORDER)
+        PKL_CALL_PHASES (type, ps, typecode);
       else
         assert (0);
 
@@ -191,17 +191,17 @@ pkl_call_node_handlers (pkl_compiler compiler,
   /* Call the phase handlers defined for node codes, in the given
      order.  */
   if (order == PKL_PASS_PRE_ORDER)
-    PKL_CALL_PHASES (code, ps, node_code);
-  else if (order == PKL_PASS_POST_ORDER)
     PKL_CALL_PHASES (code, pr, node_code);
+  else if (order == PKL_PASS_POST_ORDER)
+    PKL_CALL_PHASES (code, ps, node_code);
   else
     assert (0);
 
   /* Call the phase handlers defined as default.  */
   if (order == PKL_PASS_PRE_ORDER)
-    PKL_CALL_PHASES_SINGLE(default_ps);
-  else if (order == PKL_PASS_PRE_ORDER)
     PKL_CALL_PHASES_SINGLE(default_pr);
+  else if (order == PKL_PASS_PRE_ORDER)
+    PKL_CALL_PHASES_SINGLE(default_ps);
 
  restart:
  _exit:
@@ -275,7 +275,7 @@ pkl_do_pass_1 (pkl_compiler compiler,
   /* Call the pre-order handlers from registered phases.  */
   node = pkl_call_node_handlers (compiler, toplevel, ast, node, payloads, phases,
                                  &handlers_used, child_pos, parent, &dobreak,
-                                 PKL_PASS_POST_ORDER, flags);
+                                 PKL_PASS_PRE_ORDER, flags);
   if (dobreak)
     goto _exit;
 
@@ -535,7 +535,7 @@ pkl_do_pass_1 (pkl_compiler compiler,
   /* Call the post-order handlers from registered phases.  */
   node = pkl_call_node_handlers (compiler, toplevel, ast, node, payloads, phases,
                                  &handlers_used, child_pos, parent, &dobreak,
-                                 PKL_PASS_PRE_ORDER, flags);
+                                 PKL_PASS_POST_ORDER, flags);
 
   /* If no handler has been invoked, call the default handler of the
      registered phases in case they are defined.  */

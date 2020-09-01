@@ -1,5 +1,11 @@
 2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Pass the right pass order to
+	pkl_cal_node_handlers.
+	(pkl_call_node_handlers): Adjust accordingly.
+
+2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/dwarf-info.pk: New file.
 	* pickles/dwarf.pk: Load dwarf-info.pk.
 	* pickles/dwarf-common.pk: Do not load leb128.pk.
