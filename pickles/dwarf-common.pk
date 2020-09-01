@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-load leb128;
-
 defvar dwarf_bits = 32;
 defvar dwarf_version = 4;
 

@@ -1,5 +1,26 @@
 /* Map file for ELF files with DWARF -*- mode: poke-map -*- */
 
+/* Sections and DWARF data:
+ *
+ * .debug_info
+ *     Dwarf_CU_Header
+ * .debug_types
+ *     Dwarf_Type_Unit_Header
+ * .debug_aranges
+ * .debug_frame
+ *     Dwarf_Call_Frame_Entry[]
+ * .debug_abbrev
+ * .debug_str
+ * .debug_loc
+ * .debug_ranges
+ * .debug_macinfo
+ * .debug_line
+ * .debug_pubnames
+ *     Dwarf_Name_Lookup_Table
+ * .debug_pubtypes
+ *     Dwarf_Name_Lookup_Table
+ */
+
 load dwarf;
 load elf;
 

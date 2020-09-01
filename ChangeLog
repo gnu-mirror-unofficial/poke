@@ -1,5 +1,13 @@
 2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/dwarf-info.pk: New file.
+	* pickles/dwarf.pk: Load dwarf-info.pk.
+	* pickles/dwarf-common.pk: Do not load leb128.pk.
+	* maps/dwarf.map: Add comment with information on DWARF related
+	sections and the data stored in them.
+
+2020-09-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-map.c (pk_cmd_map_show): Include the $ prefix in the
 	map entry names.
 	* testsuite/poke.cmd/maps-4.pk: Update accordingly.

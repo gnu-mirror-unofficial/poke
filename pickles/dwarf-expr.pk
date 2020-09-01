@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+load leb128;
+
 /* Opcodes.  */
 
 defvar DW_OP_FIRST = 0x03;

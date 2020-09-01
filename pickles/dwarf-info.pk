@@ -1,0 +1,387 @@
+/* dwarf-info.pk - DWARF implementation for GNU poke.
+                   Data in .debug_info  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load "dwarf-common.pk";
+
+/* DWARF Tags.  */
+
+defvar DW_TAG_array_type = 0x01;
+defvar DW_TAG_class_type = 0x02;
+defvar DW_TAG_entry_point = 0x03;
+defvar DW_TAG_enumeration_type = 0x04;
+defvar DW_TAG_formal_parameter = 0x05;
+/* 0x06 reserved.  */
+/* 0x07 reserved.  */
+defvar DW_TAG_imported_declaration = 0x08;
+/* 0x09 reserved.  */
+defvar DW_TAG_label = 0x0a;
+defvar DW_TAG_lexical_block = 0x0b;
+/* 0x0c reserved.  */
+defvar DW_TAG_member = 0x0d;
+/* 0x0e reserved.  */
+defvar DW_TAG_pointer_type = 0x0f;
+defvar DW_TAG_reference_type = 0x10;
+defvar DW_TAG_compile_unit = 0x11;
+defvar DW_TAG_string_type = 0x12;
+defvar DW_TAG_structure_type = 0x13;
+/* 0x14 reserved.  */
+defvar DW_TAG_subroutine_type = 0x15;
+defvar DW_TAG_typedef = 0x16;
+defvar DW_TAG_union_type = 0x17;
+defvar DW_TAG_unspecified_parameters = 0x18;
+defvar DW_TAG_variant = 0x19;
+defvar DW_TAG_common_block = 0x1a;
+defvar DW_TAG_common_inclusion = 0x1b;
+defvar DW_TAG_inheritance = 0x1c;
+defvar DW_TAG_inlined_subroutine = 0x1d;
+defvar DW_TAG_module = 0x1e;
+defvar DW_TAG_ptr_to_member_type = 0x1f;
+defvar DW_TAG_set_type = 0x20;
+defvar DW_TAG_subrange_type = 0x21;
+defvar DW_TAG_with_stmt = 0x22;
+defvar DW_TAG_access_declaration = 0x23;
+defvar DW_TAG_base_type = 0x24;
+defvar DW_TAG_catch_block = 0x25;
+defvar DW_TAG_const_type = 0x26;
+defvar DW_TAG_constant = 0x27;
+defvar DW_TAG_enumerator = 0x28;
+defvar DW_TAG_file_type = 0x29;
+defvar DW_TAG_friend = 0x2a;
+defvar DW_TAG_namelist = 0x2b;
+defvar DW_TAG_namelist_item = 0x2c;
+defvar DW_TAG_packed_type = 0x2d;
+defvar DW_TAG_subprogram = 0x2e;
+defvar DW_TAG_template_type_parameter = 0x2f;
+defvar DW_TAG_template_value_parameter = 0x30;
+defvar DW_TAG_thrown_type = 0x31;
+defvar DW_TAG_try_block = 0x32;
+defvar DW_TAG_variant_part = 0x33;
+defvar DW_TAG_variable = 0x34;
+defvar DW_TAG_volatile_type = 0x35;
+defvar DW_TAG_dwarf_procedure = 0x36;
+defvar DW_TAG_restrict_type = 0x37;
+defvar DW_TAG_interface_type = 0x38;
+defvar DW_TAG_namespace = 0x39;
+defvar DW_TAG_imported_module = 0x3a;
+defvar DW_TAG_unspecified_type = 0x3b;
+defvar DW_TAG_partial_unit = 0x3c;
+defvar DW_TAG_imported_unit = 0x3d;
+/* 0x3e reserved.  Was DW_TAG_mutable_type.  */
+defvar DW_TAG_condition = 0x3f;
+defvar DW_TAG_shared_type = 0x40;
+defvar DW_TAG_type_unit = 0x41;
+defvar DW_TAG_rvalue_reference_type = 0x42;
+defvar DW_TAG_template_alias = 0x43;
+defvar DW_TAG_coarray_type = 0x44;
+defvar DW_TAG_generic_subrange = 0x45;
+defvar DW_TAG_dynamic_type = 0x46;
+defvar DW_TAG_atomic_type = 0x47;
+defvar DW_TAG_call_site = 0x48;
+defvar DW_TAG_call_site_parameter = 0x49;
+defvar DW_TAG_skeleton_unit = 0x4a;
+defvar DW_TAG_immutable_type = 0x4b;
+defvar DW_TAG_lo_user = 0x4080;
+defvar DW_TAG_MIPS_loop = 0x4081;
+defvar DW_TAG_format_label = 0x4101;
+defvar DW_TAG_function_template = 0x4102;
+defvar DW_TAG_class_template = 0x4103;
+defvar DW_TAG_GNU_BINCL = 0x4104;
+defvar DW_TAG_GNU_EINCL = 0x4105;
+defvar DW_TAG_GNU_template_template_param = 0x4106;
+defvar DW_TAG_GNU_template_parameter_pack = 0x4107;
+defvar DW_TAG_GNU_formal_parameter_pack = 0x4108;
+defvar DW_TAG_GNU_call_site = 0x4109;
+defvar DW_TAG_GNU_call_site_parameter = 0x410a;
+defvar DW_TAG_hi_user = 0xffff;
+
+/* DWARF Attributes.  */
+
+defvar DW_AT_sibling = 0x01;
+defvar DW_AT_location = 0x02;
+defvar DW_AT_name = 0x03;
+/* 0x04 reserved.  */
+/* 0x05 reserved.  */
+/* 0x06 reserved.  */
+/* 0x07 reserved.  */
+/* 0x08 reserved.  */
+defvar DW_AT_ordering = 0x09;
+/* 0x0a reserved.  */
+defvar DW_AT_byte_size = 0x0b;
+defvar DW_AT_bit_offset = 0x0c;
+defvar DW_AT_bit_size = 0x0d;
+/* 0x0e reserved.  */
+/* 0x0f reserved.  */
+defvar DW_AT_stmt_list = 0x10;
+defvar DW_AT_low_pc = 0x11;
+defvar DW_AT_high_pc = 0x12;
+defvar DW_AT_language = 0x13;
+/* 0x14 reserved.  */
+defvar DW_AT_discr = 0x15;
+defvar DW_AT_discr_value = 0x16;
+defvar DW_AT_visibility = 0x17;
+defvar DW_AT_import = 0x18;
+defvar DW_AT_string_length = 0x19;
+defvar DW_AT_common_reference = 0x1a;
+defvar DW_AT_comp_dir = 0x1b;
+defvar DW_AT_const_value = 0x1c;
+defvar DW_AT_containing_type = 0x1d;
+defvar DW_AT_default_value = 0x1e;
+/* 0x1f reserved.  */
+defvar DW_AT_inline = 0x20;
+defvar DW_AT_is_optional = 0x21;
+defvar DW_AT_lower_bound = 0x22;
+/* 0x23 reserved.  */
+/* 0x24 reserved.  */
+defvar DW_AT_producer = 0x25;
+/* 0x26 reserved.  */
+defvar DW_AT_prototyped = 0x27;
+/* 0x28 reserved.  */
+/* 0x29 reserved.  */
+defvar DW_AT_return_addr = 0x2a;
+/* 0x2b reserved.  */
+defvar DW_AT_start_scope = 0x2c;
+/* 0x2d reserved.  */
+defvar DW_AT_bit_stride = 0x2e;
+defvar DW_AT_upper_bound = 0x2f;
+/* 0x30 reserved.  */
+defvar DW_AT_abstract_origin = 0x31;
+defvar DW_AT_accessibility = 0x32;
+defvar DW_AT_address_class = 0x33;
+defvar DW_AT_artificial = 0x34;
+defvar DW_AT_base_types = 0x35;
+defvar DW_AT_calling_convention = 0x36;
+defvar DW_AT_count = 0x37;
+defvar DW_AT_data_member_location = 0x38;
+defvar DW_AT_decl_column = 0x39;
+defvar DW_AT_decl_file = 0x3a;
+defvar DW_AT_decl_line = 0x3b;
+defvar DW_AT_declaration = 0x3c;
+defvar DW_AT_discr_list = 0x3d;
+defvar DW_AT_encoding = 0x3e;
+defvar DW_AT_external = 0x3f;
+defvar DW_AT_frame_base = 0x40;
+defvar DW_AT_friend = 0x41;
+defvar DW_AT_identifier_case = 0x42;
+defvar DW_AT_macro_info = 0x43;
+defvar DW_AT_namelist_item = 0x44;
+defvar DW_AT_priority = 0x45;
+defvar DW_AT_segment = 0x46;
+defvar DW_AT_specification = 0x47;
+defvar DW_AT_static_link = 0x48;
+defvar DW_AT_type = 0x49;
+defvar DW_AT_use_location = 0x4a;
+defvar DW_AT_variable_parameter = 0x4b;
+defvar DW_AT_virtuality = 0x4c;
+defvar DW_AT_vtable_elem_location = 0x4d;
+defvar DW_AT_allocated = 0x4e;
+defvar DW_AT_associated = 0x4f;
+defvar DW_AT_data_location = 0x50;
+defvar DW_AT_byte_stride = 0x51;
+defvar DW_AT_entry_pc = 0x52;
+defvar DW_AT_use_UTF8 = 0x53;
+defvar DW_AT_extension = 0x54;
+defvar DW_AT_ranges = 0x55;
+defvar DW_AT_trampoline = 0x56;
+defvar DW_AT_call_column = 0x57;
+defvar DW_AT_call_file = 0x58;
+defvar DW_AT_call_line = 0x59;
+defvar DW_AT_description = 0x5a;
+defvar DW_AT_binary_scale = 0x5b;
+defvar DW_AT_decimal_scale = 0x5c;
+defvar DW_AT_small = 0x5d;
+defvar DW_AT_decimal_sign = 0x5e;
+defvar DW_AT_digit_count = 0x5f;
+defvar DW_AT_picture_string = 0x60;
+defvar DW_AT_mutable = 0x61;
+defvar DW_AT_threads_scaled = 0x62;
+defvar DW_AT_explicit = 0x63;
+defvar DW_AT_object_pointer = 0x64;
+defvar DW_AT_endianity = 0x65;
+defvar DW_AT_elemental = 0x66;
+defvar DW_AT_pure = 0x67;
+defvar DW_AT_recursive = 0x68;
+defvar DW_AT_signature = 0x69;
+defvar DW_AT_main_subprogram = 0x6a;
+defvar DW_AT_data_bit_offset = 0x6b;
+defvar DW_AT_const_expr = 0x6c;
+defvar DW_AT_enum_class = 0x6d;
+defvar DW_AT_linkage_name = 0x6e;
+defvar DW_AT_string_length_bit_size = 0x6f;
+defvar DW_AT_string_length_byte_size = 0x70;
+defvar DW_AT_rank = 0x71;
+defvar DW_AT_str_offsets_base = 0x72;
+defvar DW_AT_addr_base = 0x73;
+defvar DW_AT_rnglists_base = 0x74;
+/* 0x75 reserved.  */
+defvar DW_AT_dwo_name = 0x76;
+defvar DW_AT_reference = 0x77;
+defvar DW_AT_rvalue_reference = 0x78;
+defvar DW_AT_macros = 0x79;
+defvar DW_AT_call_all_calls = 0x7a;
+defvar DW_AT_call_all_source_calls = 0x7b;
+defvar DW_AT_call_all_tail_calls = 0x7c;
+defvar DW_AT_call_return_pc = 0x7d;
+defvar DW_AT_call_value = 0x7e;
+defvar DW_AT_call_origin = 0x7f;
+defvar DW_AT_call_parameter = 0x80;
+defvar DW_AT_call_pc = 0x81;
+defvar DW_AT_call_tail_call = 0x82;
+defvar DW_AT_call_target = 0x83;
+defvar DW_AT_call_target_clobbered = 0x84;
+defvar DW_AT_call_data_location = 0x85;
+defvar DW_AT_call_data_value = 0x86;
+defvar DW_AT_noreturn = 0x87;
+defvar DW_AT_alignment = 0x88;
+defvar DW_AT_export_symbols = 0x89;
+defvar DW_AT_deleted = 0x8a;
+defvar DW_AT_defaulted = 0x8b;
+defvar DW_AT_loclists_base = 0x8c;
+defvar DW_AT_lo_user = 0x2000;
+defvar DW_AT_MIPS_fde = 0x2001;
+defvar DW_AT_MIPS_loop_begin = 0x2002;
+defvar DW_AT_MIPS_tail_loop_begin = 0x2003;
+defvar DW_AT_MIPS_epilog_begin = 0x2004;
+defvar DW_AT_MIPS_loop_unroll_factor = 0x2005;
+defvar DW_AT_MIPS_software_pipeline_depth = 0x2006;
+defvar DW_AT_MIPS_linkage_name = 0x2007;
+defvar DW_AT_MIPS_stride = 0x2008;
+defvar DW_AT_MIPS_abstract_name = 0x2009;
+defvar DW_AT_MIPS_clone_origin = 0x200a;
+defvar DW_AT_MIPS_has_inlines = 0x200b;
+defvar DW_AT_MIPS_stride_byte = 0x200c;
+defvar DW_AT_MIPS_stride_elem = 0x200d;
+defvar DW_AT_MIPS_ptr_dopetype = 0x200e;
+defvar DW_AT_MIPS_allocatable_dopetype = 0x200f;
+defvar DW_AT_MIPS_assumed_shape_dopetype = 0x2010;
+defvar DW_AT_MIPS_assumed_size = 0x2011;
+/* GNU extensions.  */
+defvar DW_AT_sf_names = 0x2101;
+defvar DW_AT_src_info = 0x2102;
+defvar DW_AT_mac_info = 0x2103;
+defvar DW_AT_src_coords = 0x2104;
+defvar DW_AT_body_begin = 0x2105;
+defvar DW_AT_body_end = 0x2106;
+defvar DW_AT_GNU_vector = 0x2107;
+defvar DW_AT_GNU_guarded_by = 0x2108;
+defvar DW_AT_GNU_pt_guarded_by = 0x2109;
+defvar DW_AT_GNU_guarded = 0x210a;
+defvar DW_AT_GNU_pt_guarded = 0x210b;
+defvar DW_AT_GNU_locks_excluded = 0x210c;
+defvar DW_AT_GNU_exclusive_locks_required = 0x210d;
+defvar DW_AT_GNU_shared_locks_required = 0x210e;
+defvar DW_AT_GNU_odr_signature = 0x210f;
+defvar DW_AT_GNU_template_name = 0x2110;
+defvar DW_AT_GNU_call_site_value = 0x2111;
+defvar DW_AT_GNU_call_site_data_value = 0x2112;
+defvar DW_AT_GNU_call_site_target = 0x2113;
+defvar DW_AT_GNU_call_site_target_clobbered = 0x2114;
+defvar DW_AT_GNU_tail_call = 0x2115;
+defvar DW_AT_GNU_all_tail_call_sites = 0x2116;
+defvar DW_AT_GNU_all_call_sites = 0x2117;
+defvar DW_AT_GNU_all_source_call_sites = 0x2118;
+defvar DW_AT_GNU_locviews = 0x2137;
+defvar DW_AT_GNU_entry_view = 0x2138;
+defvar DW_AT_GNU_macros = 0x2119;
+defvar DW_AT_GNU_deleted = 0x211a;
+/* GNU Debug Fission extensions.  */
+defvar DW_AT_GNU_dwo_name = 0x2130;
+defvar DW_AT_GNU_dwo_id = 0x2131;
+defvar DW_AT_GNU_ranges_base = 0x2132;
+defvar DW_AT_GNU_addr_base = 0x2133;
+defvar DW_AT_GNU_pubnames = 0x2134;
+defvar DW_AT_GNU_pubtypes = 0x2135;
+/* https://gcc.gnu.org/wiki/DW_AT_GNU_numerator_denominator  */
+defvar DW_AT_GNU_numerator = 0x2303;
+defvar DW_AT_GNU_denominator = 0x2304;
+/* https://gcc.gnu.org/wiki/DW_AT_GNU_bias  */
+defvar DW_AT_GNU_bias = 0x2305;
+defvar DW_AT_hi_user = 0x3ff;
+
+/* DWARF form encodings.  */
+
+defvar DW_FORM_addr = 0x01;
+defvar DW_FORM_block2 = 0x03;
+defvar DW_FORM_block4 = 0x04;
+defvar DW_FORM_data2 = 0x05;
+defvar DW_FORM_data4 = 0x06;
+defvar DW_FORM_data8 = 0x07;
+defvar DW_FORM_string = 0x08;
+defvar DW_FORM_block = 0x09;
+defvar DW_FORM_block1 = 0x0a;
+defvar DW_FORM_data1 = 0x0b;
+defvar DW_FORM_flag = 0x0c;
+defvar DW_FORM_sdata = 0x0d;
+defvar DW_FORM_strp = 0x0e;
+defvar DW_FORM_udata = 0x0f;
+defvar DW_FORM_ref_addr = 0x10;
+defvar DW_FORM_ref1 = 0x11;
+defvar DW_FORM_ref2 = 0x12;
+defvar DW_FORM_ref4 = 0x13;
+defvar DW_FORM_ref8 = 0x14;
+defvar DW_FORM_ref_udata = 0x15;
+defvar DW_FORM_indirect = 0x16;
+defvar DW_FORM_sec_offset = 0x17;
+defvar DW_FORM_exprloc = 0x18;
+defvar DW_FORM_flag_present = 0x19;
+defvar DW_FORM_strx = 0x1a;
+defvar DW_FORM_addrx = 0x1b;
+defvar DW_FORM_ref_sup4 = 0x1c;
+defvar DW_FORM_strp_sup = 0x1d;
+defvar DW_FORM_data16 = 0x1e;
+defvar DW_FORM_line_strp = 0x1f;
+defvar DW_FORM_ref_sig8 = 0x20;
+defvar DW_FORM_implicit_const = 0x21;
+defvar DW_FORM_loclistx = 0x22;
+defvar DW_FORM_rnglistx = 0x23;
+defvar DW_FORM_ref_sup8 = 0x24;
+defvar DW_FORM_strx1 = 0x25;
+defvar DW_FORM_strx2 = 0x26;
+defvar DW_FORM_strx3 = 0x27;
+defvar DW_FORM_strx4 = 0x28;
+defvar DW_FORM_addrx1 = 0x29;
+defvar DW_FORM_addrx2 = 0x2a;
+defvar DW_FORM_addrx3 = 0x2b;
+defvar DW_FORM_addrx4 = 0x2c;
+/* GNU Debug Fission extensions.  */
+defvar DW_FORM_GNU_addr_index = 0x1f01;
+defvar DW_FORM_GNU_str_index = 0x1f02;
+defvar DW_FORM_GNU_ref_alt = 0x1f20;
+defvar DW_FORM_GNU_strp_alt = 0x1f21;
+
+/* Contributions are stored in .debug_info sections.  */
+
+deftype Dwarf_CU_Header =
+  struct
+  {
+    /* Length of the .debug_info contribution for this CU, not
+       including the length field itself.  */
+    Dwarf_Initial_Length unit_length;
+
+    /* Version of the DWARF information for the compilation unit.  */
+    uint<16> version : (version in [2, 3, 4, 5]
+                        && dwarf_set_version (version));
+
+    /* Offset into the .debug_abbrev section that associates the
+       compilation unit with a particular set of debugging information
+       entry abbreviations.  */
+    Dwarf_Section_Offset debug_abbrev_offset;
+
+    /* Size of an address on the target architecture.  */
+    offset<uint<8>,B> address_size;
+  };
