@@ -2836,11 +2836,7 @@ struct pkl_phase pkl_phase_typify1
 
 
 
-/* Determine the completeness of a type node.
-
-   Also, since this is the last phase in the compiler front-end, mark
-   the type as processed, to avoid useless and potentially harmful
-   re-compilations.  */
+/* Determine the completeness of a type node.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
 {
@@ -2849,8 +2845,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY
       || PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT)
   PKL_AST_TYPE_COMPLETE (type) = pkl_ast_type_is_complete (type);
-
-  PKL_AST_TYPE_COMPILED (PKL_PASS_NODE) = 1;
 }
 PKL_PHASE_END_HANDLER
 

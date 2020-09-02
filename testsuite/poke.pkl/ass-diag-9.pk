@@ -1,0 +1,11 @@
+/* { dg-do compile } */
+
+deftype Foo2 =
+  struct
+  {
+    defun qqq = void:
+      {
+        defvar rs = "foo";
+        rs[0] = 'x'; /* { dg-error "invalid l-value" } */
+      }
+  };

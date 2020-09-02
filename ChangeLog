@@ -1,5 +1,14 @@
 2020-09-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify2_ps_type): Do not set
+	COMPILED=1.
+	* libpoke/pkl-anal.c (pkl_analf_ps_type): New handler.
+	(pkl_phase_analf): Install handler.
+	* testsuite/poke.pkl/ass-diag-9.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2020-09-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-asm.pks (aconc): Fix the type of the resulting
 	array.
 	* testsuite/poke.pkl/add-arrays-4.pk: New test.

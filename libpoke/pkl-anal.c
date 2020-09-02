@@ -963,6 +963,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_ass_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* Since this this the last phase in the compiler middle-end, mark the
+   type as processed, to avoid useless and potentially harmful
+   re-compilations.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_type)
+{
+  PKL_AST_TYPE_COMPILED (PKL_PASS_NODE) = 1;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_analf
   __attribute__ ((visibility ("hidden"))) =
   {
@@ -971,4 +981,5 @@ struct pkl_phase pkl_phase_analf
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_analf_ps_array_initializer),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_analf_ps_ass_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_anal_pr_type),
+   PKL_PHASE_PS_HANDLER (PKL_AST_TYPE, pkl_analf_ps_type),
   };
