@@ -441,6 +441,7 @@ EXTRA_DIST = \
   poke.pkl/add-arrays-1.pk \
   poke.pkl/add-arrays-2.pk \
   poke.pkl/add-arrays-3.pk \
+  poke.pkl/add-arrays-4.pk \
   poke.pkl/add-arrays-diag-1.pk \
   poke.pkl/add-arrays-diag-2.pk \
   poke.pkl/add-arrays-diag-3.pk \

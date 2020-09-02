@@ -1,0 +1,17 @@
+/* { dg-do run } */
+
+defun qqq = int[]:
+  {
+    defvar rs  = [0];
+    defvar len = 4;
+    while (len > 0)
+      {
+        rs = [1] + rs;
+        len = len - 1;
+      }
+
+    return rs;
+  }
+
+/* { dg-command { qqq } } */
+/* { dg-output {[1,1,1,1,0]} } */
