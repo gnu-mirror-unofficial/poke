@@ -1275,7 +1275,6 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
 {
   pkl_ast_node function = PKL_PASS_NODE;
-  pkl_ast_node function_type = PKL_AST_TYPE (function);
   int nargs = PKL_AST_FUNC_NARGS (function);
   int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
 
@@ -1326,49 +1325,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHF,
                 method_p ? nargs + 1 : nargs);
 
-  /* If in a method, register the implicit argument.  XXX: move to an
-     AST node between the function arguments and the function body,
-     and avoid subpasses in this handler.  */
+  /* If in a method, register the implicit argument.  */
   if (method_p)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
-
-  /* Process the function formal arguments.  */
-  {
-    pkl_ast_node arg;
-
-    for (arg = PKL_AST_FUNC_ARGS (function);
-         arg;
-         arg = PKL_AST_CHAIN (arg))
-      {
-        PKL_PASS_SUBPASS (arg);
-      }
-  }
-
-  /* Function body.  */
-  PKL_PASS_SUBPASS (PKL_AST_FUNC_BODY (function));
-
-  /* Function epilogue.  */
-
-  /* In a void function, return PVM_NULL in the stack.  Otherwise, it
-     is a run-time error to reach this point.  */
-  if (PKL_AST_TYPE_CODE (PKL_AST_TYPE_F_RTYPE (function_type))
-      == PKL_TYPE_VOID)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-  else
-    {
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_MSG,
-                                        PVM_E_NO_RETURN_ESTATUS));
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
-    }
-
-  /* Pop the function's argument environment, if any, and return.  */
-  if (PKL_AST_FUNC_ARGS (function) || method_p)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
-
-
-  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1430,6 +1389,42 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
 
   PKL_PASS_BREAK;
+}
+PKL_PHASE_END_HANDLER
+
+/*
+ * | [TYPE]
+ * | [FUNC_ARG]
+ * | ...
+ * | BODY
+ * FUNC
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
+{
+  /* Function epilogue.  */
+
+  pkl_ast_node function = PKL_PASS_NODE;
+  pkl_ast_node function_type = PKL_AST_TYPE (function);
+  int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
+
+  /* In a void function, return PVM_NULL in the stack.  Otherwise, it
+     is a run-time error to reach this point.  */
+  if (PKL_AST_TYPE_CODE (PKL_AST_TYPE_F_RTYPE (function_type))
+      == PKL_TYPE_VOID)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+  else
+    {
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_MSG,
+                                        PVM_E_NO_RETURN_ESTATUS));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
+    }
+
+  /* Pop the function's argument environment, if any, and return.  */
+  if (PKL_AST_FUNC_ARGS (function) || method_p)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
 }
 PKL_PHASE_END_HANDLER
 
@@ -3457,6 +3452,7 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL_ARG, pkl_gen_ps_funcall_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNCALL, pkl_gen_pr_funcall),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC, pkl_gen_pr_func),
+   PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_gen_ps_func),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC_ARG, pkl_gen_pr_func_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC_TYPE_ARG, pkl_gen_pr_func_type_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_gen_pr_type),
