@@ -1,5 +1,11 @@
 2020-09-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_type): Process types in
+	PKL_AST_FUNC_TYPE_ARG nodes.
+	(pkl_gen_pr_func_type_arg): Remove weird subpass.
+
+2020-09-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_ps_func): New handler.
 	(pkl_phase_gen): Install handler.
 

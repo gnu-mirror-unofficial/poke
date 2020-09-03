@@ -1513,6 +1513,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type)
         {
         case PKL_AST_TYPE:
         case PKL_AST_STRUCT_TYPE_FIELD:
+        case PKL_AST_FUNC_TYPE_ARG:
           /* Process these.  */
           break;
         default:
@@ -2187,9 +2188,7 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_type_arg)
 {
-  /* XXX: why is it needed a PR handler and a subpass here???  The
-     FUNC_TYPE_ARG_TYPE doesn't get traversed in post-order, wtf.  */
-  PKL_PASS_SUBPASS (PKL_AST_FUNC_TYPE_ARG_TYPE (PKL_PASS_NODE));
+  /* Nothing to do.  */
 }
 PKL_PHASE_END_HANDLER
 
