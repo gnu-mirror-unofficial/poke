@@ -42,16 +42,6 @@
 
 #define PKL_FOLD_PAYLOAD ((pkl_fold_payload) PKL_PASS_PAYLOAD)
 
-/* The following handler is used in the folding phase to avoid
-   re-folding already processed AST type nodes.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_fold_pr_type)
-{
-  if (PKL_AST_TYPE_COMPILED (PKL_PASS_NODE))
-    PKL_PASS_BREAK;
-}
-PKL_PHASE_END_HANDLER
-
 /* Emulation routines.
 
    The letter-codes after EMUL_ specify the number and kind of
@@ -1148,7 +1138,6 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_fold
   __attribute__ ((visibility ("hidden"))) =
   {
-   PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_fold_pr_type),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_fold_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_fold_ps_indexer),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_fold_ps_cond_exp),

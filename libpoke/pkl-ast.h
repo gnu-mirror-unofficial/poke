@@ -831,8 +831,9 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    CODE contains the kind of type, as defined in the pkl_ast_type_code
    enumeration above.
 
-   COMPILED is 0 if the type has not been compiled yet.  1 otherwise.
-   This is used to avoid unneccessary work in the compiler.
+   COMPILED contains an integer identifying the last compiler pass
+   that was run on the node.  This is only used in certain nodes, and
+   is controlled in the pass manager.
 
    In integral types, SIGNED is 1 if the type denotes a signed numeric
    type.  In non-integral types SIGNED is 0.  SIZE is the size in bits

@@ -1,3 +1,34 @@
+2020-09-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-pass.c (pkl_do_pass): Get a new argument `level'.
+	(pkl_do_subpass): Likewise.
+	(pkl_do_pass_1): Likewise.
+	(pkl_call_node_handlers): Likewise.
+	(PKL_PASS_CHAIN): Pass the new argument.
+	(PKL_PASS): Likewise.
+	(PKL_CALL_PHASES_SINGLE): Likewise.
+	* libpoke/pkl.c (rest_of_compilation): Set pass levels.
+	* libpoke/pkl-ast.h: Update comment on COMPILED.
+	* libpoke/pkl-anal.c (pkl_anal_pr_type): Remove handler.
+	(pkl_phase_anal1): Likewise.
+	(pkl_phase_anal2): Likewise.
+	(pkl_anal_ps_type): Likewise.
+	(pkl_phase_analf): Likewise.
+	* libpoke/pkl-trans.c (pkl_trans_pr_type): Likewise.
+	(pkl_phase_trans1): Likewise.
+	(pkl_phase_trans2): Likewise.
+	(pkl_phase_trans3): Likewise.
+	(pkl_phase_trans4): Likewise.
+	* libpoke/pkl-promo.c (pkl_promo_pr_type): Likewise.
+	(pkl_phase_promo): Likewise.
+	* libpoke/pkl-fold.c (pkl_fold_pr_type): Likewise.
+	(pkl_phase_fold): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify_pr_type): Likewise.
+	(pkl_phase_typify1): Likewise.
+	(pkl_phase_typify2): Likewise.
+	* testsuite/poke.pkl/compiler-passes-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2020-09-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_type): Process types in

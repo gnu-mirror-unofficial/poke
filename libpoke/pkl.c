@@ -208,14 +208,14 @@ rest_of_compilation (pkl_compiler compiler,
   };
 
   void *middleend_payloads[]
-    = { &fold_payload,
-        &trans4_payload,
+    = { &trans4_payload,
+        &fold_payload,
         &analf_payload,
   };
 
   struct pkl_phase *middleend_phases[]
-    = { &pkl_phase_fold,
-        &pkl_phase_trans4,
+    = { &pkl_phase_trans4,
+        &pkl_phase_fold,
         &pkl_phase_analf,
         NULL
   };
@@ -242,7 +242,7 @@ rest_of_compilation (pkl_compiler compiler,
   pkl_gen_init_payload (&gen_payload, compiler);
 
   if (!pkl_do_pass (compiler, ast,
-                    frontend_phases, frontend_payloads, PKL_PASS_F_TYPES))
+                    frontend_phases, frontend_payloads, PKL_PASS_F_TYPES, 1))
     goto error;
 
   if (trans1_payload.errors > 0
@@ -256,7 +256,7 @@ rest_of_compilation (pkl_compiler compiler,
     goto error;
 
   if (!pkl_do_pass (compiler, ast,
-                    middleend_phases, middleend_payloads, PKL_PASS_F_TYPES))
+                    middleend_phases, middleend_payloads, PKL_PASS_F_TYPES, 2))
     goto error;
 
   if (trans4_payload.errors > 0
@@ -265,7 +265,7 @@ rest_of_compilation (pkl_compiler compiler,
     goto error;
 
   if (!pkl_do_pass (compiler, ast,
-                    backend_phases, backend_payloads, 0))
+                    backend_phases, backend_payloads, 0, 0))
     goto error;
 
   if (analf_payload.errors > 0)
