@@ -208,14 +208,14 @@ rest_of_compilation (pkl_compiler compiler,
   };
 
   void *middleend_payloads[]
-    = { &trans4_payload,
-        &fold_payload,
+    = { &fold_payload,
+        &trans4_payload,
         &analf_payload,
   };
 
   struct pkl_phase *middleend_phases[]
-    = { &pkl_phase_trans4,
-        &pkl_phase_fold,
+    = { &pkl_phase_fold,
+        &pkl_phase_trans4,
         &pkl_phase_analf,
         NULL
   };
