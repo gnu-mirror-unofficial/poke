@@ -1,3 +1,9 @@
+2020-09-06  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	* testsuite/poke.libpoke/values.c: Now all tests run with make check.
+	* testsuite/poke.libpoke/Makefile.am: Added TESTDIR and LTLIBTEXTSTYLE
+	for this purpose.
+
 2020-09-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl.c (rest_of_compilation): Revert fold and trans4 in

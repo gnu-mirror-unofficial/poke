@@ -220,7 +220,7 @@ test_pk_equal_file (const char *filename, FILE *ifp)
   if (compile_poke_expressions (ifp, pkc, &val1, &val2) == 0)
     goto error;
 
-  /* (NOTE: kostas) We should have a way to discriminate if we should check
+  /*  We should have a way to discriminate if we should check
       if 2 values should match or not.
 
       Currently, this decision is taken based on the name of the file.
@@ -253,27 +253,44 @@ test_pk_val_equal_p ()
   DIR *directory;
   struct dirent *dir;
   const char *extension;
+  char *testdir, *testfile;
+  size_t testdir_len;
 
-  directory = opendir (".");
+  testdir_len = strlen (TESTDIR);
+  testdir = (char *) malloc (testdir_len + 2);
+  memcpy (testdir, TESTDIR, testdir_len + 1);
+  strncat (testdir, "/", 1);
+  testdir_len = strlen (testdir);
+
+  directory = opendir (testdir);
   if (directory)
     {
       while ((dir = readdir (directory)) != NULL)
         {
-          /* If this file a .json file, proccess it.  */
           extension = strrchr (dir->d_name, '.');
           if (extension)
             {
               if (!strncmp (extension + 1, "test", 4))
                 {
-                  ifp = fopen (dir->d_name, "r");
+                  testfile = (char *) malloc (testdir_len
+                                                   + strlen (dir->d_name) + 1);
+                  memcpy (testfile, testdir, testdir_len + 1);
+                  strncat (testfile, dir->d_name, strlen (dir->d_name));
+
+                  ifp = fopen (testfile, "r");
                   if (ifp)
-                    test_pk_equal_file (dir->d_name, ifp);
-                  fclose (ifp);
+                    {
+                      test_pk_equal_file (dir->d_name, ifp);
+                      fclose (ifp);
+                    }
+                  free (testfile);
                 }
             }
         }
       closedir (directory);
     }
+
+  free (testdir);
 }
 
 int
