@@ -1,3 +1,7 @@
+2020-09-15  Aurélien Aptel  <aaptel@suse.com>
+
+	* etc/poke-mode.el: Add SMIE grammar and indent code.
+
 2020-09-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/time.pk: New file.
