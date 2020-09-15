@@ -1575,7 +1575,8 @@ EXTRA_DIST = \
   poke.std/strchr-1.pk \
   poke.std/strchr-2.pk \
   poke.std/strchr-3.pk \
-  poke.std/time32.pk \
+  poke.time/time.exp \
+  poke.time/time32.pk \
   poke.libpoke/pk_equal_int.test \
   poke.libpoke/pk_equal_uint.test \
   poke.libpoke/pk_equal_str.test \

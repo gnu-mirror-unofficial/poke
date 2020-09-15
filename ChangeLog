@@ -1,5 +1,18 @@
 2020-09-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/time.pk: New file.
+	(ptime): Move from std.pk.
+	(POSIX_Time32): Likewise.
+	(POSIX_Time64): Likewise.
+	* pickles/Makefile.am (dist_pickles_DATA): Add time.pk.
+	* testsuite/poke.time/time32.pk: Moved from poke.std.
+	* testsuite/poke.time/time.exp: New file.
+	* testsuite/Makefile.am (EXTRA_DIST): Reflect change of opsition
+	of time32.pk
+	* doc/poke.texi (Time): New chapter.
+
+2020-09-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.c (struct pk_compiler): New field complete_type.
 	(pk_compiler_new): Initialize complete_type.
 	(complete_struct): Use complete_type.

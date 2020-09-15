@@ -54,6 +54,7 @@ Using poke
 * Debugging Poke Programs::	When something goes wrong.
 
 Pickles
+* Time::			Handling time.
 * Colors::			Editing colors.
 * Audio::			Poking audio files.
 
@@ -124,6 +125,9 @@ Structuring Data
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
+
+Time
+* POSIX Time::			Encoding POSIX dates.
 
 Colors
 * The Color Registry::		The @file{color} pickle.
@@ -3940,6 +3944,32 @@ Expands to a string with the name of the file currently being compiled.  If the
 program is read from the standard input (like in the REPL) then this
 is @code{"<stdin>"}.
 @end table
+
+@node Time
+@chapter Time
+
+Systems encode time-stamps or dates in several ways.  GNU poke
+provides support for some of them.
+
+@menu
+* POSIX Time::			The @file{time} pickle.
+@end menu
+
+@node POSIX Time
+@section POSIX Time
+
+In POSIX systems time is encoded as a certain number of seconds
+elapsed since some origin date, namely the first of January 1970.  The
+@file{time} pickle provides two types for 32-bit and 64-bit POSIX time
+encodings:
+
+@example
+POSIX_Time32
+POSIX_Time64
+@end example
+
+A function @code{ptime} is also provided, that prints a human-readable
+representation of a POSIX date, given a number of seconds.
 
 @node Colors
 @chapter Colors

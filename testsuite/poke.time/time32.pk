@@ -1,5 +1,7 @@
 /* { dg-do run } */
 
+load time;
+
 /* { dg-command {.set pretty-print yes} } */
 /* { dg-command {.set endian host} } */
 
