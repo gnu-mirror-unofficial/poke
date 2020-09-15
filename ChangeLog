@@ -1,3 +1,9 @@
+2020-09-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.c (struct pk_compiler): New field complete_type.
+	(pk_compiler_new): Initialize complete_type.
+	(complete_struct): Use complete_type.
+
 2020-09-06  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
 	* testsuite/poke.libpoke/values.c: Now all tests run with make check.
