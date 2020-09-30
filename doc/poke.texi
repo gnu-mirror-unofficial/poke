@@ -2843,7 +2843,7 @@ This encodes each color with a 24-bit unsigned integer. When looking
 at the hexadecimal values of @code{bg} and @code{fg} above, note that
 0xff = 255, 0x63 = 99 and 0x47 = 71.  Each byte seems to be in the
 right position in the 24-bit containing number.  Now, poking a pixel
-at some given offset should be as easy as issugin would involve just
+at some given offset should be as easy as issuing just
 one map operation, right?  Let's see, using some arbitrary offset 10#B:
 
 @example
@@ -3251,7 +3251,7 @@ It follows that if we wanted to change the color of some SBM pixel
 stored at offset @var{offset}, we would do this:
 
 @example
-(poke) defvar pixel = byte[3] @@ @var{offset}
+(poke) defvar a = byte[3] @@ @var{offset}
 (poke) a[1] = 10
 @end example
 
@@ -3820,7 +3820,7 @@ deftype SBM_Header = byte[5];
 @end example
 
 However, this would not capture the properties of the fields
-themselves, which would need to be remember by the user: which of
+themselves, which would need to be remembered by the user: which of
 these five bytes correspond to the magic number?  Is the pixels per
 line number signed or unsigned? @i{etc}.
 
@@ -3987,7 +3987,7 @@ with these colors.
 @section The Color Registry
 
 The @file{color} pickle provides a registry of @dfn{standard colors},
-organized as an space of integers.  Each integer identifies a standard
+organized as a space of integers.  Each integer identifies a standard
 color, which are accessible as variables named @code{color_*} after
 the pickle is loaded.  Example:
 
@@ -4061,7 +4061,7 @@ deftype RGB24_Color = RGB24_Color_Beam[3];
 
 @noindent
 The indexes @code{RGB24_RED}, @code{RGB24_GREEN} and @code{RGB24_BLUE}
-can be used to access to an specific beam of a given color:
+can be used to access to a specific beam of a given color:
 
 @example
 (poke) rgb24_color[color_tomato][RGB24_GREEN]
@@ -5733,7 +5733,7 @@ since a block does not necessarily occupy an integral number of bytes.
 @end quotation
 
 At this point I understood that my little language on the works would
-be never capable to describe the DEFLATE structures naturally: C-like
+never be capable to describe the DEFLATE structures naturally: C-like
 bit-fields, masking and shifting, all based on byte-oriented
 containers and boundaries, would never provide the slickness I wanted
 for my editor.  I mean, just use C and get done with it.

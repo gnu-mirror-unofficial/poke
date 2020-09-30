@@ -1,3 +1,7 @@
+2020-09-30  Pierre-Evariste Dagand  <pierre-evariste.dagand@lip6.fr>
+
+	* doc/poke.texi: Fix typos.
+
 2020-09-15  Aurélien Aptel  <aaptel@suse.com>
 
 	* etc/poke-mode.el: Add SMIE grammar and indent code.
