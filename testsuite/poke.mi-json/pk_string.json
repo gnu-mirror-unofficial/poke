@@ -1,0 +1,9 @@
+##
+"foo"
+##
+{
+    "PokeValue" : {
+        "type" : "String",
+        "value" : "foo"
+    }
+}

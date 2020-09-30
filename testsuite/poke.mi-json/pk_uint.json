@@ -1,0 +1,10 @@
+##
+3500 as uint<32>
+##
+{
+    "PokeValue" : {
+        "type" : "UnsignedInteger",
+        "value" : 3500,
+        "size" : 32
+    }
+}

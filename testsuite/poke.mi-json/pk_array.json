@@ -1,0 +1,109 @@
+##
+[1L, 2L, 3L, 15L, 25L, -35L, 64L, 9223372036854775807L] as int<64>[]
+##
+{ 
+    "PokeValue" : {
+        "type" : "Array",
+        "elements" : [
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 1,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 0,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 2,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 64,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 3,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 128,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 15,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 192,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 25,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 256,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : -35,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 320,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 64,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 384,
+                    "size" : 64
+                }
+            },
+            {
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 9223372036854775807,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 448,
+                    "size" : 64
+                }
+            }
+        ],
+        "mapping" : {
+            "type" : "Null", "value" : null
+        } 
+    }
+}

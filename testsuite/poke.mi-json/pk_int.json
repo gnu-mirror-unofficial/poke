@@ -1,0 +1,10 @@
+##
+-3500 as int<32>
+##
+{
+    "PokeValue" : {
+        "type" : "Integer",
+        "value" : -3500,
+        "size" : 32
+    }
+}

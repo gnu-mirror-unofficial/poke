@@ -1,0 +1,51 @@
+deftype Packet = struct { int i; long j; };
+##
+Packet { i = 1, j = 2}
+##
+{ 
+    "PokeValue" : { 
+        "type" : "Struct",
+        "name" : {
+            "type" : "String", 
+            "value" : "Packet"
+        },
+        "fields" : [
+            {
+                "name" : {
+                    "type" : "String",
+                    "value" : "i"
+                },
+                "value" : { 
+                    "type" : "Integer",
+                    "value" : 1,
+                    "size" : 32 
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 0,
+                    "size" : 64
+                }
+            },
+            {
+                "name" : {
+                    "type" : "String", 
+                    "value" : "j"
+                },
+                "value" : {
+                    "type" : "Integer",
+                    "value" : 2,
+                    "size" : 64
+                },
+                "boffset" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 32,
+                    "size" : 64
+                }
+            }
+        ],
+        "mapping" : { 
+            "type" : "Null",
+            "value" : null 
+        }
+    } 
+}
