@@ -249,7 +249,7 @@
   (smie-setup poke-smie-grammar #'poke-smie-rules
               :forward-token #'poke--smie-forward-token
               :backward-token #'poke--smie-backward-token)
-  
+
   ;; font-lock
   (setq-local font-lock-defaults
               '(poke-font-lock-keywords

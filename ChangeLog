@@ -1,3 +1,7 @@
+2020-09-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke-mode.el: Delete trailing whitespaces.
+
 2020-09-30  Pierre-Evariste Dagand  <pierre-evariste.dagand@lip6.fr>
 
 	* doc/poke.texi: Fix typos.
