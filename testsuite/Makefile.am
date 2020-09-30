@@ -1588,4 +1588,10 @@ EXTRA_DIST = \
   poke.libpoke/pk_nequal_str.test \
   poke.libpoke/pk_nequal_off.test \
   poke.libpoke/pk_nequal_sct.test \
-  poke.libpoke/pk_nequal_arr.test
+  poke.libpoke/pk_nequal_arr.test \
+  poke.mi-json/pk_int.json \
+  poke.mi-json/pk_uint.json \
+  poke.mi-json/pk_string.json \
+  poke.mi-json/pk_offset.json \
+  poke.mi-json/pk_array.json \
+  poke.mi-json/pk_sct.json

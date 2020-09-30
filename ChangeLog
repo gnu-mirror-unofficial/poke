@@ -1,3 +1,55 @@
+2020-09-30  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+    * poke/pk-mi-json.h (pk_mi_val_to_json): Prototype.
+	(pk_mi_json_to_val): Prototype.
+	* poke/pk-mi-json.c (pk_mi_val_to_json): Define.
+	(pk_mi_json_to_val): Define.
+	(pk_mi_val_to_json): New function.
+	(pk_mi_val_to_json_1): Likewise.
+	(pk_mi_int_to_json): Likewise.
+	(pk_mi_uint_to_json): Likewise.
+	(pk_mi_string_to_json): Likewise.
+	(pk_mi_offset_to_json): Likewise.
+	(pk_mi_mapping_to_json): Likewise.
+	(pk_mi_sct_to_json): Likewise.
+	(pk_mi_array_to_json): Likewise.
+	(pk_mi_null_to_json): Likewise.
+	(pk_mi_json_to_val): Likewise.
+	(pk_mi_json_to_val_1): Likewise.
+	(pk_mi_json_to_int): Likewise.
+	(pk_mi_json_to_uint): Likewise.
+	(pk_mi_json_to_string): Likewise.
+	(pk_mi_json_to_offset): Likewise.
+	(pk_mi_json_to_mapping): Likewise.
+	(pk_mi_json_to_sct): Likewise.
+	(pk_mi_json_to_array): Likewise.
+	(pk_mi_json_poke_value_type): Likewise.
+	(pk_mi_json_array_element_pair): Likewise.
+	* testsuite/poke.mi-json/mi-json.c (test_json_to_val_to_json): New function.
+	(test_json_file): Likewise.
+	(test_json_to_val): Likewise.
+	(test_val_to_json): Likewise.
+	(test_json_pk_val): Likewise.
+	(test_json_pk_int): Likewise.
+	(test_json_pk_uint): Likewise.
+	(test_json_pk_string): Likewise.
+	(test_json_pk_offset): Likewise.
+	(test_json_pk_null): Likewise.
+	(test_json_pk_sct): Likewise.
+	(test_json_pk_array): Likewise.
+	(compile_initial_poke_code): Likewise.
+	(compile_poke_expression): Likewise.
+	(read_json_object): Likewise.
+	(parse_json_str_object): Likewise.
+	* testsuite/poke.mi-json/pk_int.json: New test.
+	* testsuite/poke.mi-json/pk_uint.json: New test.
+	* testsuite/poke.mi-json/pk_string.json: New test.
+	* testsuite/poke.mi-json/pk_offset.json: New test.
+	* testsuite/poke.mi-json/pk_array.json: New test.
+	* testsuite/poke.mi-json/pk_sct.json: New test.
+	* testsuite/poke.mi-json/Makefile.am: Added TESTDIR.
+	* testsuite/Makefile.am (EXTRA_DIST): Updated with new tests.
+
 2020-09-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/poke-mode.el: Delete trailing whitespaces.

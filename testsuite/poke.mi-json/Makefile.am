@@ -27,9 +27,13 @@ mi_json_SOURCES = mi-json.c \
                   $(top_srcdir)/poke/pk-mi-json.c
 
 mi_json_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
-                   -I$(top_srcdir)/poke -I$(top_builddir)/poke
+                   -I$(top_srcdir)/poke -I$(top_builddir)/poke \
+                   -DTESTDIR=\"$(abs_srcdir)\" \
+                   -DPKGDATADIR=\"$(pkgdatadir)\" \
+                   -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
 
 mi_json_CFLAGS = $(JSON_C_CFLAGS)
-mi_json_LDADD = $(JSON_C_LIBS) $(top_builddir)/gl/libgnu.la
+mi_json_LDADD = $(JSON_C_LIBS) $(top_builddir)/gl/libgnu.la \
+                $(top_builddir)/libpoke/libpoke.la
 
 endif
