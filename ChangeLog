@@ -1,5 +1,10 @@
 2020-10-11  Egeyar Bagcioglu  <egeyar@gmail.com>
 
+	* libpoke/ios.c (ios_flush): Divide the offset by 8 before passing it
+	to io->dev_if->flush which accepts offsets in the granularity of bytes.
+
+2020-10-11  Egeyar Bagcioglu  <egeyar@gmail.com>
+
 	* libpoke/ios-dev-file.c (ios_dev_file_get_if_name): New.
 	* libpoke/ios-dev-mem.c (ios_dev_mem_get_if_name): New.
 	* libpoke/ios-dev-nbd.c (ios_dev_nbd_get_if_name): New.
