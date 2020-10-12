@@ -3,5 +3,5 @@
 
 /* { dg-command { .file a#b } } */
 /* { dg-command { .info ios } } */
-/* { dg-output "  Id\tMode\tSize\t\tName" } */
-/* { dg-output "\n\\* #0\trw\t0x00000008#B\t./a#b" } */
+/* { dg-output "  Id\tType\tMode\tSize\t\tName" } */
+/* { dg-output "\n\\* #0\tFILE\trw\t0x00000008#B\t./a#b" } */

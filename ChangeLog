@@ -1,3 +1,17 @@
+2020-10-11  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_get_if_name): New.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_get_if_name): New.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_get_if_name): New.
+	* libpoke/ios-dev.h (get_if_name): New.
+	* libpoke/ios.c (ios_get_dev_if_name): New.
+	* libpoke/ios.h (ios_get_dev_if_name): New.
+	* libpoke/libpoke.c (pk_ios_get_dev_if_name): New.
+	* libpoke/libpoke.h (pk_ios_get_dev_if_name): New.
+	* poke/pk-cmd-ios.c (print_info_ios): Print interface name.
+	* testsuite/poke.cmd/file-mode.pk: Adjust test output.
+	* testsuite/poke.cmd/file-relative.pk: Adjust test output.
+
 2020-09-30  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
     * poke/pk-mi-json.h (pk_mi_val_to_json): Prototype.

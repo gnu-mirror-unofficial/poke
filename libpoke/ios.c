@@ -258,6 +258,12 @@ ios_get_id (ios io)
   return io->id;
 }
 
+char *
+ios_get_dev_if_name (ios io)
+{
+  return io->dev_if->get_if_name();
+}
+
 ios_off
 ios_get_bias (ios io)
 {

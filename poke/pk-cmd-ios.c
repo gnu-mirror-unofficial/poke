@@ -151,9 +151,10 @@ print_info_ios (pk_ios io, void *data)
   mode[1] = flags & PK_IOS_F_WRITE ? 'w' : ' ';
   mode[2] = '\0';
 
-  pk_printf ("%s#%d\t%s\t",
+  pk_printf ("%s#%d\t%s\t%s\t",
              io == pk_ios_cur (poke_compiler) ? "* " : "  ",
              pk_ios_get_id (io),
+	     pk_ios_get_dev_if_name (io),
              mode);
 
 #if HAVE_HSERVER
@@ -203,7 +204,7 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   assert (argc == 0);
 
-  pk_printf (_("  Id\tMode\tSize\t\tName\n"));
+  pk_printf (_("  Id\tType\tMode\tSize\t\tName\n"));
   pk_ios_map (poke_compiler, print_info_ios, NULL);
 
   return 1;

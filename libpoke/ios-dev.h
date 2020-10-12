@@ -43,6 +43,10 @@ typedef uint64_t ios_dev_off;
 
 struct ios_dev_if
 {
+  /* Return the name of this device interface. Cannot return NULL. */
+
+  char *(*get_if_name) ();
+
   /* Determine whether the provided HANDLER is recognized as a valid
      device spec by this backend, and if so, return its normalized
      form (caller will free).  If not, return NULL.  */

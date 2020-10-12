@@ -199,6 +199,11 @@ ios ios_search_by_id (int id)
 int ios_get_id (ios io)
   __attribute__ ((visibility ("hidden")));
 
+/* Return the name of the device interface.  */
+
+char *ios_get_dev_if_name (ios io)
+  __attribute__ ((visibility ("hidden")));
+
 /* Return the first IO space.  */
 
 ios ios_begin (void)

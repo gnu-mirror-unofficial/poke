@@ -41,6 +41,11 @@ struct ios_dev_file
 };
 
 static char *
+ios_dev_file_get_if_name () {
+  return "FILE";
+}
+
+static char *
 ios_dev_file_handler_normalize (const char *handler, uint64_t flags)
 {
   char *newhandler;
@@ -200,6 +205,7 @@ ios_dev_file_flush (void *iod, ios_dev_off offset)
 struct ios_dev_if ios_dev_file
   __attribute__ ((visibility ("hidden"))) =
   {
+   .get_if_name = ios_dev_file_get_if_name,
    .handler_normalize = ios_dev_file_handler_normalize,
    .open = ios_dev_file_open,
    .close = ios_dev_file_close,

@@ -245,6 +245,10 @@ pk_ios pk_ios_search_by_id (pk_compiler pkc, int id);
 
 int pk_ios_get_id (pk_ios ios);
 
+/* Return the name of the device interface.  */
+
+char *pk_ios_get_dev_if_name (pk_ios ios);
+
 /* Return the size of the given IO space, in bits.  */
 
 uint64_t pk_ios_size (pk_ios ios);

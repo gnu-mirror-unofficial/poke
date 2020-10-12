@@ -438,6 +438,12 @@ pk_ios_get_id (pk_ios io)
   return ios_get_id ((ios) io);
 }
 
+char *
+pk_ios_get_dev_if_name (pk_ios io)
+{
+  return ios_get_dev_if_name ((ios) io);
+}
+
 uint64_t
 pk_ios_size (pk_ios io)
 {
