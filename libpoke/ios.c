@@ -85,6 +85,7 @@ static struct ios *cur_io;
 
 extern struct ios_dev_if ios_dev_mem; /* ios-dev-mem.c */
 extern struct ios_dev_if ios_dev_file; /* ios-dev-file.c */
+extern struct ios_dev_if ios_dev_stream; /* ios-dev-stream.c */
 #ifdef HAVE_LIBNBD
 extern struct ios_dev_if ios_dev_nbd; /* ios-dev-nbd.c */
 #endif
@@ -92,6 +93,7 @@ extern struct ios_dev_if ios_dev_nbd; /* ios-dev-nbd.c */
 static struct ios_dev_if *ios_dev_ifs[] =
   {
    &ios_dev_mem,
+   &ios_dev_stream,
 #ifdef HAVE_LIBNBD
    &ios_dev_nbd,
 #endif

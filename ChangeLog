@@ -1,3 +1,13 @@
+2020-10-12  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add ios-buffer.h,
+	ios-buffer.c and ios-dev-stream.c.
+	* libpoke/ios-buffer.c: New file.
+	* libpoke/ios-buffer.h: New file.
+	* libpoke/ios-dev-stream.c: New file.
+	* libpoke/ios.c: Extern ios_dev_stream.
+	(ios_dev_ifs): Add ios_dev_stream.
+
 2020-10-11  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios.c (ios_flush): Divide the offset by 8 before passing it

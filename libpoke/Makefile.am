@@ -55,7 +55,9 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pvm-program.h pvm-program.c \
                      pvm.jitter \
                      ios.c ios.h ios-dev.h \
-                     ios-dev-file.c ios-dev-mem.c
+                     ios-dev-file.c ios-dev-mem.c \
+                     ios-buffer.h ios-buffer.c \
+                     ios-dev-stream.c
 
 libpoke_la_SOURCES += ../common/pk-utils.c ../common/pk-utils.h
 
