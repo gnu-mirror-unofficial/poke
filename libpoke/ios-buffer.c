@@ -24,16 +24,16 @@
 #include "ios.h"
 #include "ios-dev.h"
 
-#define IOB_CHUNK_SIZE		2048
-#define IOB_BUCKET_COUNT	8
+#define IOB_CHUNK_SIZE          2048
+#define IOB_BUCKET_COUNT        8
 
-#define IOB_CHUNK_OFFSET(offset)	\
+#define IOB_CHUNK_OFFSET(offset)        \
   ((offset) % IOB_CHUNK_SIZE)
 
-#define IOB_CHUNK_NO(offset)		\
+#define IOB_CHUNK_NO(offset)            \
   ((offset) / IOB_CHUNK_SIZE)
 
-#define IOB_BUCKET_NO(chunk_no)		\
+#define IOB_BUCKET_NO(chunk_no)         \
   ((chunk_no) % IOB_BUCKET_COUNT)
 
 struct ios_buffer_chunk
@@ -80,11 +80,11 @@ ios_buffer_free (struct ios_buffer *buffer)
     {
       chunk = buffer->chunks[i];
       while (chunk)
-	{
-	  chunk_next = chunk->next;
-	  free (chunk);
-	  chunk = chunk_next;
-	}
+        {
+          chunk_next = chunk->next;
+          free (chunk);
+          chunk = chunk_next;
+        }
     }
 
   free (buffer);
@@ -106,7 +106,7 @@ ios_buffer_get_chunk (struct ios_buffer *buffer, int chunk_no)
 
 int
 ios_buffer_allocate_new_chunk (struct ios_buffer *buffer, int final_chunk_no,
-			       struct ios_buffer_chunk **final_chunk)
+                               struct ios_buffer_chunk **final_chunk)
 {
   struct ios_buffer_chunk *chunk;
   int bucket_no;
@@ -117,7 +117,7 @@ ios_buffer_allocate_new_chunk (struct ios_buffer *buffer, int final_chunk_no,
     {
       chunk = calloc (1, sizeof (struct ios_buffer_chunk));
       if (!chunk)
-	return IOD_ERROR;
+        return IOD_ERROR;
       /* Place the new chunk into the buffer.  */
       chunk->chunk_no = buffer->next_chunk_no;
       bucket_no = IOB_BUCKET_NO (chunk->chunk_no);
@@ -139,13 +139,13 @@ ios_buffer_allocate_new_chunk (struct ios_buffer *buffer, int final_chunk_no,
 
 int
 ios_buffer_pread (struct ios_buffer *buffer, void *buf, size_t count,
-		  ios_dev_off offset)
+                  ios_dev_off offset)
 {
   int chunk_no;
   struct ios_buffer_chunk *chunk;
   ios_dev_off chunk_offset;
   size_t already_read_count = 0,
-	 to_be_read_count = 0;
+         to_be_read_count = 0;
 
   chunk_no = IOB_CHUNK_NO (offset);
   chunk_offset = IOB_CHUNK_OFFSET (offset);
@@ -156,20 +156,20 @@ ios_buffer_pread (struct ios_buffer *buffer, void *buf, size_t count,
   /* The amount we read from this chunk is the maximum of
      the COUNT requested and the size of the rest of this chunk. */
   to_be_read_count = IOB_CHUNK_SIZE - chunk_offset > count
-		     ? count
-		     : IOB_CHUNK_SIZE - chunk_offset;
+                     ? count
+                     : IOB_CHUNK_SIZE - chunk_offset;
 
   memcpy (buf, (void *) chunk + chunk_offset, to_be_read_count);
 
   while ((already_read_count += to_be_read_count) < count)
     {
       to_be_read_count = count - already_read_count > IOB_CHUNK_SIZE
-			 ? IOB_CHUNK_SIZE
-			 : count - already_read_count;
+                         ? IOB_CHUNK_SIZE
+                         : count - already_read_count;
 
       chunk = ios_buffer_get_chunk (buffer, ++chunk_no);
       if (!chunk && ios_buffer_allocate_new_chunk (buffer, chunk_no, &chunk))
-	return IOD_ERROR;
+        return IOD_ERROR;
       memcpy (buf + already_read_count, chunk, to_be_read_count);
     };
 
@@ -182,13 +182,13 @@ ios_buffer_pread (struct ios_buffer *buffer, void *buf, size_t count,
 
 int
 ios_buffer_pwrite (struct ios_buffer *buffer, const void *buf, size_t count,
-		   ios_dev_off offset)
+                   ios_dev_off offset)
 {
   int chunk_no;
   struct ios_buffer_chunk *chunk;
   ios_dev_off chunk_offset;
   size_t already_written_count = 0,
-	 to_be_written_count = 0;
+         to_be_written_count = 0;
 
   chunk_no = IOB_CHUNK_NO (offset);
   chunk_offset = IOB_CHUNK_OFFSET (offset);
@@ -199,20 +199,20 @@ ios_buffer_pwrite (struct ios_buffer *buffer, const void *buf, size_t count,
   /* The amount we write to this chunk is the maximum of the COUNT requested
      and the size of the rest of this chunk. */
   to_be_written_count = IOB_CHUNK_SIZE - chunk_offset > count
-			? count
-			: IOB_CHUNK_SIZE - chunk_offset;
+                        ? count
+                        : IOB_CHUNK_SIZE - chunk_offset;
 
   memcpy ((void *) chunk + chunk_offset, buf, to_be_written_count);
 
   while ((already_written_count += to_be_written_count) < count)
     {
       to_be_written_count = count - already_written_count > IOB_CHUNK_SIZE
-			    ? IOB_CHUNK_SIZE
-			    : count - already_written_count;
+                            ? IOB_CHUNK_SIZE
+                            : count - already_written_count;
 
       chunk = ios_buffer_get_chunk (buffer, ++chunk_no);
       if (!chunk && ios_buffer_allocate_new_chunk (buffer, chunk_no, &chunk))
-	return IOD_ERROR;
+        return IOD_ERROR;
       memcpy (chunk, buf + already_written_count, to_be_written_count);
     };
 
@@ -235,17 +235,17 @@ ios_buffer_forget_till (struct ios_buffer *buffer, ios_dev_off offset)
       chunk = buffer->chunks[i];
       buffer->chunks[i] = NULL;
       while (chunk)
-	{
-	  chunk_next = chunk->next;
-	  if (chunk->chunk_no >= chunk_no)
-	    {
-	      chunk->next = buffer->chunks[i];
-	      buffer->chunks[i] = chunk;
-	    }
-	  else
-	    free (chunk);
-	  chunk = chunk_next;
-	}
+        {
+          chunk_next = chunk->next;
+          if (chunk->chunk_no >= chunk_no)
+            {
+              chunk->next = buffer->chunks[i];
+              buffer->chunks[i] = chunk;
+            }
+          else
+            free (chunk);
+          chunk = chunk_next;
+        }
     }
 
   buffer->begin_offset = chunk_no * IOB_CHUNK_SIZE;

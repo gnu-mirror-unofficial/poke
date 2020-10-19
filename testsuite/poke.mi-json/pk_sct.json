@@ -2,11 +2,11 @@ deftype Packet = struct { int i; long j; };
 ##
 Packet { i = 1, j = 2}
 ##
-{ 
-    "PokeValue" : { 
+{
+    "PokeValue" : {
         "type" : "Struct",
         "name" : {
-            "type" : "String", 
+            "type" : "String",
             "value" : "Packet"
         },
         "fields" : [
@@ -15,10 +15,10 @@ Packet { i = 1, j = 2}
                     "type" : "String",
                     "value" : "i"
                 },
-                "value" : { 
+                "value" : {
                     "type" : "Integer",
                     "value" : 1,
-                    "size" : 32 
+                    "size" : 32
                 },
                 "boffset" : {
                     "type" : "UnsignedInteger",
@@ -28,7 +28,7 @@ Packet { i = 1, j = 2}
             },
             {
                 "name" : {
-                    "type" : "String", 
+                    "type" : "String",
                     "value" : "j"
                 },
                 "value" : {
@@ -43,9 +43,9 @@ Packet { i = 1, j = 2}
                 }
             }
         ],
-        "mapping" : { 
+        "mapping" : {
             "type" : "Null",
-            "value" : null 
+            "value" : null
         }
-    } 
+    }
 }

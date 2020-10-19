@@ -154,7 +154,7 @@ print_info_ios (pk_ios io, void *data)
   pk_printf ("%s#%d\t%s\t%s\t",
              io == pk_ios_cur (poke_compiler) ? "* " : "  ",
              pk_ios_get_id (io),
-	     pk_ios_get_dev_if_name (io),
+             pk_ios_get_dev_if_name (io),
              mode);
 
 #if HAVE_HSERVER

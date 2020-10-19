@@ -1,7 +1,7 @@
 ##
 [1L, 2L, 3L, 15L, 25L, -35L, 64L, 9223372036854775807L] as int<64>[]
 ##
-{ 
+{
     "PokeValue" : {
         "type" : "Array",
         "elements" : [
@@ -104,6 +104,6 @@
         ],
         "mapping" : {
             "type" : "Null", "value" : null
-        } 
+        }
     }
 }

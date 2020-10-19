@@ -23,15 +23,14 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
-#include <assert.h>
 
 #include "ios.h"
 #include "ios-dev.h"
 #include "ios-buffer.h"
 
-#define IOS_STDIN_HANDLER	("<stdin>")
-#define IOS_STDOUT_HANDLER	("<stdout>")
-#define IOS_STDERR_HANDLER	("<stderr>")
+#define IOS_STDIN_HANDLER       ("<stdin>")
+#define IOS_STDOUT_HANDLER      ("<stdout>")
+#define IOS_STDERR_HANDLER      ("<stderr>")
 
 /* State associated with a stream device.  */
 
@@ -56,9 +55,9 @@ static char *
 ios_dev_stream_handler_normalize (const char *handler, uint64_t flags)
 {
   /* TODO handle the case where strdup fails. */
-  if (!strcmp (handler, IOS_STDIN_HANDLER)
-      || !strcmp (handler, IOS_STDOUT_HANDLER)
-      || !strcmp (handler, IOS_STDERR_HANDLER))
+  if (STREQ (handler, IOS_STDIN_HANDLER)
+      || STREQ (handler, IOS_STDOUT_HANDLER)
+      || STREQ (handler, IOS_STDERR_HANDLER))
     return strdup (handler);
   else
     return NULL;
@@ -77,21 +76,21 @@ ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
   if (!sio->handler)
     goto error;
 
-  if (!strcmp (handler, IOS_STDIN_HANDLER))
+  if (STREQ (handler, IOS_STDIN_HANDLER))
     {
       sio->file = stdin;
       sio->flags = IOS_F_READ;
       sio->buffer = ios_buffer_init ();
       if (!sio->buffer)
-	goto error;
+        goto error;
     }
-  else if (!strcmp (handler, IOS_STDOUT_HANDLER))
+  else if (STREQ (handler, IOS_STDOUT_HANDLER))
     {
       sio->file = stdout;
       sio->flags = IOS_F_WRITE;
       sio->write_offset = 0;
     }
-  else if (!strcmp (handler, IOS_STDERR_HANDLER))
+  else if (STREQ (handler, IOS_STDERR_HANDLER))
     {
       sio->file = stderr;
       sio->flags = IOS_F_WRITE;
@@ -105,8 +104,7 @@ ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
 error:
   if (sio)
     {
-      if (sio->handler)
-	free (sio->handler);
+      free (sio->handler);
       free (sio);
     }
   *error = IOD_ERROR;
@@ -142,37 +140,37 @@ ios_dev_stream_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
     return IOD_ERROR;
 
   /* If the beginning of the buffer is discarded, return EOF. */
-  if (ios_buffer_get_begin_offset(buffer) > offset)
+  if (ios_buffer_get_begin_offset (buffer) > offset)
     return IOD_EOF;
 
   /* If the requsted range is in the buffer, return it. */
-  if (ios_buffer_get_end_offset(buffer) >= offset + count)
+  if (ios_buffer_get_end_offset (buffer) >= offset + count)
     return ios_buffer_pread (buffer, buf, count, offset);
 
   /* What was last read into the buffer may be before or after the
      offset that this function is provided with.  */
-  if (ios_buffer_get_end_offset(buffer) == offset)
+  if (ios_buffer_get_end_offset (buffer) == offset)
     {
       do
-	{
-	  read_count = fread (buf + total_read_count, count, 1, sio->file);
-	  total_read_count += read_count;
-	}
+        {
+          read_count = fread (buf + total_read_count, count, 1, sio->file);
+          total_read_count += read_count;
+        }
       while (total_read_count < count && read_count);
 
       if (ios_buffer_pwrite (buffer, buf, total_read_count, offset)
-	  || total_read_count < count)
-	return IOD_ERROR;
+          || total_read_count < count)
+        return IOD_ERROR;
 
       return IOS_OK;
     }
   else
     {
-      size_t to_be_read = (offset + count) - ios_buffer_get_end_offset(buffer);
+      size_t to_be_read = (offset + count) - ios_buffer_get_end_offset (buffer);
       void *temp = malloc (to_be_read);
       fread (temp, to_be_read, 1, sio->file);
-      if (ios_buffer_pwrite (buffer, temp, to_be_read, ios_buffer_get_end_offset(buffer)))
-	return IOD_ERROR;
+      if (ios_buffer_pwrite (buffer, temp, to_be_read, ios_buffer_get_end_offset (buffer)))
+        return IOD_ERROR;
       free (temp);
       return ios_buffer_pread (buffer, buf, count, offset);
     }
@@ -180,7 +178,7 @@ ios_dev_stream_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
 
 static int
 ios_dev_stream_pwrite (void *iod, const void *buf, size_t count,
-		       ios_dev_off offset)
+                       ios_dev_off offset)
 {
   struct ios_dev_stream *sio = iod;
 
@@ -195,7 +193,7 @@ ios_dev_stream_pwrite (void *iod, const void *buf, size_t count,
   if (offset > sio->write_offset)
     /* TODO: Write this more efficiently. */
     for (int i=0; i < (offset - sio->write_offset); i++)
-      fputc (0,	 sio->file);
+      fputc (0,  sio->file);
 
   fwrite (buf, count, 1, sio->file);
   sio->write_offset = offset + count;
@@ -208,7 +206,7 @@ ios_dev_stream_size (void *iod)
 {
   struct ios_dev_stream *sio = iod;
   if (sio->flags & IOS_F_READ)
-    return ios_buffer_get_end_offset(sio->buffer);
+    return ios_buffer_get_end_offset (sio->buffer);
   else
     return sio->write_offset;
 }
@@ -218,8 +216,8 @@ ios_dev_stream_flush (void *iod, ios_dev_off offset)
 {
   struct ios_dev_stream *sio = iod;
   if (sio->flags & IOS_F_READ
-      && offset > ios_buffer_get_begin_offset(sio->buffer)
-      && offset <= ios_buffer_get_end_offset(sio->buffer))
+      && offset > ios_buffer_get_begin_offset (sio->buffer)
+      && offset <= ios_buffer_get_end_offset (sio->buffer))
     return ios_buffer_forget_till (sio->buffer, offset);
   else
     return IOS_OK;

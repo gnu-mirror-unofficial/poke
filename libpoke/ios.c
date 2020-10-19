@@ -263,7 +263,7 @@ ios_get_id (ios io)
 char *
 ios_get_dev_if_name (ios io)
 {
-  return io->dev_if->get_if_name();
+  return io->dev_if->get_if_name ();
 }
 
 ios_off

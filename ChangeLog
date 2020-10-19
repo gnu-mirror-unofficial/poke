@@ -1,3 +1,22 @@
+2020-10-19  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* testsuite/poke.mi-json/pk_int.json: Add new line at the end.
+	* testsuite/poke.mi-json/pk_uint.json: Likewise.
+	* testsuite/poke.mi-json/pk_offset.json: Likewise.
+	* testsuite/poke.mi-json/pk_string.json: Likewise.
+	* testsuite/poke.mi-json/pk_array.json: Add new line at the end and
+	trim trailing whitespaces.
+	* testsuite/poke.mi-json/pk_sct.json: Likewise.
+	* poke/pk-cmd-ios.c: Expand TAB to 8 spaces.
+	* libpoke/ios-buffer.h: Likewise.
+	* libpoke/ios-buffer.c: Likewise.
+	* libpoke/ios.c: Put space after function name.
+	* libpoke/ios-dev-stream.c: Expand TAB to 8 spaces. Put space after
+	function names. Use STREQ. Remove `if` before `free`. Remove inclusion
+	of assert.h.
+	* libpoke/ios-buffer.h: Reformat function prototypes according to the
+	GNU Coding Standards.
+
 2020-10-12  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/Makefile.am (libpoke_la_SOURCES): Add ios-buffer.h,

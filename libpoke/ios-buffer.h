@@ -18,30 +18,25 @@
 
 struct ios_buffer;
 
-struct ios_buffer * ios_buffer_init ();
+struct ios_buffer *ios_buffer_init ();
 
 int ios_buffer_free (struct ios_buffer *buffer);
 
-ios_dev_off
-ios_buffer_get_begin_offset (struct ios_buffer *buffer);
+ios_dev_off ios_buffer_get_begin_offset (struct ios_buffer *buffer);
 
-ios_dev_off
-ios_buffer_get_end_offset (struct ios_buffer *buffer);
+ios_dev_off ios_buffer_get_end_offset (struct ios_buffer *buffer);
 
-struct ios_buffer_chunk*
-ios_buffer_get_chunk (struct ios_buffer *buffer, int chunk_no);
+struct ios_buffer_chunk *ios_buffer_get_chunk (struct ios_buffer *buffer,
+                                               int chunk_no);
 
-int
-ios_buffer_allocate_new_chunk (struct ios_buffer *buffer, int final_chunk_no,
-			       struct ios_buffer_chunk **final_chunk);
+int ios_buffer_allocate_new_chunk (struct ios_buffer *buffer,
+                                   int final_chunk_no,
+                                   struct ios_buffer_chunk **final_chunk);
 
-int
-ios_buffer_pread (struct ios_buffer *buffer, void *buf, size_t count,
-		  ios_dev_off offset);
+int ios_buffer_pread (struct ios_buffer *buffer, void *buf, size_t count,
+                      ios_dev_off offset);
 
-int
-ios_buffer_pwrite (struct ios_buffer *buffer, const void *buf, size_t count,
-		   ios_dev_off offset);
+int ios_buffer_pwrite (struct ios_buffer *buffer, const void *buf,
+                       size_t count, ios_dev_off offset);
 
-int
-ios_buffer_forget_till (struct ios_buffer *buffer, ios_dev_off offset);
+int ios_buffer_forget_till (struct ios_buffer *buffer, ios_dev_off offset);
