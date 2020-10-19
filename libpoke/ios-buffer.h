@@ -20,7 +20,7 @@ struct ios_buffer;
 
 struct ios_buffer *ios_buffer_init ();
 
-int ios_buffer_free (struct ios_buffer *buffer);
+void ios_buffer_free (struct ios_buffer *buffer);
 
 ios_dev_off ios_buffer_get_begin_offset (struct ios_buffer *buffer);
 

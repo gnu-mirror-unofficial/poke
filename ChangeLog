@@ -1,5 +1,12 @@
 2020-10-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* libpoke/ios-dev-stream.c (ios_dev_stream_close): Free buffer only
+	in read mode.
+	* libpoke/ios-buffer.h (ios_buffer_free): Change return type to void.
+	* libpoke/ios-buffer.c (ios_buffer_free): Handle buffer == NULL.
+
+2020-10-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/ios-dev-stream.c: Add missing include "pk-utils.h".
 
 2020-10-19  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>

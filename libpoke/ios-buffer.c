@@ -72,10 +72,14 @@ ios_buffer_init ()
   return bio;
 }
 
-int
+void
 ios_buffer_free (struct ios_buffer *buffer)
 {
   struct ios_buffer_chunk *chunk, *chunk_next;
+
+  if (buffer == NULL)
+    return;
+
   for (int i = 0; i < IOB_BUCKET_COUNT; i++)
     {
       chunk = buffer->chunks[i];
@@ -88,7 +92,7 @@ ios_buffer_free (struct ios_buffer *buffer)
     }
 
   free (buffer);
-  return 1;
+  return;
 }
 
 struct ios_buffer_chunk*

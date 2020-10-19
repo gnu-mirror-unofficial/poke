@@ -117,7 +117,8 @@ ios_dev_stream_close (void *iod)
 {
   struct ios_dev_stream *sio = iod;
 
-  ios_buffer_free (sio->buffer);
+  if (sio->flags & IOS_F_READ)
+    ios_buffer_free (sio->buffer);
   free (sio);
 
   return 1;
