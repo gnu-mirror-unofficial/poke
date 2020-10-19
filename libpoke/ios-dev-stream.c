@@ -27,6 +27,7 @@
 #include "ios.h"
 #include "ios-dev.h"
 #include "ios-buffer.h"
+#include "pk-utils.h"
 
 #define IOS_STDIN_HANDLER       ("<stdin>")
 #define IOS_STDOUT_HANDLER      ("<stdout>")

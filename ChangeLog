@@ -1,3 +1,7 @@
+2020-10-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/ios-dev-stream.c: Add missing include "pk-utils.h".
+
 2020-10-19  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* testsuite/poke.mi-json/pk_int.json: Add new line at the end.
