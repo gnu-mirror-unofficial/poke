@@ -1,3 +1,11 @@
+2020-10-22  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* doc/poke.texi: output of `.info ios`commands: Add `Type` column.
+	Minor tweaks to make them consistent.
+	* doc/poke.texi (From Bytes to Integers): Remove the description of
+	little-endian integers.
+	* HACKING (Appendix): Fix `pk-utils.[ch]` paths.
+
 2020-10-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/ios-dev-stream.c (ios_dev_stream_close): Free buffer only

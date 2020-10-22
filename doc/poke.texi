@@ -721,16 +721,17 @@ about:
 
 @example
 (poke) .info ios
-  Id	Mode	Size		Name
-* #0	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Size		Name
+* #0	FILE	rw	0x00000398#B	./foo.o
 @end example
 
 The command @command{.info ios} gives us information about all the IO
 spaces that are currently open.  The first column tells us a @dfn{tag}
 that identifies the IOS.  In this example, the tag corresponding to
-@file{foo.o} is @code{#0}.  The second column tells us that
-@file{foo.o} allows both reading and writing.  The third column tells
-us the size of the file, in hexadecimal.
+@file{foo.o} is @code{#0}.  The second column tells us the type of
+IO space. The third column tells us that @file{foo.o} allows both
+reading and writing.  The fourth column tells us the size of the file,
+in hexadecimal.
 
 You may wonder what is that weird suffix @code{#B}.  It is a unit,
 and tells us that the size @code{0x398} is measured in bytes, @i{i.e.} the
@@ -745,9 +746,9 @@ clearly, let's open another file:
 (poke) .file bar.o
 The current IOS is now `./bar.o'.
 (poke) .info ios
-  Id	Mode	Size		Name
-* #1	rw	0x00000398#B	./bar.o
-  #0	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Size		Name
+* #1	FILE	rw	0x00000398#B	./bar.o
+  #0	FILE	rw	0x00000398#B	./foo.o
 @end example
 
 Ah, there we have both @file{foo.o} and @file{bar.o}.  Now the current
@@ -761,9 +762,9 @@ an IO space tag as an argument:
 (poke) .ios #0
 The current IOS is now `./foo.o'.
 (poke) .info ios
-  Id	Mode	Size		Name
-  #1	rw	0x00000398#B	./bar.o
-* #0	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Size		Name
+  #1	FILE	rw	0x00000398#B	./bar.o
+* #0	FILE	rw	0x00000398#B	./foo.o
 @end example
 
 @noindent
@@ -773,8 +774,8 @@ We are back to @file{foo.o}.  Since we are not really interested in
 @example
 (poke) .close #1
 (poke) .info ios
-  Id	Mode	Size		Name
-* #0	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Size		Name
+* #0	FILE	rw	0x00000398#B	./foo.o
 @end example
 
 @noindent
@@ -1314,46 +1315,19 @@ two bytes?  Yeah, it is indeed possible:
 
 @example
 (poke) uint<16> @@ 0#B
-0x457fUH
+0x7f45UH
 @end example
 
 @noindent
 Mapping an unsigned integer of 16-bits at the offset 0 gives us an
-unsigned ``half'' value, as expected.  But wait a minute, didn't you
-notice something weird?@footnote{This is assuming you are running poke
-in a x86 machine or other systems using little-endian.  Otherwise,
-just continue reading the next section :)}
+unsigned ``half'' value, as expected.
 
-@example
-(poke) (byte @@ 0#B):::(byte @@ 1#B)
-0x7f45UH
-(poke) uint<16> @@ 0#B
-0x457fUH
-@end example
-
-@noindent
-The bytes are reversed when we map an unsigned 16-bit integer, but not
-when we concatenate the two mapped byte values at the beginning of the
-file.  Apparently, the @code{uint<16>} mapping is wrong, because the
-bytes are clearly arranged in the file the other way around:
-
-@example
-(poke) dump :from 0#B :size 16#B
-76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
-00000000: 7f45 4c46 0201 0000 0000 0000 0000 0000  .ELF............
-@end example
-
-The solution for the mystery, which is probably one of the biggest
-banes in the computing world, with a cost for the industry of who
-knows how many millions of dollars every year, is explained in the
-next section.
-
-Before that, just note that you can build bigger and bigger arrays
-concatenating more and more bytes.   Three bytes? sure:
+You can easily build bigger and bigger arrays concatenating more and
+more bytes.   Three bytes? sure:
 
 @example
 (poke) uint<24> @@ 0#B
-(uint<24>) 0x4c457f
+(uint<24>) 0x7f454c
 @end example
 
 @noindent
@@ -1362,7 +1336,7 @@ indicate that the given value is 24-bits long.  Four bytes?
 
 @example
 (poke) uint<32> @@ 0#B
-0x464c457fU
+0x7f454c46U
 @end example
 
 Certain integer widths are so often used that easier-to-type synonyms
@@ -2066,8 +2040,8 @@ that opened a file as an IO space?
 (poke) .file foo.o
 The current IOS is now `./foo.o'.
 (poke) .info ios
-  Id	Mode	Size		Name
-* #0	rw	0x000004c8#B	./foo.o
+  Id	Type	Mode	Size		Name
+* #0	FILE	rw	0x000004c8#B	./foo.o
 @end example
 
 @noindent
@@ -2079,9 +2053,9 @@ Memory buffers can be created using a similar dot-command,
 The current IOS is now `*foo*'.
 (poke) .info ios
 (poke) .info ios
-  Id    Mode    Size            Name
-* #1            0x00001000#B    *foo*
-  #0    rw      0x000004c8#B    ./foo.o
+  Id	Type	Mode    Size            Name
+* #1	MEMORY		0x00001000#B    *foo*
+  #0	FILE	rw	0x000004c8#B    ./foo.o
 @end example
 
 Note how the name of the buffer is built by prepending and appending
@@ -2204,9 +2178,9 @@ we can continue our work tomorrow.  This is how we would do that:
 
 @example
 (poke) .info ios
-  Id    Mode    Size            Name
-* #1            0x00001000#B    *scratch*
-  #0    rw      0x000f4241#B    ./foo.o
+  Id    Type	Mode    Size            Name
+* #1	MEMORY		0x00001000#B    *scratch*
+  #0	FILE	rw	0x000f4241#B    ./foo.o
 (poke) save :from 0#B :size iosize (1) :file "scratch.dat"
 @end example
 
@@ -3180,9 +3154,9 @@ $ poke p.sbm
 (poke) .mem scratch
 The current IOS is now `*scratch*'.
 (poke) .info ios
-  Id	Mode	Size		Name
-* #1		0x00001000#B	*scratch*
-  #0	rw	0x0000006e#B	./p.sbm
+  Id	Type	Mode	Size		Name
+* #1	MEMORY		0x00001000#B	*scratch*
+  #0	FILE	rw	0x0000006e#B	./p.sbm
 (poke) copy :from_ios 0 :from 0#B :to 0#B :size iosize (0)
 (poke) dump
 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
@@ -4734,9 +4708,9 @@ Display a list of open files.
 
 @example
 (poke) .info ios
-Id	Mode	Size		Name
-* #0	rw	0x00000022#B	foo.bson
-#1	r	0x0000df78#B	foo.o
+Id	Type	Mode	Size		Name
+  #1	FILE	r	0x0000df78#B	foo.o
+* #0	FILE	rw	0x00000022#B	foo.bson
 @end example
 
 @cindex IO space
@@ -4750,9 +4724,9 @@ switch to it as the new current IO space:
 (poke) .ios #1
 The current file is now `foo.o'.
 (poke) .info ios
-  Id	Mode	Size		Name
-  #0	rw      0x00000022#B	foo.bson
-* #1	r       0x0000df78#B	foo.o
+  Id	Type	Mode	Size		Name
+* #1	FILE	r	0x0000df78#B	foo.o
+  #0	FILE	rw	0x00000022#B	foo.bson
 @end example
 
 @item .info variable

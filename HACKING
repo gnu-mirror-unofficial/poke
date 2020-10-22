@@ -2031,7 +2031,7 @@ Common Code
 ~~~~~~~~~~~
 
 The following source files are used by both poke and libpoke
-  ``libpoke/pk-utils.h``, ``libpoke/pk-utils.c``
+  ``common/pk-utils.h``, ``common/pk-utils.c``
 
 
 The poke library
