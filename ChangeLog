@@ -1,5 +1,10 @@
 2020-10-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* DEV-NEWS: New file.
+	* HACKING (Recording noteworthy development changes): New section.
+
+2020-10-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.h: Rename pvm_type_equal to pvm_type_equal_p.
 	* libpoke/pvm.jitter: Likewise.
 	* libpoke/pvm-val.c: Likewise.

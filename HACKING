@@ -5,7 +5,7 @@ GNU Poke - Hacking Notes
 Welcome, adventurous poker! This file contains useful information for
 you.
 
-Copyright (C) 2019, 2020 Jose E. Marchesi
+Copyright (C) 2019, 2020 The poke authors.
 
 This file is part of GNU poke.
 
@@ -31,15 +31,16 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 ..
      1  Nomenclature
      2  Maintainers
-       2.1  GNU Maintainer
-       2.2  Global Reviewers
-       2.3  Maintainers
-       2.4  Write After Approval
-       2.5  Personal Branches
-       2.6  Building Release Tarballs
-       2.7  Installing Obvious Changes
-       2.8  The Bugzilla
-         2.8.1  Dealing with spam in the Bugzilla
+       2. 1  GNU Maintainer
+       2. 2  Global Reviewers
+       2. 3  Maintainers
+       2. 4  Write After Approval
+       2. 5  Personal Branches
+       2. 6  Building Release Tarballs
+       2. 7  Installing Obvious Changes
+       2. 8  The Bugzilla
+         2. 8.1  Dealing with spam in the Bugzilla
+       2. 9  Recording noteworthy development changes
      3  Development Environment
        3. 1  Autotools
        3. 2  Dejagnu
@@ -66,6 +67,8 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
          4.1.4  Documenting Functions in Public Headers
        4.2  Writing Poke
        4.3  Writing RAS
+         4.3.1  RAS Emacs mode
+         4.3.2  Calling compiled Poke from RAS
      5  Writing Tests
        5. 1  Test framework
        5. 2  Unit Tests
@@ -272,6 +275,19 @@ transitioning the following fields::
   Assigneee -> nobody@sourceware.org
   Status -> Closed as invalid
 
+Recording noteworthy development changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes the development of poke can be fast, and may be difficult
+for hackers to stay up to date with the latest modifications and
+changes.  The DEV-NEWS file records noteworthy changes in a terse way,
+and it is intended to be a helper for developers.
+
+If you change or add something that you think should be noted by other
+hackers, such as the addition of a new API, or a change in an existing
+interface, or a new auxiliary tool, or ... please consider adding a
+record to DEV-NEWS
+  
 
 Development Environment
 -----------------------
