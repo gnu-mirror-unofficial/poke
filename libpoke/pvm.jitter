@@ -62,6 +62,7 @@ wrapped-functions
   pvm_allocate_struct_attrs
   pvm_make_struct_type
   pvm_typeof
+  pvm_type_equal_p
   pvm_ref_struct
   pvm_set_struct
   ios_cur
@@ -4162,7 +4163,7 @@ instruction isa ()
     pvm_val val = JITTER_UNDER_TOP_STACK ();
     pvm_val val_type = pvm_typeof (val);
 
-    JITTER_PUSH_STACK (pvm_make_int (pvm_type_equal (type, val_type),
+    JITTER_PUSH_STACK (pvm_make_int (pvm_type_equal_p (type, val_type),
                                      32));
   end
 end

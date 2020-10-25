@@ -323,7 +323,7 @@ pvm_val pvm_dup_type (pvm_val type)
 pvm_val pvm_typeof (pvm_val val)
   __attribute__ ((visibility ("hidden")));
 
-int pvm_type_equal (pvm_val type1, pvm_val type2)
+int pvm_type_equal_p (pvm_val type1, pvm_val type2)
   __attribute__ ((visibility ("hidden")));
 
 pvm_program pvm_val_cls_program (pvm_val cls)

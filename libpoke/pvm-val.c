@@ -478,7 +478,7 @@ pvm_val_equal_p (pvm_val val1, pvm_val val2)
       return 1;
     }
   else if (PVM_IS_TYP (val1) && PVM_IS_TYP (val2))
-    return pvm_type_equal (val1, val2);
+    return pvm_type_equal_p (val1, val2);
   else
     return 0;
 }
@@ -1224,7 +1224,7 @@ pvm_typeof (pvm_val val)
 }
 
 int
-pvm_type_equal (pvm_val type1, pvm_val type2)
+pvm_type_equal_p (pvm_val type1, pvm_val type2)
 {
   enum pvm_type_code type_code_1 = PVM_VAL_TYP_CODE (type1);
   enum pvm_type_code type_code_2 = PVM_VAL_TYP_CODE (type2);
@@ -1247,14 +1247,14 @@ pvm_type_equal (pvm_val type1, pvm_val type2)
     case PVM_TYPE_ANY:
       return 1;
     case PVM_TYPE_ARRAY:
-      return pvm_type_equal (PVM_VAL_TYP_A_ETYPE (type1),
-                             PVM_VAL_TYP_A_ETYPE (type2));
+      return pvm_type_equal_p (PVM_VAL_TYP_A_ETYPE (type1),
+                               PVM_VAL_TYP_A_ETYPE (type2));
     case PVM_TYPE_STRUCT:
       return (STREQ (PVM_VAL_STR (PVM_VAL_TYP_S_NAME (type1)),
                      PVM_VAL_STR (PVM_VAL_TYP_S_NAME (type2))));
     case PVM_TYPE_OFFSET:
-      return (pvm_type_equal (PVM_VAL_TYP_O_BASE_TYPE (type1),
-                              PVM_VAL_TYP_O_BASE_TYPE (type2))
+      return (pvm_type_equal_p (PVM_VAL_TYP_O_BASE_TYPE (type1),
+                                PVM_VAL_TYP_O_BASE_TYPE (type2))
               && (PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (type1))
                   == PVM_VAL_ULONG (PVM_VAL_TYP_O_UNIT (type2))));
     case PVM_TYPE_CLOSURE:
@@ -1265,15 +1265,15 @@ pvm_type_equal (pvm_val type1, pvm_val type2)
             != PVM_VAL_ULONG (PVM_VAL_TYP_C_NARGS (type2)))
           return 0;
 
-        if (!pvm_type_equal (PVM_VAL_TYP_C_RETURN_TYPE (type1),
-                             PVM_VAL_TYP_C_RETURN_TYPE (type2)))
+        if (!pvm_type_equal_p (PVM_VAL_TYP_C_RETURN_TYPE (type1),
+                               PVM_VAL_TYP_C_RETURN_TYPE (type2)))
           return 0;
 
         nargs = PVM_VAL_ULONG (PVM_VAL_TYP_C_NARGS (type1));
         for (i = 0; i < nargs; i++)
           {
-            if (!pvm_type_equal (PVM_VAL_TYP_C_ATYPE (type1, i),
-                                 PVM_VAL_TYP_C_ATYPE (type2, i)))
+            if (!pvm_type_equal_p (PVM_VAL_TYP_C_ATYPE (type1, i),
+                                   PVM_VAL_TYP_C_ATYPE (type2, i)))
               return 0;
           }
 
