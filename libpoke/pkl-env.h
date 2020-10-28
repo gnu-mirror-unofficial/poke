@@ -59,26 +59,22 @@ typedef struct pkl_env *pkl_env;  /* Struct defined in pkl-env.c */
 
 /* Get an empty environment.  */
 
-pkl_env pkl_env_new (void)
-  __attribute__ ((visibility ("hidden")));
+pkl_env pkl_env_new (void);
 
 /* Destroy ENV, freeing all resources.  */
 
-void pkl_env_free (pkl_env env)
-  __attribute__ ((visibility ("hidden")));
+void pkl_env_free (pkl_env env);
 
 /* Push a new frame to ENV and return the modified environment.  The
    new frame is empty.  */
 
-pkl_env pkl_env_push_frame (pkl_env env)
-  __attribute__ ((visibility ("hidden")));
+pkl_env pkl_env_push_frame (pkl_env env);
 
 /* Pop a frame from ENV and return the modified environment.  The
    contents of the popped frame are disposed.  Trying to pop the
    top-level frame is an error.  */
 
-pkl_env pkl_env_pop_frame (pkl_env env)
-  __attribute__ ((visibility ("hidden")));
+pkl_env pkl_env_pop_frame (pkl_env env);
 
 /* Register the declaration DECL in the current frame under NAME in
    the given NAMESPACE.  Return 1 if the declaration was properly
@@ -88,20 +84,17 @@ pkl_env pkl_env_pop_frame (pkl_env env)
 int pkl_env_register (pkl_env env,
                       int namespace,
                       const char *name,
-                      pkl_ast_node decl)
-  __attribute__ ((visibility ("hidden")));
+                      pkl_ast_node decl);
 
 /* Return 1 if the given ENV contains only one frame.  Return 0
    otherwise.  */
 
-int pkl_env_toplevel_p (pkl_env env)
-  __attribute__ ((visibility ("hidden")));
+int pkl_env_toplevel_p (pkl_env env);
 
 /* Return a copy of ENV.  Note this only works for top-level
    environments.  */
 
-pkl_env pkl_env_dup_toplevel (pkl_env env)
-  __attribute__ ((visibility ("hidden")));
+pkl_env pkl_env_dup_toplevel (pkl_env env);
 
 /* Declarations in Poke live in two different, separated name spaces:
 
@@ -123,8 +116,7 @@ pkl_env pkl_env_dup_toplevel (pkl_env env)
 
 pkl_ast_node pkl_env_lookup (pkl_env env, int namespace,
                              const char *name,
-                             int *back, int *over)
-  __attribute__ ((visibility ("hidden")));
+                             int *back, int *over);
 
 /* The following iterators work on the main namespace.  */
 
@@ -135,19 +127,15 @@ struct pkl_ast_node_iter
 };
 
 
-void pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter)
-  __attribute__ ((visibility ("hidden")));
+void pkl_env_iter_begin (pkl_env env, struct pkl_ast_node_iter *iter);
 
-void pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter)
-  __attribute__ ((visibility ("hidden")));
+void pkl_env_iter_next (pkl_env env, struct pkl_ast_node_iter *iter);
 
-bool pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter)
-  __attribute__ ((visibility ("hidden")));
+bool pkl_env_iter_end (pkl_env env, const struct pkl_ast_node_iter *iter);
 
 char *pkl_env_get_next_matching_decl (pkl_env env,
                                       struct pkl_ast_node_iter *iter,
-                                      const char *name, size_t len)
-  __attribute__ ((visibility ("hidden")));
+                                      const char *name, size_t len);
 
 /* Map over the declarations defined in the top-level compile-time
    environment, executing a handler.  */
@@ -160,7 +148,6 @@ typedef void (*pkl_map_decl_fn) (pkl_ast_node decl, void *data);
 void pkl_env_map_decls (pkl_env env,
                         int what,
                         pkl_map_decl_fn cb,
-                        void *data)
-  __attribute__ ((visibility ("hidden")));
+                        void *data);
 
 #endif /* !PKL_ENV_H  */

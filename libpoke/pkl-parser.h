@@ -60,12 +60,10 @@ struct pkl_parser
 #define PKL_PARSE_STATEMENT 3
 
 int pkl_parse_file (pkl_compiler compiler, pkl_env *env, pkl_ast *ast,
-                    FILE *fp, const char *fname)
-  __attribute__ ((visibility ("hidden")));
+                    FILE *fp, const char *fname);
 
 int pkl_parse_buffer (pkl_compiler compiler, pkl_env *env, pkl_ast *ast,
-                      int what, const char *buffer, const char **end)
-  __attribute__ ((visibility ("hidden")));
+                      int what, const char *buffer, const char **end);
 
 
 

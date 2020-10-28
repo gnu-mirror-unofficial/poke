@@ -25,15 +25,12 @@
 #include "pkl-ast.h"
 
 void pkl_error (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
-                const char *fmt, ...)
-  __attribute__ ((visibility ("hidden")));
+                const char *fmt, ...);
 
 void pkl_warning (pkl_compiler compiler, pkl_ast ast,
-                  pkl_ast_loc loc, const char *fmt, ...)
-  __attribute__ ((visibility ("hidden")));
+                  pkl_ast_loc loc, const char *fmt, ...);
 
 void pkl_ice (pkl_compiler compiler, pkl_ast ast, pkl_ast_loc loc,
-              const char *fmt, ...)
-  __attribute__ ((visibility ("hidden")));
+              const char *fmt, ...);
 
 #endif /* ! PKL_DIAG_H */

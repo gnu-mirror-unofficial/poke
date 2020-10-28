@@ -1,3 +1,23 @@
+2020-10-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* bootstrap.conf: Add `lib-symbol-visibility` module to `libpoke`.
+	* libpoke/Makefile.am: Add CPP flags to hide symbols by default.
+	* libpoke/libpoke.h: Define `LIBPOKE_API` macro. Mark all public
+	functions with `LIBPOKE_API`.
+	* libpoke/ios.h: Remove `__attribute__ ((visibility ("hidden")))`.
+	* libpoke/pkl-asm.h: Likewise.
+	* libpoke/pkl-ast.h: Likewise.
+	* libpoke/pkl-diag.h: Likewise.
+	* libpoke/pkl-env.h: Likewise.
+	* libpoke/pkl-parser.h: Likewise.
+	* libpoke/pkl-pass.h: Likewise.
+	* libpoke/pkl.h: Likewise.
+	* libpoke/pkl-alloc.h: Likewise.
+	* libpoke/pvm-program.h: Likewise.
+	* libpoke/pvm-val.h: Likewise.
+	* libpoke/pvm.h: Likewise.
+	* DEV-NEWS: Add relevant notes for devs.
+
 2020-10-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* DEV-NEWS: New file.

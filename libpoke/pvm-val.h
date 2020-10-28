@@ -590,9 +590,7 @@ typedef struct pvm_off *pvm_off;
     } while (0)
 
 void pvm_allocate_struct_attrs (pvm_val nfields, pvm_val **fnames,
-                                pvm_val **ftypes)
-  __attribute__ ((visibility ("hidden")));
-void pvm_allocate_closure_attrs (pvm_val nargs, pvm_val **atypes)
-  __attribute__ ((visibility ("hidden")));
+                                pvm_val **ftypes);
+void pvm_allocate_closure_attrs (pvm_val nargs, pvm_val **atypes);
 
 #endif /* ! PVM_VAL_H */

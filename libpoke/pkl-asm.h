@@ -67,29 +67,25 @@ typedef struct pkl_asm *pkl_asm;
    PVM program.  */
 
 pkl_asm pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
-                     int prologue)
-  __attribute__ ((visibility ("hidden")));
+                     int prologue);
 
 /* Finish the assembly of the current program and return it.  This
    function frees all resources used by the assembler instance, and
    `pkl_asm_new' should be called again in order to assemble another
    program.  */
 
-pvm_program pkl_asm_finish (pkl_asm pasm, int epilogue)
-  __attribute__ ((visibility ("hidden")));
+pvm_program pkl_asm_finish (pkl_asm pasm, int epilogue);
 
 /* Assemble an instruction INSN and append it to the program being
    assembled in PASM.  If the instruction takes any argument, they
    follow after INSN.  */
 
-void pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...);
 
 /* Emit assembly code for calling the function FUNCNAME, which should
    be defined in the global environment.  */
 
-void pkl_asm_call (pkl_asm pasm, const char *funcname)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_call (pkl_asm pasm, const char *funcname);
 
 /* Conditionals.
  *
@@ -112,17 +108,13 @@ void pkl_asm_call (pkl_asm pasm, const char *funcname)
  * type.
  */
 
-void pkl_asm_if (pkl_asm pasm, pkl_ast_node exp)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_if (pkl_asm pasm, pkl_ast_node exp);
 
-void pkl_asm_then (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_then (pkl_asm pasm);
 
-void pkl_asm_else (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_else (pkl_asm pasm);
 
-void pkl_asm_endif (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_endif (pkl_asm pasm);
 
 /* Simple loops.
  *
@@ -133,11 +125,9 @@ void pkl_asm_endif (pkl_asm pasm)
  * pkl_asm_endloop (pasm);
  */
 
-void pkl_asm_loop (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_loop (pkl_asm pasm);
 
-void pkl_asm_endloop (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_endloop (pkl_asm pasm);
 
 /* While loops.
  *
@@ -155,14 +145,11 @@ void pkl_asm_endloop (pkl_asm pasm)
  * int<32> value, and this is assumed by pkl_asm_while_loop.
  */
 
-void pkl_asm_while (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_while (pkl_asm pasm);
 
-void pkl_asm_while_loop (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_while_loop (pkl_asm pasm);
 
-void pkl_asm_while_endloop (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_while_endloop (pkl_asm pasm);
 
 /* For-in-where loops.
  *
@@ -185,17 +172,13 @@ void pkl_asm_while_endloop (pkl_asm pasm)
  */
 
 void pkl_asm_for (pkl_asm pasm, int container_type,
-                  pkl_ast_node selector)
-  __attribute__ ((visibility ("hidden")));
+                  pkl_ast_node selector);
 
-void pkl_asm_for_where (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_for_where (pkl_asm pasm);
 
-void pkl_asm_for_loop (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_for_loop (pkl_asm pasm);
 
-void pkl_asm_for_endloop (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_for_endloop (pkl_asm pasm);
 
 /* Try-catch blocks.
  *
@@ -210,21 +193,17 @@ void pkl_asm_for_endloop (pkl_asm pasm)
  * pkl_asm_endtry (pasm);
  */
 
-void pkl_asm_try (pkl_asm pasm, pkl_ast_node type)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_try (pkl_asm pasm, pkl_ast_node type);
 
-void pkl_asm_catch (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_catch (pkl_asm pasm);
 
-void pkl_asm_endtry (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_endtry (pkl_asm pasm);
 
 /* The following function returns the label associated to the
    enclosing break-able construction (such as a loop or a switch).  If
    there is not such enclosign environment, this function aborts.  */
 
-pvm_program_label pkl_asm_break_label (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+pvm_program_label pkl_asm_break_label (pkl_asm pasm);
 
 /* Assembler directives:
  *
@@ -244,15 +223,12 @@ pvm_program_label pkl_asm_break_label (pkl_asm pasm)
  *       loc lb,le,cb,ce
  */
 
-void pkl_asm_note (pkl_asm pasm, const char *str)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_note (pkl_asm pasm, const char *str);
 
 /* Allocate a fresh PVM label and return it.  */
-pvm_program_label pkl_asm_fresh_label (pkl_asm pasm)
-  __attribute__ ((visibility ("hidden")));
+pvm_program_label pkl_asm_fresh_label (pkl_asm pasm);
 
 /* Append a label.  */
-void pkl_asm_label (pkl_asm pasm, pvm_program_label label)
-  __attribute__ ((visibility ("hidden")));
+void pkl_asm_label (pkl_asm pasm, pvm_program_label label);
 
 #endif /* PKL_ASM_H */

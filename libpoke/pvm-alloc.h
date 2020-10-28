@@ -29,18 +29,14 @@
    services shall be used once finalized, unless pvm_alloc_init is
    invoked again.  */
 
-void pvm_alloc_initialize (void)
-    __attribute__ ((visibility ("hidden")));
-void pvm_alloc_finalize (void)
-    __attribute__ ((visibility ("hidden")));
+void pvm_alloc_initialize (void);
+void pvm_alloc_finalize (void);
 
 /* Register/unregister NELEM pointers at POINTER as roots for the
    garbage-collector.  */
 
-void pvm_alloc_add_gc_roots (void *pointer, size_t nelems)
-  __attribute__ ((visibility ("hidden")));
-void pvm_alloc_remove_gc_roots (void *pointer, size_t nelems)
-  __attribute__ ((visibility ("hidden")));
+void pvm_alloc_add_gc_roots (void *pointer, size_t nelems);
+void pvm_alloc_remove_gc_roots (void *pointer, size_t nelems);
 
 /* Allocate SIZE bytes and return a pointer to the allocated memory.
    SIZE has the same semantics as in malloc(3).  On error, return
@@ -48,8 +44,7 @@ void pvm_alloc_remove_gc_roots (void *pointer, size_t nelems)
 
 void *pvm_alloc (size_t size)
   __attribute__ ((malloc))
-  __attribute__ ((alloc_size (1)))
-  __attribute__ ((visibility ("hidden")));
+  __attribute__ ((alloc_size (1)));
 
 /* Reallocate the given pointer to occupy SIZE bytes and return a
    pointer to the allocated memory.  SIZE has the same semantics as in
@@ -57,27 +52,23 @@ void *pvm_alloc (size_t size)
 
 void *pvm_realloc (void *ptr, size_t size)
   __attribute__ ((malloc))
-  __attribute__ ((alloc_size (2)))
-  __attribute__ ((visibility ("hidden")));
+  __attribute__ ((alloc_size (2)));
 
 /* Allocate a pvm_cls struct and return a pointer to the allocated
    memory.  This type-specific allocator is needed because the GC
    needs additional information to free these structs.  */
 
 void *pvm_alloc_cls (void)
-  __attribute__ ((malloc))
-  __attribute__ ((visibility ("hidden")));
+  __attribute__ ((malloc));
 
 /* Allocate and return a copy of the given STRING.  This call has the
    same semantics than strdup(3).  */
 
 char *pvm_alloc_strdup (const char *string)
-  __attribute__ ((malloc))
-  __attribute__ ((visibility ("hidden")));
+  __attribute__ ((malloc));
 
 /* Forced collection.  */
 
-void pvm_alloc_gc (void)
-  __attribute__ ((visibility ("hidden")));
+void pvm_alloc_gc (void);
 
 #endif /* ! PVM_ALLOC_H */
