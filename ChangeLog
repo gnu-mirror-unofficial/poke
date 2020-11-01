@@ -1,3 +1,10 @@
+2020-11-01  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios-dev.h: Add IOD_OK, IOD_EIOFF, IOD_EFLAGS and IOD_ENOMEM.
+	Change the values of IOD_EOF and IOD_EINVAL.
+	* libpoke/ios.h: Add IOS_EOF and IOS_EINVAL. Define
+	IOD_ERROR_TO_IOS_ERROR.
+
 2020-10-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* bootstrap.conf: Add `lib-symbol-visibility` module to `libpoke`.

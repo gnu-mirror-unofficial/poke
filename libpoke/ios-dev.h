@@ -34,9 +34,14 @@ typedef uint64_t ios_dev_off;
 
 /* Error codes to be used in the interface below.  */
 
-#define IOD_ERROR  -1 /* Generic error.     */
-#define IOD_EOF    -2
-#define IOD_EINVAL -3 /* Invalid argument.  */
+#define IOD_OK      0 /* The operation was performed to completion,
+                         in the expected way.  */
+#define IOD_ERROR  -1 /* Generic error.  */
+#define IOD_EIOFF  -2 /* The provided offset is invalid.  */
+#define IOD_EFLAGS -3 /* Invalid flags specified.  */
+#define IOD_ENOMEM -4 /* Memory allocation failure.  */
+#define IOD_EOF    -5 /* End of file / input.  */
+#define IOD_EINVAL -6 /* Invalid argument.  */
 
 /* Each IO backend should implement a device interface, by filling an
    instance of the struct defined below.  */

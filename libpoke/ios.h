@@ -87,12 +87,18 @@ typedef int64_t ios_off;
 /* The following status codes are used in the several APIs defined
    below in the file.  */
 
-#define IOS_OK 0       /* The operation was performed to completion, in
-                          the expected way.  */
+#define IOS_OK      0  /* The operation was performed to completion,
+                          in the expected way.  */
 
-#define IOS_ERROR -1   /* An unspecified error condition happened.  */
+#define IOS_ERROR  -1  /* An unspecified error condition happened.  */
 
 #define IOS_ENOMEM -4  /* Memory allocation failure.  */
+
+#define IOS_EOF    -5  /* End of file / input.  */
+
+#define IOS_EINVAL -6  /* Invalid argument.  */
+
+#define IOD_ERROR_TO_IOS_ERROR(error_no) (error_no)
 
 /* **************** IOS flags ******************************
 
