@@ -1,5 +1,35 @@
 2020-11-01  Egeyar Bagcioglu  <egeyar@gmail.com>
 
+	* libpoke/ios-dev-file.h: Include errno.h.
+	(ios_dev_file_handler_normalize): Pass a new argument to be filled
+	with the new_handler. Convert the return value to int to return IOD
+	error types. In case of no errors, return IOD_OK.
+	(ios_dev_file_open): Pass a new argument to be filled with the newly
+	opened device. Convert the return value into an int to return IOD
+	error types. In case of no errors, return IOD_OK.
+	* libpoke/ios-dev-mem.h (ios_dev_mem_handler_normalize): Like
+	ios_dev_file_handler_normalize.
+	(ios_dev_mem_open): Like ios_dev_file_open.
+	* libpoke/ios-dev-nbd.h (ios_dev_nbd_handler_normalize): Like
+	ios_dev_file_handler_normalize.
+	(ios_dev_nbd_open): Like ios_dev_file_open.
+	* libpoke/ios-dev-stream.h (ios_dev_stream_handler_normalize): Like
+	ios_dev_file_handler_normalize.
+	(ios_dev_stream_open): Like ios_dev_file_open.
+	* libpoke/ios-dev.h (handler_normalize): Pass a new argument to be
+	filled with the new_handler. Convert the return value to int.
+	(open): Pass a new argument to be filled with the newly opened device.
+	Convert the return value into an int to return IOD error types. In
+	case of no errors, return IOD_OK.
+	* libpoke/ios.c (ios_open): Set IO id after making sure open won't
+	fail. Handle errors returned by handler_normalize and open. Prevent
+	opening an already-open IO space.
+	* libpoke/ios.h: Introduce IOS_EOPEN.
+	* libpoke/pvm.jitter (open): Raise a PVM_E_IO for all possible error
+	values of ios_open.
+
+2020-11-01  Egeyar Bagcioglu  <egeyar@gmail.com>
+
 	* libpoke/ios-dev.h: Add IOD_OK, IOD_EIOFF, IOD_EFLAGS and IOD_ENOMEM.
 	Change the values of IOD_EOF and IOD_EINVAL.
 	* libpoke/ios.h: Add IOS_EOF and IOS_EINVAL. Define

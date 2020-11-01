@@ -121,14 +121,15 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
 {
   struct ios *io;
   struct ios_dev_if **dev_if = NULL;
-  int error = IOD_ERROR, ret;
+  int iod_error = IOD_OK, error = IOS_ERROR;
 
   /* Allocate and initialize the new IO space.  */
   io = malloc (sizeof (struct ios));
   if (!io)
     return IOS_ENOMEM;
 
-  io->id = ios_next_id++;
+  io->handler = NULL;
+  io->dev = NULL;
   io->next = NULL;
   io->bias = 0;
 
@@ -136,7 +137,9 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
      handler.  */
   for (dev_if = ios_dev_ifs; *dev_if; ++dev_if)
     {
-      io->handler = (*dev_if)->handler_normalize (handler, flags);
+      iod_error = (*dev_if)->handler_normalize (handler, flags, &io->handler);
+      if (iod_error)
+        goto error;
       if (io->handler)
         break;
     }
@@ -146,10 +149,21 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
 
   io->dev_if = *dev_if;
 
+  /* Do not re-open an already-open IO space.  */
+  for (ios i = io_list; i; i = i->next)
+    if (STREQ (i->handler, io->handler))
+      {
+        error = IOS_EOPEN;
+        goto error;
+      }
+
   /* Open the device using the interface found above.  */
-  io->dev = io->dev_if->open (handler, flags, &error);
-  if (io->dev == NULL)
+  iod_error = io->dev_if->open (handler, flags, &io->dev);
+  if (iod_error || io->dev == NULL)
     goto error;
+
+  /* Increment the id counter after all possible errors are avoided.  */
+  io->id = ios_next_id++;
 
   /* Add the newly created space to the list, and update the current
      space.  */
@@ -166,12 +180,10 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
     free (io->handler);
   free (io);
 
-  if (error == IOD_EINVAL)
-    ret = IOS_EFLAGS;
-  else
-    ret = IOS_ERROR;
+  if (iod_error)
+    error = IOD_ERROR_TO_IOS_ERROR (iod_error);
 
-  return ret;
+  return error;
 }
 
 void

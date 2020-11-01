@@ -53,18 +53,18 @@ struct ios_dev_if
   char *(*get_if_name) ();
 
   /* Determine whether the provided HANDLER is recognized as a valid
-     device spec by this backend, and if so, return its normalized
-     form (caller will free).  If not, return NULL.  */
+     device spec by this backend, and if so, copy its normalized
+     form into newhandler (caller will free).  In case of error,
+     return the error code.  If not, return IOD_OK.  */
 
-  char *(*handler_normalize) (const char *handler, uint64_t flags);
+  int (*handler_normalize) (const char *handler, uint64_t flags, char **newhandler);
 
-  /* Open a device using the provided HANDLER.  Return the opened
-     device, or NULL if there was an error.  In case of invalid flags,
-     store IOD_EINVAL in ERROR.  Note that this function assumes that
+  /* Open a device using the provided HANDLER.  Fill DEV with the opened
+     device, or return the error code.  Note that this function assumes that
      HANDLER is recognized as a handler by the backend, i.e. HANDLER_P
      returns 1 if HANDLER is passed to it.  */
 
-  void *(*open) (const char *handler, uint64_t flags, int *error);
+  int (*open) (const char *handler, uint64_t flags, void **dev);
 
   /* Close the given device.  Return 0 if there was an error during
 

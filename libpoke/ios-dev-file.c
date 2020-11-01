@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #include "ios.h"
 #include "ios-dev.h"
@@ -45,18 +46,20 @@ ios_dev_file_get_if_name () {
   return "FILE";
 }
 
-static char *
-ios_dev_file_handler_normalize (const char *handler, uint64_t flags)
+static int
+ios_dev_file_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
 {
-  char *newhandler;
-  IOS_FILE_HANDLER_NORMALIZE (handler, newhandler);
+  IOS_FILE_HANDLER_NORMALIZE (handler, *newhandler);
 
-  /* TODO handle the case where newhandler is NULL.  */
-  return newhandler;
+  /* Every handler is accepted as a file handler.  */
+  if (*newhandler == NULL)
+    return IOD_ENOMEM;
+  else
+    return IOD_OK;
 }
 
-static void *
-ios_dev_file_open (const char *handler, uint64_t flags, int *error)
+static int
+ios_dev_file_open (const char *handler, uint64_t flags, void **dev)
 {
   struct ios_dev_file *fio = NULL;
   FILE *f;
@@ -75,12 +78,7 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
       else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
         mode = "w+b";
       else
-        {
-          /* Invalid mode.  */
-          if (error != NULL)
-            *error = IOD_EINVAL;
-          return NULL;
-        }
+          return IOD_EFLAGS;
 
       f = fopen (handler, mode);
     }
@@ -111,22 +109,24 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
   fio->file = f;
   fio->flags = flags;
 
-  return fio;
+  *dev = fio;
+  return IOD_OK;
 
 err:
   if (fio)
-    {
-      free (fio->filename);
-      free (fio);
-    }
+    free (fio->filename);
+  free (fio);
 
   if (f)
     fclose (f);
 
-  if (error != NULL)
-    *error = IOD_ERROR;
-
-  return NULL;
+  if (errno == ENOMEM)
+    return IOD_ENOMEM;
+  else if (errno == EINVAL)
+    return IOD_EINVAL;
+  /* Should never happen.  */
+  else
+    return IOD_ERROR;
 }
 
 static int

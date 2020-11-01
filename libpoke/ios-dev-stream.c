@@ -52,30 +52,40 @@ ios_dev_stream_get_dev_if_name () {
   return "STREAM";
 }
 
-static char *
-ios_dev_stream_handler_normalize (const char *handler, uint64_t flags)
+static int
+ios_dev_stream_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
 {
   /* TODO handle the case where strdup fails. */
   if (STREQ (handler, IOS_STDIN_HANDLER)
       || STREQ (handler, IOS_STDOUT_HANDLER)
       || STREQ (handler, IOS_STDERR_HANDLER))
-    return strdup (handler);
-  else
-    return NULL;
+    {
+      *newhandler = strdup (handler);
+      if (*newhandler == NULL)
+        return IOD_ENOMEM;
+    }
+  return IOD_OK;
 }
 
-static void *
-ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
+static int
+ios_dev_stream_open (const char *handler, uint64_t flags, void **dev)
 {
   struct ios_dev_stream *sio;
+  int error = IOD_ERROR;
 
   sio = malloc (sizeof (struct ios_dev_stream));
   if (!sio)
-    goto error;
+    {
+      error = IOD_ENOMEM;
+      goto error;
+    }
 
   sio->handler = strdup (handler);
   if (!sio->handler)
-    goto error;
+    {
+      error = IOD_ENOMEM;
+      goto error;
+    }
 
   if (STREQ (handler, IOS_STDIN_HANDLER))
     {
@@ -83,7 +93,10 @@ ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
       sio->flags = IOS_F_READ;
       sio->buffer = ios_buffer_init ();
       if (!sio->buffer)
-        goto error;
+        {
+          error = IOD_ENOMEM;
+          goto error;
+        }
     }
   else if (STREQ (handler, IOS_STDOUT_HANDLER))
     {
@@ -100,16 +113,15 @@ ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
   else
     goto error;
 
-  return sio;
+  *dev = sio;
+  return IOD_OK;
 
 error:
   if (sio)
-    {
-      free (sio->handler);
-      free (sio);
-    }
-  *error = IOD_ERROR;
-  return NULL;
+    free (sio->handler);
+  free (sio);
+
+  return error;
 }
 
 static int

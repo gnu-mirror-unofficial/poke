@@ -40,33 +40,38 @@ ios_dev_mem_get_if_name () {
   return "MEMORY";
 }
 
-static char *
-ios_dev_mem_handler_normalize (const char *handler, uint64_t flags)
+static int
+ios_dev_mem_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
 {
   if (handler[0] == '*' && handler[strlen (handler) - 1] == '*')
-    return strdup (handler);
-  return NULL;
+    {
+      *newhandler = strdup (handler);
+      if (*newhandler == NULL)
+        return IOD_ENOMEM;
+    }
+  return IOD_OK;
 }
 
-static void *
-ios_dev_mem_open (const char *handler, uint64_t flags, int *error)
+static int
+ios_dev_mem_open (const char *handler, uint64_t flags, void **dev)
 {
   struct ios_dev_mem *mio = malloc (sizeof (struct ios_dev_mem));
 
   if (!mio)
-    return NULL;
+    return IOD_ENOMEM;
 
   mio->pointer = calloc (MEM_STEP, 1);
   if (!mio->pointer)
     {
       free (mio);
-      return NULL;
+      return IOD_ENOMEM;
     }
 
   mio->size = MEM_STEP;
   mio->flags = flags;
 
-  return mio;
+  *dev = mio;
+  return IOD_OK;
 }
 
 static int

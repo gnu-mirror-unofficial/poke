@@ -49,17 +49,21 @@ ios_dev_nbd_get_if_name () {
   return "NBD";
 }
 
-static char *
-ios_dev_nbd_handler_normalize (const char *handler, uint64_t flags)
+static int
+ios_dev_nbd_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
 {
   if (startswith (handler, "nbd://")
       || startswith (handler, "nbd+unix://"))
-    return strdup (handler);
-  return NULL;
+    {
+      *newhandler = strdup (handler);
+      if (*newhandler == NULL)
+        return IOD_ENOMEM;
+    }
+  return IOD_OK;
 }
 
-static void *
-ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
+static int
+ios_dev_nbd_open (const char *handler, uint64_t flags, void **dev)
 {
   struct ios_dev_nbd *nio = NULL;
   struct nbd_handle *nbd = NULL;
@@ -70,7 +74,7 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
   /* We don't permit truncation.  */
   if (flags_mode & IOS_F_TRUNCATE)
     {
-      err = IOD_EINVAL;
+      err = IOD_EFLAGS;
       goto err;
     }
 
@@ -100,32 +104,34 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
 
   nio = malloc (sizeof *nio);
   if (!nio)
-    goto err;
+    {
+      err = IOD_ENOMEM;
+      goto err;
+    }
 
   nio->uri = strdup (handler);
   if (!nio->uri)
-    goto err;
+    {
+      err = IOD_ENOMEM;
+      goto err;
+    }
 
   nio->nbd = nbd;
   nio->size = size;
   nio->flags = flags;
 
-  return nio;
+  *dev = nio;
+  return IOD_OK;
 
  err:
   /* Worth logging nbd_get_error ()?  */
-  if (error)
-    *error = err;
-
   if (nio)
-    {
-      free (nio->uri);
-      free (nio);
-    }
+    free (nio->uri);
+  free (nio);
 
   nbd_close (nbd);
 
-  return NULL;
+  return err;
 }
 
 static int

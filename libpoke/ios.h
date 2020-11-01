@@ -98,6 +98,8 @@ typedef int64_t ios_off;
 
 #define IOS_EINVAL -6  /* Invalid argument.  */
 
+#define IOS_EOPEN  -7  /* IO space is already open.  */
+
 #define IOD_ERROR_TO_IOS_ERROR(error_no) (error_no)
 
 /* **************** IOS flags ******************************

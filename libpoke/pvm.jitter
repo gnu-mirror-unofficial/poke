@@ -812,7 +812,7 @@ instruction open ()
 
      if (ret == IOS_EFLAGS)
        PVM_RAISE_DFL (PVM_E_IOFLAGS);
-     else if (ret == IOS_ERROR)
+     else if (ret < IOS_OK)
        PVM_RAISE_DFL (PVM_E_IO);
 
      JITTER_DROP_STACK ();
