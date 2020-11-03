@@ -1370,6 +1370,12 @@ EXTRA_DIST = \
   poke.pkl/strings-2.pk \
   poke.pkl/strings-3.pk \
   poke.pkl/strings-4.pk \
+  poke.pkl/strings-esc-1.pk \
+  poke.pkl/strings-esc-2.pk \
+  poke.pkl/strings-esc-diag-1.pk \
+  poke.pkl/strings-esc-diag-2.pk \
+  poke.pkl/strings-esc-diag-3.pk \
+  poke.pkl/strings-esc-diag-4.pk \
   poke.pkl/strings-index-1.pk \
   poke.pkl/strings-index-2.pk \
   poke.pkl/strings-index-diag-1.pk \

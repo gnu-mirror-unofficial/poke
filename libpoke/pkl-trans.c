@@ -20,6 +20,7 @@
 
 #include <gettext.h>
 #define _(str) gettext (str)
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <xalloc.h>
@@ -304,6 +305,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
   size_t string_length, i;
   bool found_backslash = false;
 
+#define ISODIGIT(c) ((unsigned)(c) - '0' < 8) /* is octal digit */
+#define XDIGIT(x) \
+  ((unsigned)(x) - '0' < 10 ? (x) - '0' : ((x) | 0x20) - 'a' + 10)
+
   /* Please keep this code in sync with the string printer in
      pvm-val.c:pvm_print_val.  */
 
@@ -311,27 +316,45 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
      \-expansion, and report errors in the contents of the string.  */
   for (p = string_pointer, string_length = 0; *p != '\0'; ++p)
     {
-      if (p[0] == '\\')
+      string_length++;
+      if (*p != '\\')
+        continue;
+
+      found_backslash = true;
+      ++p;
+
+      if (ISODIGIT (p[0]))
         {
-          switch (p[1])
+          if (ISODIGIT (p[1]))
+            p += ISODIGIT (p[2]) ? 2 : 1;
+          continue;
+        }
+
+      switch (*p)
+        {
+        case '\\':
+        case 'n':
+        case 't':
+        case '"':
+          break;
+        case 'x':
+          ++p;
+          if (!isxdigit (p[0]))
             {
-            case '\\':
-            case 'n':
-            case 't':
-            case '"':
-              string_length++;
-              break;
-            default:
               PKL_ERROR (PKL_AST_LOC (string),
-                         "invalid \\%c sequence in string", p[1]);
+                         _ ("\\x used with no following hex digits"));
               PKL_TRANS_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
-          p++;
-          found_backslash = true;
+          if (isxdigit (p[1]))
+            ++p;
+          break;
+        default:
+          PKL_ERROR (PKL_AST_LOC (string),
+                     _ ("invalid \\%c sequence in string"), *p);
+          PKL_TRANS_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
         }
-      else
-        string_length++;
     }
 
   if (!found_backslash)
@@ -342,23 +365,76 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
 
   for (p = string_pointer, i = 0; *p != '\0'; ++p, ++i)
     {
-      if (p[0] == '\\')
+      if (*p != '\\')
         {
-          switch (p[1])
-            {
-            case '\\': new_string_pointer[i] = '\\'; break;
-            case 'n':  new_string_pointer[i] = '\n'; break;
-            case 't':  new_string_pointer[i] = '\t'; break;
-            case '"':  new_string_pointer[i] = '"'; break;
-            default:
-              assert (0);
-            }
-          p++;
+          new_string_pointer[i] = *p;
+          continue;
         }
-      else
-        new_string_pointer[i] = p[0];
+      ++p;
+
+      /* octal escape sequence */
+      if (ISODIGIT (p[0]))
+        {
+          unsigned int num = p[0] - '0';
+
+          if (ISODIGIT (p[1]))
+            {
+              ++p;
+              num = (num << 3) | (p[0] - '0');
+              if (ISODIGIT (p[1]))
+                {
+                  ++p;
+                  num = (num << 3) | (p[0] - '0');
+                }
+            }
+          if (num == '\0')
+            {
+              PKL_ERROR (PKL_AST_LOC (string),
+                         _ ("string literal cannot contain NULL character"));
+              PKL_TRANS_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+          else if (num > 255)
+            {
+              PKL_ERROR (PKL_AST_LOC (string),
+                         _ ("octal escape sequence out of range"));
+              PKL_TRANS_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+          new_string_pointer[i] = num;
+          continue;
+        }
+
+      switch (*p)
+        {
+        case '\\': new_string_pointer[i] = '\\'; break;
+        case 'n': new_string_pointer[i] = '\n'; break;
+        case 't': new_string_pointer[i] = '\t'; break;
+        case '"': new_string_pointer[i] = '"'; break;
+        case 'x':
+          ++p;
+          new_string_pointer[i] = XDIGIT (p[0]);
+          if (isxdigit (p[1]))
+            {
+              new_string_pointer[i] = (XDIGIT (p[0]) << 4) | XDIGIT (p[1]);
+              ++p;
+            }
+          if (new_string_pointer[i] == '\0')
+            {
+              PKL_ERROR (PKL_AST_LOC (string),
+                         _ ("string literal cannot contain NULL character"));
+              PKL_TRANS_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+          break;
+        default:
+          assert (0);
+        }
     }
   new_string_pointer[i] = '\0';
+
+#undef ISODIGIT
+#undef XDIGIT
 
   free (string_pointer);
   PKL_AST_STRING_POINTER (string) = new_string_pointer;

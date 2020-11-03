@@ -1,0 +1,25 @@
+/* { dg-do run } */
+
+/* Hexadecimal escape sequence */
+
+defvar s = "He\x1llo \x12\x123, World!";
+
+/* { dg-command {.set obase 16} } */
+
+/* { dg-command {s'length} } */
+/* { dg-output "0x12UL" } */
+
+/* { dg-command {s[2]} } */
+/* { dg-output "\n0x1UB" } */
+
+/* { dg-command {s[7]} } */
+/* { dg-output "\n0x12UB" } */
+
+/* { dg-command {s[8]} } */
+/* { dg-output "\n0x12UB" } */
+
+/* { dg-command {s[9]} } */
+/* { dg-output "\n0x33UB" } */
+
+/* { dg-command {s[0:1] + s[3:5] + s[10:]} } */
+/* { dg-output "\n\"Hello, World!\"" } */

@@ -6133,7 +6133,14 @@ Denotes an horizontal tab.
 Denotes a backlash @code{\} character.
 @item \"
 Denotes a double-quote @code{"} character.
+@item \@var{num}
+@var{num} is a number in the range 1 to 255 (inclusive) in base 8.
+@item \x@var{num}
+@var{num} is a number in the range 1 to 255 (inclusive) in base 16.
 @end table
+
+Strings cannot contain @code{0UB} character, and inserting one using
+escape sequences (@code{\0} or @code{\x0}) leads to compilation error.
 
 @node String Types
 @subsection String Types

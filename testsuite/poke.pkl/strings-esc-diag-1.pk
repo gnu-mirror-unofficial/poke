@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+defvar s = "a\0b"; /* { dg-error "" } */

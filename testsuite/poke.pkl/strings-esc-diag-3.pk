@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+/* Invalid \-sequence */
+
+defvar s = "a\8b"; /* { dg-error "" } */

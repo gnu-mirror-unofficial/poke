@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+/* Invalid octal \-sequence */
+
+defvar s = "\400"; /* { dg-error "" } */

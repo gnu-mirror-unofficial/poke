@@ -1,3 +1,18 @@
+2020-11-03  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pkl-trans.c (pkl_trans1_ps_string): Add support for octal
+	and hexadecimal escape sequences.
+	* doc/poke.texi (String Literals): Document new escape sequences.
+	* testsuite/poke.pkl/strings-esc-1.pk: New test.
+	* testsuite/poke.pkl/strings-esc-2.pk: Likewise.
+	* testsuite/poke.pkl/strings-esc-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/strings-esc-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/strings-esc-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/strings-esc-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/string-diag-1.pk: `\x` is now a valid sequence;
+	use `\z` as an invalid escape sequence.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2020-11-01  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-file.h: Include errno.h.
