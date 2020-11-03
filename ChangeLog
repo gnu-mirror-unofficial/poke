@@ -1,3 +1,8 @@
+2020-11-04  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* HACKING (Write After Approval): Add Mohammad-Reza Nabipoor.
+	* AUTHORS: Likewise.
+
 2020-11-03  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/pkl-trans.c (pkl_trans1_ps_string): Add support for octal
