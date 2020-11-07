@@ -202,10 +202,13 @@
       (definition
         (id "=" inst)
         (id "=" id ":" inst))
+      (definitions (definitions "," definitions) (definition))
       (decl
-       ("var" definition)
+       ("var" definitions)
+       ("type" definitions)
+       ("unit" definitions)
        ("method" definition)
-       ("type" definition)
+       ("fun" definition)
        (decl ";" decl))
       (inst
        (id)

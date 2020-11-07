@@ -1,5 +1,10 @@
 2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke-mode.el (poke-smie-grammar): Indent chained
+	declarations for variables, types and units.
+
+2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/bmp.pk: Use chained declarations.
 	* pickles/bpf.pk: Likewise.
 	* pickles/btf.pk: Likewise.
