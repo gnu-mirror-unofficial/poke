@@ -53,6 +53,14 @@
   '((t (:inherit font-lock-type-face)))
   "Face used to highlight builtin types.")
 
+(defface poke-type-constructor-integral
+  '((t (:inherit font-lock-type-face)))
+  "Face used to highlight type constructors.")
+
+(defface poke-type-constructor-offset
+  '((t (:inherit poke-unit)))
+  "Face used to highlight offset type constructors")
+
 (defface poke-function
   '((t (:inherit font-lock-function-name-face)))
   "Face used to highlight builtin functions.")
@@ -65,6 +73,10 @@
   '((t (:inherit error)))
   "Face used to highlight builtin exceptions.")
 
+(defface poke-declaration-name
+  '((t (:inherit font-lock-variable-name-face)))
+  "Face used to highlight declaration names.")
+
 ;; from libpoke/pkl-lex.l
 (defconst poke-keywords
   '("pinned" "struct" "union" "else" "while" "until" "for" "in" "where" "if"
@@ -76,7 +88,7 @@
 ;; from libpoke/pkl-lex.l
 ;; from perl -nE 'say qq{"$1"} if /^type (\S+)/' libpoke/*.pk
 (defconst poke-builtin-types
-  '("string" "void" "int" "uint" "offset"
+  '("string" "void" "int" "uint"
     "Exception"
     "bit" "nibble" "byte" "char"
     "ushort" "short"
@@ -168,12 +180,36 @@
 		  (: "\\" (repeat 1 3 (any "01234567"))))
 	  "'")
      0 'font-lock-string-face)
+   ;; string
+   `("\"[^\"]*\"" 0 'font-lock-string-face)
+   ;; Names of declared entities
+   `(,(rx (regexp (regexp-opt '("type" "unit" "fun" "var" "method")))
+          (+ space)
+          (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "_" "0-9")))
+          (+ space)
+          "=")
+     1 'poke-declaration-name)
    ;; attributes
    `(,(rx "'" (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "0-9" "_"))))
      0 'poke-attribute)
    ;; keywords
    `(,(rx symbol-start (regexp (regexp-opt poke-keywords)) symbol-end)
      0 'font-lock-keyword-face)
+   ;; offset type constructors
+   `(,(rx "offset<"
+          (* space)
+          (+ (not ","))
+          (* space)
+          ","
+          (* space)
+          (+ (any "A-Z" "a-z" "_" "0-9"))
+          (* space)
+          ">")
+     0 'poke-type-constructor-offset)
+   ;; integral type constructors
+   `(,(rx (regexp (regexp-opt '("int" "uint"))) "<"
+          (* space) (+ (any "0-9")) (* space) ">")
+     (0 'poke-type-constructor-integral t))
    ;; builtin types
    `(,(rx symbol-start (regexp (regexp-opt poke-builtin-types)) symbol-end)
      0 'poke-type)
