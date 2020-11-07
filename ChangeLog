@@ -1,5 +1,10 @@
 2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	(poke-font-lock-keywords): Cover the case of chained declaration
+	lines with type constructors in them.
+
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-mode.el (poke-font-lock-keywords): Add additional rule
 	to cover chained declarations.
 

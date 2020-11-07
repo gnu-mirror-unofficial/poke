@@ -195,7 +195,7 @@
    `(,(rx (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "_" "0-9")))
           (* space)
           "="
-          (+ (not ","))
+          (+? anychar)
           "," (* space) eol)
      1 'poke-declaration-name)
    ;; attributes
