@@ -77,6 +77,10 @@
   '((t (:inherit font-lock-variable-name-face)))
   "Face used to highlight declaration names.")
 
+(defface poke-field-name
+  '((t (:inherit font-lock-variable-name-face)))
+  "Face used to highlight field names.")
+
 ;; from libpoke/pkl-lex.l
 (defconst poke-keywords
   '("pinned" "struct" "union" "else" "while" "until" "for" "in" "where" "if"
@@ -198,6 +202,16 @@
           (+? anychar)
           "," (* space) eol)
      1 'poke-declaration-name)
+   ;; Field names
+   `(,(rx (any "A-Z" "a-z" "_" "<" ">" "," "[" "]") (* (any "A-Z" "a-z" "_" "0-9"))
+          (+ space)
+          (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "_" "0-9")))
+          (* space)
+          (opt (or ":" "@") (+? anychar))
+          ";"
+          (* space)
+          eol)
+     1 'poke-field-name)
    ;; attributes
    `(,(rx "'" (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "0-9" "_"))))
      0 'poke-attribute)
