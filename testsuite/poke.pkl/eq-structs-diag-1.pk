@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Foo = struct {};
-deftype Bar = struct {};
+type Foo = struct {};
+type Bar = struct {};
 
-defvar i = Foo {} == Bar {}; /* { dg-error "invalid.*\n.*expected Foo" } */
+var i = Foo {} == Bar {}; /* { dg-error "invalid.*\n.*expected Foo" } */

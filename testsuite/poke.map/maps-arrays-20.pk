@@ -1,9 +1,9 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x02 0x20 0x30 0x40  0x66 0x6f 0x6f 0x00   0x62 0x61 0x72 0x73} } */
 
-defvar n = 1;
-deftype Array = byte[n+1][n];
-deftype Packet = struct { Array a; };
+var n = 1;
+type Array = byte[n+1][n];
+type Packet = struct { Array a; };
 
 /* { dg-command { .set obase 16 } } */
 /* { dg-command { Packet @ 0#B } } */

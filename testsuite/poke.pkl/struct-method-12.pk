@@ -2,7 +2,7 @@
 
 /* Optargs in methods.  */
 
-deftype Foo =
+type Foo =
   struct
   {
     int x;

@@ -3,9 +3,9 @@
 /* This test checks that the units in offset types, when given as
    numerical values, are properly promoted to uint<64>.  */
 
-deftype BPF_Insn_Offset = offset<int<16>,64>;
+type BPF_Insn_Offset = offset<int<16>,64>;
 
-deftype BPF_Insn =
+type BPF_Insn =
   struct
   {
     BPF_Insn_Offset offset;

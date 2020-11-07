@@ -3,13 +3,13 @@
 /* A bug in the constructor for Foo was triggering a bug with code
    like this.  */
 
-deftype Foo =
+type Foo =
   struct
   {
-    deftype Bar =
+    type Bar =
       struct
       {
-        defvar jo = 10;
+        var jo = 10;
       };
 
     int data;

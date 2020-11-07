@@ -598,7 +598,7 @@ formulae or to perform some operation defined recursively.
 In these situations, the solution is to first write a Poke function in
 the compiler's runtime library, ``pkl-rt.pk``, like::
 
-  defun _pkl_foo = (uint<64> ival, uint<64> eval,
+  fun _pkl_foo = (uint<64> ival, uint<64> eval,
                     uint<32> ivalw, uint<32> fieldw) uint<64>:
   {
     return ival | (eval <<. (ivalw - fieldw));
@@ -721,7 +721,7 @@ which is the name of the temporary file to create::
 
   [...]
 
-  /* { dg-command { defvar foo = open ("foo.data") } } */
+  /* { dg-command { var foo = open ("foo.data") } } */
 
 The file created by the last dg-data (be it anonymous or named) is the
 current IO space.
@@ -1522,7 +1522,7 @@ body.  For example, this is the code generation part for rand::
 The final step is to define the built-in function proper, in the
 compiler run-time, in ``pkl-rt.pk``::
 
-  defun rand = int<32>: __PKL_BUILTIN_RAND__;
+  fun rand = int<32>: __PKL_BUILTIN_RAND__;
 
 
 The Poke Virtual Machine
@@ -2025,20 +2025,20 @@ Future Developments
 - Allow anonymous initializers in struct constructors.  Something
   like::
 
-    deftype Foo = struct { int i; long j; }
+    type Foo = struct { int i; long j; }
     Foo { i = 10, j = 20L }
 
 - Allow coercions in struct constructors.  Currently this is not
   supported::
 
-    deftype Foo = struct { int i; }
+    type Foo = struct { int i; }
     Foo { i = 10L }
 
 - Doing compile-type static checking for union alternatives, if fields
   with the same names are allowed, will require unification::
 
-    deftype Foo = union { int x : ...; string x; };
-    defvar f = Foo @ 0#B;
+    type Foo = union { int x : ...; string x; };
+    var f = Foo @ 0#B;
     f.x = "foo";
 
 Appendix: The Source Tree

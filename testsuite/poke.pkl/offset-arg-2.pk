@@ -1,11 +1,11 @@
 /* { dg-do compile } */
 
-deftype xxx = struct
+type xxx = struct
 {
   char[2] c;
 };
 
-defun sum = (offset<int, xxx> input) void:
+fun sum = (offset<int, xxx> input) void:
 {
-  defvar h = xxx @ input + 0#xxx;
+  var h = xxx @ input + 0#xxx;
 }

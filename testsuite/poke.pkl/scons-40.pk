@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defvar n = 1;
-deftype Array = byte[n+1][n];
-deftype Packet = struct { Array a; };
+var n = 1;
+type Array = byte[n+1][n];
+type Packet = struct { Array a; };
 
 /* { dg-command { Packet { } } } */
 /* { dg-output "Packet \{a=\\\[\\\[0UB,0UB\\\]\\\]\}" } */

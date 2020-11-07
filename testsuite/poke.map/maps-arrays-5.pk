@@ -4,7 +4,7 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-deftype ja = struct {byte i;};
+type ja = struct {byte i;};
 
 /* { dg-command { byte[(ja @ 4#B).i + 1] @ 1#B } } */
 /* { dg-output "\\\[0x20UB,0x30UB,0x40UB\\\]" } */

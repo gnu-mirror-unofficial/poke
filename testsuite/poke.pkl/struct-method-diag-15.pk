@@ -1,9 +1,9 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
-    defvar v = 10;
+    var v = 10;
 
     method foo = (int i = v) int: /* { dg-error "invalid.*variable" } */
       {

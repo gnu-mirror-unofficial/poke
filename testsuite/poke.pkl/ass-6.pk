@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar a = 10;
-defvar b = 20;
+var a = 10;
+var b = 20;
 
 /* { dg-command { a = b } } */
 /* { dg-command { a } } */

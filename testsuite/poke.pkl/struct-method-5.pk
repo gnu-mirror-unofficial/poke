@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   struct
   {
     int i : i != 20 if i > 0;

@@ -1,13 +1,13 @@
 /* { dg-do run } */
 
-deftype Bar =
+type Bar =
   struct uint<32>
   {
       uint<16> a1;
       uint<16> a2;
   };
 
-deftype Foo =
+type Foo =
   struct
   {
     Bar a;

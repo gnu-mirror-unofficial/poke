@@ -24,7 +24,7 @@
 load dwarf;
 load elf;
 
-defvar _dwarf_map_elf = Elf64_File @ 0#B;
+var _dwarf_map_elf = Elf64_File @ 0#B;
 
 %%
 

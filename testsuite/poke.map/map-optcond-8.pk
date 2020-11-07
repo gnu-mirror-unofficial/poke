@@ -4,7 +4,7 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-deftype Foo = struct { byte a; byte b if b == 0x20; byte c if c == 0x30; };
+type Foo = struct { byte a; byte b if b == 0x20; byte c if c == 0x30; };
 
 /* { dg-command { Foo @ 0#B } } */
 /* { dg-output "Foo {a=0x10UB,b=0x20UB,c=0x30UB}" } */

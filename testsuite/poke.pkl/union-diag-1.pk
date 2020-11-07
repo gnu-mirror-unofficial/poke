@@ -2,9 +2,9 @@
 
 /* Check for unreachable alternatives in unions.  */
 
-defvar a = 10;
+var a = 10;
 
-deftype Foo = union
+type Foo = union
  {
    int foo : a < 20;
    int quux;

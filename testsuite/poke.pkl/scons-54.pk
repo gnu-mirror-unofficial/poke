@@ -3,7 +3,7 @@
 /* This tests that the struct constructors do the right thing with
    anonymous fields.  */
 
-deftype BMP_Header =
+type BMP_Header =
   struct
   {
     byte[2] magic = ['B','M'];

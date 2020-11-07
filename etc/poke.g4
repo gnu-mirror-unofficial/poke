@@ -324,9 +324,9 @@ struct_type_field_constraint:
  */
 
 declaration:
-        'defun' identifier '=' function_specifier
-    | 'defvar' identifier '=' expression ';'
-    | 'deftype' identifier '=' type_specifier ';'
+        'fun' identifier '=' function_specifier
+    | 'var' identifier '=' expression ';'
+    | 'type' identifier '=' type_specifier ';'
     ;
 
 /*

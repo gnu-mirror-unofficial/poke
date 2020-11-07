@@ -1,17 +1,17 @@
 /* { dg-do run } */
 
-deftype Callback = (...)int;
+type Callback = (...)int;
 
-defun add = (args...) int:
+fun add = (args...) int:
   {
-   defvar res = 0;
+   var res = 0;
    for (i in args) res = res + i as int;
    return res;
   }
 
-defun apply = (Callback[] callbacks, int data) int:
+fun apply = (Callback[] callbacks, int data) int:
   {
-   defvar sum = 0;
+   var sum = 0;
 
    for (e in callbacks)
      sum = sum + e (data, 2, 3);

@@ -3,8 +3,8 @@
 /* This test relies on the fact that POKESTYLESDIR is defined on the
    environment.  This is assured by testsuite/Makefile.am */
 
-defvar picklesdir = getenv ("POKEPICKLESDIR");
-defvar length = picklesdir'length;
+var picklesdir = getenv ("POKEPICKLESDIR");
+var length = picklesdir'length;
 
 /* { dg-command { picklesdir[length-8:length-1] } } */
 /* { dg-output {"/pickles"} } */

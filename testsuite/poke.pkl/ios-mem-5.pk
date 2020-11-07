@@ -5,7 +5,7 @@
    by MEM_STEP bytes at a time, from src/ios-dev-mem.c).  */
 
 /* { dg-command { .set obase 10 } } */
-/* { dg-command { defvar buffer = open ("*foo*") } } */
+/* { dg-command { var buffer = open ("*foo*") } } */
 /* { dg-command { try byte @ 1024 * 1024#B = 1; catch if E_eof { printf "caught\n"; } } } */
 /* { dg-output "caught" } */
 /* { dg-command { close (buffer) } } */

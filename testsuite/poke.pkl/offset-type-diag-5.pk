@@ -2,12 +2,12 @@
 
 /* Offset types only work on complete types.  */
 
-defvar N = 2;
-deftype List = int[N];
+var N = 2;
+type List = int[N];
 
-defun foo = (offset<int,List> input, /* { dg-error "on complete types" } */
+fun foo = (offset<int,List> input, /* { dg-error "on complete types" } */
              int len) int:
 {
-    defvar ret = 0;
+    var ret = 0;
     return ret;
 }

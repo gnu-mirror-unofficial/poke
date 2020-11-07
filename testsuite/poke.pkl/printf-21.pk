@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Struct = struct { int i; long l; };
+type Struct = struct { int i; long l; };
 
 printf ("%Tv\n", Struct { i = 10, l = 20L });
 

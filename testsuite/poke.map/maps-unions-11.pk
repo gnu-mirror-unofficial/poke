@@ -1,13 +1,13 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80} } */
 
-deftype Bar =
+type Bar =
     struct
     {
       int marker : 0;
     };
 
-deftype Foo =
+type Foo =
     union
     {
       Bar b;

@@ -1,3 +1,53 @@
+2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: Rename tokens def{var,type,fun,unit} to
+	{var,type,fun,unit}.
+	* libpoke/pkl-lex.l: Likewise.
+	* libpoke/pkl-rt.pk: Adjust accordingly.
+	* libpoke/std.pk: Likewise.
+	* poke/poke.pk: Likewise.
+	* poke/pk-copy.pk: Likewise.
+	* poke/pk-dump.pk: Likewise.
+	* poke/pk-extract.pk: Likewise.
+	* poke/pk-save.pk: Likewise.
+	* poke/pk-cmd.pk: Likewise.
+	* pickles/bmp.pk: Likewise.
+	* pickles/bpf.pk: Likewise.
+	* pickles/btf.pk: Likewise.
+	* pickles/color.pk: Likewise.
+	* pickles/ctf.pk: Likewise.
+	* pickles/dwarf-common.pk: Likewise.
+	* pickles/dwarf-expr.pk: Likewise.
+	* pickles/dwarf-frame.pk: Likewise.
+	* pickles/dwarf-info.pk: Likewise.
+	* pickles/dwarf-pubnames.pk: Likewise.
+	* pickles/dwarf-types.pk: Likewise.
+	* pickles/elf.pk: Likewise.
+	* pickles/id3v1.pk: Likewise.
+	* pickles/id3v2.pk: Likewise.
+	* pickles/leb128.pk: Likewise.
+	* pickles/rgb24.pk: Likewise.
+	* pickles/time.pk: Likewise.
+	* poke/pk-cmd.c (pk_cmd_exec): Likewise.
+	* etc/poke.g4 (declaration): Likewise.
+	* etc/poke-mode.el: Likewise.
+	* poke/pk-map.c (pk_map_load_parsed_map): Likewise.
+	* poke/pk-mi.c: Likewise.
+	* maps/dwarf.map: Likewise.
+	* doc/poke.texi: Likewise.
+	* testsuite/poke.cmd/*.pk: Likewise.
+	* testsuite/poke.pkl/*.pk: Likewise.
+	* testsuite/poke.map/*.pk: Likeiwise.
+	* testsuite/poke.libpoke/*.pk: Likewise.
+	* testsuite/poke.id3v1/*.pk: Likewise.
+	* testsuite/poke.color/*.pk: Likewise.
+	* testsuite/poke.repl/repl.exp: Likewise.
+	* testsuite/poke.std/*.pk: Likewise.
+	* testsuite/poke.mi-json/pk_sct.json: Likewise.
+	* utils/elfextractor: Likewise.
+	* HACKING: Likewise.
+	* TODO: Likewise.
+
 2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h: Do not include config.h as this is an

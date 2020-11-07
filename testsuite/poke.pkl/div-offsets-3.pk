@@ -1,9 +1,9 @@
 /* { dg-do run } */
 
-deftype Packet = struct { byte[64] data; };
-deftype Byte = byte;
+type Packet = struct { byte[64] data; };
+type Byte = byte;
 
-defvar x = 2UL#Packet;
+var x = 2UL#Packet;
 
 /* { dg-command {  x / 1UB#Byte } } */
 /* { dg-output "128UL" } */

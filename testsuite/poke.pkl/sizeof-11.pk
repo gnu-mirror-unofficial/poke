@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype struct_with_intconstr =
+type struct_with_intconstr =
   struct
   {
     int<5> foo;

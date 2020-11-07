@@ -2,7 +2,7 @@
 
 /* This tests that the emitted diagnostic has the right location.  */
 
-defun foo = int:
+fun foo = int:
   {
    try
      raise Exception {code = 1};

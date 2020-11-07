@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 2L#byte;
-defvar y = 16UH#bit;
+var x = 2L#byte;
+var y = 16UH#bit;
 
 /* { dg-command {  x == y } } */
 /* { dg-output "1" } */

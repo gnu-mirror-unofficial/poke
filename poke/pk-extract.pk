@@ -19,7 +19,7 @@
 pk_help_str = pk_help_str
   + "\nextract\t\tExtract the contents of a mapped value to a mem IOS.";
 
-defun extract = (any val, string to) void:
+fun extract = (any val, string to) void:
 {
   /* XXX make TO optional and generate an unique mem IOS name in that
      case.  */

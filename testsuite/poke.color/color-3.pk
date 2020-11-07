@@ -2,6 +2,6 @@
 
 load color;
 
-/* { dg-command "defvar my_color = color_register" } */
+/* { dg-command "var my_color = color_register" } */
 /* { dg-command "color_name (my_color)" } */
 /* { dg-output {"user-defined color"} } */

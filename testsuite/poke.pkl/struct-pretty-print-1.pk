@@ -1,7 +1,7 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
 
-deftype Foo =
+type Foo =
   struct
   {
     byte b;
@@ -10,10 +10,10 @@ deftype Foo =
 
 /* { dg-command {.set pretty-print yes}  } */
 /* { dg-command {.set obase 10 } } */
-/* { dg-command {defvar f = Foo @ 0#B} } */
+/* { dg-command {var f = Foo @ 0#B} } */
 /* { dg-command {f} } */
 /* { dg-output "<16>" } */
-/* { dg-command {defvar a = Foo[3] @ 0#B} } */
+/* { dg-command {var a = Foo[3] @ 0#B} } */
 /* { dg-command {a[0]} } */
 /* { dg-output "\n<16>" } */
 /* { dg-command {a[1]} } */

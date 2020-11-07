@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar aa = [1,2,3];
+var aa = [1,2,3];
 
 /* { dg-command { aa[0] = aa[1] } } */
 /* { dg-command { aa[0] } } */

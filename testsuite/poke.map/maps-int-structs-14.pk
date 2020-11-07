@@ -1,12 +1,12 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
 
-deftype Foo = struct int<32> { int<16> a; offset<uint<16>,B> b; };
+type Foo = struct int<32> { int<16> a; offset<uint<16>,B> b; };
 
 /* { dg-command { .set obase 16 } } */
 
 /* { dg-command { .set endian little } } */
-/* { dg-command { defvar f = Foo @ 0#B } } */
+/* { dg-command { var f = Foo @ 0#B } } */
 /* { dg-command { f.b = 0x2211UH#B } } */
 
 /* { dg-command { dump :from 0#B :size 4#B :group_by 1#B :ruler 0 :ascii 0 } } */

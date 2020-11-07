@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-/* { dg-command { defvar i = 10 as int<9> } } */
+/* { dg-command { var i = 10 as int<9> } } */
 
 /* { dg-command { i = 30UL } } */
 /* { dg-command { i } } */

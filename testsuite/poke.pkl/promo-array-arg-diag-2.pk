@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defun foo = (int[3] a) int: { return a[1]; }
-defun bar = (int[3][2] a) int: { return a[1][1]; }
+fun foo = (int[3] a) int: { return a[1]; }
+fun bar = (int[3][2] a) int: { return a[1][1]; }
 
 /* { dg-command {try foo ([1,2] as int[]); catch if E_conv { print "caught\n"; } } } */
 /* { dg-output "caught" } */

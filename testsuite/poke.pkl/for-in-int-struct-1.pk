@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo = struct uint<32> { int<16> hi; uint<16> lo; };
+type Foo = struct uint<32> { int<16> hi; uint<16> lo; };
 
 /* { dg-command { for (a in [1,0,3] where Foo { lo = a }) { print "lala\n"; } } } */
 /* { dg-output "lala\nlala" } */

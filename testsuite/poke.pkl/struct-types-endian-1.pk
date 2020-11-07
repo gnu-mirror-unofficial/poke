@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Packet = struct
+type Packet = struct
  {
    little uint<11> foo;
    big uint<60> bar;

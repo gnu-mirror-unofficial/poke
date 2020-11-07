@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-deftype Foo = struct int<32> { int<16> hi; uint<16> lo; };
-defun foo = (uint<16> arg) int: { return Foo { hi = 0, lo = arg }; }
+type Foo = struct int<32> { int<16> hi; uint<16> lo; };
+fun foo = (uint<16> arg) int: { return Foo { hi = 0, lo = arg }; }
 
 
 /* { dg-command {.set obase 10} } */

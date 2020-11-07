@@ -3,6 +3,6 @@
 
 load id3v1;
 
-/* { dg-command { defvar tag = ID3V1_Tag @ 0#B } } */
+/* { dg-command { var tag = ID3V1_Tag @ 0#B } } */
 /* { dg-command { tag.get_comment } } */
 /* { dg-output {"very good song"} } */

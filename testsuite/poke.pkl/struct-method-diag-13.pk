@@ -1,11 +1,11 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
     method foo = void: {}
 
-    deftype Bar =
+    type Bar =
       struct
       {
         method bar = void:

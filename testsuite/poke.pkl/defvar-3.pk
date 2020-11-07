@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar name = "foo";
+var name = "foo";
 
 /* { dg-command {  name + "bar" } } */
 /* { dg-output "foobar" } */

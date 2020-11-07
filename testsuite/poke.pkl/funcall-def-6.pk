@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defun def5 = (int a, int b, int c = 1, int d = 2UL) int: { return a + b + c + d; }
+fun def5 = (int a, int b, int c = 1, int d = 2UL) int: { return a + b + c + d; }
 
 /* { dg-command { def5 :a 10 :b 20 :d 30 } } */
 /* { dg-output "61" } */

@@ -38,7 +38,7 @@
 
    The layout of each message is:
 
-   deftype PMI_FrameMessage =
+   type PMI_FrameMessage =
     struct
     {
        big uint<4> size : size <= 2048;

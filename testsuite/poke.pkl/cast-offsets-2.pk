@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = #long;
+var x = #long;
 
 /* { dg-command {  x as offset<int,B> } } */
 /* { dg-output "8#B" } */

@@ -1,11 +1,11 @@
 /* { dg-do compile } */
 
-defun def = (int a, int b, int c = 0) int:
+fun def = (int a, int b, int c = 0) int:
   {
    return a + b + c;
   }
 
-defun bar = void:
+fun bar = void:
   {
    def (1); /* { dg-error "" } */
   }

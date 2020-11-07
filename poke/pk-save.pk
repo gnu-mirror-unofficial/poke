@@ -19,28 +19,28 @@
 pk_help_str = pk_help_str
   + "\nsave\t\tSave a range of an IO space to a file.";
 
-defun save = (int ios = get_ios,
-              string file = "",
-              off64 from = 0#B,
-              off64 size = 0#B,
-              int append = 0,
-              int verbose = 0) void:
+fun save = (int ios = get_ios,
+            string file = "",
+            off64 from = 0#B,
+            off64 size = 0#B,
+            int append = 0,
+            int verbose = 0) void:
 {
  if (file == "" || size == 0#B)
    return;
 
  /* Determine the proper mode for the output IOS and open it.  */
- defvar flags = IOS_F_WRITE;
+ var flags = IOS_F_WRITE;
 
  if (append)
    flags = flags | IOS_F_READ;
  else
    flags = flags | IOS_F_TRUNCATE | IOS_F_CREATE;
 
- defvar file_ios = open (file, flags);
+ var file_ios = open (file, flags);
 
  /* Determine the output offset.  */
- defvar output_offset = 0#B;
+ var output_offset = 0#B;
  if (append)
    output_offset = iosize (file_ios);
 

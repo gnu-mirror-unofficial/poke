@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 6;
+var x = 6;
 
 /* { dg-command { x as uint<16> } } */
 /* { dg-output "6UH" } */

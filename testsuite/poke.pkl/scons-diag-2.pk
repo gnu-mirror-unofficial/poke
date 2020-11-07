@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-deftype Foo = struct { int i; long j; };
+type Foo = struct { int i; long j; };
 
-defvar a = Foo { i = "invalid type" };  /* { dg-error "" } */
+var a = Foo { i = "invalid type" };  /* { dg-error "" } */

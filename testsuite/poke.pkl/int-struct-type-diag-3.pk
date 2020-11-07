@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct int<32>
   {
     string je; /* { dg-error "invalid field" } */

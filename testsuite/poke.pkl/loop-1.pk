@@ -1,9 +1,9 @@
 /* { dg-do run } */
 
-defun loop_1 = (int i) int:
+fun loop_1 = (int i) int:
   {
-   defvar n = 0;
-   defvar res = 1;
+   var n = 0;
+   var res = 1;
 
    while (n < i)
      {

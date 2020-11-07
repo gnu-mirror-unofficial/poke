@@ -2,7 +2,7 @@
 
 /* Struct element constraints should evaluate to a boolean.  */
 
-deftype Packet = struct
+type Packet = struct
   {
     int i : "foo"; /* { dg-error "" } */
   };

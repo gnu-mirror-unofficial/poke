@@ -2,7 +2,7 @@
 
 /* { dg-command { .set obase 16 } } */
 
-defvar x = 2#B;
+var x = 2#B;
 
 /* { dg-command { x ** 10 } } */
 /* { dg-output "0x400#B" } */

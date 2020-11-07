@@ -2,7 +2,7 @@
 
 /* This tests promotion of struct constructor fields.  */
 
-deftype Packet = struct { int i; offset<long,B> l; };
+type Packet = struct { int i; offset<long,B> l; };
 
 /* { dg-command { .set omode flat } } */
 /* { dg-command { Packet { l = (2 as int<3>)#B, i = 66UL } } } */

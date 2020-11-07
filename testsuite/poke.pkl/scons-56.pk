@@ -1,12 +1,12 @@
 /* { dg-do run } */
 
-deftype Bar =
+type Bar =
     struct
     {
       int marker : 0;
     };
 
-deftype Foo =
+type Foo =
     union
     {
       Bar b;

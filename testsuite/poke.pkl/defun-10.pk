@@ -1,9 +1,9 @@
 /* { dg-do run } */
 
-deftype Callback = (int)int;
+type Callback = (int)int;
 
-defun foo = (Callback bar) int: { return bar (10); }
-defun double = (int a) int: { return a * 2; }
+fun foo = (Callback bar) int: { return bar (10); }
+fun double = (int a) int: { return a * 2; }
 
 /* { dg-command {  foo (double) } } */
 /* { dg-output "20" } */

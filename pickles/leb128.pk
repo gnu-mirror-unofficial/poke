@@ -19,14 +19,14 @@
 /* LEB128 or Little Endian Base 128 is a variable-length encoding for
    arbitrarily large integers.  It is used in DWARF.  */
 
-deftype LEB128_Byte =
+type LEB128_Byte =
   struct uint<8>
   {
     uint<1> hi : hi == 1;
     uint<7> lo;
   };
 
-deftype ULEB128 =
+type ULEB128 =
   struct
   {
     LEB128_Byte[] variable;
@@ -34,9 +34,9 @@ deftype ULEB128 =
 
     method value = uint<64>:
       {
-       defvar shift = 0;
-       defvar result = 0UL;
-       defun extract = (byte b) byte: { return (b & 0x7f) <<. shift; }
+       var shift = 0;
+       var result = 0UL;
+       fun extract = (byte b) byte: { return (b & 0x7f) <<. shift; }
 
        /* poke supports up to 64-bit integers.  */
        if (variable'length > 8)
@@ -54,7 +54,7 @@ deftype ULEB128 =
 
     method _print = void:
       {
-       defvar val = 0UL;
+       var val = 0UL;
 
        try val = value;
        catch
@@ -72,7 +72,7 @@ deftype ULEB128 =
       }
   };
 
-deftype LEB128 =
+type LEB128 =
   struct
   {
     LEB128_Byte[] variable;
@@ -80,9 +80,9 @@ deftype LEB128 =
 
     method value = int<64>:
       {
-       defvar shift = 0;
-       defvar result = 0UL;
-       defun extract = (byte b) byte: { return (b & 0x7f) <<. shift; }
+       var shift = 0;
+       var result = 0UL;
+       fun extract = (byte b) byte: { return (b & 0x7f) <<. shift; }
 
        /* poke supports up to 64-bit integers.  */
        if (variable'length > 8)
@@ -103,7 +103,7 @@ deftype LEB128 =
 
     method _print = void:
       {
-       defvar val = 0UL;
+       var val = 0UL;
 
        try val = value;
        catch

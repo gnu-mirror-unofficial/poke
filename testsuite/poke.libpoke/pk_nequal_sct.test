@@ -1,4 +1,4 @@
-deftype Packet = struct { int i; long j; };
+type Packet = struct { int i; long j; };
 ##
 Packet { i = 1, j = 2 }
 ##

@@ -3,7 +3,7 @@
 
 load id3v1;
 
-/* { dg-command { defvar tag = ID3V1_Tag @ 0#B } } */
+/* { dg-command { var tag = ID3V1_Tag @ 0#B } } */
 /* { dg-command { tag.set_artist ("RMS") } } */
 /* { dg-command { dump :ascii 0 :ruler 0 :from tag.artist'offset :size 30#B } } */
 /* { dg-output   "00000021: 524d 5320 2020 2020 2020 2020 2020 2020" } */

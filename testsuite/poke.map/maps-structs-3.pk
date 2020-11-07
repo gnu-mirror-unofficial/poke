@@ -4,9 +4,9 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-deftype Packet = struct { int i; int j; int k;};
+type Packet = struct { int i; int j; int k;};
 
-/* { dg-command { defvar p = Packet @ 0#B } } */
+/* { dg-command { var p = Packet @ 0#B } } */
 /* { dg-command { p } } */
 /* { dg-output "Packet \\{i=0x10203040,j=0x50607080,k=0x90a0b0c0\\}" } */
 

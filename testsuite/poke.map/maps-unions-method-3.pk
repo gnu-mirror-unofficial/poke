@@ -4,7 +4,7 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-deftype Bar =
+type Bar =
   union
   {
     int i : i == 0x50607080;

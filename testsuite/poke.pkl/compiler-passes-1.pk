@@ -3,13 +3,13 @@
 /* This was crashing the compiler due to unneeded re-execution of
    passes.  */
 
-deftype LEB128_Byte =
+type LEB128_Byte =
   struct
   {
     uint<1> hi : hi == 1;
   };
 
-deftype ULEB128 =
+type ULEB128 =
   struct
   {
     LEB128_Byte variable;
@@ -20,7 +20,7 @@ deftype ULEB128 =
       }
   };
 
-deftype Dwarf_Op =
+type Dwarf_Op =
   struct
   {
     ULEB128 u128;

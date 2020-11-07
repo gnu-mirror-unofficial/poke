@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 11U;
-defvar y = 2U;
+var x = 11U;
+var y = 2U;
 
 /* { dg-command {  12U#b != (x + y)#b } } */
 /* { dg-output "1" } */

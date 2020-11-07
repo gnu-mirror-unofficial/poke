@@ -1,4 +1,4 @@
 /* { dg-do compile } */
 
-deftype Packet = struct { uint<8>[] data; };
+type Packet = struct { uint<8>[] data; };
 #Packet; /* { dg-error "on complete types" } */

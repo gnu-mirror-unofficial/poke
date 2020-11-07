@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-defvar a = 10;
+var a = 10;
 
-defvar b = 20;
+var b = 20;

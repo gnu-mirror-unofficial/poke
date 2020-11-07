@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 1L#B;
-defvar y = -7H#b;
+var x = 1L#B;
+var y = -7H#b;
 
 /* { dg-command {  x > y } } */
 /* { dg-output "1" } */

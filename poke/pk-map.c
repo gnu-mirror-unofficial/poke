@@ -520,7 +520,7 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
 
           /* XXX set error location with compiler pragmas... */
           char *defvar_str
-            = pk_str_concat ("defvar ",
+            = pk_str_concat ("var ",
                              PK_MAP_PARSED_ENTRY_VARNAME (entry),
                              " = ", type, " @ ", offset, ";", NULL);
 

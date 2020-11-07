@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 1024#b;
+var x = 1024#b;
 
 /* { dg-command {  x as offset<uint16,B> } } */
 /* { dg-output "128UH#B" } */

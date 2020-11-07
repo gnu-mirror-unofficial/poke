@@ -1,10 +1,10 @@
 /* { dg-do run } */
 
-defvar DATUM_UNKNOWN = 0;
-defvar DATUM_NUMBER = 1;
-defvar DATUM_STRING = 2;
+var DATUM_UNKNOWN = 0;
+var DATUM_NUMBER = 1;
+var DATUM_STRING = 2;
 
-deftype Datum =
+type Datum =
   struct {
     int tag;
     union

@@ -1,4 +1,4 @@
 /* { dg-do compile } */
 
-defvar s = "abc";
+var s = "abc";
 s[1] = 'x'; /* { dg-error "invalid l-value" } */

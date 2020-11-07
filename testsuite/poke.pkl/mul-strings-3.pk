@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = "";
+var x = "";
 
 /* { dg-command { 3 * x } } */
 /* { dg-output {""} } */

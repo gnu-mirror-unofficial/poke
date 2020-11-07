@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defun bar = (offset<uint,B> o) offset<uint,B>: { return o; }
+fun bar = (offset<uint,B> o) offset<uint,B>: { return o; }
 
 /* Coercion from offset with different base type and unit. */
 /* { dg-command {  bar (32#b) } } */

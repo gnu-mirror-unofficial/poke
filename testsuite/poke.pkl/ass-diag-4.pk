@@ -1,4 +1,4 @@
 /* { dg-do compile } */
 
-defvar i = 10;
+var i = 10;
 i = "foo";  /* { dg-error ".*\n.*" } */

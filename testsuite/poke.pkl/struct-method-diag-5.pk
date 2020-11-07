@@ -1,7 +1,7 @@
 /* { dg-do compile } */
 
-defvar n = 3;
-deftype Foo =
+var n = 3;
+type Foo =
   struct
   {
     byte j;

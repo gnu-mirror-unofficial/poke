@@ -1,10 +1,10 @@
 /* { dg-do run } */
 
-defvar x = 3;
-deftype Foo = struct { byte[x] a; };
-defvar y = 2;
-deftype Bar = Foo[y];
-deftype Baz = struct { Bar a; Bar b; };
+var x = 3;
+type Foo = struct { byte[x] a; };
+var y = 2;
+type Bar = Foo[y];
+type Baz = struct { Bar a; Bar b; };
 
 /* { dg-command { .set omode tree } } */
 /* { dg-command { Baz { b = [Foo {a=[x as uint<8> - 2UB,2UB,3UB]}, Foo {}] } } } */

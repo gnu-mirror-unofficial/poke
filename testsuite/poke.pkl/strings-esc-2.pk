@@ -2,7 +2,7 @@
 
 /* Hexadecimal escape sequence */
 
-defvar s = "He\x1llo \x12\x123, World!";
+var s = "He\x1llo \x12\x123, World!";
 
 /* { dg-command {.set obase 16} } */
 

@@ -7,7 +7,7 @@
 /* { dg-command { [1,2]'mapped} } */
 /* { dg-output "\n0" } */
 
-deftype Struct = struct { int i; string s; };
+type Struct = struct { int i; string s; };
 
 /* { dg-command { Struct {i=1,s="foo"}'mapped} } */
 /* { dg-output "\n0" } */
@@ -15,7 +15,7 @@ deftype Struct = struct { int i; string s; };
 /* { dg-command { (byte[2] @ 2#B)'mapped} } */
 /* { dg-output "\n1" } */
 
-/* { dg-command {defvar a = byte[2] @ 0#B} } */
+/* { dg-command {var a = byte[2] @ 0#B} } */
 /* { dg-command { a'mapped} } */
 /* { dg-output "\n1" } */
 

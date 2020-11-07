@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defun if_1 = (int i) int:
+fun if_1 = (int i) int:
 {
- defvar res = 0;
+ var res = 0;
 
  if (i > 10)
    res = 666;

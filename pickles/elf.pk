@@ -29,12 +29,12 @@
  * with these names.
  */
 
-deftype Elf_Half = uint<16>;
-deftype Elf_Word = uint<32>;
-deftype Elf64_Xword = uint<64>;
-deftype Elf64_Sxword = int<64>;
-deftype Elf64_Addr = offset<uint<64>,B>;
-deftype Elf64_Off = offset<uint<64>,B>;
+type Elf_Half = uint<16>;
+type Elf_Word = uint<32>;
+type Elf64_Xword = uint<64>;
+type Elf64_Sxword = int<64>;
+type Elf64_Addr = offset<uint<64>,B>;
+type Elf64_Off = offset<uint<64>,B>;
 
 /****** Relocation Entries.  ******/
 
@@ -44,7 +44,7 @@ deftype Elf64_Off = offset<uint<64>,B>;
    r_type is the type of relocation to apply, which is
    architecture-specific.  See the elf-ARCH pickles.  */
 
-deftype Elf64_RelInfo =
+type Elf64_RelInfo =
   struct Elf64_Xword
   {
     uint<32> r_sym;
@@ -58,14 +58,14 @@ deftype Elf64_RelInfo =
    value.  In architectures using Rel relocations this addend is
    somehow stored in the relocation's memory location.  */
 
-deftype Elf64_Rel =
+type Elf64_Rel =
   struct
   {
     Elf64_Addr r_offset;
     Elf64_RelInfo r_info;
   };
 
-deftype Elf64_Rela =
+type Elf64_Rela =
   struct
   {
     Elf64_Addr r_offset;
@@ -77,49 +77,49 @@ deftype Elf64_Rela =
 
 /* ELF symbol bindings.  */
 
-defvar STB_LOCAL = 0;
-defvar STB_GLOBAL = 1;
-defvar STB_WEAK = 2;
-defvar STB_LOOS = 10;
-defvar STB_HIOS = 12;
-defvar STB_LOPROC = 13;
-defvar STB_HIPROC = 15;
+var STB_LOCAL = 0;
+var STB_GLOBAL = 1;
+var STB_WEAK = 2;
+var STB_LOOS = 10;
+var STB_HIOS = 12;
+var STB_LOPROC = 13;
+var STB_HIPROC = 15;
 
-defvar elf_stb_names =
+var elf_stb_names =
   ["local","global","weak",.[9]="reserved",.[12]="os",.[15]="proc"];
 
 /* ELF symbol types.  */
 
-defvar STT_NOTYPE = 0;
-defvar STT_OBJECT = 1;
-defvar STT_FUNC = 2;
-defvar STT_SECTION = 3;
-defvar STT_FILE = 4;
-defvar STT_COMMON = 5;
-defvar STT_TLS = 6;
-defvar STT_NUM = 7;
-defvar STT_LOOS = 10;
-defvar STT_GNU_IFUNC = 10;
-defvar STT_HIOS = 12;
-defvar STT_LOPROC = 13;
-defvar STT_HIPROC = 15;
+var STT_NOTYPE = 0;
+var STT_OBJECT = 1;
+var STT_FUNC = 2;
+var STT_SECTION = 3;
+var STT_FILE = 4;
+var STT_COMMON = 5;
+var STT_TLS = 6;
+var STT_NUM = 7;
+var STT_LOOS = 10;
+var STT_GNU_IFUNC = 10;
+var STT_HIOS = 12;
+var STT_LOPROC = 13;
+var STT_HIPROC = 15;
 
-defvar elf_stt_names =
+var elf_stt_names =
   ["notype", "object", "func", "section", "file", "common",
    "tls", "num", "8", "9", "gnu_ifunc", "os11", "os12",
    "loproc13", "loproc14", "loproc15"];
 
 /* ELF symbol visibility.  */
 
-defvar STV_DEFAULT = 0;
-defvar STV_INTERNAL = 1;
-defvar STV_HIDDEN = 2;
-defvar STV_PROTECTED = 3;
+var STV_DEFAULT = 0;
+var STV_INTERNAL = 1;
+var STV_HIDDEN = 2;
+var STV_PROTECTED = 3;
 
-defvar elf_stv_names =
+var elf_stv_names =
   ["default", "internal", "hidden", "protected"];
 
-deftype Elf64_Sym =
+type Elf64_Sym =
   struct
   {
     offset<Elf_Word,B> st_name;
@@ -155,35 +155,35 @@ deftype Elf64_Sym =
 
 /* Section types.  */
 
-defvar SHT_STRTAB = 3;
-defvar SHT_RELA = 4;
-defvar SHT_REL = 9;
-defvar SHT_DYNSYM = 11;
+var SHT_STRTAB = 3;
+var SHT_RELA = 4;
+var SHT_REL = 9;
+var SHT_DYNSYM = 11;
 
 /* Section Attribute Flags.  */
 
-defvar SHF_WRITE = 0x1;
-defvar SHF_ALLOC = 0x2;
-defvar SHF_EXECINSTR = 0x4;
-defvar SHF_MERGE = 0x10;
-defvar SHF_STRINGS = 0x20;
-defvar SHF_INFO_LINK = 0x40;
-defvar SHF_LINK_ORDER = 0x80;
-defvar SHF_OS_NONCONFORMING = 0x100;
-defvar SHF_GROUP = 0x200;
-defvar SHF_TLS = 0x400;
-defvar SHF_COMPRESSED = 0x800;
-defvar SHF_MASKOS = 0x0ff0_0000;
-defvar SHF_MASKPROC = 0xf000_0000;
+var SHF_WRITE = 0x1;
+var SHF_ALLOC = 0x2;
+var SHF_EXECINSTR = 0x4;
+var SHF_MERGE = 0x10;
+var SHF_STRINGS = 0x20;
+var SHF_INFO_LINK = 0x40;
+var SHF_LINK_ORDER = 0x80;
+var SHF_OS_NONCONFORMING = 0x100;
+var SHF_GROUP = 0x200;
+var SHF_TLS = 0x400;
+var SHF_COMPRESSED = 0x800;
+var SHF_MASKOS = 0x0ff0_0000;
+var SHF_MASKPROC = 0xf000_0000;
 
-deftype Elf64_SectionFlags =
+type Elf64_SectionFlags =
   struct
   {
     Elf64_Xword flags;
 
     method _print = void:
       {
-        defvar s = "";
+        var s = "";
 
         if (flags & SHF_WRITE)
           s = s + "WRITE,";
@@ -227,7 +227,7 @@ deftype Elf64_SectionFlags =
    sh_flags is the ORed value of the 1-bit flags SHF_* defined
    above.  */
 
-deftype Elf64_Shdr =
+type Elf64_Shdr =
   struct
   {
     offset<Elf_Word,B> sh_name;
@@ -246,35 +246,35 @@ deftype Elf64_Shdr =
 
 /* Segment types.  */
 
-defvar PT_NULL = 0;
-defvar PT_LOAD = 1;
-defvar PT_DYNAMIC = 2;
-defvar PT_INTERP = 3;
-defvar PT_NOTE = 4;
-defvar PT_SHLIB = 5;
-defvar PT_PHDR = 6;
-defvar PT_TLS = 7;
-defvar PT_LOOS = 0x6000_0000;
-defvar PT_HIOS = 0x6fff_ffff;
-defvar PT_LOPROC = 0x7000_0000;
-defvar PT_HIPROC = 0x7fff_ffff;
+var PT_NULL = 0;
+var PT_LOAD = 1;
+var PT_DYNAMIC = 2;
+var PT_INTERP = 3;
+var PT_NOTE = 4;
+var PT_SHLIB = 5;
+var PT_PHDR = 6;
+var PT_TLS = 7;
+var PT_LOOS = 0x6000_0000;
+var PT_HIOS = 0x6fff_ffff;
+var PT_LOPROC = 0x7000_0000;
+var PT_HIPROC = 0x7fff_ffff;
 
 /* Segment Flags.  */
 
-defvar PF_X = 0x1;
-defvar PF_W = 0x2;
-defvar PF_R = 0x4;
-defvar PF_MASKOS = 0x0ff0_0000;
-defvar PF_MASKPROC = 0xf000_0000;
+var PF_X = 0x1;
+var PF_W = 0x2;
+var PF_R = 0x4;
+var PF_MASKOS = 0x0ff0_0000;
+var PF_MASKPROC = 0xf000_0000;
 
-deftype Elf64_SegmentFlags =
+type Elf64_SegmentFlags =
   struct
   {
     Elf_Word flags;
 
     method _print = void:
       {
-        defvar s = "";
+        var s = "";
 
         if (flags & PF_R)
           s = s + "R,";
@@ -293,7 +293,7 @@ deftype Elf64_SegmentFlags =
       }
   };
 
-deftype Elf64_Phdr =
+type Elf64_Phdr =
   struct
   {
     Elf_Word p_type;
@@ -306,11 +306,11 @@ deftype Elf64_Phdr =
     Elf64_Xword p_align;
   };
 
-defvar ELFDATANONE = 0;
-defvar ELFDATA2LSB = 1;
-defvar ELFDATA2MSB = 2;
+var ELFDATANONE = 0;
+var ELFDATA2LSB = 1;
+var ELFDATA2MSB = 2;
 
-deftype Elf64_Ehdr =
+type Elf64_Ehdr =
   struct
   {
     struct
@@ -343,7 +343,7 @@ deftype Elf64_Ehdr =
     Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
   };
 
-deftype Elf64_File =
+type Elf64_File =
   struct
   {
     Elf64_Ehdr ehdr;
@@ -358,7 +358,7 @@ deftype Elf64_File =
        string.  */
     method get_string = (offset<Elf_Word,B> offset) string:
       {
-        defvar strtab = ehdr.e_shstrndx;
+        var strtab = ehdr.e_shstrndx;
         return string @ (shdr[strtab].sh_offset + offset);
       }
 
@@ -378,9 +378,9 @@ deftype Elf64_File =
        corresponding to the first section in the ELF file featuring
        that type.  In case no such section exists, raise a generic
        error exception.  */
-    method get_section_by_type = (Elf_Word type) Elf64_Shdr:
+    method get_section_by_type = (Elf_Word stype) Elf64_Shdr:
       {
-        for (s in shdr where s.sh_type == type)
+        for (s in shdr where s.sh_type == stype)
           return s;
 
         raise E_generic;

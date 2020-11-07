@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 10U#B;
-defvar y = 10U#B;
+var x = 10U#B;
+var y = 10U#B;
 
 /* { dg-command { x as offset<int<1>,B> == y } } */
 /* { dg-output "0" } */

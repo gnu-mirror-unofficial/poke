@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-deftype StructA = struct { int i; };
-deftype StructB = struct { StructA s; long l; };
+type StructA = struct { int i; };
+type StructB = struct { StructA s; long l; };
 
 printf ("%Tv\n", StructB { s = StructA { i = 10 },  l = 20L });
 

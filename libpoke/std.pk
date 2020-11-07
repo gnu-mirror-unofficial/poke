@@ -18,58 +18,58 @@
 
 /*** Standard units.  */
 
-defunit b = 1;
-defunit N = 4;
-defunit B = 8;
+unit b = 1;
+unit N = 4;
+unit B = 8;
 
-defunit Kb = 10 ** 3;
-defunit KB = 10 ** 3 * 8;
-defunit Mb = 10 ** 6;
-defunit MB = 10 ** 6 * 8;
-defunit Gb = 10 ** 9;
-defunit GB = 10 ** 9 * 8;
+unit Kb = 10 ** 3;
+unit KB = 10 ** 3 * 8;
+unit Mb = 10 ** 6;
+unit MB = 10 ** 6 * 8;
+unit Gb = 10 ** 9;
+unit GB = 10 ** 9 * 8;
 
-defunit Kib = 2 ** 10;
-defunit KiB = 2 ** 10 * 8;
-defunit Mib = 2 ** 20;
-defunit MiB = 2 ** 20 * 8;
-defunit Gib = 2 ** 30;
-defunit GiB = 2 ** 30 * 8;
+unit Kib = 2 ** 10;
+unit KiB = 2 ** 10 * 8;
+unit Mib = 2 ** 20;
+unit MiB = 2 ** 20 * 8;
+unit Gib = 2 ** 30;
+unit GiB = 2 ** 30 * 8;
 
 /*** Standard Integral Types.  */
 
-deftype bit = uint<1>;
-deftype nibble = uint<4>;
+type bit = uint<1>;
+type nibble = uint<4>;
 
-deftype uint8 = uint<8>;
-deftype uint16 = uint<16>;
-deftype uint32 = uint<32>;
-deftype uint64 = uint<64>;
+type uint8 = uint<8>;
+type uint16 = uint<16>;
+type uint32 = uint<32>;
+type uint64 = uint<64>;
 
-deftype int8 = int<8>;
-deftype int16 = int<16>;
-deftype int32 = int<32>;
-deftype int64 = int<64>;
+type int8 = int<8>;
+type int16 = int<16>;
+type int32 = int<32>;
+type int64 = int<64>;
 
-deftype uint = uint32;
-deftype int = int32;
-deftype char = uint8;
-deftype byte = uint8;
-deftype ushort = uint16;
-deftype short = int16;
-deftype ulong = uint64;
-deftype long = int64;
+type uint = uint32;
+type int = int32;
+type char = uint8;
+type byte = uint8;
+type ushort = uint16;
+type short = int16;
+type ulong = uint64;
+type long = int64;
 
 /*** Standard Offset Types.  */
 
-deftype off64 = offset<int64,b>;
-deftype uoff64 = offset<uint64,b>;
+type off64 = offset<int64,b>;
+type uoff64 = offset<uint64,b>;
 
 /*** Conversion Functions.  */
 
-defun catos = (char[] chars) string:
+fun catos = (char[] chars) string:
   {
-   defvar s = "";
+   var s = "";
 
    for (c in chars)
      {
@@ -80,12 +80,12 @@ defun catos = (char[] chars) string:
    return s;
   }
 
-defun stoca = (string s, char[] ca, char fill = 0) void:
+fun stoca = (string s, char[] ca, char fill = 0) void:
   {
     if (s'length > ca'length)
       raise E_out_of_bounds;
 
-    defvar i = 0;
+    var i = 0;
     while (i < ca'length)
       {
         ca[i] = i < s'length ? s[i] : fill;
@@ -93,18 +93,18 @@ defun stoca = (string s, char[] ca, char fill = 0) void:
       }
   }
 
-defun atoi = (string s, int b = 10) long:
+fun atoi = (string s, int b = 10) long:
   {
-    defvar result = 0;
+    var result = 0;
 
-    defun htoi = (char c) int:
+    fun htoi = (char c) int:
       {
         if (c >= '0' && c <= '9') return c - '0';
         if (c >= 'a' && c <= 'f') return c - 'a' + 10;
         if (c >= 'A' && c <= 'F') return c - 'A' + 10;
       }
 
-    defun valid = (char c, int b) int:
+    fun valid = (char c, int b) int:
       {
         if (b <= 10) return (c >= '0') && (c <= '0' + b - 1);
         if (b == 16) return ((c >= '0') && (c <= '9')) ||
@@ -130,9 +130,9 @@ defun atoi = (string s, int b = 10) long:
 /* Return the index in the string S of the first occurence of the
    character C.  If C is not in S then return the size of S.  */
 
-defun strchr = (string s, uint<8> c) int<32>:
+fun strchr = (string s, uint<8> c) int<32>:
   {
-    defvar i = 0;
+    var i = 0;
     for (t in s)
       {
         if (s[i] == c)
@@ -145,10 +145,10 @@ defun strchr = (string s, uint<8> c) int<32>:
 
 /* Return S with leading characters belonging to the given set
    omitted.  By default the omitted characters are whitespaces.  */
-defun ltrim = (string s, string cs = " \t") string:
+fun ltrim = (string s, string cs = " \t") string:
   {
-    defvar cs_length = cs'length;
-    defvar result = "";
+    var cs_length = cs'length;
+    var result = "";
     for (c in s)
       {
 	if (strchr (cs, c) == cs_length || result != "")
@@ -159,14 +159,14 @@ defun ltrim = (string s, string cs = " \t") string:
 
 /* Return S with trailing character belonging tot he given set
    omitted.  By default the omitted characters are whitespaces.  */
-defun rtrim = (string s, string cs = " \t") string:
+fun rtrim = (string s, string cs = " \t") string:
   {
-    defvar cs_length = cs'length;
-    defvar result = "";
-    defvar i = s'length;
+    var cs_length = cs'length;
+    var result = "";
+    var i = s'length;
     while (i > 0)
     {
-      defvar c = s[i - 1];
+      var c = s[i - 1];
       if (strchr (cs, c) == cs_length || result != "")
         result = c as string + result;
       i = i - 1;
@@ -176,24 +176,24 @@ defun rtrim = (string s, string cs = " \t") string:
 
 /*** Sorting Functions.  */
 
-deftype Comparator = (any,any)int;
+type Comparator = (any,any)int;
 
-defun qsort = (any[] array, Comparator cmp_f,
+fun qsort = (any[] array, Comparator cmp_f,
                long left = 0, long right = array'length - 1) void:
 {
-   defun partition = int:
+   fun partition = int:
    {
-     defun swap = (long i1, long i2) void:
+     fun swap = (long i1, long i2) void:
      {
-       defvar t = array[i1];
+       var t = array[i1];
        array[i1] = array[i2];
        array[i2] = t;
      }
 
-     defvar pivot = array[right];
-     defvar i = left - 1;
+     var pivot = array[right];
+     var i = left - 1;
 
-     defvar j = left;
+     var j = left;
      while (j <= right - 1)
      {
        if (cmp_f (array[j], pivot) <= 0)
@@ -211,7 +211,7 @@ defun qsort = (any[] array, Comparator cmp_f,
 
    if (left < right)
    {
-     defvar pi = partition;
+     var pi = partition;
 
      qsort (array, cmp_f, left, pi - 1);
      qsort (array, cmp_f, pi + 1, right);
@@ -224,11 +224,11 @@ defun qsort = (any[] array, Comparator cmp_f,
    See ISO 3309 [ISO-3309] or ITU-T V.42 [ITU-V42] for a formal specification.
 */
 
-defun crc32 = (byte[] buf) uint<32>:
+fun crc32 = (byte[] buf) uint<32>:
   {
-   defun update = (uint<32> crc, byte[] buf) uint<32>:
+   fun update = (uint<32> crc, byte[] buf) uint<32>:
    {
-    defvar table =
+    var table =
     [
      0x00000000U, 0x77073096U, 0xee0e612cU, 0x990951baU, 0x076dc419U, 0x706af48fU, 0xe963a535U, 0x9e6495a3U,
      0x0edb8832U, 0x79dcb8a4U, 0xe0d5e91eU, 0x97d2d988U, 0x09b64c2bU, 0x7eb17cbdU, 0xe7b82d07U, 0x90bf1d91U,
@@ -264,7 +264,7 @@ defun crc32 = (byte[] buf) uint<32>:
      0xb3667a2eU, 0xc4614ab8U, 0x5d681b02U, 0x2a6f2b94U, 0xb40bbe37U, 0xc30c8ea1U, 0x5a05df1bU, 0x2d02ef8dU
      ];
 
-    defvar c = crc as uint<32>;
+    var c = crc as uint<32>;
     for (x in buf)
       {
 	c = table[(c ^ x) & 0xff] ^ (c .>> 8);
@@ -277,4 +277,4 @@ defun crc32 = (byte[] buf) uint<32>:
 
 /*** Miscellanea.  */
 
-defvar NULL = 0#B;
+var NULL = 0#B;

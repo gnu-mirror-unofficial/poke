@@ -1,3 +1,3 @@
 /* { dg-do run } */
 
-defvar random_number = rand;
+var random_number = rand;

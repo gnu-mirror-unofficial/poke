@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 0xabUB;
+var x = 0xabUB;
 
 /* { dg-command { .set obase 16 } } */
 

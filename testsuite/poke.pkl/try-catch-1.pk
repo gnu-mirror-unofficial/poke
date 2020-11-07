@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defun baz = (int n) int:
+fun baz = (int n) int:
 {
- defvar a = 100;
+ var a = 100;
 
  try
    a = a / n;

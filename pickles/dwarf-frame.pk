@@ -23,44 +23,44 @@ load "dwarf-expr.pk"; /* For Dwarf_Op  */
 
 /* Call Frame Instructions.  */
 
-defvar DW_CFA_advance_loc = 0x40;
-defvar DW_CFA_offset = 0x80;
-defvar DW_CFA_restore = 0xc0;
-defvar DW_CFA_extended = 0;
+var DW_CFA_advance_loc = 0x40;
+var DW_CFA_offset = 0x80;
+var DW_CFA_restore = 0xc0;
+var DW_CFA_extended = 0;
 
-defvar DW_CFA_nop = 0x00;
-defvar DW_CFA_set_loc = 0x01;
-defvar DW_CFA_advance_loc1 = 0x02;
-defvar DW_CFA_advance_loc2 = 0x03;
-defvar DW_CFA_advance_loc4 = 0x04;
-defvar DW_CFA_offset_extended = 0x05;
-defvar DW_CFA_restore_extended = 0x06;
-defvar DW_CFA_undefined = 0x07;
-defvar DW_CFA_same_value = 0x08;
-defvar DW_CFA_register = 0x09;
-defvar DW_CFA_remember_state = 0x0a;
-defvar DW_CFA_restore_state = 0x0b;
-defvar DW_CFA_def_cfa = 0x0c;
-defvar DW_CFA_def_cfa_register = 0x0d;
-defvar DW_CFA_def_cfa_offset = 0x0e;
-defvar DW_CFA_def_cfa_expression = 0x0f;
-defvar DW_CFA_expression = 0x10;
-defvar DW_CFA_offset_extended_sf = 0x11;
-defvar DW_CFA_def_cfa_sf = 0x12;
-defvar DW_CFA_def_cfa_offset_sf = 0x13;
-defvar DW_CFA_val_offset = 0x14;
-defvar DW_CFA_val_offset_sf = 0x15;
-defvar DW_CFA_val_expression = 0x16;
+var DW_CFA_nop = 0x00;
+var DW_CFA_set_loc = 0x01;
+var DW_CFA_advance_loc1 = 0x02;
+var DW_CFA_advance_loc2 = 0x03;
+var DW_CFA_advance_loc4 = 0x04;
+var DW_CFA_offset_extended = 0x05;
+var DW_CFA_restore_extended = 0x06;
+var DW_CFA_undefined = 0x07;
+var DW_CFA_same_value = 0x08;
+var DW_CFA_register = 0x09;
+var DW_CFA_remember_state = 0x0a;
+var DW_CFA_restore_state = 0x0b;
+var DW_CFA_def_cfa = 0x0c;
+var DW_CFA_def_cfa_register = 0x0d;
+var DW_CFA_def_cfa_offset = 0x0e;
+var DW_CFA_def_cfa_expression = 0x0f;
+var DW_CFA_expression = 0x10;
+var DW_CFA_offset_extended_sf = 0x11;
+var DW_CFA_def_cfa_sf = 0x12;
+var DW_CFA_def_cfa_offset_sf = 0x13;
+var DW_CFA_val_offset = 0x14;
+var DW_CFA_val_offset_sf = 0x15;
+var DW_CFA_val_expression = 0x16;
 
-defvar DW_CFA_low_user = 0x1c;
-defvar DW_CFA_MIPS_advance_loc8 = 0x1d;
-defvar DW_CFA_GNU_window_save = 0x2d;
-defvar DW_CFA_GNU_args_size = 0x2e;
-defvar DW_CFA_GNU_negative_offset_extended = 0x2f;
-defvar DW_CFA_high_user = 0x3f;
+var DW_CFA_low_user = 0x1c;
+var DW_CFA_MIPS_advance_loc8 = 0x1d;
+var DW_CFA_GNU_window_save = 0x2d;
+var DW_CFA_GNU_args_size = 0x2e;
+var DW_CFA_GNU_negative_offset_extended = 0x2f;
+var DW_CFA_high_user = 0x3f;
 
 
-deftype Dwarf_CFI =
+type Dwarf_CFI =
   struct
   {
     struct uint<8>
@@ -69,7 +69,7 @@ deftype Dwarf_CFI =
       uint<6> extop;
     } code;
 
-    defvar ecode = code.extop;
+    var ecode = code.extop;
 
     /* Off-opcode arguments follow.  */
     union
@@ -132,7 +132,7 @@ deftype Dwarf_CFI =
    There is at least one CIE in every non-empty .debug_frame
    section.  */
 
-deftype Dwarf_CIE =
+type Dwarf_CIE =
   struct
   {
     /* Size of the CIE structure, not including the `length' field
@@ -180,7 +180,7 @@ deftype Dwarf_CIE =
        represents the return address of the function.  */
     ULEB128 return_address_register;
 
-    defvar insn_size = (length.value
+    var insn_size = (length.value
                         - cie_id'size
                         - version'size
                         - augmentation'size
@@ -196,7 +196,7 @@ deftype Dwarf_CIE =
 /* DWARF FDE.
    Description of a frame for a given function.  */
 
-deftype Dwarf_FDE =
+type Dwarf_FDE =
   struct
   {
     /* Size of the header and instruction stream for this function,
@@ -214,7 +214,7 @@ deftype Dwarf_FDE =
        entry.  */
     Dwarf_Address address_range;
 
-    defvar padding = (length.value
+    var padding = (length.value
                       - (cie_pointer'size + initial_location'size
                          + address_range'size + address_range.value()#B));
 
@@ -223,7 +223,7 @@ deftype Dwarf_FDE =
 
 /* Call Frame Information.  */
 
-deftype Dwarf_Call_Frame_Entry =
+type Dwarf_Call_Frame_Entry =
   union
   {
     Dwarf_CIE cie;

@@ -1,12 +1,12 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   struct
   {
     method size = uint<16>: { return 5; }
   };
 
-defvar f = Foo {};
+var f = Foo {};
 
 /* { dg-command { f.size == 5 } } */
 /* { dg-output "1" } */

@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defun foo = (int n) int:
+fun foo = (int n) int:
   {
-   defun bar = (int n) int:
+   fun bar = (int n) int:
    {
     return n;
    }

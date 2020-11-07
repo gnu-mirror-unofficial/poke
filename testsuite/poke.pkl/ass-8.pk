@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar bb = [1,2,3];
-defun fff = (any[] a) void: { a[0] = 666; }
+var bb = [1,2,3];
+fun fff = (any[] a) void: { a[0] = 666; }
 
 /* { dg-command { fff (bb) } } */
 /* { dg-command { bb } } */

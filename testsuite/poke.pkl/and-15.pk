@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 666;
+var x = 666;
 
 /* { dg-command {  1 && x } } */
 /* { dg-output 1 } */

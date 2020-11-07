@@ -4,7 +4,7 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-/* { dg-command { defvar ao = offset<int,B>[1] @ 0#B } } */
+/* { dg-command { var ao = offset<int,B>[1] @ 0#B } } */
 /* { dg-command { ao[0] = 0x09876543#B } } */
 /* { dg-command { dump :from ao'offset :size ao'size :group_by 4#B :ruler 0 } } */
 /* { dg-output "00000000: 09876543" } */

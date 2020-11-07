@@ -1,7 +1,7 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
-    defun _print = (int a) void: { print "foo"; } /* { dg-error "should be of type" } */
+    fun _print = (int a) void: { print "foo"; } /* { dg-error "should be of type" } */
   };

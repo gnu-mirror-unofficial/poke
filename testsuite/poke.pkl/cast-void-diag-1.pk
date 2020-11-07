@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-deftype Pac0et = struct { };
+type Pac0et = struct { };
 
-defvar x=0 as  void ;  /* { dg-error "not allowed" } */
+var x=0 as  void ;  /* { dg-error "not allowed" } */

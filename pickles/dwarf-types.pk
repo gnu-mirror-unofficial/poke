@@ -24,7 +24,7 @@ load "dwarf-common.pk";
    conforming a type that has been stored in the .debug_types
    section.  */
 
-deftype Dwarf_Type_Unit_Header =
+type Dwarf_Type_Unit_Header =
   struct
   {
     /* Length of the .debug_types contribution for this CU, not

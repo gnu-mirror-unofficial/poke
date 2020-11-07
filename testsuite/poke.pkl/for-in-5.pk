@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defun foo = (int[] array) int:
+fun foo = (int[] array) int:
   {
-   defvar sum = 0;
+   var sum = 0;
 
    for (a in array where ((a % 2 == 0) as uint<64>))
      sum = sum + a;

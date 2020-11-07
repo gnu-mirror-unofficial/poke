@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo = struct {};
+type Foo = struct {};
 
 /* { dg-command { Foo { } == Foo { } } } */
 /* { dg-output "1" } */

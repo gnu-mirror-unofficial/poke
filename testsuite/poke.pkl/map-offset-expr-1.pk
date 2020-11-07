@@ -1,9 +1,9 @@
 /* { dg-do compile } */
 
-deftype xxx = struct
+type xxx = struct
  {
   uint<32>       data_len;
-  char[4]        type;
+  char[4]        data_type;
   byte[data_len] data;
-  uint<32>       crc : crc == crc32 (byte[data_len+4] @ type'offset);
+  uint<32>       crc : crc == crc32 (byte[data_len+4] @ data_type'offset);
 };

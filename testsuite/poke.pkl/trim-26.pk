@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar a = [1,2,3];
-defvar b = a[0:1];
+var a = [1,2,3];
+var b = a[0:1];
 
 /* { dg-command { a == b } } */
 /* { dg-output "0" } */

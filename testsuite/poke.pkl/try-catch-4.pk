@@ -1,16 +1,16 @@
 /* { dg-do run } */
 
-defun baz = (int n) int:
+fun baz = (int n) int:
 {
-   defun foo = (int n) int:
+   fun foo = (int n) int:
    {
-      defvar a = 100;
+      var a = 100;
       if (n == 0)
         raise E_div_by_zero;
       return a / n;
    }
 
-   defvar ret = 0;
+   var ret = 0;
 
    try
      ret = foo (n);

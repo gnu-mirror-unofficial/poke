@@ -23,53 +23,53 @@
 
 load elf;
 
-defvar CTF_MAX_SIZE = 0xfffffffe;
-defvar CTF_LSIZE_SENT = 0xffffffff;
+var CTF_MAX_SIZE = 0xfffffffe;
+var CTF_LSIZE_SENT = 0xffffffff;
 
-defvar CTF_MAGIC = 0xdff2;
-defvar CTF_VERSION = 3;
+var CTF_MAGIC = 0xdff2;
+var CTF_VERSION = 3;
 
-defvar CTF_K_UNKNOWN  = 0U;
-defvar CTF_K_INTEGER  = 1U;
-defvar CTF_K_FLOAT    = 2U;
-defvar CTF_K_POINTER  = 3U;
-defvar CTF_K_ARRAY    = 4U;
-defvar CTF_K_FUNCTION = 5U;
-defvar CTF_K_STRUCT   = 6U;
-defvar CTF_K_UNION    = 7U;
-defvar CTF_K_ENUM     = 8U;
-defvar CTF_K_FORWARD  = 9U;
-defvar CTF_K_TYPEDEF  = 10U;
-defvar CTF_K_VOLATILE = 11U;
-defvar CTF_K_CONST    = 12U;
-defvar CTF_K_RESTRICT = 13U;
-defvar CTF_K_MAX = 63U;
+var CTF_K_UNKNOWN  = 0U;
+var CTF_K_INTEGER  = 1U;
+var CTF_K_FLOAT    = 2U;
+var CTF_K_POINTER  = 3U;
+var CTF_K_ARRAY    = 4U;
+var CTF_K_FUNCTION = 5U;
+var CTF_K_STRUCT   = 6U;
+var CTF_K_UNION    = 7U;
+var CTF_K_ENUM     = 8U;
+var CTF_K_FORWARD  = 9U;
+var CTF_K_TYPEDEF  = 10U;
+var CTF_K_VOLATILE = 11U;
+var CTF_K_CONST    = 12U;
+var CTF_K_RESTRICT = 13U;
+var CTF_K_MAX = 63U;
 
-defvar CTF_STRTAB_0 = 0; /* Name is in the in-CTF string table.  */
-defvar CTF_STRTAB_1 = 1; /* Name is in an ELF strtab.  */
+var CTF_STRTAB_0 = 0; /* Name is in the in-CTF string table.  */
+var CTF_STRTAB_1 = 1; /* Name is in an ELF strtab.  */
 
-defvar CTF_KIND_UNKNOWN  = 0;
-defvar CTF_KIND_INTEGER  = 1;
-defvar CTF_KIND_FLOAT    = 2;
-defvar CTF_KIND_POINTER  = 3;
-defvar CTF_KIND_ARRAY    = 4;
-defvar CTF_KIND_FUNCTION = 5;
-defvar CTF_KIND_STRUCT   = 6;
-defvar CTF_KIND_UNION    = 7;
-defvar CTF_KIND_ENUM     = 8;
-defvar CTF_KIND_FORWARD  = 9;
-defvar CTF_KIND_TYPEDEF  = 10;
-defvar CTF_KIND_VOLATILE = 11;
-defvar CTF_KIND_CONST    = 12;
-defvar CTF_KIND_RESTRICT = 13;
-defvar CTF_KIND_SLICE    = 14;
+var CTF_KIND_UNKNOWN  = 0;
+var CTF_KIND_INTEGER  = 1;
+var CTF_KIND_FLOAT    = 2;
+var CTF_KIND_POINTER  = 3;
+var CTF_KIND_ARRAY    = 4;
+var CTF_KIND_FUNCTION = 5;
+var CTF_KIND_STRUCT   = 6;
+var CTF_KIND_UNION    = 7;
+var CTF_KIND_ENUM     = 8;
+var CTF_KIND_FORWARD  = 9;
+var CTF_KIND_TYPEDEF  = 10;
+var CTF_KIND_VOLATILE = 11;
+var CTF_KIND_CONST    = 12;
+var CTF_KIND_RESTRICT = 13;
+var CTF_KIND_SLICE    = 14;
 
-defvar ctf_kind_str =
+var ctf_kind_str =
   ["unknown", "integer", "float", "pointer", "array",
    "function", "struct", "union", "enum", "forward",
    "typedef", "volatile", "const", "restrict"];
 
-deftype CTF_Name =
+type CTF_Name =
   struct uint<32>
   {
     uint<1> stid;
@@ -83,14 +83,14 @@ deftype CTF_Name =
       }
   };
 
-deftype CTF_Type_Id =
+type CTF_Type_Id =
   struct uint<32>
   {
     uint<31> index;
     uint<1> is_parent;
   };
 
-deftype CTF_Preamble =
+type CTF_Preamble =
   struct
   {
     uint<16> ctp_magic = CTF_MAGIC;
@@ -98,7 +98,7 @@ deftype CTF_Preamble =
     byte ctp_flags;
   };
 
-deftype CTF_Header =
+type CTF_Header =
   struct
   {
     CTF_Preamble cth_preamble;
@@ -116,21 +116,21 @@ deftype CTF_Header =
     offset<uint32,B> cth_strlen;	/* Length of string section in bytes.  */
   };
 
-deftype CTF_Lblent =
+type CTF_Lblent =
   struct
   {
     CTF_Name ctl_label;
     CTF_Type_Id ctl_type;
   };
 
-deftype CTF_Varent =
+type CTF_Varent =
   struct
   {
     CTF_Name ctv_name;
     CTF_Type_Id ctv_type;
   };
 
-deftype CTF_Info =
+type CTF_Info =
   struct uint<32>
   {
     uint<6> kind;
@@ -151,12 +151,12 @@ deftype CTF_Info =
       }
   };
 
-defvar CTF_INT_SIGNED  = 0x01UB;
-defvar CTF_INT_CHAR    = 0x02UB;
-defvar CTF_INT_BOOL    = 0x04UB;
-defvar CTF_INT_VARARGS = 0x08UB;
+var CTF_INT_SIGNED  = 0x01UB;
+var CTF_INT_CHAR    = 0x02UB;
+var CTF_INT_BOOL    = 0x04UB;
+var CTF_INT_VARARGS = 0x08UB;
 
-deftype CTF_Integer_Type =
+type CTF_Integer_Type =
   struct
   {
     uint<8> encoding : encoding <= CTF_INT_VARARGS;
@@ -164,20 +164,20 @@ deftype CTF_Integer_Type =
     offset<uint<16>,b> bits;
   };
 
-defvar CTF_FP_SINGLE = 1UB;
-defvar CTF_FP_DOUBLE = 2UB;
-defvar CTF_FP_CPLX   = 3UB;
-defvar CTF_FP_DCPLX  = 4UB;
-defvar CTF_FP_LDCPLX = 5UB;
-defvar CTF_FP_LDOUBLE = 6UB;
-defvar CTF_FP_INTRVL = 7UB;
-defvar CTF_FP_DINTRVL = 8UB;
-defvar CTF_FP_LDINTRVL = 9UB;
-defvar CTF_FP_IMAGRY = 10UB;
-defvar CTF_FP_DIMAGRY = 11UB;
-defvar CTF_FP_LDIMAGRY = 12UB;
+var CTF_FP_SINGLE = 1UB;
+var CTF_FP_DOUBLE = 2UB;
+var CTF_FP_CPLX   = 3UB;
+var CTF_FP_DCPLX  = 4UB;
+var CTF_FP_LDCPLX = 5UB;
+var CTF_FP_LDOUBLE = 6UB;
+var CTF_FP_INTRVL = 7UB;
+var CTF_FP_DINTRVL = 8UB;
+var CTF_FP_LDINTRVL = 9UB;
+var CTF_FP_IMAGRY = 10UB;
+var CTF_FP_DIMAGRY = 11UB;
+var CTF_FP_LDIMAGRY = 12UB;
 
-deftype CTF_Float_Type =
+type CTF_Float_Type =
   struct
   {
     uint<8> encoding: encoding <= CTF_FP_LDIMAGRY;
@@ -185,7 +185,7 @@ deftype CTF_Float_Type =
     offset<uint<16>,b> bits;
   };
 
-deftype CTF_Array =
+type CTF_Array =
   struct
   {
     CTF_Type_Id cta_contents;
@@ -193,7 +193,7 @@ deftype CTF_Array =
     uint<32> cta_nelems;
   };
 
-deftype CTF_Member =
+type CTF_Member =
   struct
   {
     CTF_Name ctm_name;
@@ -201,7 +201,7 @@ deftype CTF_Member =
     CTF_Type_Id ctm_type;
   };
 
-deftype CTF_Lmember =
+type CTF_Lmember =
   struct
   {
     CTF_Name ctlm_name;
@@ -210,14 +210,14 @@ deftype CTF_Lmember =
     uint32 ctlm_offsetlo;
   };
 
-deftype CTF_Enum =
+type CTF_Enum =
   struct
   {
     CTF_Name cte_name;
     int<32> cte_value;
   };
 
-deftype CTF_Type =
+type CTF_Type =
   struct
   {
     CTF_Name name;
@@ -226,12 +226,12 @@ deftype CTF_Type =
     /* Some types have a size.  Others refer to other types.  */
     union
     {
-      uint32 type : info.kind in [CTF_KIND_POINTER,
-                                  CTF_KIND_FUNCTION,
-                                  CTF_KIND_TYPEDEF,
-                                  CTF_KIND_VOLATILE,
-                                  CTF_KIND_CONST,
-                                  CTF_KIND_RESTRICT];
+      uint32 ttype : info.kind in [CTF_KIND_POINTER,
+                                   CTF_KIND_FUNCTION,
+                                   CTF_KIND_TYPEDEF,
+                                   CTF_KIND_VOLATILE,
+                                   CTF_KIND_CONST,
+                                   CTF_KIND_RESTRICT];
       union
       {
         uint32 normal : normal <= CTF_MAX_SIZE;
@@ -264,9 +264,9 @@ deftype CTF_Type =
     } data;
   };
 
-defun ctf_string = (Elf64_File elf,
-                    CTF_Header header,
-                    CTF_Name name) string:
+fun ctf_string = (Elf64_File elf,
+                  CTF_Header header,
+                  CTF_Name name) string:
 {
  if (name.stid == CTF_STRTAB_0)
    return string @ (header.cth_stroff + name.offset);
@@ -274,13 +274,13 @@ defun ctf_string = (Elf64_File elf,
    return elf.get_string (name.offset);
 }
 
-defun ctf_get_header = (Elf64_File elf) CTF_Header:
+fun ctf_get_header = (Elf64_File elf) CTF_Header:
 {
   return CTF_Header
    @ (elf.get_section_by_name (".ctf")).sh_offset;
 }
 
-defun ctf_get_types = (CTF_Header ctf) CTF_Type[]:
+fun ctf_get_types = (CTF_Header ctf) CTF_Type[]:
 {
   return CTF_Type[ctf.cth_stroff - ctf.cth_typeoff]
      @ (ctf'offset + ctf'size + ctf.cth_typeoff);

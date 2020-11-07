@@ -4,7 +4,7 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-deftype Foo =
+type Foo =
   union
   {
     method bar = int: { return 0xbeef; }

@@ -18,7 +18,7 @@
 
 /* Implemented as specified in http://id3.org/id3v2.3.0  */
 
-deftype ID3V2_Hdr =
+type ID3V2_Hdr =
   struct
   {
     char[3] head = ['I','D','3'];
@@ -50,7 +50,7 @@ deftype ID3V2_Hdr =
       }
   };
 
-deftype ID3V2_Ext_Hdr =
+type ID3V2_Ext_Hdr =
   struct
   {
     /* Size of this header, excluding this field.  */
@@ -66,7 +66,7 @@ deftype ID3V2_Ext_Hdr =
     uint32 crc if flags.crc_present;
   };
 
-deftype ID3V2_Frame =
+type ID3V2_Frame =
   struct
   {
     char[4] id : id[0] != 0;
@@ -105,7 +105,7 @@ deftype ID3V2_Frame =
     };
   };
 
-deftype ID3V2_Tag =
+type ID3V2_Tag =
   struct
   {
     ID3V2_Hdr hdr;

@@ -20,7 +20,7 @@ pk_help_str = pk_help_str
   + "\ncopy\t\tCopy a range of memory.";
 
 
-defun copy = (int from_ios = get_ios,
+fun copy = (int from_ios = get_ios,
               int to_ios = get_ios,
               off64 from = 0#B,
               off64 to = from,
@@ -31,7 +31,7 @@ defun copy = (int from_ios = get_ios,
    return;
 
  /* Determine the best step size to operate with.  */
- defvar step = 1#B;
+ var step = 1#B;
 
  if (size % 8#B == 0#B)
    step = 8#B;
@@ -42,11 +42,11 @@ defun copy = (int from_ios = get_ios,
 
  /* Change the endianness to big endian, so we get the right ordering
     of the bytes when operating on steps > 1#B.  */
- defvar endian = get_endian;
+ var endian = get_endian;
  set_endian (ENDIAN_BIG);
 
  /* Copy the stuff.  */
- defvar end = from + size;
+ var end = from + size;
  while (from < end)
    {
      if (step == 8#B)

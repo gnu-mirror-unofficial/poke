@@ -1,15 +1,15 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
 
-deftype Foo =
+type Foo =
   struct {
     byte a;
-    defvar foo = a + 2;
-    defun f1 = void: {}
+    var foo = a + 2;
+    fun f1 = void: {}
     byte b;
-    defvar bar = b + a;
-    defun f2 = void: {}
-    defvar baz = bar * 2;
+    var bar = b + a;
+    fun f2 = void: {}
+    var baz = bar * 2;
     byte c;
   };
 

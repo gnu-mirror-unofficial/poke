@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defun foo = (long l) long: { return l; }
+fun foo = (long l) long: { return l; }
 
 /* Coercion from small int.  */
 /* { dg-command {  foo (2 as uint<3>) } } */

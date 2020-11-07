@@ -1,9 +1,9 @@
 /* { dg-do run } */
 
-defun qqq = int[]:
+fun qqq = int[]:
   {
-    defvar rs  = [0];
-    defvar len = 4;
+    var rs  = [0];
+    var len = 4;
     while (len > 0)
       {
         rs = [1] + rs;

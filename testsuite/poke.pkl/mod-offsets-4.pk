@@ -1,9 +1,9 @@
 /* { dg-do run } */
 
-deftype Packet = struct { int<1>[5]; };
-deftype Byte = byte;
+type Packet = struct { int<1>[5]; };
+type Byte = byte;
 
-defvar x = 2#Packet;
+var x = 2#Packet;
 
 /* { dg-command {  x % 1#Byte } } */
 /* { dg-output "2#b" } */

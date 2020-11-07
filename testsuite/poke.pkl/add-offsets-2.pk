@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 8#b;
-defvar y = 4#B;
+var x = 8#b;
+var y = 4#B;
 
 /* { dg-command {  x + y } } */
 /* { dg-output "40#b" } */

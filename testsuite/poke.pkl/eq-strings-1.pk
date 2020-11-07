@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = "foo";
-defvar y = "foo";
+var x = "foo";
+var y = "foo";
 
 /* { dg-command {  x == y } } */
 /* { dg-output "1" } */

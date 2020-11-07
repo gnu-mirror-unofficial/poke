@@ -3,7 +3,7 @@
 
 /* { dg-command { .set obase 16 } } */
 
-deftype Foo = struct { byte a; byte[2] b; };
+type Foo = struct { byte a; byte[2] b; };
 
 /* { dg-command { .set omaps no } } */
 /* { dg-command { Foo @ 0#B } } */

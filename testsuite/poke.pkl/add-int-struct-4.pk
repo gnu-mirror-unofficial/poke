@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   struct
   {
     struct int<32>
@@ -12,7 +12,7 @@ deftype Foo =
 
 /* { dg-command { .set obase 16 } } */
 
-/* { dg-command { defvar f = Foo { } } } */
+/* { dg-command { var f = Foo { } } } */
 /* { dg-command { f.foo.hi = 1 } } */
 /* { dg-command { f.foo.lo = 2 } } */
 /* { dg-command { f.foo + 1 } } */

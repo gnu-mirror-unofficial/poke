@@ -22,16 +22,16 @@
 /* The variable `color_num_colors' keeps the number of colors
    currently defined in the registry.  */
 
-defvar color_num_colors = 0;
+var color_num_colors = 0;
 
 /* The `color_register' function allocates a new color number in the
    registry.  It updates color_num_colors accordingly.  The user can
    define her own colors using this function, after loading this file.
    These colors will be allocated at the end of the color space.  */
 
-defun color_register = int:
+fun color_register = int:
   {
-    defvar c = color_num_colors;
+    var c = color_num_colors;
     color_num_colors = color_num_colors + 1;
     return c;
   }
@@ -51,24 +51,24 @@ defun color_register = int:
    Non-standard colors can be defined at the end of the register.  See
    above.  */
 
-defvar color_white = color_register;
-defvar color_black = color_register;
-defvar color_grey = color_register;
-defvar color_gray = color_grey;
-defvar color_red = color_register;
-defvar color_tomato = color_register;
-defvar color_green = color_register;
-defvar color_blue = color_register;
+var color_white = color_register;
+var color_black = color_register;
+var color_grey = color_register;
+var color_gray = color_grey;
+var color_red = color_register;
+var color_tomato = color_register;
+var color_green = color_register;
+var color_blue = color_register;
 
 /* color_LAST marks the first of the colors that is non-standard.
    Pickles maintaining tables indexed by standard color codes should
    use the range [0..color_LAST).  */
 
-defvar color_LAST = color_num_colors;
+var color_LAST = color_num_colors;
 
 /* Table with printable names of standard colors.  */
 
-defvar color_std_names =
+var color_std_names =
   ["white", "black", "grey", "red", "tomato", "green", "blue"];
 
 /* Sanity check.  */
@@ -79,7 +79,7 @@ if (color_std_names'length != color_num_colors)
 
 /* Return the printable name of the given color code.  */
 
-defun color_name = (int color) string:
+fun color_name = (int color) string:
   {
     if (color < color_LAST)
       return color_std_names[color];

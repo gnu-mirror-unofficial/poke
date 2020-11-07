@@ -99,7 +99,7 @@ programs, so they can alter their behavior accordingly.
 Probably a good way to implement this is via a built-in and a
 definition in ``pkl-rt.pk`` like::
 
-  defun poke_interactive_p = int<32>: __PKL_BUILTIN_INTERACTIVE_P__;
+  fun poke_interactive_p = int<32>: __PKL_BUILTIN_INTERACTIVE_P__;
 
 #C3 Debugging mode in poke
 --------------------------
@@ -133,7 +133,7 @@ This should be implemented in the lexer, ``src/pkl-lex.l``.
 The exception objects then shall be augmented in order to carry the
 location information.  Something like::
   
-  deftype Exception =
+  type Exception =
     struct
     {
       int code;
@@ -259,7 +259,7 @@ A new %-sequence shall be added to printf: %%.  This denotes a single
 ----------------------------------------------------
 
 The poke compiler allows the user to define her own units using the
-``defunit`` construct.  The PVM, however, is oblivious of this, and it
+``unit`` construct.  The PVM, however, is oblivious of this, and it
 only knows how to print the names of the standard units.  This is
 achieved by replicating the logic of the units in the
 ``print_unit_name`` function.
@@ -295,11 +295,11 @@ necessary.
 The goal of this project is to being able to "translate" an IO space
 using Poke code.  Example::
 
-  defvar my_translator
+  var my_translator
      = IOS_Translate { readp = my_readp, writep = my_writep ... };
   
-  defvar outer = open ("disk.img");
-  defvar inner = translate (outer, my_translator);
+  var outer = open ("disk.img");
+  var inner = translate (outer, my_translator);
 
 In this scenario, the methods in ``my_translator`` are invoked when IO
 mapping is performed in ``inner``::
@@ -312,11 +312,11 @@ When the methods in ``my_translator`` run, the current IOS is
 The ``IOS_Translate`` type shall be defined in ``std.pk`` and
 basically implements the IOD interface in ``ios-dev.h``::
 
-  deftype IOS_Translate =
+  type IOS_Translate =
      struct
      {
-        defun readp = ...;
-        defun writep = ...;
+        fun readp = ...;
+        fun writep = ...;
      };
 
 This of course depends on support for setting methods in struct

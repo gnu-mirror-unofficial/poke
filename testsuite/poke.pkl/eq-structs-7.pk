@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-deftype Bar = struct { byte b; };
+type Bar = struct { byte b; };
 
-deftype Foo =
+type Foo =
   struct
   {
     Bar[2] bars;

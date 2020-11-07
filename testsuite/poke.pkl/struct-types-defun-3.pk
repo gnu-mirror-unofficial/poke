@@ -1,11 +1,11 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   struct
   {
     int a;
-    defun twoa = int: { return a * 2; }
-    defun bleh = int: { return twoa; }
+    fun twoa = int: { return a * 2; }
+    fun bleh = int: { return twoa; }
     int b : b == bleh;
   };
 

@@ -6,8 +6,8 @@
 /* { dg-command { .set omode tree } } */
 /* { dg-command { .set oindent 4 } } */
 /* { dg-command { .set odepth 1 } } */
-/* { dg-command { deftype Foo = struct { byte b; } } } */
-/* { dg-command { deftype Bar = struct { Foo foo; } } } */
+/* { dg-command { type Foo = struct { byte b; } } } */
+/* { dg-command { type Bar = struct { Foo foo; } } } */
 /* { dg-command { Bar @ 0#B } } */
 /* { dg-output "Bar \{" } */
 /* { dg-output "\n    foo=Foo \{...\}" } */

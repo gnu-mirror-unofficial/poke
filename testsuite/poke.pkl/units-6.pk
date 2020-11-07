@@ -3,8 +3,8 @@
 /* Make sure that units take prececence to type names in offset
    literals.  */
 
-deftype y = int;
-defunit y = 3;
+type y = int;
+unit y = 3;
 
 /* { dg-command { 2#y } } */
 /* { dg-output "2#3" } */

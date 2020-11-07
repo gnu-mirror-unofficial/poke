@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 1;
+var x = 1;
 
 /* { dg-command {  x as uint32 } } */
 /* { dg-output "1U" } */

@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defun foo = void:
+fun foo = void:
   {
    raise Exception { code = EC_io, msg = "double upset event" };
   }

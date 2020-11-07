@@ -3,10 +3,10 @@
 /* Make sure that the given names are used when referring
    to types in diagnostics.  */
 
-deftype MyType = int;
-defun bar = (MyType e) int: { return e; }
+type MyType = int;
+fun bar = (MyType e) int: { return e; }
 
-defun foo = int:
+fun foo = int:
   {
    return bar ("wrong"); /* { dg-error "\n.*MyType" } */
   }

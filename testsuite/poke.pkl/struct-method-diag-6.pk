@@ -1,12 +1,12 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
     method foo = void: {}
     method bar = void:
       {
-        defun baz = void:
+        fun baz = void:
         {
           foo; /* { dg-error "invalid reference" } */
         }

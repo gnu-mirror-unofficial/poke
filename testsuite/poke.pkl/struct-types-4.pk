@@ -1,11 +1,11 @@
 /* { dg-do compile } */
 
-defun f = (int i) int: { return i + 2; }
+fun f = (int i) int: { return i + 2; }
 
-deftype Packet =
+type Packet =
   struct
   {
     int b;
-    defvar a = 10;
+    var a = 10;
     int c : c == f (a);
   };

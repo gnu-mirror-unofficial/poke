@@ -4,9 +4,9 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-deftype Foo = struct { byte a; byte b if b != 0x20; byte c; };
+type Foo = struct { byte a; byte b if b != 0x20; byte c; };
 
-/* { dg-command { defvar f = Foo @ 0#B } } */
+/* { dg-command { var f = Foo @ 0#B } } */
 /* { dg-command { f } } */
 /* { dg-output "Foo {a=0x10UB,c=0x20UB}" } */
 /* { dg-command { f.a = 0x66 } } */

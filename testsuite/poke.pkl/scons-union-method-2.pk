@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   union
   {
     method bar = int: { return 666; }

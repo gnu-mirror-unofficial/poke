@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Struct = struct { int i; int j; };
+type Struct = struct { int i; int j; };
 
 /* { dg-command { .set obase 10 } } */
 /* { dg-command { printf "%v\n", Struct { i = 10, j = 20 } } } */

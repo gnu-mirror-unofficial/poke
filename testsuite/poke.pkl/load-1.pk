@@ -1,7 +1,7 @@
 /* { dg-do run } */
-/* { dg-data {a*} {printf "Loading foo\n"; defvar foo = 10; load bar;} foo.pk } */
-/* { dg-data {a*} {printf "Loading bar\n"; defvar bar = 20; load baz;} bar.pk } */
-/* { dg-data {a*} {printf "Loading baz\n"; defvar baz = 30;} baz.pk } */
+/* { dg-data {a*} {printf "Loading foo\n"; var foo = 10; load bar;} foo.pk } */
+/* { dg-data {a*} {printf "Loading bar\n"; var bar = 20; load baz;} bar.pk } */
+/* { dg-data {a*} {printf "Loading baz\n"; var baz = 30;} baz.pk } */
 
 /* { dg-command { load foo } } */
 /* { dg-output "Loading foo\nLoading bar\nLoading baz" } */

@@ -392,7 +392,7 @@ REPL no result is printed, but of course the statement can print on its
 own:
 
 @example
-(poke) defun do_foo = void: @{@}
+(poke) fun do_foo = void: @{@}
 (poke) do_foo
 (poke) for (i in [1,2,3]) printf "elem %i32d\n", i;
 elem 1
@@ -534,7 +534,7 @@ read line by line and commands cannot occupy more than one line.
 Hence the following is a valid command file:
 
 @example
-deftype foo = struct @{int this; int that;@}
+type foo = struct @{int this; int that;@}
 @end example
 
 @noindent
@@ -542,7 +542,7 @@ but this is not valid as a command file (although it is a valid Poke
 statement) and will provoke an error:
 
 @example
-deftype foo = struct
+type foo = struct
 @{
  int this;
  int that;
@@ -1103,12 +1103,12 @@ REPL or mapping them at the current IO space.  Often it is useful to
 save values under meaningful names, and access to them by name.  In
 poke we do that by storing the values in @dfn{variables}.
 
-Before being used, variables shall be defined using the @code{defvar}
+Before being used, variables shall be defined using the @code{var}
 construction.  Let's get the byte at offset @code{64} bytes and save it
 in a variable called @code{foo}:
 
 @example
-(poke) defvar foo = byte @@ 64#B
+(poke) var foo = byte @@ 64#B
 @end example
 
 @noindent
@@ -1149,7 +1149,7 @@ stored in @file{foo.o} at offset 64 bytes?  The answer is no.  This is
 because when we do the mapping:
 
 @example
-(poke) defvar foo = byte @@ 64#B
+(poke) var foo = byte @@ 64#B
 @end example
 
 @noindent
@@ -1164,7 +1164,7 @@ It follows that if we wanted to increase the byte in the file, we
 would need to do something like:
 
 @example
-(poke) defvar foo = byte @@ 64#B
+(poke) var foo = byte @@ 64#B
 (poke) foo = foo + 1
 (poke) byte @@ 64#B = foo
 @end example
@@ -1197,7 +1197,7 @@ the average of the first byte values stored in @file{foo.o}.  We could
 do something like:
 
 @example
-(poke) defvar a = byte[3] @@ 0#B
+(poke) var a = byte[3] @@ 0#B
 (poke) a
 [0x7fUB,0x45UB,0x4cUB]
 (poke) (a[0] + a[1] + a[2]) / 3UB
@@ -1422,9 +1422,9 @@ bit-concatenation operator implements:
 (poke) dump :from 0#B :size 3#B
 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
 00000000: 7f45 4c                                  .EL
-(poke) defvar b1 = byte @@ 0#B
-(poke) defvar b2 = byte @@ 1#B
-(poke) defvar b3 = byte @@ 2#B
+(poke) var b1 = byte @@ 0#B
+(poke) var b2 = byte @@ 1#B
+(poke) var b3 = byte @@ 2#B
 (poke) b1:::b2:::b3
 (uint<24>) 0x7f454c
 @end example
@@ -1564,7 +1564,7 @@ This means that the value is signed!  But in this case it is still
 positive, so let's try to get an actual negative value:
 
 @example
-(poke) defvar h = int<16> @@ 0#B
+(poke) var h = int<16> @@ 0#B
 (poke) h - h - 1H
 -1H
 @end example
@@ -2281,7 +2281,7 @@ from an IO space is a digit.  Looking at the ASCI table, we observe
 that digits all have consecutive codes, so we can do:
 
 @example
-(poke) defvar b = byte @@ 23#B
+(poke) var b = byte @@ 23#B
 (poke) b >= '0' && b <= '9'
 1
 @end example
@@ -2780,12 +2780,12 @@ To ease things a bit, we can define variables with the color codes for
 both foreground and background pixels:
 
 @example
-(poke) defvar bg1 = 255
-(poke) defvar bg2 = 255
-(poke) defvar bg3 = 255
-(poke) defvar fg1 = 255
-(poke) defvar fg2 = 99
-(poke) defvar fg3 = 71
+(poke) var bg1 = 255
+(poke) var bg2 = 255
+(poke) var bg3 = 255
+(poke) var fg1 = 255
+(poke) var fg2 = 99
+(poke) var fg3 = 71
 @end example
 
 @noindent
@@ -2804,8 +2804,8 @@ integer to ``encapsulate'' the bytes.  Using the bit-concatenation
 operator, we could do something like:
 
 @example
-(poke) defvar bg = 255UB::255UB::255UB
-(poke) defvar fg = 255UB::99UB::71UB
+(poke) var bg = 255UB::255UB::255UB
+(poke) var fg = 255UB::99UB::71UB
 (poke) bg
 (uint<24>) 0xffffff
 (poke) fg
@@ -2843,8 +2843,8 @@ Using array values, we can define the foreground and background colors
 like this:
 
 @example
-(poke) defvar bga = [255UB, 255UB, 255UB]
-(poke) defvar fga = [255UB, 99UB, 71UB]
+(poke) var bga = [255UB, 255UB, 255UB]
+(poke) var fga = [255UB, 99UB, 71UB]
 @end example
 
 @noindent
@@ -2930,7 +2930,7 @@ pixels.  It would be natural to express each line as a sequence of
 pixels.  The first line in our image would be:
 
 @example
-(poke) defvar l0 = [bga,fga,fga,bga,bga]
+(poke) var l0 = [bga,fga,fga,bga,bga]
 (poke) l0
 [[255UB,255UB,255UB],[255UB,99UB,71UB],@dots{}]
 @end example
@@ -2939,12 +2939,12 @@ pixels.  The first line in our image would be:
 Let's complete the image lines:
 
 @example
-(poke) defvar l0 = [bga,fga,bga,fga,bga]
-(poke) defvar l1 = [bga,fga,bga,fga,bga]
-(poke) defvar l2 = [bga,fga,fga,bga,bga]
-(poke) defvar l3 = [bga,fga,bga,bga,bga]
-(poke) defvar l4 = l3
-(poke) defvar l5 = l4
+(poke) var l0 = [bga,fga,bga,fga,bga]
+(poke) var l1 = [bga,fga,bga,fga,bga]
+(poke) var l2 = [bga,fga,fga,bga,bga]
+(poke) var l3 = [bga,fga,bga,bga,bga]
+(poke) var l4 = l3
+(poke) var l5 = l4
 @end example
 
 @noindent
@@ -2986,7 +2986,7 @@ number of arrays-of levels that you can nest.
 So, let's define our image as an array of the lines defined above:
 
 @example
-(poke) defvar image_data = [l0,l1,l2,l3,l4,l5]
+(poke) var image_data = [l0,l1,l2,l3,l4,l5]
 (poke) image_data
 [[[255UB,255UB,255UB],[255UB,99UB,71UB],[255UB,99UB,71UB]@dots{}]@dots{}]
 @end example
@@ -3019,8 +3019,8 @@ pixels per line byte, and the number of lines byte.  We know that each
 pixel occupies 3 bytes, so calculating@dots{}
 
 @example
-(poke) defvar ppl = byte @@ 3#B
-(poke) defvar lines = byte @@ 4#B
+(poke) var ppl = byte @@ 3#B
+(poke) var lines = byte @@ 4#B
 (poke) save :from 0#B :size 5#B + ppl#B * lines#B :file "p.sbm"
 @end example
 
@@ -3096,10 +3096,10 @@ Now let's read the image's metadata from the header: pixels per line
 and how many lines are contained in the image:
 
 @example
-(poke) defvar ppl = byte @@ 3#B
+(poke) var ppl = byte @@ 3#B
 (poke) ppl
 5UB
-(poke) defvar lines = byte @@ 4#B
+(poke) var lines = byte @@ 4#B
 7UB
 @end example
 
@@ -3110,7 +3110,7 @@ bytes, and that each line contains @code{ppl} pixels, and that we have
 type specifier:
 
 @example
-(poke) defvar image_data = byte[3][ppl][lines] @@ 5#B
+(poke) var image_data = byte[3][ppl][lines] @@ 5#B
 (poke) image_data
 [[[255UB,255UB,255UB],[255UB,99UB,71UB], @dots{}]@dots{}]
 @end example
@@ -3175,9 +3175,9 @@ Good.  Now let's map the contents of the image, both header information
 and the sequence of pixels:
 
 @example
-(poke) defvar ppl = byte @@ 3#B
-(poke) defvar lines = byte @@ 4#B
-(poke) defvar image_data = byte[3][ppl][lines] @@ 5#B
+(poke) var ppl = byte @@ 3#B
+(poke) var lines = byte @@ 4#B
+(poke) var image_data = byte[3][ppl][lines] @@ 5#B
 @end example
 
 @noindent
@@ -3193,7 +3193,7 @@ space?  First, we would map it into a variable, change the value, and
 then poke it back to the IO space.  Something like this:
 
 @example
-(poke) defvar n = int @@ @var{offset}
+(poke) var n = int @@ @var{offset}
 (poke) n = n + 1
 (poke) int @@ @var{offset} = n
 @end example
@@ -3225,7 +3225,7 @@ It follows that if we wanted to change the color of some SBM pixel
 stored at offset @var{offset}, we would do this:
 
 @example
-(poke) defvar a = byte[3] @@ @var{offset}
+(poke) var a = byte[3] @@ @var{offset}
 (poke) a[1] = 10
 @end example
 
@@ -3281,8 +3281,8 @@ Well, at this point it should be clear how to paint pixels.  First,
 let's define our background and foreground pixels:
 
 @example
-(poke) defvar bga = [255UB, 255UB, 255UB]
-(poke) defvar fga = [255UB, 99UB, 71UB]
+(poke) var bga = [255UB, 255UB, 255UB]
+(poke) var fga = [255UB, 99UB, 71UB]
 @end example
 
 @noindent
@@ -3354,7 +3354,7 @@ line | p1 | p2 | p3 |
 Let's get the first line from the original @code{image_data}:
 
 @example
-(poke) defvar l0 = image_data[0]
+(poke) var l0 = image_data[0]
 (poke) l0
 [[255UB,255UB,255UB],[255UB,99UB,71UB],@dots{}]
 @end example
@@ -3364,7 +3364,7 @@ We could create the corresponding cropped line, by doing something
 like this:
 
 @example
-(poke) defvar cl0 = [l0[1],l0[2],l0[3]]
+(poke) var cl0 = [l0[1],l0[2],l0[3]]
 @end example
 
 @cindex arrays, trimming
@@ -3394,12 +3394,12 @@ Armed with this new operation, we can very easily mount the sequence
 of pixels for our cropped image:
 
 @example
-(poke) defvar l0 = image_data[0]
-(poke) defvar l1 = image_data[1]
-(poke) defvar l2 = image_data[2]
-(poke) defvar l3 = image_data[3]
-(poke) defvar l4 = image_data[4]
-(poke) defvar l5 = image_data[5]
+(poke) var l0 = image_data[0]
+(poke) var l1 = image_data[1]
+(poke) var l2 = image_data[2]
+(poke) var l3 = image_data[3]
+(poke) var l4 = image_data[4]
+(poke) var l5 = image_data[5]
 @end example
 
 @noindent
@@ -3469,11 +3469,11 @@ Recall that the mapping operation above means ``map three bytes at the
 offset 5 bytes in the current IO space''.  But what we really want is
 to map color beams, not bytes!
 
-@cindex deftype
+@cindex type
 Poke provides a way to assign names to type specifiers:
 
 @example
-(poke) deftype RGB_Color_Beam = byte
+(poke) type RGB_Color_Beam = byte
 @end example
 
 @noindent
@@ -3509,7 +3509,7 @@ them.  For example, if we wanted to map a pixel at some particular
 offset, we would need to issue the following command:
 
 @example
-(poke) defvar pixel = byte[3] @@ 5#B
+(poke) var pixel = byte[3] @@ 5#B
 @end example
 
 @noindent
@@ -3517,7 +3517,7 @@ Now that we made poke aware of what a RGB color beam is, we can
 rewrite the above as:
 
 @example
-(poke) defvar pixel = RGB_Color_Beam[3] @@ 5#B
+(poke) var pixel = RGB_Color_Beam[3] @@ 5#B
 @end example
 
 @noindent
@@ -3528,14 +3528,14 @@ later in this book) then we would need to remember it before issuing
 commands like:
 
 @example
-(poke) defvar image_data = RGB_Color_Beam[4][ppl][lines] @@ 5#B
+(poke) var image_data = RGB_Color_Beam[4][ppl][lines] @@ 5#B
 @end example
 
 To avoid this problem, we define yet another type, this time
 describing the structure of a SBM pixel:
 
 @example
-(poke) deftype SBM_Pixel = RGB_Color_Beam[3]
+(poke) type SBM_Pixel = RGB_Color_Beam[3]
 @end example
 
 @noindent
@@ -3543,7 +3543,7 @@ And then we can define @code{image_data} as a table of SBM pixels,
 instead of as a table of triplets of RGB color beams:
 
 @example
-(poke) defvar image_data = SBM_Pixel[ppl][lines] @@ 5#B
+(poke) var image_data = SBM_Pixel[ppl][lines] @@ 5#B
 @end example
 
 @node Pickles
@@ -3568,8 +3568,8 @@ We are giving poke a @dfn{Poke expression} @code{10 + 2} to be
 evaluated.  Once the expression is evaluated, the REPL prints the
 resulting value for us.
 
-Similarly, when we define a variable or a type with @code{defvar} and
-@code{deftype} respectively, we are providing poke definitions to be
+Similarly, when we define a variable or a type with @code{var} and
+@code{type} respectively, we are providing poke definitions to be
 evaluated.  When we assign a value to a variable we are actually
 providing a Poke statement to be executed.
 
@@ -3596,8 +3596,8 @@ Remember how we defined the foreground and background pixels for
 @code{p.sbm} in the REPL?
 
 @example
-(poke) defvar bga = [255UB, 255UB, 255UB]
-(poke) defvar fga = [255UB, 99UB, 71UB]
+(poke) var bga = [255UB, 255UB, 255UB]
+(poke) var fga = [255UB, 99UB, 71UB]
 @end example
 
 @noindent
@@ -3606,8 +3606,8 @@ pixel.  We could write these definitions in a file @file{colors.pk}
 like this:
 
 @example
-defvar white = [255UB, 255UB, 255UB];
-defvar tomato = [255UB, 99UB, 71UB];
+var white = [255UB, 255UB, 255UB];
+var tomato = [255UB, 99UB, 71UB];
 @end example
 
 @noindent
@@ -3623,7 +3623,7 @@ lines, like in most programming languages.  For example, we could have
 the following variable definition in a file:
 
 @example
-defvar matrix = [[10, 20, 30],
+var matrix = [[10, 20, 30],
                  [40, 50, 60],
                  [70, 80, 90]];
 @end example
@@ -3703,8 +3703,8 @@ the variables to reflect the fact they denote not just any kind of
 colors, but RGB24 colors:
 
 @example
-defvar rgb24_white = [255UB, 255UB, 255UB];
-defvar rgb24_tomato = [255UB, 99UB, 71UB];
+var rgb24_white = [255UB, 255UB, 255UB];
+var rgb24_tomato = [255UB, 99UB, 71UB];
 @end example
 
 @noindent
@@ -3712,11 +3712,11 @@ At this point, we can also add the definitions of a couple of types to
 our @file{rgb24.pk}:
 
 @example
-deftype RGB_Color_Beam = byte;
-deftype RGB24_Color = RGB_Color_Beam[3];
+type RGB_Color_Beam = byte;
+type RGB24_Color = RGB_Color_Beam[3];
 
-defvar rgb24_white = [255UB, 255UB, 255UB];
-defvar rgb24_tomato = [255UB, 99UB, 71UB];
+var rgb24_white = [255UB, 255UB, 255UB];
+var rgb24_tomato = [255UB, 99UB, 71UB];
 @end example
 
 @noindent
@@ -3790,7 +3790,7 @@ We could of course abstract the header using an array of five bytes,
 like this:
 
 @example
-deftype SBM_Header = byte[5];
+type SBM_Header = byte[5];
 @end example
 
 However, this would not capture the properties of the fields
@@ -3803,7 +3803,7 @@ heterogeneous data: @dfn{struct types}.  Using a struct type we can
 abstract the SBM header like this:
 
 @example
-deftype SBM_Header =
+type SBM_Header =
  struct
  @{
    byte[3] magic;
@@ -3836,7 +3836,7 @@ The value resulting from the mapping is a struct value.  The fields of
 struct values are accessed using the familiar dot-notation:
 
 @example
-(poke) defvar header = SBM_Header @@ 0#B
+(poke) var header = SBM_Header @@ 0#B
 (poke) header.ppl * header.lines
 35UB
 @end example
@@ -3982,7 +3982,7 @@ you can use the @code{color_register} function, which gets no
 arguments:
 
 @example
-(poke) defvar mycolor = color_register
+(poke) var mycolor = color_register
 (poke) mycolor
 490
 @end example
@@ -3996,7 +3996,7 @@ the variable @code{color_LAST}.   For example, if you wanted to store
 a frob per standard color, you would do it like:
 
 @example
-(poke) deftype Frobs = Frob[color_LAST]
+(poke) type Frobs = Frob[color_LAST]
 @end example
 
 The pickle also provides a function @code{color_name} that, given a
@@ -4029,8 +4029,8 @@ respectively.
 Types are provided for both the color beams, and the triplets:
 
 @example
-deftype RGB24_Color_Beam = uint<8>;
-deftype RGB24_Color = RGB24_Color_Beam[3];
+type RGB24_Color_Beam = uint<8>;
+type RGB24_Color = RGB24_Color_Beam[3];
 @end example
 
 @noindent
@@ -4093,7 +4093,7 @@ Conversely, the function @code{id3v1_search_genre} gives us the code
 of a genre, given its name.  The prototype of this function is:
 
 @example
-defun id3v1_search_genre = (string name) uint<8>:
+fun id3v1_search_genre = (string name) uint<8>:
 @end example
 
 @noindent
@@ -4291,7 +4291,7 @@ Let's say we are writing a pretty-printer method for a struct type
 that has an optional field.  Like for example:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     byte magic : magic in [MAGIC1,MAGIC2];
@@ -4331,8 +4331,8 @@ and complicated, we can avoid rewriting the same expression by
 encapsulating the logic in a function:
 
 @example
-defun packet_magic2_p = int: @{ return magic == MAGIC2; @}
-deftype Packet =
+fun packet_magic2_p = int: @{ return magic == MAGIC2; @}
+type Packet =
   struct
   @{
     byte magic : magic in [MAGIC1,MAGIC2];
@@ -4357,7 +4357,7 @@ An alternative is to use the following idiom, that checks whether the
 field actually exists in the struct:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     byte magic : magic in [MAGIC1,MAGIC2];
@@ -4377,7 +4377,7 @@ deftype Packet =
 This approach also works with unions:
 
 @example
-deftype ID3V1_Tag =
+type ID3V1_Tag =
   struct
   @{
     [...]
@@ -4417,7 +4417,7 @@ is to just refer to it using dot-notation.
 For example, for the following struct type:
 
 @example
-deftype ID3V1_Tag =
+type ID3V1_Tag =
   struct
   @{
     [...]
@@ -4473,7 +4473,7 @@ For example, let's add setter and getter methods for the field
 @code{year} in the ID3V1 tag struct above:
 
 @example
-deftype ID3V1_Tag =
+type ID3V1_Tag =
   struct
   @{
     [...]
@@ -4482,7 +4482,7 @@ deftype ID3V1_Tag =
     method get_year = int: @{ return atoi (catos (year)); @}
     method set_year = (int val) void:
     @{
-      defvar str = format "%d", val;
+      var str = format "%d", val;
       stoca (str, year);
     @}
     [...]
@@ -4878,7 +4878,7 @@ To do this, use the @command{dump} command.
 This command has the following prototype:
 
 @example
-defun dump = (off64 from = pk_dump_offset,
+fun dump = (off64 from = pk_dump_offset,
               off64 size = pk_dump_size,
               off64 group_by = pk_dump_group_by,
               int cluster_by = pk_dump_cluster_by,
@@ -4917,7 +4917,7 @@ selected IO space.  However, it is possible to specify an explicit IO
 space using the @code{ios} option:
 
 @example
-(poke) defvar myfile = open ("/path/to/file")
+(poke) var myfile = open ("/path/to/file")
 (poke) dump :ios myfile
 @end example
 
@@ -5015,7 +5015,7 @@ space, or between different IO spaces.
 This command has the following prototype:
 
 @example
-defun copy = (int from_ios = get_ios,
+fun copy = (int from_ios = get_ios,
               int to_ios = get_ios,
               off64 from = 0#B,
               off64 to = from,
@@ -5048,7 +5048,7 @@ space into a file in your file system.
 This command has the following prototype:
 
 @example
-defun save = (int ios = get_ios,
+fun save = (int ios = get_ios,
               string file = "",
               off64 from = 0#B,
               off64 size = 0#B,
@@ -5064,7 +5064,7 @@ region of the IO space to save.  This is how you would extract and
 save the contents of an ELF section to a file @file{out.text}:
 
 @example
-(poke) defvar s = elf_section_by_name (Elf64_Ehdr @@ 0#B, ".text")
+(poke) var s = elf_section_by_name (Elf64_Ehdr @@ 0#B, ".text")
 (poke) save :file "out.text" :from s.sh_offset :size s.sh_size
 @end example
 
@@ -5092,7 +5092,7 @@ memory IO space with the contents of a mapped value.
 This command the has the following prototype:
 
 @example
-defun extract = (any val, string to) void
+fun extract = (any val, string to) void
 @end example
 
 @noindent
@@ -5653,7 +5653,7 @@ variable-length data and holes in structures.  Consider the following
 definition, which is @strong{not} valid in today's Poke:
 
 @example
-deftype Data =
+type Data =
   struct
   @{
     byte magic;
@@ -5729,7 +5729,7 @@ saw above.  In a bit-oriented description language, we would need to
 write something like:
 
 @example
-deftype BitData =
+type BitData =
   struct
   @{
     byte magic;
@@ -5820,11 +5820,11 @@ always interpreted as a multiple of the basic unit, which is the bit
 @subsubsection Named Units
 
 The first way is to refer to an unit by name.  For example, @code{2#B}
-for two bytes.  Units are defined using the @code{defunit}
+for two bytes.  Units are defined using the @code{unit}
 construction:
 
 @example
-defunit @var{name} = @var{constant_expression};
+unit @var{name} = @var{constant_expression};
 @end example
 
 @noindent
@@ -5838,8 +5838,8 @@ types.  However, when a given name is both a type name and an unit
 name in an unit context, the named unit takes precedence:
 
 @example
-(poke) deftype xx = int
-(poke) defunit xx = 2
+(poke) type xx = int
+(poke) unit xx = 2
 (poke) 1#xx
 1#2
 @end example
@@ -5870,7 +5870,7 @@ structures and operating on them@dots{} so why not use these structures
 as units as well?  Consider the following struct:
 
 @example
-deftype Packet = struct @{ int i; long j; @};
+type Packet = struct @{ int i; long j; @};
 @end example
 
 The size of a @code{Packet} is known at compile time (which is not
@@ -5891,7 +5891,7 @@ Consider for example an ELF section header.  One of its fields is the
 size of the described section, in bytes:
 
 @example
-deftype Elf64_Shdr =
+type Elf64_Shdr =
   struct
   @{
    @dots{}
@@ -6194,7 +6194,7 @@ A string can be created empty, and additional characters added to it
 by means of concatenation:
 
 @example
-(poke) defvar bytes = "";
+(poke) var bytes = "";
 (poke) bytes = bytes + 'x' as string;
 @end example
 
@@ -6221,7 +6221,7 @@ This is useful for building strings whose length is not known at
 compile time.  For example:
 
 @example
-defun make_empty_string = (int length) string:
+fun make_empty_string = (int length) string:
 @{
    return " " * length;
 @}
@@ -6361,8 +6361,8 @@ it can involve variables.  For example, consider the following type
 definition:
 
 @example
-defvar N = 2;
-deftype List = int[N*2];
+var N = 2;
+type List = int[N*2];
 @end example
 
 @noindent
@@ -6408,7 +6408,7 @@ first.  Consider for example the following definition of a
 @code{Packet}:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     byte size;
@@ -6432,7 +6432,7 @@ expressions when the type is used, and not at type definition time.
 To show this property in action, let's play a bit:
 
 @example
-(poke) defvar data = byte[4] @@ 0#B
+(poke) var data = byte[4] @@ 0#B
 (poke) data[0] = 2
 (poke) data[1] = 3
 (poke) data[2] = 4
@@ -6441,8 +6441,8 @@ To show this property in action, let's play a bit:
 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff
 00000000: 0203 0405 0000 0000 0000 0000 0000 0000
 00000010: 0000 0000 0000 0000 0000 0000 0000 0000
-(poke) defvar p1 = Packet @@ 0#B
-(poke) defvar p2 = Packet @@ 1#B
+(poke) var p1 = Packet @@ 0#B
+(poke) var p2 = Packet @@ 1#B
 (poke) p1
 Packet @{size=0x2UB,payload=[0x3UB,0x4UB]@}
 (poke) p2
@@ -6549,8 +6549,8 @@ shared value, exactly like when passing arguments to functions.  This
 means that for simple types, copies of the elements are done:
 
 @example
-(poke) defvar a = [1,2,3]
-(poke) defvar s = a[1:1]
+(poke) var a = [1,2,3]
+(poke) var s = a[1:1]
 (poke) s[0] = 66
 (poke) a
 [1,2,3]
@@ -6560,8 +6560,8 @@ However, for complex types like arrays and structs, the values are
 shared:
 
 @example
-(poke) defvar a = Packet[] @@ 0#B
-(poke) defvar s = a[1:1]
+(poke) var a = Packet[] @@ 0#B
+(poke) var s = a[1:1]
 (poke) s[0].field = 66
 (poke) a[1].field
 66
@@ -6622,8 +6622,8 @@ Gives the number of elements stored in the array.  Example:
 Gives 1 if the array is mapped, 0 otherwise.  Examples:
 
 @example
-(poke) defvar a = [1,2,3]
-(poke) defvar b = int[3] @@ 0#B
+(poke) var a = [1,2,3]
+(poke) var b = int[3] @@ 0#B
 (poke) a'mapped
 0
 (poke) b'mapped
@@ -6663,7 +6663,7 @@ They contain heterogeneous collections of values.
 A simple struct type definition in Poke looks like:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     byte magic;
@@ -6684,7 +6684,7 @@ the struct itself) but they are handy for expressing padding.
 Example:
 
 @example
-deftype Imm64 =
+type Imm64 =
   struct
   @{
     uint<32> lo;
@@ -6725,7 +6725,7 @@ convenience, a trailing comma is accepted but not required.
 Suppose for example that we have a type defined as:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     uint<16> flags;
@@ -6772,7 +6772,7 @@ constraints are taken into account.  For example, given the following
 struct type:
 
 @example
-deftype BPF_Reg =
+type BPF_Reg =
   struct
   @{
    uint<4> code : code < 11;
@@ -6812,7 +6812,7 @@ endianness.  However, it is possible to annotate integral fields with
 an explicit endianness, like in:
 
 @example
-deftype Foo =
+type Foo =
   struct
   @{
     little int a;
@@ -6832,7 +6832,7 @@ Poke uses the usual dot-notation to provide access to struct fields.
 Examples:
 
 @example
-(poke) defvar s = struct @{ i = 10, l = 20L @}
+(poke) var s = struct @{ i = 10, l = 20L @}
 (poke) s.i
 10
 (poke) s.l
@@ -6870,7 +6870,7 @@ evaluate to an integer value.  The result is interpreted as a boolean.
 As an example, this is how the ELF magic number is checked for:
 
 @example
-deftype Ctf_Preamble =
+type Ctf_Preamble =
   struct
   @{
     uint<16> ctp_magic : ctp_magic == CTF_MAGIC;
@@ -6908,7 +6908,7 @@ marker byte at the beginning, which should always be @code{0xff}.  We
 could use a constraint like in:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     byte marker : marker == 0xff;
@@ -6949,7 +6949,7 @@ memorable.  To help with this, Poke has the notion of @dfn{type field
 initializers}.  Let's use one in our example:
 
 @example
-deftype Packet =
+type Packet =
   struct
   @{
     byte marker = 0xff;
@@ -7057,7 +7057,7 @@ For example, consider the @code{_u} field below in a CTF type
 description:
 
 @example
-deftype Ctf_Stype_V1 =
+type Ctf_Stype_V1 =
   struct
   @{
     Ctf_Name ctt_name;
@@ -7093,7 +7093,7 @@ typedef struct
 we could use something like this in Poke:
 
 @example
-deftype Elf64_Rela =
+type Elf64_Rela =
   struct
   @{
     Elf64_Addr r_offset;
@@ -7138,11 +7138,11 @@ compose it.  This is typical of C data structures.
 We could of course mimic the C implementation in Poke:
 
 @example
-defun Elf64_R_Sym = (Elf64_Xword i) uint<32>:
+fun Elf64_R_Sym = (Elf64_Xword i) uint<32>:
    @{ return i .>> 32; @}
-defun Elf64_R_Type = (Elf64_Xword i) uint<32>:
+fun Elf64_R_Type = (Elf64_Xword i) uint<32>:
    @{ return i & 0xffff_ffff; @}
-defun Elf64_R_Info = (uint<32> sym, uint<32> type) Elf64_Xword:
+fun Elf64_R_Info = (uint<32> sym, uint<32> type) Elf64_Xword:
    @{ return sym as Elf64_Xword <<. 32 + type; @}
 @end example
 
@@ -7157,7 +7157,7 @@ structs that are defined exactly like your garden variety Poke
 structs, with a small addition:
 
 @example
-deftype Elf64_RelInfo =
+type Elf64_RelInfo =
   struct uint<64>
   @{
     uint<32> r_sym;
@@ -7175,7 +7175,7 @@ checked and enforced by the compiler.
 The Elf64 RELA in Poke can then be encoded like:
 
 @example
-deftype Elf64_Rela =
+type Elf64_Rela =
   struct
   @{
     Elf64_Addr r_offset;
@@ -7198,7 +7198,7 @@ It is possible to obtain the integral value corresponding to an
 integral struct using a cast to an integral type:
 
 @example
-(poke) deftype Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
+(poke) type Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
 (poke) Foo @{ hi = 1 @} as int<32>
 0x10000
 @end example
@@ -7207,8 +7207,8 @@ An useful idiom, that doesn't require to specify an explicit integral
 type, is this:
 
 @example
-(poke) deftype Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
-(poke) defvar x = Foo @ 0#B;
+(poke) type Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
+(poke) var x = Foo @ 0#B;
 (poke) +x
 0xfe00aa
 @end example
@@ -7258,7 +7258,7 @@ In order to express this in a Poke struct type, we could of course use
 an union, like:
 
 @example
-deftype ID3V2_Tag =
+type ID3V2_Tag =
   struct
   @{
     ID3V2_Hdr hdr;
@@ -7276,7 +7276,7 @@ is a bit cumbersome.  Therefore Poke provides a more convenient way to
 denote this:
 
 @example
-deftype ID3V2_Tag =
+type ID3V2_Tag =
   struct
   @{
      ID3V2_Hdr hdr;
@@ -7297,8 +7297,8 @@ It is possible to cast a struct of some particular type into another
 struct type.   Examples:
 
 @example
-(poke) deftype Foo = struct @{ int i; int j; @};
-(poke) deftype Bar = struct @{ int k; int j; @};
+(poke) type Foo = struct @{ int i; int j; @};
+(poke) type Bar = struct @{ int k; int j; @};
 (poke) Bar @{j=2@} as Foo @{@}
 Foo @{i=0,j=2@}
 @end example
@@ -7312,8 +7312,8 @@ when the struct is converted to the new type.  Consider the following
 two definitions:
 
 @example
-deftype Foo = struct @{ int i; long j; @};
-deftype Bar = struct @{ int i; @}
+type Foo = struct @{ int i; long j; @};
+type Bar = struct @{ int i; @}
 @end example
 
 Let's cast some values and see what we obtain:
@@ -7341,7 +7341,7 @@ converted to the target type.
 Given the following integral struct type:
 
 @example
-deftype Foo =
+type Foo =
   struct int<64>
   @{
     int<32> f1;
@@ -7377,19 +7377,19 @@ XXX
 @cindex types
 
 @menu
-* deftype::			Naming types.
+* type::			Naming types.
 * The any Type::		Polymorphism.
 * The isa Operator::		Testing for types of values.
 @end menu
 
-@node deftype
-@subsection @code{deftype}
-@cindex @code{deftype}
-The @code{deftype} directive allows you to declare named types.  The
+@node type
+@subsection @code{type}
+@cindex @code{type}
+The @code{type} directive allows you to declare named types.  The
 syntax is:
 
 @example
-deftype @var{name} = @var{type};
+type @var{name} = @var{type};
 @end example
 
 @noindent
@@ -7424,7 +7424,7 @@ this is how you would declare a function that prints the size of any
 given value:
 
 @example
-defun print_size = (any value) void:
+fun print_size = (any value) void:
 @{
   printf "%v\n", any'size;
 @}
@@ -7440,7 +7440,7 @@ This means that using any operator that require certain types with
 @code{any} values will fail: you have to cast them first.  Example:
 
 @example
-(poke) defun foo = (any v) int: @{ return v as int; @}
+(poke) fun foo = (any v) int: @{ return v as int; @}
 @end example
 
 Arrays of @code{any}, @code{any[]}, are also supported:
@@ -7675,10 +7675,10 @@ The value computed by the expression will be discarded.
 @subsection Function Declarations
 @cindex declarations, function declarations
 A function is declared using the following syntax:
-@cindex @code{defun}
+@cindex @code{fun}
 
 @example
-defun @var{name} = [(@var{formal},@dots{})] @var{ret_type}:
+fun @var{name} = [(@var{formal},@dots{})] @var{ret_type}:
 @{
    @dots{} body @dots{}
 @}
@@ -7708,14 +7708,14 @@ If the function takes no arguments, it is possible to omit the list of
 arguments entirely:
 
 @example
-defun hello = void: @{ print "Hello!\n"; @}
+fun hello = void: @{ print "Hello!\n"; @}
 @end example
 
 The @code{return} statement is used to return values in functions that
 return a value.  Example:
 
 @example
-defun gcd = (uint<64> a, uint<64> b) uint<64>:
+fun gcd = (uint<64> a, uint<64> b) uint<64>:
   @{
    if (b == 0)
      return a;
@@ -7733,7 +7733,7 @@ run-time error.
 Optional function arguments are specified like:
 
 @example
-defun atoi = (string s, int b = 10) long: @{ @dots{} @}
+fun atoi = (string s, int b = 10) long: @{ @dots{} @}
 @end example
 
 Which means that if the base argument is not specified when passed to
@@ -7743,14 +7743,14 @@ Optional arguments should not appear before any non-optional argument
 in function declarations.  The following is not valid Poke:
 
 @example
-defun foo = (int i = 10, int j) int: @{ return i + j; @}
+fun foo = (int i = 10, int j) int: @{ return i + j; @}
 @end example
 
 Note that arguments declared before an optional argument can be used
 in its initialization expression.  This is valid Poke:
 
 @example
-defun foo = (int n, int[n] array = init_array (n)) void: @{ @dots{} @}
+fun foo = (int n, int[n] array = init_array (n)) void: @{ @dots{} @}
 @end example
 
 @node Variadic Functions
@@ -7760,7 +7760,7 @@ Functions getting an arbitrary number of arguments are denoted like
 this:
 
 @example
-defun printf (string fmt, args@dots{}) void: @{ @dots{} @}
+fun printf (string fmt, args@dots{}) void: @{ @dots{} @}
 @end example
 
 The variadic argument shall be the last argument in the function, and
@@ -7836,7 +7836,7 @@ Optional arguments are marked with a @code{?} after the type.  For
 example, the type of the @code{atoi} function with declaration:
 
 @example
-defun atoi = (string s, int b = 10) long: @{ @dots{} @}
+fun atoi = (string s, int b = 10) long: @{ @dots{} @}
 @end example
 
 @noindent
@@ -7847,7 +7847,7 @@ argument in the function type specifier contains @code{@dots{}}.  For
 example, the type of a @code{printf} function with declaration:
 
 @example
-defun printf (string fmt, args@dots{}) void: @{ @dots{} @}
+fun printf (string fmt, args@dots{}) void: @{ @dots{} @}
 @end example
 
 @noindent
@@ -7926,11 +7926,11 @@ Their definitions, along with the specific supported values, look
 like:
 
 @example
-defvar ENDIAN_LITTLE = 0;
-defvar ENDIAN_BIG = 1;
+var ENDIAN_LITTLE = 0;
+var ENDIAN_BIG = 1;
 
-defun get_endian = int: @{ @dots{} @}
-defun set_endian = (int endian) int: @{ @dots{} @}
+fun get_endian = int: @{ @dots{} @}
+fun set_endian = (int endian) int: @{ @dots{} @}
 @end example
 
 Accessing the current endianness programmatically is especially useful
@@ -7968,7 +7968,7 @@ on some condition is using an union.  In this case, it could read like
 this:
 
 @example
-deftype BPF_Insn_Regs =
+type BPF_Insn_Regs =
   union
   @{
     struct
@@ -7995,10 +7995,10 @@ Nifty.  However, there is an ever better way to denote the
 structure of these fields.  This is it:
 
 @example
-deftype BPF_Insn_Regs =
+type BPF_Insn_Regs =
   struct
   @{
-    defvar little_p = (get_endian == ENDIAN_LITTLE);
+    var little_p = (get_endian == ENDIAN_LITTLE);
 
     BPF_Reg src @@ !little_p * 4#b;
     BPF_Reg dst @@ little_p * 4#b;
@@ -8035,7 +8035,7 @@ value specifies the endianness of the data stored in the ELF file.
 This is how we handle this in Poke:
 
 @example
-defun elf_endian = (int endian) byte:
+fun elf_endian = (int endian) byte:
  @{
    if (endian == ENDIAN_LITTLE)
      return ELFDATA2LSB;
@@ -8045,7 +8045,7 @@ defun elf_endian = (int endian) byte:
 
 [@dots{}]
 
-deftype Elf64_Ehdr =
+type Elf64_Ehdr =
   struct
   @{
     struct
@@ -8115,7 +8115,7 @@ The @code{open} builtin allows you to create new IO spaces, by opening an
 IO device.  It has the following prototype:
 
 @example
-defun open = (string @var{handler}, uint<64> flags = 0) int<32>
+fun open = (string @var{handler}, uint<64> flags = 0) int<32>
 @end example
 
 @noindent
@@ -8182,7 +8182,7 @@ The @code{close} builtin allows you to destroy IO spaces, closing the
 underlying IO device.  The prototype is:
 
 @example
-defun close = (int<32> @var{ios}) void
+fun close = (int<32> @var{ios}) void
 @end example
 
 @noindent
@@ -8200,7 +8200,7 @@ The builtin @code{flush} performs a ``flushing'' operation on a given
 IO space.  The prototype is:
 
 @example
-defun flush = (int<32> @var{ios}, offset<uint<64>,1> @var{offset}) void
+fun flush = (int<32> @var{ios}, offset<uint<64>,1> @var{offset}) void
 @end example
 
 Where @var{ios} is the IOS identifier where to perform the flush.  The
@@ -8224,7 +8224,7 @@ dot-command).  The builtin @code{get_ios} returns this space.  It has
 the following prototype:
 
 @example
-defun get_ios = int<32>
+fun get_ios = int<32>
 @end example
 
 If there is no IO space, @code{get_ios} will raise the @code{E_no_ios}
@@ -8238,7 +8238,7 @@ The @code{set_ios} builtin allows you to set a specific IO space as the
 new current IO space.  It has the following prototype:
 
 @example
-defun set_ios = (int<32> @var{ios}) int<32>
+fun set_ios = (int<32> @var{ios}) int<32>
 @end example
 
 @noindent
@@ -8257,7 +8257,7 @@ The @code{iosize} builtin returns the size of a given IO space, as an
 offset.  It has the following prototype:
 
 @example
-defun iosize = (int<32> ios) offset<uint<64>,1>
+fun iosize = (int<32> ios) offset<uint<64>,1>
 @end example
 
 If the IO space specified to @code{iosize} doesn't exist,
@@ -8308,7 +8308,7 @@ check whether a value is mapped or not, and in that case the offset
 where it is mapped:
 
 @example
-(poke) defvar p = Packet @@ 0#B
+(poke) var p = Packet @@ 0#B
 (poke) p'mapped
 0x1
 (poke) p'offset
@@ -8330,7 +8330,7 @@ or a struct, the resulting value is said to be mapped in the IO
 space:
 
 @example
-(poke) deftype Packet = struct @{ int i; long l; @}
+(poke) type Packet = struct @{ int i; long l; @}
 (poke) Packet @@ 0#B
 Packet @{i=0x464c457f,l=0x10102L@}
 (poke) uint<8>[2] @@ 0#B
@@ -8343,7 +8343,7 @@ example, consider the quick sort implementation in poke's standard
 library.  The prototype is:
 
 @example
-defun qsort = (any[] array, Comparator cmp_f,
+fun qsort = (any[] array, Comparator cmp_f,
                long left = 0, long right = array'length - 1) void
 @end example
 
@@ -8351,8 +8351,8 @@ defun qsort = (any[] array, Comparator cmp_f,
 @code{qsort} works with both mapped and not-mapped arrays:
 
 @example
-(poke) defvar a = [2,3,1]
-(poke) defvar b = int[3] @@ 0#B
+(poke) var a = [2,3,1]
+(poke) var b = int[3] @@ 0#B
 (poke) b
 [1179403647,65794,0]
 (poke) qsort (a, IntComparator)
@@ -8423,7 +8423,7 @@ the number of elements doesn't need to be constant.  For example,
 given the variable @code{nelems} has a value of @code{2}:
 
 @example
-(poke) defvar nelems = 2
+(poke) var nelems = 2
 (poke) int[nelems + 1] @@ 0#B
 [100,222,333]
 @end example
@@ -8455,7 +8455,7 @@ sections contain a collection of zero or more relocations. The layout
 of each relocation is specified by the following type:
 
 @example
-deftype Elf64_Rela =
+type Elf64_Rela =
   struct
   @{
     offset<Elf64_Addr,B> r_offset;
@@ -8467,7 +8467,7 @@ deftype Elf64_Rela =
 The section is described by an entry in the ELF sections header table:
 
 @example
-deftype Elf64_Shdr =
+type Elf64_Shdr =
   struct
   @{
     Elf_Word sh_name;
@@ -8558,7 +8558,7 @@ Let's assume a binary file contains a series of blocks, located one
 after the other, of a kind described by the following struct type:
 
 @example
-deftype Block =
+type Block =
   struct
   @{
      byte magic[2] : magic[0] == 'B' && magic[1] == 'K';
@@ -8589,7 +8589,7 @@ relocations.  First, we map an @code{Elf64_Shdr} to get the section
 header:
 
 @example
-(poke) defvar shdr = Elf64_Shdr @@ @var{offset}
+(poke) var shdr = Elf64_Shdr @@ @var{offset}
 (poke) shdr.sh_offset
 120#B
 (poke) shdr.sh_size
@@ -8600,7 +8600,7 @@ Now we map an array with the relocations themselves, using a map
 bounded by size, as we learned in the last section:
 
 @example
-(poke) defvar relocs = ELF64_Rela[shdr.sh_size] @@ shdr.sh_offset
+(poke) var relocs = ELF64_Rela[shdr.sh_size] @@ shdr.sh_offset
 (poke) relocs'length
 3
 @end example
@@ -8622,8 +8622,8 @@ don't want the mapping bounds of @code{relocs} to be tied to
 @code{shdr}, we can just use a temporary for the size:
 
 @example
-(poke) defvar s = shdr.sh_size
-(poke) defvar relocs = Elf64_Rela[s] @@ shdr.sh_offset
+(poke) var s = shdr.sh_size
+(poke) var relocs = Elf64_Rela[s] @@ shdr.sh_offset
 @end example
 
 Since simple values (such as the size above) are not mapped, this
@@ -8647,7 +8647,7 @@ This is useful when we want to read a data structure from the IO space
 changing the underlying IO space.  We would do something like:
 
 @example
-(poke) defvar a = unmap (int[1] @@ 10#B)
+(poke) var a = unmap (int[1] @@ 10#B)
 (poke) a[2] = 100
 @end example
 
@@ -8672,7 +8672,7 @@ Exceptions in Poke are values of type @code{Exception}, which is a
 struct defined like this:
 
 @example
-deftype Exception =
+type Exception =
   struct
   @{
     int<32> code;
@@ -8805,7 +8805,7 @@ This statement is particularly useful for mapping IO spaces until an
 compute with every integer in the current IO space:
 
 @example
-defvar o = 0#B;
+var o = 0#B;
 try
 @{
   compute (int @@ o);
@@ -9100,7 +9100,7 @@ system.  These are described in the subsections below.
 The @code{getenv} built-in function has the form:
 
 @example
-defun getenv (string name) string:
+fun getenv (string name) string:
 @end example
 
 @noindent
@@ -9114,7 +9114,7 @@ the @code{E_inval} exception is raised.
 The @code{rand} built-in function has the form:
 
 @example
-defun rand = (uint<32> seed = 0) int<32>:
+fun rand = (uint<32> seed = 0) int<32>:
 @end example
 
 @noindent
@@ -9239,7 +9239,7 @@ It is often useful to convert arrays of characters into strings.  The
 standard function @code{catos} provides the following interface:
 
 @example
-defun catos = (char[] @var{chars}) string: @{ @dots{} @}
+fun catos = (char[] @var{chars}) string: @{ @dots{} @}
 @end example
 
 It builds a string containing the characters in @var{chars}, and
@@ -9268,7 +9268,7 @@ Sometimes we want to store strings in character arrays.  The standard
 function @code{stoca} provides the following interface:
 
 @example
-defun stoca = (string s, char[] ca, char fill = 0) void: @{ @dots{} @}
+fun stoca = (string s, char[] ca, char fill = 0) void: @{ @dots{} @}
 @end example
 
 It fills the given array @var{ca} with the contents of the string
@@ -9284,7 +9284,7 @@ than the length of the array, the extra characters are set to the
 The standard function @code{atoi} provides the following interface:
 
 @example
-defun atoi = (string @var{str}, int @var{base} = 10) long: @{ @dots{} @}
+fun atoi = (string @var{str}, int @var{base} = 10) long: @{ @dots{} @}
 @end example
 
 It parses a signed integral number in the given @var{base} in the
@@ -9322,7 +9322,7 @@ work on strings:
 The standard function @code{ltrim} provides the following interface:
 
 @example
-defun ltrim = (string s, string cs = " \t") string: @{ @dots{} @}
+fun ltrim = (string s, string cs = " \t") string: @{ @dots{} @}
 @end example
 
 It returns a copy of the input string @code{s} with any leading
@@ -9335,7 +9335,7 @@ character that also appears in @var{cs} removed.
 The standard function @code{rtrim} provides the following interface:
 
 @example
-defun rtrim = (string s, string cs = " \t") string: @{ @dots{} @}
+fun rtrim = (string s, string cs = " \t") string: @{ @dots{} @}
 @end example
 
 It returns a copy of the input string @code{s} with any trailing
@@ -9348,7 +9348,7 @@ character that also appears in @var{cs} removed.
 The standard function @code{strchr} provides the following interface:
 
 @example
-defun strchr = (string s, uint<8> c) int<32>: @{ @dots{} @}
+fun strchr = (string s, uint<8> c) int<32>: @{ @dots{} @}
 @end example
 
 It returns the index of the first occurrence of the character @var{c}
@@ -9369,7 +9369,7 @@ this function returns the length of the string.
 The standard function @code{qsort} has the following prototype:
 
 @example
-defun qsort = (any[] @var{array}, Comparator @var{cmp_f},
+fun qsort = (any[] @var{array}, Comparator @var{cmp_f},
                long @var{left} = 0,
                long @var{right} = array'length - 1) void
 @end example
@@ -9385,7 +9385,7 @@ The comparator function @var{cmp_f} should have the following
 prototype:
 
 @example
-deftype Comparator = (any,any):int
+type Comparator = (any,any):int
 @end example
 
 @node CRC Functions
@@ -9402,7 +9402,7 @@ is the Cyclic Redundancy Checksum (CRC).  The standard function
 @code{crc32} calculates the 32 bit CRC defined by ISO-3309.
 
 @example
-defun crc32 = (byte[] @var{buf}) uint<32>: @{ @dots{} @}
+fun crc32 = (byte[] @var{buf}) uint<32>: @{ @dots{} @}
 @end example
 
 @noindent
@@ -9424,7 +9424,7 @@ display the date in a human readable format.
 The definition is:
 
 @example
-deftype POSIX_Time@var{size} = struct
+type POSIX_Time@var{size} = struct
 @{
   uint<@var{size}>  seconds;
 
@@ -9459,7 +9459,7 @@ human readable format.  To do this, you can use the @code{ptime} function,
 which is defined as follows:
 
 @example
-defun ptime = (uint<64> seconds) void:
+fun ptime = (uint<64> seconds) void:
 @{ @dots{} @}
 @end example
 
@@ -9560,7 +9560,7 @@ At the lowest level the communication is performed in terms of
 The layout of each message is:
 
 @example
-deftype PMI_FrameMessage =
+type PMI_FrameMessage =
  struct
  @{
     big uint<4> size : size <= 2048;
@@ -9830,13 +9830,13 @@ XXX
 @c  LocalWords:  dircategory direntry titlepage vskip filll ifnottex
 @c  LocalWords:  insertcopying vm pokerc Structs Endianness catos dfn
 @c  LocalWords:  atoi qsort cindex bitpatterns noindent samp
-@c  LocalWords:  itemx html init REPL TTY rluserman defun printf PVM
+@c  LocalWords:  itemx html init REPL TTY rluserman fun printf PVM
 @c  LocalWords:  stdin subcommands disassembler ascii POKEDATADIR FLV
 @c  LocalWords:  endian endianness obase expr Booleans uint Bitwise
 @c  LocalWords:  emph signedness unary boolean ceil bitwise structs
-@c  LocalWords:  BSON deftype struct dstart IETF BFINAL BTYPE BitData
+@c  LocalWords:  BSON type struct dstart IETF BFINAL BTYPE BitData
 @c  LocalWords:  sizeof kilobits Pokish B'size B'magnitude B'unit UB
-@c  LocalWords:  b'magnitude b'unit fUB unhandled defvar CTF isa str
+@c  LocalWords:  b'magnitude b'unit fUB unhandled var CTF isa str
 @c  LocalWords:  polymorphism lvalue stmt Variadic ret namespace gcd
 @c  LocalWords:  variadic args PDP programmatically PKL eBPF dst src
 @c  LocalWords:  BPF Insn Regs le ident ei ELFDATA LSB ELFDAT MSB ios

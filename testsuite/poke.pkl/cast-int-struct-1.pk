@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   struct int<64>
   {
     int<32> f1;

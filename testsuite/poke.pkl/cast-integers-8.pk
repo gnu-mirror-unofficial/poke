@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 0;
+var x = 0;
 
 /* { dg-command {  x as uint<1> } } */
 /* { dg-output "\\(uint<1>\\) 0" } */

@@ -1,16 +1,16 @@
 /* { dg-do run } */
 
-deftype Ja =
+type Ja =
   struct
   {
     int extop;
   };
 
-deftype Dwarf_CFI =
+type Dwarf_CFI =
   struct
   {
     Ja foo;
-    defvar pred = foo.extop;
+    var pred = foo.extop;
   };
 
 /* { dg-command { [Dwarf_CFI {}] } } */

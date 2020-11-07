@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-deftype Prolog = struct { byte magic; };
-deftype Packet = struct { Prolog p; byte data; };
+type Prolog = struct { byte magic; };
+type Packet = struct { Prolog p; byte data; };
 
 /* { dg-command { .set omode flat } } */
 /* { dg-command { Packet { p = Prolog {} } } } */

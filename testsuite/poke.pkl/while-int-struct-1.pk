@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Foo = struct int<32> { int<16> hi; uint<16> lo; };
+type Foo = struct int<32> { int<16> hi; uint<16> lo; };
 
 /* { dg-command { while (Foo { hi=12 }) { print "lala\n"; break; } } } */
 /* { dg-command { print "lala" } } */

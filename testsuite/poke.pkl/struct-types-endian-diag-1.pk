@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Packet = struct
+type Packet = struct
  {
    big string foo; /* { dg-error "" } */
    long bar;

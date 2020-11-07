@@ -2,7 +2,7 @@
 
 /* Make sure && is lazy.  */
 
-defvar zero = 0;
+var zero = 0;
 
 /* { dg-command {  0 && 1/zero } } */
 /* { dg-output "0" } */

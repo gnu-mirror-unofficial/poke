@@ -3,7 +3,7 @@
 /* Function types cannot appear in the definition of a struct
    element.  */
 
-deftype Packet = struct
+type Packet = struct
   {
     fun()void foo; /* { dg-error "" } */
   };

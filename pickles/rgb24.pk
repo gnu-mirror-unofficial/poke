@@ -24,19 +24,19 @@ load color;
 
 /* Each color beam is encoded by an unsigned 8-bit integer.  */
 
-deftype RGB24_Color_Beam = uint<8>;
+type RGB24_Color_Beam = uint<8>;
 
 /* A RGB24 color is the composition of red, green and blue beams.  */
 
-deftype RGB24_Color = RGB24_Color_Beam[3];
+type RGB24_Color = RGB24_Color_Beam[3];
 
-defvar RGB24_RED = 0;
-defvar RGB24_GREEN = 1;
-defvar RGB24_BLUE = 2;
+var RGB24_RED = 0;
+var RGB24_GREEN = 1;
+var RGB24_BLUE = 2;
 
 /* RGB24 colors for the standard colors.  */
 
-defvar rgb24_color =
+var rgb24_color =
   [[255UB,255UB,255UB], /* white */
    [0UB,0UB,0UB],       /* black */
    [190UB,190UB,190UB], /* grey */

@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Packet = struct { int i; };
+type Packet = struct { int i; };
 
 /* { dg-command { .set omode flat } } */
 /* { dg-command { Packet { i = 66 } } } */

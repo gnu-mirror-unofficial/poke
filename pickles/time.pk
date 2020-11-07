@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-defun ptime = (uint<64> seconds) void:
+fun ptime = (uint<64> seconds) void:
 {
-    defun days_in_year = (int year) int:
+    fun days_in_year = (int year) int:
     {
       if (year % 400 == 0) return 366;
       if (year % 100 == 0) return 365;
@@ -26,7 +26,7 @@ defun ptime = (uint<64> seconds) void:
       return 365;
     }
 
-    defun days_in_month = (int year, int month) int:
+    fun days_in_month = (int year, int month) int:
     {
       if (month < 0)
 	raise E_out_of_bounds;
@@ -49,14 +49,14 @@ defun ptime = (uint<64> seconds) void:
       return 31;
     }
 
-    defvar month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-			  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    defvar year = 1970;
-    defvar month = 0;
-    defvar day = 0;
-    defvar hour = 0;
-    defvar minute = 0;
+    var year = 1970;
+    var month = 0;
+    var day = 0;
+    var hour = 0;
+    var minute = 0;
     while (seconds >= 0)
       {
 	if (seconds < 24 * 60 * 60)
@@ -89,7 +89,7 @@ defun ptime = (uint<64> seconds) void:
 	    hour, minute, seconds);
 }
 
-deftype POSIX_Time32 = struct
+type POSIX_Time32 = struct
 {
   uint<32>  seconds;
 
@@ -101,7 +101,7 @@ deftype POSIX_Time32 = struct
   }
 };
 
-deftype POSIX_Time64 = struct
+type POSIX_Time64 = struct
 {
   uint<64>  seconds;
 

@@ -18,7 +18,7 @@
 
 /**** Set the default load path for maps ****/
 
-defvar map_load_path = "";
+var map_load_path = "";
 
 /* First, add the system-wide locations.  */
 
@@ -46,6 +46,6 @@ map_load_path = ".:" + map_load_path;
    regular expression, and the second element is the name of a
    map.  */
 
-defvar auto_map = [[".*\\.mp3$", "mp3"],
-                   [".*\\.o$", "elf"],
-                   ["a\\.out$", "elf"]];
+var auto_map = [[".*\\.mp3$", "mp3"],
+                [".*\\.o$", "elf"],
+                ["a\\.out$", "elf"]];

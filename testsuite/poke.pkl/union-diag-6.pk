@@ -3,11 +3,11 @@
 /* Declarations are only allowed in unions if they appear before any
    of the alternatives. */
 
-defun pred = int: { return 0; }
+fun pred = int: { return 0; }
 
-deftype Foo = union
+type Foo = union
  {
    int bar : pred;
-   deftype je = int[bar]; /* { dg-error "" } */
+   type je = int[bar]; /* { dg-error "" } */
    int jorl;
  };

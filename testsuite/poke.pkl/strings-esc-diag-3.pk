@@ -2,4 +2,4 @@
 
 /* Invalid \-sequence */
 
-defvar s = "a\8b"; /* { dg-error "" } */
+var s = "a\8b"; /* { dg-error "" } */

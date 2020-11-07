@@ -1,19 +1,19 @@
 /* { dg-do run } */
 /* { dg-data {c*} {0x61 0x59 0x63 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
 
-deftype Foo =
+type Foo =
   struct
   {
     byte a;
     method set_a = (byte n) void:
       {
-        defvar x = 1;
+        var x = 1;
         a = n + x;
       }
   };
 
 /* { dg-command {.set obase 16} } */
-/* { dg-command {defvar f = Foo @ 3#B} } */
+/* { dg-command {var f = Foo @ 3#B} } */
 /* { dg-command {f.a} } */
 /* { dg-output "0x40UB" } */
 /* { dg-command {f.set_a (2)} } */

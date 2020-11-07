@@ -3,8 +3,8 @@
 
 /* The 'ios attribute is allowed in `any' values.  */
 
-deftype Packet = struct { byte a; byte b; };
-defun foo = (any v) int: { return v'ios; }
+type Packet = struct { byte a; byte b; };
+fun foo = (any v) int: { return v'ios; }
 
 /* { dg-command { foo (Packet @ 4#B) } } */
 /* { dg-output "0" } */

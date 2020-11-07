@@ -4,8 +4,8 @@
 
 /* { dg-command { .set obase 16 } } */
 /* { dg-command { .set endian big } } */
-/* { dg-command { defvar foo = open ("foo.data") } } */
-/* { dg-command { defvar bar = open ("bar.data") } } */
+/* { dg-command { var foo = open ("foo.data") } } */
+/* { dg-command { var bar = open ("bar.data") } } */
 /* { dg-command { int[] @ foo:0#B } } */
 /* { dg-output "\\\[0x1020304,0x5060708\\\]" } */
 /* { dg-command { int[] @ bar:0#B } } */

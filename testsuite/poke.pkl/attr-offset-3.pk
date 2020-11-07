@@ -3,8 +3,8 @@
 
 /* The 'offset attribute is allowed in `any' values.  */
 
-deftype Packet = struct { byte a; byte b; };
-defun foo = (any v) offset<int,B>: { return v'offset; }
+type Packet = struct { byte a; byte b; };
+fun foo = (any v) offset<int,B>: { return v'offset; }
 
 /* { dg-command { foo (Packet @ 4#B) } } */
 /* { dg-output "4#B" } */

@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Bar = struct { int i; long j; defun ja = void: {} };
+type Bar = struct { int i; long j; fun ja = void: {} };
 
-defvar b = Bar @ 0#B;
+var b = Bar @ 0#B;
 b.jorl; /* { dg-error "" } */

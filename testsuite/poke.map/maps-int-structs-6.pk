@@ -3,7 +3,7 @@
 
 /* First two bytes in base 2: 1000_0000 0010_0011 */
 
-deftype Foo =
+type Foo =
   struct int<16>
   {
     int<1> s;

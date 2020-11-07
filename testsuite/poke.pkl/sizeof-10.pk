@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype struct_with_array =
+type struct_with_array =
   struct
   {
     int;

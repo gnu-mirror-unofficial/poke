@@ -27,17 +27,17 @@ if (!(argv'length in [1,2]))
     exit (1);
   }
 
-defvar file_name = argv[0];
-defvar section_name = (argv'length > 1) ? argv[1] : "";
+var file_name = argv[0];
+var section_name = (argv'length > 1) ? argv[1] : "";
 
 try
   {
-    defvar fd = open (file_name, IOS_M_RDONLY);
-    defvar elf = Elf64_File @ fd : 0#B;
+    var fd = open (file_name, IOS_M_RDONLY);
+    var elf = Elf64_File @ fd : 0#B;
 
     for (shdr in elf.shdr where shdr.sh_type != 0x0)
       {
-        defvar sname = elf.get_string (shdr.sh_name);
+        var sname = elf.get_string (shdr.sh_name);
 
         if (section_name == "" || sname == section_name)
           save :ios elf'ios :file file_name + sname

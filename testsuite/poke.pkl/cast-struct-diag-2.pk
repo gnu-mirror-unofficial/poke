@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-deftype Struct = struct {};
+type Struct = struct {};
 
-defvar x = Struct {} as int<32>; /* { dg-error "expected struct" } */
+var x = Struct {} as int<32>; /* { dg-error "expected struct" } */

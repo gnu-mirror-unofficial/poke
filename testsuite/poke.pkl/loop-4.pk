@@ -1,13 +1,13 @@
 /* { dg-do run } */
 
-defun loop_4 = int:
+fun loop_4 = int:
   {
-   defvar res = 0;
-   defvar i = 0;
+   var res = 0;
+   var i = 0;
 
    while (i < 3)
      {
-       defvar j = 0;
+       var j = 0;
        while (j < 3)
          {
            res = res + 1;

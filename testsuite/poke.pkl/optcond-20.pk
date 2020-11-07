@@ -1,10 +1,10 @@
 /* { dg-do run } */
 
-deftype Foo =
+type Foo =
   struct
   {
     int a;
-    defun fn = int: { return a; }
+    fun fn = int: { return a; }
     int b if fn > 10;
   };
 

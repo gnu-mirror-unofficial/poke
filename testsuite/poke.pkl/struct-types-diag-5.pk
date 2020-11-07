@@ -2,7 +2,7 @@
 
 /* Struct elements can't have duplicated names.  */
 
-deftype Packet = struct
+type Packet = struct
  {
    int foo;
    long bar;

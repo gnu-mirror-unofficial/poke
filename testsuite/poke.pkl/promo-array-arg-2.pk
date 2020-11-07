@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defun foo = (int[] a) int: { return a[1]; }
-defun bar = (int[][] a) int: { return a[1][1]; }
+fun foo = (int[] a) int: { return a[1]; }
+fun bar = (int[][] a) int: { return a[1][1]; }
 
 /* { dg-command { foo ([1,2,3] as int[]) } } */
 /* { dg-output "2" } */

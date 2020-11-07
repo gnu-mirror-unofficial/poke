@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Bar =
+type Bar =
   struct
   {
     int i;

@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-deftype Foo = struct { int i @ 0#B; };
+type Foo = struct { int i @ 0#B; };
 
-defvar o = 23#Foo; /* { dg-error "complete types" } */
+var o = 23#Foo; /* { dg-error "complete types" } */

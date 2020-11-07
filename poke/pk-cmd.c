@@ -585,13 +585,13 @@ pk_cmd_exec (const char *str)
       int what; /* 0 -> declaration, 1 -> statement */
       int retval = 1;
 
-      if (IS_COMMAND(ecmd, "defun"))
+      if (IS_COMMAND(ecmd, "fun"))
         what = 0;
       else
         {
-          if (IS_COMMAND(ecmd, "defvar")
-           || IS_COMMAND(ecmd, "deftype")
-           || IS_COMMAND(ecmd, "defunit"))
+          if (IS_COMMAND(ecmd, "var")
+           || IS_COMMAND(ecmd, "type")
+           || IS_COMMAND(ecmd, "unit"))
             what = 0;
           else
             what = 1;

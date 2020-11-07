@@ -3,9 +3,9 @@
 /* Make sure that units take prececence to type names in offset
    types.  */
 
-deftype y = int;
-defunit y = 3;
-deftype myoff = offset<int,y>;
+type y = int;
+unit y = 3;
+type myoff = offset<int,y>;
 
 /* { dg-command { 6#b as myoff } } */
 /* { dg-output "2#3" } */

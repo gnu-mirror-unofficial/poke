@@ -1,9 +1,9 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
-    defvar n = 10;
+    var n = 10;
     int i;
     method foo = int:
       {

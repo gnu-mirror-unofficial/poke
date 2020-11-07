@@ -1,10 +1,10 @@
 /* { dg-do run } */
 
-defvar global = 10;
+var global = 10;
 
-defun foo = int:
+fun foo = int:
   {
-   defun bar = int:
+   fun bar = int:
    {
     return global;
    }

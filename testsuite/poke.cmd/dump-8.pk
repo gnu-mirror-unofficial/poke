@@ -5,7 +5,7 @@
 /* { dg-command { .set endian big } } */
 
 /* { dg-command { .file foo } } */
-/* { dg-command { defvar bar = open ("bar") } } */
+/* { dg-command { var bar = open ("bar") } } */
 /* { dg-command { dump :ruler 0 :ascii 0 :size 4#B} } */
 /* { dg-output "00000000: 1020 3040" } */
 /* { dg-command { dump :ios bar :ruler 0 :ascii 0 :size 4#B} } */

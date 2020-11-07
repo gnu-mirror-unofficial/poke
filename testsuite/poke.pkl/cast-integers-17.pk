@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 1;
-defvar y = 2;
+var x = 1;
+var y = 2;
 
 /* { dg-command {  x as uint<2> + y as int<5> } } */
 /* { dg-output "\\(uint<5>\\) 3" } */

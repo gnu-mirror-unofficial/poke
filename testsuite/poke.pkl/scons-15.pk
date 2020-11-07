@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-deftype Packet = struct { offset<int,Kib> o; };
+type Packet = struct { offset<int,Kib> o; };
 
 /* { dg-command { .set omode flat } } */
 /* { dg-command { Packet {} } } */

@@ -4,8 +4,8 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-defvar N = 5;
-deftype Foo = struct { byte a if N > 10; byte b : b > 20 if a == 0x10; };
+var N = 5;
+type Foo = struct { byte a if N > 10; byte b : b > 20 if a == 0x10; };
 
 /* { dg-command { try Foo @ 0#B; catch if E_elem { printf "caught\n"; }} } */
 /* { dg-output "caught" } */

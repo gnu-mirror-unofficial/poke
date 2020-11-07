@@ -17,22 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-defvar dwarf_bits = 32;
-defvar dwarf_version = 4;
+var dwarf_bits = 32;
+var dwarf_version = 4;
 
-defun dwarf_set_bits = (int bits) int:
+fun dwarf_set_bits = (int bits) int:
   {
     dwarf_bits = bits;
     return 1;
   }
 
-defun dwarf_set_version = (int ver) int:
+fun dwarf_set_version = (int ver) int:
   {
     dwarf_version = ver;
     return 1;
   }
 
-deftype Dwarf_Initial_Length =
+type Dwarf_Initial_Length =
   union
   {
     struct
@@ -60,7 +60,7 @@ deftype Dwarf_Initial_Length =
       }
   };
 
-deftype Dwarf_Address =
+type Dwarf_Address =
   union
   {
     uint<32> a32 : dwarf_bits == 32;
@@ -81,7 +81,7 @@ deftype Dwarf_Address =
       }
   };
 
-deftype Dwarf_Section_Offset =
+type Dwarf_Section_Offset =
   union
   {
     offset<uint<32>,B> o32 : dwarf_bits == 32;

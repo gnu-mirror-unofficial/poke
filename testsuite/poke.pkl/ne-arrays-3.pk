@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar a = [1,2,2];
+var a = [1,2,2];
 
 /* { dg-command { a != [1,2,3] } } */
 /* { dg-output "1" } */

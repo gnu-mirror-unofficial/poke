@@ -68,13 +68,13 @@
 ;; from libpoke/pkl-lex.l
 (defconst poke-keywords
   '("pinned" "struct" "union" "else" "while" "until" "for" "in" "where" "if"
-    "sizeof" "defun" "method" "deftype" "defvar" "defunit" "break" "return"
+    "sizeof" "fun" "method" "type" "var" "unit" "break" "return"
     "as" "try" "catch" "raise" "any" "print" "printf" "isa"
     "unmap" "big" "little" "load")
   "List of the main keywords of the Poke language.")
 
 ;; from libpoke/pkl-lex.l
-;; from perl -nE 'say qq{"$1"} if /^deftype (\S+)/' libpoke/*.pk
+;; from perl -nE 'say qq{"$1"} if /^type (\S+)/' libpoke/*.pk
 (defconst poke-builtin-types
   '("string" "void" "int" "uint" "offset"
     "Exception"
@@ -88,7 +88,7 @@
     "POSIX_Time32" "POSIX_Time64")
   "List of Poke builtin types.")
 
-;; from perl -nE 'say qq{"$1"} if /^defun (\S+)/ && $1 !~ /_pkl/' libpoke/*.pk
+;; from perl -nE 'say qq{"$1"} if /^fun (\S+)/ && $1 !~ /_pkl/' libpoke/*.pk
 (defconst poke-builtin-functions
   '("rand" "get_endian" "set_endian" "get_ios" "set_ios" "open"
     "close" "iosize" "getenv" "exit"
@@ -96,7 +96,7 @@
     "crc32" "ptime")
   "List of Poke builtin functions.")
 
-;; from perl -nE 'say qq{"$1"} if /^defvar (\S+)/ && $1 !~ /^EC?_/' libpoke/*.pk
+;; from perl -nE 'say qq{"$1"} if /^var (\S+)/ && $1 !~ /^EC?_/' libpoke/*.pk
 (defconst poke-builtin-constants
   '("ENDIAN_LITTLE" "ENDIAN_BIG"
     "IOS_F_READ" "IOS_F_WRITE" "IOS_F_TRUNCATE" "IOS_F_CREATE"
@@ -104,7 +104,7 @@
     "load_path" "NULL")
   "List of Poke builtin constants and variables.")
 
-;; from perl -nE 'say qq{"$1"} if /defvar (EC?_\S+)/' libpoke/*.pk
+;; from perl -nE 'say qq{"$1"} if /var (EC?_\S+)/' libpoke/*.pk
 (defconst poke-builtin-exceptions
   '("EC_generic" "EC_div_by_zero" "EC_no_ios" "EC_no_return" "EC_out_of_bounds"
     "EC_map_bounds" "EC_eof" "EC_map" "EC_conv" "EC_elem" "EC_constraint"
@@ -203,9 +203,9 @@
         (id "=" inst)
         (id "=" id ":" inst))
       (decl
-       ("defvar" definition)
+       ("var" definition)
        ("method" definition)
-       ("deftype" definition)
+       ("type" definition)
        (decl ";" decl))
       (inst
        (id)

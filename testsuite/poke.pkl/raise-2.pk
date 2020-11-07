@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defun foo = int:
+fun foo = int:
   {
    try
      raise Exception { code = 0} ;

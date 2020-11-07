@@ -3,7 +3,7 @@
 /* Check for unreachable alternatives in unions.  Constant constraint
    expression.  */
 
-deftype Foo = union
+type Foo = union
  {
    int foo : 1 + 2;
    int bar; /* { dg-warning "" } */

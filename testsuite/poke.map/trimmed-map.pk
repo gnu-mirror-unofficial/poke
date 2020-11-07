@@ -3,8 +3,8 @@
 
 /* { dg-command {.set obase 16 } } */
 /* { dg-command {.set endian big} } */
-/* { dg-command { defvar a = int[3] @ 0#B } } */
-/* { dg-command { defvar b = a[1:] } } */
+/* { dg-command { var a = int[3] @ 0#B } } */
+/* { dg-command { var b = a[1:] } } */
 /* { dg-command { b[0] = 0x0eadbeef } } */
 /* { dg-command { a[1] } } */
 /* { dg-output "0xeadbeef" } */

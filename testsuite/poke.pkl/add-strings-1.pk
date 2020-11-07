@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = "foo";
-defvar y = "bar";
+var x = "foo";
+var y = "bar";
 
 /* { dg-command {  x + y } } */
 /* { dg-output "\"foobar\"" } */

@@ -4,8 +4,8 @@
 /* { dg-command { .set obase 16 } } */
 
 /* { dg-command { .set omode flat } } */
-/* { dg-command { deftype Foo = struct { byte b; } } } */
-/* { dg-command { deftype Bar = struct { Foo foo; } } } */
+/* { dg-command { type Foo = struct { byte b; } } } */
+/* { dg-command { type Bar = struct { Foo foo; } } } */
 /* { dg-command { Bar @ 0#B } } */
 /* { dg-output "Bar \{foo=Foo \{b=0x10UB\}\}" } */
 

@@ -3,17 +3,17 @@
 
 /* { dg-command {.set obase 16} } */
 
-deftype Foo = struct { byte i; byte j @ 3#B; };
+type Foo = struct { byte i; byte j @ 3#B; };
 
-/* { dg-command { defvar f = Foo @ 0#B } } */
+/* { dg-command { var f = Foo @ 0#B } } */
 /* { dg-command { f } } */
 /* { dg-output "Foo \\{i=0x10UB,j=0x40UB\\}" } */
 /* { dg-command { f'size } } */
 /* { dg-output "\n0x20UL#b" } */
 
-deftype Bar = struct { byte i; byte j @ 0#B; };
+type Bar = struct { byte i; byte j @ 0#B; };
 
-/* { dg-command { defvar b = Bar @ 0#B } } */
+/* { dg-command { var b = Bar @ 0#B } } */
 /* { dg-command { b } } */
 /* { dg-output "\nBar \\{i=0x10UB,j=0x10UB\\}" } */
 /* { dg-command { b'size } } */

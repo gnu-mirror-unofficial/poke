@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar x = 30;
+var x = 30;
 
 /* { dg-command { x in [20, 30, 40] && x > 2 } } */
 /* { dg-output "1" } */

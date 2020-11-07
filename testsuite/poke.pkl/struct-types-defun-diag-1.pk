@@ -1,10 +1,10 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
     int i;
-    defun foo = void:
+    fun foo = void:
       {
         i = 2; /* { dg-error "invalid assignment" } */
       }

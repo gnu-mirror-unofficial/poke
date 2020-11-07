@@ -4,7 +4,7 @@
 /* Test that algol68-style calls can be done in struct methods in
    which all arguments are optional.  */
 
-deftype Foo =
+type Foo =
   struct
   {
     byte a;
@@ -14,6 +14,6 @@ deftype Foo =
   };
 
 /* { dg-command {.set obase 10 } } */
-/* { dg-command {defvar f = Foo @ 0#B} } */
+/* { dg-command {var f = Foo @ 0#B} } */
 /* { dg-command {f.foo} } */
 /* { dg-output "30" } */

@@ -4,8 +4,8 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-defvar n = 10;
-deftype Foo = union { byte b : n < 10; int c; };
+var n = 10;
+type Foo = union { byte b : n < 10; int c; };
 
 /* { dg-command { Foo @ 0#B } } */
 /* { dg-output "Foo \\{c=0x10203040\\}" } */

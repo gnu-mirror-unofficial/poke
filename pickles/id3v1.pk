@@ -22,7 +22,7 @@
    that there are 255 possible genres, because the code 255 denotes
    no-genre according to the spec.  */
 
-defvar id3v1_genres =
+var id3v1_genres =
   ["blues", "classic rock", "country", "dance", "disco", "funk",
    "grunge", "hip-hop", "jazz", "metal", "new age", "oldies",
    "other", "pop", "rhythm and blues", "rap", "reggae", "rock",
@@ -44,9 +44,9 @@ defvar id3v1_genres =
 /* Given a genre name, return its code.  Raise E_inval if the genre is
    not found.  */
 
-defun id3v1_search_genre = (string name) uint<8>:
+fun id3v1_search_genre = (string name) uint<8>:
 {
-  defvar i = 0;
+  var i = 0;
   while (i < id3v1_genres'length)
     {
       if (id3v1_genres[i] == name)
@@ -60,7 +60,7 @@ defun id3v1_search_genre = (string name) uint<8>:
 
 /* The ID3V1_Tag type denotes an ID3 tag.  */
 
-deftype ID3V1_Tag =
+type ID3V1_Tag =
   struct
   {
     char[3] id = ['T', 'A', 'G'];

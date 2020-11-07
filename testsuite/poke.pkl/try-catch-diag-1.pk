@@ -1,12 +1,12 @@
 /* { dg-do compile } */
 
-defun foo = int:
+fun foo = int:
   {
    try
      raise Exception {code = 1};
    catch (string e) /* { dg-error "" } */
    {
-     defvar foo = 10;
+     var foo = 10;
      foo = 20;
    }
    return 666;

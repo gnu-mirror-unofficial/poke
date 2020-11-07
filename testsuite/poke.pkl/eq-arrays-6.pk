@@ -1,6 +1,6 @@
 /* { dg-do run } */
 
-defvar a = ["","bar","baz"];
+var a = ["","bar","baz"];
 
 /* { dg-command { a == ["foo","bar","baz"] } } */
 /* { dg-output "0" } */

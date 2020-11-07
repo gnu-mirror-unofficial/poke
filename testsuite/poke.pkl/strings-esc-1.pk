@@ -2,7 +2,7 @@
 
 /* Octal escape sequence */
 
-defvar s = "\1\12\1234;\12==\n";
+var s = "\1\12\1234;\12==\n";
 
 /* { dg-command { .set obase 8 } } */
 

@@ -1,14 +1,14 @@
 /* { dg-do run } */
 
-deftype Callback = (int)int;
+type Callback = (int)int;
 
-defun identity = (int n) int: { return n; }
-defun double = (int n) int: { return n * 2; }
-defun half = (int n) int: { return n / 2; }
+fun identity = (int n) int: { return n; }
+fun double = (int n) int: { return n * 2; }
+fun half = (int n) int: { return n / 2; }
 
-defun apply = (Callback[] callbacks, int data) int:
+fun apply = (Callback[] callbacks, int data) int:
   {
-   defvar sum = 0;
+   var sum = 0;
 
    for (e in callbacks)
      sum = sum + e (data);

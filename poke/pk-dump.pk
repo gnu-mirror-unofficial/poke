@@ -22,33 +22,33 @@ pk_help_str = pk_help_str
 /* The operation of `dump' can be configured by the user by
    customizing the following variables.  */
 
-defvar pk_dump_size = 128#B;
-defvar pk_dump_group_by = 2#B;
-defvar pk_dump_cluster_by = 8;
-defvar pk_dump_ruler = 1;
-defvar pk_dump_ascii = 1;
+var pk_dump_size = 128#B;
+var pk_dump_group_by = 2#B;
+var pk_dump_cluster_by = 8;
+var pk_dump_ruler = 1;
+var pk_dump_ascii = 1;
 
 /* `pk_dump_offset' keeps the last base offset used by `dump'.  It is
    the offset to be used in case the command is invoked with no :from
    argument.  */
 
-defvar pk_dump_offset = 0#B;
+var pk_dump_offset = 0#B;
 
 /* And the command itself.  */
 
-defun dump = (int<32> ios = get_ios,
-              off64 from = pk_dump_offset,
-              off64 size = pk_dump_size,
-              off64 group_by = pk_dump_group_by,
-              int cluster_by = pk_dump_cluster_by,
-              int ruler = pk_dump_ruler,
-              int ascii = pk_dump_ascii) void:
+fun dump = (int<32> ios = get_ios,
+            off64 from = pk_dump_offset,
+            off64 size = pk_dump_size,
+            off64 group_by = pk_dump_group_by,
+            int cluster_by = pk_dump_cluster_by,
+            int ruler = pk_dump_ruler,
+            int ascii = pk_dump_ascii) void:
 {
-  defun print_ruler = void:
+  fun print_ruler = void:
   {
-    defvar o = 0#B;
+    var o = 0#B;
 
-    defun itoa = (uint<8> x) char:
+    fun itoa = (uint<8> x) char:
     {
       if (x >= 0 && x <= 9) return x + '0';
       if (x >= 10 && x <= 15) return x + 'A' - 10;
@@ -68,8 +68,8 @@ defun dump = (int<32> ios = get_ios,
       }
     if (ascii)
       {
-	defvar x = 0 as uint<8>;
-	defvar s = "";
+	var x = 0 as uint<8>;
+	var s = "";
 	while (x < 16)
 	  {
 	    s = s + itoa(x) as string;
@@ -82,14 +82,14 @@ defun dump = (int<32> ios = get_ios,
     print "\n";
   }
 
-  defun print_ascii = (off64 offset, off64 top, off64 step,
-		       off64 group_by, int cluster_by) void:
+  fun print_ascii = (off64 offset, off64 top, off64 step,
+                     off64 group_by, int cluster_by) void:
   {
     print("  ");
-    defvar o = 0#B;
+    var o = 0#B;
     while (o < step && offset + o < top)
       {
-	defvar v = byte @ ios : (offset + o);
+	var v = byte @ ios : (offset + o);
 	if (v < ' ' || v > '~')
 	  printf "%<dump-ascii:%c%>", '.';
 	else
@@ -100,21 +100,21 @@ defun dump = (int<32> ios = get_ios,
       }
   }
 
-  defun print_hex = (char c, off64 o) void:
+  fun print_hex = (char c, off64 o) void:
   {
     if (o % group_by == 0#B)
       print " ";
     printf ("%u8x", c);
   }
 
-  defun print_data = (off64 offset, off64 top, off64 step,
-		      off64 group_by , int cluster_by) void:
+  fun print_data = (off64 offset, off64 top, off64 step,
+                    off64 group_by , int cluster_by) void:
   {
     while (offset < top)
       {
 	printf ("%<dump-address:%u32x:%>", offset / #B);
 
-	defvar o = 0#B;
+	var o = 0#B;
 	try
 	{
 	  while (o < step && offset + o < top)
@@ -146,8 +146,8 @@ defun dump = (int<32> ios = get_ios,
   /* The `dump' command is byte-oriented.  Both the base offset and
      the size of the dump are truncated to bytes.  Hence the casts
      below.  */
-  defvar offset = from as offset<uint<64>,B>;
-  defvar top = (from + size) as offset<uint<64>,B>;
+  var offset = from as offset<uint<64>,B>;
+  var top = (from + size) as offset<uint<64>,B>;
 
   if (ruler)
     print_ruler;

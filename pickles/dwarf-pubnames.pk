@@ -23,7 +23,7 @@ load "dwarf-common.pk";
 /* The sections .debug_pubnames and .debug_pubtypes contain a name
    lookup table each.  */
 
-deftype Dwarf_Name_Lookup_Table =
+type Dwarf_Name_Lookup_Table =
   struct
   {
     /* Lenght of the set of entries for this CU, not including the
@@ -42,7 +42,7 @@ deftype Dwarf_Name_Lookup_Table =
     /* The header is followed by a set of entries, which are finished
        by an offset containing the value 0.  */
 
-    deftype Global_Name =
+    type Global_Name =
       struct
       {
         Dwarf_Section_Offset offset : offset.value != 0#B;

@@ -3,9 +3,9 @@
 /* Struct elements can't have duplicated names.
    Version with declarations.  */
 
-deftype Packet = struct
+type Packet = struct
  {
-   defvar foo = 10;
+   var foo = 10;
    long bar;
    string foo;  /* { dg-error "" } */
  };

@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 10U;
-defvar y = 10U;
+var x = 10U;
+var y = 10U;
 
 /* { dg-command { x as int<1> == y } } */
 /* { dg-output "0" } */

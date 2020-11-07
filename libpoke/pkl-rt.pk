@@ -18,19 +18,19 @@
 
 /* Compiler built-ins. */
 
-defun rand = (uint<32> seed = 0) int<32>: __PKL_BUILTIN_RAND__;
-defun get_endian = int<32>: __PKL_BUILTIN_GET_ENDIAN__;
-defun set_endian = (int<32> endian) int<32>: __PKL_BUILTIN_SET_ENDIAN__;
-defun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
-defun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
-defun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
-defun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
-defun iosize = (int<32> ios = get_ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
-defun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
-defun flush = (int<32> ios, offset<uint<64>,1> offset) void: __PKL_BUILTIN_FORGET__;
+fun rand = (uint<32> seed = 0) int<32>: __PKL_BUILTIN_RAND__;
+fun get_endian = int<32>: __PKL_BUILTIN_GET_ENDIAN__;
+fun set_endian = (int<32> endian) int<32>: __PKL_BUILTIN_SET_ENDIAN__;
+fun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
+fun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
+fun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
+fun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
+fun iosize = (int<32> ios = get_ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
+fun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
+fun flush = (int<32> ios, offset<uint<64>,1> offset) void: __PKL_BUILTIN_FORGET__;
 
-defvar ENDIAN_LITTLE = 0;
-defvar ENDIAN_BIG = 1;
+var ENDIAN_LITTLE = 0;
+var ENDIAN_BIG = 1;
 
 /* IOS flags and modes.
 
@@ -41,14 +41,14 @@ defvar ENDIAN_BIG = 1;
 
    Please keep these values in sync with the constants in ios.c.  */
 
-defvar IOS_F_READ   = 1;
-defvar IOS_F_WRITE  = 2;
-defvar IOS_F_TRUNCATE = 8;
-defvar IOS_F_CREATE = 16;
+var IOS_F_READ   = 1;
+var IOS_F_WRITE  = 2;
+var IOS_F_TRUNCATE = 8;
+var IOS_F_CREATE = 16;
 
-defvar IOS_M_RDONLY = IOS_F_READ;
-defvar IOS_M_WRONLY = IOS_F_WRITE;
-defvar IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
+var IOS_M_RDONLY = IOS_F_READ;
+var IOS_M_WRONLY = IOS_F_WRITE;
+var IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
 
 /* Exceptions.  */
 
@@ -56,7 +56,7 @@ defvar IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
    update the pvm_make_exception function in pvm-val.c
    accordingly.  */
 
-deftype Exception =
+type Exception =
   struct
   {
     int<32> code;
@@ -69,56 +69,56 @@ deftype Exception =
    255.
    Note also that EC_generic _must_ be zero.  */
 
-defvar EC_generic       = 0;
-defvar EC_div_by_zero   = 1;
-defvar EC_no_ios        = 2;
-defvar EC_no_return     = 3;
-defvar EC_out_of_bounds = 4;
-defvar EC_map_bounds    = 5;
-defvar EC_eof           = 6;
-defvar EC_map           = 7;
-defvar EC_conv          = 8;
-defvar EC_elem          = 9;
-defvar EC_constraint    = 10;
-defvar EC_io            = 11;
-defvar EC_signal        = 12;
-defvar EC_io_flags      = 13;
-defvar EC_inval         = 14;
-defvar EC_exit          = 15;
+var EC_generic       = 0;
+var EC_div_by_zero   = 1;
+var EC_no_ios        = 2;
+var EC_no_return     = 3;
+var EC_out_of_bounds = 4;
+var EC_map_bounds    = 5;
+var EC_eof           = 6;
+var EC_map           = 7;
+var EC_conv          = 8;
+var EC_elem          = 9;
+var EC_constraint    = 10;
+var EC_io            = 11;
+var EC_signal        = 12;
+var EC_io_flags      = 13;
+var EC_inval         = 14;
+var EC_exit          = 15;
 
 /* Standard exceptions.  */
 
-defvar E_generic
+var E_generic
   = Exception {code = EC_generic, msg = "generic", exit_status = 1};
-defvar E_div_by_zero
+var E_div_by_zero
   = Exception {code = EC_div_by_zero, msg = "division by zero", exit_status = 1};
-defvar E_no_ios
+var E_no_ios
   = Exception {code = EC_no_ios, msg = "no IOS", exit_status = 1};
-defvar E_no_return
+var E_no_return
   = Exception {code = EC_no_return, msg = "no return", exit_status = 1};
-defvar E_out_of_bounds
+var E_out_of_bounds
   = Exception {code = EC_out_of_bounds, msg = "out of bounds", exit_status = 1};
-defvar E_map_bounds
+var E_map_bounds
   = Exception {code = EC_map_bounds, msg = "out of map bounds", exit_status = 1};
-defvar E_eof
+var E_eof
   = Exception {code = EC_eof, msg = "EOF", exit_status = 0 };
-defvar E_map
+var E_map
   = Exception {code = EC_map, msg = "no map", exit_status = 1};
-defvar E_conv
+var E_conv
   = Exception {code = EC_conv, msg = "conversion error", exit_status = 1};
-defvar E_elem
+var E_elem
   = Exception {code = EC_elem, msg = "invalid element", exit_status = 1};
-defvar E_constraint
+var E_constraint
   = Exception {code = EC_constraint, msg = "constraint violation", exit_status = 1};
-defvar E_io
+var E_io
   = Exception {code = EC_io, msg = "generic IO", exit_status = 1};
-defvar E_signal
+var E_signal
   = Exception {code = EC_signal, exit_status = 1};
-defvar E_io_flags
+var E_io_flags
   = Exception {code = EC_io_flags, msg = "invalid IO flags", exit_status = 1};
-defvar E_inval
+var E_inval
   = Exception {code = EC_inval, msg = "invalid argument", exit_status = 1};
-defvar E_exit
+var E_exit
   = Exception {code = EC_exit, msg = "exit", exit_status = 0};
 
 /* Default exception handler.
@@ -127,7 +127,7 @@ defvar E_exit
    or be ready to underflow the exception handlers stack and face some
    ugly shit.  You have been warned!  */
 
-defun _pkl_exception_handler = (Exception exception) int<32>:
+fun _pkl_exception_handler = (Exception exception) int<32>:
   {
    if (exception.code != EC_exit && exception.code != EC_signal)
      {
@@ -143,7 +143,7 @@ defun _pkl_exception_handler = (Exception exception) int<32>:
    to raise an E_exit exception, but provides a more conventional
    syntax.  */
 
-defun exit = (int<32> exit_code = 0) void:
+fun exit = (int<32> exit_code = 0) void:
   {
     raise Exception { code = EC_exit, exit_status = exit_code };
   }
@@ -151,7 +151,7 @@ defun exit = (int<32> exit_code = 0) void:
 /* Find the greatest common divisor of two unsigned 64-bit integrals A
    and B using the Euclidean algorithm.  */
 
-defun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
+fun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
   {
    if (b == 0)
      return a;
@@ -162,7 +162,7 @@ defun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
 
 /**** Set the default load path ****/
 
-defvar load_path = "";
+var load_path = "";
 
 /* First, add the system-wide locations.  */
 

@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct
   {
     int i;
@@ -12,7 +12,7 @@ deftype Foo =
 
     method bar = int:
       {
-        defun jorl = int:
+        fun jorl = int:
         {
           return foo; /* { dg-error "method" } */
         }

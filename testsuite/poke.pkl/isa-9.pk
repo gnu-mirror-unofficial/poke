@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-deftype Struct = struct { int i; string j; };
+type Struct = struct { int i; string j; };
 
-defun foo2 = (any a) void:
+fun foo2 = (any a) void:
   {
    if (a isa int<32>)
      print "an int32";

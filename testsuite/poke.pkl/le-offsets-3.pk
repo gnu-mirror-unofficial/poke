@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-defvar x = 9#b;
-defvar y = 1#B;
+var x = 9#b;
+var y = 1#B;
 
 /* { dg-command {  x <= y } } */
 /* { dg-output "0" } */

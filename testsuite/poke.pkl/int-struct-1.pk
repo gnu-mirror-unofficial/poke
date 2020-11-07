@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-deftype Foo =
+type Foo =
   struct uint<32>
   {
     int<16> a;

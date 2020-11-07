@@ -4,9 +4,9 @@
 /* { dg-command { .set endian big } } */
 /* { dg-command { .set obase 16 } } */
 
-defvar n = 10;
+var n = 10;
 
-deftype Foo =
+type Foo =
   union
   {
     byte b : n != 10;

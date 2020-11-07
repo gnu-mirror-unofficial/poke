@@ -18,7 +18,7 @@
 
 /* Variable containing the text that is shown when .help is invoked
    with no arguments.  It should contain an entry per command.  */
-defvar pk_help_str = "";
+var pk_help_str = "";
 
 /* poke commands implemented in Poke.  */
 

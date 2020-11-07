@@ -4,7 +4,7 @@
    of a mem buffer.  Also, bytes in the growth area are initialized to 0.  */
 
 /* { dg-command { .set obase 10 } } */
-/* { dg-command { defvar buffer = open ("*foo*") } } */
+/* { dg-command { var buffer = open ("*foo*") } } */
 /* { dg-command { iosize (0) } } */
 /* { dg-output "32768UL#b" } */
 /* { dg-command { byte @ 4096#B = 1 } } */

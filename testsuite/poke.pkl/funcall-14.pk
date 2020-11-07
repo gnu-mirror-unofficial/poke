@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defun xxx = int: { print "foo\n"; return 10; }
-defun yyy = int: { print "bar\n"; return 20; }
-defun zzz = (int a, int b) int: { return a + b; }
+fun xxx = int: { print "foo\n"; return 10; }
+fun yyy = int: { print "bar\n"; return 20; }
+fun zzz = (int a, int b) int: { return a + b; }
 
 /* { dg-command { zzz (xxx, yyy) } } */
 /* { dg-output "foo\nbar\n30" } */

@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
-deftype Packet = struct { int<1>[5]; };
-defvar x = 2#Packet;
+type Packet = struct { int<1>[5]; };
+var x = 2#Packet;
 
 /* { dg-command {  x % 1#B } } */
 /* { dg-output "2#b" } */

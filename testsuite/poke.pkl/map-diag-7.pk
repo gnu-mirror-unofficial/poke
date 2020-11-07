@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-deftype Foo = struct { int i; struct { any[] a; } s; };
+type Foo = struct { int i; struct { any[] a; } s; };
 
 Foo @ 0#B; /* { dg-error "" } */

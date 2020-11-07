@@ -1,9 +1,9 @@
 /* { dg-do run } */
 
-deftype Packet = byte[3];
+type Packet = byte[3];
 
-defvar x = 1#Packet;
-defvar y = 16#b;
+var x = 1#Packet;
+var y = 16#b;
 
 /* { dg-command { x == y } } */
 /* { dg-output "0" } */

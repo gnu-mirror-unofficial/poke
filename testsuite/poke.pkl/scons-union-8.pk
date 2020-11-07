@@ -1,8 +1,8 @@
 /* { dg-do run } */
 
-defvar N = 1;
+var N = 1;
 
-deftype Bar =
+type Bar =
   union
   {
     int a : N == 0;
