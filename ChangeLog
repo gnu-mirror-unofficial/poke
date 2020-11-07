@@ -1,3 +1,8 @@
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke-mode.el (poke-font-lock-keywords): Add additional rule
+	to cover chained declarations.
+
 2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/poke-mode.el (poke-builtin-types): Remove "offset".

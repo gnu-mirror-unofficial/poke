@@ -189,6 +189,15 @@
           (+ space)
           "=")
      1 'poke-declaration-name)
+   ;; This one is to cover the case of chained declarations of the form
+   ;;   var foo = 10, bar = 20,
+   ;;       baz = 30,
+   `(,(rx (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "_" "0-9")))
+          (* space)
+          "="
+          (+ (not ","))
+          "," (* space) eol)
+     1 'poke-declaration-name)
    ;; attributes
    `(,(rx "'" (group (any "A-Z" "a-z" "_") (* (any "A-Z" "a-z" "0-9" "_"))))
      0 'poke-attribute)
