@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+var foo = 10,
+    bar = foo + 2;
+
+/* { dg-command { foo } } */
+/* { dg-output "10" } */
+/* { dg-command { bar } } */
+/* { dg-output "\n12" } */

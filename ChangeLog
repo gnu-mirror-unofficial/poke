@@ -1,5 +1,22 @@
 2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (defvar): New rule.
+	(defvar_list): Likewise.
+	(deftype): Likewise.
+	(deftype_list): Likewise.
+	(defunit): Likewise.
+	(defunit_list): Likewise.
+	* testsuite/poke.pkl/defunit-1.pk: Likewise.
+	* testsuite/poke.pkl/deftype-1.pk: Likewise.
+	* testsuite/poke.pkl/defvar-6.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (Values and Variables): Mention chained variable
+	declarations.
+	(type): Document chained type declarations.
+	(Offset Units): Likewise for unit declarations.
+
+2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: Rename tokens def{var,type,fun,unit} to
 	{var,type,fun,unit}.
 	* libpoke/pkl-lex.l: Likewise.

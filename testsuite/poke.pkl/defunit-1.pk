@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+unit MyBit = 1,
+     MyNibble = 4,
+     MyWhatever = 13 + 1;

@@ -1125,6 +1125,15 @@ name to poke:
 @end example
 
 @noindent
+Several variables can be defined in a single @code{var} declaration.
+Each definition is separated by a comma.  This is equivalent of
+issuing several @code{var}s:
+
+@example
+(poke) var a = 10, b = 20
+@end example
+
+@noindent
 In general, a variable containing a byte value can be used in any
 context where the contained value would be expected.  If we wanted to
 check the highest bit in the byte value stored in @code{foo} we would
@@ -5824,7 +5833,7 @@ for two bytes.  Units are defined using the @code{unit}
 construction:
 
 @example
-unit @var{name} = @var{constant_expression};
+unit @var{name} = @var{constant_expression} [, @var{name} = @var{constant_expression}]...;
 @end example
 
 @noindent
@@ -7389,7 +7398,7 @@ The @code{type} directive allows you to declare named types.  The
 syntax is:
 
 @example
-type @var{name} = @var{type};
+type @var{name} = @var{type} [, @var{name} = @var{type}]...;
 @end example
 
 @noindent

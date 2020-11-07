@@ -432,7 +432,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
 %type <ast> struct_type_field_constraint_or_init struct_type_field_label
 %type <ast> struct_type_field_optcond
-%type <ast> declaration
+%type <ast> declaration defvar defvar_list deftype deftype_list defunit defunit_list
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
 %type <ast> comp_stmt stmt_decl_list stmt print_stmt_arg_list
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
@@ -1621,79 +1621,9 @@ declaration:
 
                   pkl_parser->in_method_decl_p = 0;
                 }
-        | DEFVAR identifier '=' expression ';'
-                {
-                  $$ = pkl_ast_make_decl (pkl_parser->ast,
-                                          PKL_AST_DECL_KIND_VAR, $2, $4,
-                                          pkl_parser->filename);
-                  PKL_AST_LOC ($2) = @2;
-                  PKL_AST_LOC ($$) = @$;
-
-                  if (!pkl_env_register (pkl_parser->env,
-                                         PKL_ENV_NS_MAIN,
-                                         PKL_AST_IDENTIFIER_POINTER ($2),
-                                         $$))
-                    {
-                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
-                                 "the variable `%s' is already defined",
-                                 PKL_AST_IDENTIFIER_POINTER ($2));
-                      YYERROR;
-                    }
-                }
-        | DEFTYPE identifier '=' type_specifier ';'
-                {
-                  $$ = pkl_ast_make_decl (pkl_parser->ast,
-                                          PKL_AST_DECL_KIND_TYPE, $2, $4,
-                                          pkl_parser->filename);
-                  PKL_AST_LOC ($2) = @2;
-                  PKL_AST_LOC ($$) = @$;
-
-                  PKL_AST_TYPE_NAME ($4) = ASTREF ($2);
-
-                  if (!pkl_env_register (pkl_parser->env,
-                                         PKL_ENV_NS_MAIN,
-                                         PKL_AST_IDENTIFIER_POINTER ($2),
-                                         $$))
-                    {
-                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
-                                 "the type `%s' is already defined",
-                                 PKL_AST_IDENTIFIER_POINTER ($2));
-                      YYERROR;
-                    }
-                }
-        | DEFUNIT identifier '=' expression ';'
-                {
-                  /* We need to cast the expression to uint<64> here,
-                     instead of pkl-promo, because the installed
-                     initializer is used as earlier as in the
-                     lexer.  Not pretty.  */
-                  pkl_ast_node type
-                    = pkl_ast_make_integral_type (pkl_parser->ast,
-                                                  64, 0);
-                  pkl_ast_node cast
-                    = pkl_ast_make_cast (pkl_parser->ast,
-                                         type, $4);
-
-                  $$ = pkl_ast_make_decl (pkl_parser->ast,
-                                          PKL_AST_DECL_KIND_UNIT, $2, cast,
-                                          pkl_parser->filename);
-
-                  PKL_AST_LOC (type) = @4;
-                  PKL_AST_LOC (cast) = @4;
-                  PKL_AST_LOC ($2) = @2;
-                  PKL_AST_LOC ($$) = @$;
-
-                  if (!pkl_env_register (pkl_parser->env,
-                                         PKL_ENV_NS_UNITS,
-                                         PKL_AST_IDENTIFIER_POINTER ($2),
-                                         $$))
-                    {
-                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
-                                 "the unit `%s' is already defined",
-                                 PKL_AST_IDENTIFIER_POINTER ($2));
-                      YYERROR;
-                    }
-                }
+        | DEFVAR defvar_list ';' { $$ = $2; }
+        | DEFTYPE deftype_list ';' { $$ = $2; }
+        | DEFUNIT defunit_list ';' { $$ = $2; }
         ;
 
 defun_or_method:
@@ -1701,6 +1631,105 @@ defun_or_method:
         | METHOD        { $$ = IS_METHOD; }
         ;
 
+defvar_list:
+          defvar
+        | defvar_list ',' defvar
+          { $$ = pkl_ast_chainon ($1, $3); }
+        ;
+
+defvar:
+          identifier '=' expression
+            {
+                $$ = pkl_ast_make_decl (pkl_parser->ast,
+                                        PKL_AST_DECL_KIND_VAR, $1, $3,
+                                        pkl_parser->filename);
+                PKL_AST_LOC ($1) = @1;
+                PKL_AST_LOC ($$) = @$;
+
+                if (!pkl_env_register (pkl_parser->env,
+                                       PKL_ENV_NS_MAIN,
+                                       PKL_AST_IDENTIFIER_POINTER ($1),
+                                       $$))
+                  {
+                    pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                               "the variable `%s' is already defined",
+                               PKL_AST_IDENTIFIER_POINTER ($1));
+                    YYERROR;
+                  }
+          }
+        ;
+
+deftype_list:
+          deftype
+        | deftype_list ',' deftype
+          { $$ = pkl_ast_chainon ($1, $3); }
+        ;
+
+deftype:
+          identifier '=' type_specifier
+          {
+            $$ = pkl_ast_make_decl (pkl_parser->ast,
+                                    PKL_AST_DECL_KIND_TYPE, $1, $3,
+                                    pkl_parser->filename);
+            PKL_AST_LOC ($1) = @1;
+            PKL_AST_LOC ($$) = @$;
+
+            PKL_AST_TYPE_NAME ($3) = ASTREF ($1);
+
+            if (!pkl_env_register (pkl_parser->env,
+                                   PKL_ENV_NS_MAIN,
+                                   PKL_AST_IDENTIFIER_POINTER ($1),
+                                   $$))
+              {
+                pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                           "the type `%s' is already defined",
+                           PKL_AST_IDENTIFIER_POINTER ($1));
+                YYERROR;
+              }
+          }
+        ;
+
+defunit_list:
+          defunit
+        | defunit_list ',' defunit
+          { $$ = pkl_ast_chainon ($1, $3); }
+        ;
+
+defunit:
+          identifier '=' expression
+            {
+              /* We need to cast the expression to uint<64> here,
+                 instead of pkl-promo, because the installed
+                 initializer is used as earlier as in the lexer.  Not
+                 pretty.  */
+              pkl_ast_node type
+                = pkl_ast_make_integral_type (pkl_parser->ast,
+                                              64, 0);
+              pkl_ast_node cast
+                = pkl_ast_make_cast (pkl_parser->ast,
+                                     type, $3);
+
+              $$ = pkl_ast_make_decl (pkl_parser->ast,
+                                      PKL_AST_DECL_KIND_UNIT, $1, cast,
+                                      pkl_parser->filename);
+
+              PKL_AST_LOC (type) = @3;
+              PKL_AST_LOC (cast) = @3;
+              PKL_AST_LOC ($1) = @1;
+              PKL_AST_LOC ($$) = @$;
+
+              if (!pkl_env_register (pkl_parser->env,
+                                     PKL_ENV_NS_UNITS,
+                                     PKL_AST_IDENTIFIER_POINTER ($1),
+                                     $$))
+                {
+                  pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                             "the unit `%s' is already defined",
+                             PKL_AST_IDENTIFIER_POINTER ($1));
+                  YYERROR;
+                }
+            }
+        ;
 /*
  * Statements.
  */

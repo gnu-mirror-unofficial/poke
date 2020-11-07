@@ -724,11 +724,14 @@ EXTRA_DIST = \
   poke.pkl/defun-diag-2.pk \
   poke.pkl/defun-diag-3.pk \
   poke.pkl/defun-diag-4.pk \
+  poke.pkl/deftype-1.pk \
+  poke.pkl/defunit-1.pk \
   poke.pkl/defvar-1.pk \
   poke.pkl/defvar-2.pk \
   poke.pkl/defvar-3.pk \
   poke.pkl/defvar-4.pk \
   poke.pkl/defvar-5.pk \
+  poke.pkl/defvar-6.pk \
   poke.pkl/div-integers-1.pk \
   poke.pkl/div-integers-2.pk \
   poke.pkl/div-integers-3.pk \

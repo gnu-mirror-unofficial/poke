@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+type Foo = int,
+     Bar = string,
+     Baz = struct {};
