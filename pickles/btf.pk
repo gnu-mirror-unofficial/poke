@@ -20,22 +20,22 @@
    documented in https://www.kernel.org/doc/html/latest/bpf/btf.html
    (fetched 2019-10-25) */
 
-var BTF_KIND_UKNONWN = 0;
-var BTF_KIND_INT = 1;
-var BTF_KIND_PTR = 2;
-var BTF_KIND_ARRAY = 3;
-var BTF_KIND_STRUCT = 4;
-var BTF_KIND_UNION = 5;
-var BTF_KIND_ENUM = 6;
-var BTF_KIND_FWD = 7;
-var BTF_KIND_TYPEDEF = 8;
-var BTF_KIND_VOLATILE = 9;
-var BTF_KIND_CONST = 10;
-var BTF_KIND_RESTRICT = 11;
-var BTF_KIND_FUNC = 12;
-var BTF_KIND_FUNC_PROTO = 13;
-var BTF_KIND_VAR = 14;
-var BTF_KIND_DATASEC = 15;
+var BTF_KIND_UKNONWN = 0,
+    BTF_KIND_INT = 1,
+    BTF_KIND_PTR = 2,
+    BTF_KIND_ARRAY = 3,
+    BTF_KIND_STRUCT = 4,
+    BTF_KIND_UNION = 5,
+    BTF_KIND_ENUM = 6,
+    BTF_KIND_FWD = 7,
+    BTF_KIND_TYPEDEF = 8,
+    BTF_KIND_VOLATILE = 9,
+    BTF_KIND_CONST = 10,
+    BTF_KIND_RESTRICT = 11,
+    BTF_KIND_FUNC = 12,
+    BTF_KIND_FUNC_PROTO = 13,
+    BTF_KIND_VAR = 14,
+    BTF_KIND_DATASEC = 15;
 
 var btf_kind_names =
   ["unkn", "int", "ptr", "array", "struct", "union", "enum",

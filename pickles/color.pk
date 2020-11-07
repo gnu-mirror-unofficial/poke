@@ -51,14 +51,14 @@ fun color_register = int:
    Non-standard colors can be defined at the end of the register.  See
    above.  */
 
-var color_white = color_register;
-var color_black = color_register;
-var color_grey = color_register;
-var color_gray = color_grey;
-var color_red = color_register;
-var color_tomato = color_register;
-var color_green = color_register;
-var color_blue = color_register;
+var color_white = color_register,
+    color_black = color_register,
+    color_grey = color_register,
+    color_gray = color_grey,
+    color_red = color_register,
+    color_tomato = color_register,
+    color_green = color_register,
+    color_blue = color_register;
 
 /* color_LAST marks the first of the colors that is non-standard.
    Pickles maintaining tables indexed by standard color codes should

@@ -1,5 +1,19 @@
 2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/bmp.pk: Use chained declarations.
+	* pickles/bpf.pk: Likewise.
+	* pickles/btf.pk: Likewise.
+	* pickles/color.pk: Likewise.
+	* pickles/ctf.pk: Likewise.
+	* pickles/dwarf-expr.pk: Likewise.
+	* pickles/dwarf-frame.pk: Likewise.
+	* pickles/dwarf-info.pk: Likewise.
+	* pickles/elf.pk: Likewise.
+	* pickles/rgb24.pk: Likewise.
+	* pickles/time.pk (ptime): Likewise.
+
+2020-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (defvar): New rule.
 	(defvar_list): Likewise.
 	(deftype): Likewise.

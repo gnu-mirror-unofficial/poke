@@ -52,11 +52,7 @@ fun ptime = (uint<64> seconds) void:
     var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    var year = 1970;
-    var month = 0;
-    var day = 0;
-    var hour = 0;
-    var minute = 0;
+    var year = 1970, month = 0, day = 0, hour = 0, minute = 0;
     while (seconds >= 0)
       {
 	if (seconds < 24 * 60 * 60)

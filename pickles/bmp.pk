@@ -18,14 +18,13 @@
 
 /* Compression methods.  */
 
-var BI_RGB = 0;  /* No compression.  */
-var BI_RLE8 = 1; /* 8 bit RLE encoding.  */
-var BI_RLE4 = 2; /* 4 bit RLE encoding.  */
+var BI_RGB = 0,  /* No compression.  */
+    BI_RLE8 = 1, /* 8 bit RLE encoding.  */
+    BI_RLE4 = 2; /* 4 bit RLE encoding.  */
 
 /* The size of the info header depends on the type of BMP file.  */
 
-var IHS_BMP_V2 = 12#B;
-var IHS_BMP_V3 = 40#B;
+var IHS_BMP_V2 = 12#B, IHS_BMP_V3 = 40#B;
 
 type BMP_Header =
   struct

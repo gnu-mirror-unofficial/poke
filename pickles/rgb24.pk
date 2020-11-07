@@ -30,9 +30,9 @@ type RGB24_Color_Beam = uint<8>;
 
 type RGB24_Color = RGB24_Color_Beam[3];
 
-var RGB24_RED = 0;
-var RGB24_GREEN = 1;
-var RGB24_BLUE = 2;
+var RGB24_RED = 0,
+    RGB24_GREEN = 1,
+    RGB24_BLUE = 2;
 
 /* RGB24 colors for the standard colors.  */
 

@@ -23,13 +23,13 @@
 
 type BPF_Insn_Class = uint<3>;
 
-var BPF_INSN_CLASS_LD  = 0b000;
-var BPF_INSN_CLASS_LDX = 0b001;
-var BPF_INSN_CLASS_ST  = 0b010;
-var BPF_INSN_CLASS_STX = 0b011;
-var BPF_INSN_CLASS_ALU = 0b100;
-var BPF_INSN_CLASS_JMP = 0b101;
-var BPF_INSN_CLASS_ALU64 = 0b111;
+var BPF_INSN_CLASS_LD  = 0b000,
+    BPF_INSN_CLASS_LDX = 0b001,
+    BPF_INSN_CLASS_ST  = 0b010,
+    BPF_INSN_CLASS_STX = 0b011,
+    BPF_INSN_CLASS_ALU = 0b100,
+    BPF_INSN_CLASS_JMP = 0b101,
+    BPF_INSN_CLASS_ALU64 = 0b111;
 
 fun bpf_class_is_alujmp = (uint<3> class) int:
   {
@@ -42,20 +42,20 @@ fun bpf_class_is_alujmp = (uint<3> class) int:
 
 type BPF_Insn_Op_Code = uint<4>;
 
-var BPF_ALU_INSN_ADD = 0x0;
-var BPF_ALU_INSN_SUB = 0x1;
-var BPF_ALU_INSN_MUL = 0x2;
-var BPF_ALU_INSN_DIV = 0x3;
-var BPF_ALU_INSN_OR  = 0x4;
-var BPF_ALU_INSN_AND = 0x5;
-var BPF_ALU_INSN_LSH = 0x6;
-var BPF_ALU_INSN_RSH = 0x7;
-var BPF_ALU_INSN_NEG = 0x8;
-var BPF_ALU_INSN_MOD = 0x9;
-var BPF_ALU_INSN_XOR = 0xa;
-var BPF_ALU_INSN_MOV = 0xb;
-var BPF_ALU_INSN_ARSH = 0xc;
-var BPF_ALU_INSN_END = 0xd;
+var BPF_ALU_INSN_ADD = 0x0,
+    BPF_ALU_INSN_SUB = 0x1,
+    BPF_ALU_INSN_MUL = 0x2,
+    BPF_ALU_INSN_DIV = 0x3,
+    BPF_ALU_INSN_OR  = 0x4,
+    BPF_ALU_INSN_AND = 0x5,
+    BPF_ALU_INSN_LSH = 0x6,
+    BPF_ALU_INSN_RSH = 0x7,
+    BPF_ALU_INSN_NEG = 0x8,
+    BPF_ALU_INSN_MOD = 0x9,
+    BPF_ALU_INSN_XOR = 0xa,
+    BPF_ALU_INSN_MOV = 0xb,
+    BPF_ALU_INSN_ARSH = 0xc,
+    BPF_ALU_INSN_END = 0xd;
 
 var bpf_alu_opcodes =
   ["add", "sub", "mul", "div", "or", "and", "lsh",
@@ -63,20 +63,20 @@ var bpf_alu_opcodes =
 
 /* JMP instructions operation codes.  */
 
-var BPF_JMP_INSN_JA  = 0x0;
-var BPF_JMP_INSN_JEQ = 0x1;
-var BPF_JMP_INSN_JGT = 0x2;
-var BPF_JMP_INSN_JGE = 0x3;
-var BPF_JMP_INSN_JSET = 0x4;
-var BPF_JMP_INSN_JNE = 0x5;
-var BPF_JMP_INSN_JSGT = 0x6;
-var BPF_JMP_INSN_JSGE = 0x7;
-var BPF_JMP_INSN_CALL = 0x8;
-var BPF_JMP_INSN_EXIT = 0x9;
-var BPF_JMP_INSN_JLT = 0xa;
-var BPF_JMP_INSN_JLE = 0xb;
-var BPF_JMP_INSN_JSLT = 0xc;
-var BPF_JMP_INSN_JSLE = 0xd;
+var BPF_JMP_INSN_JA  = 0x0,
+    BPF_JMP_INSN_JEQ = 0x1,
+    BPF_JMP_INSN_JGT = 0x2,
+    BPF_JMP_INSN_JGE = 0x3,
+    BPF_JMP_INSN_JSET = 0x4,
+    BPF_JMP_INSN_JNE = 0x5,
+    BPF_JMP_INSN_JSGT = 0x6,
+    BPF_JMP_INSN_JSGE = 0x7,
+    BPF_JMP_INSN_CALL = 0x8,
+    BPF_JMP_INSN_EXIT = 0x9,
+    BPF_JMP_INSN_JLT = 0xa,
+    BPF_JMP_INSN_JLE = 0xb,
+    BPF_JMP_INSN_JSLT = 0xc,
+    BPF_JMP_INSN_JSLE = 0xd;
 
 var bpf_jmp_opcodes =
   ["ja", "jeq", "jgt", "jge", "jset", "jne", "jsgt",
@@ -86,17 +86,16 @@ var bpf_jmp_opcodes =
 
 type BPF_Insn_Source = uint<1>;
 
-var BPF_INSN_SOURCE_K = 0b0;
-var BPF_INSN_SOURCE_X = 0b1;
+var BPF_INSN_SOURCE_K = 0b0, BPF_INSN_SOURCE_X = 0b1;
 
 /* LD and ST instruction sizes.  */
 
 type BPF_Insn_Data_Size = uint<2>;
 
-var BPF_LDST_INSN_SIZE_W = 0b00;
-var BPF_LDST_INSN_SIZE_H = 0b01;
-var BPF_LDST_INSN_SIZE_B = 0b10;
-var BPF_LDST_INSN_SIZE_DW = 0b11;
+var BPF_LDST_INSN_SIZE_W = 0b00,
+    BPF_LDST_INSN_SIZE_H = 0b01,
+    BPF_LDST_INSN_SIZE_B = 0b10,
+    BPF_LDST_INSN_SIZE_DW = 0b11;
 
 var bpf_ldst_sizes = ["w", "h", "b", "dw"];
 
@@ -104,11 +103,11 @@ var bpf_ldst_sizes = ["w", "h", "b", "dw"];
 
 type BPF_Insn_LDST_Mode = uint<3>;
 
-var BPF_LDST_INSN_MODE_IMM = 0b000;
-var BPF_LDST_INSN_MODE_ABS = 0b001;
-var BPF_LDST_INSN_MODE_IND = 0b010;
-var BPF_LDST_INSN_MODE_MEM = 0b011;
-var BPF_LDST_INSN_MODE_XADD = 0b110;
+var BPF_LDST_INSN_MODE_IMM = 0b000,
+    BPF_LDST_INSN_MODE_ABS = 0b001,
+    BPF_LDST_INSN_MODE_IND = 0b010,
+    BPF_LDST_INSN_MODE_MEM = 0b011,
+    BPF_LDST_INSN_MODE_XADD = 0b110;
 
 /* Offsets in instructions are measured in 64-bit words.  */
 
@@ -116,17 +115,17 @@ type BPF_Insn_Offset = offset<int<16>,64>;
 
 /* Registers.  */
 
-var BPF_R0 = 0x0;
-var BPF_R1 = 0x1;
-var BPF_R2 = 0x2;
-var BPF_R3 = 0x3;
-var BPF_R4 = 0x4;
-var BPF_R5 = 0x5;
-var BPF_R6 = 0x6;
-var BPF_R7 = 0x7;
-var BPF_R8 = 0x8;
-var BPF_R9 = 0x9;
-var BPF_FP = 0xa;
+var BPF_R0 = 0x0,
+    BPF_R1 = 0x1,
+    BPF_R2 = 0x2,
+    BPF_R3 = 0x3,
+    BPF_R4 = 0x4,
+    BPF_R5 = 0x5,
+    BPF_R6 = 0x6,
+    BPF_R7 = 0x7,
+    BPF_R8 = 0x8,
+    BPF_R9 = 0x9,
+    BPF_FP = 0xa;
 
 type BPF_Reg =
   struct

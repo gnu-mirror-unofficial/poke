@@ -29,40 +29,40 @@ var CTF_LSIZE_SENT = 0xffffffff;
 var CTF_MAGIC = 0xdff2;
 var CTF_VERSION = 3;
 
-var CTF_K_UNKNOWN  = 0U;
-var CTF_K_INTEGER  = 1U;
-var CTF_K_FLOAT    = 2U;
-var CTF_K_POINTER  = 3U;
-var CTF_K_ARRAY    = 4U;
-var CTF_K_FUNCTION = 5U;
-var CTF_K_STRUCT   = 6U;
-var CTF_K_UNION    = 7U;
-var CTF_K_ENUM     = 8U;
-var CTF_K_FORWARD  = 9U;
-var CTF_K_TYPEDEF  = 10U;
-var CTF_K_VOLATILE = 11U;
-var CTF_K_CONST    = 12U;
-var CTF_K_RESTRICT = 13U;
-var CTF_K_MAX = 63U;
+var CTF_K_UNKNOWN  = 0U,
+    CTF_K_INTEGER  = 1U,
+    CTF_K_FLOAT    = 2U,
+    CTF_K_POINTER  = 3U,
+    CTF_K_ARRAY    = 4U,
+    CTF_K_FUNCTION = 5U,
+    CTF_K_STRUCT   = 6U,
+    CTF_K_UNION    = 7U,
+    CTF_K_ENUM     = 8U,
+    CTF_K_FORWARD  = 9U,
+    CTF_K_TYPEDEF  = 10U,
+    CTF_K_VOLATILE = 11U,
+    CTF_K_CONST    = 12U,
+    CTF_K_RESTRICT = 13U,
+    CTF_K_MAX = 63U;
 
 var CTF_STRTAB_0 = 0; /* Name is in the in-CTF string table.  */
 var CTF_STRTAB_1 = 1; /* Name is in an ELF strtab.  */
 
-var CTF_KIND_UNKNOWN  = 0;
-var CTF_KIND_INTEGER  = 1;
-var CTF_KIND_FLOAT    = 2;
-var CTF_KIND_POINTER  = 3;
-var CTF_KIND_ARRAY    = 4;
-var CTF_KIND_FUNCTION = 5;
-var CTF_KIND_STRUCT   = 6;
-var CTF_KIND_UNION    = 7;
-var CTF_KIND_ENUM     = 8;
-var CTF_KIND_FORWARD  = 9;
-var CTF_KIND_TYPEDEF  = 10;
-var CTF_KIND_VOLATILE = 11;
-var CTF_KIND_CONST    = 12;
-var CTF_KIND_RESTRICT = 13;
-var CTF_KIND_SLICE    = 14;
+var CTF_KIND_UNKNOWN  = 0,
+    CTF_KIND_INTEGER  = 1,
+    CTF_KIND_FLOAT    = 2,
+    CTF_KIND_POINTER  = 3,
+    CTF_KIND_ARRAY    = 4,
+    CTF_KIND_FUNCTION = 5,
+    CTF_KIND_STRUCT   = 6,
+    CTF_KIND_UNION    = 7,
+    CTF_KIND_ENUM     = 8,
+    CTF_KIND_FORWARD  = 9,
+    CTF_KIND_TYPEDEF  = 10,
+    CTF_KIND_VOLATILE = 11,
+    CTF_KIND_CONST    = 12,
+    CTF_KIND_RESTRICT = 13,
+    CTF_KIND_SLICE    = 14;
 
 var ctf_kind_str =
   ["unknown", "integer", "float", "pointer", "array",
@@ -151,10 +151,10 @@ type CTF_Info =
       }
   };
 
-var CTF_INT_SIGNED  = 0x01UB;
-var CTF_INT_CHAR    = 0x02UB;
-var CTF_INT_BOOL    = 0x04UB;
-var CTF_INT_VARARGS = 0x08UB;
+var CTF_INT_SIGNED  = 0x01UB,
+    CTF_INT_CHAR    = 0x02UB,
+    CTF_INT_BOOL    = 0x04UB,
+    CTF_INT_VARARGS = 0x08UB;
 
 type CTF_Integer_Type =
   struct
@@ -164,18 +164,18 @@ type CTF_Integer_Type =
     offset<uint<16>,b> bits;
   };
 
-var CTF_FP_SINGLE = 1UB;
-var CTF_FP_DOUBLE = 2UB;
-var CTF_FP_CPLX   = 3UB;
-var CTF_FP_DCPLX  = 4UB;
-var CTF_FP_LDCPLX = 5UB;
-var CTF_FP_LDOUBLE = 6UB;
-var CTF_FP_INTRVL = 7UB;
-var CTF_FP_DINTRVL = 8UB;
-var CTF_FP_LDINTRVL = 9UB;
-var CTF_FP_IMAGRY = 10UB;
-var CTF_FP_DIMAGRY = 11UB;
-var CTF_FP_LDIMAGRY = 12UB;
+var CTF_FP_SINGLE = 1UB,
+    CTF_FP_DOUBLE = 2UB,
+    CTF_FP_CPLX   = 3UB,
+    CTF_FP_DCPLX  = 4UB,
+    CTF_FP_LDCPLX = 5UB,
+    CTF_FP_LDOUBLE = 6UB,
+    CTF_FP_INTRVL = 7UB,
+    CTF_FP_DINTRVL = 8UB,
+    CTF_FP_LDINTRVL = 9UB,
+    CTF_FP_IMAGRY = 10UB,
+    CTF_FP_DIMAGRY = 11UB,
+    CTF_FP_LDIMAGRY = 12UB;
 
 type CTF_Float_Type =
   struct
