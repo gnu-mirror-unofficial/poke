@@ -1,5 +1,10 @@
 2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_ps_func): Do not leak a frame in the
+	dynamic lexical environment when raising no_return exception.
+
+2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_ps_func): Functions always introduce
 	a lexical environment for arguments even if they get none.
 	(pkl_gen_ps_return_stmt): Likewise.
