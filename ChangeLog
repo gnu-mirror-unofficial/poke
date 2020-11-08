@@ -1,5 +1,10 @@
 2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: Do not include config.h as this is an
+	installed header.
+
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-mode.el (poke-field-name): New face.
 	(poke-font-lock-keywords): Rule to highlight many field names.
 
@@ -108,11 +113,6 @@
 	* utils/elfextractor: Likewise.
 	* HACKING: Likewise.
 	* TODO: Likewise.
-
-2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
-
-	* libpoke/libpoke.h: Do not include config.h as this is an
-	installed header.
 
 2020-11-04  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
