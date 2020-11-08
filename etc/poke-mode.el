@@ -184,8 +184,6 @@
 		  (: "\\" (repeat 1 3 (any "01234567"))))
 	  "'")
      0 'font-lock-string-face)
-   ;; string
-   `("\"[^\"]*\"" 0 'font-lock-string-face)
    ;; Names of declared entities
    `(,(rx (regexp (regexp-opt '("type" "unit" "fun" "var" "method")))
           (+ space)

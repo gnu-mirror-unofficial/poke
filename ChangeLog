@@ -1,5 +1,11 @@
 2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke-mode.el (poke-font-lock-keywords): Remove unneeded
+	entry for strings, since they are font-locked via the syntax
+	table.
+
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h: Do not include config.h as this is an
 	installed header.
 
