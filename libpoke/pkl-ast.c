@@ -1538,6 +1538,19 @@ pkl_ast_make_var (pkl_ast ast, pkl_ast_node name,
   return var;
 }
 
+/* Build and return an AST node for a lambda expression.  */
+
+pkl_ast_node
+pkl_ast_make_lambda (pkl_ast ast, pkl_ast_node function)
+{
+  pkl_ast_node lambda = pkl_ast_make_node (ast, PKL_AST_LAMBDA);
+
+  assert (function);
+
+  PKL_AST_LAMBDA_FUNCTION (lambda) = ASTREF (function);
+  return lambda;
+}
+
 /* Build and return an AST node for a compound statement.  */
 
 pkl_ast_node
@@ -2065,6 +2078,11 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_VAR_NAME (ast));
       if (!PKL_AST_VAR_IS_RECURSIVE (ast))
         pkl_ast_node_free (PKL_AST_VAR_DECL (ast));
+      break;
+
+    case PKL_AST_LAMBDA:
+
+      pkl_ast_node_free (PKL_AST_LAMBDA_FUNCTION (ast));
       break;
 
     case PKL_AST_COMP_STMT:
@@ -2840,6 +2858,13 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (type, TYPE);
       PRINT_AST_IMM (back, VAR_BACK, "%d");
       PRINT_AST_IMM (over, VAR_OVER, "%d");
+      break;
+
+    case PKL_AST_LAMBDA:
+      IPRINTF ("LAMBDA::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_SUBAST (function, LAMBDA_FUNCTION);
       break;
 
     case PKL_AST_COMP_STMT:

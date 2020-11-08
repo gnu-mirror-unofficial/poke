@@ -567,6 +567,9 @@ pkl_do_pass_1 (pkl_compiler compiler,
       if (PKL_AST_PRINT_STMT_ARGS (node))
         PKL_PASS_CHAIN (PKL_AST_PRINT_STMT_ARGS (node));
       break;
+    case PKL_AST_LAMBDA:
+      PKL_PASS (PKL_AST_LAMBDA_FUNCTION (node));
+      break;
     case PKL_AST_NULL_STMT:
     case PKL_AST_INTEGER:
     case PKL_AST_STRING:

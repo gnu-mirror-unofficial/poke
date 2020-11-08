@@ -2021,6 +2021,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_var)
 }
 PKL_PHASE_END_HANDLER
 
+/* The type of a lambda node is the type of its function.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_lambda)
+{
+  pkl_ast_node lambda = PKL_PASS_NODE;
+  pkl_ast_node function = PKL_AST_LAMBDA_FUNCTION (lambda);
+
+  PKL_AST_TYPE (lambda) = ASTREF (PKL_AST_TYPE (function));
+}
+PKL_PHASE_END_HANDLER
+
 /* The type of the condition of a loop statement should be a boolean.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt)
@@ -2758,6 +2769,7 @@ struct pkl_phase pkl_phase_typify1
   {
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_typify1_ps_var),
+   PKL_PHASE_PS_HANDLER (PKL_AST_LAMBDA, pkl_typify1_ps_lambda),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_typify1_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_typify1_ps_isa),
    PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_typify1_ps_map),

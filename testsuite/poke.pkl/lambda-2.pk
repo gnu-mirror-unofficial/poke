@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command "lambda (int i) int: { return i + 2; }" } */
+/* { dg-output "#<closure>" } */
+/* { dg-command "lambda (int i) int: { return i + 2; } (10)" } */
+/* { dg-output "\n12" } */

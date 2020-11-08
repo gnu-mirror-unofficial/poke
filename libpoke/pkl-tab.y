@@ -335,6 +335,7 @@ token <integer> UNION    _("keyword `union'")
 %token PRINT             _("keyword `print'")
 %token PRINTF            _("keyword `printf'")
 %token LOAD              _("keyword `load'")
+%token LAMBDA            _("keyword lambda")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE BUILTIN_GETENV BUILTIN_FORGET
@@ -970,6 +971,21 @@ primary:
         | '(' funcall_stmt ')'
                 {
                   $$ = $2;
+                }
+        | LAMBDA
+                {
+                  /* function_specifier needs to know whether we are
+                     in a function declaration or a method
+                     declaration.  */
+                  pkl_parser->in_method_decl_p = 0;
+                }
+          function_specifier
+                {
+                  /* Annotate the contained RETURN statements with
+                     their function and their lexical nest level
+                     within the function.  */
+                  pkl_ast_finish_returns ($3);
+                  $$ = pkl_ast_make_lambda (pkl_parser->ast, $3);
                 }
         ;
 

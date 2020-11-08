@@ -55,6 +55,7 @@ enum pkl_ast_code
   PKL_AST_FUNCALL,
   PKL_AST_FUNCALL_ARG,
   PKL_AST_VAR,
+  PKL_AST_LAMBDA,
   PKL_AST_GCD,
   PKL_AST_LAST_EXP = PKL_AST_GCD,
   /* Types.  */
@@ -1283,6 +1284,22 @@ pkl_ast_node pkl_ast_make_var (pkl_ast ast,
                                pkl_ast_node initial,
                                int back, int over);
 
+/* PKL_AST_LAMBDA nodes represent lambda expressions, which evaluate
+   to a function.
+
+   FUNCTION is a node of type PKL_AST_FUNC.  */
+
+#define PKL_AST_LAMBDA_FUNCTION(AST) ((AST)->lambda.function)
+
+struct pkl_ast_lambda
+{
+  struct pkl_ast_common common;
+
+  union pkl_ast_node *function;
+};
+
+pkl_ast_node pkl_ast_make_lambda (pkl_ast ast, pkl_ast_node function);
+
 /* PKL_AST_COMPOUND_STMT nodes represent compound statements in the
    language.
 
@@ -1715,6 +1732,7 @@ union pkl_ast_node
   struct pkl_ast_funcall funcall;
   struct pkl_ast_funcall_arg funcall_arg;
   struct pkl_ast_var var;
+  struct pkl_ast_lambda lambda;
   /* Types.  */
   struct pkl_ast_type type;
   struct pkl_ast_struct_type_field sct_type_elem;

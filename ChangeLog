@@ -1,5 +1,31 @@
 2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-lex.l: Support `lambda'.
+	* libpoke/pkl-tab.y (LABMDA): New token.
+	(primary): Support lambdas as primaries in expressions.
+	* libpoke/pkl-ast.h (enum pkl_ast_code): New value PKL_AST_LAMBDA.
+	(PKL_AST_LAMBDA_FUNCTION): Define.
+	(struct pkl_ast_lambda): Likewise.
+	(union pkl_ast_node): New field `lambda'.
+	(pkl_ast_make_lambda): New prototype.
+	* libpoke/pkl-ast.c (pkl_ast_make_lambda): New function.
+	(pkl_ast_node_free): Handle lambda AST nodes.
+	(pkl_ast_print_1): Likewise.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_lambda): New handler.
+	(pkl_phase_typify1): Register handler.
+	* libpoke/pkl-gen.c (pkl_gen_pr_lambda): New handler.
+	(pkl_gen_ps_lambda): Likewise.
+	(pkl_phase_gen): Register handlers.
+	* testsuite/poke.pkl/lambda-1.pk: New test.
+	* testsuite/poke.pkl/lambda-2.pk: Likewise.
+	* testsuite/poke.pkl/lambda-3.pk: Likewise.
+	* testsuite/poke.pkl/lambda-diag-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (Lambdas): New section.
+
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-mode.el (poke-font-lock-keywords): Remove unneeded
 	entry for strings, since they are font-locked via the syntax
 	table.

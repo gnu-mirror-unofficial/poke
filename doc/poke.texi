@@ -7678,6 +7678,7 @@ The value computed by the expression will be discarded.
 * Variadic Functions::		Functions taking any number of arguments.
 * Calling Functions::		Invoking functions.
 * Function Types::		Useful for defining interfaces.
+* Lambdas::                     Functions in expressions.
 @end menu
 
 @node Function Declarations
@@ -7861,6 +7862,33 @@ fun printf (string fmt, args@dots{}) void: @{ @dots{} @}
 
 @noindent
 is @code{(string,@dots{})void:}.
+
+@node Lambdas
+@subsection Lambdas
+
+Poke support @dfn{lambda expressions} using the following syntax:
+
+@example
+lambda @var{function_specifier}
+@end example
+
+@noindent
+Where @var{function_specifier} is any function specifier.  Examples:
+
+@example
+lambda void: @{@}
+lambda (int i) int: @{ return i * 2; @}
+@end example
+
+@noindent
+Lambdas can be manipulated exactly like any other Poke value, and can
+be stored in variables.  Therefore, this is an alternative way of
+defining a named function (which can't be recursive for obvious
+reasons):
+
+@example
+var double = lambda (int i) int: @{ return i * 2 @};
+@end example
 
 @node Endianness
 @section Endianness

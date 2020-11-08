@@ -445,6 +445,45 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
 PKL_PHASE_END_HANDLER
 
 /*
+ * LAMBDA
+ * | FUNCTION
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_lambda)
+{
+  /* FUNCTION is a PKL_AST_FUNC, that will compile into a program
+     containing the function code.  Push a new assembler.  */
+  PKL_GEN_PUSH_ASM (pkl_asm_new (PKL_PASS_AST,
+                                 PKL_GEN_PAYLOAD->compiler,
+                                 0 /* prologue */));
+}
+PKL_PHASE_END_HANDLER
+
+/*
+ * | FUNCTION
+ * LAMBDA
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_lambda)
+{
+  /* At this point the code for FUNCTION has been assembled in the
+     current macroassembler.  Finalize the program and put it in a PVM
+     closure, along with the current environment.  */
+
+  pvm_program program = pkl_asm_finish (PKL_GEN_ASM,
+                                        0 /* epilogue */);
+  pvm_val closure;
+
+  PKL_GEN_POP_ASM;
+  pvm_program_make_executable (program);
+  closure = pvm_make_cls (program);
+
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, closure);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+}
+PKL_PHASE_END_HANDLER
+
+/*
  * NULL_STMT
  */
 
@@ -3433,6 +3472,8 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_gen_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_gen_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_gen_ps_var),
+   PKL_PHASE_PR_HANDLER (PKL_AST_LAMBDA, pkl_gen_pr_lambda),
+   PKL_PHASE_PS_HANDLER (PKL_AST_LAMBDA, pkl_gen_ps_lambda),
    PKL_PHASE_PR_HANDLER (PKL_AST_COND_EXP, pkl_gen_pr_cond_exp),
    PKL_PHASE_PR_HANDLER (PKL_AST_COMP_STMT, pkl_gen_pr_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_gen_ps_comp_stmt),

@@ -957,6 +957,10 @@ EXTRA_DIST = \
   poke.pkl/isa-7.pk \
   poke.pkl/isa-8.pk \
   poke.pkl/isa-9.pk \
+  poke.pkl/lambda-1.pk \
+  poke.pkl/lambda-2.pk \
+  poke.pkl/lambda-3.pk \
+  poke.pkl/lambda-diag-1.pk \
   poke.pkl/le-arrays-diag-1.pk \
   poke.pkl/le-integers-1.pk \
   poke.pkl/le-integers-2.pk \

@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command "var la = lambda (int i) int: { return i + 2; }" } */
+/* { dg-command "la (12)" } */
+/* { dg-output "14" } */
