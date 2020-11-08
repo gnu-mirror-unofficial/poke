@@ -998,12 +998,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_return_stmt)
   pkl_ast_node function = PKL_AST_RETURN_STMT_FUNCTION (return_stmt);
   pkl_ast_node function_type = PKL_AST_TYPE (function);
 
+  /* Note the + 1 is for the function argument's frame.  */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF,
-                PKL_AST_RETURN_STMT_NFRAMES (PKL_PASS_NODE));
-
-  /* Pop the function argument's frame.  */
-  if (PKL_AST_FUNC_ARGS (function))
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
+                PKL_AST_RETURN_STMT_NFRAMES (PKL_PASS_NODE) + 1);
 
   /* In a void function, return PVM_NULL in the stack.  */
   if (PKL_AST_TYPE_CODE (PKL_AST_TYPE_F_RTYPE (function_type))
@@ -1445,7 +1442,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
 
   pkl_ast_node function = PKL_PASS_NODE;
   pkl_ast_node function_type = PKL_AST_TYPE (function);
-  int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
 
   /* In a void function, return PVM_NULL in the stack.  Otherwise, it
      is a run-time error to reach this point.  */
@@ -1460,9 +1456,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
     }
 
-  /* Pop the function's argument environment, if any, and return.  */
-  if (PKL_AST_FUNC_ARGS (function) || method_p)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
+  /* Pop the function's argument environment.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, 1);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
 }
 PKL_PHASE_END_HANDLER
