@@ -335,7 +335,7 @@ token <integer> UNION    _("keyword `union'")
 %token PRINT             _("keyword `print'")
 %token PRINTF            _("keyword `printf'")
 %token LOAD              _("keyword `load'")
-%token LAMBDA            _("keyword lambda")
+%token LAMBDA            _("keyword `lambda'")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE BUILTIN_GETENV BUILTIN_FORGET
