@@ -3,5 +3,5 @@
 
 /* { dg-command { .map create foo,#0 } } */
 /* { dg-command { .info maps } } */
-/* { dg-output "IOS\tName\t\tSource" } */
-/* { dg-output "\n#0\tfoo\t\t<stdin>" } */
+/* { dg-output "IOS +Name +Source" } */
+/* { dg-output "\n#0 +foo +<stdin>" } */

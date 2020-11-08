@@ -28,6 +28,7 @@ dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk \
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \
                pk-term.c pk-term.h \
+               pk-table.c pk-table.h \
                pk-repl.c pk-repl.h \
                pk-cmd.c pk-cmd.h \
                pk-cmd-ios.c pk-cmd-info.c pk-cmd-misc.c \

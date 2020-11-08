@@ -3,6 +3,6 @@
 /* { dg-command { .file /etc/passwd } } */
 /* { dg-command { .file /dev/null } } */
 /* { dg-command { .info ios } } */
-/* { dg-output "  Id\tType\tMode\tSize\t\tName" } */
-/* { dg-output {\n. #1\tFILE\trw\t0x00000000#B\t/dev/null} } */
-/* { dg-output {\n  #0\tFILE\tr[w ]\t0x[0-9a-f]*#B\t/etc/passwd} } */
+/* { dg-output "  Id +Type +Mode +Size +Name" } */
+/* { dg-output {\n. #1 +FILE +rw +0x00000000#B +/dev/null} } */
+/* { dg-output {\n  #0 +FILE +r[w ] +0x[0-9a-f]*#B +/etc/passwd} } */

@@ -9,8 +9,8 @@
 /* { dg-command { .map entry add foo, bar } } */
 /* { dg-command { .map entry add foo, jorl } } */
 /* { dg-command { .info maps } } */
-/* { dg-output "IOS\tName\t\tSource" } */
-/* { dg-output "\n#0\tfoo\t\t<stdin>" } */
+/* { dg-output "IOS +Name +Source" } */
+/* { dg-output "\n#0 +foo +<stdin>" } */
 /* { dg-command { .map remove foo } } */
 /* { dg-command { .info maps } } */
 /* { dg-output "" } */

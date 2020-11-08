@@ -31,6 +31,7 @@
 #include "pk-map.h"
 #include "pk-utils.h"
 #include "pk-ios.h"
+#include "pk-table.h"
 #if HAVE_HSERVER
 #  include "pk-hserver.h"
 #endif
@@ -147,36 +148,40 @@ print_info_ios (pk_ios io, void *data)
 {
   uint64_t flags = pk_ios_flags (io);
   char mode[3];
+  pk_table table = (pk_table) data;
+
+  pk_table_row (table);
+
+  /* Id.  */
+  {
+    char *tag;
+
+    asprintf (&tag, "%s#%d",
+              io == pk_ios_cur (poke_compiler) ? "* " : "  ",
+              pk_ios_get_id (io));
+    pk_table_column (table, tag);
+    free (tag);
+  }
+
+  /* Type.  */
+  pk_table_column (table, pk_ios_get_dev_if_name (io));
+
+  /* Mode.  */
   mode[0] = flags & PK_IOS_F_READ ? 'r' : ' ';
   mode[1] = flags & PK_IOS_F_WRITE ? 'w' : ' ';
   mode[2] = '\0';
+  pk_table_column (table, mode);
 
-  pk_printf ("%s#%d\t%s\t%s\t",
-             io == pk_ios_cur (poke_compiler) ? "* " : "  ",
-             pk_ios_get_id (io),
-             pk_ios_get_dev_if_name (io),
-             mode);
-
-#if HAVE_HSERVER
+  /* Size.  */
   {
-    char *cmd;
-    char *hyperlink;
+    char *size;
 
-    asprintf (&cmd, "0x%08jx#B", pk_ios_size (io) / 8);
-    hyperlink = pk_hserver_make_hyperlink ('i', cmd);
-    free (cmd);
-
-    pk_term_hyperlink (hyperlink, NULL);
-    pk_printf ("0x%08jx#B", pk_ios_size (io) / 8);
-    pk_term_end_hyperlink ();
-
-    free (hyperlink);
+    asprintf (&size, "0x%08jx#B", pk_ios_size (io) / 8);
+    pk_table_column_cl (table, size, "offset");
+    free (size);
   }
-#else
-  pk_printf ("0x%08jx#B", pk_ios_size (io) / 8);
-#endif
-  pk_puts ("\t");
 
+  /* Name.  */
 #if HAVE_HSERVER
   {
     char *cmd;
@@ -186,27 +191,33 @@ print_info_ios (pk_ios io, void *data)
     hyperlink = pk_hserver_make_hyperlink ('e', cmd);
     free (cmd);
 
-    pk_term_hyperlink (hyperlink, NULL);
-    pk_puts (pk_ios_handler (io));
-    pk_term_end_hyperlink ();
-
+    pk_table_column_hl (table, pk_ios_handler (io), hyperlink);
     free (hyperlink);
   }
 #else
-  pk_puts (pk_ios_handler (io));
+  pk_table_column (table, pk_ios_handler (io));
 #endif
-
-  pk_puts ("\n");
 }
 
 static int
 pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
+  pk_table table;
+
   assert (argc == 0);
 
-  pk_printf (_("  Id\tType\tMode\tSize\t\tName\n"));
-  pk_ios_map (poke_compiler, print_info_ios, NULL);
+  table = pk_table_new (5);
+  pk_table_row_cl (table, "table-header");
+  pk_table_column (table, "  Id");
+  pk_table_column (table, "Type");
+  pk_table_column (table, "Mode");
+  pk_table_column (table, "Size");
+  pk_table_column (table, "Name");
 
+  pk_ios_map (poke_compiler, print_info_ios, table);
+
+  pk_table_print (table);
+  pk_table_free (table);
   return 1;
 }
 

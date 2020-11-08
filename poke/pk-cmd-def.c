@@ -19,10 +19,12 @@
 #include <config.h>
 #include <string.h>
 
+#include "xalloc.h"
 #include "dirname.h"
 
 #include "poke.h"
 #include "pk-cmd.h"
+#include "pk-table.h"
 
 static void
 print_var_decl (int kind,
@@ -33,13 +35,20 @@ print_var_decl (int kind,
                 int first_column, int last_column,
                 void *data)
 {
-  pk_puts (name);
-  pk_puts ("\t\t");
+  char *source_str = NULL;
+  pk_table table = (pk_table) data;
+
+  pk_table_row (table);
+  pk_table_column (table, name);
 
   if (source)
-    pk_printf ("%s:%d\n", base_name (source), first_line);
+    asprintf (&source_str, "%s:%d",
+              base_name (source), first_line);
   else
-    pk_puts ("<stdin>\n");
+    source_str = xstrdup ("<stdin>");
+
+  pk_table_column (table, source_str);
+  free (source_str);
 }
 
 static void
@@ -51,29 +60,56 @@ print_fun_decl (int kind,
                 int first_column, int last_column,
                 void *data)
 {
-  pk_puts (name);
-  pk_puts ("  ");
-  pk_puts (type);
-  pk_puts ("  ");
+  char *source_str = NULL;
+  pk_table table = (pk_table) data;
+
+  pk_table_row (table);
+
+  pk_table_column (table, name);
+  pk_table_column (table, type);
 
   if (source)
-    pk_printf ("%s:%d\n", basename (source), first_line);
+    asprintf (&source_str, "%s:%d",
+              basename (source), first_line);
   else
-    pk_puts ("<stdin>\n");
+    source_str = xstrdup ("<stdin>");
+
+  pk_table_column (table, source_str);
+  free (source_str);
 }
 
 static int
 pk_cmd_info_var (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  pk_puts (_("Name\t\tDeclared at\n"));
-  pk_decl_map (poke_compiler, PK_DECL_KIND_VAR, print_var_decl, NULL);
+  pk_table table = pk_table_new (2);
+
+  pk_table_row_cl (table, "table-header");
+  pk_table_column (table, "Name");
+  pk_table_column (table, "Declared at");
+
+  pk_decl_map (poke_compiler, PK_DECL_KIND_VAR, print_var_decl,
+               (void *) table);
+
+  pk_table_print (table);
+  pk_table_free (table);
   return 1;
 }
 
 static int
 pk_cmd_info_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  pk_decl_map (poke_compiler, PK_DECL_KIND_FUNC, print_fun_decl, NULL);
+  pk_table table = pk_table_new (3);
+
+  pk_table_row_cl (table, "table-header");
+  pk_table_column (table, "Name");
+  pk_table_column (table, "Type");
+  pk_table_column (table, "Declared at");
+
+  pk_decl_map (poke_compiler, PK_DECL_KIND_FUNC, print_fun_decl,
+               table);
+
+  pk_table_print (table);
+  pk_table_free (table);
   return 1;
 }
 

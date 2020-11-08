@@ -25,6 +25,7 @@
 #include "pk-cmd.h"
 #include "pk-utils.h"
 #include "pk-map.h"
+#include "pk-table.h"
 
 static int
 pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -126,6 +127,7 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ios_id;
   const char *mapname;
   pk_map map;
+  pk_table table;
 
   /* Get arguments.  */
   assert (argc == 2);
@@ -155,9 +157,11 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   /* Print out this map entries.  */
-  pk_term_class ("table_header");
-  pk_puts ("Offset\t\tEntry\n");
-  pk_term_end_class ("table_header");
+  table = pk_table_new (2);
+
+  pk_table_row_cl (table, "table-header");
+  pk_table_column (table, "Offset");
+  pk_table_column (table, "Entry");
 
   {
     pk_map_entry entry;
@@ -166,13 +170,20 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
          entry;
          entry = PK_MAP_ENTRY_CHAIN (entry))
       {
-        pk_print_val (poke_compiler,
-                      PK_MAP_ENTRY_OFFSET (entry));
-        pk_printf ("\t\t$%s::%s\n",
-                   mapname,
-                   PK_MAP_ENTRY_NAME (entry));
+        char *name;
+
+        pk_table_row (table);
+        pk_table_column_val (table, PK_MAP_ENTRY_OFFSET (entry));
+
+        asprintf (&name, "$%s::%s",
+                  mapname, PK_MAP_ENTRY_NAME (entry));
+        pk_table_column (table, name);
+        free (name);
       }
   }
+
+  pk_table_print (table);
+  pk_table_free (table);
 
   return 1;
 }
@@ -372,14 +383,30 @@ pk_cmd_info_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   maps = pk_map_get_maps (ios_id);
   if (maps)
     {
-      pk_term_class ("table_header");
-      pk_puts ("IOS\tName\t\tSource\n");
-      pk_term_end_class ("table_header");
-    }
+      pk_table table = pk_table_new (3);
 
-  for (map = maps; map; map = PK_MAP_CHAIN (map))
-    pk_printf ("#%d\t%s\t\t%s\n", ios_id, PK_MAP_NAME (map),
-               PK_MAP_SOURCE (map) ? PK_MAP_SOURCE (map) : "<stdin>");
+      pk_table_row_cl (table, "table-header");
+      pk_table_column (table, "IOS");
+      pk_table_column (table, "Name");
+      pk_table_column (table, "Source");
+
+      for (map = maps; map; map = PK_MAP_CHAIN (map))
+        {
+          char *ios;
+
+          pk_table_row (table);
+
+          asprintf (&ios, "#%d", ios_id);
+          pk_table_column (table, ios);
+          free (ios);
+          pk_table_column (table, PK_MAP_NAME (map));
+          pk_table_column (table,
+                           PK_MAP_SOURCE (map) ? PK_MAP_SOURCE (map) : "<stdin>");
+        }
+
+      pk_table_print (table);
+      pk_table_free (table);
+    }
 
   return 1;
 }

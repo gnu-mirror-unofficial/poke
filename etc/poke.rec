@@ -1664,29 +1664,6 @@ Description:
 + run-time dependency that is not easy to check for.  Better to use the
 + json-c that we also require for libpoke.
 
-Summary: pk-table
-Component: CLI
-Kind: ENH
-Priority: 4
-Description:
-+ With hyperlinks!
-+ Add property maximum width.
-+ Pagination?
-+
-+ API in this spirit:
-+
-+   table = pk_table_new ();
-+   pk_table_header (table, "IOS");  (adds class table_header)
-+   pk_table_header (table, "Name");
-+   pk_table_row ([CLASS...]);
-+   pk_table_column (table, "10", [CLASS...]);
-+   pk_table_column (table, "<global>", [CLASS...]);
-+   pk_table_print (table);
-+   pk_table_free (table);
-Target: 0.1
-Hacker: jemarch@gnu.org
-RFC: yes
-
 Summary: Modeline and toolbar
 Component: CLI
 Kind: ENH

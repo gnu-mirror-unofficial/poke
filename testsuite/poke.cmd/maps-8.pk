@@ -4,13 +4,13 @@
 /* { dg-command { .map create foo } } */
 /* { dg-command { .map create bar } } */
 /* { dg-command { .info maps } } */
-/* { dg-output "IOS\tName\t\tSource" } */
-/* { dg-output "\n#0\tbar\t\t<stdin>" } */
-/* { dg-output "\n#0\tfoo\t\t<stdin>" } */
+/* { dg-output "IOS +Name +Source" } */
+/* { dg-output "\n#0 +bar +<stdin>" } */
+/* { dg-output "\n#0 +foo +<stdin>" } */
 /* { dg-command { .map remove foo } } */
 /* { dg-command { .info maps } } */
-/* { dg-output "\nIOS\tName\t\tSource" } */
-/* { dg-output "\n#0\tbar\t\t<stdin>" } */
+/* { dg-output "\nIOS +Name +Source" } */
+/* { dg-output "\n#0 +bar +<stdin>" } */
 /* { dg-command { .map remove bar } } */
 /* { dg-command { .info maps } } */
 /* { dg-output "" } */
