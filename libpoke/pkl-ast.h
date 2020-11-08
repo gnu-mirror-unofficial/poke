@@ -980,7 +980,7 @@ pkl_ast_node pkl_ast_make_any_type (pkl_ast);
 
 pkl_ast_node pkl_ast_dup_type (pkl_ast_node type);
 
-int pkl_ast_type_equal (pkl_ast_node t1, pkl_ast_node t2);
+int pkl_ast_type_equal_p (pkl_ast_node t1, pkl_ast_node t2);
 
 int pkl_ast_type_mappable_p (pkl_ast_node type);
 

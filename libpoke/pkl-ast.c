@@ -744,7 +744,7 @@ pkl_ast_array_type_remove_bounders (pkl_ast_node type)
    the same type.  */
 
 int
-pkl_ast_type_equal (pkl_ast_node a, pkl_ast_node b)
+pkl_ast_type_equal_p (pkl_ast_node a, pkl_ast_node b)
 {
   if (PKL_AST_TYPE_CODE (a) != PKL_AST_TYPE_CODE (b))
     return 0;
@@ -782,8 +782,8 @@ pkl_ast_type_equal (pkl_ast_node a, pkl_ast_node b)
               }
           }
 
-        return pkl_ast_type_equal (PKL_AST_TYPE_A_ETYPE (a),
-                                   PKL_AST_TYPE_A_ETYPE (b));
+        return pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (a),
+                                     PKL_AST_TYPE_A_ETYPE (b));
         break;
       }
     case PKL_TYPE_STRUCT:
@@ -815,8 +815,8 @@ pkl_ast_type_equal (pkl_ast_node a, pkl_ast_node b)
                 != PKL_AST_FUNC_TYPE_ARG_VARARG (fb))
               return 0;
 
-            if (!pkl_ast_type_equal (PKL_AST_FUNC_TYPE_ARG_TYPE (fa),
-                                     PKL_AST_FUNC_TYPE_ARG_TYPE (fb)))
+            if (!pkl_ast_type_equal_p (PKL_AST_FUNC_TYPE_ARG_TYPE (fa),
+                                       PKL_AST_FUNC_TYPE_ARG_TYPE (fb)))
               return 0;
           }
         break;
@@ -834,8 +834,8 @@ pkl_ast_type_equal (pkl_ast_node a, pkl_ast_node b)
           return 0;
 
         return (PKL_AST_INTEGER_VALUE (a_unit) == PKL_AST_INTEGER_VALUE (b_unit)
-                  && pkl_ast_type_equal (PKL_AST_TYPE_O_BASE_TYPE (a),
-                                         PKL_AST_TYPE_O_BASE_TYPE (b)));
+                  && pkl_ast_type_equal_p (PKL_AST_TYPE_O_BASE_TYPE (a),
+                                           PKL_AST_TYPE_O_BASE_TYPE (b)));
       }
       break;
     case PKL_TYPE_STRING:
@@ -848,14 +848,14 @@ pkl_ast_type_equal (pkl_ast_node a, pkl_ast_node b)
 }
 
 /* Return whether the type FT is promoteable to type TT.  Note that,
-   unlike pkl_ast_type_equal above, this operation is not
+   unlike pkl_ast_type_equal_p above, this operation is not
    generally commutative.  */
 
 int
 pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
                           int promote_array_of_any)
 {
-  if (pkl_ast_type_equal (ft, tt))
+  if (pkl_ast_type_equal_p (ft, tt))
     return 1;
 
   /* Any type is promoteable to ANY.  */
@@ -889,7 +889,7 @@ pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
       pkl_ast_node ft_etype = PKL_AST_TYPE_A_ETYPE (ft);
       pkl_ast_node tt_etype = PKL_AST_TYPE_A_ETYPE (tt);
 
-      if (!pkl_ast_type_equal (tt_etype, ft_etype))
+      if (!pkl_ast_type_equal_p (tt_etype, ft_etype))
         return 0;
 
       /* Static array types can be handled here.  */

@@ -987,7 +987,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
 
       /* We may need to create a new magnitude node, if the base type
          is different.  */
-      if (!pkl_ast_type_equal (from_base_type, to_base_type))
+      if (!pkl_ast_type_equal_p (from_base_type, to_base_type))
         {
           magnitude = pkl_ast_make_integer (PKL_PASS_AST,
                                             PKL_AST_INTEGER_VALUE (magnitude));

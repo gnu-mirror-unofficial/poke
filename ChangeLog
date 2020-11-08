@@ -1,5 +1,14 @@
 2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h: Rename pkl_ast_type_equal to
+	pkl_ast_type_equal_p.
+	* libpoke/pkl-ast.c (pkl_ast_type_equal_p): Likewise.
+	* libpoke/pkl-typify.c: Likewise.
+	* libpoke/pkl-promo.c: Likewise.
+	* libpoke/pkl-fold.c (pkl_fold_ps_cast): Likewise.
+
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-lex.l: Support `lambda'.
 	* libpoke/pkl-tab.y (LABMDA): New token.
 	(primary): Support lambdas as primaries in expressions.

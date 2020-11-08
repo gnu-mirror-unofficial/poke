@@ -135,8 +135,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
           goto invalid_operands;
 
         /* The arrays must contain the same kind of elements.  */
-        if (!pkl_ast_type_equal (PKL_AST_TYPE_A_ETYPE (op1_type),
-                                 PKL_AST_TYPE_A_ETYPE (op2_type)))
+        if (!pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (op1_type),
+                                   PKL_AST_TYPE_A_ETYPE (op2_type)))
           goto invalid_array_operands;
 
         /* If the bounds of both array types are known at
@@ -341,7 +341,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_isa)
     {
       pkl_ast_node bool_node
         = pkl_ast_make_integer (PKL_PASS_AST,
-                                pkl_ast_type_equal (isa_type, isa_exp_type));
+                                pkl_ast_type_equal_p (isa_type, isa_exp_type));
 
 
       PKL_AST_TYPE (bool_node) = ASTREF (bool_type);
@@ -489,7 +489,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   /* Only arrays can be casted to arrays.  Also, only array boundaries
      may differ.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY
-      && !pkl_ast_type_equal (type, exp_type))
+      && !pkl_ast_type_equal_p (type, exp_type))
     {
       char *type_str = pkl_type_str (type, 1);
       char *found_type_str = pkl_type_str (exp_type, 1);
@@ -506,7 +506,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   /* Arrays can only be casted to other arrays of the right type,
      i.e. only array boundaries may differ.  */
   if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ARRAY
-      && !pkl_ast_type_equal (type, exp_type))
+      && !pkl_ast_type_equal_p (type, exp_type))
     {
       char *type_str = pkl_type_str (type, 1);
       char *found_type_str = pkl_type_str (exp_type, 1);
@@ -745,8 +745,8 @@ TYPIFY_BIN (sub);
   {                                                             \
   /* The type of the elements of the operand arrays */          \
     /* should be the same.  */                                  \
-    if (!pkl_ast_type_equal (PKL_AST_TYPE_A_ETYPE (t1),         \
-                             PKL_AST_TYPE_A_ETYPE (t2)))        \
+    if (!pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (t1),       \
+                               PKL_AST_TYPE_A_ETYPE (t2)))      \
       {                                                         \
         char *t1_str = pkl_type_str (t1, 1);                    \
         char *t2_str = pkl_type_str (t2, 1);                    \
@@ -1134,7 +1134,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_array)
 
       if (type == NULL)
         type = PKL_AST_TYPE (initializer);
-      else if (!pkl_ast_type_equal (PKL_AST_TYPE (initializer), type))
+      else if (!pkl_ast_type_equal_p (PKL_AST_TYPE (initializer), type))
         {
           PKL_ERROR (PKL_AST_LOC (array),
                      "array initializers should be of the same type");
@@ -2134,7 +2134,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_print_stmt)
             {
               pkl_ast_node arg_type = PKL_AST_TYPE (arg_exp);
 
-              if (!pkl_ast_type_equal (arg_type, type))
+              if (!pkl_ast_type_equal_p (arg_type, type))
                 {
                   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY
                       || (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
@@ -2699,7 +2699,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
       && PKL_AST_TYPE_S_ITYPE (cond_type))
     cond_type = PKL_AST_TYPE_S_ITYPE (cond_type);
 
-  if (!pkl_ast_type_equal (then_type, else_type))
+  if (!pkl_ast_type_equal_p (then_type, else_type))
     {
       PKL_ERROR (PKL_AST_LOC (cond_exp),
                  "alternatives in conditional expression shall be of\n"

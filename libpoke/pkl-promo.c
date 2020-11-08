@@ -953,7 +953,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_ass_stmt)
      equivalent, then we are done.  Arrays are excluded because of how
      the boundary is ignored in type equivalence.  */
   if (PKL_AST_TYPE_CODE (lvalue_type) != PKL_TYPE_ARRAY
-      && pkl_ast_type_equal (lvalue_type, exp_type))
+      && pkl_ast_type_equal_p (lvalue_type, exp_type))
     PKL_PASS_DONE;
 
   /* A promotion is needed.  */
@@ -1041,7 +1041,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
                  wouldn't have allowed it to pass.  */
 
               /* If both types are equivalent, then we are done.  */
-              if (! pkl_ast_type_equal (fa_type, aa_type))
+              if (! pkl_ast_type_equal_p (fa_type, aa_type))
                 /* A promotion is needed.  */
                 switch (PKL_AST_TYPE_CODE (fa_type))
                   {
@@ -1188,7 +1188,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_return_stmt)
      equivalent, then we are done.  Arrays are excluded because of how
      the boundary is ignored in type equivalence.  */
   if (PKL_AST_TYPE_CODE (expected_type) != PKL_TYPE_ARRAY
-      && pkl_ast_type_equal (expected_type, returned_type))
+      && pkl_ast_type_equal_p (expected_type, returned_type))
     PKL_PASS_DONE;
 
   if (PKL_AST_TYPE_CODE (expected_type) != PKL_TYPE_VOID)
@@ -1314,7 +1314,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_func_arg)
          equivalent, then we are done.  Arrays are excluded because of
          how the boundary is ignored in type equivalence.  */
       if (PKL_AST_TYPE_CODE (arg_type) != PKL_TYPE_ARRAY
-          && pkl_ast_type_equal (arg_type, initial_type))
+          && pkl_ast_type_equal_p (arg_type, initial_type))
         PKL_PASS_DONE;
 
       switch (PKL_AST_TYPE_CODE (arg_type))
@@ -1642,7 +1642,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_in)
 
   int restart = 0;
 
-  if (pkl_ast_type_equal (t1, t2))
+  if (pkl_ast_type_equal_p (t1, t2))
     PKL_PASS_DONE;
 
   switch (PKL_AST_TYPE_CODE (t2))
@@ -1729,7 +1729,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
                   pkl_ast_node type_elem_type
                     = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
 
-                  if (!pkl_ast_type_equal (elem_type, type_elem_type)
+                  if (!pkl_ast_type_equal_p (elem_type, type_elem_type)
                       || (PKL_AST_TYPE_CODE (type_elem_type) == PKL_TYPE_ARRAY))
                     {
                       int restart = 0;
