@@ -1,3 +1,8 @@
+2020-11-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h: Do not include config.h as this is an
+	installed header.
+
 2020-11-04  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* HACKING (Write After Approval): Add Mohammad-Reza Nabipoor.
