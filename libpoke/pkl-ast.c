@@ -852,8 +852,8 @@ pkl_ast_type_equal_p (pkl_ast_node a, pkl_ast_node b)
    generally commutative.  */
 
 int
-pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
-                          int promote_array_of_any)
+pkl_ast_type_promoteable_p (pkl_ast_node ft, pkl_ast_node tt,
+                            int promote_array_of_any)
 {
   if (pkl_ast_type_equal_p (ft, tt))
     return 1;
@@ -904,9 +904,9 @@ pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
         }
 
       return 1;
-      //      return pkl_ast_type_promoteable (PKL_AST_TYPE_A_ETYPE (ft),
-      //                                       PKL_AST_TYPE_A_ETYPE (tt),
-      //                                       promote_array_of_any);
+      //      return pkl_ast_type_promoteable_p (PKL_AST_TYPE_A_ETYPE (ft),
+      //                                         PKL_AST_TYPE_A_ETYPE (tt),
+      //                                         promote_array_of_any);
     }
 
   /* A struct type is promoteable to any integral type if the struct

@@ -969,9 +969,9 @@ expected array");
       PKL_PASS_ERROR;
     }
 
-  if (!pkl_ast_type_promoteable (t1,
-                                 PKL_AST_TYPE_A_ETYPE (t2),
-                                 0 /* promote_array_of_any */))
+  if (!pkl_ast_type_promoteable_p (t1,
+                                   PKL_AST_TYPE_A_ETYPE (t2),
+                                   0 /* promote_array_of_any */))
     {
       char *t1_str = pkl_type_str (t1, 1);
       char *t2_str = pkl_type_str (t2, 1);
@@ -1586,8 +1586,8 @@ with prototype %s",
           pkl_ast_node aa_type =  PKL_AST_TYPE (aa_exp);
 
           if (!PKL_AST_FUNC_TYPE_ARG_VARARG (fa)
-              && !pkl_ast_type_promoteable (aa_type, fa_type,
-                                            1 /* promote_array_of_any */))
+              && !pkl_ast_type_promoteable_p (aa_type, fa_type,
+                                              1 /* promote_array_of_any */))
             {
               char *passed_type = pkl_type_str (aa_type, 1);
               char *expected_type = pkl_type_str (fa_type, 1);
@@ -1964,8 +1964,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_scons)
 
                   found = 1;
 
-                  if (!pkl_ast_type_promoteable (elem_type, type_elem_type,
-                                                 0 /* promote array of any */))
+                  if (!pkl_ast_type_promoteable_p (elem_type, type_elem_type,
+                                                   0 /* promote array of any */))
                     {
                       char *expected_type = pkl_type_str (type_elem_type, 1);
                       char *found_type = pkl_type_str (elem_type, 1);
@@ -2481,8 +2481,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
       pkl_ast_node constraint_type
         = PKL_AST_TYPE (elem_constraint);
 
-      if (!pkl_ast_type_promoteable (constraint_type, bool_type,
-                                     1 /* promote_array_of_any */))
+      if (!pkl_ast_type_promoteable_p (constraint_type, bool_type,
+                                       1 /* promote_array_of_any */))
         {
           PKL_ERROR (PKL_AST_LOC (elem_constraint),
                      "struct field constraint should evaluate to a boolean");
@@ -2501,8 +2501,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
       pkl_ast_node optcond_type
         = PKL_AST_TYPE (elem_optcond);
 
-      if (!pkl_ast_type_promoteable (optcond_type, bool_type,
-                                     1 /* promote_array_of_any */))
+      if (!pkl_ast_type_promoteable_p (optcond_type, bool_type,
+                                       1 /* promote_array_of_any */))
         {
           PKL_ERROR (PKL_AST_LOC (elem_optcond),
                      "expected boolean expression");
@@ -2522,8 +2522,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
       pkl_ast_node initializer_type
         = PKL_AST_TYPE (elem_initializer);
 
-      if (!pkl_ast_type_promoteable (initializer_type, field_type,
-                                     0 /* promote_array_of_any */))
+      if (!pkl_ast_type_promoteable_p (initializer_type, field_type,
+                                       0 /* promote_array_of_any */))
         {
           char *field_type_str = pkl_type_str (field_type, 1);
           char *initializer_type_str = pkl_type_str (initializer_type, 1);
@@ -2551,8 +2551,8 @@ expected %s, got %s",
                                     pkl_ast_make_integer (PKL_PASS_AST, 1));
 
 
-      if (!pkl_ast_type_promoteable (label_type, offset_type,
-                                     1 /* promote_array_of_any */))
+      if (!pkl_ast_type_promoteable_p (label_type, offset_type,
+                                       1 /* promote_array_of_any */))
         {
           PKL_ERROR (PKL_AST_LOC (elem_label),
                      "struct field label should evaluate to an offset");
@@ -2584,8 +2584,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_return_stmt)
   expected_type = PKL_AST_FUNC_RET_TYPE (function);
 
   if (PKL_AST_TYPE_CODE (expected_type) != PKL_TYPE_VOID
-      && !pkl_ast_type_promoteable (returned_type, expected_type,
-                                    1 /* promote_array_of_any */))
+      && !pkl_ast_type_promoteable_p (returned_type, expected_type,
+                                      1 /* promote_array_of_any */))
     {
       char *returned_type_str = pkl_type_str (returned_type, 1);
       char *expected_type_str = pkl_type_str (expected_type, 1);
@@ -2616,8 +2616,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_func_arg)
       pkl_ast_node arg_type = PKL_AST_FUNC_ARG_TYPE (func_arg);
       pkl_ast_node initial_type = PKL_AST_TYPE (initial);
 
-      if (!pkl_ast_type_promoteable (initial_type, arg_type,
-                                     1 /* promote_aray_of_any */))
+      if (!pkl_ast_type_promoteable_p (initial_type, arg_type,
+                                       1 /* promote_aray_of_any */))
         {
           char *arg_type_str = pkl_type_str (arg_type, 1);
           char *initial_type_str = pkl_type_str (initial_type, 1);
@@ -2734,8 +2734,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_ass_stmt)
   pkl_ast_node lvalue_type = PKL_AST_TYPE (lvalue);
   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
-  if (!pkl_ast_type_promoteable (exp_type, lvalue_type,
-                                 1 /* promote_array_of_any */))
+  if (!pkl_ast_type_promoteable_p (exp_type, lvalue_type,
+                                   1 /* promote_array_of_any */))
     {
       char *expected_type = pkl_type_str (lvalue_type, 1);
       char *found_type = pkl_type_str (exp_type, 1);

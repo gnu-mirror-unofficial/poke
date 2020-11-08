@@ -986,8 +986,8 @@ int pkl_ast_type_mappable_p (pkl_ast_node type);
 
 int pkl_ast_type_is_exception (pkl_ast_node type);
 
-int pkl_ast_type_promoteable (pkl_ast_node ft, pkl_ast_node tt,
-                              int promote_array_of_any);
+int pkl_ast_type_promoteable_p (pkl_ast_node ft, pkl_ast_node tt,
+                                int promote_array_of_any);
 
 pkl_ast_node pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type);
 
