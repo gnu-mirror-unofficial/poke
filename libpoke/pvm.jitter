@@ -1135,6 +1135,23 @@ instruction regvar ()
   end
 end
 
+# Instruction: duc
+#
+# Make a copy of the closure at the top of the stack, and
+# replace it.
+#
+# Stack: ( CLS -- CLS )
+
+instruction duc ()
+  code
+    pvm_val cls = JITTER_TOP_STACK ();
+    pvm_val new_cls = pvm_make_cls (PVM_VAL_CLS_PROGRAM (cls));
+
+    JITTER_DROP_STACK ();
+    JITTER_PUSH_STACK (new_cls);
+  end
+end
+
 # Instruction: pec
 #
 # Put the current lexical environment to the closure at the top of the

@@ -1,5 +1,16 @@
 2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-insn.def (PKL_INSN_DUC): Define.
+	* libpoke/pvm.jitter (duc): New instruction.
+	* libpoke/pkl-gen.c (pkl_gen_ps_lambda): Duplicate the closure
+	value before installing the environment.
+	(pkl_gen_ps_decl): Likewise.
+	* testsuite/poke.pkl/defun-15.pk: New test.
+	* testsuite/poke.pkl/lambda-4.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_ps_return_stmt): Do not pop
 	environment frames before RETURN, as it is not needed.
 	(pkl_gen_ps_func): Likewise.

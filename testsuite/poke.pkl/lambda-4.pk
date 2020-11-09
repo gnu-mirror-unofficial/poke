@@ -1,0 +1,22 @@
+/* { dg-do run } */
+
+type Generator = (int)int;
+
+fun new_generator = Generator:
+ {
+   var accu = 0;
+   return lambda (int i) int: { accu = accu + 1; return accu; };
+ }
+
+/* { dg-command { var a = new_generator } } */
+/* { dg-command { var b = new_generator } } */
+/* { dg-command { a (0) } } */
+/* { dg-output "1" } */
+/* { dg-command { a (0)} } */
+/* { dg-output "\n2" } */
+/* { dg-command { b (0)} } */
+/* { dg-output "\n1" } */
+/* { dg-command { a (0)} } */
+/* { dg-output "\n3" } */
+/* { dg-command { b (0)} } */
+/* { dg-output "\n2" } */

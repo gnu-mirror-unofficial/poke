@@ -720,6 +720,7 @@ EXTRA_DIST = \
   poke.pkl/defun-12.pk \
   poke.pkl/defun-13.pk \
   poke.pkl/defun-14.pk \
+  poke.pkl/defun-15.pk\
   poke.pkl/defun-diag-1.pk \
   poke.pkl/defun-diag-2.pk \
   poke.pkl/defun-diag-3.pk \
@@ -960,6 +961,7 @@ EXTRA_DIST = \
   poke.pkl/lambda-1.pk \
   poke.pkl/lambda-2.pk \
   poke.pkl/lambda-3.pk \
+  poke.pkl/lambda-4.pk \
   poke.pkl/lambda-diag-1.pk \
   poke.pkl/le-arrays-diag-1.pk \
   poke.pkl/le-integers-1.pk \

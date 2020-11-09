@@ -343,6 +343,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_decl)
         //        pvm_disassemble_program (program);
 
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, closure);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUC);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
         break;
@@ -479,6 +480,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_lambda)
   closure = pvm_make_cls (program);
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, closure);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUC);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
 }
 PKL_PHASE_END_HANDLER
