@@ -73,6 +73,7 @@ wrapped-functions
   random
   srandom
   secure_getenv
+  gettime
 end
 
 #wrapped-globals
@@ -140,6 +141,7 @@ early-c
 #   include <string.h>
 #   include <assert.h>
 #   include "xalloc.h"
+#   include "timespec.h"
 
 #   include "pvm-alloc.h"
   end
@@ -4887,6 +4889,30 @@ instruction rand ()
       srandom (seed);
     JITTER_DROP_STACK ();
     JITTER_PUSH_STACK (pvm_make_int (random (), 32));
+  end
+end
+
+# Instruction: time
+#
+# Push the current system time to the stack in the form of
+# an array of two long elements containing the number of seconds
+# and nanoseconds since the epoch.
+#
+# Stack: ( -- ARR )
+
+instruction time ()
+  code
+    struct timespec ts;
+    pvm_val arr = pvm_make_array (pvm_make_ulong (2, 64),
+                                  pvm_make_integral_type (64, 1));
+
+    gettime (&ts);
+    PVM_VAL_ARR_ELEM_VALUE (arr, 0) = pvm_make_long (ts.tv_sec, 64);
+    PVM_VAL_ARR_ELEM_OFFSET (arr, 0) = pvm_make_ulong (0, 64);
+    PVM_VAL_ARR_ELEM_VALUE (arr, 1) = pvm_make_long (ts.tv_nsec, 64);
+    PVM_VAL_ARR_ELEM_OFFSET (arr, 1) = pvm_make_ulong (0, 64);
+
+    JITTER_PUSH_STACK (arr);
   end
 end
 

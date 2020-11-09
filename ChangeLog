@@ -1,5 +1,23 @@
 2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (libpoke_modules): Add modules timespec and
+	gettime.
+	* libpoke/pkl-insn.def (PKL_INSN_TIME): Define.
+	* libpoke/pvm.jitter (time): New instruction.
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_GET_TIME): Define.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle
+	PKL_AST_BUILTIN_GET_TIME.
+	* libpoke/pkl-lex.l: Handle __PKL_BUILTIN_GET_TIME__.
+	* libpoke/pkl-rt.pk (get_time): New function.
+	* libpoke/pkl-tab.y (builtin): Handle BUILTIN_GET_TIME.
+	* pickles/time.pk (gettimeofday): New function.
+	(Timespec): New type.
+	* doc/poke.texi (rand): Mention using get_time to seed the
+	pseudo-random numbers generator.
+	(Dates and Times): Update to mention Timespec and gettimeofday.
+
+2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def (PKL_INSN_DUC): Define.
 	* libpoke/pvm.jitter (duc): New instruction.
 	* libpoke/pkl-gen.c (pkl_gen_ps_lambda): Duplicate the closure

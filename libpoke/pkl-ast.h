@@ -1325,6 +1325,7 @@ pkl_ast_node pkl_ast_make_lambda (pkl_ast ast, pkl_ast_node function);
 #define PKL_AST_BUILTIN_IOSIZE 9
 #define PKL_AST_BUILTIN_GETENV 10
 #define PKL_AST_BUILTIN_FORGET 11
+#define PKL_AST_BUILTIN_GET_TIME 12
 
 struct pkl_ast_comp_stmt
 {

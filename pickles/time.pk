@@ -16,6 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+type Timespec = struct
+{
+  int<64> sec;
+  int<64> nsec;
+};
+
+fun gettimeofday = Timespec:
+{
+  var time = get_time;
+  return Timespec {sec = time[0], nsec = time[1]};
+}
+
 fun ptime = (uint<64> seconds) void:
 {
     fun days_in_year = (int year) int:

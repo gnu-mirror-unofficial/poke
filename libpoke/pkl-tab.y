@@ -338,7 +338,7 @@ token <integer> UNION    _("keyword `union'")
 %token LAMBDA            _("keyword `lambda'")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
-%token BUILTIN_IOSIZE BUILTIN_GETENV BUILTIN_FORGET
+%token BUILTIN_IOSIZE BUILTIN_GETENV BUILTIN_FORGET BUILTIN_GET_TIME
 
 /* Compiler builtins.  */
 
@@ -1788,6 +1788,7 @@ builtin:
         | BUILTIN_IOSIZE        { $$ = PKL_AST_BUILTIN_IOSIZE; }
         | BUILTIN_GETENV        { $$ = PKL_AST_BUILTIN_GETENV; }
         | BUILTIN_FORGET        { $$ = PKL_AST_BUILTIN_FORGET; }
+        | BUILTIN_GET_TIME      { $$ = PKL_AST_BUILTIN_GET_TIME; }
         ;
 
 stmt_decl_list:

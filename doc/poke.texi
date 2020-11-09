@@ -9160,6 +9160,13 @@ integers.  If a @var{seed} different to zero is provided, it is used
 to initialize a new sequence of pseudo-random numbers (which includes
 the one returned.)
 
+The @code{get_time} builtin function can be used in order to seed the
+pseudo-random number generator very easily:
+
+@example
+srand (get_time[1])
+@end example
+
 @node The Standard Library
 @chapter The Standard Library
 
@@ -9450,15 +9457,17 @@ array @var{buf}.
 @section Dates and Times
 @cindex date
 @cindex time
+@cindex @code{Timespec}
+@cindex @code{gettimeofday}
+@cindex @code{ptime}
 @cindex @code{POSIX_Time32}
 
-Often a format encodes a date and time expressed as the number of seconds
-since midnight, January@tie{}1st 1970@.   You could map these
-simply as integers.  However, the standard library provides two
-types @code{POSIX_Time32} and @code{POSIX_Time64} which include
-pretty-printers (@pxref{Pretty Printers}) to
-display the date in a human readable format.
-The definition is:
+Often a format encodes a date and time expressed as the number of
+seconds since midnight, January@tie{}1st 1970@.  You could map these
+simply as integers.  However, the standard library provides two types
+@code{POSIX_Time32} and @code{POSIX_Time64} which include
+pretty-printers (@pxref{Pretty Printers}) to display the date in a
+human readable format.  The definition is:
 
 @example
 type POSIX_Time@var{size} = struct
@@ -9498,6 +9507,30 @@ which is defined as follows:
 @example
 fun ptime = (uint<64> seconds) void:
 @{ @dots{} @}
+@end example
+
+This pickle also provides a type @code{Timespec} that can store Unix
+times to nanosecond precision, and has the form:
+
+@example
+type Timespec = struct
+@{
+  int<64> sec;
+  int<64> nsec;
+@};
+@end example
+
+The function @code{gettimeofday} uses the @code{get_time} builtin in
+order to construct an instance of @code{Timespec}.  For example:
+
+@example
+(poke) gettimeofday
+Timespec @{
+  sec=1604918423L,
+  nsec=753492546L
+@}
+(poke) ptime (gettimeofday.sec)
+2020-Nov-9 10:40:36
 @end example
 
 @node The Machine-Interface
