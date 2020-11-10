@@ -96,6 +96,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   size_t nbytes = sizeof (struct pvm_array_elem) * PVM_VAL_ULONG (nelem);
   size_t i;
 
+  arr->mapped_p = 0;
   arr->ios = PVM_NULL;
   arr->offset = PVM_NULL;
   arr->elems_bound = PVM_NULL;
@@ -127,6 +128,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
   size_t nmethodbytes
     = sizeof (struct pvm_struct_method) * PVM_VAL_ULONG (nmethods);
 
+  sct->mapped_p = 0;
   sct->ios = PVM_NULL;
   sct->offset = PVM_NULL;
   sct->mapper = PVM_NULL;
@@ -953,6 +955,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       for (idx = 0; idx < nelem; idx++)
         {
           pvm_val elem_value = PVM_VAL_ARR_ELEM_VALUE (val, idx);
+          pvm_val elem_offset = PVM_VAL_ARR_ELEM_OFFSET (val, idx);
 
           if (idx != 0)
             pk_puts (",");
@@ -966,6 +969,15 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
             }
 
           PVM_PRINT_VAL_1 (elem_value, ndepth);
+
+          if (maps && elem_offset != PVM_NULL)
+            {
+              pk_puts (" @ ");
+              pk_term_class ("offset");
+              PVM_PRINT_VAL_1 (elem_offset, ndepth);
+              pk_puts ("#b");
+              pk_term_end_class ("offset");
+            }
         }
       pk_puts ("]");
 
@@ -1023,8 +1035,9 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       nabsent = 0;
       for (idx = 0; idx < nelem; ++idx)
         {
-          pvm_val name = PVM_VAL_SCT_FIELD_NAME(val, idx);
-          pvm_val value = PVM_VAL_SCT_FIELD_VALUE(val, idx);
+          pvm_val name = PVM_VAL_SCT_FIELD_NAME (val, idx);
+          pvm_val value = PVM_VAL_SCT_FIELD_VALUE (val, idx);
+          pvm_val offset = PVM_VAL_SCT_FIELD_OFFSET (val, idx);
 
           if (PVM_VAL_SCT_FIELD_ABSENT_P (val, idx))
             nabsent++;
@@ -1044,6 +1057,15 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
                   pk_puts ("=");
                 }
               PVM_PRINT_VAL_1 (value, ndepth + 1);
+            }
+
+          if (maps && offset != PVM_NULL)
+            {
+              pk_puts (" @ ");
+              pk_term_class ("offset");
+              PVM_PRINT_VAL_1 (offset, ndepth);
+              pk_puts ("#b");
+              pk_term_end_class ("offset");
             }
         }
 

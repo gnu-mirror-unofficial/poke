@@ -11,4 +11,4 @@ type Foo = struct { byte a; byte[2] b; };
 
 /* { dg-command { .set omaps yes } } */
 /* { dg-command { Foo @ 0#B } } */
-/* { dg-output "\nFoo \{a=0x10UB,b=\\\[0x20UB,0x30UB\\\] @ 0x8UL#b\} @ 0x0UL#b" } */
+/* { dg-output "\nFoo \{a=0x10UB @ 0x0UL#b,b=\\\[0x20UB @ 0x8UL#b,0x30UB @ 0x10UL#b\\\] @ 0x8UL#b @ 0x8UL#b\} @ 0x0UL#b" } */

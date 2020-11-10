@@ -24,14 +24,7 @@
 ;;; is mapped.  If the value is not mapped, this is a NOP.
 
         .macro op_unmap
-        push null
-        mseto
-        push null
-        msetm
-        push null
-        msetw
-        push null
-        msetios
+        unmap
         .end
 
 ;;; RAS_FUNCTION_ARRAY_MAPPER @array_type
@@ -226,6 +219,7 @@
         ;; Set the other map attributes.
         pushvar $ios          ; ARRAY IOS
         msetios               ; ARRAY
+        map                   ; ARRAY
         popf 1
         return
 .bounds_fail:
@@ -370,6 +364,7 @@
         msetsiz                 ; ARRAY
         pushvar $ebound         ; ARRAY EBOUND
         msetsel                 ; ARRAY
+        map                     ; ARRAY
         popf 1
         return
 .bounds_fail:
@@ -501,14 +496,13 @@
         dup                     ; 0UL 0UL
         regvar $eidx            ; BOFF
         regvar $eboff           ; _
-        ;; The offset of the constructed array is null, since it is
-        ;; not mapped.
-        push null               ; null
+        ;; The bit-offset of the constructed array is 0 by convention.
+        push ulong<64>0         ; 0UL
         ;; Build the type of the constructed array.
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
-                                ; null ATYPE
+                                ; 0UL ATYPE
         ;; Ok, loop to add elements to the constructed array.
      .while
         ;; If there is an EBOUND, check it.
@@ -1038,6 +1032,7 @@
         ;; Install the attributes of the mapped object.
         pushvar $ios            ; SCT IOS
         msetios                 ; SCT
+        map                     ; SCT
         popf 1
         return
         .end
@@ -1202,8 +1197,8 @@
         ;; So we have the same lexical structure than struct_mapper.
         push null
         regvar $unused
-        ;; The struct is not mapped, so its offset is null.
-        push null               ; null
+        ;; The struct is not mapped, so set its bit-offset to 0UL.
+        push ulong<64>0          ; 0UL
         ;; Iterate over the fields of the struct type.
  .c size_t vars_registered = 0;
         .let @field
@@ -1477,12 +1472,6 @@
         tor                     ; SCT I [IVAL EVAL]
         swap                    ; I SCT [IVAL EVAL]
         mgeto                   ; I SCT SOFF [IVAL EVAL]
-        ;; XXX: if NULL, put 0UL.  This check will go away when we
-        ;; add a separated flag for mapped values.
-        bnn .done
-        drop
-        push ulong<64>0
-.done:
         tor                     ; I SCT [IVAL EVAL SOFF]
         swap                    ; SCT I [IVAL EVAL SOFF]
         srefio                  ; SCT I EOFF [IVAL EVAL SOFF]

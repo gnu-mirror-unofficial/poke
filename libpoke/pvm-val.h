@@ -154,12 +154,15 @@ typedef struct pvm_val_box *pvm_val_box;
 /* Arrays values are boxed, and store sequences of homogeneous values
    called array "elements".  They can be mapped in IO, or unmapped.
 
+   MAPPED_P is 0 if the array value is not mapped, or has any other
+   value if it is mapped.
+
    IOS is an int<32> value that identifies the IO space where the
    value is mapped.  If the array is not mapped then this is PVM_NULL.
 
    OFFSET is an ulong<64> value with the bit offset in the current IO
    space where the array is mapped.  If the array is not mapped then
-   this is PVM_NULL.
+   this holds 0UL by convention.
 
    If the array is mapped, ELEMS_BOUND is an unsigned long containing
    the number of elements to which the map is bounded.  Similarly,
@@ -189,6 +192,7 @@ typedef struct pvm_val_box *pvm_val_box;
    relevant.  */
 
 #define PVM_VAL_ARR(V) (PVM_VAL_BOX_ARR (PVM_VAL_BOX ((V))))
+#define PVM_VAL_ARR_MAPPED_P(V) (PVM_VAL_ARR(V)->mapped_p)
 #define PVM_VAL_ARR_IOS(V) (PVM_VAL_ARR(V)->ios)
 #define PVM_VAL_ARR_OFFSET(V) (PVM_VAL_ARR(V)->offset)
 #define PVM_VAL_ARR_ELEMS_BOUND(V) (PVM_VAL_ARR(V)->elems_bound)
@@ -201,6 +205,7 @@ typedef struct pvm_val_box *pvm_val_box;
 
 struct pvm_array
 {
+  int mapped_p;
   pvm_val ios;
   pvm_val offset;
   pvm_val elems_bound;
@@ -238,12 +243,15 @@ struct pvm_array_elem
    called structure "elements".  They can be mapped in IO, or
    unmapped.
 
-   IO is an int<32> value that identifies the IO space where the value
+   MAPPED_P is 0 if the struct value is not mapped, or has any other
+   value if it is mapped.
+
+   IOS is an int<32> value that identifies the IO space where the value
    is mapped.  If the structure is not mapped then this is PVM_NULL.
 
    OFFSET is an ulong<64> value holding the bit offset of in the IO
    space where the structure is mapped.  If the structure is not
-   mapped then this is PVM_NULL.
+   mapped then this is 0UL by convention.
 
    TYPE is the type of the struct.  This includes the types of the
    struct fields.
@@ -259,6 +267,7 @@ struct pvm_array_elem
    irrelevant.  */
 
 #define PVM_VAL_SCT(V) (PVM_VAL_BOX_SCT (PVM_VAL_BOX ((V))))
+#define PVM_VAL_SCT_MAPPED_P(V) (PVM_VAL_SCT((V))->mapped_p)
 #define PVM_VAL_SCT_IOS(V) (PVM_VAL_SCT((V))->ios)
 #define PVM_VAL_SCT_OFFSET(V) (PVM_VAL_SCT((V))->offset)
 #define PVM_VAL_SCT_MAPPER(V) (PVM_VAL_SCT((V))->mapper)
@@ -271,6 +280,7 @@ struct pvm_array_elem
 
 struct pvm_struct
 {
+  int mapped_p;
   pvm_val ios;
   pvm_val offset;
   pvm_val mapper;
@@ -539,6 +549,21 @@ typedef struct pvm_off *pvm_off;
       else if (PVM_IS_SCT (V))                   \
         PVM_VAL_SCT_IOS ((V)) = (I);             \
     } while (0)
+
+#define PVM_VAL_MAPPED_P(V)                             \
+  (PVM_IS_ARR ((V)) ? PVM_VAL_ARR_MAPPED_P ((V))        \
+   : PVM_IS_SCT ((V)) ? PVM_VAL_SCT_MAPPED_P ((V))      \
+   : 0)
+
+#define PVM_VAL_SET_MAPPED_P(V,I)               \
+  do                                            \
+    {                                           \
+      if (PVM_IS_ARR ((V)))                     \
+        PVM_VAL_ARR_MAPPED_P ((V)) = (I);       \
+      else if (PVM_IS_SCT ((V)))                \
+        PVM_VAL_SCT_MAPPED_P ((V)) = (I);       \
+    }                                           \
+  while (0)
 
 #define PVM_VAL_MAPPER(V)                               \
   (PVM_IS_ARR ((V)) ? PVM_VAL_ARR_MAPPER ((V))          \

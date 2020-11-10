@@ -39,9 +39,9 @@
 ;;; implementation of the PKL_INSN_REMAP macro-instruction.
 
         .macro remap
-        ;; The re-map should be done only if the value has a mapper.
-        mgetm                   ; VAL MCLS
-        bn .label               ; VAL MCLS
+        ;; The re-map should be done only if the value is mapped.
+        mm                      ; VAL MAPPED_P
+        bzi .label              ; VAL MAPPED_P
         drop                    ; VAL
         ;; XXX do not re-map if the object is up to date (cached
         ;; value.)
@@ -78,6 +78,9 @@
         .macro write
         dup                     ; VAL VAL
         ;; The write should be done only if the value is mapped.
+        mm                      ; VAL VAL MAPPED_P
+        bzi .label
+        drop                    ; VAL VAL
         mgetw                   ; VAL VAL WCLS
         bn .label
         call                    ; VAL null
@@ -470,9 +473,11 @@
         ;; bounded by number of elements, regardless of the
         ;; characteristics of the mapping of the trimmed array.
         pushvar $array          ; TARR ARR
-        mgeto                   ; TARR ARR BOFFSET
-        bn .notmapped
+        mm                      ; TARR ARR MAPPED_P
+        bzi .notmapped
+        drop                    ; TARR ARR
         ;; Calculate the new offset.
+        mgeto                   ; TARR ARR BOFFSET
         swap                    ; TARR BOFFSET ARR
         pushvar $from           ; TARR BOFFSET ARR FROM
         arefo                   ; TARR BOFFSET ARR FROM BOFF(FROM)
@@ -509,6 +514,8 @@
         msetm                   ; BOFFSET TARR
         swap                    ; TARR BOFFSET
         mseto                   ; TARR
+        ;; Mark the new array as mapped.
+        map                     ; TARR
         ;; Remap!!
         remap
         push null

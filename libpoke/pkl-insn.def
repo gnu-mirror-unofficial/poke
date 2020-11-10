@@ -265,6 +265,11 @@ PKL_DEF_INSN(PKL_INSN_SMODI, "", "smodi")
 
 /* Instructions to handle mapped values.  */
 
+PKL_DEF_INSN(PKL_INSN_MM, "", "mm")
+
+PKL_DEF_INSN(PKL_INSN_MAP, "", "map")
+PKL_DEF_INSN(PKL_INSN_UNMAP, "", "unmap")
+
 PKL_DEF_INSN(PKL_INSN_MGETO, "", "mgeto")
 PKL_DEF_INSN(PKL_INSN_MSETO, "", "mseto")
 

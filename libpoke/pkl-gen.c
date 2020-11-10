@@ -675,8 +675,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
         /* If VAL is not mapped, skip the mapval.  */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHR, 0);  /* LVALUE IDX VAL EXP */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);      /* LVALUE IDX EXP VAL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETM);     /* LVALUE IDX EXP VAL MCLS */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BN, label); /* LVALUE IDX EXP VAL MCLS */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM);        /* LVALUE IDX EXP VAL MAPPED_P */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label); /* LVALUE IDX EXP VAL MAPPED_P */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);      /* LVALUE IDX EXP VAL */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);     /* LVALUE IDX EXP VAL OFFSET */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);      /* LVALUE IDX OFFSET EXP VAL */
@@ -3304,17 +3304,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           {
             pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
-            if (attr == PKL_AST_ATTR_OFFSET)
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
-            else
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM); /* VAL MAPPED_P */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
+
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                           pvm_make_exception (PVM_E_MAP, PVM_E_MAP_MSG,
                                               PVM_E_MAP_ESTATUS));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
             pkl_asm_label (PKL_GEN_ASM, label);
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL */
+            if (attr == PKL_AST_ATTR_OFFSET)
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
+            else
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS);
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* (BOFF|IOS) */
+
             if (attr == PKL_AST_ATTR_OFFSET)
               {
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
@@ -3337,9 +3342,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
         case PKL_TYPE_ANY:
         case PKL_TYPE_ARRAY:
         case PKL_TYPE_STRUCT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NN);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
           break;
         default:
@@ -3388,7 +3391,7 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_unmap)
 {
-  RAS_MACRO_OP_UNMAP;
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_UNMAP);
 }
 PKL_PHASE_END_HANDLER
 

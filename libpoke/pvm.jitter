@@ -3985,6 +3985,53 @@ end
 
 ## Instructions to handle mapped values
 
+# Instruction: mm
+#
+# Given a value, push 1 on the stack if the value is mapped.
+# Push 0 otherwise.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction mm ()
+  code
+    pvm_val mapped_p = pvm_make_int (PVM_VAL_MAPPED_P (JITTER_TOP_STACK ()),
+                                     32);
+    JITTER_PUSH_STACK (mapped_p);
+  end
+end
+
+# Instruction: map
+#
+# Given a value, mark it as as mapped.  If the value can't be
+# mapped then PVM_E_INVAL is raised.
+#
+# Stack: ( VAL -- VAL )
+# Exceptions: PVM_E_INVAL
+
+instruction map ()
+  code
+    pvm_val val = JITTER_TOP_STACK ();
+
+    if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
+      PVM_RAISE_DFL (PVM_E_INVAL);
+
+    PVM_VAL_SET_MAPPED_P (JITTER_TOP_STACK (), 1);
+  end
+end
+
+# Instruction: unmap
+#
+# Given a value, mark it as as not mapped.  If the value can't be
+# mapped then this is a no-operation.
+#
+# Stack: ( VAL -- VAL )
+
+instruction unmap ()
+  code
+    PVM_VAL_SET_MAPPED_P (JITTER_TOP_STACK (), 0);
+  end
+end
+
 # Instruction: mgeto
 #
 # Given a map-able value, push its bit-offset on the stack as an

@@ -1,5 +1,37 @@
 2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (mm,map,unmap): New instructions.
+	* libpoke/pkl-insn.def: Entries for new instructions.
+	* libpoke/pkl-gen.c (pkl_gen_pr_ass_stmt): Likewise.
+	(pkl_gen_ps_op_unmap): Use the new unmap instruction.
+	(pkl_gen_ps_op_attr): Use `mm' to determine
+	whether a value is mapped or not.
+	* libpoke/pkl-asm.pks (remap): Use mm instead of mgetm.
+	(atrim): Likewise.
+	(write) Likewise.
+	* libpoke/pkl-gen.pks (array_mapper): Map the new value.
+	(array_valmapper): Likewise.
+	(struct_mapper): Likewise.
+	(array_constructor): Set bit-offset of the constructed array.
+	(struct_constructor): Likewise.
+	(struct_field_inserter): Adapt to the fact mgeto can't return null
+	any longer.
+	(op_unmap): Delete macro.
+	* libpoke/pvm-val.c (pvm_make_array): Make new arrays unmapped by
+	default.
+	(pvm_make_struct): Likewise for structs.
+	(pvm_print_val_1): Print element offsets in
+	mapped arrays and structs.
+	* libpoke/pvm-val.h (PVM_VAL_ARR_MAPPED_P): Define.
+	(struct pvm_array): New field `mapped_p'.
+	(PVM_VAL_SCT_MAPPED_P): Define.
+	(struct pvm_struct): New field `mapped_p'.
+	(PVM_VAL_MAPPED_P): Define.
+	(PVM_VAL_SET_MAPPED_P): Likewise.
+	* testsuite/poke.cmd/set-omaps-1.pk: Adapt.
+
+2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (mktyv): New instruction.
 	* libpoke/pkl-insn.def: Define PKL_INSN_MKTYV.
 	* libpoke/pvm.h: Prototype for pvm_make_void_type.
