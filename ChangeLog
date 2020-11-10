@@ -1,3 +1,8 @@
+2020-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm-val.c (pvm_print_val_1): Fix printing function
+	types.
+
 2020-11-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* bootstrap.conf (libpoke_modules): Add modules timespec and

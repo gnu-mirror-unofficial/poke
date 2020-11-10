@@ -1111,8 +1111,12 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
             for (i = 0; i < nargs; ++i)
               {
                 pvm_val atype = PVM_VAL_TYP_C_ATYPE (val, i);
+                if (i != 0)
+                  pk_puts (",");
                 PVM_PRINT_VAL_1 (atype, ndepth);
               }
+            pk_puts (")");
+
             PVM_PRINT_VAL_1 (PVM_VAL_TYP_C_RETURN_TYPE (val), ndepth);
             break;
           }
