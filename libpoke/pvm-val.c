@@ -132,7 +132,9 @@ pvm_make_array (pvm_val nelem, pvm_val type)
 
   arr->mapped_p = 0;
   arr->ios = PVM_NULL;
+  arr->ios_back = PVM_NULL;
   arr->offset = PVM_NULL;
+  arr->offset_back = PVM_NULL;
   arr->elems_bound = PVM_NULL;
   arr->size_bound = PVM_NULL;
   arr->mapper = PVM_NULL;
@@ -145,6 +147,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   for (i = 0; i < num_allocated; ++i)
     {
       arr->elems[i].offset = PVM_NULL;
+      arr->elems[i].offset_back = PVM_NULL;
       arr->elems[i].value = PVM_NULL;
     }
 
@@ -240,6 +243,8 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
   sct->mapped_p = 0;
   sct->ios = PVM_NULL;
   sct->offset = PVM_NULL;
+  sct->ios_back = PVM_NULL;
+  sct->offset_back = PVM_NULL;
   sct->mapper = PVM_NULL;
   sct->writer = PVM_NULL;
   sct->type = type;
@@ -258,6 +263,8 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
       sct->fields[i].name = PVM_NULL;
       sct->fields[i].value = PVM_NULL;
       sct->fields[i].modified = pvm_make_int (0, 32);
+      sct->fields[i].modified_back = PVM_NULL;
+      sct->fields[i].offset_back = PVM_NULL;
     }
 
   for (i = 0; i < PVM_VAL_ULONG (sct->nmethods); ++i)
@@ -661,6 +668,120 @@ pvm_val_writer (pvm_val val)
     return PVM_VAL_SCT_WRITER (val);
 
   return PVM_NULL;
+}
+
+void
+pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
+{
+  uint64_t boff = PVM_VAL_ULONG (boffset);
+
+  if (PVM_IS_ARR (val))
+    {
+      size_t nelem, i;
+      uint64_t array_offset = PVM_VAL_ULONG (PVM_VAL_ARR_OFFSET (val));
+
+      nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (val));
+      for (i = 0; i < nelem; ++i)
+        {
+          pvm_val elem_value = PVM_VAL_ARR_ELEM_VALUE (val, i);
+          pvm_val elem_offset = PVM_VAL_ARR_ELEM_OFFSET (val, i);
+          uint64_t elem_new_offset
+            = boff + (PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (val, i))
+                      - array_offset);
+
+          PVM_VAL_ARR_ELEM_OFFSET_BACK (val, i) = elem_offset;
+          PVM_VAL_ARR_ELEM_OFFSET (val, i)
+            = pvm_make_ulong (elem_new_offset, 64);
+          
+          pvm_val_reloc (elem_value, ios,
+                         pvm_make_ulong (elem_new_offset, 64));
+        }
+
+      PVM_VAL_ARR_IOS_BACK (val) = PVM_VAL_ARR_IOS (val);
+      PVM_VAL_ARR_OFFSET_BACK (val) = PVM_VAL_ARR_OFFSET (val);
+
+      PVM_VAL_ARR_IOS (val) = ios;
+      PVM_VAL_ARR_OFFSET (val) = pvm_make_ulong (boff, 64);
+    }
+  else if (PVM_IS_SCT (val))
+    {
+      size_t nfields, i;
+      uint64_t struct_offset = PVM_VAL_ULONG (PVM_VAL_SCT_OFFSET (val));
+
+      nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
+      for (i = 0; i < nfields; ++i)
+        {
+          pvm_val field_value = PVM_VAL_SCT_FIELD_VALUE (val, i);
+          pvm_val field_offset = PVM_VAL_SCT_FIELD_OFFSET (val, i);
+          uint64_t field_new_offset
+            = boff + (PVM_VAL_ULONG (PVM_VAL_SCT_FIELD_OFFSET (val, i))
+                      - struct_offset);
+
+          
+          /* Do not relocate absent fields.  */
+          if (PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
+            continue;
+
+          PVM_VAL_SCT_FIELD_OFFSET_BACK (val, i)
+            = field_offset;
+          PVM_VAL_SCT_FIELD_OFFSET (val, i)
+            = pvm_make_ulong (field_new_offset, 64);
+          PVM_VAL_SCT_FIELD_MODIFIED_BACK (val, i)
+            = PVM_VAL_SCT_FIELD_MODIFIED (val, i);
+          PVM_VAL_SCT_FIELD_MODIFIED (val, i) =
+            pvm_make_int (1, 32);
+          
+          pvm_val_reloc (field_value, ios,
+                         pvm_make_ulong (boff + field_offset, 64));
+        }
+
+      PVM_VAL_SCT_OFFSET_BACK (val) = PVM_VAL_SCT_OFFSET (val);
+      PVM_VAL_SCT_IOS_BACK (val) = PVM_VAL_SCT_IOS (val);
+
+      PVM_VAL_SCT_IOS (val) = ios;
+      PVM_VAL_SCT_OFFSET (val) = pvm_make_ulong (boff, 64);
+    }
+}
+
+void
+pvm_val_ureloc (pvm_val val)
+{
+  if (PVM_IS_ARR (val))
+    {
+      size_t nelem, i;
+
+      nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (val));
+      for (i = 0; i < nelem; ++i)
+        {
+          pvm_val elem_value = PVM_VAL_ARR_ELEM_VALUE (val, i);
+
+          PVM_VAL_ARR_ELEM_OFFSET (val, i) = PVM_VAL_ARR_ELEM_OFFSET_BACK (val, i);
+          pvm_val_ureloc (elem_value);
+        }
+
+      PVM_VAL_ARR_IOS (val) = PVM_VAL_ARR_IOS_BACK (val);
+      PVM_VAL_ARR_OFFSET (val) = PVM_VAL_ARR_OFFSET_BACK (val);
+    }
+  else if (PVM_IS_SCT (val))
+    {
+      size_t nfields, i;
+
+      nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
+      for (i = 0; i < nfields; ++i)
+        {
+          pvm_val field_value = PVM_VAL_SCT_FIELD_VALUE (val, i);
+
+          PVM_VAL_SCT_FIELD_OFFSET (val, i)
+            = PVM_VAL_SCT_FIELD_OFFSET_BACK (val, i);
+          PVM_VAL_SCT_FIELD_MODIFIED (val, i)
+            = PVM_VAL_SCT_FIELD_MODIFIED_BACK (val, i);
+
+          pvm_val_ureloc (field_value);
+        }
+
+      PVM_VAL_SCT_OFFSET (val) = PVM_VAL_SCT_OFFSET_BACK (val);
+      PVM_VAL_SCT_IOS (val) = PVM_VAL_SCT_IOS_BACK (val);
+    }
 }
 
 uint64_t

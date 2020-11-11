@@ -1,3 +1,0 @@
-/* { dg-do compile } */
-
-int[3] @ 0#B = [1,2,3];  /* { dg-error "l-value.*simple type" } */

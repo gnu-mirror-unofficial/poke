@@ -272,6 +272,9 @@ PKL_DEF_INSN(PKL_INSN_MM, "", "mm")
 PKL_DEF_INSN(PKL_INSN_MAP, "", "map")
 PKL_DEF_INSN(PKL_INSN_UNMAP, "", "unmap")
 
+PKL_DEF_INSN(PKL_INSN_RELOC, "", "reloc")
+PKL_DEF_INSN(PKL_INSN_URELOC, "", "ureloc")
+
 PKL_DEF_INSN(PKL_INSN_MGETO, "", "mgeto")
 PKL_DEF_INSN(PKL_INSN_MSETO, "", "mseto")
 

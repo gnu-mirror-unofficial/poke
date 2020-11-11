@@ -330,6 +330,16 @@ pvm_val pvm_val_mapper (pvm_val val);
 
 pvm_val pvm_val_writer (pvm_val val);
 
+/* Relocate the given value to the given bit-offset.  If the value is
+   not map-able then this is a no-operation.  */
+
+void pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset);
+
+/* Undo the last relocation performed on the given value.  If the
+   value is not map-able then this is a no-operation.  */
+
+void pvm_val_ureloc (pvm_val val);
+
 /* Return a PVM value for an exception with the given CODE, MESSAGE
    and EXIT_STATUS.  */
 

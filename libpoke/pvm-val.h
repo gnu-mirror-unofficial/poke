@@ -164,6 +164,9 @@ typedef struct pvm_val_box *pvm_val_box;
    space where the array is mapped.  If the array is not mapped then
    this holds 0UL by convention.
 
+   IOS_BACK and OFFSET_BACK are backup areas used by the relocation
+   instructions.
+
    If the array is mapped, ELEMS_BOUND is an unsigned long containing
    the number of elements to which the map is bounded.  Similarly,
    SIZE_BOUND is an offset indicating the size to which the map is
@@ -196,7 +199,9 @@ typedef struct pvm_val_box *pvm_val_box;
 #define PVM_VAL_ARR(V) (PVM_VAL_BOX_ARR (PVM_VAL_BOX ((V))))
 #define PVM_VAL_ARR_MAPPED_P(V) (PVM_VAL_ARR(V)->mapped_p)
 #define PVM_VAL_ARR_IOS(V) (PVM_VAL_ARR(V)->ios)
+#define PVM_VAL_ARR_IOS_BACK(V) (PVM_VAL_ARR(V)->ios_back)
 #define PVM_VAL_ARR_OFFSET(V) (PVM_VAL_ARR(V)->offset)
+#define PVM_VAL_ARR_OFFSET_BACK(V) (PVM_VAL_ARR(V)->offset_back)
 #define PVM_VAL_ARR_ELEMS_BOUND(V) (PVM_VAL_ARR(V)->elems_bound)
 #define PVM_VAL_ARR_SIZE_BOUND(V) (PVM_VAL_ARR(V)->size_bound)
 #define PVM_VAL_ARR_MAPPER(V) (PVM_VAL_ARR(V)->mapper)
@@ -212,6 +217,8 @@ struct pvm_array
   int mapped_p;
   pvm_val ios;
   pvm_val offset;
+  pvm_val ios_back;
+  pvm_val offset_back;
   pvm_val elems_bound;
   pvm_val size_bound;
   pvm_val mapper;
@@ -231,16 +238,20 @@ typedef struct pvm_array *pvm_array;
    relative to the begginnig of the IO space.  If the array is not
    mapped then this is PVM_NULL.
 
+   OFFSET_BACK is a backup area used by the reloc instructions.
+
    VALUE is the value contained in the element.  If the array is
    mapped this is the cached value, which is returned by `aref'.  */
 
 #define PVM_VAL_ARR_ELEM_OFFSET(V,I) (PVM_VAL_ARR_ELEM((V),(I)).offset)
+#define PVM_VAL_ARR_ELEM_OFFSET_BACK(V,I) (PVM_VAL_ARR_ELEM((V),(I)).offset_back)
 #define PVM_VAL_ARR_ELEM_VALUE(V,I) (PVM_VAL_ARR_ELEM((V),(I)).value)
 
 
 struct pvm_array_elem
 {
   pvm_val offset;
+  pvm_val offset_back;
   pvm_val value;
 };
 
@@ -257,6 +268,9 @@ struct pvm_array_elem
    OFFSET is an ulong<64> value holding the bit offset of in the IO
    space where the structure is mapped.  If the structure is not
    mapped then this is 0UL by convention.
+
+   IOS_BACK and OFFSET_BACK are backups used by the relocation
+   instructions.
 
    TYPE is the type of the struct.  This includes the types of the
    struct fields.
@@ -275,6 +289,8 @@ struct pvm_array_elem
 #define PVM_VAL_SCT_MAPPED_P(V) (PVM_VAL_SCT((V))->mapped_p)
 #define PVM_VAL_SCT_IOS(V) (PVM_VAL_SCT((V))->ios)
 #define PVM_VAL_SCT_OFFSET(V) (PVM_VAL_SCT((V))->offset)
+#define PVM_VAL_SCT_IOS_BACK(V) (PVM_VAL_SCT((V))->ios_back)
+#define PVM_VAL_SCT_OFFSET_BACK(V) (PVM_VAL_SCT((V))->offset_back)
 #define PVM_VAL_SCT_MAPPER(V) (PVM_VAL_SCT((V))->mapper)
 #define PVM_VAL_SCT_WRITER(V) (PVM_VAL_SCT((V))->writer)
 #define PVM_VAL_SCT_TYPE(V) (PVM_VAL_SCT((V))->type)
@@ -288,6 +304,8 @@ struct pvm_struct
   int mapped_p;
   pvm_val ios;
   pvm_val offset;
+  pvm_val ios_back;
+  pvm_val offset_back;
   pvm_val mapper;
   pvm_val writer;
   pvm_val type;
@@ -316,12 +334,17 @@ struct pvm_struct
 
    MODIFIED is a C boolean indicating whether the field value has
    been modified since struct creation, or since last mapping if the
-   struct is mapped.  */
+   struct is mapped.
+
+   MODIFIED_BACK and OFFSET_BACK are backup storage used by the
+   relocation instructions.  */
 
 #define PVM_VAL_SCT_FIELD_OFFSET(V,I) (PVM_VAL_SCT_FIELD((V),(I)).offset)
 #define PVM_VAL_SCT_FIELD_NAME(V,I) (PVM_VAL_SCT_FIELD((V),(I)).name)
 #define PVM_VAL_SCT_FIELD_VALUE(V,I) (PVM_VAL_SCT_FIELD((V),(I)).value)
 #define PVM_VAL_SCT_FIELD_MODIFIED(V,I) (PVM_VAL_SCT_FIELD((V),(I)).modified)
+#define PVM_VAL_SCT_FIELD_MODIFIED_BACK(V,I) (PVM_VAL_SCT_FIELD((V),(I)).modified_back)
+#define PVM_VAL_SCT_FIELD_OFFSET_BACK(V,I) (PVM_VAL_SCT_FIELD((V),(I)).offset_back)
 #define PVM_VAL_SCT_FIELD_ABSENT_P(V,I)         \
   (PVM_VAL_SCT_FIELD_NAME ((V),(I)) == PVM_NULL \
    && PVM_VAL_SCT_FIELD_VALUE ((V),(I)) == PVM_NULL)
@@ -329,9 +352,11 @@ struct pvm_struct
 struct pvm_struct_field
 {
   pvm_val offset;
+  pvm_val offset_back;
   pvm_val name;
   pvm_val value;
   pvm_val modified;
+  pvm_val modified_back;
 };
 
 /* Struct methods are closures associated with the struct, which can

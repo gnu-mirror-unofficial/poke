@@ -2722,8 +2722,6 @@ PKL_PHASE_END_HANDLER
 
 /* The type of the r-value in an assignment statement should match the
    type of the l-value.
-
-   Also, if the l-value is a map, its type should be a simple type.
 */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_ass_stmt)
@@ -2748,16 +2746,6 @@ expected %s got %s",
       free (found_type);
       free (expected_type);
 
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  if (PKL_AST_CODE (lvalue) == PKL_AST_MAP
-      && (PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_ARRAY
-          || PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_STRUCT))
-    {
-      PKL_ERROR (PKL_AST_LOC (PKL_AST_MAP_TYPE (lvalue)),
-                 "the map in l-value shall be of a simple type");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

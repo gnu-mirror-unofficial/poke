@@ -1,3 +1,40 @@
+2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.h: Prototype for pvm_val_ureloc.
+	* libpoke/pvm-val.c (pvm_make_array): Initialize ios_back and
+	offset_back.
+	(pvm_make_struct): Likewise, and also modified_back.
+	(pvm_val_ureloc): New function.
+	* libpoke/pvm-val.h (PVM_VAL_ARR_ELEM_OFFSET_BACK): Define.
+	(PVM_VAL_ARR_OFFSET_BACK): Likewise.
+	(PVM_VAL_ARR_IOS_BACK): Likewise.
+	(PVM_VAL_SCT_OFFSET_BACK): Likewise.
+	(PVM_VAL_SCT_FIELD_MODIFIED_BACK): Likewise.
+	(PVM_VAL_SCT_FIELD_OFFSET_BACK): Likewise.
+	(struct pvm_array): New fields offset_back and ios_back.
+	(struct pvm_array_elem): Likewise.
+	(struct pvm_struct): Likewise.
+	(struct pvm_struct_field): New fields modified_back and
+	offset_back.
+	* libpoke/pkl-insn.def: New instruction PKL_INSN_URELOC.
+	* libpoke/pvm.jitter (reloc): Change to new interface.
+	(ureloc): New instruction.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_ass_stmt): Remove
+	restriction of simple types in lvalues.
+	* libpoke/pkl-gen.pks (complex_lmap): New macro.
+	* testsuite/poke.pkl/ass-map-diag-1.pk: Remove test.
+	* testsuite/poke.pkl/ass-map-diag-2.pk: Likewise.
+	* testsuite/poke.map/ass-map-7.pk: New test.
+	* testsuite/poke.map/ass-map-8.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-insn.def; Define PKL_INSN_RELOC.
+	* libpoke/pvm.jitter (reloc): New instruction.
+	* libpoke/pvm.h: Prototype for pk_val_reloc.
+	* libpoke/pk-val.c (pvm_val_reloc): New function.
+
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-trans.c (pkl_trans4_ps_array): Remove handler.
