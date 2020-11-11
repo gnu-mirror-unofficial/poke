@@ -4225,6 +4225,18 @@ instruction tyissct ()
   end
 end
 
+# Instruction: mktyv
+#
+# Build a "void" type and push it on the stack.
+#
+# Stack: ( -- TYPE )
+
+instruction mktyv ()
+  code
+    JITTER_PUSH_STACK (pvm_make_void_type ());
+  end
+end
+
 # Instruction: mktyany
 #
 # Build an "any" type and push it on the stack.

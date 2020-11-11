@@ -368,7 +368,8 @@ enum pvm_type_code
   PVM_TYPE_STRUCT,
   PVM_TYPE_OFFSET,
   PVM_TYPE_CLOSURE,
-  PVM_TYPE_ANY
+  PVM_TYPE_ANY,
+  PVM_TYPE_VOID
 };
 
 struct pvm_type

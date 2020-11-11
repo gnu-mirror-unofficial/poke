@@ -503,6 +503,8 @@ EXTRA_DIST = \
   poke.pkl/arrays-11.pk \
   poke.pkl/arrays-12.pk \
   poke.pkl/arrays-13.pk \
+  poke.pkl/arrays-14.pk \
+  poke.pkl/arrays-15.pk \
   poke.pkl/arrays-diag-1.pk \
   poke.pkl/arrays-diag-2.pk \
   poke.pkl/arrays-diag-3.pk \

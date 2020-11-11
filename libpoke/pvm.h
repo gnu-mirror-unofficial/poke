@@ -272,6 +272,8 @@ pvm_val pvm_make_integral_type (pvm_val size, pvm_val signed_p);
 
 pvm_val pvm_make_string_type (void);
 
+pvm_val pvm_make_void_type (void);
+
 pvm_val pvm_make_any_type (void);
 
 pvm_val pvm_make_array_type (pvm_val type, pvm_val bound);

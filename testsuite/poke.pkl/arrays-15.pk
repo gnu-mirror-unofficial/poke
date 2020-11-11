@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+fun h = (int i) void: { printf "%v", i; }
+
+/* { dg-command { [h,h]} } */
+/* { dg-output "\\\[#<closure>,#<closure>\\\]" } */
+/* { dg-command { [h,h][1](2) } } */
+/* { dg-output "\n2" } */

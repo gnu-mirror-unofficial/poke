@@ -2110,6 +2110,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct_ref)
 PKL_PHASE_END_HANDLER
 
 /*
+ * TYPE_VOID
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_void)
+{
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYV);
+}
+PKL_PHASE_END_HANDLER
+
+/*
  * TYPE_ANY
  */
 
@@ -3496,8 +3506,6 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_HANDLER (PKL_AST_INTEGER, pkl_gen_ps_integer),
    PKL_PHASE_PS_HANDLER (PKL_AST_IDENTIFIER, pkl_gen_ps_identifier),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRING, pkl_gen_ps_string),
-   PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_pr_type_offset),
-   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_ps_type_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_gen_ps_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_gen_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_gen_ps_isa),
@@ -3542,8 +3550,11 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_gen_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_UNMAP, pkl_gen_ps_op_unmap),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_gen_ps_op_in),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_VOID, pkl_gen_ps_type_void),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ANY, pkl_gen_ps_type_any),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_gen_ps_type_integral),
+   PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_pr_type_offset),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_ps_type_offset),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_gen_ps_type_function),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_gen_pr_type_array),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRING, pkl_gen_ps_type_string),

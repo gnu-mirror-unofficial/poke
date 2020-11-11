@@ -1,3 +1,18 @@
+2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.jitter (mktyv): New instruction.
+	* libpoke/pkl-insn.def: Define PKL_INSN_MKTYV.
+	* libpoke/pvm.h: Prototype for pvm_make_void_type.
+	* libpoke/pvm-val.c (pvm_make_void_type): New function.
+	(pvm_print_val_1): Handle PVM_TYPE_VOID.
+	(pvm_type_equal_p): Likewise.
+	* libpoke/pvm-val.h (enum pvm_type_code): Add PVM_TYPE_VOID.
+	* libpoke/pkl-gen.c (pkl_gen_ps_type_void): New handler.
+	(pkl_phase_gen): Install handler.
+	* testsuite/poke.pkl/arrays-14.pk: New test.
+	* testsuite/poke.pkl/arrays-15.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2020-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.c (pvm_print_val_1): Fix printing function

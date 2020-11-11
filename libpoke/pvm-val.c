@@ -267,6 +267,12 @@ pvm_make_string_type (void)
 }
 
 pvm_val
+pvm_make_void_type (void)
+{
+  return pvm_make_type (PVM_TYPE_VOID);
+}
+
+pvm_val
 pvm_make_any_type (void)
 {
   return pvm_make_type (PVM_TYPE_ANY);
@@ -1082,6 +1088,9 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         case PVM_TYPE_STRING:
           pk_puts ("string");
           break;
+        case PVM_TYPE_VOID:
+          pk_puts ("void");
+          break;
         case PVM_TYPE_ANY:
           pk_term_class ("any");
           pk_puts ("any");
@@ -1249,6 +1258,7 @@ pvm_type_equal_p (pvm_val type1, pvm_val type2)
       }
     case PVM_TYPE_STRING:
     case PVM_TYPE_ANY:
+    case PVM_TYPE_VOID:
       return 1;
     case PVM_TYPE_ARRAY:
       return pvm_type_equal_p (PVM_VAL_TYP_A_ETYPE (type1),
