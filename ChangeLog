@@ -1,5 +1,17 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.h (PVM_VAL_ARR_MAPPED_P_BACK): Define
+	(PVM_VAL_SCT_MAPPED_P_BACK): Likewise.
+	(struct pvm_array): New field mapped_p_back;
+	(struct pvm_struct): Likewise.
+	* libpoke/pvm-val.c (pvm_make_array): Initialize mapped_p_back.
+	(pvm_make_struct): Likewise.
+	(pvm_val_reloc): Handle the mapped_p backups.
+	(pvm_val_ureloc): Restore the mapped_p attribute.
+	(pvm_val_reloc): Save the mapped_p attribute.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Install a writer in
 	newly-constructed struct values.
 	(pkl_gen_pr_type_array): Ditto for newly-constructed array values.

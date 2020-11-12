@@ -164,8 +164,8 @@ typedef struct pvm_val_box *pvm_val_box;
    space where the array is mapped.  If the array is not mapped then
    this holds 0UL by convention.
 
-   IOS_BACK and OFFSET_BACK are backup areas used by the relocation
-   instructions.
+   MAPPED_P_BACK, IOS_BACK and OFFSET_BACK are backup areas used by
+   the relocation instructions.
 
    If the array is mapped, ELEMS_BOUND is an unsigned long containing
    the number of elements to which the map is bounded.  Similarly,
@@ -198,6 +198,7 @@ typedef struct pvm_val_box *pvm_val_box;
 
 #define PVM_VAL_ARR(V) (PVM_VAL_BOX_ARR (PVM_VAL_BOX ((V))))
 #define PVM_VAL_ARR_MAPPED_P(V) (PVM_VAL_ARR(V)->mapped_p)
+#define PVM_VAL_ARR_MAPPED_P_BACK(V) (PVM_VAL_ARR(V)->mapped_p_back)
 #define PVM_VAL_ARR_IOS(V) (PVM_VAL_ARR(V)->ios)
 #define PVM_VAL_ARR_IOS_BACK(V) (PVM_VAL_ARR(V)->ios_back)
 #define PVM_VAL_ARR_OFFSET(V) (PVM_VAL_ARR(V)->offset)
@@ -215,6 +216,7 @@ typedef struct pvm_val_box *pvm_val_box;
 struct pvm_array
 {
   int mapped_p;
+  int mapped_p_back;
   pvm_val ios;
   pvm_val offset;
   pvm_val ios_back;
@@ -269,8 +271,8 @@ struct pvm_array_elem
    space where the structure is mapped.  If the structure is not
    mapped then this is 0UL by convention.
 
-   IOS_BACK and OFFSET_BACK are backups used by the relocation
-   instructions.
+   MAPPED_BACK, IOS_BACK and OFFSET_BACK are backups used by the
+   relocation instructions.
 
    TYPE is the type of the struct.  This includes the types of the
    struct fields.
@@ -287,6 +289,7 @@ struct pvm_array_elem
 
 #define PVM_VAL_SCT(V) (PVM_VAL_BOX_SCT (PVM_VAL_BOX ((V))))
 #define PVM_VAL_SCT_MAPPED_P(V) (PVM_VAL_SCT((V))->mapped_p)
+#define PVM_VAL_SCT_MAPPED_P_BACK(V) (PVM_VAL_SCT((V))->mapped_p_back)
 #define PVM_VAL_SCT_IOS(V) (PVM_VAL_SCT((V))->ios)
 #define PVM_VAL_SCT_OFFSET(V) (PVM_VAL_SCT((V))->offset)
 #define PVM_VAL_SCT_IOS_BACK(V) (PVM_VAL_SCT((V))->ios_back)
@@ -302,6 +305,7 @@ struct pvm_array_elem
 struct pvm_struct
 {
   int mapped_p;
+  int mapped_p_back;
   pvm_val ios;
   pvm_val offset;
   pvm_val ios_back;

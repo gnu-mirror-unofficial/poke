@@ -131,6 +131,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   size_t i;
 
   arr->mapped_p = 0;
+  arr->mapped_p_back = 0;
   arr->ios = PVM_NULL;
   arr->ios_back = PVM_NULL;
   arr->offset = PVM_NULL;
@@ -241,6 +242,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
     = sizeof (struct pvm_struct_method) * PVM_VAL_ULONG (nmethods);
 
   sct->mapped_p = 0;
+  sct->mapped_p_back = 0;
   sct->ios = PVM_NULL;
   sct->offset = PVM_NULL;
   sct->ios_back = PVM_NULL;
@@ -697,9 +699,11 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
                          pvm_make_ulong (elem_new_offset, 64));
         }
 
+      PVM_VAL_ARR_MAPPED_P_BACK (val) = PVM_VAL_ARR_MAPPED_P (val);
       PVM_VAL_ARR_IOS_BACK (val) = PVM_VAL_ARR_IOS (val);
       PVM_VAL_ARR_OFFSET_BACK (val) = PVM_VAL_ARR_OFFSET (val);
 
+      PVM_VAL_ARR_MAPPED_P_BACK (val) = 1;
       PVM_VAL_ARR_IOS (val) = ios;
       PVM_VAL_ARR_OFFSET (val) = pvm_make_ulong (boff, 64);
     }
@@ -735,9 +739,11 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
                          pvm_make_ulong (boff + field_offset, 64));
         }
 
+      PVM_VAL_SCT_MAPPED_P_BACK (val) = PVM_VAL_SCT_MAPPED_P (val);
       PVM_VAL_SCT_OFFSET_BACK (val) = PVM_VAL_SCT_OFFSET (val);
       PVM_VAL_SCT_IOS_BACK (val) = PVM_VAL_SCT_IOS (val);
 
+      PVM_VAL_SCT_MAPPED_P (val) = 1;
       PVM_VAL_SCT_IOS (val) = ios;
       PVM_VAL_SCT_OFFSET (val) = pvm_make_ulong (boff, 64);
     }
@@ -759,6 +765,7 @@ pvm_val_ureloc (pvm_val val)
           pvm_val_ureloc (elem_value);
         }
 
+      PVM_VAL_ARR_MAPPED_P (val) = PVM_VAL_ARR_MAPPED_P (val);
       PVM_VAL_ARR_IOS (val) = PVM_VAL_ARR_IOS_BACK (val);
       PVM_VAL_ARR_OFFSET (val) = PVM_VAL_ARR_OFFSET_BACK (val);
     }
@@ -779,6 +786,7 @@ pvm_val_ureloc (pvm_val val)
           pvm_val_ureloc (field_value);
         }
 
+      PVM_VAL_SCT_MAPPED_P (val) = PVM_VAL_SCT_MAPPED_P_BACK (val);
       PVM_VAL_SCT_OFFSET (val) = PVM_VAL_SCT_OFFSET_BACK (val);
       PVM_VAL_SCT_IOS (val) = PVM_VAL_SCT_IOS_BACK (val);
     }

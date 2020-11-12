@@ -1715,41 +1715,23 @@
 ;;;   a closure with the writer function to use.
 
         .macro complex_lmap @type #writer
-        ;; Reloc the value and save its mapped status.
+        ;; Reloc the value.
         reloc                   ; VAL IOS BOFF
+        ;; Install the writer.
         rot                     ; IOS BOFF VAL
-        mm                      ; IOS BOFF VAL MM
-        swap                    ; IOS BOFF MM VAL
-        tor                     ; IOS BOFF MM [VAL]
-        nrot                    ; MM IOS BOFF [VAL]
-        fromr                   ; MM IOS BOFF VAL
-        ;; Install the writer and mark the value as mapped.
-        ;; attributes, and mark the value as mappd.
-        push #writer            ; MM IOS BOFF VAL CLS
-        msetw                   ; MM IOS BOFF VAL
-        map                     ; MM IOS BOFF VAL
-        swap                    ; MM IOS VAL BOFF
-        tor                     ; MM IOS VAL [BOFF]
-        dup                     ; MM IOS VAL VAL
-        quake                   ; MM VAL IOS VAL
-        fromr                   ; MM VAL IOS VAL BOFF
-        rot                     ; MM VAL VAL BOFF IOS
-        swap                    ; MM VAL VAL IOS BOFF
-        rot                     ; MM VAL IOS BOFF VAL
-;        strace 0
-        ;; Everything should be ready now to invoke the writer.
+        push #writer            ; IOS BOFF VAL CLS
+        msetw                   ; IOS BOFF VAL
+        ;; Make a copy of the value, which will be consumed by the
+        ;; writer below.
+        dup                     ; IOS BOFF VAL VAL
+        tor                     ; IOS BOFF VAL [VAL]
+        nrot                    ; VAL IOS BOFF [VAL]
+        fromr                   ; VAL IOS BOFF VAL
+        ;; Invoke it.
         .c PKL_GEN_PAYLOAD->in_writer = 1;
         .c PKL_PASS_SUBPASS (@type);
         .c PKL_GEN_PAYLOAD->in_writer = 0;
-        ;; Undo the relocation, and restore the original mapped status.
-        ureloc                  ; MM VAL
-        swap                    ; VAL MM
-        bnzi .label1
-        drop
-        unmap
-        ba .label2
-.label1:
-        drop
-.label2:
+        ;; Undo the relocation.
+        ureloc                  ; VAL
         drop                    ; _
         .end
