@@ -3590,32 +3590,6 @@ instruction aset ()
   end
 end
 
-# Instruction: aseto
-#
-# Set the offset of the element with index ULONG in the array ARR, to
-# the bit-offset BOFF.
-#
-# Stack: ( ARR ULONG BOFF -- ARR )
-
-instruction aseto ()
-  code
-    uint64_t idx;
-    pvm_val boff;
-    pvm_val arr;
-
-    boff = JITTER_TOP_STACK ();
-    idx = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
-    JITTER_DROP_STACK ();
-    JITTER_DROP_STACK ();
-    arr = JITTER_TOP_STACK ();
-
-    if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
-      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
-
-    PVM_VAL_ARR_ELEM_OFFSET (arr, idx) = boff;
-  end
-end
-
 # Instruction: aref
 #
 # Given an array ARR and an index ULONG, push the element of the array

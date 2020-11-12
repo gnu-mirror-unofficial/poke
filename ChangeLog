@@ -1,5 +1,10 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter: Remove instruction aseto.
+	* libpoke/pkl-insn.def: Likewise.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.h (PVM_VAL_ARR_NALLOCATED): Define.
 	(struct pvm_array): New field `nallocated'.
 	* libpoke/pvm-val.c (pvm_make_array): Initialize nallocated.
