@@ -1,5 +1,14 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (ains): New instruction.
+	(xmka): New temporary instruction.
+	* libpoke/pkl-insn.def: Define PKL_INSN_AINS and PKL_INSN_XMKA.
+	* libpoke/pvm.h: Prototype for pvm_array_insert.
+	* libpoke/pvm-val.h (PVM_VAL_ARR_ELEMS): Define.
+	* libpoke/pvm-val.c (pvm_array_insert): New function.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter: Remove instruction aseto.
 	* libpoke/pkl-insn.def: Likewise.
 

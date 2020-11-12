@@ -42,6 +42,7 @@ wrapped-functions
   pk_term_end_class
   pk_printf
   printf
+  pvm_array_insert
   pvm_assert
   pvm_env_lookup
   pvm_env_register
@@ -3464,6 +3465,68 @@ end
 
 
 ## Array instructions
+
+# Instruction: xmka
+#
+# Make a new empty array value.
+#
+# TYP is the type of the new array.
+#
+# NELEM is a hint on how many elements to use to initialize the array
+# value.  This is to avoid allocating memory that will never be used.
+# Use 0UL when the number of elements in the array are not known
+# in advance; this will make the PVM to choose a reasonable default.
+#
+# Stack: ( TYP ULONG(nelem) -- ARR )
+
+instruction xmka ()
+  code
+    pvm_val arr = pvm_make_array (JITTER_TOP_STACK (),
+                                  JITTER_UNDER_TOP_STACK ());
+
+    PVM_VAL_ARR_OFFSET (arr) = pvm_make_ulong (0, 64);
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    JITTER_PUSH_STACK (arr);
+  end
+end
+
+# Instruction: ains
+#
+# Insert a new element VAL, with bit-offset BOFF, at the end of
+# the array ARR, making it grow.
+#
+# If IDX is less than the current size of the array, the exeption
+# PVM_E_INVAL is raised.
+#
+# If IDX is equal or bigger than the current size of the array, the
+# same element is replicated in the previous elements.
+#
+# Examples:
+#
+# a = [a1, a2, a3]
+#
+# [a1, a2, a3] BOFF 2 VAL ains -> INVAL exception
+# [a1, a2, a3] BOFF 3 VAL ains -> [a1, a2, a3, VAL]
+# [a1, a2, a3] BOFF 5 VAL ains -> [a1, a2, a3, VAL, VAL, VAL]
+#
+# Stack: ( ARR IDX VAL -- ARR )
+# Exceptions: PVM_E_INVAL
+
+instruction ains ()
+  code
+    pvm_val val = JITTER_TOP_STACK ();
+    pvm_val idx = JITTER_UNDER_TOP_STACK ();
+    pvm_val arr;
+
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    arr = JITTER_TOP_STACK ();
+
+    if (!pvm_array_insert (arr, idx, val))
+      PVM_RAISE_DFL (PVM_E_INVAL);
+  end
+end
 
 # Instruction: mka
 #

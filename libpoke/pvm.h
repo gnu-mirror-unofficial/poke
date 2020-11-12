@@ -293,6 +293,17 @@ int pvm_type_equal_p (pvm_val type1, pvm_val type2);
 
 pvm_program pvm_val_cls_program (pvm_val cls);
 
+/* Insert the value VAL in the array ARR past to the last element.
+   IDX is an ulong<64> denoting the index of the new element.
+
+   More than one element may be created, depending on the provided
+   index.  In that case, all the new elements contain a copy of VAL.
+
+   If the index corresponds to an existing element, then return 1.
+   Otherwise return 1.  */
+
+int pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val);
+
 /* Return the size of VAL, in bits.  */
 
 uint64_t pvm_sizeof (pvm_val val);

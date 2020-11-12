@@ -204,6 +204,7 @@ typedef struct pvm_val_box *pvm_val_box;
 #define PVM_VAL_ARR_TYPE(V) (PVM_VAL_ARR(V)->type)
 #define PVM_VAL_ARR_NELEM(V) (PVM_VAL_ARR(V)->nelem)
 #define PVM_VAL_ARR_NALLOCATED(V) (PVM_VAL_ARR(V)->nallocated)
+#define PVM_VAL_ARR_ELEMS(V) (PVM_VAL_ARR(V)->elems)
 #define PVM_VAL_ARR_ELEM(V,I) (PVM_VAL_ARR(V)->elems[(I)])
 
 struct pvm_array

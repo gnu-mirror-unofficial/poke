@@ -120,6 +120,46 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   return PVM_BOX (box);
 }
 
+int
+pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val)
+{
+  size_t index = PVM_VAL_ULONG (idx);
+  size_t nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr));
+  size_t nallocated = PVM_VAL_ULONG (PVM_VAL_ARR_NALLOCATED (arr));
+  size_t nelem_to_add = index - nelem + 1;
+  size_t val_size = pvm_sizeof (val);
+  size_t elem_boffset = pvm_sizeof (arr);
+  size_t i;
+
+  /* First of all, make sure that the given index doesn't correspond
+     to an existing element.  If that is the case, return 0 now.  */
+  if (index < nelem)
+    return 0;
+
+  /* We have a hard-limit in the number of elements to append, in
+     order to avoid malicious code or harmful bugs.  */
+  if (nelem_to_add > 1024)
+    return 0;
+
+  /* Make sure there is enough room in the array for the new elements.
+     Otherwise, make space for the new elements, plus a buffer of 16
+     elements more.  */
+  if ((nallocated - nelem) < nelem_to_add)
+    PVM_VAL_ARR_ELEMS (arr) = pvm_realloc (PVM_VAL_ARR_ELEMS (arr),
+                                           nallocated + nelem_to_add + 16);
+
+  /* Initialize the new elements with the given value, also setting
+     their bit-offset.  */
+  for (i = nelem; i < idx; ++i)
+    {
+      PVM_VAL_ARR_ELEM_VALUE (arr, i) = val;
+      PVM_VAL_ARR_ELEM_OFFSET (arr, i) = pvm_make_ulong (elem_boffset, 64);
+      elem_boffset += val_size;
+    }
+
+  return 1;
+}
+
 pvm_val
 pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
 {
