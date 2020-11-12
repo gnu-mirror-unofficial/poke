@@ -1,0 +1,21 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type Foo  = struct { int i; };
+type Bar = struct { Foo f; byte l; };
+type Baz = struct { Bar b; byte q; };
+
+var s = Baz {b = Bar {f = Foo {i = 0xaabbccdd}, l = 0xff}, q = 0xee};
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+
+/* { dg-command {Baz @ 4#B = s } } */
+/* { dg-command {Baz @ 4#B} } */
+/* { dg-output {Baz {b=Bar {f=Foo {i=0xaabbccdd},l=0xffUB},q=0xeeUB}} } */
+/* { dg-command {s'mapped} } */
+/* { dg-output "\n0x0" } */
+/* { dg-command {s.b'mapped} } */
+/* { dg-output "\n0x0" } */
+/* { dg-command {s.b.f'mapped} } */
+/* { dg-output "\n0x0" } */

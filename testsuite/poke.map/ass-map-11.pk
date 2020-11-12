@@ -1,0 +1,12 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0xaa 0xaa 0xaa 0xaa  0xaa 0xaa 0xaa 0xaa   0xaa 0xaa 0xaa 0xaa} } */
+
+type Foo  = struct { int i; };
+type Bar = struct { Foo f; byte l; };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+
+/* { dg-command {Bar @ 4#B = Bar { f = Foo { }, l = 0xff } } } */
+/* { dg-command {Bar @ 4#B} } */
+/* { dg-output {Bar {f=Foo {i=0x0},l=0xffUB}} } */
