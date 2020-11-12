@@ -89,6 +89,38 @@ pvm_make_string (const char *str)
 }
 
 pvm_val
+xpvm_make_array (pvm_val nelem, pvm_val type)
+{
+  pvm_val_box box = pvm_make_box (PVM_VAL_TAG_ARR);
+  pvm_array arr = pvm_alloc (sizeof (struct pvm_array));
+  size_t num_elems = PVM_VAL_ULONG (nelem);
+  size_t num_allocated = num_elems > 0 ? num_elems : 16;
+  size_t nbytes = (sizeof (struct pvm_array_elem) * num_allocated);
+  size_t i;
+
+  arr->mapped_p = 0;
+  arr->ios = PVM_NULL;
+  arr->offset = PVM_NULL;
+  arr->elems_bound = PVM_NULL;
+  arr->size_bound = PVM_NULL;
+  arr->mapper = PVM_NULL;
+  arr->writer = PVM_NULL;
+  arr->nelem = pvm_make_ulong (0, 64);
+  arr->nallocated = num_allocated;
+  arr->type = type;
+
+  arr->elems = pvm_alloc (nbytes);
+  for (i = 0; i < num_allocated; ++i)
+    {
+      arr->elems[i].offset = PVM_NULL;
+      arr->elems[i].value = PVM_NULL;
+    }
+
+  PVM_VAL_BOX_ARR (box) = arr;
+  return PVM_BOX (box);
+}
+
+pvm_val
 pvm_make_array (pvm_val nelem, pvm_val type)
 {
   pvm_val_box box = pvm_make_box (PVM_VAL_TAG_ARR);
@@ -125,7 +157,7 @@ pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val)
 {
   size_t index = PVM_VAL_ULONG (idx);
   size_t nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr));
-  size_t nallocated = PVM_VAL_ULONG (PVM_VAL_ARR_NALLOCATED (arr));
+  size_t nallocated = PVM_VAL_ARR_NALLOCATED (arr);
   size_t nelem_to_add = index - nelem + 1;
   size_t val_size = pvm_sizeof (val);
   size_t elem_boffset = pvm_sizeof (arr);
@@ -145,16 +177,50 @@ pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val)
      Otherwise, make space for the new elements, plus a buffer of 16
      elements more.  */
   if ((nallocated - nelem) < nelem_to_add)
-    PVM_VAL_ARR_ELEMS (arr) = pvm_realloc (PVM_VAL_ARR_ELEMS (arr),
-                                           nallocated + nelem_to_add + 16);
+    {
+      PVM_VAL_ARR_NALLOCATED (arr) += nelem_to_add + 16;
+      PVM_VAL_ARR_ELEMS (arr) = pvm_realloc (PVM_VAL_ARR_ELEMS (arr),
+                                             PVM_VAL_ARR_NALLOCATED (arr));
+    }
 
   /* Initialize the new elements with the given value, also setting
      their bit-offset.  */
-  for (i = nelem; i < idx; ++i)
+  for (i = nelem; i <= PVM_VAL_ULONG (idx); ++i)
     {
       PVM_VAL_ARR_ELEM_VALUE (arr, i) = val;
       PVM_VAL_ARR_ELEM_OFFSET (arr, i) = pvm_make_ulong (elem_boffset, 64);
       elem_boffset += val_size;
+    }
+
+  /* Finally, adjust the number of elements.  */
+  PVM_VAL_ARR_NELEM (arr)
+    = pvm_make_ulong (PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr)) + nelem_to_add, 64);
+
+  return 1;
+}
+
+int
+pvm_array_set (pvm_val arr, pvm_val idx, pvm_val val)
+{
+  size_t index = PVM_VAL_ULONG (idx);
+  size_t nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr));
+  size_t elem_boffset;
+  size_t i;
+
+  /* Make sure that the given index is within bounds.  */
+  if (index >= nelem)
+    return 0;
+
+  /* Update the element with the given value.  */
+  PVM_VAL_ARR_ELEM_VALUE (arr, index) = val;
+
+  /* Recalculate the bit-offset of all the elemens following the
+     element just updated.  */
+  elem_boffset = PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (arr, index));
+  for (i = index + 1; i < nelem; ++i)
+    {
+      PVM_VAL_ARR_ELEM_OFFSET (arr, i) = pvm_make_ulong (elem_boffset, 64);
+      elem_boffset += pvm_sizeof (PVM_VAL_ARR_ELEM_OFFSET (arr, i));
     }
 
   return 1;
@@ -661,6 +727,9 @@ pvm_sizeof (pvm_val val)
     return pvm_sizeof (PVM_VAL_OFF_MAGNITUDE (val));
   else if (PVM_IS_TYP (val))
     /* By convention, type values have size zero.  */
+    return 0;
+  else if (PVM_IS_CLS (val))
+    /* By convention, function values have size zero.  */
     return 0;
 
   assert (0);

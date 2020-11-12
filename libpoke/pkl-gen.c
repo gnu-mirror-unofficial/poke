@@ -1862,9 +1862,7 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array_initializer)
 {
-  /* Offset of the array initializer.  PVM_NULL since this array is
-     not mapped.  */
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+  /* Do nothing.  */
 }
 PKL_PHASE_END_HANDLER
 
@@ -1876,7 +1874,9 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_array_initializer)
 {
-  /* Nothing to do.  */
+  /* Insert this initializer in the array.  */
+                                             /* ARR IDX EXP */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS); /* ARR */
 }
 PKL_PHASE_END_HANDLER
 
@@ -1888,11 +1888,17 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
 {
-  /* The offset for mka, in this case PVM_NULL, since this array is
-     not mapped.  */
+  pkl_ast_node array = PKL_PASS_NODE;
+  pkl_ast_node array_type = PKL_AST_TYPE (array);
 
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-  PKL_PASS_SUBPASS (PKL_AST_TYPE (PKL_PASS_NODE));
+  /* Create a new empty array of the right type, having the right
+     number of elements.  */
+
+  PKL_PASS_SUBPASS (array_type);             /* TYP */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                pvm_make_ulong (PKL_AST_ARRAY_NELEM (array), 64));
+                                             /* TYP NELEM */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_XMKA); /* ARR */
 }
 PKL_PHASE_END_HANDLER
 
@@ -1905,16 +1911,7 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_array)
 {
-  pkl_asm pasm = PKL_GEN_ASM;
-  pkl_ast_node array = PKL_PASS_NODE;
-
-  pkl_asm_insn (pasm, PKL_INSN_PUSH,
-                pvm_make_ulong (PKL_AST_ARRAY_NELEM (array), 64));
-
-  pkl_asm_insn (pasm, PKL_INSN_PUSH,
-                pvm_make_ulong (PKL_AST_ARRAY_NINITIALIZER (array), 64));
-
-  pkl_asm_insn (pasm, PKL_INSN_MKA);
+  /* Nothing to do here.  */
 }
 PKL_PHASE_END_HANDLER
 

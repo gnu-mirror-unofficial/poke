@@ -43,6 +43,7 @@ wrapped-functions
   pk_printf
   printf
   pvm_array_insert
+  pvm_array_set
   pvm_assert
   pvm_env_lookup
   pvm_env_register
@@ -3481,8 +3482,8 @@ end
 
 instruction xmka ()
   code
-    pvm_val arr = pvm_make_array (JITTER_TOP_STACK (),
-                                  JITTER_UNDER_TOP_STACK ());
+    pvm_val arr = xpvm_make_array (JITTER_TOP_STACK (),
+                                   JITTER_UNDER_TOP_STACK ());
 
     PVM_VAL_ARR_OFFSET (arr) = pvm_make_ulong (0, 64);
     JITTER_DROP_STACK ();
@@ -3496,8 +3497,8 @@ end
 # Insert a new element VAL, with bit-offset BOFF, at the end of
 # the array ARR, making it grow.
 #
-# If IDX is less than the current size of the array, the exeption
-# PVM_E_INVAL is raised.
+# If IDX is less than the current size of the array, the value is
+# stored in the referred argument.
 #
 # If IDX is equal or bigger than the current size of the array, the
 # same element is replicated in the previous elements.
@@ -3523,8 +3524,15 @@ instruction ains ()
     JITTER_DROP_STACK ();
     arr = JITTER_TOP_STACK ();
 
-    if (!pvm_array_insert (arr, idx, val))
-      PVM_RAISE_DFL (PVM_E_INVAL);
+    if (PVM_VAL_LONG (idx) < PVM_VAL_LONG (PVM_VAL_ARR_NELEM (arr)))
+      /* Note that pvm_array_set can't return 0 here due
+         to the index check.  */
+      pvm_array_set (arr, idx, val);
+    else
+    {
+      if (!pvm_array_insert (arr, idx, val))
+        PVM_RAISE_DFL (PVM_E_INVAL);
+    }
   end
 end
 
@@ -3621,11 +3629,9 @@ instruction aset ()
 
     arr = JITTER_TOP_STACK ();
 
-    if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
-      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
-
     /* If the array is bounded by size, check whether the new value
-       results in a different size.  */
+       results in a different size.
+       XXX: Move this check to pvm_array_set.  */
 
     array_type = PVM_VAL_ARR_TYPE (arr);
     bound = PVM_VAL_TYP_A_BOUND (array_type);
@@ -3649,7 +3655,10 @@ instruction aset ()
          }
       }
    else
-     PVM_VAL_ARR_ELEM_VALUE (arr, idx) = val;
+      {
+        if (!pvm_array_set (arr, idx, val))
+          PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
+      }
   end
 end
 

@@ -1,5 +1,21 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.h: Prototype for pvm_array_set.
+	* libpoke/pvm-val.c (pvm_array_set): New function.
+	* libpoke/pkl-trans.c (pkl_trans4_ps_array): Remove handler.
+	* libpoke/pvm-val.c (xpvm_make_array): New temporary function.
+	(pvm_array_insert): Update the number of elements in the array,
+	and update nallocated.
+	(pvm_sizeof): By convention closures have size zero.
+	* libpoke/pvm.jitter (xmka): Use xpvm_make_array.
+	(aset): Use pvm_array_set.
+	* libpoke/pkl-gen.c (pkl_gen_pr_array): Use the new array schema.
+	(pkl_gen_pr_array_initializer): Likewise.
+	(pkl_gen_ps_array_initializer): Likewise.
+	(pkl_gen_ps_array): Likewise.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (ains): New instruction.
 	(xmka): New temporary instruction.
 	* libpoke/pkl-insn.def: Define PKL_INSN_AINS and PKL_INSN_XMKA.

@@ -231,6 +231,7 @@ pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
    The elements in the created array are initialized to PVM_NULL.  */
 
 pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
+pvm_val xpvm_make_array (pvm_val nelem, pvm_val type);
 
 /* Make a struct PVM value.
 
@@ -303,6 +304,14 @@ pvm_program pvm_val_cls_program (pvm_val cls);
    Otherwise return 1.  */
 
 int pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val);
+
+/* Set VAL as the value of the element occupying the position IDX in
+   the array ARR.
+
+   If IDX is not within the boundaries of the array, return 0.
+   Otherwise return 1.  */
+
+int pvm_array_set (pvm_val arr, pvm_val idx, pvm_val val);
 
 /* Return the size of VAL, in bits.  */
 
