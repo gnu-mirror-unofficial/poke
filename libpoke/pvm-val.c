@@ -692,7 +692,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
           PVM_VAL_ARR_ELEM_OFFSET_BACK (val, i) = elem_offset;
           PVM_VAL_ARR_ELEM_OFFSET (val, i)
             = pvm_make_ulong (elem_new_offset, 64);
-          
+
           pvm_val_reloc (elem_value, ios,
                          pvm_make_ulong (elem_new_offset, 64));
         }
@@ -717,7 +717,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
             = boff + (PVM_VAL_ULONG (PVM_VAL_SCT_FIELD_OFFSET (val, i))
                       - struct_offset);
 
-          
+
           /* Do not relocate absent fields.  */
           if (PVM_VAL_SCT_FIELD_ABSENT_P (val, i))
             continue;
@@ -730,7 +730,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
             = PVM_VAL_SCT_FIELD_MODIFIED (val, i);
           PVM_VAL_SCT_FIELD_MODIFIED (val, i) =
             pvm_make_int (1, 32);
-          
+
           pvm_val_reloc (field_value, ios,
                          pvm_make_ulong (boff + field_offset, 64));
         }

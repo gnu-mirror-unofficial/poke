@@ -813,7 +813,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
            promo.  */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* VAL IOS BOFF */
-        
+
         switch (lvalue_type_code)
           {
           case PKL_TYPE_ARRAY:
@@ -2524,7 +2524,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       /* Stack: null */
       pkl_ast_node array_type = PKL_PASS_NODE;
       pkl_ast_node array_type_bound = PKL_AST_TYPE_A_BOUND (array_type);
-      pvm_val constructor = PKL_AST_TYPE_A_CONSTRUCTOR (array_type);
+      pvm_val array_type_constructor = PKL_AST_TYPE_A_CONSTRUCTOR (array_type);
+      pvm_val array_type_writer = PKL_AST_TYPE_A_WRITER (array_type);
       int bounder_created = 0;
 
       PKL_GEN_PAYLOAD->constructor_depth++;
@@ -2578,16 +2579,36 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
       /* Make sure the array type has a constructor, and call it.  */
-      if (constructor != PVM_NULL)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor); /* EBOUND SBOUND CLS */
+      if (array_type_constructor != PVM_NULL)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                      array_type_constructor); /* EBOUND SBOUND CLS */
       else
         {
-          RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor, array_type);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
+          RAS_FUNCTION_ARRAY_CONSTRUCTOR (array_type_constructor, array_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_constructor);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
         }
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);          /* ARR */
+
+      /* Install a writer in the constructed array.  This is needed
+         when the value is used as the right-hand-side to a
+         map-assignment operation.  */
+      if (array_type_writer == PVM_NULL)
+        {
+          PKL_GEN_PAYLOAD->in_writer = 1;
+          RAS_FUNCTION_ARRAY_WRITER (array_type_writer, array_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_writer); /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                     /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                    /* _ */
+          PKL_GEN_PAYLOAD->in_writer = 0;
+
+          PKL_AST_TYPE_A_WRITER (array_type) = array_type_writer;
+        }
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    array_type_writer);           /* ARR CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW); /* ARR */
 
       PKL_GEN_PAYLOAD->constructor_depth--;
 
@@ -2760,6 +2781,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       /* Stack: SCT */
       pkl_ast_node type_struct = PKL_PASS_NODE;
       pvm_val type_struct_constructor = PKL_AST_TYPE_S_CONSTRUCTOR (type_struct);
+      pvm_val type_struct_writer = PKL_AST_TYPE_S_WRITER (type_struct);
 
       /* If the given structure is null, then create an empty AST
          struct of the right type.  */
@@ -2798,6 +2820,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
 
       /* Call the constructor to get a new struct.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);    /* NSCT */
+
+      /* Install a writer in the constructed struct.  This is needed
+         when the value is used as the right-hand-side to a
+         map-assignment operation.  */
+      if (type_struct_writer == PVM_NULL)
+        {
+          /* The struct type is anonymous and doesn't have a writer.
+             Compile one in this environment.  */
+
+          PKL_GEN_PAYLOAD->in_writer = 1;
+          RAS_FUNCTION_STRUCT_WRITER (type_struct_writer, type_struct);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, type_struct_writer); /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
+          PKL_GEN_PAYLOAD->in_writer = 0;
+
+          PKL_AST_TYPE_S_WRITER (type_struct) = type_struct_writer;
+        }
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    type_struct_writer);          /* NCSCT CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW); /* NCSCT */
 
       /* And we are done.  */
       PKL_PASS_BREAK;

@@ -1,3 +1,9 @@
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Install a writer in
+	newly-constructed struct values.
+	(pkl_gen_pr_type_array): Ditto for newly-constructed array values.
+
 2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.h: Prototype for pvm_val_ureloc.
