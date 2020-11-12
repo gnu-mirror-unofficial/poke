@@ -406,7 +406,13 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
                     size_t size;
 
                     p = skip_blanks (p);
-                    for (end = p; *end != '\0' && *end != ','; end++)
+                    /* Note how commas are allowed in the value of the
+                       string argument if the argument is the last in
+                       the argument list.  This is checked using
+                       a[1].  */
+                    for (end = p;
+                         *end != '\0' && (a[1] == '\0' || *end != ',');
+                         end++)
                       ;
 
                     size = end - p;

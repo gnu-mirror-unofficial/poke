@@ -1,5 +1,10 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd.c (pk_cmd_exec_1): Support commas in string
+	arguments that are at the end of the argument list.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_array): Install a writer in arrays
 	built from literals.
 	* libpoke/pvm-val.c (pvm_val_reloc): Fix setting mapped_p in arrays.
