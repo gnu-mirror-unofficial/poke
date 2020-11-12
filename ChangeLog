@@ -1,8 +1,11 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans4_ps_array): Remove handler.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.h: Prototype for pvm_array_set.
 	* libpoke/pvm-val.c (pvm_array_set): New function.
-	* libpoke/pkl-trans.c (pkl_trans4_ps_array): Remove handler.
 	* libpoke/pvm-val.c (xpvm_make_array): New temporary function.
 	(pvm_array_insert): Update the number of elements in the array,
 	and update nallocated.

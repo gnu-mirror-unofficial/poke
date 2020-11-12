@@ -1367,26 +1367,6 @@ struct pkl_phase pkl_phase_trans3
 
 
 
-/* Reverse the list of initializers in array literals.
-
-   This is needed because at code generation time, the mka instruction
-   processes initializers from top to bottom of the stack.  Since
-   several initializers can refer to the same array element, they
-   should be processed in the right order.
-
-   XXX this won't be needed anymore when the mka instruction is
-   modified to not get the elements from the stack.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_trans4_ps_array)
-{
-  pkl_ast_node array = PKL_PASS_NODE;
-  pkl_ast_node initializers = PKL_AST_ARRAY_INITIALIZERS (array);
-
-  initializers = pkl_ast_reverse (initializers);
-  PKL_AST_ARRAY_INITIALIZERS (array) = ASTREF (initializers);
-}
-PKL_PHASE_END_HANDLER
-
 struct pkl_phase pkl_phase_trans4
   __attribute__ ((visibility ("hidden"))) =
   {
