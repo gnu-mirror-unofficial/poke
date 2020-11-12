@@ -3629,6 +3629,10 @@ instruction aset ()
 
     arr = JITTER_TOP_STACK ();
 
+    if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
+
+
     /* If the array is bounded by size, check whether the new value
        results in a different size.
        XXX: Move this check to pvm_array_set.  */
@@ -3655,10 +3659,7 @@ instruction aset ()
          }
       }
    else
-      {
-        if (!pvm_array_set (arr, idx, val))
-          PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
-      }
+     PVM_VAL_ARR_ELEM_VALUE (arr, idx) = val;
   end
 end
 
