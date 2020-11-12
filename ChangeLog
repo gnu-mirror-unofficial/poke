@@ -1,5 +1,10 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_sizeof): Closure values have size zero by
+	convention.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_val_reloc): Fix calculation of new
 	boffset for contained structs.
 	* testsuite/poke.map/ass-map-9.pk: New test.
