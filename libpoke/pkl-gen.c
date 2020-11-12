@@ -1939,13 +1939,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
   /* Install a writer in the array.  */
   PKL_GEN_PAYLOAD->in_writer = 1;
   RAS_FUNCTION_ARRAY_WRITER (array_type_writer, array_type);
+  PKL_AST_TYPE_A_WRITER (array_type) = array_type_writer;
+  PKL_GEN_PAYLOAD->in_writer = 0;
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_writer); /* CLS */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                     /* CLS */
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                    /* _ */
-  PKL_GEN_PAYLOAD->in_writer = 0;
-  PKL_AST_TYPE_A_WRITER (array_type) = array_type_writer;
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                array_type_writer);           /* ARR CLS */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW); /* ARR */
 }
 PKL_PHASE_END_HANDLER
