@@ -188,6 +188,8 @@ typedef struct pvm_val_box *pvm_val_box;
 
    NELEM is the number of elements contained in the array.
 
+   NALLOCATED is the number of elements allocated in the array.
+
    ELEMS is a list of elements.  The order of the elements is
    relevant.  */
 
@@ -201,6 +203,7 @@ typedef struct pvm_val_box *pvm_val_box;
 #define PVM_VAL_ARR_WRITER(V) (PVM_VAL_ARR(V)->writer)
 #define PVM_VAL_ARR_TYPE(V) (PVM_VAL_ARR(V)->type)
 #define PVM_VAL_ARR_NELEM(V) (PVM_VAL_ARR(V)->nelem)
+#define PVM_VAL_ARR_NALLOCATED(V) (PVM_VAL_ARR(V)->nallocated)
 #define PVM_VAL_ARR_ELEM(V,I) (PVM_VAL_ARR(V)->elems[(I)])
 
 struct pvm_array
@@ -214,6 +217,7 @@ struct pvm_array
   pvm_val writer;
   pvm_val type;
   pvm_val nelem;
+  uint64_t nallocated;
   struct pvm_array_elem *elems;
 };
 

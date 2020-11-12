@@ -1,3 +1,9 @@
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm-val.h (PVM_VAL_ARR_NALLOCATED): Define.
+	(struct pvm_array): New field `nallocated'.
+	* libpoke/pvm-val.c (pvm_make_array): Initialize nallocated.
+
 2020-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.jitter (mm,map,unmap): New instructions.
