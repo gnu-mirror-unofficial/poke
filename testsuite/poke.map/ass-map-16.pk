@@ -1,0 +1,10 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type Packet = struct { union {byte a = 0x69;} s; byte b; };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Packet @ 0x1#B = Packet { b = 0xab } } } */
+/* { dg-command {Packet @ 0x1#B } } */
+/* { dg-output {Packet {s=struct {a=0x69UB},b=0xabUB}} } */

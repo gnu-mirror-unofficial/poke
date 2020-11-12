@@ -703,7 +703,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
       PVM_VAL_ARR_IOS_BACK (val) = PVM_VAL_ARR_IOS (val);
       PVM_VAL_ARR_OFFSET_BACK (val) = PVM_VAL_ARR_OFFSET (val);
 
-      PVM_VAL_ARR_MAPPED_P_BACK (val) = 1;
+      PVM_VAL_ARR_MAPPED_P (val) = 1;
       PVM_VAL_ARR_IOS (val) = ios;
       PVM_VAL_ARR_OFFSET (val) = pvm_make_ulong (boff, 64);
     }

@@ -1,5 +1,17 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_array): Install a writer in arrays
+	built from literals.
+	* libpoke/pvm-val.c (pvm_val_reloc): Fix setting mapped_p in arrays.
+	* testsuite/poke.map/ass-map-12.pk: New test.
+	* testsuite/poke.map/ass-map-13.pk: Likewise.
+	* testsuite/poke.map/ass-map-14.pk: Likewise.
+	* testsuite/poke.map/ass-map-15.pk: Likewise.
+	* testsuite/poke.map/ass-map-16.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_sizeof): Closure values have size zero by
 	convention.
 

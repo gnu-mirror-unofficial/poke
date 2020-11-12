@@ -117,6 +117,11 @@ EXTRA_DIST = \
   poke.map/ass-map-9.pk \
   poke.map/ass-map-10.pk \
   poke.map/ass-map-11.pk \
+  poke.map/ass-map-12.pk \
+  poke.map/ass-map-13.pk \
+  poke.map/ass-map-14.pk \
+  poke.map/ass-map-15.pk \
+  poke.map/ass-map-16.pk \
   poke.map/map-opcond-write-1.pk \
   poke.map/map-optcond-1.pk \
   poke.map/map-optcond-2.pk \

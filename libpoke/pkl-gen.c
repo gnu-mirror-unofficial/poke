@@ -1926,15 +1926,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
 {
   pkl_ast_node array = PKL_PASS_NODE;
   pkl_ast_node array_type = PKL_AST_TYPE (array);
+  pvm_val array_type_writer = PVM_NULL;
 
   /* Create a new empty array of the right type, having the right
      number of elements.  */
-
   PKL_PASS_SUBPASS (array_type);             /* TYP */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                 pvm_make_ulong (PKL_AST_ARRAY_NELEM (array), 64));
                                              /* TYP NELEM */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_XMKA); /* ARR */
+
+  /* Install a writer in the array.  */
+  PKL_GEN_PAYLOAD->in_writer = 1;
+  RAS_FUNCTION_ARRAY_WRITER (array_type_writer, array_type);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_writer); /* CLS */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                     /* CLS */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                    /* _ */
+  PKL_GEN_PAYLOAD->in_writer = 0;
+  PKL_AST_TYPE_A_WRITER (array_type) = array_type_writer;
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                array_type_writer);           /* ARR CLS */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW); /* ARR */
 }
 PKL_PHASE_END_HANDLER
 

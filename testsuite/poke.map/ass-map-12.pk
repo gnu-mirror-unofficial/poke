@@ -1,0 +1,8 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {int[2] @ 4#B = [1,2]} } */
+/* { dg-command { int[2] @ 4#B } } */
+/* { dg-output {[1,2]} } */
