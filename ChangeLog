@@ -1,5 +1,10 @@
 2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_ps_scons): Subpass on scons_type
+	instead of calling the constructor closure directly.
+
+2020-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.h (PVM_VAL_ARR_MAPPED_P_BACK): Define
 	(PVM_VAL_SCT_MAPPED_P_BACK): Likewise.
 	(struct pvm_array): New field mapped_p_back;

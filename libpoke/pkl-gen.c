@@ -1807,11 +1807,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_scons)
 {
   pkl_ast_node scons = PKL_PASS_NODE;
   pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
-  pvm_val constructor = PKL_AST_TYPE_S_CONSTRUCTOR (scons_type);
 
-  assert (constructor != PVM_NULL);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
+  PKL_GEN_PAYLOAD->in_constructor = 1;
+  PKL_PASS_SUBPASS (scons_type);
+  PKL_GEN_PAYLOAD->in_constructor = 0;
 }
 PKL_PHASE_END_HANDLER
 
