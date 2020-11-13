@@ -500,65 +500,66 @@
         dup                     ; 0UL 0UL
         regvar $eidx            ; BOFF
         regvar $eboff           ; _
-        ;; The bit-offset of the constructed array is 0 by convention.
-        push ulong<64>0         ; 0UL
         ;; Build the type of the constructed array.
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
-                                ; 0UL ATYPE
+                                ; ATYPE
+        push ulong<64>0         ; ATYPE 0UL
+        xmka                    ; ARR
         ;; Ok, loop to add elements to the constructed array.
      .while
         ;; If there is an EBOUND, check it.
         ;; Else, check the SBOUND.
-        pushvar $ebound         ; NELEM
+        pushvar $ebound         ; ARR NELEM
         bn .loop_on_sbound
-        pushvar $eidx           ; NELEM I
-        gtlu                    ; NELEM I (NELEM>I)
+        pushvar $eidx           ; ARR NELEM I
+        gtlu                    ; ARR NELEM I (NELEM>I)
         nip2
         ba .end_loop_on
 .loop_on_sbound:
         drop
-        pushvar $sbound         ; SBOUND
-        pushvar $eboff          ; SBOUND EBOFF
-        gtlu                    ; SBOUND EBOFF (SBOUNDMAG>EBOFF)
+        pushvar $sbound         ; ARR SBOUND
+        pushvar $eboff          ; ARR SBOUND EBOFF
+        gtlu                    ; ARR SBOUND EBOFF (SBOUNDMAG>EBOFF)
         nip2
 .end_loop_on:
      .loop
-        ;; Mount the Ith element triplet: [EBOFF EIDX EVAL]
-        pushvar $eboff          ; ... EBOFF
-        pushvar $eidx           ; ... EBOFF EIDX
-        push null               ; ... EBOFF null
+        ;; Insert the element in the array.
+        pushvar $eidx           ; ARR EIDX
+        push null               ; ARR EIDX null
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
-                                ; ... EBOFF EIDX EVAL
+                                ; ARR EIDX EVAL
+        dup                     ; ARR EIDX EVAL EVAL
+        tor                     ; ARR EIDX EVAL [EVAL]
+        ains                    ; ARR
+        fromr                   ; ARR EVAL
         ;; Update the bit offset.
-        siz                     ; ... EBOFF EIDX EVAL ESIZ
-        pushvar $eboff          ; ... EBOFF EIDX EVAL ESIZ EBOFF
+        siz                     ; ARR EVAL ESIZ
+        nip                     ; ARR ESIZ
+        pushvar $eboff          ; ARR ESIZ EBOFF
         addlu
-        nip2                    ; ... EBOFF EIDX EVAL NEBOFF
-        popvar $eboff           ; ... EBOFF EIDX EVAL
+        nip2                    ; ARR (ESIZ+EBOFF)
+        popvar $eboff           ; ARR
         ;; Update the index.
-        over                    ; ... EBOFF EIDX EVAL EIDX
-        push ulong<64>1         ; ... EBOFF EIDX EVAL EIDX 1UL
+        pushvar $eidx           ; ARR EIDX
+        push ulong<64>1         ; ARR EIDX 1UL
         addlu
-        nip2                    ; ... EBOFF EIDX EVAL (EIDX+1UL)
+        nip2                    ; ARR (EIDX+1UL)
         popvar $eidx
      .endloop
-        pushvar $eidx           ; null ATYPE [EBOFF EIDX EVAL]... NELEM
-        dup                     ; null ATYPE [EBOFF EIDX EVAL]... NELEM NINITIALIZER
-        mka                     ; ARRAY
         ;; Check that the resulting array satisfies the size bound.
-        pushvar $sbound         ; ARRAY SBOUND
+        pushvar $sbound         ; ARR SBOUND
         bn .bounds_ok
-        swap                    ; SBOUND ARRAY
-        siz                     ; SBOUND ARRAY SIZ
-        rot                     ; ARRAY SIZ SBOUND
-        sublu                   ; ARRAY SIZ SBOUND (SIZ-SBOUND)
+        swap                    ; SBOUND ARR
+        siz                     ; SBOUND ARR SIZ
+        rot                     ; ARR SIZ SBOUND
+        sublu                   ; ARR SIZ SBOUND (SIZ-SBOUND)
         bnzlu .bounds_fail
-        drop                   ; ARRAY (OFFU*OFFM) SBOUND
-        drop                   ; ARRAY (OFFU*OFFM)
+        drop                   ; ARR (OFFU*OFFM) SBOUND
+        drop                   ; ARR (OFFU*OFFM)
 .bounds_ok:
-        drop                   ; ARRAY
+        drop                   ; ARR
         popf 1
         return
 .bounds_fail:

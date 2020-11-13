@@ -1,5 +1,9 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (array_constructor): Use new array schema.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_array_insert): Fix setting of elem
 	offsets.
 	* libpoke/pkl-gen.pks (array_mapper): Use new array schema.
