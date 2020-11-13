@@ -62,12 +62,11 @@
         regvar $ios              ; Argument
         ;; Initialize the bit-offset of the elements in a local.
         pushvar $boff           ; BOFF
-        dup                     ; BOFF BOFF
         regvar $eboff           ; BOFF
         ;; Initialize the element index to 0UL, and put it
         ;; in a local.
-        push ulong<64>0         ; BOFF 0UL
-        regvar $eidx            ; BOFF
+        push ulong<64>0         ; 0UL
+        regvar $eidx            ; _
         ;; Build the type of the new mapped array.  Note that we use
         ;; the bounds passed to the mapper instead of just subpassing
         ;; in array_type.  This is because this mapper should work for
@@ -77,86 +76,94 @@
         .c PKL_GEN_PAYLOAD->in_mapper = 0;
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_PAYLOAD->in_mapper = 1;
-                                ; OFF ETYPE
-        pushvar $ebound         ; OFF ETYPE EBOUND
+                                ; ETYPE
+        pushvar $ebound         ; ETYPE EBOUND
         bnn .atype_bound_done
-        drop                    ; OFF ETYPE
-        pushvar $sbound         ; OFF ETYPE (SBOUND|NULL)
+        drop                    ; ETYPE
+        pushvar $sbound         ; ETYPE (SBOUND|NULL)
 .atype_bound_done:
-        mktya                   ; OFF ATYPE
-        .while
+        mktya                   ; ATYPE
+        ;; In general we don't know how many elements the mapped array
+        ;; will contain.
+        push ulong<64>0         ; ATYPE 0UL
+        xmka                    ; ARR
+        pushvar $boff           ; ARR BOFF
+        mseto                   ; ARR
+     .while
         ;; If there is an EBOUND, check it.
         ;; Else, if there is a SBOUND, check it.
         ;; Else, iterate (unbounded).
-        pushvar $ebound         ; OFF ATYPE NELEM
+        pushvar $ebound         ; ARR NELEM
         bn .loop_on_sbound
-        pushvar $eidx           ; OFF ATYPE NELEM I
-        gtlu                    ; OFF ATYPE NELEM I (NELEM>I)
-        nip2                    ; OFF ATYPE (NELEM>I)
+        pushvar $eidx           ; ARR NELEM I
+        gtlu                    ; ARR NELEM I (NELEM>I)
+        nip2                    ; ARR (NELEM>I)
         ba .end_loop_on
 .loop_on_sbound:
-        drop                    ; OFF ATYPE
-        pushvar $sbound         ; OFF ATYPE SBOUND
+        drop                    ; ARR
+        pushvar $sbound         ; ARR SBOUND
         bn .loop_unbounded
-        pushvar $boff           ; OFF ATYPE SBOUND BOFF
-        addlu                   ; OFF ATYPE SBOUND BOFF (SBOUND+BOFF)
-        nip2                    ; OFF ATYPE (SBOUND+BOFF)
-        pushvar $eboff          ; OFF ATYPE (SBOUND+BOFF) EBOFF
-        gtlu                    ; OFF ATYPE (SBOUND+BOFF) EBOFF ((SBOUND+BOFF)>EBOFF)
-        nip2                    ; OFF ATYPE ((SBOUND+BOFF)>EBOFF)
+        pushvar $boff           ; ARR SBOUND BOFF
+        addlu                   ; ARR SBOUND BOFF (SBOUND+BOFF)
+        nip2                    ; ARR (SBOUND+BOFF)
+        pushvar $eboff          ; ARR (SBOUND+BOFF) EBOFF
+        gtlu                    ; ARR (SBOUND+BOFF) EBOFF ((SBOUND+BOFF)>EBOFF)
+        nip2                    ; ARR ((SBOUND+BOFF)>EBOFF)
         ba .end_loop_on
 .loop_unbounded:
-        drop                    ; OFF ATYPE
-        push int<32>1           ; OFF ATYPE 1
+        drop                    ; ARR
+        push int<32>1           ; ARR 1
 .end_loop_on:
-        .loop
-                                ; OFF ATYPE
-        ;; Mount the Ith element triplet: [EBOFF EIDX EVAL]
-        pushvar $eboff          ; ... EBOFF
-        dup                     ; ... EBOFF EBOFF
+     .loop
+                                ; ARR
+        ;; Insert a new element in the array.
+        pushvar $eboff          ; ARR EBOFF
+        dup                     ; ARR EBOFF EBOFF
         push PVM_E_EOF
         pushe .eof
         push PVM_E_CONSTRAINT
         pushe .constraint_error
-        pushvar $ios            ; ... EBOFF EBOFF IOS
-        swap                    ; ... EBOFF IOS EBOFF
+        pushvar $ios            ; ARR EBOFF EBOFF IOS
+        swap                    ; ARR EBOFF IOS EBOFF
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         pope
         pope
         ;; Update the current offset with the size of the value just
         ;; peeked.
-        siz                     ; ... EBOFF EVAL ESIZ
-        quake                   ; ... EVAL EBOFF ESIZ
-        addlu                   ; ... EVAL EBOFF ESIZ (EBOFF+ESIZ)
-        popvar $eboff           ; ... EVAL EBOFF ESIZ
-        drop                    ; ... EVAL EBOFF
-        pushvar $eidx           ; ... EVAL EBOFF EIDX
-        rot                     ; ... EBOFF EIDX EVAL
+        siz                     ; ARR EBOFF EVAL ESIZ
+        quake                   ; ARR EVAL EBOFF ESIZ
+        addlu                   ; ARR EVAL EBOFF ESIZ (EBOFF+ESIZ)
+        popvar $eboff           ; ARR EVAL EBOFF ESIZ
+        drop                    ; ARR EVAL EBOFF
+        drop                    ; ARR EVAL
+        pushvar $eidx           ; ARR EVAL EIDX
+        swap                    ; ARR EIDX EVAL
+        ains                    ; ARR
         ;; Increase the current index and process the next element.
-        pushvar $eidx           ; ... EBOFF EIDX EVAL EIDX
-        push ulong<64>1         ; ... EBOFF EIDX EVAL EIDX 1UL
-        addlu                   ; ... EBOFF EIDX EVAL EDIX 1UL (EIDX+1UL)
-        nip2                    ; ... EBOFF EIDX EVAL (EIDX+1UL)
-        popvar $eidx            ; ... EBOFF EIDX EVAL
-        .endloop
+        pushvar $eidx           ; ARR EIDX
+        push ulong<64>1         ; ARR EIDX 1UL
+        addlu
+        nip2                    ; ARR (EIDX+1UL)
+        popvar $eidx            ; ARR
+     .endloop
         push null
-        ba .mountarray
+        ba .arraymounted
 .constraint_error:
         ;; Remove the partial element from the stack.
-                                ; ... EOFF EOFF EXCEPTION
+                                ; ARR EOFF EOFF EXCEPTION
         drop
         drop
         drop
         ;; If the array is bounded, raise E_CONSTRAINT
-        pushvar $ebound         ; ... EBOUND
-        nn                      ; ... EBOUND (EBOUND!=NULL)
-        nip                     ; ... (EBOUND!=NULL)
-        pushvar $sbound         ; ... (EBOUND!=NULL) SBOUND
-        nn                      ; ... (EBOUND!=NULL) SBOUND (SBOUND!=NULL)
-        nip                     ; ... (EBOUND!=NULL) (SBOUND!=NULL)
-        or                      ; ... (EBOUND!=NULL) (SBOUND!=NULL) ARRAYBOUNDED
-        nip2                    ; ... ARRAYBOUNDED
-        bzi .mountarray
+        pushvar $ebound         ; ARR EBOUND
+        nn                      ; ARR EBOUND (EBOUND!=NULL)
+        nip                     ; ARR (EBOUND!=NULL)
+        pushvar $sbound         ; ARR (EBOUND!=NULL) SBOUND
+        nn                      ; ARR (EBOUND!=NULL) SBOUND (SBOUND!=NULL)
+        nip                     ; ARR (EBOUND!=NULL) (SBOUND!=NULL)
+        or                      ; ARR (EBOUND!=NULL) (SBOUND!=NULL) ARRAYBOUNDED
+        nip2                    ; ARR ARRAYBOUNDED
+        bzi .arraymounted
         push PVM_E_CONSTRAINT
         raise
 .eof:
@@ -174,17 +181,14 @@
         nip                     ; ... (EBOUND!=NULL) (SBOUND!=NULL)
         or                      ; ... (EBOUND!=NULL) (SBOUND!=NULL) ARRAYBOUNDED
         nip2                    ; ... ARRAYBOUNDED
-        bzi .mountarray
+        bzi .arraymounted
         push PVM_E_EOF
         raise
-.mountarray:
-        drop                   ; BOFF ATYPE [EBOFF EIDX EVAL]...
-        pushvar $eidx          ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM
-        dup                    ; BOFF ATYPE [EBOFF EIDX EVAL]... NELEM NINITIALIZER
-        mka                    ; ARRAY
+.arraymounted:
+        drop                   ; ARR
         ;; Check that the resulting array satisfies the mapping's
         ;; bounds (number of elements and total size.)
-        pushvar $ebound        ; ARRAY EBOUND
+        pushvar $ebound        ; ARR EBOUND
         bnn .check_ebound
         drop                   ; ARRAY
         pushvar $sbound        ; ARRAY SBOUND
