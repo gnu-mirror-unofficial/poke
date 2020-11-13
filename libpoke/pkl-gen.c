@@ -1279,18 +1279,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
   for (aa = PKL_AST_FUNCALL_ARGS (funcall); aa; aa = PKL_AST_CHAIN (aa))
     {
       if (PKL_AST_FUNCALL_ARG_FIRST_VARARG (aa))
-        {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* Array offset. */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_any_type ());
-          vararg_actual = 1;
-        }
+        vararg_actual = 1;
 
       if (vararg_actual)
-        {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* Elem offset. */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (aindex, 64));
-          aindex++;
-        }
+        aindex++;
 
       if (!PKL_AST_FUNCALL_ARG_EXP (aa))
         {
@@ -1305,15 +1297,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
 
   if (vararg)
     {
-      if (aindex == 0)
+      /* The actuals are stored in the stack in reverse order.
+         Reverse them.  */
+      if (aindex == 2)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+      else if (aindex == 3)
         {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* Array offset. */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_any_type ());
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
         }
+      else if (aindex > 1)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, aindex);
 
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (aindex, 64));
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA);
+      /* Create the array of variable arguments.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_any_type ());
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_ulong (aindex, 64));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_XMKA);
+
+      /* Insert the elements in the array.  */
+      for (i = 0; i < aindex; ++i)
+        {
+                                                     /* ... ELEM ARR */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (i, 64));     /* ... ELEM ARR IDX */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* ... ARR IDX ELEM */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS); /* ... ARR */
+        }
     }
 
   /* Complete non-specified actuals for formals having default values.
