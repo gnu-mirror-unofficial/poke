@@ -388,7 +388,7 @@
 ;;;    a pkl_ast_node with the type of ARR.
 
         .macro atrim @array_type
-        pushf 3
+        pushf 4
         regvar $to
         regvar $from
         regvar $array
@@ -421,48 +421,43 @@
         ;; subset of the elements of the array.
         typof                   ; ARR ATYP
         nip                     ; ATYP
-        push null               ; NULL
-        swap                    ; NULL ATYP
+        ;; Calculate the length of the new array.
+        pushvar $to             ; ATYP TO
+        pushvar $from           ; ATYP TO FROM
+        sublu
+        nip2
+        push ulong<64>1
+        addlu
+        nip2                    ; ATYP (TO-FROM+1)
+        xmka                    ; TARR
+        ;; Now add the elements to the new array.
         pushvar $from
         regvar $idx
       .while
-        pushvar $idx            ; ... IDX
-        pushvar $to             ; ... IDX TO
-        lelu                    ; ... IDX TO (IDX<=TO)
-        nip2                    ; ... (IDX<=TO)
+        pushvar $idx            ; TARR IDX
+        pushvar $to             ; TARR IDX TO
+        lelu                    ; TARR IDX TO (IDX<=TO)
+        nip2                    ; TARR (IDX<=TO)
       .loop
-        ;; Mount the IDX-FROMth element of the new array.
-        push null               ; ... NULL IDX
-        pushvar $idx            ; ... NULL IDX
-        pushvar $array          ; ... NULL IDX ARR
-        swap                    ; ... NULL ARR IDX
-        aref                    ; ... NULL ARR IDX EVAL
-        rot                     ; ... NULL IDX EVAL ARR
-        drop                    ; ... NULL IDX EVAL
-        pushvar $from           ; ... NULL IDX EVAL FROM
-        quake                   ; ... NULL EVAL IDX FROM
+        ;; Add the IDX-FROMth element of the new array.
+        pushvar $idx            ; TARR IDX
+        pushvar $array          ; TARR IDX ARR
+        over                    ; TARR IDX ARR IDX
+        aref                    ; TARR IDX ARR IDX EVAL
+        nip2                    ; TARR IDX EVAL
+        swap                    ; TARR EVAL IDX
+        pushvar $from           ; TARR EVAL IDX FROM
         sublu
-        nip2                    ; ... NULL EVAL (IDX-FROM)
-        swap                    ; ... NULL (IDX-FROM) EVAL
+        nip2                    ; TARR EVAL (IDX-FROM)
+        swap                    ; TARR (IDX-FROM) EVAL
+        ains                    ; TARR
         ;; Increase index and loop.
-        pushvar $idx            ; ... IDX
-        push ulong<64>1         ; ... IDX 1UL
+        pushvar $idx            ; TARR IDX
+        push ulong<64>1         ; TARR IDX 1UL
         addlu
-        nip2                    ; (IDX+1UL)
-        popvar $idx
+        nip2                    ; TARR (IDX+1UL)
+        popvar $idx             ; TARR
       .endloop
-        ;; Ok, the elements are in the stack.  Calculate the
-        ;; number of initializers and elements and make the
-        ;; new array.
-        pushvar $to             ; ... TO
-        pushvar $from           ; ... TO FROM
-        sublu
-        nip2                    ; ... (TO-FROM)
-        push ulong<64>1         ; ... (TO-FROM) 1
-        addlu
-        nip2                    ; ... (TO-FROM+1)
-        dup                     ; NULL ATYP [NULL IDX VAL...] NELEM NINIT
-        mka
         ;; If the trimmed array is mapped then the resulting array
         ;; is mapped as well, with the following attributes:
         ;;

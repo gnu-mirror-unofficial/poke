@@ -1,5 +1,11 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_array_insert): Fix reallocation of
+	buffer.
+	* libpoke/pkl-asm.pks (atrim): Use new array schema.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_val_equal_p): Do not include mapper and
 	writer closures in the comparison criteria for arrays.
 

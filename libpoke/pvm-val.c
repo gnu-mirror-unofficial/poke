@@ -184,7 +184,14 @@ pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val)
     {
       PVM_VAL_ARR_NALLOCATED (arr) += nelem_to_add + 16;
       PVM_VAL_ARR_ELEMS (arr) = pvm_realloc (PVM_VAL_ARR_ELEMS (arr),
-                                             PVM_VAL_ARR_NALLOCATED (arr));
+                                             PVM_VAL_ARR_NALLOCATED (arr)
+                                             * sizeof (struct pvm_array_elem));
+
+      for (i = index + 1; i < PVM_VAL_ARR_NALLOCATED (arr); ++i)
+        {
+          PVM_VAL_ARR_ELEM_VALUE (arr, i) = PVM_NULL;
+          PVM_VAL_ARR_ELEM_OFFSET (arr, i) = PVM_NULL;
+        }
     }
 
   /* Initialize the new elements with the given value, also setting
@@ -1180,7 +1187,6 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       pvm_val array_offset = PVM_VAL_ARR_OFFSET (val);
 
       nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (val));
-
       pk_term_class ("array");
 
       pk_puts ("[");
