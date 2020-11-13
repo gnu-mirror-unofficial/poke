@@ -299,7 +299,7 @@ pvm_program pvm_val_cls_program (pvm_val cls);
    More than one element may be created, depending on the provided
    index.  In that case, all the new elements contain a copy of VAL.
 
-   If the index corresponds to an existing element, then return 1.
+   If the index corresponds to an existing element, then return 0.
    Otherwise return 1.  */
 
 int pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val);

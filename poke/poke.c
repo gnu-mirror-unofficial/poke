@@ -308,7 +308,7 @@ static void
 set_script_args (int argc, char *argv[])
 {
   int i, nargs;
-  uint64_t index, boffset;
+  uint64_t index;
   pk_val argv_array;
 
   /* Look for -L SCRIPT */
@@ -323,15 +323,9 @@ set_script_args (int argc, char *argv[])
                               pk_make_array_type (pk_make_string_type (),
                                                   PK_NULL /* bound */));
 
-  for (index = 0, boffset = 0; i < argc; ++i, ++index)
-    {
-      pk_array_set_elem_val (argv_array, index,
-                             pk_make_string (argv[i]));
-      pk_array_set_elem_boffset (argv_array, index,
-                                 pk_make_uint (boffset, 64));
-      boffset = (boffset
-                 + (strlen (argv[i]) + 1) * 8);
-    }
+  for (index = 0; i < argc; ++i, ++index)
+    pk_array_insert_elem (argv_array, index,
+                          pk_make_string (argv[i]));
 
   pk_defvar (poke_compiler, "argv", argv_array);
 }

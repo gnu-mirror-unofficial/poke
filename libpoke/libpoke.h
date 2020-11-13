@@ -590,12 +590,14 @@ void pk_struct_set_field_value (pk_val sct, uint64_t idx,
 
 /* Arrays.  */
 
-/* Build and return a Poke array.
+/* Build and return an empty Poke array.
 
-   NELEM is the number of the elements in the array.
-   ARRAY_TYPE is the type of the array.
+   NELEM is a hint on the number of the elements that the array will
+   hold.  If it is not clear how many elements the array will hold,
+   pass zero here.
 
-   The new array is created containing PK_NULL values.  */
+   ARRAY_TYPE is the type of the array.  Note, this is an array type,
+   not the type of the elements.  */
 
 pk_val pk_make_array (pk_val nelem, pk_val array_type) LIBPOKE_API;
 
@@ -613,18 +615,31 @@ pk_val pk_array_nelem (pk_val array) LIBPOKE_API;
 
 pk_val pk_array_elem_val (pk_val array, uint64_t idx) LIBPOKE_API;
 
+/* Insert a new element into an array.
+
+   More than oen element may be created, depending on the provided
+   index.  In that case, all the new elements contain a copy of VAL.
+
+   If the index corresponds to an existing element, the array remains
+   unchanged.
+
+   This function sets the bit-offset of the inserted elements.  */
+
+void pk_array_insert_elem (pk_val array, pk_val idx, pk_val val)
+  LIBPOKE_API;
+
 /* Set the value of the element of an array.
 
    ARRAY is the array value.
    IDX is the index of the element whose value is set.
    VAL is the new value for the array element.
-
-   Note that the type of the element is not checked by this function,
-   so be careful.
+   
+   This function may change the bit-offsets of the elements following
+   the element just inserted.
 
    If IDX is invalid, array remains unchanged. */
 
-void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val) LIBPOKE_API;
+void pk_array_set_elem (pk_val array, uint64_t idx, pk_val val) LIBPOKE_API;
 
 /* Get the bit-offset of the element of an array, relative to the
    beginning of the array.
@@ -637,18 +652,6 @@ void pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val) LIBPOKE_API;
    If IDX is invalid, PK_NULL is returned. */
 
 pk_val pk_array_elem_boffset (pk_val array, uint64_t idx) LIBPOKE_API;
-
-/* Set the bit-offset of the element of an array, relative to the
-   beginning of the array.
-
-   ARRAY is the array value.
-   IDX is the index of the element in the array.
-   BOFFSET is an uint<64> value with the bit-offset of the element.
-
-   If IDX is invalid, array remains unchanged. */
-
-void pk_array_set_elem_boffset (pk_val array, uint64_t idx,
-                                pk_val boffset) LIBPOKE_API;
 
 /* Integral types.  */
 

@@ -1,5 +1,16 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.h: Correct docstring of function pvm_array_insert.
+	* libpoke/libpoke.h: Prototype for pk_array_insert_elem_val.
+	Remove pk_array_set_elem_boffset.
+	* libpoke/pk-val.c (pk_array_insert_elem_val): New function.
+	(pk_array_set_elem_boffset): Remove function.
+	* poke/pk-mi-json.c (pk_mi_json_to_array): Adapt to new array API
+	in libpoke.
+	* poke/poke.c (set_script_args): Likewise.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/struct-method-16.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
 

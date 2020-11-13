@@ -1189,9 +1189,7 @@ pk_mi_json_to_array (pk_val *pk_array, json_object *array_obj,
 
       assert (pk_type_code (pk_typeof (element_pair[1])) == PK_UINT);
 
-      pk_array_set_elem_val (array, 0, element_pair[0]);
-      pk_array_set_elem_boffset (array, 0, element_pair[1]);
-
+      pk_array_insert_elem (array, 0, element_pair[0]);
       free (element_pair);
 
       for (size_t i = 1 ; i < elements_len ; i++)
@@ -1205,9 +1203,7 @@ pk_mi_json_to_array (pk_val *pk_array, json_object *array_obj,
                                            == pk_type_code (array_etype));
           assert (pk_type_code (pk_typeof (element_pair[1])) == PK_UINT);
 
-          pk_array_set_elem_val (array, i, element_pair[0]);
-          pk_array_set_elem_boffset (array, i, element_pair[1]);
-
+          pk_array_insert_elem (array, i, element_pair[0]);
           free (element_pair);
         }
 

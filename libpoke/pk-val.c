@@ -401,10 +401,15 @@ pk_array_elem_val (pk_val array, uint64_t idx)
 }
 
 void
-pk_array_set_elem_val (pk_val array, uint64_t idx, pk_val val)
+pk_array_insert_elem (pk_val array, uint64_t idx, pk_val val)
 {
-  if (idx < pk_uint_value (pk_array_nelem (array)))
-    PVM_VAL_ARR_ELEM_VALUE (array, idx) = val;
+  (void) pvm_array_insert (array, pvm_make_ulong (idx, 64), val);
+}
+
+void
+pk_array_set_elem (pk_val array, uint64_t idx, pk_val val)
+{
+  (void) pvm_array_set (array, pvm_make_ulong (idx, 64), val);
 }
 
 pk_val
