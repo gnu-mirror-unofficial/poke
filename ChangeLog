@@ -1,5 +1,10 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/struct-method-16.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h: Remove the rtpath argument from the
 	pk_compiler_new prototype.
 	* libpoke/libpoke.c (pk_compiler_new): Likewise.

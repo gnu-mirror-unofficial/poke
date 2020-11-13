@@ -1,0 +1,22 @@
+/* { dg-do run } */
+
+var n = 3;
+type Foo =
+  struct
+  {
+    struct
+    {
+      byte x;
+      method foo = int:
+        {
+          return x as int;
+        }
+    } je;
+
+    int y : y > je.foo;
+  };
+
+/* { dg-command {try Foo {}; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */
+/* { dg-command {Foo { y = 20 }} } */
+/* { dg-output "\nFoo \{je=struct \{x=0UB\},y=20\}" } */

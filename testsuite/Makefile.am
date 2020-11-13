@@ -1422,6 +1422,7 @@ EXTRA_DIST = \
   poke.pkl/struct-method-13.pk \
   poke.pkl/struct-method-14.pk \
   poke.pkl/struct-method-15.pk \
+  poke.pkl/struct-method-16.pk \
   poke.pkl/struct-method-diag-1.pk \
   poke.pkl/struct-method-diag-2.pk \
   poke.pkl/struct-method-diag-3.pk \
