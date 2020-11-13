@@ -279,51 +279,48 @@
         mko                     ; OFF1 OFF2 OFFR
         .end
 
-;;; AELEMS
-;;; ( ULONG BOFF ARR -- [EBOFF IDX VAL]... )
+;;; ACAT
+;;; ( ARR1 ARR2 -- ARR1 ARR2 )
 ;;;
-;;; Given a base index, a bit offset and an array on the stack,
-;;; replace them with triplets of the form [EBOFF IDX VAL] where EBOFF
-;;; = BOFF + the original offset of the element.
+;;; Given two arrays in the stack, append the elements of the second
+;;; array to the first array.
 
-        .macro aelems
-        pushf 5
-        sel                     ; ULONG BOFF ARR SEL
-        regvar $nelem           ; ULONG BOFF ARR
-        regvar $arr             ; ULONG BOFF
-        regvar $boff            ; ULONG
-        regvar $baseidx         ; _
-        push ulong<64>0
-        regvar $idx
-      .while
-        pushvar $idx            ; ... IDX
-        pushvar $nelem          ; ... IDX NELEM
+        .macro acat
+        pushf 4
+        swap                    ; ARR2 ARR1
+        sel                     ; ARR2 ARR1 SEL1
+        regvar $sel1            ; ARR2 ARR1
+        regvar $arr1            ; ARR2 SEL2
+        sel                     ; ARR2 SEL2
+        regvar $nelem           ; ARR2
+        push ulong<64>0         ; ARR2 0UL
+        regvar $idx             ; ARR2
+     .while
+        pushvar $idx            ; ARR2 IDX
+        pushvar $nelem          ; ARR2 IDX NELEM
         ltlu
-        nip2
-      .loop
-        ;; Mount the triple
-        pushvar $boff           ; ... BOFF
-        pushvar $idx            ; ... BOFF IDX
-        pushvar $baseidx        ; ... BOFF IDX BASEIDX
+        nip2                    ; ARR2 (IDX<NELEM)
+     .loop
+        pushvar $idx            ; ARR2 IDX
+        aref                    ; ARR2 IDX EVAL
+        swap                    ; ARR2 EVAL IDX
+        pushvar $sel1           ; ARR2 EVAL IDX SEL1
         addlu
-        nip2                    ; ... BOFF (IDX+BASEIDX)
-        pushvar $arr
-        pushvar $idx
-        aref
-        nip2                    ; ... BOFF EIDX VAL
-        ;; Increase the bit-offset.
-        siz                     ; ... BOFF EIDX VAL SIZ
-        pushvar $boff           ; ... BOFF EIDX VAL SIZ BOFF
-        addlu
-        nip2                    ; ... BOFF EIDX VAL (SIZ+BOFF)
-        popvar $boff            ; ... BOFF EIDX VAL
-        ;; Increase index and loop.
+        nip2                    ; ARR2 EVAL (IDX+SEL1)
+        pushvar $arr1           ; ARR2 EVAL (IDX+SEL1) ARR1
+        nrot                    ; ARR2 ARR1 EVAL (IDX+SEL1)
+        swap                    ; ARR2 ARR1 (IDX+SEL1) EVAL
+        ains                    ; ARR2 ARR1
+        drop                    ; ARR2
+        ;; Update index
         pushvar $idx
         push ulong<64>1
         addlu
         nip2
         popvar $idx
-      .endloop
+     .endloop
+        pushvar $arr1           ; ARR2 ARR1
+        swap                    ; ARR1 ARR2
         popf 1
         .end
 
@@ -337,44 +334,30 @@
 ;;;  the operands.
 
         .macro aconc
-        pushf 2
+        ;; Create an empty array for the result.
         over                    ; ARR1 ARR2 ARR1
-        over                    ; ARR1 ARR2 ARR1 ARR2
-        typof                   ; ... ARR1 ARR2 ATYPE
-        rot                     ; ... ARR2 ATYPE ARR1
-        regvar $arr1            ; ... ARR2 ATYPE
-        swap                    ; ... ATYPE ARR2
-        regvar $arr2            ; ... ATYPE
-        push null               ; ... ATYPE null
-        swap                    ; ... null ATYPE
-        ;; Get the elements of the first array.
-        push ulong<64>0         ; ... null ATYPE 0UL
-        dup                     ; ... null ATYPE 0UL 0UL
-        pushvar $arr1           ; ... null ATYPE 0UL 0UL ARR1
-        .e aelems               ; ... null ATYPE ARR1ELEMS...
-        ;; Get the elements of the second array.
-        pushvar $arr1           ; ... null ATYPE ARR1ELEMS ARR1
-        siz                     ; ... null ATYPE ARR1ELEMS ARR1 SIZ1
-        swap                    ; ... null ATYPE ARR1ELEMS SIZ1 ARR1
         sel
-        nip                     ; ... null ATYPE ARR1ELEMS SIZ1 SEL1
-        swap                    ; ... null ATYPE ARR1ELEMS SEL1 SIZ1
-        pushvar $arr2           ; ... null ATYPE ARR1ELEMS SIZ1 ARR2
-        .e aelems               ; ... null ATYPE ARR1ELEMS ARR2ELEMS
-        ;; Set nelem and ninitializer.
-        pushvar $arr1           ; ... ARR1
-        pushvar $arr2           ; ... ARR1 ARR2
+        nip                     ; ARR1 ARR2 SEL1
+        over                    ; ARR1 ARR2 SEL1 ARR2
         sel
-        nip                     ; ... ARR1 SEL2
-        swap                    ; ... SEL2 ARR1
-        sel
-        nip                     ; ... SEL2 SEL1
+        nip                     ; ARR1 ARR2 SEL1 SEL2
         addlu
-        nip2                    ; ... null ATYPE ARR1ELEMS ARR2ELEMS (SEL1 + SEL2)
-        dup                     ; ... null ATYPE ARR1ELEMS ARR2ELEMS NELEMS NINIT
-        ;; Create the resulting array.
-        mka                     ; ARR1 ARR2 ARR
-        popf 1
+        nip2                    ; ARR1 ARR2 (SEL1+SEL2)
+        over                    ; ARR1 ARR2 (SEL1+SEL2) ARR2
+        typof
+        nip                     ; ARR1 ARR2 (SEL1+SEL2) ATYPE
+
+        swap                    ; ARR1 ARR2 ATYPE (SEL1+SEL2)
+        xmka                    ; ARR1 ARR2 ARR
+        ;; Append the elements of the first array.
+        rot                     ; ARR2 ARR ARR1
+        .e acat                 ; ARR2 ARR ARR1
+        ;; Append the elements of the second array.
+        nrot                    ; ARR1 ARR2 ARR
+        swap                    ; ARR1 ARR ARR2
+        .e acat
+        ;; And we are done.
+        swap                    ; ARR1 ARR2 ARR
         .end
 
 ;;; ATRIM array_type

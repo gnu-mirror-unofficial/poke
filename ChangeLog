@@ -1,5 +1,11 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-asm.pks (acat): New macro.
+	(aelems): Remove macro.
+	(aconc): Use the new array schema.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (array_constructor): Use new array schema.
 
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
