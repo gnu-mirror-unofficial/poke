@@ -447,7 +447,6 @@ EXTRA_DIST = \
   poke.map/trimmed-map-3.pk \
   poke.map/trimmed-map-4.pk \
   poke.map/unmap-1.pk \
-  poke.map/valmaps-arrays.pk \
   poke.pkl/pkl.exp \
   poke.pkl/add-arrays-1.pk \
   poke.pkl/add-arrays-2.pk \

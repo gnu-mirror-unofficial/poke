@@ -628,8 +628,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
   pkl_ast_node lvalue = PKL_AST_ASS_STMT_LVALUE (ass_stmt);
   pkl_ast_node exp = PKL_AST_ASS_STMT_EXP (ass_stmt);
 
-  pvm_val valmapper;
-
   PKL_PASS_SUBPASS (exp);
 
   PKL_GEN_PAYLOAD->in_lvalue = 1;
@@ -637,15 +635,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
   PKL_GEN_PAYLOAD->in_lvalue = 0;
 
   /* At this point the r-value, generated from executing EXP, is in
-     the stack.  If its type can be mapped, then we need to generate
-     code to perform a mapval on that value.
+     the stack.  */
 
-     Mapval code gets two arguments, and generates one value:
-     MAPVAL ( NVAL OFF -- NVAL )
-
-     If the type is a named struct or array, the assignment statement
-     has the lexical address of the corresponding mapval function.
-     Just call it.  */
+  /* If the base array to the indexer, or the referred struct, are
+     mapped, then we have to reflect the effect of the assingment in
+     the corresponding IO space.  */
   switch (PKL_AST_CODE (lvalue))
     {
     case PKL_AST_INDEXER:
@@ -653,57 +647,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
          an array, not a string.  */
       /* Fallthrough.  */
     case PKL_AST_STRUCT_REF:
-      {
-        pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
-
-        valmapper = PVM_NULL; /* XXX PKL_AST_TYPE_S_VALMAPPER (lvalue_type) */
-
-        /* We need to get the value (array element, or struct field)
-           that will be replaced in the lvalue.  */
-
-                                                      /* EXP LVALUE IDX */
-
-        /* Save EXP in %r0. XXX: use the r-stack instead.  */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);     /* LVALUE IDX EXP */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPR, 0); /* LVALUE IDX */
-
-        if (PKL_AST_CODE (lvalue) == PKL_AST_INDEXER)
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF); /* LVALUE IDX VAL */
-        else /* PKL_AST_STRUCT_REF */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREF);
-
-        /* If VAL is not mapped, skip the mapval.  */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHR, 0);  /* LVALUE IDX VAL EXP */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);      /* LVALUE IDX EXP VAL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM);        /* LVALUE IDX EXP VAL MAPPED_P */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label); /* LVALUE IDX EXP VAL MAPPED_P */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);      /* LVALUE IDX EXP VAL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);     /* LVALUE IDX EXP VAL OFFSET */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);      /* LVALUE IDX OFFSET EXP VAL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);      /* LVALUE IDX OFFSET VAL EXP */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);       /* LVALUE IDX VAL EXP OFFSET */
-
-        if (valmapper != PVM_NULL)
-          {
-            /* XXX this never happens atm  */
-            assert (0);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, valmapper);
-          }
-        else
-          {
-            PKL_GEN_PAYLOAD->in_valmapper = 1;
-            PKL_PASS_SUBPASS (PKL_AST_TYPE (exp));
-            PKL_GEN_PAYLOAD->in_valmapper = 0;
-          }
-
-                                                             /* LVALUE IDX VAL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* LVALUE IDX VAL null */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL); /* LVALUE IDX VAL null null */
-        pkl_asm_label (PKL_GEN_ASM, label);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);        /* LVALUE IDX EXP VAL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);        /* LVALUE IDX EXP */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);        /* EXP LVALUE IDX */
-      }
+      /* XXX WRITEME.  */
       break;
     default:
       break;
@@ -1644,12 +1588,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_offset)
       /* Stack: VAL UNIT */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
     }
-  else if (PKL_GEN_PAYLOAD->in_valmapper)
-    {
-      /* Stack: VAL NVAL OFF */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL NVAL */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* NVAL */
-    }
   else
     /* Just build an offset type.  */
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYO);
@@ -2232,12 +2170,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
           assert (0);
         }
     }
-  else if (PKL_GEN_PAYLOAD->in_valmapper)
-    {
-      /* Stack: VAL NVAL BOFF */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* NVAL */
-    }
   else if (PKL_GEN_PAYLOAD->in_constructor)
     {
       /* Stack: NULL */
@@ -2328,7 +2260,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       PKL_PASS_BREAK;
     }
-  else if (PKL_GEN_PAYLOAD->in_mapper || PKL_GEN_PAYLOAD->in_valmapper)
+  else if (PKL_GEN_PAYLOAD->in_mapper)
     {
       pkl_ast_node array_type = PKL_PASS_NODE;
       pkl_ast_node array_type_bound = PKL_AST_TYPE_A_BOUND (array_type);
@@ -2338,147 +2270,103 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       int bounder_created = 0;
 
-      if (PKL_GEN_PAYLOAD->in_valmapper)
+      /* Make a copy of the IOS.  We will need to install it in the
+         resulting value later.  */
+                                                 /* IOS OFF */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);  /* OFF IOS IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* IOS IOS OFF */
+
+      /* Make sure the array type has a bounder.  Note that this
+         should be done before compiling mapper, writer, constructor,
+         etc functions, in order to make sure the bounder closures are
+         compiled in the right environment.  */
+
+      PKL_GEN_PAYLOAD->mapper_depth++;
+
+      if (PKL_GEN_PAYLOAD->mapper_depth == 1
+          && PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
         {
-          pvm_val mapper_closure;
-
-          /* Compile a valmapper function and complete it using the
-             current environment.  This is used when assigning array
-             values to mapped arrays.  */
-                                                                     /* VAL NVAL OFF */
-          RAS_FUNCTION_ARRAY_VALMAPPER (mapper_closure, array_type);
-
-          /* Install the current environment in the valmapper closure,
-             arrange the arguments (including the attributes of VAL's
-             mapping, and call the valmapper to obtain the new
-             value.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPR, 0);    /* VAL NVAL */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHR, 0);   /* VAL NVAL OFF */
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);        /* VAL NVAL OFF CLS */
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SAVER, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);                 /* VAL */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RESTORER, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHR, 0);             /* VAL OFF */
-
-          /* Compile a mapper function, complete it using the current
-             environment, and install it as the mapper of the new
-             value.  */
-                                                                     /* VAL OFF */
-          PKL_GEN_PAYLOAD->in_valmapper = 0;
-          PKL_GEN_PAYLOAD->in_mapper = 1;
-          RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
+          /* Note that this only happens at the top-level of an
+             anonymous array type, and compiles a bounder for it.
+             Named array types have their bounder compiled in
+             pkl_gen_pr_decl.  */
+          bounder_created = 1;
           PKL_GEN_PAYLOAD->in_mapper = 0;
-          PKL_GEN_PAYLOAD->in_valmapper = 1;
+          PKL_GEN_PAYLOAD->in_array_bounder = 1;
+          PKL_PASS_SUBPASS (array_type);
+          PKL_GEN_PAYLOAD->in_array_bounder = 0;
+          PKL_GEN_PAYLOAD->in_mapper = 1;
+        }
 
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* VAL OFF CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* VAL OFF CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);                  /* VAL CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM);                /* VAL */
+      if (array_type_mapper != PVM_NULL)
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        array_type_mapper); /* IOS IOS OFF CLS */
         }
       else
         {
-          /* Make a copy of the IOS.  We will need to install it in
-             the resulting value later.  */
-                                                     /* IOS OFF */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* OFF IOS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);  /* OFF IOS IOS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* IOS IOS OFF */
+          /* Compile a mapper function and complete it using the
+             current environment.  */
+          pvm_val mapper_closure;
 
-          /* Make sure the array type has a bounder.  Note that this
-             should be done before compiling mapper, writer,
-             constructor, etc functions, in order to make sure the
-             bounder closures are compiled in the right
+          RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
+
+          /* Complete the mapper closure with the current
              environment.  */
-
-          PKL_GEN_PAYLOAD->mapper_depth++;
-
-          if (PKL_GEN_PAYLOAD->mapper_depth == 1
-              && PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
-            {
-              /* Note that this only happens at the top-level of an
-                 anonymous array type, and compiles a bounder for it.
-                 Named array types have their bounder compiled in
-                 pkl_gen_pr_decl.  */
-              bounder_created = 1;
-              PKL_GEN_PAYLOAD->in_mapper = 0;
-              PKL_GEN_PAYLOAD->in_array_bounder = 1;
-              PKL_PASS_SUBPASS (array_type);
-              PKL_GEN_PAYLOAD->in_array_bounder = 0;
-              PKL_GEN_PAYLOAD->in_mapper = 1;
-            }
-
-          if (array_type_mapper != PVM_NULL)
-            {
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                            array_type_mapper); /* IOS IOS OFF CLS */
-            }
-          else
-            {
-              /* Compile a mapper function and complete it using the
-                 current environment.  */
-              pvm_val mapper_closure;
-
-              RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
-
-              /* Complete the mapper closure with the current
-                 environment.  */
-              /* OFF */
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* IOS IOS OFF CLS */
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* IOS IOS OFF CLS */
-            }
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);              /* IOS IOS OFF [CLS] */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ATR);              /* IOS IOS OFF CLS [CLS] */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);             /* IOS CLS IOS OFF [CLS] */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);            /* IOS CLS IOS OFF CLS */
-
-          /* Build the arguments and call the mapper to get a mapped
-             array value.  Whether the mapping is bounded, and exactly
-             how, is determined from the array type.  */
-          if (array_type_bound
-              && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
-                  == PKL_TYPE_INTEGRAL))
-            {
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                            PKL_AST_TYPE_A_BOUNDER (array_type));
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-            }
-          else
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-                                                         /* IOS CLS IOS OFF CLS EBOUND */
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* IOS CLS IOS OFF EBOUND CLS */
-
-          if (array_type_bound
-              && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
-                  == PKL_TYPE_OFFSET))
-            {
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                            PKL_AST_TYPE_A_BOUNDER (array_type));
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-
-              /* Convert to bit-offset.  */
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-            }
-          else
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-                                                      /* IOS CLS IOS OFF EBOUND CLS SBOUND */
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS CLS IOS OFF EBOUND SBOUND CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);  /* IOS CLS VAL */
-
-          /* Install the mapper into the value.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS VAL CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM); /* IOS VAL */
-
-          /* Install the IOS into the value.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);    /* VAL IOS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETIOS); /* VAL */
+          /* OFF */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* IOS IOS OFF CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* IOS IOS OFF CLS */
         }
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);              /* IOS IOS OFF [CLS] */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ATR);              /* IOS IOS OFF CLS [CLS] */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT);             /* IOS CLS IOS OFF [CLS] */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);            /* IOS CLS IOS OFF CLS */
+
+      /* Build the arguments and call the mapper to get a mapped array
+         value.  Whether the mapping is bounded, and exactly how, is
+         determined from the array type.  */
+      if (array_type_bound
+          && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
+              == PKL_TYPE_INTEGRAL))
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        PKL_AST_TYPE_A_BOUNDER (array_type));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+                                                     /* IOS CLS IOS OFF CLS EBOUND */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* IOS CLS IOS OFF EBOUND CLS */
+
+      if (array_type_bound
+          && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
+              == PKL_TYPE_OFFSET))
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        PKL_AST_TYPE_A_BOUNDER (array_type));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
+
+          /* Convert to bit-offset.  */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+                                                  /* IOS CLS IOS OFF EBOUND CLS SBOUND */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS CLS IOS OFF EBOUND SBOUND CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);  /* IOS CLS VAL */
+
+      /* Install the mapper into the value.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* IOS VAL CLS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETM); /* IOS VAL */
+
+      /* Install the IOS into the value.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);    /* VAL IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETIOS); /* VAL */
 
       if (array_type_writer != PVM_NULL)
         {
@@ -2488,16 +2376,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       else
         {
           pvm_val writer_closure;
-          int in_valmapper_p = PKL_GEN_PAYLOAD->in_valmapper;
           int in_mapper_p = PKL_GEN_PAYLOAD->in_mapper;
 
           /* Compile a writer function to a closure.  */
           PKL_GEN_PAYLOAD->in_mapper = 0;
-          PKL_GEN_PAYLOAD->in_valmapper = 0;
           PKL_GEN_PAYLOAD->in_writer = 1;
           RAS_FUNCTION_ARRAY_WRITER (writer_closure, array_type);
           PKL_GEN_PAYLOAD->in_writer = 0;
-          PKL_GEN_PAYLOAD->in_valmapper = in_valmapper_p;
           PKL_GEN_PAYLOAD->in_mapper = in_mapper_p;
 
           /* Complete the writer closure with the current
@@ -2674,12 +2559,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
     {
       /* Stack: IOS BOFF */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEEKS);
-    }
-  else if (PKL_GEN_PAYLOAD->in_valmapper)
-    {
-      /* Stack: VAL NVAL BOFF */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
     }
   else if (PKL_GEN_PAYLOAD->in_constructor)
     {

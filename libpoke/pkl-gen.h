@@ -95,7 +95,6 @@ struct pkl_gen_payload
   int in_mapper;
   int in_constructor;
   int in_writer;
-  int in_valmapper;
   int in_lvalue;
   int in_comparator;
   int in_array_bounder;

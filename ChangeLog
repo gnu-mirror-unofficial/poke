@@ -1,5 +1,23 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_ASS_STMT_VALMAPPER_BACK): Remove.
+	(PKL_AST_ASS_STMT_VALMAPPER_OVER): Likewise.
+	(PKL_AST_ASS_STMT_VALMAPPER_P): Likewise.
+	(struct pkl_ast_ass_stmt): Remove fields `valmapper_back' and
+	`valmapper_over'.
+	* libpoke/pkl-gen.h (struct pkl_gen_payload): Remove field
+	`in_valmapper'.
+	* libpoke/pkl-gen.c (pkl_gen_pr_ass_stml): Remove valmappers.
+	(pkl_gen_ps_type_offset): Likewise.
+	(pkl_gen_ps_type_integral): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	* libpoke/pkl-gen.pks (array_valmapper): Remove.
+	* testsuite/poke.map/valmap-arrays.pk: Remove test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_funcall): Use new array schema.
 
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
