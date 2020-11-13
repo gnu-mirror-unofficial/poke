@@ -582,14 +582,6 @@ pvm_val_equal_p (pvm_val val1, pvm_val val2)
                             PVM_VAL_ARR_SIZE_BOUND (val2)))
         return 0;
 
-      if (!pvm_val_equal_p (PVM_VAL_ARR_MAPPER (val1),
-                            PVM_VAL_ARR_MAPPER (val2)))
-        return 0;
-
-      if (!pvm_val_equal_p (PVM_VAL_ARR_WRITER (val1),
-                            PVM_VAL_ARR_WRITER (val2)))
-        return 0;
-
       for (size_t i = 0 ; i < pvm_arr1_nelems ; i++)
         {
           if (!pvm_val_equal_p (PVM_VAL_ARR_ELEM_VALUE (val1, i),

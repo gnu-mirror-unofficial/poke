@@ -237,7 +237,15 @@ test_pk_equal_file (const char *filename, FILE *ifp)
   else if (STARTS_WITH ("pk_nequal", filename) && !equal)
     pass (filename);
   else
-    fail (filename);
+    {
+      printf ("val1:\n");
+      pk_print_val_with_params (pkc, val1, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      printf ("\n");
+      printf ("val2:\n");
+      pk_print_val_with_params (pkc, val2, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      printf ("\n");
+      fail (filename);
+    }
 
   pk_compiler_free (pkc);
   return;
