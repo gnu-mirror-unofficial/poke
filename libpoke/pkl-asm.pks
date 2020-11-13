@@ -348,7 +348,7 @@
         nip                     ; ARR1 ARR2 (SEL1+SEL2) ATYPE
 
         swap                    ; ARR1 ARR2 ATYPE (SEL1+SEL2)
-        xmka                    ; ARR1 ARR2 ARR
+        mka                     ; ARR1 ARR2 ARR
         ;; Append the elements of the first array.
         rot                     ; ARR2 ARR ARR1
         .e acat                 ; ARR2 ARR ARR1
@@ -412,7 +412,7 @@
         push ulong<64>1
         addlu
         nip2                    ; ATYP (TO-FROM+1)
-        xmka                    ; TARR
+        mka                     ; TARR
         ;; Now add the elements to the new array.
         pushvar $from
         regvar $idx

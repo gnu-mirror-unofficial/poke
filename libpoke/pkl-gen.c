@@ -1257,7 +1257,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_any_type ());
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                     pvm_make_ulong (aindex, 64));
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_XMKA);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA);
 
       /* Insert the elements in the array.  */
       for (i = 0; i < aindex; ++i)
@@ -1881,8 +1881,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
   PKL_PASS_SUBPASS (array_type);             /* TYP */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                 pvm_make_ulong (PKL_AST_ARRAY_NELEM (array), 64));
-                                             /* TYP NELEM */
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_XMKA); /* ARR */
+                                            /* TYP NELEM */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA); /* ARR */
 
   /* Install a writer in the array.  */
   PKL_GEN_PAYLOAD->in_writer = 1;

@@ -3468,7 +3468,7 @@ end
 
 ## Array instructions
 
-# Instruction: xmka
+# Instruction: mka
 #
 # Make a new empty array value.
 #
@@ -3481,10 +3481,10 @@ end
 #
 # Stack: ( TYP ULONG(nelem) -- ARR )
 
-instruction xmka ()
+instruction mka ()
   code
-    pvm_val arr = xpvm_make_array (JITTER_TOP_STACK (),
-                                   JITTER_UNDER_TOP_STACK ());
+    pvm_val arr = pvm_make_array (JITTER_TOP_STACK (),
+                                  JITTER_UNDER_TOP_STACK ());
 
     PVM_VAL_ARR_OFFSET (arr) = pvm_make_ulong (0, 64);
     JITTER_DROP_STACK ();
@@ -3534,72 +3534,6 @@ instruction ains ()
       if (!pvm_array_insert (arr, idx, val))
         PVM_RAISE_DFL (PVM_E_INVAL);
     }
-  end
-end
-
-# Instruction: mka
-#
-# Given an offset, an elements type, a list of initializers, and
-# numbers of elements and number of initializers, create an array
-# value and push it on the stack.
-#
-# Each array initializer is specified as a triplet [BOFF IDX VAL]
-# where BOFF is the bit-offsets of the element, IDX its position
-# inside the array, and VAL the value to store in that position.
-#
-# Array elements that are not initialized are set to the value of the
-# first initializer to their right.
-#
-# Stack: ( BOFF TYP [BOFF IDX VAL]... ULONG(nelem) ULONG(ninitializer) -- ARR )
-
-instruction mka ()
-  code
-    size_t i;
-    pvm_val nelem, ninitializer, arr, elem;
-
-    ninitializer = JITTER_TOP_STACK ();
-    JITTER_DROP_STACK ();
-
-    nelem = JITTER_TOP_STACK ();
-    JITTER_DROP_STACK ();
-
-    arr = pvm_make_array (nelem, PVM_NULL /* type */);
-    for (i = 0; i < PVM_VAL_ULONG (ninitializer); ++i)
-    {
-      size_t index
-        = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
-
-      PVM_VAL_ARR_ELEM_VALUE (arr, index) = JITTER_TOP_STACK ();
-      JITTER_DROP_STACK ();
-      JITTER_DROP_STACK ();
-
-      PVM_VAL_ARR_ELEM_OFFSET (arr, index) = JITTER_TOP_STACK ();
-      JITTER_DROP_STACK ();
-    }
-
-    /* Fill-in non-initialized elements in the array.  */
-    if (PVM_VAL_ULONG (nelem) != PVM_VAL_ULONG (ninitializer))
-    {
-       for (i = PVM_VAL_ULONG (nelem), elem = PVM_NULL;
-            i > 0;
-            --i)
-       {
-         pvm_val elem_value = PVM_VAL_ARR_ELEM_VALUE (arr, i - 1);
-
-         if (elem_value == PVM_NULL)
-           PVM_VAL_ARR_ELEM_VALUE (arr, i - 1) = elem;
-         else
-           elem = elem_value;
-       }
-    }
-
-    PVM_VAL_ARR_TYPE (arr) = JITTER_TOP_STACK ();
-    JITTER_DROP_STACK ();
-
-    PVM_VAL_ARR_OFFSET (arr) = JITTER_TOP_STACK ();
-    JITTER_DROP_STACK ();
-
-    JITTER_PUSH_STACK (arr);
   end
 end
 

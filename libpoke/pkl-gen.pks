@@ -86,7 +86,7 @@
         ;; In general we don't know how many elements the mapped array
         ;; will contain.
         push ulong<64>0         ; ATYPE 0UL
-        xmka                    ; ARR
+        mka                     ; ARR
         pushvar $boff           ; ARR BOFF
         mseto                   ; ARR
      .while
@@ -361,7 +361,7 @@
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
                                 ; ATYPE
         push ulong<64>0         ; ATYPE 0UL
-        xmka                    ; ARR
+        mka                     ; ARR
         ;; Ok, loop to add elements to the constructed array.
      .while
         ;; If there is an EBOUND, check it.

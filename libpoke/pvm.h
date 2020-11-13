@@ -231,7 +231,6 @@ pvm_val pvm_make_offset (pvm_val magnitude, pvm_val unit);
    The elements in the created array are initialized to PVM_NULL.  */
 
 pvm_val pvm_make_array (pvm_val nelem, pvm_val type);
-pvm_val xpvm_make_array (pvm_val nelem, pvm_val type);
 
 /* Make a struct PVM value.
 

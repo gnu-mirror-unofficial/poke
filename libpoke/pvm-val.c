@@ -89,7 +89,7 @@ pvm_make_string (const char *str)
 }
 
 pvm_val
-xpvm_make_array (pvm_val nelem, pvm_val type)
+pvm_make_array (pvm_val nelem, pvm_val type)
 {
   pvm_val_box box = pvm_make_box (PVM_VAL_TAG_ARR);
   pvm_array arr = pvm_alloc (sizeof (struct pvm_array));
@@ -113,42 +113,6 @@ xpvm_make_array (pvm_val nelem, pvm_val type)
   for (i = 0; i < num_allocated; ++i)
     {
       arr->elems[i].offset = PVM_NULL;
-      arr->elems[i].value = PVM_NULL;
-    }
-
-  PVM_VAL_BOX_ARR (box) = arr;
-  return PVM_BOX (box);
-}
-
-pvm_val
-pvm_make_array (pvm_val nelem, pvm_val type)
-{
-  pvm_val_box box = pvm_make_box (PVM_VAL_TAG_ARR);
-  pvm_array arr = pvm_alloc (sizeof (struct pvm_array));
-  size_t num_elems = PVM_VAL_ULONG (nelem);
-  size_t num_allocated = num_elems > 0 ? num_elems : 16;
-  size_t nbytes = (sizeof (struct pvm_array_elem) * num_allocated);
-  size_t i;
-
-  arr->mapped_p = 0;
-  arr->mapped_p_back = 0;
-  arr->ios = PVM_NULL;
-  arr->ios_back = PVM_NULL;
-  arr->offset = PVM_NULL;
-  arr->offset_back = PVM_NULL;
-  arr->elems_bound = PVM_NULL;
-  arr->size_bound = PVM_NULL;
-  arr->mapper = PVM_NULL;
-  arr->writer = PVM_NULL;
-  arr->nelem = nelem;
-  arr->nallocated = num_allocated;
-  arr->type = type;
-
-  arr->elems = pvm_alloc (nbytes);
-  for (i = 0; i < num_allocated; ++i)
-    {
-      arr->elems[i].offset = PVM_NULL;
-      arr->elems[i].offset_back = PVM_NULL;
       arr->elems[i].value = PVM_NULL;
     }
 
