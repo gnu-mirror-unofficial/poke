@@ -132,7 +132,7 @@ pk_offset_unit (pk_val val)
 int
 pk_val_mapped_p (pk_val val)
 {
-  return PVM_VAL_MAPPER (val) != PVM_NULL;
+  return PVM_VAL_MAPPED_P (val);
 }
 
 pk_val

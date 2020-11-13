@@ -489,7 +489,7 @@ read_json_object (FILE *ifp)
 }
 
 int
-test_json_to_val (const char *pk_obj_str, pk_val val)
+test_json_to_val (pk_compiler pk, const char *pk_obj_str, pk_val val)
 {
   pk_val pk_test_val;
   json_object *pk_obj, *current;
@@ -502,7 +502,15 @@ test_json_to_val (const char *pk_obj_str, pk_val val)
      is the same as the pk_val that we read from the test file.  */
 
   if (!pk_val_equal_p (pk_test_val, val))
+    {
+      printf ("Expected value:\n");
+      pk_print_val_with_params (pk, val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      printf ("\n");
+      printf ("Parsed value:\n");
+      pk_print_val_with_params (pk, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      printf ("\n");
       return FAIL;
+    }
 
   if (parse_json_str_object (pk_obj_str, &pk_obj) == FAIL)
     return FAIL;
@@ -568,18 +576,10 @@ test_json_file (const char *filename, FILE *ifp)
   if (compile_poke_expression (ifp, pkc, &val) == 0)
     goto error;
 
-  /* Right now, pk_arrays' boffsets are not correctly calculated unless
-    the array is mapped, thats why we can omit this test for now.  */
-  if (pk_type_code (pk_typeof (val)) == PK_ARRAY)
-    {
-      xfail (filename);
-      return;
-    }
-
   if ((json_obj_str = read_json_object (ifp)) == NULL)
     goto error;
 
-  if (test_json_to_val (json_obj_str, val) == FAIL)
+  if (test_json_to_val (pkc, json_obj_str, val) == FAIL)
     goto error;
 
   if (test_val_to_json (json_obj_str, val) == FAIL)

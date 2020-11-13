@@ -802,3 +802,14 @@ pk_print_val (pk_compiler pkc, pk_val val)
 {
   pvm_print_val (pkc->vm, val);
 }
+
+void
+pk_print_val_with_params (pk_compiler pkc, pk_val val,
+                          int depth, int mode, int base,
+                          int indent, int acutoff,
+                          uint32_t flags)
+{
+  pvm_print_val_with_params (pkc->vm, val,
+                             depth, mode, base,
+                             indent, acutoff, flags);
+}

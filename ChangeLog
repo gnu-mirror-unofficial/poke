@@ -1,5 +1,15 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pk-val.c (pk_val_mapped_p): Update the criteria to
+	decide when a value is mapped.
+	* libpoke/libpoke.h (PK_PRINT_F_MAPS): Define.
+	(PK_PRINT_F_PPRINT): Likewise.
+	* libpoke/libpoke.c (pk_print_val_with_params): New function.
+	* testsuite/poke.mi-json/mi-json.c (test_json_file): Do not skip
+	array tests anymore.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.map/ass-map-17.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add test.
 	* doc/poke.texi (Assignments): Document that maps in l-value can

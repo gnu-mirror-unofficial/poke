@@ -850,8 +850,18 @@ int pk_type_code (pk_val val) LIBPOKE_API;
 
 int pk_val_equal_p (pk_val val1, pk_val val2) LIBPOKE_API;
 
-/* Print the given value.   */
+/* Print the given value using the current PKC settings.  */
 
 void pk_print_val (pk_compiler pkc, pk_val val) LIBPOKE_API;
+
+/* Print the given value using the given settings.  */
+
+#define PK_PRINT_F_MAPS   1  /* Output value and element offsets.  */
+#define PK_PRINT_F_PPRINT 2  /* Use pretty-printers.  */
+
+void pk_print_val_with_params (pk_compiler pkc, pk_val val,
+                               int depth, int mode, int base,
+                               int indent, int acutoff,
+                               uint32_t flags) LIBPOKE_API;
 
 #endif /* ! LIBPOKE_H */
