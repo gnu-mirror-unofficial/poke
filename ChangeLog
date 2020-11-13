@@ -1,5 +1,44 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (enum pkl_ast_code): New entry
+	PKL_AST_CONTINUE_STMT.
+	(PKL_AST_CONTINUE_STMT_ENTITY): Define.
+	(PKL_AST_CONTINUE_STMT_NFRAMES): Likewise.
+	(struct pkl_ast_continue_stmt): Define.
+	Prototype for pkl_ast_make_continue_stmt.
+	(union pkl_ast_node): New field `continue_stmt'.
+	* libpoke/pkl-ast.c (pkl_ast_make_continue_stmt): Define.
+	(pkl_ast_node_free): Handle continue statements.
+	(pkl_ast_finish_breaks_1): Likewise.
+	(pkl_ast_finish_returns_1): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* libpoke/pkl-tab.y (stmt): Add continue statement.
+	* libpoke/pkl-lex.l: New token continue.
+	* libpoke/pkl-tab.y: Likewise.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Add case for
+	PKL_AST_CONTINUE_STMT.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_continue_stmt): New handler.
+	(pkl_phase_anal1): Install handler.
+	* libpoke/pkl-gen.c (pkl_gen_ps_continue_stmt): New handler.
+	(pkl_phase_gen): Install handler.
+	* libpoke/pkl-asm.h: Prototype for pkl_asm_continue_label.
+	* libpoke/pkl-asm.c (struct pkl_asm_level): New field
+	`continue_label'.
+	(pkl_asm_loop): Set the continue label of the loop.
+	(pkl_asm_while): Likewise.
+	(pkl_asm_for): Likewise.
+	(pkl_asm_continue_label): New function.
+	* testsuite/poke.pkl/continue-diag-1.pk: New test.
+	* testsuite/poke.pkl/continue-for-1.pk: Likewise.
+	* testsuite/poke.pkl/continue-for-2.pk: Likewise.
+	* testsuite/poke.pkl/continue-while-1.pk: Likewise.
+	* testsuite/poke.pkl/continue-while-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (while): Document `continue' in while loops.
+	(for-in): Likewise.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (aset): Use pvm_array_set.
 	* libpoke/pvm-val.c (pvm_array_set): Fix recalculation of element
 	bit-offsets.

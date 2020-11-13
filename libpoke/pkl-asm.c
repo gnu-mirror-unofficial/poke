@@ -87,6 +87,7 @@ struct pkl_asm_level
   int int1;
 
   pvm_program_label break_label;
+  pvm_program_label continue_label;
 };
 
 /* An assembler instance.
@@ -1670,6 +1671,7 @@ pkl_asm_endtry (pkl_asm pasm)
 
    label1:
    ... loop body ...
+   continue_label:
    SYNC
    BA label1;
    break_label:
@@ -1682,12 +1684,14 @@ pkl_asm_loop (pkl_asm pasm)
 
   pasm->level->label1 = pvm_program_fresh_label (pasm->program);
   pasm->level->break_label = pvm_program_fresh_label (pasm->program);
+  pasm->level->continue_label = pvm_program_fresh_label (pasm->program);
   pvm_program_append_label (pasm->program, pasm->level->label1);
 }
 
 void
 pkl_asm_endloop (pkl_asm pasm)
 {
+  pvm_program_append_label (pasm->program, pasm->level->continue_label);
   pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);
   pvm_program_append_label (pasm->program, pasm->level->break_label);
@@ -1704,6 +1708,8 @@ pkl_asm_endloop (pkl_asm pasm)
    BZ label2;
    POP the condition expression
    ... loop body ...
+   continue_label:
+   SYNC
    BA label1;
    label2:
    POP the condition expression
@@ -1719,6 +1725,7 @@ pkl_asm_while (pkl_asm pasm)
   pasm->level->label1 = pvm_program_fresh_label (pasm->program);
   pasm->level->label2 = pvm_program_fresh_label (pasm->program);
   pasm->level->break_label = pvm_program_fresh_label (pasm->program);
+  pasm->level->continue_label = pvm_program_fresh_label (pasm->program);
 
   pvm_program_append_label (pasm->program, pasm->level->label1);
 }
@@ -1734,6 +1741,8 @@ pkl_asm_while_loop (pkl_asm pasm)
 void
 pkl_asm_while_endloop (pkl_asm pasm)
 {
+  pvm_program_append_label (pasm->program,
+                            pasm->level->continue_label);
   pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);
   pvm_program_append_label (pasm->program, pasm->level->label2);
@@ -1790,6 +1799,7 @@ pkl_asm_while_endloop (pkl_asm pasm)
 
    ... BODY ...
 
+ continue_label:
    PUSH null ; CONTAINER (I+1) NELEMS null
    BA label2
  label3:
@@ -1811,6 +1821,7 @@ pkl_asm_for (pkl_asm pasm, int container_type,
   pasm->level->label2 = pvm_program_fresh_label (pasm->program);
   pasm->level->label3 = pvm_program_fresh_label (pasm->program);
   pasm->level->break_label = pvm_program_fresh_label (pasm->program);
+  pasm->level->continue_label = pvm_program_fresh_label (pasm->program);
 
   if (selector)
     pasm->level->node1 = ASTREF (selector);
@@ -1874,6 +1885,8 @@ pkl_asm_for_loop (pkl_asm pasm)
 void
 pkl_asm_for_endloop (pkl_asm pasm)
 {
+  pvm_program_append_label (pasm->program,
+                            pasm->level->continue_label);
   pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_PUSH, PVM_NULL);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label2);
@@ -1931,6 +1944,31 @@ pvm_program_label
 pkl_asm_break_label (pkl_asm pasm)
 {
   return pkl_asm_break_label_1 (pasm->level);
+}
+
+/* XXX avoid code duplication with the break statement.  */
+static pvm_program_label
+pkl_asm_continue_label_1 (struct pkl_asm_level *level)
+{
+  switch (level->current_env)
+    {
+    case PKL_ASM_ENV_LOOP:
+    case PKL_ASM_ENV_FOR_LOOP:
+      return level->continue_label;
+      break;
+    default:
+      return pkl_asm_continue_label_1 (level->parent);
+      break;
+    }
+
+  /* The compiler must guarantee this does NOT happen.  */
+  assert (0);
+}
+
+pvm_program_label
+pkl_asm_continue_label (pkl_asm pasm)
+{
+  return pkl_asm_continue_label_1 (pasm->level);
 }
 
 pvm_program_label

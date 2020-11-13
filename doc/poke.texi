@@ -7620,6 +7620,19 @@ while (1)
 @}
 @end example
 
+@cindex @code{continue}
+It is also possible to jump to the next iteration of the loop from
+within @var{stmt} using the @code{continue} statement.  Example:
+
+@example
+while (1)
+@{
+   [@dots{}]
+   if (continue_loop)
+     continue;
+@}
+@end example
+
 @node for-in
 @subsection @code{for-in}
 @cindex @code{for-in}
@@ -7651,6 +7664,9 @@ example:
 It is possible to leave the loop from within @var{stmt} using the
 @code{break} statement.
 
+@cindex @code{continue}
+It is also possible to jump to the next iteration of the loop from
+within @var{stmt} using the @code{continue} statement.
 
 @node Expression Statements
 @section Expression Statements

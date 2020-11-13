@@ -83,6 +83,7 @@ enum pkl_ast_code
   PKL_AST_TRY_UNTIL_STMT,
   PKL_AST_PRINT_STMT,
   PKL_AST_BREAK_STMT,
+  PKL_AST_CONTINUE_STMT,
   PKL_AST_RAISE_STMT,
   PKL_AST_LAST_STMT = PKL_AST_RAISE_STMT,
   PKL_AST_PRINT_STMT_ARG,
@@ -1656,6 +1657,26 @@ struct pkl_ast_print_stmt_arg
 
 pkl_ast_node pkl_ast_make_print_stmt_arg (pkl_ast ast, pkl_ast_node exp);
 
+/* PKL_AST_CONTINUE_STMT nodes represent `continue' statements.  Each
+   continue statement is associated to a loop node.
+
+   ENTITY is the loop node associated with this continue statement.
+
+   NFRAMES is the lexical depth of the continue statement, relative to
+   the enclosing entity.  */
+
+#define PKL_AST_CONTINUE_STMT_ENTITY(AST) ((AST)->continue_stmt.entity)
+#define PKL_AST_CONTINUE_STMT_NFRAMES(AST) ((AST)->continue_stmt.nframes)
+
+struct pkl_ast_continue_stmt
+{
+  struct pkl_ast_common common;
+  union pkl_ast_node *entity;
+  int nframes;
+};
+
+pkl_ast_node pkl_ast_make_continue_stmt (pkl_ast ast);
+
 /* PKL_AST_BREAK_STMT nodes represent `break' statements.  Each break
    statement is associated to a loop or switch node.
 
@@ -1746,6 +1767,7 @@ union pkl_ast_node
   struct pkl_ast_try_catch_stmt try_catch_stmt;
   struct pkl_ast_try_until_stmt try_until_stmt;
   struct pkl_ast_break_stmt break_stmt;
+  struct pkl_ast_continue_stmt continue_stmt;
   struct pkl_ast_raise_stmt raise_stmt;
   struct pkl_ast_print_stmt print_stmt;
   struct pkl_ast_print_stmt_arg print_stmt_arg;

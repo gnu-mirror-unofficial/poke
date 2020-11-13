@@ -1770,6 +1770,16 @@ pkl_ast_make_break_stmt (pkl_ast ast)
   return break_stmt;
 }
 
+/* Build and return an AST node for a `continue' statement.  */
+
+pkl_ast_node
+pkl_ast_make_continue_stmt (pkl_ast ast)
+{
+  pkl_ast_node continue_stmt = pkl_ast_make_node (ast,
+                                                  PKL_AST_CONTINUE_STMT);
+  return continue_stmt;
+}
+
 /* Build and return an AST node for a `raise' statement.  */
 
 pkl_ast_node
@@ -2172,10 +2182,11 @@ pkl_ast_node_free (pkl_ast_node ast)
       }
 
     case PKL_AST_BREAK_STMT:
+    case PKL_AST_CONTINUE_STMT:
       break;
 
-    case PKL_AST_RAISE_STMT:
 
+    case PKL_AST_RAISE_STMT:
       pkl_ast_node_free (PKL_AST_RAISE_STMT_EXP (ast));
       break;
 
@@ -2237,9 +2248,9 @@ pkl_ast_reverse (pkl_ast_node ast)
   return prev;
 }
 
-/* Annotate the break statements within a given entity (loop or switch
-   or...) with a pointer to the entity and their lexical nest level
-   within the entity.  */
+/* Annotate the break and continue statements within a given entity
+   (loop or switch or...) with a pointer to the entity and their
+   lexical nest level within the entity.  */
 
 static void
 pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
@@ -2252,6 +2263,10 @@ pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
     case PKL_AST_BREAK_STMT:
       PKL_AST_BREAK_STMT_ENTITY (stmt) = entity; /* Note no ASTREF */
       PKL_AST_BREAK_STMT_NFRAMES (stmt) = *nframes;
+      break;
+    case PKL_AST_CONTINUE_STMT:
+      PKL_AST_CONTINUE_STMT_ENTITY (stmt) = entity; /* Note no ASTREF */
+      PKL_AST_CONTINUE_STMT_NFRAMES (stmt) = *nframes;
       break;
     case PKL_AST_COMP_STMT:
       {
@@ -2382,6 +2397,7 @@ pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
     case PKL_AST_ASS_STMT:
     case PKL_AST_PRINT_STMT:
     case PKL_AST_BREAK_STMT:
+    case PKL_AST_CONTINUE_STMT:
     case PKL_AST_RAISE_STMT:
     case PKL_AST_NULL_STMT:
       break;
@@ -2967,6 +2983,11 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
 
     case PKL_AST_BREAK_STMT:
       IPRINTF ("BREAK_STMT::\n");
+      PRINT_COMMON_FIELDS;
+      break;
+
+    case PKL_AST_CONTINUE_STMT:
+      IPRINTF ("CONTINUE_STMT::\n");
       PRINT_COMMON_FIELDS;
       break;
 

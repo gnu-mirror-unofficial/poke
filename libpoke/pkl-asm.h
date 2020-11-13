@@ -201,9 +201,15 @@ void pkl_asm_endtry (pkl_asm pasm);
 
 /* The following function returns the label associated to the
    enclosing break-able construction (such as a loop or a switch).  If
-   there is not such enclosign environment, this function aborts.  */
+   there is not such enclosing environment, this function aborts.  */
 
 pvm_program_label pkl_asm_break_label (pkl_asm pasm);
+
+/* The following function returns the label associated to the
+   enclosing continuable construction (such as a loop).  If there is
+   not such enclosing environment, this function aborts.  */
+
+pvm_program_label pkl_asm_continue_label (pkl_asm pasm);
 
 /* Assembler directives:
  *

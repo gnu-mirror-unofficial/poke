@@ -717,6 +717,11 @@ EXTRA_DIST = \
   poke.pkl/cond-exp-diag-3.pk \
   poke.pkl/cond-exp-int-struct-1.pk \
   poke.pkl/cond-exp-int-struct-2.pk \
+  poke.pkl/continue-diag-1.pk \
+  poke.pkl/continue-for-1.pk \
+  poke.pkl/continue-for-2.pk \
+  poke.pkl/continue-while-1.pk \
+  poke.pkl/continue-while-2.pk \
   poke.pkl/csat-struct-6.pk \
   poke.pkl/defun-1.pk \
   poke.pkl/defun-2.pk \

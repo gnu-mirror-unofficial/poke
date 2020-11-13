@@ -209,6 +209,7 @@ S ::
 "var"           { return DEFVAR; }
 "unit"          { return DEFUNIT; }
 "break"         { return BREAK; }
+"continue"      { return CONTINUE; }
 "return"        { return RETURN; }
 "string"        { return STRING; }
 "as"            { return AS; }
