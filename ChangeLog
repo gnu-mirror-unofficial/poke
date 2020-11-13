@@ -1,5 +1,11 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (aset): Use pvm_array_set.
+	* libpoke/pvm-val.c (pvm_array_set): Fix recalculation of element
+	bit-offsets.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: Remove definition of PKL_INSN_XMKA.
 	* libpoke/pvm.jitter (mka): Remove.
 	(xmka): Rename to mka.

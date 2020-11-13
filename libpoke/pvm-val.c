@@ -192,11 +192,14 @@ pvm_array_set (pvm_val arr, pvm_val idx, pvm_val val)
 
   /* Recalculate the bit-offset of all the elemens following the
      element just updated.  */
-  elem_boffset = PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (arr, index));
+  elem_boffset
+    = (PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (arr, index))
+       + pvm_sizeof (PVM_VAL_ARR_ELEM_VALUE (arr, index)));
+
   for (i = index + 1; i < nelem; ++i)
     {
       PVM_VAL_ARR_ELEM_OFFSET (arr, i) = pvm_make_ulong (elem_boffset, 64);
-      elem_boffset += pvm_sizeof (PVM_VAL_ARR_ELEM_OFFSET (arr, i));
+      elem_boffset += pvm_sizeof (PVM_VAL_ARR_ELEM_VALUE (arr, i));
     }
 
   return 1;

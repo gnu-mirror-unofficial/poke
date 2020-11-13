@@ -3552,36 +3552,35 @@ end
 
 instruction aset ()
   code
-    uint64_t idx;
+    pvm_val idx;
     pvm_val val;
     pvm_val arr;
     pvm_val array_type, bound;
+    size_t index;
 
     val= JITTER_TOP_STACK ();
-    idx = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
+    idx = JITTER_UNDER_TOP_STACK ();
+    index = PVM_VAL_ULONG (idx);
     JITTER_DROP_STACK ();
     JITTER_DROP_STACK ();
 
     arr = JITTER_TOP_STACK ();
 
-    if (idx < 0 || idx >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
+    if (index >= PVM_VAL_INTEGRAL (PVM_VAL_ARR_NELEM (arr)))
       PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
-
     /* If the array is bounded by size, check whether the new value
-       results in a different size.
-       XXX: Move this check to pvm_array_set.  */
-
+       results in a different size.  */
     array_type = PVM_VAL_ARR_TYPE (arr);
     bound = PVM_VAL_TYP_A_BOUND (array_type);
 
     if (PVM_IS_OFF (bound))
       {
-        pvm_val oval = PVM_VAL_ARR_ELEM_VALUE (arr, idx);
+        pvm_val oval = PVM_VAL_ARR_ELEM_VALUE (arr, index);
         uint64_t old_size_bits;
         uint64_t new_size_bits;
 
-        PVM_VAL_ARR_ELEM_VALUE (arr, idx) = val;
+        PVM_VAL_ARR_ELEM_VALUE (arr, index) = val;
 
         old_size_bits = (PVM_VAL_INTEGRAL (PVM_VAL_OFF_MAGNITUDE (bound))
                          * PVM_VAL_INTEGRAL (PVM_VAL_OFF_UNIT (bound)));
@@ -3589,12 +3588,17 @@ instruction aset ()
 
         if (new_size_bits != old_size_bits)
          {
-           PVM_VAL_ARR_ELEM_VALUE (arr, idx) = oval;
+           PVM_VAL_ARR_ELEM_VALUE (arr, index) = oval;
            PVM_RAISE_DFL (PVM_E_CONV);
          }
       }
    else
-     PVM_VAL_ARR_ELEM_VALUE (arr, idx) = val;
+      {
+        /* Note that pvm_aray_set cannot fail here, due to the check
+           on index above.  This is done like this in order to avoid
+           checking the bound by size if the index is out of bounds.  */
+         pvm_array_set (arr, idx, val);
+      }
   end
 end
 
