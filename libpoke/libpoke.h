@@ -81,8 +81,7 @@ struct pk_term_if
    If there is an error creating the compiler this function returns
    NULL.  */
 
-pk_compiler pk_compiler_new (const char *rtpath,
-                             struct pk_term_if *term_if) LIBPOKE_API;
+pk_compiler pk_compiler_new (struct pk_term_if *term_if) LIBPOKE_API;
 
 /* Destroy an instance of a Poke incremental compiler.
 

@@ -536,8 +536,7 @@ initialize (int argc, char *argv[])
   pk_term_init (argc, argv);
 
   /* Initialize the poke incremental compiler.  */
-  poke_compiler = pk_compiler_new (poke_datadir,
-                                   &poke_term_if);
+  poke_compiler = pk_compiler_new (&poke_term_if);
   if (poke_compiler == NULL)
     pk_fatal ("creating the incremental compiler");
 

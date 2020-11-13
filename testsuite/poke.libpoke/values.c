@@ -203,13 +203,8 @@ test_pk_equal_file (const char *filename, FILE *ifp)
   pk_val val1, val2;
   pk_compiler pkc;
   int equal;
-  char *poke_datadir;
 
-  poke_datadir = getenv ("POKEDATADIR");
-  if (poke_datadir == NULL)
-    poke_datadir = PKGDATADIR;
-
-  pkc = pk_compiler_new (poke_datadir, &poke_term_if);
+  pkc = pk_compiler_new (&poke_term_if);
 
   if (!pkc)
     goto error;

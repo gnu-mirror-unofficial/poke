@@ -561,11 +561,7 @@ test_json_file (const char *filename, FILE *ifp)
   pk_compiler pkc;
   pk_val val;
 
-  poke_datadir = getenv ("POKEDATADIR");
-  if (poke_datadir == NULL)
-    poke_datadir = PKGDATADIR;
-
-  pkc = pk_compiler_new (poke_datadir, &poke_term_if);
+  pkc = pk_compiler_new (&poke_term_if);
 
   if (pkc == NULL)
     goto error;

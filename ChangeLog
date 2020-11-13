@@ -1,5 +1,15 @@
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: Remove the rtpath argument from the
+	pk_compiler_new prototype.
+	* libpoke/libpoke.c (pk_compiler_new): Likewise.
+	* poke/poke.c (initialize): Adjust call to pk_compiler_new
+	accordingly.
+	* testsuite/poke.libpoke/values.c (test_pk_equal_file): Likewise.
+	* testsuite/poke.mi-json/mi-json.c (test_json_file): Likewise.
+
+2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (enum pkl_ast_code): New entry
 	PKL_AST_CONTINUE_STMT.
 	(PKL_AST_CONTINUE_STMT_ENTITY): Define.

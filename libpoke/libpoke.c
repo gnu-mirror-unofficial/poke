@@ -41,20 +41,25 @@ struct pk_term_if libpoke_term_if
 __attribute__ ((visibility ("hidden")));
 
 pk_compiler
-pk_compiler_new (const char *rtpath,
-                 struct pk_term_if *term_if)
+pk_compiler_new (struct pk_term_if *term_if)
 {
   pk_compiler pkc
     = malloc (sizeof (struct pk_compiler));
 
   if (pkc)
     {
+      /* Determine the path to the compiler's runtime files.  */
+      const char *libpoke_datadir = getenv ("POKEDATADIR");
+      if (libpoke_datadir == NULL)
+        libpoke_datadir = PKGDATADIR;
+
       libpoke_term_if = *term_if;
 
       pkc->vm = pvm_init ();
       if (pkc->vm == NULL)
         goto error;
-      pkc->compiler = pkl_new (pkc->vm, rtpath);
+      pkc->compiler = pkl_new (pkc->vm,
+                               libpoke_datadir);
       if (pkc->compiler == NULL)
         goto error;
       pkc->complete_type = NULL;
