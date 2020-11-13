@@ -7488,7 +7488,8 @@ where @var{lvalue} is either:
 @item A variable.
 @item A field reference like @code{foo.bar}.
 @item An index reference like @code{foo[30]}.
-@item A map of a simple type, like @code{int @@ 0#B}.
+@item A map of a type, like @code{int @@ 0#B} or @code{int[3] @@ 0#B}
+or @code{Packet @@ 12#B}.
 @end itemize
 
 In all cases, the type of @var{exp} should match the type of the
@@ -7503,6 +7504,8 @@ Examples:
 (poke) packet.data[2] = 666
 (poke) int @@ 23#B = 23
 (poke) string @@ str.offset = "foo"
+(poke) int[2] @@ 23#B = [1,2]
+(poke) Packet @@ 0#B = Packet @{ @dots{} @}
 @end example
 
 @node Compound Statements

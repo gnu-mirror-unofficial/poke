@@ -1,0 +1,15 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08} foo.data } */
+/* { dg-data {c*} {0x11 0x12 0x13 0x14 0x15 0x16 0x17 0x18} bar.data } */
+
+type Packet = struct { byte[2] a; int i; };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { var foo = open ("foo.data") } } */
+/* { dg-command { var bar = open ("bar.data") } } */
+/* { dg-command { var p = Packet @ bar : 1#B } } */
+/* { dg-command { Packet @ foo : 1#B = p } } */
+/* { dg-command { Packet @ foo : 1#B } } */
+/* { dg-output {Packet {a=\[0x12UB,0x13UB\],i=0x14151617}} } */
+/* { dg-command { p'ios } } */
+/* { dg-output "\n0x1" } */
