@@ -38,9 +38,10 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        2. 5  Personal Branches
        2. 6  Building Release Tarballs
        2. 7  Installing Obvious Changes
-       2. 8  The Bugzilla
-         2. 8.1  Dealing with spam in the Bugzilla
-       2. 9  Recording noteworthy development changes
+       2. 8  The POKE database
+       2. 9  The Bugzilla
+         2. 9.1  Dealing with spam in the Bugzilla
+       2.10  Recording noteworthy development changes
      3  Development Environment
        3. 1  Autotools
        3. 2  Dejagnu
@@ -88,60 +89,59 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        6.1  Documenting Pickles
      7  Fuzzing poke
        7.1  Grammarinator
-     8  Deciding on What to Work on
-     9  Submitting a Patch
-    10  Maintenance
-    11  Poke Architecture
-    12  The Poke Compiler
-      12.1  Compiler Overview
-      12.2  The bison Parser in pkl-tab.y
-      12.3  The AST
-        12.3.1  Loop Statements
-      12.4  Compiler Passes and Phases
-        12.4.1  Naming Conventions for Phases
-        12.4.2  Naming Conventions for Handlers
-        12.4.3  Transformation Phases
-        12.4.4  Analysis Phases
-        12.4.5  Type System Phases
-        12.4.6  Front and Middle End Handlers should be Re-entrant
-      12.5  The Type System
-        12.5.1  Type Expressions
-      12.6  Adding Compiler Built-Ins
-    13  The Poke Virtual Machine
-      13.1  Exception Handling
-      13.2  Signal Handling
-      13.3  Offsets and bit-offsets in the PVM
-    14  Memory Management
-      14.1  Using ASTREF
-      14.2  Using ASTDEREF
-      14.3  PVM values in PVM programs
-      14.4  PVM values in AST nodes
-    15  Terminal Handling
-      15.1  pk-term
-      15.2  Styling Classes
-      15.3  Debugging Styling
-    16  Debugging Poke
-      16.1  Building with Debugging support
-      16.2  Invoking GDB to debug an uninstalled poke
-      16.3  Using GDB extensions
-      16.4  Valgrind and Poke
-      16.5  Debugging PVM Assembly Code
-    17  Future Developments
-    18  Appendix: The Source Tree
-      18.1  Common Code
-      18.2  The poke library
-        18.2.1  Public Library Services
-        18.2.2  The Compiler
-        18.2.3  The Poke Virtual Machine
-        18.2.4  The IO Subsystem
-        18.2.5  Poke Standard Library
-        18.2.6  Internal Services
-      18.3  The poke utility
-      18.4  Pickles
-      18.5  Poke Utilities
-      18.6  Test Suite
-      18.7  Documentation
-      18.8  Other Stuff
+     8  Submitting a Patch
+     9  Maintenance
+    10  Poke Architecture
+    11  The Poke Compiler
+      11.1  Compiler Overview
+      11.2  The bison Parser in pkl-tab.y
+      11.3  The AST
+        11.3.1  Loop Statements
+      11.4  Compiler Passes and Phases
+        11.4.1  Naming Conventions for Phases
+        11.4.2  Naming Conventions for Handlers
+        11.4.3  Transformation Phases
+        11.4.4  Analysis Phases
+        11.4.5  Type System Phases
+        11.4.6  Front and Middle End Handlers should be Re-entrant
+      11.5  The Type System
+        11.5.1  Type Expressions
+      11.6  Adding Compiler Built-Ins
+    12  The Poke Virtual Machine
+      12.1  Exception Handling
+      12.2  Signal Handling
+      12.3  Offsets and bit-offsets in the PVM
+    13  Memory Management
+      13.1  Using ASTREF
+      13.2  Using ASTDEREF
+      13.3  PVM values in PVM programs
+      13.4  PVM values in AST nodes
+    14  Terminal Handling
+      14.1  pk-term
+      14.2  Styling Classes
+      14.3  Debugging Styling
+    15  Debugging Poke
+      15.1  Building with Debugging support
+      15.2  Invoking GDB to debug an uninstalled poke
+      15.3  Using GDB extensions
+      15.4  Valgrind and Poke
+      15.5  Debugging PVM Assembly Code
+    16  Future Developments
+    17  Appendix: The Source Tree
+      17.1  Common Code
+      17.2  The poke library
+        17.2.1  Public Library Services
+        17.2.2  The Compiler
+        17.2.3  The Poke Virtual Machine
+        17.2.4  The IO Subsystem
+        17.2.5  Poke Standard Library
+        17.2.6  Internal Services
+      17.3  The poke utility
+      17.4  Pickles
+      17.5  Poke Utilities
+      17.6  Test Suite
+      17.7  Documentation
+      17.8  Other Stuff
 
 
 Nomenclature
@@ -250,6 +250,16 @@ send an email to the mailing list stating you installed the change.
 Please include a suggestive tag in your email's subject, something
 like ``[COMMITTED]``.  Also, make sure to include the patch itself.
 
+The POKE database
+~~~~~~~~~~~~~~~~~
+
+We maintain a database in POKE, in the form of a recfile.  See
+http://www.gnu.org/software/recutils for more information on recfiles.
+
+This database is kept up to date by the maintainer, and contains lots
+of information on the current tasks to do, bugs, release, asn so on.
+See the comment at the top of POKE for more information.
+
 The Bugzilla
 ~~~~~~~~~~~~
 
@@ -258,11 +268,12 @@ Our component is ``poke``.  If you find a bug and you don't want or
 you can't work on it, please file a bug there providing as much
 details as you can.
 
-Also, feel free to assign unasigned bugs to yourself.  You will have
-to open an account in bugzilla for that.
-
 If the bugzilla URL ever changes it should be updated in
 ``configure.ac``.
+
+Once a new bug is submitted to bugzilla, a maintainer will eventually
+look at it and, if confirmed as a bug, will add an entry for it to
+POKE.
 
 Dealing with spam in the Bugzilla
 .................................
@@ -914,12 +925,6 @@ crash.
 The option ``-t grammarinator.runtime.simple_space_transformer`` makes
 sure that whitespaces get inserted between literal tokens.
 
-Deciding on What to Work on
----------------------------
-
-We maintain a detailed task list in the ``TODO`` file at the root of
-the source tree.  Please take a look.
-    
 Submitting a Patch
 ------------------
 

@@ -1,3 +1,11 @@
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* POKE: New file.
+	* DEV-NEWS: Mention POKE.
+	* HACKING (Deciding on What to Work on): Remove section.
+	(The POKE database): New section.
+	* TODO: Refer to POKE.
+
 2020-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.h: Correct docstring of function pvm_array_insert.

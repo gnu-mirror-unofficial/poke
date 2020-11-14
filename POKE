@@ -1,0 +1,2306 @@
+# POKE -- The GNU poke database -*- mode: rec -*-
+#
+# Copyright (C) 2020 The poke authors.
+#
+# This file is part of GNU poke.
+#
+# GNU poke is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# GNU poke is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
+
+# This recfile (see http://www.gnu.org/software/recutils) contains
+# information relative to the development of GNU poke, and it is used
+# by the poke hackers and maintainers.
+#
+# The information is gathered among several record sets:
+#
+# - `Task' records describe stuff that we would like to see realized
+#   somehow.
+#
+# - `Release' records describe poke releases.
+#
+# - `Hacker' records describe members of the poke gang.
+#
+# See the corresponding record descriptors for more information.
+
+# If you start working on a complex task, please let us know in the
+# development mailing list so we can be aware of your efforts, and
+# probably help you.
+#
+# If the task is marked with RFC, please send a proposal of a design
+# to poke-devel so we can discuss about it.  Do not start working on
+# it straight away, because whatever design to use must be agreed
+# among the maintainers.
+#
+# If you complete a task, please include a patch for this file in your
+# patch submission that removes the task from this file.
+#
+# If you want to add a comment to any of the entries in this file,
+# please do so adding a note field like:
+#
+#   Note: This would be soooooo cool :) - jemarch
+#
+# IMPORTANT: please make sure to run `recfix' on this file to make
+#            sure your modifications do not break the integrity of the
+#            data stored in it!
+
+%rec: Task
+%index: Summary
+%type: Summary line
+%type: Kind enum
++ ENH (Enhancement) OPT (Optimization) BUG (Work on a bug fix)
+%type: Component enum
++ Build         (The build system)
++ Language      (Poke, the language)
++ Compiler      (The PKL compiler)
++ RAS           (Our dear Retarded Assembler)
++ PVM           (The Poke Virtual Machine)
++ Runtime       (Poke standard library and other runtime stuff)
++ Library       (Libpoke)
++ MI            (The Machine Interface)
++ Emacs         (Emacs related stuff, poke.el, poke-mode.el, etc)
++ IO            (The IO subsystem)
++ POKE          (poke, the program)
++ CLI           (Commands and interface)
++ Pickles       (Everything under pickles/)
++ Documentation (The manual and other docs)
++ Testsuite     (Everything under testsuite/)
++ GUI           (Everything under gui/)
++ Other         (Kitchen sink)
++ Someday       (One can dream... lalala)
+%mandatory: Component Kind Priority
+# A task can be related to other tasks in several ways.
+#
+# `Requires' is used for hard requirements, i.e. some task
+# depends on the resolution of another task.
+#
+# `SeeAlso' is used when some task is relevant to some other
+# task.
+%type: Requires line
+%type: SeeAlso line
+# Priorities go from 1 (least priority) to 5 (most priority).
+%type: Priority range 1 5
+%type: Assignee rec Hacker
+# A task that fixes a bug should refer to the corresponding bug in the
+# sourceware bugzilla.
+%type: BZ int
+%constraint: (Kind = "BUG") => #BZ
+# What version this task is scheduled for.
+%type: Target rec Release
+# Whether this task requires discussion in the mailing list.
+%type: RFC bool
+%Summary: Component,Priority,Summary
+
+Summary: Support for ++ and --
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ In integral values (including integral structs) and offsets.
++
++   until E_eof print int @ offset++;
++
++ Syntactic sugar for:
++
++   offset = offset + offset'unit
++   offset = offset - offset'unit
++
++ Supernice!
+Target: 1.0
+
+Summary: Implement for-from-to-by loops
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++    for (VAR from EXP to EXP [by EXP])
+Target: 1.0
+
+Summary: Support bit-concatenation in l-value
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++    a::b = c;
++
++ Constraints:
++
++    c'size == a'size + b'size
++    c'sign == a'sign
++
++ 19:59 <jemarch> defvar a = 0UB;
++ 19:59 <jemarch> defvar b = 0UB;
++ 19:59 <jemarch> defvar c = 0UH;
++ 20:00 <jemarch> instead of writing:
++ 20:00 <jemarch>  a = (val .>> 24) & 0xff;
++ 20:00 <jemarch> b = (val .>> 16) & 0xff;
++ 20:00 <jemarch> c = val & 0xffff;
++ 20:00 <jemarch> you just write:
++ 20:00 <jemarch> a:::b:::c = val;
+Target: 1.0
+
+Summary: Support labels and a goto statement
+Component: Language
+Kind: ENH
+Priority: 2
+
+Summary: Support for non-strict values
+Component: Language
+Kind: ENH
+Priority: 3
+Description: In non-strict values data integrity is not enforced:
++
++ val = TYPE @! OFFSET;
++ val = Foo { ... }
++
++ val'strict
++ val'strict = 1
++ val'strict = 0
++
++ Struct values are constructed strict by default, then this can be
++ changed with the attribute.  Or support a syntax for constructing
++ non-strict struct values?
+Target: 1.0
+RFC: yes
+
+Summary: Support %% in printf string literals
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ A new %-sequence shall be added to printf: %%.  This denotes a single
++ % in the formatted output.  The right place where to hack this is the
++ ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
+Target: 1.0
+
+Summary: STRING ~ REGEXP operator
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ How to express regular expressions?  Using strings for them is
++ cumbersome because of the escaping of special characters.
+
+Summary: Support RGB colors in printf, %cRGB
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ So we can pretty-print RGB colors in their own color :)
++
++ 18:20 <bhaible> 2) When you have a term_styled_ostream instance, it
++                 relies on a term_ostream instance. You should be
++                 able to retrieve this instance (but I don't
++                 remember what is the easiest way to do it). On this
++                 instance, invoke
++ 18:20 <bhaible> term_ostream_set_color (term_ostream_t stream,
++                 term_color_t color)
++ 18:20 <bhaible> where color is the result of
++                 term_ostream_rgb_to_color (term_ostream_t stream,
++                 int red, int green, int blue)
++ 18:20 <jemarch> oh
++ 18:20 <bhaible> See
++                 https://www.gnu.org/software/gettext/libtextstyle/manual/libtextstyle.html#The-term_005fostream-class
+Target: 1.0
+
+Summary: with_temp_ios FILENAME { ... }
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ This should be an easy way to create an IOS and switch to is as the
++ default IOS.
+
+Summary: struct patterns and matching operators
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++    Foo {{ a == 2 }}
++
++ Only valid as second argument of the match operator ~.  NO: valid
++ everywhere, so the resulting closure can be passed to
++ commands/functions.  The pattern compiles to a closure, that is then
++ called.
++
++    (poke) Foo { a = 2} ~ Foo {{ a == 2 }}
++    1
++
++ Or:
++
++     Foo {{a ==2}} (Foo { a = 2 })
++
++    TYPE {{ EXP, EXP, ... }}
++
++ Where EXP is an expression that evaluates to an int<32>.  All the
++ expressions should evaluate to 1 when applied to the given struct
++ value, for the pattern operator to succeed.
++
++ ~ can also be used with: STRING ~ STRING where the second string
++ contains a regular expression.
++
++ This will lead to write the `search' command.
++
++ 18:27 <bhaible> so does it return a Packet, or does it return a
++                 boolean, or throw an exception?
++ 18:28 <jemarch> Packet {{ i > 0 }} (mypacket)
++ 18:28 <jemarch> the function returns a boolean
++ 18:28 <jemarch> if (Packet {{ i > 0 }} (mypacket)) ...
++ 18:28 <jemarch> Then I am considering adding a "match" operator ~
++ 18:29 <jemarch> which gets as operands a struct value, and a
++                 function with signature (TYPE_NAME s) INT
++ 18:29 <jemarch> so you can write:
++ 18:29 <jemarch> if (mypacket ~ Packet {{ i > 0 }}) ...
++ 18:29 <jemarch> which looks more natural
++ 18:29 <jemarch> still having the patterns to evaluate to a function
++                 is useful, because you can pass it around without
++                 having to define a new value class "pattern"
++ 18:30 <bhaible> and you will want cascaded matches to be useable in
++                 a 'switch' statement too, is that it?
++ 18:31 <jemarch> right :)
++ 18:31 <jemarch> case Packet {{ ... }}:
++ 18:31 <jemarch> case Packet {{ ... }}:
++
++ 18:37 <bhaible> I mean    ID3V1_Tag {{ get_year() == 2018 }}
++ 18:37 <jemarch> you cant
++ 18:37 <jemarch> but you don't need a pattern for that
++ 18:38 <jemarch> astruct ~ ID3V1_Tag {{ ...other expr... }} &&
++                 astruct.get_year () == 2018
++ 18:38 <bhaible> But that's where the pattern as a synonym for "type
++                 with certain conditions" would be useful
++ 18:38 <jemarch> yes but the methods are not fields
++ 18:39 <bhaible> If inside the {{ ... }} I can access the fields
++                 without a prefix, I should also be able to invoke
++                 the methods without a prefix.
++ 18:39 <jemarch> that can be arranged
++
++ Or using lambdas:
++
++ lambda (TYPE s) int: { return EXP && ...; }
++
++ NO.
++
++ This better, which is not ambiguous:
++
++         | pushlevel '{' TYPENAME '|' expression_list '}'
++                 {
++                   $$ = NULL;
++                 }
++         ;
++
++ expression_list:
++           %empty { $$ = NULL; }
++          | expression
++          | expression_list ',' expression  { $$ = NULL; }
++          ;
++
++ i.e.
++
++   { Packet | i == 0, j > 10 }
+
+Summary: struct/union flattening
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ Can happen both at compile and run-time.
++
++ At compile-time, the struct/union type is modified.  Also, run-time
++ flattening is considered when emitting emit compilation errors in
++ struct references.
++
++ At run-time, sref simulates the flattening, which is not reflected in
++ the structure/union value itself.
+
+Summary: Alignment attribute in struct types
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ In order for searching to be more efficient, alignment constraints
++ should be used whenever possible.  For both the struct itself, and
++ also fields.
+
+Summary: Named constraints in struct types
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++   int foo : foo > 10;      /* Error constraint.  */
++   int foo fail: foo > 10; /* Equivalent to the above.  */
++   int foo last: foo > 10; /* Last/final constraint.  */
++   int foo warn: foo > 10; /* Warning.  */
++   int foo aligned: 8;  /* Alignment.  */
++
++ These constraints can be combined:
++
++   int foo : foo < 10, warning: foo == 8, final: foo == 5;
++
++ The warnings are emitted by the struct mapper function with `print',
++ and also registered in the IOS as "problematic" areas, to be displayed
++ (and listed) as such.
+
+Summary: Operator to upunit an offset
+Component: Language
+Kind: ENH
+Priority: 3
+Description: ^1024#B -> 1#Kb
+
+Summary: `format' support
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ We want to add a new language construction ``format``, which has the
++ form:
++
++   format (FMT, ARGS...)
++
++ or:
++
++   format FMT, ARGS...
++
++ ``format`` works like printf, but instead of printing out the
++ formatted string it returns it.  This task requires adding support for
++ this construction to the compiler.  In principle no PVM changes are
++ necessary.
++
++   format "%a%b%c", a, b, c
++
++ This requires propertized string support in the PVM.
+
+Summary: `system' support
+Component: Language
+Kind: ENH
+Priority: 3
+Description: system ("command")
+
+Summary: casts from integral to array and from array to integral
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ 0x1234 as byte[2] --> [0x12UB,0x34UB]
++ [0x12UB,0x34UB] as int -> 0x1234 (with big endian)
++
++ This is a bit redundant with l-value bit-concatenation.
+
+Summary: Support %< and %> in different printf.  E_sc_underflow
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ But when to raise it??  Function exit?  Program exit only?
++ The `exit' instruction should empty the stack.
+
+Summary: Support for hyperlinks in printf
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ It should be possible to emit hyperlinks using printf.  Each hyperlink
++ is characterized by an url, and a text:
++
++   %<href//URL: TEXT %>
++
++ Something like the above.  This shall be discussed in the mailing
++ list.
+
+Summary: Support for referring to current offset in struct types
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ We need a token like . or OFFSET to mean the current offset to the
++ beginning of the struct being defined.
+Target: 1.0
+
+Summary: Support OFFSET / MAGNITUDE -> OFFSET
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ This operation is the opposite of OFFSET * MAGNITUDE -> OFFSET.  The
++ unit of the result should be the unit of the source offset.
+Target: 1.0
+
+Summary: Support recursive definitions
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ This is to support recursive definitions, like it happens in the BSON
++ format:
++
++   type BSON_Code_Scope =
++   struct
++   {
++     int32 size;
++     BSON_String code;
++     BSON_Doc doc;
++     int doc;
++   };
++
++   type BSON_Doc =
++   struct
++   {
++     ...
++     struct
++     {
++       byte tag : tag == 0x0f;
++       string name;
++       BSON_Code_Scope value;
++     } js_scope;
++   }
+
+Summary: Assign to sref with data integrity
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ Generate:
++
++   SSET -> modified struct
++   PUSH constructor
++   CALL -> call constructor
++   Result: MODIFIED_STRUCT NEW_STRUCT
++   NIP
++   [MAYBE WRITE IF MAPPED]
++
++ This can raise a constraint error, and in that case nothing changes.
++ It is perfect.
++
++ This is the only way that unions in non-mapped struct values can
++ actually have effect in terms on its own contents: first sset then
++ calling the constructor again.
++
++ When non-strict values are implemented, this should be conditioned to
++ the strict character of the struct.
+Target: 1.0
+SeeAlso: Support for non-strict values
+Hacker: jemarch@gnu.org
+
+Summary: struct _equal methods
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ The default equal compares all fields, but the user may want to use a
++ different notion of equality.
++
++ This can also return 1 for > and -1 for <, but then the default
++ predicate should return < by convention to mean "not equal".
++
++   deftype Exception =
++     struct
++     {
++       int<32> code;
++       string msg;
++
++       defun _equal = int: (Exception b)
++       {
++         return code == b.code;
++       }
++     };
+Requires: Support recursive definitions
+
+Summary: Support hidden field names
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ This allows to have nameless fields with constraints, like for padding
++ initialized to 0.
++
++ Also for optional fields.
+
+Summary: Provide syntax for array constructors
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ Currently there are three different ways to create array values in
++ Poke:
++
++ 1) From an array literal, like [1,2,3,.[10]=666]
++ 2) From a mapping, like int[3] @ 0#B
++ 3) From an array constructor, like in:
++
++    type Packet = struct { byte[2] magic; ... };
++    Packet { } -> Packet { magic = [0UB,0UB], ... }
++
++ However, there is no syntax to achieve 3) out of the context of
++ constructing a struct, and 1) is limited, since it is not possible to
++ express a literal with a variable number of elements.
++
++ Therefore we need to add a syntax for 3), something like:
++
++  TYPE ([INIT_VALUE])
++
++ Examples:
++
++  int[2]() -> [0,0]
++  int[2](10) -> [10,10]
++
++ To discuss in the mailing list.
+RFC: yes
+Target: 1.0
+
+Summary: Support a pipe IOS
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ Something like:
++
++   var ios = open ("|cmd")
++
++ That runs CMD in a subprocess.  Reading from IOS results in accessing
++ the process' standard output, and writing to IOS results in writing to
++ the process' standard input.
++
++ This should leverage the existing stream IOD.
+RFC: yes
+
+Summary: Exception predicate operator !?
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ expr !? Exception
++
++ if (do_foo () !? E_constraint)
++   ...;
+Target: 1.0
+RFC: yes
+
+Summary: Introduce SELF in methods
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ Poke methods can refer to the fields of the enclosing struct type like
++ if they were regular variables:
++
++   struct
++   {
++     byte a;
++
++     method set_a = (byte v) void:
++     {
++       a = v;
++     }
++   }
++
++ The refernce to `v' really means a sref to the struct value implicitly
++ passed as the first argument to the method.  This is useful and
++ convenient.  However, sometimes it is useful to access to the
++ properties of the struct, like its size, and for that it is necessary
++ to add a SELF:
++
++   method size = void:
++   {
++     return SELF'size;
++   }
++
++ The type of SELF would be `any' (since we do not support recursive
++ definitions) and the keyword SELF would only be available in method
++ bodies.  Ideally it wouldn't be a keyword anywhere else: maybe that is
++ achievable by piggybacking into the lexer.
++
++ Is `SELF' the right keyword to use?  Using uppercase reduces the odds
++ of collision with user defined identifiers.
+Target: 1.0
+RFC: yes
+
+Summary: Constraint expressions for whole structs
+Component: Language
+Kind: ENH
+Priority: 3
+Description: Not sure if useful enough:
++
++    type Foo = struct
++     {
++      ...
++     } : EXPRESSION;
+RFC: yes
+
+Summary: Support nested integral structs
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ This will require to subpass on fields.  i.e. a gen context:
++ in_integrator.
+Target: 1.0
+
+Summary: Support offsets in integral structs
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ There is no reason for offsets to not be allowed as fields of integral
++ structs.  It is an arbitrary limitation.
+Target: 1.0
+
+Summary: Support for optional fields in integral structs
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ At the moment optional fields are not supported in integral structs.
++ In particular, the lack of support is in the writer in
++ pkl-gen.pks:struct_field_writer.
++
++ The struct writer uses the following strategy to poke integral
++ structs:
++
++   Initialize IVAL to 0
++   FOR each field
++     IF field is not absent
++       IVAL |= FIELD_VALUE << SHIFT;
++   POKE IVAL to the corresponding offset
++
++ The problem with this approach is that if a field is not absent, the
++ portion in IVAL corresponding to its value is 0, and not the value
++ that currently exists in that portion in IO space.
++
++ Fixing this probably involves:
++ 1. Initializing IVAL to the current contents in IO space instead of 0.
++ 2. hacking ``struct_field_inserter`` in order to zero the portion of
++    the field in IVAL before inserting it.
++
++ Once support is ready in ``struct_writer`` the compile-time check
++ forbiding optional fields in ``pkl_typify1_ps_type_struct`` should be
++ removed accordingly.
+
+Summary: Make endianness a type quality
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ To: Bruno Haible <bruno@clisp.org>
++ Cc: poke-devel@gnu.org
++ Subject: Re: Generalizing the big/little attribute
++ From: "Jose E. Marchesi" <jemarch@gnu.org>
++ Gcc: nnfolder+archive:sent.2020-07
++ --text follows this line--
++
++ Hi Bruno!
++ Sorry for the delay in replying to this.
++
++ First of all, thank you very much for your suggestions.  There is a lot
++ to improve/complete in Poke's design!  Much appreciated :)
++
++     Currently, big/little applies only integral struct fields:
++
++     deftype test =
++       struct
++       {
++         little uint32 a;                        // OK
++         little uint8[3] b;                      // ERROR
++         little struct { uint8 x; uint8 y; } c;  // ERROR
++       };
++
++     A simple generalization to make it apply to integral types, then
++
++     deftype test =
++       struct
++       {
++         little uint32 a;                        // OK
++         little uint8[3] b;                      // would be OK
++         little struct { uint8 x; uint8 y; } c;  // ERROR
++       };
++
++     However, another generalization would be more powerful:
++     [...]
++
++ The big/little attribute, as you mention, is currently associated with
++ struct fields.  It is not associated with integral types.  Implementing
++ the "simple generalization" would involve adding a new attribute to
++ struct types, with the endianness to use.  This would be easy.
++
++ However, at this point I would generalize the endianness in a way it
++ becomes an attribute of certain types, not struct fields.  This way, you
++ could write:
++
++ deftype MSBInt32 = big int<32>;
++ deftype Foo = little struct { MSBInt32 magic_in_big; ... };
++
++ This would involve changes in the type system (like, two integer types
++ with different endianness are different types) but I don't think it will
++ require a lot of work.
++
++     So, in any place where you can use a type name, you could also add a
++     little/big attribute, and it has a recursive effect.
++
++ Using the approach of associating endianness to types, it would be
++ natural to support a new type specifier `{little,big} typename', that
++ constructs a proper (derived) type itself.
++
++ Then we could use `{little,big} typename' anywhere a type specifier is
++ expected, like casts, function formal arguments, etc.
++
++     Method invocations would not only have an implicit SELF argument, but
++     maybe also an implicit ENDIANNESS_OVERRIDE argument?
++
++ Good idea
+RFC: yes
+
+Summary: Support for sets (enums and bitmasks)
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ set NAME = enum { ... };
++ set NAME = bitmask { ... };
++
++ NAME<int<32>> field;
++
++ enums should be visible in PVM
++ tagged integrals: tag is a reference to an enum.
++ pvm_print_val knows this, and prints: DW_const_type (0x23)
++ Setting checks for valid value.
+RFC: yes
+
+Summary: Variable-length integers
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ - Similar syntax than fixed-width integers:
++   int<EXP>, uint<EXP>, where EXP are non constant expressions.
++ - Type specifiers: int<*> and uint<*>.
++ - Built on top of long<64> and ulong<64> PVM values?
++ - Casts: u?int<*> -> u?int<N>, u?int<N> -> u?int<*>
+RFC: yes
+
+Summary: Support for multi-line strings with """
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ At some point we will support docstrings in Poke functions.  For that,
++ it is useful to support multi-line strings in order to avoid having to
++ terminate each line with ``\n\``.
++
++ We can use the python syntax """ ... """.  Other ideas are welcome.
++
++ This should be implemented in the lexer, ``src/pkl-lex.l``.
+RFC: yes
+
+Summary: Support for i18n with gettext in Poke programs
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ In order to support internationalization of Poke programs, we need to
++ add support in gettext for Poke.  This involves hacking certain
++ support in gettext.  The end result should be:
++
++   var msg = _("this is translated");
+RFC: yes
+
+Summary: Support for big numbers
+Component: Language
+Kind: ENH
+Priority: 2
+Description: Currently the PVM supports the following kind of integer values:
++
++    Integers up to 32-bit, signed and unsigned
++      These values are unboxed.
++    Long integers, up to 64-bit, signed and unsigned
++      These values are boxed.
++
++ The task is to introduce an additional kind of integer:
++
++    Big integers, up to infinite bits, signed and unsigned
++     These values are boxed.
++
++ This new integer shall be implemented as a boxed value, using the GNU
++ MultiPrecision library ``libgmp``.  This task involves:
++
++ - Adding the support to ``src/pvm-val.[ch]``.
++ - Add new instruction to ``src/pvm.jitter``, i.e. itob, btol, etc.
++ - Adapt the compiler to support big integer literals.
++ - Adapt the code generator to use the new instructions.
+RFC: yes
+
+Summary: bit-concatenation of offsets
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ It should be possible to apply the bit-concatenation operator ::: to
++ offsets, the same way it works with integral values.
+Target: 1.0
+
+Summary: Support for struct deintegrators
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ It is currently possible to "integrate" an integral struct into an
++ integral value:
++
++   type Foo = struct int<16> {byte hi; byte lo;};
++   Foo {} + 2  -> 2H
++
++ This is about supporting the reverse operation: "deintegrating" an
++ integral value into an integral struct:
++
++   2 as Foo -> Foo {hi=0UB,lo=2UB}
+Target: 1.0
+
+Summary: Alien tokens for IO space names: $<path/to/file>
+Component: CLI
+Kind: ENH
+Priority: 3
+Description:
++ Currently the only way to refer to IO space is by either ID (a number)
++ or via a variable where the number is stored.  However, referring to
++ them by name at the prompt is important.
+RFC: yes
+
+Summary: Support arguments in type constructors
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ struct Packet (t1 f1, ..., tn fn) { ... }
++
++   Packet (a1, ..., an) packet;
++
++ or
++
++   Packet<a1,...,an> packet;
++
++ The second option is more coherent with the constructors like int<16>.
++ But it will require a lexical trick TYPE<.
+RFC: yes
+
+Summary: Add error recovery support to the compiler
+Component: Compiler
+Kind: ENH
+Priority: 2
+Description:
++ - Ability to emit more than one error message.
++ - Passes and phases can replace trees with ERROR_MARK nodes in the
++   AST.
++ - Further passes and phases ignore ERROR_MARK nodes.
++ - At some points a pass is invoked that checks for ERROR_MARK nodes
++   and emit error messages and then abort the compilation.
+
+Summary: Constant-fold array trims
+Component: Compiler
+Kind: OPT
+Priority: 3
+Target: 1.0
+
+Summary: Constant-fold array casts
+Component: Compiler
+Kind: OPT
+Priority: 3
+Target: 1.0
+
+Summary: Constant-fold `isa' expressions
+Component: Compiler
+Kind: OPT
+Priority: 3
+Target: 1.0
+
+Summary: Constant-fold array concatenation
+Component: Compiler
+Kind: OPT
+Priority: 4
+Target: 1.0
+
+Summary: Constant-fold struct references
+Component: Compiler
+Kind: OPT
+Priority: 2
+Target: 1.0
+
+Summary: Constant-fold struct integrations
+Component: Compiler
+Kind: OPT
+Priority: 3
+Target: 1.0
+
+Summary: Constant-fold operations with integral structs
+Component: Compiler
+Kind: OPT
+Priority: 3
+Description: such as +, -, etc
+Target: 1.0
+
+Summary: Avoid subpasses by introducing additional AST nodes
+Component: Compiler
+Kind: ENH
+Priority: 3
+Description:
++ The presence of a subpass in a compiler phase handler sometimes
++ indicates a problem in the design of the AST.  These subpasses can be
++ eliminated by introducing extra nodes in the AST.
++
++ This task is about identifying these cases and to remove the
++ corresponding subpasses.
+RFC: yes
+
+Summary: Move checks from anal2 to anal1 whenever feasible
+Component: Compiler
+Kind: ENH
+Priority: 3
+Description:
++ In general checks in anal2 that rely on attributes of children nodes
++ can be moved to anal1.
++
++ This task is about identifying these cases, and to move the
++ corresponding check to anal1.
+
+Summary: Make pvm_print_val show integral structs as integers
+Component: PVM
+Kind: ENH
+Priority: 3
+Description:
++ Foo { ... } (IVAL)
++
++ With option: (poke) .set print-integral-struct-ival (yes|no)
++
++ But this required having the struct values annotated as integral in
++ the PVM, i.e. the integrator should be available in struct values.
+
+Summary: printf should evaluate arguments _before_ printing anything
+Component: Compiler
+Kind: BUG
+BZ: 26883
+Priority: 3
+Description:
++ In struct and union methods it is often useful to user `printf' like
++ this:
++
++   method _print = void:
++   {
++     try printf "%i32d, %i32d\n", field_foo, field_bar;
++     catch if E_elem { ... }
++   }
++
++ However, if field `field-bar' happens to be absent, by the time E_elem
++ is raised field_foo has been already printed.  This is a no-no.
+Target: 1.0
+
+Summary: remove unneeded locs in the passes/phases
+Component: Compiler
+Kind: ENH
+Priority: 3
+Description:
++ In the past we used to force having location information for all nodes
++ in the AST.  This would assure that a location was always available
++ when printing error messages involving these nodes.  However, this
++ leads on a miriad of locations that are simply not useful, so we
++ removed the check.
++
++ This task is about:
++ 1) Identifying which LOCs are not needed, and remove them, and
++ 2) Emit an ICE if no location is found at error/warning emission time.
++
++ This will hopefully lead to have the minimum set of locations that is
++ actually needed.
+
+Summary: unify `break' and `continue' in the same AST node
+Component: Compiler
+Kind: ENH
+Priority: 3
+Description:
++ The `break' and `continue' statements are similar enough to merit
++ using the same kind of AST node, which would require a discriminant
++ field (kind = break | continue).
++
++ Likewise, there is some code duplication in the assembler which may be
++ optimized: pkl_asm_break_label_1 vs. pkl_asm_continue_label_1.
+
+Summary: Do tail recursion optimization in the compiler
+Component: Compiler
+Kind: ENH
+Priority: 3
+
+Summary: Finish i18n of the bison parsers
+Component: Compiler
+Kind: ENH
+Priority: 3
+Description: See the section `Enabling Internationalization' in bison.info
+
+Summary: Support lazy mapping
+Component: PVM
+Kind: ENH
+Priority: 2
+Description:
++ In complete arrays, the size of the elements is known at compile-time.
++ Then, it is not required to calculate it by peeking the element from
++ IO.  Lazy mapping is therefore possible.
++
++ Size annotations will be needed in structs in cases where it is not
++ possible for the compiler to determine the size by:
++
++   struct size(24#B) { ... }
++
++ Because of data integrity, lazy mapping can only be done when mapping
++ non-strict values.
+RFC: yes
+Target: 1.0
+
+Summary: Mapping anonymous complete struct fields
+Component: Compiler
+Kind: OPT
+Priority: 2
+Description:
++ If a field is anonymous and it is complete, then there is no need to
++ actually decode it.  Adjusting the current offset and adding a NULL
++ element is enough: it will never be accessed.
+
+Summary: Consider struct types as complete if all labels are literal
+Component: Compiler
+Kind: OPT
+Priority: 3
+Description:
++ Field labes that are literal should not result in the the containing
++ struct type to be considered not completed, i.e. this struct type:
++
++   struct
++   {
++     int a;
++     byte[16] data @ 18#B;
++   }
++
++ Should be considered complete.
+Target: 1.0
+
+Summary: Unions can be completed
+Component: Compiler
+Kind: OPT
+Priority: 3
+Description:
++ If all the alternatives in the union are complete and they have the
++ same size, then the union is complete too with that size.
++
++ Example:
++
++   union
++   {
++      uint<32> foo : n == 10;
++      byte[32] bar;
++   }
++
++ The type above is complete, with size 32#b known at compile time.
+Target: 1.0
+
+Summary: Save a nton instruction in pkl_asm_while
+Component: Compiler
+Kind: OPT
+Priority: 3
+Description:
++ - This also requires removing the promo for loop conditions
++ - Ditto for `where' conditions
++ - This requires changes in ras! :/
++
++ diff --git a/ChangeLog b/ChangeLog
++ index a37da464..5a592409 100644
++ --- a/ChangeLog
++ +++ b/ChangeLog
++ @@ -1,3 +1,11 @@
++ +2020-07-24  Jose E. Marchesi  <jemarch@gnu.org>
++ +
++ +	* libpoke/pkl-asm.h (pkl_asm_while): Get a new argument
++ +	`condition'.
++ +	* libpoke/pkl-asm.c (pkl_asm_while): Likewise.
++ +	(pkl_asm_while_loop): Generate BZ instead of BZI.
++ +	(pkl_asm_while_endloop): Cleanup node1.
++ +
++  2020-07-24  Jose E. Marchesi  <jemarch@gnu.org>
++
++  	* libpoke/pvm-val.h (PVM_VAL_TYP_I_SIGNED_P): Renamed from
++ diff --git a/libpoke/pkl-asm.c b/libpoke/pkl-asm.c
++ index 4d2f08dc..048782d7 100644
++ --- a/libpoke/pkl-asm.c
++ +++ b/libpoke/pkl-asm.c
++ @@ -1712,10 +1712,11 @@ pkl_asm_endloop (pkl_asm pasm)
++     Thus, loops use two labels.  */
++
++  void
++ -pkl_asm_while (pkl_asm pasm)
++ +pkl_asm_while (pkl_asm pasm, pkl_ast_node condition)
++  {
++    pkl_asm_pushlevel (pasm, PKL_ASM_ENV_LOOP);
++
++ +  pasm->level->node1 = ASTREF (condition);
++    pasm->level->label1 = pvm_program_fresh_label (pasm->program);
++    pasm->level->label2 = pvm_program_fresh_label (pasm->program);
++    pasm->level->break_label = pvm_program_fresh_label (pasm->program);
++ @@ -1726,7 +1727,9 @@ pkl_asm_while (pkl_asm pasm)
++  void
++  pkl_asm_while_loop (pkl_asm pasm)
++  {
++ -  pkl_asm_insn (pasm, PKL_INSN_BZI, pasm->level->label2);
++ +  pkl_asm_insn (pasm, PKL_INSN_BZ,
++ +                PKL_AST_TYPE (pasm->level->node1),
++ +                pasm->level->label2);
++    /* Pop the loop condition from the stack.  */
++    pkl_asm_insn (pasm, PKL_INSN_DROP);
++  }
++ @@ -1743,6 +1746,7 @@ pkl_asm_while_endloop (pkl_asm pasm)
++    pvm_program_append_label (pasm->program, pasm->level->break_label);
++
++    /* Cleanup and pop the current level.  */
++ +  pkl_ast_node_free (pasm->level->node1);
++    pkl_asm_poplevel (pasm);
++  }
++
++ diff --git a/libpoke/pkl-asm.h b/libpoke/pkl-asm.h
++ index b217b850..1968734c 100644
++ --- a/libpoke/pkl-asm.h
++ +++ b/libpoke/pkl-asm.h
++ @@ -141,7 +141,7 @@ void pkl_asm_endloop (pkl_asm pasm)
++
++  /* While loops.
++   *
++ - * pkl_asm_while (pasm);
++ + * pkl_asm_while (pasm, condition);
++   *
++   *   ... condition ...
++   *
++ @@ -151,11 +151,12 @@ void pkl_asm_endloop (pkl_asm pasm)
++   *
++   * pkl_asm_while_endloop (pasm);
++   *
++ - * Note that the code in `... condition ...' should result in an
++ - * int<32> value, and this is assumed by pkl_asm_while_loop.
++ + * Note that the CONDITION expression can be of any integral type.
++ + * The macro-assembler will generate the right code for the specific
++ + * type.
++   */
++
++ -void pkl_asm_while (pkl_asm pasm)
++ +void pkl_asm_while (pkl_asm pasm, pkl_ast_node condition)
++    __attribute__ ((visibility ("hidden")));
++
++  void pkl_asm_while_loop (pkl_asm pasm)
+
+Summary: Union fields should not refer to other fields
+Component: Compiler
+Kind: BUG
+BZ: 26884
+Priority: 4
+Description:
++ A field in an union type cannot refer to other union alternatives, in
++ any case.  This applies to constraints, array bounds, etc.
+Target: 1.0
+
+Summary: Fix GC roots in AST nodes
+Component: Compiler
+Kind: BUG
+BZ: 26885
+Priority: 4
+Description:
++ There is a limit on the number of GC roots that can be registered, so
++ having them in each AST node is not an option.  We need a list of GC
++ roots in the `ast' structure instead.
++
++ Look for calls to pvm_alloc*gc_roots in pkl-ast.c.
+Target: 1.0
+
+Summary: Promote struct constructor elements
+Component: Compiler
+Kind: BUG
+BZ: 26886
+Priority: 3
+Description:
++ Initialization values in struct constructors are not currently
++ promoted to the target types.  This is a PITA and must be fixed.
++
++ /* Promote initializers in struct constructors.  */
++
++ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
++ {
++   pkl_ast_node scons = PKL_PASS_NODE;
++   pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
++   pkl_ast_node astruct = PKL_AST_SCONS_VALUE (scons);
++   pkl_ast_node struct_elems = PKL_AST_STRUCT_ELEMS (astruct);
++   pkl_ast_node elem = NULL;
++   int restart = 0;
++
++   PKL_PASS_DONE;
++
++   for (elem = struct_elems; elem; elem = PKL_AST_CHAIN (elem))
++     {
++       pkl_ast_node type_elem;
++       pkl_ast_node elem_name = PKL_AST_STRUCT_ELEM_NAME (elem);
++       pkl_ast_node elem_exp = PKL_AST_STRUCT_ELEM_EXP (elem);
++       pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
++
++       for (type_elem = PKL_AST_TYPE_S_ELEMS (scons_type);
++            type_elem;
++            type_elem = PKL_AST_CHAIN (type_elem))
++         {
++           pkl_ast_node type_elem_name
++             = PKL_AST_STRUCT_ELEM_TYPE_NAME (type_elem);
++
++           if (type_elem_name
++               && strcmp (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
++                          PKL_AST_IDENTIFIER_POINTER (elem_name)) == 0)
++             {
++               pkl_ast_node type_elem_type
++                 = PKL_AST_STRUCT_ELEM_TYPE_TYPE (type_elem);
++               int this_restart;
++
++               if (PKL_AST_TYPE_CODE (type_elem_type) != PKL_TYPE_ARRAY
++                   && pkl_ast_type_equal (type_elem_type, elem_type))
++                 break;
++
++               switch (PKL_AST_TYPE_CODE (elem_type))
++                 {
++                 case PKL_TYPE_ANY:
++                   break;
++                 case PKL_TYPE_ARRAY:
++                   if (!promote_array (PKL_PASS_AST,
++                                       type_elem_type,
++                                       &PKL_AST_STRUCT_ELEM_EXP (elem),
++                                       &this_restart))
++                     goto error;
++                   break;
++                 case PKL_TYPE_INTEGRAL:
++                   if (!promote_integral (PKL_PASS_AST,
++                                          PKL_AST_TYPE_I_SIZE (type_elem_type),
++                                          PKL_AST_TYPE_I_SIGNED (type_elem_type),
++                                          &PKL_AST_STRUCT_ELEM_EXP (elem),
++                                          &this_restart))
++                     goto error;
++                   break;
++                 case PKL_TYPE_OFFSET:
++                   {
++                     pkl_ast_node base_type
++                       = PKL_AST_TYPE_O_BASE_TYPE (type_elem_type);
++                     pkl_ast_node unit
++                       = PKL_AST_TYPE_O_UNIT (type_elem_type);
++
++                     size_t size = PKL_AST_TYPE_I_SIZE (base_type);
++                     int sign = PKL_AST_TYPE_I_SIGNED (base_type);
++                     uint64_t unit_bits = PKL_AST_INTEGER_VALUE (unit);
++
++                     if (!promote_offset (PKL_PASS_AST,
++                                          size, sign, unit_bits,
++                                          &PKL_AST_STRUCT_ELEM_EXP (elem),
++                                          &this_restart))
++                       goto error;
++                     break;
++                   }
++                 default:
++                   pkl_ice (PKL_PASS_AST, PKL_AST_LOC (scons),
++                            "non-promoteable struct constructor initializer\
++ at promo time");
++                   PKL_PASS_ERROR;
++                   break;
++                 }
++
++               restart |= this_restart;
++             }
++         }
++     }
++
++   PKL_PASS_RESTART = restart;
++   PKL_PASS_DONE;
++
++  error:
++   pkl_ice (PKL_PASS_AST, PKL_AST_LOC (scons),
++            "couldn't promote struct constructor initializer");
++   PKL_PASS_ERROR;
++ }
++ PKL_PHASE_END_HANDLER
+Target: 1.0
+
+Summary: `load' doesn't load after an error
+Component: Compiler
+Kind: BUG
+BZ: 26887
+Priority: 3
+Description:
++ If an error prevents the loading of a module, the module still gets
++ registered as loaded and therefore subsequent loads are not effective:
++
++ (poke) load foo
++ error: fjdi
++ (poke) load foo
++ /* Does nothing.  */
+Target: 1.0
+
+Summary: Infamous constructor bug
+Component: Compiler
+Kind: BUG
+BZ: 26888
+Priority: 4
+Description:
++ (Foo{}).bar fails in the code below.  This is the infamous bug related
++ to nested types and constructors.
++
++ type Foo =
++   struct
++   {
++     int i;
++
++     fun foo = int:
++       {
++         return i + 1;
++       }
++
++     method bar = int:
++       {
++         type Bar =
++           struct
++           {
++             int j;
++             method bar = int: { return j + 1; }
++           };
++
++         fun jorl = int:
++         {
++           return (Bar { j = 1 }).bar;
++         }
++
++         return jorl + i;
++       }
++   };
+Target: 1.0
+
+Summary: Fix %destructors in parser
+Component: Compiler
+Kind: BUG
+BZ: 26889
+Priority: 3
+Description:
++ A suitable %destructor should be added to the Poke parser, to assure
++ no memory leaks when an error occurs (AST nodes).
+Target: 1.0
+
+Summary: Do not leak decl AST nodes in parser
+Component: Compiler
+Kind: BUG
+BZ: 26890
+Priority: 3
+Description:
++ Do not leak decl AST nodes if there is an error condition like an
++ already declared entity.
+Target: 1.0
+
+Summary: Source line is missing in in-type struct errors
+Component: Compiler
+Kind: BUG
+BZ: 26891
+Priority: 3
+Description:
++ Under some circumstances, the source line is missing when reporting
++ compile-time errors in struct types.
+Target: 1.0
+
+Summary: Do not emit empty source lines in error reporting
+Component: Compiler
+Kind: BUG
+BZ: 26892
+Priority: 4
+Description:
++ If there is no source line available, do not use verbose error
++ reporting.
+Target: 1.0
+
+Summary: Remove call to `abort' in pkl-lex.l
+Component: Compiler
+Kind: BUG
+BZ: 26893
+Priority: 3
+Description:
++ Code in libpoke should not call `abort' nor `exit'.
+Target: 1.0
+
+Summary: The `muls' instruction in pvm.jitter calls xmalloc
+Component: Compiler
+Kind: BUG
+BZ: 26894
+Priority: 3
+Description:
++ libpoke code shouldn't abort, therefore xalloc shouldn't be used.
+Target: 1.0
+
+Summary: Complete pvm_print_val for function types
+Component: PVM
+Kind: BUG
+BZ: 26895
+Priority: 3
+Description:
++ pvm_print_val should print valid type descriptors for function types,
++ including optional arguments, varargs, etc.
+Target: 1.0
+
+Summary: Function types are generated with its arguments reversed
+Component: Compiler
+Kind: BUG
+BZ: 26896
+Priority: 4
+Description:
++ Either mktyc should get its arguments reversed (ugly) or the compiler
++ should reverse them before calling the instruction.
+Target: 1.0
+
+Summary: pvm_array_set should check for size bounds
+Component: Compiler
+Kind: ENH
+Priority: 3
+Description:
++ The logic that checks for the violation of the size bound when setting
++ the value of an array element should be moved from the `aset'
++ instruction in pvm.jitter to pvm_array_set.  This later function
++ should be altered to return a code identifying out-of-bounds,
++ out-of-size, or OK.
+Target: 1.0
+
+Summary: Allow .let #fieldw = ulong<field_type_size>64 in RAS
+Component: RAS
+Kind: ENH
+Priority: 3
+Description:
++ Right now we write:
++
++   .c .let #fieldw = pvm_make_ulong (10, 64)
++
++ we want to write:
++
++   .c .let #fieldw = ulong<field_type_size>64
+
+Summary: Allow splitting lines in RAS with \ at EOL
+Component: RAS
+Kind: ENH
+Priority: 2
+
+Summary: Validate u?int and u?long args in RAS
+Component: RAS
+Kind: ENH
+Priority: 2
+Description:
++ This should be reported as invalid by RAS: int<40>
+Target: 1.0
+
+Summary: Adjustable recursion limit in the PVM
+Component: PVM
+Kind: ENH
+Priority: 2
+Description:
++ Right now the PVM return stack can be overflown easily
++ doing recursion.  It should be possible to set a limit
++ to avoid this.
++
++ If Jitter ever gains support for detecting stack overflow
++ this will no longer be necessary.
+
+Summary: Support for string properties
+Component: PVM
+Kind: ENH
+Priority: 3
+Description:
++ In areas of a string:
++
++ Styling classes.
++ Hyperlinks/actions.
++
++ This should be visible at the PVM level.  Instructions to set string
++ properties:
++
++    push "Age: 10"
++    push 5LU
++    push 2LU
++    push "integer"
++    sprop ; String propertize  ( STR IDX LENGTH CLASS -- STR )
+RFC: yes
+
+Summary: pvm_print_val should emit hyperlinks in collapsed structs
+Component: PVM
+Kind: ENH
+Priority: 2
+Description:
++     > What about:
++     >
++     >   item_hdr=St_Item_Hdr {...}
++     >
++     > That makes it more explicit that St_Item_Hdr is a struct, and also makes
++     > it easier to glimpse that it can be further expanded.  WDYT?
++
++     No objections and it is indeed a nice improvement.
++
++ I just had an idea.
++
++ It would be awesome if you would generate a terminal hyperlink on the
++ `TypeName {...}' part, that would generate an `e' command to evaluate
++ the field.  This would make using the tree shallow mode very comfy!
++
++ Example:
++
++ (poke) .file foo.o
++ (poke) load elf
++ (poke) .set tree-print shallow
++ (poke) Elf64_Ehdr @ 0#B
++ Elf64_Ehdr {
++    e_ident=struct {...},
++            ------------
++    e_type=0x1UH,
++    e_machine=0x3eUH,
++    e_version=0x1U,
++    e_entry=0x0UL#B,
++    e_phoff=0x0UL#B,
++    e_shoff=0x208UL#B,
++    e_flags=0x0U,
++    e_ehsize=0x40UH#B,
++    e_phentsize=0x0UH#B,
++    e_phnum=0x0UH,
++    e_shentsize=0x40UH#B,
++    e_shnum=0xbUH,
++    e_shstrndx=0xaUH
++  }
++
++ Above, the ---- underlines the hyperlink that would be generated in the
++ terminal.  Then, when the user clicks it, it will execute:
++
++ (poke) (Elf64_Ehdr @ 0#B).e_ident
++ struct {
++    ei_mag=[0x7fUB,0x45UB,0x4cUB,0x46UB],
++    ei_class=0x2UB,
++    ei_data=0x1UB,
++    ei_version=0x1UB,
++    ei_osabi=0x0UB,
++    ei_abiversion=0x0UB,
++    ei_pad=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,0x0UB],
++    ei_nident=0x0UB#B
++  }
+
+Summary: `unmap' should be recursive
+Component: PVM
+Kind: BUG
+BZ: 26897
+Priority: 3
+Description:
++ (poke) defvar e = unmap (Elf64_Ehdr @ 0#B)
++ (poke) e
++ Elf64_Ehdr {
++   e_ident=struct {
++     ei_mag=[0x7fUB,0x45UB,0x4cUB,0x46UB] @ 0x0UL#b,
++     ei_class=0x2UB,
++     ei_data=0x1UB,
++     ei_version=0x1UB,
++     ei_osabi=0x0UB,
++     ei_abiversion=0x0UB,
++     ei_pad=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...] @ 0x48UL#b,
++     ei_nident=0x0UB#B
++   } @ 0x0UL#b,
++   e_type=0x1UH,
++   e_machine=0x3eUH,
++   e_version=0x1U,
++   e_entry=0x0UL#B,
++   e_phoff=0x0UL#B,
++   e_shoff=0x208UL#B,
++   e_flags=0x0U,
++   e_ehsize=0x40UH#B,
++   e_phentsize=0x0UH#B,
++   e_phnum=0x0UH,
++   e_shentsize=0x40UH#B,
++   e_shnum=0xbUH,
++   e_shstrndx=0xaUH
++ }
+Target: 1.0
+
+Summary: Location tracking in PVM
+Component: PVM
+Kind: ENH
+Priority: 2
+Description:
++ The PVM shall be expanded with new instructions for location tracking.
++ Something like::
++
++   pushloc file,line,column
++   setloc line,column
++   poploc
++
++ If you want to work in this, please start a discussion in
++ ``poke-devel`` so we can design a suitable set of instructions.
+
+Summary: Make the PVM aware of units
+Component: PVM
+Kind: ENH
+Priority: 3
+Description:
++ The poke compiler allows the user to define her own units using the
++ ``unit`` construct.  The PVM, however, is oblivious of this, and it
++ only knows how to print the names of the standard units.  This is
++ achieved by replicating the logic of the units in the
++ ``print_unit_name`` function.
++
++ We really want to make the PVM aware of units.  This would allow us to:
++
++ 1. Print the name of user-defined units when printing offsets.
++
++ 2. Avoid logic replication in ``print_unit_name`` and the set of
++    ``PVM_VAL_OFF_UNIT_*`` constants defined in ``pvm-val.h``.
+
+Summary: Unbox small strings in the PVM
+Component: PVM
+Kind: OPT
+Priority: 2
+Description:
++ String values are boxed in the PVM.  A cool optimization would be to,
++ somehow, treat small strings less than 7 or 8 characters as unboxed
++ values.
+RFC: yes
+
+Summary: pretty-printer to pretty-printer calls dont work
+Component: PVM
+Kind: ENH
+Priority: 4
+Description: deftype ULEB_128_Byte =
++   struct
++   {
++     method _print = void:
++       {
++       }
++   };
++
++ deftype ULEB128 =
++   struct
++   {
++     ULEB_128_Byte[1] variable;
++
++     method _print = void:
++       {
++         printf "%v", variable;
++       }
++   };
+Target: 1.0
+
+Summary: Exceptions raised in pretty-printers are not propagated
+Component: PVM
+Kind: BUG
+BZ: 26898
+Priority: 4
+Description:
++ When a pretty-printer raises an exception, the same exception shall be
++ propagated by the code in pvm_call_pretty_printer.
+Target: 1.0
+
+Summary: Better error handling in `atoi'
+Component: Runtime
+Kind: BUG
+BZ: 26899
+Priority: 3
+Description:
++ Currently `atoi' is unable to report where a parsed integer ends in the given string:
++
++ (poke) atoi ("23x")
++ 23L
++
++ I think there are two options for this:
++ a) To raise an error if the given string doesn't encode a valid integer
++    in its totality, or
++ b) To somehow return where the parsed integer ends in the string.
++
++ Also, errors are not currently handled:
++
++ (poke) atoi ("a")
++ 0L
+RFC: yes
+Target: 1.0
+
+Summary: Add `strtok' to the standard library
+Component: Runtime
+Kind: ENH
+Priority: 3
+Description:
++ defun strok = (string s, string sep) char[]:
++ Returns an array of tokens.
+RFC: yes
+
+Summary: Make poke_interactive_p available to Poke programs
+Component: Runtime
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: Add an API for client-provided IOD implementations to libpoke
+Component: Library
+Kind: ENH
+Priority: 3
+Description:
++ A suitable API shall be provided in libpoke.h in order to allow
++ tadding additional IOD implementations.
+Target: 1.0
+RFC: yes
+
+Summary: Add an elisp MI interface to poke.el
+Component: Emacs
+Kind: ENH
+Priority: 3
+Description:
++ The foundation of an Emacs interface to poke is the handling of the MI
++ interface.  Code should be added to poke.el in order to launch a poke
++ process, get the version, exit the process, and call the different
++ supported MI messages.
+RFC: yes
+
+Summary: Pass the declaration's pk_value in callback pk_map_decl_fn
+Component: Library
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: Support IO transactions
+Component: IO
+Kind: ENH
+Priority: 2
+Description:
++ (poke) ... poke something ...
++ (poke*) ... poke something more ...
++ (poke*) .changes
++ - 000043: 0034 aabb
++ + 000043: ffff ffff
++ (poke*) .commit
++ Written 4 #B to IO foo.o
++
++ (poke*) .rollback
+
+Summary: Support N-byte endianness
+Component: IO
+Kind: ENH
+Priority: 2
+Description:
++ For 2-byte endianness:
++
++ (poke) .set endian little,big,host
++ (poke) .set word-size 16
+Note: This would be soooooo cool :) - jemarch
+
+Summary: Process IOD
+Component: IO
+Kind: ENH
+Priority: 3
+Description:
++ Handler syntax:  pid://NUMBER
++
++ Provides access to poke the memory of some given process.
++ The process is specified by process-id: pid://1234
+Target: 1.0
+
+Summary: Support Poke IOS Translators
+Component: IO
+Kind: ENH
+Priority: 2
+Description:
++ This requires support for specifying method implementations in struct
++ constructors.
++
++ The goal of this project is to being able to "translate" an IO space
++ using Poke code.  Example:
++
++   var my_translator
++     = IOS_Translate { readp = my_readp, writep = my_writep ... };
++
++   var outer = open ("disk.img");
++   var inner = translate (outer, my_translator);
++
++ In this scenario, the methods in ``my_translator`` are invoked when IO
++ mapping is performed in ``inner``::
++
++   int @ inner : 0#B -> calls my_read
++
++ When the methods in ``my_translator`` run, the current IOS is ``outer``.
++
++ The ``IOS_Translate`` type shall be defined in ``std.pk`` and
++ basically implements the IOD interface in ``ios-dev.h`:
++
++   type IOS_Translate =
++    struct
++    {
++      fun readp = ...;
++      fun writep = ...;
++    };
++
++ This of course depends on support for setting methods in struct
++ constructors.
+Requires: Support setting methods in struct constructors
+
+Summary: Support setting methods in struct constructors
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ It should be possible to specify methods in struct contructors.  This
++ will make it feasible to express interfaces in Poke using struct
++ types:
++
++   type Iface =
++   struct
++   {
++     method foo = ...;
++     method bar = ...;
++   }
++
++ Then:
++
++   Iface { foo = my_foo, bar = my_bar }
+Target: 1.0
+
+Summary: Add IOS_EPERM and exception E_perm
+Component: IO
+Kind: ENH
+Priority: 3
+Description:
++ We need to incorporate an IOS_EPERM error code, to report cases where
++ we attempt to write to read-only IOS.
++
++ The peek*/poke* instructions in ``src/pvm.jitter`` shall raise E_perm
++ when they get IOS_EPERM.
++
++ Obviously a new exception ``E_perm`` shall be added as well.
+Target: 1.0
+
+Summary: Abstract the quiet mode in a poke_msg function
+Component: POKE
+Kind: ENH
+Priority: 2
+Description: This will avoid duplicating conditionals everywhere.
+Target: 1.0
+
+Summary: .set with no arguments should give a summary of all options
+Component: CLI
+Kind: ENH
+Priority: 3
+Description:
++ This requires work in rec-cmd.c, because the current infrastructure
++ doens't support this.
+Target: 1.0
+
+Summary: Add command-line option to disable the hserver
+Component: POKE
+Kind: ENH
+Priority: 3
+Descritpion: Something like --no-hserver
+Target: 1.0
+
+Summary: Support language-level construct for easy redirections to pipes/files
+Component: Language
+Kind: ENH
+Priority: 2
+Description:
++ Support the syntax in `print' and `printf', like AWK does:
++
++   print "foo" > OUTPUT-FILE
++   print "foo" >> OUTPUT-FILE
++   print "foo" | COMMAND
++   print "foo" |& COMMAND
++
++ Or have `send' and `receive'?
++
++   send "foo" |& COMMAND
++   receive
++
++ Or `pipe'?
++
++   pipe VAL > OUTPUT-FILE
++   pipe VAL >> OUTPUT-FILE
++   pipe VAL | COMMAND
+RFC: yes
+
+Summary: Support the command `info types'
+Component: CLI
+Kind: ENH
+Priority: 3
+Description:
++ (poke) info types
++ Name      Class    Defined at
++ ----      -----    ----------
++ ElfHdr    struct   elf.pkl:125
++ Foo       array    <cmdline>
+Requires: pk-table
+Target: 1.0
+
+Summary: Auto-complete value attributes
+Component: CLI
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: Use json-c instead of tcllib json modules in the GUI
+Component: GUI
+Kind: ENH
+Priority: 3
+Description:
++ The JSON support in Tcllib is very bad, and relying on it introduces a
++ run-time dependency that is not easy to check for.  Better to use the
++ json-c that we also require for libpoke.
+Target: 1.0
+
+Summary: pk-table
+Component: CLI
+Kind: ENH
+Priority: 4
+Description:
++ With hyperlinks!
++ Add property maximum width.
++ Pagination?
++
++ API in this spirit:
++
++   table = pk_table_new ();
++   pk_table_header (table, "IOS");  (adds class table_header)
++   pk_table_header (table, "Name");
++   pk_table_row ([CLASS...]);
++   pk_table_column (table, "10", [CLASS...]);
++   pk_table_column (table, "<global>", [CLASS...]);
++   pk_table_print (table);
++   pk_table_free (table);
+Target: 1.0
+Hacker: jemarch@gnu.org
+RFC: yes
+
+Summary: Modeline and toolbar
+Component: CLI
+Kind: ENH
+Priority: 3
+Description:
++ -- ./foo.o [elf]
++ (poke)
++ -- ./foo.o [elf]
++ (poke)
++
++ Customizable:
++
++ %m -> comma-separated list of maps.
++ %i -> IO space name
++
++ mode_line_format = "-- %i [%m]"
++
++ Styling classes:
++
++ mode-line
++ mode-line-map-list
++ mode-line-ios
++
++ Can have a toolbar with hyperlinks, associated with Poke functions!
+Target: 1.0
+RFC: yes
+
+Summary: pk-term-query
+Component: CLI
+Kind: ENH
+Priority: 3
+Description:
++ Query:
++
++    char *pk_term_query (const char *prompt,
++                         int (*valid_p) (const char *input),
++                         complete_fn)
++
++ Based on readline.
++ Ctrl-C cancels query, and makes pk_term_query return NULL.
++ Language-level support.
++
++ Predefined functions:
++
++    char *pk_term_query_yesno (const char *prompt);
++
++ Integration in cmd:
++
++    cmd subcmd1 subcmd2 arg1, arg2
++
++    Interactive selection of subcommands and input of command arguments:
++
++    (poke) cmd
++    a) subcmd1a
++    b) subcmd1b
++    c) subcmd1c
++    subcommand? _
++    (poke) cmd subcmd1b _
++    a) subcmd2a
++    b) subcmd2b
++    subcommand? _
++    (poke) cmd subcmd1b subcmd2a _
++    arg1? _
++    arg2? _
++    ... execute command ...
++
++ Real example:
++
++    (poke) .map entry add
++    map? foobarbaz
++    map? mp3
++    variable? foo
++    ios (optional)? 2
++    [map: mp3, variable: foo, ios: 2]  Input correct? yes
++    (poke) .map show mp3
++    Offset        Entry
++    ...           mp3::foo
++    (poke)
++
++ Note how above foobarbaz is an invalid entry, i.e. a map that doesn't
++ exist.
++
++ The confirmation query is optional and configurable by the user.
++
++ Two alternatives:
++ 1) Use the information in struct pk_cmd entries to guide the
++    interactive process.
++ 2) To add an entry in struct pk_cmd with a function that guides the
++    interactive process.
++
++ We can use 2) if the function is specified, and fallback to 1) if the
++ function is NULL.
+RFC: yes
+
+Summary: Move the initialization of the hserver to pk-repl.c
+Component: POKE
+Kind: ENH
+Priority: 3
+Description: hserver business should be encapsulated in pk-repl.c
+Target: 1.0
+
+Summary: Auto-complete map names in .map
+Component: CLI
+Kind: ENH
+Priority: 2
+
+Summary: Auto-complete yes|no in commands
+Component: CLI
+Kind: ENH
+Priority: 3
+Target: 1.0
+
+Summary: Routine to get an unique memory IO space name
+Component: IO
+Kind: ENH
+Priority: 3
+Description: uniquify.el
++
++     forward
++     reverse
++     post-forward
++     post-forward-angle-brackets
++
++ Support all three styles:
++ .set uniquify-style (forward|reverse|post-forward|post-forward-angle-brackets)
++ This is for recognizing names in #"...." constructs.
++
++    #"foo.o"
++
++ For this we need auto-completion to work well.
+Target: 1.0
+RFC: yes
+
+Summary: .info type TYPENAME
+Component: CLI
+Kind: ENH
+Priority: 3
+Description:
++ This command, given the name of a type, should print an informative
++ description on the fields and methods that the type defines:
++
++   Fields:
++     f1, f2, f3, f4...
++   Methods:
++     m1, m2, m3, ...
++
++ The implementation should use the libpoke services in order to get the
++ declaration of TYPE, and then to inspect the returned ``pk_type``.
++
++ Once we support docstrings in both fields and methods, the output of
++ ``.info type`` can be expanded to use them.
+Target: 1.0
+
+Summary: .vm time
+Component: CLI
+Kind: ENH
+Priority: 2
+Description:
++ This command will measure and show the time spent to execute some
++ given expression/statement.  The computed time shall be decomposed
++ into several components:
++
++ - Time spent in the compiler.
++ - Time spent in the PVM.
++  - Total amount of time.
+
+Summary: Write IEEE754 pickle
+Component: Pickles
+Kind: ENH
+Priority: 2
+
+Summary: Write RFC 8794 (ebml) pickle
+Component: Pickles
+Kind: ENH
+Priority: 2
+
+Summary: Write pickles for unicode
+Component: Pickles
+Kind: ENH
+Priority: 2
+Description: unicode.pk  (also handling ucs encodings)
++ utf8.pk
++ utf16.pk
++
++ Manual for libunistring:
++ http://www.gnu.org/software/libunistring/manual/libunistring.html
++
++ - unicode_character_name (UCS4) string:
++ - display width (for printing)
++ - We don't need explicit check functions because that logic shall be
++   implemented in the UTF8 type definitions (constraints.)
++ - Conversion functions (utf* -> utf*)
++ - mblen functions are not needed because the logic is implemented as part
++   of the mapping.
++ - ditto for the *cpy functions.
++ - ditto for the *move functions.
++ - ditto for the *mbsnlen functions.
++ - ditto for *next and *prev.
++ - ditto for *strlen.
++ - Comparison functions are useful (for sorting for example.)
+RFC: yes
+
+Summary: Write pickle for mseed (geological formats)
+Component: Pickles
+Kind: ENH
+Priority: 2
+Description:
++ And data encodings for the payloads: GEOSCOPE, STEIM-1 and STEIM-2
++ encoded integers, etc.
+
+Summary: Write pickle for tar files (PAX)
+Component: Pickles
+Kind: ENH
+Priority: 2
+
+Summary: Write pickle for openpgp (RFC 4880)
+Component: Pickles
+Kind: ENH
+Priority: 2
+
+Summary: parallelize the dg testsuite
+Component: Testsuite
+Kind: ENH
+Priority: 2
+Description:
++ The dg testsuites are big.  We need to be able to run the tests in
++ parallel.  A good place where to look for inspiration for this task is
++ the GCC testing infrastructure.
+Target: 1.0
+
+Summary: Document language operand promotion rules in the manual
+Component: Documentation
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: Document array casts in the manual
+Component: Documentation
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: Document poke CSS classes in the manual
+Component: Documentation
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: Note in the manual how arrays built from array literals are unbounded
+Component: Documentation
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: docuemnt poke maps in the manual
+Component: Documentation
+Kind: ENH
+Priority: 2
+Target: 1.0
+
+Summary: document the libpoke API in the manual
+Component: Documentation
+Kind: ENH
+Priority: 2
+Description: Preferably generating it from libpoke.h
+Target: 1.0
+RFC: yes
+
+Summary: Complete PVM values and PKL nodes support in poke-gdb.scm
+Component: Other
+Kind: ENH
+Priority: 3
+Target: 1.0
+
+Summary: Gettextize strings in the codebase
+Component: Other
+Kind: ENH
+Priority: 3
+Target: 1.0
+
+Summary: Use upper-letter names for macro arguments consistenly
+Component: Other
+Kind: ENH
+Priority: 2
+
+Summary: Make boehm-gc.suppressions more generic
+Component: Other
+Kind: ENH
+Priority: 2
+
+%rec: Release
+%key: Version
+%type: Version regexp /^[0-9]+\.[0-9]+$/
+%type: ReleaseDate date
+
+Version: 1.0
+
+%rec: Hacker
+%key: Email
+
+Name: Jose E. Marchesi
+Email: jemarch@gnu.org
+
+Name: Egeyar Bagcioglu
+Email: egeyar@gmail.com
+
+Name: John Darrington
+Email: jmd@gnu.org
+
+Name: Luca Saiu
+Email: positron@gnu.org
+
+Name: Darshit Shah
+Email: darnir@gnu.org
+
+Name: Dan Čermák
+Email: dan.cermak@cgc-instruments.com
+
+Name: Carlo Caione
+Email: ccaione@baylibre.com
+
+Name: Eric Blake
+Email: eblake@redhat.com
+
+Name: Tim Ruehsen
+Email: tim.ruehsen@gmx.de
+
+Name: Aurélien Aptel
+Email: aaptel@suse.com
+
+Name: Mohammad-Reza Nabipoor
+Email: m.nabipoor@yahoo.com

@@ -7,6 +7,11 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2020-11-14
+* The newly introduced file POKE contains a recutils database with
+  development resources: tasks, releases, etc, along with several
+  useful maintainer targets.  See HACKING.
+
 2020-10-28
 * libpoke is now built with all symbols hidden by default.  Public symbols
   in libpoke.h are explicitly marked as such.
