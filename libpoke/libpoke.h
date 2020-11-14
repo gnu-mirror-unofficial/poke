@@ -617,7 +617,7 @@ pk_val pk_array_elem_val (pk_val array, uint64_t idx) LIBPOKE_API;
 
 /* Insert a new element into an array.
 
-   More than oen element may be created, depending on the provided
+   More than one element may be created, depending on the provided
    index.  In that case, all the new elements contain a copy of VAL.
 
    If the index corresponds to an existing element, the array remains
@@ -625,7 +625,7 @@ pk_val pk_array_elem_val (pk_val array, uint64_t idx) LIBPOKE_API;
 
    This function sets the bit-offset of the inserted elements.  */
 
-void pk_array_insert_elem (pk_val array, pk_val idx, pk_val val)
+void pk_array_insert_elem (pk_val array, uint64_t idx, pk_val val)
   LIBPOKE_API;
 
 /* Set the value of the element of an array.
