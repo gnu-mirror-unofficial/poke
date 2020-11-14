@@ -8,8 +8,8 @@ poke.
   notice and this notice are preserved.
 
 2020-11-14
-* The newly introduced file POKE contains a recutils database with
-  development resources: tasks, releases, etc, along with several
+* The newly introduced file etc/poke.rec contains a recutils database
+  with development resources: tasks, releases, etc, along with several
   useful maintainer targets.  See HACKING.
 
 2020-10-28

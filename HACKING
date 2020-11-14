@@ -38,7 +38,7 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
        2. 5  Personal Branches
        2. 6  Building Release Tarballs
        2. 7  Installing Obvious Changes
-       2. 8  The POKE database
+       2. 8  The poke.rec database
        2. 9  The Bugzilla
          2. 9.1  Dealing with spam in the Bugzilla
        2.10  Recording noteworthy development changes
@@ -250,15 +250,16 @@ send an email to the mailing list stating you installed the change.
 Please include a suggestive tag in your email's subject, something
 like ``[COMMITTED]``.  Also, make sure to include the patch itself.
 
-The POKE database
-~~~~~~~~~~~~~~~~~
+The poke.rec database
+~~~~~~~~~~~~~~~~~~~~~
 
-We maintain a database in POKE, in the form of a recfile.  See
-http://www.gnu.org/software/recutils for more information on recfiles.
+We maintain a database in ``etc/poke.rec``, in the form of a recfile.
+See http://www.gnu.org/software/recutils for more information on
+recfiles.
 
 This database is kept up to date by the maintainer, and contains lots
 of information on the current tasks to do, bugs, release, asn so on.
-See the comment at the top of POKE for more information.
+See the comment at the top of ``poke.rec`` for more information.
 
 The Bugzilla
 ~~~~~~~~~~~~
@@ -273,7 +274,7 @@ If the bugzilla URL ever changes it should be updated in
 
 Once a new bug is submitted to bugzilla, a maintainer will eventually
 look at it and, if confirmed as a bug, will add an entry for it to
-POKE.
+``etc/poke.rec``.
 
 Dealing with spam in the Bugzilla
 .................................

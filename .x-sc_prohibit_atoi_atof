@@ -1,4 +1,4 @@
 libpoke/*
 *.texi
 *.pk
-POKE
+etc/poke.rec

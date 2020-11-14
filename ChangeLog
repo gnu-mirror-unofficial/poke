@@ -1,3 +1,12 @@
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke.rec: Renamed from POKE.
+	* DEV-NEWS: Updated to reflect new name.
+	* HACKING: Likewise.
+	* TODO: Likewise.
+	* .x-sc_prohibit_atoi_atof: Likewise.
+	* .x-sc_space_tab: Likewise.
+
 2020-11-14  Bruno Haible  <bruno@clisp.org>
 
 	Fix 'make dist' failure.
