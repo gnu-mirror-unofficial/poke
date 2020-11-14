@@ -2262,6 +2262,44 @@ Component: Other
 Kind: ENH
 Priority: 2
 
+Summary: Union constructors are not aware of field coupling
+Component: Compiler
+Kind: BUG
+BZ: 26900
+Priority: 3
+Description: 
++ The algorithm used by the struct constructors assumes that the fields
++ are disjoint.  Therefore, this works as intended:
++ 
++   (poke) type Bar = union { int a : a == 10; int b : b == 10;  };
++   (poke) Bar { a = 11}
++   unhandled constraint violation exception
++ 
++ But this doesn't:
++ 
++   (poke) type Bar = union { int a : a == 10; int b : b < 10;  };
++   (poke) Bar { a = 11}
++   Bar {
++     b=0x0
++   }
++ 
++ The solution for this is to make the constructor to be aware of the
++ coupling of fields.  For unions, this coupling is determined only by
++ their size: labels are not allowed in unions.  Therefore, this should
++ be calculated at run-time.  This is a difficult problem.
+Target: 1.0
+Note: 
++ The following ass-struct-int-* test can be added to the testsuite as
++ soon as this is fixed:
++
++ /* { dg-do run } */
++
++ type Foo = union { int a : a < 10; int b : b < 20; };
++ var f = Foo { };
++
++ /* { dg-command {try f.a = 30; catch if E_constraint { print "caught\n"; } } } */
++ /* { dg-output "caught" } */
+
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
