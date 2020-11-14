@@ -2287,6 +2287,12 @@ Description:
 + coupling of fields.  For unions, this coupling is determined only by
 + their size: labels are not allowed in unions.  Therefore, this should
 + be calculated at run-time.  This is a difficult problem.
++ 
++ However, it seems to me that if the user provides an initial value in
++ an union constructor, she is definitely interested in using that
++ alternative, and no other, and thus the union constructors should
++ _not_ try other alternatives in case the new value violates a
++ constraint.  This is the solution!
 Target: 1.0
 Note: 
 + The following ass-struct-int-* test can be added to the testsuite as

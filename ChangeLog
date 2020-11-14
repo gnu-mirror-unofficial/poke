@@ -1,6 +1,11 @@
 2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/poke.rec (Union constructors are not aware of field
+	coupling): Add more details.
+
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke.rec (Union constructors are not aware of field
 	coupling): New bug.
 	* .x-sc_trailing_blank: Add etc/poke.rec
 
