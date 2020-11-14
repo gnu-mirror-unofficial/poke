@@ -100,7 +100,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
 
   arr->mapped_p = 0;
   arr->ios = PVM_NULL;
-  arr->offset = PVM_NULL;
+  arr->offset = pvm_make_ulong (0, 64);
   arr->elems_bound = PVM_NULL;
   arr->size_bound = PVM_NULL;
   arr->mapper = PVM_NULL;

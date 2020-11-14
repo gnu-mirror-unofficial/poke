@@ -1,5 +1,10 @@
 2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_make_array): Initialize the bit-offset of
+	the array to 0#B.
+
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Union constructors are not aware of field
 	coupling): Add more details.
 
