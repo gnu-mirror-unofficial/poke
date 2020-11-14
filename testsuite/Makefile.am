@@ -542,8 +542,6 @@ EXTRA_DIST = \
   poke.pkl/ass-diag-8.pk \
   poke.pkl/ass-diag-9.pk \
   poke.pkl/ass-function-1.pk \
-  poke.pkl/ass-map-diag-1.pk \
-  poke.pkl/ass-map-diag-2.pk \
   poke.pkl/ass-offset-1.pk \
   poke.pkl/attr-diag-1.pk \
   poke.pkl/attr-ios-1.pk \
