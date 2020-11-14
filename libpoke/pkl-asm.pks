@@ -324,7 +324,7 @@
         popf 1
         .end
 
-;;; SSETI
+;;; SSETI @struct_type
 ;;; ( SCT STR VAL -- SCT )
 ;;;
 ;;; SSET with data integrity.
@@ -345,7 +345,7 @@
         sref                    ; VAL SCT STR OVAL
         tor                     ; VAL SCT STR [STR OVAL]
         rot                     ; SCT STR VAL [STR OVAL]
-        ;; Now the set new value.
+        ;; Now set the new value.
         sset                    ; SCT [STR OVAL]
         fromr                   ; SCT OVAL [STR]
         fromr                   ; SCT OVAL STR

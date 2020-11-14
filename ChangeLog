@@ -1,5 +1,9 @@
 2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-asm.pks: Fix a couple of typos.
+
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: Define PKL_INSN_SSETI.
 	* libpoke/pkl-asm.c (pkl_asm_insn): Handle the SSETI
 	macro-instruction.
