@@ -1,5 +1,12 @@
 2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: Remove trailing whitespaces.
+	* .x-sc_prohibit_atoi_atof: Add POKE.
+	* .x-sc_space_tab: Likewise.
+	* POKE: Remove repeated words.
+
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* POKE: New file.
 	* DEV-NEWS: Mention POKE.
 	* HACKING (Deciding on What to Work on): Remove section.

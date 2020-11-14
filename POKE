@@ -1072,7 +1072,7 @@ Component: Compiler
 Kind: OPT
 Priority: 3
 Description:
-+ Field labes that are literal should not result in the the containing
++ Field labes that are literal should not result in the containing
 + struct type to be considered not completed, i.e. this struct type:
 +
 +   struct
@@ -1399,7 +1399,7 @@ Description:
 + already declared entity.
 Target: 1.0
 
-Summary: Source line is missing in in-type struct errors
+Summary: Source line is missing on in-type struct errors
 Component: Compiler
 Kind: BUG
 BZ: 26891

@@ -633,7 +633,7 @@ void pk_array_insert_elem (pk_val array, pk_val idx, pk_val val)
    ARRAY is the array value.
    IDX is the index of the element whose value is set.
    VAL is the new value for the array element.
-   
+
    This function may change the bit-offsets of the elements following
    the element just inserted.
 

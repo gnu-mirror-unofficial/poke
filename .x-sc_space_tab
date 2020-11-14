@@ -5,3 +5,4 @@ libpoke/ios.c
 poke/pk-map-tab.y
 poke/pk-map-lex.l
 m4/tcl.m4
+POKE
