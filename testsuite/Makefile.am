@@ -123,6 +123,7 @@ EXTRA_DIST = \
   poke.map/ass-map-15.pk \
   poke.map/ass-map-16.pk \
   poke.map/ass-map-17.pk \
+  poke.map/ass-map-struct-int-1.pk \
   poke.map/map-opcond-write-1.pk \
   poke.map/map-optcond-1.pk \
   poke.map/map-optcond-2.pk \
@@ -543,6 +544,8 @@ EXTRA_DIST = \
   poke.pkl/ass-diag-9.pk \
   poke.pkl/ass-function-1.pk \
   poke.pkl/ass-offset-1.pk \
+  poke.pkl/ass-struct-int-1.pk \
+  poke.pkl/ass-struct-int-2.pk \
   poke.pkl/attr-diag-1.pk \
   poke.pkl/attr-ios-1.pk \
   poke.pkl/attr-ios-2.pk \

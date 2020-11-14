@@ -738,13 +738,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
         break;
       }
     case PKL_AST_STRUCT_REF:
-      /* Stack: VAL SCT ID */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSET);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The struct
-                                                    value.  */
-      break;
+      {
+        /* Stack: VAL SCT ID */
+
+        pkl_ast_node sct = PKL_AST_INDEXER_ENTITY (lvalue);
+        pkl_ast_node struct_type = PKL_AST_TYPE (sct);
+
+        assert (PKL_AST_TYPE_S_CONSTRUCTOR (struct_type) != PVM_NULL);
+
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSETI, struct_type);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The struct
+                                                      value.  */
+        break;
+      }
     case PKL_AST_MAP:
       {
         /* Stack: VAL IOS OFF */
@@ -2728,6 +2736,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
           RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure, type_struct);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC); /* SCT CLS */
+
+          /* Since this is an anonymous struct, install the
+             constructor in it.  This is needed by other operations
+             like sseti.  */
+          PKL_AST_TYPE_S_CONSTRUCTOR (type_struct) = constructor_closure;
         }
 
       /* Call the constructor to get a new struct.  */

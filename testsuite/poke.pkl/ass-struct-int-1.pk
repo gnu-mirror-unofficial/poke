@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type Foo = struct { int i : i != 20; };
+var f = Foo { i = 10 };
+
+/* { dg-command {try f.i = 20; catch if E_constraint { print "caught\n";}} } */
+/* { dg-output "caught" } */
+/* { dg-command {f.i} } */
+/* { dg-output "\n10" } */
+/* { dg-command {f.i = 12} } */
+/* { dg-command {f.i} } */
+/* { dg-output "\n12" } */

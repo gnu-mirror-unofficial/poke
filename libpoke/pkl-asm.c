@@ -895,6 +895,21 @@ pkl_asm_insn_cmp (pkl_asm pasm,
     assert (0);
 }
 
+/* Macro-instruction: SSETI struct_type
+   ( SCT STR VAL -- SCT )
+
+   Given a struct, a string containing the name of a struct element,
+   and a value, set the value to the referred element.  If setting the
+   element causes a problem with the integrity of the data stored in
+   the struct (for example, a constraint expresssion fails) then the
+   operation is aborted and PVM_E_CONSTRAINT is raised.  */
+
+static void
+pkl_asm_insn_sseti (pkl_asm pasm, pkl_ast_node struct_type)
+{
+  RAS_MACRO_SSETI (struct_type);
+}
+
 /* Macro-instruction: ACONC array_elem_type
    ( ARR ARR -- ARR ARR ARR )
 
@@ -1518,6 +1533,17 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
         case PKL_INSN_ACONC:
           pkl_asm_insn_aconc (pasm);
           break;
+        case PKL_INSN_SSETI:
+          {
+            pkl_ast_node struct_type;
+
+            va_start (valist, insn);
+            struct_type = va_arg (valist, pkl_ast_node);
+            va_end (valist);
+
+            pkl_asm_insn_sseti (pasm, struct_type);
+            break;
+          }
         case PKL_INSN_MACRO:
         default:
           assert (0);

@@ -324,6 +324,61 @@
         popf 1
         .end
 
+;;; SSETI
+;;; ( SCT STR VAL -- SCT )
+;;;
+;;; SSET with data integrity.
+;;;
+;;; Given a struct, a string containing the name of a struct element,
+;;; and a value, set the value to the referred element.
+;;;
+;;; If setting the element causes a problem with the integrity of the
+;;; data stored in the struct (for example, a constraint expresssion
+;;; fails) then the operation is aborted and PVM_E_CONSTRAINT is raised.
+
+        .macro sseti @struct_type
+        ;; First, save the previous value of the referred field
+        ;; and also the field name.
+        nrot                    ; VAL SCT STR
+        dup                     ; VAL SCT STR STR
+        tor                     ; VAL SCT STR [STR]
+        sref                    ; VAL SCT STR OVAL
+        tor                     ; VAL SCT STR [STR OVAL]
+        rot                     ; SCT STR VAL [STR OVAL]
+        ;; Now the set new value.
+        sset                    ; SCT [STR OVAL]
+        fromr                   ; SCT OVAL [STR]
+        fromr                   ; SCT OVAL STR
+        rot                     ; OVAL STR SCT
+        ;; Invoke the constructor of the struct in itself.  If it
+        ;; raises E_constraint, then restore the original value
+        ;; and re-raise the exception.
+        .let #constructor = PKL_AST_TYPE_S_CONSTRUCTOR (@struct_type)
+        push PVM_E_CONSTRAINT
+        pushe .integrity_fucked
+        dup                     ; OVAL STR SCT SCT CLS
+        push #constructor       ; OVAL STR SCT SCT CLS
+        call                    ; OVAL STR SCT SCT
+        pope
+        drop                    ; OVAL STR SCT
+        nip2                    ; SCT
+        ba .integrity_ok
+.integrity_fucked:
+        ;; The constructor says this modification violates the
+        ;; integrity of the data as defined by the struct type.
+        ;; Restore the old value in the struct and re-raise the
+        ;; exception.
+        tor                     ; OVAL STR SCT [EXCEPTION]
+        quake                   ; STR OVAL SCT [EXCEPTION]
+        nrot                    ; SCT STR OVAL [EXCEPTION]
+        sset                    ; SCT [EXCEPTION]
+        fromr                   ; SCT EXCEPTION
+        raise
+.integrity_ok:
+        ;; Everything went ok.  The struct with the new value
+        ;; is on the stack.
+        .end
+
 ;;; ACONC array_type
 ;;; ( ARR ARR -- ARR ARR ARR )
 ;;;

@@ -473,6 +473,10 @@ PKL_DEF_INSN(PKL_INSN_ATRIM, "a", "atrim")
 PKL_DEF_INSN(PKL_INSN_AIS, "", "ais")
 PKL_DEF_INSN(PKL_INSN_ACONC, "", "aconc")
 
+/* Struct macro-instructions.  */
+
+PKL_DEF_INSN(PKL_INSN_SSETI, "a", "sseti")
+
 /* Offset macro-instructions.  */
 
 PKL_DEF_INSN(PKL_INSN_ADDO, "a", "addo")

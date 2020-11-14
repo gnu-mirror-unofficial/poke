@@ -1,0 +1,15 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Foo = struct { int i : i != 0x20; };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var f = Foo  @ 0#B} } */
+/* { dg-command {try f.i = 0x20; catch if E_constraint { print "caught\n";}} } */
+/* { dg-output "caught" } */
+/* { dg-command {f.i} } */
+/* { dg-output "\n0x40" } */
+/* { dg-command {f.i = 0x12} } */
+/* { dg-command {f.i} } */
+/* { dg-output "\n0x12" } */

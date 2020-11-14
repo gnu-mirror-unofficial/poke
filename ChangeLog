@@ -1,5 +1,20 @@
 2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-insn.def: Define PKL_INSN_SSETI.
+	* libpoke/pkl-asm.c (pkl_asm_insn): Handle the SSETI
+	macro-instruction.
+	(pkl_asm_insn_sseti): New function.
+	* libpoke/pkl-asm.pks (sseti): New macro.
+	* libpoke/pkl-gen.c (pkl_gen_pr_ass_stmt): Use sseti.
+	(pkl_gen_pr_type_struct): Make constructors install constructors
+	for their contained anonymous structs.
+	* testsuite/poke.pkl/ass-struct-int-1.pk: New test.
+	* testsuite/poke.pkl/ass-struct-int-2.pk: Likewise.
+	* testsuite/poke.map/ass-map-struct-int-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec: Renamed from POKE.
 	* DEV-NEWS: Updated to reflect new name.
 	* HACKING: Likewise.
