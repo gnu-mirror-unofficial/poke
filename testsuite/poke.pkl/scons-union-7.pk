@@ -8,5 +8,5 @@ type Bar =
     int c : c == 2;
   };
 
-/* { dg-command { try Bar { a = 100, c = 20 }; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-command { try Bar { c = 20 }; catch if E_constraint { printf "caught\n"; } } } */
 /* { dg-output "caught" } */

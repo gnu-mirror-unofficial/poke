@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+type Foo = union { byte b : b > 0; int i; };
+Foo { b = 0, i = 0 }; /* { dg-error "exactly one" } */

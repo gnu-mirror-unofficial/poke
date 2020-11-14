@@ -2,5 +2,5 @@
 
 type Foo = union { int i : i != 0; long l : l != 0; };
 
-/* { dg-command { try Foo {}; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-command { try Foo { i = 0 }; catch if E_constraint { printf "caught\n"; } } } */
 /* { dg-output "caught" } */

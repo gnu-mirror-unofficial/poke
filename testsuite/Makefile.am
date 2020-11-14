@@ -546,6 +546,8 @@ EXTRA_DIST = \
   poke.pkl/ass-offset-1.pk \
   poke.pkl/ass-struct-int-1.pk \
   poke.pkl/ass-struct-int-2.pk \
+  poke.pkl/ass-union-int-1.pk \
+  poke.pkl/ass-union-int-2.pk \
   poke.pkl/attr-diag-1.pk \
   poke.pkl/attr-ios-1.pk \
   poke.pkl/attr-ios-2.pk \
@@ -1337,6 +1339,9 @@ EXTRA_DIST = \
   poke.pkl/scons-union-6.pk \
   poke.pkl/scons-union-7.pk \
   poke.pkl/scons-union-8.pk \
+  poke.pkl/scons-union-9.pk \
+  poke.pkl/scons-union-10.pk \
+  poke.pkl/scons-union-diag-1.pk \
   poke.pkl/scons-union-method-1.pk \
   poke.pkl/scons-union-method-2.pk \
   poke.pkl/scons-union-method-3.pk \

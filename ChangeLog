@@ -1,5 +1,28 @@
 2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_scons): Union constructors
+	require exactly one field initializer.
+	* libpoke/pkl-gen.pks (struct_constructor): Implement new
+	semantics for union construction.
+	* testsuite/poke.pkl/scons-56.pk: Adjust test.
+	* testsuite/poke.pkl/scons-union-1.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-3.pk: LIkewise.
+	* testsuite/poke.pkl/scons-union-5.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-6.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-7.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-8.pk: Likewise
+	* testsuite/poke.pkl/scons-union-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-10.pk: New test.
+	* testsuite/poke.pkl/scons-union-diag-1.pk: New test.
+	* testsuite/poke.pkl/scons-union-9.pk: Likewise.
+	* testsuite/poke.pkl/ass-union-int-1.pk: Likewise.
+	* testsuite/poke.pkl/ass-union-int-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update tests.
+	* doc/poke.texi (Union Constructors): New section.
+
+2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_make_struct): Initialize the bit-offset
 	of the struct to 0#B.
 

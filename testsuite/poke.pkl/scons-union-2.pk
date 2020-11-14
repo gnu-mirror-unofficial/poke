@@ -2,5 +2,5 @@
 
 type Bar = union { int i : i != 0; long l : l == 0; };
 
-/* { dg-command { Bar { } } } */
-/* { dg-output "Bar \{l=0L\}" } */
+/* { dg-command { try Bar { i = 0 }; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

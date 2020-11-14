@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type Foo = union { byte b : b > 0; int i; };
+
+/* { dg-command {try Foo {b = 0}; catch if E_constraint { printf "caught\n"; }} } */
+/* { dg-output "caught" } */
+/* { dg-command {Foo {b = 2}} } */
+/* { dg-output "\nFoo {b=2UB}" } */
+/* { dg-command {Foo {i = 3}} } */
+/* { dg-output "\nFoo {i=3}" } */
+/* { dg-command {Foo {}} } */
+/* { dg-output "\nFoo {i=0}" } */

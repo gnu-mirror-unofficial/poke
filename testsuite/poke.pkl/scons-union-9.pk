@@ -10,5 +10,5 @@ type Bar =
     int c : N == 2;
   };
 
-/* { dg-command { Bar { b = 0 } } } */
-/* { dg-output "Bar \{b=0\}" } */
+/* { dg-command { try Bar { c = 0 }; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

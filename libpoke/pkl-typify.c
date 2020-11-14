@@ -1914,6 +1914,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_scons)
   pkl_ast_node struct_fields = PKL_AST_STRUCT_FIELDS (astruct);
   pkl_ast_node elem = NULL;
 
+  /* Unions require either zero or exactly one initializer in their constructors.  */
+  if (PKL_AST_TYPE_S_UNION_P (scons_type)
+      && PKL_AST_STRUCT_NELEM (astruct) > 1)
+    {
+      PKL_ERROR (PKL_AST_LOC (astruct),
+                 "union constructors require exactly one field initializer");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
   /* This check is currently redundant, because the restriction is
      implicitly satisfied by the parser.  */
   if (PKL_AST_TYPE_CODE (scons_type) != PKL_TYPE_STRUCT)

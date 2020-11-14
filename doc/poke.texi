@@ -6659,6 +6659,7 @@ They contain heterogeneous collections of values.
 * Pinned Structs::		Fix the offset of fields.
 * Integral Structs::		Composite data stored in integers.
 * Unions::			Dealing with conditional data.
+* Union Constructors::          Constructing union values.
 * Optional Fields::		Fields that may or may not exist.
 * Casting Structs::		Converting structs from one type to another.
 * Declarations in Structs::	Declaring stuff within a struct.
@@ -7248,6 +7249,68 @@ XXX
 
 For performance purposes, it is good to always place the most common
 alternatives first in unions.
+
+@node Union Constructors
+@subsection Union Constructors
+
+Constructing union values is very similar to constructing struct
+values:
+
+@example
+@var{type_name} @{ [@var{field_initializer}] @}
+@end example
+
+The main difference is that union constructors require either exactly
+one field initializer, or none.  Specifying initialization values for
+more than one field doesn't make sense in the case of unions.
+
+Suppose we have the following union type:
+
+@example
+type Packet =
+  union
+  @{
+    byte b : b > 0;
+    int k;
+  @};
+@end example
+
+If we try to construct a @code{Packet} with an invalid @code{b}, we
+get a constraint error:
+
+@example
+(poke) Packet @{b = 0@}
+unhandled constraint violation exception
+@end example
+
+@noindent
+The reason why @code{k} is not chosen is because we specified @code{b}
+in the union constructor: we explicitly as for a @code{Packet} of that
+kind, but the data we provide doesn't accommodate to that.  If we
+wanted another kind of value, we could of course specify an initial
+value for @code{k} instead:
+
+@example
+(poke) Packet @{k = 10@}
+Packet @{
+  k=10
+@}
+@end example
+
+If no field initializer is specified in an union constructor then each
+alternative is tried assuming all fields have default values, which in
+the case of integral types is a zero:
+
+@example
+(poke) Packet @{@}
+Packet @{
+  k=0
+@}
+@end example
+
+@noindent
+Therefore the alternative @code{b} is considered invalid (it has to be
+bigger than 0) and @code{k} is chosen instead.
 
 @node Optional Fields
 @subsection Optional Fields

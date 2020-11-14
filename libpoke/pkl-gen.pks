@@ -1100,6 +1100,29 @@
         ;; obtained by subpassing in the value's type, or the field's
         ;; initializer.
         bnn .got_value         ; ... SCT ENAME null
+        ;; If the struct is an union, and the given struct contains one element
+        ;; (the compiler guarantees that it will be just one element)
+        ;; then we have to skip every field until we reach the only field that
+        ;; exists in $sct.
+ .c  if (PKL_AST_TYPE_S_UNION_P (@type_struct))
+ .c  {
+        .label .skip_field
+        .label .process_field
+        drop                    ; SCT ENAME
+        over                    ; SCT ENAME SCT
+        sel                     ; SCT ENAME SCT SEL
+        nip                     ; SCT ENAME SEL
+        bnzlu .skip_field
+        ba .process_field
+.skip_field:
+        ;; This is to keep the right lexical environment.
+        push null
+        regvar $foo
+        ba .alternative_failed
+.process_field:
+        drop                    ; SCT ENAME
+        push null               ; SCT ENAME null
+ .c  }
  .c if (@field_initializer)
  .c {
         drop
@@ -1114,7 +1137,6 @@
  .c   {
         .label .alternative_ok
         bnzi .alternative_ok
-        drop
         drop
         ba .alternative_failed
 .alternative_ok:
@@ -1183,6 +1205,7 @@
    .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
    .c   {
         ;; Alternative failed: try next alternative.
+        push null
         ba .alternative_failed
    .c   }
         push PVM_E_CONSTRAINT
@@ -1240,6 +1263,7 @@
         ;; And we are done :)
         ba .union_fields_done
 .alternative_failed:
+        drop
         drop                    ; ... ENAME
         drop                    ; ... EVAL
    .c }

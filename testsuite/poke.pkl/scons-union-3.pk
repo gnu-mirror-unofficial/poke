@@ -8,5 +8,5 @@ type Bar =
     int c : c == 2;
   };
 
-/* { dg-command { Bar { } } } */
+/* { dg-command { Bar { a = 0 } } } */
 /* { dg-output "Bar \{a=0\}" } */

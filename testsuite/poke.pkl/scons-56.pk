@@ -14,5 +14,5 @@ type Foo =
     };
 
 /* { dg-command { .set obase 16 } } */
-/* { dg-command { Foo {} } } */
+/* { dg-command { Foo { l32 = 0#B } } } */
 /* { dg-output {Foo {l32=0x0U#B}} } */
