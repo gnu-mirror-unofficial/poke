@@ -219,7 +219,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
   sct->mapped_p = 0;
   sct->mapped_p_back = 0;
   sct->ios = PVM_NULL;
-  sct->offset = PVM_NULL;
+  sct->offset = pvm_make_ulong (0, 64);
   sct->ios_back = PVM_NULL;
   sct->offset_back = PVM_NULL;
   sct->mapper = PVM_NULL;
