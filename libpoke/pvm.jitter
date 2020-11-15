@@ -5001,9 +5001,9 @@ instruction time ()
 
     gettime (&ts);
     (void) pvm_array_insert (arr, pvm_make_long (0, 64),
-                             pvm_make_ulong (ts.tv_sec, 64));
+                             pvm_make_long (ts.tv_sec, 64));
     (void) pvm_array_insert (arr, pvm_make_long (1, 64),
-                             pvm_make_ulong (ts.tv_nsec, 64));
+                             pvm_make_long (ts.tv_nsec, 64));
 
     JITTER_PUSH_STACK (arr);
   end
