@@ -158,6 +158,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jmd> I never place periods after my strncpy.",
      "<jmd> pokie pokie!",
      "<jmd> Hokus Pokus",
+     "<mnabipoor> I wanted making a zero-length array for a long(!) time",
      NULL
     };
   static int num_strings = 0;

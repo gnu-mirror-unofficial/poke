@@ -1,5 +1,9 @@
 2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-misc.c (pk_cmd_jmd): New quote.
+
+2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (time): Use pvm_make_array.
 	* testsuite/poke.time/gettimeofday-1.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
