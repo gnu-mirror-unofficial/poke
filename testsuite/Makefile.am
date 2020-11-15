@@ -1341,6 +1341,7 @@ EXTRA_DIST = \
   poke.pkl/scons-union-8.pk \
   poke.pkl/scons-union-9.pk \
   poke.pkl/scons-union-10.pk \
+  poke.pkl/scons-union-11.pk \
   poke.pkl/scons-union-diag-1.pk \
   poke.pkl/scons-union-method-1.pk \
   poke.pkl/scons-union-method-2.pk \

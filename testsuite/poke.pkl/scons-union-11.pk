@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Bar = union { byte a : a > 10; byte b : b < 20; };
+
+/* { dg-command {try Bar {b = 21}; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-output "caught\n" } */
