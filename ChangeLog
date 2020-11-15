@@ -1,5 +1,10 @@
 2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Union constructors are not aware of field
+	coupling): This is fixed.  Remove.
+
+2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_scons): Union constructors
 	require exactly one field initializer.
 	* libpoke/pkl-gen.pks (struct_constructor): Implement new
