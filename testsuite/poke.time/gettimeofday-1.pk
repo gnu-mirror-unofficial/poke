@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+load time;
+
+/* { dg-command {gettimeofday } } */
+/* { dg-output "Timespec {.*}" } */

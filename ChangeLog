@@ -1,5 +1,11 @@
 2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (time): Use pvm_make_array.
+	* testsuite/poke.time/gettimeofday-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/scons-union-11.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
 

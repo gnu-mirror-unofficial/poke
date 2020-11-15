@@ -5000,10 +5000,10 @@ instruction time ()
                                   pvm_make_integral_type (64, 1));
 
     gettime (&ts);
-    PVM_VAL_ARR_ELEM_VALUE (arr, 0) = pvm_make_long (ts.tv_sec, 64);
-    PVM_VAL_ARR_ELEM_OFFSET (arr, 0) = pvm_make_ulong (0, 64);
-    PVM_VAL_ARR_ELEM_VALUE (arr, 1) = pvm_make_long (ts.tv_nsec, 64);
-    PVM_VAL_ARR_ELEM_OFFSET (arr, 1) = pvm_make_ulong (0, 64);
+    (void) pvm_array_insert (arr, pvm_make_long (0, 64),
+                             pvm_make_ulong (ts.tv_sec, 64));
+    (void) pvm_array_insert (arr, pvm_make_long (1, 64),
+                             pvm_make_ulong (ts.tv_nsec, 64));
 
     JITTER_PUSH_STACK (arr);
   end
