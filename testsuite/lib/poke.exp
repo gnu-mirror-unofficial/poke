@@ -1,6 +1,7 @@
 # poke.exp - Infrastructure for testing poke in interactive mode.
 
-# Copyright (c) 2019, 2020 Jose E. Marchesi
+# Copyright (C) 2019, 2020 Jose E. Marchesi
+# Copyright (C) 2014-2020 Free Software Foundation
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -135,4 +136,137 @@ proc poke_test_cmd {cmd pattern} {
             fail "$test (timeout)"
         }
     }
+}
+
+# Given WRES, the result from "wait", issue a PASS
+# if the spawnee exited cleanly, or a FAIL for various kinds of
+# unexpected exits.
+
+proc verify_exit_status { executable wres } {
+    lassign $wres pid spawnid os_error_flag value
+    verbose "pid: $pid" 3
+    verbose "spawnid: $spawnid" 3
+    verbose "os_error_flag: $os_error_flag" 3
+    verbose "value: $value" 3
+
+    # Detect segfaults etc:
+    if { [llength $wres] > 4 } {
+        if { [lindex $wres 4] == "CHILDKILLED" } {
+            fail "$executable killed: $wres"
+            return
+        }
+    }
+    if { $os_error_flag != 0 } {
+        fail "$executable: OS error: $wres"
+        return
+    }
+    if { $value != 0 } {
+        fail "$executable: non-zero exit code: $wres"
+        return
+    }
+    pass "$executable exited cleanly"
+}
+
+# This is `host_execute` from `dejagnu-1.6.2-release/lib/dejagnu.exp`
+# modified to call `verify_exit_status` at the end.
+
+proc verified_host_execute {args} {
+    global text
+
+    set timeoutmsg "Timed out: Never got started, "
+    set timeout 100
+    set file all
+    set timetol 0
+    set arguments ""
+
+    if { [llength $args] == 0} {
+        set executable $args
+    } else {
+        set executable [string trimleft [lindex [split $args " "] 0] "\{"]
+        set params [string trimleft [lindex [split $args " "] 1] "\{"]
+        set params [string trimright $params "\}"]
+    }
+
+    verbose "The executable is $executable" 2
+    if {![file exists ${executable}]} {
+        perror "The executable, \"$executable\" is missing" 0
+        return "No source file found"
+    }
+
+    # spawn the executable and look for the DejaGnu output messages from the
+    # test case.
+    # spawn -noecho -open [open "|./${executable}" "r"]
+    spawn -noecho "./${executable}" ${params}
+    set prefix "\[^\r\n\]*"
+    expect {
+        -re "^$prefix\[0-9\]\[0-9\]:..:..:${text}*\r\n" {
+            regsub "\[\n\r\t\]*NOTE: $text\r\n" $expect_out(0,string) "" output
+            verbose "$output" 3
+            set timetol 0
+            exp_continue
+        }
+        -re "^$prefix\tNOTE:${text}*" {
+            regsub "\[\n\r\t\]*NOTE: $text\r\n" $expect_out(0,string) "" output
+            set output [string range $output 6 end]
+            verbose "$output" 2
+            set timetol 0
+            exp_continue
+        }
+        -re "^$prefix\tPASSED:${text}*" {
+            regsub "\[\n\r\t\]*PASSED: $text\r\n" $expect_out(0,string) "" output
+            set output [string range $output 8 end]
+            pass "$output"
+            set timetol 0
+            exp_continue
+        }
+        -re "^$prefix\tFAILED:${text}*" {
+            regsub "\[\n\r\t\]*FAILED: $text\r\n" $expect_out(0,string) "" output
+            set output [string range $output 8 end]
+            fail "$output"
+            set timetol 0
+            exp_continue
+        }
+        -re "^$prefix\tUNTESTED:${text}*" {
+            regsub "\[\n\r\t\]*TESTED: $text\r\n" $expect_out(0,string) "" output
+            set output [string range $output 8 end]
+            untested "$output"
+            set timetol 0
+            exp_continue
+        }
+        -re "^$prefix\tUNRESOLVED:${text}*" {
+            regsub "\[\n\r\t\]*UNRESOLVED: $text\r\n" $expect_out(0,string) "" output
+            set output [string range $output 8 end]
+            unresolved "$output"
+            set timetol 0
+            exp_continue
+        }
+        -re "^Totals" {
+            verbose "All done" 2
+        }
+        eof {
+            #       unresolved "${executable} died prematurely"
+            #       catch close
+            #       return "${executable} died prematurely"
+        }
+        timeout {
+            warning "Timed out executing test case"
+            if { $timetol <= 2 } {
+                incr timetol
+                exp_continue
+            } else {
+                catch close
+                return "Timed out executing test case"
+            }
+        }
+        -re "^$prefix\r\n" {
+            exp_continue
+        }
+    }
+
+    catch wait wres
+    verify_exit_status $executable $wres
+
+    # force a close of the executable to be safe.
+    catch close
+    return ""
 }

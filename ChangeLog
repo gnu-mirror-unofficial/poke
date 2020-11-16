@@ -1,3 +1,11 @@
+2020-11-16  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* testsuite/lib/poke.exp (verify_exit_status): New proc.
+	(verified_host_execute): Likewise.
+	* testsuite/poke.libpoke/libpoke.exp: Replace `host_execute` with
+	`verified_host_execute`.
+	* testsuite/poke.mi-json/mi-json.exp: Likewise.
+
 2020-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-misc.c (pk_cmd_jmd): New quote.

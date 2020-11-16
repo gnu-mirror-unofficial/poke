@@ -1,6 +1,6 @@
-load_lib "dejagnu.exp"
+load_lib "poke.exp"
 
 # Execute the test cases, and analyse the output
-if { [host_execute "poke.libpoke/values"] ne "" } {
-    perror "values had an execution error" 0
+if { [verified_host_execute "poke.libpoke/values"] ne "" } {
+    fail "values had an execution error"
 }
