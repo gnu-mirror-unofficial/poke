@@ -2262,6 +2262,30 @@ Component: Other
 Kind: ENH
 Priority: 2
 
+Summary: Use semi-open ranges in array trims
+Component: Language
+Kind: ENH
+Priority: 4
+Description:
++ At the moment the ranges used to specify array trims are closed in
++ both sides, i.e:
++
++   [1,2,3][0:1] -> [1,2]
++   [0:0] -> [1]
++
++ We want to change the range so the right part is interpreted as open,
++ like in:
++
++   [1,2,3][0:1] -> [1]
++   [0:0] -> []
++
++ Also, we want to support this alternative syntax: if +: is used
++ instead of : in the range, the second part denotes the number of
++ elements to include in the trim:
++
++   [1,2,3,4,5][1+:3] -> [2,3,4]
+Target: 1.0
+
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
