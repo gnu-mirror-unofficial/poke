@@ -2,6 +2,9 @@
 
 	* etc/poke.rec (Assign to sref with data integrity): Remove as
 	done.
+	(Implement {beginning,end}-of-defun-function functions in
+	poke-mode): New entry.
+	(Implement add-log-current-defun-function in poke-mode): Likewise.
 
 2020-11-16  Jose E. Marchesi  <jemarch@gnu.org>
 

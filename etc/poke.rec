@@ -462,6 +462,21 @@ Description:
 +     } js_scope;
 +   }
 
+Summary: Implement {beginning,end}-of-defun-function functions in poke-mode
+Component: Emacs
+Kind: ENH
+Priority: 2
+Description:
++ Having functions in poke-mode capable of locating the beginning and
++ end of functions and methods will allow us to navigate thru them, and
++ also to implement support for add-log-current-defun-function.
+
+Summary: Implement add-log-current-defun-function in poke-mode
+Component: Emacs
+Kind: ENH
+Priority: 2
+Requires: Implement {beginning,end}-of-defun-function functions in poke-mode
+
 Summary: struct _equal methods
 Component: Language
 Kind: ENH
