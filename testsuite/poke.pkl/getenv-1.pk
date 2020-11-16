@@ -6,5 +6,5 @@
 var picklesdir = getenv ("POKEPICKLESDIR");
 var length = picklesdir'length;
 
-/* { dg-command { picklesdir[length-8:length-1] } } */
+/* { dg-command { picklesdir[length-8:length] } } */
 /* { dg-output {"/pickles"} } */

@@ -557,6 +557,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_trimmer)
   pkl_ast_node entity = PKL_AST_TRIMMER_ENTITY (trimmer);
   pkl_ast_node from = PKL_AST_TRIMMER_FROM (trimmer);
   pkl_ast_node to = PKL_AST_TRIMMER_TO (trimmer);
+  pkl_ast_node addend = PKL_AST_TRIMMER_ADDEND (trimmer);
 
   /* If the FROM index of a trimmer isn't specified, it defaults to
      0UL.  */
@@ -573,30 +574,29 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_trimmer)
       PKL_AST_TRIMMER_FROM (trimmer) = ASTREF (from);
     }
 
-  /* If the TO index of a trimmer isn't specified, it defaults to an
-     expression that evaluates to the size of the container, minus
-     one.  */
-  if (!to)
+  if (addend)
     {
-      pkl_ast_node idx_type
-        = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+      /* If an ADDEND is specified, we set `TO' to an expression that
+         evaluates to FROM + ADDEND.  */
+      pkl_ast_node plus_exp
+        = pkl_ast_make_binary_exp (PKL_PASS_AST,
+                                   PKL_AST_OP_ADD,
+                                   from, addend);
+
+      PKL_AST_TRIMMER_TO (trimmer) = ASTREF (plus_exp);
+      PKL_PASS_RESTART = 1;
+    }
+  else if (!to)
+    {
+      /* If the TO index of a trimmer isn't specified, it defaults to
+         an expression that evaluates to the size of the
+         container.  */
       pkl_ast_node length_op = pkl_ast_make_unary_exp (PKL_PASS_AST,
                                                        PKL_AST_OP_ATTR,
                                                        entity);
-      pkl_ast_node one = pkl_ast_make_integer (PKL_PASS_AST, 1);
-      pkl_ast_node sub_op = pkl_ast_make_binary_exp (PKL_PASS_AST,
-                                                     PKL_AST_OP_SUB,
-                                                     length_op, one);
 
       PKL_AST_EXP_ATTR (length_op) = PKL_AST_ATTR_LENGTH;
-      PKL_AST_TYPE (one) = ASTREF (idx_type);
-
-      PKL_AST_LOC (length_op) = PKL_AST_LOC (trimmer);
-      PKL_AST_LOC (idx_type) = PKL_AST_LOC (trimmer);
-      PKL_AST_LOC (one) = PKL_AST_LOC (trimmer);
-      PKL_AST_LOC (sub_op) = PKL_AST_LOC (trimmer);
-
-      PKL_AST_TRIMMER_TO (trimmer) = ASTREF (sub_op);
+      PKL_AST_TRIMMER_TO (trimmer) = ASTREF (length_op);
       PKL_PASS_RESTART = 1;
     }
 }

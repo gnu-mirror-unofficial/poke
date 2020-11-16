@@ -4,8 +4,8 @@
 /* { dg-command {.set obase 16} } */
 /* { dg-command {.set endian big} } */
 /* { dg-command { var a = int[] @ 0#B } } */
-/* { dg-command { var b = a[1:2] } } */
-/* { dg-command { var c = a[0:1] } } */
+/* { dg-command { var b = a[1:3] } } */
+/* { dg-command { var c = a[0:2] } } */
 /* { dg-command { a[1] = 0xeadbeef } } */
 /* { dg-command { a } } */
 /* { dg-output "\\\[0x10203040,0xeadbeef,0x90a0b0c0\\\]" } */

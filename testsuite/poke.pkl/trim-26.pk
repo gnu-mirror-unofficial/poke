@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
 var a = [1,2,3];
-var b = a[0:1];
+var b = a[0:2];
 
 /* { dg-command { a == b } } */
 /* { dg-output "0" } */

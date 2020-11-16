@@ -375,6 +375,8 @@ pkl_do_pass_1 (pkl_compiler compiler,
         PKL_PASS (PKL_AST_TRIMMER_FROM (node));
       if (PKL_AST_TRIMMER_TO (node))
         PKL_PASS (PKL_AST_TRIMMER_TO (node));
+      if (PKL_AST_TRIMMER_ADDEND (node))
+        PKL_PASS (PKL_AST_TRIMMER_ADDEND (node));
 
       break;
     case PKL_AST_INDEXER:

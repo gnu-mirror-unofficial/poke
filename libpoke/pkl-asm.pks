@@ -434,7 +434,7 @@
         pushvar $array          ; ARR
         sel                     ; ARR NELEM
         pushvar $to             ; ARR NELEM TO
-        lelu                    ; ARR NELEM TO (NELEM<=TO)
+        ltlu                    ; ARR NELEM TO (NELEM<TO)
         bnzi .ebounds
         drop                    ; ARR NELEM TO
         drop                    ; ARR NELEM
@@ -474,7 +474,7 @@
       .while
         pushvar $idx            ; TARR IDX
         pushvar $to             ; TARR IDX TO
-        lelu                    ; TARR IDX TO (IDX<=TO)
+        ltlu                    ; TARR IDX TO (IDX<TO)
         nip2                    ; TARR (IDX<=TO)
       .loop
         ;; Add the IDX-FROMth element of the new array.
@@ -534,12 +534,12 @@
         pushvar $from           ; BOFFSET MAPPER WRITER TO FROM
         sublu
         nip2                    ; BOFFSET MAPPER WRITER (TO-FROM)
-        push ulong<64>1
-        addlu
-        nip2                    ; BOFFSET MAPPER WRITER (TO-FROM+1UL)
+;        push ulong<64>1
+;        addlu
+;        nip2                    ; BOFFSET MAPPER WRITER (TO-FROM+1UL)
         ;; Install mapper, writer, offset and ebound.
-        pushvar $tarr           ; BOFFSET MAPPER WRITER (TO-FROM+!UL) TARR
-        swap                    ; BOFFSET MAPPER WRITER TARR (TO-FROM+!UL)
+        pushvar $tarr           ; BOFFSET MAPPER WRITER (TO-FROM) TARR
+        swap                    ; BOFFSET MAPPER WRITER TARR (TO-FROM)
         msetsel                 ; BOFFSET MAPPER WRITER TARR
         swap                    ; BOFFSET MAPPER TARR WRITER
         msetw                   ; BOFFSET MAPPER TARR

@@ -253,7 +253,8 @@ S ::
 "int<"          { return INTCONSTR; }
 "offset<"       { return OFFSETCONSTR; }
 
-"..."                { return THREEDOTS; }
+"..."           { return THREEDOTS; }
+"+:"            { return RANGEA; }
 
 "*="                { return MULA; }
 "/="                { return DIVA; }

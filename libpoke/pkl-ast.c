@@ -259,15 +259,20 @@ pkl_ast_make_func_arg (pkl_ast ast, pkl_ast_node type,
 
 pkl_ast_node
 pkl_ast_make_trimmer (pkl_ast ast, pkl_ast_node entity,
-                      pkl_ast_node from, pkl_ast_node to)
+                      pkl_ast_node from, pkl_ast_node to,
+                      pkl_ast_node addend)
 {
   pkl_ast_node trimmer = pkl_ast_make_node (ast, PKL_AST_TRIMMER);
+
+  assert (!to || !addend);
 
   PKL_AST_TRIMMER_ENTITY (trimmer) = ASTREF (entity);
   if (from)
     PKL_AST_TRIMMER_FROM (trimmer) = ASTREF (from);
   if (to)
     PKL_AST_TRIMMER_TO (trimmer) = ASTREF (to);
+  if (addend)
+    PKL_AST_TRIMMER_ADDEND (trimmer) = ASTREF (addend);
 
   return trimmer;
 }
@@ -1959,6 +1964,7 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_TRIMMER_ENTITY (ast));
       pkl_ast_node_free (PKL_AST_TRIMMER_FROM (ast));
       pkl_ast_node_free (PKL_AST_TRIMMER_TO (ast));
+      pkl_ast_node_free (PKL_AST_TRIMMER_ADDEND (ast));
       break;
 
     case PKL_AST_FUNC:
@@ -2752,6 +2758,7 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (from, TRIMMER_FROM);
       PRINT_AST_SUBAST (to, TRIMMER_TO);
       PRINT_AST_SUBAST (entity, TRIMMER_ENTITY);
+      PRINT_AST_SUBAST (addend, TRIMMER_ADDEND);
       break;
 
     case PKL_AST_INDEXER:

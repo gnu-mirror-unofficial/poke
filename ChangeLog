@@ -1,5 +1,53 @@
 2020-11-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_TRIMMER_ADDEND): Define.
+	(struct pkl_ast_trimmer): New field `addend'.
+	* libpoke/pkl-ast.c (pkl_ast_make_trimmer): Handle ADDEND.
+	(pkl_ast_node_free): Likewise.
+	(pkl_ast_print_1): Likewise.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* libpoke/pkl-tab.y: New toke RANGEA.
+	(primary): Rule for array trims based on +:.
+	* libpoke/pkl-lex.l: Handle RANGEA tokens.
+	* libpoke/pkl-gen.c (pkl_gen_pr_trimmer): Renamed from
+	pkl_gen_ps_trimmer, and adapted accordingly.
+	* libpoke/pkl-asm.pks (atrim): The TO boundaries in array trims
+	are now open.
+	* libpoke/pvm.jitter (substr): Likewise.
+	* testsuite/poke.map/maps-trims-1.pk: Adjust test accordingly.
+	* testsuite/poke.map/trimmed-map-2.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-3.pk: Likewise.
+	* testsuite/poke.map/trimmed-map-4.pk: Likewise.
+	* testsuite/poke.pkl/getenv-1.pk: Likewise.
+	* testsuite/poke.pkl/strings-esc-2.pk: Likewise.
+	* testsuite/poke.pkl/trim-10.pk: Likewise.
+	* testsuite/poke.pkl/trim-11.pk: Likewise.
+	* testsuite/poke.pkl/trim-13.pk: Likewise.
+	* testsuite/poke.pkl/trim-15.pk: Likewise.
+	* testsuite/poke.pkl/trim-19.pk: Likewise.
+	* testsuite/poke.pkl/trim-20.pk: Likewise.
+	* testsuite/poke.pkl/trim-21.pk: Likewise.
+	* testsuite/poke.pkl/trim-22.pk: Likewise.
+	* testsuite/poke.pkl/trim-23.pk: Likewise.
+	* testsuite/poke.pkl/trim-25.pk: Likewise.
+	* testsuite/poke.pkl/trim-26.pk: Likewise.
+	* testsuite/poke.pkl/trim-27.pk: New test.
+	* testsuite/poke.pkl/trim-28.pk: Likewise.
+	* testsuite/poke.pkl/trim-29.pk: Likewise.
+	* testsuite/poke.pkl/trim-30.pk: Likewise.
+	* testsuite/poke.pkl/trim-31.pk: Likewise.
+	* testsuite/poke.pkl/trim-32.pk: Likewise.
+	* testsuite/poke.pkl/trim-33.pk: Likewise.
+	* testsuite/poke.pkl/trim-34.pk: Likewise.
+	* testsuite/poke.pkl/trim-35.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (Modifying SBM Images): Update accordingly.
+	(Array Trimming): Likewise.
+	* etc/poke.rec (Use semi-open ranges in array trims): Removed as
+	done.
+
+2020-11-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_Ehdr): Initialize e_version to EV_CURRENT.
 	(EV_NONE): Define.
 	(EV_CURRENT): Likewise.

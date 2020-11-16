@@ -1932,16 +1932,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_array)
 PKL_PHASE_END_HANDLER
 
 /*
+ * TRIMMER
  * | ENTITY
  * | FROM
  * | TO
- * TRIMMER
+ * | ADDEND
  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_trimmer)
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_trimmer)
 {
   pkl_ast_node trimmer = PKL_PASS_NODE;
   pkl_ast_node trimmer_type = PKL_AST_TYPE (trimmer);
+  pkl_ast_node trimmer_entity = PKL_AST_TRIMMER_ENTITY (trimmer);
+  pkl_ast_node trimmer_from = PKL_AST_TRIMMER_FROM (trimmer);
+  pkl_ast_node trimmer_to = PKL_AST_TRIMMER_TO (trimmer);
+
+  PKL_PASS_SUBPASS (trimmer_entity);
+  PKL_PASS_SUBPASS (trimmer_from);
+  PKL_PASS_SUBPASS (trimmer_to);
 
   switch (PKL_AST_TYPE_CODE (trimmer_type))
     {
@@ -1961,6 +1969,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_trimmer)
     default:
       assert (0);
     }
+
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -3520,7 +3530,7 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_gen_ps_scons),
    PKL_PHASE_PR_HANDLER (PKL_AST_ARRAY, pkl_gen_pr_array),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_gen_ps_array),
-   PKL_PHASE_PS_HANDLER (PKL_AST_TRIMMER, pkl_gen_ps_trimmer),
+   PKL_PHASE_PR_HANDLER (PKL_AST_TRIMMER, pkl_gen_pr_trimmer),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_gen_ps_indexer),
    PKL_PHASE_PR_HANDLER (PKL_AST_ARRAY_INITIALIZER, pkl_gen_pr_array_initializer),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY_INITIALIZER, pkl_gen_ps_array_initializer),

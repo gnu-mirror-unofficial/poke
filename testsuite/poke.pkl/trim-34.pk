@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {try "foobar"[1+:-3]; catch if E_out_of_bounds { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

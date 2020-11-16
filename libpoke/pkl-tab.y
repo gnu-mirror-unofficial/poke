@@ -355,6 +355,8 @@ token <integer> UNION    _("keyword `union'")
 %token <opcode> XORA    _("bit-xor-and-assign operator")
 %token <opcode> IORA    _("bit-or-and-assign operator")
 
+%token RANGEA           _("range separator")
+
 %token OR               _("logical or operator")
 %token AND              _("logical and operator")
 %token '|'              _("bit-wise or operator")
@@ -943,28 +945,34 @@ primary:
                   $$ = pkl_ast_make_indexer (pkl_parser->ast, $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
+        | primary '[' expression RANGEA expression ']' %prec '.'
+                {
+                  $$ = pkl_ast_make_trimmer (pkl_parser->ast,
+                                             $1, $3, NULL, $5);
+                  PKL_AST_LOC ($$) = @$;
+                }
         | primary '[' expression ':' expression ']' %prec '.'
                 {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
-                                             $1, $3, $5);
+                                             $1, $3, $5, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '[' ':' ']' %prec '.'
                 {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
-                                             $1, NULL, NULL);
+                                             $1, NULL, NULL, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '[' ':' expression ']' %prec '.'
                 {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
-                                             $1, NULL, $4);
+                                             $1, NULL, $4, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
         | primary '[' expression ':' ']' %prec '.'
                 {
                   $$ = pkl_ast_make_trimmer (pkl_parser->ast,
-                                             $1, $3, NULL);
+                                             $1, $3, NULL, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
         | funcall

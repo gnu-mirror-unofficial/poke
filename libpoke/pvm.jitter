@@ -3413,20 +3413,33 @@ instruction strref () # ( STR ULONG -- STR ULONG VAL )
   end
 end
 
+# Instruction: substr
+#
+# Given a string and two indexes FROM AND to conforming a semi-open
+# interval [FROM,TO), push the substring enclosed by that interval.
+#
+# Both indexes are zero-based.
+#
+# If FROM >= the size of the string, or if TO > the size of the
+# string, or if FROM >= TO, raise the PVM_E_OUT_OF_BOUNDS exception.
+#
+# Stack: ( STR ULONG(from) ULONG(to) -- STR ULONG(from) ULONG(to) STR )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
 instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
   code
     pvm_val str;
     char *s;
     pvm_val to = JITTER_TOP_STACK ();
     pvm_val from = JITTER_UNDER_TOP_STACK ();
-    size_t slen = PVM_VAL_ULONG (to) - PVM_VAL_ULONG (from) + 1;
+    size_t slen = PVM_VAL_ULONG (to) - PVM_VAL_ULONG (from);
 
     JITTER_DROP_STACK ();
     str = JITTER_UNDER_TOP_STACK ();
     JITTER_PUSH_STACK (to);
 
     if (PVM_VAL_ULONG (from) >= strlen (PVM_VAL_STR (str))
-        || PVM_VAL_ULONG (to) >= strlen (PVM_VAL_STR (str))
+        || PVM_VAL_ULONG (to) > strlen (PVM_VAL_STR (str))
         || PVM_VAL_ULONG (from) > PVM_VAL_ULONG (to))
         PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
