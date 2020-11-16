@@ -462,33 +462,6 @@ Description:
 +     } js_scope;
 +   }
 
-Summary: Assign to sref with data integrity
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ Generate:
-+
-+   SSET -> modified struct
-+   PUSH constructor
-+   CALL -> call constructor
-+   Result: MODIFIED_STRUCT NEW_STRUCT
-+   NIP
-+   [MAYBE WRITE IF MAPPED]
-+
-+ This can raise a constraint error, and in that case nothing changes.
-+ It is perfect.
-+
-+ This is the only way that unions in non-mapped struct values can
-+ actually have effect in terms on its own contents: first sset then
-+ calling the constructor again.
-+
-+ When non-strict values are implemented, this should be conditioned to
-+ the strict character of the struct.
-Target: 1.0
-SeeAlso: Support for non-strict values
-Hacker: jemarch@gnu.org
-
 Summary: struct _equal methods
 Component: Language
 Kind: ENH
