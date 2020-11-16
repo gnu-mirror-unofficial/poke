@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type Foo = union { int a : a < 10; int b : b < 20; };
+var f = Foo { };
+
+/* { dg-command {try f.a = 30; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */
