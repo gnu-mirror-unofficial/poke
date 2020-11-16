@@ -1,5 +1,18 @@
 2020-11-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_Ehdr): Initialize e_version to EV_CURRENT.
+	(EV_NONE): Define.
+	(EV_CURRENT): Likewise.
+	(EM_NONE): Likewise.
+	(EM_RISCV): Likewise.
+	(ET_NONE): Likewise.
+	(ET_REL): Likewise.
+	(ET_EXEC): Likewise.
+	(ET_DYN): Likewise.
+	(ET_CORE): Likewise.
+
+2020-11-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-ras-mode.el (poke-ras-log-current-entity): New
 	function.
 	(poke-ras-mode): Add function to add-log hook.

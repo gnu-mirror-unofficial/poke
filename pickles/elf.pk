@@ -36,6 +36,22 @@ type Elf_Half = uint<16>,
      Elf64_Addr = offset<uint<64>,B>,
      Elf64_Off = offset<uint<64>,B>;
 
+/****** ELF versions and file types.  ******/
+
+var EV_NONE = 0, /* Invalid ELF version.  */
+    EV_CURRENT = 1;
+
+var ET_NONE = 0,  /* No file type.  */
+    ET_REL  = 1,  /* Relocatable file.  */
+    ET_EXEC = 2,  /* Position-dependent executable.  */
+    ET_DYN  = 3,  /* Position-independent executable or shared object.  */
+    ET_CORE = 4;  /* Core file.  */
+
+/****** ELF machine codes.  ********/
+
+var EM_NONE = 0,
+    EM_RISCV = 243;
+
 /****** Relocation Entries.  ******/
 
 /* r_sym is the symbol table index with respect to which the
@@ -328,7 +344,7 @@ type Elf64_Ehdr =
 
     Elf_Half e_type;
     Elf_Half e_machine;
-    Elf_Word e_version;
+    Elf_Word e_version = EV_CURRENT;
 
     Elf64_Addr e_entry;
     Elf64_Off e_phoff;
