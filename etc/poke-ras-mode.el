@@ -27,6 +27,13 @@
 
 ;;; Code:
 
+
+(defun poke-ras-log-current-entity ()
+  "Return the name of the current entity, if any.  If there is no
+entity then return nil."
+  (when (re-search-backward "^[ \t]*.\\(macro\\|function\\)[ \t]+\\([a-zA-Z_0-9]+\\)")
+    (buffer-substring (match-beginning 2) (match-end 2))))
+
 (defface poke-ras-c-literal-face '((t :foreground "brown")) "" :group 'poke-ras-mode)
 (defface poke-ras-variable-face '((t :foreground "green")) "" :group 'poke-ras-mode)
 (defface poke-ras-argument-face '((t :foreground "magenta")) "" :group 'poke-ras-mode)
@@ -37,6 +44,7 @@
                           '(("^[ \t]*\\.c" . 'poke-ras-c-literal-face)
                             ("[#@][a-zA-Z][0-9a-zA-Z_]+" . 'poke-ras-argument-face)
                             ("\\$[a-zA-Z][0-9a-zA-Z_]*" . 'poke-ras-variable-face)))
-  (modify-syntax-entry ?. "w"))
+  (modify-syntax-entry ?. "w")
+  (setq-local add-log-current-defun-function #'poke-ras-log-current-entity))
 
 ;;; ras-mode.el ends here
