@@ -266,6 +266,8 @@ struct pkl_ast_common
 pkl_ast_node pkl_ast_chainon (pkl_ast_node ast1,
                               pkl_ast_node ast2);
 
+size_t pkl_ast_chain_length (pkl_ast_node ast);
+
 typedef struct pkl_ast *pkl_ast; /* Forward declaration. */
 
 /* PKL_AST_PROGRAM nodes represent PKL programs.
@@ -1187,8 +1189,10 @@ pkl_ast_node pkl_ast_make_map (pkl_ast ast,
 #define PKL_AST_CONS_TYPE(AST) ((AST)->cons.type)
 #define PKL_AST_CONS_VALUE(AST) ((AST)->cons.value)
 
-#define PKL_AST_CONS_KIND_STRUCT 0
-#define PKL_AST_CONS_KIND_ARRAY 1
+#define PKL_AST_CONS_KIND_UNKNOWN 0
+#define PKL_AST_CONS_KIND_STRUCT 1
+#define PKL_AST_CONS_KIND_ARRAY 2
+#define PKL_AST_CONS_KIND_STRING 3
 
 struct pkl_ast_cons
 {
@@ -1199,9 +1203,7 @@ struct pkl_ast_cons
   union pkl_ast_node *value;
 };
 
-pkl_ast_node pkl_ast_make_cons (pkl_ast ast,
-                                int kind,
-                                pkl_ast_node type,
+pkl_ast_node pkl_ast_make_cons (pkl_ast ast, pkl_ast_node type,
                                 pkl_ast_node value);
 
 /* PKL_AST_FUNCALL nodes represent the invocation of a function.

@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var s
+    = string (); /* { dg-error "argument" } */

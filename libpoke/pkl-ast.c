@@ -68,6 +68,21 @@ pkl_ast_chainon (pkl_ast_node ast1, pkl_ast_node ast2)
   return ast2;
 }
 
+/* Return the number of elements chained by CHAIN starting at the
+   given AST node.  */
+
+size_t
+pkl_ast_chain_length (pkl_ast_node ast)
+{
+  pkl_ast_node tmp;
+  size_t nelem = 0;
+
+  for (tmp = ast; tmp; tmp = PKL_AST_CHAIN (tmp))
+    nelem++;
+
+  return nelem;
+}
+
 /* Build and return an AST node for an integer constant.  */
 
 pkl_ast_node
@@ -1479,15 +1494,13 @@ pkl_ast_make_map (pkl_ast ast,
 
 pkl_ast_node
 pkl_ast_make_cons (pkl_ast ast,
-                   int kind, pkl_ast_node type, pkl_ast_node value)
+                   pkl_ast_node type, pkl_ast_node value)
 {
   pkl_ast_node cons = pkl_ast_make_node (ast, PKL_AST_CONS);
 
   assert (type);
-  assert (kind == PKL_AST_CONS_KIND_STRUCT
-          || kind == PKL_AST_CONS_KIND_ARRAY);
 
-  PKL_AST_CONS_KIND (cons) = kind;
+  PKL_AST_CONS_KIND (cons) = PKL_AST_CONS_KIND_UNKNOWN;
   PKL_AST_CONS_TYPE (cons) = ASTREF (type);
   PKL_AST_CONS_VALUE (cons) = ASTREF (value);
   return cons;

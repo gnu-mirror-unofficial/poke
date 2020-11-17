@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
-type Array = struct {};
+type Array = int[];
 
 var a
-  = Array (23,3); /* { dg-error "syntax error" } */
+  = Array (23,3); /* { dg-error "argument" } */

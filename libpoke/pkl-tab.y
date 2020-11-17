@@ -254,30 +254,6 @@ load_module (struct pkl_parser *parser,
   return 0;
 }
 
-/* Given an AST identifier, lookup for a type with that name in the
-   current lexical environment and return it.  If not such type is
-   found, return NULL.  */
-
-static pkl_ast_node
-resolve_typename (struct pkl_parser *pkl_parser, pkl_ast_node typename)
-{
-  pkl_ast_node decl, type;
-
-  decl = pkl_env_lookup (pkl_parser->env,
-                         PKL_ENV_NS_MAIN,
-                         PKL_AST_IDENTIFIER_POINTER (typename),
-                         NULL, NULL);
-
-  if (decl == NULL
-      || PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_TYPE)
-    return NULL;
-
-  type = PKL_AST_DECL_INITIAL (decl);
-  assert (type != NULL);
-
-  return type;
-}
-
 %}
 
 %union {
@@ -448,14 +424,14 @@ token <integer> UNION    _("keyword `union'")
 %type <opcode> unary_operator
 
 %type <ast> start program program_elem_list program_elem load
-%type <ast> expression primary identifier bconc map
+%type <ast> expression expression_list primary identifier bconc map
 %type <ast> funcall funcall_arg_list funcall_arg
 %type <ast> array array_initializer_list array_initializer
 %type <ast> struct_field_list struct_field
-%type <ast> type_specifier simple_type_specifier
+%type <ast> typename type_specifier simple_type_specifier cons_type_specifier
 %type <ast> integral_type_specifier offset_type_specifier array_type_specifier
 %type <ast> function_type_specifier function_type_arg_list function_type_arg
-%type <ast> struct_type_specifier
+%type <ast> struct_type_specifier string_type_specifier
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
 %type <ast> struct_type_field_constraint_or_init struct_type_field_label
 %type <ast> struct_type_field_optcond
@@ -637,6 +613,16 @@ identifier:
  * Expressions.
  */
 
+expression_list:
+          %empty
+                  { $$ = NULL; }
+        | expression
+        | expression_list ',' expression
+                  {
+                    $$ = pkl_ast_chainon ($1, $3);
+                  }
+        ;
+
 expression:
           primary
         | unary_operator expression %prec UNARY
@@ -797,97 +783,38 @@ expression:
                                               $1, $3, $5);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | array_type_specifier '(' ')'
+        | cons_type_specifier '(' expression_list opt_comma ')'
                 {
-                  $$ = pkl_ast_make_cons (pkl_parser->ast,
-                                          PKL_AST_CONS_KIND_ARRAY,
-                                          $1, NULL);
-                }
-        | array_type_specifier '(' expression ')'
-                {
-                  $$ = pkl_ast_make_cons (pkl_parser->ast,
-                                          PKL_AST_CONS_KIND_ARRAY,
-                                          $1, $3);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | TYPENAME '(' ')'
-                {
-                  pkl_ast_node type = resolve_typename (pkl_parser, $1);
-
-                  assert (type);
-                  PKL_AST_LOC (type) = @1;
-                  /* XXX not sure this is actually needed: the type
-                     should be already named.  */
-                  if (PKL_AST_TYPE_NAME (type) == NULL)
-                    PKL_AST_TYPE_NAME (type) = ASTREF ($1);
-                  else
+                  /* This syntax is not used for struct
+                     constructors.  */
+                  if (PKL_AST_TYPE_CODE ($1) == PKL_TYPE_STRUCT)
                     {
-                      $1 = ASTREF ($1);
-                      pkl_ast_node_free ($1);
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                                 "invalid type specifier in constructor");
+                      YYERROR;
                     }
 
-                  $$ = pkl_ast_make_cons (pkl_parser->ast,
-                                          PKL_AST_CONS_KIND_ARRAY,
-                                          type, NULL);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast, $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | TYPENAME '(' expression ')'
+        | typename '{' struct_field_list opt_comma '}'
                 {
-                  pkl_ast_node type = resolve_typename (pkl_parser, $1);
-
-                  assert (type);
-                  PKL_AST_LOC (type) = @1;
-                  /* XXX not sure this is actually needed: the type
-                     should be already named.  */
-                 if (PKL_AST_TYPE_NAME (type) == NULL)
-                   PKL_AST_TYPE_NAME (type) = ASTREF ($1);
-                 else
-                   {
-                     $1 = ASTREF ($1);
-                     pkl_ast_node_free ($1);
-                   }
-
-                  $$ = pkl_ast_make_cons (pkl_parser->ast,
-                                          PKL_AST_CONS_KIND_ARRAY,
-                                          type, $3);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | TYPENAME '{' struct_field_list opt_comma '}'
-                  {
-                  pkl_ast_node type;
                   pkl_ast_node astruct;
 
-                  pkl_ast_node decl = pkl_env_lookup (pkl_parser->env,
-                                                      PKL_ENV_NS_MAIN,
-                                                      PKL_AST_IDENTIFIER_POINTER ($1),
-                                                      NULL, NULL);
-                  assert (decl != NULL
-                          && PKL_AST_DECL_KIND (decl) == PKL_AST_DECL_KIND_TYPE);
-
-                  type = PKL_AST_DECL_INITIAL (decl);
-                  if (PKL_AST_TYPE_CODE (type) != PKL_TYPE_STRUCT)
+                  /* This syntax is only used for struct
+                     constructors.  */
+                  if (PKL_AST_TYPE_CODE ($1) != PKL_TYPE_STRUCT)
                     {
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
                                  "expected struct type in constructor");
                       YYERROR;
                     }
 
-                  if (PKL_AST_TYPE_NAME (type) == NULL)
-                    PKL_AST_TYPE_NAME (type) = ASTREF ($1);
-                  else
-                    {
-                      $1 = ASTREF ($1);
-                      pkl_ast_node_free ($1);
-                    }
-
                   astruct = pkl_ast_make_struct (pkl_parser->ast,
-                                                 0 /* nelem */, $3);
+                                           0 /* nelem */, $3);
                   PKL_AST_LOC (astruct) = @$;
 
-                  $$ = pkl_ast_make_cons (pkl_parser->ast,
-                                          PKL_AST_CONS_KIND_STRUCT,
-                                          type,
-                                          astruct);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast, $1, astruct);
                   PKL_AST_LOC ($$) = @$;
                 }
         | UNIT
@@ -1272,7 +1199,7 @@ type_specifier:
         | function_type_specifier
         ;
 
-simple_type_specifier:
+typename:
           TYPENAME
                   {
                   pkl_ast_node decl = pkl_env_lookup (pkl_parser->env,
@@ -1285,7 +1212,18 @@ simple_type_specifier:
                   PKL_AST_LOC ($$) = @$;
                   $1 = ASTREF ($1); pkl_ast_node_free ($1);
                 }
-        | ANY
+        ;
+
+string_type_specifier:
+          STRING
+                {
+                  $$ = pkl_ast_make_string_type (pkl_parser->ast);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        ;
+
+simple_type_specifier:
+          ANY
                 {
                   $$ = pkl_ast_make_any_type (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
@@ -1295,14 +1233,17 @@ simple_type_specifier:
                   $$ = pkl_ast_make_void_type (pkl_parser->ast);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | STRING
-                {
-                  $$ = pkl_ast_make_string_type (pkl_parser->ast);
-                  PKL_AST_LOC ($$) = @$;
-                }
+        | typename
         | integral_type_specifier
         | offset_type_specifier
         | array_type_specifier
+        | string_type_specifier
+        ;
+
+cons_type_specifier:
+          typename
+        | array_type_specifier
+        | string_type_specifier
         ;
 
 integral_type_specifier:

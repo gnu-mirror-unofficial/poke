@@ -3,4 +3,4 @@
 type Array = struct {};
 
 var a
-  = Array (23); /* { dg-error "expected array type" } */
+  = Array (23); /* { dg-error "invalid type" } */

@@ -654,6 +654,53 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_ass_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_cons)
+{
+  pkl_ast_node cons = PKL_PASS_NODE;
+  pkl_ast_node cons_type = PKL_AST_CONS_TYPE (cons);
+  pkl_ast_node cons_value = PKL_AST_CONS_VALUE (cons);
+
+  /* Different kind of constructors require different number and kind
+     of arguments.  Check it here.  */
+
+  switch (PKL_AST_TYPE_CODE (cons_type))
+    {
+    case PKL_TYPE_STRUCT:
+      /* Struct constructors accept exactly one argument.  */
+      if (pkl_ast_chain_length (cons_value) != 1)
+        {
+          PKL_ERROR (PKL_AST_LOC (cons),
+                     "struct constructor requires exactly one argument");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      break;
+    case PKL_TYPE_ARRAY:
+      /* Array constructors accept zero or one arguments.  */
+      if (pkl_ast_chain_length (cons_value) > 1)
+        {
+          PKL_ERROR (PKL_AST_LOC (cons),
+                     "struct constructor requires exactly one argument");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      break;
+    case PKL_TYPE_STRING:
+      /* String constructors require exactly two arguments.  */
+      if (pkl_ast_chain_length (cons_value) != 2)
+        {
+          PKL_ERROR (PKL_AST_LOC (cons),
+                     "string constructor requires exactly two arguments");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      break;
+    default:
+      assert (0);
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_anal1
   __attribute__ ((visibility ("hidden"))) =
   {
@@ -672,6 +719,7 @@ struct pkl_phase pkl_phase_anal1
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_anal1_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_anal1_ps_var),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_anal1_ps_ass_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_CONS, pkl_anal1_ps_cons),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_pr_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),

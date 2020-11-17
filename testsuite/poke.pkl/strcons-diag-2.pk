@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var s
+    = string (32, "bar", 3#B); /* { dg-error "argument" } */

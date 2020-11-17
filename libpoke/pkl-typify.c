@@ -1905,13 +1905,15 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cons)
 {
   pkl_ast_node cons = PKL_PASS_NODE;
-  int cons_kind = PKL_AST_CONS_KIND (cons);
   pkl_ast_node cons_type = PKL_AST_CONS_TYPE (cons);
   pkl_ast_node cons_value = PKL_AST_CONS_VALUE (cons);
 
-  switch (cons_kind)
+  /* Different kind of constructors require different number of
+     arguments.  Check it here.  */
+
+  switch (PKL_AST_TYPE_CODE (cons_type))
     {
-    case PKL_AST_CONS_KIND_STRUCT:
+    case PKL_TYPE_STRUCT:
       {
         /* The type of a struct constructor is the type specified
            before the struct value.  It should be a struct type.
@@ -1922,6 +1924,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cons)
         pkl_ast_node astruct = cons_value;
         pkl_ast_node struct_fields = PKL_AST_STRUCT_FIELDS (astruct);
 
+        /* The parser guarantees this.  */
+        assert (PKL_AST_TYPE_CODE (cons_type) == PKL_TYPE_STRUCT);
+
         /* Unions require either zero or exactly one initializer in
            their constructors.  */
         if (PKL_AST_TYPE_S_UNION_P (cons_type)
@@ -1929,16 +1934,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cons)
           {
             PKL_ERROR (PKL_AST_LOC (astruct),
                        "union constructors require exactly one field initializer");
-            PKL_TYPIFY_PAYLOAD->errors++;
-            PKL_PASS_ERROR;
-          }
-
-        /* This check is currently redundant, because the restriction
-           is implicitly satisfied by the parser.  */
-        if (PKL_AST_TYPE_CODE (cons_type) != PKL_TYPE_STRUCT)
-          {
-            PKL_ERROR (PKL_AST_LOC (cons_type),
-                       "expected struct type in constructor");
             PKL_TYPIFY_PAYLOAD->errors++;
             PKL_PASS_ERROR;
           }
@@ -2016,21 +2011,12 @@ expected %s, got %s",
               }
           }
 
+        PKL_AST_CONS_KIND (cons) = PKL_AST_CONS_KIND_STRUCT;
         break;
       }
-    case PKL_AST_CONS_KIND_ARRAY:
-      /* The type of an array constructor is the type specified in the
-         constructor.  It should be an array type.  Also, if an
-         initialization value is provided its type should match the
-         type of the elements of the array.  */
-
-      if (PKL_AST_TYPE_CODE (cons_type) != PKL_TYPE_ARRAY)
-        {
-          PKL_ERROR (PKL_AST_LOC (cons_type),
-                     "expected array type in constructor");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
+    case PKL_TYPE_ARRAY:
+      /* If an initialization value is provided its type should match
+         the type of the elements of the array.  */
 
       if (cons_value)
         {
@@ -2057,6 +2043,22 @@ expected %s, got %s",
               PKL_PASS_ERROR;
             }
         }
+
+      PKL_AST_CONS_KIND (cons) = PKL_AST_CONS_KIND_ARRAY;
+      break;
+    case PKL_TYPE_STRING:
+      /* The first argument to the constructor should be promoteable
+         to an uint<8>.  The second argument should be promoteable to
+         an uint<64>. */
+
+      //      pkl_ast_node arg1 = cons_value;
+      //      pkl_ast_node arg2 = PKL_AST_CHAIN (cons_value);
+
+      //      pkl_ast_node arg1_type = PKL_AST_TYPE (arg1);
+      //      pkl_ast_ndoe arg2_type = PKL_AST_TYPE (arg2);
+
+      /* XXX finishme.  */
+      assert (0);
       break;
     default:
       assert (0);
