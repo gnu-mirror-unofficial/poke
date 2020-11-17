@@ -254,6 +254,30 @@ load_module (struct pkl_parser *parser,
   return 0;
 }
 
+/* Given an AST identifier, lookup for a type with that name in the
+   current lexical environment and return it.  If not such type is
+   found, return NULL.  */
+
+static pkl_ast_node
+resolve_typename (struct pkl_parser *pkl_parser, pkl_ast_node typename)
+{
+  pkl_ast_node decl, type;
+
+  decl = pkl_env_lookup (pkl_parser->env,
+                         PKL_ENV_NS_MAIN,
+                         PKL_AST_IDENTIFIER_POINTER (typename),
+                         NULL, NULL);
+
+  if (decl == NULL
+      || PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_TYPE)
+    return NULL;
+
+  type = PKL_AST_DECL_INITIAL (decl);
+  assert (type != NULL);
+
+  return type;
+}
+
 %}
 
 %union {
@@ -771,6 +795,53 @@ expression:
                 {
                   $$ = pkl_ast_make_cond_exp (pkl_parser->ast,
                                               $1, $3, $5);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | array_type_specifier '(' ')'
+                {
+                  $$ = pkl_ast_make_acons (pkl_parser->ast, $1, NULL);
+                }
+        | array_type_specifier '(' expression ')'
+                {
+                  $$ = pkl_ast_make_acons (pkl_parser->ast, $1, $3);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | TYPENAME '(' ')'
+                {
+                  pkl_ast_node type = resolve_typename (pkl_parser, $1);
+
+                  assert (type);
+                  PKL_AST_LOC (type) = @1;
+                  /* XXX not sure this is actually needed: the type
+                     should be already named.  */
+                  if (PKL_AST_TYPE_NAME (type) == NULL)
+                    PKL_AST_TYPE_NAME (type) = ASTREF ($1);
+                  else
+                    {
+                      $1 = ASTREF ($1);
+                      pkl_ast_node_free ($1);
+                    }
+
+                  $$ = pkl_ast_make_acons (pkl_parser->ast, type, NULL);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | TYPENAME '(' expression ')'
+                {
+                  pkl_ast_node type = resolve_typename (pkl_parser, $1);
+
+                  assert (type);
+                  PKL_AST_LOC (type) = @1;
+                  /* XXX not sure this is actually needed: the type
+                     should be already named.  */
+                 if (PKL_AST_TYPE_NAME (type) == NULL)
+                   PKL_AST_TYPE_NAME (type) = ASTREF ($1);
+                 else
+                   {
+                     $1 = ASTREF ($1);
+                     pkl_ast_node_free ($1);
+                   }
+
+                  $$ = pkl_ast_make_acons (pkl_parser->ast, type, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | TYPENAME '{' struct_field_list opt_comma '}'

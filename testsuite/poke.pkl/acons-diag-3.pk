@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a
+  = int<32> (1 + 2); /* { dg-error "syntax error" } */

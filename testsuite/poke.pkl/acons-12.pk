@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {offset<uint<64>,B>[2](16#b)} } */
+/* { dg-output "\\\[2UL#B,2UL#B\\\]" } */

@@ -1690,6 +1690,68 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_in)
 }
 PKL_PHASE_END_HANDLER
 
+/* The argument to an array constructor may need promotion.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_acons)
+{
+  pkl_ast_node acons = PKL_PASS_NODE;
+  pkl_ast_node acons_type = PKL_AST_ACONS_TYPE (acons);
+  pkl_ast_node acons_elem_type = PKL_AST_TYPE_A_ETYPE (acons_type);
+  pkl_ast_node acons_value = PKL_AST_ACONS_VALUE (acons);
+  pkl_ast_node acons_value_type;
+  int restart = 0;
+
+  if (!acons_value)
+    PKL_PASS_DONE;
+
+  acons_value_type = PKL_AST_TYPE (acons_value);
+
+  if (!pkl_ast_type_equal_p (acons_elem_type, acons_value_type))
+    {
+      switch (PKL_AST_TYPE_CODE (acons_elem_type))
+        {
+        case PKL_TYPE_INTEGRAL:
+          if (!promote_integral (PKL_PASS_AST,
+                                 PKL_AST_TYPE_I_SIZE (acons_elem_type),
+                                 PKL_AST_TYPE_I_SIGNED_P (acons_elem_type),
+                                 &PKL_AST_ACONS_VALUE (acons),
+                                 &restart))
+            goto error;
+
+
+          PKL_PASS_RESTART = 1;
+          break;
+        case PKL_TYPE_OFFSET:
+          {
+            pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (acons_elem_type);
+            pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (acons_elem_type);
+
+            size_t size = PKL_AST_TYPE_I_SIZE (base_type);
+            int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
+
+            if (!promote_offset (PKL_PASS_AST,
+                                 size, signed_p, unit,
+                                 &PKL_AST_ACONS_VALUE (acons),
+                                 &restart))
+              goto error;
+
+            PKL_PASS_RESTART = 1;
+          }
+          break;
+        default:
+          assert (0);
+        }
+    }
+
+  PKL_PASS_DONE;
+
+ error:
+  PKL_ICE (PKL_AST_LOC (acons_value),
+           "couldn't promote argument to array constructor");
+  PKL_PASS_ERROR;
+}
+PKL_PHASE_END_HANDLER
+
 /* The fields in struct constructors may have to be promoted to their
    corresponding types.  */
 
@@ -1833,6 +1895,7 @@ struct pkl_phase pkl_phase_promo
    PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT, pkl_promo_ps_loop_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_promo_ps_struct_type_field),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_promo_ps_cond_exp),
+   PKL_PHASE_PS_HANDLER (PKL_AST_ACONS, pkl_promo_ps_acons),
    PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_promo_ps_scons),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_promo_ps_type_array),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_promo_ps_type_offset),

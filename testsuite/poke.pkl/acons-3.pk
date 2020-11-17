@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Packet = struct { string s; byte b; };
+
+/* { dg-command {Packet[1][1] ()} } */
+/* { dg-output "\\\[\\\[Packet {s=\"\",b=0UB}\\\]\\\]" } */

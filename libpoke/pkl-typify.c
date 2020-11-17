@@ -1902,6 +1902,55 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 }
 PKL_PHASE_END_HANDLER
 
+/* The type of an array constructor is the type specified in the
+   constructor.  It should be an array type.  Also, if an
+   initialization value is provided its type should match the type of
+   the elements of the array.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_acons)
+{
+  pkl_ast_node acons = PKL_PASS_NODE;
+  pkl_ast_node acons_type = PKL_AST_ACONS_TYPE (acons);
+  pkl_ast_node initval = PKL_AST_ACONS_VALUE (acons);
+
+  if (PKL_AST_TYPE_CODE (acons_type) != PKL_TYPE_ARRAY)
+    {
+      PKL_ERROR (PKL_AST_LOC (acons_type),
+                 "expected array type in constructor");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  if (initval)
+    {
+      pkl_ast_node initval_type = PKL_AST_TYPE (initval);
+      pkl_ast_node acons_type_elems_type
+        = PKL_AST_TYPE_A_ETYPE (acons_type);
+
+      if (!pkl_ast_type_promoteable_p (initval_type,
+                                       acons_type_elems_type,
+                                       0 /* promote array of any */))
+        {
+          char *expected_type
+            = pkl_type_str (acons_type_elems_type, 1);
+          char *found_type = pkl_type_str (initval_type, 1);
+
+          PKL_ERROR (PKL_AST_LOC (initval),
+                     "wrong initial value for array\n"
+                     "expected %s, got %s",
+                     expected_type, found_type);
+          free (expected_type);
+          free (found_type);
+
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
+
+  PKL_AST_TYPE (acons) = ASTREF (acons_type);
+}
+PKL_PHASE_END_HANDLER
+
 /* The type of a struct constructor is the type specified before the
    struct value.  It should be a struct type.  Also, there are several
    rules the struct must conform to.  */
@@ -2771,6 +2820,7 @@ struct pkl_phase pkl_phase_typify1
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_typify1_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_typify1_ps_isa),
    PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_typify1_ps_map),
+   PKL_PHASE_PS_HANDLER (PKL_AST_ACONS, pkl_typify1_ps_acons),
    PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_typify1_ps_scons),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_typify1_ps_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_typify1_ps_array),

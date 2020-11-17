@@ -1,5 +1,54 @@
 2020-11-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (expression): Add rules for array
+	constructors.
+	(resolve_typename): New function.
+	* libpoke/pkl-ast.h (enum pkl_ast_code): New entry PKL_AST_ACONS.
+	(PKL_AST_ACONS_TYPE): Define.
+	(PKL_AST_ACONS_VALUE): Define.
+	(struct pkl_ast_acons): New struct.
+	(union pkl_ast_node): New field acons.
+	* libpoke/pkl-ast.c (pkl_ast_make_acons): New function.
+	(pkl_ast_node_free): Handle array constructors.
+	(pkl_ast_print_1): Likewise.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_acons): New handler.
+	(pkl_phase_typify1): Register handler.
+	* libpoke/pkl-promo.c (pkl_promo_ps_acons): New handler.
+	(pkl_phase_promo): Install handler.
+	* libpoke/pkl-gen.c (pkl_gen_ps_acons): New handler.
+	(pkl_phase_gen): Install handler.
+	* libpoke/pkl-insn.def: Define macro-instruction PKL_INSN_AFILL.
+	* libpoke/pkl-asm.c (pkl_asm_insn_afill): Define.
+	(pkl_asm_insn): Dispatch PKL_INSN_AFILL.
+	* libpoke/pkl-asm.pks (afill): New macro.
+	* testsuite/poke.pkl/acons-diag-1.pk: New test.
+	* testsuite/poke.pkl/acons-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/acons-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/acons-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/acons-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/acons-diag-6.pk: Likewise.
+	* testsuite/poke.pkl/acons-diag-7.pk: Likewise.
+	* testsuite/poke.pkl/acons-diag-8.pk: Likewise.
+	* testsuite/poke.pkl/acons-1.pk: Likewise.
+	* testsuite/poke.pkl/acons-2.pk: Likewise.
+	* testsuite/poke.pkl/acons-3.pk: Likewise.
+	* testsuite/poke.pkl/acons-4.pk: Likewise.
+	* testsuite/poke.pkl/acons-5.pk: Likewise.
+	* testsuite/poke.pkl/acons-6.pk: Likewise.
+	* testsuite/poke.pkl/acons-7.pk: Likewise.
+	* testsuite/poke.pkl/acons-8.pk: Likewise.
+	* testsuite/poke.pkl/acons-9.pk: Likewise.
+	* testsuite/poke.pkl/acons-10.pk: Likewise.
+	* testsuite/poke.pkl/acons-11.pk: Likewise.
+	* testsuite/poke.pkl/acons-12.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (Array Constructors): New section.
+	* etc/poke.rec (Provide syntax for array constructors): Remove as
+	done.
+
+2020-11-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Document "default values" in the poke manual): New
 	entry.
 

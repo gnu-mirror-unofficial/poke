@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+type Array = int[];
+
+var a
+  = Array ("foo"); /* { dg-error ".*\n.*" } */

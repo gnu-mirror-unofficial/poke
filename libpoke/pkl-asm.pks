@@ -379,6 +379,41 @@
         ;; is on the stack.
         .end
 
+;;; AFILL
+;;; ( ARR VAL -- ARR VAL )
+;;;
+;;; Given ana array and a a value of the right type, set all the
+;;; elements of the array to the given value.
+;;;
+;;; This is the implementation of the `afill' macro instruction.
+
+        .macro afill
+        swap                    ; VAL ARR
+        sel                     ; VAL ARR SEL
+     .while
+        push ulong<64>0         ; VAL ARR IDX 0UL
+        eqlu
+        nip                     ; VAL ARR IDX (IDX==0UL)
+        not
+        nip                     ; VAL ARR IDX !(IDX==0UL)
+     .loop
+        push ulong<64>1         ; VAL ARR IDX 1UL
+        sublu
+        nip2                    ; VAL ARR (IDX-1UL)
+        tor
+        atr                     ; VAL ARR (IDX-1UL) [(IDX-1UL)]
+        rot                     ; ARR (IDX-1UL) VAL [(IDX-1UL)]
+        tor
+        atr                     ; ARR (IDX-1UL) VAL [(IDX-1UL) VAL]
+        aset                    ; ARR [(IDX-1UL) VAL]
+        fromr
+        fromr                   ; ARR VAL (IDX-1UL)
+        quake                   ; VAL ARR (IDX-1UL)
+     .endloop
+        drop                    ; VAL ARR
+        swap                    ; ARR VAL
+        .end
+
 ;;; ACONC array_type
 ;;; ( ARR ARR -- ARR ARR ARR )
 ;;;

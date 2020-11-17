@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {string[2]("foo")} } */
+/* { dg-output "\\\[\"foo\",\"foo\"\\\]" } */

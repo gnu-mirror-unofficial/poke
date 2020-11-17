@@ -422,6 +422,12 @@ pkl_do_pass_1 (pkl_compiler compiler,
       PKL_PASS (PKL_AST_MAP_TYPE (node));
 
       break;
+    case PKL_AST_ACONS:
+      PKL_PASS (PKL_AST_ACONS_TYPE (node));
+      if (PKL_AST_ACONS_VALUE (node))
+        PKL_PASS (PKL_AST_ACONS_VALUE (node));
+
+      break;
     case PKL_AST_SCONS:
       PKL_PASS (PKL_AST_SCONS_TYPE (node));
       PKL_PASS (PKL_AST_SCONS_VALUE (node));

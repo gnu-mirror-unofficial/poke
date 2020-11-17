@@ -923,6 +923,18 @@ pkl_asm_insn_aconc (pkl_asm pasm)
   RAS_MACRO_ACONC;
 }
 
+/* Macro-instruction: AFILL
+   ( ARR VAL -- ARR VAL )
+
+   Given an array and a value of the right type, set all the
+   elements of the array to the given value.  */
+
+static void
+pkl_asm_insn_afill (pkl_asm pasm)
+{
+  RAS_MACRO_AFILL;
+}
+
 /* Macro-instruction: ATRIM array_type
    ( ARR ULONG ULONG -- ARR ULONG ULONG ARR )
 
@@ -1532,6 +1544,9 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
           break;
         case PKL_INSN_ACONC:
           pkl_asm_insn_aconc (pasm);
+          break;
+        case PKL_INSN_AFILL:
+          pkl_asm_insn_afill (pasm);
           break;
         case PKL_INSN_SSETI:
           {

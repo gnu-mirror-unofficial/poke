@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {byte[3#B]()} } */
+/* { dg-output "\\\[0UB,0UB,0UB\\\]" } */

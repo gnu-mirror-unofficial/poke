@@ -51,6 +51,7 @@ enum pkl_ast_code
   PKL_AST_CAST,
   PKL_AST_ISA,
   PKL_AST_MAP,
+  PKL_AST_ACONS,
   PKL_AST_SCONS,
   PKL_AST_FUNCALL,
   PKL_AST_FUNCALL_ARG,
@@ -1170,6 +1171,28 @@ pkl_ast_node pkl_ast_make_map (pkl_ast ast,
                                pkl_ast_node ios,
                                pkl_ast_node offset);
 
+/* PKL_AST_SCONS nodes represent array constructors.
+
+   TYPE is an array type.
+
+   IELEM is either NULL or a value to use to initialize the array
+   contents.  */
+
+#define PKL_AST_ACONS_TYPE(AST) ((AST)->acons.type)
+#define PKL_AST_ACONS_VALUE(AST) ((AST)->acons.value)
+
+struct pkl_ast_acons
+{
+  struct pkl_ast_common common;
+
+  union pkl_ast_node *type;
+  union pkl_ast_node *value;
+};
+
+pkl_ast_node pkl_ast_make_acons (pkl_ast ast,
+                                 pkl_ast_node type,
+                                 pkl_ast_node value);
+
 /* PKL_AST_SCONS nodes represent struct constructors.
 
    TYPE is a struct type.
@@ -1749,6 +1772,7 @@ union pkl_ast_node
   struct pkl_ast_cast cast;
   struct pkl_ast_isa isa;
   struct pkl_ast_map map;
+  struct pkl_ast_acons acons;
   struct pkl_ast_scons scons;
   struct pkl_ast_funcall funcall;
   struct pkl_ast_funcall_arg funcall_arg;

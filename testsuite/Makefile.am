@@ -449,6 +449,26 @@ EXTRA_DIST = \
   poke.map/trimmed-map-4.pk \
   poke.map/unmap-1.pk \
   poke.pkl/pkl.exp \
+  poke.pkl/acons-diag-1.pk \
+  poke.pkl/acons-diag-2.pk \
+  poke.pkl/acons-diag-3.pk \
+  poke.pkl/acons-diag-4.pk \
+  poke.pkl/acons-diag-5.pk \
+  poke.pkl/acons-diag-6.pk \
+  poke.pkl/acons-diag-7.pk \
+  poke.pkl/acons-diag-8.pk \
+  poke.pkl/acons-1.pk \
+  poke.pkl/acons-2.pk \
+  poke.pkl/acons-3.pk \
+  poke.pkl/acons-4.pk \
+  poke.pkl/acons-5.pk \
+  poke.pkl/acons-6.pk \
+  poke.pkl/acons-7.pk \
+  poke.pkl/acons-8.pk \
+  poke.pkl/acons-9.pk \
+  poke.pkl/acons-10.pk \
+  poke.pkl/acons-11.pk \
+  poke.pkl/acons-12.pk \
   poke.pkl/add-arrays-1.pk \
   poke.pkl/add-arrays-2.pk \
   poke.pkl/add-arrays-3.pk \

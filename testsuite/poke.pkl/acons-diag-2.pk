@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a
+  = string[] (1 + 2); /* { dg-error ".*\n.*" } */

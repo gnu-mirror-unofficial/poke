@@ -6276,6 +6276,7 @@ Arrays are homogeneous collections of values.
 @menu
 * Array Literals::		Writing array values.
 * Array Types::			Bounded and unbounded arrays.
+* Array Constructors::		Constructing array values.
 * Array Comparison::		Comparing array values.
 * Array Indexing::		Accessing values stored in arrays.
 * Array Trimming::		Working with array pieces.
@@ -6474,6 +6475,48 @@ So, as we have seen, Poke's way of handling boundaries in array types
 allows data structures to adjust to the particular data they contain,
 so usual in binary formats.  This is an important feature, that gives
 Poke part of its feel and magic.
+
+@node Array Constructors
+@subsection Array Constructors
+@cindex constructing, arrays
+
+Array literals can only specify arrays which a constant number of
+elements.  They also require initial values for their elements, and it
+is also not possible to construct an array literal denoting an empty
+array of some given type.
+
+Array constructors provide a suitable way to build such array values.
+The syntax is:
+
+@example
+@var{array_type} ([@var{value}])
+@end example
+
+@noindent
+Where @var{array_type} is an array type, or the name of an array type,
+and @var{value} is an optional argument that specify the value to
+which the elements of the new array are initialized.  If no value is
+provided in the constructor then default values are calculated (XXX:
+xref to default values.)
+
+Examples:
+
+@example
+(poke) int[]()
+[]
+(poke) int[2]()
+[0,0]
+(poke) int[2](10)
+[10,10]
+(poke) offset<int,#B>[2](16#b)
+[2#B,2#B]
+(poke) string[3]()
+["","",""]
+(poke) int[][3](int[2](666))
+[[666,666],[666,666],[666,666]]
+(poke) Packet[3]()
+[Packet @{...@}, Packet @{...@}, Packet @{...@}]
+@end example
 
 @node Array Comparison
 @subsection Array Comparison

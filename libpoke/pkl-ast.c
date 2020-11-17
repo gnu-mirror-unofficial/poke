@@ -1475,6 +1475,21 @@ pkl_ast_make_map (pkl_ast ast,
   return map;
 }
 
+/* Build and return an AST node for an array constructor.  */
+
+pkl_ast_node
+pkl_ast_make_acons (pkl_ast ast,
+                    pkl_ast_node type, pkl_ast_node value)
+{
+  pkl_ast_node acons = pkl_ast_make_node (ast, PKL_AST_ACONS);
+
+  assert (type);
+
+  PKL_AST_ACONS_TYPE (acons) = ASTREF (type);
+  PKL_AST_ACONS_VALUE (acons) = ASTREF (value);
+  return acons;
+}
+
 /* Build and return an AST node for a struct constructor.  */
 
 pkl_ast_node
@@ -2064,6 +2079,12 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_MAP_TYPE (ast));
       pkl_ast_node_free (PKL_AST_MAP_IOS (ast));
       pkl_ast_node_free (PKL_AST_MAP_OFFSET (ast));
+      break;
+
+    case PKL_AST_ACONS:
+
+      pkl_ast_node_free (PKL_AST_ACONS_TYPE (ast));
+      pkl_ast_node_free (PKL_AST_ACONS_VALUE (ast));
       break;
 
     case PKL_AST_SCONS:
@@ -2846,6 +2867,15 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (map_type, MAP_TYPE);
       PRINT_AST_SUBAST (ios, MAP_IOS);
       PRINT_AST_SUBAST (offset, MAP_OFFSET);
+      break;
+
+    case PKL_AST_ACONS:
+      IPRINTF ("ACONS::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_SUBAST (type, TYPE);
+      PRINT_AST_SUBAST (acons_type, ACONS_TYPE);
+      PRINT_AST_SUBAST (acons_value, ACONS_VALUE);
       break;
 
     case PKL_AST_SCONS:

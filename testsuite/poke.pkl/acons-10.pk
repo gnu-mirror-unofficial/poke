@@ -1,0 +1,13 @@
+/* { dg-do run } */
+
+var N = 0;
+type Fun = ()int;
+
+/* { dg-command {var a = Fun[3] (lambda int: { N = N + 1; return N; })} } */
+/* { dg-command {a} } */
+/* { dg-output "\\\[#<closure>,#<closure>,#<closure>\\\]" } */
+/* { dg-command {a[1]()} } */
+/* { dg-output "\n1" } */
+/* { dg-command {N = 5} } */
+/* { dg-command {a[2]()} } */
+/* { dg-output "\n6" } */

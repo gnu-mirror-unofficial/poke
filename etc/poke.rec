@@ -511,38 +511,6 @@ Description:
 +
 + Also for optional fields.
 
-Summary: Provide syntax for array constructors
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ Currently there are three different ways to create array values in
-+ Poke:
-+
-+ 1) From an array literal, like [1,2,3,.[10]=666]
-+ 2) From a mapping, like int[3] @ 0#B
-+ 3) From an array constructor, like in:
-+
-+    type Packet = struct { byte[2] magic; ... };
-+    Packet { } -> Packet { magic = [0UB,0UB], ... }
-+
-+ However, there is no syntax to achieve 3) out of the context of
-+ constructing a struct, and 1) is limited, since it is not possible to
-+ express a literal with a variable number of elements.
-+
-+ Therefore we need to add a syntax for 3), something like:
-+
-+  TYPE ([INIT_VALUE])
-+
-+ Examples:
-+
-+  int[2]() -> [0,0]
-+  int[2](10) -> [10,10]
-+
-+ To discuss in the mailing list.
-RFC: yes
-Target: 1.0
-
 Summary: Support a pipe IOS
 Component: Language
 Kind: ENH

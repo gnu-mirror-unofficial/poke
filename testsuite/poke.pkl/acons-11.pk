@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {int[2](666UL)} } */
+/* { dg-output "\\\[666,666\\\]" } */
