@@ -1770,79 +1770,43 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
 PKL_PHASE_END_HANDLER
 
 /*
- * | [ACONS_VALUE]
- * ACONS
+ * | [CONS_VALUE]
+ * CONS
  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_acons)
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cons)
 {
-  pkl_ast_node acons = PKL_PASS_NODE;
-  pkl_ast_node acons_type = PKL_AST_ACONS_TYPE (acons);
+  pkl_ast_node cons = PKL_PASS_NODE;
+  int cons_kind = PKL_AST_CONS_KIND (cons);
+  pkl_ast_node cons_type = PKL_AST_CONS_TYPE (cons);
 
-  /* Build an array with default values.  Note how array constructors
-     do not use their argument.  */
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-  PKL_GEN_PAYLOAD->in_constructor = 1;
-  PKL_PASS_SUBPASS (acons_type);
-  PKL_GEN_PAYLOAD->in_constructor = 0;
-
-  /* If an initial value has been provided, set the elements of the
-     array to this value.  */
-  if (PKL_AST_ACONS_VALUE (acons))
+  switch (cons_kind)
     {
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* ARR IVAL */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AFILL); /* ARR IVAL */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);  /* ARR */
-#if 0
-                                                /* IVAL ARR */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL); /* IVAL ARR SEL */
-      pkl_asm_while (PKL_GEN_ASM);
-      {
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                      pvm_make_ulong (0, 64)); /* IVAL ARR IDX 0UL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_EQLU); /* IVAL ARR IDX (IDX==0UL) */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* IVAL ARR IDX !(IDX==0UL) */
-      }
-      pkl_asm_while_loop (PKL_GEN_ASM);
-      {
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                      pvm_make_ulong (1, 64));    /* IVAL ARR IDX 1UL */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SUBLU);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2); /* IVAL ARR (IDX-1UL) */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ATR);  /* IVAL ARR (IDX-1UL) [(IDX-1UL)] */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);  /* ARR (IDX-1UL) IVAL [(IDX-1UL)] */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ATR);  /* ARR (IDX-1UL) IVAL [(IDX-1UL) IVAL] */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ASET); /* ARR [(IDX-1UL) IVAL] */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR); /* ARR IVAL (IDX-1UL) */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_QUAKE); /* IVAL ARR (IDX-1UL) */
-      }
-      pkl_asm_while_endloop (PKL_GEN_ASM);
+    case PKL_AST_CONS_KIND_ARRAY:
+      /* Build an array with default values.  Note how array
+         constructors do not use their argument.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+      PKL_GEN_PAYLOAD->in_constructor = 1;
+      PKL_PASS_SUBPASS (cons_type);
+      PKL_GEN_PAYLOAD->in_constructor = 0;
 
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* IVAL ARR */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);  /* ARR */
-#endif
+      /* If an initial value has been provided, set the elements of
+         the array to this value.  */
+      if (PKL_AST_CONS_VALUE (cons))
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* ARR IVAL */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AFILL); /* ARR IVAL */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);  /* ARR */
+        }
+      break;
+    case PKL_AST_CONS_KIND_STRUCT:
+      PKL_GEN_PAYLOAD->in_constructor = 1;
+      PKL_PASS_SUBPASS (cons_type);
+      PKL_GEN_PAYLOAD->in_constructor = 0;
+      break;
+    default:
+      assert (0);
     }
-}
-PKL_PHASE_END_HANDLER
-
-/*
- * | SCONS_VALUE
- * SCONS
- */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_scons)
-{
-  pkl_ast_node scons = PKL_PASS_NODE;
-  pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
-
-  PKL_GEN_PAYLOAD->in_constructor = 1;
-  PKL_PASS_SUBPASS (scons_type);
-  PKL_GEN_PAYLOAD->in_constructor = 0;
 }
 PKL_PHASE_END_HANDLER
 
@@ -3588,8 +3552,7 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_gen_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_gen_ps_isa),
    PKL_PHASE_PR_HANDLER (PKL_AST_MAP, pkl_gen_pr_map),
-   PKL_PHASE_PS_HANDLER (PKL_AST_ACONS, pkl_gen_ps_acons),
-   PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_gen_ps_scons),
+   PKL_PHASE_PS_HANDLER (PKL_AST_CONS, pkl_gen_ps_cons),
    PKL_PHASE_PR_HANDLER (PKL_AST_ARRAY, pkl_gen_pr_array),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_gen_ps_array),
    PKL_PHASE_PR_HANDLER (PKL_AST_TRIMMER, pkl_gen_pr_trimmer),

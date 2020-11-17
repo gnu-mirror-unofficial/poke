@@ -799,11 +799,15 @@ expression:
                 }
         | array_type_specifier '(' ')'
                 {
-                  $$ = pkl_ast_make_acons (pkl_parser->ast, $1, NULL);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast,
+                                          PKL_AST_CONS_KIND_ARRAY,
+                                          $1, NULL);
                 }
         | array_type_specifier '(' expression ')'
                 {
-                  $$ = pkl_ast_make_acons (pkl_parser->ast, $1, $3);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast,
+                                          PKL_AST_CONS_KIND_ARRAY,
+                                          $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | TYPENAME '(' ')'
@@ -822,7 +826,9 @@ expression:
                       pkl_ast_node_free ($1);
                     }
 
-                  $$ = pkl_ast_make_acons (pkl_parser->ast, type, NULL);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast,
+                                          PKL_AST_CONS_KIND_ARRAY,
+                                          type, NULL);
                   PKL_AST_LOC ($$) = @$;
                 }
         | TYPENAME '(' expression ')'
@@ -841,7 +847,9 @@ expression:
                      pkl_ast_node_free ($1);
                    }
 
-                  $$ = pkl_ast_make_acons (pkl_parser->ast, type, $3);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast,
+                                          PKL_AST_CONS_KIND_ARRAY,
+                                          type, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | TYPENAME '{' struct_field_list opt_comma '}'
@@ -876,9 +884,10 @@ expression:
                                                  0 /* nelem */, $3);
                   PKL_AST_LOC (astruct) = @$;
 
-                  $$ = pkl_ast_make_scons (pkl_parser->ast,
-                                           type,
-                                           astruct);
+                  $$ = pkl_ast_make_cons (pkl_parser->ast,
+                                          PKL_AST_CONS_KIND_STRUCT,
+                                          type,
+                                          astruct);
                   PKL_AST_LOC ($$) = @$;
                 }
         | UNIT

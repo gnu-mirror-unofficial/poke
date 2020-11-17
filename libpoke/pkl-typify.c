@@ -1902,161 +1902,167 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 }
 PKL_PHASE_END_HANDLER
 
-/* The type of an array constructor is the type specified in the
-   constructor.  It should be an array type.  Also, if an
-   initialization value is provided its type should match the type of
-   the elements of the array.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_acons)
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cons)
 {
-  pkl_ast_node acons = PKL_PASS_NODE;
-  pkl_ast_node acons_type = PKL_AST_ACONS_TYPE (acons);
-  pkl_ast_node initval = PKL_AST_ACONS_VALUE (acons);
+  pkl_ast_node cons = PKL_PASS_NODE;
+  int cons_kind = PKL_AST_CONS_KIND (cons);
+  pkl_ast_node cons_type = PKL_AST_CONS_TYPE (cons);
+  pkl_ast_node cons_value = PKL_AST_CONS_VALUE (cons);
 
-  if (PKL_AST_TYPE_CODE (acons_type) != PKL_TYPE_ARRAY)
+  switch (cons_kind)
     {
-      PKL_ERROR (PKL_AST_LOC (acons_type),
-                 "expected array type in constructor");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+    case PKL_AST_CONS_KIND_STRUCT:
+      {
+        /* The type of a struct constructor is the type specified
+           before the struct value.  It should be a struct type.
+           Also, there are several rules the struct must conform
+           to.  */
 
-  if (initval)
-    {
-      pkl_ast_node initval_type = PKL_AST_TYPE (initval);
-      pkl_ast_node acons_type_elems_type
-        = PKL_AST_TYPE_A_ETYPE (acons_type);
+        pkl_ast_node elem;
+        pkl_ast_node astruct = cons_value;
+        pkl_ast_node struct_fields = PKL_AST_STRUCT_FIELDS (astruct);
 
-      if (!pkl_ast_type_promoteable_p (initval_type,
-                                       acons_type_elems_type,
-                                       0 /* promote array of any */))
-        {
-          char *expected_type
-            = pkl_type_str (acons_type_elems_type, 1);
-          char *found_type = pkl_type_str (initval_type, 1);
+        /* Unions require either zero or exactly one initializer in
+           their constructors.  */
+        if (PKL_AST_TYPE_S_UNION_P (cons_type)
+            && PKL_AST_STRUCT_NELEM (astruct) > 1)
+          {
+            PKL_ERROR (PKL_AST_LOC (astruct),
+                       "union constructors require exactly one field initializer");
+            PKL_TYPIFY_PAYLOAD->errors++;
+            PKL_PASS_ERROR;
+          }
 
-          PKL_ERROR (PKL_AST_LOC (initval),
-                     "wrong initial value for array\n"
-                     "expected %s, got %s",
-                     expected_type, found_type);
-          free (expected_type);
-          free (found_type);
+        /* This check is currently redundant, because the restriction
+           is implicitly satisfied by the parser.  */
+        if (PKL_AST_TYPE_CODE (cons_type) != PKL_TYPE_STRUCT)
+          {
+            PKL_ERROR (PKL_AST_LOC (cons_type),
+                       "expected struct type in constructor");
+            PKL_TYPIFY_PAYLOAD->errors++;
+            PKL_PASS_ERROR;
+          }
 
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-    }
+        /* Make sure that:
+           0. Every field in the initializer is named.
+           1. Every field in the initializer exists in the struct type.
+           2. The type of the initializer field should be equal to (or
+           promoteable to) the type of the struct field.  */
+        for (elem = struct_fields; elem; elem = PKL_AST_CHAIN (elem))
+          {
+            pkl_ast_node type_elem;
+            pkl_ast_node elem_name = PKL_AST_STRUCT_FIELD_NAME (elem);
+            pkl_ast_node elem_exp = PKL_AST_STRUCT_FIELD_EXP (elem);
+            pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
+            int found = 0;
 
-  PKL_AST_TYPE (acons) = ASTREF (acons_type);
-}
-PKL_PHASE_END_HANDLER
+            if (!elem_name)
+              {
+                PKL_ERROR (PKL_AST_LOC (elem),
+                           "anonymous initializer in struct constructor");
+                PKL_TYPIFY_PAYLOAD->errors++;
+                PKL_PASS_ERROR;
+              }
 
-/* The type of a struct constructor is the type specified before the
-   struct value.  It should be a struct type.  Also, there are several
-   rules the struct must conform to.  */
+            for (type_elem = PKL_AST_TYPE_S_ELEMS (cons_type);
+                 type_elem;
+                 type_elem = PKL_AST_CHAIN (type_elem))
+              {
+                /* Process only struct type fields.  */
+                if (PKL_AST_CODE (type_elem) == PKL_AST_STRUCT_TYPE_FIELD)
+                  {
+                    pkl_ast_node type_elem_name;
 
-PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_scons)
-{
-  pkl_ast_node scons = PKL_PASS_NODE;
-  pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
-  pkl_ast_node astruct = PKL_AST_SCONS_VALUE (scons);
-  pkl_ast_node struct_fields = PKL_AST_STRUCT_FIELDS (astruct);
-  pkl_ast_node elem = NULL;
+                    type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
+                    if (type_elem_name
+                        && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
+                                  PKL_AST_IDENTIFIER_POINTER (elem_name)))
+                      {
+                        pkl_ast_node type_elem_type
+                          = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
 
-  /* Unions require either zero or exactly one initializer in their constructors.  */
-  if (PKL_AST_TYPE_S_UNION_P (scons_type)
-      && PKL_AST_STRUCT_NELEM (astruct) > 1)
-    {
-      PKL_ERROR (PKL_AST_LOC (astruct),
-                 "union constructors require exactly one field initializer");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+                        found = 1;
 
-  /* This check is currently redundant, because the restriction is
-     implicitly satisfied by the parser.  */
-  if (PKL_AST_TYPE_CODE (scons_type) != PKL_TYPE_STRUCT)
-    {
-      PKL_ERROR (PKL_AST_LOC (scons_type),
-                 "expected struct type in constructor");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+                        if (!pkl_ast_type_promoteable_p (elem_type, type_elem_type,
+                                                         0 /* promote array of any */))
+                          {
+                            char *expected_type = pkl_type_str (type_elem_type, 1);
+                            char *found_type = pkl_type_str (elem_type, 1);
 
-  /* Make sure that:
-     0. Every field in the initializer is named.
-     1. Every field in the initializer exists in the struct type.
-     2. The type of the initializer field should be equal to (or
-        promoteable to) the type of the struct field.  */
-  for (elem = struct_fields; elem; elem = PKL_AST_CHAIN (elem))
-    {
-      pkl_ast_node type_elem;
-      pkl_ast_node elem_name = PKL_AST_STRUCT_FIELD_NAME (elem);
-      pkl_ast_node elem_exp = PKL_AST_STRUCT_FIELD_EXP (elem);
-      pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
-      int found = 0;
-
-      if (!elem_name)
-        {
-          PKL_ERROR (PKL_AST_LOC (elem),
-                     "anonymous initializer in struct constructor");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-
-      for (type_elem = PKL_AST_TYPE_S_ELEMS (scons_type);
-           type_elem;
-           type_elem = PKL_AST_CHAIN (type_elem))
-        {
-          /* Process only struct type fields.  */
-          if (PKL_AST_CODE (type_elem) == PKL_AST_STRUCT_TYPE_FIELD)
-            {
-              pkl_ast_node type_elem_name;
-
-              type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (type_elem);
-              if (type_elem_name
-                  && STREQ (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
-                            PKL_AST_IDENTIFIER_POINTER (elem_name)))
-                {
-                  pkl_ast_node type_elem_type
-                    = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
-
-                  found = 1;
-
-                  if (!pkl_ast_type_promoteable_p (elem_type, type_elem_type,
-                                                   0 /* promote array of any */))
-                    {
-                      char *expected_type = pkl_type_str (type_elem_type, 1);
-                      char *found_type = pkl_type_str (elem_type, 1);
-
-                      PKL_ERROR (PKL_AST_LOC (elem_exp),
-                                 "invalid initializer for `%s' in constructor\n\
+                            PKL_ERROR (PKL_AST_LOC (elem_exp),
+                                       "invalid initializer for `%s' in constructor\n\
 expected %s, got %s",
-                                 PKL_AST_IDENTIFIER_POINTER (elem_name),
-                                 expected_type, found_type);
+                                       PKL_AST_IDENTIFIER_POINTER (elem_name),
+                                       expected_type, found_type);
 
-                      free (expected_type);
-                      free (found_type);
-                      PKL_TYPIFY_PAYLOAD->errors++;
-                      PKL_PASS_ERROR;
-                    }
+                            free (expected_type);
+                            free (found_type);
+                            PKL_TYPIFY_PAYLOAD->errors++;
+                            PKL_PASS_ERROR;
+                          }
 
-                  break;
-                }
+                        break;
+                      }
+                  }
+              }
+
+            if (!found)
+              {
+                PKL_ERROR (PKL_AST_LOC (elem_name),
+                           "invalid struct field `%s' in constructor",
+                           PKL_AST_IDENTIFIER_POINTER (elem_name));
+                PKL_TYPIFY_PAYLOAD->errors++;
+                PKL_PASS_ERROR;
+              }
+          }
+
+        break;
+      }
+    case PKL_AST_CONS_KIND_ARRAY:
+      /* The type of an array constructor is the type specified in the
+         constructor.  It should be an array type.  Also, if an
+         initialization value is provided its type should match the
+         type of the elements of the array.  */
+
+      if (PKL_AST_TYPE_CODE (cons_type) != PKL_TYPE_ARRAY)
+        {
+          PKL_ERROR (PKL_AST_LOC (cons_type),
+                     "expected array type in constructor");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+
+      if (cons_value)
+        {
+          pkl_ast_node initval_type = PKL_AST_TYPE (cons_value);
+          pkl_ast_node cons_type_elems_type
+            = PKL_AST_TYPE_A_ETYPE (cons_type);
+
+          if (!pkl_ast_type_promoteable_p (initval_type,
+                                           cons_type_elems_type,
+                                           0 /* promote array of any */))
+            {
+              char *expected_type
+                = pkl_type_str (cons_type_elems_type, 1);
+              char *found_type = pkl_type_str (initval_type, 1);
+
+              PKL_ERROR (PKL_AST_LOC (cons_value),
+                         "wrong initial value for array\n"
+                         "expected %s, got %s",
+                         expected_type, found_type);
+              free (expected_type);
+              free (found_type);
+
+              PKL_TYPIFY_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
             }
         }
-
-      if (!found)
-        {
-          PKL_ERROR (PKL_AST_LOC (elem_name),
-                     "invalid struct field `%s' in constructor",
-                     PKL_AST_IDENTIFIER_POINTER (elem_name));
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
+      break;
+    default:
+      assert (0);
     }
 
-  PKL_AST_TYPE (scons) = ASTREF (scons_type);
+  PKL_AST_TYPE (cons) = ASTREF (cons_type);
 }
 PKL_PHASE_END_HANDLER
 
@@ -2820,8 +2826,7 @@ struct pkl_phase pkl_phase_typify1
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_typify1_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_typify1_ps_isa),
    PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_typify1_ps_map),
-   PKL_PHASE_PS_HANDLER (PKL_AST_ACONS, pkl_typify1_ps_acons),
-   PKL_PHASE_PS_HANDLER (PKL_AST_SCONS, pkl_typify1_ps_scons),
+   PKL_PHASE_PS_HANDLER (PKL_AST_CONS, pkl_typify1_ps_cons),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_typify1_ps_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_typify1_ps_array),
    PKL_PHASE_PS_HANDLER (PKL_AST_TRIMMER, pkl_typify1_ps_trimmer),

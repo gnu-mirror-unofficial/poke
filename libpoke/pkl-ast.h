@@ -51,8 +51,7 @@ enum pkl_ast_code
   PKL_AST_CAST,
   PKL_AST_ISA,
   PKL_AST_MAP,
-  PKL_AST_ACONS,
-  PKL_AST_SCONS,
+  PKL_AST_CONS,
   PKL_AST_FUNCALL,
   PKL_AST_FUNCALL_ARG,
   PKL_AST_VAR,
@@ -1171,48 +1170,39 @@ pkl_ast_node pkl_ast_make_map (pkl_ast ast,
                                pkl_ast_node ios,
                                pkl_ast_node offset);
 
-/* PKL_AST_SCONS nodes represent array constructors.
+/* PKL_AST_CONS nodes represent value constructors.
 
-   TYPE is an array type.
+   KIND is the kind of constructor.  It should be one of the
+   PKL_AST_CONS_KIND_* values defined below.
 
-   IELEM is either NULL or a value to use to initialize the array
-   contents.  */
+   TYPE is a type.
 
-#define PKL_AST_ACONS_TYPE(AST) ((AST)->acons.type)
-#define PKL_AST_ACONS_VALUE(AST) ((AST)->acons.value)
+   For struct constructors, VALUE is a struct value of type TYPE and
+   must always be present.
 
-struct pkl_ast_acons
+   For array constructors, VALUE is either NULL or the value that will
+   be used as elements of the constructed array.  */
+
+#define PKL_AST_CONS_KIND(AST) ((AST)->cons.kind)
+#define PKL_AST_CONS_TYPE(AST) ((AST)->cons.type)
+#define PKL_AST_CONS_VALUE(AST) ((AST)->cons.value)
+
+#define PKL_AST_CONS_KIND_STRUCT 0
+#define PKL_AST_CONS_KIND_ARRAY 1
+
+struct pkl_ast_cons
 {
   struct pkl_ast_common common;
 
+  int kind;
   union pkl_ast_node *type;
   union pkl_ast_node *value;
 };
 
-pkl_ast_node pkl_ast_make_acons (pkl_ast ast,
-                                 pkl_ast_node type,
-                                 pkl_ast_node value);
-
-/* PKL_AST_SCONS nodes represent struct constructors.
-
-   TYPE is a struct type.
-
-   VALUE is a struct value.  */
-
-#define PKL_AST_SCONS_TYPE(AST) ((AST)->scons.type)
-#define PKL_AST_SCONS_VALUE(AST) ((AST)->scons.value)
-
-struct pkl_ast_scons
-{
-  struct pkl_ast_common common;
-
-  union pkl_ast_node *type;
-  union pkl_ast_node *value;
-};
-
-pkl_ast_node pkl_ast_make_scons (pkl_ast ast,
-                                 pkl_ast_node type,
-                                 pkl_ast_node value);
+pkl_ast_node pkl_ast_make_cons (pkl_ast ast,
+                                int kind,
+                                pkl_ast_node type,
+                                pkl_ast_node value);
 
 /* PKL_AST_FUNCALL nodes represent the invocation of a function.
 
@@ -1772,8 +1762,7 @@ union pkl_ast_node
   struct pkl_ast_cast cast;
   struct pkl_ast_isa isa;
   struct pkl_ast_map map;
-  struct pkl_ast_acons acons;
-  struct pkl_ast_scons scons;
+  struct pkl_ast_cons cons;
   struct pkl_ast_funcall funcall;
   struct pkl_ast_funcall_arg funcall_arg;
   struct pkl_ast_var var;

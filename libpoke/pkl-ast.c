@@ -1475,34 +1475,22 @@ pkl_ast_make_map (pkl_ast ast,
   return map;
 }
 
-/* Build and return an AST node for an array constructor.  */
+/* Build and return an AST node for a value constructor.  */
 
 pkl_ast_node
-pkl_ast_make_acons (pkl_ast ast,
-                    pkl_ast_node type, pkl_ast_node value)
+pkl_ast_make_cons (pkl_ast ast,
+                   int kind, pkl_ast_node type, pkl_ast_node value)
 {
-  pkl_ast_node acons = pkl_ast_make_node (ast, PKL_AST_ACONS);
+  pkl_ast_node cons = pkl_ast_make_node (ast, PKL_AST_CONS);
 
   assert (type);
+  assert (kind == PKL_AST_CONS_KIND_STRUCT
+          || kind == PKL_AST_CONS_KIND_ARRAY);
 
-  PKL_AST_ACONS_TYPE (acons) = ASTREF (type);
-  PKL_AST_ACONS_VALUE (acons) = ASTREF (value);
-  return acons;
-}
-
-/* Build and return an AST node for a struct constructor.  */
-
-pkl_ast_node
-pkl_ast_make_scons (pkl_ast ast,
-                    pkl_ast_node type, pkl_ast_node value)
-{
-  pkl_ast_node scons = pkl_ast_make_node (ast, PKL_AST_SCONS);
-
-  assert (type && value);
-
-  PKL_AST_SCONS_TYPE (scons) = ASTREF (type);
-  PKL_AST_SCONS_VALUE (scons) = ASTREF (value);
-  return scons;
+  PKL_AST_CONS_KIND (cons) = kind;
+  PKL_AST_CONS_TYPE (cons) = ASTREF (type);
+  PKL_AST_CONS_VALUE (cons) = ASTREF (value);
+  return cons;
 }
 
 /* Build and return an AST node for a function call.  */
@@ -2081,16 +2069,10 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_MAP_OFFSET (ast));
       break;
 
-    case PKL_AST_ACONS:
+    case PKL_AST_CONS:
 
-      pkl_ast_node_free (PKL_AST_ACONS_TYPE (ast));
-      pkl_ast_node_free (PKL_AST_ACONS_VALUE (ast));
-      break;
-
-    case PKL_AST_SCONS:
-
-      pkl_ast_node_free (PKL_AST_SCONS_TYPE (ast));
-      pkl_ast_node_free (PKL_AST_SCONS_VALUE (ast));
+      pkl_ast_node_free (PKL_AST_CONS_TYPE (ast));
+      pkl_ast_node_free (PKL_AST_CONS_VALUE (ast));
       break;
 
     case PKL_AST_FUNCALL:
@@ -2869,23 +2851,16 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (offset, MAP_OFFSET);
       break;
 
-    case PKL_AST_ACONS:
-      IPRINTF ("ACONS::\n");
+    case PKL_AST_CONS:
+      IPRINTF ("CONS::\n");
 
       PRINT_COMMON_FIELDS;
       PRINT_AST_SUBAST (type, TYPE);
-      PRINT_AST_SUBAST (acons_type, ACONS_TYPE);
-      PRINT_AST_SUBAST (acons_value, ACONS_VALUE);
+      PRINT_AST_IMM (cons_kind, CONS_KIND, "%d");
+      PRINT_AST_SUBAST (cons_type, CONS_TYPE);
+      PRINT_AST_SUBAST (cons_value, CONS_VALUE);
       break;
 
-    case PKL_AST_SCONS:
-      IPRINTF ("SCONS::\n");
-
-      PRINT_COMMON_FIELDS;
-      PRINT_AST_SUBAST (type, TYPE);
-      PRINT_AST_SUBAST (scons_type, SCONS_TYPE);
-      PRINT_AST_SUBAST (scons_value, SCONS_VALUE);
-      break;
 
     case PKL_AST_FUNCALL:
       IPRINTF ("FUNCALL::\n");
