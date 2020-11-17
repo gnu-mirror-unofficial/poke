@@ -888,7 +888,7 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_continue_stmt)
 {
-  int nframes = PKL_AST_BREAK_STMT_NFRAMES (PKL_PASS_NODE);
+  int nframes = PKL_AST_CONTINUE_STMT_NFRAMES (PKL_PASS_NODE);
 
   if (nframes > 0)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPF, nframes);

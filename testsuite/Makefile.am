@@ -744,6 +744,7 @@ EXTRA_DIST = \
   poke.pkl/continue-diag-1.pk \
   poke.pkl/continue-for-1.pk \
   poke.pkl/continue-for-2.pk \
+  poke.pkl/continue-for-3.pk \
   poke.pkl/continue-while-1.pk \
   poke.pkl/continue-while-2.pk \
   poke.pkl/csat-struct-6.pk \

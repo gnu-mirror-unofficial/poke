@@ -2316,9 +2316,13 @@ pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
       pkl_ast_finish_breaks_1 (entity,
                                PKL_AST_TRY_CATCH_STMT_CODE (stmt),
                                nframes);
+      if (PKL_AST_TRY_CATCH_STMT_ARG (stmt))
+        *nframes += 1;
       pkl_ast_finish_breaks_1 (entity,
                                PKL_AST_TRY_CATCH_STMT_HANDLER (stmt),
                                nframes);
+      if (PKL_AST_TRY_CATCH_STMT_ARG (stmt))
+        *nframes -=1;
       break;
     case PKL_AST_TRY_UNTIL_STMT:
       pkl_ast_finish_breaks_1 (entity,

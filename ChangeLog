@@ -1,3 +1,12 @@
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_ps_continue_stmt): Fix typo.
+	* libpoke/pkl-ast.c (pkl_ast_finish_breaks_1): Take into account
+	lexical frames introduced by the "catch" block when it gets an
+	argument.
+	* testsuite/poke.pkl/continue-for-3.pk: New test.
+	* testsuite/Makefile.am: Add new test.
+
 2020-11-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y: Syntax for string constructors.

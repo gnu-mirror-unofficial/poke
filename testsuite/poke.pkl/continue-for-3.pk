@@ -1,0 +1,29 @@
+/* { dg-do run } */
+
+var funs = [
+  lambda void:
+    {
+      raise E_generic;
+    },
+  lambda void:
+    {
+      raise E_generic;
+    },
+];
+
+fun foo = void:
+    {
+      for (f in funs)
+      {
+        try f();
+        catch (Exception ex)
+        {
+          printf ("FAIL %s\n", ex.msg);
+          continue;
+        }
+        print ("PASS\n");
+      }
+    }
+
+/* { dg-command { foo } } */
+/* { dg-output "FAIL generic\nFAIL generic" } */
