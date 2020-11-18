@@ -124,6 +124,11 @@ EXTRA_DIST = \
   poke.map/ass-map-16.pk \
   poke.map/ass-map-17.pk \
   poke.map/ass-map-struct-int-1.pk \
+  poke.map/func-map-1.pk \
+  poke.map/func-map-2.pk \
+  poke.map/func-map-3.pk \
+  poke.map/func-map-4.pk \
+  poke.map/func-map-5.pk \
   poke.map/map-opcond-write-1.pk \
   poke.map/map-optcond-1.pk \
   poke.map/map-optcond-2.pk \
@@ -610,6 +615,7 @@ EXTRA_DIST = \
   poke.pkl/attr-size-11.pk \
   poke.pkl/attr-size-12.pk \
   poke.pkl/attr-size-13.pk \
+  poke.pkl/attr-size-14.pk \
   poke.pkl/attr-unit-1.pk \
   poke.pkl/band-integers-1.pk \
   poke.pkl/band-integers-2.pk \
@@ -1042,7 +1048,6 @@ EXTRA_DIST = \
   poke.pkl/lt-strings-1.pk \
   poke.pkl/lt-strings-2.p \
   poke.pkl/luca-suck-this.pk \
-  poke.pkl/map-diag-1.pk \
   poke.pkl/map-diag-2.pk \
   poke.pkl/map-diag-3.pk \
   poke.pkl/map-diag-4.pk \
@@ -1601,7 +1606,6 @@ EXTRA_DIST = \
   poke.pkl/units-diag-1.pk \
   poke.pkl/units-diag-2.pk \
   poke.pkl/units-diag-3.pk \
-  poke.pkl/unmap-diag-1.pk \
   poke.pkl/uu-file-1.pk \
   poke.pkl/uu-line-1.pk \
   poke.pkl/while-1.pk \

@@ -1037,6 +1037,7 @@ pkl_ast_type_mappable_p (pkl_ast_node type)
     case PKL_TYPE_INTEGRAL:
     case PKL_TYPE_STRING:
     case PKL_TYPE_OFFSET:
+    case PKL_TYPE_FUNCTION:
       return 1;
     case PKL_TYPE_ARRAY:
       return pkl_ast_type_mappable_p (PKL_AST_TYPE_A_ETYPE (type));

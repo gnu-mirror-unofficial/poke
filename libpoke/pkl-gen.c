@@ -2278,6 +2278,77 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_type_arg)
 }
 PKL_PHASE_END_HANDLER
 
+/* TYPE_FUNCTION
+ * | FUNC_TYPE_ARG
+ * | ...
+ * | FUNC_TYPE_RTYPE
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
+{
+  if (PKL_GEN_PAYLOAD->in_mapper || PKL_GEN_PAYLOAD->in_constructor)
+    {
+      /* We construct the same function value for mappings and
+         constructions.  */
+
+      pkl_ast_node function_type = PKL_PASS_NODE;
+      pkl_ast_node function_rtype = PKL_AST_TYPE_F_RTYPE (function_type);
+      pvm_program program;
+
+      /* Compile the body for the function value.  */
+      PKL_GEN_PUSH_ASM (pkl_asm_new (PKL_PASS_AST,
+                                     PKL_GEN_PAYLOAD->compiler,
+                                     0 /* prologue */));
+      {
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PROLOG);
+        int i;
+
+        /* Discard arguments.  */
+        for (i = 0; i < PKL_AST_TYPE_F_NARG (function_type); ++i)
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+
+        /* If the function returns a value, construct it.  */
+        if (PKL_AST_TYPE_CODE (function_rtype) == PKL_TYPE_VOID)
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+        else
+          {
+            int in_mapper_back = PKL_GEN_PAYLOAD->in_mapper;
+            int in_constructor_back = PKL_GEN_PAYLOAD->in_constructor;
+
+            /* Constructor argument.  */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+
+            PKL_GEN_PAYLOAD->in_mapper = 0;
+            PKL_GEN_PAYLOAD->in_constructor = 1;
+            PKL_PASS_SUBPASS (function_rtype);
+            PKL_GEN_PAYLOAD->in_mapper = in_mapper_back;
+            PKL_GEN_PAYLOAD->in_constructor = in_constructor_back;
+          }
+
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+      }
+
+      program = pkl_asm_finish (PKL_GEN_ASM, 0 /* epilogue */);
+      PKL_GEN_POP_ASM;
+
+      pvm_program_make_executable (program);
+
+      /* Discard constructor/mapper arguments.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+      if (PKL_GEN_PAYLOAD->in_mapper)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+
+      /* Push the constructed closure and install the current lexical
+         environment.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_cls (program));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUC);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+
+      PKL_PASS_BREAK;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /*
  * | FUNC_TYPE_ARG
  * | ...
@@ -3597,6 +3668,7 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_gen_ps_type_integral),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_pr_type_offset),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_ps_type_offset),
+   PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_gen_pr_type_function),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_gen_ps_type_function),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_gen_pr_type_array),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRING, pkl_gen_ps_type_string),

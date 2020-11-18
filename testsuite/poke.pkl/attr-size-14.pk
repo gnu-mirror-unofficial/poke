@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+fun f = (int i) int: { return i + 1; }
+
+/* { dg-command { f'size / #b} } */
+/* { dg-output "0UL" } */

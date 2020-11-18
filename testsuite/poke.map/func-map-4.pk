@@ -1,0 +1,12 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Func = (int,int) long;
+
+/* { dg-command {var a = Func[3] @ 0#B} } */
+/* { dg-command {a} } */
+/* { dg-output "\\\[#<closure>,#<closure>,#<closure>\\\]" } */
+/* { dg-command {a'size} } */
+/* { dg-output "\n0UL#b" } */
+/* { dg-command {a[1](10,20)} } */
+/* { dg-output "\n0L" } */

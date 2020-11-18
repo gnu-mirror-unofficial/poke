@@ -7818,6 +7818,7 @@ The value computed by the expression will be discarded.
 * Calling Functions::		Invoking functions.
 * Function Types::		Useful for defining interfaces.
 * Lambdas::                     Functions in expressions.
+* Function Attributes::         Accessing properties of function values.
 @end menu
 
 @node Function Declarations
@@ -8028,6 +8029,17 @@ reasons):
 @example
 var double = lambda (int i) int: @{ return i * 2 @};
 @end example
+
+@node Function Attributes
+@subsection Function Attributes
+@cindex attributes, function attributes
+
+The following attributes are defined for function values.
+
+@table @code
+@item size
+Gives an offset @code{0#B}, by convention.
+@end table
 
 @node Endianness
 @section Endianness

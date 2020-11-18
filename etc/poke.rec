@@ -98,7 +98,7 @@
 %type: Target rec Release
 # Whether this task requires discussion in the mailing list.
 %type: RFC bool
-%Summary: Component,Priority,Summary
+%summary: Component,Priority,Summary
 
 Summary: Support for ++ and --
 Component: Language

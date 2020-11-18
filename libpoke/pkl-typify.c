@@ -2335,15 +2335,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
   switch (attr)
     {
     case PKL_AST_ATTR_SIZE:
-      /* 'size is defined for all kind of value, but functions.  */
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_FUNCTION:
-          goto invalid_attribute;
-        default:
-          break;
-        }
-
+      /* 'size is defined for all kind of values.  */
       /* The type of 'size is offset<uint<64>,1>  */
       offset_unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
       PKL_AST_LOC (offset_unit_type) = PKL_AST_LOC (exp);

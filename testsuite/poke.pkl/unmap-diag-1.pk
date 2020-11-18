@@ -1,3 +1,0 @@
-/* { dg-do compile } */
-
-unmap atoi; /* { dg-error "cannot be mapped" } */
