@@ -1,5 +1,10 @@
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Skip empty lines, and lines composed only by blank
+	characters, when reading the output of cpp.
+
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.map/func-map-2.pk: Fix syntax in test.
 
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>

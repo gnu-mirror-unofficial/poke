@@ -516,6 +516,10 @@ BEGIN {
     cmd = "cpp -D'PKL_DEF_INSN(M,A,N)=M:A:N' -P " ideffile
     while ((cmd | getline line) > 0)
     {
+        # Skip empty lines
+        if (line ~ /^[ \t]*$/)
+            continue;
+
         name = gensub (/.*:.*: *(".*") */, "\\1", "g", line)
         args = gensub (/.*: *(".*") *:.*/, "\\1", "g", line)
         id   = gensub (/ *([^ ]+) *:.*:.*/, "\\1", "g", line)
