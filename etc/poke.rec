@@ -2228,6 +2228,30 @@ Description:
 + section from array and struct constructor sections.
 Target: 1.0
 
+Summary: Support mapping and constructing functions
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ At the moment function values cannot be mapped.  We should support
++ mapping them, with the following semantics:
++
++ - The size of a function value is 0 (this is already the case.)
++ - Mapping a function always returns void:{}
++ - The default value for a function in a constructor is also void:{}
+Target: 1.0
+
+Summary: Support functions in struct fields
+Component: Language
+Kind: ENH
+Priority: 3
+Description:
++ There is no reason to not accept function values in struct fiels.
++ This would allow to initialize them in struct constructors.
++
++ Support for mapping functions is a requirement for this.
+Requires: Support mapping and constructing functions
+
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
