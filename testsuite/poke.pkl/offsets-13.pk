@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+type Func2 = (int,long,string)uint;
+type Foo = struct { Func2 f; byte b; };
+type Foo2 = struct { int a; Func2 f; Foo b; };
+
+/* { dg-command { 3#Foo2 / #B } } */
+/* { dg-output "15" } */

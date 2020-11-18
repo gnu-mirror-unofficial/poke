@@ -19,6 +19,7 @@
 #include <config.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 #include "pkl.h"
 #include "pkl-gen.h"
@@ -1311,7 +1312,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
   PKL_PASS_SUBPASS (PKL_AST_FUNCALL_FUNCTION (funcall));
   PKL_GEN_PAYLOAD->in_funcall = 0;
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
-
   PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
@@ -2130,11 +2130,38 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct_ref)
     {
       pkl_ast_node struct_ref = PKL_PASS_NODE;
       pkl_ast_node struct_ref_type = PKL_AST_TYPE (struct_ref);
+      pkl_ast_node struct_ref_struct
+        = PKL_AST_STRUCT_REF_STRUCT (struct_ref);
+      pkl_ast_node struct_ref_identifier
+        = PKL_AST_STRUCT_REF_IDENTIFIER (struct_ref);
+      pkl_ast_node struct_ref_struct_type = PKL_AST_TYPE (struct_ref_struct);
+      pkl_ast_node elem;
+      int is_field_p = 0;
+
+      /* Determine whether the referred struct element is a field or a
+         declaration.  */
+      for (elem = PKL_AST_TYPE_S_ELEMS (struct_ref_struct_type);
+           elem;
+           elem = PKL_AST_CHAIN (elem))
+        {
+          if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD)
+            {
+              pkl_ast_node field_name
+                = PKL_AST_STRUCT_TYPE_FIELD_NAME (elem);
+
+              if (strcmp (PKL_AST_IDENTIFIER_POINTER (field_name),
+                          PKL_AST_IDENTIFIER_POINTER (struct_ref_identifier)) == 0)
+                {
+                  is_field_p = 1;
+                  break;
+                }
+            }
+        }
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREF);
-      /* If the parent is a funcall, then leave both the struct and
-         the closure.  */
-      if (PKL_GEN_PAYLOAD->in_funcall && !PKL_PASS_PARENT)
+      /* If the parent is a funcall and the referred field is a struct
+         method, then leave both the struct and the closure.  */
+      if (PKL_GEN_PAYLOAD->in_funcall && !PKL_PASS_PARENT && !is_field_p)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
@@ -2286,7 +2313,16 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
 {
-  if (PKL_GEN_PAYLOAD->in_mapper || PKL_GEN_PAYLOAD->in_constructor)
+  if (PKL_GEN_PAYLOAD->in_writer)
+    {
+      /* Writing a function value is a NOP.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The BOFF */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The IOS */
+
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_PAYLOAD->in_mapper || PKL_GEN_PAYLOAD->in_constructor)
     {
       /* We construct the same function value for mappings and
          constructions.  */

@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+type Func2 = (int,long,string)uint;
+type Foo = struct { Func2 f; byte b; };
+type Foo2 = struct { int a; Func2 f; Foo b; };
+
+/* { dg-command { Foo2 { b = Foo { b = 2 } } } } */
+/* { dg-output "Foo2 \{a=0,f=#<closure>,b=Foo \{f=#<closure>,b=2UB\}\}" } */

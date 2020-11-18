@@ -2505,10 +2505,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
   pkl_ast_node elem_label
     = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
 
-  /* Function types cannot appear in the definition of a struct type
-     element.  Ditto for `any' and `void'.  */
-  if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_FUNCTION
-      || PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_ANY
+  /* Any and void types cant appear in the definition of a struct type
+     element.  */
+  if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_ANY
       || PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_VOID)
     {
       PKL_ERROR (PKL_AST_LOC (elem_type),
@@ -2874,8 +2873,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
 {
   pkl_ast_node type = PKL_PASS_NODE;
 
+  /* XXX why is this conditional here?  Should go away!  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY
-      || PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT)
+      || PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+      || PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
   PKL_AST_TYPE_COMPLETE (type) = pkl_ast_type_is_complete (type);
 }
 PKL_PHASE_END_HANDLER

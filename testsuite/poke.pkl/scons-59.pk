@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+type Func = (int)int;
+type Foo = struct { int a; Func f; };
+fun lala = (int i) int: { return i + 1; }
+
+/* { dg-command {Foo { a = 10, f = lala } } } */
+/* { dg-output "Foo \{a=10,f=#<closure>\}" } */

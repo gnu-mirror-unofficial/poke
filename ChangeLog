@@ -1,5 +1,27 @@
 2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.c (pkl_ast_type_is_complete): Function types are
+	always complete.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Allow
+	function types in struct fields.
+	(pkl_typify1_ps_type): Determine completeness also in function
+	types.
+	* libpoke/pkl-asm.c (pkl_asm_insn_cmp): Support function values.
+	* testsuite/poke.pkl/offsets-13.pk: Likewise.
+	* testsuite/poke.pkl/scons-diag-7.pk: Likewise.
+	* testsuite/poke.pkl/scons-58.pk: New test.
+	* testsuite/poke.pkl/scons-59.pk: LIkewise.
+	* testsuite/poke.pkl/scons-60.pk: Likewise.
+	* testsuite/poke.pkl/sref-func-1.pk: New test.
+	* testsuite/poke.pkl/sref-func-2.pk: Likewise.
+	* testsuite/poke.pkl/sref-func-3.pk: Likewise.
+	* testsuite/poke.pkl/sref-func-4.pk: Likewise.
+	* testsuite/poke.map/map-struct-fun-1.pk: Likewise.
+	* testsuite/poke.map/map-struct-fun-2.pk: Likewise.
+	* testsuite/poke.map/map-struct-fun-3.pk: Likewise.
+
+2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Use gl_PROG_BISON instead of gl_BISON.
 	* libpoke/Makefile.am (libpoke_la_SOURCES): Replace pkl-tab.y with
 	pkl-tab.c.

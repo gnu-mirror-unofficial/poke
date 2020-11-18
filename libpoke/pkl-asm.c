@@ -891,6 +891,11 @@ pkl_asm_insn_cmp (pkl_asm pasm,
           pkl_asm_insn (pasm, PKL_INSN_NIP);
         }
     }
+  else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
+    {
+      /* Function values are never equal.  */
+      pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (0, 32));
+    }
   else
     assert (0);
 }

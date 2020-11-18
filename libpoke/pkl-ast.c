@@ -1077,13 +1077,14 @@ pkl_ast_type_is_complete (pkl_ast_node type)
 
   switch (PKL_AST_TYPE_CODE (type))
     {
-      /* Integral, offset and struct types are always complete.  */
+      /* Integral, offset, function and struct types are always
+         complete.  */
     case PKL_TYPE_INTEGRAL:
     case PKL_TYPE_OFFSET:
+    case PKL_TYPE_FUNCTION:
       complete = PKL_AST_TYPE_COMPLETE_YES;
       break;
-      /* String and function types are never complete.  */
-    case PKL_TYPE_FUNCTION:
+      /* String types are never complete.  */
     case PKL_TYPE_STRING:
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;

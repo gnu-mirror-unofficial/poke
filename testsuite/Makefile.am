@@ -144,6 +144,9 @@ EXTRA_DIST = \
   poke.map/map-optcond-int-struct-1.pk \
   poke.map/map-optcond-int-struct-2.pk \
   poke.map/map-size-1.pk \
+  poke.map/map-struct-fun-1.pk \
+  poke.map/map-struct-fun-2.pk \
+  poke.map/map-struct-fun-3.pk \
   poke.map/mapped-attr.pk \
   poke.map/maps-arrays-1.pk \
   poke.map/maps-arrays-2.pk \
@@ -462,6 +465,8 @@ EXTRA_DIST = \
   poke.pkl/acons-diag-6.pk \
   poke.pkl/acons-diag-7.pk \
   poke.pkl/acons-diag-8.pk \
+  poke.pkl/acons-fun-1.pk \
+  poke.pkl/acons-fun-2.pk \
   poke.pkl/acons-1.pk \
   poke.pkl/acons-2.pk \
   poke.pkl/acons-3.pk \
@@ -1144,6 +1149,7 @@ EXTRA_DIST = \
   poke.pkl/offsets-9.pk \
   poke.pkl/offsets-11.pk \
   poke.pkl/offsets-12.pk \
+  poke.pkl/offsets-13.pk \
   poke.pkl/offsets-53.pk \
   poke.pkl/offsets-diag-1.pk \
   poke.pkl/offsets-diag-2.pk \
@@ -1356,11 +1362,16 @@ EXTRA_DIST = \
   poke.pkl/scons-55.pk \
   poke.pkl/scons-56.pk \
   poke.pkl/scons-57.pk \
+  poke.pkl/scons-58.pk \
+  poke.pkl/scons-59.pk \
+  poke.pkl/scons-60.pk \
   poke.pkl/scons-diag-1.pk \
   poke.pkl/scons-diag-2.pk \
   poke.pkl/scons-diag-3.pk \
   poke.pkl/scons-diag-4.pk \
   poke.pkl/scons-diag-6.pk \
+  poke.pkl/scons-diag-7.pk \
+  poke.pkl/scons-fun-diag-1.pk \
   poke.pkl/scons-int-struct-1.pk \
   poke.pkl/scons-int-struct-2.pk \
   poke.pkl/scons-int-struct-3.pk \
@@ -1432,6 +1443,10 @@ EXTRA_DIST = \
   poke.pkl/sref-diag-1.pk \
   poke.pkl/sref-diag-2.pk \
   poke.pkl/string-diag-1.pk \
+  poke.pkl/sref-func-1.pk \
+  poke.pkl/sref-func-2.pk \
+  poke.pkl/sref-func-3.pk \
+  poke.pkl/sref-func-4.pk \
   poke.pkl/strings-1.pk \
   poke.pkl/strings-2.pk \
   poke.pkl/strings-3.pk \

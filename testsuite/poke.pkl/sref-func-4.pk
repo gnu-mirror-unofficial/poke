@@ -1,0 +1,14 @@
+/* { dg-do run } */
+
+type Func2 = (int,long,string)uint;
+type Foo2 = struct { int a; Func2 f; };
+
+fun func = (int i, long l, string s) uint:
+{
+  return i + l + s'length;
+}
+
+/* { dg-command {var foo = Foo2 { a = 10 }} } */
+/* { dg-command {foo.f = func} } */
+/* { dg-command {foo.f (1,2,"foo")} } */
+/* { dg-output "6U" } */

@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type Func2 = (int,long,string)uint;
+type Foo2 = struct { int a; Func2 f; };
+
+fun func = (int i, long l, string s) uint:
+{
+  return i + l + s'length;
+}
+
+/* { dg-command {(Foo2 {f = func}).f(1,2,"foo")} } */
+/* { dg-output "6U" } */

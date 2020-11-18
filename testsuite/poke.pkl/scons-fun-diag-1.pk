@@ -1,0 +1,10 @@
+/* { dg-do compile } */
+
+type Func = (int)int;
+type Foo = struct { int a; Func f; };
+fun lala = (int i, int j) int: { return i + j; }
+
+var f = Foo {
+  a = 10,
+  f = lala, /* { dg-error ".*\n.*expected.*" } */
+};
