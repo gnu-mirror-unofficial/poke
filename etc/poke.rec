@@ -2252,15 +2252,6 @@ Description:
 + Support for mapping functions is a requirement for this.
 Requires: Support mapping and constructing functions
 
-Summary: Allow re-definitions of variables and units at the top-level
-Component: Compiler
-Kind: ENH
-Priority: 3
-Description:
-+ Re-defining variable and units at the top-level will ease interactive
-+ usage of poke by a lot.
-Target: 1.0
-
 Summary: Factorize promotion of expressions in promo
 Component: Compiler
 Kind: ENH

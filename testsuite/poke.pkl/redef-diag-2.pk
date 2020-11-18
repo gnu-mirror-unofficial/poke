@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+fun foo = void:
+{
+  unit a = 10;
+  unit b = 20;
+  unit a = 30; /* { dg-error "" } */
+}

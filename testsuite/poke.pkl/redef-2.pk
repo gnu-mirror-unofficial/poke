@@ -1,0 +1,14 @@
+/* { dg-do run } */
+
+var N = 2;
+fun f = int: { return N + 1; }
+
+/* { dg-command { var oldf = f } } */
+/* { dg-command { fun f = int: { return 60 + N; } } } */
+/* { dg-command { f } } */
+/* { dg-output "62" } */
+/* { dg-command {fun f = int: { return 666; } } } */
+/* { dg-command {f} } */
+/* { dg-output "\n666" } */
+/* { dg-command { oldf } } */
+/* { dg-output "\n3" } */

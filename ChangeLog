@@ -1,5 +1,21 @@
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-env.c (pkl_env_register): Adjust call to
+	register_decl accordingly.
+	(register_decl): Allow "redefining" variables, functions and
+	types.
+	* testsuite/poke.pkl/redef-1.pk: New test.
+	* testsuite/poke.pkl/redef-2.pk: Likewise.
+	* testsuite/poke.pkl/redef-3.pk: Likewise.
+	* testsuite/poke.pkl/redef-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/redef-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/redef-diag-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* etc/poke.rec (Allow re-definitions of variables and units at the
+	top-level): Remove as done.
+
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Allow re-definitions of variables and units at the
 	top-level): New entry.
 	(Factorize promotion of expressions in promo): Likewise.

@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+unit Foo = 5;
+
+/* { dg-command { 2#Foo } } */
+/* { dg-output "2#5" } */
+/* { dg-command {unit Foo = 666} } */
+/* { dg-command {3#Foo} } */
+/* { dg-output "\n3#666" } */

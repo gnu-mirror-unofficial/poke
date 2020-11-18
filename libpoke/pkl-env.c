@@ -118,15 +118,38 @@ get_registered (pkl_hash hash_table, const char *name)
 }
 
 static int
-register_decl (pkl_hash hash_table,
+register_decl (int top_level_p,
+               pkl_hash hash_table,
                const char *name,
                pkl_ast_node decl)
 {
   int hash;
+  pkl_ast_node found_decl;
 
-  if (get_registered (hash_table, name) != NULL)
-    /* Already registered.  */
-    return 0;
+  /* Check if DECL is already registered in the given hash table.
+
+     If we are in the global environment and the declaration is for a
+     variable, funcion, or an unit, then we allow "redefining" by
+     changing the name of the previous declaration to "".
+
+     Otherwise we don't register DECL, as it is already defined.  */
+
+  found_decl = get_registered (hash_table, name);
+  if (found_decl != NULL)
+    {
+      int decl_kind = PKL_AST_DECL_KIND (decl);
+
+      if (top_level_p
+          && (decl_kind == PKL_AST_DECL_KIND_VAR
+              || decl_kind == PKL_AST_DECL_KIND_FUNC
+              || decl_kind == PKL_AST_DECL_KIND_UNIT))
+        {
+          pkl_ast_node_free (PKL_AST_DECL_NAME (found_decl));
+          PKL_AST_DECL_NAME (found_decl) = NULL;
+        }
+      else
+        return 0;
+    }
 
   /* Add the declaration to the hash table.  */
   hash = hash_string (name);
@@ -206,7 +229,7 @@ pkl_env_register (pkl_env env,
 {
   pkl_hash *table = get_ns_table (env, namespace);
 
-  if (register_decl (*table, name, decl))
+  if (register_decl (env->up == NULL, *table, name, decl))
     {
       switch (PKL_AST_DECL_KIND (decl))
         {

@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+fun foo = void:
+{
+  fun a = void: {}
+  fun b = void: {}
+  fun a = void: {} ; /* { dg-error "" } */
+}
