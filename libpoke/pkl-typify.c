@@ -2046,20 +2046,6 @@ expected %s, got %s",
 
       PKL_AST_CONS_KIND (cons) = PKL_AST_CONS_KIND_ARRAY;
       break;
-    case PKL_TYPE_STRING:
-      /* The first argument to the constructor should be promoteable
-         to an uint<8>.  The second argument should be promoteable to
-         an uint<64>. */
-
-      //      pkl_ast_node arg1 = cons_value;
-      //      pkl_ast_node arg2 = PKL_AST_CHAIN (cons_value);
-
-      //      pkl_ast_node arg1_type = PKL_AST_TYPE (arg1);
-      //      pkl_ast_ndoe arg2_type = PKL_AST_TYPE (arg2);
-
-      /* XXX finishme.  */
-      assert (0);
-      break;
     default:
       assert (0);
     }

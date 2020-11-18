@@ -1,5 +1,18 @@
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_CONS_KIND_STRING): Remove.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cons): Remove string
+	constructor stuff.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_cons): Likewise.
+	* libpoke/pkl-tab.y (expression): Likewise.
+	* testsuite/poke.pkl/strcons-diag-1.pk: Revove test.
+	* testsuite/poke.pkl/strcons-diag-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update accordingly.
+	* testsuite/poke.pkl/acons-diag-6.pk: Update error message.
+	* testsuite/poke.pkl/acons-diag-7.pk: Update error message.
+
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_ps_continue_stmt): Fix typo.
 	* libpoke/pkl-ast.c (pkl_ast_finish_breaks_1): Take into account
 	lexical frames introduced by the "catch" block when it gets an

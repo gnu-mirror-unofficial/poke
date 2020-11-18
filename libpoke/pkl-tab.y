@@ -785,12 +785,12 @@ expression:
                 }
         | cons_type_specifier '(' expression_list opt_comma ')'
                 {
-                  /* This syntax is not used for struct
+                  /* This syntax is only used for array
                      constructors.  */
-                  if (PKL_AST_TYPE_CODE ($1) == PKL_TYPE_STRUCT)
+                  if (PKL_AST_TYPE_CODE ($1) != PKL_TYPE_ARRAY)
                     {
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
-                                 "invalid type specifier in constructor");
+                                 "expected array type in constructor");
                       YYERROR;
                     }
 

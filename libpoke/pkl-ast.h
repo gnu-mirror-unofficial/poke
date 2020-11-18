@@ -1192,7 +1192,6 @@ pkl_ast_node pkl_ast_make_map (pkl_ast ast,
 #define PKL_AST_CONS_KIND_UNKNOWN 0
 #define PKL_AST_CONS_KIND_STRUCT 1
 #define PKL_AST_CONS_KIND_ARRAY 2
-#define PKL_AST_CONS_KIND_STRING 3
 
 struct pkl_ast_cons
 {

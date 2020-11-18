@@ -685,16 +685,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_cons)
           PKL_PASS_ERROR;
         }
       break;
-    case PKL_TYPE_STRING:
-      /* String constructors require exactly two arguments.  */
-      if (pkl_ast_chain_length (cons_value) != 2)
-        {
-          PKL_ERROR (PKL_AST_LOC (cons),
-                     "string constructor requires exactly two arguments");
-          PKL_ANAL_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-      break;
     default:
       assert (0);
     }
