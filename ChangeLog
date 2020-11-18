@@ -1,5 +1,10 @@
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* HACKING (Building Release Tarballs): Remove obsolete comment
+	regarding stale files in testsuite/**.
+
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-env.c (pkl_env_register): Adjust call to
 	register_decl accordingly.
 	(register_decl): Allow "redefining" variables, functions and
