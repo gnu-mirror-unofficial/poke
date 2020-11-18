@@ -8,4 +8,3 @@ fun f = int: { return N + 1; }
 /* { dg-output "3" } */
 /* { dg-command { N + 1 } } */
 /* { dg-output "\n11" } */
-               
