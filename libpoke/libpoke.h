@@ -32,11 +32,13 @@ typedef struct pk_compiler *pk_compiler;
 typedef struct pk_ios *pk_ios;
 typedef uint64_t pk_val;
 
-/* The following status codes are returned by many of the functions in
-   this interface.  */
+/* The following status codes are returned by pk_errno function.  */
 
 #define PK_OK 0
 #define PK_ERROR 1
+#define PK_ENOMEM 2
+#define PK_EEOF 3
+#define PK_EINVAL 4
 
 /* Terminal output callbacks.  */
 
@@ -89,13 +91,22 @@ pk_compiler pk_compiler_new (struct pk_term_if *term_if) LIBPOKE_API;
 
 void pk_compiler_free (pk_compiler pkc) LIBPOKE_API;
 
+/* Error code of last operation.
+
+   This function returns the status corresponding to the given PK
+   compiler.  This status is updated by every call performed in
+   the API, and is one of the PK_* status codes defined above.
+   If PKC is NULL returns PK_ERROR.  */
+
+int pk_errno (pk_compiler pkc) LIBPOKE_API;
+
 /* Compile a Poke program from the given file FILENAME.
 
    If not NULL, *EXIT_STATUS is set to the status resulting from the
    execution of the program.
 
-   Return 0 in case of a compilation error, a non-zero value
-   otherwise.  */
+   Return PK_ERROR in case of a compilation error.  Otherwise,
+   return PK_OK.  */
 
 int pk_compile_file (pk_compiler pkc, const char *filename,
                      int *exit_status) LIBPOKE_API;
@@ -107,8 +118,8 @@ int pk_compile_file (pk_compiler pkc, const char *filename,
    If not NULL, *END is set to the first character in BUFFER that is
    not part of the compiled entity.
 
-   Return 0 in case of a compilation error, a non-zero value
-   otherwise.  */
+   Return PK_ERROR in case of a compilation error.  Otherwise,
+   return PK_OK.  */
 
 int pk_compile_buffer (pk_compiler pkc, const char *buffer,
                        const char **end) LIBPOKE_API;
@@ -134,8 +145,8 @@ int pk_compile_expression (pk_compiler pkc, const char *buffer,
 
 /* Load a module using the given compiler.
 
-   If the module cannot be loaded, return 1.
-   Otherwise, return 0.  */
+   If the module cannot be loaded, return PK_ERROR.  Otherwise,
+   return PK_OK.  */
 
 int pk_load (pk_compiler pkc, const char *module) LIBPOKE_API;
 
@@ -267,9 +278,10 @@ uint64_t pk_ios_size (pk_ios ios) LIBPOKE_API;
 uint64_t pk_ios_flags (pk_ios ios) LIBPOKE_API;
 
 /* Open an IO space using a handler and if set_cur is set to 1, make
-   the newly opened IO space the current space.  Return PK_IOS_ERROR
+   the newly opened IO space the current space.  Return PK_IOS_NOID
    if there is an error opening the space (such as an unrecognized
-   handler), the ID of the new IOS otherwise.
+   handler). Otherwise, the ID of the new IOS.
+   The error code can be retrieved by pk_errno function.
 
    FLAGS is a bitmask.  The least significant 32 bits are reserved for
    common flags (the PK_IOS_F_* above).  The most significant 32 bits
@@ -278,8 +290,7 @@ uint64_t pk_ios_flags (pk_ios ios) LIBPOKE_API;
    If no PK_IOS_F_READ or PK_IOS_F_WRITE flags are specified, then the
    IOS will be opened in whatever mode makes more sense.  */
 
-#define PK_IOS_OK     0
-#define PK_IOS_ERROR -1
+#define PK_IOS_NOID (-1) /* Represents an invalid IO space identifier */
 
 int pk_ios_open (pk_compiler pkc,
                  const char *handler, uint64_t flags, int set_cur_p) LIBPOKE_API;
@@ -335,8 +346,8 @@ pk_val pk_decl_val (pk_compiler pkc, const char *name) LIBPOKE_API;
 /* Declare a variable in the global environment of the given
    incremental compiler.
 
-   If the operation is successful, return 1.  If a variable with name
-   VARNAME already exists in the environment, return 0.  */
+   If the operation is successful, return PK_OK.  If a variable with name
+   VARNAME already exists in the environment, return PK_ERROR.  */
 
 int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
 
@@ -350,9 +361,9 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
    A variable number of function arguments follow, terminated by
    PK_NULL.
 
-   Return 0 if there is a problem performing the operation, or if the
+   Return PK_ERROR if there is a problem performing the operation, or if the
    execution of the function results in an unhandled exception.
-   Return 1 otherwise.  */
+   Return PK_OK otherwise.  */
 
 int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...)
   __attribute__ ((sentinel)) LIBPOKE_API;

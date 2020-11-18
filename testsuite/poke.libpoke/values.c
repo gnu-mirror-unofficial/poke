@@ -70,7 +70,7 @@ compile_initial_poke_code (FILE *ifp, pk_compiler pkc)
   ssize_t nread, s_nread = 0;
   char *line = NULL, *poke_code = NULL;
   size_t len = 0;
-  int error = 1;
+  int error = PK_OK;
 
   while (1)
     {
@@ -179,8 +179,8 @@ compile_poke_expressions (FILE *ifp, pk_compiler pkc, pk_val *val1,
       copy_line_to_expression (&expr2, line, s_read);
     }
 
-  if (pk_compile_expression (pkc, (const char *) expr1, NULL, val1) == 0
-      || pk_compile_expression (pkc, (const char *) expr2, NULL, val2) == 0)
+  if (pk_compile_expression (pkc, (const char *) expr1, NULL, val1) != PK_OK
+      || pk_compile_expression (pkc, (const char *) expr2, NULL, val2) != PK_OK)
     goto error;
 
   free (expr1);
@@ -209,7 +209,7 @@ test_pk_equal_file (const char *filename, FILE *ifp)
   if (!pkc)
     goto error;
 
-  if (compile_initial_poke_code (ifp, pkc) == 0)
+  if (compile_initial_poke_code (ifp, pkc) != PK_OK)
     goto error;
 
   if (compile_poke_expressions (ifp, pkc, &val1, &val2) == 0)

@@ -30,7 +30,7 @@ pk_open_ios (const char *handler, int set_cur_p)
   int ios_id;
 
   ios_id = pk_ios_open (poke_compiler, handler, 0, 1);
-  if (ios_id == PK_IOS_ERROR)
+  if (ios_id == PK_IOS_NOID)
     return ios_id;
 
   if (poke_auto_map_p)

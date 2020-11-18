@@ -35,10 +35,13 @@ struct pk_compiler
   pvm vm;
 
   pkl_ast_node complete_type;
+  int status;  /* Status of last API function call. Initialized with PK_OK */
 };
 
 struct pk_term_if libpoke_term_if
 __attribute__ ((visibility ("hidden")));
+
+#define PK_RETURN(code) do { return pkc->status = (code); } while (0)
 
 pk_compiler
 pk_compiler_new (struct pk_term_if *term_if)
@@ -63,6 +66,7 @@ pk_compiler_new (struct pk_term_if *term_if)
       if (pkc->compiler == NULL)
         goto error;
       pkc->complete_type = NULL;
+      pkc->status = PK_OK;
 
       pvm_set_compiler (pkc->vm, pkc->compiler);
     }
@@ -87,18 +91,28 @@ pk_compiler_free (pk_compiler pkc)
 }
 
 int
+pk_errno (pk_compiler pkc)
+{
+  if (pkc)
+    return pkc->status;
+  return PK_ERROR;
+}
+
+int
 pk_compile_file (pk_compiler pkc, const char *filename,
                  int *exit_status)
 {
-  return pkl_execute_file (pkc->compiler, filename,
-                           exit_status);
+  PK_RETURN (pkl_execute_file (pkc->compiler, filename, exit_status)
+                 ? PK_OK
+                 : PK_ERROR);
 }
 
 int
 pk_compile_buffer (pk_compiler pkc, const char *buffer,
                    const char **end)
 {
-  return pkl_execute_buffer (pkc->compiler, buffer, end);
+  PK_RETURN (pkl_execute_buffer (pkc->compiler, buffer, end) ? PK_OK
+                                                             : PK_ERROR);
 }
 
 int
@@ -108,12 +122,12 @@ pk_compile_statement (pk_compiler pkc, const char *buffer,
   pvm_val val;
 
   if (!pkl_execute_statement (pkc->compiler, buffer, end, &val))
-    return 0;
+    PK_RETURN (PK_ERROR);
 
   if (valp)
     *valp = val;
 
-  return 1;
+  PK_RETURN (PK_OK);
 }
 
 int
@@ -123,36 +137,39 @@ pk_compile_expression (pk_compiler pkc, const char *buffer,
   pvm_val val;
 
   if (!pkl_execute_expression (pkc->compiler, buffer, end, &val))
-    return 0;
+    PK_RETURN (PK_ERROR);
 
   if (valp)
     *valp = val;
 
-  return 1;
+  PK_RETURN (PK_OK);
 }
 
 int
 pk_load (pk_compiler pkc, const char *module)
 {
-  return pkl_load (pkc->compiler, module);
+  PK_RETURN (pkl_load (pkc->compiler, module) == 0 ? PK_OK : PK_ERROR);
 }
 
 void
 pk_set_quiet_p (pk_compiler pkc, int quiet_p)
 {
   pkl_set_quiet_p (pkc->compiler, quiet_p);
+  pkc->status = PK_OK;
 }
 
 void
 pk_set_lexical_cuckolding_p (pk_compiler pkc, int lexical_cuckolding_p)
 {
   pkl_set_lexical_cuckolding_p (pkc->compiler, lexical_cuckolding_p);
+  pkc->status = PK_OK;
 }
 
 void
 pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb)
 {
   pkl_set_alien_token_fn (pkc->compiler, cb);
+  pkc->status = PK_OK;
 }
 
 static char *
@@ -339,7 +356,7 @@ pk_disassemble_function (pk_compiler pkc,
   if (decl == NULL
       || PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_FUNC)
     /* Function not found.  */
-    return PK_ERROR;
+    PK_RETURN (PK_ERROR);
 
   val = pvm_env_lookup (runtime_env, back, over);
   program = pvm_val_cls_program (val);
@@ -349,7 +366,7 @@ pk_disassemble_function (pk_compiler pkc,
   else
     pvm_disassemble_program (program);
 
-  return PK_OK;
+  PK_RETURN (PK_OK);
 }
 
 int
@@ -367,12 +384,12 @@ pk_disassemble_expression (pk_compiler pkc, const char *str,
 
   if (program == NULL)
     /* Invalid expression.  */
-    return PK_ERROR;
+    PK_RETURN (PK_ERROR);
 
   if (*end != '\0')
     {
       pvm_destroy_program (program);
-      return PK_ERROR;
+      PK_RETURN (PK_ERROR);
     }
 
   if (native_p)
@@ -380,12 +397,13 @@ pk_disassemble_expression (pk_compiler pkc, const char *str,
   else
     pvm_disassemble_program (program);
 
-  return PK_OK;
+  PK_RETURN (PK_OK);
 }
 
 pk_ios
 pk_ios_cur (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return (pk_ios) ios_cur ();
 }
 
@@ -394,6 +412,7 @@ pk_ios_set_cur (pk_compiler pkc, pk_ios io)
 {
   /* XXX use pkc */
   ios_set_cur ((ios) io);
+  pkc->status = PK_OK;
 }
 
 const char *
@@ -411,6 +430,7 @@ pk_ios_flags (pk_ios io)
 pk_ios
 pk_ios_search (pk_compiler pkc, const char *handler)
 {
+  pkc->status = PK_OK;
   /* XXX use pkc */
   return (pk_ios) ios_search (handler);
 }
@@ -418,6 +438,7 @@ pk_ios_search (pk_compiler pkc, const char *handler)
 pk_ios
 pk_ios_search_by_id (pk_compiler pkc, int id)
 {
+  pkc->status = PK_OK;
   /* XXX use pkc */
   return (pk_ios) ios_search_by_id (id);
 }
@@ -426,8 +447,25 @@ int
 pk_ios_open (pk_compiler pkc,
              const char *handler, uint64_t flags, int set_cur_p)
 {
+  int ret;
+
   /* XXX use pkc */
-  return ios_open (handler, flags, set_cur_p);
+  if ((ret = ios_open (handler, flags, set_cur_p)) >= 0)
+    return ret;
+
+  switch (ret)
+    {
+    case IOS_ERROR: pkc->status = PK_ERROR; break;
+    case IOS_ENOMEM: pkc->status = PK_ENOMEM; break;
+    case IOS_EOF: pkc->status = PK_EEOF; break;
+    case IOS_EINVAL:
+    case IOS_EOPEN:
+      pkc->status = PK_EINVAL;
+      break;
+    default:
+      pkc->status = PK_ERROR;
+    }
+  return PK_IOS_NOID;
 }
 
 void
@@ -435,6 +473,7 @@ pk_ios_close (pk_compiler pkc, pk_ios io)
 {
   /* XXX use pkc */
   ios_close ((ios) io);
+  pkc->status = PK_OK;
 }
 
 int
@@ -475,6 +514,7 @@ pk_ios_map (pk_compiler pkc,
   struct ios_map_fn_payload payload = { cb, data };
   /* XXX use pkc */
   ios_map (my_ios_map_fn, (void *) &payload);
+  pkc->status = PK_OK;
 }
 
 struct decl_map_fn_payload
@@ -531,6 +571,8 @@ pk_decl_map (pk_compiler pkc, int kind,
   pkl_env compiler_env = pkl_get_env (pkc->compiler);
   int pkl_kind;
 
+  pkc->status = PK_OK;
+
   switch (kind)
     {
     case PK_DECL_KIND_VAR: pkl_kind = PKL_AST_DECL_KIND_VAR; break;
@@ -548,11 +590,12 @@ int
 pk_decl_p (pk_compiler pkc, const char *name, int kind)
 {
   pkl_env compiler_env = pkl_get_env (pkc->compiler);
-
   pkl_ast_node decl = pkl_env_lookup (compiler_env,
                                       PKL_ENV_NS_MAIN,
                                       name,
                                       NULL, NULL);
+
+  pkc->status = PK_OK;
 
   int pkl_kind;
   switch (kind)
@@ -576,11 +619,12 @@ pk_decl_val (pk_compiler pkc, const char *name)
   pkl_env compiler_env = pkl_get_env (pkc->compiler);
   pvm_env runtime_env = pvm_get_env (pkc->vm);
   int back, over;
-
   pkl_ast_node decl = pkl_env_lookup (compiler_env,
                                       PKL_ENV_NS_MAIN,
                                       name,
                                       &back, &over);
+
+  pkc->status = PK_OK;
 
   if (decl == NULL
       || PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR)
@@ -595,10 +639,10 @@ pk_defvar (pk_compiler pkc, const char *varname, pk_val val)
   pvm_env runtime_env = pvm_get_env (pkc->vm);
 
   if (!pkl_defvar (pkc->compiler, varname, val))
-    return 0;
+    PK_RETURN (PK_ERROR);
   pvm_env_register (runtime_env, val);
 
-  return 1;
+  PK_RETURN (PK_OK);
 }
 
 int
@@ -613,19 +657,20 @@ pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...)
   program = pkl_compile_call (pkc->compiler, cls, ret, ap);
   va_end (ap);
   if (!program)
-    return 0;
+    PK_RETURN (PK_ERROR);
 
   /* Run the program in the poke VM.  */
   pvm_program_make_executable (program);
   rret = pvm_run (pkc->vm, program, ret);
 
   pvm_destroy_program (program);
-  return (rret == PVM_EXIT_OK);
+  PK_RETURN (rret == PVM_EXIT_OK ? PK_OK : PK_ERROR);
 }
 
 int
 pk_obase (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pvm_obase (pkc->vm);
 }
 
@@ -633,22 +678,26 @@ void
 pk_set_obase (pk_compiler pkc, int obase)
 {
   pvm_set_obase (pkc->vm, obase);
+  pkc->status = PK_OK;
 }
 
 unsigned int
 pk_oacutoff (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pvm_oacutoff (pkc->vm);
 }
 
 void pk_set_oacutoff (pk_compiler pkc, unsigned int oacutoff)
 {
   pvm_set_oacutoff (pkc->vm, oacutoff);
+  pkc->status = PK_OK;
 }
 
 unsigned int
 pk_odepth (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pvm_odepth (pkc->vm);
 }
 
@@ -656,11 +705,13 @@ void
 pk_set_odepth (pk_compiler pkc, unsigned int odepth)
 {
   pvm_set_odepth (pkc->vm, odepth);
+  pkc->status = PK_OK;
 }
 
 unsigned int
 pk_oindent (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pvm_oindent (pkc->vm);
 }
 
@@ -668,11 +719,13 @@ void
 pk_set_oindent (pk_compiler pkc, unsigned int oindent)
 {
   pvm_set_oindent (pkc->vm, oindent);
+  pkc->status = PK_OK;
 }
 
 int
 pk_omaps (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pvm_omaps (pkc->vm);
 }
 
@@ -680,6 +733,7 @@ void
 pk_set_omaps (pk_compiler pkc, int omaps_p)
 {
   pvm_set_omaps (pkc->vm, omaps_p);
+  pkc->status = PK_OK;
 }
 
 enum pk_omode
@@ -694,7 +748,7 @@ pk_omode (pk_compiler pkc)
     default:
       assert (0);
     }
-
+  pkc->status = PK_OK;
   return omode;
 }
 
@@ -710,13 +764,14 @@ pk_set_omode (pk_compiler pkc, enum pk_omode omode)
     default:
       assert (0);
     }
-
   pvm_set_omode (pkc->vm, mode);
+  pkc->status = PK_OK;
 }
 
 int
 pk_error_on_warning (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pkl_error_on_warning (pkc->compiler);
 }
 
@@ -724,6 +779,7 @@ void
 pk_set_error_on_warning (pk_compiler pkc, int error_on_warning_p)
 {
   pkl_set_error_on_warning (pkc->compiler, error_on_warning_p);
+  pkc->status = PK_OK;
 }
 
 enum pk_endian
@@ -738,7 +794,7 @@ pk_endian (pk_compiler pkc)
     default:
       assert (0);
     }
-
+  pkc->status = PK_OK;
   return endian;
 }
 
@@ -754,8 +810,8 @@ pk_set_endian (pk_compiler pkc, enum pk_endian endian)
     default:
       assert (0);
     }
-
   pvm_set_endian (pkc->vm, ios_endian);
+  pkc->status = PK_OK;
 }
 
 enum pk_nenc
@@ -770,7 +826,7 @@ pk_nenc (pk_compiler pkc)
     default:
       assert (0);
     }
-
+  pkc->status = PK_OK;
   return nenc;
 }
 
@@ -786,13 +842,14 @@ pk_set_nenc (pk_compiler pkc, enum pk_nenc nenc)
     default:
       assert (0);
     }
-
   pvm_set_nenc (pkc->vm, ios_nenc);
+  pkc->status = PK_OK;
 }
 
 int
 pk_pretty_print (pk_compiler pkc)
 {
+  pkc->status = PK_OK;
   return pvm_pretty_print (pkc->vm);
 }
 
@@ -800,12 +857,14 @@ void
 pk_set_pretty_print (pk_compiler pkc, int pretty_print_p)
 {
   pvm_set_pretty_print (pkc->vm, pretty_print_p);
+  pkc->status = PK_OK;
 }
 
 void
 pk_print_val (pk_compiler pkc, pk_val val)
 {
   pvm_print_val (pkc->vm, val);
+  pkc->status = PK_OK;
 }
 
 void

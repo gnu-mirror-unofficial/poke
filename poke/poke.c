@@ -403,8 +403,8 @@ parse_args_2 (int argc, char *argv[])
           break;
         case 'l':
         case LOAD_ARG:
-          if (!pk_compile_file (poke_compiler, optarg,
-                                NULL /* exit_status */))
+          if (pk_compile_file (poke_compiler, optarg,
+                               NULL /* exit_status */) != PK_OK)
             goto exit_success;
           break;
         case 'c':
@@ -431,7 +431,7 @@ parse_args_2 (int argc, char *argv[])
                command-line arguments.  Then execute the script and
                return.  */
             set_script_args (argc, argv);
-            if (!pk_compile_file (poke_compiler, optarg, &exit_status))
+            if (pk_compile_file (poke_compiler, optarg, &exit_status) != PK_OK)
               goto exit_success;
 
             finalize ();
@@ -459,7 +459,7 @@ parse_args_2 (int argc, char *argv[])
       int xxx = poke_auto_map_p;
 
       poke_auto_map_p = 0; /* XXX */
-      if (pk_open_ios (filename, 1 /* set_cur_p */) == PK_IOS_ERROR)
+      if (pk_open_ios (filename, 1 /* set_cur_p */) == PK_IOS_NOID)
         {
           if (!poke_quiet_p)
             pk_printf (_("cannot open file %s\n"), filename);

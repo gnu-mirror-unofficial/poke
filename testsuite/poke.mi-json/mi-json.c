@@ -387,7 +387,7 @@ compile_initial_poke_code (FILE *ifp, pk_compiler pkc)
   ssize_t nread, s_nread = 0;
   char *line = NULL, *poke_code = NULL;
   size_t len = 0;
-  int error = 1;
+  int error = PK_OK;
 
   while (1)
     {
@@ -395,7 +395,7 @@ compile_initial_poke_code (FILE *ifp, pk_compiler pkc)
       /* That should not happen on a correct file.
          We should prolly check ferror (ifp), postpone it for now.  */
       if (nread == -1)
-        return 0;
+        return PK_ERROR;
 
       /* If we reached the next section of the file, break.  */
       if (nread == 3 && line[0] == '#' && line[1] == '#')
@@ -439,23 +439,23 @@ compile_poke_expression (FILE *ifp, pk_compiler pkc, pk_val *val)
     {
       nread = getline (&line, &len, ifp);
       if (nread == -1)
-          return 0;
+        return PK_ERROR;
 
       if (nread == 3 && line[0] == '#' && line[1] == '#')
-          break;
+        break;
 
       line[nread - 1] = '\0';
 
-      if (pk_compile_expression (pkc, (const char *) line, NULL, val) == 0)
+      if (pk_compile_expression (pkc, (const char *)line, NULL, val) != PK_OK)
         goto error;
     }
 
   free (line);
-  return 1;
+  return PK_OK;
 
-  error:
-    free (line);
-    return 0;
+error:
+  free (line);
+  return PK_ERROR;
 }
 
 const char *
@@ -566,10 +566,10 @@ test_json_file (const char *filename, FILE *ifp)
   if (pkc == NULL)
     goto error;
 
-  if (compile_initial_poke_code (ifp, pkc) == 0)
+  if (compile_initial_poke_code (ifp, pkc) != PK_OK)
     goto error;
 
-  if (compile_poke_expression (ifp, pkc, &val) == 0)
+  if (compile_poke_expression (ifp, pkc, &val) != PK_OK)
     goto error;
 
   if ((json_obj_str = read_json_object (ifp)) == NULL)

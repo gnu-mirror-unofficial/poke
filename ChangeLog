@@ -1,3 +1,87 @@
+2020-11-18  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/libpoke.h (PK_ENOMEM): Define.
+	(PK_EEOF): Likewise.
+	(PK_EINVAL): Likewise.
+	(PK_IOS_OK): Remove.
+	(PK_IOS_ERROR): Likewise.
+	(PK_IOS_NOID): Define.
+	(pk_errno): New prototype.
+	(pk_compile_file): Use `PK_OK`/`PK_ERROR` for return value.
+	(pk_compile_buffer): Likewise.
+	(pk_compile_satement): Likewise.
+	(pk_compile_expression): Likewise.
+	(pk_load): Likewise.
+	(pk_defvar): Likewise.
+	(pk_call): Likewise.
+	(pk_ios_open): Use `PK_IOS_NOID` as invalid return value.
+	* libpoke/libpoke.c (struct pk_compiler): Add new field: `status`.
+	(PK_RETURN): Define.
+	(pk_errno): New function.
+	(pk_compile_file): Update `status` filed of `pk_compiler` and return
+	that.
+	(pk_compile_buffer): Likewise.
+	(pk_compile_statement): Likewise.
+	(pk_compile_expression): Likewise.
+	(pk_load): Likewise.
+	(pk_disassemble_function): Likewise.
+	(pk_disassemble_expression): Likewise.
+	(pk_defvar): Likewise.
+	(pk_call): Likewise.
+	(pk_set_quiet_p): Update `status` field of `pk_compiler`.
+	(pk_set_lexical_cuckolding_p): Likewise.
+	(pk_set_alien_toekn_fn): Likewise.
+	(pk_ios_cur): Likewise.
+	(pk_ios_set_cur): Likewise.
+	(pk_ios_search): Likewise.
+	(pk_ios_search_by_id): Likewise.
+	(pk_ios_close): Likewise.
+	(pk_ios_map): Likewise.
+	(pk_decl_map): Likewise.
+	(pk_decl_p): Likewise.
+	(pk_decl_val): Likewise.
+	(pk_obase): Likewise.
+	(pk_set_obase): Likewise.
+	(pk_oacutoff): Likewise.
+	(pk_set_oacutoff): Likewise.
+	(pk_odepth): Likewise.
+	(pk_set_odepth): Likewise.
+	(pk_oindent): Likewise.
+	(pk_set_oindent): Likewise.
+	(pk_omaps): Likewise.
+	(pk_set_omaps): Likewise.
+	(pk_omode): Likewise.
+	(pk_set_omode): Likewise.
+	(pk_error_on_warning): Likewise.
+	(pk_set_error_on_warning): Likewise.
+	(pk_endian): Likewise.
+	(pk_set_endian): Likewise.
+	(pk_nenc): Likewise.
+	(pk_set_nenc): Likewise.
+	(pk_pretty_print): Likewise.
+	(pk_set_pretty_print): Likewise.
+	(pk_print_val): Likewise.
+	(pk_ios_open): Update the `status` field of `pk_compiler`. Return
+	`PK_IOS_NOID` on failure.
+	* poke/pk-cmd-ios.c (pk_cmd_file): Use `PK_IOS_NOID` instead of
+	`PK_IOS_ERROR`.
+	* poke/pk-ios.c (pk_open_ios): Likewise.
+	(pk_cmd_mem): Likewise.
+	(pk_cmd_nbd): Likewise.
+	(pk_cmd_load_file): Check `pk_compile_file` against `PK_OK`.
+	* poke/pk-cmd.c (pk_cmd_exec): Check `pk_compile_buffer` and
+	`pk_compile_statement` against `PK_OK`.
+	* poke/pk-map.c (pk_map_load_parsed_map): Check `pk_compile_buffer`
+	and `pk_compile_expression` against `PK_OK`.
+	* poke/poke.c (parse_args_2): Check `pk_compile_file` against
+	`PK_OK`. Check `pk_open_ios` against `PK_IOS_NOID`.
+	* testsuite/poke.libpoke/values.c (compile_initial_poke_code): Use
+	`PK_OK`/`PK_ERROR` as return value. Check `pk_compile_expression`
+	against `PK_OK`.
+	* testsuite/poke.mi-json/mi-json.c (compile_poke_expression): Likewise.
+	(compile_initial_poke_code): Use `PK_OK`/`PK_ERROR` as return value.
+	(test_json_file): Check `pk_compile_expression` against `PK_OK`.
+
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Use gl_PROG_BISON instead of gl_BISON.

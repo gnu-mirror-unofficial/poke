@@ -88,7 +88,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_IOS_ERROR == pk_open_ios (filename, 1 /* set_cur_p */))
+  if (PK_IOS_NOID == pk_open_ios (filename, 1 /* set_cur_p */))
     {
       pk_term_class ("error");
       pk_puts ("error: ");
@@ -240,7 +240,8 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     goto no_file;
 
-  if (!pk_compile_file (poke_compiler, filename, NULL /* exit_status */))
+  if (pk_compile_file (poke_compiler, filename, NULL /* exit_status */)
+      != PK_OK)
     /* Note that the compiler emits its own error messages.  */
     goto error;
 
@@ -282,7 +283,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_IOS_ERROR == pk_ios_open (poke_compiler, mem_name, 0, 1))
+  if (PK_IOS_NOID == pk_ios_open (poke_compiler, mem_name, 0, 1))
     {
       pk_printf (_("Error creating memory IOS %s\n"), mem_name);
       free (mem_name);
@@ -319,7 +320,7 @@ pk_cmd_nbd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_IOS_ERROR == pk_ios_open (poke_compiler, nbd_name, 0, 1))
+  if (PK_IOS_NOID == pk_ios_open (poke_compiler, nbd_name, 0, 1))
     {
       pk_printf (_("Error creating NBD IOS %s\n"), nbd_name);
       free (nbd_name);
