@@ -1,5 +1,11 @@
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Allow re-definitions of variables and units at the
+	top-level): New entry.
+	(Factorize promotion of expressions in promo): Likewise.
+
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Support mapping functions): New task.
 	(Support functions in struct fields): Likewise.
 
