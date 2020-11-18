@@ -1,3 +1,8 @@
+2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-insn.def: Remove spaces before and after arguments
+	to accomodate some weird cpp implementations.
+
 2020-11-18  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/libpoke.h (PK_ENOMEM): Define.
