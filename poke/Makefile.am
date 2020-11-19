@@ -35,9 +35,13 @@ poke_SOURCES = poke.c poke.h \
                pk-cmd-set.c pk-cmd-editor.c pk-cmd-map.c \
                pk-ios.c pk-ios.h \
                pk-map.c pk-map.h pk-map-parser.h \
-               pk-map-tab.y pk-map-lex.l
+               pk-map-tab.c pk-map-lex.l
 
 poke_SOURCES += ../common/pk-utils.c ../common/pk-utils.h
+
+pk-map-tab.h pk-map-tab.c: pk-map-tab.y
+	$(POKE_BISON) -d -t --report=state --output pk-map-tab.c \
+          $(srcdir)/pk-map-tab.y
 
 poke_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                 -I$(top_srcdir)/common \
@@ -56,9 +60,9 @@ poke_LDFLAGS =
 AM_YFLAGS = -d -t --report=state
 AM_LFLAGS = -d
 
-EXTRA_DIST = pk-map-lex.h
+EXTRA_DIST = pk-map-lex.h pk-map-tab.y
 
-BUILT_SOURCES = pk-map-tab.h pk-map-lex.c
+BUILT_SOURCES = pk-map-tab.h pk-map-tab.c pk-map-lex.c
 
 # Machine interface
 if POKE_MI
@@ -74,7 +78,7 @@ if HSERVER
   poke_LDADD += -lpthread
 endif
 
-# Created by doc/Makefile.am.
-MOSTLYCLEANFILES += nodelist
+# nodelist is reated by doc/Makefile.am.
+MOSTLYCLEANFILES += nodelist pk-map-tab.h pk-map-tab.c pk-map-tab.output
 
 # End of Makefile.am

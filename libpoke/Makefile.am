@@ -40,7 +40,7 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pkl-typify.h pkl-typify.c \
                      pkl-anal.h pkl-anal.c \
                      pkl-trans.h pkl-trans.c \
-                     pkl-tab.y pkl-lex.l \
+                     pkl-tab.h pkl-tab.c pkl-lex.l \
                      pkl-gen.h pkl-gen.c \
                      pkl-asm.h pkl-asm.c \
                      pkl-diag.h pkl-diag.c \
@@ -71,14 +71,18 @@ endif NBD
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
 
 # XXX Adding pkl-lex.h shouldn't be necessary?
-EXTRA_DIST = pkl-lex.h ras
+EXTRA_DIST = pkl-tab.y pkl-lex.h ras
 
-BUILT_SOURCES = pkl-tab.h pkl-lex.c \
+BUILT_SOURCES = pkl-tab.h pkl-tab.c pkl-lex.c \
                 pkl-gen.pkc pkl-asm.pkc \
                 pvm-vm.h pvm-vm1.c pvm-vm2.c
 
-AM_YFLAGS = -d -t --report=state
-MOSTLYCLEANFILES += pkl-tab.output
+pkl-tab.h pkl-tab.c: pkl-tab.y
+	$(POKE_BISON) -d -t --report=state --output pkl-tab.c \
+          $(srcdir)/pkl-tab.y
+
+AM_YFLAGS =
+MOSTLYCLEANFILES += pkl-tab.output pkl-tab.h pkl-tab.c
 
 AM_LFLAGS = -d
 

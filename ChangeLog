@@ -1,3 +1,20 @@
+2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Use gl_PROG_BISON instead of gl_BISON.
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Replace pkl-tab.y with
+	pkl-tab.c.
+	(pkl-tab.h pkl-tab.c): New rule to invoke bison.
+	(BUILT_SOURCES): Declare pkl-tab.h and pkl-tab.c as built sources.
+	(EXTRA_DIST): Distribute pkl-tab.y.
+	(MOSTLYCLEANFILES): Add bison generated files.
+
+	* poke/Makefile.am (poke_SOURCES): Replace pk-map-tab.y with
+	pk-map-tab.c.
+	(BUILT_SOURCES): Add pk-map-tab.c.
+	(EXTRA_DIST): Add pk-map-tab.y
+	(pk-map-tab.h pk-map-tab.c): New rule to invoke bison.
+	(MOSTLYCLEANFILES): Add bison generated files.
+
 2020-11-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/ras: Skip empty lines, and lines composed only by blank
