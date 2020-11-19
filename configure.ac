@@ -51,9 +51,7 @@ AC_ARG_VAR([LEX], [The flex implementation to use.])
 AC_ARG_VAR([LEXLIB], [Options for linking with the flex runtime library.])
 AC_ARG_VAR([LEX_OUTPUT_ROOT], [Base of the file name that the lexer generates.])
 
-dnl Note that we are setting YACC to bison because this is required
-dnl by the Automake implicit rules for .y files.
-gl_PROG_BISON([YACC],[3.6])
+gl_BISON
 
 dnl System
 AC_CANONICAL_HOST
