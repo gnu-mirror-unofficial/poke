@@ -19,6 +19,10 @@
 	* testsuite/poke.map/map-struct-fun-1.pk: Likewise.
 	* testsuite/poke.map/map-struct-fun-2.pk: Likewise.
 	* testsuite/poke.map/map-struct-fun-3.pk: Likewise.
+	* etc/poke.rec (Support setting methods in struct constructors):
+	Remove as no longer needed.
+	(Support Poke IOS Translators): This no longer depends on other
+	tasks
 
 2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 

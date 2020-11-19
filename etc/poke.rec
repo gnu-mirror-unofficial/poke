@@ -1786,34 +1786,15 @@ Description:
 +   type IOS_Translate =
 +    struct
 +    {
-+      fun readp = ...;
-+      fun writep = ...;
++      type IOS_ReadFunc = ...;
++      type IOS_WriteFunc = ...;
++
++      IOS_ReadFunc readp = ...;
++      IOS_WriteFunc writep = ...;
 +    };
 +
 + This of course depends on support for setting methods in struct
 + constructors.
-Requires: Support setting methods in struct constructors
-
-Summary: Support setting methods in struct constructors
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ It should be possible to specify methods in struct contructors.  This
-+ will make it feasible to express interfaces in Poke using struct
-+ types:
-+
-+   type Iface =
-+   struct
-+   {
-+     method foo = ...;
-+     method bar = ...;
-+   }
-+
-+ Then:
-+
-+   Iface { foo = my_foo, bar = my_bar }
-Target: 1.0
 
 Summary: Add IOS_EPERM and exception E_perm
 Component: IO
