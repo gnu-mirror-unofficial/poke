@@ -70,6 +70,30 @@ struct pvm
   pkl_compiler compiler;
 };
 
+static void
+pvm_initialize_state (pvm apvm, struct pvm_state *state)
+{
+  /* Call the Jitter state initializer.  */
+  pvm_state_initialize (state);
+
+  /* Register GC roots.  */
+  pvm_alloc_add_gc_roots (&state->pvm_state_runtime.env, 1);
+  pvm_alloc_add_gc_roots
+    (state->pvm_state_backing.jitter_stack_stack_backing.memory,
+     state->pvm_state_backing.jitter_stack_stack_backing.element_no);
+  pvm_alloc_add_gc_roots
+    (state->pvm_state_backing.jitter_stack_returnstack_backing.memory,
+     state->pvm_state_backing.jitter_stack_returnstack_backing.element_no);
+  pvm_alloc_add_gc_roots
+    (state->pvm_state_backing.jitter_stack_exceptionstack_backing.memory,
+     state->pvm_state_backing.jitter_stack_exceptionstack_backing.element_no);
+
+  /* Initialize the global environment.  Note we do this after
+     registering GC roots, since we are allocating memory.  */
+  state->pvm_state_runtime.env = pvm_env_new (0 /* hint */);
+  state->pvm_state_backing.vm = apvm;
+}
+
 pvm
 pvm_init (void)
 {
@@ -84,24 +108,7 @@ pvm_init (void)
   pvm_initialize ();
 
   /* Initialize the VM state.  */
-  pvm_state_initialize (&apvm->pvm_state);
-
-  /* Register GC roots.  */
-  pvm_alloc_add_gc_roots (&PVM_STATE_ENV (apvm), 1);
-  pvm_alloc_add_gc_roots
-    (apvm->pvm_state.pvm_state_backing.jitter_stack_stack_backing.memory,
-     apvm->pvm_state.pvm_state_backing.jitter_stack_stack_backing.element_no);
-  pvm_alloc_add_gc_roots
-    (apvm->pvm_state.pvm_state_backing.jitter_stack_returnstack_backing.memory,
-     apvm->pvm_state.pvm_state_backing.jitter_stack_returnstack_backing.element_no);
-  pvm_alloc_add_gc_roots
-    (apvm->pvm_state.pvm_state_backing.jitter_stack_exceptionstack_backing.memory,
-     apvm->pvm_state.pvm_state_backing.jitter_stack_exceptionstack_backing.element_no);
-
-  /* Initialize the global environment.  Note we do this after
-     registering GC roots, since we are allocating memory.  */
-  PVM_STATE_ENV (apvm) = pvm_env_new (0 /* hint */);
-  PVM_STATE_VM (apvm) = apvm;
+  pvm_initialize_state (apvm, &apvm->pvm_state);
 
   return apvm;
 }

@@ -1,5 +1,12 @@
 2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.c (pvm_initialize_state): New function.
+	(pvm_init): Use pvm_initialize_state.
+	* testsuite/poke.pkl/struct-pretty-print-6.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.c (pkl_ast_type_is_complete): Function types are
 	always complete.
 	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Allow

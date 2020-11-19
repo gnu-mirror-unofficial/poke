@@ -1498,6 +1498,7 @@ EXTRA_DIST = \
   poke.pkl/struct-pretty-print-3.pk \
   poke.pkl/struct-pretty-print-4.pk \
   poke.pkl/struct-pretty-print-5.pk \
+  poke.pkl/struct-pretty-print-6.pk \
   poke.pkl/struct-pretty-print-diag-1.pk \
   poke.pkl/struct-pretty-print-diag-2.pk \
   poke.pkl/struct-types-1.pk \

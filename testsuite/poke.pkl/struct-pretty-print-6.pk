@@ -1,0 +1,34 @@
+/* { dg-do run } */
+
+/* This tests pretty printers calling other pretty printers.  */
+
+type Jorl = struct
+{
+  method _print = void: { print "#<jorl>"; }
+};
+
+type ULEB_128_Byte = struct
+{
+   Jorl j;
+   method _print = void:
+    {
+      printf "#<foo:%v>", j;
+    }
+};
+
+type ULEB128 =
+struct
+{
+  int n;
+  ULEB_128_Byte[n] variable;
+    method _print = void:
+    {
+      printf "%v", variable;
+    }
+};
+
+/* { dg-command {.set pretty-print yes } } */
+/* { dg-command { ULEB128 { n = 1 } } } */
+/* { dg-output "\\\[#<foo:#<jorl>>\\\]" } */
+/* { dg-command { ULEB128 { n = 3 } } } */
+/* { dg-output "\n\\\[#<foo:#<jorl>>,#<foo:#<jorl>>,#<foo:#<jorl>>\\\]" } */
