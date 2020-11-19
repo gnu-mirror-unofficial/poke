@@ -23,6 +23,7 @@
 #define PVM_H
 
 #include <config.h>
+#include <stdarg.h>
 
 #include "ios.h"
 
@@ -539,6 +540,14 @@ pvm_env pvm_get_env (pvm pvm);
 enum pvm_exit_code pvm_run (pvm vm,
                             pvm_program program,
                             pvm_val *res);
+
+/* Given a PVM and a closure value, call the closure.
+
+   A list of pvm_val arguments terminated with PVM_NULL are passed as
+   arguments to the closure.  Note that this function doesn't allow
+   pass nulls as arguments.  */
+
+void pvm_call_closure (pvm vm, pvm_val cls, ...);
 
 /* Get/set the current byte endianness of a virtual machine.
 

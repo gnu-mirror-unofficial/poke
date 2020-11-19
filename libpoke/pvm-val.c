@@ -28,7 +28,6 @@
 #include "pvm.h"
 #include "pvm-program.h"
 #include "pvm-val.h"
-#include "pkl-asm.h"
 #include "pvm-alloc.h"
 #include "pk-utils.h"
 
@@ -1538,29 +1537,12 @@ pvm_print_string (pvm_val string)
 int
 pvm_call_pretty_printer (pvm vm, pvm_val val)
 {
-  pvm_program program;
   pvm_val cls = pvm_get_struct_method (val, "_print");
-  pkl_asm pasm;
 
   if (cls == PVM_NULL)
     return 0;
 
-  pasm = pkl_asm_new (NULL /* ast */,
-                      pvm_compiler (vm), 1 /* prologue */);
-
-  /* Push the implicit argument for the method.  */
-  pkl_asm_insn (pasm, PKL_INSN_PUSH, val);
-
-  /* Call the closure.  */
-  pkl_asm_insn (pasm, PKL_INSN_PUSH, cls);
-  pkl_asm_insn (pasm, PKL_INSN_CALL);
-
-  /* Run the program in the poke VM.  */
-  program = pkl_asm_finish (pasm, 1 /* epilogue */);
-  pvm_program_make_executable (program);
-  (void) pvm_run (vm, program, NULL);
-  pvm_destroy_program (program);
-
+  pvm_call_closure (vm, cls, val, PVM_NULL);
   return 1;
 }
 

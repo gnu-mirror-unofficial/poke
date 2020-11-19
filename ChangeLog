@@ -1,5 +1,12 @@
 2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.h: Prototype for pvm_call_closure.
+	* libpoke/pvm.c (pvm_call_closure): New function.
+	* libpoke/pvm-val.c (pvm_call_pretty_printer): Use
+	pvm_call_closure.
+
+2020-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.c (pvm_initialize_state): New function.
 	(pvm_init): Use pvm_initialize_state.
 	* testsuite/poke.pkl/struct-pretty-print-6.pk: New test.

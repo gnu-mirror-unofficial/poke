@@ -21,8 +21,10 @@
 #include <string.h>
 #include <assert.h>
 #include <signal.h>
+#include <stdarg.h>
 
 #include "pkl.h"
+#include "pkl-asm.h"
 #include "pvm.h"
 
 #include "pvm-alloc.h"
@@ -136,6 +138,35 @@ pvm_run (pvm apvm, pvm_program program, pvm_val *res)
     *res = PVM_STATE_RESULT_VALUE (apvm);
 
   return PVM_STATE_EXIT_CODE (apvm);
+}
+
+void
+pvm_call_closure (pvm vm, pvm_val cls, ...)
+{
+  pvm_program program;
+  pkl_asm pasm;
+  va_list valist;
+  pvm_val arg;
+
+  pasm = pkl_asm_new (NULL /* ast */,
+                      pvm_compiler (vm), 1 /* prologue */);
+
+  /* Push the arguments to the call.  */
+  va_start (valist, cls);
+  while ((arg = va_arg (valist, pvm_val)) != PVM_NULL)
+    pkl_asm_insn (pasm, PKL_INSN_PUSH, arg);
+  va_end (valist);
+
+  /* Call the closure.  */
+  pkl_asm_insn (pasm, PKL_INSN_PUSH, cls);
+  pkl_asm_insn (pasm, PKL_INSN_CALL);
+
+  /* Run the program in the poke VM.  */
+  program = pkl_asm_finish (pasm, 1 /* epilogue */);
+  pvm_program_make_executable (program);
+  (void) pvm_run (vm, program, NULL);
+  pvm_destroy_program (program);
+
 }
 
 void
