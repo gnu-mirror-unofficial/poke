@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var a = [[1,2] as int[],[3,4,5] as int[],[6] as int[]];
+
+/* { dg-command { printf "%v\n", a; } } */
+/* { dg-output "\\\[\\\[1,2\\\],\\\[3,4,5\\\],\\\[6\\\]\\\]" } */

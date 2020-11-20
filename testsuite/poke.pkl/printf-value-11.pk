@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var a = int[100](666);
+
+/* { dg-command { .set oacutoff 3 } } */
+/* { dg-command { printf "%v\n", a } } */
+/* { dg-output "\\\[666,666,666\.\.\.\\\]" } */

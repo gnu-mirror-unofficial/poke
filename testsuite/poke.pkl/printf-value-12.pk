@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var a = [1,2,3];
+
+/* { dg-command {.set omaps yes} } */
+/* { dg-command { printf "%v\n", a } } */
+/* { dg-output "\\\[1 @ 0x0+#b,2 @ 0x0+20#b,3 @ 0x0+40#b\\\] @ 0x0+#b" } */

@@ -1091,7 +1091,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
 
                   switch (PKL_AST_TYPE_CODE (exp_type))
                     {
-                    case PKL_TYPE_ARRAY:
                     case PKL_TYPE_STRUCT:
                       {
                         /* XXX: to remove.  */
@@ -1119,6 +1118,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
                     case PKL_TYPE_OFFSET:
                     case PKL_TYPE_STRING:
                     case PKL_TYPE_FUNCTION:
+                    case PKL_TYPE_ARRAY:
                       PKL_GEN_PAYLOAD->in_printer = 1;
                       PKL_PASS_SUBPASS (exp_type);
                       PKL_GEN_PAYLOAD->in_printer = 0;
@@ -2632,6 +2632,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       PKL_PASS_BREAK;
     }
+  else if (PKL_GEN_PAYLOAD->in_printer)
+    {
+      /* Stack: ARR */
+
+      pkl_ast_node array_type = PKL_PASS_NODE;
+      pvm_val printer_closure = PKL_AST_TYPE_A_PRINTER (array_type);
+
+      /* If the array type doesn't have a printer, compile one.  */
+      if (printer_closure == PVM_NULL)
+        {
+          RAS_FUNCTION_ARRAY_PRINTER (printer_closure, array_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
+
+      /* Invoke the printer.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
+
+      PKL_PASS_BREAK;
+    }
   else if (PKL_GEN_PAYLOAD->in_constructor)
     {
       /* Stack: null */
@@ -2779,7 +2801,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
       /* Stack: VAL */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS); /* _ */
+      RAS_MACRO_STRING_PRINTER; /* _ */
     }
   else
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYS);

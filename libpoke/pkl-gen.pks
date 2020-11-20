@@ -1729,3 +1729,149 @@
         push "offset"
         endsc
         .end
+
+;;; RAS_MACRO_STRING_PRINTER
+;;; ( VAL -- )
+;;;
+;;; Given a string value in the stack, print it out.
+
+        .macro string_printer
+        push "string"
+        begsc
+        push "\""
+        prints
+        prints
+        push "\""
+        prints
+        push "string"
+        endsc
+        .end
+
+;;; RAS_MACRO_PRINT_BOFFSET
+;;; ( ULONG -- )
+;;;
+;;; Given a bit-offset in the stack, print it out like a real
+;;; offset in hexadecimal.
+
+        .macro print_boffset
+        push "offset"
+        begsc
+        push "integer"
+        begsc
+        push "0x"
+        prints
+        push int<32>16          ; ULONG 16
+        printlu 64              ; _
+        push "integer"
+        endsc
+        ;; XXX RAS turns "#b" into "(B_arg)"
+        push "#"
+        prints
+        push "b"
+        prints
+        push "offset"
+        endsc
+        .end
+
+;;; RAS_FUNCTION_ARRAY_PRINTER @array_type
+;;; ( ARR -- )
+;;;
+;;; Assemble a function that prints out an array value that is given
+;;; in the stack.
+;;;
+;;; Macro-arguments:
+;;; @array_type
+;;;   pkl_ast_node with the type of the array value to print.
+
+        .function array_printer @array_type
+        prolog
+        pushf 1
+        push "array"
+        begsc
+        push "["
+        prints
+        ;; Iterate on the values stored in the array, printing them
+        ;; in turn.
+        sel                     ; ARR SEL
+        regvar $sel             ; ARR
+        push ulong<64>0         ; ARR IDX
+     .while
+        pushvar $sel            ; ARR IDX SEL
+        over                    ; ARR IDX SEL IDX
+        swap                    ; ARR IDX IDX SEL
+        ltlu                    ; ARR IDX IDX SEL (IDX<SEL)
+        nip2                    ; ARR IDX (IDX<SEL)
+     .loop
+        ;; Honor oacutoff.
+        ;; An oacutoff of 0 means no limit.
+        pushoac                 ; ARR IDX OACUTOFF
+        bzi .l2
+        itolu 64
+        nip                     ; ARR IDX OACUTOFFL
+        ltlu
+        nip                     ; ARR IDX (IDX<OACUTOFF)
+        bnzi .l2
+        drop
+        push "ellipsis"
+        begsc
+        push "..."
+        push "ellipsis"
+        endsc
+        prints
+        ba .elems_done
+.l2:
+        drop
+        ;; Print a comma if this is not the first element of the
+        ;; array.
+        push ulong<64>0         ; ARR IDX 0UL
+        eql
+        nip                     ; ARR IDX (IDX==0UL)
+        bnzi .l1
+        push ","
+        prints
+.l1:
+        drop                    ; ARR IDX
+        ;; Now print the array element.
+        .let @array_elem_type = PKL_AST_TYPE_A_ETYPE (@array_type)
+        aref                    ; ARR IDX EVAL
+        .c PKL_PASS_SUBPASS (@array_elem_type);
+                                ; ARR IDX
+        ;; Print the element offset if required.
+        pushoo                  ; ARR IDX OMAPS
+        bzi .l3
+        push " @ "
+        prints
+        nrot                    ; OMAPS ARR IDX
+        arefo                   ; OMAPS ARR IDX BOFF
+        .e print_boffset        ; OMAPS ARR IDX
+        rot                     ; ARR IDX OMAPS
+.l3:
+        drop
+        ;; Increase index to process next element.
+        push ulong<64>1
+        addlu
+        nip2                    ; ARR (IDX+1)
+     .endloop
+.elems_done:
+        drop                    ; ARR
+        push "]"
+        prints
+        ;; Print the array offset if required.
+        pushoo                  ; ARR OMAPS
+        bzi .l4
+        swap                    ; OMAPS ARR
+        mgeto
+        nip                     ; OMAPS BOFF
+        push " @ "
+        prints
+        .e print_boffset        ; OMAPS
+        push null
+.l4:
+        push "array"
+        endsc
+        ;; We are done.  Cleanup and bye bye.
+        drop
+        drop
+        popf 1
+        return
+        .end

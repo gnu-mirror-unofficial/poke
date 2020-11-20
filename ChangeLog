@@ -1,5 +1,25 @@
 2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Suppor \" in RAS strings.
+	* libpoke/pkl-ast.h (PKL_AST_TYPE_A_PRINTER): Define.
+	(array): New field `printer' for arrays.
+	* libpoke/pkl-ast.c (pkl_ast_make_array_type): Initialialize the
+	printer.
+	(pkl_ast_node_free): Remove GC roots for array printers.
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_array): Implement printer.
+	(pkl_gen_pr_print_stmt): Subpass in the array type in printer
+	mode.
+	(pkl_gen_ps_type_string): Use the string_printer RAS macro.
+	* libpoke/pkl-gen.pks (array_printer): New function.
+	(string_printer): New macro.
+	(print_boffset): Likewise.
+	* testsuite/poke.pkl/printf-value-10.pk: New test.
+	* testsuite/poke.pkl/printf-value-11.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-12.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.h: Prototype for pvm_env_toplevel.
 	* libpoke/pvm-env.c (pvm_env_toplevel): New function.
 	* libpoke/pvm.jitter (pushtopvar): New instruction.
