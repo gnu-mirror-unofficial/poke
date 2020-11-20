@@ -397,15 +397,15 @@ late-header-c
 
 /* Macros to implement printi* and printl* instructions.  */
 
-#define PVM_PRINTI(TYPE,TYPEC,IFORMAT)                                      \
+#define PVM_PRINTI(TYPE,TYPEC,IFORMAT,BASE)                                 \
   do                                                                        \
   {                                                                         \
-    TYPEC val = PVM_VAL_##TYPE (JITTER_TOP_STACK ());                       \
+    TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[6];  /* %0NNd */                                               \
                                                                             \
     fmt[0] = '%';                                                           \
     fmt[1] = '0';                                                           \
-    if (JITTER_ARGN1 == 10)                                                 \
+    if ((BASE) == 10)                                                       \
     {                                                                       \
       fmt[2] = IFORMAT;                                                     \
       fmt[3] = '\0';                                                        \
@@ -414,24 +414,25 @@ late-header-c
     {                                                                       \
       int prec = 0;                                                         \
                                                                             \
-      if (JITTER_ARGN1 == 256)                                              \
+      if ((BASE) == 256)                                                    \
       {                                                                     \
         fmt[4] = 'c';                                                       \
         prec = 1;                                                           \
       }                                                                     \
-      else if (JITTER_ARGN1 == 16)                                          \
+      else if ((BASE) == 16)                                                \
       {                                                                     \
         fmt[4] = 'x';                                                       \
         prec = (JITTER_ARGN0 / 4) + ((JITTER_ARGN0 % 4) != 0);              \
       }                                                                     \
-      else if (JITTER_ARGN1 == 8)                                           \
+      else if ((BASE) == 8)                                                 \
       {                                                                     \
         fmt[4] = 'o';                                                       \
         prec = (JITTER_ARGN0 / 3) + ((JITTER_ARGN0 % 3) != 0);              \
       }                                                                     \
-      else if (JITTER_ARGN1 == 2)                                           \
+      else if ((BASE) == 2)                                                 \
       {                                                                     \
         pk_print_binary (pk_puts, val, JITTER_ARGN0, 1);                    \
+        JITTER_DROP_STACK ();                                               \
         JITTER_DROP_STACK ();                                               \
         break;                                                              \
       }                                                                     \
@@ -444,18 +445,19 @@ late-header-c
                                                                             \
     pk_printf (fmt, val);                                                   \
     JITTER_DROP_STACK ();                                                   \
+    JITTER_DROP_STACK ();                                                   \
   } while (0)
 
-#define PVM_PRINTL(TYPE,TYPEC,IFORMAT)                                      \
+#define PVM_PRINTL(TYPE,TYPEC,IFORMAT,BASE)                                 \
   do                                                                        \
   {                                                                         \
-    TYPEC val = PVM_VAL_##TYPE (JITTER_TOP_STACK ());                       \
+    TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[7];  /* %0NNff */                                              \
                                                                             \
     fmt[0] = '%';                                                           \
     fmt[1] = '0';                                                           \
     fmt[4] = 'l';                                                           \
-    if (JITTER_ARGN1 == 10)                                                 \
+    if ((BASE) == 10)                                                       \
     {                                                                       \
       fmt[2] = IFORMAT;                                                     \
       fmt[3] = '\0';                                                        \
@@ -464,19 +466,20 @@ late-header-c
     {                                                                       \
       int prec = 0;                                                         \
                                                                             \
-      if (JITTER_ARGN1 == 16)                                               \
+      if ((BASE) == 16)                                                     \
       {                                                                     \
         fmt[5] = 'x';                                                       \
         prec = (JITTER_ARGN0 / 4) + ((JITTER_ARGN0 % 4) != 0);              \
       }                                                                     \
-      else if (JITTER_ARGN1 == 8)                                           \
+      else if ((BASE) == 8)                                                 \
       {                                                                     \
         fmt[5] = 'o';                                                       \
         prec = (JITTER_ARGN0 / 3) + ((JITTER_ARGN0 % 3) != 0);              \
       }                                                                     \
-      else if (JITTER_ARGN1 == 2)                                           \
+      else if ((BASE) == 2)                                                 \
       {                                                                     \
         pk_print_binary (pk_puts, val, JITTER_ARGN0, 1);                    \
+        JITTER_DROP_STACK ();                                               \
         JITTER_DROP_STACK ();                                               \
         break;                                                              \
       }                                                                     \
@@ -487,6 +490,7 @@ late-header-c
     }                                                                       \
                                                                             \
     pk_printf (fmt, val);                                                   \
+    JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
   } while (0)
 
@@ -1421,55 +1425,59 @@ end
 # 16 - print the number in hexadecimal.
 # Any other value - print the number in decimal.
 
-# Instruction: printi BITS, BASE
+# Instruction: printi BITS
 #
-# Print the signed integer at the top of the stack using the width in
-# BITS and numeration base BASE.
+# Given a signed integer and a numeration base in the stack, print the
+# integer to the terminal.
 #
-# Stack: ( INT -- )
+# Stack: ( INT INT -- )
 
-instruction printi (?n popf_printer, ?n popf_printer)
+instruction printi (?n popf_printer)
   code
-    PVM_PRINTI (INT, int32_t, 'd');
+    int base = PVM_VAL_INT (JITTER_TOP_STACK ());
+    PVM_PRINTI (INT, int32_t, 'd', base);
   end
 end
 
-# Instruction: printiu BITS, BASE
+# Instruction: printiu BITS
 #
-# Print the unsigned integer at the top of the stack using the width
-# in BITS and numeration base BASE.
+# Given an unsigned integer and a numeration base in the stack, print
+# the integer to the terminal.
 #
-# Stack: ( UINT -- )
+# Stack: ( UINT INT -- )
 
-instruction printiu (?n popf_printer, ?n popf_printer)
+instruction printiu (?n popf_printer)
   code
-    PVM_PRINTI (UINT, uint32_t, 'u');
+    int base = PVM_VAL_INT (JITTER_TOP_STACK ());
+    PVM_PRINTI (UINT, uint32_t, 'u', base);
   end
 end
 
-# Instruction: printl BITS, BASE
+# Instruction: printl BITS
 #
-# Print the signed long at the top of the stack using the width in
-# BITS and numeration base BASE.
+# Given a long and a numeration base in the stack, print the integer
+# to the terminal.
 #
-# Stack: ( LONG -- )
+# Stack: ( LONG INT -- )
 
-instruction printl (?n popf_printer, ?n popf_printer)
+instruction printl (?n popf_printer)
   code
-    PVM_PRINTL (LONG, int64_t, 'd');
+    int base = PVM_VAL_INT (JITTER_TOP_STACK ());
+    PVM_PRINTL (LONG, int64_t, 'd', base);
   end
 end
 
-# Instruction: printlu BITS, BASE
+# Instruction: printlu BITS
 #
-# Print the unsigned long at the top of the stack using the width in
-# BITS and numeration base BASE.
+# Given an unsigned long and a numeration base in the stack, print the
+# integer to the terminal.
 #
-# Stack: ( ULONG -- )
+# Stack: ( ULONG INT -- )
 
-instruction printlu (?n popf_printer, ?n popf_printer)
+instruction printlu (?n popf_printer)
   code
-   PVM_PRINTL (ULONG, uint64_t, 'u');
+   int base = PVM_VAL_INT (JITTER_TOP_STACK ());
+   PVM_PRINTL (ULONG, uint64_t, 'u', base);
   end
 end
 

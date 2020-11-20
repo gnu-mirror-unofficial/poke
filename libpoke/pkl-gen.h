@@ -71,6 +71,8 @@
    IN_COMPARATOR is 1 when a struct comparator is being generated.
    0 otherwise.
 
+   IN_PRINTER is 1 when a printer is being generated.  0 otherwise.
+
    IN_LVALUE is 1 in a sub-tree corresponding to the l-value of an
    assignment statement.  0 otherwise.
 
@@ -97,6 +99,7 @@ struct pkl_gen_payload
   int in_writer;
   int in_lvalue;
   int in_comparator;
+  int in_printer;
   int in_array_bounder;
   int in_method_arguments;
   int in_funcall;

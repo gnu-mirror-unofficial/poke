@@ -378,10 +378,10 @@ PKL_DEF_INSN(PKL_INSN_RETURN,"","return")
 
 /* Printing instructions.  */
 
-PKL_DEF_INSN(PKL_INSN_PRINTI,"nn","printi")
-PKL_DEF_INSN(PKL_INSN_PRINTIU,"nn","printiu")
-PKL_DEF_INSN(PKL_INSN_PRINTL,"nn","printl")
-PKL_DEF_INSN(PKL_INSN_PRINTLU,"nn","printlu")
+PKL_DEF_INSN(PKL_INSN_PRINTI,"n","printi")
+PKL_DEF_INSN(PKL_INSN_PRINTIU,"n","printiu")
+PKL_DEF_INSN(PKL_INSN_PRINTL,"n","printl")
+PKL_DEF_INSN(PKL_INSN_PRINTLU,"n","printlu")
 
 PKL_DEF_INSN(PKL_INSN_PRINTS,"","prints")
 PKL_DEF_INSN(PKL_INSN_PRINTV,"nn","printv")
@@ -511,7 +511,7 @@ PKL_DEF_INSN(PKL_INSN_WRITE,"","write")
 
 /* Printing macro-instructions.  */
 
-PKL_DEF_INSN(PKL_INSN_PRINT,"an","print")
+PKL_DEF_INSN(PKL_INSN_PRINT,"a","print")
 
 /*
 Local variables:

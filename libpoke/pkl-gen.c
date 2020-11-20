@@ -1107,8 +1107,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
                                 print_mode, print_depth);
                 }
               else
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINT, PKL_AST_TYPE (exp),
-                              base);
+                {
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                                base ? pvm_make_int (base, 32) : PVM_NULL);
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINT, PKL_AST_TYPE (exp));
+                }
             }
 
           if (suffix)

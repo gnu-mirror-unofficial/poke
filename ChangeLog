@@ -1,5 +1,20 @@
 2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (PVM_PRINTI): Get a BASE argument.
+	(PVM_PRINTL): Likewise.
+	(printi): Get BASE from the stack.
+	(printiu): Likewise.
+	(printl): Likewise.
+	(printlu): Likewise.
+	* libpoke/pkl-insn.def: Change macro-instruction `print' to not
+	get the output base as an argument.
+	* libpoke/pkl-asm.c (pkl_asm_insn): Adapt accordingly.
+	(pkl_asm_insn_print): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_print_stmt): Adapt code generator
+	accordingly.
+
+2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (pushob): New instruction.
 	(popob): Likewise.
 	(pushom): Likewise.
