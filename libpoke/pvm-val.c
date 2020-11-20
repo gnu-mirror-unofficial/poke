@@ -996,7 +996,10 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         ulongval = (uint64_t) longval & ((((uint64_t) 1) << size) - 1);
 
       if (base == 2)
-        pk_print_binary (pk_puts, ulongval, size, 1);
+        {
+          pk_puts ("0b");
+          pk_print_binary (pk_puts, ulongval, size, 1);
+        }
       else
         {
           if (size == 64)
@@ -1022,7 +1025,10 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         uintval = (uint32_t) intval & ((((uint32_t) 1) << size) - 1);
 
       if (base == 2)
-        pk_print_binary (pk_puts, (uint64_t) uintval, size, 1);
+        {
+          pk_puts ("0b");
+          pk_print_binary (pk_puts, (uint64_t) uintval, size, 1);
+        }
       else
         {
           if (size == 32)
@@ -1048,7 +1054,10 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       pk_term_class ("integer");
 
       if (base == 2)
-        pk_print_binary (pk_puts, ulongval, size, 0);
+        {
+          pk_puts ("0b");
+          pk_print_binary (pk_puts, ulongval, size, 0);
+        }
       else
         {
           if (size == 64)
@@ -1067,7 +1076,10 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       pk_term_class ("integer");
 
       if (base == 2)
-        pk_print_binary (pk_puts, uintval, size, 0);
+        {
+          pk_puts ("0b");
+          pk_print_binary (pk_puts, uintval, size, 0);
+        }
       else
         {
           if (size == 32)

@@ -90,19 +90,11 @@ pk_print_binary (void (*puts_fn) (const char *str),
 {
   char b[65];
 
-  if (size != 64 && size != 32 && size != 16 && size != 8
-      && size != 4)
-    {
-      snprintf (b, sizeof (b), "(%sint<%d>) ", sign ? "" : "u", size);
-      puts_fn (b);
-    }
-
   for (int z = 0; z < size; z++) {
     b[size-1-z] = ((val >> z) & 0x1) + '0';
   }
   b[size] = '\0';
 
-  puts_fn ("0b");
   puts_fn (b);
 
   if (size == 64)

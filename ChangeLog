@@ -1,5 +1,21 @@
 2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* common/pk-utils.c (pk_print_binary): Do not print prefixes.
+	* libpoke/pvm-val.c (pvm_print_val_1): Print prefix 0b before
+	calling pk_print_binary.
+	* testsuite/poke.map/maps-int-structs-11.pk: Adapt test
+	accordingly.
+	* testsuite/poke.map/maps-int-structs-6.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-1.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-2.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-3.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-4.pk: Likewise.
+	* testsuite/poke.pkl/cast-integers-11.pk: Likewise.
+	* testsuite/poke.pkl/cast-integers-10.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-6.pk: Likewise.
+
+2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ras: Fix .call pseudo-op.
 	* libpoke/pkl-rt.pk (_pkl_unit_str): New funtion.
 	(_pkl_base_prefix): Likewise.
@@ -27,7 +43,6 @@
 	(pkl_gen_ps_type_string): Likewise.
 	(pkl_gen_pr_print_stmt): Subpass in printer for integral, offset,
 	string and function types.
-	* common/pk-utils.c (pk_print_binary): Do not print a 0b prefix.
 	* testsuite/poke.pkl/printf-value-1.pk: Adjust test.
 	* testsuite/poke.pkl/printf-value-2.pk: Likewise.
 	* testsuite/poke.pkl/printf-value-3.pk: Likewise.xo
