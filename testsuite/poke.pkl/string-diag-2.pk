@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+/* Due to a lexer bug, this was a valid string */
+
+var s = "\\" foo"; /* { dg-error "" } */

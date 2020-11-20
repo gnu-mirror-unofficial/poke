@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var str = "foo\
+bar";
+
+/* { dg-command { str} } */
+/* { dg-output "\"foobar\"" } */

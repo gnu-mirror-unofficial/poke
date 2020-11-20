@@ -337,6 +337,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
         case 't':
         case '"':
           break;
+        case '\n':
+          string_length--;
+          break;
         case 'x':
           ++p;
           if (!isxdigit (p[0]))
@@ -371,6 +374,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_string)
           continue;
         }
       ++p;
+      if (*p == '\n') {
+        --i;
+        continue;
+      }
+
 
       /* octal escape sequence */
       if (ISODIGIT (p[0]))

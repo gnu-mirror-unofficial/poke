@@ -126,7 +126,7 @@ BLANK              [ \t]
 LETTER             [a-zA-Z]
 FIELD_NAME         {LETTER}[a-zA-Z0-9_]*
 CHAR                   '(.|\\[ntr\\]|\\[0-7]|\\[0-7][0-7]|\\[0-7][0-7][0-7])'
-STRING             \"([^"]|\\(.|\n))*\"
+STRING             \"([^"\n\\]|\\(.|\n))*\"
 HEXCST                   0[xX][0-9a-fA-F][0-9a-fA-F_]*
 BINCST                   0[bB][01][01_]*
 OCTCST             0[oO][0-7_]*
