@@ -426,6 +426,10 @@ void pvm_env_set_var (pvm_env env, int back, int over, pvm_val val);
 
 int pvm_env_toplevel_p (pvm_env env);
 
+/* Return the toplevel frame of the given environment.  */
+
+pvm_env pvm_env_toplevel (pvm_env env);
+
 /*** Other Definitions.  ***/
 
 enum pvm_omode

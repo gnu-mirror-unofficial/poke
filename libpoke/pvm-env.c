@@ -117,3 +117,13 @@ pvm_env_toplevel_p (pvm_env env)
 {
   return (env->up == NULL);
 }
+
+pvm_env
+pvm_env_toplevel (pvm_env env)
+{
+  assert (env);
+  while (env->up)
+    env = env->up;
+
+  return env;
+}

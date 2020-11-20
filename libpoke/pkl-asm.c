@@ -1963,11 +1963,14 @@ pkl_asm_call (pkl_asm pasm, const char *funcname)
   int back, over;
   pkl_ast_node tmp;
 
+  assert (pkl_env_toplevel_p (compiler_env));
+
   tmp = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
                         funcname, &back, &over);
   assert (tmp != NULL);
+  assert (back == 0);
 
-  pkl_asm_insn (pasm, PKL_INSN_PUSHVAR, back, over);
+  pkl_asm_insn (pasm, PKL_INSN_PUSHTOPVAR, over);
   pkl_asm_insn (pasm, PKL_INSN_CALL);
 }
 

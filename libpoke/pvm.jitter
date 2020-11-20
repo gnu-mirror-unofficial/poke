@@ -49,6 +49,7 @@ wrapped-functions
   pvm_env_register
   pvm_env_pop_frame
   pvm_env_push_frame
+  pvm_env_toplevel
   pvm_make_int
   pvm_make_uint
   pvm_make_long
@@ -1347,6 +1348,31 @@ instruction pushvar (?n 0, ?n 0 1 2 3 4 5)
     JITTER_PUSH_STACK (pvm_env_lookup (jitter_state_runtime.env,
                                        (int) JITTER_ARGN0,
                                        (int) JITTER_ARGN1));
+  end
+end
+
+# Instruction: pushtopvar OVER
+#
+# Retrive the value of a variable from the top-level frame of the
+# lexical environment and put it on the stack.  The OVER part of the
+# lexical address of the variable is specified as an argument to the
+# instruction.
+#
+# If the variable is not found then raise E_INVAL.
+#
+# Stack: ( -- VAL )
+
+instruction pushtopvar (?n)
+  code
+    pvm_env topenv = pvm_env_toplevel (jitter_state_runtime.env);
+    pvm_val val = pvm_env_lookup (topenv, 0 /* back */,
+                                  (int) JITTER_ARGN0 /* over */);
+
+    if (val == PVM_NULL)
+      PVM_RAISE (PVM_E_INVAL, "no top-level variable found",
+                 PVM_E_INVAL_ESTATUS);
+
+    JITTER_PUSH_STACK (val);
   end
 end
 
