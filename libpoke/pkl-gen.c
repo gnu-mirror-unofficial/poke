@@ -1087,45 +1087,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
               PKL_PASS_SUBPASS (exp);
               if (PKL_AST_PRINT_STMT_ARG_VALUE_P (arg))
                 {
+                  /* Generate code to print the value.  */
                   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
-                  switch (PKL_AST_TYPE_CODE (exp_type))
-                    {
-                    case PKL_TYPE_STRUCT:
-                      {
-                        /* XXX: to remove.  */
-                        int print_depth
-                          = PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg);
-                        int print_mode;
-
-                        switch (PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg))
-                          {
-                          case PKL_AST_PRINT_MODE_FLAT:
-                            print_mode = PVM_PRINT_FLAT;
-                            break;
-                          case PKL_AST_PRINT_MODE_TREE:
-                            print_mode = PVM_PRINT_TREE;
-                            break;
-                          default:
-                            assert (0);
-                          }
-
-                        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTV,
-                                      print_mode, print_depth);
-                        break;
-                      }
-                    case PKL_TYPE_INTEGRAL:
-                    case PKL_TYPE_OFFSET:
-                    case PKL_TYPE_STRING:
-                    case PKL_TYPE_FUNCTION:
-                    case PKL_TYPE_ARRAY:
-                      PKL_GEN_PAYLOAD->in_printer = 1;
-                      PKL_PASS_SUBPASS (exp_type);
-                      PKL_GEN_PAYLOAD->in_printer = 0;
-                      break;
-                    default:
-                      assert (0);
-                    }
+                  PKL_GEN_PAYLOAD->in_printer = 1;
+                  PKL_PASS_SUBPASS (exp_type);
+                  PKL_GEN_PAYLOAD->in_printer = 0;
                 }
               else
                 {
@@ -2651,7 +2618,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       /* Invoke the printer.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
-
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_PAYLOAD->in_constructor)
@@ -3009,6 +2975,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
 
       /* Call the comparator.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* SCT1 SCT2 INT */
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_PAYLOAD->in_printer)
+    {
+      /* Stack: SCT */
+
+      pkl_ast_node struct_type = PKL_PASS_NODE;
+      pvm_val printer_closure = PKL_AST_TYPE_S_PRINTER (struct_type);
+
+      /* If the struct type doesn't have a printer, compile one.  */
+      if (printer_closure == PVM_NULL)
+        {
+          RAS_FUNCTION_STRUCT_PRINTER (printer_closure, struct_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
+
+      /* Invoke the printer.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
       PKL_PASS_BREAK;
     }
   else

@@ -1,5 +1,23 @@
 2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (pushopp): New instruction.
+	(popopp): Likewise.
+	(srefnt): Likewise.
+	(tysctn): Likewise.
+	* libpoke/pkl-insn.def: Define PKL_INSN_PUSHOPP,
+	PKL_INSN_POPOPP, PKL_INSN_SREFMNT, PKL_INSN_TYSCTN.
+	* libpoke/pkl-ast.c (pkl_ast_make_struct_type): Initialize struct
+	printer.
+	(pkl_ast_node_free): Deregister GC roots from the printer.
+	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_PRINTER): Define.
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Implement printer.
+	(pkl_gen_pr_print_stmt): Remove legacy code.
+	* libpoke/pkl-gen.pks (struct_printer): New function.
+	* testsuite/poke.pkl/struct-pretty-print-7.pk: New test.
+	* testsuite/poke.pkl/printf-value-13.pk: Likewise.
+
+2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ras: Suppor \" in RAS strings.
 	* libpoke/pkl-ast.h (PKL_AST_TYPE_A_PRINTER): Define.
 	(array): New field `printer' for arrays.

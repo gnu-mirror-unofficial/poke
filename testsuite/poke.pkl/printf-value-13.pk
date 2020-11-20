@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+type U = union { int a : a > 0; byte b; };
+
+/* { dg-command {printf "%v\n", U { } } } */
+/* { dg-output "U \{b=0UB\}" } */
+/* { dg-command {printf "%v\n", U { b = 66 } } } */
+/* { dg-output "\nU \{b=66UB\}" } */
+/* { dg-command {printf "%v\n", U { a = 2 } } } */
+/* { dg-output "\nU \{a=2\}" } */

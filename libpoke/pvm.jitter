@@ -1012,6 +1012,41 @@ instruction popoac ()
   end
 end
 
+# Instruction: pushopp
+#
+# Push pretty-print usage.
+#
+# This instruction pushes a signed integer indicating whether the VM
+# is configured to use pretty-printers.
+#
+# Stack: ( -- INT )
+
+instruction pushopp ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int pp = pvm_pretty_print (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (pp, 32));
+  end
+end
+
+# Instruction: popopp
+#
+# Pop and set usage of pretty-printers.
+#
+# This instructions pops a signed integer indicating whether to use
+# pretty-printers when printing values and sets it in the VM.
+#
+# Stack: ( INT -- )
+
+instruction popopp ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int pp = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    pvm_set_pretty_print (vm, pp);
+  end
+end
 
 # Instruction: sync
 #
@@ -4067,6 +4102,24 @@ instruction sref ()
   end
 end
 
+# Instruction: srefmnt
+#
+# Given a struct and a method name, push the closure value corresponding
+# to that method on the stack.  If the struct does not have a method with
+# the given name then push PVM_NULL.
+#
+# Stack: ( SCT STR - SCT STR CLS )
+
+instruction srefmnt ()
+  code
+    pvm_val sct = JITTER_UNDER_TOP_STACK ();
+    pvm_val name = JITTER_TOP_STACK ();
+    pvm_val cls = pvm_get_struct_method (sct, PVM_VAL_STR (name));
+
+    JITTER_PUSH_STACK (cls);
+  end
+end
+
 # Instruction: srefnt
 #
 # Given a struct and a field name, push the value contained in the
@@ -4770,6 +4823,22 @@ instruction mktysct ()
 
     JITTER_PUSH_STACK (pvm_make_struct_type (nelem, name,
                                              enames, etypes));
+  end
+end
+
+# Instruction: tysctn
+#
+# Given a struct type, push its name to the stack.  If the struct
+# type is not named push PVM_NULL.
+#
+# Stack: ( SCT -- SCT STR )
+
+instruction tysctn ()
+  code
+    pvm_val type = JITTER_TOP_STACK ();
+    pvm_val type_name = PVM_VAL_TYP_S_NAME (type);
+
+    JITTER_PUSH_STACK (type_name);
   end
 end
 

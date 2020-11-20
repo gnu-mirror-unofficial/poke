@@ -1371,10 +1371,16 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
         case PVM_TYPE_STRUCT:
           {
             size_t i, nelem;
+            pvm_val type_name = PVM_VAL_TYP_S_NAME (val);
 
             nelem = PVM_VAL_ULONG (PVM_VAL_TYP_S_NFIELDS (val));
 
-            pk_puts ("struct {");
+            if (type_name != PVM_NULL)
+              pk_puts (PVM_VAL_STR (type_name));
+            else
+              pk_puts ("struct");
+
+            pk_puts (" {");
             for (i = 0; i < nelem; ++i)
               {
                 pvm_val ename = PVM_VAL_TYP_S_FNAME(val, i);

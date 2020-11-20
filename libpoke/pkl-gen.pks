@@ -1875,3 +1875,136 @@
         popf 1
         return
         .end
+
+;;; RAS_FUNCTION_STRUCT_PRINTER @struct_type
+;;; ( SCT -- )
+;;;
+;;; Assemble a function that prints out a struct value that is given
+;;; in the stack.
+;;;
+;;; Macro-arguments:
+;;; @struct_type
+;;;   pkl_ast_node with the type fo the struct value to print.
+
+        .function struct_printer @struct_type
+        prolog
+        ;; If the struct has a pretty printing method (called _print)
+        ;; then use it, unless the PVM is configured to not do so.
+        pushopp                 ; SCT PP
+        bzi .no_pretty_print_1
+        drop
+        push "_print"           ; SCT STR
+        srefmnt                 ; SCT STR CLS
+        bn .no_pretty_print_2
+        nip                     ; SCT CLS
+        call                    ; null
+        drop                    ; _
+        ba .done
+.no_pretty_print_2:
+        drop
+.no_pretty_print_1:
+        drop
+                                ; SCT
+        ;; Allright, print the struct.
+        push "struct"
+        begsc
+        ;; Print the struct type name.
+        ;; XXX tysctn which can be null!
+        push "struct-type-name"
+        begsc
+        typof                   ; SCT TYP
+        tysctn
+        nip                     ; SCT STR
+        bn .anonymous_struct
+        ba .got_type_name
+.anonymous_struct:
+        drop                    ; SCT
+        push "struct"
+.got_type_name:
+        prints
+        push "struct-type-name"
+        endsc
+        ;; Iterate on the elements stored in the struct, printing them
+        ;; in order.
+        ;; XXX if depth >= && depth != 0, {...}
+        push " {"
+        prints
+ .c      uint64_t i;
+        .let @field
+ .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (struct_type);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+        .label .process_next_alternative
+        .let #i = pvm_make_ulong (i, 64)
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        ;; Get the value of this field.  If this an union we have to
+        ;; refer to the field by name, and the first one we found is
+        ;; the only one.
+ .c if (PKL_AST_TYPE_S_UNION_P (@struct_type))
+ .c {
+        .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name)) ;
+        push #name_str          ; SCT STR
+        srefnt                  ; SCT STR EVAL
+        nip                     ; SCT EVAL
+        bn .process_next_alternative
+ .c }
+ .c else
+ .c {
+        push #i                 ; SCT I
+        srefi                   ; SCT I EVAL
+        nip                     ; SCT EVAL
+ .c   if (i > 0)
+        ;; Print the separator with the previous field if this
+        ;; is not the first field.
+ .c    {
+        push ","
+        prints
+ .c    }
+ .c }
+                                ; SCT EVAL
+ .c   if (@field_name)
+ .c   {
+        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        push #field_name_str
+        prints
+        push "="
+        prints
+ .c   }
+        .c PKL_PASS_SUBPASS (@field_type);
+                                ; SCT
+ .c if (PKL_AST_TYPE_S_UNION_P (@struct_type))
+ .c {
+        ;; Unions only have one field => we are done.
+        ba .fields_done
+ .c }
+        push null               ; SCT null
+.process_next_alternative:
+        drop                    ; SCT
+ .c    i = i + 1;
+ .c }
+.fields_done:
+        push "}"
+        prints
+        ;; Print the struct offset if required.
+        pushoo                  ; SCT OMAPS
+        bzi .l1
+        swap                    ; OMAPS SCT
+        mgeto
+        nip                     ; OMAPS BOFF
+        push " @ "
+        prints
+        .e print_boffset        ; OMAPS
+        drop
+        push "struct"
+        endsc
+        ba .done
+.l1:
+        drop
+        drop
+.done:
+        return
+        .end

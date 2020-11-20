@@ -1,0 +1,30 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x41 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type foo = struct
+{
+  char[2] c;
+
+  method _print = void:
+    {
+      print "#<";
+      printf "%<foo:%s%>", catos (c);
+      print ">";
+    }
+};
+
+fun ugg = (offset<int, foo> ip) uint<8>:
+{
+    printf ("IP %v \n", foo @ ip);
+    return 1;
+}
+
+type bar = struct
+  {
+    foo               a;
+    foo[2]   data : ugg (a'offset);
+};
+
+/* { dg-command { .set pretty-print yes } } */
+/* { dg-command { var x = bar @ 0#B } } */
+/* { dg-output "IP #<A>" } */

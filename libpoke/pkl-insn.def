@@ -264,6 +264,7 @@ PKL_DEF_INSN(PKL_INSN_SREFNT,"","srefnt")
 PKL_DEF_INSN(PKL_INSN_SREFI,"","srefi")
 PKL_DEF_INSN(PKL_INSN_SREFIO,"","srefio")
 PKL_DEF_INSN(PKL_INSN_SREFIA,"","srefia")
+PKL_DEF_INSN(PKL_INSN_SREFMNT,"","srefmnt")
 PKL_DEF_INSN(PKL_INSN_SSET,"","sset")
 PKL_DEF_INSN(PKL_INSN_SMODI,"","smodi")
 
@@ -316,6 +317,10 @@ PKL_DEF_INSN(PKL_INSN_TYPOF,"","typof")
 
 PKL_DEF_INSN(PKL_INSN_TYISC,"","tyisc")
 PKL_DEF_INSN(PKL_INSN_TYISSCT,"","tyissct")
+
+/** Struct types. */
+
+PKL_DEF_INSN(PKL_INSN_TYSCTN,"","tysctn")
 
 /* Branch instructions.  */
 
@@ -440,6 +445,8 @@ PKL_DEF_INSN(PKL_INSN_PUSHOD,"","pushod")
 PKL_DEF_INSN(PKL_INSN_POPOD,"","popod")
 PKL_DEF_INSN(PKL_INSN_PUSHOAC,"","pushoac")
 PKL_DEF_INSN(PKL_INSN_POPOAC,"","popoac")
+PKL_DEF_INSN(PKL_INSN_PUSHOPP,"","pushopp")
+PKL_DEF_INSN(PKL_INSN_POPOPP,"","popopp")
 
 /* The only purpose of PKL_INSN_MACRO is to mark the beginning of
    macro instructions.  It should _not_ be passed to

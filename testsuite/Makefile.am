@@ -1263,6 +1263,7 @@ EXTRA_DIST = \
   poke.pkl/printf-value-10.pk \
   poke.pkl/printf-value-11.pk \
   poke.pkl/printf-value-12.pk \
+  poke.pkl/printf-value-13.pk \
   poke.pkl/promo-array-arg-1.pk \
   poke.pkl/promo-array-arg-2.pk \
   poke.pkl/promo-array-arg-3.pk \
@@ -1509,6 +1510,7 @@ EXTRA_DIST = \
   poke.pkl/struct-pretty-print-4.pk \
   poke.pkl/struct-pretty-print-5.pk \
   poke.pkl/struct-pretty-print-6.pk \
+  poke.pkl/struct-pretty-print-7.pk \
   poke.pkl/struct-pretty-print-diag-1.pk \
   poke.pkl/struct-pretty-print-diag-2.pk \
   poke.pkl/struct-types-1.pk \
