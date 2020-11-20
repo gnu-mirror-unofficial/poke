@@ -1,5 +1,17 @@
 2020-11-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* bootstrap.conf (gnu_modules): Add module `read-file`.
+	* testsuite/poke.libpoke/values.c: Add includes: `stdint.h`, `err.h`,
+	`read-file.h`.
+	(compile_initial_poke_code): Remove.
+	(compile_poke_expressions): Likewise.
+	(test_pk_val_equal_p): Refactored to use `asprintf` for string
+	manipulation. Use memory buffers instead of `FILE`s.
+	(test_pk_equal_file): Renamed to `testcase_pk_val_equal_p` with new
+	interface to deal with memory buffers instead of `FILE`s.
+
+2020-11-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/pkl-lex.l (STRING): Fix regexp to escape backslash and
 	newline characters correctly.
 	* libpoke/pkl-trans.c (pkl_trans1_ps_string): Ignore `\<NEWLINE>`

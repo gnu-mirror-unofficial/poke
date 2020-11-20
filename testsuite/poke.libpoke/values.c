@@ -21,8 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <dejagnu.h>
 #include <dirent.h>
+#include <err.h>
+#include "read-file.h"
 #include "libpoke.h"
 
 #include "term-if.h"
@@ -64,141 +67,11 @@ test_simple_values ()
     fail ("pk_int_value_2");
 }
 
-int
-compile_initial_poke_code (FILE *ifp, pk_compiler pkc)
-{
-  ssize_t nread, s_nread = 0;
-  char *line = NULL, *poke_code = NULL;
-  size_t len = 0;
-  int error = PK_OK;
-
-  while (1)
-    {
-      nread = getline (&line, &len, ifp);
-      if (nread == -1)
-        return 0;
-
-      /* If we reached the next section of the file, break.  */
-      if (nread == 3 && line[0] == '#' && line[1] == '#')
-        break;
-
-      line[nread - 1] = '\0';
-      s_nread += nread - 1;
-
-      if (poke_code == NULL)
-        {
-          poke_code = (char *) malloc (nread);
-          memcpy (poke_code, line, nread);
-        }
-      else
-        {
-          poke_code = (char *) realloc (poke_code, s_nread + 1);
-          strncat (poke_code, line, nread + 1);
-        }
-    }
-
-  if (ferror (ifp))
-    return 0;
-
-  if (poke_code)
-    {
-      error = pk_compile_buffer (pkc, poke_code, NULL);
-      free (poke_code);
-    }
-
-  free (line);
-  return error;
-}
-
-static int
-copy_line_to_expression (char **expr, char *line, size_t nbytes)
-{
-  if (*expr == NULL)
-    {
-      *expr = (char *) malloc (nbytes);
-      if (*expr == NULL)
-        goto error;
-
-      memcpy (*expr, line, nbytes);
-    }
-  else
-    {
-      *expr = (char *) realloc (*expr, nbytes);
-      if (*expr == NULL)
-        goto error;
-
-      strncat (*expr, line, strlen (line) + 1);
-    }
-
-  return 0;
-
-  error:
-    return -1;
-}
-
-/* Returns a C array containing the Poke values that were compiled.
-   Returns NULL on error.  */
-int
-compile_poke_expressions (FILE *ifp, pk_compiler pkc, pk_val *val1,
-                          pk_val *val2)
-{
-  ssize_t nread;
-  char *expr1 = NULL, *expr2 = NULL, *line = NULL;
-  size_t s_read = 0, len = 0;
-
-  /* Read the first expression of the file.  */
-  while (1)
-    {
-      nread = getline (&line, &len, ifp);
-      if (nread == -1)
-          goto error;
-
-      line[nread - 1] = '\0';
-      s_read += nread;
-
-      if (nread == 3 && line[0] == '#' && line[1] == '#')
-        break;
-
-      copy_line_to_expression (&expr1, line, s_read);
-    }
-
-  /* Read the second expression of the file.  */
-  s_read = 0;
-  while ((nread = getline (&line, &len, ifp)) != -1)
-    {
-      if (line[nread - 1] == '\n')
-        {
-          line[nread - 1] = '\0';
-          s_read += nread;
-        }
-      else
-        {
-          s_read += nread + 1;
-        }
-
-      copy_line_to_expression (&expr2, line, s_read);
-    }
-
-  if (pk_compile_expression (pkc, (const char *) expr1, NULL, val1) != PK_OK
-      || pk_compile_expression (pkc, (const char *) expr2, NULL, val2) != PK_OK)
-    goto error;
-
-  free (expr1);
-  free (expr2);
-  free (line);
-  return 1;
-
-  error:
-    free (expr1);
-    free (expr2);
-    free (line);
-    return 0;
-}
-
 #define STARTS_WITH(PREFIX, STR) (strncmp (PREFIX, STR, strlen (PREFIX)) == 0)
 
 void
-test_pk_equal_file (const char *filename, FILE *ifp)
+testcase_pk_val_equal_p (const char *filename, const char *sec_code,
+                         const char *sec_expr1, const char *sec_expr2)
 {
   pk_val val1, val2;
   pk_compiler pkc;
@@ -209,10 +82,13 @@ test_pk_equal_file (const char *filename, FILE *ifp)
   if (!pkc)
     goto error;
 
-  if (compile_initial_poke_code (ifp, pkc) != PK_OK)
+  if (pk_compile_buffer (pkc, sec_code, NULL) != PK_OK)
     goto error;
 
-  if (compile_poke_expressions (ifp, pkc, &val1, &val2) == 0)
+  if (pk_compile_expression (pkc, sec_expr1, NULL, &val1) != PK_OK)
+    goto error;
+
+  if (pk_compile_expression (pkc, sec_expr2, NULL, &val2) != PK_OK)
     goto error;
 
   /*  We should have a way to discriminate if we should check
@@ -245,55 +121,57 @@ test_pk_equal_file (const char *filename, FILE *ifp)
   pk_compiler_free (pkc);
   return;
 
-  error:
-    fail (filename);
+error:
+  fail (filename);
 }
 
 void
 test_pk_val_equal_p ()
 {
-  FILE *ifp;
   DIR *directory;
   struct dirent *dir;
   const char *extension;
-  char *testdir, *testfile;
-  size_t testdir_len;
+  char *testfile, *sec_code, *sec_expr1, *sec_expr2;
+  size_t test_len;
 
-  testdir_len = strlen (TESTDIR);
-  testdir = (char *) malloc (testdir_len + 2);
-  memcpy (testdir, TESTDIR, testdir_len + 1);
-  strncat (testdir, "/", 1);
-  testdir_len = strlen (testdir);
+  directory = opendir (TESTDIR);
+  if (!directory)
+    err (1, "opendir (%s) failed", TESTDIR);
 
-  directory = opendir (testdir);
-  if (directory)
+  while ((dir = readdir (directory)) != NULL)
     {
-      while ((dir = readdir (directory)) != NULL)
-        {
-          extension = strrchr (dir->d_name, '.');
-          if (extension)
-            {
-              if (!strncmp (extension + 1, "test", 4))
-                {
-                  testfile = (char *) malloc (testdir_len
-                                                   + strlen (dir->d_name) + 1);
-                  memcpy (testfile, testdir, testdir_len + 1);
-                  strncat (testfile, dir->d_name, strlen (dir->d_name));
+      extension = strrchr (dir->d_name, '.');
+      if (!extension)
+        continue;
 
-                  ifp = fopen (testfile, "r");
-                  if (ifp)
-                    {
-                      test_pk_equal_file (dir->d_name, ifp);
-                      fclose (ifp);
-                    }
-                  free (testfile);
-                }
-            }
-        }
-      closedir (directory);
+      if (strncmp (extension + 1, "test", 4) != 0)
+        continue;
+
+      if (asprintf (&testfile, "%s/%s", TESTDIR, dir->d_name) == -1)
+        err (1, "asprintf () failed");
+
+      if ((sec_code = read_file (testfile, 0, &test_len)) == NULL)
+        err (1, "read_file (%s) failed", testfile);
+
+      if ((sec_expr1 = strstr (sec_code, "##\n")) == NULL)
+        errx (1, "Invalid test file");
+      sec_expr1[0] = '\0'; /* end of code section */
+      sec_expr1 += 3;      /* start of first expression section */
+      if ((sec_expr2 = strstr (sec_expr1, "##\n")) == NULL)
+        errx (1, "Invalid test file");
+      sec_expr2[0] = '\0'; /* end of first expression section */
+      sec_expr2 += 3;      /* start of second expression section */
+
+      if (sec_expr2 - sec_code > test_len)
+        errx (1, "Invalid test file");
+
+      testcase_pk_val_equal_p (dir->d_name, sec_code, sec_expr1, sec_expr2);
+
+      free (sec_code);
+      free (testfile);
     }
 
-  free (testdir);
+  closedir (directory);
 }
 
 int
