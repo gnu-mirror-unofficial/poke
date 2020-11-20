@@ -46,9 +46,17 @@ __attribute__ ((visibility ("hidden")));
 pk_compiler
 pk_compiler_new (struct pk_term_if *term_if)
 {
-  pk_compiler pkc
-    = malloc (sizeof (struct pk_compiler));
+  pk_compiler pkc;
 
+  if (!term_if)
+    return NULL;
+
+  if (!term_if->flush_fn || !term_if->puts_fn || !term_if->printf_fn
+      || !term_if->indent_fn || !term_if->class_fn || !term_if->end_class_fn
+      || !term_if->hyperlink_fn || !term_if->end_hyperlink_fn)
+    return NULL;
+
+  pkc = malloc (sizeof (struct pk_compiler));
   if (pkc)
     {
       /* Determine the path to the compiler's runtime files.  */

@@ -111,6 +111,7 @@ pk_make_offset (pk_val magnitude, pk_val unit)
 {
   if (!PVM_IS_INTEGRAL (magnitude)
       || !PVM_IS_ULONG (unit)
+      || PVM_VAL_ULONG (unit) == 0
       || PVM_VAL_ULONG_SIZE (unit) != 64)
     return PK_NULL;
   else

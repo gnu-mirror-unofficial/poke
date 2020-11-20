@@ -18,6 +18,7 @@
 
 #include <config.h>
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,36 +36,113 @@
 void
 test_simple_values ()
 {
+  static const char *awesome = "Poke is awesome!";
+  const size_t bigstr_len = 1u << 20; /* 1 MiB */
   pk_val val;
+  pk_val mag;
+  pk_val unit;
+
+#define T(name, cond)                                                         \
+  do                                                                          \
+    {                                                                         \
+      if (cond)                                                               \
+        pass (name);                                                          \
+      else                                                                    \
+        fail (name);                                                          \
+    }                                                                         \
+  while (0)
+
+  /* Signed integers */
 
   /* Exceeding maximum number of bits supported in poke integers.  */
-  val = pk_make_int (0, 65);
-  if (val == PK_NULL)
-    pass ("make_int_1");
-  else
-    fail ("make_int_1");
+  T ("pk_make_int_0", pk_make_int (0, 65) == PK_NULL);
 
-  /* Integer getters, positive value.  */
   val = pk_make_int (666, 32);
-  if (pk_int_size (val) == 32)
-    pass ("pk_int_size_1");
-  else
-    fail ("pk_int_size_1");
-  if (pk_int_value (val) == 666)
-    pass ("pk_int_value_1");
-  else
-    fail ("pk_int_value_1");
+  T ("pk_make_int_1", val != PK_NULL);
+  T ("pk_int_value_1", pk_int_value (val) == 666);
+  T ("pk_int_size_1", pk_int_size (val) == 32);
 
-  /* Integer getters, negative value.  */
   val = pk_make_int (-666, 32);
-  if (pk_int_size (val) == 32)
-    pass ("pk_int_size_2");
-  else
-    fail ("pk_int_size_2");
-  if (pk_int_value (val) == -666)
-    pass ("pk_int_value_2");
-  else
-    fail ("pk_int_value_2");
+  T ("pk_make_int_2", val != PK_NULL);
+  T ("pk_int_value_2", pk_int_value (val) == -666);
+  T ("pk_int_size_2", pk_int_size (val) == 32);
+
+  /* Unsigned integers */
+
+  val = pk_make_uint (UINT64_MAX, 63);
+  T ("pk_make_uint_0", val != PK_NULL);
+  T ("pk_uint_value_0", pk_uint_value (val) == (UINT64_MAX >> 1));
+  T ("pk_uint_size_0", pk_uint_size (val) == 63);
+
+  val = pk_make_uint (0, 64);
+  T ("pk_make_uint_1", val != PK_NULL);
+  T ("pk_uint_value_1", pk_uint_value (val) == 0);
+  T ("pk_uint_size_1", pk_uint_size (val) == 64);
+
+  val = pk_make_uint (0xabcdef, 24);
+  T ("pk_make_uint_2", val != PK_NULL);
+  T ("pk_uint_value_2", pk_uint_value (val) == 0xabcdef);
+  T ("pk_uint_size_2", pk_uint_size (val) == 24);
+
+  /* Strings */
+
+  val = pk_make_string (awesome);
+  T ("pk_make_string_0", val != PK_NULL);
+  T ("pk_string_str_0", strcmp (pk_string_str (val), awesome) == 0);
+
+  {
+    char *bigstr;
+
+    if ((bigstr = (char *)malloc (bigstr_len + 1)) == NULL)
+      err (1, "malloc () failed");
+    memset (bigstr, 'P', bigstr_len);
+    bigstr[bigstr_len] = '\0';
+
+    val = pk_make_string (bigstr);
+
+    memset (bigstr, 'p', bigstr_len);
+    free (bigstr);
+  }
+  T ("pk_make_string_1", val != PK_NULL);
+  {
+    const char *sb = pk_string_str (val);
+    const char *se = sb;
+
+    while (*se != '\0' && *se == 'P')
+      ++se;
+
+    T ("pk_string_str_1", se - sb == bigstr_len);
+  }
+
+  /* Offsets */
+
+  mag = pk_make_uint (0, 64);
+  unit = pk_make_int (1, 64);
+
+  assert (mag != PK_NULL);
+  assert (unit != PK_NULL);
+
+  val = pk_make_offset (mag, unit);
+  T ("pk_make_offset_0", val == PK_NULL); /* Because of signed unit */
+
+  unit = pk_make_uint (0, 64);
+  assert (unit != PK_NULL);
+
+  val = pk_make_offset (mag, unit);
+  T ("pk_make_offset_1", val == PK_NULL);
+
+  mag = pk_make_uint (UINT64_MAX, 64);
+  unit = pk_make_uint (UINT64_MAX, 64);
+  assert (mag != PK_NULL);
+  assert (unit != PK_NULL);
+
+  val = pk_make_offset (mag, unit);
+  T ("pk_make_offset_2", val != PK_NULL);
+  T ("pk_offset_magnitude_2",
+     pk_uint_value (pk_offset_magnitude (val)) == UINT64_MAX);
+  T ("pk_offset_unit_2", pk_uint_value (pk_offset_unit (val)) == UINT64_MAX);
+
+#undef T
 }
 
 #define STARTS_WITH(PREFIX, STR) (strncmp (PREFIX, STR, strlen (PREFIX)) == 0)

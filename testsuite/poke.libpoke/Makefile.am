@@ -18,7 +18,7 @@ EXTRA_DIST = \
 
 COMMON = term-if.h
 
-check_PROGRAMS = values
+check_PROGRAMS = values api
 values_SOURCES = $(COMMON) values.c
 
 values_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
@@ -28,5 +28,17 @@ values_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                   -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
 
 values_LDADD = $(top_builddir)/gl/libgnu.la \
+               $(top_builddir)/libpoke/libpoke.la \
+               $(LTLIBTEXTSTYLE)
+
+api_SOURCES = $(COMMON) api.c
+
+api_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
+                  -I$(top_srcdir)/common \
+                  -DTESTDIR=\"$(abs_srcdir)\" \
+                  -DPKGDATADIR=\"$(pkgdatadir)\" \
+                  -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
+
+api_LDADD = $(top_builddir)/gl/libgnu.la \
                $(top_builddir)/libpoke/libpoke.la \
                $(LTLIBTEXTSTYLE)

@@ -4,3 +4,6 @@ load_lib "poke.exp"
 if { [verified_host_execute "poke.libpoke/values"] ne "" } {
     fail "values had an execution error"
 }
+if { [verified_host_execute "poke.libpoke/api"] ne "" } {
+    fail "api had an execution error"
+}

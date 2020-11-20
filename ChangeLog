@@ -1,5 +1,19 @@
 2020-11-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* libpoke/libpoke.c (pk_compiler_new): Make sure all feilds of
+	`term_if` are non-NULL.
+	* libpoke/pk-val.c (pk_make_offset): Reject zero value for units.
+	* testsuite/poke.libpoke/values.c: Add include `assert.h`.
+	(test_simple_values): Add more tests to cover all simple data
+	types: signed/unsigned ints, strings and offsets.
+	* testsuite/poke.libpoke/api.c: New test file to unit test libpoke
+	public API.
+	* testsuite/poke.libpoke/Makefile.am: Add build rules for `api` test.
+	* testsuite/poke.libpoke/libpoke.exp: Add support for new `api`
+	executable.
+
+2020-11-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* bootstrap.conf (gnu_modules): Add module `read-file`.
 	* testsuite/poke.libpoke/values.c: Add includes: `stdint.h`, `err.h`,
 	`read-file.h`.
