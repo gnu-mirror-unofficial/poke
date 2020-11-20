@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {.set obase 2} } */
+/* { dg-command { printf "%v\n", 0xffff0000U; } } */
+/* { dg-output "0b11111111111111110000000000000000U" } */

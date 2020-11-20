@@ -1087,24 +1087,45 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
               PKL_PASS_SUBPASS (exp);
               if (PKL_AST_PRINT_STMT_ARG_VALUE_P (arg))
                 {
-                  int print_depth
-                    = PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg);
-                  int print_mode;
+                  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
-                  switch (PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg))
+                  switch (PKL_AST_TYPE_CODE (exp_type))
                     {
-                    case PKL_AST_PRINT_MODE_FLAT:
-                      print_mode = PVM_PRINT_FLAT;
-                      break;
-                    case PKL_AST_PRINT_MODE_TREE:
-                      print_mode = PVM_PRINT_TREE;
+                    case PKL_TYPE_ARRAY:
+                    case PKL_TYPE_STRUCT:
+                      {
+                        /* XXX: to remove.  */
+                        int print_depth
+                          = PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg);
+                        int print_mode;
+
+                        switch (PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg))
+                          {
+                          case PKL_AST_PRINT_MODE_FLAT:
+                            print_mode = PVM_PRINT_FLAT;
+                            break;
+                          case PKL_AST_PRINT_MODE_TREE:
+                            print_mode = PVM_PRINT_TREE;
+                            break;
+                          default:
+                            assert (0);
+                          }
+
+                        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTV,
+                                      print_mode, print_depth);
+                        break;
+                      }
+                    case PKL_TYPE_INTEGRAL:
+                    case PKL_TYPE_OFFSET:
+                    case PKL_TYPE_STRING:
+                    case PKL_TYPE_FUNCTION:
+                      PKL_GEN_PAYLOAD->in_printer = 1;
+                      PKL_PASS_SUBPASS (exp_type);
+                      PKL_GEN_PAYLOAD->in_printer = 0;
                       break;
                     default:
                       assert (0);
                     }
-
-                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTV,
-                                print_mode, print_depth);
                 }
               else
                 {
@@ -1591,6 +1612,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
          BASE_TYPE handler to tackle it.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS BOFF VAL VMAG */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS BOFF VMAG */
+      /* XXX: no PASS BREAK? */
+    }
+  else if (PKL_GEN_PAYLOAD->in_printer)
+    {
+                                                /* VAL */
+      RAS_MACRO_OFFSET_PRINTER (PKL_PASS_NODE); /* _ */
+      PKL_PASS_BREAK;
     }
 }
 PKL_PHASE_END_HANDLER
@@ -2282,6 +2310,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The NULL */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, zero);
     }
+  else if (PKL_GEN_PAYLOAD->in_printer)
+    {
+                                                  /* VAL */
+      RAS_MACRO_INTEGRAL_PRINTER (PKL_PASS_NODE); /* _ */
+    }
   else
     {
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
@@ -2383,6 +2416,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUC);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
 
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_PAYLOAD->in_printer)
+    {
+      /* Stack: VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_string ("#<closure>"));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS);
       PKL_PASS_BREAK;
     }
 }
@@ -2733,6 +2775,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
       /* Stack: NULL */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (""));
+    }
+  else if (PKL_GEN_PAYLOAD->in_printer)
+    {
+      /* Stack: VAL */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS); /* _ */
     }
   else
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYS);

@@ -160,6 +160,80 @@ fun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
      return _pkl_gcd (b, a % b);
   }
 
+/* Return the prefix to use when printing integral magnitudes of the
+   given numerical base.  This may return an empty prefix.  */
+
+fun _pkl_base_prefix = (int<32> base) string:
+ {
+   if (base == 2)
+      return "0b";
+   if (base == 8)
+      return "0o";
+   if (base == 16)
+      return "0x";
+
+   return "";
+ }
+
+/* Return a string with the name corresponding to the given uni in
+   bits.  This may be an empty string for an unknown unit.
+
+   This should go away once we have a run-time mechanism to store and
+   access unit types.  */
+
+var _pkl_unit_bit =    1UL;
+var _pkl_unit_nibble = 4UL;
+var _pkl_unit_byte =   8UL;
+
+var _pkl_unit_kilobit = _pkl_unit_bit * 1000;
+var _pkl_unit_kilobyte = _pkl_unit_byte * 1000;
+var _pkl_unit_megabit = _pkl_unit_kilobit * 1000;
+var _pkl_unit_megabyte = _pkl_unit_kilobyte * 1000;
+var _pkl_unit_gigabit = _pkl_unit_megabit * 1000;
+var _pkl_unit_gigabyte = _pkl_unit_megabyte * 1000;
+
+var _pkl_unit_kibibit = _pkl_unit_bit * 1024;
+var _pkl_unit_kibibyte = _pkl_unit_byte * 1024;
+var _pkl_unit_mebibit = _pkl_unit_kibibit * 1024;
+var _pkl_unit_mebibyte = _pkl_unit_kibibyte * 1024;
+var _pkl_unit_gigibit = _pkl_unit_mebibit * 1024;
+var _pkl_unit_gigibyte = _pkl_unit_mebibyte * 1024;
+
+fun _pkl_unit_name = (uint<64> bits) string:
+ {
+    if (bits == _pkl_unit_bit)
+       return "b";
+    if (bits == _pkl_unit_nibble)
+       return "N";
+    if (bits == _pkl_unit_byte)
+       return "B";
+    if (bits == _pkl_unit_kilobit)
+       return "Kb";
+    if (bits == _pkl_unit_kilobyte)
+       return "KB";
+    if (bits == _pkl_unit_megabit)
+       return "Mb";
+    if (bits == _pkl_unit_megabyte)
+       return "MB";
+    if (bits == _pkl_unit_gigabit)
+       return "Gb";
+    if (bits == _pkl_unit_gigabyte)
+       return "GB";
+    if (bits == _pkl_unit_kibibit)
+       return "Kib";
+    if (bits == _pkl_unit_kibibyte)
+       return "KiB";
+    if (bits == _pkl_unit_mebibit)
+       return "Mib";
+    if (bits == _pkl_unit_mebibyte)
+       return "MiB";
+    if (bits == _pkl_unit_gigibit)
+       return "Gib";
+    if (bits == _pkl_unit_gigibyte)
+       return "GiB";
+
+    return "";
+  }
 
 /**** Set the default load path ****/
 

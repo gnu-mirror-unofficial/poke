@@ -1,5 +1,42 @@
 2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Fix .call pseudo-op.
+	* libpoke/pkl-rt.pk (_pkl_unit_str): New funtion.
+	(_pkl_base_prefix): Likewise.
+	(_pkl_unit_bit): Define.
+	(_pkl_unit_nibble): Likewise.
+	(_pkl_unit_kilobit): Likewise.
+	(_pkl_unit_kilobyte): Likewise.
+	(_pkl_unit_megabit): Likewise.
+	(_pkl_unit_megabyte): Likewise.
+	(_pkl_unit_gigabit): Likewise.
+	(_pkl_unit_gigabyte): Likewise.
+	(_pkl_unit_kibibits): Likewise.
+	(_pkl_unit_kibibytes): Likewise.
+	(_pkl_unit_mebibits): Likewise.
+	(_pkl_unit_mebibytes): Likewise.
+	(_pkl_unit_gigibits): Likewise.
+	(_pkl_unit_gigibytes): Likewise.
+	* libpoke/pkl-gen.pks (print_int_suffix): Likewise.
+	(integral_printer): New macro.
+	(offset_printer): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_type_integral): Generate code for
+	value printer.
+	(pkl_gen_pr_type_function): Likewise.
+	(pkl_gen_pr_type_offset): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_pr_print_stmt): Subpass in printer for integral, offset,
+	string and function types.
+	* common/pk-utils.c (pk_print_binary): Do not print a 0b prefix.
+	* testsuite/poke.pkl/printf-value-1.pk: Adjust test.
+	* testsuite/poke.pkl/printf-value-2.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-3.pk: Likewise.xo
+	* testsuite/poke.pkl/printf-value-6.pk: New test.
+	* testsuite/poke.pkl/printf-value-7.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-8.pk: Likewise.
+
+2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (PVM_PRINTI): Get a BASE argument.
 	(PVM_PRINTL): Likewise.
 	(printi): Get BASE from the stack.

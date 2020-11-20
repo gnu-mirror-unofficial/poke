@@ -1619,3 +1619,113 @@
         ureloc                  ; VAL
         drop                    ; _
         .end
+
+;;; RAS_MACRO_PRINT_INT_SUFFIX @type
+;;; ( -- )
+;;;
+;;; Print the suffix corresponding to the specified integral type.
+;;;
+;;; Macro-arguments:
+;;; @type
+;;;   pkl_ast_node with an integral type.
+
+        .macro print_int_suffix @type
+        ;; First signed/unsigned suffix.
+   .c if (!PKL_AST_TYPE_I_SIGNED_P (@type))
+   .c {
+        push "U"
+        prints
+   .c }
+        ;; Then certain kinds based on size
+   .c if (PKL_AST_TYPE_I_SIZE (@type) == 4)
+   .c {
+        push "N"
+        prints
+   .c }
+   .c if (PKL_AST_TYPE_I_SIZE (@type) == 8)
+   .c {
+        push "B"
+        prints
+   .c }
+   .c if (PKL_AST_TYPE_I_SIZE (@type) == 16)
+   .c {
+        push "H"
+        prints
+   .c }
+   .c if (PKL_AST_TYPE_I_SIZE (@type) == 64)
+   .c {
+        push "L"
+        prints
+   .c }
+        .end
+
+;;; RAS_MACRO_INTEGRAL_PRINTER @type
+;;; ( VAL -- )
+;;;
+;;; Given an integral value in the stack, print it out.
+;;;
+;;; Macro-arguments:
+;;; @type
+;;;   pkl_ast_node with the type of the value in the stack.
+
+        .macro integral_printer @type
+        push "integer"
+        begsc
+        pushob                  ; VAL OBASE
+        ;; Calculate and print the prefix.
+        dup                     ; VAL OBASE OBASE
+        .call _pkl_base_prefix  ; VAL OBASE STR
+        prints                  ; VAL OBASE
+        ;; Print the value.
+        print @type             ; _
+        ;; Print the suffix
+        .e print_int_suffix @type
+        push "integer"
+        endsc
+        .end
+
+;;; RAS_MACRO_OFFSET_PRINTER @type
+;;; ( VAL -- )
+;;;
+;;; Given an offset value in the stack, print it out.
+;;;
+;;; Macro-arguments:
+;;; @type
+;;;   pkl_ast_node with the type of the value in the stack.
+
+        .macro offset_printer @type
+        push "offset"
+        begsc
+
+        ;; Print the offset magnitude
+        .let @unit = PKL_AST_TYPE_O_UNIT (@type)
+        .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@type)
+        ogetm                   ; VAL MAG
+        .c PKL_PASS_SUBPASS (@base_type);
+                                ; VAL
+        ;; Separator
+        push "#"
+        prints
+        ;; Print the offset unit.
+        ;; If the unit has a name, use it.
+        ;; Otherwise, print the unit in decimal.
+        .let @unit_type = PKL_AST_TYPE (@unit)
+        ogetu                   ; VAL UNIT
+        dup                     ; VAL UNIT UNIT
+        .call _pkl_unit_name    ; VAL UNIT STR
+        sel                     ; VAL UNIT STR SEL
+        bzlu .no_unit_name
+        drop                    ; VAL UNIT STR
+        prints                  ; VAL UNIT
+        drop                    ; VAL
+        ba .unit_name_done
+.no_unit_name:
+        drop
+        push int<32>10          ; VAL UNIT 10
+        print @unit_type        ; VAL
+        drop
+.unit_name_done:
+        drop                    ; _
+        push "offset"
+        endsc
+        .end

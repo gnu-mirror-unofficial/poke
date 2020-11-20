@@ -2,4 +2,4 @@
 
 /* { dg-command { .set obase 16 } } */
 /* { dg-command { printf "%v\n", [1,2,3] } } */
-/* { dg-output "\\\[0x1,0x2,0x3\\\]" } */
+/* { dg-output "\\\[0x00000001,0x00000002,0x00000003\\\]" } */
