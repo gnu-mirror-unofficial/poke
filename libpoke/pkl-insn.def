@@ -427,6 +427,19 @@ PKL_DEF_INSN(PKL_INSN_PUSHEND,"","pushend")
 PKL_DEF_INSN(PKL_INSN_POPEND,"", "popend")
 PKL_DEF_INSN(PKL_INSN_SYNC,"","sync")
 
+PKL_DEF_INSN(PKL_INSN_PUSHOB,"","pushob")
+PKL_DEF_INSN(PKL_INSN_POPOB,"","popob")
+PKL_DEF_INSN(PKL_INSN_PUSHOM,"","pushom")
+PKL_DEF_INSN(PKL_INSN_POPOM,"","popom")
+PKL_DEF_INSN(PKL_INSN_PUSHOO,"","pushoo")
+PKL_DEF_INSN(PKL_INSN_POPOO,"","popoo")
+PKL_DEF_INSN(PKL_INSN_PUSHOI,"","pushoi")
+PKL_DEF_INSN(PKL_INSN_POPOI,"","popoi")
+PKL_DEF_INSN(PKL_INSN_PUSHOD,"","pushod")
+PKL_DEF_INSN(PKL_INSN_POPOD,"","popod")
+PKL_DEF_INSN(PKL_INSN_PUSHOAC,"","pushoac")
+PKL_DEF_INSN(PKL_INSN_POPOAC,"","popoac")
+
 /* The only purpose of PKL_INSN_MACRO is to mark the beginning of
    macro instructions.  It should _not_ be passed to
    `pkl_asm_insn'.  */

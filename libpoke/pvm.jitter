@@ -769,6 +769,245 @@ instruction popend ()
   end
 end
 
+# Instruction: pushob
+#
+# Push output base.
+#
+# This instruction pushes a signed integer value with the output base
+# that is used when printing PVM values.  Valid values are 2, 8, 10
+# and 16.
+#
+# Stack: ( -- INT )
+
+instruction pushob ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int obase = pvm_obase (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (obase, 32));
+  end
+end
+
+# Instruction: popob
+#
+# Pop and set output base.
+#
+# This instructions pops a signed integer from the stack and uses it
+# to set the new output base to be used when printing PVM values.
+# Valid values are 2, 8, 10 and 16.
+#
+# If an invalid obase is specified then this instruction raises
+# PVM_E_INVAL.
+#
+# Stack: ( INT -- )
+# Exceptions: PVM_E_INVAL
+
+instruction popob ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int obase = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    if (obase != 2 && obase != 8 && obase != 10 && obase != 16)
+      PVM_RAISE (PVM_E_INVAL, "invalid output base", PVM_E_INVAL_ESTATUS);
+
+    pvm_set_obase (vm, obase);
+  end
+end
+
+# Instruction: pushom
+#
+# Push output mode.
+#
+# This instruction pushes a signed integer value with the output mode
+# that is used when printing PVM values.  Valid values are 0 for flat
+# mode, and 1 for tree mode.
+#
+# Stack: ( -- INT )
+
+instruction pushom ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int omode = pvm_omode (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (omode, 32));
+  end
+end
+
+# Instruction: popom
+#
+# Pop and set output mode.
+#
+# This instructions pops a signed integer from the stack and uses it
+# to set the new output mode to be used when printing PVM values.
+# Valid values are 0 for flat mode and 1 for tree mode.
+#
+# If an invalid omode is specified then this instruction raises
+# PVM_E_INVAL.
+#
+# Stack: ( INT -- )
+# Exceptions: PVM_E_INVAL
+
+instruction popom ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int omode = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    if (omode != PVM_PRINT_FLAT && omode != PVM_PRINT_TREE)
+      PVM_RAISE (PVM_E_INVAL, "invalid output base", PVM_E_INVAL_ESTATUS);
+
+    pvm_set_omode (vm, omode);
+  end
+end
+
+# Instruction: pushoo
+#
+# Push output offsets mode.
+#
+# This instruction pushes a boolean encoded in a signed integer value
+# indicating whether to show offsets when printing PVM values.
+#
+# Stack: ( -- INT )
+
+instruction pushoo ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int omaps = pvm_omaps (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (omaps, 32));
+  end
+end
+
+# Instruction: popoo
+#
+# Pop and set output offsets mode.
+#
+# This instructions pops a boolean encoded in a signed integer from
+# the stack and uses it to set the new output offset mode to be used
+# when printing PVM values.
+#
+# Stack: ( INT -- )
+
+instruction popoo ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int omaps = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    pvm_set_omaps (vm, omaps);
+  end
+end
+
+# Instruction: pushoi
+#
+# Push output indentation mode.
+#
+# This instruction pushes a boolean encoded in a signed integer value
+# indicating whether indentation is used when printing PVM values.
+#
+# Stack: ( -- INT )
+
+instruction pushoi ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int oindent = pvm_oindent (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (oindent, 32));
+  end
+end
+
+# Instruction: popoi
+#
+# Pop and set output indentation mode.
+#
+# This instructions pops a boolean encoded in a signed integer from
+# the stack and uses it to set the new output indentation mode to be
+# used when printing PVM values.
+#
+# Stack: ( INT -- )
+
+instruction popoi ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int oindent = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    pvm_set_oindent (vm, oindent);
+  end
+end
+
+# Instruction: pushod
+#
+# Push output depth.
+#
+# This instruction pushes a signed integer indicating the depth to use
+# when printing PVM values.
+#
+# Stack: ( -- INT )
+
+instruction pushod ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int odepth = pvm_odepth (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (odepth, 32));
+  end
+end
+
+# Instruction: popod
+#
+# Pop and set output depth.
+#
+# This instructions pops a signed integer indicating the depth used by
+# the VM when printing values.
+#
+# Stack: ( INT -- )
+
+instruction popod ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int odepth = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    pvm_set_odepth (vm, odepth);
+  end
+end
+
+# Instruction: pushoac
+#
+# Push output array cutoff.
+#
+# This instruction pushes a signed integer indicating the number of
+# elements that the VM includes in the printed representation of PVM
+# array values.
+#
+# Stack: ( -- INT )
+
+instruction pushoac ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int oacutoff = pvm_oacutoff (vm);
+
+    JITTER_PUSH_STACK (pvm_make_int (oacutoff, 32));
+  end
+end
+
+# Instruction: popoac
+#
+# Pop and set output array cutoff.
+#
+# This instructions pops a signed integer indicating the number of
+# elements that the VM includes in the printed representation of PVM
+# array values.
+#
+# Stack: ( INT -- )
+
+instruction popoac ()
+  code
+    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    int oacutoff = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    pvm_set_oacutoff (vm, oacutoff);
+  end
+end
+
+
 # Instruction: sync
 #
 # Handle pending signals, and raise exceptions accordingly.  This
