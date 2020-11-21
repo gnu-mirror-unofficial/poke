@@ -1620,40 +1620,6 @@ Description:
 + values.
 RFC: yes
 
-Summary: pretty-printer to pretty-printer calls dont work
-Component: PVM
-Kind: ENH
-Priority: 4
-Description: deftype ULEB_128_Byte =
-+   struct
-+   {
-+     method _print = void:
-+       {
-+       }
-+   };
-+
-+ deftype ULEB128 =
-+   struct
-+   {
-+     ULEB_128_Byte[1] variable;
-+
-+     method _print = void:
-+       {
-+         printf "%v", variable;
-+       }
-+   };
-Target: 1.0
-
-Summary: Exceptions raised in pretty-printers are not propagated
-Component: PVM
-Kind: BUG
-BZ: 26898
-Priority: 4
-Description:
-+ When a pretty-printer raises an exception, the same exception shall be
-+ propagated by the code in pvm_call_pretty_printer.
-Target: 1.0
-
 Summary: Better error handling in `atoi'
 Component: Runtime
 Kind: BUG
