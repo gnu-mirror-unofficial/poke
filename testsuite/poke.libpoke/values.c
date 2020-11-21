@@ -31,6 +31,8 @@
 
 #include "term-if.h"
 
+#define STREQ(a,b) (strcmp (a, b) == 0)
+
 /* Test simple type constructors, getters and setters.  */
 
 void
@@ -88,7 +90,7 @@ test_simple_values ()
 
   val = pk_make_string (awesome);
   T ("pk_make_string_0", val != PK_NULL);
-  T ("pk_string_str_0", strcmp (pk_string_str (val), awesome) == 0);
+  T ("pk_string_str_0", STREQ (pk_string_str (val), awesome));
 
   {
     char *bigstr;
