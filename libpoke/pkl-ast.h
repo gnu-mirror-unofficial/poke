@@ -592,6 +592,7 @@ pkl_ast_node pkl_ast_make_enum (pkl_ast ast,
 #define PKL_AST_FUNC_NAME(AST) ((AST)->func.name)
 #define PKL_AST_FUNC_NARGS(AST) ((AST)->func.nargs)
 #define PKL_AST_FUNC_METHOD_P(AST) ((AST)->func.method_p)
+#define PKL_AST_FUNC_PROGRAM(AST) ((AST)->func.program)
 
 struct pkl_ast_func
 {
@@ -606,6 +607,7 @@ struct pkl_ast_func
   int nframes;
   char *name;
   int method_p;
+  pvm_program program;
 };
 
 pkl_ast_node pkl_ast_make_func (pkl_ast ast,

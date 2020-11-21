@@ -1,5 +1,16 @@
 2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_FUNC_PROGRAM): Define.
+	(struct pkl_ast_func): New field `program'.
+	* libpoke/pkl-ast.c (pkl_ast_make_func): Initialize field
+	`program'.
+	* libpoke/pkl-gen.c (pkl_gen_ps_decl): Move handling of function
+	declarations to the pre-order handler.
+	(pkl_gen_pr_decl): Handle function declarations, and do not
+	re-compile the initial if it is already compiled.
+
+2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.libpoke/values.c (test_simple_values): Replace
 	strcmp with STREQ.
 	(STREQ): Define.

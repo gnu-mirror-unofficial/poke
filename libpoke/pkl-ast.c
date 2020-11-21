@@ -245,6 +245,7 @@ pkl_ast_make_func (pkl_ast ast, pkl_ast_node ret_type,
   PKL_AST_FUNC_BODY (func) = ASTREF (body);
 
   PKL_AST_FUNC_FIRST_OPT_ARG (func) = NULL;
+  PKL_AST_FUNC_PROGRAM (func) = NULL;
 
   return func;
 }

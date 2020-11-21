@@ -289,15 +289,48 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
         }
       break;
     case PKL_AST_DECL_KIND_FUNC:
+      {
+        pvm_program program;
+        pvm_val closure;
 
-      /* INITIAL is a PKL_AST_FUNC, that will compile into a program
-         containing the function code.  Push a new assembler to the
-         stack of assemblers in the payload and use it to process
-         INITIAL.  */
-      PKL_GEN_PUSH_ASM (pkl_asm_new (PKL_PASS_AST,
-                                     PKL_GEN_PAYLOAD->compiler,
-                                     0 /* prologue */));
-      break;
+        if (PKL_AST_FUNC_PROGRAM (initial))
+          program = PKL_AST_FUNC_PROGRAM (initial);
+        else
+          {
+            /* INITIAL is a PKL_AST_FUNC, that will compile into a
+               program containing the function code.  Push a new
+               assembler to the stack of assemblers in the payload and
+               use it to process INITIAL.  */
+            PKL_GEN_PUSH_ASM (pkl_asm_new (PKL_PASS_AST,
+                                           PKL_GEN_PAYLOAD->compiler,
+                                           0 /* prologue */));
+
+            PKL_PASS_SUBPASS (initial);
+
+            /* At this point the code for the function specification
+               INITIAL has been assembled in the current
+               macroassembler.  Finalize the program and put it in a
+               PVM closure, along with the current environment.  */
+
+            program = pkl_asm_finish (PKL_GEN_ASM,
+                                      0 /* epilogue */);
+            PKL_GEN_POP_ASM;
+            pvm_program_make_executable (program);
+
+            /* XXX */
+            //            pvm_disassemble_program (program);
+            PKL_AST_FUNC_PROGRAM (initial) = program;
+          }
+
+        closure = pvm_make_cls (program);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, closure);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUC);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
+
+        PKL_PASS_BREAK;
+        break;
+      }
     default:
       break;
     }
@@ -325,30 +358,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_decl)
           || PKL_AST_TYPE_CODE (initial) == PKL_TYPE_ARRAY)
         assert (0);
       break;
-    case PKL_AST_DECL_KIND_FUNC:
-      {
-        /* At this point the code for the function specification
-           INITIAL has been assembled in the current macroassembler.
-           Finalize the program and put it in a PVM closure, along
-           with the current environment.  */
-
-        pvm_program program = pkl_asm_finish (PKL_GEN_ASM,
-                                              0 /* epilogue */);
-        pvm_val closure;
-
-        PKL_GEN_POP_ASM;
-        pvm_program_make_executable (program);
-        closure = pvm_make_cls (program);
-
-        /*XXX*/
-        //        pvm_disassemble_program (program);
-
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, closure);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUC);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REGVAR);
-        break;
-      }
     default:
       assert (0);
       break;
