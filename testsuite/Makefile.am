@@ -161,6 +161,7 @@ EXTRA_DIST = \
   poke.map/maps-arrays-11.pk \
   poke.map/maps-arrays-12.pk \
   poke.map/maps-arrays-13.pk \
+  poke.map/maps-arrays-14.pk \
   poke.map/maps-arrays-15.pk \
   poke.map/maps-arrays-16.pk \
   poke.map/maps-arrays-17.pk \

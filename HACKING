@@ -776,8 +776,16 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   We have a syntax-check target that checks that Makefile.am contains
   all the test files under `testsuite/'.  However, we don't have a
   similar rule to detect whether all the files listed in EXTRA_DIST
-  exist, other than running `make distcheck'.  Please try to do so
-  before you push.
+  exist, other than running `make distcheck'.
+
+  You can try something like this in this case:
+
+  ,----
+  | $ find ../testsuite/ -name '*.pk' | sed -e 's#../testsuite/##g' | sort > in-files
+  | $ cat ../testsuite/Makefile.am | egrep -e '\.pk *\\$' \
+  |       | sed -e 's/ *\\$//' -e 's/^ *//' | sort  > in-makefile
+  | $ diff -u in-files in-makefile
+  `----
 
 
 5.7 dg-output may require a newline

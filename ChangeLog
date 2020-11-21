@@ -1,5 +1,13 @@
 2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/Makefile.am (EXTRA_DIST): Add missing test.
+	* etc/hacking.org (List the test files in testsuite/Makefile.am):
+	Add recipe on how to get a list of test files missing from
+	testsuite/Makefile.am.
+	* HACKING: Regenerated.
+
+2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/hacking.org: New file.
 	* HACKING: Generated from hacking.org.
 

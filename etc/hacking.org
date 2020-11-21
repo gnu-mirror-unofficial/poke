@@ -103,7 +103,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    branch owner.
 
 ** Building Release Tarballs
-   
+
    The standard target =make distcheck= builds a distributable sources
    tarball, and tests that it can be built and tested properly.
 
@@ -175,7 +175,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    other hackers, such as the addition of a new API, or a change in an
    existing interface, or a new auxiliary tool, or ... please consider
    adding a record to DEV-NEWS
-  
+
 * Development Environment
 
 ** Autotools
@@ -282,7 +282,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
    After getting the git sources, and installing the tools above, you
    can run:
-  
+
    : $ ./bootstrap --skip-po
 
    Then, you can run =configure=::
@@ -312,7 +312,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
    To disable building the GUI, pass the =--disable-gui= option at
    configure time.
-  
+
 ** Building a 32-bit poke
 
    If you are in a 64-bit multilib system with support for building
@@ -351,7 +351,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
    The package is built automatically, at regular intervals.  You find
    the latest build results here:
-  
+
    : https://gitlab.com/gnu-poke/ci-distcheck/pipelines
    : https://gitlab.com/gnu-poke/ci-distcheck/-/jobs?scope=finished
 
@@ -414,22 +414,22 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
     Example:
 
-#+BEGIN_EXAMPLE    
+#+BEGIN_EXAMPLE
   /* Frobnicate a frob.
 
      FROB is a frob that should have been previously initialized using
      frob_new.
-  
+
      LAZY_P is a boolean.  If true, FROB won't be frobnicated
      immediately, but instead marked for later frobnication.
-  
+
      If the frob cannot be frobnicated, this function returns NULL.
      Otherwise the function returns the given frob.  */
-  
+
   frob_t frobnicate (frob_t frob, int lazy_p);
   frob_t forbnicate_r (frob_t frob, int lazy_p);
 #+END_EXAMPLE
-  
+
 ** Writing Poke
 
    We recommend to use the Emacs mode in =etc/poke-mode.el= to write
@@ -502,7 +502,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    We are using DejaGnu's support for unit tests.  See
    =testsuite/poke.libpoke= for an example on how to write C unit
    tests.
-  
+
 ** Naming Tests
 
    For testing a functionality =foo=, name your test =foo.pk= or
@@ -554,8 +554,14 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    We have a syntax-check target that checks that Makefile.am contains
    all the test files under =testsuite/=.  However, we don't have a
    similar rule to detect whether all the files listed in EXTRA_DIST
-   exist, other than running =make distcheck=.  Please try to do so
-   before you push.
+   exist, other than running =make distcheck=.
+
+   You can try something like this in this case:
+
+   : $ find ../testsuite/ -name '*.pk' | sed -e 's#../testsuite/##g' | sort > in-files
+   : $ cat ../testsuite/Makefile.am | egrep -e '\.pk *\\$' \
+   :       | sed -e 's/ *\\$//' -e 's/^ *//' | sort  > in-makefile
+   : $ diff -u in-files in-makefile
 
 ** dg-output may require a newline
 
@@ -631,7 +637,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    : /* { dg-do run } */
    : /* { dg-options "--color=html" } */
    : /* { dg-require libtextstyle } */
-   : 
+   :
    : /* { dg-command {printf "%<foo:%i32d%>", 10} } */
    : /* { dg-output "<span class=\"foo\">10</span>" } */
 
@@ -649,7 +655,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    interactive usage of poke.  Therefore, it is not dg-based.
    Instead, it uses the services provided by =testsuite/lib/poke.exp=.
    In a nutshell, these services are:
-   
+
    - poke_start :: Run a new poke process and wait at the prompt.
    - poke_exit :: Exit poke.
    - poke_test_cmd CMD PATTERN ::
@@ -659,7 +665,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
      respectively.  PATTERN shouldn't include the prompt.
   - poke_send INPUT PATTERN :: Send INPUT to poke, and expect PATTERN as output.
   - poke_send_signal SIGNAL ::  Send SIGNAL to poke.
-  
+
   Adding a new test to =poke.repl= involves editing
   =poke.repl/repl.exp= and adding some content there.  The following
   subsections detail how.
@@ -676,7 +682,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
     =testsuite/lib/poke.exp= provides a convenient interface for this.
 
     For example:
-  
+
     : set test "slashes are preserved"
     : poke_start
     : poke_test_cmd {4 / 2} {2}
@@ -690,14 +696,14 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
 
     : (poke) 4 / 2
     : 2
-    : (poke) 
+    : (poke)
 
 *** General REPL tests
 
     Other REPL tests are not about executing commands.  Suppose for
     example we want to test whether tab-completion works.  We would
     write something like:
-  
+
     : set test "tab-completion-2"
     : poke_start
     : poke_send ".e\t\t" "\r\n.editor  .exit *\r\n$poke_prompt .e"
@@ -803,7 +809,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
   - Inline the patch in the body of your email, or alternatively
     attach it as =text/x-diff= or =text/x-patch=.  This is to ease
     reviewers to quote parts of the patch.
-    
+
 * Maintenance
 
   This section describes =make= targets that performs several
@@ -845,10 +851,10 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
 * Poke Architecture
 
   This figure depicts the overall architecture of poke:
-  
+
 #+BEGIN_EXAMPLE
   +----------+
-  | compiler |      
+  | compiler |
   +----------+      +------+
        |            |      |
        v            |      |
@@ -873,7 +879,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
 ** Compiler Overview
 
    This figure depicts the architecture of the compiler:
-  
+
 #+BEGIN_EXAMPLE
       /--------\
       | source |
@@ -886,7 +892,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
   |  analysis and   |
   | transformation  |
   |     phases      |
-  +-----------------+    
+  +-----------------+
   | code generation |
   |      phase      |
   +-----------------+
@@ -1250,7 +1256,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
    :       $$ = pkl_ast_make_builtin (pkl_parser->ast,
    :                                  PKL_AST_BUILTIN_RAND);
    :       PKL_AST_LOC ($$) = @$;
-   :       
+   :
    :       /* Pop the frame pushed by the `pushlevel' above.  */
    :       pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
    :     }
@@ -1413,7 +1419,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
    This works because =pkl_ast_make_xxx= does an =ASTREF= to =b=
    internally.  The final result is that the reference counter of =b=
    doesn't change at all.
-  
+
 ** PVM values in PVM programs
 
    PVM routines (data structures of type =pvm_routine=) are allocated
@@ -1580,7 +1586,7 @@ Each pickle in =pickles/FOO.pk= shall have a testsuite in
    : $ poke --color=html
    : [...]
    : (poke) [1#B,2#B]
-   : <span class="array">[<span class="offset"><span class="integer">0x1</span>#B</span>,<span class="offset"><span class="integer">0x2</span>#B</span>]</span><br/>(poke) 
+   : <span class="array">[<span class="offset"><span class="integer">0x1</span>#B</span>,<span class="offset"><span class="integer">0x2</span>#B</span>]</span><br/>(poke)
 
 * Debugging Poke
 
