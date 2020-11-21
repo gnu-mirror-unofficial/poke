@@ -1374,6 +1374,7 @@ EXTRA_DIST = \
   poke.pkl/scons-58.pk \
   poke.pkl/scons-59.pk \
   poke.pkl/scons-60.pk \
+  poke.pkl/scons-61.pk \
   poke.pkl/scons-diag-1.pk \
   poke.pkl/scons-diag-2.pk \
   poke.pkl/scons-diag-3.pk \

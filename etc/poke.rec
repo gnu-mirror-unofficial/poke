@@ -1297,44 +1297,6 @@ Description:
 + /* Does nothing.  */
 Target: 1.0
 
-Summary: Infamous constructor bug
-Component: Compiler
-Kind: BUG
-BZ: 26888
-Priority: 4
-Description:
-+ (Foo{}).bar fails in the code below.  This is the infamous bug related
-+ to nested types and constructors.
-+
-+ type Foo =
-+   struct
-+   {
-+     int i;
-+
-+     fun foo = int:
-+       {
-+         return i + 1;
-+       }
-+
-+     method bar = int:
-+       {
-+         type Bar =
-+           struct
-+           {
-+             int j;
-+             method bar = int: { return j + 1; }
-+           };
-+
-+         fun jorl = int:
-+         {
-+           return (Bar { j = 1 }).bar;
-+         }
-+
-+         return jorl + i;
-+       }
-+   };
-Target: 1.0
-
 Summary: Fix %destructors in parser
 Component: Compiler
 Kind: BUG

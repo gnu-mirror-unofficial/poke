@@ -1,0 +1,32 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    int i;
+
+    fun foo = int:
+      {
+        return i + 1;
+      }
+
+    method bar = int:
+      {
+        type Bar =
+          struct
+          {
+            int j;
+            method bar = int: { return j + 1; }
+          };
+
+        fun jorl = int:
+        {
+          return (Bar { j = 1 }).bar;
+        }
+
+        return jorl + i;
+      }
+  };
+
+/* { dg-command {(Foo {}).bar ();} } */
+/* { dg-output "2" } */
