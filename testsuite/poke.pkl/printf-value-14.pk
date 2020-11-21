@@ -5,5 +5,5 @@ type Bar = struct { Baz b; };
 type Foo = struct { Bar a; };
 
 /* { dg-command {.set odepth 1} } */
-/* { dg-command { printf "%v\n", Foo {} } } */
+/* { dg-command { printf "%1v\n", Foo {} } } */
 /* { dg-output "Foo \{a=Bar \{\.\.\.\}\}" } */

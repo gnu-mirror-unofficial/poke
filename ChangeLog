@@ -1,5 +1,15 @@
 2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (indent_if_tree): New macro.
+	(struct_printer): Acknowledge tree mode.
+	* libpoke/pkl-gen.c (pkl_gen_pr_print_stmt): Acknowledge mode and
+	depth from printf statements.
+	* libpoke/pvm.jitter: Fix stack handling of the popo*
+	instructions.
+	* testsuite/poke.pkl/printf-value-14.pk: Adapt test.
+
+2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (indent): New instruction.
 	* libpoke/pkl-insn.def (PKL_INSN_INDENT): Define.
 	* libpoke/pkl-gen.c (pkl_gen_pr_print_stmt): Pass an initial depth

@@ -1884,6 +1884,25 @@
         return
         .end
 
+;;; RAS_MACRO_INDENT_IF_TREE
+;;; ( DEPTH ISTEP -- )
+;;;
+;;; Given a depth and an indentation step, indent if the VM
+;;; is configured to print in tree-mode.  Otherwise do nothing.
+
+        .macro indent_if_tree
+        pushom                  ; DEPTH ISTEP OMODE
+        bnzi .do_indent
+        drop
+        drop
+        drop                    ; _
+        ba .done
+.do_indent:
+        drop                    ; DEPTH ISTEP
+        indent                  ; _
+.done:
+        .end
+
 ;;; RAS_FUNCTION_STRUCT_PRINTER @struct_type
 ;;; ( SCT DEPTH -- )
 ;;;
@@ -1919,7 +1938,6 @@
         push "struct"
         begsc
         ;; Print the struct type name.
-        ;; XXX tysctn which can be null!
         push "struct-type-name"
         begsc
         typof                   ; SCT TYP
@@ -1934,8 +1952,6 @@
         prints
         push "struct-type-name"
         endsc
-        push " {"
-        prints
         ;; Stop here if we are past the maximum depth configured in
         ;; the VM.
         pushod                  ; SCT MDEPTH
@@ -1946,13 +1962,15 @@
         nip2                    ; SCT (DEPTH>=MDEPTH)
         bzi .depth_ok
         drop                    ; SCT
-        push "..."
+        push " {...}"
         prints
-        ba .fields_done
+        ba .body_done
 .depth_ok:
         drop                    ; SCT
         ;; Iterate on the elements stored in the struct, printing them
         ;; in order.
+        push " {"
+        prints
  .c      uint64_t i;
         .let @field
  .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (struct_type);
@@ -1989,7 +2007,13 @@
         prints
  .c    }
  .c }
-                                ; SCT EVAL
+        ;; Indent if in tree-mode
+        pushvar $depth          ; SCT EVAL DEPTH
+        push int<32>1
+        addi
+        nip2                    ; SCT EVAL (DEPTH+1)
+        pushoi                  ; SCT EVAL (DEPTH+1) ISTEP
+        .e indent_if_tree       ; SCT EVAL
  .c   if (@field_name)
  .c   {
         .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
@@ -2015,8 +2039,13 @@
  .c    i = i + 1;
  .c }
 .fields_done:
+        ;; Indent if in tree-mode
+        pushvar $depth          ; SCT EVAL DEPTH
+        pushoi                  ; SCT EVAL DEPTH ISTEP
+        .e indent_if_tree       ; SCT EVAL
         push "}"
         prints
+.body_done:
         ;; Print the struct offset if required.
         pushoo                  ; SCT OMAPS
         bzi .l1

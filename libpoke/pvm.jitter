@@ -816,6 +816,7 @@ instruction popob ()
       PVM_RAISE (PVM_E_INVAL, "invalid output base", PVM_E_INVAL_ESTATUS);
 
     pvm_set_obase (vm, obase);
+    JITTER_DROP_STACK ();
   end
 end
 
@@ -858,9 +859,10 @@ instruction popom ()
     int omode = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     if (omode != PVM_PRINT_FLAT && omode != PVM_PRINT_TREE)
-      PVM_RAISE (PVM_E_INVAL, "invalid output base", PVM_E_INVAL_ESTATUS);
+      PVM_RAISE (PVM_E_INVAL, "invalid output mode", PVM_E_INVAL_ESTATUS);
 
     pvm_set_omode (vm, omode);
+    JITTER_DROP_STACK ();
   end
 end
 
@@ -898,6 +900,7 @@ instruction popoo ()
     int omaps = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_omaps (vm, omaps);
+    JITTER_DROP_STACK ();
   end
 end
 
@@ -938,6 +941,7 @@ instruction popoi ()
     int oindent = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_oindent (vm, oindent);
+    JITTER_DROP_STACK ();
   end
 end
 
@@ -974,6 +978,7 @@ instruction popod ()
     int odepth = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_odepth (vm, odepth);
+    JITTER_DROP_STACK ();
   end
 end
 
@@ -1012,6 +1017,7 @@ instruction popoac ()
     int oacutoff = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_oacutoff (vm, oacutoff);
+    JITTER_DROP_STACK ();
   end
 end
 
@@ -1048,6 +1054,7 @@ instruction popopp ()
     int pp = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_pretty_print (vm, pp);
+    JITTER_DROP_STACK ();
   end
 end
 

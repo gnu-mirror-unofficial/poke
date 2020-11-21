@@ -1089,12 +1089,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
                 {
                   /* Generate code to print the value.  */
                   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
+                  int arg_omode = PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg);
+                  int arg_odepth = PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg);
 
+                  /* Set the argument's own omode and odepth, saving
+                     the VM's own.  */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOM); /* OMODE */
                   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                                pvm_make_int (0, 32)); /* EXP DEPTH */
+                                pvm_make_int (arg_omode, 32)); /* OMODE NOMODE */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM); /* OMODE */
+
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOD); /* OMODE ODEPTH */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                                pvm_make_int (arg_odepth, 32)); /* OMODE ODEPTH NODEPTH */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD); /* OMODE ODEPTH */
+
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* OMODE ODEPTH EXP */
+
+                  /* Print out the value.  */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                                pvm_make_int (0, 32)); /* OMODE ODEPTH EXP DEPTH */
                   PKL_GEN_PAYLOAD->in_printer = 1;
                   PKL_PASS_SUBPASS (exp_type);
                   PKL_GEN_PAYLOAD->in_printer = 0;
+
+                  /* Restore the current omode and odepth in the VM.  */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD); /* OMODE */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM); /* _ */
                 }
               else
                 {
