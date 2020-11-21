@@ -1,5 +1,10 @@
 2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/hacking.org: New file.
+	* HACKING: Generated from hacking.org.
+
+2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/Makefile.am (EXTRA_DIST): Remove non-existing tests
 	poke.pkl/arrays-14.pk, poke.map/arrays-14.pk and
 	poke.pkl/scons-diag-7.pk.
