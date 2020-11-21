@@ -1,5 +1,12 @@
 2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_ps_struct_ref): Fix regression with
+	anonymous fields.
+	* testsuite/poke.pkl/sref-5.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (pretty-printer to pretty-printer calls dont work):
 	Removed as fixed.
 	(Exceptions raised in pretty-printers are not propagated):

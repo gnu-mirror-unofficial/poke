@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+type Foo = struct { int; int b; };
+var f = Foo {};
+var b = f.b;

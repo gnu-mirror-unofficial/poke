@@ -1449,6 +1449,7 @@ EXTRA_DIST = \
   poke.pkl/sref-2.pk \
   poke.pkl/sref-3.pk \
   poke.pkl/sref-4.pk \
+  poke.pkl/sref-5.pk \
   poke.pkl/sref-diag-1.pk \
   poke.pkl/sref-diag-2.pk \
   poke.pkl/string-diag-1.pk \
