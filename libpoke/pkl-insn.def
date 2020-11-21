@@ -384,6 +384,8 @@ PKL_DEF_INSN(PKL_INSN_RETURN,"","return")
 
 /* Printing instructions.  */
 
+PKL_DEF_INSN(PKL_INSN_INDENT,"","indent")
+
 PKL_DEF_INSN(PKL_INSN_PRINTI,"n","printi")
 PKL_DEF_INSN(PKL_INSN_PRINTIU,"n","printiu")
 PKL_DEF_INSN(PKL_INSN_PRINTL,"n","printl")

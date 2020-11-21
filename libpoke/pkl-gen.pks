@@ -1660,15 +1660,17 @@
         .end
 
 ;;; RAS_MACRO_INTEGRAL_PRINTER @type
-;;; ( VAL -- )
+;;; ( VAL DEPTH -- )
 ;;;
-;;; Given an integral value in the stack, print it out.
+;;; Given an integral value and a depth in the stack, print the
+;;; integral value.
 ;;;
 ;;; Macro-arguments:
 ;;; @type
 ;;;   pkl_ast_node with the type of the value in the stack.
 
         .macro integral_printer @type
+        drop                    ; VAL
         push "integer"
         begsc
         pushob                  ; VAL OBASE
@@ -1685,9 +1687,10 @@
         .end
 
 ;;; RAS_MACRO_OFFSET_PRINTER @type
-;;; ( VAL -- )
+;;; ( VAL DEPTH -- )
 ;;;
-;;; Given an offset value in the stack, print it out.
+;;; Given an offset value in the stack and a depth level,
+;;; print the offset.
 ;;;
 ;;; Macro-arguments:
 ;;; @type
@@ -1696,11 +1699,12 @@
         .macro offset_printer @type
         push "offset"
         begsc
-
         ;; Print the offset magnitude
         .let @unit = PKL_AST_TYPE_O_UNIT (@type)
         .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@type)
-        ogetm                   ; VAL MAG
+        swap                    ; DEPTH VAL
+        ogetm                   ; DEPTH VAL MAG
+        rot                     ; VAL MAG DEPTH
         .c PKL_PASS_SUBPASS (@base_type);
                                 ; VAL
         ;; Separator
@@ -1731,11 +1735,13 @@
         .end
 
 ;;; RAS_MACRO_STRING_PRINTER
-;;; ( VAL -- )
+;;; ( VAL DEPTH -- )
 ;;;
-;;; Given a string value in the stack, print it out.
+;;; Given a string value and a depth in the stack, print
+;;; the string.
 
         .macro string_printer
+        drop                    ; VAL
         push "string"
         begsc
         push "\""
@@ -1774,10 +1780,10 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_PRINTER @array_type
-;;; ( ARR -- )
+;;; ( ARR DEPTH -- )
 ;;;
-;;; Assemble a function that prints out an array value that is given
-;;; in the stack.
+;;; Assemble a function that gets an array value and a depth
+;;; level in the stack and prints out the array.
 ;;;
 ;;; Macro-arguments:
 ;;; @array_type
@@ -1786,6 +1792,7 @@
         .function array_printer @array_type
         prolog
         pushf 1
+        regvar $depth           ; ARR
         push "array"
         begsc
         push "["
@@ -1834,6 +1841,7 @@
         ;; Now print the array element.
         .let @array_elem_type = PKL_AST_TYPE_A_ETYPE (@array_type)
         aref                    ; ARR IDX EVAL
+        pushvar $depth          ; ARR IDX EVAL DEPTH
         .c PKL_PASS_SUBPASS (@array_elem_type);
                                 ; ARR IDX
         ;; Print the element offset if required.
@@ -1877,10 +1885,10 @@
         .end
 
 ;;; RAS_FUNCTION_STRUCT_PRINTER @struct_type
-;;; ( SCT -- )
+;;; ( SCT DEPTH -- )
 ;;;
-;;; Assemble a function that prints out a struct value that is given
-;;; in the stack.
+;;; Assemble a function that gets a struct value and a depth
+;;; level in the stack and prints out the struct.
 ;;;
 ;;; Macro-arguments:
 ;;; @struct_type
@@ -1888,6 +1896,8 @@
 
         .function struct_printer @struct_type
         prolog
+        pushf 1
+        regvar $depth           ; SCT
         ;; If the struct has a pretty printing method (called _print)
         ;; then use it, unless the PVM is configured to not do so.
         pushopp                 ; SCT PP
@@ -1924,11 +1934,25 @@
         prints
         push "struct-type-name"
         endsc
-        ;; Iterate on the elements stored in the struct, printing them
-        ;; in order.
-        ;; XXX if depth >= && depth != 0, {...}
         push " {"
         prints
+        ;; Stop here if we are past the maximum depth configured in
+        ;; the VM.
+        pushod                  ; SCT MDEPTH
+        bzi .depth_ok
+        pushvar $depth          ; SCT MDEPTH DEPTH
+        swap                    ; SCT DEPTH MDEPTH
+        gei
+        nip2                    ; SCT (DEPTH>=MDEPTH)
+        bzi .depth_ok
+        drop                    ; SCT
+        push "..."
+        prints
+        ba .fields_done
+.depth_ok:
+        drop                    ; SCT
+        ;; Iterate on the elements stored in the struct, printing them
+        ;; in order.
  .c      uint64_t i;
         .let @field
  .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (struct_type);
@@ -1974,6 +1998,10 @@
         push "="
         prints
  .c   }
+        pushvar $depth          ; SCT EVAL DEPTH
+        push int<32>1
+        addi
+        nip2                    ; SCT EVAL (DEPTH+1)
         .c PKL_PASS_SUBPASS (@field_type);
                                 ; SCT
  .c if (PKL_AST_TYPE_S_UNION_P (@struct_type))
@@ -2006,5 +2034,6 @@
         drop
         drop
 .done:
+        popf 1
         return
         .end

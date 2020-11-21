@@ -1,3 +1,18 @@
+2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.jitter (indent): New instruction.
+	* libpoke/pkl-insn.def (PKL_INSN_INDENT): Define.
+	* libpoke/pkl-gen.c (pkl_gen_pr_print_stmt): Pass an initial depth
+	to the printer.
+	* libpoke/pkl-gen.pks (offset_printer): Handle a depth argument.
+	(string_printer): Likewise.
+	(array_printer): Likewise.
+	(struct_printer): Likewise.
+	(integral_printer): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_function): Likewise.
+	* testsuite/poke.pkl/printf-value-14.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.jitter (pushopp): New instruction.

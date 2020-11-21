@@ -1090,6 +1090,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
                   /* Generate code to print the value.  */
                   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                                pvm_make_int (0, 32)); /* EXP DEPTH */
                   PKL_GEN_PAYLOAD->in_printer = 1;
                   PKL_PASS_SUBPASS (exp_type);
                   PKL_GEN_PAYLOAD->in_printer = 0;
@@ -1583,7 +1585,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
-                                                /* VAL */
+                                                /* VAL DEPTH */
       RAS_MACRO_OFFSET_PRINTER (PKL_PASS_NODE); /* _ */
       PKL_PASS_BREAK;
     }
@@ -2279,7 +2281,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
-                                                  /* VAL */
+                                                  /* VAL DEPTH */
       RAS_MACRO_INTEGRAL_PRINTER (PKL_PASS_NODE); /* _ */
     }
   else
@@ -2387,7 +2389,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
-      /* Stack: VAL */
+      /* Stack: VAL DEPTH  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* DEPTH is not used.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                     pvm_make_string ("#<closure>"));
@@ -2601,7 +2604,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
-      /* Stack: ARR */
+      /* Stack: ARR DEPTH */
 
       pkl_ast_node array_type = PKL_PASS_NODE;
       pvm_val printer_closure = PKL_AST_TYPE_A_PRINTER (array_type);
@@ -2766,7 +2769,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
-      /* Stack: VAL */
+      /* Stack: VAL DEPTH */
       RAS_MACRO_STRING_PRINTER; /* _ */
     }
   else
@@ -2979,7 +2982,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
-      /* Stack: SCT */
+      /* Stack: SCT DEPTH */
 
       pkl_ast_node struct_type = PKL_PASS_NODE;
       pvm_val printer_closure = PKL_AST_TYPE_S_PRINTER (struct_type);

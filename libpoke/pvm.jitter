@@ -905,8 +905,10 @@ end
 #
 # Push output indentation mode.
 #
-# This instruction pushes a boolean encoded in a signed integer value
-# indicating whether indentation is used when printing PVM values.
+# This instructions pushes an integer to the stack with the current
+# indentation step configured in the VM.  The indentation step
+# determines how many white characters to use in each indentation
+# level when printing output.
 #
 # Stack: ( -- INT )
 
@@ -921,11 +923,12 @@ end
 
 # Instruction: popoi
 #
-# Pop and set output indentation mode.
+# Pop and set output indentation step mode.
 #
-# This instructions pops a boolean encoded in a signed integer from
-# the stack and uses it to set the new output indentation mode to be
-# used when printing PVM values.
+# This instructions pops an integer from the stack and uses it to
+# set the current indentation step in the VM.  The indentation step
+# determines how many white characters to use in each indentation
+# level when printing output.
 #
 # Stack: ( INT -- )
 
@@ -960,8 +963,8 @@ end
 #
 # Pop and set output depth.
 #
-# This instructions pops a signed integer indicating the depth used by
-# the VM when printing values.
+# This instructions pops a signed integer indicating the maximum depth
+# included by the VM when printing values.
 #
 # Stack: ( INT -- )
 
@@ -1485,6 +1488,25 @@ end
 # 8 - print the number in octal.
 # 16 - print the number in hexadecimal.
 # Any other value - print the number in decimal.
+
+# Instruction: printind
+#
+# Indent the output in the terminal for LVL levels of indentation,
+# using STEP white chars in each indentation level.
+#
+# LVL is an integer in the under top stack.
+# STEP is an integer in the top of the stack.
+#
+# Stack: ( INT INT -- )
+
+instruction indent ()
+  code
+    pk_term_indent (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()),
+                    PVM_VAL_INT (JITTER_TOP_STACK ()));
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+  end
+end
 
 # Instruction: printi BITS
 #
