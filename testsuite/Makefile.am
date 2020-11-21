@@ -161,7 +161,6 @@ EXTRA_DIST = \
   poke.map/maps-arrays-11.pk \
   poke.map/maps-arrays-12.pk \
   poke.map/maps-arrays-13.pk \
-  poke.map/maps-arrays-14.pk \
   poke.map/maps-arrays-15.pk \
   poke.map/maps-arrays-16.pk \
   poke.map/maps-arrays-17.pk \
@@ -543,7 +542,6 @@ EXTRA_DIST = \
   poke.pkl/arrays-11.pk \
   poke.pkl/arrays-12.pk \
   poke.pkl/arrays-13.pk \
-  poke.pkl/arrays-14.pk \
   poke.pkl/arrays-15.pk \
   poke.pkl/arrays-diag-1.pk \
   poke.pkl/arrays-diag-2.pk \
@@ -1379,7 +1377,6 @@ EXTRA_DIST = \
   poke.pkl/scons-diag-3.pk \
   poke.pkl/scons-diag-4.pk \
   poke.pkl/scons-diag-6.pk \
-  poke.pkl/scons-diag-7.pk \
   poke.pkl/scons-fun-diag-1.pk \
   poke.pkl/scons-int-struct-1.pk \
   poke.pkl/scons-int-struct-2.pk \
