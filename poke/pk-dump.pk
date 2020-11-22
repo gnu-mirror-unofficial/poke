@@ -62,7 +62,7 @@ fun dump = (int<32> ios = get_ios,
 	if (o % group_by == 0#B)
 	  printf "%<dump-ruler: %>";
 	printf "%<dump-ruler:%s%>", s;
-	o = o + 1#B;
+        o++;
 	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
 	   printf (" ");
       }
@@ -73,7 +73,7 @@ fun dump = (int<32> ios = get_ios,
 	while (x < 16)
 	  {
 	    s = s + itoa(x) as string;
-	    x = x + 1;
+            x++;
 	    if (x < 16 && (x % ((cluster_by * group_by)/1#B)) == 0)
 	      s = s + " ";
 	  }
@@ -94,7 +94,7 @@ fun dump = (int<32> ios = get_ios,
 	  printf "%<dump-ascii:%c%>", '.';
 	else
 	  printf "%<dump-ascii:%c%>", v;
-	o = o + 1#B;
+        o++;
 	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
 	   printf (" ");
       }
@@ -120,7 +120,7 @@ fun dump = (int<32> ios = get_ios,
 	  while (o < step && offset + o < top)
 	    {
 	      print_hex (byte @ ios : (offset + o), o);
-	      o = o + 1#B;
+              o++;
 	      if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
 		printf (" ");
 	    }
@@ -133,7 +133,7 @@ fun dump = (int<32> ios = get_ios,
 		if (o % group_by == 0#B)
 		  print " ";
 		print ("  ");
-		o = o + 1#B;
+                o++;
 	      }
 	    print_ascii (offset, top, step, group_by, cluster_by);
 	  }

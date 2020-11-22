@@ -51,7 +51,7 @@ fun id3v1_search_genre = (string name) uint<8>:
     {
       if (id3v1_genres[i] == name)
         return i;
-      i = i + 1;
+      i++;
     }
 
   raise Exception { code = EC_inval,
