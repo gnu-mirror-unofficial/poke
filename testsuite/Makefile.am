@@ -1373,6 +1373,8 @@ EXTRA_DIST = \
   poke.pkl/scons-59.pk \
   poke.pkl/scons-60.pk \
   poke.pkl/scons-61.pk \
+  poke.pkl/scons-62.pk \
+  poke.pkl/scons-63.pk \
   poke.pkl/scons-diag-1.pk \
   poke.pkl/scons-diag-2.pk \
   poke.pkl/scons-diag-3.pk \
@@ -1492,18 +1494,14 @@ EXTRA_DIST = \
   poke.pkl/struct-method-diag-1.pk \
   poke.pkl/struct-method-diag-2.pk \
   poke.pkl/struct-method-diag-3.pk \
-  poke.pkl/struct-method-diag-4.pk \
   poke.pkl/struct-method-diag-5.pk \
   poke.pkl/struct-method-diag-6.pk \
   poke.pkl/struct-method-diag-7.pk \
   poke.pkl/struct-method-diag-8.pk \
   poke.pkl/struct-method-diag-9.pk \
-  poke.pkl/struct-method-diag-10.pk \
-  poke.pkl/struct-method-diag-11.pk \
   poke.pkl/struct-method-diag-12.pk \
   poke.pkl/struct-method-diag-13.pk \
   poke.pkl/struct-method-diag-14.pk \
-  poke.pkl/struct-method-diag-15.pk \
   poke.pkl/struct-pretty-print-1.pk \
   poke.pkl/struct-pretty-print-2.pk \
   poke.pkl/struct-pretty-print-3.pk \

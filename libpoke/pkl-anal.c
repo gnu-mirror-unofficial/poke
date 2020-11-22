@@ -567,23 +567,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_var)
       PKL_PASS_ERROR;
     }
 
-  /* Methods are not allowed to refer to variables and functions
-     defined in struct types.  */
-  if (in_method_p
-      && !var_is_method_p
-      && PKL_AST_DECL_IN_STRUCT_P (var_decl))
-    {
-      const char *what
-        = ((PKL_AST_DECL_KIND (var_decl) == PKL_AST_DECL_KIND_FUNC)
-           ? "function"
-           : "variable");
-
-      PKL_ERROR (PKL_AST_LOC (var),
-                 "invalid reference to struct %s", what);
-      PKL_ANAL_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
   /* A method can only refer to struct fields and methods defined in
      the same struct.  */
   if (in_method_p
@@ -602,27 +585,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_var)
           PKL_ANAL_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
-    }
-
-  /* Functions defined inside methods are not allowed to refer to
-     struct fields and methods.
-
-     Note that the case for methods is already handled above, but it
-     doesn't harm to replicate the logic here.  Just make sure the
-     error message is the same.  */
-
-  if ((var_is_field_p || var_is_method_p)
-      && var_function
-      && !in_method_p
-      && PKL_ANAL_CONTEXT == PKL_ANAL_CONTEXT_METHOD)
-    {
-      const char *what
-        = var_is_method_p ? "method" : "field";
-
-      PKL_ERROR (PKL_AST_LOC (var),
-                 "invalid reference to struct %s", what);
-      PKL_ANAL_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
     }
 }
 PKL_PHASE_END_HANDLER

@@ -1,0 +1,26 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    var n = 0;
+    fun igetn = int: { return n; }
+    fun isetn = (int i) void: { n = i; }
+
+    method setn = (int i) void: { isetn (i); }
+    method getn = int: { return igetn; }
+  };
+
+/* { dg-command { var a = Foo {} } } */
+/* { dg-command { a.setn (100) } } */
+/* { dg-command { var b = Foo {} } } */
+/* { dg-command { b.setn (200) } } */
+/* { dg-command { var c = Foo {} } } */
+/* { dg-command { c.setn (300) } } */
+
+/* { dg-command { a.getn } } */
+/* { dg-output "100" } */
+/* { dg-command { b.getn } } */
+/* { dg-output "\n200" } */
+/* { dg-command { c.getn } } */
+/* { dg-output "\n300" } */

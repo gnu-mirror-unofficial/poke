@@ -1,3 +1,16 @@
+2020-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-anal.c (pkl_anal1_ps_var): Lift the restriction of
+	methods not being able to refer to variables and functions defined
+	in struct types.
+	* testsuite/poke.pkl/struct-method-diag-4.pk: Remove test.
+	* testsuite/poke.pkl/struct-method-diag-10.pk: Remove test.
+	* testsuite/poke.pkl/struct-method-diag-11.pk: Remove test.
+	* testsuite/poke.pkl/struct-method-diag-15.pk: Remove test.
+	* testsuite/poke.pkl/scons-62.pk: New test.
+	* testsuite/poke.pkl/scons-63.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/Makefile.am (EXTRA_DIST): Add missing test.
