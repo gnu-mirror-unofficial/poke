@@ -4195,7 +4195,7 @@ end
 # the position specified by the index in the given struct.  If the
 # struct doesn't have that many fields, raise PVM_E_OUT_OF_BOUNDS.
 #
-# Stack: ( SCT ULONG -- SCT ULONG OFF )
+# Stack: ( SCT ULONG -- SCT ULONG BOFF )
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction srefio ()

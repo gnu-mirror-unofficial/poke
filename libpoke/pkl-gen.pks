@@ -2032,6 +2032,21 @@
         nip2                    ; SCT EVAL (DEPTH+1)
         .c PKL_PASS_SUBPASS (@field_type);
                                 ; SCT
+        ;; Print the field offset, if required.
+        .label .no_elem_offset
+        .let #field_idx = pvm_make_ulong (i, 64)
+        pushoo                  ; SCT OMAPS
+        bzi .no_elem_offset
+        drop                    ; SCT
+        push " @ "
+        prints
+        push #field_idx         ; SCT IDX
+        srefio
+        nip                     ; SCT BOFF
+        .e print_boffset        ; SCT
+        push null               ; SCT NULL
+.no_elem_offset:
+        drop
  .c if (PKL_AST_TYPE_S_UNION_P (@struct_type))
  .c {
         ;; Unions only have one field => we are done.
