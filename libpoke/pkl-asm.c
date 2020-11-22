@@ -450,8 +450,7 @@ pkl_asm_insn_print (pkl_asm pasm, pkl_ast_node type)
     }
   else if (type_code == PKL_TYPE_ANY)
     {
-      pkl_asm_insn (pasm, PKL_INSN_DROP); /* The base.  */
-      pkl_asm_insn (pasm, PKL_INSN_PRINTV);
+      assert (0);
     }
   else if (type_code == PKL_TYPE_INTEGRAL)
     {

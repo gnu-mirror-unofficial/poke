@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+fun foo = (any a) void:
+ {
+   printf "%v\n", a; /* { dg-error "any" } */
+ }

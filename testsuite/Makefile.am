@@ -1249,6 +1249,7 @@ EXTRA_DIST = \
   poke.pkl/printf-diag-14.pk \
   poke.pkl/printf-diag-15.pk \
   poke.pkl/printf-diag-16.pk \
+  poke.pkl/printf-diag-17.pk \
   poke.pkl/printf-value-1.pk \
   poke.pkl/printf-value-2.pk \
   poke.pkl/printf-value-3.pk \

@@ -2187,12 +2187,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_print_stmt)
             {
               pkl_ast_node arg_type = PKL_AST_TYPE (arg_exp);
 
+              if (PKL_AST_TYPE_CODE (arg_type) == PKL_TYPE_ANY)
+                {
+                  PKL_ERROR (PKL_AST_LOC (arg),
+                             "invalid printf argument of type `any'");
+                  PKL_TYPIFY_PAYLOAD->errors++;
+                  PKL_PASS_ERROR;
+                }
+
               if (!pkl_ast_type_equal_p (arg_type, type))
                 {
                   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY
                       || (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
                           && PKL_AST_TYPE_CODE (arg_type) == PKL_TYPE_INTEGRAL))
-                    /* Integers can be promoted.  Ditto for any.  */
+                    /* Integers can be promoted.  */
                     ;
                   else
                     {

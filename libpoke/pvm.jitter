@@ -1584,34 +1584,6 @@ instruction prints ()
   end
 end
 
-# Instruction: printv MODE, DEPTH
-#
-# Print the PVM value at the top of the stack, using the same printer
-# that is used in the REPL.  This takes into account pretty-printers.
-#
-# MODE can be one of the printing modes PVM_PRINT_* defined in pvm.h.
-# DEPTH is either 0 (meaning no depth limit while printing structures) or
-# a positive integer, specifying how many levels of structures to print.
-#
-# Stack: ( VAL -- )
-
-instruction printv (?n,?n)
-  code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
-    int back_omode = pvm_omode (vm);
-    int back_odepth = pvm_odepth (vm);
-
-    pvm_set_omode (vm, (int) JITTER_ARGN0);
-    pvm_set_odepth (vm, (int) JITTER_ARGN1);
-    pvm_print_val (jitter_original_state->pvm_state_backing.vm,
-                   JITTER_TOP_STACK ());
-    pvm_set_omode (vm, back_omode);
-    pvm_set_odepth (vm, back_odepth);
-
-    JITTER_DROP_STACK ();
-  end
-end
-
 # Instruction: begsc
 #
 # Begin the styling class whose name is found on the stack.  This
