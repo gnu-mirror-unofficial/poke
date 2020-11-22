@@ -1,5 +1,10 @@
 2020-11-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_printer): Use the styling class
+	struct-field-name for struct field names.
+
+2020-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-anal.c (pkl_anal1_ps_var): Lift the restriction of
 	methods not being able to refer to variables and functions defined
 	in struct types.

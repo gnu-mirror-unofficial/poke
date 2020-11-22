@@ -2017,8 +2017,12 @@
  .c   if (@field_name)
  .c   {
         .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        push "struct-field-name"
+        begsc
         push #field_name_str
         prints
+        push "struct-field-name"
+        endsc
         push "="
         prints
  .c   }
