@@ -627,6 +627,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
 PKL_PHASE_END_HANDLER
 
 /*
+ * INCRDECR
+ * | EXP
+ * | ASS_STMT
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_incrdecr)
+{
+  pkl_ast_node incrdecr = PKL_PASS_NODE;
+  pkl_ast_node incrdecr_exp = PKL_AST_INCRDECR_EXP (incrdecr);
+  pkl_ast_node incrdecr_ass_stmt = PKL_AST_INCRDECR_ASS_STMT (incrdecr);
+  int incrdecr_order = PKL_AST_INCRDECR_ORDER (incrdecr);
+
+  if (incrdecr_order == PKL_AST_PRE)
+    PKL_PASS_SUBPASS (incrdecr_ass_stmt);
+
+  PKL_PASS_SUBPASS (incrdecr_exp);
+
+  if (incrdecr_order == PKL_AST_POST)
+    PKL_PASS_SUBPASS (incrdecr_ass_stmt);
+
+  PKL_PASS_BREAK;
+}
+PKL_PHASE_END_HANDLER
+
+/*
  * ASS_STMT
  * | EXP
  * | LVALUE
@@ -3725,6 +3750,7 @@ struct pkl_phase pkl_phase_gen
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_gen_ps_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_NULL_STMT, pkl_gen_ps_null_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_ASS_STMT, pkl_gen_pr_ass_stmt),
+   PKL_PHASE_PR_HANDLER (PKL_AST_INCRDECR, pkl_gen_pr_incrdecr),
    PKL_PHASE_PR_HANDLER (PKL_AST_IF_STMT, pkl_gen_pr_if_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_BREAK_STMT, pkl_gen_ps_break_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_CONTINUE_STMT, pkl_gen_ps_continue_stmt),

@@ -1566,6 +1566,26 @@ pkl_ast_make_var (pkl_ast ast, pkl_ast_node name,
   return var;
 }
 
+/* Build and return an AST node for an incrdecr expression.  */
+
+pkl_ast_node
+pkl_ast_make_incrdecr (pkl_ast ast,
+                       pkl_ast_node exp, int order, int sign)
+{
+  pkl_ast_node incrdecr = pkl_ast_make_node (ast,
+                                             PKL_AST_INCRDECR);
+
+  assert (order == PKL_AST_PRE || order == PKL_AST_POST);
+  assert (sign == PKL_AST_INCR || sign == PKL_AST_DECR);
+  assert (exp);
+
+  PKL_AST_INCRDECR_EXP (incrdecr) = ASTREF (exp);
+  PKL_AST_INCRDECR_ORDER (incrdecr) = order;
+  PKL_AST_INCRDECR_SIGN (incrdecr) = sign;
+
+  return incrdecr;
+}
+
 /* Build and return an AST node for a lambda expression.  */
 
 pkl_ast_node
@@ -2121,6 +2141,11 @@ pkl_ast_node_free (pkl_ast_node ast)
         pkl_ast_node_free (PKL_AST_VAR_DECL (ast));
       break;
 
+    case PKL_AST_INCRDECR:
+
+      pkl_ast_node_free (PKL_AST_INCRDECR_EXP (ast));
+      break;
+
     case PKL_AST_LAMBDA:
 
       pkl_ast_node_free (PKL_AST_LAMBDA_FUNCTION (ast));
@@ -2361,6 +2386,41 @@ pkl_ast_finish_breaks (pkl_ast_node entity, pkl_ast_node stmt)
 {
   int nframes = 0;
   pkl_ast_finish_breaks_1 (entity, stmt, &nframes);
+}
+
+pkl_ast_node
+pkl_ast_type_incr_step (pkl_ast ast, pkl_ast_node type)
+{
+  pkl_ast_node step = NULL;
+
+  assert (PKL_AST_CODE (type) == PKL_AST_TYPE);
+
+  switch (PKL_AST_TYPE_CODE (type))
+    {
+    case PKL_TYPE_INTEGRAL:
+      {
+        /* The obvious step for integral types is 1, of the same
+           type.  */
+        step = pkl_ast_make_integer (ast, 1);
+        PKL_AST_TYPE (step) = ASTREF (type);
+        break;
+      }
+    case PKL_TYPE_OFFSET:
+      {
+        /* The step for an offset type is one unit.  */
+        pkl_ast_node one = pkl_ast_make_integer (ast, 1);
+
+        PKL_AST_TYPE (one) = PKL_AST_TYPE_O_BASE_TYPE (type);
+        step = pkl_ast_make_offset (ast, one,
+                                    PKL_AST_TYPE_O_UNIT (type));
+        PKL_AST_TYPE (step) = ASTREF (type);
+        break;
+      }
+    default:
+      break;
+    }
+
+  return step;
 }
 
 /* Annotate FUNCTIONs return statements with the function and their
@@ -2919,6 +2979,15 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
 
       PRINT_COMMON_FIELDS;
       PRINT_AST_SUBAST (function, LAMBDA_FUNCTION);
+      break;
+
+    case PKL_AST_INCRDECR:
+      IPRINTF ("INCRDECR::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_IMM (order, INCRDECR_ORDER, "%d");
+      PRINT_AST_IMM (sign, INCRDECR_SIGN, "%d");
+      PRINT_AST_SUBAST (exp, INCRDECR_EXP);
       break;
 
     case PKL_AST_COMP_STMT:

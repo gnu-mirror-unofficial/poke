@@ -2074,6 +2074,37 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_var)
 }
 PKL_PHASE_END_HANDLER
 
+/* The type of an incrdecr expression is the type of the expression it
+   applies to.  Not all types support this operations though.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_incrdecr)
+{
+  pkl_ast_node incrdecr = PKL_PASS_NODE;
+  pkl_ast_node incrdecr_exp = PKL_AST_INCRDECR_EXP (incrdecr);
+  pkl_ast_node incrdecr_exp_type = PKL_AST_TYPE (incrdecr_exp);
+  int incrdecr_order = PKL_AST_INCRDECR_ORDER (incrdecr);
+  int incrdecr_sign = PKL_AST_INCRDECR_SIGN (incrdecr);
+
+  /* Only values of certain types can be decremented/incremented.  */
+  switch (PKL_AST_TYPE_CODE (incrdecr_exp_type))
+    {
+    case PKL_TYPE_INTEGRAL:
+    case PKL_TYPE_OFFSET:
+      break;
+    default:
+      PKL_ERROR (PKL_AST_LOC (incrdecr),
+                 "invalid operand to %s%s",
+                 incrdecr_order == PKL_AST_PRE ? "pre" : "post",
+                 incrdecr_sign == PKL_AST_INCR ? "increment" : "decrement");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  /* The type of the construction is the type of the expression.  */
+  PKL_AST_TYPE (incrdecr) = ASTREF (incrdecr_exp_type);
+}
+PKL_PHASE_END_HANDLER
+
 /* The type of a lambda node is the type of its function.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_lambda)
@@ -2810,6 +2841,7 @@ struct pkl_phase pkl_phase_typify1
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_typify_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_typify1_ps_var),
    PKL_PHASE_PS_HANDLER (PKL_AST_LAMBDA, pkl_typify1_ps_lambda),
+   PKL_PHASE_PS_HANDLER (PKL_AST_INCRDECR, pkl_typify1_ps_incrdecr),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_typify1_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_typify1_ps_isa),
    PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_typify1_ps_map),

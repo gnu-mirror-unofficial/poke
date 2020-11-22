@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+type Packet = struct { byte a; byte b; };
+
+var a = 3#Packet;
+
+/* { dg-command {a++} } */
+/* { dg-output "3#16" } */
+/* { dg-command {a} } */
+/* { dg-output "\n4#16" } */

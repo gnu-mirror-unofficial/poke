@@ -1298,6 +1298,40 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_type_offset)
 }
 PKL_PHASE_END_HANDLER
 
+/* Add an assignment statement to INCRDECR expressions.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_incrdecr)
+{
+  pkl_ast_node incrdecr = PKL_PASS_NODE;
+  pkl_ast_node incrdecr_stmt = PKL_AST_INCRDECR_ASS_STMT (incrdecr);
+
+  if (!incrdecr_stmt)
+    {
+      pkl_ast_node incrdecr_exp = PKL_AST_INCRDECR_EXP (incrdecr);
+      pkl_ast_node incrdecr_exp_type = PKL_AST_TYPE (incrdecr_exp);
+      int incrdecr_sign = PKL_AST_INCRDECR_SIGN (incrdecr);
+      pkl_ast_node step, ass_stmt, exp_plus_one;
+
+      int op = (incrdecr_sign == PKL_AST_INCR
+                ? PKL_AST_OP_ADD : PKL_AST_OP_SUB);
+
+      /* Get the step.  The type of the expression is safe as per
+         typify.  */
+      step = pkl_ast_type_incr_step (PKL_PASS_AST, incrdecr_exp_type);
+      assert (step); /* XXX turn to ICE.  */
+
+      /* Build a statement EXP = EXP +/- STEP  */
+      exp_plus_one = pkl_ast_make_binary_exp (PKL_PASS_AST, op,
+                                              incrdecr_exp, step);
+      PKL_AST_TYPE (exp_plus_one) = ASTREF (incrdecr_exp_type);
+      ass_stmt = pkl_ast_make_ass_stmt (PKL_PASS_AST,
+                                        incrdecr_exp, exp_plus_one);
+
+      PKL_AST_INCRDECR_ASS_STMT (incrdecr) = ASTREF (ass_stmt);
+      PKL_PASS_RESTART = 1;
+    }
+}
+PKL_PHASE_END_HANDLER
 
 struct pkl_phase pkl_phase_trans2
   __attribute__ ((visibility ("hidden"))) =
@@ -1311,6 +1345,7 @@ struct pkl_phase pkl_phase_trans2
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_trans2_ps_struct),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_REF, pkl_trans2_ps_struct_ref),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_trans2_ps_cast),
+   PKL_PHASE_PS_HANDLER (PKL_AST_INCRDECR, pkl_trans2_ps_incrdecr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_trans2_ps_type_offset),
   };
 

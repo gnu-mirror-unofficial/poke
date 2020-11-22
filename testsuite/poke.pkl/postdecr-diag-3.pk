@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+E_generic--; /* { dg-error "invalid operand" } */

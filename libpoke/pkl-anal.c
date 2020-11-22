@@ -968,6 +968,34 @@ PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_ass_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* Make sure that the argument to an incrdecr operator is of the right
+   kind, i.e. it is a valid lvalue.
+
+   XXX this shouldn't be necessary due to the check in ass_stmt!  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_incrdecr)
+{
+  pkl_ast_node incrdecr = PKL_PASS_NODE;
+  pkl_ast_node incrdecr_exp = PKL_AST_INCRDECR_EXP (incrdecr);
+
+  if (!pkl_ast_lvalue_p (incrdecr_exp))
+    {
+      int incrdecr_order = PKL_AST_INCRDECR_ORDER (incrdecr);
+      int incrdecr_sign = PKL_AST_INCRDECR_SIGN (incrdecr);
+
+      if (!pkl_ast_lvalue_p (incrdecr_exp))
+        {
+          PKL_ERROR (PKL_AST_LOC (incrdecr_exp),
+                     "invalid operand to %s%s",
+                     incrdecr_order == PKL_AST_PRE ? "pre" : "post",
+                     incrdecr_sign == PKL_AST_INCR ? "increment" : "decrement");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_analf
   __attribute__ ((visibility ("hidden"))) =
   {
@@ -975,4 +1003,5 @@ struct pkl_phase pkl_phase_analf
    PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_analf_ps_array_initializer),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_analf_ps_ass_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_INCRDECR, pkl_analf_ps_incrdecr),
   };

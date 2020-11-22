@@ -56,6 +56,7 @@ enum pkl_ast_code
   PKL_AST_FUNCALL_ARG,
   PKL_AST_VAR,
   PKL_AST_LAMBDA,
+  PKL_AST_INCRDECR,
   PKL_AST_GCD,
   PKL_AST_LAST_EXP = PKL_AST_GCD,
   /* Types.  */
@@ -1019,6 +1020,12 @@ char *pkl_type_str (pkl_ast_node type, int use_given_name);
 
 pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
 
+/* Return an expression that evaluates to an increment step for the
+   given TYPE.  If the provided type doesn't support the notion of
+   increment step this function returns NULL.  */
+
+pkl_ast_node pkl_ast_type_incr_step (pkl_ast ast, pkl_ast_node type);
+
 /* PKL_AST_DECL nodes represent the declaration of a named entity:
    function, type, variable....
 
@@ -1329,6 +1336,41 @@ struct pkl_ast_lambda
 };
 
 pkl_ast_node pkl_ast_make_lambda (pkl_ast ast, pkl_ast_node function);
+
+/* PKL_AST_INCRDECR nodes represent {pre,post}{increment,decrement}
+   expressions.
+
+   ORDER is either PKL_AST_PRE or PKL_AST_POST.
+   SIGN is either PKL_AST_INCR or PKL_AST_DECR.
+   EXP is the expression to which the operator is applied.
+
+   ASS_STMT is an AST node that is used in a transformation phase in
+   order to hold an assignment statement.  */
+
+#define PKL_AST_INCRDECR_ORDER(AST) ((AST)->incrdecr.order)
+#define PKL_AST_INCRDECR_SIGN(AST) ((AST)->incrdecr.sign)
+#define PKL_AST_INCRDECR_EXP(AST) ((AST)->incrdecr.exp)
+#define PKL_AST_INCRDECR_ASS_STMT(AST) ((AST)->incrdecr.ass_stmt)
+
+#define PKL_AST_PRE 0
+#define PKL_AST_POST 1
+
+#define PKL_AST_INCR 0
+#define PKL_AST_DECR 1
+
+struct pkl_ast_incrdecr
+{
+  struct pkl_ast_common common;
+
+  int order;
+  int sign;
+  union pkl_ast_node *exp;
+  union pkl_ast_node *ass_stmt;
+};
+
+pkl_ast_node pkl_ast_make_incrdecr (pkl_ast ast,
+                                    pkl_ast_node exp, int order, int sign);
+
 
 /* PKL_AST_COMPOUND_STMT nodes represent compound statements in the
    language.
@@ -1774,6 +1816,7 @@ union pkl_ast_node
   struct pkl_ast_funcall_arg funcall_arg;
   struct pkl_ast_var var;
   struct pkl_ast_lambda lambda;
+  struct pkl_ast_incrdecr incrdecr;
   /* Types.  */
   struct pkl_ast_type type;
   struct pkl_ast_struct_type_field sct_type_elem;

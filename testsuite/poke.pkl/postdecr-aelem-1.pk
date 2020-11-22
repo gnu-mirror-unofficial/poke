@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+var a = [1,2,3];
+
+/* { dg-command {a[1]--} } */
+/* { dg-output "2" } */
+/* { dg-command {a[1]} } */
+/* { dg-output "\n1" } */

@@ -457,6 +457,28 @@ EXTRA_DIST = \
   poke.map/trimmed-map-4.pk \
   poke.map/unmap-1.pk \
   poke.pkl/pkl.exp \
+  poke.pkl/postincr-1.pk \
+  poke.pkl/postincr-2.pk \
+  poke.pkl/postdecr-1.pk \
+  poke.pkl/postdecr-2.pk \
+  poke.pkl/postincr-offset-1.pk \
+  poke.pkl/postincr-offset-2.pk \
+  poke.pkl/postdecr-offset-1.pk \
+  poke.pkl/postdecr-offset-2.pk \
+  poke.pkl/postincr-aelem-1.pk \
+  poke.pkl/postdecr-aelem-1.pk \
+  poke.pkl/postincr-diag-1.pk \
+  poke.pkl/postincr-diag-2.pk \
+  poke.pkl/postincr-diag-3.pk \
+  poke.pkl/postincr-diag-4.pk \
+  poke.pkl/postincr-diag-5.pk \
+  poke.pkl/postdecr-diag-1.pk \
+  poke.pkl/postdecr-diag-2.pk \
+  poke.pkl/postdecr-diag-3.pk \
+  poke.pkl/postdecr-diag-4.pk \
+  poke.pkl/postdecr-diag-5.pk \
+  poke.pkl/postincr-field-1.pk \
+  poke.pkl/postdecr-field-1.pk \
   poke.pkl/acons-diag-1.pk \
   poke.pkl/acons-diag-2.pk \
   poke.pkl/acons-diag-3.pk \

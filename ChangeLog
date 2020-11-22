@@ -1,5 +1,57 @@
 2020-11-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (enum pkl_ast_code): Add PKL_AST_INCRDECR.
+	(struct pkl_ast_incrdecr): New type.
+	(PKL_AST_INCRDECR_ORDER): Define.
+	(PKL_AST_INCRDECR_SIGN): Likewise.
+	(PKL_AST_INCRDECR_EXP): Likewise.
+	(PKL_AST_INCRDECR_ASS_STMT): Likewise.
+	(PKL_AST_PRE): Likewise.
+	(PKL_AST_POST): Likewise.
+	(PKL_AST_INCR): Likewise.
+	(PKL_AST_DECR): Likewise.
+	(pkl_ast_make_incrdecr): New prototype.
+	(pkl_ast_type_incr_step): Likewise.
+	(union pkl_ast_node): New field incrdecr.
+	* libpoke/pkl-ast.c (pkl_ast_make_incrdecr): New function.
+	(pkl_ast_type_incr_step): Likewise.
+	(pkl_ast_node_free): Handle PKL_AST_INCRDECR nodes.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): LIkewise.
+	* libpoke/pkl-tab.y (primary): syntax for INCRDECR.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_incrdecr): New handler.
+	(pkl_phase_typify1): Register handler.
+	* libpoke/pkl-anal.c (pkl_analf_ps_incrdecr): New handler.
+	(pkl_phase_analf): Install handler.
+	* libpoke/pkl-trans.c (pkl_trans1_ps_incrdecr): New handler.
+	(pkl_phase_trans1): Install handler.
+	* libpoke/pkl-gen.c (pkl_gen_pr_incrdecr): New handler.
+	(pkl_phase_gen): Install handler.
+	* testsuite/poke.pkl/postincr-diag-1.pk: New test.
+	* testsuite/poke.pkl/postincr-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/postincr-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/postincr-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/postincr-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/postincr-1.pk: Likewise.
+	* testsuite/poke.pkl/postincr-2.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-1.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-2.pk: Likewise.
+	* testsuite/poke.pkl/postincr-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/postincr-offset-2.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-offset-2.pk: Likewise.
+	* testsuite/poke.pkl/postincr-aelem-1.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-aelem-2.pk: Likewise.
+	* testsuite/poke.pkl/postdecr-field-1.pk: Likewise.
+	* testsuite/poke.pkl/postincr-field-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_printer): Print struct elements
 	offsets.
 	* libpoke/pvm.jitter: Fix typo in comment.

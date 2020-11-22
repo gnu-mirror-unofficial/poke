@@ -1002,6 +1002,32 @@ primary:
                   pkl_ast_finish_returns ($3);
                   $$ = pkl_ast_make_lambda (pkl_parser->ast, $3);
                 }
+        | expression INC
+                {
+                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $1,
+                                              PKL_AST_POST, PKL_AST_INCR);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | expression DEC
+                {
+                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $1,
+                                              PKL_AST_POST, PKL_AST_DECR);
+                  PKL_AST_LOC ($$) = @$;
+                }
+/*
+        | INC expression
+                {
+                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
+                                              PKL_AST_PRE, PKL_AST_INCR);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | DEC expression
+                {
+                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
+                                              PKL_AST_PRE, PKL_AST_DECR);
+                  PKL_AST_LOC ($$) = @$;
+                }
+*/
         ;
 
 funcall:

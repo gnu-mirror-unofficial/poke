@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+var a = 10;
+
+/* { dg-command {a--} } */
+/* { dg-output "10" } */
+/* { dg-command {a} } */
+/* { dg-output "\n9" } */

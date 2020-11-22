@@ -574,6 +574,11 @@ pkl_do_pass_1 (pkl_compiler compiler,
     case PKL_AST_LAMBDA:
       PKL_PASS (PKL_AST_LAMBDA_FUNCTION (node));
       break;
+    case PKL_AST_INCRDECR:
+      PKL_PASS (PKL_AST_INCRDECR_EXP (node));
+      if (PKL_AST_INCRDECR_ASS_STMT (node))
+        PKL_PASS (PKL_AST_INCRDECR_ASS_STMT (node));
+      break;
     case PKL_AST_NULL_STMT:
     case PKL_AST_INTEGER:
     case PKL_AST_STRING:
