@@ -7,6 +7,9 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2020-11-21
+* The contents of HACKING are now generated from etc/hacking.org.
+
 2020-11-14
 * The newly introduced file etc/poke.rec contains a recutils database
   with development resources: tasks, releases, etc, along with several
