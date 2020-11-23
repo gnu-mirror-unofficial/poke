@@ -1,5 +1,9 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke-default.css: Add styling classes for PVM disassembly.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-program.h: Prototypes for pvm_program_init and
 	pvm_program_fini.
 	* libpoke/pvm-program.c (pvm_program_init): New function.
