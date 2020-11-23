@@ -1575,8 +1575,8 @@ pkl_ast_make_incrdecr (pkl_ast ast,
   pkl_ast_node incrdecr = pkl_ast_make_node (ast,
                                              PKL_AST_INCRDECR);
 
-  assert (order == PKL_AST_PRE || order == PKL_AST_POST);
-  assert (sign == PKL_AST_INCR || sign == PKL_AST_DECR);
+  assert (order == PKL_AST_ORDER_PRE || order == PKL_AST_ORDER_POST);
+  assert (sign == PKL_AST_SIGN_INCR || sign == PKL_AST_SIGN_DECR);
   assert (exp);
 
   PKL_AST_INCRDECR_EXP (incrdecr) = ASTREF (exp);

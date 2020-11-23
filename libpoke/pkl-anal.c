@@ -987,8 +987,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_incrdecr)
         {
           PKL_ERROR (PKL_AST_LOC (incrdecr_exp),
                      "invalid operand to %s%s",
-                     incrdecr_order == PKL_AST_PRE ? "pre" : "post",
-                     incrdecr_sign == PKL_AST_INCR ? "increment" : "decrement");
+                     incrdecr_order == PKL_AST_ORDER_PRE ? "pre" : "post",
+                     incrdecr_sign == PKL_AST_SIGN_INCR ? "increment" : "decrement");
           PKL_ANAL_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }

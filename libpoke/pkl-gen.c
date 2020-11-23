@@ -639,12 +639,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_incrdecr)
   pkl_ast_node incrdecr_ass_stmt = PKL_AST_INCRDECR_ASS_STMT (incrdecr);
   int incrdecr_order = PKL_AST_INCRDECR_ORDER (incrdecr);
 
-  if (incrdecr_order == PKL_AST_PRE)
+  if (incrdecr_order == PKL_AST_ORDER_PRE)
     PKL_PASS_SUBPASS (incrdecr_ass_stmt);
 
   PKL_PASS_SUBPASS (incrdecr_exp);
 
-  if (incrdecr_order == PKL_AST_POST)
+  if (incrdecr_order == PKL_AST_ORDER_POST)
     PKL_PASS_SUBPASS (incrdecr_ass_stmt);
 
   PKL_PASS_BREAK;

@@ -850,13 +850,13 @@ expression:
         | INC expression
                 {
                   $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
-                                              PKL_AST_PRE, PKL_AST_INCR);
+                                              PKL_AST_ORDER_PRE, PKL_AST_SIGN_INCR);
                   PKL_AST_LOC ($$) = @$;
                 }
         | DEC expression
                 {
                   $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
-                                              PKL_AST_PRE, PKL_AST_DECR);
+                                              PKL_AST_ORDER_PRE, PKL_AST_SIGN_DECR);
                   PKL_AST_LOC ($$) = @$;
                 }
         | bconc
@@ -1017,13 +1017,13 @@ primary:
         | expression INC
                 {
                   $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $1,
-                                              PKL_AST_POST, PKL_AST_INCR);
+                                              PKL_AST_ORDER_POST, PKL_AST_SIGN_INCR);
                   PKL_AST_LOC ($$) = @$;
                 }
         | expression DEC
                 {
                   $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $1,
-                                              PKL_AST_POST, PKL_AST_DECR);
+                                              PKL_AST_ORDER_POST, PKL_AST_SIGN_DECR);
                   PKL_AST_LOC ($$) = @$;
                 }
         ;

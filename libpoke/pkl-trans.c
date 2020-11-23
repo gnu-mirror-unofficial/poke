@@ -1312,7 +1312,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_incrdecr)
       int incrdecr_sign = PKL_AST_INCRDECR_SIGN (incrdecr);
       pkl_ast_node step, ass_stmt, exp_plus_one;
 
-      int op = (incrdecr_sign == PKL_AST_INCR
+      int op = (incrdecr_sign == PKL_AST_SIGN_INCR
                 ? PKL_AST_OP_ADD : PKL_AST_OP_SUB);
 
       /* Get the step.  The type of the expression is safe as per

@@ -1,5 +1,17 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_ORDER_PRE): Rename from PKL_AST_PRE.
+	(PKL_AST_ORDER_POST): Rename from PKL_AST_POST.
+	(PKL_AST_SIGN_INCR): Rename from PKL_AST_INCR.
+	(PKL_AST_SIGN_DECR): Rename from PKL_AST_DECR.
+	* libpoke/pkl-anal.c (pkl_analf_ps_incrdecr): Adapt accordingly.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_incrdecr): Likewise.
+	* libpoke/pkl-tab.y: Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_incrdecr): Likewise.
+	* libpoke/pkl-ast.c (pkl_ast_make_incrdecr): Likewise.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (expression): Rules for pre{incr,decr}
 	expressions.
 	* testsuite/poke.pkl/preincr-1.pk: New test.

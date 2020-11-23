@@ -1340,8 +1340,8 @@ pkl_ast_node pkl_ast_make_lambda (pkl_ast ast, pkl_ast_node function);
 /* PKL_AST_INCRDECR nodes represent {pre,post}{increment,decrement}
    expressions.
 
-   ORDER is either PKL_AST_PRE or PKL_AST_POST.
-   SIGN is either PKL_AST_INCR or PKL_AST_DECR.
+   ORDER is either PKL_AST_ORDER_PRE or PKL_AST_ORDER_POST.
+   SIGN is either PKL_AST_SIGN_INCR or PKL_AST_SIGN_DECR.
    EXP is the expression to which the operator is applied.
 
    ASS_STMT is an AST node that is used in a transformation phase in
@@ -1352,11 +1352,11 @@ pkl_ast_node pkl_ast_make_lambda (pkl_ast ast, pkl_ast_node function);
 #define PKL_AST_INCRDECR_EXP(AST) ((AST)->incrdecr.exp)
 #define PKL_AST_INCRDECR_ASS_STMT(AST) ((AST)->incrdecr.ass_stmt)
 
-#define PKL_AST_PRE 0
-#define PKL_AST_POST 1
+#define PKL_AST_ORDER_PRE 0
+#define PKL_AST_ORDER_POST 1
 
-#define PKL_AST_INCR 0
-#define PKL_AST_DECR 1
+#define PKL_AST_SIGN_INCR 0
+#define PKL_AST_SIGN_DECR 1
 
 struct pkl_ast_incrdecr
 {
