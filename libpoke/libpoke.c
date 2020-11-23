@@ -27,6 +27,7 @@
 #include "pkl-ast.h" /* XXX */
 #include "pkl-env.h" /* XXX */
 #include "pvm.h"
+#include "pvm-val.h" /* XXX */
 #include "libpoke.h"
 
 struct pk_compiler
@@ -346,10 +347,27 @@ pk_ios_completion_function (pk_compiler pkc __attribute__ ((unused)),
 }
 
 int
+pk_disassemble_function_val (pk_compiler pkc,
+                             pk_val val, int native_p)
+{
+  pvm_program program;
+
+  if (!PVM_IS_CLS (val))
+    PK_RETURN (PK_ERROR);
+
+  program = pvm_val_cls_program (val);
+  if (native_p)
+    pvm_disassemble_program_nat (program);
+  else
+    pvm_disassemble_program (program);
+
+  PK_RETURN (PK_OK);
+}
+
+int
 pk_disassemble_function (pk_compiler pkc,
                          const char *fname, int native_p)
 {
-  pvm_program program;
   int back, over;
   pvm_val val;
 
@@ -367,14 +385,7 @@ pk_disassemble_function (pk_compiler pkc,
     PK_RETURN (PK_ERROR);
 
   val = pvm_env_lookup (runtime_env, back, over);
-  program = pvm_val_cls_program (val);
-
-  if (native_p)
-    pvm_disassemble_program_nat (program);
-  else
-    pvm_disassemble_program (program);
-
-  PK_RETURN (PK_OK);
+  PK_RETURN (pk_disassemble_function_val (pkc, val, native_p));
 }
 
 int

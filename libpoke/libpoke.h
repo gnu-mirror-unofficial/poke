@@ -150,7 +150,7 @@ int pk_compile_expression (pk_compiler pkc, const char *buffer,
 
 int pk_load (pk_compiler pkc, const char *module) LIBPOKE_API;
 
-/* Print a disassembly of a function.
+/* Print a disassembly of a named function.
 
    FNAME is the name of the function to disassemble.  It should be
    defined in the global environment of the incremental compiler.
@@ -163,6 +163,19 @@ int pk_load (pk_compiler pkc, const char *module) LIBPOKE_API;
 
 int pk_disassemble_function (pk_compiler pkc, const char *fname,
                              int native_p) LIBPOKE_API;
+
+/* Print a disassembly of the body of the given function value.
+
+   VAL is a function value.
+
+   NATIVE_P is a flag determining whether to emit a native disassembly
+   or a PVM disassembly.
+
+   If VAL is not a valid function value, return PK_ERROR.  Otherwise
+   return PK_OK.  */
+
+int pk_disassemble_function_val (pk_compiler pkc, pk_val val,
+                                 int native_p) LIBPOKE_API;
 
 /* Print a disassembly of an expression.
 

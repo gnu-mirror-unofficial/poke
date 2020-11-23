@@ -54,24 +54,31 @@ pk_cmd_vm_disas_exp (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static int
 pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  /* disassemble function FNAME.  */
+  /* disassemble function EXP.  */
 
   int ret;
-  const char *fname;
+  const char *expr;
+  pk_val cls;
 
   assert (argc == 1);
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
 
-  fname = PK_CMD_ARG_STR (argv[0]);
-  ret = pk_disassemble_function (poke_compiler, fname,
-                                 uflags & PK_VM_DIS_F_NAT);
+  expr = PK_CMD_ARG_STR (argv[0]);
+  ret = pk_compile_expression (poke_compiler, expr, NULL, &cls);
 
-  if (ret == PK_ERROR)
+  if (ret != PK_OK)
+    /* The compiler has already printed diagnostics in the
+       terminal.  */
+    return 0;
+
+  ret = pk_disassemble_function_val (poke_compiler, cls,
+                                     uflags & PK_VM_DIS_F_NAT);
+  if (ret != PK_OK)
     {
       pk_term_class ("error");
       pk_puts ("error: ");
       pk_term_end_class ("error");
-      pk_printf ("no such function `%s'\n", fname);
+      pk_printf ("given expression doesn't evaluate to a function\n");
       return 0;
     }
 
@@ -88,7 +95,7 @@ Flags:\n\
 
 const struct pk_cmd vm_disas_fun_cmd =
   {"function", "s", PK_VM_DIS_UFLAGS, 0, NULL, pk_cmd_vm_disas_fun,
-   "vm disassemble function[/n] FUNCTION_NAME\n\
+   "vm disassemble function[/n] EXP\n\
 Flags:\n\
   n (do a native disassemble)", NULL};
 

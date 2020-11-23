@@ -1,5 +1,14 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h (pk_disassemble_function_val): New function.
+	* libpoke/libpoke.c (pk_disassemble_function_val): Likewise.
+	(pk_disassemble_function): Rewrite in terms of
+	disassemble_function_val.
+	* poke/pk-cmd-vm.c (pk_cmd_vm_disas_fun): Use
+	pk_disassemble_function_val.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-default.css: Add styling classes for PVM disassembly.
 
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
