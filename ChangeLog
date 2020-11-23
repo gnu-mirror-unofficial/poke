@@ -1,6 +1,10 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* bootstrap: Updated from latest gnulib.
+	* DEV-NEWS: Update.
+	* bootstrap.conf (bootstrap_option_hook): New function.
+	(bootstrap_print_option_usage_hook): Likewise.
+	(bootstrap_post_import_hook): Honor --jitter-srcdir.
 
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
