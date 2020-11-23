@@ -1383,28 +1383,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
                 PKL_AST_FUNC_NAME (function));
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PROLOG);
 
-  /* Reverse the arguments.
+  if (nargs > 1)
+    {
+      /* Reverse the arguments.
 
-     Note that in methods the implicit struct argument is passed as
-     the last actual.  However, we have to process it as the _first_
-     formal.  We achieve this by not reversing it, saving it in the
-     return stack temporarily.  */
+         Note that in methods the implicit struct argument is passed
+         as the last actual.  However, we have to process it as the
+         _first_ formal.  We achieve this by not reversing it, saving
+         it in the return stack temporarily.  */
 
-  if (method_p)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
+      if (method_p)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
 
-  if (nargs == 2)
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-  else if (nargs == 3)
-      {
+      if (nargs == 2)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-      }
-  else if (nargs > 1)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nargs);
+      else if (nargs == 3)
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+        }
+      else if (nargs > 1)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nargs);
 
-  if (method_p)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
+      if (method_p)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
+    }
 
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this

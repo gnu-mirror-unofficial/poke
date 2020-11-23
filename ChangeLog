@@ -1,5 +1,11 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_func): Avoid generating a
+	tor-fromr sequence in methods that do not get additional
+	arguments.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Support for ++ and --): Removed as fixed.
 
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
