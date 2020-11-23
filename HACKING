@@ -11,7 +11,7 @@ _________________
 
 1. Nomenclature
 2. Maintenance
-.. 1. GNU Maintainer
+.. 1. Global Maintainer
 .. 2. Global Reviewers
 .. 3. Maintainers
 .. 4. Write After Approval
@@ -148,8 +148,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 2 Maintenance
 =============
 
-2.1 GNU Maintainer
-~~~~~~~~~~~~~~~~~~
+2.1 Global Maintainer
+~~~~~~~~~~~~~~~~~~~~~
 
   Jose E. Marchesi <jemarch@gnu.org>
 
@@ -601,16 +601,16 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 
   ,----
   | /* Frobnicate a frob.
-  |
+  | 
   |    FROB is a frob that should have been previously initialized using
   |    frob_new.
-  |
+  | 
   |    LAZY_P is a boolean.  If true, FROB won't be frobnicated
   |    immediately, but instead marked for later frobnication.
-  |
+  | 
   |    If the frob cannot be frobnicated, this function returns NULL.
   |    Otherwise the function returns the given frob.  */
-  |
+  | 
   | frob_t frobnicate (frob_t frob, int lazy_p);
   | frob_t forbnicate_r (frob_t frob, int lazy_p);
   `----
@@ -748,13 +748,13 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 
   ,----
   | /* { dg-do run } */
-  |
+  | 
   | /* { dg-command {foo (1)} } */
   | /* { dg-output "expected result" } */
-  |
+  | 
   | /* { dg-command {foo (1)} } */
   | /* { dg-output "\nexpected result" } */
-  |
+  | 
   | [... and so on ...]
   `----
 
@@ -816,9 +816,9 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   ,----
   | /* { dg-data {c*} {0x01 0x02 ...} foo.data } */
   | /* { dg-data {c*} {0x11 0x12 ...} bar.data } */
-  |
+  | 
   | [...]
-  |
+  | 
   | /* { dg-command { var foo = open ("foo.data") } } */
   `----
 
@@ -870,7 +870,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   | /* { dg-do run } */
   | /* { dg-options "--color=html" } */
   | /* { dg-require libtextstyle } */
-  |
+  | 
   | /* { dg-command {printf "%<foo:%i32d%>", 10} } */
   | /* { dg-output "<span class=\"foo\">10</span>" } */
   `----
@@ -1603,7 +1603,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   |   $$ = pkl_ast_make_builtin (pkl_parser->ast,
   |                              PKL_AST_BUILTIN_RAND);
   |   PKL_AST_LOC ($$) = @$;
-  |
+  | 
   |   /* Pop the frame pushed by the `pushlevel' above.  */
   |   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
   | }

@@ -38,7 +38,7 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 
 * Maintenance
 
-** GNU Maintainer
+** Global Maintainer
 
    Jose E. Marchesi	<jemarch@gnu.org>
 
