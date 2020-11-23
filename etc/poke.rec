@@ -100,23 +100,6 @@
 %type: RFC bool
 %summary: Component,Priority,Summary
 
-Summary: Support for ++ and --
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ In integral values (including integral structs) and offsets.
-+
-+   until E_eof print int @ offset++;
-+
-+ Syntactic sugar for:
-+
-+   offset = offset + offset'unit
-+   offset = offset - offset'unit
-+
-+ Supernice!
-Target: 1.0
-
 Summary: Implement for-from-to-by loops
 Component: Language
 Kind: ENH
