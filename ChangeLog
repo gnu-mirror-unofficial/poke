@@ -1,3 +1,23 @@
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y (expression): Rules for pre{incr,decr}
+	expressions.
+	* testsuite/poke.pkl/preincr-1.pk: New test.
+	* testsuite/poke.pkl/predecr-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/predecr-field-1.pk: Likewise.
+	* testsuite/poke.pkl/predecr-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/predecr-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/predecr-aelem-1.pk: Likewise.
+	* testsuite/poke.pkl/predecr-2.pk: Likewise.
+	* testsuite/poke.pkl/predecr-1.pk: Likewise.
+	* testsuite/poke.pkl/preincr-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/preincr-field-1.pk: Likewise.
+	* testsuite/poke.pkl/preincr-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/preincr-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/preincr-aelem-1.pk: Likewise.
+	* testsuite/poke.pkl/preincr-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-11-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-dump.pk (dump): Use ++/-- wherever appropriate.

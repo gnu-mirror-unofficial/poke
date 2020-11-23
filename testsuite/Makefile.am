@@ -1221,6 +1221,20 @@ EXTRA_DIST = \
   poke.pkl/pow-offsets-1.pk \
   poke.pkl/pow-offsets-2.pk \
   poke.pkl/pow-offsets-3.pk \
+  poke.pkl/preincr-1.pk \
+  poke.pkl/predecr-offset-1.pk \
+  poke.pkl/predecr-field-1.pk \
+  poke.pkl/predecr-diag-2.pk \
+  poke.pkl/predecr-diag-1.pk \
+  poke.pkl/predecr-aelem-1.pk \
+  poke.pkl/predecr-2.pk \
+  poke.pkl/predecr-1.pk \
+  poke.pkl/preincr-offset-1.pk \
+  poke.pkl/preincr-field-1.pk \
+  poke.pkl/preincr-diag-2.pk \
+  poke.pkl/preincr-diag-1.pk \
+  poke.pkl/preincr-aelem-1.pk \
+  poke.pkl/preincr-2.pk \
   poke.pkl/printf-1.pk \
   poke.pkl/printf-2.pk \
   poke.pkl/printf-3.pk \

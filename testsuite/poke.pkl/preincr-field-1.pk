@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+type Foo = struct { int i; };
+var f = Foo {};
+
+/* { dg-command { ++f.i } } */
+/* { dg-output "1" } */
+/* { dg-command { f.i } } *?
+/* { dg-output "\n1" } */

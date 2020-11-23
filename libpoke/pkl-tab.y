@@ -847,6 +847,18 @@ expression:
                         PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
                     PKL_AST_LOC ($$) = @$;
                 }
+        | INC expression
+                {
+                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
+                                              PKL_AST_PRE, PKL_AST_INCR);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | DEC expression
+                {
+                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
+                                              PKL_AST_PRE, PKL_AST_DECR);
+                  PKL_AST_LOC ($$) = @$;
+                }
         | bconc
         | map
         ;
@@ -1014,20 +1026,6 @@ primary:
                                               PKL_AST_POST, PKL_AST_DECR);
                   PKL_AST_LOC ($$) = @$;
                 }
-/*
-        | INC expression
-                {
-                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
-                                              PKL_AST_PRE, PKL_AST_INCR);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | DEC expression
-                {
-                  $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $2,
-                                              PKL_AST_PRE, PKL_AST_DECR);
-                  PKL_AST_LOC ($$) = @$;
-                }
-*/
         ;
 
 funcall:
