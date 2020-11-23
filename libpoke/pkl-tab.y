@@ -344,6 +344,7 @@ token <integer> UNION    _("keyword `union'")
 
 /* Opcodes.  */
 
+%token <opcode> POWA    _("power-and-assign operator")
 %token <opcode> MULA    _("multiply-and-assign operator")
 %token <opcode> DIVA    _("divide-and-assing operator")
 %token <opcode> MODA    _("modulus-and-assign operator")
@@ -1854,7 +1855,8 @@ stmt_decl_list:
         ;
 
 ass_exp_op:
-          MULA { $$ = PKL_AST_OP_MUL; }
+          POWA { $$ = PKL_AST_OP_POW; }
+        | MULA { $$ = PKL_AST_OP_MUL; }
         | DIVA { $$ = PKL_AST_OP_DIV; }
         | MODA { $$ = PKL_AST_OP_MOD; }
         | ADDA { $$ = PKL_AST_OP_ADD; }

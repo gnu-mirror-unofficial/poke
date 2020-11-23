@@ -1,3 +1,12 @@
+2020-11-24  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pkl-ops.def: Remove unused definitions.
+	* libpoke/pkl-lex.l: New token: `POWA`.
+	* libpoke/pkl-tab.y: Use `POWA` in `ass_exp_op` rule.
+	* testsuite/poke.pkl/powa-int-1.pk: New test.
+	* testsuite/poke.pkl/powa-offset-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y (ass_exp_op): New rule.

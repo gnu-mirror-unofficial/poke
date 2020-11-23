@@ -256,6 +256,7 @@ S ::
 "..."           { return THREEDOTS; }
 "+:"            { return RANGEA; }
 
+"**="               { return POWA; }
 "*="                { return MULA; }
 "/="                { return DIVA; }
 "%="                { return MODA; }
