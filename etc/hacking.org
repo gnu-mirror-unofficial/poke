@@ -551,17 +551,9 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    So that the tests get distributed, you need to list each newly
    added test file in testsuite/Makefile.am.
 
-   We have a syntax-check target that checks that Makefile.am contains
-   all the test files under =testsuite/=.  However, we don't have a
-   similar rule to detect whether all the files listed in EXTRA_DIST
-   exist, other than running =make distcheck=.
-
-   You can try something like this in this case:
-
-   : $ find ../testsuite/ -name '*.pk' | sed -e 's#../testsuite/##g' | sort > in-files
-   : $ cat ../testsuite/Makefile.am | egrep -e '\.pk *\\$' \
-   :       | sed -e 's/ *\\$//' -e 's/^ *//' | sort  > in-makefile
-   : $ diff -u in-files in-makefile
+  We have a syntax-check target that checks that EXTRA_DIST contains
+  all the test files under `testsuite/', and that there is no test
+  listed in EXTRA_DIST that doesn't exist in the file system.
 
 ** dg-output may require a newline
 

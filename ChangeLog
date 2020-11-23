@@ -1,5 +1,13 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* cfg.mk (sc_tests_listed_in_makefile_am): Rewrite to detect
+	errors in both directions and be more efficient.
+	* etc/hacking.org (List the test files in testsuite/Makefile.am):
+	Update accordingly.
+	* HACKING: Regenerate.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_func): Avoid generating a
 	tor-fromr sequence in methods that do not get additional
 	arguments.

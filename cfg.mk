@@ -47,9 +47,10 @@ sc_tabs_in_source:
 	$(_sc_search_regexp)
 
 sc_tests_listed_in_makefile_am:
-	@for tfile in $(patsubst $(top_srcdir)/testsuite/%,%,$(wildcard $(top_srcdir)/testsuite/**/*.pk)); \
-	do require="$$tfile" \
-	   in_vc_files='testsuite/Makefile.am'	\
-	   halt='missing tests in EXTRA_DIST'	\
-	   $(_sc_search_regexp)		\
-	done
+	@find $(top_srcdir)/testsuite/ -name '*.pk' \
+           | sed -e 's#../testsuite/##g' | sort > in-files
+	@egrep -e '\.pk *\\$$' $(top_srcdir)/testsuite/Makefile.am \
+           | sed -e 's/ *\\$$//' -e 's/^ *//' | sort  > in-makefile
+	@cmp -s in-files in-makefile || \
+          { diff -u in-files in-makefile; \
+            msg='missing or extra tests in EXTRA_DIST' $(_sc_say_and_exit) }
