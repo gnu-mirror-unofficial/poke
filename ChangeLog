@@ -1,5 +1,10 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y: The INC and DEC operators are
+	non-associative.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Arithmetic Operators): Mention ++ and --.
 	(Offset Operations): Likewise.
 

@@ -415,8 +415,8 @@ token <integer> UNION    _("keyword `union'")
 %left POW
 %left BCONC
 %right '@'
-%nonassoc UNIT
-%right UNARY INC DEC AS ISA
+%nonassoc UNIT INC DEC
+%right UNARY AS ISA
 %left HYPERUNARY
 %left '.'
 %left ATTR
