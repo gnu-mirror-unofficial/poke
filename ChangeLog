@@ -1,5 +1,9 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap: Updated from latest gnulib.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: The INC and DEC operators are
 	non-associative.
 
