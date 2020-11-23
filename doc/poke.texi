@@ -5513,6 +5513,9 @@ supported:
 @cindex minus
 @end itemize
 
+Finally, pre-increment, pre-decrement, post-increment and
+post-decrement operators @code{++} and @code{--} are supported.
+
 @node Bitwise Operators
 @subsection Bitwise Operators
 @cindex bitwise operators
@@ -5992,6 +5995,10 @@ Examples:
 
 The unit of the result is the greatest common divisor of the units of
 the operands.
+
+The operators @code{++} and @code{--}, in their prefix and suffix
+versions, can be applied to offsets as well.  The step used in the
+increment/decrement is one unit.
 
 @subsubsection Multiplication by a scalar
 @cindex multiplication

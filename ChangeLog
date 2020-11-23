@@ -1,5 +1,10 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Arithmetic Operators): Mention ++ and --.
+	(Offset Operations): Likewise.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (PKL_AST_ORDER_PRE): Rename from PKL_AST_PRE.
 	(PKL_AST_ORDER_POST): Rename from PKL_AST_POST.
 	(PKL_AST_SIGN_INCR): Rename from PKL_AST_INCR.
