@@ -23,6 +23,11 @@
 
 typedef void *pvm_program_program_point; /* XXX better name */
 
+/* Initialize and finalize the pvm-program subsystem.  */
+
+void pvm_program_init (void);
+void pvm_program_fini (void);
+
 /* Return the program point corresponding to the beginning of the
    given program.  */
 pvm_program_program_point pvm_program_beginning (pvm_program program);

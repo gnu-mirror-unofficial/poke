@@ -1,5 +1,19 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-program.h: Prototypes for pvm_program_init and
+	pvm_program_fini.
+	* libpoke/pvm-program.c (pvm_program_init): New function.
+	(pvm_program_fini): Likewise.
+	(pvm_disassemble_program): Adapt to new API.
+	(pvm_disassemble_program_nat): Likewise.
+	* libpoke/pvm.c (pvm_init): Call pvm_program_init.
+	(pvm_shutdown): Call pvm_program_fini.
+	* libpoke/pvm-program.c (pvm_jitter_print_char): New function.
+	(pvm_jitter_print_chars): Likewise.
+	* libpoke/pvm.jitter: Adapt printers to new API.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* cfg.mk (sc_tests_listed_in_makefile_am): Rewrite to detect
 	errors in both directions and be more efficient.
 	* etc/hacking.org (List the test files in testsuite/Makefile.am):

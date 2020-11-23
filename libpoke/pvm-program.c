@@ -22,7 +22,10 @@
 #include <string.h>
 #include <stdio.h> /* For stdout. */
 
+#include "jitter/jitter-print.h"
+
 #include "pk-utils.h"
+#include "pkt.h"
 
 #include "pvm.h"
 #include "pvm-alloc.h"
@@ -51,6 +54,10 @@ struct pvm_program
   /* Next available slot in POINTERS.  */
   int next_pointer;
 };
+
+/* Jitter print context to use when disassembling PVM programs.  */
+jitter_print_context_kind jitter_context_kind = NULL;
+jitter_print_context jitter_context = NULL;
 
 static void
 collect_value_pointers (pvm_program program, pvm_val val)
@@ -254,15 +261,85 @@ pvm_program_routine (pvm_program program)
   return program->routine;
 }
 
+/* Jitter print context.  */
+
+static int
+pvm_jitter_print_flush (jitter_print_context_data data)
+{
+  pk_term_flush ();
+  return 0;
+}
+
+static int
+pvm_jitter_print_char (jitter_print_context_data d, char c)
+{
+  char str[2];
+
+  str[0] = c;
+  str[1] = '\0';
+  pk_puts (&str);
+  return 0;
+}
+
+static int
+pvm_jitter_begin_decoration (jitter_print_context_data d,
+                             const jitter_print_decoration_name name,
+                             enum jitter_print_decoration_type type,
+                             const union jitter_print_decoration_value *value)
+{
+  if (STREQ (name, JITTER_PRINT_DECORATION_NAME_CLASS))
+    pk_term_class (value->string);
+  else
+    pk_term_hyperlink (value->string, NULL);
+
+  return 0;
+}
+
+static int
+pvm_jitter_end_decoration (jitter_print_context_data data,
+                           const jitter_print_decoration_name name,
+                           enum jitter_print_decoration_type type,
+                           const union jitter_print_decoration_value *value)
+{
+  if (STREQ (name, JITTER_PRINT_DECORATION_NAME_CLASS))
+    pk_term_end_class (value->string);
+  else
+    pk_term_end_hyperlink ();
+
+  return 0;
+}
+
 void
 pvm_disassemble_program_nat (pvm_program program)
 {
-  pvm_disassemble_routine (program->routine, true,
-                           JITTER_OBJDUMP, NULL);
+  pvm_routine_disassemble (jitter_context, program->routine,
+                           true, JITTER_OBJDUMP, NULL);
 }
 
 void
 pvm_disassemble_program (pvm_program program)
 {
-  pvm_routine_print (stdout, program->routine);
+  pvm_routine_print (jitter_context, program->routine);
+}
+
+
+void
+pvm_program_init ()
+{
+  jitter_context_kind = jitter_print_context_kind_make_trivial ();
+
+  jitter_context_kind->print_char = pvm_jitter_print_char;
+  jitter_context_kind->flush = pvm_jitter_print_flush;
+  jitter_context_kind->begin_decoration = pvm_jitter_begin_decoration;
+  jitter_context_kind->end_decoration = pvm_jitter_end_decoration;
+
+  jitter_context = jitter_print_context_make (jitter_context_kind,
+                                              NULL);
+}
+
+void
+pvm_program_fini ()
+{
+  jitter_print_context_destroy (jitter_context);
+  jitter_print_context_kind_destroy (jitter_context_kind);
 }

@@ -112,6 +112,9 @@ pvm_init (void)
   /* Initialize the VM state.  */
   pvm_initialize_state (apvm, &apvm->pvm_state);
 
+  /* Initialize pvm-program.  */
+  pvm_program_init ();
+
   return apvm;
 }
 
@@ -172,6 +175,9 @@ pvm_call_closure (pvm vm, pvm_val cls, ...)
 void
 pvm_shutdown (pvm apvm)
 {
+  /* Finalize pvm-program.  */
+  pvm_program_fini ();
+
   /* Deregister GC roots.  */
   pvm_alloc_remove_gc_roots (&PVM_STATE_ENV (apvm), 1);
   pvm_alloc_remove_gc_roots

@@ -524,17 +524,15 @@ printer-c
     static jitter_uint printer_hi;
 
     static void
-    pvm_literal_printer_cast (FILE *out, jitter_uint val)
+    pvm_literal_printer_cast (jitter_print_context out, jitter_uint val)
     {
-      fflush (out);
       pk_printf ("%" JITTER_PRIu, val);
       pk_term_flush ();
     }
 
     static void
-    pvm_literal_printer (FILE *out, jitter_uint val)
+    pvm_literal_printer (jitter_print_context out, jitter_uint val)
     {
-      fflush (out);
       pvm_print_val_with_params (NULL /* not used since no
                                          pretty-print */,
                                  (pvm_val) val,
@@ -557,9 +555,8 @@ printer-c
     }
 
     static void
-    pvm_literal_printer_lo (FILE *out, jitter_uint lo)
+    pvm_literal_printer_lo (jitter_print_context out, jitter_uint lo)
     {
-      fflush (out);
       pk_printf ("%%lo(0x%" JITTER_PRIx") (", lo);
 
       pvm_print_val_with_params (NULL /* not used since no
@@ -577,33 +574,29 @@ printer-c
     }
 
     static void
-    popf_printer (FILE *out, jitter_uint nframes)
+    popf_printer (jitter_print_context out, jitter_uint nframes)
     {
-      fflush (out);
       pk_printf ("%" JITTER_PRIu, nframes);
       pk_term_flush ();
     }
 
     static void
-    bits_printer (FILE *out, jitter_uint val)
+    bits_printer (jitter_print_context out, jitter_uint val)
     {
-      fflush (out);
       pk_printf ("%" JITTER_PRIu, val);
       pk_term_flush ();
     }
 
     static void
-    endian_printer (FILE *out, jitter_uint val)
+    endian_printer (jitter_print_context out, jitter_uint val)
     {
-      fflush (out);
       pk_printf ("%s", val == IOS_ENDIAN_MSB ? "big" : "little");
       pk_term_flush ();
     }
 
     static void
-    nenc_printer (FILE *out, jitter_uint val)
+    nenc_printer (jitter_print_context out, jitter_uint val)
     {
-      fflush (out);
       pk_printf ("%s", val == IOS_NENC_1 ? "1c" : "2c");
       pk_term_flush ();
     }
