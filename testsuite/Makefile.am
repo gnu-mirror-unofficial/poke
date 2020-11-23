@@ -527,6 +527,9 @@ EXTRA_DIST = \
   poke.pkl/add-offsets-9.pk \
   poke.pkl/add-offsets-10.pk \
   poke.pkl/add-strings-1.pk \
+  poke.pkl/adda-int-1.pk \
+  poke.pkl/adda-offset-1.pk \
+  poke.pkl/adda-string-1.pk \
   poke.pkl/and-1.pk \
   poke.pkl/and-2.pk \
   poke.pkl/and-3.pk \
@@ -649,6 +652,8 @@ EXTRA_DIST = \
   poke.pkl/band-int-struct-3.pk \
   poke.pkl/band-offsets-1.pk \
   poke.pkl/band-offsets-2.pk \
+  poke.pkl/banda-int-1.pk \
+  poke.pkl/banda-offset-1.pk \
   poke.pkl/bconc-1.pk \
   poke.pkl/bconc-2.pk \
   poke.pkl/bconc-3.pk \
@@ -819,6 +824,8 @@ EXTRA_DIST = \
   poke.pkl/div-offsets-4.pk \
   poke.pkl/div-offsets-diag-1.pk \
   poke.pkl/div-offsets-diag-2.pk \
+  poke.pkl/diva-int-1.pk \
+  poke.pkl/diva-offset-diag-1.pk \
   poke.pkl/eq-any-diag-1.pk \
   poke.pkl/eq-arrays-1.pk \
   poke.pkl/eq-arrays-2.pk \
@@ -1013,6 +1020,8 @@ EXTRA_DIST = \
   poke.pkl/ior-int-struct-3.pk \
   poke.pkl/ior-offsets-1.pk \
   poke.pkl/ior-offsets-2.pk \
+  poke.pkl/iora-int-1.pk \
+  poke.pkl/iora-offset-1.pk \
   poke.pkl/ios-cur-1.pk \
   poke.pkl/ios-mem-1.pk \
   poke.pkl/ios-mem-2.pk \
@@ -1092,6 +1101,8 @@ EXTRA_DIST = \
   poke.pkl/mod-offsets-4.pk \
   poke.pkl/mod-offsets-5.pk \
   poke.pkl/mod-offsets-diag-1.pk \
+  poke.pkl/moda-int-1.pk \
+  poke.pkl/moda-offset-1.pk \
   poke.pkl/mul-integers-1.pk \
   poke.pkl/mul-integers-2.pk \
   poke.pkl/mul-integers-3.pk \
@@ -1114,6 +1125,9 @@ EXTRA_DIST = \
   poke.pkl/mul-strings-4.pk \
   poke.pkl/mul-strings-5.pk \
   poke.pkl/mul-strings-diag-1.pk \
+  poke.pkl/mula-int-1.pk \
+  poke.pkl/mula-offset-1.pk \
+  poke.pkl/mula-string-1.pk \
   poke.pkl/ne-arrays-1.pk \
   poke.pkl/ne-arrays-2.pk \
   poke.pkl/ne-arrays-3.pk \
@@ -1350,6 +1364,8 @@ EXTRA_DIST = \
   poke.pkl/return-2.pk \
   poke.pkl/return-diag-1.pk \
   poke.pkl/return-diag-2.pk \
+  poke.pkl/rla-int-1.pk \
+  poke.pkl/rla-offset-1.pk \
   poke.pkl/scons-1.pk \
   poke.pkl/scons-2.pk \
   poke.pkl/scons-3.pk \
@@ -1474,6 +1490,8 @@ EXTRA_DIST = \
   poke.pkl/sl-int-struct-2.pk \
   poke.pkl/sl-offsets-1.pk \
   poke.pkl/sl-offsets-2.pk \
+  poke.pkl/sla-int-1.pk \
+  poke.pkl/sla-offset-1.pk \
   poke.pkl/sr-diag-1.pk \
   poke.pkl/sr-diag-2.pk \
   poke.pkl/sr-integers-1.pk \
@@ -1588,6 +1606,8 @@ EXTRA_DIST = \
   poke.pkl/sub-offsets-6.pk \
   poke.pkl/sub-offsets-7.pk \
   poke.pkl/sub-offsets-8.pk \
+  poke.pkl/suba-int-1.pk \
+  poke.pkl/suba-offset-1.pk \
   poke.pkl/trim-1.pk \
   poke.pkl/trim-2.pk \
   poke.pkl/trim-3.pk \
@@ -1683,6 +1703,8 @@ EXTRA_DIST = \
   poke.pkl/xor-int-struct-3.pk \
   poke.pkl/xor-offsets-1.pk \
   poke.pkl/xor-offsets-2.pk \
+  poke.pkl/xora-int-1.pk \
+  poke.pkl/xora-offset-1.pk \
   poke.repl/repl.exp \
   poke.rgb24/rgb24.exp \
   poke.rgb24/rgb24-1.pk \

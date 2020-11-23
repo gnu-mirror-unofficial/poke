@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+var foo = 10#B;
+
+foo /= 2#B; /* { dg-error "" } */

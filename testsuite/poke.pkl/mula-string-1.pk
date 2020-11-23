@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var foo = "foo";
+
+/* { dg-command { foo *= 3 } } */
+/* { dg-command { foo } } */
+/* { dg-output "\"foofoofoo\"" } */

@@ -261,8 +261,8 @@ S ::
 "%="                { return MODA; }
 "+="                { return ADDA; }
 "-="                { return SUBA; }
-"<-="                { return SLA; }
-"->="                { return SRA; }
+"<<.="                { return SLA; }
+".>>="                { return SRA; }
 "&="                { return BANDA; }
 "|="                { return IORA; }
 "^="                { return XORA; }

@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var foo = 10#Kb;
+
+/* { dg-command { foo %= 9#Kb } } */
+/* { dg-command { foo } } */
+/* { dg-output "1#Kb" } */

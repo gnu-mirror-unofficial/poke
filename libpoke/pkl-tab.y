@@ -441,7 +441,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
 %type <ast> integral_struct
 %type <integer> struct_type_pinned integral_type_sign struct_or_union
-%type <integer> builtin endianness defun_or_method
+%type <integer> builtin endianness defun_or_method ass_exp_op
 
 /* The following two tokens are used in order to support several start
    rules: one is for parsing an expression, declaration or sentence,
@@ -1853,6 +1853,19 @@ stmt_decl_list:
                   { $$ = pkl_ast_chainon ($1, $2); }
         ;
 
+ass_exp_op:
+          MULA { $$ = PKL_AST_OP_MUL; }
+        | DIVA { $$ = PKL_AST_OP_DIV; }
+        | MODA { $$ = PKL_AST_OP_MOD; }
+        | ADDA { $$ = PKL_AST_OP_ADD; }
+        | SUBA { $$ = PKL_AST_OP_SUB; }
+        | SLA  { $$ = PKL_AST_OP_SL; }
+        | SRA  { $$ = PKL_AST_OP_SR; }
+        | BANDA { $$ = PKL_AST_OP_BAND; }
+        | IORA { $$ = PKL_AST_OP_IOR; }
+        | XORA { $$ = PKL_AST_OP_XOR; }
+        ;
+
 stmt:
           comp_stmt
         | ';'
@@ -1864,6 +1877,17 @@ stmt:
                   {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | primary ass_exp_op expression ';'
+                {
+                  pkl_ast_node exp
+                    = pkl_ast_make_binary_exp (pkl_parser->ast,
+                                               $2, $1, $3);
+
+                  $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
+                                                $1, exp);
+                  PKL_AST_LOC (exp) = @$;
                   PKL_AST_LOC ($$) = @$;
                 }
         | bconc '=' expression ';'

@@ -1,5 +1,33 @@
 2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (ass_exp_op): New rule.
+	(stmt): Add rule for ass_exp statements.
+	* testsuite/poke.pkl/xora-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/xora-int-1.pk: Likewise.
+	* testsuite/poke.pkl/iora-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/iora-int-1.pk: Likewise.
+	* testsuite/poke.pkl/banda-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/banda-int-1.pk: Likewise.
+	* testsuite/poke.pkl/rla-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/rla-int-1.pk: Likewise.
+	* testsuite/poke.pkl/sla-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/sla-int-1.pk: Likewise.
+	* testsuite/poke.pkl/suba-int-1.pk: Likewise.
+	* testsuite/poke.pkl/suba-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/adda-int-1.pk: Likewise.
+	* testsuite/poke.pkl/adda-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/adda-string-1.pk: Likewise.
+	* testsuite/poke.pkl/moda-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/moda-int-1.pk: Likewise.
+	* testsuite/poke.pkl/diva-offset-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/diva-int-1.pk: Likewise.
+	* testsuite/poke.pkl/mula-int-1.pk: New test.
+	* testsuite/poke.pkl/mula-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/mula-string-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h (pk_disassemble_function_val): New function.
 	* libpoke/libpoke.c (pk_disassemble_function_val): Likewise.
 	(pk_disassemble_function): Rewrite in terms of
