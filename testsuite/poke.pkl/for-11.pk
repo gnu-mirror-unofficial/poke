@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {for (var a = 0, b = 0; a < 5; a += 1, b += 10) { printf "%v %v\n", a, b; }} } */
+/* { dg-output "0 0\n1 10\n2 20\n3 30\n4 40" } */

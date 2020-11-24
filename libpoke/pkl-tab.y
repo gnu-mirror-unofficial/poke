@@ -441,7 +441,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> defvar defvar_list deftype deftype_list
 %type <ast> defunit defunit_list
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
-%type <ast> simple_stmt simple_stmt_opt comp_stmt stmt_decl_list stmt print_stmt_arg_list
+%type <ast> simple_stmt simple_stmt_list comp_stmt stmt_decl_list stmt print_stmt_arg_list
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
 %type <ast> integral_struct
 %type <integer> struct_type_pinned integral_type_sign struct_or_union
@@ -1880,9 +1880,11 @@ ass_exp_op:
         | XORA { $$ = PKL_AST_OP_XOR; }
         ;
 
-simple_stmt_opt:
+simple_stmt_list:
           %empty { $$ = NULL; }
         | simple_stmt
+        | simple_stmt_list ',' simple_stmt
+                 { $$ = pkl_ast_chainon ($1, $3); }
         ;
 
 simple_stmt:
@@ -1919,15 +1921,6 @@ simple_stmt:
                 {
                   $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
                                               $1);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | PRINTF STR print_stmt_arg_list
-                {
-                  $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
-                                                $2, $3);
-                  PKL_AST_LOC ($2) = @2;
-                  if (PKL_AST_TYPE ($2))
-                    PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
                   PKL_AST_LOC ($$) = @$;
                 }
         | PRINTF '(' STR print_stmt_arg_list ')'
@@ -1986,7 +1979,7 @@ stmt:
                      loop.  */
                   pkl_ast_finish_breaks ($$, $5);
                 }
-        | FOR '(' pushlevel simple_declaration ';' expression_opt ';' simple_stmt_opt ')' stmt
+        | FOR '(' pushlevel simple_declaration ';' expression_opt ';' simple_stmt_list ')' stmt
                 {
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
                                                PKL_AST_LOOP_STMT_KIND_FOR,
@@ -2006,7 +1999,7 @@ stmt:
                      above.  */
                   pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
                 }
-        | FOR '(' ';' expression_opt ';' simple_stmt_opt ')' stmt
+        | FOR '(' ';' expression_opt ';' simple_stmt_list ')' stmt
                 {
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
                                                PKL_AST_LOOP_STMT_KIND_FOR,
@@ -2200,6 +2193,15 @@ stmt:
                 {
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
                                                 NULL /* fmt */, $2);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | PRINTF STR print_stmt_arg_list ';'
+                {
+                  $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
+                                                $2, $3);
+                  PKL_AST_LOC ($2) = @2;
+                  if (PKL_AST_TYPE ($2))
+                    PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
                   PKL_AST_LOC ($$) = @$;
                 }
         ;

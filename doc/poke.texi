@@ -7768,14 +7768,14 @@ while (1)
 The @code{for} statement has this form:
 
 @example
-for ([@var{decls}];[@var{expr}];[@var{stmt}]) @var{body_stmt}
+for ([@var{decls}];[@var{expr}];[@var{stmts}]) @var{stmt}
 @end example
 
 @noindent
 where @var{decls} is an optional declaration or chain of declarations
 separated by commas, @var{expr} is an optional boolean expression,
-@var{stmt} is an optional statement and @var{body_stmt} is a
-statement.
+@var{stmts} is an optional comma-separated list of statements, and
+@var{stmt} is a statement.
 
 @node for-in
 @subsection @code{for-in}

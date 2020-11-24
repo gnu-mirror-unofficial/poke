@@ -1,5 +1,17 @@
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y: Rework grammar to allow comma-separated lists
+	of "simple" statements.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Traverse all the statements
+	in the tail.
+	* libpoke/pkl-gen.c (pkl_gen_pr_loop_stmt): Support several
+	statements in for loop.
+	* doc/poke.texi (for): Adjust accordingly.
+	* testsuite/poke.pkl/for-11.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Implement for-from-to-by loops): Removed as done.
 
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>

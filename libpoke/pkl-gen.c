@@ -1006,7 +1006,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_loop_stmt)
         {
           pkl_ast_node tail = PKL_AST_LOOP_STMT_TAIL (loop_stmt);
 
-          if (tail)
+          for (; tail; tail = PKL_AST_CHAIN (tail))
             PKL_PASS_SUBPASS (tail);
         }
         pkl_asm_for_endloop (PKL_GEN_ASM);
