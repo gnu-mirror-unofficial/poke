@@ -1,0 +1,17 @@
+/* { dg-do run } */
+
+fun foo = void:
+{
+  for (var a = 0;; a++)
+  {
+    if (a < 5)
+       {
+         printf ("%v\n", a);
+         continue;
+       }
+    break;
+  }
+}
+
+/* { dg-command { foo } } */
+/* { dg-output "0\n1\n2\n3\n4" } */

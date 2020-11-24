@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var a = 0;
+
+/* { dg-command { for (; a < 5; a++) printf "%v\n", a; } } */
+/* { dg-output "0\n1\n2\n3\n4" } */

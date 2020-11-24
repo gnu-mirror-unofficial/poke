@@ -1,5 +1,47 @@
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (simple_stmt): New rule.
+	(simple_stmt_opt): Likewise.
+	(simple_declaration): Likewise.
+	(stmt): Rules for FOR statement.
+	* libpoke/pkl-ast.h (PKL_AST_LOOP_STMT_TAIL): Define.
+	(PKL_AST_LOOP_STMT_DECL): Likewise.
+	(PKL_AST_LOOP_STMT_KIND_WHILE): Define.
+	(PKL_AST_LOOP_STMT_KIND_FOR): Likewise.
+	(PKL_AST_LOOP_STMT_KIND_FOR_IN): Likewise.
+	* libpoke/pkl-ast.c (pkl_ast_make_loop_stmt): Get `head' and
+	`tail' arguments.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): subpass on new fields of
+	loop statements.
+	* libpoke/pkl-typify.c (pkl_typify1_loop_stmt): Handle lists of
+	conditions.
+	* libpoke/pkl-asm.c (PKL_ASM_ENV_FOR_LOOP): Define.
+	(pkl_asm_for): New function.
+	(pkl_asm_for_condition): Likewise.
+	(pkl_asm_for_loop): Likewise.
+	(pkl_asm_for_loop_tail): Likewise.
+	(pkl_asm_for_endloop): Likewise.
+	(pkl_asm_for_in): Renamed from pkl_asm_for.
+	(pkl_asm_for_in_where): Renamed from pkl_asm_for_where.
+	(pkl_asm_for_in_loop): Renamed from pkl_asm_for_loop.
+	(pkl_asm_for_in_endloop): Renamed from pkl_asm_for_in_endloop.
+	(PKL_ASM_ENV_FOR_IN_LOOP): Renamed form PKL_ASM_ENV_FOR_LOOP.
+	* testsuite/poke.pkl/for-diag-1.pk: New test.
+	* testsuite/poke.pkl/for-1.pk: Likewise.
+	* testsuite/poke.pkl/for-2.pk: Likewise.
+	* testsuite/poke.pkl/for-3.pk: Likewise.
+	* testsuite/poke.pkl/for-4.pk: Likewise.
+	* testsuite/poke.pkl/for-5.pk: Likewise.
+	* testsuite/poke.pkl/for-6.pk: Likewise.
+	* testsuite/poke.pkl/for-7.pk: Likewise.
+	* testsuite/poke.pkl/for-8.pk: Likewise.
+	* testsuite/poke.pkl/for-9.pk: Likewise.
+	* testsuite/poke.pkl/for-10.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+	* doc/poke.texi (for): New section.
+
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Support mapping and constructing functions):
 	Removed as done.
 

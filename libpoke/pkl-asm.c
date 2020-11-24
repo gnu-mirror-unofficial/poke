@@ -59,7 +59,7 @@
 
    CURRENT_ENV identifies what kind of instruction created the level.
    This can be either PKL_ASM_ENV_NULL, PKL_ASM_ENV_CONDITIONAL,
-   PKL_ASM_ENV_LOOP, PKL_ASM_ENV_FOR_LOOP, PKL_ASM_ENV_TRY.
+   PKL_ASM_ENV_LOOP, PKL_ASM_ENV_FOR_IN_LOOP, PKL_ASM_ENV_TRY.
    PKL_ASM_ENV_NULL should only be used at the top-level.
 
    PARENT is the parent level, i.e. the level containing this one.
@@ -73,7 +73,8 @@
 #define PKL_ASM_ENV_CONDITIONAL 1
 #define PKL_ASM_ENV_LOOP 2
 #define PKL_ASM_ENV_TRY 3
-#define PKL_ASM_ENV_FOR_LOOP 4
+#define PKL_ASM_ENV_FOR_IN_LOOP 4
+#define PKL_ASM_ENV_FOR_LOOP 5
 
 struct pkl_asm_level
 {
@@ -211,22 +212,22 @@ pkl_asm_insn_atoa (pkl_asm pasm,
      elements, recursively.  */
   if (PKL_AST_TYPE_CODE (to_type_etype) == PKL_TYPE_ARRAY)
     {
-      pkl_asm_for (pasm, PKL_TYPE_ARRAY, NULL /* selector */);
+      pkl_asm_for_in (pasm, PKL_TYPE_ARRAY, NULL /* selector */);
       {
         /* The array is already in the stack.  */
         pkl_asm_insn (pasm, PKL_INSN_DUP);
       }
-      pkl_asm_for_where (pasm);
+      pkl_asm_for_in_where (pasm);
       {
         /* No condition.  */
       }
-      pkl_asm_for_loop (pasm);
+      pkl_asm_for_in_loop (pasm);
       {
         pkl_asm_insn (pasm, PKL_INSN_PUSHVAR, 0, 0);              /* ELEM */
         pkl_asm_insn_atoa (pasm, from_type_etype, to_type_etype); /* ELEM */
         pkl_asm_insn (pasm, PKL_INSN_DROP);                       /* _ */
       }
-      pkl_asm_for_endloop (pasm);
+      pkl_asm_for_in_endloop (pasm);
     }
 
   /* Now process the array itself.  */
@@ -1803,6 +1804,81 @@ pkl_asm_while_endloop (pkl_asm pasm)
   pkl_asm_poplevel (pasm);
 }
 
+/* The following functions implement for loops.  The code generated
+   is:
+
+   FOR (HEAD; CONDITION; TAIL) { BODY }
+
+     PUHSF
+     ... HEAD ...
+   label1:
+     ... condition ...
+   label2:
+     ... BODY ...
+   continue_label:
+     ... TAIL ...
+     BA label1
+   label3:
+     DROP
+   break_label:
+     POPF
+*/
+
+void
+pkl_asm_for (pkl_asm pasm, pkl_ast_node head)
+{
+  pkl_asm_pushlevel (pasm, PKL_ASM_ENV_FOR_LOOP);
+
+  pasm->level->node1 = ASTREF (head);
+  pasm->level->label1 = pvm_program_fresh_label (pasm->program);
+  pasm->level->label2 = pvm_program_fresh_label (pasm->program);
+  pasm->level->label3 = pvm_program_fresh_label (pasm->program);
+  pasm->level->continue_label = pvm_program_fresh_label (pasm->program);
+  pasm->level->break_label = pvm_program_fresh_label (pasm->program);
+
+  if (head)
+    pkl_asm_insn (pasm, PKL_INSN_PUSHF, 0);
+}
+
+void
+pkl_asm_for_condition (pkl_asm pasm)
+{
+  pvm_program_append_label (pasm->program, pasm->level->label1);
+}
+
+void
+pkl_asm_for_loop (pkl_asm pasm)
+{
+  pkl_asm_insn (pasm, PKL_INSN_BZI, pasm->level->label3);
+  /* Pop the loop condition from the stack.  */
+  pkl_asm_insn (pasm, PKL_INSN_DROP);
+  /* XXX label2 is unused.  */
+  pvm_program_append_label (pasm->program, pasm->level->label2);
+}
+
+void
+pkl_asm_for_tail (pkl_asm pasm)
+{
+  pvm_program_append_label (pasm->program, pasm->level->continue_label);
+}
+
+void
+pkl_asm_for_endloop (pkl_asm pasm)
+{
+  pkl_asm_insn (pasm, PKL_INSN_SYNC);
+  pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);
+  pvm_program_append_label (pasm->program, pasm->level->label3);
+  pkl_asm_insn (pasm, PKL_INSN_DROP); /* The condition boolean */
+  pvm_program_append_label (pasm->program, pasm->level->break_label);
+
+  if (pasm->level->node1)
+    pkl_asm_insn (pasm, PKL_INSN_POPF, 1);
+
+  /* Cleanup and pop the current level.  */
+  pkl_ast_node_free (pasm->level->node1);
+  pkl_asm_poplevel (pasm);
+}
+
 /* The following functions implement for-in-where loops.  The code
    generated is:
 
@@ -1860,10 +1936,10 @@ pkl_asm_while_endloop (pkl_asm pasm)
 */
 
 void
-pkl_asm_for (pkl_asm pasm, int container_type,
-             pkl_ast_node selector)
+pkl_asm_for_in (pkl_asm pasm, int container_type,
+                pkl_ast_node selector)
 {
-  pkl_asm_pushlevel (pasm, PKL_ASM_ENV_FOR_LOOP);
+  pkl_asm_pushlevel (pasm, PKL_ASM_ENV_FOR_IN_LOOP);
 
   pasm->level->label1 = pvm_program_fresh_label (pasm->program);
   pasm->level->label2 = pvm_program_fresh_label (pasm->program);
@@ -1879,7 +1955,7 @@ pkl_asm_for (pkl_asm pasm, int container_type,
 }
 
 void
-pkl_asm_for_where (pkl_asm pasm)
+pkl_asm_for_in_where (pkl_asm pasm)
 {
   pvm_program_append_label (pasm->program, pasm->level->label1);
 
@@ -1917,7 +1993,7 @@ pkl_asm_for_where (pkl_asm pasm)
 }
 
 void
-pkl_asm_for_loop (pkl_asm pasm)
+pkl_asm_for_in_loop (pkl_asm pasm)
 {
   if (pasm->level->node1)
     {
@@ -1931,7 +2007,7 @@ pkl_asm_for_loop (pkl_asm pasm)
 }
 
 void
-pkl_asm_for_endloop (pkl_asm pasm)
+pkl_asm_for_in_endloop (pkl_asm pasm)
 {
   pvm_program_append_label (pasm->program,
                             pasm->level->continue_label);
@@ -1980,6 +2056,7 @@ pkl_asm_break_label_1 (struct pkl_asm_level *level)
     {
     case PKL_ASM_ENV_LOOP:
     case PKL_ASM_ENV_FOR_LOOP:
+    case PKL_ASM_ENV_FOR_IN_LOOP:
       return level->break_label;
       break;
     default:
@@ -2005,6 +2082,7 @@ pkl_asm_continue_label_1 (struct pkl_asm_level *level)
     {
     case PKL_ASM_ENV_LOOP:
     case PKL_ASM_ENV_FOR_LOOP:
+    case PKL_ASM_ENV_FOR_IN_LOOP:
       return level->continue_label;
       break;
     default:

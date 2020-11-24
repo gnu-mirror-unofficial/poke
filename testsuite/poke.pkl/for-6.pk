@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command { for (var a = 0, b = "foo"; a < 5; a++) { print "foo\n"; } } } */
+/* { dg-output "foo\nfoo\nfoo\nfoo" } */

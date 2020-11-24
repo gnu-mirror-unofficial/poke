@@ -1663,20 +1663,32 @@ pkl_ast_make_if_stmt (pkl_ast ast, pkl_ast_node exp,
 /* Build and return an AST node for a loop statement.  */
 
 pkl_ast_node
-pkl_ast_make_loop_stmt (pkl_ast ast, pkl_ast_node iterator,
-                        pkl_ast_node condition, pkl_ast_node body)
+pkl_ast_make_loop_stmt (pkl_ast ast,
+                        int kind,
+                        pkl_ast_node iterator,
+                        pkl_ast_node condition,
+                        pkl_ast_node head, pkl_ast_node tail,
+                        pkl_ast_node body)
 {
   pkl_ast_node loop_stmt
     = pkl_ast_make_node (ast, PKL_AST_LOOP_STMT);
 
   assert (body);
+  assert (kind == PKL_AST_LOOP_STMT_KIND_WHILE
+          || kind == PKL_AST_LOOP_STMT_KIND_FOR
+          || kind == PKL_AST_LOOP_STMT_KIND_FOR_IN);
 
+  PKL_AST_LOOP_STMT_KIND (loop_stmt) = kind;
   if (iterator)
     PKL_AST_LOOP_STMT_ITERATOR (loop_stmt)
       = ASTREF (iterator);
   if (condition)
     PKL_AST_LOOP_STMT_CONDITION (loop_stmt)
       = ASTREF (condition);
+  if (head)
+    PKL_AST_LOOP_STMT_HEAD (loop_stmt) = ASTREF (head);
+  if (tail)
+    PKL_AST_LOOP_STMT_TAIL (loop_stmt) = ASTREF (tail);
   PKL_AST_LOOP_STMT_BODY (loop_stmt) = ASTREF (body);
 
   return loop_stmt;
@@ -2179,6 +2191,8 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_LOOP_STMT_ITERATOR (ast));
       pkl_ast_node_free (PKL_AST_LOOP_STMT_CONDITION (ast));
       pkl_ast_node_free (PKL_AST_LOOP_STMT_BODY (ast));
+      pkl_ast_node_free (PKL_AST_LOOP_STMT_HEAD (ast));
+      pkl_ast_node_free (PKL_AST_LOOP_STMT_TAIL (ast));
 
       break;
 
@@ -2465,12 +2479,14 @@ pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
       break;
     case PKL_AST_LOOP_STMT:
       {
-        if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
+        if (PKL_AST_LOOP_STMT_ITERATOR (stmt)
+            || PKL_AST_LOOP_STMT_HEAD (stmt))
           *ndrops += 3;
         pkl_ast_finish_returns_1 (function,
                                   PKL_AST_LOOP_STMT_BODY (stmt),
                                   nframes, ndrops);
-        if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
+        if (PKL_AST_LOOP_STMT_ITERATOR (stmt)
+            || PKL_AST_LOOP_STMT_HEAD (stmt))
           *ndrops -= 3;
         break;
       }
@@ -3021,8 +3037,11 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       IPRINTF ("LOOP_STMT::\n");
 
       PRINT_COMMON_FIELDS;
+      PRINT_AST_IMM (kind, LOOP_STMT_KIND, "%d");
       PRINT_AST_SUBAST (iterator, LOOP_STMT_ITERATOR);
       PRINT_AST_SUBAST (condition, LOOP_STMT_CONDITION);
+      PRINT_AST_SUBAST (head, LOOP_STMT_HEAD);
+      PRINT_AST_SUBAST (tail, LOOP_STMT_TAIL);
       PRINT_AST_SUBAST (body, LOOP_STMT_BODY);
       break;
 

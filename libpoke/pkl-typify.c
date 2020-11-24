@@ -2116,20 +2116,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_lambda)
 }
 PKL_PHASE_END_HANDLER
 
-/* The type of the condition of a loop statement should be a boolean.  */
+/* The type of the condition expressions of a loop statement should be
+   boolean.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt)
 {
   pkl_ast_node loop_stmt = PKL_PASS_NODE;
   pkl_ast_node condition = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
 
-  /* The type of the loop condition should be a boolean, i.e. a
-     promoteable integer or integral struct.  */
   if (condition)
     {
-      pkl_ast_node condition_type;
-
-      condition_type = PKL_AST_TYPE (condition);
+      pkl_ast_node condition_type = PKL_AST_TYPE (condition);
 
       /* Allow an integral struct.  */
       if (PKL_AST_TYPE_CODE (condition_type) == PKL_TYPE_STRUCT

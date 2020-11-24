@@ -1,0 +1,11 @@
+/* { dg-do run } */
+
+fun foo = void:
+ {
+   for (var a = 0; a < 2; a++)
+    for (var b = 0; b < 2; b++)
+      print "lala\n";
+ }
+
+/* { dg-command { foo } } */
+/* { dg-output "lala\nlala\nlala\nlala" } */

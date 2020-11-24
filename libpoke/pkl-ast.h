@@ -1473,33 +1473,56 @@ int pkl_ast_lvalue_p (pkl_ast_node node);
 
 /* PKL_AST_LOOP_STMT nodes represent iterative statements.
 
+   KIND is one of the PKL_AST_LOOP_STMT_KIND_* values defined below.
+   It identifies the kind of loop.
+
    ITERATOR is a PKL_AST_LOOP_STMT_ITERATOR node, or NULL.
 
-   CONDITION is an expression that should evaluate to a boolean, that
+   CONDITION is a expression that should evaluate to a boolean, that
    is evaluated at the beginning of the loop.  If it evals to false,
-   the loop is exited.  This is used in WHILE, FOR-IN and FOR-IN-WHERE
-   loops.  In loops with an iterator, the iterator variable is
-   available in the scope where CONDITION is evaluated, and CONDITION
-   determines whether BODY is executed in the current iteration.
+   the loop is exited.  This is used in WHILE, FOR, FOR-IN and
+   FOR-IN-WHERE loops.  In loops with an iterator, the iterator
+   variable is available in the scope where CONDITION is evaluated,
+   and CONDITION determines whether BODY is executed in the current
+   iteration.
+
+   HEAD is a list of PKL_AST_DECL nodes that are processed before
+   checking the loop condition, or NULL.  This is used in FOR loops.
+
+   TAIL is a list of statements, to be executed at the end of the loop
+   body.  This is only used in FOR loops.
 
    BODY is a statement, which is the body of the loop.  */
 
 #define PKL_AST_LOOP_STMT_ITERATOR(AST) ((AST)->loop_stmt.iterator)
 #define PKL_AST_LOOP_STMT_CONDITION(AST) ((AST)->loop_stmt.condition)
 #define PKL_AST_LOOP_STMT_BODY(AST) ((AST)->loop_stmt.body)
+#define PKL_AST_LOOP_STMT_TAIL(AST) ((AST)->loop_stmt.tail)
+#define PKL_AST_LOOP_STMT_HEAD(AST) ((AST)->loop_stmt.head)
+#define PKL_AST_LOOP_STMT_KIND(AST) ((AST)->loop_stmt.kind)
+
+#define PKL_AST_LOOP_STMT_KIND_WHILE  0
+#define PKL_AST_LOOP_STMT_KIND_FOR    1
+#define PKL_AST_LOOP_STMT_KIND_FOR_IN 2
 
 struct pkl_ast_loop_stmt
 {
   struct pkl_ast_common COMMON;
 
+  int kind;
   union pkl_ast_node *iterator;
   union pkl_ast_node *condition;
   union pkl_ast_node *body;
+  union pkl_ast_node *head;
+  union pkl_ast_node *tail;
 };
 
 pkl_ast_node pkl_ast_make_loop_stmt (pkl_ast ast,
+                                     int kind,
                                      pkl_ast_node iterator,
                                      pkl_ast_node condition,
+                                     pkl_ast_node head,
+                                     pkl_ast_node tail,
                                      pkl_ast_node body);
 
 /* PKL_AST_LOOP_STMT_ITERATOR nodes represent an iterator in a loop

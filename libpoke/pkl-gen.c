@@ -941,74 +941,114 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_loop_stmt)
 {
   pkl_ast_node loop_stmt = PKL_PASS_NODE;
-  pkl_ast_node loop_stmt_iterator
-    = PKL_AST_LOOP_STMT_ITERATOR (loop_stmt);
-  pkl_ast_node condition
-    = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
+  int loop_stmt_kind = PKL_AST_LOOP_STMT_KIND (loop_stmt);
   pkl_ast_node body = PKL_AST_LOOP_STMT_BODY (loop_stmt);
 
-  pkl_ast_node iterator = NULL;
-  pkl_ast_node container = NULL;
-
-  if (loop_stmt_iterator)
+  switch (loop_stmt_kind)
     {
-      iterator = PKL_AST_LOOP_STMT_ITERATOR_DECL (loop_stmt_iterator);
-      container = PKL_AST_LOOP_STMT_ITERATOR_CONTAINER (loop_stmt_iterator);
-    }
+    case PKL_AST_LOOP_STMT_KIND_WHILE:
+      {
+        pkl_ast_node condition
+          = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
 
-  if (condition && !iterator  && !container)
-    {
-      /* This is a WHILE loop.  */
+        assert (condition && body);
 
-      if (PKL_AST_CODE (condition) == PKL_AST_INTEGER)
-        {
-          if (PKL_AST_INTEGER_VALUE (condition) == 0)
-            ; /* while (0) is optimized away.  */
-          else
+        if (PKL_AST_CODE (condition) == PKL_AST_INTEGER)
+          {
+            if (PKL_AST_INTEGER_VALUE (condition) == 0)
+              ; /* while (0) is optimized away.  */
+            else
+              {
+                pkl_asm_loop (PKL_GEN_ASM);
+                PKL_PASS_SUBPASS (body);
+                pkl_asm_endloop (PKL_GEN_ASM);
+              }
+          }
+        else
+          {
+            pkl_asm_while (PKL_GEN_ASM);
             {
-              pkl_asm_loop (PKL_GEN_ASM);
-              PKL_PASS_SUBPASS (body);
-              pkl_asm_endloop (PKL_GEN_ASM);
+              PKL_PASS_SUBPASS (condition);
             }
-        }
-      else
-        {
-          pkl_asm_while (PKL_GEN_ASM);
-          {
-            PKL_PASS_SUBPASS (condition);
+            pkl_asm_while_loop (PKL_GEN_ASM);
+            {
+              PKL_PASS_SUBPASS (body);
+            }
+            pkl_asm_while_endloop (PKL_GEN_ASM);
           }
-          pkl_asm_while_loop (PKL_GEN_ASM);
-          {
-            PKL_PASS_SUBPASS (body);
-          }
-          pkl_asm_while_endloop (PKL_GEN_ASM);
-        }
-    }
-  else if (iterator && container)
-    {
-      pkl_ast_node container_type = PKL_AST_TYPE (container);
 
-      /* This is a FOR-IN[-WHERE] loop.  */
-      pkl_asm_for (PKL_GEN_ASM,
-                   PKL_AST_TYPE_CODE (container_type),
-                   condition);
-      {
-        PKL_PASS_SUBPASS (container);
+      break;
       }
-      pkl_asm_for_where (PKL_GEN_ASM);
+    case PKL_AST_LOOP_STMT_KIND_FOR:
       {
-        if (condition)
-          PKL_PASS_SUBPASS (condition);
+        pkl_ast_node head = PKL_AST_LOOP_STMT_HEAD (loop_stmt);
+
+        pkl_asm_for (PKL_GEN_ASM, head);
+        {
+          for (; head; head = PKL_AST_CHAIN (head))
+            PKL_PASS_SUBPASS (head);
+        }
+        pkl_asm_for_condition (PKL_GEN_ASM);
+        {
+          pkl_ast_node condition
+            = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
+
+          if (condition)
+            PKL_PASS_SUBPASS (condition);
+          else
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (1, 32));
+        }
+        pkl_asm_for_loop (PKL_GEN_ASM);
+        {
+          PKL_PASS_SUBPASS (body);
+        }
+        pkl_asm_for_tail (PKL_GEN_ASM);
+        {
+          pkl_ast_node tail = PKL_AST_LOOP_STMT_TAIL (loop_stmt);
+
+          if (tail)
+            PKL_PASS_SUBPASS (tail);
+        }
+        pkl_asm_for_endloop (PKL_GEN_ASM);
+
+        break;
       }
-      pkl_asm_for_loop (PKL_GEN_ASM);
+    case PKL_AST_LOOP_STMT_KIND_FOR_IN:
       {
-        PKL_PASS_SUBPASS (body);
+        pkl_ast_node condition
+          = PKL_AST_LOOP_STMT_CONDITION (loop_stmt);
+        pkl_ast_node loop_stmt_iterator
+          = PKL_AST_LOOP_STMT_ITERATOR (loop_stmt);
+        pkl_ast_node container = NULL;
+        pkl_ast_node container_type = NULL;
+
+        assert (loop_stmt_iterator);
+
+        container = PKL_AST_LOOP_STMT_ITERATOR_CONTAINER (loop_stmt_iterator);
+        container_type = PKL_AST_TYPE (container);
+
+        pkl_asm_for_in (PKL_GEN_ASM,
+                        PKL_AST_TYPE_CODE (container_type),
+                        condition);
+        {
+          PKL_PASS_SUBPASS (container);
+        }
+        pkl_asm_for_in_where (PKL_GEN_ASM);
+        {
+          if (condition)
+            PKL_PASS_SUBPASS (condition);
+        }
+        pkl_asm_for_in_loop (PKL_GEN_ASM);
+        {
+          PKL_PASS_SUBPASS (body);
+        }
+        pkl_asm_for_in_endloop (PKL_GEN_ASM);
+
+        break;
       }
-      pkl_asm_for_endloop (PKL_GEN_ASM);
+    default:
+      assert (0);
     }
-  else
-    /* This should not happen.  */
-    assert (0);
 
   PKL_PASS_BREAK;
 }

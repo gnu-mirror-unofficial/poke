@@ -425,7 +425,8 @@ token <integer> UNION    _("keyword `union'")
 %type <opcode> unary_operator
 
 %type <ast> start program program_elem_list program_elem load
-%type <ast> expression expression_list primary identifier bconc map
+%type <ast> expression expression_list expression_opt primary
+%type <ast> identifier bconc map
 %type <ast> funcall funcall_arg_list funcall_arg
 %type <ast> array array_initializer_list array_initializer
 %type <ast> struct_field_list struct_field
@@ -436,9 +437,11 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
 %type <ast> struct_type_field_constraint_or_init struct_type_field_label
 %type <ast> struct_type_field_optcond
-%type <ast> declaration defvar defvar_list deftype deftype_list defunit defunit_list
+%type <ast> declaration simple_declaration
+%type <ast> defvar defvar_list deftype deftype_list
+%type <ast> defunit defunit_list
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
-%type <ast> comp_stmt stmt_decl_list stmt print_stmt_arg_list
+%type <ast> simple_stmt simple_stmt_opt comp_stmt stmt_decl_list stmt print_stmt_arg_list
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
 %type <ast> integral_struct
 %type <integer> struct_type_pinned integral_type_sign struct_or_union
@@ -622,6 +625,11 @@ expression_list:
                   {
                     $$ = pkl_ast_chainon ($1, $3);
                   }
+        ;
+
+expression_opt:
+          %empty { $$ = NULL; }
+        | expression;
         ;
 
 expression:
@@ -1627,6 +1635,12 @@ struct_type_field_optcond:
  * Declarations.
  */
 
+simple_declaration:
+          DEFVAR defvar_list   { $$ = $2; }
+        | DEFTYPE deftype_list { $$ = $2; }
+        | DEFUNIT defunit_list { $$ = $2; }
+        ;
+
 declaration:
         defun_or_method identifier
                 {
@@ -1691,9 +1705,7 @@ declaration:
 
                   pkl_parser->in_method_decl_p = 0;
                 }
-        | DEFVAR defvar_list ';' { $$ = $2; }
-        | DEFTYPE deftype_list ';' { $$ = $2; }
-        | DEFUNIT defunit_list ';' { $$ = $2; }
+        | simple_declaration ';' { $$ = $1; }
         ;
 
 defun_or_method:
@@ -1868,20 +1880,19 @@ ass_exp_op:
         | XORA { $$ = PKL_AST_OP_XOR; }
         ;
 
-stmt:
-          comp_stmt
-        | ';'
-                  {
-                  $$ = pkl_ast_make_null_stmt (pkl_parser->ast);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | primary '=' expression ';'
+simple_stmt_opt:
+          %empty { $$ = NULL; }
+        | simple_stmt
+        ;
+
+simple_stmt:
+          primary '=' expression
                   {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | primary ass_exp_op expression ';'
+        | primary ass_exp_op expression
                 {
                   pkl_ast_node exp
                     = pkl_ast_make_binary_exp (pkl_parser->ast,
@@ -1892,17 +1903,60 @@ stmt:
                   PKL_AST_LOC (exp) = @$;
                   PKL_AST_LOC ($$) = @$;
                 }
-        | bconc '=' expression ';'
+        | bconc '=' expression
                 {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | map '=' expression ';'
+        | map '=' expression
                 {
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
                                               $1, $3);
                   PKL_AST_LOC ($$) = @$;
+                }
+        | expression
+                {
+                  $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
+                                              $1);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | PRINTF STR print_stmt_arg_list
+                {
+                  $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
+                                                $2, $3);
+                  PKL_AST_LOC ($2) = @2;
+                  if (PKL_AST_TYPE ($2))
+                    PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | PRINTF '(' STR print_stmt_arg_list ')'
+                {
+                  $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
+                                                $3, $4);
+                  PKL_AST_LOC ($3) = @3;
+                  if (PKL_AST_TYPE ($3))
+                    PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | funcall_stmt
+                {
+                  $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
+                                              $1);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        ;
+
+stmt:
+          comp_stmt
+        | ';'
+                {
+                  $$ = pkl_ast_make_null_stmt (pkl_parser->ast);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | simple_stmt ';'
+                {
+                  $$ = $1;
                 }
         | IF '(' expression ')' stmt %prec THEN
                 {
@@ -1919,8 +1973,11 @@ stmt:
         | WHILE '(' expression ')' stmt
                 {
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
+                                               PKL_AST_LOOP_STMT_KIND_WHILE,
                                                NULL, /* iterator */
                                                $3,   /* condition */
+                                               NULL, /* head */
+                                               NULL, /* tail */
                                                $5);  /* body */
                   PKL_AST_LOC ($$) = @$;
 
@@ -1928,6 +1985,43 @@ stmt:
                      statements with their lexical level within this
                      loop.  */
                   pkl_ast_finish_breaks ($$, $5);
+                }
+        | FOR '(' pushlevel simple_declaration ';' expression_opt ';' simple_stmt_opt ')' stmt
+                {
+                  $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
+                                               PKL_AST_LOOP_STMT_KIND_FOR,
+                                               NULL, /* iterator */
+                                               $6,   /* condition */
+                                               $4,   /* head */
+                                               $8,   /* tail */
+                                               $10); /* body */
+                  PKL_AST_LOC ($$) = @$;
+
+                  /* Annotate the contained BREAK and CONTINUE
+                     statements with their lexical level within this
+                     loop.  */
+                  pkl_ast_finish_breaks ($$, $10);
+
+                  /* Pop the frame introduced by `pushlevel'
+                     above.  */
+                  pkl_parser->env = pkl_env_pop_frame (pkl_parser->env);
+                }
+        | FOR '(' ';' expression_opt ';' simple_stmt_opt ')' stmt
+                {
+                  $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
+                                               PKL_AST_LOOP_STMT_KIND_FOR,
+                                               NULL, /* iterator */
+                                               $4,   /* condition */
+                                               NULL, /* head */
+                                               $6,   /* tail */
+                                               $8);  /* body */
+
+                  /* Annotate the contained BREAK and CONTINUE
+                     statements with their lexical level within this
+                     loop.  */
+                  pkl_ast_finish_breaks ($$, $8);
+
+                  PKL_AST_LOC ($$) = @$;
                 }
         | FOR '(' IDENTIFIER IN expression pushlevel
                 {
@@ -1962,8 +2056,11 @@ stmt:
                   PKL_AST_LOC (iterator) = @$;
 
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
+                                               PKL_AST_LOOP_STMT_KIND_FOR_IN,
                                                iterator,
                                                NULL, /* condition */
+                                               NULL, /* head */
+                                               NULL, /* tail */
                                                $9);  /* body */
                   PKL_AST_LOC ($$) = @$;
 
@@ -2014,8 +2111,11 @@ stmt:
                   PKL_AST_LOC (iterator) = @$;
 
                   $$ = pkl_ast_make_loop_stmt (pkl_parser->ast,
+                                               PKL_AST_LOOP_STMT_KIND_FOR_IN,
                                                iterator,
                                                $9, /* condition */
+                                               NULL, /* head */
+                                               NULL, /* tail */
                                                $11); /* body */
                   PKL_AST_LOC ($3) = @3;
                   PKL_AST_LOC ($$) = @$;
@@ -2096,40 +2196,10 @@ stmt:
                                                 $2);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | expression ';'
-                {
-                  $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
-                                              $1);
-                  PKL_AST_LOC ($$) = @$;
-                }
         | PRINT expression ';'
                 {
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
                                                 NULL /* fmt */, $2);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | PRINTF STR print_stmt_arg_list ';'
-                {
-                  $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
-                                                $2, $3);
-                  PKL_AST_LOC ($2) = @2;
-                  if (PKL_AST_TYPE ($2))
-                    PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | PRINTF '(' STR print_stmt_arg_list ')' ';'
-                {
-                  $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
-                                                $3, $4);
-                  PKL_AST_LOC ($3) = @3;
-                  if (PKL_AST_TYPE ($3))
-                    PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | funcall_stmt ';'
-                {
-                  $$ = pkl_ast_make_exp_stmt (pkl_parser->ast,
-                                              $1);
                   PKL_AST_LOC ($$) = @$;
                 }
         ;

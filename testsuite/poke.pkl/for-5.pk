@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command { for (;;) { print "foo\n"; break; } } } */
+/* { dg-output "foo" } */

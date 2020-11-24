@@ -151,34 +151,61 @@ void pkl_asm_while_loop (pkl_asm pasm);
 
 void pkl_asm_while_endloop (pkl_asm pasm);
 
-/* For-in-where loops.
+/* For loops.
  *
- * pkl_asm_for (pasm, container_type, selector)
+ * pkl_asm_for (pasm);
  *
- * ... container ...
+ * ... head ...
  *
- * pkl_asm_for_where (pasm);
+ * pkl_asm_for_condition (pasm);
  *
- * ... selector ...
+ * ... condition ...
  *
  * pkl_asm_for_loop (pasm);
  *
  * ... body ...
  *
+ * pkl_asm_for_tail (pasm);
+ *
+ * ... tail ...
+ *
  * pkl_asm_for_endloop (pasm);
+ */
+
+void pkl_asm_for (pkl_asm pasm, pkl_ast_node head);
+void pkl_asm_for_condition (pkl_asm pasm);
+void pkl_asm_for_loop (pkl_asm pasm);
+void pkl_asm_for_tail (pkl_asm pasm);
+void pkl_asm_for_endloop (pkl_asm pasm);
+
+/* For-in-where loops.
+ *
+ * pkl_asm_for_in (pasm, container_type, selector)
+ *
+ * ... container ...
+ *
+ * pkl_asm_for_in_where (pasm);
+ *
+ * ... selector ...
+ *
+ * pkl_asm_for_in_loop (pasm);
+ *
+ * ... body ...
+ *
+ * pkl_asm_for_in_endloop (pasm);
  *
  * Note that the SELECTOR expression can be of any integral type. The
  * macro-assembler will generate the right code for the specific type.
  */
 
-void pkl_asm_for (pkl_asm pasm, int container_type,
-                  pkl_ast_node selector);
+void pkl_asm_for_in (pkl_asm pasm, int container_type,
+                     pkl_ast_node selector);
 
-void pkl_asm_for_where (pkl_asm pasm);
+void pkl_asm_for_in_where (pkl_asm pasm);
 
-void pkl_asm_for_loop (pkl_asm pasm);
+void pkl_asm_for_in_loop (pkl_asm pasm);
 
-void pkl_asm_for_endloop (pkl_asm pasm);
+void pkl_asm_for_in_endloop (pkl_asm pasm);
 
 /* Try-catch blocks.
  *

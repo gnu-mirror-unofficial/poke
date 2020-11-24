@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+for (var s = "foo";
+     s + "bar"; /* { dg-error "expected boolean" } */
+    ) {}
