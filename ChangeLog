@@ -1,5 +1,9 @@
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Implement for-from-to-by loops): Removed as done.
+
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-dump.pk (print_data): Use a `for' statement instead of a
 	`while' statement.
 

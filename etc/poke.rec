@@ -100,14 +100,6 @@
 %type: RFC bool
 %summary: Kind,Component,Priority,Summary
 
-Summary: Implement for-from-to-by loops
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+    for (VAR from EXP to EXP [by EXP])
-Target: 1.0
-
 Summary: Support bit-concatenation in l-value
 Component: Language
 Kind: ENH
