@@ -152,7 +152,6 @@ fun dump = (int<32> ios = get_ios,
 
   try print_data :offset offset :top top :step 16#B
                  :group_by group_by :cluster_by cluster_by;
-
   catch if E_eof { print "\n"; }
 
   pk_dump_offset = from;
