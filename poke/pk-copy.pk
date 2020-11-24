@@ -46,8 +46,9 @@ fun copy = (int from_ios = get_ios,
  set_endian (ENDIAN_BIG);
 
  /* Copy the stuff.  */
- var end = from + size;
- while (from < end)
+ for (var end = from + size;
+      from < end;
+      from += step, to += step)
    {
      if (step == 8#B)
        uint<64> @ to_ios : to = uint<64> @ from_ios : from;
@@ -57,9 +58,6 @@ fun copy = (int from_ios = get_ios,
        uint<16> @ to_ios : to = uint<16> @ from_ios : from;
      else
        byte @ to_ios : to = byte @ from_ios : from;
-
-     from = from + step;
-     to = to + step;
    }
 
  /* Cleanup.  */

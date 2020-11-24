@@ -525,10 +525,10 @@ pkl_do_pass_1 (pkl_compiler compiler,
     case PKL_AST_LOOP_STMT:
       if (PKL_AST_LOOP_STMT_ITERATOR (node))
         PKL_PASS (PKL_AST_LOOP_STMT_ITERATOR (node));
-      if (PKL_AST_LOOP_STMT_CONDITION (node))
-        PKL_PASS_CHAIN (PKL_AST_LOOP_STMT_CONDITION (node));
       if (PKL_AST_LOOP_STMT_HEAD (node))
         PKL_PASS (PKL_AST_LOOP_STMT_HEAD (node));
+      if (PKL_AST_LOOP_STMT_CONDITION (node))
+        PKL_PASS_CHAIN (PKL_AST_LOOP_STMT_CONDITION (node));
       if (PKL_AST_LOOP_STMT_TAIL (node))
         PKL_PASS_CHAIN (PKL_AST_LOOP_STMT_TAIL (node));
       PKL_PASS (PKL_AST_LOOP_STMT_BODY (node));
