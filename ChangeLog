@@ -1,5 +1,15 @@
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.c (pkl_ast_finish_returns_1): Fix return drops
+	for `for' statements.
+	* pickles/id3v1.pk: Use a `for' loop.
+	* testsuite/poke.pkl/for-12.pk: New test.
+	* testsuite/poke.id3v1/id3v1-6.pk: Expand test to exercise the
+	set_genre method.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: Rework grammar to allow comma-separated lists
 	of "simple" statements.
 	* libpoke/pkl-pass.c (pkl_do_pass_1): Traverse all the statements

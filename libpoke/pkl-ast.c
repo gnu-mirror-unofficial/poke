@@ -2479,14 +2479,12 @@ pkl_ast_finish_returns_1 (pkl_ast_node function, pkl_ast_node stmt,
       break;
     case PKL_AST_LOOP_STMT:
       {
-        if (PKL_AST_LOOP_STMT_ITERATOR (stmt)
-            || PKL_AST_LOOP_STMT_HEAD (stmt))
+        if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
           *ndrops += 3;
         pkl_ast_finish_returns_1 (function,
                                   PKL_AST_LOOP_STMT_BODY (stmt),
                                   nframes, ndrops);
-        if (PKL_AST_LOOP_STMT_ITERATOR (stmt)
-            || PKL_AST_LOOP_STMT_HEAD (stmt))
+        if (PKL_AST_LOOP_STMT_ITERATOR (stmt))
           *ndrops -= 3;
         break;
       }

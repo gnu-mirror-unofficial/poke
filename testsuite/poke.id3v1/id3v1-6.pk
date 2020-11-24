@@ -6,3 +6,6 @@ load id3v1;
 /* { dg-command { var tag = ID3V1_Tag @ 0#B } } */
 /* { dg-command { tag.get_genre } } */
 /* { dg-output {"rock"} } */
+/* { dg-command { tag.set_genre ("eurodance") } } */
+/* { dg-command { tag.get_genre } } */
+/* { dg-output "\n\"eurodance\"" } */

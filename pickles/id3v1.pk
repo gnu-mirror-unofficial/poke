@@ -46,13 +46,9 @@ var id3v1_genres =
 
 fun id3v1_search_genre = (string name) uint<8>:
 {
-  var i = 0;
-  while (i < id3v1_genres'length)
-    {
+  for (var i = 0; i < id3v1_genres'length; i++)
       if (id3v1_genres[i] == name)
         return i;
-      i++;
-    }
 
   raise Exception { code = EC_inval,
                     msg = "cannot find ID3V1 genre" };

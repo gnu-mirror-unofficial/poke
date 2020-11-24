@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+fun foo = (int val) int: { for (var i = 0; i < val; i++) if (i == 5) return i; }
+
+/* { dg-command {foo (10)} } */
+/* { dg-output "5" } */
