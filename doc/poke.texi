@@ -5396,7 +5396,7 @@ uint<64>
 @end example
 
 Similarly, signed integer types are created using the type constructor
-@var{int<@var{n}>}, where @var{n} is the number of bits.  @var{n}
+@code{int<@var{n}>}, where @var{n} is the number of bits.  @var{n}
 should be an integer literal in the range @code{[1,64]}.  Examples:
 
 @example
@@ -7680,7 +7680,7 @@ conditional operator, which are discussed in the sections below.
 The @code{if-else} statement has the form
 
 @example
-if @var{exp} @var{if_stmt} [else @var{else_stmt}]
+if (@var{exp}) @var{if_stmt} [else @var{else_stmt}]
 @end example
 
 @noindent

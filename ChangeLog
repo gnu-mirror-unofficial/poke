@@ -1,5 +1,10 @@
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Integer Types): Fix formatting.
+	(if-else): Fix syntax of `if-else'.
+
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-dump.pk (pk_help_str): Remove empty line between try and
 	catch.
 
