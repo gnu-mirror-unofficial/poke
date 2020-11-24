@@ -1,5 +1,10 @@
 2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk (print_data): Use a `for' statement instead of a
+	`while' statement.
+
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (simple_stmt): New rule.
 	(simple_stmt_opt): Likewise.
 	(simple_declaration): Likewise.

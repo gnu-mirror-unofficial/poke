@@ -110,7 +110,7 @@ fun dump = (int<32> ios = get_ios,
   fun print_data = (off64 offset, off64 top, off64 step,
                     off64 group_by , int cluster_by) void:
   {
-    while (offset < top)
+    for (; offset < top; offset += step)
       {
 	printf ("%<dump-address:%u32x:%>", offset / #B);
 
@@ -138,8 +138,6 @@ fun dump = (int<32> ios = get_ios,
 	    print_ascii (offset, top, step, group_by, cluster_by);
 	  }
 	print "\n";
-
-	offset = offset + step;
       }
   }
 
