@@ -32,12 +32,12 @@
 
 /* Classes for the pvm disassembly.  */
 
-.pvm_comment { color: brown; font-style: italic; }
-.pvm_punctuation { color: white; }
-.pvm_instruction { color: cyan; }
-.pvm_label { color: yellow;   }
-.pvm_register { color: green; }
-.pvm_number { color: lightgreen; }
+.pvm-comment { color: brown; font-style: italic; }
+.pvm-punctuation { color: white; }
+.pvm-instruction { color: cyan; }
+.pvm-label { color: yellow;   }
+.pvm-register { color: green; }
+.pvm-number { color: lightgreen; }
 
 html {
     font-family: Menlo, Monaco, "Courier New", monospace;

@@ -277,7 +277,7 @@ pvm_jitter_print_char (jitter_print_context_data d, char c)
 
   str[0] = c;
   str[1] = '\0';
-  pk_puts (&str);
+  pk_puts ((const char*) &str);
   return 0;
 }
 

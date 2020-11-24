@@ -1,3 +1,9 @@
+2020-11-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* jitter: submodule reference updated to v0.9.237.
+	* etc/poke-default.css: Rename pvm_* styling classes to pvm-*.
+	* libpoke/pvm-program.c (pvm_jitter_print_char): Add cast.
+
 2020-11-24  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/pkl-ops.def: Remove unused definitions.
