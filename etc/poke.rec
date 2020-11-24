@@ -121,7 +121,6 @@ Description:
 + 20:00 <jemarch> c = val & 0xffff;
 + 20:00 <jemarch> you just write:
 + 20:00 <jemarch> a:::b:::c = val;
-Target: 1.0
 
 Summary: Support labels and a goto statement
 Component: Language
@@ -144,7 +143,7 @@ Description: In non-strict values data integrity is not enforced:
 + Struct values are constructed strict by default, then this can be
 + changed with the attribute.  Or support a syntax for constructing
 + non-strict struct values?
-Target: 1.0
+Target: 0.1
 RFC: yes
 
 Summary: Support %% in printf string literals
@@ -155,7 +154,7 @@ Description:
 + A new %-sequence shall be added to printf: %%.  This denotes a single
 + % in the formatted output.  The right place where to hack this is the
 + ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
-Target: 1.0
+Target: 0.1
 
 Summary: STRING ~ REGEXP operator
 Component: Language
@@ -185,7 +184,7 @@ Description:
 + 18:20 <jemarch> oh
 + 18:20 <bhaible> See
 +                 https://www.gnu.org/software/gettext/libtextstyle/manual/libtextstyle.html#The-term_005fostream-class
-Target: 1.0
+Target: 0.1
 
 Summary: with_temp_ios FILENAME { ... }
 Component: Language
@@ -397,7 +396,6 @@ Priority: 4
 Description:
 + We need a token like . or OFFSET to mean the current offset to the
 + beginning of the struct being defined.
-Target: 1.0
 
 Summary: Support OFFSET / MAGNITUDE -> OFFSET
 Component: Language
@@ -406,7 +404,7 @@ Priority: 4
 Description:
 + This operation is the opposite of OFFSET * MAGNITUDE -> OFFSET.  The
 + unit of the result should be the unit of the source offset.
-Target: 1.0
+Target: 0.1
 
 Summary: Support recursive definitions
 Component: Language
@@ -511,7 +509,6 @@ Description:
 +
 + if (do_foo () !? E_constraint)
 +   ...;
-Target: 1.0
 RFC: yes
 
 Summary: Introduce SELF in methods
@@ -550,8 +547,6 @@ Description:
 +
 + Is `SELF' the right keyword to use?  Using uppercase reduces the odds
 + of collision with user defined identifiers.
-Target: 1.0
-RFC: yes
 
 Summary: Constraint expressions for whole structs
 Component: Language
@@ -572,7 +567,7 @@ Priority: 4
 Description:
 + This will require to subpass on fields.  i.e. a gen context:
 + in_integrator.
-Target: 1.0
+Target: 0.1
 
 Summary: Support offsets in integral structs
 Component: Language
@@ -581,7 +576,7 @@ Priority: 4
 Description:
 + There is no reason for offsets to not be allowed as fields of integral
 + structs.  It is an arbitrary limitation.
-Target: 1.0
+Target: 0.1
 
 Summary: Support for optional fields in integral structs
 Component: Language
@@ -773,7 +768,7 @@ Priority: 4
 Description:
 + It should be possible to apply the bit-concatenation operator ::: to
 + offsets, the same way it works with integral values.
-Target: 1.0
+Target: 0.1
 
 Summary: Support for struct deintegrators
 Component: Language
@@ -790,7 +785,6 @@ Description:
 + integral value into an integral struct:
 +
 +   2 as Foo -> Foo {hi=0UB,lo=2UB}
-Target: 1.0
 
 Summary: Alien tokens for IO space names: $<path/to/file>
 Component: CLI
@@ -835,44 +829,44 @@ Summary: Constant-fold array trims
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Constant-fold array casts
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Constant-fold `isa' expressions
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Constant-fold array concatenation
 Component: Compiler
 Kind: OPT
 Priority: 4
-Target: 1.0
+Target: 0.1
 
 Summary: Constant-fold struct references
 Component: Compiler
 Kind: OPT
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Constant-fold struct integrations
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Constant-fold operations with integral structs
 Component: Compiler
 Kind: OPT
 Priority: 3
 Description: such as +, -, etc
-Target: 1.0
+Target: 0.1
 
 Summary: Avoid subpasses by introducing additional AST nodes
 Component: Compiler
@@ -927,7 +921,7 @@ Description:
 +
 + However, if field `field-bar' happens to be absent, by the time E_elem
 + is raised field_foo has been already printed.  This is a no-no.
-Target: 1.0
+Target: 0.1
 
 Summary: remove unneeded locs in the passes/phases
 Component: Compiler
@@ -987,7 +981,7 @@ Description:
 + Because of data integrity, lazy mapping can only be done when mapping
 + non-strict values.
 RFC: yes
-Target: 1.0
+Target: 0.1
 
 Summary: Mapping anonymous complete struct fields
 Component: Compiler
@@ -1013,7 +1007,7 @@ Description:
 +   }
 +
 + Should be considered complete.
-Target: 1.0
+Target: 0.1
 
 Summary: Unions can be completed
 Component: Compiler
@@ -1032,7 +1026,7 @@ Description:
 +   }
 +
 + The type above is complete, with size 32#b known at compile time.
-Target: 1.0
+Target: 0.1
 
 Summary: Save a nton instruction in pkl_asm_while
 Component: Compiler
@@ -1133,7 +1127,7 @@ Priority: 4
 Description:
 + A field in an union type cannot refer to other union alternatives, in
 + any case.  This applies to constraints, array bounds, etc.
-Target: 1.0
+Target: 0.1
 
 Summary: Fix GC roots in AST nodes
 Component: Compiler
@@ -1146,7 +1140,7 @@ Description:
 + roots in the `ast' structure instead.
 +
 + Look for calls to pvm_alloc*gc_roots in pkl-ast.c.
-Target: 1.0
+Target: 0.1
 
 Summary: Promote struct constructor elements
 Component: Compiler
@@ -1255,7 +1249,7 @@ Description:
 +   PKL_PASS_ERROR;
 + }
 + PKL_PHASE_END_HANDLER
-Target: 1.0
+Target: 0.1
 
 Summary: `load' doesn't load after an error
 Component: Compiler
@@ -1270,7 +1264,7 @@ Description:
 + error: fjdi
 + (poke) load foo
 + /* Does nothing.  */
-Target: 1.0
+Target: 0.1
 
 Summary: Fix %destructors in parser
 Component: Compiler
@@ -1280,7 +1274,7 @@ Priority: 3
 Description:
 + A suitable %destructor should be added to the Poke parser, to assure
 + no memory leaks when an error occurs (AST nodes).
-Target: 1.0
+Target: 0.1
 
 Summary: Do not leak decl AST nodes in parser
 Component: Compiler
@@ -1290,7 +1284,7 @@ Priority: 3
 Description:
 + Do not leak decl AST nodes if there is an error condition like an
 + already declared entity.
-Target: 1.0
+Target: 0.1
 
 Summary: Source line is missing on in-type struct errors
 Component: Compiler
@@ -1300,7 +1294,7 @@ Priority: 3
 Description:
 + Under some circumstances, the source line is missing when reporting
 + compile-time errors in struct types.
-Target: 1.0
+Target: 0.1
 
 Summary: Do not emit empty source lines in error reporting
 Component: Compiler
@@ -1310,7 +1304,7 @@ Priority: 4
 Description:
 + If there is no source line available, do not use verbose error
 + reporting.
-Target: 1.0
+Target: 0.1
 
 Summary: Remove call to `abort' in pkl-lex.l
 Component: Compiler
@@ -1319,7 +1313,7 @@ BZ: 26893
 Priority: 3
 Description:
 + Code in libpoke should not call `abort' nor `exit'.
-Target: 1.0
+Target: 0.1
 
 Summary: The `muls' instruction in pvm.jitter calls xmalloc
 Component: Compiler
@@ -1328,7 +1322,7 @@ BZ: 26894
 Priority: 3
 Description:
 + libpoke code shouldn't abort, therefore xalloc shouldn't be used.
-Target: 1.0
+Target: 0.1
 
 Summary: Complete pvm_print_val for function types
 Component: PVM
@@ -1338,7 +1332,7 @@ Priority: 3
 Description:
 + pvm_print_val should print valid type descriptors for function types,
 + including optional arguments, varargs, etc.
-Target: 1.0
+Target: 0.1
 
 Summary: Function types are generated with its arguments reversed
 Component: Compiler
@@ -1348,7 +1342,7 @@ Priority: 4
 Description:
 + Either mktyc should get its arguments reversed (ugly) or the compiler
 + should reverse them before calling the instruction.
-Target: 1.0
+Target: 0.1
 
 Summary: pvm_array_set should check for size bounds
 Component: Compiler
@@ -1360,7 +1354,7 @@ Description:
 + instruction in pvm.jitter to pvm_array_set.  This later function
 + should be altered to return a code identifying out-of-bounds,
 + out-of-size, or OK.
-Target: 1.0
+Target: 0.1
 
 Summary: Allow .let #fieldw = ulong<field_type_size>64 in RAS
 Component: RAS
@@ -1386,7 +1380,7 @@ Kind: ENH
 Priority: 2
 Description:
 + This should be reported as invalid by RAS: int<40>
-Target: 1.0
+Target: 0.1
 
 Summary: Adjustable recursion limit in the PVM
 Component: PVM
@@ -1512,7 +1506,7 @@ Description:
 +   e_shnum=0xbUH,
 +   e_shstrndx=0xaUH
 + }
-Target: 1.0
+Target: 0.1
 
 Summary: Location tracking in PVM
 Component: PVM
@@ -1578,7 +1572,7 @@ Description:
 + (poke) atoi ("a")
 + 0L
 RFC: yes
-Target: 1.0
+Target: 0.1
 
 Summary: Add `strtok' to the standard library
 Component: Runtime
@@ -1593,7 +1587,7 @@ Summary: Make poke_interactive_p available to Poke programs
 Component: Runtime
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Add an API for client-provided IOD implementations to libpoke
 Component: Library
@@ -1602,7 +1596,7 @@ Priority: 3
 Description:
 + A suitable API shall be provided in libpoke.h in order to allow
 + tadding additional IOD implementations.
-Target: 1.0
+Target: 0.1
 RFC: yes
 
 Summary: Add an elisp MI interface to poke.el
@@ -1620,7 +1614,7 @@ Summary: Pass the declaration's pk_value in callback pk_map_decl_fn
 Component: Library
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Support IO transactions
 Component: IO
@@ -1657,7 +1651,7 @@ Description:
 +
 + Provides access to poke the memory of some given process.
 + The process is specified by process-id: pid://1234
-Target: 1.0
+Target: 0.1
 
 Summary: Support Poke IOS Translators
 Component: IO
@@ -1711,14 +1705,14 @@ Description:
 + when they get IOS_EPERM.
 +
 + Obviously a new exception ``E_perm`` shall be added as well.
-Target: 1.0
+Target: 0.1
 
 Summary: Abstract the quiet mode in a poke_msg function
 Component: POKE
 Kind: ENH
 Priority: 2
 Description: This will avoid duplicating conditionals everywhere.
-Target: 1.0
+Target: 0.1
 
 Summary: .set with no arguments should give a summary of all options
 Component: CLI
@@ -1727,14 +1721,14 @@ Priority: 3
 Description:
 + This requires work in rec-cmd.c, because the current infrastructure
 + doens't support this.
-Target: 1.0
+Target: 0.1
 
 Summary: Add command-line option to disable the hserver
 Component: POKE
 Kind: ENH
 Priority: 3
 Descritpion: Something like --no-hserver
-Target: 1.0
+Target: 0.1
 
 Summary: Support language-level construct for easy redirections to pipes/files
 Component: Language
@@ -1771,13 +1765,13 @@ Description:
 + ElfHdr    struct   elf.pkl:125
 + Foo       array    <cmdline>
 Requires: pk-table
-Target: 1.0
+Target: 0.1
 
 Summary: Auto-complete value attributes
 Component: CLI
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Use json-c instead of tcllib json modules in the GUI
 Component: GUI
@@ -1787,7 +1781,7 @@ Description:
 + The JSON support in Tcllib is very bad, and relying on it introduces a
 + run-time dependency that is not easy to check for.  Better to use the
 + json-c that we also require for libpoke.
-Target: 1.0
+Target: 0.1
 
 Summary: pk-table
 Component: CLI
@@ -1808,7 +1802,7 @@ Description:
 +   pk_table_column (table, "<global>", [CLASS...]);
 +   pk_table_print (table);
 +   pk_table_free (table);
-Target: 1.0
+Target: 0.1
 Hacker: jemarch@gnu.org
 RFC: yes
 
@@ -1836,7 +1830,7 @@ Description:
 + mode-line-ios
 +
 + Can have a toolbar with hyperlinks, associated with Poke functions!
-Target: 1.0
+Target: 0.1
 RFC: yes
 
 Summary: pk-term-query
@@ -1911,7 +1905,7 @@ Component: POKE
 Kind: ENH
 Priority: 3
 Description: hserver business should be encapsulated in pk-repl.c
-Target: 1.0
+Target: 0.1
 
 Summary: Auto-complete map names in .map
 Component: CLI
@@ -1922,7 +1916,7 @@ Summary: Auto-complete yes|no in commands
 Component: CLI
 Kind: ENH
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Routine to get an unique memory IO space name
 Component: IO
@@ -1942,7 +1936,7 @@ Description: uniquify.el
 +    #"foo.o"
 +
 + For this we need auto-completion to work well.
-Target: 1.0
+Target: 0.1
 RFC: yes
 
 Summary: .info type TYPENAME
@@ -1963,7 +1957,7 @@ Description:
 +
 + Once we support docstrings in both fields and methods, the output of
 + ``.info type`` can be expanded to use them.
-Target: 1.0
+Target: 0.1
 
 Summary: .vm time
 Component: CLI
@@ -2040,57 +2034,57 @@ Description:
 + The dg testsuites are big.  We need to be able to run the tests in
 + parallel.  A good place where to look for inspiration for this task is
 + the GCC testing infrastructure.
-Target: 1.0
+Target: 0.1
 
 Summary: Document language operand promotion rules in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Document array casts in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Document poke CSS classes in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: Note in the manual how arrays built from array literals are unbounded
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: docuemnt poke maps in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 0.1
 
 Summary: document the libpoke API in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
 Description: Preferably generating it from libpoke.h
-Target: 1.0
+Target: 0.1
 RFC: yes
 
 Summary: Complete PVM values and PKL nodes support in poke-gdb.scm
 Component: Other
 Kind: ENH
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Gettextize strings in the codebase
 Component: Other
 Kind: ENH
 Priority: 3
-Target: 1.0
+Target: 0.1
 
 Summary: Use upper-letter names for macro arguments consistenly
 Component: Other
@@ -2110,7 +2104,7 @@ Description:
 + These are the values generated by the constructors of the several
 + types (integers, offsets, strings, arrays, structs).  Refer to this
 + section from array and struct constructor sections.
-Target: 1.0
+Target: 0.1
 
 Summary: Support functions in struct fields
 Component: Language
@@ -2168,14 +2162,14 @@ Description:
 +         assert (0);
 +       }
 +   }
-Target: 1.0
+Target: 0.1
 
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
 %type: ReleaseDate date
 
-Version: 1.0
+Version: 0.1
 
 %rec: Hacker
 %key: Email
