@@ -1,0 +1,15 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x03 0x6f 0xaa  0x00 0x50 0x60 0x70  0x90 0xa0 0xb0 0xc0} } */
+
+type Foo =
+  struct
+  {
+    byte s;
+    byte[s] a : OFFSET == 1#B;
+    byte b : OFFSET == (s'size + a'size);
+  };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Foo @ 1#B} } */
+/* { dg-output "Foo \{s=0x3UB,a=\\\[0x6fUB,0xaaUB,0x0UB\\\],b=0x50UB\}" } */

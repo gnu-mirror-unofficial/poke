@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { uint<16> h; byte b : OFFSET == 2#B; };
+
+/* { dg-command {Foo {}} } */
+/* { dg-output "Foo \{h=0UH,b=0UB\}" } */

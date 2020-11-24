@@ -1,0 +1,9 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x66 0x6f 0xaa 0x00  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Foo = struct { uint<16> h; byte b : OFFSET == 2#B; };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Foo @ 1#B} } */
+/* { dg-output "Foo \{h=0x6faaUH,b=0x0UB\}" } */

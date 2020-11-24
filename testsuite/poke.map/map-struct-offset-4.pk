@@ -1,0 +1,18 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x66 0x6f 0xaa 0x00  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Foo =
+  struct
+  {
+    byte x : OFFSET == 0#B;
+    struct
+    {
+      byte a : OFFSET == 0#B;
+      byte b : OFFSET == 1#B;
+    } s;
+    byte c : OFFSET == 3#B;
+  };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Foo @ 1#B} } */
+/* { dg-output "Foo \{x=0x6fUB,s=struct \{a=0xaaUB,b=0x0UB\},c=0x50UB\}" } */

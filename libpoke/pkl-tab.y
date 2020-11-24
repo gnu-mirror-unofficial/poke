@@ -1537,8 +1537,46 @@ struct_type_specifier:
           integral_struct '{'
                 {
                   /* Register dummies for the locals used in
-                     pkl-gen.pks:struct_mapper.  */
+                     pkl-gen.pks:struct_mapper (not counting
+                     OFFSET).  */
                   pkl_register_dummies (pkl_parser, 4);
+
+                  /* Now register OFFSET with a type of
+                     offset<uint<64>,1> */
+                  {
+                    pkl_ast_node decl, type;
+                    pkl_ast_node offset_identifier
+                      = pkl_ast_make_identifier (pkl_parser->ast, "OFFSET");
+                    pkl_ast_node offset_magnitude
+                      = pkl_ast_make_integer (pkl_parser->ast, 0);
+                    pkl_ast_node offset_unit
+                      = pkl_ast_make_integer (pkl_parser->ast, 8);
+                    pkl_ast_node offset;
+
+                    type = pkl_ast_make_integral_type (pkl_parser->ast, 64, 0);
+                    PKL_AST_TYPE (offset_magnitude) = ASTREF (type);
+                    PKL_AST_TYPE (offset_unit) = ASTREF (type);
+
+                    offset = pkl_ast_make_offset (pkl_parser->ast,
+                                                  offset_magnitude,
+                                                  offset_unit);
+                    type = pkl_ast_make_offset_type (pkl_parser->ast,
+                                                     type,
+                                                     offset_unit);
+                    PKL_AST_TYPE (offset) = ASTREF (type);
+
+                    decl = pkl_ast_make_decl (pkl_parser->ast,
+                                              PKL_AST_DECL_KIND_VAR,
+                                              offset_identifier,
+                                              offset,
+                                              NULL /* source */);
+
+                    if (!pkl_env_register (pkl_parser->env,
+                                           PKL_ENV_NS_MAIN,
+                                           PKL_AST_IDENTIFIER_POINTER (offset_identifier),
+                                           decl))
+                      assert (0);
+                  }
                 }
           struct_type_elem_list '}'
                 {

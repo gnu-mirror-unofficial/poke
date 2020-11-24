@@ -1,0 +1,15 @@
+/* { dg-do compile } */
+
+type Foo =
+  struct
+  {
+    byte x : OFFSET == 0#B;
+    struct
+    {
+      byte a : OFFSET == 0#B;
+      byte b : OFFSET == 1#B;
+    } s;
+    byte c : OFFSET == 3#B;
+  };
+
+var a = OFFSET; /* { dg-error "" } */

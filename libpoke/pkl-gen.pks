@@ -512,10 +512,10 @@
         over                    ; BOFF null BOFF
         over                    ; BOFF null BOFF null
         dup                     ; BOFF null BOFF null null
-        ;; Note that this 4 should be updated if the lexical structure
+        ;; Note that this 5 should be updated if the lexical structure
         ;; of struct_mapper and struct_constructor changes!
         .c pkl_asm_insn (RAS_ASM, PKL_INSN_POPVAR,
-        .c               0 /* back */, 4 + vars_registered - 1 /* over */);
+        .c               0 /* back */, 5 + vars_registered - 1 /* over */);
         swap                    ; BOFF null null BOFF
         ba .omitted_field
    .c }
@@ -714,7 +714,7 @@
 
         .function struct_mapper @type_struct
         prolog
-        pushf 4
+        pushf 5
         drop                    ; sbound
         drop                    ; ebound
         regvar $boff
@@ -735,6 +735,10 @@
         push null
   .c }
         regvar $ivalue
+        push ulong<64>0
+        push ulong<64>1
+        mko
+        regvar $OFFSET
         pushvar $boff           ; BOFF
         dup                     ; BOFF BOFF
         ;; Iterate over the elements of the struct type.
@@ -805,6 +809,14 @@
         drop
         pushvar $boff           ; ...[EBOFF ENAME EVAL] BOFF
  .c   }
+        ;; Update OFFSET
+        dup
+        pushvar $boff
+        sublu
+        nip2
+        push ulong<64>1
+        mko
+        popvar $OFFSET
  .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
         ;; Union field successfully mapped.
@@ -867,13 +879,13 @@
  .c       i++;
  .c     continue;
  .c   }
-        ;; The lexical address of this method is 0,B where B is 4 +
-        ;; element order.  This 4 should be updated if the lexical
+        ;; The lexical address of this method is 0,B where B is 5 +
+        ;; element order.  This 5 should be updated if the lexical
         ;; structure of this function changes.
         .let @decl_name = PKL_AST_DECL_NAME (@field)
         .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
         push #name_str
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 4 + i);
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 5 + i);
  .c     nmethod++;
  .c     i++;
  .c }
@@ -1046,7 +1058,7 @@
 
         .function struct_constructor @type_struct
         prolog
-        pushf 4
+        pushf 5
         regvar $sct             ; SCT
         ;; Initialize $nfield to 0UL
         push ulong<64>0
@@ -1057,6 +1069,10 @@
         ;; So we have the same lexical structure than struct_mapper.
         push null
         regvar $unused
+        push ulong<64>0
+        push ulong<64>1
+        mko
+        regvar $OFFSET
         ;; The struct is not mapped, so set its bit-offset to 0UL.
         push ulong<64>0          ; 0UL
         ;; Iterate over the fields of the struct type.
@@ -1185,7 +1201,7 @@
         push null               ; BOFF null null
         dup                     ; BOFF null null null
         .c pkl_asm_insn (RAS_ASM, PKL_INSN_POPVAR,
-        .c               0 /* back */, 4 + vars_registered - 1 /* over */);
+        .c               0 /* back */, 5 + vars_registered - 1 /* over */);
         ba .omitted_field
    .c }
    .c else
@@ -1229,6 +1245,11 @@
         addlu
         nip                    ; ... ENAME EVAL EBOFF NEBOFF
    .c }
+        ;; Update OFFSET
+        dup                    ; ... ENAME EVAL NEBOFF NEBOFF
+        push ulong<64>1
+        mko                    ; ... ENAME EVAL NEBOFF NOFFSET
+        popvar $OFFSET
         popvar $boff           ; ... ENAME EVAL NEBOFF
         nrot                   ; ... NEBOFF ENAME EVAL
 .omitted_field:
@@ -1290,13 +1311,13 @@
  .c       i++;
  .c     continue;
  .c   }
-        ;; The lexical address of this method is 0,B where B is 4 +
-        ;; element order.  This 4 should be updated if the lexical
+        ;; The lexical address of this method is 0,B where B is 5 +
+        ;; element order.  This 5 should be updated if the lexical
         ;; structure of this function changes.
         .let @decl_name = PKL_AST_DECL_NAME (@field)
         .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
         push #name_str
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 4 + i);
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 5 + i);
  .c     nmethod++;
  .c     i++;
  .c }

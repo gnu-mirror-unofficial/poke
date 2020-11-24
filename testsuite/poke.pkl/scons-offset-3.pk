@@ -1,0 +1,16 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    byte x : OFFSET == 0#B;
+    struct
+    {
+      byte a : OFFSET == 0#B;
+      byte b : OFFSET == 1#B;
+    } s;
+    byte c : OFFSET == 3#B;
+  };
+
+/* { dg-command {Foo {}} } */
+/* { dg-output "Foo \{x=0UB,s=struct \{a=0UB,b=0UB\},c=0UB\}" } */

@@ -7221,6 +7221,7 @@ They contain heterogeneous collections of values.
 * Field Initializers::		Initial values for fields.
 * Field Labels::		Explicit offsets for fields.
 * Pinned Structs::		Fix the offset of fields.
+* The OFFSET variable::		Accessing the offset of the current field.
 * Integral Structs::		Composite data stored in integers.
 * Unions::			Dealing with conditional data.
 * Union Constructors::          Constructing union values.
@@ -7645,6 +7646,36 @@ type Ctf_Stype_V1 =
 @end example
 
 Note that integral structs cannot be pinned.  @xref{Integral Structs}.
+
+@node The OFFSET variable
+@subsection The OFFSET variable
+@cindex OFFSET
+
+The offset of the current field being mapped or constructed, relative
+to the beginning of the struct, is at all times available in a
+variable called @code{OFFSET}.  This is useful in situations where we
+need that information in a constraint expression, the boundary of an
+array, an initialization value, or the like.
+
+For example, what follows is a typical usage of OFFSET in order to
+introduce some padding in a struct:
+
+@example
+type Elf64_Note =
+  struct
+  @{
+    [...]
+
+    Elf64_Xword name;
+    byte[alignto (OFFSET, 4#B)] padding;
+
+    [...]
+  @};
+@end example
+
+The value of this variable changes every time a new field is mapped or
+constructed, so writing to it will only have effect until the next
+field is processed: at that time the value will be overwritten.
 
 @node Integral Structs
 @subsection Integral Structs

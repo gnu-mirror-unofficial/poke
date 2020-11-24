@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    byte s;
+    byte[s] a : OFFSET == 1#B;
+    byte b : OFFSET == (s'size + a'size);
+  };
+
+/* { dg-command {Foo {s=3}} } */
+/* { dg-output "Foo \{s=3UB,a=\\\[0UB,0UB,0UB\\\],b=0UB\}" } */

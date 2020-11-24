@@ -147,6 +147,11 @@ EXTRA_DIST = \
   poke.map/map-struct-fun-1.pk \
   poke.map/map-struct-fun-2.pk \
   poke.map/map-struct-fun-3.pk \
+  poke.map/map-struct-offset-1.pk \
+  poke.map/map-struct-offset-2.pk \
+  poke.map/map-struct-offset-3.pk \
+  poke.map/map-struct-offset-4.pk \
+  poke.map/map-struct-offset-5.pk \
   poke.map/mapped-attr.pk \
   poke.map/maps-arrays-1.pk \
   poke.map/maps-arrays-2.pk \
@@ -1461,6 +1466,11 @@ EXTRA_DIST = \
   poke.pkl/scons-int-struct-1.pk \
   poke.pkl/scons-int-struct-2.pk \
   poke.pkl/scons-int-struct-3.pk \
+  poke.pkl/scons-offset-1.pk \
+  poke.pkl/scons-offset-2.pk \
+  poke.pkl/scons-offset-3.pk \
+  poke.pkl/scons-offset-4.pk \
+  poke.pkl/scons-offset-diag-1.pk \
   poke.pkl/scons-union-1.pk \
   poke.pkl/scons-union-2.pk \
   poke.pkl/scons-union-3.pk \
