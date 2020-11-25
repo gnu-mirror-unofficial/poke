@@ -1525,7 +1525,6 @@ EXTRA_DIST = \
   poke.pkl/string-diag-1.pk \
   poke.pkl/string-diag-2.pk \
   poke.pkl/string-multiline-1.pk \
-  poke.pkl/string-multiline-diag-1.pk \
   poke.pkl/sref-func-1.pk \
   poke.pkl/sref-func-2.pk \
   poke.pkl/sref-func-3.pk \
@@ -1534,6 +1533,7 @@ EXTRA_DIST = \
   poke.pkl/strings-2.pk \
   poke.pkl/strings-3.pk \
   poke.pkl/strings-4.pk \
+  poke.pkl/strings-5.pk \
   poke.pkl/strings-esc-1.pk \
   poke.pkl/strings-esc-2.pk \
   poke.pkl/strings-esc-diag-1.pk \

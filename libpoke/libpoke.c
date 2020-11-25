@@ -646,7 +646,8 @@ pk_decl_val (pk_compiler pkc, const char *name)
   pkc->status = PK_OK;
 
   if (decl == NULL
-      || PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR)
+      || (PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR
+          && PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_FUNC))
     return PK_NULL;
 
   return pvm_env_lookup (runtime_env, back, over);

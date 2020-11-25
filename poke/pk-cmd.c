@@ -549,9 +549,6 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 extern const struct pk_cmd *info_cmds[]; /* pk-cmd-info.c  */
 extern struct pk_trie *info_trie; /* pk-cmd-info.c  */
 
-extern const struct pk_cmd *help_cmds[]; /* pk-cmd-help.c */
-extern struct pk_trie *help_trie; /* pk-cmd-help.c */
-
 extern const struct pk_cmd *vm_cmds[]; /* pk-cmd-vm.c  */
 extern struct pk_trie *vm_trie;  /* pk-cmd-vm.c  */
 
@@ -721,7 +718,6 @@ pk_cmd_init (void)
 {
   cmds_trie = pk_trie_from_cmds (dot_cmds);
   info_trie = pk_trie_from_cmds (info_cmds);
-  help_trie = pk_trie_from_cmds (help_cmds);
   vm_trie = pk_trie_from_cmds (vm_cmds);
   vm_disas_trie = pk_trie_from_cmds (vm_disas_cmds);
   set_trie = pk_trie_from_cmds (set_cmds);
@@ -738,7 +734,6 @@ pk_cmd_shutdown (void)
 {
   pk_trie_free (cmds_trie);
   pk_trie_free (info_trie);
-  pk_trie_free (help_trie);
   pk_trie_free (vm_trie);
   pk_trie_free (vm_disas_trie);
   pk_trie_free (set_trie);

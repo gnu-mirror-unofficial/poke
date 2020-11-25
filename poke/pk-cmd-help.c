@@ -17,16 +17,30 @@
  */
 
 #include <config.h>
+
+#include <assert.h>
+
 #include "pk-cmd.h"
+#include "pk-utils.h"
 
-extern struct pk_cmd null_cmd; /* pk-cmd.c  */
+static int
+pk_cmd_help (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  pk_val ret;
+  pk_val topic;
+  pk_val pk_help;
+  assert (argc == 1);
 
-const struct pk_cmd *help_cmds[] =
-  {
-    &null_cmd
-  };
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  topic = pk_make_string (PK_CMD_ARG_STR (argv[0]));
 
-struct pk_trie *help_trie;
+  pk_help = pk_decl_val (poke_compiler, "pk_help");
+  assert (pk_help != PK_NULL);
+  if (pk_call (poke_compiler, pk_help, &ret, topic, PK_NULL) == PK_ERROR)
+    assert (0);
+
+  return 1;
+}
 
 const struct pk_cmd help_cmd =
-  {"help", "", "", 0, &help_trie, NULL, "help COMMAND", NULL};
+  {"help", "s?", "", 0, NULL, pk_cmd_help, ".help [TOPIC]", NULL};

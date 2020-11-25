@@ -4,4 +4,4 @@ var s = "foo
 bar";
 
 /* { dg-command {s} } */
-/* { dg-output {"foo\nbar"} } */
+/* { dg-output "\"foo\\\\nbar\"" } */

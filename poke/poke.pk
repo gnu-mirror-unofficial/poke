@@ -16,6 +16,74 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**** Online help system.  ****/
+
+/* The pk_help_topics global variable contains an array of entries
+   with the form:
+
+   ["TOPIC" "... description of topic ..."]
+
+   The .help TOPIC command searches in this table and displays the
+   corresponding description.  */
+
+type Poke_HelpEntry =
+  struct
+  {
+    string category;
+    string topic;
+    string summary;
+    string description;
+  };
+
+var pk_help_topics = Poke_HelpEntry[] ();
+
+/* Add a new entry to pk_help_topics.  */
+
+fun pk_help_add_topic = (Poke_HelpEntry entry) void:
+{
+  /* If the topic already exists in the table, replace its description
+     with the new one.  */
+  for (var i = 0; i < pk_help_topics'length; i++)
+   if (pk_help_topics[i].category == entry.category
+       && pk_help_topics[i].topic == entry.topic)
+     {
+       pk_help_topics[i] = entry;
+       return;
+     }
+
+  /* XXX use += ELEM instead.  */
+  pk_help_topics += [entry];
+}
+
+/* Print a help topic.  */
+
+fun pk_help = (string topic) void:
+{
+  if (topic == "")
+  {
+    print "Usage: .help TOPIC\n";
+    print "Available help topics:\n\n";
+    print "Commands:\n";
+    for (entry in pk_help_topics where entry.category == "commands")
+      printf ("\t%s\t\t%s\n", entry.topic, entry.summary);
+    print "\n";
+    print "To access the poke manual, type \".doc TOPIC\".\n";
+    return;
+  }
+
+  for (entry in pk_help_topics)
+    if (entry.topic == topic)
+    {
+      printf ("%s - %s\n", entry.topic, entry.summary);
+      if (entry.description != "")
+        printf ("%s\n", entry.description);
+      return;
+    }
+
+  print "Sorry no clue about that.
+Type .help with no topic for a list of topics.\n";
+}
+
 /**** Set the default load path for maps ****/
 
 var map_load_path = "";

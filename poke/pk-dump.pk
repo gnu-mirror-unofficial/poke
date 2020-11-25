@@ -16,8 +16,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-pk_help_str = pk_help_str
-  + "\ndump\t\tDisplay the contents of an IO range.";
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+          category = "commands",
+          topic = "dump",
+          summary = "display the contents of a range in the current IO space.",
+          description="
+Synopsis:
+
+  dump [:from OFFSET] [:size OFFSET] [:ruler BOOL] [:ascii BOOL] \\
+       [:group_by INT] [:cluster_by INT]
+
+Arguments:
+
+  :from (offset)
+         Beginning of the range to dump.  Defaults to
+         `pk_dump_offset', initially 0#B.
+
+  :size (offset)
+         How much data to dump.  Defaults to `pk_dump_size', initially
+         128#B.
+
+  :ruler (int)
+         Boolean indicating whether to display a ruler.  Defaults to
+         `pk_dump_ruler', initially 1.
+
+  :ascii (int)
+         Boolean indicating whether to display an ASCII dump at the
+         right of the bytes dump.  Defaults to `pk_dump_ascii',
+         initially 1.
+
+  :group_by (int)
+         How are bytes grouped together in the output.  Defaults to
+         `pk_dump_group_by', initially 2#B.
+
+  :cluster_by (int)
+         Display additional space after the specified number of groups
+         have been displayed.  Defaults to `pk_dump_cluster_by',
+         initially 8.
+
+If there is not a current IO space available `dump' raises an E_no_ios
+exception.
+
+Note that `dump' updates the `pk_dump_offset' global variable to
+reflect the last used offset.
+
+See `.doc dump' for more information."
+          };
 
 /* The operation of `dump' can be configured by the user by
    customizing the following variables.  */

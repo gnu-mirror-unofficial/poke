@@ -1,5 +1,18 @@
 2020-11-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk (pk_help_topics): New variable.
+	(pk_help_add_topic): New function.
+	* poke/pk-dump.pk: Add an entry to pk_help_topics.
+	* poke/pk-save.pk: Likewise.
+	* poke/pk-copy.pk: Likewise.
+	* poke/pk-extract.pk: Likewise.
+	* poke/pk-cmd-help.c (pk_cmd_help): Rewrite to use the Poke
+	infrastructure.
+	* poke/pk-cmd.c (pk_cmd_shutdown): Reflect changes in
+	pk-cmd-help.c.
+
+2020-11-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/strings-5.pk: New test.
 	* testsuite/poke.pkl/string-multiline-diag-1.pk: Remove.
 	* testsuite/Makefile.am (EXTRA_DIST): Update.

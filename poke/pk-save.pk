@@ -16,8 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-pk_help_str = pk_help_str
-  + "\nsave\t\tSave a range of an IO space to a file.";
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+          category = "commands",
+          topic = "save",
+          summary = "Save a range of an IO sapce to a file.",
+          description = "
+Get the bytes corresponding to a given mapped value and create a
+memory IO space that contains them.
+
+Synopsis:
+
+  save [:ios IOS] [:from OFFSET] [:size OFFSET] [:file STRING] \\
+       [:append BOOL] [:verbose BOOL]
+
+Arguments:
+
+  :ios (int)
+         IOS id from where to get the data.  Defaults to the current
+         IO space.
+
+  :from (offset)
+         Beginning of the data to save, in the selected IO space.
+
+  :size (offset)
+
+         Size of the data to save.  This argument is truncated to
+         bytes.
+
+  :file (string)
+         Name of the file where to save the data.
+
+  :append (bool)
+         By default the output file is truncated if it already
+         exists. If this argument is true, then the data is instead
+         appended at the end of the file.
+
+  :verbose (bool)
+         Be verbose.
+
+If the given value is not mapped `extract' raises E_map.
+
+See `.doc save' for more information."
+         };
 
 fun save = (int ios = get_ios,
             string file = "",

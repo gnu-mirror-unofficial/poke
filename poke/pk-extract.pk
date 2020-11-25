@@ -16,8 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-pk_help_str = pk_help_str
-  + "\nextract\t\tExtract the contents of a mapped value to a mem IOS.";
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+          category = "commands",
+          topic = "extract",
+          summary = "Extract the contents of a mapped value to a mem IOS.",
+          description ="
+Get the bytes corresponding to a given mapped value and create a
+memory IO space that contains them.
+
+Synopsis:
+
+  extract :val VALUE :to IOS_NAME
+
+Arguments:
+
+  :val (any)
+         Mapped value.
+
+  :to (string)
+         Name of the memory IO space created to hold the value
+         bytes.
+
+If the given value is not mapped `extract' raises E_map.
+
+See `.doc extract' for more information."
+         };
 
 fun extract = (any val, string to) void:
 {
