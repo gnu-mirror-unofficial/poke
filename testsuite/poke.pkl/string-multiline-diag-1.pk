@@ -1,6 +1,0 @@
-/* { dg-do compile } */
-
-/* Normal strings cannot span over multiple lines */
-
-/* { dg-error "" } */ var s = "foo
-bar";

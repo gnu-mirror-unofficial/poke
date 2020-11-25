@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var s = "foo
+bar";
+
+/* { dg-command {s} } */
+/* { dg-output {"foo\nbar"} } */
