@@ -55,7 +55,7 @@ fun pk_help_add_topic = (Poke_HelpEntry entry) void:
   pk_help_topics += [entry];
 }
 
-/* Print a help topic.  */
+/* Print some help about a given topic.  */
 
 fun pk_help = (string topic) void:
 {
