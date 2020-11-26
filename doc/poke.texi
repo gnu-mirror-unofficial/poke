@@ -57,6 +57,7 @@ Pickles
 * Time::			Handling time.
 * Colors::			Editing colors.
 * Audio::			Poking audio files.
+* Object Formats::		Editing executables and libraries.
 
 Advanced Pokology
 * Writing Pickles::		Sharing your abstractions the sane way.
@@ -4178,6 +4179,28 @@ as an integer value:
 1980
 (poke) tag.set_year (1988)
 @end example
+
+@node Object Formats
+@chapter Object Formats
+
+This chapter is of special interest to toolchain developers, people
+doing reverse-engineering, and similar low-level development
+activities.
+
+@menu
+* ELF::                         Editing ELF files.
+* Dwarf::	                Editing DWARF data.
+@end menu
+
+@node ELF
+@section ELF
+
+XXX
+
+@node Dwarf
+@section Dwarf
+
+XXX
 
 @node Writing Pickles
 @chapter Writing Pickles
