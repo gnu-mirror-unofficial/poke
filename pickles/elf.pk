@@ -457,6 +457,19 @@ type Elf64_File =
         return sections'length;
       }
 
+    /* Given an offset, return the string stored at that offset in the
+       "default" string table of the ELF file.  This is the string table
+       section named ".strtab".  If such a section doesn't exist, or it
+       doesn't contain a string table, then raise E_inval.  */
+    method get_string = (offset<Elf_Word,B> offset) string:
+     {
+       if (!section_name_p (".strtab"))
+          raise E_inval;
+
+       var strtab = get_sections_by_name (".strtab")[0];
+       return string @ strtab.sh_offset + offset;
+     }
+
     /* Return the signature corresponding to a given group section.
        If the given section header doesn't correspond to a group
        section then raise E_inval.  */

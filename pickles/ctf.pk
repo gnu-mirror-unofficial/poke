@@ -271,7 +271,7 @@ fun ctf_string = (Elf64_File elf,
  if (name.stid == CTF_STRTAB_0)
    return string @ (header.cth_stroff + name.offset);
  else
-   return elf.get_section_name (name.offset);
+   return elf.get_string (name.offset);
 }
 
 fun ctf_get_header = (Elf64_File elf) CTF_Header:
