@@ -1,6 +1,7 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y: Fix indentation.
+	* pickles/elf.pk: Remove a couple of comments.
 
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 

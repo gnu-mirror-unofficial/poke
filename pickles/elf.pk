@@ -437,7 +437,6 @@ type Elf64_File =
         var sections = Elf64_Shdr[]();
 
         for (s in shdr where s.sh_type == stype)
-          /* XXX use += ELEM instead.  */
           sections += [s];
 
         return sections;
@@ -502,7 +501,6 @@ type Elf64_File =
                  @ sec.sh_offset + sizeof (Elf_Word));
 
             for (entry in group_entries)
-              /* XXX use += ELEM instead.  */
               section_group += [shdr[entry]];
 
             break;
