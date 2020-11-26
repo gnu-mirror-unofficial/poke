@@ -32,34 +32,34 @@ var _dwarf_map_elf = Elf64_File @ 0#B;
 %name info
 %type Dwarf_CU_Header
 %condition _dwarf_map_elf.section_name_p (".debug_info")
-%offset _dwarf_map_elf.get_section_by_name (".debug_info").sh_offset
+%offset _dwarf_map_elf.get_sections_by_name (".debug_info")[0].sh_offset
 
 %entry
 %name types
 %type Dwarf_Type_Unit_Header
 %condition _dwarf_map_elf.section_name_p (".debug_types")
-%offset _dwarf_map_elf.get_section_by_name (".debug_types").sh_offset
+%offset _dwarf_map_elf.get_section_by_name (".debug_types")[0].sh_offset
 
 %entry
 %name pubnames
 %type Dwarf_Name_Lookup_Table
 %condition _dwarf_map_elf.section_name_p (".debug_pubnames")
-%offset _dwarf_map_elf.get_section_by_name (".debug_pubnames").sh_offset
+%offset _dwarf_map_elf.get_sections_by_name (".debug_pubnames")[0].sh_offset
 
 %entry
 %name pubtypes
 %type Dwarf_Name_Lookup_Table
 %condition _dwarf_map_elf.section_name_p (".debug_pubtypes")
-%offset _dwarf_map_elf.get_section_by_name (".debug_pubtypes").sh_offset
+%offset _dwarf_map_elf.get_sections_by_name (".debug_pubtypes")[0].sh_offset
 
 %entry
 %name frame
-%type Dwarf_Call_Frame_Entry[_dwarf_map_elf.get_section_by_name (".debug_frame").sh_size]
+%type Dwarf_Call_Frame_Entry[_dwarf_map_elf.get_sections_by_name (".debug_frame")[0].sh_size]
 %condition _dwarf_map_elf.section_name_p (".debug_frame")
-%offset _dwarf_map_elf.get_section_by_name (".debug_frame").sh_offset
+%offset _dwarf_map_elf.get_sections_by_name (".debug_frame")[0].sh_offset
 
 %entry
 %name types
 %type Dwarf_Type_Unit_Header
 %condition _dwarf_map_elf.section_name_p (".debug_types")
-%offset _dwarf_map_elf.get_section_by_name (".debug_types").sh_offset
+%offset _dwarf_map_elf.get_sections_by_name (".debug_types")[0].sh_offset

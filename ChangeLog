@@ -1,5 +1,10 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/ctf.pk: Adapt to new interface in elf.pk.
+	* maps/dwarf.map: Likewise.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	BZ 26891
 	* libpoke/pkl-ast.h (PKL_AST_SRC_FILENAME): Define.
 	(struct pkl_ast_src): New type.
