@@ -546,9 +546,8 @@ printer-c
     }
 
     static void
-    pvm_literal_printer_hi (FILE *out, jitter_uint hi)
+    pvm_literal_printer_hi (jitter_print_context out, jitter_uint hi)
     {
-      fflush (out);
       pk_printf ("%%hi(0x%" JITTER_PRIx ")", hi);
       pk_term_flush ();
       printer_hi = hi; /* This sucks */

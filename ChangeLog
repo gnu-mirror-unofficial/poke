@@ -1,5 +1,10 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (pvm_literal_printer_hi): Get a jitter print
+	context as first argument.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Object Formats): New chapter.
 
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
