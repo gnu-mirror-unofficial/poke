@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+/* function argument 2 has the wrong type */
+
+assert (2, 0);  /* { dg-error "" } */

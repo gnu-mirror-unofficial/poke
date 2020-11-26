@@ -1,0 +1,13 @@
+/* { dg-do run } */
+
+fun f = void:
+  {
+    try assert (1 == 0);
+    catch if Exception {code = EC_assert}
+      {
+        print "caught\n";
+      }
+  }
+
+/* { dg-command { f } } */
+/* { dg-output "caught" } */

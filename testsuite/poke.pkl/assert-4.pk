@@ -1,0 +1,16 @@
+/* { dg-do run } */
+
+fun a = (int cond) void:
+  {
+    assert (1 == 1, "One is equal to one");
+
+    try assert (cond); /* Line 7. Assert statement starts at column 9. */
+    catch (Exception ex)
+      {
+        print (ex.msg + "\n");
+      }
+  }
+
+/* { dg-command { a (1) } } */
+/* { dg-command { a (0) } } */
+/* { dg-output "assertion failed at .*:7:9" } */

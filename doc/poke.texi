@@ -8898,6 +8898,7 @@ provides an exceptions mechanism to deal with these situations.
 * try-catch::		Catching exceptions in programs.
 * try-until::		Running code until some exception occurs.
 * raise::		Raising exceptions in programs.
+* assert::		Asserting conditions in programs.
 @end menu
 
 @node Exceptions
@@ -8967,6 +8968,8 @@ is reached.
 Generic IO exception.
 @item E_io_flags
 Invalid flags were tried while opening an IO device.
+@item E_assert
+Assertion failure exception.  This is raised by @code{assert} statement.
 @end table
 
 The exception codes of the standard exceptions are available in the
@@ -9069,6 +9072,28 @@ raise @var{exception};
 @noindent
 where @var{exception} is an integer.  This integer can be any number,
 but most often is one of the @code{E_*} codes defined in Poke.
+
+@node assert
+@subsection @code{assert}
+@cindex @code{assert}
+
+The @code{assert} statement allows you test if a condition is true,
+if not, the program will raise an exception with code @code{EC_assert}.
+
+@example
+assert (@var{condition})
+assert (@var{condition}, @var{message})
+@end example
+
+The optional @var{message} will be part of the @code{msg} field of
+raised @code{Exception} to explain the situation.
+
+@example
+assert (1 == 1);
+assert (0 == 0, ``Zero is equal to zero'');
+@end example
+
+@code{assert} is useful for writing unit tests.
 
 @node Printing
 @section Printing

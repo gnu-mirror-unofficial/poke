@@ -602,6 +602,15 @@ EXTRA_DIST = \
   poke.pkl/ass-struct-int-4.pk \
   poke.pkl/ass-union-int-1.pk \
   poke.pkl/ass-union-int-2.pk \
+  poke.pkl/assert-1.pk \
+  poke.pkl/assert-2.pk \
+  poke.pkl/assert-3.pk \
+  poke.pkl/assert-4.pk \
+  poke.pkl/assert-5.pk \
+  poke.pkl/assert-diag-1.pk \
+  poke.pkl/assert-diag-2.pk \
+  poke.pkl/assert-diag-3.pk \
+  poke.pkl/assert-diag-4.pk \
   poke.pkl/attr-diag-1.pk \
   poke.pkl/attr-ios-1.pk \
   poke.pkl/attr-ios-2.pk \

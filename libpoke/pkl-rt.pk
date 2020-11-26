@@ -66,6 +66,7 @@ type Exception =
   };
 
 /* Standard exception codes.
+   These codes should be in sync with PVM_E_* macros in pvm.h.
    Note that user-defined exceptions must have codes starting with
    255.
    Note also that EC_generic _must_ be zero.  */
@@ -86,6 +87,7 @@ var EC_signal        = 12;
 var EC_io_flags      = 13;
 var EC_inval         = 14;
 var EC_exit          = 15;
+var EC_assert        = 16;
 
 /* Standard exceptions.  */
 
@@ -121,6 +123,8 @@ var E_inval
   = Exception {code = EC_inval, msg = "invalid argument", exit_status = 1};
 var E_exit
   = Exception {code = EC_exit, msg = "exit", exit_status = 0};
+var E_assert
+  = Exception {code = EC_assert, msg = "assertion failure", exit_status = 1};
 
 /* Default exception handler.
 
@@ -138,6 +142,26 @@ fun _pkl_exception_handler = (Exception exception) int<32>:
      }
 
    return exception.exit_status;
+  }
+
+/* Assertion function.
+
+   The compiler transforms assert statement to invocation of this
+   function.  COND is first argument of assert statement, and MSG is
+   the optional second argument.  LINEINFO contains the source location
+   of the assert statement formatted like "<FILENAME>:<LINE>:<COLUMN>".
+   */
+
+fun _pkl_assert = (uint<64> cond, string msg, string lineinfo) void:
+  {
+    if (cond)
+      return;
+
+    raise Exception {
+      code = EC_assert,
+      msg = "assertion failed at " + lineinfo + (msg'length ? ": " + msg : ""),
+      exit_status = 1,
+    };
   }
 
 /* Exit a Poke program with the given exit status code.  This is equivalent

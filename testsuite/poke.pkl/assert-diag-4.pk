@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+assert (1#B);  /* { dg-error "" } */

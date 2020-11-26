@@ -519,6 +519,10 @@ enum pvm_exit_code
 #define PVM_E_EXIT_MSG ""
 #define PVM_E_EXIT_ESTATUS 0
 
+#define PVM_E_ASSERT       16
+#define PVM_E_ASSERT_MSG "assertion failure"
+#define PVM_E_ASSERT_ESTATUS 1
+
 typedef struct pvm *pvm;
 
 /* Initialize a new Poke Virtual Machine and return it.  */

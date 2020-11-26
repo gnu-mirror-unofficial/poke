@@ -120,6 +120,81 @@ pkl_register_arg (struct pkl_parser *parser, pkl_ast_node arg)
   return 1;
 }
 
+/* Assert statement is a syntatic sugar that transforms to invocation of
+   _pkl_assert function with appropriate arguments.
+
+   This function accepts AST nodes corresponding to the condition and
+   optional message of the assert statement, and also the location info
+   of the statement.
+
+   Returns NULL on failure, and expression statement AST node on success.  */
+
+static pkl_ast_node
+pkl_make_assertion (struct pkl_parser *p, pkl_ast_node cond, pkl_ast_node msg,
+                    struct pkl_ast_loc stmt_loc)
+{
+  pkl_ast_node vfunc, call, call_arg;
+  pkl_ast_node arg_cond, arg_msg, arg_lineinfo; /* _pkl_assert args */
+
+  /* Make variable for `_pkl_assert` function */
+  {
+    const char *name = "_pkl_assert";
+    pkl_ast_node vfunc_init;
+    int back, over;
+
+    vfunc_init = pkl_env_lookup (p->env, PKL_ENV_NS_MAIN, name, &back, &over);
+    if (!vfunc_init
+        || (PKL_AST_DECL_KIND (vfunc_init) != PKL_AST_DECL_KIND_FUNC))
+      {
+        pkl_error (p->compiler, p->ast, stmt_loc, "undefined function '%s'",
+                   name);
+        return NULL;
+      }
+    vfunc = pkl_ast_make_var (p->ast, pkl_ast_make_identifier (p->ast, name),
+                              vfunc_init, back, over);
+  }
+
+  /* First argument of _pkl_assert */
+  arg_cond = pkl_ast_make_funcall_arg (p->ast, cond, NULL);
+  PKL_AST_LOC (arg_cond) = PKL_AST_LOC (cond);
+
+  /* Second argument of _pkl_assert */
+  if (msg == NULL)
+    {
+      pkl_ast_node stype = pkl_ast_make_string_type (p->ast);
+
+      msg = pkl_ast_make_string (p->ast, "");
+      PKL_AST_TYPE (msg) = ASTREF (stype);
+    }
+  arg_msg = pkl_ast_make_funcall_arg (p->ast, msg, NULL);
+  ASTREF (arg_msg);
+  PKL_AST_LOC (arg_msg) = PKL_AST_LOC (msg);
+
+  /* Third argument of _pkl_assert to report the location of the assert
+     statement with the following format "<FILENAME>:<LINE>:<COLUMN>".  */
+  {
+    char *str;
+    pkl_ast_node lineinfo, stype;
+
+    if (asprintf (&str, "%s:%d:%d", p->filename ? p->filename : "<stdin>",
+                  stmt_loc.first_line, stmt_loc.first_column)
+        == -1)
+      return NULL;
+    lineinfo = pkl_ast_make_string (p->ast, str);
+    free (str);
+    stype = pkl_ast_make_string_type (p->ast);
+    PKL_AST_TYPE (lineinfo) = ASTREF (stype);
+
+    arg_lineinfo = pkl_ast_make_funcall_arg (p->ast, lineinfo, NULL);
+    arg_lineinfo = ASTREF (arg_lineinfo);
+  }
+
+  call_arg
+      = pkl_ast_chainon (arg_cond, pkl_ast_chainon (arg_msg, arg_lineinfo));
+  call = pkl_ast_make_funcall (p->ast, vfunc, call_arg);
+  return pkl_ast_make_exp_stmt (p->ast, call);
+}
+
 #if 0
 /* Register a list of arguments in the compile-time environment.  This
    is used by function specifiers and try-catch statements.
@@ -1961,6 +2036,20 @@ simple_stmt:
                   PKL_AST_LOC ($3) = @3;
                   if (PKL_AST_TYPE ($3))
                     PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | ASSERT '(' expression ')'
+                {
+                  if (($$ = pkl_make_assertion (pkl_parser, $3, NULL, @$))
+                      == NULL)
+                    YYERROR;
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | ASSERT '(' expression ',' expression ')'
+                {
+                  if (($$ = pkl_make_assertion (pkl_parser, $3, $5, @$))
+                      == NULL)
+                    YYERROR;
                   PKL_AST_LOC ($$) = @$;
                 }
         | funcall_stmt

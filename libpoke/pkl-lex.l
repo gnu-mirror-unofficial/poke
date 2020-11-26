@@ -226,6 +226,7 @@ S ::
 "little"        { return LITTLE; }
 "load"          { return LOAD; }
 "lambda"        { return LAMBDA; }
+"assert"        { return ASSERT; }
 "__PKL_BUILTIN_RAND__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_RAND; }
 "__PKL_BUILTIN_GET_ENDIAN__" {
