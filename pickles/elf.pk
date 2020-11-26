@@ -139,7 +139,7 @@ type Elf64_Sym =
   struct
   {
     offset<Elf_Word,B> st_name;
-    struct
+    struct uint<8>
     {
       uint<4> st_bind;
       uint<4> st_type;
@@ -151,7 +151,7 @@ type Elf64_Sym =
         }
     } st_info;
 
-    struct
+    struct uint<8>
     {
       uint<5>;
       uint<3> st_visibility;

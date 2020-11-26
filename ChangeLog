@@ -1,5 +1,10 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_Sym): Make st_info and st_other integral
+	structs.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_Group): Define.
 	(GRP_COMDAT): Likewise.
 	(GRP_MASKOS): Likewise.
