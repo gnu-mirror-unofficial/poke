@@ -402,6 +402,7 @@ type Elf64_File =
 
     /* Given an offset into the ELF file's section string table, return
        the string.  */
+
     method get_section_name = (offset<Elf_Word,B> offset) string:
       {
         var strtab = ehdr.e_shstrndx;
@@ -410,23 +411,24 @@ type Elf64_File =
 
     /* Given a symtab and an offset into its associated symbol string
        table, return the string.  */
+
     method get_symbol_name = (Elf64_Shdr symtab, offset<Elf_Word,B> offset) string:
       {
         var strtab = symtab.sh_link;
         return string @ (shdr[strtab].sh_offset + offset);
       }
 
-    /* Given a section name, return the section header corresponding
-       to the first section in the ELF file featuring that name.  In
-       case no such section exists, raise a generic error
-       exception.  */
+    /* Given a section name, return an array of section headers in the
+       ELF file having that name.  */
 
-    method get_section_by_name = (string name) Elf64_Shdr:
+    method get_sections_by_name = (string name) Elf64_Shdr[]:
       {
-        for (s in shdr where get_section_name (s.sh_name) == name)
-          return s;
+        var sections = Elf64_Shdr[]();
 
-        raise E_generic;
+        for (s in shdr where get_section_name (s.sh_name) == name)
+          sections += [s];
+
+        return sections;
       }
 
     /* Given a section type (SHT_* value) return an array of section
@@ -447,9 +449,12 @@ type Elf64_File =
 
     method section_name_p = (string name) int:
       {
-        try get_section_by_name (name);
+        var sections = Elf64_Shdr[]();
+
+        try sections = get_sections_by_name (name);
         catch if E_inval { return 0; }
-        return 1;
+
+        return sections'length;
       }
 
     /* Return the signature corresponding to a given group section.

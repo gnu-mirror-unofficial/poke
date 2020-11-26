@@ -1,5 +1,10 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (get_sections_by_name): Renamed from
+	get_section_by_name.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: Fix indentation.
 	* pickles/elf.pk: Remove a couple of comments.
 
