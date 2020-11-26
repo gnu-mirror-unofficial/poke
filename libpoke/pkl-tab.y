@@ -1901,7 +1901,7 @@ simple_stmt:
                                                $2, $1, $3);
 
                   $$ = pkl_ast_make_ass_stmt (pkl_parser->ast,
-                                                $1, exp);
+                                              $1, exp);
                   PKL_AST_LOC (exp) = @$;
                   PKL_AST_LOC ($$) = @$;
                 }

@@ -1,5 +1,9 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y: Fix indentation.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_Sym): Make st_info and st_other integral
 	structs.
 
