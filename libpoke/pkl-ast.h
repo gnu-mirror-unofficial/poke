@@ -33,6 +33,7 @@
 enum pkl_ast_code
 {
   PKL_AST_PROGRAM,
+  PKL_AST_SRC,
   /* Expressions.  */
   PKL_AST_FIRST_EXP,
   PKL_AST_EXP = PKL_AST_FIRST_EXP,
@@ -287,6 +288,21 @@ struct pkl_ast_program
 
 pkl_ast_node pkl_ast_make_program (pkl_ast ast,
                                    pkl_ast_node declarations);
+
+/* PKL_AST_SRC nodes represent a change in the source file.
+
+   FILENAME is either NULL or a C NULL-terminated string.  In this
+   context NULL denotes that the current source file is stdin.  */
+
+#define PKL_AST_SRC_FILENAME(AST) ((AST)->src.filename)
+
+struct pkl_ast_src
+{
+  struct pkl_ast_common common;
+  char *filename;
+};
+
+pkl_ast_node pkl_ast_make_src (pkl_ast ast, const char *filename);
 
 /* PKL_AST_IDENTIFIER nodes represent identifiers in PKL programs.
 
@@ -1817,6 +1833,7 @@ union pkl_ast_node
 {
   struct pkl_ast_common common; /* This field _must_ appear first.  */
   struct pkl_ast_program program;
+  struct pkl_ast_src src;
   /* Expressions.  */
   struct pkl_ast_exp exp;
   struct pkl_ast_cond_exp cond_exp;

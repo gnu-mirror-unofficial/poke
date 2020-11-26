@@ -20,12 +20,28 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "tmpdir.h"
 #include "tempname.h"
 
 #include "pkt.h"
 #include "pkl.h"
 #include "pkl-diag.h"
+
+static void
+pkl_print_filename (const char *filename)
+{
+  const char *fname;
+  
+  /* Prettify a little bit the file name in the error message by
+     removing ./ prefixes.  */
+  if (strlen (filename) > 1 && filename[0] == '.' && filename[1] == '/')
+    fname = filename + 2;
+  else
+    fname = filename;
+            
+  pk_printf ("%s:", fname);
+}
 
 static void
 pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
@@ -38,36 +54,20 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
   if (!PKL_AST_LOC_VALID (loc))
     return;
 
-  if (ast->buffer)
-    {
-      char *p;
-      for (p = ast->buffer; *p != '\0'; ++p)
-        {
-          if (*p == '\n')
-            {
-              cur_line++;
-              cur_column = 1;
-            }
-          else
-            cur_column++;
+  if (ast->filename)
 
-          if (cur_line >= loc.first_line
-              && cur_line <= loc.last_line)
-            {
-              /* Print until newline or end of string.  */
-              for (;*p != '\0' && *p != '\n'; ++p)
-                pk_printf ("%c", *p);
-              break;
-            }
-        }
-    }
-  else
     {
-      FILE *fp = ast->file;
+      FILE *fp = fopen (ast->filename, "rb");
       int c;
 
-      off_t cur_pos = ftello (fp);
+      off_t cur_pos;
       off_t tmp;
+
+      if (!fp)
+        /* No source available.  Do not add detailed info.  */
+        return;
+
+      cur_pos = ftello (fp);
 
       /* Seek to the beginning of the file.  */
       tmp = fseeko (fp, 0, SEEK_SET);
@@ -101,7 +101,33 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
       /* Restore the file position so parsing can continue.  */
       tmp = fseeko (fp, cur_pos, SEEK_SET);
       assert (tmp == 0);
+      fclose (fp);
     }
+  else if (ast->buffer)
+    {
+      char *p;
+      for (p = ast->buffer; *p != '\0'; ++p)
+        {
+          if (*p == '\n')
+            {
+              cur_line++;
+              cur_column = 1;
+            }
+          else
+            cur_column++;
+
+          if (cur_line >= loc.first_line
+              && cur_line <= loc.last_line)
+            {
+              /* Print until newline or end of string.  */
+              for (;*p != '\0' && *p != '\n'; ++p)
+                pk_printf ("%c", *p);
+              break;
+            }
+        }
+    }
+  else
+    assert (0);
 
   pk_puts ("\n");
 
@@ -135,7 +161,7 @@ pkl_error_internal (pkl_compiler compiler,
     {
       pk_term_class ("error-filename");
       if (ast->filename)
-        pk_printf ("%s:", ast->filename);
+        pkl_print_filename (ast->filename);
       else
         pk_puts ("<stdin>:");
       pk_term_end_class ("error-filename");
@@ -208,7 +234,7 @@ pkl_warning (pkl_compiler compiler,
 
   pk_term_class ("error-filename");
   if (ast->filename)
-    pk_printf ("%s:", ast->filename);
+    pkl_print_filename (ast->filename);
   else
     pk_puts ("<stdin>:");
   pk_term_end_class ("error-filename");

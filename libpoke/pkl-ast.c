@@ -1865,6 +1865,17 @@ pkl_ast_make_program (pkl_ast ast, pkl_ast_node elems)
   return program;
 }
 
+/* Build and return an AST node for a source file change.  */
+
+pkl_ast_node
+pkl_ast_make_src (pkl_ast ast, const char *filename)
+{
+  pkl_ast_node src = pkl_ast_make_node (ast, PKL_AST_SRC);
+
+  PKL_AST_SRC_FILENAME (src) = filename ? xstrdup (filename) : NULL;
+  return src;
+}
+
 /* Free the AST nodes linked by PKL_AST_CHAIN.  */
 void
 pkl_ast_node_free_chain (pkl_ast_node ast)
@@ -1901,13 +1912,15 @@ pkl_ast_node_free (pkl_ast_node ast)
   switch (PKL_AST_CODE (ast))
     {
     case PKL_AST_PROGRAM:
-
       for (t = PKL_AST_PROGRAM_ELEMS (ast); t; t = n)
         {
           n = PKL_AST_CHAIN (t);
           pkl_ast_node_free (t);
         }
+      break;
 
+    case PKL_AST_SRC:
+      free (PKL_AST_SRC_FILENAME (ast));
       break;
 
     case PKL_AST_EXP:
@@ -2654,6 +2667,14 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
 
       PRINT_COMMON_FIELDS;
       PRINT_AST_SUBAST_CHAIN (PROGRAM_ELEMS);
+      break;
+
+    case PKL_AST_SRC:
+      IPRINTF ("SRC::\n");
+
+      PRINT_COMMON_FIELDS;
+      PRINT_AST_IMM (filename, SRC_FILENAME, "%p");
+      PRINT_AST_OPT_IMM (*filename, SRC_FILENAME, "%s");
       break;
 
     case PKL_AST_IDENTIFIER:

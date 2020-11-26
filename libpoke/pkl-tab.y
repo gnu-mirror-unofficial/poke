@@ -198,7 +198,7 @@ pkl_register_dummies (struct pkl_parser *parser, int n)
 static int
 load_module (struct pkl_parser *parser,
              const char *module, pkl_ast_node *node,
-             int filename_p)
+             int filename_p, char **filename)
 {
   char *module_filename = NULL;
   pkl_ast ast;
@@ -248,6 +248,10 @@ load_module (struct pkl_parser *parser,
   /* Dirty hack is dirty, but it works.  */
   PKL_AST_PROGRAM_ELEMS (ast->ast) = NULL;
   pkl_ast_free (ast);
+
+  /* Set the `filename' output argument if needed.  */
+  if (filename)
+    *filename = strdup (module_filename);
 
   fclose (fp);
   free (module_filename);
@@ -564,9 +568,10 @@ program_elem:
 load:
         LOAD IDENTIFIER ';'
                 {
+                  char *filename = NULL;
                   int ret = load_module (pkl_parser,
                                          PKL_AST_IDENTIFIER_POINTER ($2),
-                                         &$$, 0 /* filename_p */);
+                                         &$$, 0 /* filename_p */, &filename);
                   if (ret == 2)
                     /* The sub-parser should have emitted proper error
                        messages.  No need to be verbose here.  */
@@ -579,14 +584,28 @@ load:
                       YYERROR;
                     }
 
+                  /* Prepend and append SRC nodes to handle the change of
+                     source files.  */
+                  {
+                      pkl_ast_node src1 = pkl_ast_make_src (pkl_parser->ast,
+                                                            filename);
+                      pkl_ast_node src2 = pkl_ast_make_src (pkl_parser->ast,
+                                                            pkl_parser->filename);
+
+                      $$ = pkl_ast_chainon (src1, $$);
+                      $$ = pkl_ast_chainon ($$, src2);
+                  }
+
                   $2 = ASTREF ($2);
                   pkl_ast_node_free ($2);
+                  free (filename);
                 }
         | LOAD STR ';'
                 {
+                  char *filename = PKL_AST_STRING_POINTER ($2);
                   int ret = load_module (pkl_parser,
-                                         PKL_AST_STRING_POINTER ($2),
-                                         &$$, 1 /* filename_p */);
+                                         filename,
+                                         &$$, 1 /* filename_p */, NULL);
                   if (ret == 2)
                     /* The sub-parser should have emitted proper error
                        messages.  No need to be verbose here.  */
@@ -595,9 +614,21 @@ load:
                     {
                       pkl_error (pkl_parser->compiler, pkl_parser->ast, @2,
                                  "cannot load module from file `%s'",
-                                 PKL_AST_STRING_POINTER ($2));
+                                 filename);
                       YYERROR;
                     }
+
+                  /* Prepend and append SRC nodes to handle the change of
+                     source files.  */
+                  {
+                      pkl_ast_node src1 = pkl_ast_make_src (pkl_parser->ast,
+                                                            filename);
+                      pkl_ast_node src2 = pkl_ast_make_src (pkl_parser->ast,
+                                                            pkl_parser->filename);
+
+                      $$ = pkl_ast_chainon (src1, $$);
+                      $$ = pkl_ast_chainon ($$, src2);
+                  }
 
                   $2 = ASTREF ($2);
                   pkl_ast_node_free ($2);

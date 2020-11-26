@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "pk-utils.h"
 
@@ -80,6 +81,19 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_anal_ps_program)
 {
   assert (PKL_ANAL_PAYLOAD->next_context == 0);
+}
+PKL_PHASE_END_HANDLER
+
+/* The following handler is used in all anal phases, and handles
+   changing the source file for diagnostics.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal_ps_src)
+{
+  pkl_ast_node src = PKL_PASS_NODE;
+  char *filename = PKL_AST_SRC_FILENAME (src);
+
+  free (PKL_PASS_AST->filename);
+  PKL_PASS_AST->filename = filename ? strdup (filename) : NULL;
 }
 PKL_PHASE_END_HANDLER
 
@@ -656,6 +670,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_anal1
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_anal_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_anal1_ps_struct),
@@ -724,7 +739,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_offset)
   if (PKL_AST_TYPE_CODE (magnitude_type)
       != PKL_TYPE_INTEGRAL)
     {
-      PKL_ERROR (PKL_AST_LOC (magnitude_type),
+      PKL_ERROR (PKL_AST_LOC (magnitude),
                  "expected integer expression in offset");
       PKL_ANAL_PAYLOAD->errors++;
       PKL_PASS_ERROR;
@@ -919,6 +934,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_anal2
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_anal_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_EXP, pkl_anal2_ps_checktype),
@@ -999,6 +1015,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_analf
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_anal_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_anal_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_anal_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_analf_ps_array_initializer),

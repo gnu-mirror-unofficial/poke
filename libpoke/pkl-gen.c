@@ -71,6 +71,16 @@
 #include "pkl-gen.pkc"
 
 /*
+ * SRC
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_src)
+{
+  /* Nothing to do there.  */
+}
+PKL_PHASE_END_HANDLER
+
+/*
  * PROGRAM
  * | PROGRAM_ELEM
  * | ...
@@ -3783,6 +3793,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_gen
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_gen_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_gen_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_gen_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_gen_ps_var),

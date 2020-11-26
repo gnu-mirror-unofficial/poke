@@ -503,7 +503,7 @@ type Elf64_File =
           {
             var group_entries
               = (Elf_Word[sec.sh_size - sizeof (Elf_Word)]
-                 @ sec.sh_offset + sizeof (Elf_Word));
+                 @ sec.sh_offset#b + sizeof (Elf_Word));
 
             for (entry in group_entries)
               section_group += [shdr[entry]];

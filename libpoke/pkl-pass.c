@@ -352,6 +352,9 @@ pkl_do_pass_1 (pkl_compiler compiler,
         PKL_PASS_CHAIN (PKL_AST_PROGRAM_ELEMS (node));
 
       break;
+    case PKL_AST_SRC:
+      break;
+
     case PKL_AST_COND_EXP:
       PKL_PASS (PKL_AST_COND_EXP_COND (node));
       PKL_PASS (PKL_AST_COND_EXP_THENEXP (node));

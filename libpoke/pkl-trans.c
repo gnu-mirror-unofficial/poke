@@ -136,6 +136,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans_pr_program)
 }
 PKL_PHASE_END_HANDLER
 
+/* The following handler is used in all trans phases, and handles
+   changing the source file for diagnostics.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans_ps_src)
+{
+  pkl_ast_node src = PKL_PASS_NODE;
+  char *filename = PKL_AST_SRC_FILENAME (src);
+
+  free (PKL_PASS_AST->filename);
+  PKL_PASS_AST->filename = filename ? strdup (filename) : NULL;
+}
+PKL_PHASE_END_HANDLER
+
 
 
 /* Compute and set the number of elements in a STRUCT node.  */
@@ -1090,6 +1103,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_trans1
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT, pkl_trans1_ps_struct),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_trans1_ps_offset),
@@ -1336,6 +1350,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_trans2
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_EXP, pkl_trans2_ps_exp),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_trans2_ps_offset),
@@ -1404,6 +1419,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_trans3
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_trans3_ps_op_sizeof),
   };
@@ -1413,5 +1429,6 @@ struct pkl_phase pkl_phase_trans3
 struct pkl_phase pkl_phase_trans4
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
   };

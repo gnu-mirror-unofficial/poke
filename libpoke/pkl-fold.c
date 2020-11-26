@@ -42,6 +42,19 @@
 
 #define PKL_FOLD_PAYLOAD ((pkl_fold_payload) PKL_PASS_PAYLOAD)
 
+/* The following handler is used in all fold phases, and handles
+   changing the source file for diagnostics.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_src)
+{
+  pkl_ast_node src = PKL_PASS_NODE;
+  char *filename = PKL_AST_SRC_FILENAME (src);
+
+  free (PKL_PASS_AST->filename);
+  PKL_PASS_AST->filename = filename ? strdup (filename) : NULL;
+}
+PKL_PHASE_END_HANDLER
+
 /* Emulation routines.
 
    The letter-codes after EMUL_ specify the number and kind of
@@ -1138,6 +1151,7 @@ PKL_PHASE_END_HANDLER
 struct pkl_phase pkl_phase_fold
   __attribute__ ((visibility ("hidden"))) =
   {
+   PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_fold_ps_src),
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_fold_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_fold_ps_indexer),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_fold_ps_cond_exp),

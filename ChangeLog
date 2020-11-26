@@ -1,5 +1,41 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	BZ 26891
+	* libpoke/pkl-ast.h (PKL_AST_SRC_FILENAME): Define.
+	(struct pkl_ast_src): New type.
+	(pkl_ast_make_src): New prototype.
+	(union pkl_ast_node): New field `src'.
+	* libpoke/pkl-ast.c (pkl_ast_make_src): New function.
+	(pkl_ast_node_free): Handle SRC AST nodes.
+	(pkl_ast_print_1): Likewise.
+	* libpoke/pkl-tab.y (load): Add SRC nodes.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* libpoke/pkl-anal.c (pkl_anal_pr_src): New handler.
+	(pkl_phase_anal1): Install handler.
+	(pkl_phase_anal2): Likewise.
+	(pkl_phase_analf): Likewise.
+	(pkl_anal2_ps_offset): Fix location of error message.
+	* libpoke/pkl-typify.c (pkl_typify_ps_src): New handler.
+	(pkl_phase_typify1): Install handler.
+	(pkl_phase_typify2): Likewise.
+	* libpoke/pkl-fold.c (pkl_fold_ps_src): New handler.
+	(pkl_phase_fold): Install handler.
+	* libpoke/pkl-trans.c (pkl_trans_ps_src): New handler.
+	(pkl_phase_trans1): Install handler.
+	(pkl_phase_trans2): Likewise.
+	(pkl_phase_trans3): Likewise.
+	(pkl_phase_trans4): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_src): New handler.
+	* libpoke/pkl-diag.c (pkl_detailed_location): Open the source file
+	for diagnostics, do not reuse the fp in the ast.
+	(pkl_print_filename): New function.
+	(pkl_error_internal): Use pkl_print_filename.
+	(pkl_warning): Likewise.
+	* etc/poke.rec (Source line is missing on in-type struct errors):
+	Remove as fixed.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (get_sections_by_name): Renamed from
 	get_section_by_name.
 
