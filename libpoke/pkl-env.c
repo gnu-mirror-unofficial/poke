@@ -144,8 +144,10 @@ register_decl (int top_level_p,
               || decl_kind == PKL_AST_DECL_KIND_FUNC
               || decl_kind == PKL_AST_DECL_KIND_UNIT))
         {
-          pkl_ast_node_free (PKL_AST_DECL_NAME (found_decl));
-          PKL_AST_DECL_NAME (found_decl) = NULL;
+          pkl_ast_node decl_name = PKL_AST_DECL_NAME (found_decl);
+
+          free (PKL_AST_IDENTIFIER_POINTER (decl_name));
+          PKL_AST_IDENTIFIER_POINTER (decl_name) = strdup ("");
         }
       else
         return 0;

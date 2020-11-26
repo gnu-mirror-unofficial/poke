@@ -1,5 +1,11 @@
 2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-env.c (register_decl): Change the names of
+	re-defined declarations to "" instead of removing the declaration
+	name identifier node.
+
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (get_string): New method.
 	* pickles/ctf.pk (ctf_string): Use it.
 
