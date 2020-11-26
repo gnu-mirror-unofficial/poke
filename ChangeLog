@@ -1,3 +1,14 @@
+2020-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf.pk (Elf64_Group): Define.
+	(GRP_COMDAT): Likewise.
+	(GRP_MASKOS): Likewise.
+	(GRP_MASKPROC): Likewise.
+	(get_section_group): New method.
+	(get_group_signature): Likewise.
+	(get_group_signatures): Likewise.
+	(get_symbol_name): Likewise.
+
 2020-11-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/poke.pk (pk_help_topics): New variable.

@@ -167,14 +167,44 @@ type Elf64_Sym =
     Elf64_Xword st_size;
   };
 
+/****** Section Groups.  ******/
+
+var GRP_COMDAT = 1,
+    GRP_MASKOS = 0x0ff0_0000,
+    GRP_MASKPROC = 0xf000_0000;
+
+type Elf64_Group =
+  struct
+  {
+    Elf_Word flags;
+    Elf_Word[] entries;  /* Section header indices.  */
+  };
+
 /****** Sections.  ******/
 
 /* Section types.  */
 
-var SHT_STRTAB = 3,
+var SHT_NULL = 0,
+    SHT_PROGBIGS = 1,
+    SHT_SYMTAB = 2,
+    SHT_STRTAB = 3,
     SHT_RELA = 4,
+    SHT_HASH = 5,
+    SHT_DYNAMIC = 6,
+    SHT_NOTE = 7,
+    SHT_NOBITS = 8,
     SHT_REL = 9,
-    SHT_DYNSYM = 11;
+    SHT_SHLIB = 10,
+    SHT_DYNSYM = 11,
+    SHT_INIT_ARRAY = 14,
+    SHT_FINI_ARRAY = 15,
+    SHT_PREINIT_ARRAY = 16,
+    SHT_GROUP = 17,
+    SHT_SYMTAB_SHNDX = 18,
+    SHT_LOOS = 0x6000_0000,
+    SHT_HIOS = 0x6fff_ffff,
+    SHT_LOUSER = 0x8000_0000,
+    SHT_HIUSER = 0xffff_ffff;
 
 /* Section Attribute Flags.  */
 
@@ -370,11 +400,19 @@ type Elf64_File =
     Elf64_Phdr[ehdr.e_phnum] phdr @ ehdr.e_phoff
       if ehdr.e_phnum > 0;
 
-    /* Given an offset in the ELF file's string table, return the
-       string.  */
-    method get_string = (offset<Elf_Word,B> offset) string:
+    /* Given an offset into the ELF file's section string table, return
+       the string.  */
+    method get_section_name = (offset<Elf_Word,B> offset) string:
       {
         var strtab = ehdr.e_shstrndx;
+        return string @ (shdr[strtab].sh_offset + offset);
+      }
+
+    /* Given a symtab and an offset into its associated symbol string
+       table, return the string.  */
+    method get_symbol_name = (Elf64_Shdr symtab, offset<Elf_Word,B> offset) string:
+      {
+        var strtab = symtab.sh_link;
         return string @ (shdr[strtab].sh_offset + offset);
       }
 
@@ -382,32 +420,94 @@ type Elf64_File =
        to the first section in the ELF file featuring that name.  In
        case no such section exists, raise a generic error
        exception.  */
+
     method get_section_by_name = (string name) Elf64_Shdr:
       {
-        for (s in shdr where get_string (s.sh_name) == name)
+        for (s in shdr where get_section_name (s.sh_name) == name)
           return s;
 
         raise E_generic;
       }
 
-    /* Given a section type (SHT_* value) return the section header
-       corresponding to the first section in the ELF file featuring
-       that type.  In case no such section exists, raise a generic
-       error exception.  */
-    method get_section_by_type = (Elf_Word stype) Elf64_Shdr:
-      {
-        for (s in shdr where s.sh_type == stype)
-          return s;
+    /* Given a section type (SHT_* value) return an array of section
+       headers in the ELF file with that type.  */
 
-        raise E_generic;
+    method get_sections_by_type = (Elf_Word stype) Elf64_Shdr[]:
+      {
+        var sections = Elf64_Shdr[]();
+
+        for (s in shdr where s.sh_type == stype)
+          /* XXX use += ELEM instead.  */
+          sections += [s];
+
+        return sections;
       }
 
     /* Given a section name, return whether it exists in this
        file.  */
+
     method section_name_p = (string name) int:
       {
         try get_section_by_name (name);
-        catch if E_generic { return 0; }
+        catch if E_inval { return 0; }
         return 1;
       }
+
+    /* Return the signature corresponding to a given group section.
+       If the given section header doesn't correspond to a group
+       section then raise E_inval.  */
+
+    method get_group_signature = (Elf64_Shdr section) string:
+      {
+        if (section.sh_type != SHT_GROUP)
+          raise E_inval;
+
+        var symtab = shdr[section.sh_link];
+        var symtab_data
+          = Elf64_Sym [symtab.sh_size] @ symtab.sh_offset;
+        var symbol = symtab_data[section.sh_info];
+        var symbol_name = get_symbol_name (symtab, symbol.st_name);
+
+        return symbol_name;
+      }
+
+    /* Return an array of strings with the signatures of the section
+       groups present in this ELF file.  */
+
+    method get_group_signatures = string[]:
+      {
+        var signatures = string[]();
+
+        for (section in shdr where section.sh_type == SHT_GROUP)
+          signatures += [get_group_signature (section)];
+
+        return signatures;
+      }
+
+    /* Given the name of a section group, return an array with the
+       section headers corresponding to all the sections in that
+       group.  If the given name doesn't identify a section group in
+       the ELF file then return an empty array.  */
+
+    method get_section_group = (string group_name) Elf64_Shdr[]:
+      {
+        var section_group = Elf64_Shdr[]();
+
+        var group_sections = get_sections_by_type (SHT_GROUP);
+        for (sec in group_sections
+             where get_group_signature (sec) == group_name)
+          {
+            var group_entries
+              = (Elf_Word[sec.sh_size - sizeof (Elf_Word)]
+                 @ sec.sh_offset + sizeof (Elf_Word));
+
+            for (entry in group_entries)
+              /* XXX use += ELEM instead.  */
+              section_group += [shdr[entry]];
+
+            break;
+         }
+
+       return section_group;
+     }
   };

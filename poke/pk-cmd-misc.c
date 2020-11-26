@@ -36,7 +36,6 @@ pk_cmd_exit (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   int code;
   assert (argc == 1);
-
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
     code = 0;
   else
