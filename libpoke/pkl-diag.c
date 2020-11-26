@@ -32,14 +32,14 @@ static void
 pkl_print_filename (const char *filename)
 {
   const char *fname;
-  
+
   /* Prettify a little bit the file name in the error message by
      removing ./ prefixes.  */
   if (strlen (filename) > 1 && filename[0] == '.' && filename[1] == '/')
     fname = filename + 2;
   else
     fname = filename;
-            
+
   pk_printf ("%s:", fname);
 }
 
