@@ -1286,16 +1286,6 @@ Description:
 + already declared entity.
 Target: 0.1
 
-Summary: Source line is missing on in-type struct errors
-Component: Compiler
-Kind: BUG
-BZ: 26891
-Priority: 3
-Description:
-+ Under some circumstances, the source line is missing when reporting
-+ compile-time errors in struct types.
-Target: 0.1
-
 Summary: Do not emit empty source lines in error reporting
 Component: Compiler
 Kind: BUG
