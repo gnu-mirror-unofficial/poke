@@ -177,16 +177,7 @@ type Dwarf_CIE =
        represents the return address of the function.  */
     ULEB128 return_address_register;
 
-    var insn_size = (length.value
-                        - cie_id'size
-                        - version'size
-                        - augmentation'size
-                        - address_size'size
-                        - segment_size'size
-                        - code_alignment_factor'size
-                        - data_alignment_factor'size
-                        - return_address_register'size);
-
+    var insn_size = (length.value - OFFSET - length'size);
     Dwarf_CFI[insn_size] initial_instructions;
   };
 

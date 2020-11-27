@@ -1,6 +1,8 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf.pk (Elf64_Note): New type.
+	* pickles/dwarf-frame.pk (Dwarf_CIE): Simplify calculation of
+	insn_size.
 
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
