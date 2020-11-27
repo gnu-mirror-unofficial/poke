@@ -199,6 +199,180 @@ type Elf64_Note =
     byte[alignto (OFFSET, 8#B)];
   };
 
+/****** Compressed sections.  *********/
+
+/* Compression algorithm identificators.  */
+
+var ELFCOMPRESS_ZLIB = 1,
+    ELFCOMPRESS_LOOS = 0x6000_0000,
+    ELFCOMPRESS_HIOS = 0x6fff_ffff,
+    ELFCOMPRESS_LOPROC = 0x7000_0000,
+    ELFCOMPRESS_HIPROC = 0x7fff_ffff;
+
+/* The following header is used in sections iwth SHF_COMPRESSED.  */
+
+type Elf64_Chdr =
+  struct
+  {
+    Elf_Word ch_type;
+    Elf_Word ch_reserved;
+    offset<Elf64_Xword,B> ch_size;
+    offset<Elf64_Xword,B> ch_addralign;
+  };
+
+/****** ELF dynamic section.  ******/
+
+
+var DT_NULL = 0,  /* Tags the end of the dynamic array.  */
+    /* d_val holds the string table offset of a null-terminated
+       string, giving the name of a needed library.  The dynamic array
+       may.  contain multiple entries with this type.  */
+    DT_NEEDED = 1,
+    /* d_val holds the total size, in bytes, of the relocation
+       entries associated with the procedure linkage table.  If an
+       entry of type DT_JMPREL is present, a DT_PLTRELSZ must
+       accompany it.  */
+    DT_PLTRELSZ = 2,
+    /* d_ptr holds an address associated with the procedure linkage
+       table and/or the global offset table.  */
+    DT_PLTGOT = 3,
+    /* d_ptr holds the address of the symbol hash table.  This hash
+       table refers to the symbol table referenced by the DT_SYMTAB
+       element.  */
+    DT_HASH = 4,
+    /* d_ptr holds the address of the string table.  Symbol names,
+       library names, and other strings reside in this table.  */
+    DT_STRTAB = 5,
+    /* d_ptr holds the address of the symbol table.  */
+    DT_SYMTAB = 6,
+    /* d_ptr holds the address of a relocation table.  Entries in the
+       table have explicit addends.  An object file may have multiple
+       relocation sections.  If this element is present, the dynamic
+       vector must also have DT_RELASZ and DT_RELAENT elements.  */
+    DT_RELA = 7,
+    /* d_val holds the total size, in bytes, of the DT_RELA relocation
+       entry.  */
+    DT_RELASZ = 8,
+    /* d_val holds the size, in bytes, of the DT_RELA relocation
+       entry.  */
+    DT_RELAENT = 9,
+    /* d_val holds the size, in bytes, of the string table.  */
+    DT_STRSZ = 10,
+    /* d_val holds the size, in bytes, of a symbol table entry.  */
+    DT_SYMENT = 11,
+    /* d_ptr holds the addresss of the initialization function.  */
+    DT_INIT = 12,
+    /* d_ptr holds the address of the finalization function.  */
+    DT_FINI = 13,
+    /* d_val holds the string table offset of a null-terminated
+       string, giving the name of the shared object.  The offset is an
+       index into the table recorded in the DT_STRTAB entry.  */
+    DT_SONAME = 14,
+    /* d_val holds the string table offset of a null-terminated search
+       library search path string.  The offset is an index into the
+       table recorded in the DT_STRTAB entry.  This entry is at level
+       2.  Its use has been superseded by DT_RUNPATH.  */
+    DT_RPATH = 15,
+    /* This element's presence in a shared object library alters the
+       dynamic linker's symbol resolution algorithm for references
+       within the library.  */
+    DT_SYMBOLIC = 16,
+    /* d_ptr holds the address of a relocation table containing rela
+       relocations.  If this element is present, the dynamic structure
+       must also have DT_RELSZ and DT_RELENT elements.  */
+    DT_REL = 17,
+    /* d_val holds the total size, in bytes, of the DT_REL relocation
+       table.  */
+    DT_RELSZ = 18,
+    /* d_val holds the size, in bytes, of the DT_REL relocation
+       entry. */
+    DT_RELENT = 19,
+    /* d_val specifies the type of relocation entry to which the
+       procedure linkage table refers: DT_REL or DT_RELA.  */
+    DT_PLTREL = 20,
+    /* This tag is used for debugging.  Its contents are not
+       specified for the ABI.  */
+    DT_DEBUG = 21,
+    /* This tag's absence signifies that no relocation entry should
+       cause a modification to a non-writable segment, as specified
+       by the segment permissions in the program header table.  If
+       this tag is present, one or more relocation entries might
+       request modifications to a non-writable segement, and the
+       dynamic linker can prepare accordingly.  This entry is at
+       level 2.  Its use has been superseded by the DF_TEXTREL
+       flag.  */
+    DT_TEXTREL = 22,
+    /* d_ptr holds the address of relocation entries associated
+       solely with the procedure linkage table.  If this tag is
+       present, the related entries of types DT_PLTRELSZ and
+       DT_PLTREL must also be present.  */
+    DT_JMPREL = 23,
+    /* If present, this tag instructs the dynamic linker to process
+       all relocations for the object containing this entry before
+       transferring control to the program.  */
+    DT_BIND_NOW = 24,
+    /* d_ptr holds the address of the array of pointers to
+         initialization functions.  */
+    DT_INIT_ARRAY = 25,
+    /* d_ptr holds the address of the array of pointers to
+         finalization functions.  */
+    DT_FINI_ARRAY = 26,
+    /* d_val holds the size in bytes of the array of initialization
+       functions pointed to by the DT_INIT_ARRAY entry.  If an
+       object has a DT_INIT_ARRAY entry, it must also have a
+       DT_INIT_ARRAYSZ entry.  */
+    DT_INIT_ARRAYSZ = 27,
+    /* d_val holds the size in bytes of the array of termination
+       functions pointed to by the DT_FINI_ARRAY entry.  If an
+       object has a DT_fINI_ARRAY entry, it must also have a
+       DT_FINI_ARRAYSZ entry.  */
+    DT_FINI_ARRAYSZ = 28,
+    /* d_val holds the string table offset of a null-terminated
+       library search path string.  The offset is an index into the
+       table recorded in the DT_STRTAB entry.  */
+    DT_RUNPATH = 29,
+    /* d_val holds flag values specific to the object being
+       loaded.  */
+    DT_FLAGS = 30,
+    DT_ENCODING = 32,
+    /* d_ptr holds the address of the array of pointers to
+       pre-initialization functions.  */
+    DT_PREINIT_ARRAY = 32,
+    /* d_val holds the size in bytes of the array of
+       pre-initialization functions pointed to by the
+       DT_PREINIT_ARRAY entry.  */
+    DT_PREINIT_ARRAYSZ = 33,
+    /* d_ptr holds the address of the SHT_SYMTAB_SHNDX section
+       associated with the dynamic symbol table referenced by the
+       DT_SYMTAB element.  */
+    DT_SYMTAB_SHNDX = 34,
+    DT_LOOS = 0x6000_000d,
+    DT_HIOS = 0x6fff_f000,
+    DT_LOPROC = 0x7000_0000,
+    DT_SPARC_REGISTER = 0x7000_0001,
+    DT_HIPROC = 0x7fff_ffff;
+
+type Elf64_Dyn =
+  struct
+  {
+    Elf64_Sxword d_tag;
+
+    union
+      {
+      /* Entries in the dynamic tags in a position >= DT_ENCODING
+         follow an uniform rule regarding what field is used for the
+         data: even entries use d_ptr while odd entries use d_val.  */
+
+        Elf64_Addr d_ptr
+          : (d_tag in [DT_PLTGOT, DT_HASH, DT_STRTAB, DT_SYMTAB, DT_RELA,
+                       DT_SYMENT, DT_INIT, DT_FINI, DT_REL, DT_JMPREL,
+                       DT_INIT_ARRAY, DT_FINI_ARRAY]
+             || (d_tag >= DT_ENCODING && d_tag %2 != 0));
+
+        Elf64_Xword d_val;
+    } d_data;
+  };
+
 /****** Section Groups.  ******/
 
 var GRP_COMDAT = 1,
