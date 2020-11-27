@@ -278,3 +278,10 @@ fun crc32 = (byte[] buf) uint<32>:
 /*** Miscellanea.  */
 
 var NULL = 0#B;
+
+/* Align the given offset to the given alignment.  */
+
+fun alignto = (uoff64 offset, uoff64 to) uoff64:
+  {
+    return (to - (offset % to)) % to;
+  }

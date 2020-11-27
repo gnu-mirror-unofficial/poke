@@ -199,6 +199,7 @@ The Standard Library
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
 * Dates and Times::             Processing and displaying dates and times.
+* Offset Functions::            Useful functions that operate on offsets.
 
 Hacking poke
 * Writing Commands::		Extending poke with new commands.
@@ -9878,6 +9879,7 @@ srand (get_time[1])
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
 * Dates and Times::             Processing and displaying dates and times.
+* Offset Functions::            Useful functions that operate on offsets.
 @end menu
 
 @node Standard Integral Types
@@ -10231,6 +10233,27 @@ Timespec @{
 (poke) ptime (gettimeofday.sec)
 2020-Nov-9 10:40:36
 @end example
+
+@node Offset Functions
+@section Offset Functions
+
+@menu
+* alignto::             Align an offset to a given alignment.
+@end menu
+
+@node alignto
+@subsection alignto
+
+The @code{alignto} function has the prototype:
+
+@example
+fun alignto = (uoff64 offset, uoff64 to) uoff64:
+@{ @dots{} @}
+@end example
+
+@noindent
+It returns an offset that is the result of aligning the given
+@var{offset} to the given alignment @var{to}.
 
 @node The Machine-Interface
 @chapter The Machine-Interface
