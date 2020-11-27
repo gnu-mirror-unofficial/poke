@@ -1,5 +1,11 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Support for multi-line strings with """): Removed
+	as not needed any longer.
+	(Support functions in struct fields): Removed as done.
+
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (PKL_AST_VAR_IS_PARENTHESIZED): Define.
 	(PKL_AST_STRUCT_REF_IS_PARENTHESIZED): Likewise.
 	(struct pkl_ast_var): Add field `is_parenthesized'.

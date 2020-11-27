@@ -710,20 +710,6 @@ Description:
 + - Casts: u?int<*> -> u?int<N>, u?int<N> -> u?int<*>
 RFC: yes
 
-Summary: Support for multi-line strings with """
-Component: Language
-Kind: ENH
-Priority: 2
-Description:
-+ At some point we will support docstrings in Poke functions.  For that,
-+ it is useful to support multi-line strings in order to avoid having to
-+ terminate each line with ``\n\``.
-+
-+ We can use the python syntax """ ... """.  Other ideas are welcome.
-+
-+ This should be implemented in the lexer, ``src/pkl-lex.l``.
-RFC: yes
-
 Summary: Support for i18n with gettext in Poke programs
 Component: Language
 Kind: ENH
@@ -2095,17 +2081,6 @@ Description:
 + types (integers, offsets, strings, arrays, structs).  Refer to this
 + section from array and struct constructor sections.
 Target: 0.1
-
-Summary: Support functions in struct fields
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ There is no reason to not accept function values in struct fiels.
-+ This would allow to initialize them in struct constructors.
-+
-+ Support for mapping functions is a requirement for this.
-Requires: Support mapping and constructing functions
 
 Summary: Factorize promotion of expressions in promo
 Component: Compiler
