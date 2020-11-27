@@ -1,3 +1,11 @@
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-insn.def: Define PKL_INSN_AREM.
+	* libpoke/pvm.jitter (ains): IDX argument is ulong, not long.
+	(arem): New instruction.
+	* libpoke/pvm.h: Prototype for pvm_array_rem.
+	* libpoke/pvm-val.c (pvm_array_rem): New function.
+
 2020-11-26  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/pkl-lex.l: New token.

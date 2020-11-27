@@ -3839,7 +3839,7 @@ instruction ains ()
     JITTER_DROP_STACK ();
     arr = JITTER_TOP_STACK ();
 
-    if (PVM_VAL_LONG (idx) < PVM_VAL_LONG (PVM_VAL_ARR_NELEM (arr)))
+    if (PVM_VAL_ULONG (idx) < PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr)))
       /* Note that pvm_array_set can't return 0 here due
          to the index check.  */
       pvm_array_set (arr, idx, val);
@@ -3848,6 +3848,31 @@ instruction ains ()
       if (!pvm_array_insert (arr, idx, val))
         PVM_RAISE_DFL (PVM_E_INVAL);
     }
+  end
+end
+
+# Instruction: arem
+#
+# Remove an element from an array at the specified index, making it
+# schrink.
+#
+# If IDX doesn't correspond to an element in the array, raise
+# PVM_E_OUT_OF_BOUNDS.  This always happens if the array is empty.
+#
+# Stack: ( ARR IDX -- ARR )
+# Exception: PVM_E_OUT_OF_BOUNDS
+
+instruction arem ()
+  code
+    pvm_val arr = JITTER_UNDER_TOP_STACK ();
+    pvm_val idx = JITTER_TOP_STACK ();
+
+    if (PVM_VAL_ULONG (idx) >= PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr)))
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
+
+    /* This call can't fail (return 0) due to the index check above.  */
+    (void) pvm_array_rem (arr, idx);
+    JITTER_DROP_STACK ();
   end
 end
 

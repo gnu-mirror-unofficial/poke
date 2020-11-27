@@ -313,6 +313,13 @@ int pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val);
 
 int pvm_array_set (pvm_val arr, pvm_val idx, pvm_val val);
 
+/* Remove the element at position IDX from the array ARR.
+
+   If IDX is not within the boundaries of the array, return 0.
+   Otherwise return 1.  */
+
+int pvm_array_rem (pvm_val arr, pvm_val idx);
+
 /* Return the size of VAL, in bits.  */
 
 uint64_t pvm_sizeof (pvm_val val);

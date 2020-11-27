@@ -204,6 +204,24 @@ pvm_array_set (pvm_val arr, pvm_val idx, pvm_val val)
   return 1;
 }
 
+int
+pvm_array_rem (pvm_val arr, pvm_val idx)
+{
+  size_t index = PVM_VAL_ULONG (idx);
+  size_t nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr));
+  size_t i;
+
+  /* Make sure the given index is within bounds.  */
+  if (index >= nelem)
+    return 0;
+
+  for (i = index; i < nelem; i++)
+    PVM_VAL_ARR_ELEM (arr,i) = PVM_VAL_ARR_ELEM (arr, i + 1);
+  PVM_VAL_ARR_NELEM (arr) = pvm_make_ulong (nelem - 1, 64);
+
+  return 1;
+}
+
 pvm_val
 pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
 {
