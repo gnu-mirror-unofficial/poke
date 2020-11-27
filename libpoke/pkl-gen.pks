@@ -1326,11 +1326,11 @@
         push #nmethod
  .c }
         ;; Push the number of fields, create the struct and return it.
-        pushvar $nfield        ; null [OFF STR VAL]... NFIELD
+        pushvar $nfield        ; null [OFF STR VAL]... NMETHOD NFIELD
         .c PKL_GEN_PAYLOAD->in_constructor = 0;
         .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_PAYLOAD->in_constructor = 1;
-                                ; null [OFF STR VAL]... NFIELD TYP
+                                ; null [OFF STR VAL]... NMETHOD NFIELD TYP
         mksct                   ; SCT
         popf 1
         return
@@ -1483,11 +1483,13 @@
   .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
+  .c  { int in_constructor_back = PKL_GEN_PAYLOAD->in_constructor;
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
   .c    PKL_PASS_SUBPASS (@struct_itype);
-  .c    PKL_GEN_PAYLOAD->in_constructor = 0;
+  .c    PKL_GEN_PAYLOAD->in_constructor = in_constructor_back;
   .c    PKL_GEN_PAYLOAD->in_writer = 1;
+  .c  }
   .c }
         regvar $ivalue
  .c {
@@ -1565,11 +1567,13 @@
         push null
         ;; Note that the constructor consumes the null
         ;; on the stack.
+  .c  { int in_constructor_back = PKL_GEN_PAYLOAD->in_constructor;
   .c    PKL_GEN_PAYLOAD->in_writer = 0;
   .c    PKL_GEN_PAYLOAD->in_constructor = 1;
   .c    PKL_PASS_SUBPASS (@struct_itype);
-  .c    PKL_GEN_PAYLOAD->in_constructor = 0;
+  .c    PKL_GEN_PAYLOAD->in_constructor = in_constructor_back;
   .c    PKL_GEN_PAYLOAD->in_writer = 1;
+  .c  }
         regvar $ivalue
         .let @field
  .c      uint64_t i;

@@ -1,0 +1,15 @@
+/* { dg-do run } */
+
+type Elf64_Sym =
+  struct
+  {
+    struct uint<7>
+    {
+      uint<7> st_bind;
+    } st_info;
+
+    int ja;
+  };
+
+/* { dg-command { Elf64_Sym {} } } */
+/* { dg-output "Elf64_Sym \{st_info=struct \{st_bind=\\(uint<7>\\) 0\},ja=0\}" } */

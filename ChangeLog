@@ -1,5 +1,13 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_writer): Do not destroy the
+	in_constructor context.
+	(struct_integrator): Likewise.
+	* testsuite/poke.pkl/scons-int-struct-4.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Support for multi-line strings with """): Removed
 	as not needed any longer.
 	(Support functions in struct fields): Removed as done.
