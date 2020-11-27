@@ -1,5 +1,9 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf64_Note): New type.
+
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (struct_type_identifier): Register OFFSET.
 	* libpoke/pkl-gen.pks (struct_constructor): Add OFFSET and adjust
 	code accordingly.

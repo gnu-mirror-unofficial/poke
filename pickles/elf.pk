@@ -179,6 +179,26 @@ type Elf64_Sym =
     Elf64_Xword st_size;
   };
 
+/****** Notes.  *****/
+
+type Elf64_Note =
+  struct
+  {
+    /* The first `namesz' bytes in `name' contain a NULL-terminated
+    character representation of the entry's owner or originator.  */
+    Elf64_Xword namesz;
+
+    /* The first `descsz' bytes in `desc' hold the note descriptor.
+    The ABI places no constraints on a descriptor's contents.  */
+    Elf64_Xword descsz;
+
+    byte[namesz] name;
+    byte[alignto (OFFSET, 8#B)];
+
+    byte[descsz] desc;
+    byte[alignto (OFFSET, 8#B)];
+  };
+
 /****** Section Groups.  ******/
 
 var GRP_COMDAT = 1,
