@@ -123,6 +123,10 @@ Structuring Data
 * Defining Types::		Abstracting data structures.
 * Pickles::			Pickling useful abstractions.
 * Poking Structs::		Abstracting heterogeneous data.
+* How Structs are Built::	How poke builds struct values.
+* Variables in Structs::
+* Functions in Structs::
+* Struct Methods::		Operations provided by built structs.
 
 Debugging Poke Programs
 * __LINE__ and __FILE__::	Error locations in traces.
@@ -2556,12 +2560,16 @@ poke, however, is that it allows you to define your own entities.
 This is achieved by defining data structures.
 
 @menu
-* The SBM Format::	The Stupid BitMap Format
-* Poking a SBM Image::	A need for abstraction.
-* Modifying SBM Images:: Modifying existing data.
-* Defining Types::	Abstracting data structures.
-* Pickles::		Pickling useful abstractions.
-* Poking Structs::	Abstracting heterogeneous data.
+* The SBM Format::              The Stupid BitMap Format
+* Poking a SBM Image::	        A need for abstraction.
+* Modifying SBM Images::        Modifying existing data.
+* Defining Types::	        Abstracting data structures.
+* Pickles::		        Pickling useful abstractions.
+* Poking Structs::	        Abstracting heterogeneous data.
+* How Structs are Built::       How poke builds struct values.
+* Variables in Structs::
+* Functions in Structs::
+* Struct Methods::              Operations provided by built structs.
 @end menu
 
 @node The SBM Format
@@ -3899,6 +3907,474 @@ space:
 00000000: 5342 4d03 07                             SBM..
 @end example
 
+@node How Structs are Built
+@section How Structs are Built
+
+First we need to define some structure to use as an example.  Let's
+say we are interesting in poking Packets, as defined by the Packet
+Specification 1.2 published by the Packet Foundation (none less).
+
+In a nutshell, each Packet starts with a byte whose value is always
+@code{0xab}, followed by a byte that defines the size of the payload.
+A stream of bytes conforming the payload follows, themselves followed
+by another stream of the same number of bytes with ``control'' values.
+
+We could translate this description into the following Poke struct
+type definition:
+
+@example
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+    byte[size] payload;
+    byte[size] control;
+  @};
+@end example
+
+There are some details described by the fictitious Packet
+Specification 1.2 that are not covered in this simple definition, but
+we will be attending to that later in this manual.
+
+So, given the definition of a struct type like Packet, there are only
+two ways to build a struct value in Poke.
+
+One is to map it from some IO space.  This is achieved using the map
+operator:
+
+@example
+(poke) Packet @@ 12#B
+Packet @{
+  magic = 0xab,
+  size = 2,
+  payload = [0x12UB,0x30UB],
+  control = [0x1UB,0x1UB]
+@}
+@end example
+
+The expression above maps a Packet starting at offset 12 bytes, in the
+current IO space.  See the Poke manual for more details on using the
+map operator.
+
+The second way to build a struct value is to _construct_ one,
+specifying the value to some, all or none of its fields.  It looks
+like this:
+
+@example
+(poke) Packet @{size = 2, payload = [1UB,2UB]@}
+Packet @{
+  magic = 0xab,
+  size = 2,
+  payload = [0x1UB,0x2UB],
+  control = [0x0UB,0x0UB]
+@}
+@end example
+
+In either case, building a struct involves to determine the value of
+all the fields of the struct, one by one.  The order in which the
+struct fields are built is determined by the order of appearance of
+the fields in the type description.
+
+In our example, the value of @code{magic} is determined first, then
+@code{size}, @code{payload} and finally @code{control}.  This is the
+reason why we can refer to the values of previous fields when defining
+fields, such as in the size of the @code{payload} array above, but not
+the other way around: by the time @code{payload} is mapped or
+constructed, the value of @code{size}, has already been mapped or
+constructed.
+
+What happens behind the curtains is that when poke finds the
+definition of a struct type, like Packet, it compiles two functions
+from it: a mapper function, and a constructor function.  The mapper
+function gets as arguments the IO space and the offset from which to
+map the struct value, whereas the constructor function gets the
+template specifying the initial values for some, or all of the fields;
+reasonable default values (like zeroes) are used for fields for which
+no initial values have been specified.
+
+These functions, mapper and constructor, are invoked to create fresh
+values when a map operator @@ or a struct constructor is used in a Poke
+program, or at the poke prompt.
+
+@node Variables in Structs
+@section Variables in Structs
+
+Fields are not the only entity that can appear in the definition of a
+struct type.
+
+Suppose that after reading more carefully the Packet Specification 1.2
+(that spans for several thousand of pages) we realize that the field
+@code{size} doesn't really stores the number of bytes of the payload
+and control arrays, like we thought initially.  Or not exactly: the
+Packet Foundation says that if @code{size} has the special value 0xff,
+then the size is zero.
+
+We could of course do something like this:
+
+@example
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+
+    byte[size == 0xff ? 0 : size] payload;
+    byte[size == 0xff ? 0 : size] control;
+  @};
+@end example
+
+However, we can avoid replicating code by using a variable instead:
+
+@example
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+
+    var real_size = (size == 0xff ? 0 : size);
+
+    byte[real_size] payload;
+    byte[real_size] control;
+  @};
+@end example
+
+Note how the variable can be used after it gets defined.  In the
+underlying process of mapping or constructing the struct, the variable
+is incorporated into the lexical environment.  Once defined, it can be
+used in constraint expressions, array sizes, and the like.  We will
+see more about this later.
+
+Incidentally, it is of course possible to use global variables as
+well.  For example:
+
+@example
+var packet_special = 0xff;
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+
+    var real_size = (size == packet_special ? 0 : size);
+
+    byte[real_size] payload;
+    byte[real_size] control;
+  @};
+@end example
+
+In this case, the global @code{packet_special} gets captured in the
+lexical environment of the struct type (in reality in the lexical
+environment of the implicitly created mapper and constructor
+functions) in a way that if you later modify @code{packet_special} the
+new value will be used when mapping/constructing @emph{new} values of
+type Packet.  Which is really cool, but let's not get distracted from
+the main topic... :)
+
+@node Functions in Structs
+@section Functions in Structs
+
+Further reading of the Packet Specification 1.2 reveals that each
+Packet has an additional @code{crc} field.  The content of this field
+is derived from both the payload bytes and the control bytes.
+
+But this is no vulgar CRC we are talking about.  On the contrary, it
+is a special function developed by the CRC Foundation in partnership
+with the Packet Foundation, called superCRC (patented, TM).
+
+Fortunately, the CRC Foundation distributes a pickle
+@code{supercrc.pk}, that provides a @code{calculate_crc} function with
+the following spec:
+
+@example
+fun calculate_crc = (byte[] data, byte[] control) int:
+@end example
+
+So let's use the function like this in our type, after loading the
+supercrc pickle:
+
+@example
+load supercrc;
+
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+
+    var real_size = (size == 0xff ? 0 : size);
+
+    byte[real_size] payload;
+    byte[real_size] control;
+
+    int crc = calculate_crc (payload, control);
+  @};
+@end example
+
+However, there is a caveat: it happens that the calculation of the CRC
+may involve arithmetic and division, so the CRC Foundation warns us
+that the @code{calculate_crc} function may raise E_div_by_zero.
+However, the Packet 1.2 Specification tells us that in these
+situations, the @code{crc} field of the packet should contain zero.
+If we used the type above, any exception raised by
+@code{calculate_crc} would be propagated by the mapper/constructor:
+
+@example
+(poke) Packet @@ 12#B
+unhandled division by zero exception
+@end example
+
+A solution is to use a function that takes care of the extra needed
+logic, wrapping calculate_crc:
+
+@example
+load supercrc;
+
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+
+    var real_size = (size == 0xff ? 0 : size);
+
+    byte[real_size] payload;
+    byte[real_size] control;
+
+    fun corrected_crc = int:
+    @{
+      try return calculate_crc (payload, control);
+      catch if E_div_by_zero @{ return 0; @}
+    @}
+
+    int crc = corrected_crc;
+  @};
+@end example
+
+Again, note how the function is accessible after its definition.  Note
+as well how both fields and variables and other functions can be used
+in the function body.  There is no difference to define variables and
+functions in struct types than to define them inside other functions
+or on the top-level environment: the same lexical rules apply.
+
+@node Struct Methods
+@section Struct Methods
+
+At this point you may be thinking something on the line of ``hey,
+since variables and functions are also members of the struct, I should
+be able to access them the same way than fields, right?''.
+
+So you will want to do:
+
+@example
+(poke) var p = Packet @ 12#B
+(poke) p.real_size
+(poke) p.corrected_crc
+@end example
+
+@noindent
+But sorry, this won't work.
+
+To understand why, think about the struct building process we sketched
+above.  The mapper and constructor functions are derived/compiled from
+the struct type.  You can imagine them to have prototypes like:
+
+@example
+Packet_mapper (IOspace, offset) -> Packet value
+Packet_constructor (template)   -> Packet value
+@end example
+
+You can also picture the fields, variables and functions in the struct
+type specification as being defined inside the bodies of Packet_mapper
+and Packet_constructor, as their contents get mapped/constructed.  For
+example, let's see what the mapper does:
+
+@example
+Packet_mapper:
+
+  . Map a byte, put it in a local `magic'.
+  . Map a byte, put it in a local `size'.
+  . Calculate the real size, put it in a local `real_size'.
+  . Map an array of real_size bytes, put it in a local `payload'.
+  . Map an array of real_size bytes, put it in a local `control'.
+  . Compile a function, put it in a local `corrected_crc'.
+  . map a byte, call the function in the local `corrected_crc',
+    complain if the values are not the same, otherwise put the
+    mapped byte in a local `crc'.
+  . Build a struct value with the values from the locals `magic',
+    `size', `payload', `control' and `crc', and return it.
+@end example
+
+The pseudo-code for the constructor would be almost identical.  Just
+replace "map a byte" with ``construct a byte''.
+
+So you see, both the values for the mapped fields and the values for
+the variables and functions defined inside the struct type end as
+locals of the mapping process, but only the values of the fields are
+actually put in the struct value that is returned in the last step.
+
+This is where methods come in the picture.  A method looks very
+similar to a function, but it is not quite the same thing.  Let me
+show you an example:
+
+@example
+load supercrc;
+
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+
+    var real_size = (size == 0xff ? 0 : size);
+
+    byte[real_size] payload;
+    byte[real_size] control;
+
+    fun corrected_crc = int:
+    @{
+      try return calculate_crc (payload, control);
+      catch if E_div_by_zero @{ return 0; @}
+    @}
+
+    int crc = corrected_crc;
+
+    method c_crc = int:
+    @{
+      return corrected_crc;
+    @}
+  @};
+@end example
+
+We have added a method @code{c_crc} to our Packet struct type, that
+just returns the corrected superCRC (patented, TM) of a packet.  This
+can be invoked using dot-notation, once a Packet value is
+mapped/constructed:
+
+@example
+(poke) var p = Packet @ 12#B
+(poke) p.c_crc
+0xdeadbeef
+@end example
+
+Now, the important bit here is that the method returns the corrected
+crc @emph{of a @code{Packet}}.  That's it, it actually operates on a
+Packet value.  This Packet value gets implicitly passed as an argument
+whenever a method is invoked.
+
+We can visualize this with the following ``pseudo Poke'':
+
+@example
+method c_crc = (Packet SELF) int:
+@{
+   return SELF.corrected_crc;
+@}
+@end example
+
+Fortunately, poke takes care to recognize when you are referring to
+fields of this implicit struct value, and does The Right Thing(TM) for
+you.  This includes calling other methods:
+
+@example
+method foo = void: @{ ... @}
+method bar = void:
+@{
+ [...]
+ foo;
+@}
+@end example
+
+The corresponding ``pseudo-poke'' being:
+
+@example
+method bar = (Packet SELF) void:
+@{
+ [...]
+ SELF.foo ();
+@}
+@end example
+
+It is also possible to define methods that modify the contents of
+struct fields, no problem:
+
+@example
+var packet_special = 0xff;
+
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size;
+    [...]
+
+    method set_size = (byte s) void:
+    @{
+      if (s == 0)
+        size = packet_special;
+      else
+        size = s;
+    @}
+  @};
+@end example
+
+This is what is commonly known as a @dfn{setter}.  Note, incidentally,
+how a method can also use regular variables.  The Poke compiler knows
+when to generate a store in a normal variable such as
+@code{packet_special}, and when to generate a set to a @code{SELF}
+field.
+
+Given the different nature of the variables, functions and methods,
+there are a couple of restrictions:
+
+@itemize @bullet
+@item
+Functions can't set fields defined in the struct type.
+
+This will be rejected by the compiler:
+
+@example
+type Foo =
+  struct
+  @{
+     int field;
+     fun wrong = void: @{ field = 10; @}
+  @};
+@end example
+
+Remember the construction/mapping process.  When a function accesses a
+field of the struct type like in the example above, it is not doing
+one of these pseudo @code{SELF.field = 10}.  Instead, it is simply
+updating the value of the local created in this step in Foo_mapper:
+
+@example
+Foo_mapper:
+
+ . Map an int, put it in a local `field'.
+ . [...]
+@end example
+
+Setting that local would impact the mapping of the subsequent fields
+if they refer to @code{field} (for example, in their constraint
+expression) but it wouldn't actually alter the value of the field
+@code{field} in the struct value that is created and returned from the
+mapper!
+
+This is very confusing, so we just disallow this with a compiler error
+``invalid assignment to struct field'', for your own sanity 8-)
+
+@item
+Methods can't be used in field constraint expressions, nor in
+variables or functions defined in a struct type.
+
+How could they be?  The field constraint expressions, the
+initialization expressions of variables, and the functions defined in
+struct types are all executed as part of the mapper/constructor and,
+at that time, there is no struct value yet to pass to the method.
+
+If you try to do this, the compiler will greet you with an ``invalid
+reference to struct method'' message.
+@end itemize
 
 @node Debugging Poke Programs
 @chapter Debugging Poke Programs
@@ -7136,8 +7612,8 @@ struct
 @{
   elf32_word st_name;
   elf64_word st_info;
-  uint<60> st_bind @ 4#B;
-  uint<4> st_type @ 4#B + 60#b;
+  uint<60> st_bind @@ 4#B;
+  uint<4> st_type @@ 4#B + 60#b;
 @}
 @end example
 
@@ -7305,7 +7781,7 @@ type, is this:
 
 @example
 (poke) type Foo = struct int<32> @{ int<16> hi; uint<16> lo; @};
-(poke) var x = Foo @ 0#B;
+(poke) var x = Foo @@ 0#B;
 (poke) +x
 0xfe00aa
 @end example
