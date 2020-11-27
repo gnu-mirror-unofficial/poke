@@ -291,6 +291,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_var)
       pkl_ast_node initial_type = PKL_AST_TYPE (initial);
 
       if (PKL_AST_TYPE_CODE (initial_type) == PKL_TYPE_FUNCTION
+          && !PKL_AST_VAR_IS_PARENTHESIZED (var)
           && (PKL_AST_TYPE_F_NARG (initial_type) == 0
               || pkl_ast_func_all_optargs (initial_type)))
         {
@@ -1246,6 +1247,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_struct_ref)
       pkl_ast_node type = PKL_AST_TYPE (struct_ref);
 
       if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION
+          && !PKL_AST_STRUCT_REF_IS_PARENTHESIZED (struct_ref)
           && (PKL_AST_TYPE_F_NARG (type) == 0
               || pkl_ast_func_all_optargs (type)))
         {

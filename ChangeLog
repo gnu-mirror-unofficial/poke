@@ -1,5 +1,21 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_VAR_IS_PARENTHESIZED): Define.
+	(PKL_AST_STRUCT_REF_IS_PARENTHESIZED): Likewise.
+	(struct pkl_ast_var): Add field `is_parenthesized'.
+	(struct pkl_ast_struct_ref): Likewise.
+	* libpoke/pkl-tab.y (primary): Annotate array references as
+	parenthesized whenever appropriate.
+	* libpoke/pkl-trans.c (pkl_trans1_ps_var): Do not deprocedure if
+	the variable is parenthesized.
+	(pkl_trans2_ps_struct_ref): Likewise.
+	* testsuite/poke.pkl/funcall-17.pk: New test.
+	* testsuite/poke.pkl/struct-method-17.pk: LIkewise.
+	* doc/poke.texi (Calling Functions): Mention how parenthesized
+	function names do not deprocedure.
+
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf.pk (Elf64_Chdr): New type.
 	(Elf64_Dyn): Likewise.
 	Define DT_* values.

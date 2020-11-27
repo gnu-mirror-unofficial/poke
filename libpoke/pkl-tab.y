@@ -1065,6 +1065,10 @@ primary:
                 }
         | '(' expression ')'
                 {
+                  if (PKL_AST_CODE ($2) == PKL_AST_VAR)
+                    PKL_AST_VAR_IS_PARENTHESIZED ($2) = 1;
+                  else if (PKL_AST_CODE ($2) == PKL_AST_STRUCT_REF)
+                    PKL_AST_STRUCT_REF_IS_PARENTHESIZED ($2) = 1;
                   $$ = $2;
                 }
         | array

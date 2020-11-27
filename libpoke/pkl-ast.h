@@ -735,6 +735,7 @@ pkl_ast_node pkl_ast_make_indexer (pkl_ast ast,
 
 #define PKL_AST_STRUCT_REF_STRUCT(AST) ((AST)->sref.sct)
 #define PKL_AST_STRUCT_REF_IDENTIFIER(AST) ((AST)->sref.identifier)
+#define PKL_AST_STRUCT_REF_IS_PARENTHESIZED(AST) ((AST)->sref.is_parenthesized)
 
 struct pkl_ast_struct_ref
 {
@@ -742,6 +743,7 @@ struct pkl_ast_struct_ref
 
   union pkl_ast_node *sct;
   union pkl_ast_node *identifier;
+  int is_parenthesized;
 };
 
 pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
@@ -1303,6 +1305,11 @@ pkl_ast_node pkl_ast_make_funcall_arg (pkl_ast ast, pkl_ast_node exp,
    IS_RECURSIVE is a boolean indicating whether the variable
    references the declaration of the containing function.
 
+   IS_PARENTHESIZED is a boolean indicating whether the variable is
+   immediately parenthesized, i.e. there were parenthesis around the
+   variable.  This is used to disable the de-proceduring of function
+   values.
+
    FUNCTION is the function immediately enclosing the variable
    reference, or NULL.
 
@@ -1317,6 +1324,7 @@ pkl_ast_node pkl_ast_make_funcall_arg (pkl_ast ast, pkl_ast_node exp,
 #define PKL_AST_VAR_IS_RECURSIVE(AST) ((AST)->var.is_recursive)
 #define PKL_AST_VAR_FUNCTION(AST) ((AST)->var.function)
 #define PKL_AST_VAR_FUNCTION_BACK(AST) ((AST)->var.function_back)
+#define PKL_AST_VAR_IS_PARENTHESIZED(AST) ((AST)->var.is_parenthesized)
 
 struct pkl_ast_var
 {
@@ -1327,6 +1335,7 @@ struct pkl_ast_var
   int back;
   int over;
   int is_recursive;
+  int is_parenthesized;
 
   union pkl_ast_node *function;
   int function_back;

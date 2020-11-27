@@ -8491,6 +8491,16 @@ bar ()
 bar
 @end example
 
+If the closure of function that takes no arguments is needed, the call
+can be avoided by putting the variable immediately inside parenthesis,
+like this:
+
+@example
+(poke) (foo)
+#<closure>
+@end example
+
+
 There is an alternate syntax that can be used in both expressions and
 expression-statements.  This alternate syntax is:
 

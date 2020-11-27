@@ -1,0 +1,16 @@
+/* { dg-do run } */
+
+type Foo =
+ struct
+ {
+   method lala = int: { return 10; }
+ };
+
+
+/* { dg-command {var f = Foo {}} } */
+/* { dg-command {f.lala} } */
+/* { dg-output "10" } */
+/* { dg-command {(f.lala + 2)} } */
+/* { dg-output "\n12" } */
+/* { dg-command {(f.lala)} } */
+/* { dg-output "\n#<closure>" } */
