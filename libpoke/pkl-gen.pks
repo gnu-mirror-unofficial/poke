@@ -1293,9 +1293,6 @@
         ;; The lexical address of this method is 0,B where B is 4 +
         ;; element order.  This 4 should be updated if the lexical
         ;; structure of this function changes.
-        ;;
-        ;; XXX push the closure specified in the struct constructor
-        ;; instead, if appropriate.
         .let @decl_name = PKL_AST_DECL_NAME (@field)
         .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
         push #name_str

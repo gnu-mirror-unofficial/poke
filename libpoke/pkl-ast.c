@@ -1089,7 +1089,9 @@ pkl_ast_type_is_complete (pkl_ast_node type)
     case PKL_TYPE_FUNCTION:
       complete = PKL_AST_TYPE_COMPLETE_YES;
       break;
-      /* String types are never complete.  */
+      /* Other types are never complete.  */
+    case PKL_TYPE_ANY:
+    case PKL_TYPE_VOID:
     case PKL_TYPE_STRING:
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;
@@ -2398,11 +2400,9 @@ pkl_ast_finish_breaks_1 (pkl_ast_node entity, pkl_ast_node stmt,
     case PKL_AST_ASS_STMT:
     case PKL_AST_PRINT_STMT:
     case PKL_AST_RAISE_STMT:
-    /* XXX: Add switch statements here.  */
     case PKL_AST_NULL_STMT:
       break;
     default:
-      printf ("XXX %d\n", PKL_AST_CODE (stmt));
       assert (0);
       break;
     }
@@ -2557,7 +2557,6 @@ pkl_ast_lvalue_p (pkl_ast_node node)
     case PKL_AST_INDEXER:
       /* An indexer can be used as a l-value if the referred entity is
          an array, and it is itself a l-value.  */
-      /* XXX: to change when we support s[1] = 'x'  */
       {
         pkl_ast_node entity = PKL_AST_INDEXER_ENTITY (node);
         pkl_ast_node entity_type = PKL_AST_TYPE (entity);

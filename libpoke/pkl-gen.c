@@ -388,8 +388,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
       /* This is a l-value in an assignment.  Generate nothing, as
          this node is only used as a recipient for the lexical address
          of the variable.  */
-      /* XXX: the call to WRITE will most probably belong here, after
-         the indexer or sref or whatever.  */
     }
   else
     {
@@ -458,7 +456,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
       if (PKL_AST_TYPE_CODE (var_type) == PKL_TYPE_ARRAY
           || PKL_AST_TYPE_CODE (var_type) == PKL_TYPE_STRUCT)
         {
-          /* XXX: handle exceptions from the mapper function.  */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REMAP);
         }
     }
@@ -1689,7 +1686,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
          BASE_TYPE handler to tackle it.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM); /* IOS BOFF VAL VMAG */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);   /* IOS BOFF VMAG */
-      /* XXX: no PASS BREAK? */
+
+      PKL_PASS_SUBPASS (PKL_AST_TYPE_O_BASE_TYPE (PKL_PASS_NODE)); /* _ */
+      PKL_PASS_BREAK;
     }
   else if (PKL_GEN_PAYLOAD->in_printer)
     {
@@ -2144,7 +2143,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_indexer)
             case PKL_TYPE_ARRAY:
             case PKL_TYPE_STRUCT:
               /* XXX: this is redundant IO for many (most?) cases.  */
-              /* XXX: handle exceptions from the mapper function.  */
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REMAP);
               break;
             default:
@@ -2283,7 +2281,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct_ref)
         case PKL_TYPE_ARRAY:
         case PKL_TYPE_STRUCT:
           /* XXX: this is redundant IO for many (most?) cases.  */
-          /* XXX: handle exceptions from the mapper function.  */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REMAP);
           break;
         default:

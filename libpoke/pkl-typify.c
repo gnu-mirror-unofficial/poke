@@ -2924,10 +2924,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify2_ps_type)
 {
   pkl_ast_node type = PKL_PASS_NODE;
 
-  /* XXX why is this conditional here?  Should go away!  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY
-      || PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
-      || PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
   PKL_AST_TYPE_COMPLETE (type) = pkl_ast_type_is_complete (type);
 }
 PKL_PHASE_END_HANDLER

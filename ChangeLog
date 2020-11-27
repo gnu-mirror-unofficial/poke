@@ -1,5 +1,20 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_constructor): Remove obsolete
+	comment.
+	* libpoke/pkl-fold.c (pkl_fold_ps_cast): Likewise.
+	* libpoke/pkl-ast.c (pkl_ast_finish_breaks_1): Likewise.
+	(pkl_ast_lvalue_p): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_var): Likewise.
+	(pkl_gen_ps_var): Likewise.
+	(pkl_gen_pr_type_offset): Fix writer.
+	* libpoke/pkl-typify.c (pkl_typify2_ps_type): Remove unneeded
+	conditional.
+	* libpoke/pkl-ast.c (pkl_ast_type_is_complete): Handle `any' and
+	`void' types.
+
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: Define PKL_INSN_AREM.
 	* libpoke/pvm.jitter (ains): IDX argument is ulong, not long.
 	(arem): New instruction.

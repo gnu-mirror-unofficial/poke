@@ -1024,8 +1024,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
   else
     PKL_PASS_DONE;
 
-  /* XXX handle array casts.  */
-
   /* `new' is the node to replace the cast.  */
   PKL_AST_TYPE (new) = ASTREF (to_type);
   PKL_AST_LOC (new) = PKL_AST_LOC (exp);
