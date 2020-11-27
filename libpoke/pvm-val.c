@@ -215,7 +215,7 @@ pvm_array_rem (pvm_val arr, pvm_val idx)
   if (index >= nelem)
     return 0;
 
-  for (i = index; i < nelem; i++)
+  for (i = index; i < (nelem - 1); i++)
     PVM_VAL_ARR_ELEM (arr,i) = PVM_VAL_ARR_ELEM (arr, i + 1);
   PVM_VAL_ARR_NELEM (arr) = pvm_make_ulong (nelem - 1, 64);
 
