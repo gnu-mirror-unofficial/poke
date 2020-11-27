@@ -1,5 +1,10 @@
 2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf.pk (Elf_Hash_Table): New type.
+	(Elf64_Note): Likewise.
+
+2020-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (How Structs are Built): New section.
 	(Variables in Structs): Likewise.
 	(Functions in Structs): Likewise.

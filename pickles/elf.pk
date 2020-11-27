@@ -52,6 +52,18 @@ var ET_NONE = 0,  /* No file type.  */
 var EM_NONE = 0,
     EM_RISCV = 243;
 
+/****** ELF hash table.  ******/
+
+type Elf_Hash_Table =
+  struct
+  {
+    Elf_Word nbucket;
+    Elf_Word nchain;
+
+    Elf_Word[nbucket] bucket;
+    Elf_Word[nchain] chain;
+  };
+
 /****** Relocation Entries.  ******/
 
 /* r_sym is the symbol table index with respect to which the
