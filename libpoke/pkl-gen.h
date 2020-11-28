@@ -83,7 +83,11 @@
    integral types.
 
    MAPPER_DEPTH and CONSTRUCTOR_DEPTH are used in the array mapper and
-   constructor generation handlers.  */
+   constructor generation handlers.
+
+   IN_FILE_P indicates whether the current source is a file, as
+   opposed to stdin (i.e. as opposed of compiling a statement.)  */
+
 
 struct pkl_gen_payload
 {
@@ -107,6 +111,7 @@ struct pkl_gen_payload
   int endian;
   int constructor_depth;
   int mapper_depth;
+  int in_file_p;
 };
 
 typedef struct pkl_gen_payload *pkl_gen_payload;

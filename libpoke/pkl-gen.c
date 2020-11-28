@@ -76,7 +76,8 @@
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_src)
 {
-  /* Nothing to do there.  */
+  PKL_GEN_PAYLOAD->in_file_p
+    = (PKL_AST_SRC_FILENAME (PKL_PASS_NODE) != NULL);
 }
 PKL_PHASE_END_HANDLER
 
@@ -94,6 +95,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_program)
   PKL_GEN_ASM = pkl_asm_new (PKL_PASS_AST,
                              PKL_GEN_PAYLOAD->compiler,
                              1 /* prologue */);
+
+  PKL_GEN_PAYLOAD->in_file_p
+    = (!pkl_compiling_statement_p (PKL_GEN_PAYLOAD->compiler)
+       && !pkl_compiling_expression_p (PKL_GEN_PAYLOAD->compiler));
 }
 PKL_PHASE_END_HANDLER
 
@@ -1110,7 +1115,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_exp_stmt)
      single statement.  */
   if (!(pkl_compiling_statement_p (PKL_GEN_PAYLOAD->compiler)
         && PKL_PASS_PARENT
-        && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_PROGRAM))
+        && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_PROGRAM)
+      || PKL_GEN_PAYLOAD->in_file_p)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
 }
 PKL_PHASE_END_HANDLER

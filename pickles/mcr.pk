@@ -1,0 +1,255 @@
+/* mcr.pk - Pickle for the CADR microcode.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*** I-mem instructions.  ***/
+
+/* Instruction classes.  */
+
+var MCR_IC_ALU = 0,
+    MCR_IC_JMP = 1,
+    MCR_IC_DSP = 2,
+    MCR_IC_BYT = 3;
+
+/* ALU instructions.  */
+
+var MCR_I_ALU_SETZ = 0,
+    MCR_I_ALU_AND = 1,
+    MCR_I_ALU_ANDCA = 2,
+    MCR_I_ALU_SETM = 3,
+    MCR_I_ALU_ANDCM = 4,
+    MCR_I_ALU_SETA = 5,
+    MCR_I_ALU_XOR = 6,
+    MCR_I_ALU_IOR = 7,
+    MCR_I_ALU_ANDCB = 8,
+    MCR_I_ALU_EQV = 9,
+    MCR_I_ALU_SETCA = 10,
+    MCR_I_ALU_ORCA = 11,
+    MCR_I_ALU_SETCM = 12,
+    MCR_I_ALU_ORCM = 13,
+    MCR_I_ALU_ORCB = 14,
+    MCR_I_ALU_SETO = 15,
+    MCR_I_ALU_SUB = 22,
+    MCR_I_ALU_ADD = 25,
+    MCR_I_ALU_INCM = 28,
+    MCR_I_ALU_LSHM = 31,
+    MCR_I_ALU_MUL = 32,
+    MCR_I_ALU_DIV = 33,
+    MCR_I_ALU_DIVRC = 37,
+    MCR_I_ALU_DIVFS = 41;
+
+var mcr_alu_insn_names =
+    ["SETZ", "AND", "ANDCA", "SETM", "ANDCM", "SETA", "XOR", "IOR",
+     "ANDCB", "EQV", "SETCA", "ORCA", "SETCM", "ORCM","ORCB", "SETO",
+     .[21] = "FUNCTION", "SUB", .[24] = "FUNCTION", "INCM",
+     .[30] = "FUNCTION", "LSHM", "MUL", "DIV", .[36] = "FUNCTION",
+     "DIVR", .[40] = "FUNCTION", "DIVFS", .[63] = "FUNCTION"];
+
+/* Functional sources.  */
+
+var MCR_FSOURCE_READ_I_ARG = 0,
+    MCR_FSOURCE_MICRO_STACK_PNTR_AND_DATA = 1,
+    MCR_FSOURCE_PDL_BUFFER_POINTER = 2,
+    MCR_FSOURCE_PDL_BUFFER_INDEX = 3,
+    MCR_FSOURCE_C_PDL_BUFFER_INDEX = 5,
+    MCR_FSOURCE_C_OPC_BUFFER = 6,
+    MCR_FSOURCE_C_Q_R = 7,
+    MCR_FSOURCE_VMA = 8,
+    MCR_FSOURCE_MEMORY_MAP_DATA = 9,
+    MCR_FSOURCE_MD = 10,
+    MCR_FSOURCE_LOCATION_COUNTER = 11,
+    MCR_FSOURCE_MICRO_STACK_PNTR_AND_DATA_POP = 12,
+    MCR_FSOURCE_C_PDL_BUFFER_POINTER_POP = 20,
+    MCR_FSOURCE_C_PDL_BUFFER_POINTER = 21;
+
+assert (mcr_alu_insn_names'length == 64,
+        "invalid mcr_alu_insn_names table");
+
+var MCR_SHIFT_Q_LEFT = 1,
+    MCR_SHIFT_Q_RIGHT = 2;
+
+var mcr_fsource_names =
+    ["READ-I-ARG", "MICRO-STACK-PNTR-AND-DATA", "PDL-BUFFER-POINTER",
+     "PDL-BUFFER-INDEX", "", "C-PDL-BUFFER-INDEX", "C-OPC-BUFFER",
+     "C-Q-R", "VMA", "MEMORY-MAP-DATA", "MD", "LOCATION-COUNTER",
+     "MICRO-STACK-PNTR-AND-DATA-POP", .[19] = "",
+     "C-PDL-BUFFER-POINTER-POP", "C-PDL-BUFFER-POINTER", .[63] = ""];
+
+assert (mcr_fsource_names'length == 64, "invalid mcr_fsource_names table");
+
+
+fun mcr_print_fsource = (uint<6> fsource) void:
+{
+  var name = mcr_fsource_names[fsource];
+  if (name == "")
+     printf "FSOURCE-%u6o", fsource;
+  else
+    print name;
+}
+
+/* Functional destinations.  */
+
+var MCR_FDEST_LOCATION_COUNTER = 1,
+    MCR_FDEST_INTERRUP_CONTROL = 2,
+    MCR_FDEST_C_PDL_BUFFER_POINTER = 8,
+    MCR_FDEST_C_PDL_BUFFER_POINTER_PUSH = 9,
+    MCR_FDEST_C_PDL_BUFFER_INDEX = 10,
+    MCR_FDEST_PDL_BUFFER_INDEX = 11,
+    MCR_FDEST_PDL_BUFFER_POINTER = 12,
+    MCR_FDEST_MICRO_STACK_DATA_PUSH = 13,
+    MCR_FDEST_OA_REG_LOW = 14,
+    MCR_FDEST_OA_REG_HI = 15,
+    MCR_FDEST_VMA = 16,
+    MCR_FDEST_VMA_START_READ = 17,
+    MCR_FDEST_VMA_START_WRITE = 18,
+    MCR_FDEST_VMA_WRITE_MAP = 19,
+    MCR_FDEST_MD = 24,
+    MCR_FDEST_MD_START_WRITE = 26,
+    MCR_FDEST_MD_WRITE_MAP = 27;
+
+var mcr_fdest_names =
+    ["", "LOCATION_COUNTER", "INTERRUPT_CONTROL", .[7] = "",
+     "C_PDL_BUFFER_POINTER", "C_PDL_BUFFER_POINTER_PUSH", "C_PDL_BUFFER_INDEX",
+     "PDL_BUFFER_INDEX", "PDL_BUFFER_POINTER", "MICRO_STACK_DATA_PUSH",
+     "OA_REG_LOW", "OA_REG_HI", "VMA", "VMA_START_READ", "VMA_START_WRITE",
+     "VMA_WRITE_MAP", .[23] = "", "MD", "MD_START_WRITE", "MD_WRITE_MAP",
+     .[31] = ""];
+
+assert (mcr_fdest_names'length == 32, "invalid mcr_fdest_names table");
+
+fun mcr_print_fdest = (uint<6> fdest) void:
+{
+  var name = mcr_fdest_names[fdest];
+  if (name == "")
+     printf "FDEST-%u6o", fdest;
+  else
+    print name;
+}
+
+/* Micro-instructions are 48-bit long.
+
+   A bus, 32-bit. 1024 word A memory.
+   M bus, 32-bit. M memory or internal registers.
+
+   Each instruction specifies two sources: A and M.
+   ALU and BYTE ops specify a destination: A, or M plus functional.  */
+  
+type MCR_Insn_A =
+  struct       
+  {
+    uint<10> address;
+
+    method _print = void:
+    {
+      printf "#<%u10o@A>", address;
+    }
+  };
+
+type MCR_Insn_A_Src = MCR_Insn_A;
+type MCR_Insn_A_Dst = MCR_Insn_A;
+
+type MCR_Insn_M_Src =
+  struct
+  {
+    uint<1> addr_or_fsource;
+    uint<5> data;
+
+    method _print = void:
+    {
+      if (addr_or_fsource)
+      {
+        print "#<";
+        mcr_print_fsource (data);
+        print ">";
+      }
+      else
+        printf "#<%u5o@M>", data;
+    }
+  };
+
+type MCR_Insn_Dst =
+  struct
+  {
+    uint<1> m;                /* 25 */
+    uint<1>;
+
+    union
+    {
+      MCR_Insn_A_Dst a : m == 1;
+
+      struct
+      {
+        uint<5> fdest;
+        uint<5> addr;
+      } m;
+    } bus;
+
+    method _print = void:
+    {
+      if (m == 1)
+         printf "%v", bus.a;
+      else
+        {
+          print "#<";
+          printf "%u6o@M,", bus.m.addr;
+          mcr_print_fdest (bus.m.fdest);
+          print ">";
+        }
+    }
+  };
+    
+type MCR_Instruction =
+  struct
+  {
+    uint<1> bit_47;            /* 47 */
+    uint<1> stat_bit;          /* 46 */
+    uint<1> ilong;             /* 45 */
+    uint<2> class;             /* 44 - 43 */
+    uint<1> popj_after_next_p; /* 42 */
+
+    MCR_Insn_A_Src a_src;      /* 41 - 32 */
+    MCR_Insn_M_Src m_src;      /* 31 - 26 */
+
+    struct
+    {
+      MCR_Insn_Dst dst;
+      uint<2> output_selector; /* 13 - 12 */
+      uint<2> mf;              /* 11 - 10 */ /* Miscellaneous-functions.  */
+      uint<1>;                 /* 9 */
+      uint<6> function;        /* 8 - 3 */
+      uint<1> carry;           /* 2 */
+      uint<2> shift;           /* 1 - 0 */
+    } alu;
+  };
+
+/* Sections.  */
+
+var MCR_SECTION_INSN = 1,
+    MCR_SECTION_DISPATCH = 2,
+    MCR_SECTION_MEM = 3,
+    MCR_SECTION_A_MEM = 4;
+
+type MCR_Section =
+  struct
+  {
+    int<32> code : code in [MCR_SECTION_INSN,
+                            MCR_SECTION_DISPATCH,
+                            MCR_SECTION_MEM,
+                            MCR_SECTION_A_MEM];
+    int<32> start;
+    int<32> size; /* Number of entities in the section.  */
+  };
