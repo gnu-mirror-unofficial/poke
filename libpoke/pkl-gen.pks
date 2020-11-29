@@ -2103,6 +2103,8 @@
 .l1:
         drop
         drop
+        push "struct"
+        endsc
 .done:
         popf 1
         return
