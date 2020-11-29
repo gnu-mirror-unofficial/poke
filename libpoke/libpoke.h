@@ -378,8 +378,7 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
    execution of the function results in an unhandled exception.
    Return PK_OK otherwise.  */
 
-int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...)
-  __attribute__ ((sentinel)) LIBPOKE_API;
+int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...) LIBPOKE_API;
 
 /* Get and set properties of the incremental compiler.  */
 
