@@ -1101,8 +1101,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_comp_stmt)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_trans1
-  __attribute__ ((visibility ("hidden"))) =
+struct pkl_phase pkl_phase_trans1 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
@@ -1349,8 +1348,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_incrdecr)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_trans2
-  __attribute__ ((visibility ("hidden"))) =
+struct pkl_phase pkl_phase_trans2 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
@@ -1418,8 +1416,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_op_sizeof)
 }
 PKL_PHASE_END_HANDLER
 
-struct pkl_phase pkl_phase_trans3
-  __attribute__ ((visibility ("hidden"))) =
+struct pkl_phase pkl_phase_trans3 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),
@@ -1428,8 +1425,7 @@ struct pkl_phase pkl_phase_trans3
 
 
 
-struct pkl_phase pkl_phase_trans4
-  __attribute__ ((visibility ("hidden"))) =
+struct pkl_phase pkl_phase_trans4 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_trans_pr_program),

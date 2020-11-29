@@ -186,8 +186,7 @@ ios_dev_nbd_flush (void *iod, ios_dev_off offset)
   return IOS_OK;
 }
 
-struct ios_dev_if ios_dev_nbd
-  __attribute__ ((visibility ("hidden"))) =
+struct ios_dev_if ios_dev_nbd =
   {
    .get_if_name = ios_dev_nbd_get_if_name,
    .handler_normalize = ios_dev_nbd_handler_normalize,

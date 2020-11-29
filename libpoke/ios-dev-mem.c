@@ -148,8 +148,7 @@ ios_dev_mem_flush (void *iod, ios_dev_off offset)
   return IOS_OK;
 }
 
-struct ios_dev_if ios_dev_mem
-  __attribute__ ((visibility ("hidden"))) =
+struct ios_dev_if ios_dev_mem =
   {
    .get_if_name = ios_dev_mem_get_if_name,
    .handler_normalize = ios_dev_mem_handler_normalize,

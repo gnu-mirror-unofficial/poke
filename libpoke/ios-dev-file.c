@@ -202,8 +202,7 @@ ios_dev_file_flush (void *iod, ios_dev_off offset)
   return IOS_OK;
 }
 
-struct ios_dev_if ios_dev_file
-  __attribute__ ((visibility ("hidden"))) =
+struct ios_dev_if ios_dev_file =
   {
    .get_if_name = ios_dev_file_get_if_name,
    .handler_normalize = ios_dev_file_handler_normalize,

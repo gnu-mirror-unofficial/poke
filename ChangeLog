@@ -1,5 +1,19 @@
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ios-dev-file.c: Remove stale hidden attributes.
+	* libpoke/pkl-typify.c: Likewise.
+	* libpoke/pkl-trans.c: Likewise.
+	* libpoke/pkl-promo.c: Likewise.
+	* libpoke/pkl-gen.c: Likewise.
+	* libpoke/pkl-fold.c: Likewise.
+	* libpoke/pkl-anal.c: Likewise.
+	* libpoke/libpoke.c: Likewise.
+	* libpoke/ios-dev-stream.c: Likewise.
+	* libpoke/ios-dev-nbd.c: Likewise.
+	* libpoke/ios-dev-mem.c: Likewise.
+
+2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk (pk_help): Do not use tabs to separate command
 	names from summary.
 

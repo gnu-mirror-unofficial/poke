@@ -236,8 +236,7 @@ ios_dev_stream_flush (void *iod, ios_dev_off offset)
     return IOS_OK;
 }
 
-struct ios_dev_if ios_dev_stream
-  __attribute__ ((visibility ("hidden"))) =
+struct ios_dev_if ios_dev_stream =
   {
    .get_if_name = ios_dev_stream_get_dev_if_name,
    .handler_normalize = ios_dev_stream_handler_normalize,

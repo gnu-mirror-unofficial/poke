@@ -39,8 +39,7 @@ struct pk_compiler
   int status;  /* Status of last API function call. Initialized with PK_OK */
 };
 
-struct pk_term_if libpoke_term_if
-__attribute__ ((visibility ("hidden")));
+struct pk_term_if libpoke_term_if;
 
 #define PK_RETURN(code) do { return pkc->status = (code); } while (0)
 
