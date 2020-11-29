@@ -1,5 +1,10 @@
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk (pk_help): Do not use tabs to separate command
+	names from summary.
+
+2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/sref-func-5.pk: Remove trailing whitespaces.
 
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>,
