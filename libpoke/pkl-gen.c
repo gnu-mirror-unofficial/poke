@@ -2264,8 +2264,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct_ref)
               pkl_ast_node field_name
                 = PKL_AST_STRUCT_TYPE_FIELD_NAME (elem);
 
-              if (field_name == NULL
-                  || strcmp (PKL_AST_IDENTIFIER_POINTER (field_name),
+              if (field_name != NULL
+                  && strcmp (PKL_AST_IDENTIFIER_POINTER (field_name),
                              PKL_AST_IDENTIFIER_POINTER (struct_ref_identifier)) == 0)
                 {
                   is_field_p = 1;

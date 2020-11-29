@@ -1556,6 +1556,7 @@ EXTRA_DIST = \
   poke.pkl/sref-func-2.pk \
   poke.pkl/sref-func-3.pk \
   poke.pkl/sref-func-4.pk \
+  poke.pkl/sref-func-5.pk \
   poke.pkl/strings-1.pk \
   poke.pkl/strings-2.pk \
   poke.pkl/strings-3.pk \

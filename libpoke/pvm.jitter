@@ -5285,6 +5285,20 @@ instruction strace (?n)
   end
 end
 
+# Instruction: disas
+#
+# Print out the disassembling of the program executed by the
+# closure in the top of the stack.
+#
+# Stack: ( CLS -- CLS )
+
+instruction disas ()
+  code
+    pvm_val cls = JITTER_TOP_STACK ();
+    pvm_disassemble_program (PVM_VAL_CLS_PROGRAM (cls));
+  end
+end
+
 # Instruction: note VALUE
 #
 # This instruction is intended to be used to insert annotations that
