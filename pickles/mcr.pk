@@ -147,9 +147,9 @@ fun mcr_print_fdest = (uint<6> fdest) void:
 
    Each instruction specifies two sources: A and M.
    ALU and BYTE ops specify a destination: A, or M plus functional.  */
-  
+
 type MCR_Insn_A =
-  struct       
+  struct
   {
     uint<10> address;
 
@@ -211,7 +211,7 @@ type MCR_Insn_Dst =
         }
     }
   };
-    
+
 type MCR_Instruction =
   struct
   {
