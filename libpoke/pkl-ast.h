@@ -226,12 +226,6 @@ typedef union pkl_ast_node *pkl_ast_node;
 #define PKL_AST_REGISTERED_P(AST) ((AST)->common.registered_p)
 #define PKL_AST_REFCOUNT(AST) ((AST)->common.refcount)
 
-/* NOTE: both ASTREF and ASTDEREF need an l-value!  */
-#define ASTREF(AST) ((AST) ? (++((AST)->common.refcount), (AST)) \
-                     : NULL)
-#define ASTDEREF(AST) ((AST) ? (--((AST)->common.refcount), (AST)) \
-                       : NULL)
-
 struct pkl_ast_loc
 {
   int first_line;
@@ -1893,6 +1887,22 @@ union pkl_ast_node
   struct pkl_ast_print_stmt print_stmt;
   struct pkl_ast_print_stmt_arg print_stmt_arg;
 };
+
+static inline pkl_ast_node __attribute__ ((always_inline, warn_unused_result))
+ASTREF (pkl_ast_node ast)
+{
+  if (ast)
+    ++ast->common.refcount;
+  return ast;
+}
+
+static inline pkl_ast_node __attribute__ ((always_inline, warn_unused_result))
+ASTDEREF (pkl_ast_node ast)
+{
+  if (ast)
+    --ast->common.refcount;
+  return ast;
+}
 
 /* The `pkl_ast' struct defined below contains a PKL abstract syntax tree.
 

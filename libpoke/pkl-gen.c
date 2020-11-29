@@ -3014,7 +3014,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
         PKL_GEN_PAYLOAD->in_constructor = 1;
 
         pkl_asm_label (PKL_GEN_ASM, label);
-        ASTREF(s); pkl_ast_node_free (s);
+        s = ASTREF(s); pkl_ast_node_free (s);
       }
 
       if (type_struct_constructor != PVM_NULL)

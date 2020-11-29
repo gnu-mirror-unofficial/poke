@@ -2583,7 +2583,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
           PKL_PASS_ERROR;
         }
 
-      ASTREF (bool_type); pkl_ast_node_free (bool_type);
+      bool_type = ASTREF (bool_type); pkl_ast_node_free (bool_type);
     }
 
   /* Ditto for the optcond.  */
@@ -2603,7 +2603,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
           PKL_PASS_ERROR;
         }
 
-      ASTREF (bool_type); pkl_ast_node_free (bool_type);
+      bool_type = ASTREF (bool_type); pkl_ast_node_free (bool_type);
     }
 
   /* If specified, the type of the initializer of a struct field
@@ -2653,7 +2653,7 @@ expected %s, got %s",
           PKL_PASS_ERROR;
         }
 
-      ASTREF (offset_type); pkl_ast_node_free (offset_type);
+      offset_type = ASTREF (offset_type); pkl_ast_node_free (offset_type);
     }
 }
 PKL_PHASE_END_HANDLER

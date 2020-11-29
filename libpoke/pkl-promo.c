@@ -63,7 +63,7 @@ promote_integral (pkl_ast ast,
           PKL_AST_TYPE (*a) = ASTREF (desired_type);
           PKL_AST_LOC (*a) = loc;
           PKL_AST_LOC (desired_type) = loc;
-          ASTREF (*a);
+          *a = ASTREF (*a);
           *restart = 1;
         }
 
@@ -125,7 +125,7 @@ promote_offset (pkl_ast ast,
           *a = pkl_ast_make_cast (ast, type, ASTDEREF (*a));
           PKL_AST_TYPE (*a) = ASTREF (type);
           PKL_AST_LOC (*a) = loc;
-          ASTREF (*a);
+          *a = ASTREF (*a);
           *restart = 1;
         }
 
@@ -183,7 +183,7 @@ promote_array (pkl_ast ast,
     *a = pkl_ast_make_cast (ast, type, ASTDEREF (*a));
     PKL_AST_TYPE (*a) = ASTREF (type);
     PKL_AST_LOC (*a) = loc;
-    ASTREF (*a);
+    *a = ASTREF (*a);
     *restart = 1;
     return 1;
   }
@@ -257,7 +257,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
 
         pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
-        ASTREF (unit_bit);
+        unit_bit = ASTREF (unit_bit);
         PKL_AST_LOC (unit_bit) = PKL_AST_LOC (exp);
 
         if (!promote_offset (PKL_PASS_AST,
@@ -597,7 +597,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
                         && PKL_AST_TYPE_I_SIGNED_P (op2_base_type));
 
         pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
-        ASTREF (unit_bit);
+        unit_bit = ASTREF (unit_bit);
         PKL_AST_LOC (unit_bit) = PKL_AST_LOC (exp);
 
         if (!promote_offset (PKL_PASS_AST,
@@ -878,7 +878,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_type_array)
       {
         pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
-        ASTREF (unit_bit);
+        unit_bit = ASTREF (unit_bit);
         PKL_AST_LOC (unit_bit) = PKL_AST_LOC (PKL_PASS_NODE);
 
         if (!promote_offset (PKL_PASS_AST,
@@ -1385,7 +1385,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
 
   pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
-  ASTREF (unit_bit);
+  unit_bit = ASTREF (unit_bit);
   PKL_AST_LOC (unit_bit) = PKL_AST_LOC (PKL_PASS_NODE);
 
   if (!promote_offset (PKL_PASS_AST,
@@ -1614,7 +1614,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
                 PKL_PASS_ERROR;
               }
 
-            ASTREF (unit_bit); pkl_ast_node_free (unit_bit);
+            unit_bit = ASTREF (unit_bit); pkl_ast_node_free (unit_bit);
             break;
           }
         default:

@@ -1,5 +1,29 @@
 2020-11-29  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* libpoke/pkl-ast.h (ASTREF): Re-write the macro as inline function
+	with `always_inline` and `warn_unused_result` attributes.
+	(ASTDEREF): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Use return value of
+	`ASTREF`.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Likewise.
+	* libpoke/pkl-promo.c (promote_integral): Likewise.
+	(promote_offset): Likewise.
+	(promote_array): Likewise.
+	(pkl_promo_ps_op_div): Likewise.
+	(pkl_promo_ps_op_rela): Likewise.
+	(pkl_promo_ps_type_array): Likewise.
+	(pkl_promo_ps_map): Likewise.
+	(pkl_promo_ps_struct_type_field): Likewise.
+	* libpoke/pkl-tab.y (offset_type_specifier): Likewise.
+	(struct_type_field): Likewise.
+	(stmt): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Likewise.
+	* libpoke/pkl-ast.c (pkl_ast_reverse): Use return value of `ASTDEREF`.
+	* etc/hacking.org (Memory Management): Update.
+	* HACKING: Regenerate.
+
+2020-11-29  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/libpoke.h (pk_call): Remove `__attribute__ ((sentinel))`.
 	`sentinel` expects `NULL` but the API uses `PK_NULL`.
 

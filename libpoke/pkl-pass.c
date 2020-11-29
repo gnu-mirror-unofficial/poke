@@ -616,7 +616,7 @@ pkl_do_pass_1 (pkl_compiler compiler,
      this function will be stored in some other node (or the top-level
      AST structure).  */
   if (node != node_orig)
-    ASTREF (node);
+    node = ASTREF (node);
 
  _exit:
   if (level != 0

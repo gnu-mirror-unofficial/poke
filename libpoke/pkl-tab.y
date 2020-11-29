@@ -1434,7 +1434,7 @@ offset_type_specifier:
                                                  $2,
                                                  PKL_AST_DECL_INITIAL (decl));
 
-                  ASTREF ($4); pkl_ast_node_free ($4);
+                  $4 = ASTREF ($4); pkl_ast_node_free ($4);
                   PKL_AST_LOC ($$) = @$;
                 }
         | OFFSETCONSTR simple_type_specifier ',' INTEGER '>'
@@ -1724,7 +1724,7 @@ struct_type_field:
                     {
                       PKL_AST_LOC ($3) = @3;
                       PKL_AST_TYPE ($3) = pkl_ast_make_string_type (pkl_parser->ast);
-                      ASTREF (PKL_AST_TYPE ($3));
+                      PKL_AST_TYPE ($3) = ASTREF (PKL_AST_TYPE ($3));
                       PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
                     }
                 }
@@ -2220,7 +2220,7 @@ stmt:
                   PKL_AST_LOC ($$) = @$;
 
                   /* Free the identifier.  */
-                  ASTREF ($3); pkl_ast_node_free ($3);
+                  $3 = ASTREF ($3); pkl_ast_node_free ($3);
 
                   /* Annotate the contained BREAK and CONTINUE
                      statements with their lexical level within this

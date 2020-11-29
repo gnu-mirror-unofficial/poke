@@ -1,9 +1,9 @@
-                       __________________________
+		       __________________________
 
-                        GNU POKE - HACKING NOTES
+			GNU POKE - HACKING NOTES
 
-                            The poke hackers
-                       __________________________
+			    The poke hackers
+		       __________________________
 
 
 Table of Contents
@@ -1743,7 +1743,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 
   The AST uses reference counting in order to manage the memory used by
   the nodes.  Every time you store a pointer to an AST node, you should
-  use the macro `ASTREF' in order to increase its counter:
+  use the `ASTREF' function in order to increase its counter:
 
   ,----
   | pkl_ast_node foo = ASTREF (node);
@@ -1758,27 +1758,17 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-  There is a little caveat: the way ASTREF is defined, it requires a
-  l-value to work properly.  Therefore, this doesn't work:
-
-  ,----
-  | pkl_ast_node foo = ASTREF (PKL_AST_TYPE (node));
-  `----
-
-
-  instead, write:
-
-  ,----
-  | pkl_ast_node type = PKL_AST_TYPE (node);
-  | pkl_ast_node foo = ASTREF (type);
-  `----
+  To make sure you get the reference counting right, it's required to
+  use the return value of `ASTREF' function. The compiler will warn you
+  otherwise.
 
 
 13.2 Using ASTDEREF
 ~~~~~~~~~~~~~~~~~~~
 
-  `ASTDEREF' decreases the reference counter of the provided AST node.
-  The passed value should be a l-value.
+  `ASTDEREF' decreases the reference counter of the provided AST
+  node. It's required to use the return value of `ASTDEREF'. The
+  compiler will warn you otherwise.
 
   In practice you will seldom find yourself in the need to use
   `ASTDEREF'.  Just make sure that every `ASTREF' is paired with a
