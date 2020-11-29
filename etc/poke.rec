@@ -1597,16 +1597,16 @@ Description:
 +
 + (poke*) .rollback
 
-Summary: Support N-byte endianness
+Summary: Generalized endiannes support
 Component: IO
 Kind: ENH
 Priority: 2
 Description:
-+ For 2-byte endianness:
-+
-+ (poke) .set endian little,big,host
-+ (poke) .set word-size 16
-Note: This would be soooooo cool :) - jemarch
++ .set word-size N (defaults to 1 byte)
++ .set group-size N (defaults to 0 with means infinite)
++ .set endian {big,ittle} (sets the word endianness)
++ set group-endian {big,little} (sets the group endianness)
++ normal users will just use .set endian {big,little}
 
 Summary: Process IOD
 Component: IO
