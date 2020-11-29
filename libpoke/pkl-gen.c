@@ -611,6 +611,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TIME);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
           break;
+        case PKL_AST_BUILTIN_STRACE:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_STRACE, 0);
+          break;
         case PKL_AST_BUILTIN_GETENV:
           {
             pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);

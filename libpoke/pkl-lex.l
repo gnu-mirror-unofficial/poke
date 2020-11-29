@@ -249,6 +249,8 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_FORGET; }
 "__PKL_BUILTIN_GET_TIME__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_GET_TIME; }
+"__PKL_BUILTIN_STRACE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_STRACE; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

@@ -1417,6 +1417,7 @@ pkl_ast_node pkl_ast_make_incrdecr (pkl_ast ast,
 #define PKL_AST_BUILTIN_GETENV 10
 #define PKL_AST_BUILTIN_FORGET 11
 #define PKL_AST_BUILTIN_GET_TIME 12
+#define PKL_AST_BUILTIN_STRACE 13
 
 struct pkl_ast_comp_stmt
 {

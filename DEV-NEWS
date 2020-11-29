@@ -7,6 +7,10 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2020-11-29
+* A new built-in function `strace' has been introduced, that prints
+  out a stack trace.  This is useful to debug the compiler.
+
 2020-11-22
 * It is now possible to bootstrap without cloning jitter by using
   bootstrap --no-git --gnulib-srcdir=DIR --jitter-srcdir=DIR.

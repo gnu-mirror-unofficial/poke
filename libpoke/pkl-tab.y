@@ -418,6 +418,7 @@ token <integer> UNION    _("keyword `union'")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE BUILTIN_GETENV BUILTIN_FORGET BUILTIN_GET_TIME
+%token BUILTIN_STRACE
 
 /* Compiler builtins.  */
 
@@ -2003,6 +2004,7 @@ builtin:
         | BUILTIN_GETENV        { $$ = PKL_AST_BUILTIN_GETENV; }
         | BUILTIN_FORGET        { $$ = PKL_AST_BUILTIN_FORGET; }
         | BUILTIN_GET_TIME      { $$ = PKL_AST_BUILTIN_GET_TIME; }
+        | BUILTIN_STRACE        { $$ = PKL_AST_BUILTIN_STRACE; }
         ;
 
 stmt_decl_list:
