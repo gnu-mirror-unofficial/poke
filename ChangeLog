@@ -1,5 +1,10 @@
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (pkl_make_assertion): do not ignore the result
+	of ASTREF.
+
+2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_printer): fix style class handling.
 	* testsuite/poke.pkl/printf-value-15.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new test.

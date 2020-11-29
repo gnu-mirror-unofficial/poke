@@ -167,7 +167,7 @@ pkl_make_assertion (struct pkl_parser *p, pkl_ast_node cond, pkl_ast_node msg,
       PKL_AST_TYPE (msg) = ASTREF (stype);
     }
   arg_msg = pkl_ast_make_funcall_arg (p->ast, msg, NULL);
-  ASTREF (arg_msg);
+  arg_msg = ASTREF (arg_msg);
   PKL_AST_LOC (arg_msg) = PKL_AST_LOC (msg);
 
   /* Third argument of _pkl_assert to report the location of the assert
