@@ -1,5 +1,12 @@
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	BZ 26975
+	* bootstrap.conf (libpoke_modules): Import module `byteswap'.
+	* libpoke/ios.c: Include byteswap.h.
+	(ios_read_int_common): Use bswap_64 instead of __bswap_64.
+
+2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Do not emit empty source lines in error
 	reporting): Removed as fixed.
 

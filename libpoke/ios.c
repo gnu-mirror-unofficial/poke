@@ -26,6 +26,8 @@
 #define _(str) gettext (str)
 #include <streq.h>
 
+#include "byteswap.h"
+
 #include "pk-utils.h"
 #include "ios.h"
 #include "ios-dev.h"
@@ -411,7 +413,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
               reg = ((reg & 0x0000ff0000000000LL) >> (24 - bits))
                     | (reg & 0xffff00ffffffffffLL);
             /* Now we can place the bytes correctly.  */
-            *value = __bswap_64(reg);
+            *value = bswap_64(reg);
           }
       }
     else
@@ -450,7 +452,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
               reg = ((reg & 0x000000ff00000000LL) >> (32 - bits))
                     | (reg & 0xffffff00ffffffffLL);
             /* Now we can place the bytes correctly.  */
-            *value = __bswap_64(reg);
+            *value = bswap_64(reg);
           }
       }
     else
@@ -491,7 +493,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
               reg = ((reg & 0x00000000ff000000LL) >> (40 - bits))
                     | (reg & 0xffffffff00ffffffLL);
             /* Now we can place the bytes correctly.  */
-            *value = __bswap_64(reg);
+            *value = bswap_64(reg);
           }
       }
     else
@@ -535,7 +537,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
               reg = ((reg & 0x0000000000ff0000LL) >> (48 - bits))
                     | (reg & 0xffffffffff00ffffLL);
             /* Now we can place the bytes correctly.  */
-            *value = __bswap_64(reg);
+            *value = bswap_64(reg);
           }
       }
     else
@@ -582,7 +584,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
               reg = ((reg & 0x000000000000ff00LL) >> (56 - bits))
                     | (reg & 0xffffffffffff00ffLL);
             /* Now we can place the bytes correctly.  */
-            *value = __bswap_64(reg);
+            *value = bswap_64(reg);
           }
       }
     else
@@ -630,7 +632,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
               reg = ((reg & 0x00000000000000ffLL) >> (64 - bits))
                     | (reg & 0xffffffffffffff00LL);
             /* Now we can place the bytes correctly.  */
-            *value = __bswap_64(reg);
+            *value = bswap_64(reg);
           }
       }
     else
@@ -667,7 +669,7 @@ ios_read_int_common (ios io, ios_off offset, int flags,
         reg = ((reg & 0x00000000000000ffLL) >> (64 - bits))
               | (reg & 0xffffffffffffff00LL);
         /* Now we can place the bytes correctly.  */
-        *value = __bswap_64(reg);
+        *value = bswap_64(reg);
       }
     else
       {
