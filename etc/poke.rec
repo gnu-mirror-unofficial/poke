@@ -1272,16 +1272,6 @@ Description:
 + already declared entity.
 Target: 0.1
 
-Summary: Do not emit empty source lines in error reporting
-Component: Compiler
-Kind: BUG
-BZ: 26892
-Priority: 4
-Description:
-+ If there is no source line available, do not use verbose error
-+ reporting.
-Target: 0.1
-
 Summary: Remove call to `abort' in pkl-lex.l
 Component: Compiler
 Kind: BUG

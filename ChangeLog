@@ -1,5 +1,10 @@
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Do not emit empty source lines in error
+	reporting): Removed as fixed.
+
+2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (disas): New instruction.
 	* libpoke/pkl-insn.def: Define PKL_INSN_DISAS.
 	* libpoke/pkl-gen.c (pkl_gen_ps_struct_ref): Fix logic in
