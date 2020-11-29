@@ -6,7 +6,7 @@ type gmo_le_body =
     struct
     {
     } if 1;
-    
+
     method _print = void : { print ("#<foo>"); }
   };
 
