@@ -22,3 +22,4 @@ load "pk-dump.pk";
 load "pk-copy.pk";
 load "pk-save.pk";
 load "pk-extract.pk";
+load "pk-scrabble.pk";

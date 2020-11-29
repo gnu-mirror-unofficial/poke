@@ -1,0 +1,108 @@
+/* pk-scrabble.pk - `scrabble' command.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+           category = "commands",
+           topic = "scrabble",
+           summary = "Scrabble part of an IO space based on patterns",
+           description="
+Rearrange portions of an IO space based on a transformation defined
+by a pair of patterns.
+
+Synopsis:
+
+  scrabble [:from OFFSET] [:size OFFSET] \\
+           [:from_pattern STRING] [:to_pattern STRING] \\
+           [:ent_size OFFSET] \\
+           [:from_ios IOS] [:to_ios IOS]
+
+Arguments:
+
+  :from OFFSET
+         Beginning of the range in the origin IO space from where start
+         rearranging units.  Defaults to 0#B.
+
+  :size OFFSET
+         Size of the range to scrabble in the origin IO space.
+         Defaults to 0#B
+
+  :from_pattern STRING
+         String specifying a sequence of units.  Each character is an unit.
+         Defaults to \"\".
+
+  :to_pattern STRING
+         String specifying the scrabbled units.  Each character is an unit.
+         If a character that doesn't appear in the `from_pattern' is found
+         in this string, it is ignored.  Defaults to `from_pattern'.
+
+  :ent_size OFFSET
+         Size of the entities to scrabble around.  Defaults to 1#B.
+
+  :from_ios IOS
+         IOS from where obtain the data to scrabble.  Defaults to the
+         current IO space.
+
+  :to_ios IOS
+         IOS to where write the scrabbled data.  Defaults to `from_ios'.
+
+See `.doc scrabble' for more information."
+         };
+
+fun scrabble = (off64 from = 0#B,
+                off64 size = 0#B,
+                string from_pattern = "",
+                string to_pattern = from_pattern,
+                off64 ent_size = 1#B,
+                int from_ios = get_ios,
+                int to_ios = from_ios) void:
+{
+  type Entity = struct { char code; bit[ent_size] value; };
+
+  var to = from + size;
+  var end = from;
+
+  if (to_pattern == from_pattern)
+     return;
+
+  while (from < to)
+    {
+      var collected = Entity[]();
+
+      fun lookup_entity = (char code) Entity:
+      {
+        for (ent in collected where ent.code == code)
+          return ent;
+        return Entity {};
+      }
+
+      for (var i = 0; i < from_pattern'length; i++, from += ent_size)
+        collected += [Entity { code = from_pattern[i],
+                               value = unmap bit[ent_size] @ from_ios : from}];
+
+      for (var i = 0; i < to_pattern'length; i++)
+        {
+          var ent = lookup_entity (to_pattern[i]);
+          if (ent.code != '\0')
+             {
+               bit[ent_size] @ to_ios : end = ent.value;
+               end += ent_size;
+             }
+        }
+   }
+}

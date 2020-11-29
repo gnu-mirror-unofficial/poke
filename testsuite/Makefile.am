@@ -76,6 +76,10 @@ EXTRA_DIST = \
   poke.cmd/maps-alien-1.pk \
   poke.cmd/nbd-1.pk \
   poke.cmd/save-1.pk \
+  poke.cmd/scrabble-1.pk \
+  poke.cmd/scrabble-2.pk \
+  poke.cmd/scrabble-3.pk \
+  poke.cmd/scrabble-4.pk \
   poke.cmd/set-endian.pk \
   poke.cmd/set-error-on-warning.pk \
   poke.cmd/set-oacutoff-1.pk \

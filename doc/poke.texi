@@ -163,6 +163,7 @@ Commands
 * copy::			Copying data around.
 * save::			Save data into a file.
 * extract::			Extract contents of values to buffers.
+* scrabble::			Scrabble memory chunks based on patterns.
 
 Configuration
 * pokerc::			User's initialization file.
@@ -5376,6 +5377,7 @@ If @var{status} is omitted, then the exit status zero will be returned.
 * copy::			Copying data around.
 * save::			Save data into a file.
 * extract::			Extract contents of values to memory IOS.
+* scrabble::			Scrabble memory chunks based on patterns.
 @end menu
 
 @node dump
@@ -5608,6 +5610,15 @@ fun extract = (any val, string to) void
 Where @var{val} is a mapped value, and @var{to} is the name of the
 memory IOS to create (or use).  The contents of @var{val} are copied
 to the beginning of the memory IOS @code{*@var{to}*}.
+
+@node scrabble
+@section @command{scrabble}
+@cindex @command{scrabble}
+
+The @command{scrabble} command rearranges portions of an IO space
+based on a transformation defined by a pair of patterns.
+
+XXX
 
 @node Configuration
 @chapter Configuration

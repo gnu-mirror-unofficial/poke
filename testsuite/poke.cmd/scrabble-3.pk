@@ -1,0 +1,7 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x80} } */
+
+/* { dg-command { extract :val (byte[8] @ 0#B) :to "buffer" } } */
+/* { dg-command { scrabble :from 0#B :size 4#B :from_pattern "12" :to_pattern "1122" :to_ios 1} } */
+/* { dg-command { dump :ios 1 :ascii 0 :ruler 0 :from 0#B :size iosize :group_by 1#B } } */
+/* { dg-output "00000000: 10 10 20 20 30 30 40 40" } */

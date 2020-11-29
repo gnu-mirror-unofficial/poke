@@ -1,5 +1,17 @@
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-scrabble.pk: New file.
+	* poke/pk-cmd.pk: Load pk-scrabble.pk.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-scrabble.pk.
+	* doc/poke.texi (scrabble): New section.
+	* testsuite/poke.cmd/scrabble-1.pk: New test.
+	* testsuite/poke.cmd/scrabble-2.pk: Likewise.
+	* testsuite/poke.cmd/scrabble-3.pk: Likewise.
+	* testsuite/poke.cmd/scrabble-4.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (pkl_make_assertion): do not ignore the result
 	of ASTREF.
 
