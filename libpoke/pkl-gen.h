@@ -38,6 +38,11 @@
 
 #define PKL_GEN_MAX_PASM 25
 
+/* Likewise for the contexts.  If this hard limit is exceeded it is
+   most likely due to a bug in the gen pass.  */
+
+#define PKL_GEN_MAX_CTX 25
+
 /* The following struct defines the payload of the code generation
    phase.
 
@@ -55,29 +60,12 @@
    completed, the program is "finished" (in PVM parlance) and ready
    to be used.
 
-   IN_STRUCT_DECL is 1 when a struct declaration is being generated.
-   0 otherwise.
+   CONTEXT is an array implementing a stack of contexts.  Each context
+   is a bitmap.  See hte PKL_GEN_CTX_* constants below for the
+   significance of each bit.  The initial context is initialized to 0.
 
-   IN_MAPPER is 1 when a mapper function for an array or a struct type
-   is being generated.  0 otherwise.
-
-   IN_WRITER is 1 when a writer function for an array or a struct type
-   is begin generated.  0 otherwise.  This context is also used for
-   struct integrators.
-
-   IN_CONSTRUCTOR is 1 when a struct constructor is being generated.
-   0 otherwise.
-
-   IN_COMPARATOR is 1 when a struct comparator is being generated.
-   0 otherwise.
-
-   IN_PRINTER is 1 when a printer is being generated.  0 otherwise.
-
-   IN_LVALUE is 1 in a sub-tree corresponding to the l-value of an
-   assignment statement.  0 otherwise.
-
-   IN_ARRAY_BOUNDER is 1 when an array bounder function is being
-   generated.  0 otherwise.
+   CUR_CONTEXT is the index to CONTEXT and marks the top of the stack
+   of contexts.  Initially 0.
 
    ENDIAN is the endianness to be used when mapping and writing
    integral types.
@@ -94,19 +82,11 @@ struct pkl_gen_payload
   pkl_compiler compiler;
   pkl_asm pasm[PKL_GEN_MAX_PASM];
   pkl_asm pasm2[PKL_GEN_MAX_PASM];
+  uint32_t context[PKL_GEN_MAX_CTX];
   int cur_pasm;
   int cur_pasm2;
+  int cur_context;
   pvm_program program;
-  int in_struct_decl;
-  int in_mapper;
-  int in_constructor;
-  int in_writer;
-  int in_lvalue;
-  int in_comparator;
-  int in_printer;
-  int in_array_bounder;
-  int in_method_arguments;
-  int in_funcall;
   int generating_pvm_struct_type;
   int endian;
   int constructor_depth;
@@ -115,6 +95,23 @@ struct pkl_gen_payload
 };
 
 typedef struct pkl_gen_payload *pkl_gen_payload;
+
+/* At any given time the code generation phase can be in a set of
+   several possible contexts, which are generally mutually inclusive.
+   This set of contexts in maintained in a 32-bit long bitmap.  The
+   following constants identify the supported contexts and their
+   corresponding bits in the bitmap.  */
+
+#define PKL_GEN_CTX_IN_STRUCT_DECL  0x01
+#define PKL_GEN_CTX_IN_MAPPER       0x02
+#define PKL_GEN_CTX_IN_CONSTRUCTOR  0x04
+#define PKL_GEN_CTX_IN_WRITER       0x08
+#define PKL_GEN_CTX_IN_LVALUE       0x10
+#define PKL_GEN_CTX_IN_COMPARATOR   0x20
+#define PKL_GEN_CTX_IN_PRINTER      0x40
+#define PKL_GEN_CTX_IN_ARRAY_BOUNDER 0x80
+#define PKL_GEN_CTX_IN_FUNCALL      0x200
+#define PKL_GEN_CTX_GENERATING_PVM_STRUCT_TYPE 0x400
 
 extern struct pkl_phase pkl_phase_gen;
 

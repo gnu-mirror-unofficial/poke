@@ -1,5 +1,26 @@
 2020-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (PKL_GEN_IN_CTX_P): Likewise.
+	(PKL_GEN_SAVE_CONTEXT): Likewise.
+	(PKL_GEN_RESTORE_CONTEXT): Likewise.
+	(PKL_GEN_SET_CONTEXT): Likewise.
+	(PKL_GEN_CLEAR_CONTEXT): Likewise.
+
+	* libpoke/pkl-gen.h (PKL_GEN_CTX_IN_STRUCT_DECL): Define.
+	(PKL_GEN_CTX_IN_MAPPER): Likewise.
+	(PKL_GEN_CTX_IN_CONSTRUCTOR): Likewise.
+	(PKL_GEN_CTX_IN_WRITER): Likewise.
+	(PKL_GEN_CTX_IN_LVALUE): Likewise.
+	(PKL_GEN_CTX_IN_COMPARATOR): Likewise.
+	(PKL_GEN_CTX_IN_PRINTER): Likewise.
+	(PKL_GEN_CTX_IN_ARRAY_BOUNDER): Likewise.
+	(PKL_GEN_CTX_IN_METHOD_ARGUMENTS): Likewise.
+	(PKL_GEN_CTX_IN_FUNCALL): Likewise.
+	(PKL_GEN_CTX_GENEARTING_PVM_STRUCT_TYPE): Likewise.
+	(PKL_GEN_MAX_CTX): Likewise.
+
+2020-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-def.c (print_var_decl): Use base_name instead of
 	basename.
 
