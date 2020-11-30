@@ -1,3 +1,8 @@
+2020-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-def.c (print_var_decl): Use base_name instead of
+	basename.
+
 2020-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/ios-dev-file.c: Remove stale hidden attributes.

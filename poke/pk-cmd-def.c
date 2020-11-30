@@ -19,6 +19,8 @@
 #include <config.h>
 #include <string.h>
 
+#include "dirname.h"
+
 #include "poke.h"
 #include "pk-cmd.h"
 
@@ -35,7 +37,7 @@ print_var_decl (int kind,
   pk_puts ("\t\t");
 
   if (source)
-    pk_printf ("%s:%d\n", basename (source), first_line);
+    pk_printf ("%s:%d\n", base_name (source), first_line);
   else
     pk_puts ("<stdin>\n");
 }
