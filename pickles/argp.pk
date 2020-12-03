@@ -23,15 +23,54 @@ type Argp_Option =
   {
     string name;
     string long_name;
-    string description;
+    string summary;
+    string arg_name;
     int arg_required;
     Argp_Option_Handler handler;
   };
 
-fun argp_parse = (Argp_Option[] opts, string[] argv,
+fun argp_do_help = (string program, string summary,
+                    Argp_Option[] opts) void:
+{
+  printf "Usage: %s [OPTION]...\n", program;
+
+  if (summary != "")
+     printf "%s\n", summary;
+
+  if (opts'length > 0)
+   {
+     print "\nOptions:\n";
+
+     for (opt in opts)
+       printf ("  %s%s%s%s%s\n",
+               opt.name != "" ? "-" + opt.name : "",
+               opt.name != "" && opt.long_name != "" ? ", " : "    ",
+               opt.long_name != "" ? "--" + opt.long_name : "",
+               opt.arg_required ?
+                  (opt.arg_name == "" ? " ARG\t" : " " + opt.arg_name + "\t") : "\t\t",
+               opt.summary);
+   }
+
+  exit (0);
+}
+
+fun argp_parse = (string program,
+                  string summary,
+                  Argp_Option[] opts, string[] argv,
                   int allow_unknown = 0) string[]:
 {
   var rest = string[]();
+
+  /* Add some default options.  Note that user-provided options with
+     the same name will take precedence.  */
+  opts += [Argp_Option {
+               long_name = "help",
+               handler = lambda (string val) void: { argp_do_help (program,
+                                                                   summary,
+                                                                   opts); },
+               summary = "print a help message and exit."
+           }
+          ];
 
   fun getopt = (string arg) Argp_Option:
   {
@@ -41,7 +80,7 @@ fun argp_parse = (Argp_Option[] opts, string[] argv,
           || (arg == opt.name))
         return opt;
     }
-    
+
     if (allow_unknown)
       rest += ["-" + arg];
     else
