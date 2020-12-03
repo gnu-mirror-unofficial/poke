@@ -1,3 +1,8 @@
+2020-12-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/argp.pk: New file.
+	* pickles/Makefile.am (dist_pickles_DATA): Add argp.pk.
+
 2020-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (PKL_GEN_IN_CTX_P): Likewise.

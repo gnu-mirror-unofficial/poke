@@ -1,0 +1,75 @@
+/* argp.pk - Argp like interface for Poke programs.  */
+
+/* Copyright (C) 2020 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+type Argp_Option_Handler = (string)void;
+
+type Argp_Option =
+  struct
+  {
+    string name;
+    string long_name;
+    string description;
+    int arg_required;
+    Argp_Option_Handler handler;
+  };
+
+fun argp_parse = (Argp_Option[] opts, string[] argv,
+                  int allow_unknown = 0) string[]:
+{
+  var rest = string[]();
+
+  fun getopt = (string arg) Argp_Option:
+  {
+    for (opt in opts)
+    {
+      if ((arg[0] == '-' && arg[1:] == opt.long_name)
+          || (arg == opt.name))
+        return opt;
+    }
+    
+    if (allow_unknown)
+      rest += ["-" + arg];
+    else
+      raise Exception {code = EC_generic,
+                       msg = "unknown option -" + arg};
+  }
+
+  for (var i = 0; i < argv'length; i++)
+  {
+    var arg = argv[i];
+
+    if (arg[0] != '-' || arg'length == 1)
+      rest += [arg];
+    else
+    {
+      var opt = getopt (arg[1:]);
+
+      if (opt.arg_required)
+      {
+        if (i + 1 == argv'length || argv[i + 1] == "-")
+          raise Exception {code = EC_inval,
+                           msg = "option " + arg + " requires an argument"};
+        opt.handler (argv[(i++) + 1]);
+      }
+      else
+        opt.handler ("");
+    }
+  }
+
+  return rest;
+}
