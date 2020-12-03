@@ -1,5 +1,10 @@
 2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/argp.pk (argp_parse): Support specifying several short
+	options in a -FOO construction.
+
+2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/argp.pk (argp_do_help): New function.
 	(argp_parse): Support a default --help option.
 
