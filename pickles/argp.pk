@@ -99,18 +99,10 @@ fun argp_parse = (string program,
       if (arg[1] == '-')
         {
           /* This is one long option.  */
-        }
-      else
-        {
-          /* This is one or more short options.  If it is only one
-             then it can get an argument.  */
+          var opt = getopt (arg[1:]);
 
-          if (arg'length == 2)
-            {
-              var opt = getopt (arg[1:]);
-
-              if (opt.arg_required)
-                {
+          if (opt.arg_required)
+                 {
                   if (i + 1 == argv'length || argv[i + 1] == "-")
                     raise Exception {code = EC_inval,
                                      msg = "option " + arg + " requires an argument"};
@@ -118,22 +110,31 @@ fun argp_parse = (string program,
                 }
               else
                 opt.handler ("");
-            }
-          else
-            {
-              for (short_arg in arg[1:])
-                {
-                  var opt = getopt (short_arg as string);
-
-                  if (opt.arg_required)
-                    raise Exception {code = EC_inval,
-                                     msg = "option " + arg + " requires an argument"};
-                  opt.handler ("");
-                }
-            }
         }
-    }
-  }
+      else
+        {
+          /* This is one or more short options.  */
 
+          for (short_arg in arg[1:])
+            {
+              var opt = getopt (short_arg as string);
+
+              if (opt.arg_required)
+                raise Exception {code = EC_inval,
+                                 msg = "option " + arg + " requires an argument"};
+
+              if (opt.arg_required)
+               {
+                 if (i + 1 == argv'length || argv[i + 1] == "-")
+                   raise Exception {code = EC_inval,
+                                    msg = "option " + arg + " requires an argument"};
+                 opt.handler (argv[(i++) + 1]);
+               }
+               else
+               opt.handler ("");
+           }
+       }
+   }
+}
   return rest;
 }
