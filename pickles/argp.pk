@@ -47,7 +47,7 @@ fun argp_do_help = (string program, string summary,
                opt.name != "" && opt.long_name != "" ? ", " : "    ",
                opt.long_name != "" ? "--" + opt.long_name : "",
                opt.arg_required ?
-                  (opt.arg_name == "" ? " ARG\t" : " " + opt.arg_name + "\t") : "\t\t",
+                  (opt.arg_name == "" ? "=ARG\t" : "=" + opt.arg_name + "\t") : "\t\t",
                opt.summary);
    }
 
@@ -98,23 +98,30 @@ fun argp_parse = (string program,
     {
       if (arg[1] == '-')
         {
-          /* This is one long option.  */
-          var opt = getopt (arg[1:]);
+          /* This is one long option.  It may have an argument.  */
+          var eqidx = strchr (arg, '=');
+          var optname = arg[1:eqidx];
+          var optarg_p = eqidx < arg'length;
+          var optarg = eqidx < (arg'length - 1) ? arg[eqidx+1:] : "";
+          var opt = getopt (optname);
+
+          if (optarg_p && !opt.arg_required)
+             raise Exception {code = EC_inval,
+                              msg = "option " + arg + " doesn't require an argument"};
 
           if (opt.arg_required)
-                 {
-                  if (i + 1 == argv'length || argv[i + 1] == "-")
-                    raise Exception {code = EC_inval,
-                                     msg = "option " + arg + " requires an argument"};
-                  opt.handler (argv[(i++) + 1]);
-                }
+             {
+               if (!optarg_p)
+                  raise Exception {code = EC_inval,
+                                   msg = "option " + arg + " requires an argument"};
+                opt.handler (optarg);
+              }
           else
             opt.handler ("");
         }
       else
         {
           /* This is one or more short options.  */
-
           for (short_arg in arg[1:])
             {
               var opt = getopt (short_arg as string);
