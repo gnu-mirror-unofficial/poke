@@ -68,6 +68,7 @@ fun argp_parse = (string program,
                   int allow_unknown = 0) string[]:
 {
   var rest = string[]();
+  var found_dashdash = 0;
 
   /* Add some default options.  Note that user-provided options with
      the same name will take precedence.  */
@@ -106,7 +107,13 @@ fun argp_parse = (string program,
   {
     var arg = argv[i];
 
-    if (arg[0] != '-' || arg'length == 1)
+    if (arg == "--" && !found_dashdash)
+     {
+       found_dashdash = 1;
+       continue;
+     }
+
+    if (found_dashdash || arg[0] != '-' || arg'length == 1)
       rest += [arg];
     else
     {

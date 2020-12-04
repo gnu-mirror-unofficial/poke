@@ -49,6 +49,8 @@ EXTRA_DIST = \
   poke.argp/argp.exp \
   poke.argp/argp-1.pk \
   poke.argp/argp-10.pk \
+  poke.argp/argp-11.pk \
+  poke.argp/argp-12.pk \
   poke.argp/argp-2.pk \
   poke.argp/argp-3.pk \
   poke.argp/argp-4.pk \
