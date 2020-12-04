@@ -1,5 +1,10 @@
 2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/argp.pk (argp_do_version): New function.
+	(argp_parse): Add support for default --version.
+
+2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/argp.pk (argp_parse): Support proper arguments with = in
 	long options.
 	(argp_do_help): Adapt printing accordingly.

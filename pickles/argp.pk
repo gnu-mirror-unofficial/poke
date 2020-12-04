@@ -54,9 +54,17 @@ fun argp_do_help = (string program, string summary,
   exit (0);
 }
 
+fun argp_do_version = (string program, string version) void:
+{
+  printf "%s%s\n", program, version != "" ? " " + version : "";
+  exit (0);
+}
+
 fun argp_parse = (string program,
-                  string summary,
-                  Argp_Option[] opts, string[] argv,
+                  string version = "",
+                  string summary = "",
+                  Argp_Option[] opts = Argp_Option[](),
+                  string[] argv = string[](),
                   int allow_unknown = 0) string[]:
 {
   var rest = string[]();
@@ -69,7 +77,13 @@ fun argp_parse = (string program,
                                                                    summary,
                                                                    opts); },
                summary = "print a help message and exit."
-           }
+           },
+           Argp_Option {
+               long_name = "version",
+               handler = lambda (string val) void: { argp_do_version (program,
+                                                                      version); },
+               summary = "show version and exit."
+           },
           ];
 
   fun getopt = (string arg) Argp_Option:
