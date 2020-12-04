@@ -108,8 +108,8 @@ fun argp_parse = (string program,
                                      msg = "option " + arg + " requires an argument"};
                   opt.handler (argv[(i++) + 1]);
                 }
-              else
-                opt.handler ("");
+          else
+            opt.handler ("");
         }
       else
         {
@@ -119,11 +119,7 @@ fun argp_parse = (string program,
             {
               var opt = getopt (short_arg as string);
 
-              if (opt.arg_required)
-                raise Exception {code = EC_inval,
-                                 msg = "option " + arg + " requires an argument"};
-
-              if (opt.arg_required)
+               if (opt.arg_required)
                {
                  if (i + 1 == argv'length || argv[i + 1] == "-")
                    raise Exception {code = EC_inval,
