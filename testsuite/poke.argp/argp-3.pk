@@ -1,0 +1,20 @@
+/* { dg-do run } */
+
+load argp;
+
+var args = ["--foo", "bar", "foo"];
+
+var foo = "no";
+
+var options =
+    [Argp_Option {
+         name = "f",
+         long_name = "foo",
+         handler = lambda (string arg) void: { foo = "yes"; }
+     }];
+
+/* { dg-command { var rest = argp_parse ("foo", "", "", options, args) } } */
+/* { dg-command { foo } } */
+/* { dg-output {"yes"} } */
+/* { dg-command { rest } } */
+/* { dg-output "\n\\\[\"bar\",\"foo\"\\\]" } */

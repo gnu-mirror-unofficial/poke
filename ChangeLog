@@ -1,5 +1,24 @@
 2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.argp/argp.exp: New file.
+	* testsuite/poke.argp/argp-1.pk: New test.
+	* testsuite/poke.argp/argp-2.pk: Likewise.
+	* testsuite/poke.argp/argp-3.pk: Likewise.
+	* testsuite/poke.argp/argp-4.pk: Likewise.
+	* testsuite/poke.argp/argp-5.pk: Likewise.
+	* testsuite/poke.argp/argp-6.pk: Likewise.
+	* testsuite/poke.argp/argp-7.pk: Likewise.
+	* testsuite/poke.argp/argp-8.pk: Likewise.
+	* testsuite/poke.argp/argp-9.pk: Likewise.
+	* testsuite/poke.argp/argp-10.pk: Likewise.
+	* testsuite/poke.argp/argp-diag-1.pk: Likewise.
+	* testsuite/poke.argp/argp-diag-2.pk: Likewise.
+	* testsuite/poke.argp/argp-diag-3.pk: Likewise.
+	* testsuite/poke.argp/argp-diag-4.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/argp.pk (argp_do_version): New function.
 	(argp_parse): Add support for default --version.
 

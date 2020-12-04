@@ -46,6 +46,21 @@ EXTRA_DIST = \
   config/unix.exp \
   lib/poke-dg.exp \
   lib/poke.exp \
+  poke.argp/argp.exp \
+  poke.argp/argp-1.pk \
+  poke.argp/argp-10.pk \
+  poke.argp/argp-2.pk \
+  poke.argp/argp-3.pk \
+  poke.argp/argp-4.pk \
+  poke.argp/argp-5.pk \
+  poke.argp/argp-6.pk \
+  poke.argp/argp-7.pk \
+  poke.argp/argp-8.pk \
+  poke.argp/argp-9.pk \
+  poke.argp/argp-diag-1.pk \
+  poke.argp/argp-diag-2.pk \
+  poke.argp/argp-diag-3.pk \
+  poke.argp/argp-diag-4.pk \
   poke.cmd/cmd.exp \
   poke.cmd/copy-1.pk \
   poke.cmd/copy-2.pk \
