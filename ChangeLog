@@ -1,3 +1,8 @@
+2020-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Programs): New chapter.
+	(argp): New section.
+
 2020-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/argp.pk (argp_parse): Support for --.

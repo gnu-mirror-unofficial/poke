@@ -58,6 +58,7 @@ Pickles
 * Colors::			Editing colors.
 * Audio::			Poking audio files.
 * Object Formats::		Editing executables and libraries.
+* Programs::			Facilities to write binary utilities.
 
 Advanced Pokology
 * Writing Pickles::		Sharing your abstractions the sane way.
@@ -4694,6 +4695,114 @@ XXX
 @section Dwarf
 
 XXX
+
+@node Programs
+@chapter Programs
+
+This chapter describes pickles whose purpose is to facilitate the
+writing of binary utilities in Poke.
+
+@menu
+* argp::			Handling of command-line options.
+@end menu
+
+@node argp
+@section argp
+
+Like any other program, Poke scripts often need to handle options
+passed in the command line.  The @code{argp} pickle provides a
+convenient and easy way to handle these arguments.
+
+The main entry point of the pickle is the function @code{argp_parse},
+with the following prototype:
+
+@example
+fun argp_parse = (string @var{program},
+                  string @var{version} = "",
+                  string @var{summary} = "",
+                  Argp_Option[] @var{opts} = Argp_Option[](),
+                  string[] @var{argv} = string[](),
+                  int @var{allow_unknown} = 0) string[]
+@end example
+
+@noindent
+Where @var{program} is the name of the program providing the
+command-line options.  @var{version} is either a string identifying
+the version of the program, or the empty string. @var{summary} is a
+short summary of what the program does.  @var{opts} is an array of
+@code{Argp_Option} structs, each of which describe a command line
+option and, in particular, a handler for that option.  @var{argv} is
+an array of string containing the command line elements to process.
+Finally, @var{allow_unknown} specifies whether unknown options
+constitute an error or not.  This last option is useful in order to
+support sub-parsers.
+
+Once invoked, @code{argp_parse} analyzes the command line provided in
+@var{argv}, recognizes options, performs checks making sure that all
+specified options are well formed, and that every option requiring an
+argument gets one, invokes the handlers registered for each option,
+and finally returns an array of non-option arguments in @var{argv},
+for further processing by the user.
+
+Each @code{Argp_Option} struct describes an option.  They have this
+form:
+
+@example
+type Argp_Option =
+  struct
+  @{
+    string @var{name};
+    string @var{long_name};
+    string @var{summary};
+    string @var{arg_name};
+    int @var{arg_required};
+    Argp_Option_Handler @var{handler};
+  @};
+@end example
+
+@noindent
+Where @var{name} is a string of size one character specifying the
+short name for the option. @var{long_name} is a non-empty string of
+any size specifying the long name for the option. @var{summary} is a
+short paragraph with a summary of that the option does.
+@var{arg_name}, if specified, is a string to be used to describe the
+argument of the option in the @code{--help} output.  If @var{arg_name}
+is not specified then @code{"ARG"} is used.  @var{arg_required} is a
+boolean specifying whether the option accepts and expects an
+argument.  Defaults to 0.  Finally, @var{handler} is a function that
+will be invoked to process the option.  The function has the following
+prototype:
+
+@example
+type Argp_Option_Handler = (string)void
+@end example
+
+The @code{argp_parse} function provides default handlers for several
+standard options:
+
+@table @command
+@item --help
+The default handler for this option prints out an usage message in the
+standard GNU way, and exits.  In particular, this output is compatible
+with the @command{help2man} utility.
+@item --version
+The default handler for this option prints out the name and the
+version of the program, and exits.
+@end table
+
+@noindent
+If the user provides handlers for the options above, these take
+precedence wrt the default handlers.
+
+Several short options can be accumulated this way:
+
+@example
+foo -qyz
+@end example
+
+The special option @code{--}, if found in the command line, stops the
+processing of options.  Everything found about it is considered
+non-option arguments.
 
 @node Writing Pickles
 @chapter Writing Pickles
