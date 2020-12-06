@@ -1,3 +1,8 @@
+2020-12-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-asm.pks (eqa): Fix lexical context handling when the
+	comparison is false.
+
 2020-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Programs): New chapter.

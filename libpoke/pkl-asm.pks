@@ -811,7 +811,7 @@
         eqlu
         nip2                    ; ARR2 ARR1 (SEL2==SEL1)
         quake                   ; ARR1 ARR2 (SEL2==SEL1)
-        bzi .done
+        bzi .done2
         drop                    ; ARR1 ARR2
         ;; At this point both arrays are guaranteed to have the same
         ;; number of elements.  Check equality of the elements
@@ -851,6 +851,7 @@
       .endloop
         ;; The arrays are equal
         push int<32>1           ; ARR1 ARR2 1
-        popf 1
 .done:
+        popf 1
+.done2:
         .end
