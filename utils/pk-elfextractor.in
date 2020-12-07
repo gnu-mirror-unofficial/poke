@@ -1,4 +1,4 @@
-#!/usr/local/bin/poke -L
+#!@bindir@/poke -L
 !#
 
 /* elfextractor - Extract sections from ELF64 files. */

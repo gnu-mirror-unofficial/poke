@@ -1,3 +1,9 @@
+2020-12-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* Makefile.am (SUBDIRS): Add utils/.
+	* utils/Makefile.am: New file.
+	* utils/pk-elfextractor.in: Renamed from pk-elfextractor.
+
 2020-12-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-asm.pks (eqa): Fix lexical context handling when the
