@@ -1,5 +1,12 @@
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_offset): Handle in_mapper and
+	in_constructor and in_type.
+	(pkl_gen_ps_type_offset): Remove.
+	(pkl_phase_gen): Deregister pkl_gen_ps_type_offset.
+
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.h (struct pkl_gen_payload): Remove field
 	generating_pvm_struct_type.
 	(PKL_GEN_CTX_GENERATING_PVM_STRUCT_TYPE): Remove.

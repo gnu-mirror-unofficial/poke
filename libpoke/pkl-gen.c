@@ -1761,38 +1761,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
       PKL_PASS_SUBPASS (PKL_AST_TYPE_O_BASE_TYPE (PKL_PASS_NODE)); /* _ */
       PKL_PASS_BREAK;
     }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_MAPPER | PKL_GEN_CTX_IN_CONSTRUCTOR))
+    {
+      PKL_PASS_SUBPASS (PKL_AST_TYPE_O_BASE_TYPE (PKL_PASS_NODE)); /* VAL */
+      PKL_PASS_SUBPASS (PKL_AST_TYPE_O_UNIT (PKL_PASS_NODE));      /* VAL UNIT */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);                    /* OFF */
+      PKL_PASS_BREAK;
+    }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_PRINTER))
     {
                                                 /* VAL DEPTH */
       RAS_MACRO_OFFSET_PRINTER (PKL_PASS_NODE); /* _ */
       PKL_PASS_BREAK;
     }
-}
-PKL_PHASE_END_HANDLER
-
-/*
- * | BASE_TYPE
- * | UNIT
- * TYPE_OFFSET
- */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_offset)
-{
-  /* Note that in_writer is handled in the pre-order handler, and not
-     here.  */
-
-  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_MAPPER | PKL_GEN_CTX_IN_CONSTRUCTOR))
-    {
-      /* Note the value in the stack is the mapped/constructed value
-         from traversing the BASE_TYPE with in_{mapper,constructor} =
-         1 */
-      /* Stack: VAL UNIT */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
-    }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    {
     /* Just build an offset type.  */
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYO);
-
+      PKL_PASS_SUBPASS (PKL_AST_TYPE_O_BASE_TYPE (PKL_PASS_NODE)); /* BASE_TYPE */
+      PKL_PASS_SUBPASS (PKL_AST_TYPE_O_UNIT (PKL_PASS_NODE));      /* UNIT */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYO);
+      PKL_PASS_BREAK;
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -3976,7 +3965,6 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ANY, pkl_gen_ps_type_any),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_gen_ps_type_integral),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_pr_type_offset),
-   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_gen_ps_type_offset),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_gen_pr_type_function),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_gen_ps_type_function),
    PKL_PHASE_PR_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_gen_pr_type_array),
