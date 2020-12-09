@@ -112,6 +112,7 @@ typedef struct pkl_gen_payload *pkl_gen_payload;
 #define PKL_GEN_CTX_IN_ARRAY_BOUNDER 0x80
 #define PKL_GEN_CTX_IN_FUNCALL      0x200
 #define PKL_GEN_CTX_GENERATING_PVM_STRUCT_TYPE 0x400
+#define PKL_GEN_CTX_IN_TYPE         0x800
 
 extern struct pkl_phase pkl_phase_gen;
 

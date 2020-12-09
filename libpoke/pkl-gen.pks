@@ -73,8 +73,8 @@
         ;; both bounded and unbounded array types.  Also, this avoids
         ;; evaluating the boundary expression in the array type
         ;; twice.
-        .c PKL_GEN_SAVE_CONTEXT;
-        .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
+        .c PKL_GEN_PUSH_CONTEXT;
+        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_RESTORE_CONTEXT;
                                 ; ETYPE
@@ -359,8 +359,8 @@
         regvar $eidx            ; BOFF
         regvar $eboff           ; _
         ;; Build the type of the constructed array.
-        .c PKL_GEN_SAVE_CONTEXT;
-        .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
+        .c PKL_GEN_PUSH_CONTEXT;
+        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_RESTORE_CONTEXT;
                                 ; ATYPE
@@ -905,8 +905,8 @@
         ;;  Push the number of fields
         pushvar $nfield         ; BOFF [EBOFF STR VAL]... NFIELD
         ;; Finally, push the struct type and call mksct.
-        .c PKL_GEN_SAVE_CONTEXT;
-        .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
+        .c PKL_GEN_PUSH_CONTEXT;
+        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_RESTORE_CONTEXT;
                                 ; BOFF [EBOFF STR VAL]... NFIELD TYP
@@ -1343,8 +1343,8 @@
  .c }
         ;; Push the number of fields, create the struct and return it.
         pushvar $nfield        ; null [OFF STR VAL]... NMETHOD NFIELD
-        .c PKL_GEN_SAVE_CONTEXT;
-        .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
+        .c PKL_GEN_PUSH_CONTEXT;
+        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_RESTORE_CONTEXT;
                                 ; null [OFF STR VAL]... NMETHOD NFIELD TYP

@@ -1,3 +1,28 @@
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.h (PKL_GEN_CTX_IN_TYPE): Define.
+	* libpoke/pkl-gen.c (pkl_gen_ps_type_offset): Build offset type
+	only in `in_type' context.
+	(pkl_gen_ps_type_void): Likewise.
+	(pkl_gen_ps_type_any): Likewise.
+	(pkl_gen_ps_type_integral): Likewise.
+	(pkl_gen_ps_type_function): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	(pkl_gen_ps_type_struct): Likewise.
+	(pkl_gen_pr_struct_type_field): Likewise.
+	(PKL_GEN_PUSH_CONTEXT): Define.
+	* libpoke/pkl-gen.pks (array_mapper): Set the `in_type' context
+	wherever appropriate.
+	(array_constructor): Likewise.
+	(struct_mapper): Likewise.
+	(struct_constructor): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_array): Likewise.
+	(pkl_gen_ps_struct): Likewise.
+	(pkl_gen_ps_cast): Likewise.
+	(pkl_gen_ps_isa): Likewise.
+
 2020-12-10  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* pickles/color.pk: Use `assert` for integrity check.

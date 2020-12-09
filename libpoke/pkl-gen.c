@@ -74,6 +74,16 @@
     }                                                                   \
   while (0)
 
+#define PKL_GEN_PUSH_CONTEXT                                            \
+  do                                                                    \
+    {                                                                   \
+      assert (PKL_GEN_PAYLOAD->cur_context < PKL_GEN_MAX_CTX);          \
+      PKL_GEN_PAYLOAD->context[PKL_GEN_PAYLOAD->cur_context + 1]        \
+        = 0;                                                            \
+      PKL_GEN_PAYLOAD->cur_context++;                                   \
+    }                                                                   \
+  while (0)
+
 #define PKL_GEN_RESTORE_CONTEXT                         \
   do                                                    \
     {                                                   \
@@ -1779,7 +1789,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_offset)
       /* Stack: VAL UNIT */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
     }
-  else
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     /* Just build an offset type.  */
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYO);
 
@@ -1808,7 +1818,11 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_isa)
 {
+  PKL_GEN_SAVE_CONTEXT;
+  PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
   PKL_PASS_SUBPASS (PKL_AST_ISA_TYPE (PKL_PASS_NODE));
+  PKL_GEN_RESTORE_CONTEXT;
+
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ISA);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
 }
@@ -1838,7 +1852,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
     {
       pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
 
+      PKL_GEN_PUSH_CONTEXT;
+      PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
       PKL_PASS_SUBPASS (to_type);
+      PKL_GEN_RESTORE_CONTEXT;
+
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ISA);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
@@ -2102,7 +2120,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
 
   /* Create a new empty array of the right type, having the right
      number of elements.  */
+
+  PKL_GEN_PUSH_CONTEXT;
+  PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
   PKL_PASS_SUBPASS (array_type);             /* TYP */
+  PKL_GEN_RESTORE_CONTEXT;
+
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                 pvm_make_ulong (PKL_AST_ARRAY_NELEM (array), 64));
                                             /* TYP NELEM */
@@ -2262,7 +2285,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct)
      number of fields, since there are no declarations in them.  */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                 pvm_make_ulong (PKL_AST_STRUCT_NELEM (sct), 64));
-  PKL_PASS_SUBPASS (sct_type);
+
+  PKL_GEN_PUSH_CONTEXT;
+  PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+  PKL_PASS_SUBPASS (sct_type); /* TYP */
+  PKL_GEN_RESTORE_CONTEXT;
+
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKSCT);
 }
 PKL_PHASE_END_HANDLER
@@ -2369,7 +2397,8 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_void)
 {
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYV);
+  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYV);
 }
 PKL_PHASE_END_HANDLER
 
@@ -2379,7 +2408,8 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_any)
 {
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYANY);
+  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYANY);
 }
 PKL_PHASE_END_HANDLER
 
@@ -2463,7 +2493,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
                                                   /* VAL DEPTH */
       RAS_MACRO_INTEGRAL_PRINTER (PKL_PASS_NODE); /* _ */
     }
-  else
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     {
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
                     pvm_make_ulong (PKL_AST_TYPE_I_SIZE (integral_type),
@@ -2587,9 +2617,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_function)
 {
   pkl_ast_node ftype = PKL_PASS_NODE;
 
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                pvm_make_ulong (PKL_AST_TYPE_F_NARG (ftype), 64));
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYC);
+  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    {
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_ulong (PKL_AST_TYPE_F_NARG (ftype), 64));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYC);
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -2898,7 +2931,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       PKL_PASS_BREAK;
     }
-  else
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     {
       /* Generating a PVM array type.  */
 
@@ -2949,7 +2982,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
       /* Stack: VAL DEPTH */
       RAS_MACRO_STRING_PRINTER; /* _ */
     }
-  else
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYS);
 }
 PKL_PHASE_END_HANDLER
@@ -3180,11 +3213,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
       PKL_PASS_BREAK;
     }
-  else
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     {
       /* We are generating a PVM struct type.  We set the following
          variable so the struct type elems that are declarations are
          not processed.  */
+      /* XXX is this needed now? */
       PKL_GEN_PAYLOAD->generating_pvm_struct_type++;
     }
 }
@@ -3198,21 +3232,24 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_struct)
 {
-  /* We are generating a PVM struct type.  */
+  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    {
+      /* We are generating a PVM struct type.  */
 
-  pkl_ast_node struct_type = PKL_PASS_NODE;
-  pkl_ast_node type_name = PKL_AST_TYPE_NAME (struct_type);
+      pkl_ast_node struct_type = PKL_PASS_NODE;
+      pkl_ast_node type_name = PKL_AST_TYPE_NAME (struct_type);
 
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                pvm_make_ulong (PKL_AST_TYPE_S_NFIELD (struct_type), 64));
-  if (type_name)
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                  pvm_make_string (PKL_AST_IDENTIFIER_POINTER (type_name)));
-  else
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_ulong (PKL_AST_TYPE_S_NFIELD (struct_type), 64));
+      if (type_name)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                      pvm_make_string (PKL_AST_IDENTIFIER_POINTER (type_name)));
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYSCT);
-  PKL_GEN_PAYLOAD->generating_pvm_struct_type--;
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYSCT);
+      PKL_GEN_PAYLOAD->generating_pvm_struct_type--; /* XXX */
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -3228,17 +3265,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_struct_type_field)
   assert (!PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_WRITER));
   assert (!PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_CONSTRUCTOR));
 
-  /* We are generating a PVM struct type.  */
+  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    {
+      /* We are generating a PVM struct type.  */
 
-  /* If the struct type element doesn't include a name, generate a
-     null value as expected by the mktysct instruction.  */
-  if (!PKL_AST_STRUCT_TYPE_FIELD_NAME (PKL_PASS_NODE))
-    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-  else
-    PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (PKL_PASS_NODE));
-  PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (PKL_PASS_NODE));
+      /* If the struct type element doesn't include a name, generate a
+         null value as expected by the mktysct instruction.  */
+      if (!PKL_AST_STRUCT_TYPE_FIELD_NAME (PKL_PASS_NODE))
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+      else
+        PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (PKL_PASS_NODE));
+      PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (PKL_PASS_NODE));
 
-  PKL_PASS_BREAK;
+      PKL_PASS_BREAK;
+    }
 }
 PKL_PHASE_END_HANDLER
 
