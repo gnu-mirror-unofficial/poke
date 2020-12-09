@@ -1782,6 +1782,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYO);
       PKL_PASS_BREAK;
     }
+
+  /* We are in the normal context.  Process the base type, but not the
+     unit as we don't need it.  */
+  PKL_PASS_SUBPASS (PKL_AST_TYPE_O_BASE_TYPE (PKL_PASS_NODE));
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
