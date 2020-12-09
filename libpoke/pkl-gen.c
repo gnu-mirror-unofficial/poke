@@ -1715,18 +1715,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_string)
 PKL_PHASE_END_HANDLER
 
 /*
- * TYPE
- */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type)
-{
-  if (PKL_PASS_PARENT
-      && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_CAST)
-    PKL_PASS_BREAK;
-}
-PKL_PHASE_END_HANDLER
-
-/*
  * TYPE_OFFSET
  * | BASE_TYPE
  * | UNIT
@@ -1808,12 +1796,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_isa)
 PKL_PHASE_END_HANDLER
 
 /*
+ * CAST
  * | TYPE
  * | EXP
- * CAST
  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cast)
 {
   pkl_asm pasm = PKL_GEN_ASM;
   pkl_ast_node node = PKL_PASS_NODE;
@@ -1827,6 +1815,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
   to_type = PKL_AST_CAST_TYPE (node);
   from_type = PKL_AST_TYPE (exp);
 
+  /* Traverse the type and expression in normal context.  */
+  PKL_GEN_PUSH_CONTEXT;
+  PKL_PASS_SUBPASS (to_type);  /* _ */
+  PKL_PASS_SUBPASS (exp);      /* EXP */
+  PKL_GEN_POP_CONTEXT;
+
+  /* And finally generate code for the cast operation.  */
   if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_ANY)
     {
       pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
@@ -1933,6 +1928,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
   else
     assert (0);
 
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -3933,14 +3929,13 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_gen_ps_func),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC_ARG, pkl_gen_pr_func_arg),
    PKL_PHASE_PR_HANDLER (PKL_AST_FUNC_TYPE_ARG, pkl_gen_pr_func_type_arg),
-   PKL_PHASE_PR_HANDLER (PKL_AST_TYPE, pkl_gen_pr_type),
    PKL_PHASE_PR_HANDLER (PKL_AST_PROGRAM, pkl_gen_pr_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_PROGRAM, pkl_gen_ps_program),
    PKL_PHASE_PS_HANDLER (PKL_AST_INTEGER, pkl_gen_ps_integer),
    PKL_PHASE_PS_HANDLER (PKL_AST_IDENTIFIER, pkl_gen_ps_identifier),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRING, pkl_gen_ps_string),
    PKL_PHASE_PS_HANDLER (PKL_AST_OFFSET, pkl_gen_ps_offset),
-   PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_gen_ps_cast),
+   PKL_PHASE_PR_HANDLER (PKL_AST_CAST, pkl_gen_pr_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_ISA, pkl_gen_ps_isa),
    PKL_PHASE_PR_HANDLER (PKL_AST_MAP, pkl_gen_pr_map),
    PKL_PHASE_PS_HANDLER (PKL_AST_CONS, pkl_gen_ps_cons),

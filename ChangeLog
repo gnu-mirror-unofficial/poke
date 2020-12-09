@@ -1,5 +1,11 @@
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_cast): Make a pre-order handler.
+	(pkl_gen_pr_type): Remove handler.
+	(pkl_phase_gen): Adjust accordingly.
+
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_struct_type_field): Subpass on the
 	field type in normal context, avoiding generating a name.
 	(pkl_gen_pr_type_array): Likewise.
