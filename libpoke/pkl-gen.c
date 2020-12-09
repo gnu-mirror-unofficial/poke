@@ -181,7 +181,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
   /* mktysct only gets information from regular struct fields.
      Therefore, we do not need to process declarations of variables,
      types and methods inside struct types.  */
-  if (PKL_GEN_PAYLOAD->generating_pvm_struct_type)
+  if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     PKL_PASS_BREAK;
 
   switch (PKL_AST_DECL_KIND (decl))
@@ -3213,14 +3213,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
       PKL_PASS_BREAK;
     }
-  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
-    {
-      /* We are generating a PVM struct type.  We set the following
-         variable so the struct type elems that are declarations are
-         not processed.  */
-      /* XXX is this needed now? */
-      PKL_GEN_PAYLOAD->generating_pvm_struct_type++;
-    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -3248,7 +3240,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_struct)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYSCT);
-      PKL_GEN_PAYLOAD->generating_pvm_struct_type--; /* XXX */
     }
 }
 PKL_PHASE_END_HANDLER

@@ -1,5 +1,15 @@
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.h (struct pkl_gen_payload): Remove field
+	generating_pvm_struct_type.
+	(PKL_GEN_CTX_GENERATING_PVM_STRUCT_TYPE): Remove.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Use the `in_type' context
+	to break the pass.
+	(pkl_gen_pr_type_struct): Do not handle generating_pvm_struct_type.
+	(pkl_gen_ps_type_struct): Likewise.
+
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (PKL_GEN_DUP_CONTEXT): Renamed from
 	PKL_GEN_SAVE_CONTEXT.
 	(PKL_GEN_POP_CONTEXT): Renamed from PKL_GEN_RESTORE_CONTEXT.

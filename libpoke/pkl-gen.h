@@ -87,7 +87,6 @@ struct pkl_gen_payload
   int cur_pasm2;
   int cur_context;
   pvm_program program;
-  int generating_pvm_struct_type;
   int endian;
   int constructor_depth;
   int mapper_depth;
@@ -111,8 +110,7 @@ typedef struct pkl_gen_payload *pkl_gen_payload;
 #define PKL_GEN_CTX_IN_PRINTER      0x40
 #define PKL_GEN_CTX_IN_ARRAY_BOUNDER 0x80
 #define PKL_GEN_CTX_IN_FUNCALL      0x200
-#define PKL_GEN_CTX_GENERATING_PVM_STRUCT_TYPE 0x400
-#define PKL_GEN_CTX_IN_TYPE         0x800
+#define PKL_GEN_CTX_IN_TYPE         0x400
 
 extern struct pkl_phase pkl_phase_gen;
 
