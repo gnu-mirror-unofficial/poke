@@ -64,7 +64,7 @@
 #define PKL_GEN_IN_CTX_P(CTX)                                           \
   (PKL_GEN_PAYLOAD->context[PKL_GEN_PAYLOAD->cur_context] & (CTX))
 
-#define PKL_GEN_SAVE_CONTEXT                                            \
+#define PKL_GEN_DUP_CONTEXT                                             \
   do                                                                    \
     {                                                                   \
       assert (PKL_GEN_PAYLOAD->cur_context < PKL_GEN_MAX_CTX);          \
@@ -84,7 +84,7 @@
     }                                                                   \
   while (0)
 
-#define PKL_GEN_RESTORE_CONTEXT                         \
+#define PKL_GEN_POP_CONTEXT                             \
   do                                                    \
     {                                                   \
       assert (PKL_GEN_PAYLOAD->cur_context > 0);        \
@@ -209,20 +209,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
 
             if (PKL_AST_TYPE_S_WRITER (type_struct) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
                 RAS_FUNCTION_STRUCT_WRITER (writer_closure, type_struct);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_S_WRITER (type_struct) = writer_closure;
               }
 
             if (PKL_AST_TYPE_S_MAPPER (type_struct) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
 
                 RAS_FUNCTION_STRUCT_MAPPER (mapper_closure, type_struct);
@@ -230,35 +230,35 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
 
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_S_MAPPER (type_struct) = mapper_closure;
               }
 
             if (PKL_AST_TYPE_S_CONSTRUCTOR (type_struct) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
                 RAS_FUNCTION_STRUCT_CONSTRUCTOR (constructor_closure,
                                                  type_struct);          /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                      /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_S_CONSTRUCTOR (type_struct) = constructor_closure;
               }
 
             if (PKL_AST_TYPE_S_COMPARATOR (type_struct) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_COMPARATOR);
                 RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure,
                                                 type_struct);           /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_S_COMPARATOR (type_struct) = comparator_closure;
               }
@@ -270,14 +270,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                    integrators, since integrators do not call writers
                    nor the other way around.  This eases sharing of
                    code in the pks.  */
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
                 RAS_FUNCTION_STRUCT_INTEGRATOR (integrator_closure,
                                                 type_struct);           /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, integrator_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_S_INTEGRATOR (type_struct) = integrator_closure;
               }
@@ -306,49 +306,49 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                    lexical context!  This makes the calls to
                    in_array_bounder in array mappers/constructors to
                    only happen for anonymous array types.  */
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
                 PKL_PASS_SUBPASS (array_type);
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
               }
 
             if (PKL_AST_TYPE_A_WRITER (array_type) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
                 RAS_FUNCTION_ARRAY_WRITER (writer_closure, array_type);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_A_WRITER (array_type) = writer_closure;
               }
 
             if (PKL_AST_TYPE_A_MAPPER (array_type) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
 
                 RAS_FUNCTION_ARRAY_MAPPER (mapper_closure, array_type);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, mapper_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                 /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_A_MAPPER (array_type) = mapper_closure;
               }
 
             if (PKL_AST_TYPE_A_CONSTRUCTOR (array_type) == PVM_NULL)
               {
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
                 RAS_FUNCTION_ARRAY_CONSTRUCTOR (constructor_closure,
                                                 array_type);           /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, constructor_closure); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                       /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                      /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_A_CONSTRUCTOR (array_type) = constructor_closure;
               }
@@ -738,10 +738,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
 
   PKL_PASS_SUBPASS (exp);
 
-  PKL_GEN_SAVE_CONTEXT;
+  PKL_GEN_DUP_CONTEXT;
   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_LVALUE);
   PKL_PASS_SUBPASS (lvalue);
-  PKL_GEN_RESTORE_CONTEXT;
+  PKL_GEN_POP_CONTEXT;
 
   /* At this point the r-value, generated from executing EXP, is in
      the stack.  */
@@ -883,13 +883,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
               {
                 pvm_val writer;
 
-                PKL_GEN_SAVE_CONTEXT;
+                PKL_GEN_DUP_CONTEXT;
                 PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
                 RAS_FUNCTION_ARRAY_WRITER (writer, lvalue_type);
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */
-                PKL_GEN_RESTORE_CONTEXT;
+                PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_A_WRITER (lvalue_type) = writer;
               }
@@ -913,10 +913,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
 
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* IOS BOFF VAL */
 
-            PKL_GEN_SAVE_CONTEXT;
+            PKL_GEN_DUP_CONTEXT;
             PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
             PKL_PASS_SUBPASS (PKL_AST_TYPE (lvalue));
-            PKL_GEN_RESTORE_CONTEXT;
+            PKL_GEN_POP_CONTEXT;
             break;
           }
       }
@@ -1260,10 +1260,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
                   /* Print out the value.  */
                   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                                 pvm_make_int (0, 32)); /* OMODE ODEPTH EXP DEPTH */
-                  PKL_GEN_SAVE_CONTEXT;
+                  PKL_GEN_DUP_CONTEXT;
                   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_PRINTER);
                   PKL_PASS_SUBPASS (exp_type);
-                  PKL_GEN_RESTORE_CONTEXT;
+                  PKL_GEN_POP_CONTEXT;
 
                   /* Restore the current omode and odepth in the VM.  */
                   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD); /* OMODE */
@@ -1474,10 +1474,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
   }
 
   /* Push the closure for FUNCTION and call the bloody function.  */
-  PKL_GEN_SAVE_CONTEXT;
+  PKL_GEN_DUP_CONTEXT;
   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_FUNCALL);
   PKL_PASS_SUBPASS (PKL_AST_FUNCALL_FUNCTION (funcall));
-  PKL_GEN_RESTORE_CONTEXT;
+  PKL_GEN_POP_CONTEXT;
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
   PKL_PASS_BREAK;
 }
@@ -1537,10 +1537,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
     if (PKL_AST_TYPE_CODE (rtype) == PKL_TYPE_ARRAY
         && PKL_AST_TYPE_A_BOUNDER (rtype) == PVM_NULL)
       {
-        PKL_GEN_SAVE_CONTEXT;
+        PKL_GEN_DUP_CONTEXT;
         PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
         PKL_PASS_SUBPASS (rtype);
-        PKL_GEN_RESTORE_CONTEXT;
+        PKL_GEN_POP_CONTEXT;
       }
   }
 
@@ -1596,10 +1596,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
          compile and install one.  */
       if (PKL_AST_TYPE_A_BOUNDER (func_arg_type) == PVM_NULL)
         {
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
           PKL_PASS_SUBPASS (func_arg_type);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
         }
 
       pkl_asm_insn (pasm, PKL_INSN_ATOA,
@@ -1818,10 +1818,10 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_isa)
 {
-  PKL_GEN_SAVE_CONTEXT;
+  PKL_GEN_DUP_CONTEXT;
   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
   PKL_PASS_SUBPASS (PKL_AST_ISA_TYPE (PKL_PASS_NODE));
-  PKL_GEN_RESTORE_CONTEXT;
+  PKL_GEN_POP_CONTEXT;
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ISA);
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
@@ -1855,7 +1855,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
       PKL_GEN_PUSH_CONTEXT;
       PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
       PKL_PASS_SUBPASS (to_type);
-      PKL_GEN_RESTORE_CONTEXT;
+      PKL_GEN_POP_CONTEXT;
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ISA);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
@@ -1896,10 +1896,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
          compile and install one.  */
       if (PKL_AST_TYPE_A_BOUNDER (to_type) == PVM_NULL)
         {
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
           PKL_PASS_SUBPASS (to_type);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
         }
 
       pkl_asm_insn (pasm, PKL_INSN_ATOA, from_type, to_type);
@@ -1932,7 +1932,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
           pvm_val integrator_closure;
 
           /* See note about in_writer in pkl_gen_pr_decl.  */
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
           RAS_FUNCTION_STRUCT_INTEGRATOR (integrator_closure,
                                           from_type);           /* CLS */
@@ -1940,7 +1940,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, integrator_closure); /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
 
           PKL_AST_TYPE_S_INTEGRATOR (from_type) = integrator_closure;
         }
@@ -1974,10 +1974,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cons)
       /* Build an array with default values.  Note how array
          constructors do not use their argument.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-      PKL_GEN_SAVE_CONTEXT;
+      PKL_GEN_DUP_CONTEXT;
       PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
       PKL_PASS_SUBPASS (cons_type);
-      PKL_GEN_RESTORE_CONTEXT;
+      PKL_GEN_POP_CONTEXT;
 
       /* If an initial value has been provided, set the elements of
          the array to this value.  */
@@ -1989,10 +1989,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cons)
         }
       break;
     case PKL_AST_CONS_KIND_STRUCT:
-      PKL_GEN_SAVE_CONTEXT;
+      PKL_GEN_DUP_CONTEXT;
       PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
       PKL_PASS_SUBPASS (cons_type);
-      PKL_GEN_RESTORE_CONTEXT;
+      PKL_GEN_POP_CONTEXT;
       break;
     default:
       assert (0);
@@ -2020,18 +2020,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
          offset, which is expected by the ass_stmt PS handler.  */
       if (map_ios)
         {
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_LVALUE);
           PKL_PASS_SUBPASS (map_ios);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
         }
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
-      PKL_GEN_SAVE_CONTEXT;
+      PKL_GEN_DUP_CONTEXT;
       PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_LVALUE);
       PKL_PASS_SUBPASS (map_offset);
-      PKL_GEN_RESTORE_CONTEXT;
+      PKL_GEN_POP_CONTEXT;
     }
   else
     {
@@ -2070,10 +2070,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
         }
 
-      PKL_GEN_SAVE_CONTEXT;
+      PKL_GEN_DUP_CONTEXT;
       PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
       PKL_PASS_SUBPASS (map_type);
-      PKL_GEN_RESTORE_CONTEXT;
+      PKL_GEN_POP_CONTEXT;
     }
 
   PKL_PASS_BREAK;
@@ -2124,7 +2124,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
   PKL_GEN_PUSH_CONTEXT;
   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
   PKL_PASS_SUBPASS (array_type);             /* TYP */
-  PKL_GEN_RESTORE_CONTEXT;
+  PKL_GEN_POP_CONTEXT;
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                 pvm_make_ulong (PKL_AST_ARRAY_NELEM (array), 64));
@@ -2132,11 +2132,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_array)
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA); /* ARR */
 
   /* Install a writer in the array.  */
-  PKL_GEN_SAVE_CONTEXT;
+  PKL_GEN_DUP_CONTEXT;
   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
   RAS_FUNCTION_ARRAY_WRITER (array_type_writer, array_type);
   PKL_AST_TYPE_A_WRITER (array_type) = array_type_writer;
-  PKL_GEN_RESTORE_CONTEXT;
+  PKL_GEN_POP_CONTEXT;
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_writer); /* CLS */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                     /* CLS */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW); /* ARR */
@@ -2289,7 +2289,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_struct)
   PKL_GEN_PUSH_CONTEXT;
   PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
   PKL_PASS_SUBPASS (sct_type); /* TYP */
-  PKL_GEN_RESTORE_CONTEXT;
+  PKL_GEN_POP_CONTEXT;
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKSCT);
 }
@@ -2565,11 +2565,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
             /* Constructor argument.  */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
 
-            PKL_GEN_SAVE_CONTEXT;
+            PKL_GEN_DUP_CONTEXT;
             PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
             PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
             PKL_PASS_SUBPASS (function_rtype);
-            PKL_GEN_RESTORE_CONTEXT;
+            PKL_GEN_POP_CONTEXT;
           }
 
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
@@ -2682,11 +2682,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
              pkl_gen_pr_decl.  */
           bounder_created = 1;
 
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
           PKL_PASS_SUBPASS (array_type);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
         }
 
       if (array_type_mapper != PVM_NULL)
@@ -2768,11 +2768,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           pvm_val writer_closure;
 
           /* Compile a writer function to a closure.  */
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
           RAS_FUNCTION_ARRAY_WRITER (writer_closure, array_type);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
 
           /* Complete the writer closure with the current
              environment.  */
@@ -2854,11 +2854,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
              Named array types have their bounder compiled in
              pkl_gen_pr_decl.  */
           bounder_created = 1;
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
           PKL_PASS_SUBPASS (array_type);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
         }
 
       /* Push the EBOUND argument for the constructor.  */
@@ -2909,13 +2909,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
          map-assignment operation.  */
       if (array_type_writer == PVM_NULL)
         {
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
           RAS_FUNCTION_ARRAY_WRITER (array_type_writer, array_type);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_writer); /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                     /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                    /* _ */
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
 
           PKL_AST_TYPE_A_WRITER (array_type) = array_type_writer;
         }
@@ -3073,11 +3073,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
              current environment.  */
           pvm_val writer_closure;
 
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
           RAS_FUNCTION_STRUCT_WRITER (writer_closure, type_struct);
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer_closure); /* VAL CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                  /* VAL CLS */
@@ -3107,10 +3107,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
 
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The null */
-        PKL_GEN_SAVE_CONTEXT;
+        PKL_GEN_DUP_CONTEXT;
         PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
         PKL_PASS_SUBPASS (s);
-        PKL_GEN_RESTORE_CONTEXT;
+        PKL_GEN_POP_CONTEXT;
 
         pkl_asm_label (PKL_GEN_ASM, label);
         s = ASTREF(s); pkl_ast_node_free (s);
@@ -3148,13 +3148,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
           /* The struct type is anonymous and doesn't have a writer.
              Compile one in this environment.  */
 
-          PKL_GEN_SAVE_CONTEXT;
+          PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
           RAS_FUNCTION_STRUCT_WRITER (type_struct_writer, type_struct);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, type_struct_writer); /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                      /* CLS */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
-          PKL_GEN_RESTORE_CONTEXT;
+          PKL_GEN_POP_CONTEXT;
 
           PKL_AST_TYPE_S_WRITER (type_struct) = type_struct_writer;
         }

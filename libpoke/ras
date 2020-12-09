@@ -170,10 +170,10 @@
 #
 # A typical example is to invoke a GEN subpass, like:
 #
-#  .c PKL_GEN_SAVE_CONTEXT;
+#  .c PKL_GEN_DUP_CONTEXT;
 #  .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
 #  .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
-#  .c PKL_GEN_RESTORE_CONTEXT;
+#  .c PKL_GEN_POP_CONTEXT;
 #
 # The directives above will generate the literal C code, after
 # references to macro arguments (like @this or #that) are replaced.

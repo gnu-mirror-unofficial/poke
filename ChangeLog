@@ -1,5 +1,12 @@
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (PKL_GEN_DUP_CONTEXT): Renamed from
+	PKL_GEN_SAVE_CONTEXT.
+	(PKL_GEN_POP_CONTEXT): Renamed from PKL_GEN_RESTORE_CONTEXT.
+	* libpoke/pkl-gen.pks: Adapt to renames.
+
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.h (PKL_GEN_CTX_IN_TYPE): Define.
 	* libpoke/pkl-gen.c (pkl_gen_ps_type_offset): Build offset type
 	only in `in_type' context.

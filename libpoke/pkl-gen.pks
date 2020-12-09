@@ -76,7 +76,7 @@
         .c PKL_GEN_PUSH_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
                                 ; ETYPE
         pushvar $ebound         ; ETYPE EBOUND
         bnn .atype_bound_done
@@ -272,10 +272,10 @@
         swap                    ; EBOFF VAL
         pushvar $ios            ; EBOFF VAL IOS
         nrot                    ; IOS EOFF VAL
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
                                 ; _
         ;; Increase the current index and process the next
         ;; element.
@@ -308,10 +308,10 @@
         prolog
         .c if (PKL_AST_TYPE_A_BOUND (@array_type))
         .c {
-        .c   PKL_GEN_SAVE_CONTEXT;
+        .c   PKL_GEN_DUP_CONTEXT;
         .c   PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
         .c   PKL_PASS_SUBPASS (PKL_AST_TYPE_A_BOUND (@array_type)) ;
-        .c   PKL_GEN_RESTORE_CONTEXT;
+        .c   PKL_GEN_POP_CONTEXT;
         .c }
         .c else
              push null
@@ -362,7 +362,7 @@
         .c PKL_GEN_PUSH_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
                                 ; ATYPE
         push ulong<64>0         ; ATYPE 0UL
         mka                     ; ARR
@@ -443,10 +443,10 @@
    .c else
    .c {
         nip                     ; SBOFF
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_LABEL (@field));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
                                 ; SBOFF LOFF
         ;; Note that this relies on the field label offset to
         ;; be offset<uint<64>,b>.  This is guaranteed by promo.
@@ -474,10 +474,10 @@
         .macro check_struct_field_constraint @field
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
    .c {
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
         bnzi .constraint_ok
         drop
         push PVM_E_CONSTRAINT
@@ -507,10 +507,10 @@
    .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (@field);
    .c if (optcond)
         .c {
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
         .c PKL_PASS_SUBPASS (optcond);
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
         bnzi .optcond_ok
         drop                    ; BOFF STR VAL
         drop                    ; BOFF STR
@@ -758,10 +758,10 @@
  .c   if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
- .c     PKL_GEN_SAVE_CONTEXT;
+ .c     PKL_GEN_DUP_CONTEXT;
  .c     PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
  .c     PKL_PASS_SUBPASS (@field);
- .c     PKL_GEN_RESTORE_CONTEXT;
+ .c     PKL_GEN_POP_CONTEXT;
  .c
  .c     continue;
  .c   }
@@ -842,10 +842,10 @@
  .c      }
  .c      else
  .c      {
- .c     PKL_GEN_SAVE_CONTEXT;
+ .c     PKL_GEN_DUP_CONTEXT;
  .c     PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_MAPPER);
  .c     PKL_PASS_SUBPASS (@tmp);
- .c     PKL_GEN_RESTORE_CONTEXT;
+ .c     PKL_GEN_POP_CONTEXT;
  .c      }
  .c    }
         ;; And we are done.
@@ -908,7 +908,7 @@
         .c PKL_GEN_PUSH_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@type_struct);
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
                                 ; BOFF [EBOFF STR VAL]... NFIELD TYP
         mksct                   ; SCT
         ;; Install the attributes of the mapped object.
@@ -1102,10 +1102,10 @@
  .c   if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c   {
  .c     /* This is a declaration.  Generate it.  */
- .c     PKL_GEN_SAVE_CONTEXT;
+ .c     PKL_GEN_DUP_CONTEXT;
  .c     PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
  .c     PKL_PASS_SUBPASS (@field);
- .c     PKL_GEN_RESTORE_CONTEXT;
+ .c     PKL_GEN_POP_CONTEXT;
  .c
  .c     continue;
  .c   }
@@ -1153,10 +1153,10 @@
  .c if (@field_initializer)
  .c {
         drop
- .c     PKL_GEN_SAVE_CONTEXT;
+ .c     PKL_GEN_DUP_CONTEXT;
  .c     PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
  .c     PKL_PASS_SUBPASS (@field_initializer);
- .c     PKL_GEN_RESTORE_CONTEXT;
+ .c     PKL_GEN_POP_CONTEXT;
  .c }
  .c else
  .c {
@@ -1182,10 +1182,10 @@
    .c   /*   compile and install one.  */
    .c   if (PKL_AST_TYPE_A_BOUNDER (@field_type) == PVM_NULL)
    .c   {
-   .c      PKL_GEN_SAVE_CONTEXT;
+   .c      PKL_GEN_DUP_CONTEXT;
    .c      PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
    .c      PKL_PASS_SUBPASS (@field_type);
-   .c      PKL_GEN_RESTORE_CONTEXT;
+   .c      PKL_GEN_POP_CONTEXT;
    .c    }
    .c
    .c   pkl_asm_insn (RAS_ASM, PKL_INSN_ATOA,
@@ -1202,10 +1202,10 @@
    .c pkl_ast_node optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (@field);
    .c if (optcond)
    .c {
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
         .c PKL_PASS_SUBPASS (optcond);
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
         bnzi .optcond_ok
         drop                    ; ENAME EVAL
         drop                    ; ENAME
@@ -1227,10 +1227,10 @@
         ;; Evaluate the constraint expression.
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
    .c {
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
         bnzi .constraint_ok
         drop
    .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
@@ -1291,10 +1291,10 @@
  .c      }
  .c      else
  .c      {
- .c     PKL_GEN_SAVE_CONTEXT;
+ .c     PKL_GEN_DUP_CONTEXT;
  .c     PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
  .c     PKL_PASS_SUBPASS (@tmp);
- .c     PKL_GEN_RESTORE_CONTEXT;
+ .c     PKL_GEN_POP_CONTEXT;
  .c      }
  .c    }
         ;; And we are done :)
@@ -1346,7 +1346,7 @@
         .c PKL_GEN_PUSH_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@type_struct);
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
                                 ; null [OFF STR VAL]... NMETHOD NFIELD TYP
         mksct                   ; SCT
         popf 1
@@ -1465,10 +1465,10 @@
         swap                    ; IOS EOFF EVAL
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
         .c PKL_GEN_PAYLOAD->endian = endian; }
         ba .next
 .omitted_field:
@@ -1501,11 +1501,11 @@
   .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
-  .c    PKL_GEN_SAVE_CONTEXT;
+  .c    PKL_GEN_DUP_CONTEXT;
   .c    PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
   .c    PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_WRITER);
   .c    PKL_PASS_SUBPASS (@struct_itype);
-  .c    PKL_GEN_RESTORE_CONTEXT;
+  .c    PKL_GEN_POP_CONTEXT;
   .c }
         regvar $ivalue
  .c {
@@ -1583,11 +1583,11 @@
         push null
         ;; Note that the constructor consumes the null
         ;; on the stack.
-  .c    PKL_GEN_SAVE_CONTEXT;
+  .c    PKL_GEN_DUP_CONTEXT;
   .c    PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
   .c    PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_WRITER);
   .c    PKL_PASS_SUBPASS (@struct_itype);
-  .c    PKL_GEN_RESTORE_CONTEXT;
+  .c    PKL_GEN_POP_CONTEXT;
         regvar $ivalue
         .let @field
  .c      uint64_t i;
@@ -1648,10 +1648,10 @@
         nrot                    ; VAL IOS BOFF [VAL]
         fromr                   ; VAL IOS BOFF VAL
         ;; Invoke it.
-        .c PKL_GEN_SAVE_CONTEXT;
+        .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (@type);
-        .c PKL_GEN_RESTORE_CONTEXT;
+        .c PKL_GEN_POP_CONTEXT;
         ;; Undo the relocation.
         ureloc                  ; VAL
         drop                    ; _
