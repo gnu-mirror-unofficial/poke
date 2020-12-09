@@ -1531,6 +1531,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this
      environment.  */
+  /* XXX this should not be necessary any longer.  */
   {
     pkl_ast_node rtype = PKL_AST_FUNC_RET_TYPE (function);
 
@@ -1556,6 +1557,7 @@ PKL_PHASE_END_HANDLER
 
 /*
  * FUNC_ARG
+ * | TYPE
  * | INITIAL
  */
 
@@ -1566,6 +1568,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
   pkl_ast_node func_arg_initial = PKL_AST_FUNC_ARG_INITIAL (func_arg);
   pkl_ast_node func_arg_type = PKL_AST_FUNC_ARG_TYPE (func_arg);
   pvm_program_label after_conv_label = pkl_asm_fresh_label (PKL_GEN_ASM);
+
+  /* Traverse the argument type in normal context.  */
+  PKL_GEN_PUSH_CONTEXT;
+  PKL_PASS_SUBPASS (func_arg_type); /* _ */
+  PKL_GEN_POP_CONTEXT;
 
   if (func_arg_initial)
     {
@@ -1594,6 +1601,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
     {
       /* Make sure the cast type has a bounder.  If it doesn't,
          compile and install one.  */
+      /* XXX this shouldn't be necessary any more.  */
       if (PKL_AST_TYPE_A_BOUNDER (func_arg_type) == PVM_NULL)
         {
           PKL_GEN_DUP_CONTEXT;
@@ -1779,6 +1787,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_offset)
 PKL_PHASE_END_HANDLER
 
 /*
+ * | TYPE
  * | EXP
  * ISA
  */
@@ -1988,6 +1997,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
   pkl_ast_node map = PKL_PASS_NODE;
   pkl_ast_node map_offset = PKL_AST_MAP_OFFSET (map);
   pkl_ast_node map_ios = PKL_AST_MAP_IOS (map);
+  pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
+
+  /* Traverse the map type in normal context.  */
+  PKL_GEN_PUSH_CONTEXT;
+  PKL_PASS_SUBPASS (map_type);
+  PKL_GEN_POP_CONTEXT;
 
   if (PKL_PASS_PARENT == NULL
       && PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_LVALUE))
@@ -2011,7 +2026,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
     }
   else
     {
-      pkl_ast_node map_type = PKL_AST_MAP_TYPE (map);
       pkl_ast_node map_offset_magnitude = NULL;
 
       /* Push the IOS of the map.  */

@@ -1,5 +1,11 @@
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_func_arg): Traverse the argument
+	type in normal context.
+	(pkl_gen_pr_map): Traverse the map type in normal context.
+
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_cast): Make a pre-order handler.
 	(pkl_gen_pr_type): Remove handler.
 	(pkl_phase_gen): Adjust accordingly.
