@@ -1720,24 +1720,9 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type)
 {
-  /* Type nodes are handled by the code generator only in certain
-     circumstances.  In any other cases, break the pass to avoid
-     post-order hooks to be invoked.  */
-
-  if (PKL_PASS_PARENT)
-    {
-      switch (PKL_AST_CODE (PKL_PASS_PARENT))
-        {
-        case PKL_AST_TYPE:
-        case PKL_AST_STRUCT_TYPE_FIELD:
-        case PKL_AST_FUNC_TYPE_ARG:
-          /* Process these.  */
-          break;
-        default:
-          PKL_PASS_BREAK;
-          break;
-        }
-    }
+  if (PKL_PASS_PARENT
+      && PKL_AST_CODE (PKL_PASS_PARENT) == PKL_AST_CAST)
+    PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1823,7 +1808,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_isa)
 PKL_PHASE_END_HANDLER
 
 /*
- * | [TYPE is not generated]
+ * | TYPE
  * | EXP
  * CAST
  */
@@ -1952,6 +1937,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_cast)
 PKL_PHASE_END_HANDLER
 
 /*
+ * | CONS_TYPE
  * | [CONS_VALUE]
  * CONS
  */
@@ -2943,6 +2929,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       PKL_PASS_BREAK;
     }
+
+  /* In normal context, just subpass on the type of the elements,
+     ignoring the number of elements.  */
+  PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (PKL_PASS_NODE));
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -2983,7 +2974,7 @@ PKL_PHASE_END_HANDLER
 
 /*
  * TYPE_STRUCT
- * | STRUCT_TYPE_FIELD
+ * | (STRUCT_TYPE_FIELD|DECL)
  * | ...
  */
 
@@ -3207,6 +3198,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
       PKL_PASS_BREAK;
     }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
+    {
+      /* Do nothing.  See PS hook.  */
+    }
+  else
+    {
+      /* In normal context, process the fields of the struct, but not
+         the declarations contained within it.  */
+
+      pkl_ast_node elem;
+
+      for (elem = PKL_AST_TYPE_S_ELEMS (PKL_PASS_NODE);
+           elem;
+           elem = PKL_AST_CHAIN (elem))
+        {
+          if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD)
+            PKL_PASS_SUBPASS (elem);
+        }
+
+      PKL_PASS_BREAK;
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -3264,6 +3276,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_struct_type_field)
 
       PKL_PASS_BREAK;
     }
+
+  /* In normal context, subpass on the field type and ignore the
+     name.  */
+  PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (PKL_PASS_NODE));
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 

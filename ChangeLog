@@ -1,5 +1,13 @@
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_struct_type_field): Subpass on the
+	field type in normal context, avoiding generating a name.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	(pkl_gen_pr_type): Remove hack.
+
+2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_offset): Handle in_mapper and
 	in_constructor and in_type.
 	(pkl_gen_ps_type_offset): Remove.
