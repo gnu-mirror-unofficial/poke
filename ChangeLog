@@ -1,3 +1,8 @@
+2020-12-10  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* pickles/color.pk: Use `assert` for integrity check.
+	* pickles/rgb24.pk: Likewise.
+
 2020-12-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* Makefile.am (SUBDIRS): Add utils/.

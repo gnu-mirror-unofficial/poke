@@ -73,9 +73,8 @@ var color_std_names =
 
 /* Sanity check.  */
 
-if (color_std_names'length != color_num_colors)
-  raise Exception {code = EC_generic,
-                   msg = "integrity error in color_name"};
+assert (color_std_names'length == color_num_colors,
+        "integrity error in color_name");
 
 /* Return the printable name of the given color code.  */
 
