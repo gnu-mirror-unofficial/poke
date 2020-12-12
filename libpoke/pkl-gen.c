@@ -741,27 +741,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
         {                                                               \
         case PKL_TYPE_ARRAY:                                            \
           /* Make sure the array type has a writer.  */                 \
-          if (PKL_AST_TYPE_A_WRITER ((TYPE)) == PVM_NULL)               \
+          /* Note how anonymous array types from within structs */      \
+          /* need the writer to be re-compiled.  This sucks :/ */       \
+          if (PKL_AST_TYPE_A_WRITER ((TYPE)) == PVM_NULL                \
+              || !PKL_AST_TYPE_NAME ((TYPE)))                           \
             {                                                           \
               pvm_val writer;                                           \
                                                                         \
               PKL_GEN_DUP_CONTEXT;                                      \
               PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);              \
-              RAS_FUNCTION_ARRAY_WRITER (writer, (TYPE));               \
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */ \
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */ \
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */ \
-              PKL_GEN_POP_CONTEXT;                                      \
-                                                                        \
-              PKL_AST_TYPE_A_WRITER ((TYPE)) = writer;                  \
-            }                                                           \
-          /* XXX this is not hte right context where to evaluate the bounder! */ \
-          /* Make sure the array type has a bounder.  */                \
-          if (PKL_AST_TYPE_A_BOUNDER ((TYPE)) == PVM_NULL)              \
-            {                                                           \
-              pvm_val writer;                                           \
-              PKL_GEN_PUSH_CONTEXT;                                     \
-              PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);       \
               RAS_FUNCTION_ARRAY_WRITER (writer, (TYPE));               \
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */ \
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */ \
