@@ -69,6 +69,8 @@ wrapped-functions
   pvm_ref_struct
   pvm_set_struct
   pvm_val_reloc
+  pvm_val_unmap
+  pvm_val_ureloc
   ios_cur
   ios_read_int
   ios_read_uint
@@ -4371,7 +4373,7 @@ end
 
 instruction unmap ()
   code
-    PVM_VAL_SET_MAPPED_P (JITTER_TOP_STACK (), 0);
+    pvm_val_unmap (JITTER_TOP_STACK ());
   end
 end
 

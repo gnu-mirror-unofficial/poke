@@ -1,5 +1,15 @@
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	BZ 26897
+	* libpoke/pvm.h: Prototype for pvm_val_unmap.
+	* libpoke/pvm-val.c (pvm_val_unmap): New function.
+	* libpoke/pvm.jitter (unmap): Use pvm_val_unmap.
+	* testsuite/poke.map/unmap-2.pk: New test.
+	* testsuite/poke.map/unmap-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_ass_smtp): Support valmap
 	operations.
 	* testsuite/poke.map/valmap-array-1.pk: New test.

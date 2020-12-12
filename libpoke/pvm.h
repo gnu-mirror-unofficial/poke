@@ -347,6 +347,10 @@ void pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset);
 
 void pvm_val_ureloc (pvm_val val);
 
+/* Recursively unmap the given value.  If the given value is not
+   map-able then this is a no-operation.  */
+void pvm_val_unmap (pvm_val val);
+
 /* Return a PVM value for an exception with the given CODE, MESSAGE
    and EXIT_STATUS.  */
 

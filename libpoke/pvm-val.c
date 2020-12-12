@@ -657,6 +657,29 @@ pvm_val_writer (pvm_val val)
 }
 
 void
+pvm_val_unmap (pvm_val val)
+{
+  PVM_VAL_SET_MAPPED_P (val, 0);
+
+  if (PVM_IS_ARR (val))
+    {
+      size_t nelem, i;
+
+      nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (val));
+      for (i = 0; i < nelem; ++i)
+        pvm_val_unmap (PVM_VAL_ARR_ELEM_VALUE (val, i));
+    }
+  else if (PVM_IS_SCT (val))
+    {
+      size_t nfields, i;
+
+      nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (val));
+      for (i = 0; i < nfields; ++i)
+        pvm_val_unmap (PVM_VAL_SCT_FIELD_VALUE (val, i));
+    }
+}
+
+void
 pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
 {
   uint64_t boff = PVM_VAL_ULONG (boffset);
