@@ -202,6 +202,7 @@ testcase_pk_val_equal_p (const char *filename, const char *sec_code,
   return;
 
 error:
+  pk_compiler_free (pkc);
   fail (filename);
 }
 

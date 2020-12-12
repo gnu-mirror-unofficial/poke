@@ -1,5 +1,17 @@
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-lex.l: Error on -0xffff_ffff_ffff_ffff.
+	* testsuite/poke.libpoke/values.c (testcase_pk_val_equal_p):
+	Finalize the pk compiler in case of an error.
+	* testsuite/poke.libpoke/pk_equal_uint.test: Update to not use the
+	invalid literal.
+	* testsuite/poke.libpoke/pk_nequal_uint.test: Likewise.
+	* testsuite/poke.pkl/integers-diag-2.pk: New test.
+	* testsuite/poke.pkl/integers-7.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-fold.c (OP_BINARY_III): Fix signedness of
 	comparison.
 	* testsuite/poke.pkl/lt-integers-4.pk: New test.

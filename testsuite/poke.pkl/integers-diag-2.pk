@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+var i = 0xffffffffffffffff; /*  { dg-error "too big" } */

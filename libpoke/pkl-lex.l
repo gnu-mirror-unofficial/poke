@@ -450,6 +450,10 @@ S ::
       width = 32;
   }
 
+  /* Handle -0xffff_ffff_ffff_ffff */
+  if (signed_p && value == 0xffffffffffffffff)
+    return INTEGER_OVERFLOW;
+
   type = pkl_ast_make_integral_type (yyextra->ast, width, signed_p);
 
   yylval->ast = pkl_ast_make_integer (yyextra->ast, value);

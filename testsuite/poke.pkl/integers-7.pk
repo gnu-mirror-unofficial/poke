@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {0xffffffffffffffffLU} } */
+/* { dg-output "0xffffffffffffffffUL" } */

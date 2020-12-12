@@ -1061,7 +1061,9 @@ EXTRA_DIST = \
   poke.pkl/integers-4.pk \
   poke.pkl/integers-5.pk \
   poke.pkl/integers-6.pk \
+  poke.pkl/integers-7.pk \
   poke.pkl/integers-diag-1.pk \
+  poke.pkl/integers-diag-2.pk \
   poke.pkl/ior-integers-1.pk \
   poke.pkl/ior-integers-2.pk \
   poke.pkl/ior-int-struct-1.pk \
