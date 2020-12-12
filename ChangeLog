@@ -1,5 +1,13 @@
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_ass_smtp): Support valmap
+	operations.
+	* testsuite/poke.map/valmap-array-1.pk: New test.
+	* testsuite/poke.map/valmap-struct-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-lex.l: Error on -0xffff_ffff_ffff_ffff.
 	* testsuite/poke.libpoke/values.c (testcase_pk_val_equal_p):
 	Finalize the pk compiler in case of an error.

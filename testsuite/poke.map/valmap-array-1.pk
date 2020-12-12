@@ -1,0 +1,7 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+/* { dg-command { var a = byte[3][3] @ 0#B } } */
+/* { dg-command { a[1] = [1UB,2UB,3UB] } } */
+/* { dg-command { byte[3] @ 3#B } } */
+/* { dg-output "\\\[1UB,2UB,3UB\\\]" } */

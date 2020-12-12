@@ -1,0 +1,10 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type Packet = struct { byte a; byte b; };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command { var a = Packet[2] @ 2#B } } */
+/* { dg-command { a[1] = Packet { a = 0x10UB, b = 0x20UB} } } */
+/* { dg-command { Packet @ 4#B } } */
+/* { dg-output "Packet \{a=0x10UB,b=0x20UB\}" } */

@@ -732,9 +732,63 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
 {
+#define LMAP(TYPE)                                                      \
+  do                                                                    \
+    {                                                                   \
+      int lvalue_type_code = PKL_AST_TYPE_CODE ((TYPE));                \
+                                                                        \
+      switch (lvalue_type_code)                                         \
+        {                                                               \
+        case PKL_TYPE_ARRAY:                                            \
+          /* Make sure the array type has a writer.  */                 \
+          if (PKL_AST_TYPE_A_WRITER ((TYPE)) == PVM_NULL)               \
+            {                                                           \
+              pvm_val writer;                                           \
+                                                                        \
+              PKL_GEN_DUP_CONTEXT;                                      \
+              PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);              \
+              RAS_FUNCTION_ARRAY_WRITER (writer, (TYPE));               \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */ \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */ \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */ \
+              PKL_GEN_POP_CONTEXT;                                      \
+                                                                        \
+              PKL_AST_TYPE_A_WRITER ((TYPE)) = writer;                  \
+            }                                                           \
+          /* Fallthrough.  */                                           \
+        case PKL_TYPE_STRUCT:                                           \
+          {                                                             \
+            pvm_val writer =                                            \
+              (lvalue_type_code == PKL_TYPE_ARRAY                       \
+               ? PKL_AST_TYPE_A_WRITER ((TYPE))                         \
+               : PKL_AST_TYPE_S_WRITER ((TYPE)));                       \
+                                                                        \
+            /* VAL IOS BOFF */                                          \
+            RAS_MACRO_COMPLEX_LMAP ((TYPE), writer); /* _ */            \
+            break;                                                      \
+          }                                                             \
+        default:                                                        \
+          /* The map at the l-value is of a simple type, i.e. of */     \
+          /* types whose values cannot be mapped (integers, offsets, */ \
+          /* strings, etc).  The strategy here is simple: we just */    \
+          /*  generate a writer for the type.  */                       \
+                                                                        \
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* IOS BOFF VAL */  \
+                                                                        \
+          PKL_GEN_DUP_CONTEXT;                                          \
+          PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);                  \
+          PKL_PASS_SUBPASS ((TYPE));                                    \
+          PKL_GEN_POP_CONTEXT;                                          \
+          break;                                                        \
+        }                                                               \
+    }                                                                   \
+  while (0)
+
   pkl_ast_node ass_stmt = PKL_PASS_NODE;
   pkl_ast_node lvalue = PKL_AST_ASS_STMT_LVALUE (ass_stmt);
+  pkl_ast_node lvalue_type = PKL_AST_TYPE (lvalue);
   pkl_ast_node exp = PKL_AST_ASS_STMT_EXP (ass_stmt);
+  pvm_program_label done = pkl_asm_fresh_label (PKL_GEN_ASM);
 
   PKL_PASS_SUBPASS (exp);
 
@@ -747,19 +801,43 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
      the stack.  */
 
   /* If the base array to the indexer, or the referred struct, are
-     mapped, then we have to reflect the effect of the assingment in
-     the corresponding IO space.  */
-  switch (PKL_AST_CODE (lvalue))
+     mapped, and the assigned value is a complex value, then we have
+     to reflect the effect of the assignment in the corresponding IO
+     space.  */
+  if ((PKL_AST_CODE (lvalue) == PKL_AST_INDEXER
+       || PKL_AST_CODE (lvalue) == PKL_AST_STRUCT_REF)
+      && (PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_ARRAY
+          || PKL_AST_TYPE_CODE (lvalue_type) == PKL_TYPE_STRUCT))
     {
-    case PKL_AST_INDEXER:
-      /* Note that analf guarantees that the entity in this indexer is
-         an array, not a string.  */
-      /* Fallthrough.  */
-    case PKL_AST_STRUCT_REF:
-      /* XXX WRITEME.  */
-      break;
-    default:
-      break;
+      pvm_program_label not_mapped = pkl_asm_fresh_label (PKL_GEN_ASM);
+
+      /* Stack: VAL (SCT|ARR) (ID|IDX) */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* VAL ID SCT */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM);  /* VAL ID SCT MAPPED_P */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, not_mapped);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL ID SCT */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* VAL SCT ID */
+
+      if (PKL_AST_CODE (lvalue) == PKL_AST_INDEXER)
+
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREFO); /* VAL SCT ID BOFF */
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREFIO); /* VAL SCT ID BOFF */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);     /* VAL SCT BOFF */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);    /* VAL BOFF SCT */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS); /* VAL BOFF SCT IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);     /* VAL BOFF IOS */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);    /* VAL IOS BOFF */
+
+      /* VAL IOS OFF */
+      LMAP (PKL_AST_TYPE (lvalue));
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, done);
+      pkl_asm_label (PKL_GEN_ASM, not_mapped);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL ID SCT */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* VAL SCT ID */
     }
 
   /* All right, now assign the resulting rvalue to the lvalue.  */
@@ -863,68 +941,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
         break;
       }
     case PKL_AST_MAP:
-      {
-        /* Stack: VAL IOS OFF */
-
-        pkl_ast_node lvalue_type = PKL_AST_TYPE (lvalue);
-        int lvalue_type_code = PKL_AST_TYPE_CODE (lvalue_type);
-
-        /* Convert the offset to a bit-offset.  The offset is
-           guaranteed to be ulong<64> with unit bits, as per
-           promo.  */
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* VAL IOS BOFF */
-
-        switch (lvalue_type_code)
-          {
-          case PKL_TYPE_ARRAY:
-            /* Make sure the array type has a writer.  */
-            if (PKL_AST_TYPE_A_WRITER (lvalue_type) == PVM_NULL)
-              {
-                pvm_val writer;
-
-                PKL_GEN_DUP_CONTEXT;
-                PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
-                RAS_FUNCTION_ARRAY_WRITER (writer, lvalue_type);
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */
-                PKL_GEN_POP_CONTEXT;
-
-                PKL_AST_TYPE_A_WRITER (lvalue_type) = writer;
-              }
-            /* Fallthrough.  */
-          case PKL_TYPE_STRUCT:
-            {
-              pvm_val writer =
-                (lvalue_type_code == PKL_TYPE_ARRAY
-                 ? PKL_AST_TYPE_A_WRITER (lvalue_type)
-                 : PKL_AST_TYPE_S_WRITER (lvalue_type));
-
-                                                            /* VAL IOS BOFF */
-              RAS_MACRO_COMPLEX_LMAP (lvalue_type, writer); /* _ */
-              break;
-            }
-          default:
-            /* The map at the l-value is of a simple type, i.e. of
-               types whose values cannot be mapped (integers, offsets,
-               strings, etc).  The strategy here is simple: we just
-               generate a writer for the type.  */
-
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* IOS BOFF VAL */
-
-            PKL_GEN_DUP_CONTEXT;
-            PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
-            PKL_PASS_SUBPASS (PKL_AST_TYPE (lvalue));
-            PKL_GEN_POP_CONTEXT;
-            break;
-          }
-      }
+      /* Stack: VAL IOS OFF */
+      /* Convert the offset to a bit-offset.  The offset is */
+      /* guaranteed to be ulong<64> with unit bits, as per  */
+      /* promo.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* VAL IOS BOFF */
+      LMAP (PKL_AST_TYPE (lvalue));
+      break;
     default:
       break;
     }
 
+  if (PKL_AST_CODE (lvalue) == PKL_AST_INDEXER
+      || PKL_AST_CODE (lvalue) == PKL_AST_STRUCT_REF)
+    pkl_asm_label (PKL_GEN_ASM, done);
+
   PKL_PASS_BREAK;
+
+#undef LMAP
 }
 PKL_PHASE_END_HANDLER
 
