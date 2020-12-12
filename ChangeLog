@@ -1,5 +1,10 @@
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* utils/pk-elfextractor.in: Add Emacs local variable for the
+	mode.
+
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (`unmap' should be recursive): Removed as fixed.
 
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>

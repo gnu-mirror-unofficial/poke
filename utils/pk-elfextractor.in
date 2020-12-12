@@ -57,3 +57,9 @@ catch (Exception e)
 
     exit (1);
   }
+
+/*
+ * Local Variables:
+ * mode: poke
+ * End:
+ */
