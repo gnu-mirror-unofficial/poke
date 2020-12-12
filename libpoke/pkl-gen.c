@@ -2639,6 +2639,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       PKL_PASS_BREAK;
     }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_ARRAY_BOUNDER))
+    {
+      pkl_ast_node array_type = PKL_PASS_NODE;
+      pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (array_type);
+      pvm_val bounder_closure;
+
+      if (PKL_AST_TYPE_CODE (etype) == PKL_TYPE_ARRAY)
+        PKL_PASS_SUBPASS (etype);
+
+      if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
+        {
+          RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure, array_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, bounder_closure); /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                   /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                  /* _ */
+          PKL_AST_TYPE_A_BOUNDER (array_type) = bounder_closure;
+        }
+
+      PKL_PASS_BREAK;
+    }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_MAPPER))
     {
       pkl_ast_node array_type = PKL_PASS_NODE;
@@ -2778,26 +2798,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       if (bounder_created)
         pkl_ast_array_type_remove_bounders (array_type);
-
-      PKL_PASS_BREAK;
-    }
-  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_ARRAY_BOUNDER))
-    {
-      pkl_ast_node array_type = PKL_PASS_NODE;
-      pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (array_type);
-      pvm_val bounder_closure;
-
-      if (PKL_AST_TYPE_CODE (etype) == PKL_TYPE_ARRAY)
-        PKL_PASS_SUBPASS (etype);
-
-      if (PKL_AST_TYPE_A_BOUNDER (array_type) == PVM_NULL)
-        {
-          RAS_FUNCTION_ARRAY_BOUNDER (bounder_closure, array_type);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, bounder_closure); /* CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                   /* CLS */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                  /* _ */
-          PKL_AST_TYPE_A_BOUNDER (array_type) = bounder_closure;
-        }
 
       PKL_PASS_BREAK;
     }
