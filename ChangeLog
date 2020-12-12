@@ -1,5 +1,9 @@
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (`unmap' should be recursive): Removed as fixed.
+
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	BZ 26897
 	* libpoke/pvm.h: Prototype for pvm_val_unmap.
 	* libpoke/pvm-val.c (pvm_val_unmap): New function.

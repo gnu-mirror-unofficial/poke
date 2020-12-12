@@ -1439,41 +1439,6 @@ Description:
 +    ei_nident=0x0UB#B
 +  }
 
-Summary: `unmap' should be recursive
-Component: PVM
-Kind: BUG
-BZ: 26897
-Priority: 3
-Description:
-+ (poke) defvar e = unmap (Elf64_Ehdr @ 0#B)
-+ (poke) e
-+ Elf64_Ehdr {
-+   e_ident=struct {
-+     ei_mag=[0x7fUB,0x45UB,0x4cUB,0x46UB] @ 0x0UL#b,
-+     ei_class=0x2UB,
-+     ei_data=0x1UB,
-+     ei_version=0x1UB,
-+     ei_osabi=0x0UB,
-+     ei_abiversion=0x0UB,
-+     ei_pad=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...] @ 0x48UL#b,
-+     ei_nident=0x0UB#B
-+   } @ 0x0UL#b,
-+   e_type=0x1UH,
-+   e_machine=0x3eUH,
-+   e_version=0x1U,
-+   e_entry=0x0UL#B,
-+   e_phoff=0x0UL#B,
-+   e_shoff=0x208UL#B,
-+   e_flags=0x0U,
-+   e_ehsize=0x40UH#B,
-+   e_phentsize=0x0UH#B,
-+   e_phnum=0x0UH,
-+   e_shentsize=0x40UH#B,
-+   e_shnum=0xbUH,
-+   e_shstrndx=0xaUH
-+ }
-Target: 0.1
-
 Summary: Location tracking in PVM
 Component: PVM
 Kind: ENH
