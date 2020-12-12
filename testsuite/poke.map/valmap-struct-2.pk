@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type Array = byte[2];
+type Foo = struct { Array a; };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command { var f = Foo @ 2#B } } */
+/* { dg-command { f.a = [0x10UB,0x20UB] } } */
+/* { dg-command { byte[2] @ 2#B } } */
+/* { dg-output "\\\[0x10UB,0x20UB\\\]" } */

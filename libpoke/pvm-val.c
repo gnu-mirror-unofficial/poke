@@ -307,6 +307,29 @@ pvm_ref_struct (pvm_val sct, pvm_val name)
   return PVM_NULL;
 }
 
+pvm_val
+pvm_refo_struct (pvm_val sct, pvm_val name)
+{
+  size_t nfields, i;
+  struct pvm_struct_field *fields;
+
+  assert (PVM_IS_SCT (sct) && PVM_IS_STR (name));
+
+  nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (sct));
+  fields = PVM_VAL_SCT (sct)->fields;
+
+  for (i = 0; i < nfields; ++i)
+    {
+      if (!PVM_VAL_SCT_FIELD_ABSENT_P (sct, i)
+          && fields[i].name != PVM_NULL
+          && STREQ (PVM_VAL_STR (fields[i].name),
+                    PVM_VAL_STR (name)))
+        return fields[i].offset;
+    }
+
+  return PVM_NULL;
+}
+
 int
 pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val)
 {

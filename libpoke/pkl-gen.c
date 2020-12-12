@@ -755,6 +755,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
                                                                         \
               PKL_AST_TYPE_A_WRITER ((TYPE)) = writer;                  \
             }                                                           \
+          /* XXX this is not hte right context where to evaluate the bounder! */ \
+          /* Make sure the array type has a bounder.  */                \
+          if (PKL_AST_TYPE_A_BOUNDER ((TYPE)) == PVM_NULL)              \
+            {                                                           \
+              pvm_val writer;                                           \
+              PKL_GEN_PUSH_CONTEXT;                                     \
+              PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);       \
+              RAS_FUNCTION_ARRAY_WRITER (writer, (TYPE));               \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */ \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */ \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */ \
+              PKL_GEN_POP_CONTEXT;                                      \
+                                                                        \
+              PKL_AST_TYPE_A_WRITER ((TYPE)) = writer;                  \
+            }                                                           \
           /* Fallthrough.  */                                           \
         case PKL_TYPE_STRUCT:                                           \
           {                                                             \
@@ -820,10 +835,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* VAL SCT ID */
 
       if (PKL_AST_CODE (lvalue) == PKL_AST_INDEXER)
-
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREFO); /* VAL SCT ID BOFF */
       else
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREFIO); /* VAL SCT ID BOFF */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SREFO); /* VAL SCT ID BOFF */
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);     /* VAL SCT BOFF */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);    /* VAL BOFF SCT */

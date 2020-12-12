@@ -4122,6 +4122,28 @@ instruction sref ()
   end
 end
 
+# Instruction: srefo
+#
+# Given a struct and a field name, push the bit-offset of the referred
+# field on the stack.  If the struct does not have a field with the given
+# name, or if the field is absent from the struct value then raise
+# PVM_E_ELEM.
+#
+# Stack: ( SCT STR -- SCT STR BOFF )
+# Exceptions: PVM_E_ELEM
+
+instruction srefo ()
+  code
+    pvm_val sct = JITTER_UNDER_TOP_STACK ();
+    pvm_val fname = JITTER_TOP_STACK ();
+    pvm_val boff = pvm_refo_struct (sct, fname);
+
+    if (boff == PVM_NULL)
+      PVM_RAISE_DFL (PVM_E_ELEM);
+    JITTER_PUSH_STACK (boff);
+  end
+end
+
 # Instruction: srefmnt
 #
 # Given a struct and a method name, push the closure value corresponding

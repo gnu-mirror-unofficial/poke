@@ -486,6 +486,8 @@ EXTRA_DIST = \
   poke.map/unmap-3.pk \
   poke.map/valmap-array-1.pk \
   poke.map/valmap-struct-1.pk \
+  poke.map/valmap-struct-2.pk \
+  poke.map/valmap-struct-3.pk \
   poke.pkl/pkl.exp \
   poke.pkl/postincr-1.pk \
   poke.pkl/postincr-2.pk \

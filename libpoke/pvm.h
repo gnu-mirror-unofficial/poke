@@ -265,6 +265,13 @@ void pvm_print_string (pvm_val string);
 
 pvm_val pvm_ref_struct (pvm_val sct, pvm_val name);
 
+/* Given a struct value SCT and the name of a field in NAME, return
+   the bit-offset of the referred field in BOFF.
+
+   If the referred field doesn't exist in the given struct, or if it
+   is an absent field, then this function returns PVM_NULL.  */
+pvm_val pvm_refo_struct (pvm_val sct, pvm_val name);
+
 int pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val);
 
 pvm_val pvm_get_struct_method (pvm_val sct, const char *name);
