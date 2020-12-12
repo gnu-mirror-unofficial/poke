@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var x = 18446744073709551615UL;
+
+/* { dg-command { x < 1 } } */
+/* { dg-output "0" } */
+
+/* For constant folding: */
+/* { dg-command { 18446744073709551615UL < 1 } } */
+/* { dg-output "\n0" } */

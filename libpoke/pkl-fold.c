@@ -552,7 +552,11 @@ EMUL_UU (bnoto) { return ~op; }
             /* We cannot fold this expression.  */                      \
             PKL_PASS_DONE;                                              \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
+          /* Guaranteed as per typify.  */                              \
+          assert (PKL_AST_TYPE_I_SIGNED_P (op1)                         \
+                  == PKL_AST_TYPE_I_SIGNED_P (op2));                    \
+                                                                        \
+          if (PKL_AST_TYPE_I_SIGNED_P (op1))                            \
             result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op1),          \
                                   PKL_AST_INTEGER_VALUE (op2));         \
           else                                                          \

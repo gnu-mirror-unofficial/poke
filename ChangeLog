@@ -1,5 +1,12 @@
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-fold.c (OP_BINARY_III): Fix signedness of
+	comparison.
+	* testsuite/poke.pkl/lt-integers-4.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_constructor): Remove array bounders
 	after they are used.
 	* libpoke/pkl-gen.c (pkl_gen_pr_func_arg): Likewise.
