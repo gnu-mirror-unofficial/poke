@@ -815,44 +815,37 @@ Summary: Constant-fold array trims
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 0.1
 
 Summary: Constant-fold array casts
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 0.1
 
 Summary: Constant-fold `isa' expressions
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 0.1
 
 Summary: Constant-fold array concatenation
 Component: Compiler
 Kind: OPT
 Priority: 4
-Target: 0.1
 
 Summary: Constant-fold struct references
 Component: Compiler
 Kind: OPT
 Priority: 2
-Target: 0.1
 
 Summary: Constant-fold struct integrations
 Component: Compiler
 Kind: OPT
 Priority: 3
-Target: 0.1
 
 Summary: Constant-fold operations with integral structs
 Component: Compiler
 Kind: OPT
 Priority: 3
 Description: such as +, -, etc
-Target: 0.1
 
 Summary: Avoid subpasses by introducing additional AST nodes
 Component: Compiler
@@ -967,7 +960,6 @@ Description:
 + Because of data integrity, lazy mapping can only be done when mapping
 + non-strict values.
 RFC: yes
-Target: 0.1
 
 Summary: Mapping anonymous complete struct fields
 Component: Compiler
@@ -993,7 +985,6 @@ Description:
 +   }
 +
 + Should be considered complete.
-Target: 0.1
 
 Summary: Unions can be completed
 Component: Compiler
@@ -1012,7 +1003,6 @@ Description:
 +   }
 +
 + The type above is complete, with size 32#b known at compile time.
-Target: 0.1
 
 Summary: Save a nton instruction in pkl_asm_while
 Component: Compiler
@@ -1582,7 +1572,6 @@ Description:
 +
 + Provides access to poke the memory of some given process.
 + The process is specified by process-id: pid://1234
-Target: 0.1
 
 Summary: Support Poke IOS Translators
 Component: IO
@@ -1712,7 +1701,6 @@ Description:
 + The JSON support in Tcllib is very bad, and relying on it introduces a
 + run-time dependency that is not easy to check for.  Better to use the
 + json-c that we also require for libpoke.
-Target: 0.1
 
 Summary: pk-table
 Component: CLI
@@ -1991,7 +1979,7 @@ Kind: ENH
 Priority: 2
 Target: 0.1
 
-Summary: docuemnt poke maps in the manual
+Summary: document poke maps in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
