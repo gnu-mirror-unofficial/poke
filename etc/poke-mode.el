@@ -254,25 +254,37 @@
   (smie-prec2->grammar
    (smie-bnf->prec2
     '((id)
-      (exp ("[" exps "]"))
-      (exps (exps "," exps) (exp))
-      (definition
-        (id "=" inst)
-        (id "=" id ":" inst))
-      (definitions (definitions "," definitions) (definition))
+      ;; defFOOs
+      (deffun
+        ("fun" id "=" id ":" stmt))
+      (def
+       ("var" id "=" decls)
+       ("type" id "=" decls)
+       ("unit" id "=" decls)
+       ("method" id "=" decls))
+      (defs (defs ";" defs) (def))
+      ;; Declarations
       (decl
-       ("var" definitions)
-       ("type" definitions)
-       ("unit" definitions)
-       ("method" definition)
-       ("fun" definition)
-       (decl ";" decl))
-      (inst
-       (id)
-       ("struct" id)
-       ("union" id)
-       ))
-    '((assoc ";") (assoc ",")))))
+       ("struct" comp-stmt)
+       ("union" comp-stmt)
+       (exp))
+      (decls (decls "," decls) (decl))
+      ;; Expressions
+      (exp ("[" exps "]")
+           ("(" exps ")")
+           (exp "+" exp)
+           (exp "-" exp))
+      (exps (exps "," exps) (exp))
+      ;; Statements
+      (comp-stmt ("{" stmts "}"))
+      (stmt (comp-stmt)
+            (id "=" exp)
+            ("return" exp)
+            ("if" stmt "else" stmt)
+            (exp))
+      (stmts (stmts ";" stmts) (stmt)))
+    '((assoc ";") (assoc ",")
+      (assoc "+") (assoc "-")))))
 
 (defun poke--smie-forward-token ()
   ;; FIXME:
@@ -292,8 +304,17 @@
   (pcase (cons token kind)
     (`(:elem . basic) poke-indent-basic)
     ;; (`(:list-intro . "=") t)
+    (`(:after . "=") poke-indent-basic)
+    ((and `(:before . "{") (guard (smie-rule-parent-p "fun")))
+     (smie-rule-parent 0))
+    (`(:before . ,(or `"(" `"{"))
+     (if (smie-rule-hanging-p) (smie-rule-parent)))
     ((and `(:before . "{") (guard (smie-rule-parent-p "struct")))
-     (smie-rule-parent 0))))
+     (smie-rule-parent 0))
+    (`(:before . "if")
+     (and (not (smie-rule-bolp)) (smie-rule-prev-p "else")
+          (smie-rule-parent)))))
+
 
 ;;;###autoload (add-to-list 'auto-mode-alist '("\\.pk\\'" . poke-mode))
 ;;;###autoload
