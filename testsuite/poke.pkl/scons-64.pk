@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
 type S = struct
-  { 
+  {
     var nbytes = 2;
     byte[nbytes] bytes;
 
