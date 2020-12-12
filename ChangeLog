@@ -1,3 +1,12 @@
+2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_constructor): Remove array bounders
+	after they are used.
+	* libpoke/pkl-gen.c (pkl_gen_pr_func_arg): Likewise.
+	(pkl_gen_pr_cast): Likewise.
+	* testsuite/poke.pkl/scons-64.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-12-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_func_arg): Traverse the argument

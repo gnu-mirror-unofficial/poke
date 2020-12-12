@@ -1180,8 +1180,10 @@
    .c {
    .c   /* Make sure the cast type has a bounder.  If it doesn't */
    .c   /*   compile and install one.  */
+   .c   int bounder_created_p = 0;
    .c   if (PKL_AST_TYPE_A_BOUNDER (@field_type) == PVM_NULL)
    .c   {
+   .c      bounder_created_p = 1;
    .c      PKL_GEN_DUP_CONTEXT;
    .c      PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
    .c      PKL_PASS_SUBPASS (@field_type);
@@ -1190,6 +1192,9 @@
    .c
    .c   pkl_asm_insn (RAS_ASM, PKL_INSN_ATOA,
    .c                 NULL /* from_type */, @field_type);
+   .c
+   .c   if (bounder_created_p)
+   .c     pkl_ast_array_type_remove_bounders (@field_type);
    .c }
         rot                    ; ... ENAME EVAL SCT
         drop                   ; ... ENAME EVAL

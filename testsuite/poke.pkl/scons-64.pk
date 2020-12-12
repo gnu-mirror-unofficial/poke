@@ -1,0 +1,15 @@
+/* { dg-do run } */
+
+type S = struct
+  { 
+    var nbytes = 2;
+    byte[nbytes] bytes;
+
+    method reset = void:
+    {
+      bytes = [0UB,0UB];
+    }
+  };
+
+/* { dg-command {S {}} } */
+/* { dg-output "S \{bytes=\\\[0UB,0UB\\\]\}" } */

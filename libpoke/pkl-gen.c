@@ -1531,7 +1531,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   /* If the function's return type is an array type, make sure it has
      a bounder.  If it hasn't one, then compute it in this
      environment.  */
-  /* XXX this should not be necessary any longer.  */
   {
     pkl_ast_node rtype = PKL_AST_FUNC_RET_TYPE (function);
 
@@ -1601,9 +1600,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
     {
       /* Make sure the cast type has a bounder.  If it doesn't,
          compile and install one.  */
-      /* XXX this shouldn't be necessary any more.  */
+      int bounder_created_p = 0;
+
       if (PKL_AST_TYPE_A_BOUNDER (func_arg_type) == PVM_NULL)
         {
+          bounder_created_p = 1;
           PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
           PKL_PASS_SUBPASS (func_arg_type);
@@ -1612,6 +1613,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func_arg)
 
       pkl_asm_insn (pasm, PKL_INSN_ATOA,
                     NULL /* from_type */, func_arg_type);
+
+      if (bounder_created_p)
+        pkl_ast_array_type_remove_bounders (func_arg_type);
     }
 
   pkl_asm_label (PKL_GEN_ASM, after_conv_label);
@@ -1877,8 +1881,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cast)
     {
       /* Make sure the cast type has a bounder.  If it doesn't,
          compile and install one.  */
+      int bounder_created_p = 0;
+
       if (PKL_AST_TYPE_A_BOUNDER (to_type) == PVM_NULL)
         {
+          bounder_created_p = 1;
           PKL_GEN_DUP_CONTEXT;
           PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
           PKL_PASS_SUBPASS (to_type);
@@ -1886,6 +1893,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cast)
         }
 
       pkl_asm_insn (pasm, PKL_INSN_ATOA, from_type, to_type);
+
+      if (bounder_created_p)
+        pkl_ast_array_type_remove_bounders (to_type);
     }
   else if (PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_STRUCT
            && PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_STRUCT)
