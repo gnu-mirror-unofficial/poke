@@ -229,6 +229,8 @@
         ;; Set the other map attributes.
         pushvar $ios          ; ARRAY IOS
         msetios               ; ARRAY
+        pushvar $strict       ; ARRAY STRICT
+        msets                 ; ARRAY
         map                   ; ARRAY
         popf 1
         return
@@ -971,6 +973,8 @@
         ;; Install the attributes of the mapped object.
         pushvar $ios            ; SCT IOS
         msetios                 ; SCT
+        pushvar $strict         ; SCT STRICT
+        msets                   ; SCT
         map                     ; SCT
         popf 1
         return

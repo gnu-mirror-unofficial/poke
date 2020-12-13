@@ -1,5 +1,16 @@
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (array_mapper): Set the strict attribute to
+	the mapped value.
+	(struct_mapper): Likewise.
+	* testsuite/poke.map/ass-map-17.pk: Check that the r-value of an
+	ass-map keeps the `strict' attribute.
+	* testsuite/poke.map/strict-attr-8.pk: New test.
+	* testsuite/poke.map/strict-attr-9.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-attrs.def: Define PKL_AST_ATTR_STRICT.
 	* libpoke/pkl-typify.c (pkl_typify1_ps_attr): Typify attribute
 	'strict.

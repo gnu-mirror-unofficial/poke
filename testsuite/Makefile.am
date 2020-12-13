@@ -489,6 +489,8 @@ EXTRA_DIST = \
   poke.map/strict-attr-5.pk \
   poke.map/strict-attr-6.pk \
   poke.map/strict-attr-7.pk \
+  poke.map/strict-attr-8.pk \
+  poke.map/strict-attr-9.pk \
   poke.map/trimmed-map.pk \
   poke.map/trimmed-map-2.pk \
   poke.map/trimmed-map-3.pk \
