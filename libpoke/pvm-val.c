@@ -98,6 +98,7 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   size_t i;
 
   PVM_MAPINFO_MAPPED_P (arr->mapinfo) = 0;
+  PVM_MAPINFO_STRICT_P (arr->mapinfo) = 1;
   PVM_MAPINFO_IOS (arr->mapinfo) = PVM_NULL;
   PVM_MAPINFO_OFFSET (arr->mapinfo) = pvm_make_ulong (0, 64);
 
@@ -240,6 +241,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
 
 
   PVM_MAPINFO_MAPPED_P (sct->mapinfo) = 0;
+  PVM_MAPINFO_STRICT_P (sct->mapinfo) = 1;
   PVM_MAPINFO_IOS (sct->mapinfo) = PVM_NULL;
   PVM_MAPINFO_OFFSET (sct->mapinfo) = pvm_make_ulong (0, 64);
 

@@ -159,6 +159,9 @@ typedef struct pvm_val_box *pvm_val_box;
    MAPPED_P is 0 if the value is not mapped, or has any other value if
    it is mapped.
 
+   STRICT_P is 0 if data integrity shouldn't be enforced in the value,
+   or has any other value if data integrity should be enforced.
+
    IOS is an int<32> value that identifies the IO space where the
    value is mapped.  If the value si not mapped then this is PVM_NULL.
 
@@ -171,12 +174,14 @@ typedef struct pvm_val_box *pvm_val_box;
    struct.  */
 
 #define PVM_MAPINFO_MAPPED_P(MINFO) ((MINFO).mapped_p)
+#define PVM_MAPINFO_STRICT_P(MINFO) ((MINFO).strict_p)
 #define PVM_MAPINFO_IOS(MINFO) ((MINFO).ios)
 #define PVM_MAPINFO_OFFSET(MINFO) ((MINFO).offset)
 
 struct pvm_mapinfo
 {
   int mapped_p;
+  int strict_p;
   pvm_val ios;
   pvm_val offset;
 };
@@ -226,6 +231,7 @@ struct pvm_mapinfo pvm_make_mapinfo (int mapped_p, pvm_val ios,
 #define PVM_VAL_ARR_MAPINFO(V) (PVM_VAL_ARR(V)->mapinfo)
 #define PVM_VAL_ARR_MAPINFO_BACK(V) (PVM_VAL_ARR(V)->mapinfo_back)
 #define PVM_VAL_ARR_MAPPED_P(V) (PVM_MAPINFO_MAPPED_P (PVM_VAL_ARR_MAPINFO ((V))))
+#define PVM_VAL_ARR_STRICT_P(V) (PVM_MAPINFO_STRICT_P (PVM_VAL_ARR_MAPINFO ((V))))
 #define PVM_VAL_ARR_IOS(V) (PVM_MAPINFO_IOS (PVM_VAL_ARR_MAPINFO ((V))))
 #define PVM_VAL_ARR_OFFSET(V) (PVM_MAPINFO_OFFSET (PVM_VAL_ARR_MAPINFO ((V))))
 #define PVM_VAL_ARR_ELEMS_BOUND(V) (PVM_VAL_ARR(V)->elems_bound)
@@ -305,6 +311,7 @@ struct pvm_array_elem
 #define PVM_VAL_SCT_MAPINFO(V) (PVM_VAL_SCT((V))->mapinfo)
 #define PVM_VAL_SCT_MAPINFO_BACK(V) (PVM_VAL_SCT((V))->mapinfo_back)
 #define PVM_VAL_SCT_MAPPED_P(V) (PVM_MAPINFO_MAPPED_P (PVM_VAL_SCT_MAPINFO ((V))))
+#define PVM_VAL_SCT_STRICT_P(V) (PVM_MAPINFO_STRICT_P (PVM_VAL_SCT_MAPINFO ((V))))
 #define PVM_VAL_SCT_IOS(V) (PVM_MAPINFO_IOS (PVM_VAL_SCT_MAPINFO ((V))))
 #define PVM_VAL_SCT_OFFSET(V) (PVM_MAPINFO_OFFSET (PVM_VAL_SCT_MAPINFO ((V))))
 #define PVM_VAL_SCT_MAPPER(V) (PVM_VAL_SCT((V))->mapper)
@@ -605,6 +612,21 @@ typedef struct pvm_off *pvm_off;
         PVM_VAL_ARR_MAPPED_P ((V)) = (I);       \
       else if (PVM_IS_SCT ((V)))                \
         PVM_VAL_SCT_MAPPED_P ((V)) = (I);       \
+    }                                           \
+  while (0)
+
+#define PVM_VAL_STRICT_P(V)                             \
+  (PVM_IS_ARR ((V)) ? PVM_VAL_ARR_STRICT_P ((V))        \
+   : PVM_IS_SCT ((V)) ? PVM_VAL_SCT_STRICT_P ((V))      \
+   : 0)
+
+#define PVM_VAL_SET_STRICT_P(V,I)               \
+  do                                            \
+    {                                           \
+      if (PVM_IS_ARR ((V)))                     \
+        PVM_VAL_ARR_STRICT_P ((V)) = (I);       \
+      else if (PVM_IS_SCT ((V)))                \
+        PVM_VAL_SCT_STRICT_P ((V)) = (I);       \
     }                                           \
   while (0)
 

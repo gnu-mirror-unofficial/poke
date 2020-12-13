@@ -1,3 +1,15 @@
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm-val.h (struct pvm_mapinfo): New field `strict_p'.
+	(PVM_MAPINFO_STRICT_P): Define.
+	(PVM_VAL_ARR_STRICT_P): Likewise.
+	(PVM_VAL_SCT_STRICT_P): Likewise.
+	(PVM_VAL_STRICT_P): Likewise.
+	(PVM_VAL_SET_STRICT_P): Likewise.
+	* libpoke/pvm-val.c (pvm_make_array): New array values are strict
+	by default.
+	(pvm_make_struct): Ditto for structs.
+
 2020-12-13  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* poke/pk-mi.c: Add include `errno.h`.
