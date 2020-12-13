@@ -72,6 +72,7 @@ var pk_dump_group_by = 2#B;
 var pk_dump_cluster_by = 8;
 var pk_dump_ruler = 1;
 var pk_dump_ascii = 1;
+var pk_dump_nonprintable_char = '.';
 
 /* `pk_dump_offset' keeps the last base offset used by `dump'.  It is
    the offset to be used in case the command is invoked with no :from
@@ -136,7 +137,7 @@ fun dump = (int<32> ios = get_ios,
       {
 	var v = byte @ ios : (offset + o);
 	if (v < ' ' || v > '~')
-	  printf "%<dump-ascii:%c%>", '.';
+	  printf "%<dump-ascii:%c%>", pk_dump_nonprintable_char;
 	else
 	  printf "%<dump-ascii:%c%>", v;
         o++;

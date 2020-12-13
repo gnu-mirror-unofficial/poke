@@ -1730,7 +1730,6 @@ Description:
 + mode-line-ios
 +
 + Can have a toolbar with hyperlinks, associated with Poke functions!
-Target: 0.1
 RFC: yes
 
 Summary: pk-term-query
@@ -1836,7 +1835,6 @@ Description: uniquify.el
 +    #"foo.o"
 +
 + For this we need auto-completion to work well.
-Target: 0.1
 RFC: yes
 
 Summary: .info type TYPENAME

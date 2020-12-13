@@ -378,13 +378,14 @@ These are explained in the following sections.
 @subsection Evaluation
 
 You can evaluate a Poke statement by typing it at the REPL's prompt.
-Only a single statement (including expression statements
+Only a single statement, including expression statements
 (@pxref{Expression Statements}) and compound statements
-(@pxref{Compound Statements})) can be evaluted this way.  It need
-not be terminated by a semicolon.
+(@pxref{Compound Statements}), can be evaluted this way.  It needs not
+be terminated by a semicolon.
 
-When an expression is evaluated, the result of the expression is
+When an expression is evaluated, the result of the evaluation is
 printed back to you.  For example:
+
 @cindex expressions
 @example
 (poke) 23
@@ -570,7 +571,7 @@ command file (@pxref{pokerc}).
 Following the example of Guile Scheme, the Poke syntax includes
 support for multi-line comments using the @code{#!} and @code{!#}
 delimiters.  This, along with the @code{-L} command line option,
-allows you to write Poke scripts and execute them in the command line like
+allows to write Poke scripts and execute them in the command line like
 if they were normal programs.  Example of a script:
 
 @example
@@ -581,7 +582,7 @@ print "Hello world!\n";
 @end example
 
 The resulting script can process command-line options by accessing the
-@code{argv} array.  The following Poke script prints the arguments:
+@code{argv} array.  The following Poke script prints its arguments:
 
 @example
 #!/usr/bin/poke -L
@@ -654,14 +655,14 @@ characters, and many binary files contain printable strings, such as a
 string table in an ELF object file.  That is why we used the word
 ``mostly'' in the definitions above.  In practice, however, the
 distinction is almost always clear and there is common consensus on
-whether a given file format can be considered as binary format, or
+whether a given file format can be considered as a binary format, or
 not.
 
 GNU poke can edit any file, and as we shall see, it provides some nice
 features to manipulate sequences of bytes interpreted as character
 strings.  However, it is called a ``binary editor'' because it is
-especially designed to be useful editing binary files, in the sense of
-the term defined above.
+especially designed to be particularly useful editing binary files, in
+the sense of the term defined above.
 
 In this chapter, we will be using ELF object files as the experiment
 subject in most of the examples.  ELF files are good for this purpose,
@@ -714,7 +715,7 @@ Note how poke replies to the dot-command, stating that the
 @dfn{current IOS} is now the file we opened.
 
 You may be wondering, what is this IOS thing?  It is an acronym for
-Input/Output Space, often written IO Spaces. This is the denomination
+Input/Output Space, often written IO Space. This is the denomination
 used to refer to the entities being edited with poke.  In this case
 the IO space being edited is a file, but we will see that is not
 always the case: poke can also edit other entities such as memory
@@ -816,7 +817,7 @@ dot-command like @command{.file}, @command{.ios} or @command{.close}:
 @command{dump} does not start with a dot!  We will see later how
 dot-commands differ from ``normal commands'' like @command{dump}, but
 for now, let's ignore the distinction.}  .  It is called like that
-because it dumps ranges of bytes to the terminal, so the user can
+because it dumps ranges of bytes to the terminal, allowing the user to
 inspect them.
 
 So let's use our first poke command!  Fire up poke, open the file
@@ -874,10 +875,11 @@ first 0x40 in the file?  Try it!
 The section at the right of the output is the ASCII output.  It shows
 the row of bytes at the left interpreted as ASCII characters.
 Non-printable characters are shown as @code{.} to avoid scrambling the
-terminal, and no, there is no way to distinguish them from real ASCII
-dot characters (@code{0x2e}) :P In this particular dump we can see
-that near the beginning of the file there are three bytes whose value,
-if interpreted as ASCII characters, conform the string ``ELF''.  As we
+terminal, and yes, there is actually way to customize what character
+to use, so they are not confused from real ASCII dot characters
+(@code{0x2e}) :P In this particular dump we can see that near the
+beginning of the file there are three bytes whose value, if
+interpreted as ASCII characters, conform the string ``ELF''.  As we
 shall see, this is part of the ELF magic number.  Again, the ruler is
 very useful to locate the byte corresponding to some character in the
 ASCII section, or the other way around.  What is the value of the byte
@@ -5634,6 +5636,11 @@ the ascii display:
 00000020: 6e5e fa50 23fb f16a  d380 be8c fc98 d195  n^.P#..j ........
 00000030: 7bbf fa3e 3fc2 43a4  2a1e 9763 2bd6 5d24  @{..>?.C. *..c+.]$
 @end example
+
+Another variable that the user can customize is
+@code{pk_dump_nonprintable_char}.  It defaults to @code{'.'}, and
+contains the character to use in the ASCII dump to represent a
+non-printable character.
 
 If you have a personal preference on how memory dumps should appear,
 you can set the relevant @code{pk_dump_*} variables.   These
