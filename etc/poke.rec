@@ -127,25 +127,6 @@ Component: Language
 Kind: ENH
 Priority: 2
 
-Summary: Support for non-strict values
-Component: Language
-Kind: ENH
-Priority: 3
-Description: In non-strict values data integrity is not enforced:
-+
-+ val = TYPE @! OFFSET;
-+ val = Foo { ... }
-+
-+ val'strict
-+ val'strict = 1
-+ val'strict = 0
-+
-+ Struct values are constructed strict by default, then this can be
-+ changed with the attribute.  Or support a syntax for constructing
-+ non-strict struct values?
-Target: 0.1
-RFC: yes
-
 Summary: Support %% in printf string literals
 Component: Language
 Kind: ENH
