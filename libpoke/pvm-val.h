@@ -151,21 +151,47 @@ typedef struct pvm_val_box *pvm_val_box;
 
 #define PVM_VAL_STR(V) (PVM_VAL_BOX_STR (PVM_VAL_BOX ((V))))
 
+/* Map-able values share a set of properties/attributes, which are
+   stored in `mapinfo' structures.
+
+   These common properties are:
+
+   MAPPED_P is 0 if the value is not mapped, or has any other value if
+   it is mapped.
+
+   IOS is an int<32> value that identifies the IO space where the
+   value is mapped.  If the value si not mapped then this is PVM_NULL.
+
+   OFFSET is an ulong<64> value with the bit offset in the current IO
+   space where the value is mapped.  If the value is not mapped then
+   this holds 0UL by convention.
+
+   Note that other properties related to mapping that are not shared
+   among the different kind of map-able values are not stored in this
+   struct.  */
+
+#define PVM_MAPINFO_MAPPED_P(MINFO) ((MINFO).mapped_p)
+#define PVM_MAPINFO_IOS(MINFO) ((MINFO).ios)
+#define PVM_MAPINFO_OFFSET(MINFO) ((MINFO).offset)
+
+struct pvm_mapinfo
+{
+  int mapped_p;
+  pvm_val ios;
+  pvm_val offset;
+};
+
+struct pvm_mapinfo pvm_make_mapinfo (int mapped_p, pvm_val ios,
+                                     pvm_val offset);
+
 /* Arrays values are boxed, and store sequences of homogeneous values
    called array "elements".  They can be mapped in IO, or unmapped.
 
-   MAPPED_P is 0 if the array value is not mapped, or has any other
-   value if it is mapped.
+   MAPINFO contains the mapping info for the value.  See the
+   definition of the struct above in this file for more information.
 
-   IOS is an int<32> value that identifies the IO space where the
-   value is mapped.  If the array is not mapped then this is PVM_NULL.
-
-   OFFSET is an ulong<64> value with the bit offset in the current IO
-   space where the array is mapped.  If the array is not mapped then
-   this holds 0UL by convention.
-
-   MAPPED_P_BACK, IOS_BACK and OFFSET_BACK are backup areas used by
-   the relocation instructions.
+   MAPINFO_BACK is a backup are used by the relocation instructions.
+   See pvm_val_reloc and pvm_val_ureloc in pvm-val.c
 
    If the array is mapped, ELEMS_BOUND is an unsigned long containing
    the number of elements to which the map is bounded.  Similarly,
@@ -197,12 +223,11 @@ typedef struct pvm_val_box *pvm_val_box;
    relevant.  */
 
 #define PVM_VAL_ARR(V) (PVM_VAL_BOX_ARR (PVM_VAL_BOX ((V))))
-#define PVM_VAL_ARR_MAPPED_P(V) (PVM_VAL_ARR(V)->mapped_p)
-#define PVM_VAL_ARR_MAPPED_P_BACK(V) (PVM_VAL_ARR(V)->mapped_p_back)
-#define PVM_VAL_ARR_IOS(V) (PVM_VAL_ARR(V)->ios)
-#define PVM_VAL_ARR_IOS_BACK(V) (PVM_VAL_ARR(V)->ios_back)
-#define PVM_VAL_ARR_OFFSET(V) (PVM_VAL_ARR(V)->offset)
-#define PVM_VAL_ARR_OFFSET_BACK(V) (PVM_VAL_ARR(V)->offset_back)
+#define PVM_VAL_ARR_MAPINFO(V) (PVM_VAL_ARR(V)->mapinfo)
+#define PVM_VAL_ARR_MAPINFO_BACK(V) (PVM_VAL_ARR(V)->mapinfo_back)
+#define PVM_VAL_ARR_MAPPED_P(V) (PVM_MAPINFO_MAPPED_P (PVM_VAL_ARR_MAPINFO ((V))))
+#define PVM_VAL_ARR_IOS(V) (PVM_MAPINFO_IOS (PVM_VAL_ARR_MAPINFO ((V))))
+#define PVM_VAL_ARR_OFFSET(V) (PVM_MAPINFO_OFFSET (PVM_VAL_ARR_MAPINFO ((V))))
 #define PVM_VAL_ARR_ELEMS_BOUND(V) (PVM_VAL_ARR(V)->elems_bound)
 #define PVM_VAL_ARR_SIZE_BOUND(V) (PVM_VAL_ARR(V)->size_bound)
 #define PVM_VAL_ARR_MAPPER(V) (PVM_VAL_ARR(V)->mapper)
@@ -215,12 +240,8 @@ typedef struct pvm_val_box *pvm_val_box;
 
 struct pvm_array
 {
-  int mapped_p;
-  int mapped_p_back;
-  pvm_val ios;
-  pvm_val offset;
-  pvm_val ios_back;
-  pvm_val offset_back;
+  struct pvm_mapinfo mapinfo;
+  struct pvm_mapinfo mapinfo_back;
   pvm_val elems_bound;
   pvm_val size_bound;
   pvm_val mapper;
@@ -261,18 +282,11 @@ struct pvm_array_elem
    called structure "elements".  They can be mapped in IO, or
    unmapped.
 
-   MAPPED_P is 0 if the struct value is not mapped, or has any other
-   value if it is mapped.
+   MAPINFO contains the mapping info for the value.  See the
+   definition of the struct above in this file for more information.
 
-   IOS is an int<32> value that identifies the IO space where the value
-   is mapped.  If the structure is not mapped then this is PVM_NULL.
-
-   OFFSET is an ulong<64> value holding the bit offset of in the IO
-   space where the structure is mapped.  If the structure is not
-   mapped then this is 0UL by convention.
-
-   MAPPED_BACK, IOS_BACK and OFFSET_BACK are backups used by the
-   relocation instructions.
+   MAPINFO_BACK is a backup are used by the relocation instructions.
+   See pvm_val_reloc and pvm_val_ureloc in pvm-val.c
 
    TYPE is the type of the struct.  This includes the types of the
    struct fields.
@@ -288,12 +302,11 @@ struct pvm_array_elem
    irrelevant.  */
 
 #define PVM_VAL_SCT(V) (PVM_VAL_BOX_SCT (PVM_VAL_BOX ((V))))
-#define PVM_VAL_SCT_MAPPED_P(V) (PVM_VAL_SCT((V))->mapped_p)
-#define PVM_VAL_SCT_MAPPED_P_BACK(V) (PVM_VAL_SCT((V))->mapped_p_back)
-#define PVM_VAL_SCT_IOS(V) (PVM_VAL_SCT((V))->ios)
-#define PVM_VAL_SCT_OFFSET(V) (PVM_VAL_SCT((V))->offset)
-#define PVM_VAL_SCT_IOS_BACK(V) (PVM_VAL_SCT((V))->ios_back)
-#define PVM_VAL_SCT_OFFSET_BACK(V) (PVM_VAL_SCT((V))->offset_back)
+#define PVM_VAL_SCT_MAPINFO(V) (PVM_VAL_SCT((V))->mapinfo)
+#define PVM_VAL_SCT_MAPINFO_BACK(V) (PVM_VAL_SCT((V))->mapinfo_back)
+#define PVM_VAL_SCT_MAPPED_P(V) (PVM_MAPINFO_MAPPED_P (PVM_VAL_SCT_MAPINFO ((V))))
+#define PVM_VAL_SCT_IOS(V) (PVM_MAPINFO_IOS (PVM_VAL_SCT_MAPINFO ((V))))
+#define PVM_VAL_SCT_OFFSET(V) (PVM_MAPINFO_OFFSET (PVM_VAL_SCT_MAPINFO ((V))))
 #define PVM_VAL_SCT_MAPPER(V) (PVM_VAL_SCT((V))->mapper)
 #define PVM_VAL_SCT_WRITER(V) (PVM_VAL_SCT((V))->writer)
 #define PVM_VAL_SCT_TYPE(V) (PVM_VAL_SCT((V))->type)
@@ -304,12 +317,8 @@ struct pvm_array_elem
 
 struct pvm_struct
 {
-  int mapped_p;
-  int mapped_p_back;
-  pvm_val ios;
-  pvm_val offset;
-  pvm_val ios_back;
-  pvm_val offset_back;
+  struct pvm_mapinfo mapinfo;
+  struct pvm_mapinfo mapinfo_back;
   pvm_val mapper;
   pvm_val writer;
   pvm_val type;

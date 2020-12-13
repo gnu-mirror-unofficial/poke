@@ -1,3 +1,24 @@
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm-val.h (struct pvm_mapinfo): New type.
+	(struct pvm_array): New fields mapinfo and mapinfo_back and remove
+	obsolete fields.
+	(struct pvm_struct): Likewise.
+	(PVM_VAL_ARR_MAPINFO): Define.
+	(PVM_VAL_ARR_MAPINFO_BACK): Likewise.
+	(PVM_MAPINFO_MAPPED_P): Likewise.
+	(PVM_MAPINFO_IOS): Likewise.
+	(PVM_MAPINFO_OFFSET): Likewise.
+	(PVM_VAL_SCT_MAPINFO): Likewise.
+	(PVM_VAL_SCT_MAPINFO_BACK): Likewise.
+	(pvm_mapinfo_null): Define.
+	* libpoke/pvm-val.c (pvm_make_array): Initialize the mapinfo.
+	(pvm_make_struct): Likewise.
+	(pvm_val_reloc): Adapt to mapinfo structures.
+	(pvm_val_ureloc): Likewise.
+	* testsuite/poke.map/ass-map-18.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-12-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.map/valmap-struct-4.pk: New test.

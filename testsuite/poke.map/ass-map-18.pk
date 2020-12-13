@@ -1,0 +1,9 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08} } */
+
+/* { dg-command { var foo = [[[10UB],[20UB]]] } } */
+/* { dg-command { byte[][][] @ 1#B = foo } } */
+/* { dg-command { byte[1][2][1] @ 1#B } } */
+/* { dg-output "\\\[\\\[\\\[10UB\\\],\\\[20UB\\\]\\\]\\\]" } */
+/* { dg-command { foo'mapped }  } */
+/* { dg-output "\n" } */

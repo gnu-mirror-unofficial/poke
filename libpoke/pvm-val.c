@@ -97,9 +97,14 @@ pvm_make_array (pvm_val nelem, pvm_val type)
   size_t nbytes = (sizeof (struct pvm_array_elem) * num_allocated);
   size_t i;
 
-  arr->mapped_p = 0;
-  arr->ios = PVM_NULL;
-  arr->offset = pvm_make_ulong (0, 64);
+  PVM_MAPINFO_MAPPED_P (arr->mapinfo) = 0;
+  PVM_MAPINFO_IOS (arr->mapinfo) = PVM_NULL;
+  PVM_MAPINFO_OFFSET (arr->mapinfo) = pvm_make_ulong (0, 64);
+
+  PVM_MAPINFO_MAPPED_P (arr->mapinfo_back) = 0;
+  PVM_MAPINFO_IOS (arr->mapinfo_back) = PVM_NULL;
+  PVM_MAPINFO_OFFSET (arr->mapinfo_back) = PVM_NULL;
+
   arr->elems_bound = PVM_NULL;
   arr->size_bound = PVM_NULL;
   arr->mapper = PVM_NULL;
@@ -233,12 +238,15 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
   size_t nmethodbytes
     = sizeof (struct pvm_struct_method) * PVM_VAL_ULONG (nmethods);
 
-  sct->mapped_p = 0;
-  sct->mapped_p_back = 0;
-  sct->ios = PVM_NULL;
-  sct->offset = pvm_make_ulong (0, 64);
-  sct->ios_back = PVM_NULL;
-  sct->offset_back = PVM_NULL;
+
+  PVM_MAPINFO_MAPPED_P (sct->mapinfo) = 0;
+  PVM_MAPINFO_IOS (sct->mapinfo) = PVM_NULL;
+  PVM_MAPINFO_OFFSET (sct->mapinfo) = pvm_make_ulong (0, 64);
+
+  PVM_MAPINFO_MAPPED_P (sct->mapinfo_back) = 0;
+  PVM_MAPINFO_IOS (sct->mapinfo_back) = PVM_NULL;
+  PVM_MAPINFO_OFFSET (sct->mapinfo_back) = PVM_NULL;
+
   sct->mapper = PVM_NULL;
   sct->writer = PVM_NULL;
   sct->type = type;
@@ -729,9 +737,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
                          pvm_make_ulong (elem_new_offset, 64));
         }
 
-      PVM_VAL_ARR_MAPPED_P_BACK (val) = PVM_VAL_ARR_MAPPED_P (val);
-      PVM_VAL_ARR_IOS_BACK (val) = PVM_VAL_ARR_IOS (val);
-      PVM_VAL_ARR_OFFSET_BACK (val) = PVM_VAL_ARR_OFFSET (val);
+      PVM_VAL_ARR_MAPINFO_BACK (val) = PVM_VAL_ARR_MAPINFO (val);
 
       PVM_VAL_ARR_MAPPED_P (val) = 1;
       PVM_VAL_ARR_IOS (val) = ios;
@@ -768,9 +774,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
                          pvm_make_ulong (field_new_offset, 64));
         }
 
-      PVM_VAL_SCT_MAPPED_P_BACK (val) = PVM_VAL_SCT_MAPPED_P (val);
-      PVM_VAL_SCT_OFFSET_BACK (val) = PVM_VAL_SCT_OFFSET (val);
-      PVM_VAL_SCT_IOS_BACK (val) = PVM_VAL_SCT_IOS (val);
+      PVM_VAL_SCT_MAPINFO_BACK (val) = PVM_VAL_SCT_MAPINFO (val);
 
       PVM_VAL_SCT_MAPPED_P (val) = 1;
       PVM_VAL_SCT_IOS (val) = ios;
@@ -794,9 +798,7 @@ pvm_val_ureloc (pvm_val val)
           pvm_val_ureloc (elem_value);
         }
 
-      PVM_VAL_ARR_MAPPED_P (val) = PVM_VAL_ARR_MAPPED_P (val);
-      PVM_VAL_ARR_IOS (val) = PVM_VAL_ARR_IOS_BACK (val);
-      PVM_VAL_ARR_OFFSET (val) = PVM_VAL_ARR_OFFSET_BACK (val);
+      PVM_VAL_ARR_MAPINFO (val) = PVM_VAL_ARR_MAPINFO_BACK (val);
     }
   else if (PVM_IS_SCT (val))
     {
@@ -815,9 +817,7 @@ pvm_val_ureloc (pvm_val val)
           pvm_val_ureloc (field_value);
         }
 
-      PVM_VAL_SCT_MAPPED_P (val) = PVM_VAL_SCT_MAPPED_P_BACK (val);
-      PVM_VAL_SCT_OFFSET (val) = PVM_VAL_SCT_OFFSET_BACK (val);
-      PVM_VAL_SCT_IOS (val) = PVM_VAL_SCT_IOS_BACK (val);
+      PVM_VAL_ARR_MAPINFO (val) = PVM_VAL_ARR_MAPINFO_BACK (val);
     }
 }
 
