@@ -3874,6 +3874,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           break;
         }
       break;
+    case PKL_AST_ATTR_STRICT:
+      switch (PKL_AST_TYPE_CODE (operand_type))
+        {
+        case PKL_TYPE_ANY:
+        case PKL_TYPE_ARRAY:
+        case PKL_TYPE_STRUCT:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETS);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+          break;
+        default:
+          /* Other types are considered strict.  */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_int (1, 32));
+          break;
+        }
+      break;
     default:
       PKL_ICE (PKL_AST_LOC (exp),
                "unhandled attribute expression code #%d in code generator",

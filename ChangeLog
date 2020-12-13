@@ -1,5 +1,23 @@
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-attrs.def: Define PKL_AST_ATTR_STRICT.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_attr): Typify attribute
+	'strict.
+	* libpoke/pkl-gen.c (pkl_gen_ps_op_attr): Generate code for the
+	attribute 'strict.
+	* testsuite/poke.map/strict-attr-1.pk: New test.
+	* testsuite/poke.map/strict-attr-2.pk: Likewise.
+	* testsuite/poke.map/strict-attr-3.pk: Likewise.
+	* testsuite/poke.map/strict-attr-4.pk: Likewise.
+	* testsuite/poke.map/strict-attr-5.pk: Likewise.
+	* testsuite/poke.map/strict-attr-6.pk: Likewise.
+	* testsuite/poke.map/strict-attr-7.pk: Likewise.
+	* doc/poke.texi (Array Attributes): Document the 'strict
+	attribute.
+	(Non-strict Mapping): Mention the attribute.
+
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.map/nsmap-1.pk: New test.
 	* testsuite/poke.map/nsmap-2.pk: Likewise.
 	* testsuite/poke.map/nsmap-3.pk: Likewise.

@@ -7337,6 +7337,18 @@ Gives 1 if the array is mapped, 0 otherwise.  Examples:
 (poke) b'mapped
 1
 @end example
+@item strict
+Gives 0 if the array is mapped in non-strict mode, 1
+otherwise. Examples:
+
+@example
+(poke) var a = int[3] @@ 0#B
+(poke) a'strict
+1
+(poke) var a = int[3] @@! 0#B
+(poke) a'strict
+0
+@end example
 @end table
 
 @node Structs
@@ -9532,6 +9544,10 @@ poke.
 For this purpose poke provides an alternate map operator @code{@!}
 that behaves exactly like the normal operator, but inhibits the
 control of data integrity.
+
+The attribute @code{'strict} can be used to query whether a given
+value is strict or non-strict.  Non-mapped values are strict by
+definition.
 
 @node Unmapping
 @subsection Unmapping
