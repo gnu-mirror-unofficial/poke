@@ -1544,7 +1544,7 @@ struct_type_specifier:
                   /* Register dummies for the locals used in
                      pkl-gen.pks:struct_mapper (not counting
                      OFFSET).  */
-                  pkl_register_dummies (pkl_parser, 4);
+                  pkl_register_dummies (pkl_parser, 5);
 
                   /* Now register OFFSET with a type of
                      offset<uint<64>,1> */

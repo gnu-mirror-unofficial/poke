@@ -49,16 +49,19 @@
         swap                    ; WCLS VAL
         mgetm                   ; WCLS VAL MCLS
         swap                    ; WCLS MCLS VAL
-        mgetios                 ; WCLS MCLS VAL IOS
-        swap                    ; WLCS MCLS IOS VAL
-        mgeto                   ; WCLS MCLS IOS VAL OFF
-        swap                    ; WCLS MCLS IOS OFF VAL
-        mgetsel                 ; WCLS MCLS IOS OFF VAL EBOUND
-        swap                    ; WCLS MCLS IOS OFF EBOUND VAL
-        mgetsiz                 ; WCLS MCLS IOS OFF EBOUND VAL SBOUND
-        swap                    ; WCLS MCLS IOS OFF EBOUND SBOUND VAL
-        mgetm                   ; WCLS MCLS IOS OFF EBOUND SBOUND VAL MCLS
-        nip                     ; WCLS MCLS IOS OFF EBOUND SBOUND MCLS
+
+        mgets                   ; WCLS MCLS VAL STRICT
+        swap                    ; WCLS MCLS STRICT VAL
+        mgetios                 ; WCLS MCLS STRICT VAL IOS
+        swap                    ; WLCS MCLS STRICT IOS VAL
+        mgeto                   ; WCLS MCLS STRICT IOS VAL OFF
+        swap                    ; WCLS MCLS STRICT IOS OFF VAL
+        mgetsel                 ; WCLS MCLS STRICT IOS OFF VAL EBOUND
+        swap                    ; WCLS MCLS STRICT IOS OFF EBOUND VAL
+        mgetsiz                 ; WCLS MCLS STRICT IOS OFF EBOUND VAL SBOUND
+        swap                    ; WCLS MCLS STRICT IOS OFF EBOUND SBOUND VAL
+        mgetm                   ; WCLS MCLS STRICT IOS OFF EBOUND SBOUND VAL MCLS
+        nip                     ; WCLS MCLS STRICT IOS OFF EBOUND SBOUND MCLS
         call                    ; WCLS MCLS NVAL
         swap                    ; WCLS NVAL MCLS
         msetm                   ; WCLS NVAL

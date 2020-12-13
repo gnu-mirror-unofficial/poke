@@ -28,11 +28,14 @@
         .end
 
 ;;; RAS_FUNCTION_ARRAY_MAPPER @array_type
-;;; ( IOS BOFF EBOUND SBOUND -- ARR )
+;;; ( STRICT IOS BOFF EBOUND SBOUND -- ARR )
 ;;;
 ;;; Assemble a function that maps an array value at the given
 ;;; bit-offset BOFF in the IO space IOS, with mapping attributes
 ;;; EBOUND and SBOUND.
+;;;
+;;; If STRICT is 0 then do not check data integrity while mapping.
+;;; Otherwise, perform data integrity checks.
 ;;;
 ;;; If both EBOUND and SBOUND are null, then perform an unbounded map,
 ;;; i.e. read array elements from IO until EOF.
@@ -55,11 +58,12 @@
 
         .function array_mapper @array_type
         prolog
-        pushf 6
+        pushf 7
         regvar $sbound           ; Argument
         regvar $ebound           ; Argument
         regvar $boff             ; Argument
         regvar $ios              ; Argument
+        regvar $strict           ; Argument
         ;; Initialize the bit-offset of the elements in a local.
         pushvar $boff           ; BOFF
         regvar $eboff           ; BOFF
@@ -124,8 +128,9 @@
         pushe .eof
         push PVM_E_CONSTRAINT
         pushe .constraint_error
-        pushvar $ios            ; ARR EBOFF EBOFF IOS
-        swap                    ; ARR EBOFF IOS EBOFF
+        pushvar $strict         ; ARR EBOFF EBOFF STRICT
+        pushvar $ios            ; ARR EBOFF EBOFF STRICT IOS
+        rot                     ; ARR EBOFF STRICT IOS EBOFF
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         pope
         pope
@@ -488,19 +493,22 @@
         .end
 
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_CONSTRAINTS @field
-;;; ( BOFF STR VAL -- BOFF STR VAL NBOFF )
+;;; ( STRICT BOFF STR VAL -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Given a `field', evaluate its optcond and integrity constraints,
 ;;; then calculate the bit-offset of the next struct value.
 ;;;
-;;; Macro-arguments:
+;;; STRICT determines whether to check for data integrity.
 ;;;
+;;; Macro-arguments:
+;;; @struct_type is a pkl_ast_node iwth the struct type being mapped.
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 ;;;
 ;;; `vars_registered' is a size_t that contains the number
 ;;; of field-variables registered so far.
 
-        .macro handle_struct_field_constraints @field
+        .macro handle_struct_field_constraints @struct_type @field
+                                ; STRICT BOFF STR VAL
         ;; If this is an optional field, evaluate the optcond.  If
         ;; it is false, then add an absent field, i.e. both the field
         ;; name and the field value are PVM_NULL.
@@ -512,29 +520,41 @@
         .c PKL_PASS_SUBPASS (optcond);
         .c PKL_GEN_POP_CONTEXT;
         bnzi .optcond_ok
-        drop                    ; BOFF STR VAL
-        drop                    ; BOFF STR
-        drop                    ; BOFF
+        drop                    ; STRICT BOFF STR VAL
+        drop                    ; STRICT BOFF STR
+        drop                    ; STRICT BOFF
+        nip                     ; BOFF
         push null               ; BOFF null
         over                    ; BOFF null BOFF
         over                    ; BOFF null BOFF null
         dup                     ; BOFF null BOFF null null
-        ;; Note that this 5 should be updated if the lexical structure
+        ;; Note that this 6 should be updated if the lexical structure
         ;; of struct_mapper and struct_constructor changes!
         .c pkl_asm_insn (RAS_ASM, PKL_INSN_POPVAR,
-        .c               0 /* back */, 5 + vars_registered - 1 /* over */);
+        .c               0 /* back */, 6 + vars_registered - 1 /* over */);
         swap                    ; BOFF null null BOFF
         ba .omitted_field
    .c }
    .c else
    .c {
-        push null               ; BOFF STR VAL null
+        push null               ; STRICT BOFF STR VAL null
    .c }
 .optcond_ok:
-        drop                    ; BOFF STR VAL
         ;; Evaluate the field's constraint and raise
-        ;; an exception if not satisfied.
+        ;; an exception if not satisfied.  If not an union,
+        ;; honor STRICT.
+        drop                    ; STRICT BOFF STR VAL
+        tor                     ; STRICT BOFF STR [VAL]
+        rot                     ; BOFF STR STRICT [VAL]
+        fromr                   ; BOFF STR STRICT VAL
+        swap                    ; BOFF STR VAL STRICT
+   .c if (!PKL_AST_TYPE_S_UNION_P (@struct_type))
+   .c {
+        bzi .constraint_done
+   .c }
         .e check_struct_field_constraint @field
+.constraint_done:
+        drop                    ; BOFF STR VAL
         ;; Calculate the offset marking the end of the field, which is
         ;; the field's offset plus it's size.
         quake                  ; STR BOFF VAL
@@ -549,17 +569,20 @@
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_EXTRACTOR
-;;;               field struct_itype field_type ivalw fieldw
-;;; ( BOFF SBOFF IVAL -- BOFF STR VAL NBOFF )
+;;;               struct_type field struct_itype field_type ivalw fieldw
+;;; ( STRICT BOFF SBOFF IVAL -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Given an integer large enough, extract the value of the given field
 ;;; from it.
 ;;;
+;;; STRICT determines whether to check for data integrity.
 ;;; SBOFF is the bit-offset of the beginning of the struct.
 ;;; NBOFF is the bit-offset marking the end of this field.
 ;;; by this macro.  It is typically ulong<64>0 or ulong<64>1.
 ;;;
 ;;; Macro-arguments:
+;;;
+;;; @struct_type is a pkl_ast_node iwth the struct type being mapped.
 ;;;
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 ;;;
@@ -580,33 +603,33 @@
 ;;; `vars_registered' is a size_t that contains the number
 ;;; of field-variables registered so far.
 
-        .macro struct_field_extractor @field @struct_itype @field_type #ivalw #fieldw
-        nrot                            ; IVAL BOFF SBOFF
+        .macro struct_field_extractor @struct_type @field @struct_itype @field_type #ivalw #fieldw
+        nrot                            ; STRICT IVAL BOFF SBOFF
         ;; Calculate the amount of bits that we have to right-shift
         ;; IVAL in order to extract the portion of the value
         ;; corresponding to this field.  The formula is:
         ;;
         ;; (ival_width - field_width) - (field_offset - struct_offset)
         ;;
-        over                            ; IVAL BOFF SBOFF BOFF
-        swap                            ; IVAL BOFF BOFF SBOFF
+        over                            ; STRICT IVAL BOFF SBOFF BOFF
+        swap                            ; STRICT IVAL BOFF BOFF SBOFF
         sublu
-        nip2                            ; IVAL BOFF (BOFF-SBOFF)
-        push #ivalw                     ; IVAL BOFF (BOFF-SBOFF) IVALW
-        push #fieldw                    ; IVAL BOFF (BOFF-SBOFF) IVALW FIELDW
+        nip2                            ; STRICT IVAL BOFF (BOFF-SBOFF)
+        push #ivalw                     ; STRICT IVAL BOFF (BOFF-SBOFF) IVALW
+        push #fieldw                    ; STRICT IVAL BOFF (BOFF-SBOFF) IVALW FIELDW
         sublu
-        nip2                            ; IVAL BOFF (BOFF-SBOFF) (IVALW-FIELDW)
-        swap                            ; IVAL BOFF (IVALW-FIELDW) (BOFF-SBOFF)
+        nip2                            ; STRICT IVAL BOFF (BOFF-SBOFF) (IVALW-FIELDW)
+        swap                            ; STRICT IVAL BOFF (IVALW-FIELDW) (BOFF-SBOFF)
         sublu
-        nip2                            ; IVAL BOFF ((IVALW-FIELDW)-(BOFF-SBOFF))
-        quake                           ; BOFF IVAL SCOUNT
+        nip2                            ; STRICT IVAL BOFF ((IVALW-FIELDW)-(BOFF-SBOFF))
+        quake                           ; STRICT BOFF IVAL SCOUNT
         lutoiu 32
-        nip                             ; BOFF IVAL SCOUNT(U)
+        nip                             ; STRICT BOFF IVAL SCOUNT(U)
         ;; Using the calculated bit-count, extract the value of the
         ;; field from the struct ival.  The resulting value is converted
         ;; to the type of the field. (base type if the field is offset.)
         sr @struct_itype
-        nip2                            ; BOFF VAL
+        nip2                            ; STRICT BOFF VAL
    .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
    .c {
         .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@field_type)
@@ -616,39 +639,42 @@
    .c {
         nton @struct_itype, @field_type
    .c }
-        nip                             ; BOFF VALC
+        nip                             ; STRICT BOFF VALC
         ;; At this point we have either the value of the field is in the
         ;; stack.  If the field is an offset, construct it.
    .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
    .c {
         .let @offset_unit = PKL_AST_TYPE_O_UNIT (@field_type)
         .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (@offset_unit), 64)
-        push #unit                      ; BOFF MVALC UNIT
-        mko                             ; BOFF VALC
+        push #unit                      ; STRICT BOFF MVALC UNIT
+        mko                             ; STRICT BOFF VALC
    .c }
-        dup                             ; BOFF VALC VALC
-        regvar $val                     ; BOFF VALC
+        dup                             ; STRICT BOFF VALC VALC
+        regvar $val                     ; STRICT BOFF VALC
         .c vars_registered++;
    .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field) == NULL)
         push null
    .c else
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field));
-                                        ; BOFF VALC STR
-        swap                            ; BOFF STR VALC
+                                        ; STRICT BOFF VALC STR
+        swap                            ; STRICT BOFF STR VALC
         ;; Evaluate the field's opcond and constraints
-        .e handle_struct_field_constraints @field
+        .e handle_struct_field_constraints @struct_type, @field
                                         ; BOFF STR VALC NBOFF
         .end
 
 ;;; RAS_MACRO_STRUCT_FIELD_MAPPER
-;;; ( IOS BOFF SBOFF -- BOFF STR VAL NBOFF )
+;;; ( STRICT IOS BOFF SBOFF -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Map a struct field from the current IOS.
+;;; STRICT indicates whether to do strict mapping.
 ;;; SBOFF is the bit-offset of the beginning of the struct.
 ;;; NBOFF is the bit-offset marking the end of this field.
 ;;; by this macro.  It is typically ulong<64>0 or ulong<64>1.
 ;;;
 ;;; Macro-arguments:
+;;;
+;;; @struct_type is a pkl_ast_node iwth the struct type being mapped.
 ;;;
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 ;;;
@@ -657,12 +683,16 @@
 ;;; `vars_registered' is a size_t that contains the number
 ;;; of field-variables registered so far.
 
-        .macro struct_field_mapper @field
+        .macro struct_field_mapper @struct_type @field
         ;; Increase OFF by the label, if the field has one.
         .e handle_struct_field_label @field
-                                        ; IOS BOFF
-        dup                             ; IOS BOFF BOFF
-        nrot                            ; BOFF IOS BOFF
+                                ; STRICT IOS BOFF
+        swap                    ; STRICT BOFF IOS
+        tor                     ; STRICT BOFF [IOS]
+        over
+        over
+        fromr                   ; STRICT BOFF STRICT BOFF IOS
+        swap                    ; STRICT BOFF STRICT IOS BOFF
         push PVM_E_CONSTRAINT
         pushe .constraint_error_or_eof
         push PVM_E_EOF
@@ -671,7 +701,7 @@
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
         .c PKL_GEN_PAYLOAD->endian = endian; }
-                                        ; BOFF VAL
+                                        ; STRICT BOFF VAL
         pope
         pope
         ba .val_ok
@@ -682,25 +712,28 @@
         regvar $val
         raise
 .val_ok:
-        dup                             ; BOFF VAL VAL
-        regvar $val                     ; BOFF VAL
+        dup                             ; STRICT BOFF VAL VAL
+        regvar $val                     ; STRICT BOFF VAL
         .c vars_registered++;
    .c if (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field) == NULL)
         push null
    .c else
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field));
-                                        ; BOFF VAL STR
-        swap                            ; BOFF STR VAL
+                                        ; STRICT BOFF VAL STR
+        swap                            ; STRICT BOFF STR VAL
         ;; Evaluate the field's opcond and constraints
-        .e handle_struct_field_constraints @field
+        .e handle_struct_field_constraints @struct_type, @field
                                         ; BOFF STR VAL NBOFF
         .end
 
 ;;; RAS_FUNCTION_STRUCT_MAPPER @type_struct
-;;; ( IOS BOFF EBOUND SBOUND -- SCT )
+;;; ( STRICT IOS BOFF EBOUND SBOUND -- SCT )
 ;;;
 ;;; Assemble a function that maps a struct value at the given offset
 ;;; OFF.
+;;;
+;;; If STRICT is 0 then do not check data integrity while mapping.
+;;; Otherwise, perform data integrity checks.
 ;;;
 ;;; Both EBOUND and SBOUND are always null, and not used, i.e. struct maps
 ;;; are not bounded by either number of fields or size.
@@ -721,11 +754,12 @@
 
         .function struct_mapper @type_struct
         prolog
-        pushf 5
+        pushf 6
         drop                    ; sbound
         drop                    ; ebound
         regvar $boff
         regvar $ios
+        regvar $strict
         push ulong<64>0
         regvar $nfield
         ;; If the struct is integral, map the integer from which the
@@ -733,6 +767,7 @@
         ;; a dummy value that will never be used.
   .c if (PKL_AST_TYPE_S_ITYPE (@type_struct))
   .c {
+        pushvar $strict
         pushvar $ios
         pushvar $boff
   .c    PKL_PASS_SUBPASS (PKL_AST_TYPE_S_ITYPE (@type_struct));
@@ -774,9 +809,6 @@
         push PVM_E_CONSTRAINT
         pushe .alternative_failed
  .c   }
-        pushvar $ios             ; ...[EBOFF ENAME EVAL] NEBOFF IOS
-        swap                     ; ...[EBOFF ENAME EVAL] IOS NEBOFF
-        pushvar $boff            ; ...[EBOFF ENAME EVAL] IOS NEBOFF OFF
  .c   if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c   {
         .let @struct_itype = PKL_AST_TYPE_S_ITYPE (@type_struct);
@@ -789,16 +821,41 @@
         .let #fieldw = pvm_make_ulong (field_type_size, 64);
         ;; Note that at this point the field is assured to be
         ;; an integral type, as per typify.
-        rot                      ; ...[EBOFF ENAME EVAL] NEBOFF OFF IOS
-        drop                     ; ...[EBOFF ENAME EVAL] NEBOFF OFF
-        pushvar $ivalue          ; ...[EBOFF ENAME EVAL] NEBOFF OFF IVAL
-        .e struct_field_extractor @field, @struct_itype, @field_type, #ivalw, #fieldw
+        pushvar $strict
+        swap                     ; ...[EBOFF ENAME EVAL] STRICT NEBOFF
+        pushvar $boff
+        pushvar $ivalue          ; ...[EBOFF ENAME EVAL] STRICT NEBOFF OFF IVAL
+        .e struct_field_extractor @type_struct, @field, @struct_itype, @field_type, #ivalw, #fieldw
                                  ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c   else
  .c   {
-        .e struct_field_mapper @field
-                                ; ...[EBOFF ENAME EVAL] NEBOFF
+ .c     if (PKL_AST_TYPE_S_UNION_P (@type_struct))
+ .c     {
+        ;; Note that this `dup' is necessary in order to not disturb
+        ;; the value at the TOS present when the EOF and CONSTRAINT
+        ;; handlers are installed.
+        dup                      ; ...[EBOFF ENAME EVAL] [NEBOFF] NEBOFF
+ .c     }
+        pushvar $strict          ; ...[EBOFF ENAME EVAL] [NEBOFF] NEBOFF STRICT
+        swap                     ; ...[EBOFF ENAME EVAL] [NEBOFF] STRICT NEBOFF
+        pushvar $ios             ; ...[EBOFF ENAME EVAL] [NEBOFF] STRICT NEBOFF IOS
+        swap                     ; ...[EBOFF ENAME EVAL] [NEBOFF] STRICT IOS NEBOFF
+        pushvar $boff            ; ...[EBOFF ENAME EVAL] [NEBOFF] STRICT IOS NEBOFF OFF
+        .e struct_field_mapper @type_struct, @field
+                                ; ...[NEBOFF] [EBOFF ENAME EVAL] NEBOFF
+ .c     if (PKL_AST_TYPE_S_UNION_P (@type_struct))
+ .c     {
+        tor
+        tor
+        tor
+        tor
+        drop                    ; XXX fix this utter crap 8-)
+        fromr
+        fromr
+        fromr
+        fromr
+ .c     }
  .c   }
  .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
@@ -888,13 +945,13 @@
  .c       i++;
  .c     continue;
  .c   }
-        ;; The lexical address of this method is 0,B where B is 5 +
-        ;; element order.  This 5 should be updated if the lexical
+        ;; The lexical address of this method is 0,B where B is 6 +
+        ;; element order.  This 6 should be updated if the lexical
         ;; structure of this function changes.
         .let @decl_name = PKL_AST_DECL_NAME (@field)
         .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
         push #name_str
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 5 + i);
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 6 + i);
  .c     nmethod++;
  .c     i++;
  .c }
@@ -1078,7 +1135,9 @@
         regvar $boff
         ;; So we have the same lexical structure than struct_mapper.
         push null
-        regvar $unused
+        dup
+        regvar $unused1
+        regvar $unused2
         push ulong<64>0
         push ulong<64>1
         mko
@@ -1220,7 +1279,7 @@
         push null               ; BOFF null null
         dup                     ; BOFF null null null
         .c pkl_asm_insn (RAS_ASM, PKL_INSN_POPVAR,
-        .c               0 /* back */, 5 + vars_registered - 1 /* over */);
+        .c               0 /* back */, 6 + vars_registered - 1 /* over */);
         ba .omitted_field
    .c }
    .c else
@@ -1332,13 +1391,13 @@
  .c       i++;
  .c     continue;
  .c   }
-        ;; The lexical address of this method is 0,B where B is 5 +
-        ;; element order.  This 5 should be updated if the lexical
+        ;; The lexical address of this method is 0,B where B is 6 +
+        ;; element order.  This 6 should be updated if the lexical
         ;; structure of this function changes.
         .let @decl_name = PKL_AST_DECL_NAME (@field)
         .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
         push #name_str
- .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 5 + i);
+ .c     pkl_asm_insn (RAS_ASM, PKL_INSN_PUSHVAR, 0, 6 + i);
  .c     nmethod++;
  .c     i++;
  .c }

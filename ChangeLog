@@ -1,5 +1,25 @@
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (struct_type_specifier): Adjust lexical
+	environment accordingly.
+	* libpoke/pkl-gen.c (pkl_gen_ps_type_integral): Handle STRICT in
+	mapper context.
+	(pkl_gen_ps_type_array): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_ps_type_struct): Likewise.
+	(pkl_gen_pr_type_function): Likewise.
+	(pkl_gen_pr_map): Specify strictness.
+	* libpoke/pkl-gen.pks (array_mapper): Get a STRICT argument.
+	(struct_mapper): Likewise.
+	(struct_field_mapper): Likewise.
+	(struct_field_extractor): Likewise.
+	(handle_struct_field_constraints): Likewise.
+	(struct_constructor): Adjust lexical environment to match
+	the one in struct_mapper.
+	* libpoke/pkl-asm.pks (remap): Pass strict to mapper.
+
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: Definitions for the mgets and msets
 	instructions.
 	* libpoke/pvm.jitter (mgets): New instruction.
