@@ -25,6 +25,7 @@
 #include <string.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "poke.h"
 
@@ -216,6 +217,8 @@ pk_mi_loop (int fd)
       if (select (FD_SETSIZE, &read_fd_set, NULL, NULL,
                   NULL /* timeout */) < 0)
         {
+          if (errno == EINTR)
+            continue;
           perror ("select");
           pk_fatal (NULL);
         }

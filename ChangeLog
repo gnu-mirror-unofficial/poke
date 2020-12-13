@@ -1,5 +1,11 @@
 2020-12-13  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* poke/pk-mi.c: Add include `errno.h`.
+	(mi_loop): Ignore `EINTR` when `select` fails. It's not a fatal error.
+	* poke/pk-hserver.c (hserver_thread_worker): Likewise.
+
+2020-12-13  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/pkl-promo.c (pkl_promo_ps_struct_type_field): Skip
 	promotion of initializer if it has the same type as the field.
 	* testsuite/poke.pkl/struct-types-7.pk: New test.

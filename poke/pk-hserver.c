@@ -218,6 +218,8 @@ hserver_thread_worker (void *data)
       read_fd_set = active_fd_set;
       if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout) < 0)
         {
+          if (errno == EINTR)
+            continue;
           perror ("select");
           pk_fatal (NULL);
         }
