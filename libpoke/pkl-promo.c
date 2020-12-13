@@ -1463,6 +1463,7 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
 {
   pkl_ast_node elem = PKL_PASS_NODE;
+  pkl_ast_node elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
   pkl_ast_node elem_constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem);
   pkl_ast_node elem_initializer = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem);
   pkl_ast_node elem_optcond = PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem);
@@ -1499,10 +1500,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
       PKL_PASS_RESTART = restart;
     }
 
-  if (elem_initializer)
+  if (elem_initializer
+      && !pkl_ast_type_equal_p (elem_type, PKL_AST_TYPE (elem_initializer)))
     {
       int restart = 0;
-      pkl_ast_node elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
 
       switch (PKL_AST_TYPE_CODE (elem_type))
         {

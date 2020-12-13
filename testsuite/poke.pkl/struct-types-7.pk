@@ -1,0 +1,9 @@
+/* { dg-do compile } */
+
+/* This was a bug in promotion of initializer. */
+
+type S =
+  struct
+  {
+    string s = "";
+  };

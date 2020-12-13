@@ -1,3 +1,10 @@
+2020-12-13  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pkl-promo.c (pkl_promo_ps_struct_type_field): Skip
+	promotion of initializer if it has the same type as the field.
+	* testsuite/poke.pkl/struct-types-7.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.h (struct pvm_mapinfo): New type.
