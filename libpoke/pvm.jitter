@@ -4447,6 +4447,38 @@ instruction ureloc ()
   end
 end
 
+# Instruction: mgets
+#
+# Given a value, push a boolean indicating whether the
+# value is strict.  If the given value is not map-able then push
+# false, i.e. 0.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction mgets ()
+  code
+    int strict_p = PVM_VAL_STRICT_P (JITTER_TOP_STACK ());
+    JITTER_PUSH_STACK (pvm_make_int (strict_p, 32));
+  end
+end
+
+# Instruction: msets
+#
+# Given a value and a boolean, set the strictness of the value
+# to the given boolean.  If the value is not map-able this is
+# a no-operation.
+#
+# Stack: ( VAL INT -- VAL )
+
+instruction msets ()
+  code
+    int strict_p = PVM_VAL_INT (JITTER_TOP_STACK ());
+
+    PVM_VAL_SET_STRICT_P (JITTER_UNDER_TOP_STACK (), strict_p);
+    JITTER_DROP_STACK ();
+  end
+end
+
 # Instruction: mgeto
 #
 # Given a map-able value, push its bit-offset on the stack as an

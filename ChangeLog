@@ -1,5 +1,12 @@
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-insn.def: Definitions for the mgets and msets
+	instructions.
+	* libpoke/pvm.jitter (mgets): New instruction.
+	(msets): Likewise.
+
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.h (struct pvm_mapinfo): New field `strict_p'.
 	(PVM_MAPINFO_STRICT_P): Define.
 	(PVM_VAL_ARR_STRICT_P): Likewise.
