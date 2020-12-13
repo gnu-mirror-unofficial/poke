@@ -1,5 +1,22 @@
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.map/nsmap-1.pk: New test.
+	* testsuite/poke.map/nsmap-2.pk: Likewise.
+	* testsuite/poke.map/nsmap-3.pk: Likewise.
+	* testsuite/poke.map/nsmap-4.pk: Likewise.
+
+	* libpoke/pkl-ast.h (struct pkl_ast_map): New field `strict_p'.
+	(PKL_AST_MAP_STRICT_P): Define.
+	* libpoke/pkl-ast.c (pkl_ast_make_map): Get a new argument for
+	strict_p.
+	(pkl_ast_print_1): Print new attribute strict_p.
+	* libpoke/pkl-lex.l: Handle @! tokens.
+	* libpoke/pkl-tab.y (mapop): New rule.
+	(map): Support non-strict variants of the map operator.
+	* doc/poke.texi (Non-strict Mapping): Section draft.
+
+2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (struct_type_specifier): Adjust lexical
 	environment accordingly.
 	* libpoke/pkl-gen.c (pkl_gen_ps_type_integral): Handle STRICT in

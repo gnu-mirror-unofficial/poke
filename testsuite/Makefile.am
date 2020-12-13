@@ -478,6 +478,10 @@ EXTRA_DIST = \
   poke.map/maps-unions-method-1.pk \
   poke.map/maps-unions-method-2.pk \
   poke.map/maps-unions-method-3.pk \
+  poke.map/nsmap-1.pk \
+  poke.map/nsmap-2.pk \
+  poke.map/nsmap-3.pk \
+  poke.map/nsmap-4.pk \
   poke.map/trimmed-map.pk \
   poke.map/trimmed-map-2.pk \
   poke.map/trimmed-map-3.pk \

@@ -1484,6 +1484,7 @@ pkl_ast_make_isa (pkl_ast ast,
 
 pkl_ast_node
 pkl_ast_make_map (pkl_ast ast,
+                  int strict_p,
                   pkl_ast_node type,
                   pkl_ast_node ios,
                   pkl_ast_node offset)
@@ -1492,6 +1493,7 @@ pkl_ast_make_map (pkl_ast ast,
 
   assert (type && offset);
 
+  PKL_AST_MAP_STRICT_P (map) = strict_p;
   PKL_AST_MAP_TYPE (map) = ASTREF (type);
   PKL_AST_MAP_IOS (map) = ASTREF (ios);
   PKL_AST_MAP_OFFSET (map) = ASTREF (offset);
@@ -2965,6 +2967,7 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       IPRINTF ("MAP::\n");
 
       PRINT_COMMON_FIELDS;
+      PRINT_AST_IMM (strict_p, MAP_STRICT_P, "%d");
       PRINT_AST_SUBAST (type, TYPE);
       PRINT_AST_SUBAST (map_type, MAP_TYPE);
       PRINT_AST_SUBAST (ios, MAP_IOS);

@@ -1171,6 +1171,10 @@ pkl_ast_node pkl_ast_make_isa (pkl_ast ast,
 /* PKL_AST_MAP nodes represent maps, i.e. the mapping of some type at
    some offset in IO space.
 
+   STRICT_P is 0 if the node represents a non-strict mapping
+   operation.  Any other value means the operation is a strict
+   mapping.
+
    TYPE is the mapped type.
 
    IOS is an expression that should evaluate to an integer, and
@@ -1179,6 +1183,7 @@ pkl_ast_node pkl_ast_make_isa (pkl_ast ast,
 
    OFFSET is the offset in IO space where the TYPE is mapped.  */
 
+#define PKL_AST_MAP_STRICT_P(AST) ((AST)->map.strict_p)
 #define PKL_AST_MAP_TYPE(AST) ((AST)->map.type)
 #define PKL_AST_MAP_IOS(AST) ((AST)->map.ios)
 #define PKL_AST_MAP_OFFSET(AST) ((AST)->map.offset)
@@ -1187,12 +1192,14 @@ struct pkl_ast_map
 {
   struct pkl_ast_common common;
 
+  int strict_p;
   union pkl_ast_node *type;
   union pkl_ast_node *offset;
   union pkl_ast_node *ios;
 };
 
 pkl_ast_node pkl_ast_make_map (pkl_ast ast,
+                               int strict_p,
                                pkl_ast_node type,
                                pkl_ast_node ios,
                                pkl_ast_node offset);

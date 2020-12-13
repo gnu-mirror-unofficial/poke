@@ -460,6 +460,7 @@ token <integer> UNION    _("keyword `union'")
 %token POW              _("power operator")
 %token BCONC            _("bit-concatenation operator")
 %token '@'              _("map operator")
+%token NSMAP             _("non-strict map operator")
 %token INC              _("increment operator")
 %token DEC              _("decrement operator")
 %token AS               _("cast operator")
@@ -495,7 +496,7 @@ token <integer> UNION    _("keyword `union'")
 %left '*' '/' CEILDIV '%'
 %left POW
 %left BCONC
-%right '@'
+%right '@' NSMAP
 %nonassoc UNIT INC DEC
 %right UNARY AS ISA
 %left HYPERUNARY
@@ -525,7 +526,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
 %type <ast> integral_struct
 %type <integer> struct_type_pinned integral_type_sign struct_or_union
-%type <integer> builtin endianness defun_or_method ass_exp_op
+%type <integer> builtin endianness defun_or_method ass_exp_op mapop
 
 /* The following two tokens are used in order to support several start
    rules: one is for parsing an expression, declaration or sentence,
@@ -988,16 +989,23 @@ bconc:
                 }
 ;
 
+mapop:
+         '@' { $$ = 1; }
+        | NSMAP { $$ = 0; }
+        ;
+
 map:
-          simple_type_specifier '@' expression %prec THEN
+          simple_type_specifier mapop expression %prec THEN
                 {
-                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, NULL, $3);
-                    PKL_AST_LOC ($$) = @$;
+                  $$ = pkl_ast_make_map (pkl_parser->ast, $2,
+                                         $1, NULL, $3);
+                  PKL_AST_LOC ($$) = @$;
                 }
-        | simple_type_specifier '@' expression ':' expression %prec ELSE
+        | simple_type_specifier mapop expression ':' expression %prec ELSE
                  {
-                    $$ = pkl_ast_make_map (pkl_parser->ast, $1, $3, $5);
-                    PKL_AST_LOC ($$) = @$;
+                   $$ = pkl_ast_make_map (pkl_parser->ast, $2,
+                                          $1, $3, $5);
+                   PKL_AST_LOC ($$) = @$;
                 }
 ;
 

@@ -2076,9 +2076,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
       pkl_ast_node map_offset_magnitude = NULL;
 
       /* Push the strictness to use for the map.  */
-      /* XXX: get this from the map AST node.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_int (10, 32));
+                    pvm_make_int (PKL_AST_MAP_STRICT_P (map), 32));
 
       /* Push the IOS of the map.  */
       if (map_ios)

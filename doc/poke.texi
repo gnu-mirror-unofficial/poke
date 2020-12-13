@@ -8973,6 +8973,7 @@ values.  Mapping is perhaps the most important concept in Poke.
 * Mapping Simple Types::	Mapping integers, offsets and strings.
 * Mapping Structs::		Mapping collections of fields.
 * Mapping Arrays::		Mapping sequences of things.
+* Non-strict Mapping::          Working with incorrect data.
 * Unmapping::			From mapped values to regular values.
 @end menu
 
@@ -9516,6 +9517,21 @@ don't want the mapping bounds of @code{relocs} to be tied to
 
 Since simple values (such as the size above) are not mapped, this
 trick works as intended.
+
+@node Non-strict Mapping
+@subsection Non-strict Mapping
+
+The map operator @code{@@} performs what we call a @dfn{strict
+mapping}.  This means that the data integrity of the mapped data is
+checked for.  Often this is what we want.
+
+However, sometimes we have to work with incorrect or incomplete data.
+In these cases, we want to inspect that data and complete it using
+poke.
+
+For this purpose poke provides an alternate map operator @code{@!}
+that behaves exactly like the normal operator, but inhibits the
+control of data integrity.
 
 @node Unmapping
 @subsection Unmapping

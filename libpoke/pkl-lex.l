@@ -309,6 +309,7 @@ S ::
 "!"                { return '!'; }
 "~"                { return '~'; }
 "."                { return '.'; }
+"@!"               { return NSMAP; }
 "@"                { return '@'; }
 
 {A}({L}|{D})({L}|{D}|({S}({L}|{D})))* {
