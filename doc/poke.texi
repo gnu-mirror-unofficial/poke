@@ -910,7 +910,7 @@ For example:
 The command above asks poke to ``dump 64 bytes''.  In this example
 @code{:size} is the name of the argument, and @code{64#B} is the
 argument's value.  Again, the suffix @code{#B} tells poke we want to
-dump 64 bytes, not 64 kilobits or 64 potatoes.
+dump 64 bytes, not 64 kilobits nor 64 potatoes.
 
 Another interesting aspect of our first dump (ahem) is that the dumped
 bytes start from the beginning of the file, @i{i.e.} the offset of the
@@ -950,8 +950,8 @@ This tells poke to set @code{160} bytes as the new value for the
 @code{pk_dump_size} variable.  This is a global variable that the
 @command{dump} command uses to determine how much data to show if the
 user doesn't specify an explicit value with the @code{:size} option.
-The default behavior of other commands can also be modified by
-customization variables.
+Many other commands use the same strategy in order to alter their
+default behavior, not just @command{dump}.
 
 @cindex .pokerc
 @cindex initialization file
@@ -1036,7 +1036,8 @@ This application of the map operator tells poke to map a byte at the
 offset 64 bytes.  It can be read as ``byte at 64 bytes''.  Note how
 poke replies with the value 37UB.  The suffix @code{UB} means
 ``unsigned byte'', and is an indication for the user about the nature
-of the preceding number: it is unsigned, and it is a byte long.
+of the preceding number: it is unsigned, and it occupies a byte when
+stored.
 
 As we can see in this example, poke uses decimal by default when
 showing values in the REPL.  We already noted how it is usually better
@@ -1098,8 +1099,8 @@ again, we can verify that the byte actually changed:
 Does this mean that @file{foo.o} changed accordingly, in disk?  The
 answer is yes.  poke always commits changes immediately to the file
 being edited.  This, that is an useful feature, can also be a bit
-tricky if you forget about it, leading data corruption, so please be
-careful.
+tricky if you forget about it, leading to data corruption, so please
+be careful.
 
 Incidentally, altering the byte at offset 0x28 most probably have
 caused @file{foo.o} to stop being a valid ELF file, but since we are
@@ -1197,6 +1198,13 @@ Or, more succinctly, omitting the usage of a variable:
 @end example
 
 @noindent
+Or, even @emph{more} succinctly:
+
+@example
+(poke) (byte @@ 64#B) += 1
+@end example
+
+@noindent
 Note how we have to use parenthesis around the map at the right hand
 side, because the map operator @code{@@} has less precedence than the
 plus operator @code{+}.
@@ -1253,11 +1261,11 @@ somehow, and since all we have in a file are bytes, the integers will
 have to be composed of them.
 
 Integers bigger than 255 can be encoded by interpreting consecutive
-byte values in a certain way.  First, let's consider a single byte.  If
-we print a byte value using binary rather than binary or hexadecimal,
-we will observe that eight bits are what it takes to encode the
-numbers between 0 and 0xff (255) using a @dfn{natural binary
-encoding}:
+byte values in a certain way.  First, let's consider a single byte.
+If we print a byte value using binary rather than decimal or
+hexadecimal, we will observe that eight bits are what it takes to
+encode the numbers between 0 and 0xff (255) using a @dfn{natural
+binary encoding}:
 
 @example
 (poke) .set obase 2
@@ -1311,18 +1319,19 @@ beginning of @file{foo.o}?
 0x7f45UH
 @end example
 
-Now, let's go back to the syntax we use to map a byte value.  In the
-invocation of the map operator @code{byte @@ 0#B} the operator at the
-left tells the operator what kind of value to map.  This is called a
-@dfn{type specifier}; @code{byte} is the type specifier for a single
-byte value, and @code{byte[3]} is the type specifier for a group of
-three byte values arranged in an array.
+Now, let's go back to the syntax we used to map a byte value.  In the
+invocation of the map operator @code{byte @@ 0#B} the operand at the
+left (in this case @code{byte}) tells the operator what kind of value
+to map.  This is called a @dfn{type specifier}; @code{byte} is the
+type specifier for a single byte value, and @code{byte[3]} is the type
+specifier for a group of three byte values arranged in an array.
 
 As it happens, @code{byte} is a synonym for another slightly more
 interesting type specifier: @code{uint<8>}.  You can probably infer
-the meaning already: a byte is an unsigned integer of 8 bits width.
-We can of course use this alternate specifier in a mapping operation,
-achieving exactly the same result than if we were using @code{byte}:
+the meaning already: a byte is an unsigned integer which is 8 bits
+big.  We can of course use this alternate specifier in a mapping
+operation, achieving exactly the same result than if we were using
+@code{byte}:
 
 @example
 (poke) uint<8> @@ 0#B
@@ -1342,8 +1351,8 @@ two bytes?  Yeah, it is indeed possible:
 Mapping an unsigned integer of 16-bits at the offset 0 gives us an
 unsigned ``half'' value, as expected.
 
-You can easily build bigger and bigger arrays concatenating more and
-more bytes.   Three bytes? sure:
+You can easily build bigger and bigger numbers concatenating more and
+more bytes.  Three bytes? sure:
 
 @example
 (poke) uint<24> @@ 0#B
@@ -1376,7 +1385,7 @@ arbitrarily large integers.
 @cindex little endian
 @cindex endianness
 When talking about whole numbers (integers) we should distinguish
-between its value (such as 123) and its @dfn{written form} that we
+between their value (such as 123) and their @dfn{written form} that we
 would use when writing the number on a piece of paper, such as
 @code{123}.
 
@@ -1386,8 +1395,8 @@ written form of a number is important: if we write @code{123} we are
 referring to a different value than if we write @code{321}.  The
 mathematical reason for this is that depending on the position they
 occupy in the written form, each digit contributes with a different
-``weight'' to the resulting value.  This is regardless of the
-numerical base used.
+``weight'' to the total value of the number.  This is always the case,
+regardless of the numerical base used to denote the number.
 
 For example, the value of the number 123 (whose written form is
 @code{123}) is calculated as @code{1*10^2+2*10^1+3*10^0}.  If we swap
@@ -1408,8 +1417,8 @@ This distinction between the written form of a number and its value is
 very important.  Just like in certain languages letters are read
 right-to-left (Arabic) or even down-to-up (Japanese) we could
 certainly conceive a language in which the digits of numbers were
-arranged from right-to-left instead of left-to-right.  In that
-context, the written representation of 123 would be @code{321}, not
+arranged from right-to-left instead of left-to-right.  In such a
+language the written representation of 123 would be @code{321}, not
 @code{123}.  In other words: the least significant digit would come
 first, not last, in the written form of the number.
 
@@ -1642,13 +1651,14 @@ as uint<32>}:
 
 You may be wondering: why not doing it the other way around?  Why not
 converting the unsigned operand into a signed value and then operate?
-The reason is that, given an integer size, the positive range that you
-can store in it is bigger when interpreted as an unsigned integer than
-when interpreted as a signed integer.  Therefore, converting signed
-into unsigned before operating reduces the risk of positive overflow.
-This of course assumes that we, as users, will be working with
-positive numbers more often than with negative numbers, but that is a
-reasonable assumption to do, as it is often the case!
+The reason is that, given an integer of some particular size, the
+positive range that you can store in it is bigger when interpreted as
+an unsigned integer than when interpreted as a signed integer.
+Therefore, converting signed into unsigned before operating reduces
+the risk of positive overflow.  This of course assumes that we, as
+users, will be working with positive numbers more often than with
+negative numbers, but that is a reasonable assumption to do, as it is
+often the case!
 
 @node Weird Integers
 @section Weird Integers
@@ -1671,12 +1681,16 @@ We call integers like this @dfn{weird integers}.
 
 The vast majority of programming languages do not provide any support
 for weird integers.  In the few cases they do, it is often in a very
-limited and specific way, like bitmap fields in C structs, that also
-depends on the system where you compile and run your program.
+limited and specific way, like bitmap fields in C structs.  Such
+constructions are often vague, obscure, and often their semantics
+depend on the specific implementation of the language, and/or the
+characteristics of the system where you run your program.
 
 In poke, on the contrary, weird numbers are first class citizens, and
 they don't differ in any way from ``normal'' integers composed of a
-whole number of bytes.
+whole number of bytes.  Their interpretation is also well defined, and
+they keep the same semantics regardless of the characteristics of the
+computer on which poke is running.
 
 @subsection Incomplete Bytes
 
@@ -2072,7 +2086,6 @@ Memory buffers can be created using a similar dot-command,
 (poke) .mem foo
 The current IOS is now `*foo*'.
 (poke) .info ios
-(poke) .info ios
   Id	Type	Mode    Size            Name
 * #1	MEMORY		0x00001000#B    *foo*
   #0	FILE	rw	0x000004c8#B    ./foo.o
@@ -2081,8 +2094,8 @@ The current IOS is now `*foo*'.
 Note how the name of the buffer is built by prepending and appending
 asterisks.  Therefore, the name of the buffer created by the command
 @code{.mem foo} is @code{*foo*}.  Note also that the new buffer is
-created with a size of 0x1000 bytes, or 4096 bytes.  The contents of
-the buffer are zeroed:
+created with a default size of 0x1000 bytes, or 4096 bytes.  The
+contents of the buffer are zeroed:
 
 @example
 (poke) dump
@@ -2156,12 +2169,12 @@ The command @command{copy} above copies 64 bytes starting at byte 0
 from the IO with id 0 (the file @file{foo.o}) to the current IO space
 (the buffer @code{*scratch*}).
 
-Once we are doing working with the copy of the ELF header, and
+Once we are done working with the copy of the ELF header, and
 satisfied, we can copy it back to the file and close the memory IO
 space:
 
 @example
-(poke) copy :from 0#B :size 64#B :to_ios 1
+(poke) copy :from 0#B :size 64#B :to_ios 0
 (poke) .close
 The current IOS is now `./foo.o'.
 @end example
@@ -2391,7 +2404,7 @@ characters, like in:
 Note, and this is important, that string values are as atomic as
 integer values: they are not really composite values.  The fact that
 @code{"word"} contains an @code{r} at position 3 is like the fact that
-the value @code{123} contains two tens.
+the value @code{123} contains a digit @code{2} at position 2.
 
 Like in character literals, poke strings support several escape
 sequences that help to denote non-printed characters, such as new
@@ -2494,8 +2507,19 @@ operators:
 @end example
 
 @noindent
-This operator requires two strings.  Therefore, if we wanted to append
-a character to a string, we would get an error:
+The string resulting from the operation above has length 6 characters,
+and size 7 bytes.  The terminating NULL character of @code{"foo"} is
+lost in the operation.  This is easily seen:
+
+@example
+(poke) "foo"'size + "bar"'size
+0x40UL#b
+(poke) ("foo" + "bar")'size
+0x38UL#b
+@end example
+
+The string concatenation operator requires two strings.  Therefore, if
+we wanted to append a character to a string, we would get an error:
 
 @example
 (poke) "Putin" + 'a'
@@ -2539,7 +2563,6 @@ and so on.
 
 If you specify a negative index, or an index that is too big, you will
 get an error:
-is raised:
 
 @example
 (poke) "word"[-1]
@@ -2623,13 +2646,13 @@ bitmap can be reduced to a sequence of pixels, which can be further
 structured in terms of @dfn{lines}.
 
 We don't know enough poke yet to handle the complications of these
-real-life bitmap formats, so in subsequent section we introduce a very
-simple format for bitmaps, the Stupid BitMap format, or simply SBM,
-that we will use for learning purposes.
+real-life bitmap formats, so in subsequent sections we introduce a
+very simple format for bitmaps, the Stupid BitMap format, or simply
+SBM, that we will use for learning purposes.
 
 But please do not feel disappointed: later in this book, when we
-become more proficient pokers, we will poke these complex formats as
-well :)
+become more proficient pokers, we will be messing with these shiny
+complex formats as well :)
 
 @subsection SBM header
 
@@ -2648,7 +2671,7 @@ and the number of lines, respectively.  In summary:
 
 @noindent
 Here @code{ppl} stands for pixels-per-line.  The encoding of these
-fields imply that the bigger image that can be encoded in SBM has
+fields implies that the bigger image that can be encoded in SBM has
 dimensions 255x255.
 
 @subsection SBM data
@@ -2659,7 +2682,9 @@ In RGB24, each color is encoded using three little integers,
 specifying the amount of red, green and blue that, added together,
 compose the color.
 
-Therefore, each SBM pixel is encoded using three bytes:
+The name RGB24 comes from the fact that each color is encoded using
+three bytes, or 24 bits.  Therefore, each pixel in a SBM image is
+encoded using three consecutive bytes:
 
 @example
         SBM pixel
@@ -2669,12 +2694,17 @@ Therefore, each SBM pixel is encoded using three bytes:
   byte0   byte1   byte2
 @end example
 
+@noindent
+Each byte in this encoding determines the amount of the base color
+(red, green or blue) that compose the color.  We will talk more about
+these components later.
+
 @node Poking a SBM Image
 @section Poking a SBM Image
 
 @subsection P is for poke
 
-Let's create our first SBM image, using poke.  The image we want to
+Let's compose our first SBM image, using poke.  The image we want to
 encode is the very simple rendering of the letter @code{P} shown in
 the figure below.
 
@@ -2800,8 +2830,8 @@ Likewise, the operations to poke a tomato pixel would look like:
 @end example
 
 @noindent
-To ease things a bit, we can define variables with the color codes for
-both foreground and background pixels:
+To ease things a bit, we can define variables with the color
+components for both foreground and background pixels:
 
 @example
 (poke) var bg1 = 255
@@ -2821,11 +2851,12 @@ Then to poke a foreground pixel would involve doing:
 (poke) byte @@ @var{offset}+2#B = fg3
 @end example
 
-At this point, looking at the perspective of mapping bytes like crazy
-(considering we have 5x7 = 35 pixels in our image, we will need to
-poke 35 * 3 = 105 bytes) we may feel tempted to, somehow, use a bigger
-integer to ``encapsulate'' the bytes.  Using the bit-concatenation
-operator, we could do something like:
+At this point, you may feel that the perspective of mapping the pixels
+of our image is not very appealing, considering we have 5x7 = 35
+pixels in our image. We will need to poke 35 * 3 = 105 bytes. We may
+feel tempted to, somehow, use a bigger integer to ``encapsulate'' the
+bytes.  Using the bit-concatenation operator, we could do something
+like:
 
 @example
 (poke) var bg = 255UB::255UB::255UB
@@ -2949,7 +2980,7 @@ one from an arbitrary offset in our IO space:
 
 Consider again the sequence of pixels composing the image.  Using the
 information we have in the SBM header, we can group the pixels in the
-sequence into ``lines''.  In our example images, each line contains 5
+sequence into ``lines''.  In our example image, each line contains 5
 pixels.  It would be natural to express each line as a sequence of
 pixels.  The first line in our image would be:
 
@@ -2999,9 +3030,9 @@ lines.  But we can still do better@dots{}
 @subsection Poking Images
 
 When we poked the lines at the end of the previous section, we had to
-increase the offset of every poke.  This is inconvenient.
+increase the offset in every map operation.  This is inconvenient.
 
-In the same way than a sequence of bytes can be abstracted in a line,
+In the same way that a sequence of bytes can be abstracted in a line,
 a sequence of lines can be abstracted in an image.  It follows that we
 can look at the image data as an array of lines.  But lines are
 themselves arrays of arrays@dots{} no matter, there is no limit on the
@@ -3051,7 +3082,7 @@ pixel occupies 3 bytes, so calculating@dots{}
 @noindent
 Note how we expressed ``ppl bytes'' as @code{ppl#B}, and ``lines
 bytes'' as @code{lines#B}.  This is the same than expressing ``10
-bytes'' as @code{10#B}.  We well talk more about these united values
+bytes'' as @code{10#B}.  We will talk more about these united values
 later.
 
 There is another way of getting the size of the stream of pixels.
@@ -3124,6 +3155,7 @@ and how many lines are contained in the image:
 (poke) ppl
 5UB
 (poke) var lines = byte @@ 4#B
+(poke) lines
 7UB
 @end example
 
@@ -3245,8 +3277,142 @@ value''.  This means that when a composite value like an array is
 copied, its elements are shared by both the original value and the new
 value.
 
-It follows that if we wanted to change the color of some SBM pixel
-stored at offset @var{offset}, we would do this:
+We can depict this graphically for better understanding.  A Poke array
+like:
+
+@example
+(poke) var a = [1,2,3]
+@end example
+
+@noindent
+is stored in memory like this:
+
+@example
+   +---+---+---+
+ a | 1 | 2 | 3 |
+   +---+---+---+
+@end example
+
+If we make a copy of the array in another variable @code{b}:
+
+@example
+(poke) var b = a
+@end example
+
+@noindent
+we get
+
+@example
+   +---+---+---+      +---+---+---+
+ a | 1 | 2 | 3 |    b | 1 | 2 | 3 |
+   +---+---+---+      +---+---+---+
+@end example
+
+@noindent
+Note how each of the integer elements has been copied to the new
+value.  The resulting two arrays can then be modified independently:
+
+@example
+(poke) a[1] = 5
+@end example
+
+@noindent
+resulting in:
+
+@example
+   +---+---+---+      +---+---+---+
+ a | 1 | 5 | 3 |    b | 1 | 2 | 3 |
+   +---+---+---+      +---+---+---+
+@end example
+
+However, consider the following array whose elements are also arrays:
+
+@example
+(poke) var a = [[1,2],[3,4],[5,6]]
+@end example
+
+@noindent
+This array is stored in memory like this:
+
+@example
+   +---+---+---+
+ a |   |   |   |
+   +---+---+---+
+     |   |   |   +---+---+
+     |   |   +---| 5 | 6 |
+     |   |       +---+---+
+     |   |
+     |   |       +---+---+
+     |   +-------| 3 | 4 |
+     |           +---+---+
+     |
+     |           +---+---+
+     +-----------| 1 | 2 |
+                 +---+---+
+@end example
+
+If now we make a copy of the same array into another variable
+@code{b}:
+
+@example
+(poke) var b = a
+@end example
+
+@noindent
+The elements of the array are copied ``by shared value'', @i{i.e.}
+
+@example
+   +---+---+---+           +---+---+---+
+ a |   |   |   |         b |   |   |   |
+   +---+---+---+           +---+---+---+
+     |   |   |   +---+---+   |   |   |
+     |   |   +---| 5 | 6 |---+   |   |
+     |   |       +---+---+       |   |
+     |   |                       |   |
+     |   |       +---+---+       |   |
+     |   +-------| 3 | 4 |-------+   |
+     |           +---+---+           |
+     |                               |
+     |           +---+---+           |
+     +-----------| 1 | 2 |-----------+
+                 +---+---+
+@end example
+
+@noindent
+The elements are indeed shared between the original array and the
+copy!  If now we modify any of the shared values, this will be
+reflected in both containing values:
+
+@example
+(poke) a[1][1] = 9
+(poke) a
+[[1,2],[3,9],[5,6]]
+(poke) b
+[[1,2],[3,9],[5,6]]
+@end example
+
+@noindent
+or graphically:
+
+@example
+   +---+---+---+           +---+---+---+
+ a |   |   |   |         b |   |   |   |
+   +---+---+---+           +---+---+---+
+     |   |   |   +---+---+   |   |   |
+     |   |   +---| 5 | 6 |---+   |   |
+     |   |       +---+---+       |   |
+     |   |                       |   |
+     |   |       +---+---+       |   |
+     |   +-------| 3 | 9 |-------+   |
+     |           +---+---+           |
+     |                               |
+     |           +---+---+           |
+     +-----------| 1 | 2 |-----------+
+                 +---+---+
+@end example
+
+Back to our image, it follows that if we wanted to change the color of
+some SBM pixel stored at offset @var{offset}, we would do this:
 
 @example
 (poke) var a = byte[3] @@ @var{offset}
@@ -3264,7 +3430,8 @@ in poke.  However, it is possible to check whether a given value is
 mapped or not using the @code{'mapped} attribute.
 
 As we said, @dfn{simple values} such as integers and strings are never
-mapped.  Both @code{ppl} and @code{lines} are integers, therefore:
+mapped, regardless of where they come from.  Both @code{ppl} and
+@code{lines} are integers, therefore:
 
 @example
 (poke) ppl'mapped
@@ -3298,7 +3465,7 @@ and the IO space where it is mapped, using the attributes
 In other words, @code{image_data} is mapped in the IO space with id 1
 (the @code{*scratch*} buffer) at offset 40 bits, or 5 bytes.  We
 already knew that, because we mapped the image data ourselves, but in
-other situations these attributes are most useful.  We shall see that
+other situations these attributes are most useful.  We shall see how
 later.
 
 Well, at this point it should be clear how to paint pixels.  First,
@@ -3332,7 +3499,7 @@ coordinates:
 @subsection Cropping the R
 
 Looking at our new image, we realize that the first and the last
-column are all background pixels.  We know that the recutils
+column are all background pixels.  We are aware that the recutils
 project is always short of resources, so we would like to modify the
 image to remove these columns, @dfn{cropping} it so it looks like
 this:
@@ -3399,18 +3566,18 @@ Given an array like the line @code{l0}, we can obtain the desired
 portion of it by issuing:
 
 @example
-(poke) l0[1:3]
+(poke) l0[1:4]
 [[255UB,99UB,71UB],[255UB,99UB,71UB]]
 @end example
 
 @noindent
 Note how the limits of the semi-open interval specified in the trim
-reflect array indexes (hence 0 based) and are both inclusive.  The
-result of an array trimming is always another array, even if it
-contains just one element:
+reflect array indexes, and hence they are 0 based.  Also, the left
+limit is closed and the right limit is open.  The result of an array
+trimming is always another array, which may be empty:
 
 @example
-(poke) l0[1:2]
+(poke) l0[1:3]
 [[255UB,99UB,71UB]]
 @end example
 
@@ -3430,12 +3597,12 @@ of pixels for our cropped image:
 And then update the lines in the mapped image data:
 
 @example
-(poke) image_data[0] = l0[1:3]
-(poke) image_data[0] = l1[1:3]
-(poke) image_data[1] = l2[1:3]
-(poke) image_data[2] = l3[1:3]
-(poke) image_data[3] = l4[1:3]
-(poke) image_data[4] = l5[1:3]
+(poke) image_data[0] = l0[1:4]
+(poke) image_data[0] = l1[1:4]
+(poke) image_data[1] = l2[1:4]
+(poke) image_data[2] = l3[1:4]
+(poke) image_data[3] = l4[1:4]
+(poke) image_data[4] = l5[1:4]
 @end example
 
 @subsection Updating the Header
@@ -3470,16 +3637,16 @@ And finally, let's write out the new file as @file{r.sbm}:
 
 @subsection Naming your Own Abstractions
 
-While in the process of creating and manipulating SBM files we soon
+During the process of creating and manipulating SBM files we soon
 started talking about things like lines, pixel sequences, pixels,
 colors, and so on.  What is more, very naturally we started
 @emph{thinking} in terms of these entities: let's drop this or that
-line, or let's change the green level of this pixel.
+line, or let's change the green component of this pixel.
 
 Consider for example RGB colors.  We know that each color is defined
 by three levels of light: red, green and blue.  These components are
 also called color beams.  Since each color beam has a range of 0 to
-255, many formats like SBM use bytes to encode them.
+255, many formats, like SBM, use bytes to encode them.
 
 Therefore, in the previous sections we used the type specifier
 @code{byte} when we needed to map RGB color beams, like in:
@@ -3530,7 +3697,7 @@ Since we didn't know better, during our work with SBM images we had to
 remember how these entities were constructed from more simple entities
 such as bits and bytes, every time we needed to map them, or to poke
 them.  For example, if we wanted to map a pixel at some particular
-offset, we would need to issue the following command:
+offset, we had to issue the following command:
 
 @example
 (poke) var pixel = byte[3] @@ 5#B
@@ -3547,7 +3714,7 @@ rewrite the above as:
 @noindent
 This is better, but still adoleces from a big problem: what if at some
 point the SBM pixels get expanded to also have a transparency index,
-stored in a fourth byte?  If that happens (and @emph{will} happen
+stored in a fourth byte?  If that ever happens (and @emph{will} happen
 later in this book) then we would need to remember it before issuing
 commands like:
 
@@ -3570,6 +3737,10 @@ instead of as a table of triplets of RGB color beams:
 (poke) var image_data = SBM_Pixel[ppl][lines] @@ 5#B
 @end example
 
+This later definition doesn't need to be changed if we change the
+definition of what a SBM pixel is.  This is called @dfn{encapsulation}
+and is a very useful abstraction in computing.
+
 @node Pickles
 @section Pickles
 
@@ -3577,7 +3748,7 @@ instead of as a table of triplets of RGB color beams:
 
 In @ref{Nomenclature} we mentioned that poke, the program, implements
 a domain specific programming language called Poke, with a big p.  In
-the examples so far we have already used the Poke language, quite
+the examples so far we have already used the Poke language, somewhat
 extensively, while interacting with the program using the REPL.
 
 For example, in:
@@ -3612,8 +3783,9 @@ printed for the benefit of the user.
 @subsection Poke Files
 
 Poke programs are basically a collection of definitions and
-statements, which most often are stored in files.  By convention, we
-use the @file{.pk} file extension when naming files containing Poke
+statements, which most often than not are stored in files, which
+avoids the need to type them again and again.  By convention, we use
+the @file{.pk} file extension when naming files containing Poke
 programs.
 
 Remember how we defined the foreground and background pixels for
@@ -3635,10 +3807,10 @@ var tomato = [255UB, 99UB, 71UB];
 @end example
 
 @noindent
-Note that variable definitions in Poke are finished with a semicolon
-(@code{;}) character, whereas we didn't need to specify them when we
+Note that variable definitions in Poke are terminated by a semicolon
+(@code{;}) character, but we didn't need to specify them when we
 issued the definitions in the REPL.  This is because poke adds the
-trailing semicolon for you when it detects a Poke construction
+trailing semicolon for us when it detects a Poke construction
 requiring it is introduced in the REPL.
 
 @noindent
@@ -3648,8 +3820,8 @@ the following variable definition in a file:
 
 @example
 var matrix = [[10, 20, 30],
-                 [40, 50, 60],
-                 [70, 80, 90]];
+              [40, 50, 60],
+              [70, 80, 90]];
 @end example
 
 @cindex loading files
@@ -3674,7 +3846,7 @@ we can use the colors:
 @noindent
 Before, we would need to define these colors every time we would like
 to poke SBM files or, in fact, any RGB24 data.  Now we just have to
-load our @file{colors.pk} and use the variables defined there.
+load the file @file{colors.pk} and use the variables defined there.
 
 If you try to load a file whose name contains a dash character
 (@code{-}) you will get an error message:
@@ -3688,16 +3860,18 @@ load my-colors;
 
 @noindent
 This is because the argument to @code{load} is interpreted as a Poke
-identifier, where @code{-} is not allowed.  To alleviate this problem,
-you can also specify a string to @code{load}, like in:
+identifier, and dash characters are not allowed in identifiers.  To
+alleviate this problem, you can also specify the name of the file to
+load encoded in a string, line in:
 
 @example
 (poke) load "my-colors.pk"
 @end example
 
 @noindent
-If you use this form of @code{load}, however, you have to specify the
-complete name of the file, including the @file{.pk} file extension.
+If you use this form of @code{load}, however, you are required to
+specify the complete name of the file, including the @file{.pk} file
+extension.
 
 Since loading files is such a common operation, poke provides a
 dot-command @code{.load} that does auto-completion:
@@ -3717,14 +3891,14 @@ Poke programs stored in files.  We will explore this later.
 In the last section we defined a couple of RGB colors @code{white} and
 @code{tomato} in a file called @file{colors.pk}.  If we keep adding
 colors to the file, we may end with a nice collection of colors that
-we can use by just loading the file.
+are available to us at any time, by just loading the file.
 
 Since there are many ways to understand the notion of ``color'', and
 also many ways to implement these many notions, it would be better to
 be more precise and call our file @file{rgb24.pk}, since the notion of
-color we are using is of that RGB24.  While doing so, let's also rename
-the variables to reflect the fact they denote not just any kind of
-colors, but RGB24 colors:
+color we are using is of that RGB24.  While are at it, let's also
+rename the variables to reflect the fact they denote not just any kind
+of colors, but RGB24 colors:
 
 @example
 var rgb24_white = [255UB, 255UB, 255UB];
@@ -3795,7 +3969,7 @@ by adding a load command to our @code{.pokerc}.  For example:
 
 @subsection Heterogeneous Related Data
 
-Let's recap the structure of the header of a Stupid Bitmap:
+Let's recap the structure of the header of a Stupid BitMap:
 
 @example
                 SBM header
@@ -3866,7 +4040,7 @@ struct values are accessed using the familiar dot-notation:
 @end example
 
 @noindent
-The total number of pixels in the image are 35.  Note how both
+The total number of pixels in the image is 35.  Note how both
 @code{header.ppl} and @code{header.lines} are indeed unsigned byte
 values, and thus the result of the multiplication is also an unsigned
 byte.  This could be problematic if the image contained more than 255
@@ -3880,7 +4054,8 @@ pixels, but this can be prevented by using a cast:
 @noindent
 Now the second operand @code{header.lines} is promoted to a 32-bit
 unsigned value before the multiplication is performed.  Consequently,
-the result of the operation is also 32-bit wide.
+the result of the operation is also 32-bit wide (note the suffix of
+the result.)
 
 @subsection Modifying Mapped Structs
 
@@ -4011,7 +4186,7 @@ struct type.
 
 Suppose that after reading more carefully the Packet Specification 1.2
 (that spans for several thousand of pages) we realize that the field
-@code{size} doesn't really stores the number of bytes of the payload
+@code{size} doesn't really store the number of bytes of the payload
 and control arrays, like we thought initially.  Or not exactly: the
 Packet Foundation says that if @code{size} has the special value 0xff,
 then the size is zero.
@@ -4162,7 +4337,7 @@ Again, note how the function is accessible after its definition.  Note
 as well how both fields and variables and other functions can be used
 in the function body.  There is no difference to define variables and
 functions in struct types than to define them inside other functions
-or on the top-level environment: the same lexical rules apply.
+or in the top-level environment: the same lexical rules apply.
 
 @node Struct Methods
 @section Struct Methods
