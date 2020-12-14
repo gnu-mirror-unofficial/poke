@@ -1,5 +1,26 @@
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (canary): Use JITTER_STATE_BACKING_FIELD.
+	(exit): Likewise.
+	(pushob): Likewise.
+	(popob): Likewise.
+	(pushom): Likewise.
+	(popom): Likewise.
+	(pushoo): Likewise.
+	(popoo): Likewise.
+	(pushoi): Likewise.
+	(popoi): Likewise.
+	(pushod): Likewise.
+	(popod): Likewise.
+	(pushoac): Likewise.
+	(popoac): Likewise.
+	(pushopp): Likewise.
+	(popopp): Likewise.
+	(strace): Likewise.
+	(exit): Likewise.
+
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: Define PKL_INSN_BEGINHL and
 	PKL_INSN_ENDHL.
 	* libpoke/pvm.jitter (beghl): New instruction.

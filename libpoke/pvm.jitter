@@ -695,8 +695,7 @@ end
 
 instruction canary ()
   code
-     jitter_original_state->pvm_state_backing.canary
-      = JITTER_HEIGHT_STACK ();
+     JITTER_STATE_BACKING_FIELD (canary) = JITTER_HEIGHT_STACK ();
   end
 end
 
@@ -711,20 +710,20 @@ instruction exit ()
   code
     /* The element at the top of the stack is the exit
        code to report to the PVM caller.  */
-    jitter_original_state->pvm_state_backing.exit_code
+    JITTER_STATE_BACKING_FIELD (exit_code)
       = PVM_VAL_INT (JITTER_TOP_STACK());
 
     JITTER_DROP_STACK ();
 
     /* Get the result of the execution, if any.  */
-    jitter_original_state->pvm_state_backing.result_value
+    JITTER_STATE_BACKING_FIELD (result_value)
                 = JITTER_TOP_STACK();
     JITTER_DROP_STACK ();
 
     /* Check for the stack centinel, but only if it was
        installed.  */
-    if (jitter_original_state->pvm_state_backing.canary != NULL)
-      assert (jitter_original_state->pvm_state_backing.canary
+    if (JITTER_STATE_BACKING_FIELD (canary) != NULL)
+      assert (JITTER_STATE_BACKING_FIELD (canary)
               == JITTER_HEIGHT_STACK ());
 
     /* Clear pending signals.  */
@@ -782,7 +781,7 @@ end
 
 instruction pushob ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int obase = pvm_obase (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (obase, 32));
@@ -805,7 +804,7 @@ end
 
 instruction popob ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int obase = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     if (obase != 2 && obase != 8 && obase != 10 && obase != 16)
@@ -828,7 +827,7 @@ end
 
 instruction pushom ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omode = pvm_omode (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (omode, 32));
@@ -851,7 +850,7 @@ end
 
 instruction popom ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omode = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     if (omode != PVM_PRINT_FLAT && omode != PVM_PRINT_TREE)
@@ -873,7 +872,7 @@ end
 
 instruction pushoo ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omaps = pvm_omaps (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (omaps, 32));
@@ -892,7 +891,7 @@ end
 
 instruction popoo ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omaps = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_omaps (vm, omaps);
@@ -913,7 +912,7 @@ end
 
 instruction pushoi ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int oindent = pvm_oindent (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (oindent, 32));
@@ -933,7 +932,7 @@ end
 
 instruction popoi ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int oindent = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_oindent (vm, oindent);
@@ -952,7 +951,7 @@ end
 
 instruction pushod ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int odepth = pvm_odepth (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (odepth, 32));
@@ -970,7 +969,7 @@ end
 
 instruction popod ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int odepth = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_odepth (vm, odepth);
@@ -990,7 +989,7 @@ end
 
 instruction pushoac ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int oacutoff = pvm_oacutoff (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (oacutoff, 32));
@@ -1009,7 +1008,7 @@ end
 
 instruction popoac ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int oacutoff = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_oacutoff (vm, oacutoff);
@@ -1028,7 +1027,7 @@ end
 
 instruction pushopp ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int pp = pvm_pretty_print (vm);
 
     JITTER_PUSH_STACK (pvm_make_int (pp, 32));
@@ -1046,7 +1045,7 @@ end
 
 instruction popopp ()
   code
-    pvm vm = jitter_original_state->pvm_state_backing.vm;
+    pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int pp = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     pvm_set_pretty_print (vm, pp);
@@ -5444,10 +5443,10 @@ instruction strace (?n)
 
      while (((num_elems == 0 || i < num_elems)
              && (JITTER_HEIGHT_STACK () !=
-                 jitter_original_state->pvm_state_backing.canary)))
+                 JITTER_STATE_BACKING_FIELD (canary))))
         {
           assert (i < 1024);
-          pvm_print_val_with_params (jitter_original_state->pvm_state_backing.vm,
+          pvm_print_val_with_params (JITTER_STATE_BACKING_FIELD (vm),
                                      JITTER_TOP_STACK (),
                                      0 /* depth */,
                                      PVM_PRINT_FLAT,
