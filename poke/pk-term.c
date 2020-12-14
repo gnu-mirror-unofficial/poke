@@ -178,3 +178,34 @@ pk_term_color_p (void)
               && isatty (STDOUT_FILENO)
               && getenv ("NO_COLOR") == NULL));
 }
+
+int
+pk_term_rgb_to_color (int red, int green, int blue)
+{
+  return term_ostream_rgb_to_color (pk_ostream,
+                                    red, green, blue);
+}
+
+int
+pk_term_get_color (void)
+{
+  return term_ostream_get_color (pk_ostream);
+}
+
+int
+pk_term_get_bgcolor ()
+{
+  return term_ostream_get_bgcolor (pk_ostream);
+}
+
+void
+pk_term_set_color (int color)
+{
+  term_ostream_set_color (pk_ostream, color);
+}
+
+void
+pk_term_set_bgcolor (int color)
+{
+  term_ostream_set_bgcolor (pk_ostream, color);
+}

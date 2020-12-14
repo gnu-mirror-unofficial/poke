@@ -51,7 +51,14 @@ extern void pk_term_class (const char *class);
 extern void pk_term_end_class (const char *class);
 
 /* Hyperlinks.  */
-void pk_term_hyperlink (const char *url, const char *id);
-void pk_term_end_hyperlink (void);
+extern void pk_term_hyperlink (const char *url, const char *id);
+extern void pk_term_end_hyperlink (void);
+
+/* Color handling.  */
+extern int pk_term_rgb_to_color (int red, int green, int blue);
+extern int pk_term_get_color (void);
+extern int pk_term_get_bgcolor (void);
+extern void pk_term_set_color (int color);
+extern void pk_term_set_bgcolor (int color);
 
 #endif /* PK_TERM_H */

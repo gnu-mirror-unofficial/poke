@@ -1,5 +1,23 @@
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h (struct pk_term_if): New handlers get_color,
+	get_bgcolor, set_color, set_bgcolor and rgb_to_color.
+	* poke/pk-term.h: Prototypes for color handling functions.
+	* poke/pk-term.c (pk_term_rgb_to_color): New function.
+	(pk_term_get_color): Likewise.
+	(pk_term_get_bgcolor): Likewise.
+	(pk_term_set_color): Likewise.
+	(pk_term_set_bgcolor): Likewise.
+	* testsuite/poke.libpoke/term-if.h (pk_term_rgb_to_color): New
+	dummy function.
+	(pk_term_get_color): Likewise.
+	(pk_term_get_bgcolor): Likewise.
+	(pk_term_set_color): Likewise.
+	(pk_term_set_bgcolor): Likewise.
+	(poke_term_if): Install handlers.
+
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/id3v1.pk (ID3V1_Tag) <_print>: simplify.
 
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>

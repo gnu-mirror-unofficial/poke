@@ -69,6 +69,21 @@ struct pk_term_if
 
   /* Mark the end of the current hyperlink.  */
   void (*end_hyperlink_fn) (void);
+
+  /* Transform RGB to a color.  */
+  int (*rgb_to_color) (int red, int green, int blue);
+
+  /* Get the current foreground color.  */
+  int (*get_color) (void);
+
+  /* Get the current background color.  */
+  int (*get_bgcolor) (void);
+
+  /* Set the foreground color.  */
+  void (*set_color) (int color);
+
+  /* Set the background color.  */
+  void (*set_bgcolor) (int color);
 };
 
 /* Create and return a new Poke incremental compiler.

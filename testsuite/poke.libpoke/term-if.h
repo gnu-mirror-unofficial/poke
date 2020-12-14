@@ -68,6 +68,36 @@ pk_term_end_hyperlink (void)
 {
 }
 
+int
+pk_term_rgb_to_color (int red, int green, int blue)
+{
+  return 0;
+}
+
+int
+pk_term_get_color (void)
+{
+  return 0;
+}
+
+int
+pk_term_get_bgcolor (void)
+{
+  return 0;
+}
+
+void
+pk_term_set_color (int color)
+{
+
+}
+
+void
+pk_term_set_bgcolor (int color)
+{
+
+}
+
 static struct pk_term_if poke_term_if =
   {
     .flush_fn = pk_term_flush,
@@ -77,5 +107,10 @@ static struct pk_term_if poke_term_if =
     .class_fn = pk_term_class,
     .end_class_fn = pk_term_end_class,
     .hyperlink_fn = pk_term_hyperlink,
-    .end_hyperlink_fn = pk_term_end_hyperlink
+    .end_hyperlink_fn = pk_term_end_hyperlink,
+    .rgb_to_color = pk_term_rgb_to_color,
+    .get_color = pk_term_get_color,
+    .get_bgcolor = pk_term_get_bgcolor,
+    .set_color = pk_term_set_color,
+    .set_bgcolor = pk_term_set_bgcolor,
   };
