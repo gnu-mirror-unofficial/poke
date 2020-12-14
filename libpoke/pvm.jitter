@@ -647,6 +647,7 @@ state-struct-runtime-c
       uint32_t odepth;
       uint32_t oindent;
       uint32_t oacutoff;
+      int hlcount;
   end
 end
 
@@ -665,6 +666,7 @@ state-initialization-c
       jitter_state_runtime->odepth = 0;
       jitter_state_runtime->oindent = 2;
       jitter_state_runtime->oacutoff = 0;
+      jitter_state_runtime->hlcount = 0;
   end
 end
 
@@ -1656,6 +1658,48 @@ instruction prints ()
   code
     pvm_print_string (JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
+  end
+end
+
+# Instruction: beghl
+#
+# Begin an hyperlink, using the URL and ID on the stack.
+#
+# Stack: ( STR STR -- )
+
+instruction beghl ()
+  code
+    char *url = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
+    char *id = PVM_VAL_STR (JITTER_TOP_STACK ());
+
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    pk_term_hyperlink (url, id);
+    JITTER_STATE_RUNTIME_FIELD (hlcount) += 1;
+  end
+end
+
+# Instruction: endhl
+#
+# End the current hyperlink.
+#
+# If no hyperlink is currently being generated, this instruction
+# raises an exception.
+#
+# Stack: ( -- )
+# Exceptions: PVM_E_GENERIC
+
+instruction endhl ()
+  code
+    if (JITTER_STATE_RUNTIME_FIELD (hlcount) == 0)
+      PVM_RAISE (PVM_E_GENERIC,
+                 "no hyperlink to end",
+                 PVM_E_GENERIC_ESTATUS);
+    else
+    {
+      pk_term_end_hyperlink ();
+      JITTER_STATE_RUNTIME_FIELD (hlcount) -= 1;
+    }
   end
 end
 

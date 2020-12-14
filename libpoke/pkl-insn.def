@@ -400,6 +400,9 @@ PKL_DEF_INSN(PKL_INSN_PRINTS,"","prints")
 PKL_DEF_INSN(PKL_INSN_BEGINSC,"","begsc")
 PKL_DEF_INSN(PKL_INSN_ENDSC,"","endsc")
 
+PKL_DEF_INSN(PKL_INSN_BEGINHL,"","beghl")
+PKL_DEF_INSN(PKL_INSN_ENDHL,"","endhl")
+
 /* Miscellaneous instructions.  */
 
 PKL_DEF_INSN(PKL_INSN_NOP,"","nop")

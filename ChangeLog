@@ -1,5 +1,12 @@
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-insn.def: Define PKL_INSN_BEGINHL and
+	PKL_INSN_ENDHL.
+	* libpoke/pvm.jitter (beghl): New instruction.
+	(endhl): Likewise.
+
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (poke_term_if): Register color-related handlers in
 	the terminal interface.
 	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_TERM_GET_COLOR): Define.
