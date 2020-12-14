@@ -30,6 +30,12 @@ fun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
 fun flush = (int<32> ios, offset<uint<64>,1> offset) void: __PKL_BUILTIN_FORGET__;
 fun get_time = int<64>[2]: __PKL_BUILTIN_GET_TIME__;
 fun strace = void: __PKL_BUILTIN_STRACE__;
+fun term_rgb_to_color = (int<32> red, int<32> green, int<32> blue) int<32>:
+   __PKL_BUILTIN_TERM_RGB_TO_COLOR__;
+fun term_get_color = int<32>: __PKL_BUILTIN_TERM_GET_COLOR__;
+fun term_set_color = (int<32> color) void: __PKL_BUILTIN_TERM_SET_COLOR__;
+fun term_get_bgcolor = int<32>: __PKL_BUILTIN_TERM_GET_BGCOLOR__;
+fun term_set_bgcolor = (int<32> color) void: __PKL_BUILTIN_TERM_SET_BGCOLOR__;
 
 var ENDIAN_LITTLE = 0;
 var ENDIAN_BIG = 1;

@@ -251,6 +251,16 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_GET_TIME; }
 "__PKL_BUILTIN_STRACE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_STRACE; }
+"__PKL_BUILTIN_TERM_RGB_TO_COLOR__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_RGB_TO_COLOR; }
+"__PKL_BUILTIN_TERM_GET_COLOR__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_GET_COLOR; }
+"__PKL_BUILTIN_TERM_SET_COLOR__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_SET_COLOR; }
+"__PKL_BUILTIN_TERM_GET_BGCOLOR__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_GET_BGCOLOR; }
+"__PKL_BUILTIN_TERM_SET_BGCOLOR__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_SET_BGCOLOR; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

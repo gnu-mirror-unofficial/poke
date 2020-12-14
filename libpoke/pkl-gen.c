@@ -689,6 +689,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
 
             break;
           }
+        case PKL_AST_BUILTIN_TERM_RGB_TO_COLOR:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0); /* red */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1); /* green */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 2); /* blue */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RGBTOC);
+          break;
+        case PKL_AST_BUILTIN_TERM_GET_COLOR:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOC);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_TERM_GET_BGCOLOR:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOBC);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_TERM_SET_COLOR:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOC);
+          break;
+        case PKL_AST_BUILTIN_TERM_SET_BGCOLOR:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOBC);
+          break;
         default:
           assert (0);
         }

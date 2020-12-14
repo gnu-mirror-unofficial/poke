@@ -1,5 +1,26 @@
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (poke_term_if): Register color-related handlers in
+	the terminal interface.
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_TERM_GET_COLOR): Define.
+	(PKL_AST_BUILTIN_TERM_SET_COLOR): Likewise.
+	(PKL_AST_BUILTIN_TERM_GET_BGCOLOR): Likewise.
+	(PKL_AST_BUILTIN_TERM_SET_BGCOLOR): Likewise.
+	(PKL_AST_BUILTIN_TERM_RGB_TO_COLOR): Likewise.
+	* libpoke/pkl-tab.y: Tokens for new builtins.
+	(builtin): Rules for new builtins.
+	* libpoke/pkl-lex.l: Handle new built-ins.
+	* libpoke/pkl-rt.pk (term_get_color): New builtin.
+	(term_set_color): Likewise.
+	(term_get_color): Likewise.
+	(term_set_bgcolor): Likewise.
+	(term_get_bgcolor): Likewise.
+	(term_rgb_to_color): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Generate code for
+	terminal color related builtins.
+
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: Define PKL_INSN_RGBTOC, PKL_INSN_PUSHOC,
 	PKL_INSN_POPOC, PKL_INSN_PUSHOBC and PKL_INSN_POPOBC.
 	* libpoke/pvm.jitter (rgbtoc): New instruction.
