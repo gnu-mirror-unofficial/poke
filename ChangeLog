@@ -1,3 +1,13 @@
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	BZ 26883
+	* libpoke/pkl-gen.c (pkl_gen_pr_print_stmt): Evaluate arguments
+	before printing anything.
+	* testsuite/poke.pkl/printf-26.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+	* etc/poke.rec (printf should evaluate arguments _before_ printing
+	anything): Removed as fixed.
+
 2020-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-dump.pk (pk_dump_nonprintable_char): Define.

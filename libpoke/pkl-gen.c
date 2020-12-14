@@ -1238,8 +1238,36 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
     {
       pkl_ast_node arg;
       char *prefix = PKL_AST_PRINT_STMT_PREFIX (print_stmt);
+      int nexp;
 
-      /* Emit the optional prefix.  */
+      /* First, compute the arguments and push them to the stack.  */
+
+      for (nexp = 0, arg = print_stmt_args;
+           arg;
+           arg = PKL_AST_CHAIN (arg))
+        {
+          pkl_ast_node exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
+
+          if (exp)
+            {
+              PKL_PASS_SUBPASS (exp);
+              nexp++;
+            }
+        }
+
+      /* Reverse the arguments in the stack so we can print it in the
+         right order.  */
+      if (nexp == 2)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+      else if (nexp == 3)
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+        }
+      else if (nexp > 1)
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nexp);
+
+      /* Now print out the stuff.  */
       if (prefix)
         {
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (prefix));
@@ -1272,7 +1300,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
 
           if (exp)
             {
-              PKL_PASS_SUBPASS (exp);
               if (PKL_AST_PRINT_STMT_ARG_VALUE_P (arg))
                 {
                   /* Generate code to print the value.  */

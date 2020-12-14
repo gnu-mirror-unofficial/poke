@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+/* This test makes sure that `printf' evaluates all its arguments
+   before printing anything.  */
+
+var n = 0;
+
+/* { dg-command { try printf "%s%v%s", "foo", 1/n, "bar"; catch if E_div_by_zero { print "caught\n"; } } } */
+/* { dg-output "caught" } */
