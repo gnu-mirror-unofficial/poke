@@ -1052,6 +1052,87 @@ instruction popopp ()
   end
 end
 
+# Instruction: rgbtoc
+#
+# Given three levels of red, green and blue encoded as integers
+# on the stack, replace them with an integer representing the
+# resulting color.
+#
+# Stack: ( INT INT INT -- INT )
+
+instruction rgbtoc ()
+  code
+    pvm_val red, green, blue;
+    int color;
+
+    blue = JITTER_TOP_STACK ();
+    JITTER_DROP_STACK ();
+    green = JITTER_TOP_STACK ();
+    JITTER_DROP_STACK ();
+    red = JITTER_TOP_STACK ();
+    JITTER_DROP_STACK ();
+
+    color = pk_term_rgb_to_color (PVM_VAL_INT (red),
+                                  PVM_VAL_INT (green),
+                                  PVM_VAL_INT (blue));
+    JITTER_PUSH_STACK (pvm_make_int (color, 32));
+  end
+end
+
+# Instruction: pushoc
+#
+# Push the current output color to the stack, encoded as an
+# integer.
+#
+# Stack: ( -- INT )
+
+instruction pushoc ()
+  code
+    JITTER_PUSH_STACK (pvm_make_int (pk_term_get_color (), 32));
+  end
+end
+
+# Instruction: popoc
+#
+# Pop the integer at the top of the stack and use it to set
+# the new terminal output color.
+#
+# Stack: ( INT -- )
+
+instruction popoc ()
+  code
+    pk_term_set_color (PVM_VAL_INT (JITTER_TOP_STACK ()));
+    JITTER_DROP_STACK ();
+  end
+end
+
+# Instruction: pushobc
+#
+# Push the current output background color to the stack, encoded as an
+# integer.
+#
+# Stack: ( -- INT )
+
+instruction pushobc ()
+  code
+    JITTER_PUSH_STACK (pvm_make_int (pk_term_get_bgcolor (), 32));
+  end
+end
+
+# Instruction: popobc
+#
+# Pop the integer at the top of the stack and use it to set
+# the new terminal output background color.
+#
+# Stack: ( INT -- )
+
+instruction popobc ()
+  code
+    pk_term_set_bgcolor (PVM_VAL_INT (JITTER_TOP_STACK ()));
+    JITTER_DROP_STACK ();
+  end
+end
+
 # Instruction: sync
 #
 # Handle pending signals, and raise exceptions accordingly.  This

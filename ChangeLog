@@ -1,5 +1,20 @@
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-insn.def: Define PKL_INSN_RGBTOC, PKL_INSN_PUSHOC,
+	PKL_INSN_POPOC, PKL_INSN_PUSHOBC and PKL_INSN_POPOBC.
+	* libpoke/pvm.jitter (rgbtoc): New instruction.
+	(pushoc): Likewise.
+	(popoc): Likeiwise.
+	(pushobc): Likewise.
+	(popobc): Likewise.
+	* libpoke/pkt.h (pk_term_rgb_to_color): Define.
+	(pk_term_get_color): Likewise.
+	(pk_term_set_color): Likewise.
+	(pk_term_get_bgcolor): Likewise.
+	(pk_term_set_bgcolor): Likewise.
+
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h (struct pk_term_if): New handlers get_color,
 	get_bgcolor, set_color, set_bgcolor and rgb_to_color.
 	* poke/pk-term.h: Prototypes for color handling functions.
