@@ -126,8 +126,7 @@ type ID3V1_Tag =
         printf "  artist: %<string:%s%>\n", catos (artist);
         printf "  album: %<string:%s%>\n", catos (album);
         printf "  year: %<integer:%s%>\n", catos (year);
-        try {data.comment;
-             printf "  comment:%<string:%s%>\n", catos (data.comment);}
+        try printf "  comment:%<string:%s%>\n", catos (data.comment);
         catch if E_elem
         {
           printf "  comment: %<string:%s%>\n", catos (data.extended.comment);

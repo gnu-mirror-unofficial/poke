@@ -1,5 +1,9 @@
 2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/id3v1.pk (ID3V1_Tag) <_print>: simplify.
+
+2020-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	BZ 26883
 	* libpoke/pkl-gen.c (pkl_gen_pr_print_stmt): Evaluate arguments
 	before printing anything.
