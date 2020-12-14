@@ -864,25 +864,6 @@ Description:
 + But this required having the struct values annotated as integral in
 + the PVM, i.e. the integrator should be available in struct values.
 
-Summary: printf should evaluate arguments _before_ printing anything
-Component: Compiler
-Kind: BUG
-BZ: 26883
-Priority: 3
-Description:
-+ In struct and union methods it is often useful to user `printf' like
-+ this:
-+
-+   method _print = void:
-+   {
-+     try printf "%i32d, %i32d\n", field_foo, field_bar;
-+     catch if E_elem { ... }
-+   }
-+
-+ However, if field `field-bar' happens to be absent, by the time E_elem
-+ is raised field_foo has been already printed.  This is a no-no.
-Target: 0.1
-
 Summary: remove unneeded locs in the passes/phases
 Component: Compiler
 Kind: ENH
