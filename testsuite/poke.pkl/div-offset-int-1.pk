@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var x = 1024UL#b;
+
+/* { dg-command {  x / 1 } } */
+/* { dg-output "1024UL#b" } */
+
+/* For constant folding: */
+/* { dg-command {  1024UL#b/1 } } */
+/* { dg-output "\n1024UL#b" } */

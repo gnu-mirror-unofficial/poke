@@ -556,7 +556,9 @@ PKL_PHASE_END_HANDLER
    denominator of the units of the operands.
 
    When applied to offsets, the type of DIV is an integer, whose type
-   is calculated following the same rules than for integrals.
+   is calculated following the same rules than for integrals.  When
+   applied to an offset and an integer, the type of DIV is an offset
+   with the same base type and unit than the offset operand.
 
    When applied to an offset and an integer, the type of MUL is an
    offset, whose magnitude's type is calculated following the same
@@ -583,7 +585,9 @@ PKL_PHASE_END_HANDLER
         && PKL_AST_TYPE_S_ITYPE (t2))                                   \
       t2 = PKL_AST_TYPE_S_ITYPE (t2);                                   \
                                                                         \
-    if (PKL_AST_TYPE_CODE (t1) != PKL_AST_TYPE_CODE (t2))               \
+    if (PKL_AST_TYPE_CODE (t1) != PKL_AST_TYPE_CODE (t2)                \
+        && PKL_AST_EXP_CODE (exp) != PKL_AST_OP_DIV                     \
+        && PKL_AST_EXP_CODE (exp) != PKL_AST_OP_CEILDIV)                \
       goto error;                                                       \
                                                                         \
     switch (PKL_AST_TYPE_CODE (t1))                                     \
@@ -638,16 +642,23 @@ PKL_PHASE_END_HANDLER
     if (PKL_AST_EXP_CODE (exp) == PKL_AST_OP_DIV                        \
         || PKL_AST_EXP_CODE (exp) == PKL_AST_OP_CEILDIV)                \
       {                                                                 \
-        size_t base_type_1_size = PKL_AST_TYPE_I_SIZE (base_type_1);    \
-        size_t base_type_2_size = PKL_AST_TYPE_I_SIZE (base_type_2);    \
-        int base_type_1_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_1); \
-        int base_type_2_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_2); \
+        if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_INTEGRAL)                \
+          /* For OFFSET / INT, the type of the result is */             \
+          /* The type of OFFSET.  */                                    \
+          type = t1;                                                    \
+        else                                                            \
+          {                                                             \
+            size_t base_type_1_size = PKL_AST_TYPE_I_SIZE (base_type_1); \
+            size_t base_type_2_size = PKL_AST_TYPE_I_SIZE (base_type_2); \
+            int base_type_1_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_1); \
+            int base_type_2_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_2); \
                                                                         \
-        int signed_p = (base_type_1_signed_p && base_type_2_signed_p);  \
-        int size = MAX (base_type_1_size, base_type_2_size);            \
+            int signed_p = (base_type_1_signed_p && base_type_2_signed_p); \
+            int size = MAX (base_type_1_size, base_type_2_size);        \
                                                                         \
-        type = pkl_ast_make_integral_type (PKL_PASS_AST,                \
-                                           size, signed_p);             \
+            type = pkl_ast_make_integral_type (PKL_PASS_AST,            \
+                                               size, signed_p);         \
+          }                                                             \
       }                                                                 \
     else if (PKL_AST_EXP_CODE (exp) == PKL_AST_OP_MOD)                  \
       {                                                                 \

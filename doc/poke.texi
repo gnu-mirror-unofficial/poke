@@ -6872,6 +6872,15 @@ semantics as the ceil-division for integers:
 4
 @end example
 
+@subsubsection Division by an integer
+
+Dividing an offset by an integer gives you an offset.  Example:
+
+@example
+(poke) 8#B / 2
+4#B
+@end example
+
 @subsubsection Modulus
 @cindex modulus
 The modulus of two offsets gives you another offset with the expected

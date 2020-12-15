@@ -1,5 +1,25 @@
 2020-12-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (TYPIFY_BIN): DIV and CEILDIV accept
+	arguments of different types.
+	(CASE_OFFSET): Handle OFFSET / INT configuration.
+	* libpoke/pkl-promo.c (pkl_promo_ps_op_div): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_op_div): Likewise.
+	(pkl_gen_ps_op_cdiv): Likewise.
+	* testsuite/poke.pkl/div-offset-int-1.pk: New test.
+	* testsuite/poke.pkl/div-offset-int-2.pk: Likewise.
+	* testsuite/poke.pkl/div-offset-int-3.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-offset-int-1.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-offset-int-2.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-offset-int-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+	* doc/poke.texi (Offset Operations): Mention division of an offset
+	by an integer.
+	* etc/poke.rec (Support OFFSET / MAGNITUDE -> OFFSET): Remove as
+	done.
+
+2020-12-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_op_bconc): Improve
 	diagnostics.
 	* testsuite/poke.pkl/bconc-diag-1.pk: New test.

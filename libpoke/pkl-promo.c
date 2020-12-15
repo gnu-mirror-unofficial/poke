@@ -196,13 +196,17 @@ promote_array (pkl_ast ast,
 
       INTEGRAL / INTEGRAL -> INTEGRAL
       OFFSET   / OFFSET   -> INTEGRAL
+      OFFSET / INTEGRAL   -> OFFSET
 
    In the I / I -> I configuration, the types of the operands are
    promoted to match the type of the result, if needed.
 
    In the O / O -> I configuration, the magnitude types of the offset
    operands are promoted to match the type of the integral result, if
-   needed.  The units are normalized to bits.  */
+   needed.  The units are normalized to bits.
+
+   In the O / I -> O configuration, the second operand should be
+   promoted to the base type of the first operand.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
 {
@@ -224,8 +228,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
       && PKL_AST_TYPE_S_ITYPE (op2_type))
     op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
-  /* Note we discriminate on the first operand type in order to
-     distinguish between configurations.  */
   switch (PKL_AST_TYPE_CODE (op1_type))
     {
     case PKL_TYPE_INTEGRAL:
@@ -245,34 +247,52 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_div)
       }
     case PKL_TYPE_OFFSET:
       {
-        int restart1, restart2;
+        if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+          {
+            int restart1, restart2;
 
-        pkl_ast_node op1_base_type = PKL_AST_TYPE_O_BASE_TYPE (op1_type);
-        pkl_ast_node op2_base_type = PKL_AST_TYPE_O_BASE_TYPE (op2_type);
+            pkl_ast_node op1_base_type = PKL_AST_TYPE_O_BASE_TYPE (op1_type);
+            pkl_ast_node op2_base_type = PKL_AST_TYPE_O_BASE_TYPE (op2_type);
 
-        size_t size = MAX (PKL_AST_TYPE_I_SIZE (op1_base_type),
-                           PKL_AST_TYPE_I_SIZE (op2_base_type));
-        int signed_p = (PKL_AST_TYPE_I_SIGNED_P (op1_base_type)
-                        && PKL_AST_TYPE_I_SIGNED_P (op2_base_type));
+            size_t size = MAX (PKL_AST_TYPE_I_SIZE (op1_base_type),
+                               PKL_AST_TYPE_I_SIZE (op2_base_type));
+            int signed_p = (PKL_AST_TYPE_I_SIGNED_P (op1_base_type)
+                            && PKL_AST_TYPE_I_SIGNED_P (op2_base_type));
 
-        pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
+            pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
-        unit_bit = ASTREF (unit_bit);
-        PKL_AST_LOC (unit_bit) = PKL_AST_LOC (exp);
+            unit_bit = ASTREF (unit_bit);
+            PKL_AST_LOC (unit_bit) = PKL_AST_LOC (exp);
 
-        if (!promote_offset (PKL_PASS_AST,
-                             size, signed_p, unit_bit,
-                             &PKL_AST_EXP_OPERAND (exp, 0), &restart1))
-          goto error;
+            if (!promote_offset (PKL_PASS_AST,
+                                 size, signed_p, unit_bit,
+                                 &PKL_AST_EXP_OPERAND (exp, 0), &restart1))
+              goto error;
 
-        if (!promote_offset (PKL_PASS_AST,
-                             size, signed_p, unit_bit,
-                             &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
-          goto error;
+            if (!promote_offset (PKL_PASS_AST,
+                                 size, signed_p, unit_bit,
+                                 &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
+              goto error;
 
-        pkl_ast_node_free (unit_bit);
+            pkl_ast_node_free (unit_bit);
 
-        PKL_PASS_RESTART = restart1 || restart2;
+            PKL_PASS_RESTART = restart1 || restart2;
+          }
+        else
+          {
+            int restart;
+
+            pkl_ast_node op1_base_type = PKL_AST_TYPE_O_BASE_TYPE (op1_type);
+            size_t size = PKL_AST_TYPE_I_SIZE (op1_base_type);
+            int signed_p = PKL_AST_TYPE_I_SIGNED_P (op1_base_type);
+
+            if (!promote_integral (PKL_PASS_AST, size, signed_p,
+                                   &PKL_AST_EXP_OPERAND (exp, 1),
+                                   &restart))
+              goto error;
+
+            PKL_PASS_RESTART = restart;
+          }
         break;
       }
     default:

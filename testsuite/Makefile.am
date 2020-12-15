@@ -876,6 +876,12 @@ EXTRA_DIST = \
   poke.pkl/div-int-struct-1.pk \
   poke.pkl/div-int-struct-2.pk \
   poke.pkl/div-int-struct-3.pk \
+  poke.pkl/cdiv-offset-int-1.pk \
+  poke.pkl/cdiv-offset-int-2.pk \
+  poke.pkl/cdiv-offset-int-3.pk \
+  poke.pkl/div-offset-int-1.pk \
+  poke.pkl/div-offset-int-2.pk \
+  poke.pkl/div-offset-int-3.pk \
   poke.pkl/div-offsets-1.pk \
   poke.pkl/div-offsets-2.pk \
   poke.pkl/div-offsets-3.pk \

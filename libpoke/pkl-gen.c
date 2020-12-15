@@ -3549,67 +3549,68 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_mul)
 }
 PKL_PHASE_END_HANDLER
 
+/*
+ * | OP1
+ * | OP2
+ * DIV
+ */
+
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_div)
 {
   pkl_ast_node node = PKL_PASS_NODE;
   pkl_asm pasm = PKL_GEN_ASM;
   pkl_ast_node type = PKL_AST_TYPE (node);
-  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (node, 0);
-  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (node, 0);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  int div_insn, offset_div_insn;
+
+  if (PKL_AST_EXP_CODE (node) == PKL_AST_OP_DIV)
+    {
+      div_insn = PKL_INSN_DIV;
+      offset_div_insn = PKL_INSN_DIVO;
+    }
+  else
+    {
+      div_insn = PKL_INSN_CDIV;
+      offset_div_insn = PKL_INSN_CDIVO;
+    }
 
   switch (PKL_AST_TYPE_CODE (type))
     {
     case PKL_TYPE_INTEGRAL:
       {
-        if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
+        if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_OFFSET)
           {
-            pkl_asm_insn (pasm, PKL_INSN_DIVO,
-                          PKL_AST_TYPE_O_BASE_TYPE (op2_type));
+            /* This is O / O -> I */
+            pkl_asm_insn (pasm, offset_div_insn,
+                          PKL_AST_TYPE_O_BASE_TYPE (op1_type));
             pkl_asm_insn (pasm, PKL_INSN_NIP2);
           }
         else
           {
-            pkl_asm_insn (pasm, PKL_INSN_DIV, type);
+            /* This is I / I -> I */
+            pkl_asm_insn (pasm, div_insn, type);
             pkl_asm_insn (pasm, PKL_INSN_NIP2);
           }
         break;
       }
-    default:
-      assert (0);
-      break;
-    }
-}
-PKL_PHASE_END_HANDLER
-
-/*
- * | OP1
- * | OP2
- * CEILDIV
- */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_ceildiv)
-{
-  pkl_ast_node node = PKL_PASS_NODE;
-  pkl_asm pasm = PKL_GEN_ASM;
-  pkl_ast_node type = PKL_AST_TYPE (node);
-  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (node, 0);
-  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
-
-  switch (PKL_AST_TYPE_CODE (type))
-    {
-    case PKL_TYPE_INTEGRAL:
+    case PKL_TYPE_OFFSET:
       {
-        if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_OFFSET)
-          {
-            pkl_asm_insn (pasm, PKL_INSN_CDIVO,
-                          PKL_AST_TYPE_O_BASE_TYPE (op2_type));
-            pkl_asm_insn (pasm, PKL_INSN_NIP2);
-          }
-        else
-          {
-            pkl_asm_insn (pasm, PKL_INSN_CDIV, type);
-            pkl_asm_insn (pasm, PKL_INSN_NIP2);
-          }
+        /* This is O / I -> O */
+        pkl_ast_node op2 = PKL_AST_EXP_OPERAND (node, 1);
+        pkl_ast_node op2_type = PKL_AST_TYPE (op2);
+
+        pkl_asm_insn (pasm, PKL_INSN_SWAP); /* OP2 OP1 */
+        pkl_asm_insn (pasm, PKL_INSN_OGETM); /* OP2 OP1 OMAG1 */
+        pkl_asm_insn (pasm, PKL_INSN_SWAP);
+        pkl_asm_insn (pasm, PKL_INSN_OGETU);
+        pkl_asm_insn (pasm, PKL_INSN_NIP); /* OP2 OMAG1 UNIT */
+        pkl_asm_insn (pasm, PKL_INSN_NROT); /* UNIT OP2 OMAG1 */
+        pkl_asm_insn (pasm, PKL_INSN_SWAP); /* UNIT OMAG1 OP2 */
+        pkl_asm_insn (pasm, div_insn, op2_type);
+        pkl_asm_insn (pasm, PKL_INSN_NIP2); /* UNIT (OMAG1/OP2) */
+        pkl_asm_insn (pasm, PKL_INSN_SWAP);
+        pkl_asm_insn (pasm, PKL_INSN_MKO);
         break;
       }
     default:
@@ -4126,7 +4127,7 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_gen_ps_op_binexp),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_gen_ps_op_binexp),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_gen_ps_op_div),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_gen_ps_op_ceildiv),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_gen_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_gen_ps_op_binexp),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_AND, pkl_gen_pr_op_and),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_OR, pkl_gen_pr_op_or),

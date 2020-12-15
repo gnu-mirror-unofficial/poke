@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var x = 8#B;
+
+/* { dg-command {  x / 2 } } */
+/* { dg-output "4#B" } */
+
+/* For constant folding: */
+/* { dg-command {  8#B/2 } } */
+/* { dg-output "\n4#B" } */

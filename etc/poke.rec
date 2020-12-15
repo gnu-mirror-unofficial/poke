@@ -378,15 +378,6 @@ Description:
 + We need a token like . or OFFSET to mean the current offset to the
 + beginning of the struct being defined.
 
-Summary: Support OFFSET / MAGNITUDE -> OFFSET
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ This operation is the opposite of OFFSET * MAGNITUDE -> OFFSET.  The
-+ unit of the result should be the unit of the source offset.
-Target: 0.1
-
 Summary: Support recursive definitions
 Component: Language
 Kind: ENH

@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var x = 8#B;
+var n = 0;
+
+/* { dg-command {  try x /^ n; catch if E_div_by_zero { print "caught\n"; } } } */
+/* { dg-output "caught" } */
