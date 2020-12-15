@@ -233,7 +233,7 @@ void pk_set_lexical_cuckolding_p (pk_compiler pkc,
                                   int lexical_cuckolding_p) LIBPOKE_API;
 
 /* Complete the name of a variable, function or type declared in the
-   global environment of the given icnremental compiler.
+   global environment of the given incremental compiler.
 
    This function is to be called repeatedly when generating potential
    command line completions.  It returns command line completion based
