@@ -1636,19 +1636,6 @@ Description:
 +   pipe VAL | COMMAND
 RFC: yes
 
-Summary: Support the command `info types'
-Component: CLI
-Kind: ENH
-Priority: 3
-Description:
-+ (poke) info types
-+ Name      Class    Defined at
-+ ----      -----    ----------
-+ ElfHdr    struct   elf.pkl:125
-+ Foo       array    <cmdline>
-Requires: pk-table
-Target: 0.1
-
 Summary: Auto-complete value attributes
 Component: CLI
 Kind: ENH

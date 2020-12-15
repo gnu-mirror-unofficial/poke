@@ -26,6 +26,7 @@ extern struct pk_cmd info_ios_cmd;   /* pk-cmd-ios.c  */
 extern struct pk_cmd info_var_cmd;   /* pk-cmd-def.c  */
 extern struct pk_cmd info_fun_cmd;   /* pk-cmd-def.c  */
 extern struct pk_cmd info_maps_cmd;  /* pk-cmd-map.c */
+extern struct pk_cmd info_types_cmd; /* pk-cmd-map.c */
 
 const struct pk_cmd * info_cmds[] =
   {
@@ -33,6 +34,7 @@ const struct pk_cmd * info_cmds[] =
     &info_var_cmd,
     &info_fun_cmd,
     &info_maps_cmd,
+    &info_types_cmd,
     &null_cmd
   };
 

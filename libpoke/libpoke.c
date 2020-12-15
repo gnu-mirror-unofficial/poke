@@ -570,7 +570,10 @@ my_decl_map_fn (pkl_ast_node decl, void *data)
       return;
     }
 
-  type = pkl_type_str (PKL_AST_TYPE (initial), 1);
+  type
+    = (PKL_AST_TYPE (initial)
+       ? pkl_type_str (PKL_AST_TYPE (initial), 1)
+       : NULL);
   payload->cb (kind,
                source,
                PKL_AST_IDENTIFIER_POINTER (decl_name),

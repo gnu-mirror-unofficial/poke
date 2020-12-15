@@ -78,6 +78,32 @@ print_fun_decl (int kind,
   free (source_str);
 }
 
+static void
+print_type_decl (int kind,
+                const char *source,
+                const char *name,
+                const char *type,
+                int first_line, int last_line,
+                int first_column, int last_column,
+                void *data)
+{
+  char *source_str = NULL;
+  pk_table table = (pk_table) data;
+
+  pk_table_row (table);
+
+  pk_table_column (table, name);
+
+  if (source)
+    asprintf (&source_str, "%s:%d",
+              basename (source), first_line);
+  else
+    source_str = xstrdup ("<stdin>");
+
+  pk_table_column (table, source_str);
+  free (source_str);
+}
+
 static int
 pk_cmd_info_var (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -113,6 +139,23 @@ pk_cmd_info_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static int
+pk_cmd_info_types (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  pk_table table = pk_table_new (2);
+
+  pk_table_row_cl (table, "table-header");
+  pk_table_column (table, "Name");
+  pk_table_column (table, "Declared at");
+
+  pk_decl_map (poke_compiler, PK_DECL_KIND_TYPE, print_type_decl,
+               table);
+
+  pk_table_print (table);
+  pk_table_free (table);
+  return 1;
+}
+
 const struct pk_cmd info_var_cmd =
   {"variable", "", "", 0, NULL, pk_cmd_info_var,
    "info variable", NULL};
@@ -120,3 +163,7 @@ const struct pk_cmd info_var_cmd =
 const struct pk_cmd info_fun_cmd =
   {"function", "", "", 0, NULL, pk_cmd_info_fun,
    "info funtion", NULL};
+
+const struct pk_cmd info_types_cmd =
+  {"types", "", "", 0, NULL, pk_cmd_info_types,
+   "info types", NULL};
