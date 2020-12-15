@@ -1416,29 +1416,6 @@ Description:
 + values.
 RFC: yes
 
-Summary: Better error handling in `atoi'
-Component: Runtime
-Kind: BUG
-BZ: 26899
-Priority: 3
-Description:
-+ Currently `atoi' is unable to report where a parsed integer ends in the given string:
-+
-+ (poke) atoi ("23x")
-+ 23L
-+
-+ I think there are two options for this:
-+ a) To raise an error if the given string doesn't encode a valid integer
-+    in its totality, or
-+ b) To somehow return where the parsed integer ends in the string.
-+
-+ Also, errors are not currently handled:
-+
-+ (poke) atoi ("a")
-+ 0L
-RFC: yes
-Target: 0.1
-
 Summary: Add `strtok' to the standard library
 Component: Runtime
 Kind: ENH
