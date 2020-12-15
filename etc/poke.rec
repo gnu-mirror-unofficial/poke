@@ -1438,7 +1438,6 @@ Priority: 3
 Description:
 + A suitable API shall be provided in libpoke.h in order to allow
 + tadding additional IOD implementations.
-Target: 0.1
 RFC: yes
 
 Summary: Add an elisp MI interface to poke.el
