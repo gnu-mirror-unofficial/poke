@@ -1033,11 +1033,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_bconc)
 
   /* This operation is only defined for integral arguments, of any
      width.  */
-  if (PKL_AST_TYPE_CODE (t1) != PKL_TYPE_INTEGRAL
-      || PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)
+  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_INTEGRAL)
     {
-      PKL_ERROR (PKL_AST_LOC (exp),
-                 "operator requires integral arguments");
+      if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)
+        {
+          PKL_ERROR (PKL_AST_LOC (op2), "expected integer");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
+  else
+    {
+      PKL_ERROR (PKL_AST_LOC (op1), "expected integer");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

@@ -717,6 +717,8 @@ EXTRA_DIST = \
   poke.pkl/bconc-5.pk \
   poke.pkl/bconc-6.pk \
   poke.pkl/bconc-7.pk \
+  poke.pkl/bconc-diag-1.pk \
+  poke.pkl/bconc-diag-2.pk \
   poke.pkl/bconc-int-struct-1.pk \
   poke.pkl/bconc-int-struct-2.pk \
   poke.pkl/bconc-int-struct-3.pk \

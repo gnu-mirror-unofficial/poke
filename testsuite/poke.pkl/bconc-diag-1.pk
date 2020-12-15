@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = 100
+          ::: 3#B; /* { dg-error "expected integer" } */
