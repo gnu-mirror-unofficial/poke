@@ -5540,13 +5540,16 @@ The current file is now `foo.o'.
   #0	FILE	rw	0x00000022#B	foo.bson
 @end example
 
-@item .info variable
+@item .info variables
 @cindex variables
 Shows a list of defined variables along with their current values and
 the location where the variables were defined.
-@item .info function
+@item .info functions
 Shows a list of defined functions along with their prototypes and the
 location where the functions were defined.
+@item .info types
+Shows a list of defined types along with the locations where the types
+were defined.
 @end table
 
 @node set command

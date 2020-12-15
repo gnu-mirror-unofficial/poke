@@ -1,5 +1,11 @@
 2020-12-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-def.c (info_var_cmd): .info var -> .info variables.
+	(info_fun_cmd): .info fun -> .info functions.
+	* doc/poke.texi (info command): Document .info types.
+
+2020-12-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-info.c (info_types_cmd): Likewise.
 	(info_cmds): Add info_types_cmd.
 	* poke/pk-cmd-def.c (info_types_cmd): Define.
