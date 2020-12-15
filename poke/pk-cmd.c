@@ -264,7 +264,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
     besilent = 0;                                                              \
     ret = 0;                                                                   \
     goto usage;                                                                \
-  } while (1)
+  } while (0)
   int ret = 1;
   char cmd_name[MAX_CMD_NAME];
   const char *p;
