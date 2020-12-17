@@ -251,6 +251,10 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_GET_TIME; }
 "__PKL_BUILTIN_STRACE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_STRACE; }
+"__PKL_BUILTIN_TERM_BEGIN_HYPERLINK__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_BEGIN_HYPERLINK; }
+"__PKL_BUILTIN_TERM_END_HYPERLINK__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_END_HYPERLINK; }
 "__PKL_BUILTIN_TERM_BEGIN_CLASS__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_BEGIN_CLASS; }
 "__PKL_BUILTIN_TERM_END_CLASS__" {

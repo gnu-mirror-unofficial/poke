@@ -1,5 +1,18 @@
 2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_TERM_BEGIN_HYPERLINK):
+	Define.
+	(PKL_AST_BUILTIN_TERM_END_HYPERLINK): Likewise.
+	* libpoke/pkl-tab.y: Handle term_begin_hyperlink and
+	term_end_hyperlink builtins.
+	* libpoke/pkl-lex.l: Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Generate code for new
+	builtins.
+	* libpoke/pkl-rt.pk: New functions term_begin_hyperlink and
+	term_end_hyperlink.
+
+2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Check whether libtextstyle provides accessor
 	functions.
 	* poke/pk-term.c (pk_term_set_bgcolor): Use new libtextstyle

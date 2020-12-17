@@ -720,6 +720,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ENDSC);
           break;
+        case PKL_AST_BUILTIN_TERM_BEGIN_HYPERLINK:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BEGINHL);
+          break;
+        case PKL_AST_BUILTIN_TERM_END_HYPERLINK:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ENDHL);
+          break;
+
         default:
           assert (0);
         }

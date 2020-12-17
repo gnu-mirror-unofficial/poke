@@ -1432,6 +1432,8 @@ pkl_ast_node pkl_ast_make_incrdecr (pkl_ast ast,
 #define PKL_AST_BUILTIN_TERM_RGB_TO_COLOR 18
 #define PKL_AST_BUILTIN_TERM_BEGIN_CLASS 19
 #define PKL_AST_BUILTIN_TERM_END_CLASS 20
+#define PKL_AST_BUILTIN_TERM_BEGIN_HYPERLINK 21
+#define PKL_AST_BUILTIN_TERM_END_HYPERLINK 22
 
 struct pkl_ast_comp_stmt
 {
