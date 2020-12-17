@@ -52,7 +52,7 @@ extern void pk_term_end_class (const char *class);
 
 /* Hyperlinks.  */
 extern void pk_term_hyperlink (const char *url, const char *id);
-extern void pk_term_end_hyperlink (void);
+extern int pk_term_end_hyperlink (void);
 
 /* Color handling.  */
 extern int pk_term_rgb_to_color (int red, int green, int blue);

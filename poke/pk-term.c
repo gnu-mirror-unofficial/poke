@@ -154,19 +154,28 @@ pk_term_end_class (const char *class)
   styled_ostream_end_use_class (pk_ostream, class);
 }
 
+/* Counter of open hyperlinks.  */
+static int hlcount = 0;
+
 void
 pk_term_hyperlink (const char *url, const char *id)
 {
 #ifdef HAVE_TEXTSTYLE_HYPERLINK_SUPPORT
   styled_ostream_set_hyperlink (pk_ostream, url, id);
+  hlcount += 1;
 #endif
 }
 
-void
+int
 pk_term_end_hyperlink (void)
 {
 #ifdef HAVE_TEXTSTYLE_HYPERLINK_SUPPORT
+  if (hlcount == 0)
+    return 0;
+
   styled_ostream_set_hyperlink (pk_ostream, NULL, NULL);
+  hlcount -= 1;
+  return 1;
 #endif
 }
 

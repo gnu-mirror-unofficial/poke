@@ -1,5 +1,20 @@
 2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h (struct pk_term_if): Change the prototype of
+	end_hyperlink_fn so it can communicate errors to the user.
+	* poke/pk-term.c (pk_term_end_hyperlink): Keep count of the
+	hyperlinks and return the proper status.
+	* libpoke/pvm.jitter (beghl): Adapt accordingly.
+	(endhl): Likewise.
+	* testsuite/poke.libpoke/term-if.h (pk_term_end_hyperlink): Adapt
+	to new interface.
+
+2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.jitter: Improve spelling in exception description.
+
+2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_TERM_BEGIN_HYPERLINK):
 	Define.
 	(PKL_AST_BUILTIN_TERM_END_HYPERLINK): Likewise.

@@ -67,8 +67,10 @@ struct pk_term_if
      ID.  The identifier can be NULL.  */
   void (*hyperlink_fn) (const char *url, const char *id);
 
-  /* Mark the end of the current hyperlink.  */
-  void (*end_hyperlink_fn) (void);
+  /* Mark the end of the current hyperlink.  This function returns 0
+     if there is no currently an hyperlink open to close.  1
+     otherwise.  */
+  int (*end_hyperlink_fn) (void);
 
   /* Transform RGB to a color.  */
   int (*rgb_to_color_fn) (int red, int green, int blue);

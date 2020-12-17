@@ -63,9 +63,10 @@ pk_term_hyperlink (const char *url, const char *id)
 {
 }
 
-void
+int
 pk_term_end_hyperlink (void)
 {
+  return 1;
 }
 
 int

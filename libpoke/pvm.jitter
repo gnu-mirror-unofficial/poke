@@ -647,7 +647,6 @@ state-struct-runtime-c
       uint32_t odepth;
       uint32_t oindent;
       uint32_t oacutoff;
-      int hlcount;
   end
 end
 
@@ -666,7 +665,6 @@ state-initialization-c
       jitter_state_runtime->odepth = 0;
       jitter_state_runtime->oindent = 2;
       jitter_state_runtime->oacutoff = 0;
-      jitter_state_runtime->hlcount = 0;
   end
 end
 
@@ -1674,7 +1672,6 @@ instruction beghl ()
     JITTER_DROP_STACK ();
     JITTER_DROP_STACK ();
     pk_term_hyperlink (url, id);
-    JITTER_STATE_RUNTIME_FIELD (hlcount) += 1;
   end
 end
 
@@ -1690,15 +1687,10 @@ end
 
 instruction endhl ()
   code
-    if (JITTER_STATE_RUNTIME_FIELD (hlcount) == 0)
+    if (!pk_term_end_hyperlink ())
       PVM_RAISE (PVM_E_GENERIC,
-                 "no hyperlink to end",
+                 "no current hyperlink",
                  PVM_E_GENERIC_ESTATUS);
-    else
-    {
-      pk_term_end_hyperlink ();
-      JITTER_STATE_RUNTIME_FIELD (hlcount) -= 1;
-    }
   end
 end
 
