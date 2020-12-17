@@ -28,7 +28,7 @@ var tests = [
       },
   },
   PkTest {
-    name = "registeration",
+    name = "registration",
     func = lambda (string name) void:
       {
         var my_color = color_register;
