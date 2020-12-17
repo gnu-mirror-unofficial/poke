@@ -130,7 +130,7 @@ gl_LIBTEXTSTYLE_OPTIONAL
 AX_LIBTEXTSTYLE_HYPERLINK
 
 if test $HAVE_LIBTEXTSTYLE = yes; then
-    AC_CHECK_LIB([textstyle], [term_styleed_ostream_get_destination], [
+    AC_CHECK_LIB([textstyle], [term_styled_ostream_get_destination], [
       AC_DEFINE([HAVE_TEXTSTYLE_ACCESSORS_SUPPORT], 1,
                 [Defined if libtextstyle has support for terminal hyperlinks])
     ])
