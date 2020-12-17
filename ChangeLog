@@ -1,5 +1,18 @@
 2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Check whether libtextstyle provides accessor
+	functions.
+	* poke/pk-term.c (pk_term_set_bgcolor): Use new libtextstyle
+	interface to access the ostream_term of an ostream_styled_term.
+	(pk_term_set_color): Likewise.
+	(pk_term_get_bgcolor): Likewise.
+	(pk_term_get_color): Likewise.
+	(pk_term_rgb_to_color): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Fix code for builtin
+	term_rgb_to_color
+
+2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_TERM_CLASS): Define.
 	(PKL_AST_BUILTIN_TERM_END_CLASS): Likewise.
 	* libpoke/pkl-lex.l: Handle tokens BUILTIN_TERM_CLASS and

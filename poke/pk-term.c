@@ -182,30 +182,87 @@ pk_term_color_p (void)
 int
 pk_term_rgb_to_color (int red, int green, int blue)
 {
-  return term_ostream_rgb_to_color (pk_ostream,
-                                    red, green, blue);
+#if defined HAVE_TEXTSTYLE_ACCESSORS_SUPPORT
+   if (color_mode != color_html)
+     {
+       if (is_instance_of_term_styled_ostream (pk_ostream))
+         {
+           term_ostream_t term_ostream =
+             term_styled_ostream_get_destination ((term_styled_ostream_t) pk_ostream);
+
+           return term_ostream_rgb_to_color (term_ostream, red, green, blue);
+         }
+     }
+#endif
+  return -1;
 }
 
 int
 pk_term_get_color (void)
 {
-  return term_ostream_get_color (pk_ostream);
+#if defined HAVE_TEXTSTYLE_ACCESSORS_SUPPORT
+   if (color_mode != color_html)
+     {
+       if (is_instance_of_term_styled_ostream (pk_ostream))
+         {
+           term_ostream_t term_ostream =
+             term_styled_ostream_get_destination ((term_styled_ostream_t) pk_ostream);
+
+           return term_ostream_get_color (term_ostream);
+         }
+     }
+#endif
+   return -1;
 }
 
 int
 pk_term_get_bgcolor ()
 {
-  return term_ostream_get_bgcolor (pk_ostream);
+#if defined HAVE_TEXTSTYLE_ACCESSORS_SUPPORT
+  if (color_mode != color_html)
+    {
+      if (is_instance_of_term_styled_ostream (pk_ostream))
+        {
+          term_ostream_t term_ostream =
+            term_styled_ostream_get_destination ((term_styled_ostream_t) pk_ostream);
+
+          return term_ostream_get_bgcolor (term_ostream);
+        }
+    }
+#endif
+  return -1;
 }
 
 void
 pk_term_set_color (int color)
 {
-  term_ostream_set_color (pk_ostream, color);
+#if defined HAVE_TEXTSTYLE_ACCESSORS_SUPPORT
+  if (color_mode != color_html)
+    {
+      if (is_instance_of_term_styled_ostream (pk_ostream))
+        {
+          term_ostream_t term_ostream =
+            term_styled_ostream_get_destination ((term_styled_ostream_t) pk_ostream);
+
+          term_ostream_set_color (term_ostream, color);
+        }
+    }
+#endif
 }
 
 void
 pk_term_set_bgcolor (int color)
 {
-  term_ostream_set_bgcolor (pk_ostream, color);
+#if defined HAVE_TEXTSTYLE_ACCESSORS_SUPPORT
+  if (color_mode != color_html)
+    {
+      if (is_instance_of_term_styled_ostream (pk_ostream))
+        {
+          term_ostream_t term_ostream =
+            term_styled_ostream_get_destination ((term_styled_ostream_t) pk_ostream);
+
+          term_ostream_set_bgcolor (term_ostream, color);
+        }
+    }
+#endif
 }
