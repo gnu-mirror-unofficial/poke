@@ -916,8 +916,13 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 5.12 Testing Pickles
 ~~~~~~~~~~~~~~~~~~~~
 
-  Each pickle in `pickles/FOO.pk' shall have a testsuite in
-  `testsuite/poke.FOO' with a driver `testsuite/poke.FOO/FOO.exp'.
+  Each pickle in `pickles/FOO.pk' shall have a test file
+  `testsuite/poke.pickles/FOO-test.pk' written using pickle `pktest'.
+
+  If there are some features in the pickle that cannot be tested using
+  `pktest' (e.g., pickle uses `print'), that pickle also shall have a
+  testsuite in `testsuite/poke.FOO' with a driver
+  `testsuite/poke.FOO/FOO.exp'.
 
 
 5.12.1 Command REPL tests

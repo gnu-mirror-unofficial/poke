@@ -1,3 +1,24 @@
+2020-12-17  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* pickles/pktest.pk: New file.
+	* pickles/Makefile.am (dist_pickles_DATA): Add `pktest.pk`.
+	* testsuite/poke.pktest/pktest.exp: New file.
+	* testsuite/poke.pktest/pktest-1.pk: Likewise.
+	* testsuite/poke.pktest/pktest-2.pk: Likewise.
+	* testsuite/poke.pktest/pktest-3.pk: Likewise.
+	* testsuite/poke.pktest/pktest-4.pk: Likewise.
+	* testsuite/poke.pktest/pktest-5.pk: Likewise.
+	* testsuite/poke.pktest/pktest-6.pk: Likewise.
+	* testsuite/poke.pktest/pktest-7.pk: Likewise.
+	* testsuite/poke.pktest/pktest-8.pk: Likewise.
+	* testsuite/poke.pktest/pktest-9.pk: Likewise.
+	* testsuite/poke.pktest/pktest-10.pk: Likewise.
+	* testsuite/poke.pktest/pktest-11.pk: Likewise.
+	* testsuite/poke.pktest/pktest-12.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* etc/hacking.org (Testing Pickles): Update.
+	* HACKING: Regenerate.
+
 2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h (struct pk_term_if): Change the prototype of

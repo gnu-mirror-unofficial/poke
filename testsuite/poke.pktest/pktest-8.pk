@@ -1,0 +1,30 @@
+/* { dg-do run } */
+
+load pktest;
+
+var tests = [
+  PkTest {
+    name = "a descriptive name or phrase",
+    skip = "my reason to skip this test case",
+    func = lambda (string name) void:
+      {
+        assert (1 == 1);
+        assert ("elf" != "ELF");
+      },
+  },
+  PkTest {
+    name = "another descriptive name or phrase",
+    func = lambda (string name) void:
+      {
+        assert (255 == 0xff);
+        assert ([1,2] + [3,4] == [1,2,3,4]);
+      },
+  },
+];
+
+/* { dg-command {var ok = pktest_run (tests)} } */
+/* { dg-output "1..2\\nok 1 a descriptive name or phrase # SKIP" } */
+/* { dg-output " my reason to skip this test case\\n" } */
+/* { dg-output "ok 2 another descriptive name or phrase\\n" } */
+/* { dg-command {ok} } */
+/* { dg-output "1" } */

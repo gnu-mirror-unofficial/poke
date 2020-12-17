@@ -1,0 +1,81 @@
+/* pktest.pk - Facilities to write tests for pickles.  */
+
+/* Copyright (C) 2020 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This is a TAP (Test Anything Protocol) producer.
+ * TAP is a simple text-based interface between testing modules in a test
+ * harness.
+ *
+ * For more info, see https://testanything.org/.
+ */
+
+type PkTestFn = (string) void;
+type PkTest = struct
+  {
+    string name;
+    /* Skip reason. If non-empty, test will be skipped */
+    string skip;
+    /* TODO reason. If non-empty, test will be marked as TODO */
+    string todo : todo == "" || (todo != "" && skip == "");
+    PkTestFn func;
+  };
+
+fun pktest_run = (PkTest[] tests, string skip = "") int:
+  {
+    var ok = 1;
+    var i = 0UL;
+
+    if (skip != "")
+      {
+        printf "1..0 # Skipped: %s\n", skip;
+        return ok;
+      }
+    else
+      printf "1..%u64d\n", tests'length;
+
+    for (t in tests)
+      {
+        ++i;
+
+        if (t.skip != "")
+          {
+            printf "ok %u64d %s # SKIP %s\n", i, t.name, t.skip;
+            continue;
+          }
+
+        fun todo = void:
+          {
+            if (t.todo == "")
+              print "\n";
+            else
+              printf " # TODO %s\n", t.todo;
+          }
+
+        try t.func(t.name);
+        catch (Exception ex)
+          {
+            ok = 0;
+            printf "not ok %u64d %s: %s", i, t.name, ex.msg;
+            todo ();
+            continue;
+          }
+        printf "ok %u64d %s", i, t.name;
+        todo ();
+      }
+
+    return ok;
+  }

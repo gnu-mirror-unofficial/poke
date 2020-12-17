@@ -1801,6 +1801,19 @@ EXTRA_DIST = \
   poke.pkl/xor-offsets-2.pk \
   poke.pkl/xora-int-1.pk \
   poke.pkl/xora-offset-1.pk \
+  poke.pktest/pktest.exp \
+  poke.pktest/pktest-1.pk \
+  poke.pktest/pktest-2.pk \
+  poke.pktest/pktest-3.pk \
+  poke.pktest/pktest-4.pk \
+  poke.pktest/pktest-5.pk \
+  poke.pktest/pktest-6.pk \
+  poke.pktest/pktest-7.pk \
+  poke.pktest/pktest-8.pk \
+  poke.pktest/pktest-9.pk \
+  poke.pktest/pktest-10.pk \
+  poke.pktest/pktest-11.pk \
+  poke.pktest/pktest-12.pk \
   poke.repl/repl.exp \
   poke.rgb24/rgb24.exp \
   poke.rgb24/rgb24-1.pk \

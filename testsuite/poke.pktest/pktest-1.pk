@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+load pktest;
+
+/* { dg-command {var ok = pktest_run (PkTest[] ())} } */
+/* { dg-output "1..0\\n" } */
+/* { dg-command {ok} } */
+/* { dg-output "1" } */

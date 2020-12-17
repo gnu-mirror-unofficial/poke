@@ -1,0 +1,33 @@
+/* { dg-do run } */
+
+load pktest;
+
+var tests = [
+  PkTest {
+    name = "a failing test",
+    skip = "reason to skip this test case",
+    func = lambda (string name) void:
+      {
+        /* Because of the SKIP, the result will be "ok" */
+        assert (1 != 1);
+      },
+  },
+  PkTest {
+    name = "another failing test",
+    todo = "WIP",
+    func = lambda (string name) void:
+      {
+        /* This will report "not ok".
+           Test harness should this as expected failure.  */
+        assert (255 != 0xff);
+      },
+  },
+];
+
+/* { dg-command {var ok = pktest_run (tests)} } */
+/* { dg-output "1..2\\nok 1 a failing test # SKIP" } */
+/* { dg-output " reason to skip this test case\\n" } */
+/* { dg-output "not ok 2 another failing test: assertion failed at" } */
+/* { dg-output ".*:22:9 # TODO WIP\\n" } */
+/* { dg-command {ok} } */
+/* { dg-output "0" } */

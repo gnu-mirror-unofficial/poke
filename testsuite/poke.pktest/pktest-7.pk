@@ -1,0 +1,28 @@
+/* { dg-do run } */
+
+load pktest;
+
+var tests = [
+  PkTest {
+    name = "a failing test",
+    func = lambda (string name) void:
+      {
+        assert (1 != 1);  /* `assert` starts at line 10, column 9 */
+      },
+  },
+  PkTest {
+    name = "another failing test",
+    func = lambda (string name) void:
+      {
+        assert (255 != 0xff);  /* `assert` starts at line 17, column 9 */
+      },
+  },
+];
+
+/* { dg-command {var ok = pktest_run (tests)} } */
+/* { dg-output "1..2\\nnot ok 1 a failing test:" } */
+/* { dg-output " assertion failed at .*:10:9\\n" } */
+/* { dg-output "not ok 2 another failing test:" } */
+/* { dg-output " assertion failed at .*:17:9\\n" } */
+/* { dg-command {ok} } */
+/* { dg-output "0" } */
