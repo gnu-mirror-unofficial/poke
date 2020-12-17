@@ -1,0 +1,274 @@
+
+/* Copyright (C) 2020 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load pktest;
+load argp;
+
+var tests = [
+  PkTest {
+    name = "short option",
+    func = lambda (string name) void:
+      {
+        var args = ["foo", "-f", "bar"];
+        var foo = "no";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+             }];
+        var rest = argp_parse ("foo", "", "", options, args);
+
+        assert (foo == "yes");
+        assert (rest == ["foo", "bar"]);
+      },
+  },
+  PkTest {
+    name = "long option",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+             }];
+        var rest = argp_parse ("foo", "", "", options, ["foo", "--foo", "bar"]);
+
+        assert (foo == "yes");
+        assert (rest == ["foo", "bar"]);
+
+        foo = "no";
+        rest = argp_parse ("foo", "", "", options, ["--foo", "foo", "bar"]);
+        assert (foo == "yes");
+        assert (rest == ["foo", "bar"]);
+      },
+  },
+  PkTest {
+    name = "option with required argument",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var bar = "";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+               },
+             Argp_Option {
+                 name = "b",
+                 long_name = "bar",
+                 arg_required = 1,
+                 handler = lambda (string arg) void: { bar = arg; }
+               }
+            ];
+        var rest = argp_parse ("foo", "", "", options,
+                               ["-b", "bar", "foo", "--foo"]);
+
+        assert (foo == "yes");
+        assert (bar == "bar");
+        assert (rest == ["foo"]);
+
+        foo = "";
+        bar = "";
+        rest = argp_parse ("foo", "", "", options,
+                           ["--bar=bar", "foo", "--foo"]);
+        assert (foo == "yes");
+        assert (bar == "bar");
+        assert (rest == ["foo"]);
+
+        foo = "no";
+        bar = "no";
+        rest = argp_parse ("foo", "", "", options,
+                           ["--bar=", "foo", "--foo"]);
+        assert (foo == "yes");
+        assert (bar == "");
+        assert (rest == ["foo"]);
+      },
+  },
+  PkTest {
+    name = "short options grouped by a single hyphen",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var bar = "no";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+               },
+             Argp_Option {
+                 name = "b",
+                 long_name = "bar",
+                 handler = lambda (string arg) void: { bar = "yes"; }
+               }
+            ];
+        var rest = argp_parse ("foo", "", "", options, ["foo", "-fb", "bar"]);
+
+        assert (foo == "yes");
+        assert (bar == "yes");
+        assert (rest == ["foo", "bar"]);
+
+        foo = "";
+        bar = "";
+        rest = argp_parse ("foo", "", "", options, ["foo", "-bf", "bar"]);
+        assert (foo == "yes");
+        assert (bar == "yes");
+        assert (rest == ["foo", "bar"]);
+
+        foo = "no";
+        bar = "no";
+        rest = argp_parse ("foo", "", "", options, ["foo", "-b", "bar"]);
+        assert (foo == "no");
+        assert (bar == "yes");
+        assert (rest == ["foo", "bar"]);
+      },
+  },
+  PkTest {
+    name = "mark end of options with '--'",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var bar = "foobar";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+               },
+             Argp_Option {
+                 name = "b",
+                 long_name = "bar",
+                 arg_required = 1,
+                 handler = lambda (string arg) void: { bar = arg; }
+               }
+            ];
+        var rest = argp_parse ("foo", "", "", options,
+                               ["--bar=", "foo", "--", "--foo"]);
+
+        assert (foo == "no");
+        assert (bar == "");
+        assert (rest == ["foo", "--foo"]);
+
+        foo = "yes";
+        bar = "foobar";
+        rest = argp_parse ("foo", "", "", options,
+                               ["--bar=", "foo", "--", "--foo", "--"]);
+
+        assert (foo == "yes");
+        assert (bar == "");
+        assert (rest == ["foo", "--foo", "--"]);
+      },
+  },
+  PkTest {
+    name = "unknown option",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var bar = "no";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+               },
+             Argp_Option {
+                 name = "b",
+                 long_name = "bar",
+                 arg_required = 1,
+                 handler = lambda (string arg) void: { bar = "yes"; }
+               }
+            ];
+
+        try
+          {
+            argp_parse ("foo", "", "", options, ["foo", "--xxx", "-f"]);
+            assert(0, "unreachable reached!");
+          }
+        catch if E_generic
+          {
+            assert(1, "expected exception");
+          }
+      },
+  },
+  PkTest {
+    name = "missing required argument",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var bar = "no";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+               },
+             Argp_Option {
+                 name = "b",
+                 long_name = "bar",
+                 arg_required = 1,
+                 handler = lambda (string arg) void: { bar = "yes"; }
+               }
+            ];
+
+        try
+          {
+            argp_parse ("foo", "", "", options, ["foo", "--bar", "-f"]);
+            assert(0, "unreachable reached!");
+          }
+        catch if E_inval
+          {
+            assert(1, "expected exception");
+          }
+      },
+  },
+  PkTest {
+    name = "unexpected argument for option",
+    func = lambda (string name) void:
+      {
+        var foo = "no";
+        var bar = "no";
+        var options =
+            [Argp_Option {
+                 name = "f",
+                 long_name = "foo",
+                 handler = lambda (string arg) void: { foo = "yes"; }
+               },
+             Argp_Option {
+                 name = "b",
+                 long_name = "bar",
+                 arg_required = 1,
+                 handler = lambda (string arg) void: { bar = "yes"; }
+               }
+            ];
+
+        try
+          {
+            argp_parse ("foo", "", "", options, ["--foo=lala", "-f"]);
+            assert(0, "unreachable reached!");
+          }
+        catch if E_inval
+          {
+            assert(1, "expected exception");
+          }
+      },
+  },
+];
+
+exit (pktest_run (tests) ? 0 : 1);

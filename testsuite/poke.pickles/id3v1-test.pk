@@ -1,0 +1,85 @@
+
+/* Copyright (C) 2020 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load pktest;
+load id3v1;
+
+var data = open ("*data*");
+
+uint<8>[128] @ data : 0#B = [
+  0x54UB, 0x41UB, 0x47UB, 0x30UB, 0x31UB, 0x20UB, 0x2dUB, 0x20UB, 0x45UB,
+  0x63UB, 0x6cUB, 0x69UB, 0x70UB, 0x73UB, 0x65UB, 0x20UB, 0x44UB, 0x65UB,
+  0x20UB, 0x4dUB, 0x61UB, 0x72UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB,
+  0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x4aUB, 0x6fUB, 0x61UB,
+  0x71UB, 0x75UB, 0x69UB, 0x6eUB, 0x20UB, 0x53UB, 0x61UB, 0x62UB, 0x69UB,
+  0x6eUB, 0x61UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB,
+  0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB,
+  0x4dUB, 0x65UB, 0x6eUB, 0x74UB, 0x69UB, 0x72UB, 0x61UB, 0x73UB, 0x20UB,
+  0x50UB, 0x69UB, 0x61UB, 0x64UB, 0x6fUB, 0x73UB, 0x61UB, 0x73UB, 0x20UB,
+  0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB,
+  0x20UB, 0x20UB, 0x20UB, 0x31UB, 0x39UB, 0x38UB, 0x30UB, 0x76UB, 0x65UB,
+  0x72UB, 0x79UB, 0x20UB, 0x67UB, 0x6fUB, 0x6fUB, 0x64UB, 0x20UB, 0x73UB,
+  0x6fUB, 0x6eUB, 0x67UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB,
+  0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x20UB, 0x00UB,
+  0x01UB, 0x11UB
+];
+
+var tests = [
+  PkTest {
+    name = "retrieve info",
+    func = lambda (string name) void:
+      {
+        var tag = ID3V1_Tag @ data : 0#B;
+
+        assert (tag.id == ['T','A','G']);
+        assert (tag.get_title == "01 - Eclipse De Mar");
+        assert (tag.get_artist == "Joaquin Sabina");
+        assert (tag.get_album == "Mentiras Piadosas");
+        assert (tag.get_year == 1980);
+        assert (tag.get_genre == "rock");
+        assert (tag.get_comment == "very good song");
+      },
+  },
+  PkTest {
+    name = "change info",
+    func = lambda (string name) void:
+      {
+        var tag = ID3V1_Tag @ data : 0#B;
+
+        assert (tag.get_genre == "rock");
+        tag.set_genre ("eurodance");
+        assert (tag.get_genre == "eurodance");
+
+        assert (tag.get_title == "01 - Eclipse De Mar");
+        tag.set_title ("Pickle");
+        assert (tag.get_title == "Pickle");
+        assert (tag.title'size == 30#B);
+        assert ((uint<8>[tag.title'size] @ data : tag.title'offset) ==
+                [0x50UB, 0x69UB, 0x63UB, 0x6bUB, 0x6cUB, 0x65UB, .[29]=' ']);
+
+        assert (tag.get_artist == "Joaquin Sabina");
+        tag.set_artist ("RMS");
+        assert (tag.artist'size == 30#B);
+        assert ((uint<8>[tag.artist'size] @ data : tag.artist'offset) ==
+                [0x52UB, 0x4dUB, 0x53UB, .[29]=' ']);
+      },
+  },
+];
+var ok = pktest_run (tests);
+
+close (data);
+exit (ok ? 0 : 1);

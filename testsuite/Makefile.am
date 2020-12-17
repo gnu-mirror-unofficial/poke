@@ -45,24 +45,8 @@ EXTRA_DIST = \
   config/default.exp \
   config/unix.exp \
   lib/poke-dg.exp \
+  lib/poke-pk.exp \
   lib/poke.exp \
-  poke.argp/argp.exp \
-  poke.argp/argp-1.pk \
-  poke.argp/argp-10.pk \
-  poke.argp/argp-11.pk \
-  poke.argp/argp-12.pk \
-  poke.argp/argp-2.pk \
-  poke.argp/argp-3.pk \
-  poke.argp/argp-4.pk \
-  poke.argp/argp-5.pk \
-  poke.argp/argp-6.pk \
-  poke.argp/argp-7.pk \
-  poke.argp/argp-8.pk \
-  poke.argp/argp-9.pk \
-  poke.argp/argp-diag-1.pk \
-  poke.argp/argp-diag-2.pk \
-  poke.argp/argp-diag-3.pk \
-  poke.argp/argp-diag-4.pk \
   poke.cmd/cmd.exp \
   poke.cmd/copy-1.pk \
   poke.cmd/copy-2.pk \
@@ -111,21 +95,6 @@ EXTRA_DIST = \
   poke.cmd/set-oindent.pk \
   poke.cmd/set-omaps-1.pk \
   poke.cmd/set-omode.pk \
-  poke.color/color.exp \
-  poke.color/color-1.pk \
-  poke.color/color-2.pk \
-  poke.color/color-3.pk \
-  poke.color/color-4.pk \
-  poke.id3v1/id3v1.exp \
-  poke.id3v1/id3v1-1.pk \
-  poke.id3v1/id3v1-2.pk \
-  poke.id3v1/id3v1-3.pk \
-  poke.id3v1/id3v1-4.pk \
-  poke.id3v1/id3v1-5.pk \
-  poke.id3v1/id3v1-6.pk \
-  poke.id3v1/id3v1-7.pk \
-  poke.id3v1/id3v1-8.pk \
-  poke.id3v1/id3v1-9.pk \
   poke.map/map.exp \
   poke.map/ass-map-1.pk \
   poke.map/ass-map-2.pk \
@@ -503,6 +472,11 @@ EXTRA_DIST = \
   poke.map/valmap-struct-2.pk \
   poke.map/valmap-struct-3.pk \
   poke.map/valmap-struct-4.pk \
+  poke.pickles/pickles.exp \
+  poke.pickles/argp-test.pk \
+  poke.pickles/color-test.pk \
+  poke.pickles/id3v1-test.pk \
+  poke.pickles/rgb24-test.pk \
   poke.pkl/pkl.exp \
   poke.pkl/postincr-1.pk \
   poke.pkl/postincr-2.pk \
@@ -1815,41 +1789,8 @@ EXTRA_DIST = \
   poke.pktest/pktest-11.pk \
   poke.pktest/pktest-12.pk \
   poke.repl/repl.exp \
-  poke.rgb24/rgb24.exp \
-  poke.rgb24/rgb24-1.pk \
   poke.std/std.exp \
-  poke.std/atoi-1.pk \
-  poke.std/atoi-2.pk \
-  poke.std/atoi-3.pk \
-  poke.std/atoi-4.pk \
-  poke.std/atoi-5.pk \
-  poke.std/atoi-6.pk \
-  poke.std/atoi-7.pk \
-  poke.std/atoi-8.pk \
-  poke.std/atoi-9.pk \
-  poke.std/atoi-10.pk \
-  poke.std/atoi-11.pk \
-  poke.std/atoi-12.pk \
-  poke.std/atoi-13.pk \
-  poke.std/atoi-14.pk \
-  poke.std/catos-1.pk \
-  poke.std/catos-2.pk \
-  poke.std/catos-3.pk \
-  poke.std/crc32.pk \
-  poke.std/ltrim-1.pk \
-  poke.std/ltrim-2.pk \
-  poke.std/ltrim-3.pk \
-  poke.std/qsort.pk \
-  poke.std/rtrim-1.pk \
-  poke.std/rtrim-2.pk \
-  poke.std/rtrim-3.pk \
-  poke.std/stoca-1.pk \
-  poke.std/stoca-2.pk \
-  poke.std/stoca-3.pk \
-  poke.std/stoca-4.pk \
-  poke.std/strchr-1.pk \
-  poke.std/strchr-2.pk \
-  poke.std/strchr-3.pk \
+  poke.std/std-test.pk \
   poke.time/gettimeofday-1.pk \
   poke.time/time.exp \
   poke.time/time32.pk \

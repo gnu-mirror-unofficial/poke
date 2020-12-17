@@ -1,4 +1,0 @@
-/* { dg-do run } */
-
-/* { dg-command { ltrim ("  a string to trim  ") } } */
-/* { dg-output "a string to trim  " } */

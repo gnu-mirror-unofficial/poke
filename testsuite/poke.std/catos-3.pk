@@ -1,4 +1,0 @@
-/* { dg-do run } */
-
-/* { dg-command { catos (['a','\0','b']) } } */
-/* { dg-output "\"a\"" } */

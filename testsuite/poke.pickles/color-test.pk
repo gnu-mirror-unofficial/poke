@@ -1,0 +1,56 @@
+
+/* Copyright (C) 2020 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load pktest;
+load color;
+
+var tests = [
+  PkTest {
+    name = "colors",
+    func = lambda (string name) void:
+      {
+        assert (color_white == 0);
+        assert (color_name (color_tomato) == "tomato");
+      },
+  },
+  PkTest {
+    name = "registeration",
+    func = lambda (string name) void:
+      {
+        var my_color = color_register;
+
+        assert (color_name (my_color) == "user-defined color");
+      },
+  },
+  PkTest {
+    name = "color_name length",
+    func = lambda (string name) void:
+      {
+        try
+          {
+            color_name (color_num_colors);
+            assert (0, "unreachable reached!");
+          }
+        catch if E_out_of_bounds
+          {
+            assert (1, "incorrect length for `color_name` array");
+          }
+      },
+  },
+];
+
+exit (pktest_run (tests) ? 0 : 1);

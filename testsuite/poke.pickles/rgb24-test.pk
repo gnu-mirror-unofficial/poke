@@ -1,0 +1,34 @@
+
+/* Copyright (C) 2020 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load pktest;
+load rgb24;
+
+var tests = [
+  PkTest {
+    name = "rgb24_color",
+    func = lambda (string name) void:
+      {
+        assert (rgb24_color'length == color_num_colors);
+        assert (rgb24_color[color_tomato] == [255UB,99UB,71UB]);
+        assert (rgb24_color[color_red] == [255UB,0UB,0UB]);
+        assert (rgb24_color[color_blue] == [0UB,0UB,255UB]);
+      },
+  },
+];
+
+exit (pktest_run (tests) ? 0 : 1);

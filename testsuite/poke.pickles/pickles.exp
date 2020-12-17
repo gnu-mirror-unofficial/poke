@@ -1,6 +1,6 @@
-# argp.exp - Tests for teh argp pickle
+# pickles.exp - Tests for pickles
 #
-#   Copyright (C) 2020 Jose E. Marchesi
+#   Copyright (C) 2020 The poke authors
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
 
-load_lib ${tool}-dg.exp
-dg-init
-dg-runtest [lsort [glob -nocomplain $srcdir/poke.argp/*.pk]] {} {}
-dg-finish
+load_lib "poke-pk.exp"
+
+pk-runtest [lsort [glob -nocomplain $srcdir/poke.pickles/*-test.pk]]

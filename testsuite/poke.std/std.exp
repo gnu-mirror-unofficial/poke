@@ -16,7 +16,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
 
-load_lib ${tool}-dg.exp
-dg-init
-dg-runtest [lsort [glob -nocomplain $srcdir/poke.std/*.pk]] {} {}
-dg-finish
+load_lib "poke-pk.exp"
+
+pk-runtest [lsort [glob -nocomplain $srcdir/poke.std/*-test.pk]]

@@ -1,5 +1,21 @@
 2020-12-17  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* testsuite/lib/poke-pk.exp: New file.
+	* testsuite/poke.pickles/pickles.exp: Likewise.
+	* testsuite/poke.pickles/argp-test.pk: New unit test.
+	* testsuite/poke.pickles/color-test.pk: Likewise.
+	* testsuite/poke.pickles/id3v1-test.pk: Likewise.
+	* testsuite/poke.pickles/rgb24-test.pk: Likewise.
+	* testsuite/poke.std/std-test.pk: Likewise.
+	* testsuite/poke.std/std.exp: Re-write to use `poke-pk.exp`.
+	* testsuite/poke.argp/: Remove test directory.
+	* testsuite/poke.color/: Likewise.
+	* testsuite/poke.id3v1/: Likewise.
+	* testsuite/poke.rgb24/: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests, remove old ones.
+
+2020-12-17  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* pickles/pktest.pk: New file.
 	* pickles/Makefile.am (dist_pickles_DATA): Add `pktest.pk`.
 	* testsuite/poke.pktest/pktest.exp: New file.

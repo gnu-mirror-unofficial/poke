@@ -1,0 +1,193 @@
+
+/* Copyright (C) 2020 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load pktest;
+
+var tests = [
+  PkTest {
+    name = "atoi valid inputs",
+    func = lambda (string name) void:
+      {
+        assert (atoi ("0", 2) == 0L);
+        assert (atoi ("1", 2) == 1L);
+        assert (atoi ("111111111", 2) == 511L);
+        assert (atoi ("x", 2) == 0L);
+        assert (atoi ("1111x234", 2) == 15L);
+
+        assert (atoi ("1777", 8) == 1023L);
+
+        assert (atoi ("1777", 10) == 1777L);
+        assert (atoi ("1777") == 1777L);
+
+        assert (atoi ("fce2", 16) == 64738L);
+        assert (atoi ("bEeF", 16) == 48879L);
+        assert (atoi ("deadbeef", 16) == -559038737L);
+      },
+  },
+  PkTest {
+    name = "atoi invalid inputs",
+    func = lambda (string name) void:
+      {
+        try
+          {
+            atoi ("1234", 3);
+            assert (0, "unreachable reached!");
+          }
+        catch if E_generic
+          {
+            assert (1, "expects exception");
+          }
+
+        try
+          {
+            atoi ("deadbeef", 88);
+            assert (0, "unreachable reached!");
+          }
+        catch if E_inval
+          {
+            assert (1, "expects exception");
+          }
+      },
+  },
+  PkTest {
+    name = "catos",
+    func = lambda (string name) void:
+      {
+        assert (catos (['a','b','c']) == "abc");
+        assert (catos (['\0']) == "");
+        assert (catos (['a','\0','b']) == "a");
+      },
+  },
+  PkTest {
+    name = "stoca",
+    func = lambda (string name) void:
+      {
+        var A = [1UB,2UB,3UB,4UB];
+        var array = A[:];
+
+        stoca ("foo", array);
+        assert (array == [102UB, 111UB, 111UB, 0UB]);
+
+        array = A[:];
+        stoca("", array);
+        assert (array == [0UB,0UB,0UB,0UB]);
+
+        array = A[:];
+        stoca ("foo", array, 'x');
+        assert (array == [102UB,111UB,111UB,120UB]);
+
+        try
+          {
+            array = A[:];
+            stoca ("foooo", array);
+            assert (0, "unreachable reached!");
+          }
+        catch if E_out_of_bounds
+          {
+            assert (1);
+          }
+      },
+  },
+  PkTest {
+    name = "strchr",
+    func = lambda (string name) void:
+      {
+        assert (strchr ("foo", 'o') == 1);
+        assert (strchr ("foo", 'x') == 3);
+        assert (strchr ("", 'x') == 0);
+      },
+  },
+  PkTest {
+    name = "crc32",
+    func = lambda (string name) void:
+      {
+        assert (crc32 ([0x01UB, 0x02UB, 0x03UB, 0x04UB, 0x05UB, 0x06UB,
+                        0x07UB, 0x08UB]) == 0x3fca88c5U);
+      },
+  },
+  PkTest {
+    name = "ltrim",
+    func = lambda (string name) void:
+      {
+        assert (ltrim ("  a string to trim  ") == "a string to trim  ");
+        assert (ltrim (",1,2,3,", ",") == "1,2,3,");
+        assert (ltrim (".,1,2,3.,", ",.") == "1,2,3.,");
+      },
+  },
+  PkTest {
+    name = "rtrim",
+    func = lambda (string name) void:
+      {
+        assert (rtrim ("  a string to trim  ") == "  a string to trim");
+        assert (rtrim (",1,2,3,", ",") == ",1,2,3");
+        assert (rtrim (",.1,2,3,.", ",.") == ",.1,2,3");
+      },
+  },
+  PkTest {
+    name = "qsort",
+    func = lambda (string name) void:
+      {
+        fun cmpints = (any a, any b) int:
+          {
+            var ai = a as int;
+            var bi = b as int;
+
+            if (ai == bi)
+              return 0;
+            else if (ai < bi)
+              return -1;
+            else
+              return 1;
+          }
+
+        /* sort data in memory */
+        {
+          var data = open("*data*");
+          var end = get_endian;
+          var a = int[4] @ 0#B;
+
+          uint<8>[16] @ data : 0#B = [
+            0x00UB, 0x00UB, 0x00UB, 0x30UB, 0x00UB, 0x00UB, 0x00UB, 0x00UB,
+            0x00UB, 0x00UB, 0x00UB, 0x20UB, 0x00UB, 0x00UB, 0x00UB, 0x10UB,
+          ];
+          set_endian (ENDIAN_BIG);
+
+          assert (a == [0x30, 0x00, 0x20, 0x10]);
+          qsort (a, cmpints);
+          assert (a == [0x00, 0x10, 0x20, 0x30]);
+          assert ((uint<8>[16] @ data : 0#B) ==
+                  [0x00UB, 0x00UB, 0x00UB, 0x00UB,
+                   0x00UB, 0x00UB, 0x00UB, 0x10UB,
+                   0x00UB, 0x00UB, 0x00UB, 0x20UB,
+                   0x00UB, 0x00UB, 0x00UB, 0x30UB]);
+
+          set_endian (end);
+          close (data);
+        }
+
+        var b = [2,3,1,0];
+
+        qsort (b, cmpints);
+        assert (b == [0, 1, 2, 3]);
+
+        /* sort an r-value (useless) */
+        qsort ([4,3,2,1], cmpints);
+      },
+  },
+];
+
+exit (pktest_run (tests) ? 0 : 1);
