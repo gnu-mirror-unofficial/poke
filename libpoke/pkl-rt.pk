@@ -36,6 +36,8 @@ fun term_get_color = int<32>: __PKL_BUILTIN_TERM_GET_COLOR__;
 fun term_set_color = (int<32> color) void: __PKL_BUILTIN_TERM_SET_COLOR__;
 fun term_get_bgcolor = int<32>: __PKL_BUILTIN_TERM_GET_BGCOLOR__;
 fun term_set_bgcolor = (int<32> color) void: __PKL_BUILTIN_TERM_SET_BGCOLOR__;
+fun term_begin_class = (string class) void: __PKL_BUILTIN_TERM_BEGIN_CLASS__;
+fun term_end_class = (string class) void: __PKL_BUILTIN_TERM_END_CLASS__;
 
 var ENDIAN_LITTLE = 0;
 var ENDIAN_BIG = 1;

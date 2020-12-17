@@ -1430,6 +1430,8 @@ pkl_ast_node pkl_ast_make_incrdecr (pkl_ast ast,
 #define PKL_AST_BUILTIN_TERM_GET_BGCOLOR 16
 #define PKL_AST_BUILTIN_TERM_SET_BGCOLOR 17
 #define PKL_AST_BUILTIN_TERM_RGB_TO_COLOR 18
+#define PKL_AST_BUILTIN_TERM_BEGIN_CLASS 19
+#define PKL_AST_BUILTIN_TERM_END_CLASS 20
 
 struct pkl_ast_comp_stmt
 {

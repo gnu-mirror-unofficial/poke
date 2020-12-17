@@ -694,6 +694,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1); /* green */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 2); /* blue */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RGBTOC);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
           break;
         case PKL_AST_BUILTIN_TERM_GET_COLOR:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOC);
@@ -710,6 +711,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
         case PKL_AST_BUILTIN_TERM_SET_BGCOLOR:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOBC);
+          break;
+        case PKL_AST_BUILTIN_TERM_BEGIN_CLASS:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BEGINSC);
+          break;
+        case PKL_AST_BUILTIN_TERM_END_CLASS:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ENDSC);
           break;
         default:
           assert (0);
