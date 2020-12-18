@@ -144,4 +144,4 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 const struct pk_cmd editor_cmd =
-  {"editor", "", "", 0, NULL, pk_cmd_editor, ".editor", NULL};
+  {"editor", "", "", 0, NULL, NULL, pk_cmd_editor, ".editor", NULL};

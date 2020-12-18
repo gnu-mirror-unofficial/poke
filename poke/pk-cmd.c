@@ -60,7 +60,7 @@ extern const struct pk_cmd doc_cmd; /* pk-cmd-misc.c */
 extern const struct pk_cmd jmd_cmd; /* pk-cmd-misc.c */
 extern const struct pk_cmd help_cmd; /* pk-cmd-help.c */
 extern const struct pk_cmd vm_cmd; /* pk-cmd-vm.c  */
-extern const struct pk_cmd set_cmd; /* pk-cmd-set.c */
+extern struct pk_cmd set_cmd; /* pk-cmd-set.c */
 extern const struct pk_cmd editor_cmd; /* pk-cmd-editor.c */
 extern const struct pk_cmd map_cmd; /* pk-cmd-map.c */
 
@@ -767,6 +767,7 @@ pk_cmd_init (void)
   /* The set_cmds are built dynamically.  */
   pk_cmd_set_init ();
   set_trie = pk_trie_from_cmds (set_cmds);
+  set_cmd.subcommands = set_cmds;
 
   /* Compile commands written in Poke.  */
   if (!pk_load (poke_compiler, "pk-cmd"))
@@ -812,22 +813,104 @@ pk_cmd_get_next_match (const char *text, size_t len)
   return NULL;
 }
 
+/* Given a string with the form:
 
-/* Search for a command which matches cmdname.
- Returns NULL if no such command exists.  */
+   .CMD SUBCMD SUBCMD ...
+
+   Search for the corresponding command.  Returns NULL if no such
+   command exists.  */
+
+static const struct pk_cmd *
+pk_cmd_find_1 (const struct pk_cmd *prev_cmd,
+               const char *str,
+               struct pk_trie *trie,
+               const struct pk_cmd **cmds)
+{
+  const char *p;
+  const struct pk_cmd *cmd;
+  char cmd_name[MAX_CMD_NAME];
+
+  p = str;
+
+  /* Get the command name.  */
+  memset (cmd_name, 0, MAX_CMD_NAME);
+  for (int i = 0; isalnum (*p) || *p == '_' || *p == '-' || *p == ':';)
+    {
+      if (i >= MAX_CMD_NAME - 1)
+        return NULL;
+      cmd_name[i++] = *(p++);
+    }
+
+  /* Look for the command in the cmds table.  */
+  cmd = NULL;
+  for (const struct pk_cmd **c = cmds;
+       *c != &null_cmd;
+       c++)
+    {
+      if (STREQ (cmd_name, (*c)->name))
+        cmd = *c;
+    }
+
+  /* Now give a chance to the trie if this is not the last subcommand
+     in the given string.  */
+  if (!cmd && *p != '\0')
+    cmd = pk_trie_get_cmd (trie, cmd_name);
+
+  if (!cmd)
+    return prev_cmd;
+
+  /* skip user flags.  */
+  if (*p == '/')
+    {
+      p++;
+      while (isalpha (*p))
+        p++;
+    }
+
+  p = skip_blanks (p);
+  if (*p == '\0')
+    return cmd;
+
+  if (cmd->subcommands != NULL)
+    return pk_cmd_find_1 (cmd, p,
+                          *cmd->subtrie, cmd->subcommands);
+  else
+    return cmd;
+}
+
 const struct pk_cmd *
 pk_cmd_find (const char *cmdname)
 {
-  if (cmdname != NULL)
+  if (*cmdname == '\0')
+    return NULL;
+
+  return pk_cmd_find_1 (NULL /* prev_cmd */,
+                        cmdname + 1, /* Skip leading `.' */
+                        cmds_trie,
+                        dot_cmds);
+}
+
+char *
+pk_cmd_completion_function (const struct pk_cmd **cmds,
+                            const char *x, int state)
+{
+  static int idx = 0;
+  if (state == 0)
+    idx = 0;
+  else
+    ++idx;
+
+  size_t len = strlen (x);
+  while (1)
     {
-      const struct pk_cmd **c;
-      for (c = dot_cmds; *c != &null_cmd; ++c)
-        {
-          /* Check if the command name matches.
-             +1 to skip the leading '.' */
-          if (STREQ ((*c)->name, cmdname + 1))
-            return *c;
-        }
+      if (cmds[idx] == &null_cmd)
+        break;
+
+      if (strncmp (cmds[idx]->name, x, len) == 0)
+        return xstrdup (cmds[idx]->name);
+
+      idx++;
     }
+
   return NULL;
 }

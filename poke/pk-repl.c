@@ -55,7 +55,7 @@ static int volatile ctrlc_buf_valid;
 
    On each call, the function returns a potential completion.  It
    returns NULL to indicate that there are no more possibilities left. */
-static char *
+char *
 poke_completion_function (const char *text, int state)
 {
   /* First try to complete with "normal" commands.  */
@@ -127,24 +127,23 @@ static int
 poke_getc (FILE *stream)
 {
   char *line_to_point = xstrndup (rl_line_buffer, rl_point ? rl_point - 1 : 0);
-  char *tok = strtok (line_to_point, "\t ");
-  const struct pk_cmd *cmd = pk_cmd_find (tok);
+  const struct pk_cmd *cmd = NULL;
+  char *begin = line_to_point;
 
+  while (isblank (*begin))
+    begin++;
+  cmd = pk_cmd_find (begin);
   free (line_to_point);
 
-  if (cmd == NULL)
+  if (cmd)
+    {
+      if (cmd->completer)
+        rl_completion_entry_function = cmd->completer;
+      else
+        rl_completion_entry_function = null_completion_function;
+    }
+  else
     rl_completion_entry_function = poke_completion_function;
-
-   if (rl_completion_entry_function == poke_completion_function)
-     {
-       if (cmd)
-         {
-           if (cmd->completer)
-             rl_completion_entry_function = cmd->completer;
-           else
-             rl_completion_entry_function = null_completion_function;
-         }
-     }
 
   int c =  rl_getc (stream);
 

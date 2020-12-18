@@ -185,7 +185,7 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 const struct pk_cmd set_error_on_warning_cmd =
-  {"error-on-warning", "s?", "", 0, NULL, pk_cmd_set_error_on_warning,
+  {"error-on-warning", "s?", "", 0, NULL, NULL, pk_cmd_set_error_on_warning,
    "set error-on-warning (yes|no)", NULL};
 
 const struct pk_cmd **set_cmds;
@@ -193,26 +193,7 @@ const struct pk_cmd **set_cmds;
 static char *
 set_completion_function (const char *x, int state)
 {
-  static int idx = 0;
-  if (state == 0)
-    idx = 0;
-  else
-    ++idx;
-
-  int len = strlen (x);
-  for (;;)
-    {
-      const struct pk_cmd *c = set_cmds[idx];
-      if (c == &null_cmd)
-        break;
-
-      if (strncmp (c->name, x, len) == 0)
-        return xstrdup (c->name);
-
-      idx++;
-    }
-
-  return NULL;
+  return pk_cmd_completion_function (set_cmds, x, state);
 }
 
 void
@@ -260,6 +241,7 @@ pk_cmd_set_init ()
       cmd->usage = xstrdup (pk_string_str (setting_usage));
       cmd->uflags = "";
       cmd->flags = 0;
+      cmd->subcommands = NULL;
       cmd->subtrie = NULL;
 
       if (pk_int_value (setting_kind) == pk_int_value (setting_int))
@@ -289,5 +271,6 @@ pk_cmd_set_init ()
 
 struct pk_trie *set_trie;
 
-const struct pk_cmd set_cmd =
-  {"set", "", "", 0, &set_trie, pk_cmd_set_dump, "", set_completion_function};
+struct pk_cmd set_cmd =
+  {"set", "", "", 0, NULL /* set in pk-cmd.c */, &set_trie,
+   pk_cmd_set_dump, "", set_completion_function};

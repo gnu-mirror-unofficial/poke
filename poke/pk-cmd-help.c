@@ -44,4 +44,4 @@ pk_cmd_help (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 const struct pk_cmd help_cmd =
-  {"help", "s?", "", 0, NULL, pk_cmd_help, ".help [TOPIC]", NULL};
+  {"help", "s?", "", 0, NULL, NULL, pk_cmd_help, ".help [TOPIC]", NULL};

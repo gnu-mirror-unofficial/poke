@@ -71,6 +71,7 @@ struct pk_cmd
   /* A value composed of or-ed PK_CMD_F_* flags.  See above.  */
   int flags;
   /* Subcommands.  */
+  const struct pk_cmd **subcommands;
   struct pk_trie **subtrie;
   /* Function implementing the command.  */
   pk_cmd_fn handler;
@@ -102,5 +103,8 @@ void pk_cmd_shutdown (void);
 char *pk_cmd_get_next_match (const char *x, size_t len);
 
 const struct pk_cmd *pk_cmd_find (const char *cmdname);
+
+char *pk_cmd_completion_function (const struct pk_cmd **cmds,
+                                  const char *x, int state);
 
 #endif /* ! PK_H_CMD */

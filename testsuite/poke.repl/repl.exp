@@ -41,6 +41,21 @@ poke_start
 poke_send ".e\t\t" "\r\n.editor  .exit *\r\n$poke_prompt .e"
 poke_exit
 
+set test "tab-completion-3"
+poke_start
+poke_send ".vm d\t" ".vm disassemble"
+poke_exit
+
+set test "tab-completion-4"
+poke_start
+poke_send ".vm di\t" ".vm disassemble"
+poke_exit
+
+set test "tab-completion-5"
+poke_start
+poke_send "   .vm d e\t" "   .vm d expression"
+poke_exit
+
 set test "tab-completion-subcommand-1"
 poke_start
 poke_send ".set oba\t" ".set obase"
@@ -61,6 +76,11 @@ for {set index 0}  {$index < 12}  {incr index} {
     file delete $fname
 }
 poke_send ".ios #1\t\t" "#1   #10  #11"
+poke_exit
+
+set test "tab-completion-info-1"
+poke_start
+poke_send ".info type Pk_D\t" ".info type Pk_Dump_Offset"
 poke_exit
 
 set test "sigint-returns-to-prompt-1"

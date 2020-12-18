@@ -38,4 +38,9 @@ void pk_repl_display_end (void);
 
 void pk_repl_insert (const char *str);
 
+/* Autocompletion function for Poke artifacts (variables, types,
+   functions, units).  */
+
+char *poke_completion_function (const char *text, int state);
+
 #endif /* ! PK_REPL_H */

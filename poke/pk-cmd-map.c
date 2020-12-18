@@ -419,17 +419,17 @@ pk_cmd_info_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static char *
-map_completion_function (const char *x, int state)
+info_maps_completion_function (const char *x, int state)
 {
   return pk_ios_completion_function (poke_compiler, x, state);
 }
 
 const struct pk_cmd map_entry_add_cmd =
-  {"add", "s,s,?t", 0, 0, NULL, pk_cmd_map_entry_add, "add MAPNAME, VARNAME [,#IOS]",
+  {"add", "s,s,?t", "", 0, NULL, NULL, pk_cmd_map_entry_add, "add MAPNAME, VARNAME [,#IOS]",
    NULL};
 
 const struct pk_cmd map_entry_remove_cmd =
-  {"remove", "s,s,?t", 0, 0, NULL, pk_cmd_map_entry_remove, "remove MAPNAME, VARNAME [,#IOS]",
+  {"remove", "s,s,?t", "", 0, NULL, NULL, pk_cmd_map_entry_remove, "remove MAPNAME, VARNAME [,#IOS]",
    NULL};
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
@@ -441,31 +441,38 @@ const struct pk_cmd *map_entry_cmds[] =
   &null_cmd,
 };
 
+static char *
+map_entry_completion_function (const char *x, int state)
+{
+  return pk_cmd_completion_function (map_entry_cmds, x, state);
+}
+
 struct pk_trie *map_trie;
 struct pk_trie *map_entry_trie;
 
 const struct pk_cmd map_entry_cmd =
-  {"entry", "", 0, 0, &map_entry_trie, NULL, "map entry (add|remove)", NULL};
+  {"entry", "", "", 0,  map_entry_cmds, &map_entry_trie, NULL, "map entry (add|remove)",
+   map_entry_completion_function};
 
 const struct pk_cmd map_create_cmd =
-  {"create", "s,?t", 0, 0, NULL, pk_cmd_map_create, "create MAPNAME [,#IOS]",
+  {"create", "s,?t", "", 0, NULL, NULL, pk_cmd_map_create, "create MAPNAME [,#IOS]",
    NULL};
 
 const struct pk_cmd map_remove_cmd =
-  {"remove", "s,?t", 0, 0, NULL, pk_cmd_map_remove, "remove MAPNAME [,#IOS]",
+  {"remove", "s,?t", "", 0, NULL, NULL, pk_cmd_map_remove, "remove MAPNAME [,#IOS]",
    NULL};
 
 const struct pk_cmd map_show_cmd =
-  {"show", "s,?t", 0, 0, NULL, pk_cmd_map_show, "show MAPNAME [,#IOS]",
+  {"show", "s,?t", "", 0, NULL, NULL, pk_cmd_map_show, "show MAPNAME [,#IOS]",
    NULL};
 
 const struct pk_cmd map_load_cmd =
-  {"load", "s,?t", 0, PK_CMD_F_REQ_IO, NULL, pk_cmd_map_load, "load MAPNAME [,#IOS]",
+  {"load", "s,?t", "", PK_CMD_F_REQ_IO, NULL, NULL, pk_cmd_map_load, "load MAPNAME [,#IOS]",
    /* XXX use a completion function for maps.  */
    rl_filename_completion_function};
 
 const struct pk_cmd map_save_cmd =
-  {"save", "?f", 0, 0, NULL, pk_cmd_map_save, "save [FILENAME]",
+  {"save", "?f", "", 0, NULL, NULL, pk_cmd_map_save, "save [FILENAME]",
    rl_filename_completion_function};
 
 const struct pk_cmd *map_cmds[] =
@@ -479,10 +486,16 @@ const struct pk_cmd *map_cmds[] =
   &null_cmd,
 };
 
+static char *
+map_completion_function (const char *x, int state)
+{
+  return pk_cmd_completion_function (map_cmds, x, state);
+}
+
 const struct pk_cmd map_cmd =
-  {"map", "", "", 0, &map_trie, NULL, "map (create|show|entry|load|save)",
-   NULL};
+  {"map", "", "", 0, map_cmds, &map_trie, NULL, "map (create|show|entry|load|save)",
+   map_completion_function};
 
 const struct pk_cmd info_maps_cmd =
-  {"maps", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_info_maps, "info maps",
-   map_completion_function};
+  {"maps", "?t", "", PK_CMD_F_REQ_IO, NULL, NULL, pk_cmd_info_maps, "info maps",
+   info_maps_completion_function};

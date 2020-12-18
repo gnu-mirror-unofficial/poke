@@ -1,5 +1,22 @@
 2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd.h: Prototype for pk_cmd_completion_function.
+	* poke/pk-cmd.c: Fix pk_cmd_find and export
+	pk_cmd_completion_function.
+	* poke/pk-repl.c: Adapt to new pk_cmd_find.
+	* poke/pk-cmd-def.c: Fix auto-complete.
+	* poke/pk-cmd-editor.c: Likewise.
+	* poke/pk-cmd-help.c: Likewise.
+	* poke/pk-cmd-info.c: Likewise.
+	* poke/pk-cmd-ios.c: Likewise.
+	* poke/pk-cmd-map.c: Likewise.
+	* poke/pk-cmd-misc.c: Likewise.
+	* poke/pk-cmd-set.c: Likewise.
+	* poke/pk-cmd-vm.c: Likewise.
+	* testsuite/poke.repl/repl.exp: Few more auto-completion tests.
+
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.mi-json/mi-json.c (test_json_file): When libjson
 	is not modern enough, report the test as `untested' and not as
 	`unresolved'.

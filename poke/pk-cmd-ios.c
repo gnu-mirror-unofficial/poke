@@ -523,34 +523,37 @@ ios_completion_function (const char *x, int state)
 }
 
 const struct pk_cmd ios_cmd =
-  {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};
+  {"ios", "t", "", 0, NULL, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};
 
 const struct pk_cmd file_cmd =
-  {"file", "f", PK_FILE_UFLAGS, 0, NULL, pk_cmd_file, "file FILE-NAME",
+  {"file", "f", PK_FILE_UFLAGS, 0, NULL, NULL, pk_cmd_file, "file FILE-NAME",
    rl_filename_completion_function};
 
 const struct pk_cmd proc_cmd =
-  {"proc", "i", PK_PROC_UFLAGS, 0, NULL, pk_cmd_proc, "proc PID", NULL};
+  {"proc", "i", PK_PROC_UFLAGS, 0, NULL, NULL, pk_cmd_proc, "proc PID", NULL};
 
 const struct pk_cmd sub_cmd =
-  {"sub", "t,i,i,?s", "", 0, NULL, pk_cmd_sub, "sub IOS, BASE, SIZE, [NAME]", NULL};
+  {"sub", "t,i,i,?s", "", 0, NULL, NULL, pk_cmd_sub, "sub IOS, BASE, SIZE, [NAME]", NULL};
 
 const struct pk_cmd mem_cmd =
-  {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
+  {"mem", "s", "", 0, NULL, NULL, pk_cmd_mem, "mem NAME", NULL};
 
 #ifdef HAVE_LIBNBD
 const struct pk_cmd nbd_cmd =
-  {"nbd", "s", "", 0, NULL, pk_cmd_nbd, "nbd URI", NULL};
+  {"nbd", "s", "", 0, NULL, NULL, pk_cmd_nbd, "nbd URI", NULL};
 #endif
 
 const struct pk_cmd close_cmd =
-  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, pk_cmd_close, "close [#ID]", ios_completion_function};
+  {"close", "?t", "", PK_CMD_F_REQ_IO, NULL, NULL, pk_cmd_close,
+   "close [#ID]", ios_completion_function};
 
 const struct pk_cmd info_ios_cmd =
-  {"ios", "", "", 0, NULL, pk_cmd_info_ios, "info ios", NULL};
+  {"ios", "", "", 0, NULL, NULL, pk_cmd_info_ios, "info ios", NULL};
 
 const struct pk_cmd load_cmd =
-  {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILE-NAME", rl_filename_completion_function};
+  {"load", "f", "", 0, NULL, NULL, pk_cmd_load_file, "load FILE-NAME",
+   rl_filename_completion_function};
 
 const struct pk_cmd source_cmd =
-  {"source", "f", "", 0, NULL, pk_cmd_source_file, "source FILE-NAME", rl_filename_completion_function};
+  {"source", "f", "", 0, NULL, NULL, pk_cmd_source_file,
+   "source FILE-NAME", rl_filename_completion_function};

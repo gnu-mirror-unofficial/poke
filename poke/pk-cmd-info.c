@@ -19,7 +19,6 @@
 #include <config.h>
 #include "pk-cmd.h"
 #include "pk-utils.h"
-#include "xalloc.h"
 
 extern struct pk_cmd null_cmd;       /* pk-cmd.c  */
 extern struct pk_cmd info_ios_cmd;   /* pk-cmd-ios.c  */
@@ -45,30 +44,9 @@ struct pk_trie *info_trie;
 static char *
 info_completion_function (const char *x, int state)
 {
-  static int idx = 0;
-  if (state == 0)
-    idx = 0;
-  else
-    ++idx;
-
-  size_t len = strlen (x);
-  while (1)
-    {
-      const struct pk_cmd **c = info_cmds + idx;
-
-      if (*c == &null_cmd)
-        break;
-
-      if (strncmp ((*c)->name, x, len) == 0)
-        return xstrdup ((*c)->name);
-
-      idx++;
-    }
-
-  return NULL;
+  return pk_cmd_completion_function (info_cmds, x, state);
 }
 
-
 const struct pk_cmd info_cmd =
-  {"info", "", "", 0, &info_trie, NULL, "info (ios|maps|variables|functions|types|type)",
+  {"info", "", "", 0, info_cmds, &info_trie, NULL, "info (ios|maps|variables|functions|types|type)",
    info_completion_function};

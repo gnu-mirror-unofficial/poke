@@ -229,16 +229,16 @@ doc_completion_function (const char *x, int state)
 
 
 const struct pk_cmd quit_cmd =
-  {"quit", "?i", "", 0, NULL, pk_cmd_exit, "quit [CODE]", NULL};
+  {"quit", "?i", "", 0, NULL, NULL, pk_cmd_exit, "quit [CODE]", NULL};
 
 const struct pk_cmd exit_cmd =
-  {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]", NULL};
+  {"exit", "?i", "", 0, NULL, NULL, pk_cmd_exit, "exit [CODE]", NULL};
 
 const struct pk_cmd version_cmd =
-  {"version", "", "", 0, NULL, pk_cmd_version, "version", NULL};
+  {"version", "", "", 0, NULL, NULL, pk_cmd_version, "version", NULL};
 
 const struct pk_cmd jmd_cmd =
-  {"jmd", "", "", 0, NULL, pk_cmd_jmd, "jmd", NULL};
+  {"jmd", "", "", 0, NULL, NULL, pk_cmd_jmd, "jmd", NULL};
 
 const struct pk_cmd doc_cmd =
-  {"doc", "?s", "", 0, NULL, pk_cmd_doc, "doc [section]", doc_completion_function};
+  {"doc", "?s", "", 0, NULL, NULL, pk_cmd_doc, "doc [section]", doc_completion_function};
