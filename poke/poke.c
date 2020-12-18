@@ -437,7 +437,7 @@ parse_args_2 (int argc, char *argv[])
                return.  */
             set_script_args (argc, argv);
             if (pk_compile_file (poke_compiler, optarg, &exit_status) != PK_OK)
-              goto exit_success;
+              goto exit_failure;
 
             finalize ();
             exit (exit_status);

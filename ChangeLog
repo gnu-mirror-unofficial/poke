@@ -1,3 +1,8 @@
+2020-12-18  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* poke/poke.c (parse_args_2): Go to `exit_failure` when
+	`pk_compile_file` fails.
+
 2020-12-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pickles/color-test.pk: Fix typo.
