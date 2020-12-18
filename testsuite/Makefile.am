@@ -608,6 +608,8 @@ EXTRA_DIST = \
   poke.pkl/ass-7.pk \
   poke.pkl/ass-8.pk \
   poke.pkl/ass-9.pk \
+  poke.pkl/ass-10.pk \
+  poke.pkl/ass-11.pk \
   poke.pkl/ass-diag-1.pk \
   poke.pkl/ass-diag-2.pk \
   poke.pkl/ass-diag-3.pk \

@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+var a = int[2]();
+var i = 0UL;
+
+/* { dg-command {a[i++] = 1 } } */
+/* { dg-command {a[i++] = 2 } } */
+/* { dg-command {a} } */
+/* { dg-output "\\\[1,2\\\]" } */

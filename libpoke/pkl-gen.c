@@ -2308,25 +2308,33 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_trimmer)
 PKL_PHASE_END_HANDLER
 
 /*
+ * INDEXER
  * | INDEXER_ENTITY
  * | INDEXER_INDEX
- * INDEXER
  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_indexer)
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_indexer)
 {
+  pkl_ast_node indexer = PKL_PASS_NODE;
+  pkl_ast_node indexer_entity = PKL_AST_INDEXER_ENTITY (indexer);
+  pkl_ast_node indexer_index = PKL_AST_INDEXER_INDEX (indexer);
+
+  /* Traverse the entity and indexer in normal context.  */
+  PKL_GEN_PUSH_CONTEXT;
+  PKL_PASS_SUBPASS (indexer_entity);
+  PKL_PASS_SUBPASS (indexer_index);
+  PKL_GEN_POP_CONTEXT;
 
   if (PKL_PASS_PARENT == NULL
       && PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_LVALUE))
     {
       /* This is a l-value in an assignment.  The array and the index
-         are pushed to the stack for the ass_stmt PS handler.  Nothing
+         are pushed to the stack for the ass_stmt PR handler.  Nothing
          else to do here.  Note that analf guarantees that the entity
          in this indexer is an array, not a string.  */
     }
   else
     {
-      pkl_ast_node indexer = PKL_PASS_NODE;
       pkl_ast_node indexer_type = PKL_AST_TYPE (indexer);
       pkl_ast_node container = PKL_AST_INDEXER_ENTITY (indexer);
       pkl_ast_node container_type = PKL_AST_TYPE (container);
@@ -2359,6 +2367,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_indexer)
           assert (0);
         }
     }
+
+  PKL_PASS_BREAK;
 }
 PKL_PHASE_END_HANDLER
 
@@ -4124,7 +4134,7 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PR_HANDLER (PKL_AST_ARRAY, pkl_gen_pr_array),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_gen_ps_array),
    PKL_PHASE_PR_HANDLER (PKL_AST_TRIMMER, pkl_gen_pr_trimmer),
-   PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_gen_ps_indexer),
+   PKL_PHASE_PR_HANDLER (PKL_AST_INDEXER, pkl_gen_pr_indexer),
    PKL_PHASE_PR_HANDLER (PKL_AST_ARRAY_INITIALIZER, pkl_gen_pr_array_initializer),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY_INITIALIZER, pkl_gen_ps_array_initializer),
    PKL_PHASE_PR_HANDLER (PKL_AST_STRUCT, pkl_gen_pr_struct),
