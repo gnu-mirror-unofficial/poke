@@ -139,6 +139,23 @@ var tests = [
       },
   },
   PkTest {
+    name = "reverse",
+    func = lambda (string name) void:
+      {
+        var empty = int[]();
+        var a = [1];
+        var b = [1,2];
+        var c = [1,2,3];
+        var d = [[1],[2]];
+
+        reverse (empty); assert (empty == int[]());
+        reverse (a); assert (a == [1]);
+        reverse (b); assert (b == [2,1]);
+        reverse (c); assert (c == [3,2,1]);
+        reverse (d); assert (d == [[2],[1]]);
+      },
+  },
+  PkTest {
     name = "qsort",
     func = lambda (string name) void:
       {

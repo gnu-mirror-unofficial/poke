@@ -1,3 +1,12 @@
+2020-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/std.pk (reverse): New function.
+	* testsuite/poke.std/std-test.pk: Tests for `reverse'.
+	* doc/poke.texi (Array Functions): New section.
+	(reverse): New subsection.
+	* testsuite/lib/poke-pk.exp (tap_execute): Do not style output
+	when running pktests.
+
 2020-12-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_indexer): Make sure to traverse

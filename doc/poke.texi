@@ -198,6 +198,7 @@ The Standard Library
 * Standard Offset Types::	off64 and the like.
 * Standard Units::		b, B, Kb and the like.
 * Conversion Functions::	catos, atoi, @i{etc}.
+* Array Functions::             Functions which deal with arrays.
 * String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
@@ -10277,6 +10278,7 @@ srand (get_time[1])
 * Standard Offset Types::	off64 and the like.
 * Standard Units::		b, B, Kb and the like.
 * Conversion Functions::	catos, atoi, @i{etc}.
+* Array Functions::             Functions which deal with arrays.
 * String Functions::		Functions which deal with strings.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
@@ -10449,6 +10451,30 @@ after the parsed integer.  Thus, this works:
 (poke) atoi ("10foo")
 10L
 @end example
+
+@node Array Functions
+@section Array Functions
+@cindex array functions
+
+The Poke standard library provides the following functions to do work
+on arrays:
+
+@menu
+* reverse::		Reverse the elements of a given array.
+@end menu
+
+@node reverse
+@subsection @code{reverse}
+@cindex @code{reverse}
+
+The standard function @code{reverse} provides the following interface:
+
+@example
+fun reverse = (any[] a) void:
+@end example
+
+@noindent
+It reverses the elements of the given array.
 
 @node String Functions
 @section String Functions

@@ -125,6 +125,26 @@ fun atoi = (string s, int b = 10) long:
     return result;
   }
 
+/*** Array functions.  */
+
+/* Reverse the given array.  */
+
+fun reverse = (any[] a) void:
+{
+  if (a'length == 0)
+    return;
+
+  var l = 0;
+  var h = a'length - 1;
+
+  while (h > l)
+  {
+    var tmp = a[l];
+    a[l++] = a[h];
+    a[h--] = tmp;
+  }
+}
+
 /*** String functions.  */
 
 /* Return the index in the string S of the first occurence of the
