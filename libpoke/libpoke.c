@@ -655,6 +655,27 @@ pk_decl_val (pk_compiler pkc, const char *name)
   return pvm_env_lookup (runtime_env, back, over);
 }
 
+void
+pk_decl_set_val (pk_compiler pkc, const char *name, pk_val val)
+{
+  pkl_env compiler_env = pkl_get_env (pkc->compiler);
+  pvm_env runtime_env = pvm_get_env (pkc->vm);
+  int back, over;
+  pkl_ast_node decl = pkl_env_lookup (compiler_env,
+                                      PKL_ENV_NS_MAIN,
+                                      name,
+                                      &back, &over);
+
+  pkc->status = PK_OK;
+
+  if (decl == NULL
+      || (PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_VAR
+          && PKL_AST_DECL_KIND (decl) != PKL_AST_DECL_KIND_FUNC))
+    return;
+
+  pvm_env_set_var (runtime_env, back, over, val);
+}
+
 int
 pk_defvar (pk_compiler pkc, const char *varname, pk_val val)
 {

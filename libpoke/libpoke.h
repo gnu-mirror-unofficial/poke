@@ -373,6 +373,15 @@ int pk_decl_p (pk_compiler pkc, const char *name, int kind) LIBPOKE_API;
 
 pk_val pk_decl_val (pk_compiler pkc, const char *name) LIBPOKE_API;
 
+/* Given the name of a variable declared in the compiler, set a new
+   value to it.
+
+   If there is no varaible defined with NAME, then this is a
+   no-operation.  */
+
+void pk_decl_set_val (pk_compiler pkc, const char *name, pk_val val)
+  LIBPOKE_API;
+
 /* Declare a variable in the global environment of the given
    incremental compiler.
 

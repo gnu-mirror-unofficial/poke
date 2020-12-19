@@ -1,3 +1,8 @@
+2020-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h: Prototype for pk_decl_set_val.
+	* libpoke/libpoke.c (pk_decl_set_val): New function.
+
 2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y (struct_type_specifier): Fix the unit of
