@@ -1,3 +1,15 @@
+2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-hserver.pk: New file.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-hserver.pk.
+	* poke/pk-hserver.c (pk_hserver_init): Load pk-hserver.pk.
+	(pk_hserver_port): Get the value of the port from the poke value.
+	Turn pk_hserver_port and pk_hserver_tokens into pk values.
+	(pk_hserver_get_token): Rewrite to use the hserver_get_token.
+	(pk_hserver_token): New function.
+	(pk_hserver_make_hyperlink): Rewrite to call the Poke code.
+	(pk_hserver_start): Rename from pk_hserver_init.
+
 2020-12-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h: Prototype for pk_decl_set_val.

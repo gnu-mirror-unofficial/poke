@@ -21,8 +21,11 @@
 
 #include <config.h>
 
-/* Initialize and finalize the server.  */
+/* Initialize the server.  */
 void pk_hserver_init (void);
+
+/* Start and shutdown the server.  */
+void pk_hserver_start (void);
 void pk_hserver_shutdown (void);
 
 /* Get a new token.  */

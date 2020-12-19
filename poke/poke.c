@@ -557,8 +557,9 @@ initialize (int argc, char *argv[])
                     && !poke_mi_p);
 
   /* Initialize and start the terminal hyperlinks server.  */
+  pk_hserver_init ();
   if (poke_hserver_p)
-    pk_hserver_init ();
+    pk_hserver_start ();
 #endif
 
   /* Initialize the documentation viewer.  */

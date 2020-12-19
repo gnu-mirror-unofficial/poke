@@ -77,6 +77,7 @@ endif
 if HSERVER
   poke_SOURCES += pk-hserver.h pk-hserver.c
   poke_LDADD += -lpthread
+  dist_pkgdata_DATA += pk-hserver.pk
 endif
 
 # nodelist is reated by doc/Makefile.am.

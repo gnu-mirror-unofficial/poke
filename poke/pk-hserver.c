@@ -31,7 +31,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <assert.h>
+#include "xalloc.h"
 
+#include "libpoke.h"
 #include "poke.h"
 
 #include "pk-cmd.h"
@@ -49,7 +51,7 @@ static pthread_t hserver_thread;
 static int hserver_socket;
 
 /* Port where the server listens for connections.  */
-static int hserver_port = 0;
+pk_val hserver_port;
 
 /* hserver_finish is used to tell the server threads to terminate.  It
    is protected with a mutex.  */
@@ -59,21 +61,35 @@ static pthread_mutex_t hserver_mutex = PTHREAD_MUTEX_INITIALIZER;
 /* The server maintains a table with tokens.  Each hyperlink uses its
    own unique token, which is included in the payload and checked upon
    connection.  */
+pk_val hserver_tokens;
 
-#define NUM_TOKENS 2014
-bool hserver_tokens[NUM_TOKENS];
+int
+pk_hserver_port (void)
+{
+  pk_val port = pk_decl_val (poke_compiler, "hserver_port");
+
+  assert (hserver_port != PK_NULL);
+  return pk_int_value (port);
+}
 
 int
 pk_hserver_get_token (void)
 {
-  int token;
+  pk_val cls = pk_decl_val (poke_compiler, "hserver_get_token");
+  pk_val token;
+  int ret;
 
-  do
-    token = rand () % NUM_TOKENS;
-  while (hserver_tokens[token]);
+  assert (cls != PK_NULL);
+  ret = pk_call (poke_compiler, cls, &token, PK_NULL);
+  assert (ret == PK_OK);
 
-  hserver_tokens[token] = true;
-  return token;
+  return pk_int_value (token);
+}
+
+static int
+pk_hserver_token (int token)
+{
+  return pk_int_value (pk_array_elem_val (hserver_tokens, token));
 }
 
 static int
@@ -156,7 +172,7 @@ read_from_client (int filedes)
           return 0;
         }
 
-      if (!hserver_tokens[token])
+      if (!pk_hserver_token (token))
         return 0;
 
       if (*p != '/')
@@ -267,16 +283,33 @@ hserver_thread_worker (void *data)
 void
 pk_hserver_init (void)
 {
+  char hostname[128];
+
+  /* Load the Poke components of the hserver.  */
+  if (!pk_load (poke_compiler, "pk-hserver"))
+    pk_fatal ("unable to load the pk-hserver module");
+
+  hserver_tokens = pk_decl_val (poke_compiler, "hserver_tokens");
+  assert (hserver_tokens != PK_NULL);
+
+  if (gethostname (hostname, sizeof (hostname)) != 0)
+    {
+      perror ("gethostname");
+      pk_fatal (NULL);
+    }
+  pk_decl_set_val (poke_compiler, "hserver_hostname",
+                   pk_make_string (hostname));
+}
+
+void
+pk_hserver_start (void)
+{
   int ret;
-  int i;
   struct sockaddr_in clientname;
   socklen_t size;
 
-  for (i = 0; i < NUM_TOKENS; ++i)
-    hserver_tokens[i] = false;
-
   /* Create the socket and set it up to accept connections. */
-  hserver_socket = make_socket (hserver_port);
+  hserver_socket = make_socket (pk_hserver_port ());
   if (listen (hserver_socket, 1) < 0)
     {
       perror ("listen");
@@ -292,7 +325,9 @@ pk_hserver_init (void)
       perror ("getsockname");
       pk_fatal (NULL);
     }
-  hserver_port = ntohs (clientname.sin_port);
+
+  pk_decl_set_val (poke_compiler, "hserver_port",
+                   pk_make_int (ntohs (clientname.sin_port), 32));
 
   hserver_finish = 0;
   ret = pthread_create (&hserver_thread,
@@ -331,36 +366,17 @@ char *
 pk_hserver_make_hyperlink (char type,
                            const char *cmd)
 {
-  int token;
-  char *str;
-  char hostname[128];
+  pk_val cls = pk_decl_val (poke_compiler, "hserver_make_hyperlink");
+  pk_val hyperlink, kind_val, cmd_val;
+  int ret;
 
-  if (gethostname (hostname, sizeof (hostname)) != 0)
-    {
-      perror ("gethostname");
-      pk_fatal (NULL);
-    }
+  kind_val = pk_make_uint (type, 8);
+  cmd_val = pk_make_string (cmd);
 
-  assert (type == 'i' || type == 'e');
+  assert (cls != PK_NULL);
+  ret = pk_call (poke_compiler, cls, &hyperlink,
+                 kind_val, cmd_val, PK_NULL);
+  assert (ret == PK_OK);
 
-  token = pk_hserver_get_token ();
-
-  if (asprintf (&str, "app://%s:%d/%d/%c/%s",
-                hostname,
-                hserver_port,
-                token,
-                type,
-                cmd
-                ) == -1)
-    {
-      return NULL;
-    }
-
-  return str;
-}
-
-int
-pk_hserver_port (void)
-{
-  return hserver_port;
+  return xstrdup (pk_string_str (hyperlink));
 }

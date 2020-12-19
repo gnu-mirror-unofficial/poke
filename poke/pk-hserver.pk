@@ -16,3 +16,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Hostname where the hserver listens for connections.  This variable
+   is initialized in pk-hserver.c */
+var hserver_hostname = "";
+
+/* Port where the hserver listens for connections.  */
+var hserver_port = 0;
+
+/* The hserver maintains a table with tokens.  Each hyperlink uses its
+   own unique token, which is included in the payload and checked upon
+   connection.  */
+
+var hserver_max_tokens = 2014;
+var hserver_tokens = int[hserver_max_tokens]();
+
+/* Allocate and get a random token.  */
+fun hserver_get_token = int:
+{
+  var token = rand % hserver_max_tokens;
+
+  while (hserver_tokens[token])
+    token = rand % hserver_max_tokens;
+
+  hserver_tokens[token] = 1;
+  return token;
+}
+
+/* Build a hserver hyperlink.  */
+
+fun hserver_make_hyperlink = (char kind, string cmd) string:
+{
+  if (kind != 'i' && kind != 'e')
+    raise E_inval;
+
+  return ("app://"
+          + hserver_hostname
+          + ":"
+          + ltos (hserver_port)
+          + "/"
+          + ltos (hserver_get_token)
+          + "/"
+          + kind as string
+          + "/"
+          + cmd);
+}
