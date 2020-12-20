@@ -1,5 +1,9 @@
 2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-hserver.pk (hserver_print_hl): New function.
+
+2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.pk: New file.
 	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-hserver.pk.
 	* poke/pk-hserver.c (pk_hserver_init): Load pk-hserver.pk.

@@ -60,3 +60,14 @@ fun hserver_make_hyperlink = (char kind, string cmd) string:
           + "/"
           + cmd);
 }
+
+/* Print an hserver-served hyperlink.  */
+
+fun hserver_print_hl = (char kind, string str, string href) void:
+{
+  var url = hserver_make_hyperlink (kind, href);
+
+  term_begin_hyperlink (url, "");
+  print str;
+  term_end_hyperlink;
+}
