@@ -1312,7 +1312,7 @@
 .constraint_ok:
         drop
    .c }
-        ;; Increase off with the siz of the last element.  Note
+        ;; Increase off with the size of the last element.  Note
         ;; the offset starts at 0 since this struct is not mapped,
         ;; unless the struct is pinned.
    .c if (PKL_AST_TYPE_S_PINNED_P (@type_struct))

@@ -1,3 +1,12 @@
+2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_print_stmt): use
+	pkl_ast_type_promoteable_p.
+	* libpoke/pkl-ast.c (pkl_ast_type_promoteable_p): VOID can't be
+	promoted to anything.
+	* testsuite/poke.pkl/printf-diag-18.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-12-20  Luca Saiu  <positron@gnu.org>
 
 	* libpoke/pvm.jitter (r): Change the number of fast

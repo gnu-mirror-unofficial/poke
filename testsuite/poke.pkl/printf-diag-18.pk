@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+fun f = void: {}
+printf "%v\n",
+       f; /* { dg-error "invalid type.*\n.*void" } */

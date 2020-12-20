@@ -883,6 +883,10 @@ pkl_ast_type_promoteable_p (pkl_ast_node ft, pkl_ast_node tt,
   if (pkl_ast_type_equal_p (ft, tt))
     return 1;
 
+  /* VOID can't be promoted to anything.  */
+  if (PKL_AST_TYPE_CODE (ft) == PKL_TYPE_VOID)
+    return 0;
+
   /* Any type is promoteable to ANY.  */
   if (PKL_AST_TYPE_CODE (tt) == PKL_TYPE_ANY)
     return 1;
