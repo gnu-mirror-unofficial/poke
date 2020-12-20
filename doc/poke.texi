@@ -10378,6 +10378,7 @@ useful conversions.
 * catos::		converting characters arrays into string.
 * stoca::		filling character arrays from strings.
 * atoi::		converting strings to integers.
+* ltos::		converting integers to strings.
 @end menu
 
 @node catos
@@ -10450,6 +10451,18 @@ after the parsed integer.  Thus, this works:
 @example
 (poke) atoi ("10foo")
 10L
+@end example
+
+@node ltos
+@subsection @code{ltos}
+@cindex @code{ltos}
+
+The @code{ltos} standard function converts a given long integer into
+its printed representation in base 10.  It has the following
+prototype:
+
+@example
+fun ltos = (long i) string:
 @end example
 
 @node Array Functions

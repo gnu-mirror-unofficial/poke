@@ -125,6 +125,27 @@ fun atoi = (string s, int b = 10) long:
     return result;
   }
 
+fun ltos = (long i) string:
+{
+  var s = "";
+  var o = i;
+
+  if (i < 0)
+    i = -i;
+  if (i == 0)
+    return "0";
+  while (i)
+  {
+    s = ('0' + (i % 10) as uint<8>) as string + s;
+    i = i / 10;
+  }
+
+  if (o < 0)
+    s = "-" + s;
+
+  return s;
+}
+
 /*** Array functions.  */
 
 /* Reverse the given array.  */

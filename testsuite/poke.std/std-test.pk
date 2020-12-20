@@ -65,6 +65,16 @@ var tests = [
       },
   },
   PkTest {
+    name = "ltos",
+    func = lambda (string name) void:
+      {
+        assert (ltos (0) == "0");
+        assert (ltos (10) == "10");
+        assert (ltos (-1) == "-1");
+        assert (ltos (-10) == "-10");
+      }
+  },
+  PkTest {
     name = "catos",
     func = lambda (string name) void:
       {
