@@ -18,19 +18,47 @@
 
 vm
   set prefix "pvm"
-  tos-stack "pvm_val" "stack"
-  ntos-stack "pvm_val" "returnstack"
-  ntos-stack "struct pvm_exception_handler *" "exceptionstack"
+end
+
+
+
+## Stacks.
+
+stack s
+  long-name "stack"
+  c-element-type "pvm_val"
+  tos-optimized
+  element-no 65536
+  guard-underflow
+  guard-overflow
+end
+
+stack t
+  long-name "returnstack"
+  c-element-type "pvm_val"
+  non-tos-optimized
+  element-no 65536
+  guard-underflow
+  guard-overflow
+end
+
+stack x
+  long-name "exceptionstack"
+  c-element-type "struct pvm_exception_handler *"
+  non-tos-optimized
+  element-no 65536
+  guard-underflow
+  guard-overflow
 end
 
 
 
 ## Register classes.
 
-register-class r 1
-  code
-    pvm_val
-  end
+register-class r
+  c-type "pvm_val"
+  fast-register-no 1
+  no-slow-registers
 end
 
 

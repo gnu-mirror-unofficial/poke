@@ -1,3 +1,9 @@
+2020-12-20  Luca Saiu  <positron@gnu.org>
+
+	* libpoke/pvm.jitter (vm): Remove stack specifications...
+	(s, t, x): ...And add them back to their new sections.
+	This adapts poke to Jitter's new syntax.
+
 2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-hserver.pk (hserver_print_hl): New function.
