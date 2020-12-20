@@ -57,8 +57,8 @@ end
 
 register-class r
   c-type "pvm_val"
-  fast-register-no 1
-  no-slow-registers
+  fast-register-no 0
+  slow-registers
 end
 
 
