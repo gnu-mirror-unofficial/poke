@@ -1567,7 +1567,7 @@ struct_type_specifier:
                     pkl_ast_node offset_magnitude
                       = pkl_ast_make_integer (pkl_parser->ast, 0);
                     pkl_ast_node offset_unit
-                      = pkl_ast_make_integer (pkl_parser->ast, 8);
+                      = pkl_ast_make_integer (pkl_parser->ast, 1);
                     pkl_ast_node offset;
 
                     type = pkl_ast_make_integral_type (pkl_parser->ast, 64, 0);

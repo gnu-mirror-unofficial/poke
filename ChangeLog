@@ -1,5 +1,10 @@
 2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (struct_type_specifier): Fix the unit of
+	OFFSET.
+
+2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/std.pk (ltos): New function.
 	* doc/poke.texi (ltos): New section.
 	* testsuite/poke.std/std-test.pk: Test for ltos.
