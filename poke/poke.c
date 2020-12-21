@@ -114,6 +114,11 @@ char *poke_doc_viewer = NULL;
 
 int poke_auto_map_p = 1;
 
+/* The following global determines whether the user specified that the
+   hyperlinks server should not be activated, in the command line.  */
+
+int poke_no_hserver_arg = 0;
+
 /* The following global determines whether map information shall be
    included in the REPL prompt.  Defaults to `yes'.  */
 
@@ -149,6 +154,7 @@ enum
   STYLE_ARG,
   MI_ARG,
   NO_AUTO_MAP_ARG,
+  NO_HSERVER_ARG
 };
 
 static const struct option long_options[] =
@@ -164,6 +170,7 @@ static const struct option long_options[] =
   {"style", required_argument, NULL, STYLE_ARG},
   {"mi", no_argument, NULL, MI_ARG},
   {"no-auto-map", no_argument, NULL, NO_AUTO_MAP_ARG},
+  {"no-hserver", no_argument, NULL, NO_HSERVER_ARG},
   {NULL, 0, NULL, 0},
 };
 
@@ -212,7 +219,12 @@ Machine interface:\n\
      no-wrap */
   pk_puts (_("\
   -q, --no-init-file                  do not load an init file.\n\
-      --no-auto-map                   disable auto-map.\n\
+      --no-auto-map                   disable auto-map.\n"));
+#if HAVE_HSERVER
+  pk_puts ("\
+      --no-hserver                    do not run the hyperlinks server.\n");
+#endif
+  pk_puts (_("\
       --quiet                         be as terse as possible.\n\
       --help                          print a help message and exit.\n\
       --version                       show version and exit.\n"));
@@ -368,6 +380,9 @@ parse_args_1 (int argc, char *argv[])
         case NO_AUTO_MAP_ARG:
           poke_auto_map_p = 0;
           break;
+        case NO_HSERVER_ARG:
+          poke_no_hserver_arg = 1;
+          break;
         default:
           break;
         }
@@ -444,8 +459,8 @@ parse_args_2 (int argc, char *argv[])
             break;
           }
         case MI_ARG:
-          /* Fallthrough.  */
         case NO_AUTO_MAP_ARG:
+        case NO_HSERVER_ARG:
           /* These are handled in parse_args_1.  */
           break;
           /* libtextstyle arguments are handled in pk-term.c, not
@@ -554,12 +569,15 @@ initialize (int argc, char *argv[])
 #ifdef HAVE_HSERVER
   poke_hserver_p = (poke_interactive_p
                     && pk_term_color_p ()
-                    && !poke_mi_p);
+                    && !poke_mi_p
+                    && !poke_no_hserver_arg);
 
   /* Initialize and start the terminal hyperlinks server.  */
-  pk_hserver_init ();
   if (poke_hserver_p)
-    pk_hserver_start ();
+    {
+      pk_hserver_init ();
+      pk_hserver_start ();
+    }
 #endif
 
   /* Initialize the documentation viewer.  */

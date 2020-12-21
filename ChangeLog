@@ -1,5 +1,20 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c: Define NO_HSERVER_ARG.
+	(initialize): Honor poke_no_hserver_arg to initialize
+	poke_hserver_p.
+	(print_help): Help for --no-hserver.
+	* poke/pk-cmd-ios.c (print_info_ios): Do not emit hyperlinks if
+	the hserver is not enabled.
+	* testsuite/lib/poke-dg.exp (poke-dg-test): Do not run the hserver
+	when testing.
+	* testsuite/lib/poke-pk.exp (tap_execute): Likewise.
+	* testsuite/lib/poke.exp (poke_start): Likewise.
+	* etc/poke.rec (Add command-line option to disable the hserver):
+	Remove as done.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.pk (hserver_cur_token): Define.
 	(hserver_get_token): Use a simpler schema to allocate tokens, and
 	expire them if needed.

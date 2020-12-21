@@ -183,6 +183,7 @@ print_info_ios (pk_ios io, void *data)
 
   /* Name.  */
 #if HAVE_HSERVER
+  if (poke_hserver_p)
   {
     char *cmd;
     char *hyperlink;
@@ -194,9 +195,9 @@ print_info_ios (pk_ios io, void *data)
     pk_table_column_hl (table, pk_ios_handler (io), hyperlink);
     free (hyperlink);
   }
-#else
-  pk_table_column (table, pk_ios_handler (io));
+  else
 #endif
+  pk_table_column (table, pk_ios_handler (io));
 }
 
 static int
