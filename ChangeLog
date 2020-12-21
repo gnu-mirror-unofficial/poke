@@ -1,5 +1,15 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-hserver.pk (hserver_get_token): Improve the token
+	allocation algorithm.
+	(hserver_make_hyperlink): Do not include the command in the
+	hyperlink URL.
+	(hserver_token_cmd): New function.
+	(hserver_token_p): Likewise.
+	* poke/pk-hserver.c (pk_hserver_cmd): New function.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_constructor): Acknowledge struct
 	labels.
 	* testsuite/poke.pkl/scons-label-1.pk: New test.

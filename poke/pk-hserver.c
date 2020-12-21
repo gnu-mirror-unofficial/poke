@@ -87,9 +87,33 @@ pk_hserver_get_token (void)
 }
 
 static int
-pk_hserver_token (int token)
+pk_hserver_token_p (int token)
 {
-  return pk_int_value (pk_array_elem_val (hserver_tokens, token));
+  pk_val cls = pk_decl_val (poke_compiler, "hserver_token_p");
+  pk_val token_val = pk_make_int (token, 32);
+  pk_val token_p;
+  int ret;
+
+  assert (cls != PK_NULL);
+  ret = pk_call (poke_compiler, cls, &token_p, token_val, PK_NULL);
+  assert (ret == PK_OK);
+
+  return pk_int_value (token_p);
+}
+
+static const char *
+pk_hserver_cmd (int token)
+{
+  pk_val cls = pk_decl_val (poke_compiler, "hserver_token_cmd");
+  pk_val token_val = pk_make_int (token, 32);
+  pk_val cmd;
+  int ret;
+
+  assert (cls != PK_NULL);
+  ret = pk_call (poke_compiler, cls, &cmd, token_val, PK_NULL);
+  assert (ret == PK_OK);
+
+  return pk_string_str (cmd);
 }
 
 static int
@@ -158,12 +182,13 @@ read_from_client (int filedes)
       int token;
       char cmd;
       char *p = buffer;
+      const char *str;
 
       /* Remove the newline at the end.  */
-      buffer[nbytes-1] = '\0';
+      buffer[nbytes-2] = '\0';
 
       /* The format of the payload is:
-         [0-9]+/{e,i}/.*  */
+         [0-9]+/{e,i} */
 
       /* Get the token and check it.  */
       if (!parse_int (&p, &token))
@@ -172,7 +197,7 @@ read_from_client (int filedes)
           return 0;
         }
 
-      if (!pk_hserver_token (token))
+      if (!pk_hserver_token_p (token))
         return 0;
 
       if (*p != '/')
@@ -184,26 +209,27 @@ read_from_client (int filedes)
         return 0;
       p++;
 
-      if (*p != '/')
+      if (*p != '\0')
         return 0;
-      p++;
 
       switch (cmd)
         {
         case 'e':
           /* Command 'execute'.  */
+          str = pk_hserver_cmd (token);
           pthread_mutex_lock (&hserver_mutex);
           pk_repl_display_begin ();
           pk_puts (p);
           pk_puts ("\n");
-          pk_cmd_exec (p);
+          pk_cmd_exec (str);
           pk_repl_display_end ();
           pthread_mutex_unlock (&hserver_mutex);
           break;
         case 'i':
           /* Command 'insert'.  */
+          str = pk_hserver_cmd (token);
           pthread_mutex_lock (&hserver_mutex);
-          pk_repl_insert (p);
+          pk_repl_insert (str);
           pthread_mutex_unlock (&hserver_mutex);
           break;
         default:

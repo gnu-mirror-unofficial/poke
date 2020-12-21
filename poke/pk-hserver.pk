@@ -28,17 +28,40 @@ var hserver_port = 0;
    connection.  */
 
 var hserver_max_tokens = 2014;
-var hserver_tokens = int[hserver_max_tokens]();
+
+type HServer_Token =
+  struct
+  {
+    int used_p;
+    int id;
+    string cmd;
+  };
+
+var hserver_tokens = HServer_Token[hserver_max_tokens]();
+
+/* Get the command associated with a given token.  */
+fun hserver_token_cmd = (int token) string:
+{
+  return hserver_tokens[token].cmd;
+}
+
+/* Determine whether a given token exists.  */
+fun hserver_token_p = (int token) int:
+{
+  return hserver_tokens[token].used_p;
+}
 
 /* Allocate and get a random token.  */
 fun hserver_get_token = int:
 {
   var token = rand % hserver_max_tokens;
 
-  while (hserver_tokens[token])
-    token = rand % hserver_max_tokens;
+  while (hserver_tokens[token % hserver_max_tokens].used_p)
+    token = (token + 1) % hserver_max_tokens;
 
-  hserver_tokens[token] = 1;
+  hserver_tokens[token].used_p = 1;
+  hserver_tokens[token].id = token;
+
   return token;
 }
 
@@ -49,16 +72,17 @@ fun hserver_make_hyperlink = (char kind, string cmd) string:
   if (kind != 'i' && kind != 'e')
     raise E_inval;
 
+  var token = hserver_get_token;
+  hserver_tokens[token].cmd = cmd;
+
   return ("app://"
           + hserver_hostname
           + ":"
           + ltos (hserver_port)
           + "/"
-          + ltos (hserver_get_token)
+          + ltos (token)
           + "/"
-          + kind as string
-          + "/"
-          + cmd);
+          + kind as string);
 }
 
 /* Print an hserver-served hyperlink.  */
