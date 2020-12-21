@@ -51,7 +51,7 @@ static pthread_t hserver_thread;
 static int hserver_socket;
 
 /* Port where the server listens for connections.  */
-pk_val hserver_port;
+static pk_val hserver_port;
 
 /* hserver_finish is used to tell the server threads to terminate.  It
    is protected with a mutex.  */
@@ -61,7 +61,7 @@ static pthread_mutex_t hserver_mutex = PTHREAD_MUTEX_INITIALIZER;
 /* The server maintains a table with tokens.  Each hyperlink uses its
    own unique token, which is included in the payload and checked upon
    connection.  */
-pk_val hserver_tokens;
+static pk_val hserver_tokens;
 
 int
 pk_hserver_port (void)
