@@ -1563,13 +1563,6 @@ Description:
 + doens't support this.
 Target: 0.1
 
-Summary: Add command-line option to disable the hserver
-Component: POKE
-Kind: ENH
-Priority: 3
-Descritpion: Something like --no-hserver
-Target: 0.1
-
 Summary: Support language-level construct for easy redirections to pipes/files
 Component: Language
 Kind: ENH
