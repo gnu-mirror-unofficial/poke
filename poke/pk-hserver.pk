@@ -28,6 +28,7 @@ var hserver_port = 0;
    connection.  */
 
 var hserver_max_tokens = 2014;
+var hserver_cur_token = -1;
 
 type HServer_Token =
   struct
@@ -61,15 +62,14 @@ fun hserver_token_p = (int token) int:
 /* Allocate and get a random token.  */
 fun hserver_get_token = int:
 {
-  var token = rand % hserver_max_tokens;
+  hserver_cur_token = (hserver_cur_token + 1) % hserver_max_tokens;
 
-  while (hserver_tokens[token].used_p)
-    token = (token + 1) % hserver_max_tokens;
+  /* Note how tokens expire at some point if the capacity of
+     hserver_tokens is exceeded.  */
+  hserver_tokens[hserver_cur_token].used_p = 1;
+  hserver_tokens[hserver_cur_token].id = hserver_cur_token;
 
-  hserver_tokens[token].used_p = 1;
-  hserver_tokens[token].id = token;
-
-  return token;
+  return hserver_cur_token;
 }
 
 /* Build a hserver hyperlink.  */

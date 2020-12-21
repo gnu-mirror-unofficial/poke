@@ -1,5 +1,11 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-hserver.pk (hserver_cur_token): Define.
+	(hserver_get_token): Use a simpler schema to allocate tokens, and
+	expire them if needed.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.pk (hserver_token_kind): New function.
 	(hserver_make_hyperlink): Initialize the token's kind.
 	(hserver_make_hyperlink): Do not include the command kind in the
