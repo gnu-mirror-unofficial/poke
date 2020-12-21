@@ -1602,8 +1602,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
   int method_p = PKL_AST_FUNC_METHOD_P (PKL_PASS_NODE);
 
   /* This is a function prologue.  */
-  pkl_asm_note (PKL_GEN_ASM,
-                PKL_AST_FUNC_NAME (function));
+  if (PKL_AST_FUNC_NAME (function))
+    pkl_asm_note (PKL_GEN_ASM,
+                  PKL_AST_FUNC_NAME (function));
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PROLOG);
 
   if (nargs > 1)

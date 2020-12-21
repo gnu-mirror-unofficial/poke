@@ -1,3 +1,8 @@
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_func): Emit a `note' instruction
+	with the function name only if the function actually has a name.
+
 2020-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_print_stmt): use
