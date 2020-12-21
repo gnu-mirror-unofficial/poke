@@ -62,11 +62,18 @@
 #define PVM_VAL_INT(V) (((int32_t) ((V) >> 32))                \
                         << (32 - PVM_VAL_INT_SIZE ((V)))       \
                         >> (32 - PVM_VAL_INT_SIZE ((V))))
+#define PVM_MAKE_INT(V,S)                       \
+  (((((int64_t) (V)) & 0xffffffff) << 32)       \
+   | ((((S) - 1) & 0x1f) << 3)                  \
+   | PVM_VAL_TAG_INT)
 
 #define PVM_VAL_UINT_SIZE(V) (((int) (((V) >> 3) & 0x1f)) + 1)
 #define PVM_VAL_UINT(V) (((uint32_t) ((V) >> 32)) \
                          & ((uint32_t) (~( ((~0ul) << ((PVM_VAL_UINT_SIZE ((V)))-1)) << 1 ))))
-
+#define PVM_MAKE_UINT(V,S)                      \
+  (((((uint64_t) (V)) & 0xffffffff) << 32)      \
+   | ((((S) - 1) & 0x1f) << 3)                  \
+   | PVM_VAL_TAG_UINT)
 
 #define PVM_MAX_UINT(size) ((1U << (size)) - 1)
 

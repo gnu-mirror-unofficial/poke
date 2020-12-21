@@ -1,5 +1,13 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.h (PVM_MAKE_INT): Define.
+	(PVM_MAKE_UINT): Likewise.
+	* libpoke/pvm-val.c (pvm_make_int): Use macro.
+	(pvm_make_uint): Likewise.
+	* libpoke/pvm.jitter: Use the macros instead of the functions.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.pk: Reduce the size of the hserver tokens table,
 	since they now expire.
 

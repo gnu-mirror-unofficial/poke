@@ -34,17 +34,13 @@
 pvm_val
 pvm_make_int (int32_t value, int size)
 {
-  return (((((int64_t) value) & 0xffffffff) << 32)
-          | (((size - 1) & 0x1f) << 3)
-          | PVM_VAL_TAG_INT);
+  return PVM_MAKE_INT (value, size);
 }
 
 pvm_val
 pvm_make_uint (uint32_t value, int size)
 {
-  return (((((uint64_t) value) & 0xffffffff) << 32)
-          | (((size - 1) & 0x1f) << 3)
-          | PVM_VAL_TAG_UINT);
+  return PVM_MAKE_UINT (value, size);
 }
 
 static inline pvm_val
@@ -266,7 +262,7 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
       sct->fields[i].offset = PVM_NULL;
       sct->fields[i].name = PVM_NULL;
       sct->fields[i].value = PVM_NULL;
-      sct->fields[i].modified = pvm_make_int (0, 32);
+      sct->fields[i].modified = PVM_MAKE_INT (0, 32);
       sct->fields[i].modified_back = PVM_NULL;
       sct->fields[i].offset_back = PVM_NULL;
     }
@@ -359,7 +355,7 @@ pvm_set_struct (pvm_val sct, pvm_val name, pvm_val val)
         {
           PVM_VAL_SCT_FIELD_VALUE (sct,i) = val;
           PVM_VAL_SCT_FIELD_MODIFIED (sct,i) =
-            pvm_make_int (1, 32);
+            PVM_MAKE_INT (1, 32);
           return 1;
         }
     }
@@ -770,7 +766,7 @@ pvm_val_reloc (pvm_val val, pvm_val ios, pvm_val boffset)
           PVM_VAL_SCT_FIELD_MODIFIED_BACK (val, i)
             = PVM_VAL_SCT_FIELD_MODIFIED (val, i);
           PVM_VAL_SCT_FIELD_MODIFIED (val, i) =
-            pvm_make_int (1, 32);
+            PVM_MAKE_INT (1, 32);
 
           pvm_val_reloc (field_value, ios,
                          pvm_make_ulong (field_new_offset, 64));
@@ -1522,16 +1518,16 @@ pvm_typeof (pvm_val val)
 
   if (PVM_IS_INT (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_INT_SIZE (val), 64),
-                                   pvm_make_int (1, 32));
+                                   PVM_MAKE_INT (1, 32));
   else if (PVM_IS_UINT (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_UINT_SIZE (val), 64),
-                                   pvm_make_int (0, 32));
+                                   PVM_MAKE_INT (0, 32));
   else if (PVM_IS_LONG (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_LONG_SIZE (val), 64),
-                                   pvm_make_int (1, 32));
+                                   PVM_MAKE_INT (1, 32));
   else if (PVM_IS_ULONG (val))
     type = pvm_make_integral_type (pvm_make_ulong (PVM_VAL_ULONG_SIZE (val), 64),
-                                   pvm_make_int (0, 32));
+                                   PVM_MAKE_INT (0, 32));
   else if (PVM_IS_STR (val))
     type = pvm_make_string_type ();
   else if (PVM_IS_OFF (val))
@@ -1660,7 +1656,7 @@ pvm_make_exception (int code, char *message, int exit_status)
 
   PVM_VAL_SCT_FIELD_NAME (exception, 0) = code_name;
   PVM_VAL_SCT_FIELD_VALUE (exception, 0)
-    = pvm_make_int (code, 32);
+    = PVM_MAKE_INT (code, 32);
 
   PVM_VAL_SCT_FIELD_NAME (exception, 1) = msg_name;
   PVM_VAL_SCT_FIELD_VALUE (exception, 1)
@@ -1668,7 +1664,7 @@ pvm_make_exception (int code, char *message, int exit_status)
 
   PVM_VAL_SCT_FIELD_NAME (exception, 2) = exit_status_name;
   PVM_VAL_SCT_FIELD_VALUE (exception, 2)
-    = pvm_make_int (exit_status, 32);
+    = PVM_MAKE_INT (exit_status, 32);
 
   return exception;
 }

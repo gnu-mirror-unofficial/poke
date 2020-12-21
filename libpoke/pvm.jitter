@@ -245,7 +245,7 @@ late-header-c
 # define PVM_BOOL_BINOP(TYPE,OP)                                             \
    do                                                                        \
     {                                                                        \
-      pvm_val res = pvm_make_int (PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ()) \
+      pvm_val res = PVM_MAKE_INT (PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ()) \
                                   OP PVM_VAL_##TYPE (JITTER_TOP_STACK ()), 32); \
       JITTER_PUSH_STACK (res);                                               \
     } while (0)
@@ -774,7 +774,7 @@ end
 
 instruction pushend ()
   code
-    JITTER_PUSH_STACK (pvm_make_int (jitter_state_runtime.endian,
+    JITTER_PUSH_STACK (PVM_MAKE_INT (jitter_state_runtime.endian,
                                      32));
   end
 end
@@ -810,7 +810,7 @@ instruction pushob ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int obase = pvm_obase (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (obase, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (obase, 32));
   end
 end
 
@@ -856,7 +856,7 @@ instruction pushom ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omode = pvm_omode (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (omode, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (omode, 32));
   end
 end
 
@@ -901,7 +901,7 @@ instruction pushoo ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omaps = pvm_omaps (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (omaps, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (omaps, 32));
   end
 end
 
@@ -941,7 +941,7 @@ instruction pushoi ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int oindent = pvm_oindent (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (oindent, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (oindent, 32));
   end
 end
 
@@ -980,7 +980,7 @@ instruction pushod ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int odepth = pvm_odepth (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (odepth, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (odepth, 32));
   end
 end
 
@@ -1018,7 +1018,7 @@ instruction pushoac ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int oacutoff = pvm_oacutoff (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (oacutoff, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (oacutoff, 32));
   end
 end
 
@@ -1056,7 +1056,7 @@ instruction pushopp ()
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int pp = pvm_pretty_print (vm);
 
-    JITTER_PUSH_STACK (pvm_make_int (pp, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (pp, 32));
   end
 end
 
@@ -1102,7 +1102,7 @@ instruction rgbtoc ()
     color = pk_term_rgb_to_color (PVM_VAL_INT (red),
                                   PVM_VAL_INT (green),
                                   PVM_VAL_INT (blue));
-    JITTER_PUSH_STACK (pvm_make_int (color, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (color, 32));
   end
 end
 
@@ -1115,7 +1115,7 @@ end
 
 instruction pushoc ()
   code
-    JITTER_PUSH_STACK (pvm_make_int (pk_term_get_color (), 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (pk_term_get_color (), 32));
   end
 end
 
@@ -1142,7 +1142,7 @@ end
 
 instruction pushobc ()
   code
-    JITTER_PUSH_STACK (pvm_make_int (pk_term_get_bgcolor (), 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (pk_term_get_bgcolor (), 32));
   end
 end
 
@@ -1212,7 +1212,7 @@ instruction open ()
        PVM_RAISE_DFL (PVM_E_IO);
 
      JITTER_DROP_STACK ();
-     JITTER_TOP_STACK () = pvm_make_int (ret, 32);
+     JITTER_TOP_STACK () = PVM_MAKE_INT (ret, 32);
   end
 end
 
@@ -1284,7 +1284,7 @@ instruction pushios ()
 
     if (cur_io == NULL)
        PVM_RAISE_DFL (PVM_E_NO_IOS);
-    JITTER_PUSH_STACK (pvm_make_int (ios_get_id (cur_io), 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (ios_get_id (cur_io), 32));
   end
 end
 
@@ -2573,7 +2573,7 @@ end
 
 instruction eqs ()
   code
-    pvm_val res = pvm_make_int (STREQ (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+    pvm_val res = PVM_MAKE_INT (STREQ (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                        PVM_VAL_STR (JITTER_TOP_STACK ())),
                                 32);
     JITTER_PUSH_STACK (res);
@@ -2641,7 +2641,7 @@ end
 
 instruction nes ()
   code
-    pvm_val res = pvm_make_int (STRNEQ (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+    pvm_val res = PVM_MAKE_INT (STRNEQ (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())),
                                 32);
     JITTER_PUSH_STACK (res);
@@ -2657,7 +2657,7 @@ end
 
 instruction nn ()
   code
-     JITTER_PUSH_STACK (pvm_make_int (JITTER_TOP_STACK () != PVM_NULL,
+     JITTER_PUSH_STACK (PVM_MAKE_INT (JITTER_TOP_STACK () != PVM_NULL,
                                       32));
   end
 end
@@ -2671,7 +2671,7 @@ end
 
 instruction nnn ()
   code
-     JITTER_PUSH_STACK (pvm_make_int (JITTER_TOP_STACK () == PVM_NULL,
+     JITTER_PUSH_STACK (PVM_MAKE_INT (JITTER_TOP_STACK () == PVM_NULL,
                                       32));
   end
 end
@@ -2894,7 +2894,7 @@ end
 
 instruction lts ()
   code
-    pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) < 0, 32);
     JITTER_PUSH_STACK (res);
   end
@@ -2909,7 +2909,7 @@ end
 
 instruction gts ()
   code
-    pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) > 0, 32);
     JITTER_PUSH_STACK (res);
   end
@@ -2925,7 +2925,7 @@ end
 
 instruction ges ()
   code
-    pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) >= 0, 32);
     JITTER_PUSH_STACK (res);
   end
@@ -2941,7 +2941,7 @@ end
 
 instruction les ()
   code
-    pvm_val res = pvm_make_int (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
                                         PVM_VAL_STR (JITTER_TOP_STACK ())) <= 0, 32);
     JITTER_PUSH_STACK (res);
   end
@@ -3006,7 +3006,7 @@ end
 
 instruction not ()
   code
-    pvm_val res = pvm_make_int (! PVM_VAL_INT (JITTER_TOP_STACK ()), 32);
+    pvm_val res = PVM_MAKE_INT (! PVM_VAL_INT (JITTER_TOP_STACK ()), 32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3855,7 +3855,7 @@ instruction strref () # ( STR ULONG -- STR ULONG VAL )
             strlen (PVM_VAL_STR (string))))
       PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
-    JITTER_PUSH_STACK (pvm_make_uint (PVM_VAL_STR (string)[PVM_VAL_ULONG (index)],
+    JITTER_PUSH_STACK (PVM_MAKE_UINT (PVM_VAL_STR (string)[PVM_VAL_ULONG (index)],
                                       8));
   end
 end
@@ -4370,7 +4370,7 @@ instruction srefia ()
       PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     absent_p = PVM_VAL_SCT_FIELD_ABSENT_P (sct, PVM_VAL_ULONG (index));
-    JITTER_PUSH_STACK (pvm_make_int (absent_p, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (absent_p, 32));
   end
 end
 
@@ -4505,7 +4505,7 @@ end
 
 instruction mm ()
   code
-    pvm_val mapped_p = pvm_make_int (PVM_VAL_MAPPED_P (JITTER_TOP_STACK ()),
+    pvm_val mapped_p = PVM_MAKE_INT (PVM_VAL_MAPPED_P (JITTER_TOP_STACK ()),
                                      32);
     JITTER_PUSH_STACK (mapped_p);
   end
@@ -4602,7 +4602,7 @@ end
 instruction mgets ()
   code
     int strict_p = PVM_VAL_STRICT_P (JITTER_TOP_STACK ());
-    JITTER_PUSH_STACK (pvm_make_int (strict_p, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (strict_p, 32));
   end
 end
 
@@ -4820,7 +4820,7 @@ instruction isa ()
     pvm_val val = JITTER_UNDER_TOP_STACK ();
     pvm_val val_type = pvm_typeof (val);
 
-    JITTER_PUSH_STACK (pvm_make_int (pvm_type_equal_p (type, val_type),
+    JITTER_PUSH_STACK (PVM_MAKE_INT (pvm_type_equal_p (type, val_type),
                                      32));
   end
 end
@@ -4846,7 +4846,7 @@ end
 
 instruction tyisc ()
   code
-    JITTER_PUSH_STACK (pvm_make_int (PVM_IS_CLS (JITTER_TOP_STACK ()), 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (PVM_IS_CLS (JITTER_TOP_STACK ()), 32));
   end
 end
 
@@ -4859,7 +4859,7 @@ end
 
 instruction tyissct ()
   code
-    JITTER_PUSH_STACK (pvm_make_int (PVM_IS_SCT (JITTER_TOP_STACK ()), 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (PVM_IS_SCT (JITTER_TOP_STACK ()), 32));
   end
 end
 
@@ -5568,7 +5568,7 @@ instruction rand ()
     if (seed != 0)
       srandom (seed);
     JITTER_DROP_STACK ();
-    JITTER_PUSH_STACK (pvm_make_int (random (), 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (random (), 32));
   end
 end
 
