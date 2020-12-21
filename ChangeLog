@@ -1,5 +1,12 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_constructor): Acknowledge struct
+	labels.
+	* testsuite/poke.pkl/scons-label-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_func): Emit a `note' instruction
 	with the function name only if the function actually has a name.
 

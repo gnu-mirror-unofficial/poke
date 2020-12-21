@@ -1288,10 +1288,10 @@
    .c }
    .c else
    .c {
-        push null               ; BOFF STR VAL null
+        push null               ; ENAME EVAL null
    .c }
 .optcond_ok:
-        drop                    ; BOFF STR VAL
+        drop                    ; ENAME EVAL
         ;; Evaluate the constraint expression.
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
    .c {
@@ -1312,9 +1312,8 @@
 .constraint_ok:
         drop
    .c }
-        ;; Increase off with the size of the last element.  Note
-        ;; the offset starts at 0 since this struct is not mapped,
-        ;; unless the struct is pinned.
+        ;; Determine the offset of this element, and increase $boff
+        ;; with its size.
    .c if (PKL_AST_TYPE_S_PINNED_P (@type_struct))
    .c {
         push uint<64>0         ; ... ENAME EVAL EBOFF
@@ -1324,6 +1323,9 @@
    .c {
         siz                    ; ... ENAME EVAL ESIZ
         pushvar $boff          ; ... ENAME EVAL ESIZ EBOFF
+        push ulong<64>0         ; ... ENAME EVAL ESIZ EBOFF 0UL
+        .e handle_struct_field_label @field
+                               ; ... ENAME EVAL ESIZ EBOFF
         swap                   ; ... ENAME EVAL EBOFF ESIZ
         addlu
         nip                    ; ... ENAME EVAL EBOFF NEBOFF

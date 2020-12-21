@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type T = struct { uint32 x; uint16 y @ 2#B; };
+
+/* { dg-command {(T {})'size / #B} } */
+/* { dg-output "4UL" } */
