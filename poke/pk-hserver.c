@@ -101,6 +101,21 @@ pk_hserver_token_p (int token)
   return pk_int_value (token_p);
 }
 
+static char
+pk_hserver_token_kind (int token)
+{
+  pk_val cls = pk_decl_val (poke_compiler, "hserver_token_kind");
+  pk_val token_val = pk_make_int (token, 32);
+  pk_val token_kind;
+  int ret;
+
+  assert (cls != PK_NULL);
+  ret = pk_call (poke_compiler, cls, &token_kind, token_val, PK_NULL);
+  assert (ret == PK_OK);
+
+  return pk_uint_value (token_kind);
+}
+
 static const char *
 pk_hserver_cmd (int token)
 {
@@ -180,9 +195,9 @@ read_from_client (int filedes)
   else
     {
       int token;
-      char cmd;
+      char kind;
       char *p = buffer;
-      const char *str;
+      const char *cmd;
 
       /* Remove the newline at the end.  */
       buffer[nbytes-1] = '\0';
@@ -200,36 +215,29 @@ read_from_client (int filedes)
       if (!pk_hserver_token_p (token))
         return 0;
 
-      if (*p != '/')
-        return 0;
-      p++;
-
-      cmd = *p;
-      if (cmd != 'i' && cmd != 'e')
-        return 0;
-      p++;
+      kind = pk_hserver_token_kind (token);
 
       if (*p != '\0')
         return 0;
 
-      switch (cmd)
+      switch (kind)
         {
         case 'e':
           /* Command 'execute'.  */
-          str = pk_hserver_cmd (token);
+          cmd = pk_hserver_cmd (token);
           pthread_mutex_lock (&hserver_mutex);
           pk_repl_display_begin ();
           pk_puts (p);
           pk_puts ("\n");
-          pk_cmd_exec (str);
+          pk_cmd_exec (cmd);
           pk_repl_display_end ();
           pthread_mutex_unlock (&hserver_mutex);
           break;
         case 'i':
           /* Command 'insert'.  */
-          str = pk_hserver_cmd (token);
+          cmd = pk_hserver_cmd (token);
           pthread_mutex_lock (&hserver_mutex);
-          pk_repl_insert (str);
+          pk_repl_insert (cmd);
           pthread_mutex_unlock (&hserver_mutex);
           break;
         default:

@@ -34,10 +34,17 @@ type HServer_Token =
   {
     int used_p;
     int id;
+    char kind;
     string cmd;
   };
 
 var hserver_tokens = HServer_Token[hserver_max_tokens]();
+
+/* Get the kind of a given token.  */
+fun hserver_token_kind = (int token) char:
+{
+  return hserver_tokens[token].kind;
+}
 
 /* Get the command associated with a given token.  */
 fun hserver_token_cmd = (int token) string:
@@ -73,6 +80,8 @@ fun hserver_make_hyperlink = (char kind, string cmd) string:
     raise E_inval;
 
   var token = hserver_get_token;
+
+  hserver_tokens[token].kind = kind;
   hserver_tokens[token].cmd = cmd;
 
   return ("app://"
@@ -80,9 +89,7 @@ fun hserver_make_hyperlink = (char kind, string cmd) string:
           + ":"
           + ltos (hserver_port)
           + "/"
-          + ltos (token)
-          + "/"
-          + kind as string);
+          + ltos (token));
 }
 
 /* Print an hserver-served hyperlink.  */

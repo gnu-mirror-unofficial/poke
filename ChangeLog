@@ -1,5 +1,14 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-hserver.pk (hserver_token_kind): New function.
+	(hserver_make_hyperlink): Initialize the token's kind.
+	(hserver_make_hyperlink): Do not include the command kind in the
+	hyperlink url.
+	* poke/pk-hserver.c (pk_hserver_token_kind): New function.
+	(read_from_client): Do not get the kind of the token from the URL.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.pk (hserver_get_token): Improve the token
 	allocation algorithm.
 	(hserver_make_hyperlink): Do not include the command in the
