@@ -27,7 +27,7 @@ var hserver_port = 0;
    own unique token, which is included in the payload and checked upon
    connection.  */
 
-var hserver_max_tokens = 2014;
+var hserver_max_tokens = 128;
 var hserver_cur_token = -1;
 
 type HServer_Token =

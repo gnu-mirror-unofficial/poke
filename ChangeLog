@@ -1,5 +1,10 @@
 2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-hserver.pk: Reduce the size of the hserver tokens table,
+	since they now expire.
+
+2020-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c: Define NO_HSERVER_ARG.
 	(initialize): Honor poke_no_hserver_arg to initialize
 	poke_hserver_p.
