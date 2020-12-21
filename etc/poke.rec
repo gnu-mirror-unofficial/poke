@@ -145,28 +145,6 @@ Description:
 + How to express regular expressions?  Using strings for them is
 + cumbersome because of the escaping of special characters.
 
-Summary: Support RGB colors in printf, %cRGB
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ So we can pretty-print RGB colors in their own color :)
-+
-+ 18:20 <bhaible> 2) When you have a term_styled_ostream instance, it
-+                 relies on a term_ostream instance. You should be
-+                 able to retrieve this instance (but I don't
-+                 remember what is the easiest way to do it). On this
-+                 instance, invoke
-+ 18:20 <bhaible> term_ostream_set_color (term_ostream_t stream,
-+                 term_color_t color)
-+ 18:20 <bhaible> where color is the result of
-+                 term_ostream_rgb_to_color (term_ostream_t stream,
-+                 int red, int green, int blue)
-+ 18:20 <jemarch> oh
-+ 18:20 <bhaible> See
-+                 https://www.gnu.org/software/gettext/libtextstyle/manual/libtextstyle.html#The-term_005fostream-class
-Target: 0.1
-
 Summary: with_temp_ios FILENAME { ... }
 Component: Language
 Kind: ENH
