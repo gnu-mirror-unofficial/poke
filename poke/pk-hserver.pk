@@ -56,7 +56,7 @@ fun hserver_get_token = int:
 {
   var token = rand % hserver_max_tokens;
 
-  while (hserver_tokens[token % hserver_max_tokens].used_p)
+  while (hserver_tokens[token].used_p)
     token = (token + 1) % hserver_max_tokens;
 
   hserver_tokens[token].used_p = 1;
