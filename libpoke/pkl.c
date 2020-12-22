@@ -737,10 +737,13 @@ pvm_type_to_ast_type (pkl_ast ast, pvm_val type)
   switch (PVM_VAL_TYP_CODE (type))
     {
     case PVM_TYPE_INTEGRAL:
-      return pkl_ast_make_integral_type (ast,
-                                         PVM_VAL_TYP_I_SIZE (type),
-                                         PVM_VAL_TYP_I_SIGNED_P (type));
-      break;
+      {
+        size_t size = PVM_VAL_ULONG (PVM_VAL_TYP_I_SIZE (type));
+        int signed_p = PVM_VAL_INT (PVM_VAL_TYP_I_SIGNED_P (type));
+
+        return pkl_ast_make_integral_type (ast, size, signed_p);
+        break;
+      }
     case PVM_TYPE_STRING:
       return pkl_ast_make_string_type (ast);
       break;

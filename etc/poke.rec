@@ -1403,12 +1403,6 @@ Description:
 + Returns an array of tokens.
 RFC: yes
 
-Summary: Make poke_interactive_p available to Poke programs
-Component: Runtime
-Kind: ENH
-Priority: 2
-Target: 0.1
-
 Summary: Add an API for client-provided IOD implementations to libpoke
 Component: Library
 Kind: ENH
