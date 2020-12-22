@@ -7,6 +7,12 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2020-12-22
+* Please see the new section in HACKING `Building after a git pull',
+  as it contains information on how to workaround a little defect in
+  the Jitter sub-pakaging mode that makes it not working well with the
+  Automake maintainer-mode rules.
+
 2020-11-29
 * A new built-in function `strace' has been introduced, that prints
   out a stack trace.  This is useful to debug the compiler.

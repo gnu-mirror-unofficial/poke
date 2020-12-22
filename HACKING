@@ -1,9 +1,9 @@
-		       __________________________
+                       __________________________
 
-			GNU POKE - HACKING NOTES
+                        GNU POKE - HACKING NOTES
 
-			    The poke hackers
-		       __________________________
+                            The poke hackers
+                       __________________________
 
 
 Table of Contents
@@ -36,11 +36,12 @@ _________________
 .. 10. libtextstyle
 .. 11. libnbd
 .. 12. Building
-.. 13. Building the GUI
-.. 14. Building a 32-bit poke
-.. 15. Gettext
-.. 16. Running an Uninstalled Poke
-.. 17. Continuous Integration
+.. 13. Building after a git pull
+.. 14. Building the GUI
+.. 15. Building a 32-bit poke
+.. 16. Gettext
+.. 17. Running an Uninstalled Poke
+.. 18. Continuous Integration
 4. Coding Style and Conventions
 .. 1. Writing C
 ..... 1. Avoid Tabs
@@ -469,7 +470,29 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-3.13 Building the GUI
+3.13 Building after a git pull
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Usually issuing a `make' at the top build directory is enough to
+  rebuild poke after changes have been fetched from the source repo.
+  The Automake maintainer-mode rules will make sure that autoconf and
+  friends are run again and do the right thing.
+
+  However, when the Jitter submodule is updated, you have to first
+  bootstrap:
+
+  $ ./bootstrap
+
+  Then go to the top build directory, and issue a configure explicitly
+  before rebuilding:
+
+  $ cd build && ../configure $ make
+
+  You can't rely on the maintainer-mode rules there, because of certain
+  problem with the sub-package mode of Jitter.
+
+
+3.14 Building the GUI
 ~~~~~~~~~~~~~~~~~~~~~
 
   The poke GUI is optional and it is built by default, provided the
@@ -479,7 +502,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   configure time.
 
 
-3.14 Building a 32-bit poke
+3.15 Building a 32-bit poke
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   If you are in a 64-bit multilib system with support for building
@@ -495,7 +518,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   with the proper one for your architecture.
 
 
-3.15 Gettext
+3.16 Gettext
 ~~~~~~~~~~~~
 
   When updating gettext, besides the normal installation on the system,
@@ -505,7 +528,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   for more information.
 
 
-3.16 Running an Uninstalled Poke
+3.17 Running an Uninstalled Poke
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Once poke is compiled, you can run it before installing by using the
@@ -522,7 +545,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-3.17 Continuous Integration
+3.18 Continuous Integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   The package is built automatically, at regular intervals.  You find

@@ -305,6 +305,27 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
   : $ make
   : $ make check
 
+** Building after a git pull
+
+   Usually issuing a `make' at the top build directory is enough to
+   rebuild poke after changes have been fetched from the source repo.
+   The Automake maintainer-mode rules will make sure that autoconf and
+   friends are run again and do the right thing.
+
+   However, when the Jitter submodule is updated, you have to first
+   bootstrap:
+
+   $ ./bootstrap
+
+   Then go to the top build directory, and issue a configure
+   explicitly before rebuilding:
+
+   $ cd build && ../configure
+   $ make
+
+   You can't rely on the maintainer-mode rules there, because of
+   certain problem with the sub-package mode of Jitter.
+
 ** Building the GUI
 
    The poke GUI is optional and it is built by default, provided the
