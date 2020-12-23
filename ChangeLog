@@ -1,5 +1,10 @@
 2020-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-anal.c (pkl_anal1_ps_decl): Clarify error message.
+	* testsuite/poke.pkl/struct-method-diag-6.pk: Adapt.
+
+2020-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-promo.c (promote_node): New function.
 	(pkl_promo_ps_op_div): Use promote_node.
 	(pkl_promo_ps_op_binary_intoffstrarr): Likewise.

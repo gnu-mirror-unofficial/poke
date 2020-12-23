@@ -576,7 +576,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_var)
   if (var_is_method_p && !in_method_p)
     {
       PKL_ERROR (PKL_AST_LOC (var),
-                 "invalid reference to struct method");
+                 "only methods can directly call other methods");
       PKL_ANAL_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

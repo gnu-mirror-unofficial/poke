@@ -8,7 +8,7 @@ type Foo =
       {
         fun baz = void:
         {
-          foo; /* { dg-error "invalid reference" } */
+          foo; /* { dg-error "only methods" } */
         }
       }
   };
