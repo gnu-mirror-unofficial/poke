@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+unit J = 92;
+
+/* { dg-command {printf "%v\n", 1#J} } */
+/* { dg-output "1#92" } */

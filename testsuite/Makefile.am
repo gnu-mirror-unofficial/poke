@@ -1335,6 +1335,7 @@ EXTRA_DIST = \
   poke.pkl/printf-24.pk \
   poke.pkl/printf-25.pk \
   poke.pkl/printf-26.pk \
+  poke.pkl/printf-27.pk \
   poke.pkl/printf-binary-1.pk \
   poke.pkl/printf-binary-2.pk \
   poke.pkl/printf-binary-3.pk \

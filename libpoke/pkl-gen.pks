@@ -1832,9 +1832,9 @@
         ba .unit_name_done
 .no_unit_name:
         drop
+        drop
         push int<32>10          ; VAL UNIT 10
         print @unit_type        ; VAL
-        drop
 .unit_name_done:
         drop                    ; _
         push "offset"

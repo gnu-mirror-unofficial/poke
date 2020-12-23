@@ -1,5 +1,12 @@
 2020-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (offset_printer): Fix printing unnammed
+	units.
+	* testsuite/poke.pkl/printf-27.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2020-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-anal.c (pkl_anal1_ps_decl): Clarify error message.
 	* testsuite/poke.pkl/struct-method-diag-6.pk: Adapt.
 
