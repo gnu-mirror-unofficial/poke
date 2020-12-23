@@ -558,7 +558,7 @@ initialize (int argc, char *argv[])
   if (pk_defvar (poke_compiler, "poke_interactive_p",
                  pk_make_int (poke_interactive_p, 32)) == PK_ERROR)
     pk_fatal ("defining poke_interactive_p");
-  
+
   /* Load poke.pk  */
   if (!pk_load (poke_compiler, "poke"))
     pk_fatal ("unable to load the poke module");
