@@ -200,7 +200,8 @@ promote_node (pkl_ast ast,
 {
   pkl_ast_node node_type = PKL_AST_TYPE (*node);
 
-  if (!pkl_ast_type_equal_p (node_type, type))
+  if (!pkl_ast_type_equal_p (node_type, type)
+      || PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY)
     {
       switch (PKL_AST_TYPE_CODE (type))
         {
@@ -231,8 +232,11 @@ promote_node (pkl_ast ast,
           if (!promote_array (ast, type, node, restart))
             goto error;
           break;
-        default:
+        case PKL_TYPE_ANY:
           break;
+        default:
+          /* Dont know how to promote this.  */
+          goto error;
         }
     }
 
@@ -1082,8 +1086,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
       /* Ignore non-specified actuals for optional formals.  */
       if (aa_exp)
         {
-          pkl_ast_node aa_type = PKL_AST_TYPE (aa_exp);
-
           /* Do not promote varargs.  */
           if (! PKL_AST_FUNC_TYPE_ARG_VARARG (fa))
             {
@@ -1091,47 +1093,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_funcall)
                  argument and the formal argument are promoteable, or typify
                  wouldn't have allowed it to pass.  */
 
-              /* If both types are equivalent, then we are done.  */
-              if (! pkl_ast_type_equal_p (fa_type, aa_type))
-                /* A promotion is needed.  */
-                switch (PKL_AST_TYPE_CODE (fa_type))
-                  {
-                  case PKL_TYPE_ANY:
-                    break;
-                  case PKL_TYPE_ARRAY:
-                    /* Array promotion of arguments is performed in the function
-                       prologue, not here.  This is because the target type is
-                       defined in the function's environment.  */
-                    break;
-                  case PKL_TYPE_INTEGRAL:
-                    if (!promote_integral (PKL_PASS_AST,
-                                           PKL_AST_TYPE_I_SIZE (fa_type),
-                                           PKL_AST_TYPE_I_SIGNED_P (fa_type),
-                                           &PKL_AST_FUNCALL_ARG_EXP (aa),
-                                           &restart))
-                      goto error;
-                    break;
-                  case PKL_TYPE_OFFSET:
-                    {
-                      pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (fa_type);
-                      pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (fa_type);
+              /* Array promotion of arguments is performed in the
+                 function prologue, not here.  This is because the
+                 target type is defined in the function's
+                 environment.  */
+              if (PKL_AST_TYPE_CODE (fa_type) == PKL_TYPE_ARRAY)
+                continue;
 
-                      size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-                      int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-                      if (!promote_offset (PKL_PASS_AST,
-                                           size, signed_p, unit,
-                                           &PKL_AST_FUNCALL_ARG_EXP (aa),
-                                           &restart))
-                        goto error;
-                    }
-                    break;
-                  default:
-                    PKL_ICE (PKL_AST_LOC (funcall),
-                             "funcall contains non-promoteable arguments at promo time");
-                    PKL_PASS_ERROR;
-                    break;
-                  }
+              if (!promote_node (PKL_PASS_AST,
+                                 &PKL_AST_FUNCALL_ARG_EXP (aa),
+                                 fa_type, &restart))
+                goto error;
 
               PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
             }
@@ -1246,46 +1218,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_return_stmt)
     {
       int restart = 0;
 
-      switch (PKL_AST_TYPE_CODE (expected_type))
-        {
-        case PKL_TYPE_ANY:
-          break;
-        case PKL_TYPE_ARRAY:
-          if (!promote_array (PKL_PASS_AST,
-                              expected_type,
-                              &PKL_AST_RETURN_STMT_EXP (return_stmt),
-                              &restart))
-            goto error;
-          break;
-        case PKL_TYPE_INTEGRAL:
-          if (!promote_integral (PKL_PASS_AST,
-                                 PKL_AST_TYPE_I_SIZE (expected_type),
-                                 PKL_AST_TYPE_I_SIGNED_P (expected_type),
-                                 &PKL_AST_RETURN_STMT_EXP (return_stmt),
-                                 &restart))
-            goto error;
-          break;
-        case PKL_TYPE_OFFSET:
-          {
-            pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (expected_type);
-            pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (expected_type);
-
-            size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-            int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-            if (!promote_offset (PKL_PASS_AST,
-                                 size, signed_p, unit,
-                                 &PKL_AST_RETURN_STMT_EXP (return_stmt),
-                                 &restart))
-              goto error;
-          }
-          break;
-        default:
-          PKL_ICE (PKL_AST_LOC (return_stmt),
-                   "return statement non-promoteable arguments at promo time");
-          PKL_PASS_ERROR;
-          break;
-        }
+      if (!promote_node (PKL_PASS_AST,
+                         &PKL_AST_RETURN_STMT_EXP (return_stmt),
+                         expected_type, &restart))
+        goto error;
 
       PKL_PASS_RESTART = restart;
     }
@@ -1320,25 +1256,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_print_stmt)
       if (arg_exp
           && PKL_AST_TYPE_CODE (type) != PKL_TYPE_ANY)
         {
-          pkl_ast_node exp_type = PKL_AST_TYPE (arg_exp);
+          int restart;
 
-          if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_INTEGRAL)
+          if (!promote_node (PKL_PASS_AST,
+                             &PKL_AST_PRINT_STMT_ARG_EXP (arg),
+                             type, &restart))
             {
-              int restart = 0;
-
-              if (!promote_integral (PKL_PASS_AST,
-                                     PKL_AST_TYPE_I_SIZE (type),
-                                     PKL_AST_TYPE_I_SIGNED_P (type),
-                                     &PKL_AST_PRINT_STMT_ARG_EXP (arg),
-                                     &restart))
-                {
-                  PKL_ICE (PKL_AST_LOC (arg),
-                           "couldn't promote printf argument initializer");
-                      PKL_PASS_ERROR;
-                }
-
-              PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
+              PKL_ICE (PKL_AST_LOC (arg),
+                       "couldn't promote printf argument initializer");
+              PKL_PASS_ERROR;
             }
+
+          PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
         }
     }
 }
@@ -1354,59 +1283,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_func_arg)
   if (initial)
     {
       pkl_ast_node arg_type = PKL_AST_FUNC_ARG_TYPE (func_arg);
-      pkl_ast_node initial_type = PKL_AST_TYPE (initial);
       int restart = 0;
 
       /* At this point it is assured that the arg type and initial
          types are promoteable, or typify wouldn't have allowed it to
          pass.  */
 
-      /* If the arg tyep is not an array, and both types are
-         equivalent, then we are done.  Arrays are excluded because of
-         how the boundary is ignored in type equivalence.  */
-      if (PKL_AST_TYPE_CODE (arg_type) != PKL_TYPE_ARRAY
-          && pkl_ast_type_equal_p (arg_type, initial_type))
-        PKL_PASS_DONE;
-
-      switch (PKL_AST_TYPE_CODE (arg_type))
-            {
-            case PKL_TYPE_ANY:
-              break;
-            case PKL_TYPE_ARRAY:
-              if (!promote_array (PKL_PASS_AST,
-                                  arg_type,
-                                  &PKL_AST_FUNC_ARG_INITIAL (func_arg),
-                                  &restart))
-                goto error;
-              break;
-            case PKL_TYPE_INTEGRAL:
-              if (!promote_integral (PKL_PASS_AST,
-                                     PKL_AST_TYPE_I_SIZE (arg_type),
-                                     PKL_AST_TYPE_I_SIGNED_P (arg_type),
-                                     &PKL_AST_FUNC_ARG_INITIAL (func_arg),
-                                     &restart))
-                goto error;
-              break;
-            case PKL_TYPE_OFFSET:
-              {
-                pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (arg_type);
-                pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (arg_type);
-
-                size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-                int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-                if (!promote_offset (PKL_PASS_AST,
-                                     size, signed_p, unit,
-                                     &PKL_AST_FUNC_ARG_INITIAL (func_arg),
-                                     &restart))
-                  goto error;
-              }
-              break;
-            default:
-              PKL_ICE (PKL_AST_LOC (initial),
-                       "non-promoteable function argument initializer at promo time");
-              PKL_PASS_ERROR;
-            }
+      if (!promote_node (PKL_PASS_AST,
+                         &PKL_AST_FUNC_ARG_INITIAL (func_arg),
+                         arg_type, &restart))
+        goto error;
 
       PKL_PASS_RESTART = restart;
     }

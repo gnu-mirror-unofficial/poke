@@ -5,6 +5,10 @@
 	(pkl_promo_ps_op_binary_intoffstrarr): Likewise.
 	(pkl_promo_ps_op_bconc): Likewise.
 	(pkl_promo_ps_op_mul): Likewise.
+	(pkl_promo_ps_return_stmt): Likewise.
+	(pkl_promo_ps_func_arg): Likewise.
+	(pkl_promo_ps_print_stmt): Likewise.
+	(pkl_promo_ps_funcall): Likewise.
 
 2020-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
