@@ -9,6 +9,10 @@
 	(pkl_promo_ps_func_arg): Likewise.
 	(pkl_promo_ps_print_stmt): Likewise.
 	(pkl_promo_ps_funcall): Likewise.
+	(pkl_promo_ps_op_binary): Likewise.
+	(pkl_promo_ps_ass_stmt): Likewise.
+	(pkl_promo_ps_struct_type_field): Likewise.
+	(pkl_promo_ps_op_in): Likewise.
 
 2020-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 

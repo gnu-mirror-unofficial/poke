@@ -200,6 +200,10 @@ promote_node (pkl_ast ast,
 {
   pkl_ast_node node_type = PKL_AST_TYPE (*node);
 
+  /* Note how we call promote array even if pkl_ast_type_equal_p
+     declares that both types are equal.  This is because
+     pkl_ast_type_equal_p doesnt' take into account the array
+     dimensions.  */
   if (!pkl_ast_type_equal_p (node_type, type)
       || PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY)
     {
@@ -773,13 +777,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_binary)
 
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
     {
-      size_t size = PKL_AST_TYPE_I_SIZE (type);
-      int signed_p = PKL_AST_TYPE_I_SIGNED_P (type);
-
-      if (!promote_integral (PKL_PASS_AST, size, signed_p,
-                             &PKL_AST_EXP_OPERAND (exp, 0), &restart1)
-          || !promote_integral (PKL_PASS_AST, size, signed_p,
-                                &PKL_AST_EXP_OPERAND (exp, 1), &restart2))
+      if (!promote_node (PKL_PASS_AST, &PKL_AST_EXP_OPERAND (exp, 0),
+                         type, &restart1)
+          || !promote_node (PKL_PASS_AST, &PKL_AST_EXP_OPERAND (exp, 1),
+                            type, &restart2))
         {
           PKL_ICE (PKL_AST_LOC (exp),
                    "couldn't promote operands of expression #%" PRIu64,
@@ -997,69 +998,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_ass_stmt)
   pkl_ast_node lvalue = PKL_AST_ASS_STMT_LVALUE (ass_stmt);
   pkl_ast_node exp = PKL_AST_ASS_STMT_EXP (ass_stmt);
   pkl_ast_node lvalue_type = PKL_AST_TYPE (lvalue);
-  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
   int restart = 0;
 
   /* At this point it is assured that exp_type is promoteable to
      lvalue_type, or typify1 wouldn't have allowed this node to
      pass.  */
 
-  /* If the lvalue type is not an array, and both types are
-     equivalent, then we are done.  Arrays are excluded because of how
-     the boundary is ignored in type equivalence.  */
-  if (PKL_AST_TYPE_CODE (lvalue_type) != PKL_TYPE_ARRAY
-      && pkl_ast_type_equal_p (lvalue_type, exp_type))
-    PKL_PASS_DONE;
-
-  /* A promotion is needed.  */
-  switch (PKL_AST_TYPE_CODE (lvalue_type))
+  if (!promote_node (PKL_PASS_AST,
+                     &PKL_AST_ASS_STMT_EXP (ass_stmt),
+                     lvalue_type,
+                     &restart))
     {
-    case PKL_TYPE_ANY:
-      break;
-    case PKL_TYPE_ARRAY:
-      if (!promote_array (PKL_PASS_AST,
-                          lvalue_type,
-                          &PKL_AST_ASS_STMT_EXP (ass_stmt),
-                          &restart))
-        goto error;
-      break;
-    case PKL_TYPE_INTEGRAL:
-      if (!promote_integral (PKL_PASS_AST,
-                             PKL_AST_TYPE_I_SIZE (lvalue_type),
-                             PKL_AST_TYPE_I_SIGNED_P (lvalue_type),
-                             &PKL_AST_ASS_STMT_EXP (ass_stmt),
-                             &restart))
-        goto error;
-      break;
-    case PKL_TYPE_OFFSET:
-      {
-        pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (lvalue_type);
-        pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (lvalue_type);
-
-        size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-        int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-        if (!promote_offset (PKL_PASS_AST,
-                             size, signed_p, unit,
-                             &PKL_AST_ASS_STMT_EXP (ass_stmt),
-                             &restart))
-          goto error;
-      }
-      break;
-    default:
-      PKL_ICE (PKL_AST_LOC (ass_stmt),
-               "non-promoteable r-value in assignment statement at promo time");
+      PKL_ICE (PKL_AST_LOC (exp),
+               "couldn't promote r-value in assignment");
       PKL_PASS_ERROR;
-      break;
     }
 
   PKL_PASS_RESTART = restart;
-  PKL_PASS_DONE;
-
- error:
-  PKL_ICE (PKL_AST_LOC (exp),
-           "couldn't promote r-value in assignment");
-  PKL_PASS_ERROR;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1194,25 +1149,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_return_stmt)
   pkl_ast_node exp = PKL_AST_RETURN_STMT_EXP (return_stmt);
   pkl_ast_node function = PKL_AST_RETURN_STMT_FUNCTION (return_stmt);
 
-  pkl_ast_node returned_type;
   pkl_ast_node expected_type;
 
   if (exp == NULL)
     PKL_PASS_DONE;
 
-  returned_type = PKL_AST_TYPE (exp);
   expected_type = PKL_AST_FUNC_RET_TYPE (function);
 
   /* At this point it is assured that the expected type and returned
      type are promoteable, or typify wouldn't have allowed it to
      pass.  */
-
-  /* If the expected type is not an array, and both types are
-     equivalent, then we are done.  Arrays are excluded because of how
-     the boundary is ignored in type equivalence.  */
-  if (PKL_AST_TYPE_CODE (expected_type) != PKL_TYPE_ARRAY
-      && pkl_ast_type_equal_p (expected_type, returned_type))
-    PKL_PASS_DONE;
 
   if (PKL_AST_TYPE_CODE (expected_type) != PKL_TYPE_VOID)
     {
@@ -1415,85 +1361,38 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
           && PKL_AST_TYPE_S_ITYPE (constraint_type))
         constraint_type = PKL_AST_TYPE_S_ITYPE (constraint_type);
 
-      switch (PKL_AST_TYPE_CODE (constraint_type))
+      if (PKL_AST_TYPE_CODE (constraint_type)
+          != PKL_TYPE_INTEGRAL)
         {
-        case PKL_TYPE_INTEGRAL:
-          if (!promote_integral (PKL_PASS_AST, 32, 1,
-                                 &PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem),
-                                 &restart))
-            {
-              PKL_ICE (PKL_AST_LOC (elem_constraint),
-                       "couldn't promote struct field constraint");
-              PKL_PASS_ERROR;
-            }
-          break;
-        default:
           PKL_ICE (PKL_AST_LOC (elem_constraint),
                    "non-promoteable struct field constraint at promo time");
           PKL_PASS_ERROR;
-          break;
+        }
+
+      if (!promote_integral (PKL_PASS_AST, 32, 1,
+                             &PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (elem),
+                             &restart))
+        {
+          PKL_ICE (PKL_AST_LOC (elem_constraint),
+                   "couldn't promote struct field constraint");
+          PKL_PASS_ERROR;
         }
 
       PKL_PASS_RESTART = restart;
     }
 
-  if (elem_initializer
-      && !pkl_ast_type_equal_p (elem_type, PKL_AST_TYPE (elem_initializer)))
+  if (elem_initializer)
     {
       int restart = 0;
 
-      switch (PKL_AST_TYPE_CODE (elem_type))
+      if (!promote_node (PKL_PASS_AST,
+                         &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
+                         elem_type,
+                         &restart))
         {
-        case PKL_TYPE_INTEGRAL:
-          {
-            if (!promote_integral (PKL_PASS_AST,
-                                   PKL_AST_TYPE_I_SIZE (elem_type),
-                                   PKL_AST_TYPE_I_SIGNED_P (elem_type),
-                                   &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
-                                   &restart))
-              {
-                PKL_ICE (PKL_AST_LOC (elem_initializer),
-                         "couldn't promote struct type field initializer");
-                PKL_PASS_ERROR;
-              }
-            break;
-          }
-        case PKL_TYPE_OFFSET:
-          {
-            pkl_ast_node base_type
-              = PKL_AST_TYPE_O_BASE_TYPE (elem_type);
-
-            if (!promote_offset (PKL_PASS_AST,
-                                 PKL_AST_TYPE_I_SIZE (base_type),
-                                 PKL_AST_TYPE_I_SIGNED_P (base_type),
-                                 PKL_AST_TYPE_O_UNIT (elem_type),
-                                 &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
-                                 &restart))
-              {
-                PKL_ICE (PKL_AST_LOC (elem_initializer),
-                         "couldn't promote struct type field initializer");
-                PKL_PASS_ERROR;
-              }
-            break;
-          }
-        case PKL_TYPE_ARRAY:
-          {
-            if (!promote_array (PKL_PASS_AST,
-                                elem_type,
-                                &PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (elem),
-                                &restart))
-              {
-                PKL_ICE (PKL_AST_LOC (elem_initializer),
-                         "couldn't promote struct type field initializer");
-                PKL_PASS_ERROR;
-              }
-            break;
-          }
-        case PKL_TYPE_STRUCT:
-          /* Nothing to do.  */
-          break;
-        default:
-          assert (0);
+          PKL_ICE (PKL_AST_LOC (elem_initializer),
+                   "couldn't promote struct type field initializer");
+          PKL_PASS_ERROR;
         }
 
       PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
@@ -1509,23 +1408,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
           && PKL_AST_TYPE_S_ITYPE (optcond_type))
         optcond_type = PKL_AST_TYPE_S_ITYPE (optcond_type);
 
-      switch (PKL_AST_TYPE_CODE (optcond_type))
+      if (PKL_AST_TYPE_CODE (optcond_type) != PKL_TYPE_INTEGRAL)
         {
-        case PKL_TYPE_INTEGRAL:
-          if (!promote_integral (PKL_PASS_AST, 32, 1,
-                                 &PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem),
-                                 &restart))
-            {
-              PKL_ICE (PKL_AST_LOC (elem_optcond),
-                       "couldn't promote struct field optcond");
-              PKL_PASS_ERROR;
-            }
-          break;
-        default:
           PKL_ICE (PKL_AST_LOC (elem_optcond),
                    "non-promoteable struct field optcond at promo time");
           PKL_PASS_ERROR;
-          break;
+        }
+
+      if (!promote_integral (PKL_PASS_AST, 32, 1,
+                             &PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem),
+                             &restart))
+        {
+          PKL_ICE (PKL_AST_LOC (elem_optcond),
+                   "couldn't promote struct field optcond");
+          PKL_PASS_ERROR;
         }
 
       PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
@@ -1536,30 +1432,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_struct_type_field)
       pkl_ast_node label_type = PKL_AST_TYPE (elem_label);
       int restart = 0;
 
-      switch (PKL_AST_TYPE_CODE (label_type))
+      if (PKL_AST_TYPE_CODE (label_type) != PKL_TYPE_OFFSET)
         {
-        case PKL_TYPE_OFFSET:
-          {
-            pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
-
-            if (!promote_offset (PKL_PASS_AST,
-                                 64, 0, unit_bit,
-                                 &PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem),
-                                 &restart))
-              {
-                PKL_ICE (PKL_AST_LOC (elem_label),
-                         "couldn't promote struct field label");
-                PKL_PASS_ERROR;
-              }
-
-            unit_bit = ASTREF (unit_bit); pkl_ast_node_free (unit_bit);
-            break;
-          }
-        default:
           PKL_ICE (PKL_AST_LOC (elem_label),
                    "non-promoteable struct field label at promo time");
           PKL_PASS_ERROR;
-          break;
+        }
+      else
+        {
+          pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
+
+          if (!promote_offset (PKL_PASS_AST,
+                               64, 0, unit_bit,
+                               &PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem),
+                               &restart))
+            {
+              PKL_ICE (PKL_AST_LOC (elem_label),
+                       "couldn't promote struct field label");
+              PKL_PASS_ERROR;
+            }
+
+          unit_bit = ASTREF (unit_bit); pkl_ast_node_free (unit_bit);
         }
 
       PKL_PASS_RESTART = PKL_PASS_RESTART || restart;
@@ -1575,56 +1468,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_in)
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
-  pkl_ast_node t1 = PKL_AST_TYPE (op1);
   pkl_ast_node t2 = PKL_AST_TYPE_A_ETYPE (PKL_AST_TYPE (op2));
 
   int restart = 0;
 
-  if (pkl_ast_type_equal_p (t1, t2))
-    PKL_PASS_DONE;
-
-  switch (PKL_AST_TYPE_CODE (t2))
+  if (!promote_node (PKL_PASS_AST,
+                     &PKL_AST_EXP_OPERAND (exp, 0),
+                     t2, &restart))
     {
-    case PKL_TYPE_INTEGRAL:
-      if (!promote_integral (PKL_PASS_AST,
-                             PKL_AST_TYPE_I_SIZE (t2),
-                             PKL_AST_TYPE_I_SIGNED_P (t2),
-                             &PKL_AST_EXP_OPERAND (exp, 0),
-                             &restart))
-        goto error;
-
-      PKL_PASS_RESTART = 1;
-      break;
-    case PKL_TYPE_OFFSET:
-      {
-        pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (t2);
-        pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (t2);
-
-        size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-        int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-        if (!promote_offset (PKL_PASS_AST,
-                             size, signed_p, unit,
-                             &PKL_AST_EXP_OPERAND (exp, 0),
-                             &restart))
-          goto error;
-
-        PKL_PASS_RESTART = 1;
-      }
-      break;
-    case PKL_TYPE_STRING:
-      break;
-    default:
-      assert (0);
-      break;
+      PKL_ICE (PKL_AST_LOC (op1),
+               "couldn't promote operand argument");
+      PKL_PASS_ERROR;
     }
 
-  PKL_PASS_DONE;
-
- error:
-  PKL_ICE (PKL_AST_LOC (op1),
-           "couldn't promote operand argument");
-  PKL_PASS_ERROR;
+  PKL_PASS_RESTART = restart;
 }
 PKL_PHASE_END_HANDLER
 
@@ -1640,50 +1497,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cons)
     case PKL_AST_CONS_KIND_ARRAY:
       {
         pkl_ast_node cons_elem_type = PKL_AST_TYPE_A_ETYPE (cons_type);
-        pkl_ast_node cons_value_type;
         int restart = 0;
 
         if (!cons_value)
           PKL_PASS_DONE;
 
-        cons_value_type = PKL_AST_TYPE (cons_value);
+        if (!promote_node (PKL_PASS_AST,
+                           &PKL_AST_CONS_VALUE (cons),
+                           cons_elem_type,
+                           &restart))
+          goto error;
 
-        if (!pkl_ast_type_equal_p (cons_elem_type, cons_value_type))
-          {
-            switch (PKL_AST_TYPE_CODE (cons_elem_type))
-              {
-              case PKL_TYPE_INTEGRAL:
-                if (!promote_integral (PKL_PASS_AST,
-                                       PKL_AST_TYPE_I_SIZE (cons_elem_type),
-                                       PKL_AST_TYPE_I_SIGNED_P (cons_elem_type),
-                                       &PKL_AST_CONS_VALUE (cons),
-                                       &restart))
-                  goto error;
-
-
-                PKL_PASS_RESTART = 1;
-                break;
-              case PKL_TYPE_OFFSET:
-                {
-                  pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (cons_elem_type);
-                  pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (cons_elem_type);
-
-                  size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-                  int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-                  if (!promote_offset (PKL_PASS_AST,
-                                       size, signed_p, unit,
-                                       &PKL_AST_CONS_VALUE (cons),
-                                       &restart))
-                    goto error;
-
-                  PKL_PASS_RESTART = 1;
-                }
-                break;
-              default:
-                assert (0);
-              }
-          }
+        PKL_PASS_RESTART = restart;
         break;
       }
     case PKL_AST_CONS_KIND_STRUCT:
@@ -1691,14 +1516,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cons)
         pkl_ast_node astruct = cons_value;
         pkl_ast_node struct_fields = PKL_AST_STRUCT_FIELDS (astruct);
         pkl_ast_node elem = NULL;
+        int restart = 0;
 
         for (elem = struct_fields; elem; elem = PKL_AST_CHAIN (elem))
           {
             pkl_ast_node type_elem;
 
             pkl_ast_node elem_name = PKL_AST_STRUCT_FIELD_NAME (elem);
-            pkl_ast_node elem_exp = PKL_AST_STRUCT_FIELD_EXP (elem);
-            pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
 
             /* Look for the target type of this struct element.  As per
                typify, the later can always be promoted to the first.  */
@@ -1720,54 +1544,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cons)
                         pkl_ast_node type_elem_type
                           = PKL_AST_STRUCT_TYPE_FIELD_TYPE (type_elem);
 
-                        if (!pkl_ast_type_equal_p (elem_type, type_elem_type)
-                            || (PKL_AST_TYPE_CODE (type_elem_type) == PKL_TYPE_ARRAY))
+                        if (PKL_AST_TYPE_CODE (type_elem_type) == PKL_TYPE_ARRAY)
+                          /* Array promotion of cons initializers is
+                             performed in the constructor, not here.
+                             This is because the target type's bounder
+                             shall be created in the constructor's
+                             environment.  */
+                          ;
+                        else
                           {
-                            int restart = 0;
+                            if (!promote_node (PKL_PASS_AST,
+                                               &PKL_AST_STRUCT_FIELD_EXP (elem),
+                                               type_elem_type,
+                                               &restart))
+                              goto error;
 
-                            switch (PKL_AST_TYPE_CODE (type_elem_type))
-                              {
-                              case PKL_TYPE_INTEGRAL:
-                                if (!promote_integral (PKL_PASS_AST,
-                                                       PKL_AST_TYPE_I_SIZE (type_elem_type),
-                                                       PKL_AST_TYPE_I_SIGNED_P (type_elem_type),
-                                                       &PKL_AST_STRUCT_FIELD_EXP (elem),
-                                                       &restart))
-                                  goto error;
-
-                                PKL_PASS_RESTART |= restart;
-                                break;
-                              case PKL_TYPE_OFFSET:
-                                {
-                                  pkl_ast_node base_type
-                                    = PKL_AST_TYPE_O_BASE_TYPE (type_elem_type);
-                                  pkl_ast_node unit
-                                    = PKL_AST_TYPE_O_UNIT (type_elem_type);
-
-                                  size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-                                  int signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type);
-
-                                  if (!promote_offset (PKL_PASS_AST,
-                                                       size, signed_p, unit,
-                                                       &PKL_AST_STRUCT_FIELD_EXP (elem),
-                                                       &restart))
-                                    goto error;
-
-                                  PKL_PASS_RESTART |= restart;
-                                  break;
-                                }
-                              case PKL_TYPE_ARRAY:
-                                /* Array promotion of cons
-                                   initializers is performed in the
-                                   constructor, not here.  This is
-                                   because the target type's bounder
-                                   shall be created in the
-                                   constructor's environment.  */
-                                break;
-                              default:
-                                assert (0);
-                                break;
-                              }
+                            PKL_PASS_RESTART |= restart;
                           }
                       }
                   }
