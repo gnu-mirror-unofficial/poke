@@ -1872,53 +1872,6 @@ Description:
 + section from array and struct constructor sections.
 Target: 0.1
 
-Summary: Factorize promotion of expressions in promo
-Component: Compiler
-Kind: ENH
-Priority:3
-Description:
-+ pkl_ast_promo (pkl_ast_node *NODE, pkl_ast_node TYPE)
-+
-+ Do this:
-+ ...
-+
-+ if (!pkl_ast_type_equal_p (acons_elem_type, acons_value_type))
-+   {
-+     switch (PKL_AST_TYPE_CODE (acons_elem_type))
-+       {
-+       case PKL_TYPE_INTEGRAL:
-+         if (!promote_integral (PKL_PASS_AST,
-+                                PKL_AST_TYPE_I_SIZE (acons_elem_type),
-+                                PKL_AST_TYPE_I_SIGNED_P (acons_elem_type),
-+                                &PKL_AST_ACONS_VALUE (acons),
-+                                &restart))
-+           goto error;
-+
-+         PKL_PASS_RESTART = 1;
-+         break;
-+       case PKL_TYPE_OFFSET:
-+         {
-+           pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (acons_elem_type);
-+           pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (acons_elem_type);
-+
-+           size_t size = PKL_AST_TYPE_I_SIZE (acons_elem_type);
-+           int signed_p = PKL_AST_TYPE_I_SIGNED_P (acons_elem_type);
-+
-+           if (!promote_offset (PKL_PASS_AST,
-+                                size, signed_p, unit,
-+                                &PKL_AST_ACONS_VALUE (acons);
-+                                &restart))
-+             goto error;
-+
-+           PKL_PASS_RESTART = 1;
-+         }
-+         break;
-+       default:
-+         assert (0);
-+       }
-+   }
-Target: 0.1
-
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
