@@ -1519,13 +1519,6 @@ Description:
 + Obviously a new exception ``E_perm`` shall be added as well.
 Target: 0.1
 
-Summary: Abstract the quiet mode in a poke_msg function
-Component: POKE
-Kind: ENH
-Priority: 2
-Description: This will avoid duplicating conditionals everywhere.
-Target: 0.1
-
 Summary: .set with no arguments should give a summary of all options
 Component: CLI
 Kind: ENH
