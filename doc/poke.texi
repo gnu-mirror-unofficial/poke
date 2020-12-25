@@ -7522,7 +7522,7 @@ Gives the number of elements stored in the array.  Example:
 3
 @end example
 @item mapped
-Gives 1 if the array is mapped, 0 otherwise.  Examples:
+Boolean indicating whether the array is mapped.  Examples:
 
 @example
 (poke) var a = [1,2,3]
@@ -7533,8 +7533,8 @@ Gives 1 if the array is mapped, 0 otherwise.  Examples:
 1
 @end example
 @item strict
-Gives 0 if the array is mapped in non-strict mode, 1
-otherwise. Examples:
+Boolean indicating whether the array is mapped in strict mode.
+Examples:
 
 @example
 (poke) var a = int[3] @@ 0#B
@@ -8379,7 +8379,49 @@ XXX
 @node Struct Attributes
 @subsection Struct Attributes
 @cindex attributes, struct attributes
-XXX
+The following attributes are defined for struct values.
+
+@table @code
+@item size
+Gives an offset with the storage occupied by the complete struct.
+Example:
+
+@example
+(poke) type Packet = struct @{ byte s; byte[s] d; @}
+(poke) (Packet @{ s = 3 @})'size
+32UL#b
+@end example
+@item length
+Gives the number of fields stored in the struct.  Note that, due to
+absent fields, this doesn't always corresponds to the number of fields
+that appear in the definition of a struct type.
+
+For example, for the following struct type:
+
+@example
+type Packet =
+  struct
+  @{
+    byte magic: magic in [0xff,0xfe];
+    byte control if magic == 0xfe;
+    byte[128] payload;
+  @};
+@end example
+
+@noindent
+We get the following results:
+
+@example
+(poke) (Packet @{ magic = 0xff @})'length
+2UL
+(poke) (Packet @{ magic = 0xfe @})'length
+3UL
+@end example
+@item mapped
+Boolean indicating whether the struct is mapped.
+@item strict
+Boolean indicating whether the struct is mapped in strict mode.
+@end table
 
 @node Types
 @section Types

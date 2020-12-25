@@ -1,3 +1,7 @@
+2020-12-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Struct Attributes): New section.
+
 2020-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (offset_printer): Fix printing unnammed
