@@ -418,6 +418,18 @@ pk_disassemble_expression (pk_compiler pkc, const char *str,
   PK_RETURN (PK_OK);
 }
 
+void
+pk_print_profile (pk_compiler pkc)
+{
+  pvm_print_profile (pkc->vm);
+}
+
+void
+pk_reset_profile (pk_compiler pkc)
+{
+  pvm_reset_profile (pkc->vm);
+}
+
 pk_ios
 pk_ios_cur (pk_compiler pkc)
 {

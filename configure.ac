@@ -104,6 +104,18 @@ dnl Jitter
 
 AC_JITTER_SUBPACKAGE([jitter])
 
+dnl Profiling in the PVM
+
+AC_ARG_ENABLE([pvm-profiling],
+              AS_HELP_STRING([--enable-pvm-profiling],
+                             [Enable profiling in the PVM (default is NO)]),
+              [profiling_enabled=$enableval], [profiling_enabled=no])
+
+if test "x$profiling_enabled" = "xyes"; then
+  AC_DEFINE([JITTER_PROFILE_COUNT], [1], [use count-based profiling in the PVM])
+  AC_DEFINE([JITTER_PROFILE_SAMPLE], [1], [use sample-based profiling in the PVM])
+fi
+
 dnl libnbd for nbd:// io spaces (optional). Testing it also requires nbdkit
 PKG_CHECK_MODULES([LIBNBD], [libnbd], [
   AC_SUBST([LIBNBD_CFLAGS])

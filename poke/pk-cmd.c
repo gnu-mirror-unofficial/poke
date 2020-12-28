@@ -555,6 +555,9 @@ extern struct pk_trie *vm_trie;  /* pk-cmd-vm.c  */
 extern const struct pk_cmd *vm_disas_cmds[];  /* pk-cmd-vm.c */
 extern struct pk_trie *vm_disas_trie; /* pk-cmd-vm.c */
 
+extern const struct pk_cmd *vm_profile_cmds[]; /* pk-cmd-vm.c */
+extern struct pk_trie *vm_profile_trie; /* pk-cmd-vm.c */
+
 extern const struct pk_cmd *set_cmds[]; /* pk-cmd-set.c */
 extern struct pk_trie *set_trie; /* pk-cmd-set.c */
 
@@ -720,6 +723,7 @@ pk_cmd_init (void)
   info_trie = pk_trie_from_cmds (info_cmds);
   vm_trie = pk_trie_from_cmds (vm_cmds);
   vm_disas_trie = pk_trie_from_cmds (vm_disas_cmds);
+  vm_profile_trie = pk_trie_from_cmds (vm_profile_cmds);
   set_trie = pk_trie_from_cmds (set_cmds);
   map_trie = pk_trie_from_cmds (map_cmds);
   map_entry_trie = pk_trie_from_cmds (map_entry_cmds);
@@ -736,6 +740,7 @@ pk_cmd_shutdown (void)
   pk_trie_free (info_trie);
   pk_trie_free (vm_trie);
   pk_trie_free (vm_disas_trie);
+  pk_trie_free (vm_profile_trie);
   pk_trie_free (set_trie);
   pk_trie_free (map_trie);
   pk_trie_free (map_entry_trie);

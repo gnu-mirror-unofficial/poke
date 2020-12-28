@@ -1,3 +1,20 @@
+2020-12-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Handle --enable-pvm-profiling.
+	* libpoke/pvm.c (pvm_print_profile): New function.
+	(pvm_reset_profile): Likewise.
+	* libpoke/libpoke.c (pk_print_profile): Likewise.
+	(pk_reset_profile): Likewise.
+	* poke/pk-cmd-vm.c (vm_profile_cmds): Define.
+	(vm_profile_cmd): Likewise.
+	(vm_cmds): Add vm_profile_cmd.
+	(vm_profile_show_cmd): Define.
+	(vm_profile_reset_cmd): Likewise.
+	(pk_cmd_vm_profile_show): New function.
+	(pk_cmd_vm_profile_reset): Likewise.
+	* poke/pk-cmd.c (pk_cmd_init): Initialize vm_disas_trie.
+	(pk_cmd_shutdown): Dispose of vm_profile_trie.
+
 2020-12-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Struct Attributes): New section.

@@ -555,6 +555,15 @@ void pvm_shutdown (pvm pvm);
 
 pvm_env pvm_get_env (pvm pvm);
 
+/* Print a profiling summary corresponding to the currrent state of
+   the PVM.  */
+
+void pvm_print_profile (pvm pvm);
+
+/* Reset profiling counters in the given PVM.  */
+
+void pvm_reset_profile (pvm pvm);
+
 /* Run a PVM program in a virtual machine.
 
    If the execution of PROGRAM generates a result value, it is put in

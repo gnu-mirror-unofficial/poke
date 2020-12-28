@@ -118,6 +118,24 @@ pvm_init (void)
   return apvm;
 }
 
+extern jitter_print_context jitter_context; /* pvm-program.c */
+
+void
+pvm_print_profile (pvm apvm)
+{
+  struct pvm_profile_runtime *p
+    = pvm_state_profile_runtime (&apvm->pvm_state);
+  pvm_profile_runtime_print_unspecialized (jitter_context, p);
+}
+
+void
+pvm_reset_profile (pvm apvm)
+{
+  struct pvm_profile_runtime *p
+    = pvm_state_profile_runtime (&apvm->pvm_state);
+  pvm_profile_runtime_clear (p);
+}
+
 pvm_env
 pvm_get_env (pvm apvm)
 {

@@ -207,6 +207,16 @@ int pk_disassemble_function_val (pk_compiler pkc, pk_val val,
 int pk_disassemble_expression (pk_compiler pkc, const char *str,
                                int native_p) LIBPOKE_API;
 
+/* Print a profiling summary corresponding to the current state of the
+   PVM.  */
+
+void pk_print_profile (pk_compiler pkc) LIBPOKE_API;
+
+/* Reset the profiling counters.  If the PVM hasn't been compiled with
+   profiling support this is a no-operation.  */
+
+void pk_reset_profile (pk_compiler pkc) LIBPOKE_API;
+
 /* Set the QUIET_P flag in the compiler.  If this flag is set, the
    incremental compiler emits as few output as possible.  */
 

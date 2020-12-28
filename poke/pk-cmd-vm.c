@@ -85,6 +85,20 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static int
+pk_cmd_vm_profile_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  pk_print_profile (poke_compiler);
+  return 1;
+}
+
+static int
+pk_cmd_vm_profile_reset (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  pk_reset_profile (poke_compiler);
+  return 1;
+}
+
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 const struct pk_cmd vm_disas_exp_cmd =
@@ -112,11 +126,33 @@ const struct pk_cmd vm_disas_cmd =
   {"disassemble", "e", PK_VM_DIS_UFLAGS, 0, &vm_disas_trie, NULL,
    "vm disassemble (expression|function)", NULL};
 
+const struct pk_cmd vm_profile_show_cmd =
+  {"show", "", "", 0, NULL, pk_cmd_vm_profile_show,
+   "vm profile show", NULL};
+
+const struct pk_cmd vm_profile_reset_cmd =
+  {"reset", "", "", 0, NULL, pk_cmd_vm_profile_reset,
+   "vm profile reset", NULL};
+
+const struct pk_cmd *vm_profile_cmds[] =
+  {
+    &vm_profile_show_cmd,
+    &vm_profile_reset_cmd,
+    &null_cmd
+  };
+
+struct pk_trie *vm_profile_trie;
+
+const struct pk_cmd vm_profile_cmd =
+  {"profile", "", "", 0, &vm_profile_trie, NULL,
+   "vm profile (show|reset)", NULL};
+
 struct pk_trie *vm_trie;
 
 const struct pk_cmd *vm_cmds[] =
   {
     &vm_disas_cmd,
+    &vm_profile_cmd,
     &null_cmd
   };
 
