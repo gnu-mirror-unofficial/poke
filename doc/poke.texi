@@ -188,6 +188,7 @@ The Poke Language
 * Endianness::			Byte ordering.
 * Mapping::			Accessing IO spaces.
 * Exception Handling::		Dealing with exceptional conditions.
+* Terminal::	                Dealing with the terminal.
 * Printing::			Output in Poke programs.
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
@@ -6046,6 +6047,7 @@ XXX
 * Endianness::			Byte ordering.
 * Mapping::			Accessing IO spaces.
 * Exception Handling::		Dealing with exceptional conditions.
+* Terminal::	                Dealing with the terminal.
 * Printing::			Output in Poke programs.
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
@@ -10033,6 +10035,111 @@ assert (0 == 0, ``Zero is equal to zero'');
 
 @code{assert} is useful for writing unit tests.
 
+@node Terminal
+@section Terminal
+
+Poke programs have access to a text-oriented terminal, that can be
+used to communicate with the user.  The system provides several
+primitive functions to manipulate the terminal, which are described in
+the sections below.
+
+@menu
+* Terminal Colors::		Foreground and background colors.
+* Terminal Styling::		Styling output with classes.
+* Terminal Hyperlinks::         Click-able hyperlinks.
+@end menu
+
+@node Terminal Colors
+@subsection Terminal Colors
+
+@c XXX use only RGB at the Poke level
+@c XXX where default color is Term_Default_Color = [-1,-1,-1]
+
+At every moment the text terminal is configured to use certain
+foreground and background colors.  Initially, these are the
+@dfn{default colors}, which depend on the underlying terminal
+capabilities, and maybe also on some system wide configuration
+setting.
+
+Terminal colors are encoded using integer values.  These integers do
+not have any structural meaning (they are actually indexes to certain
+tables in the underlying implementation) and the specific values
+depend on the kind of physical terminal that is used, and its
+capabilities.
+
+Therefore, Poke programs must never rely on the specific values of
+color integers, and use them only to differentiate them from other
+colors.
+
+However, we need a way to actually specify a color in terms of its own
+nature.  Since characterizing colors in RGB is very common in
+computing, the poke terminal provides a function that, given the
+values of red, green and blue beams, the corresponding terminal color
+integer is returned.  This call is @code{term_rgb_to_color}, and has
+the following signature:
+
+@example
+fun term_rgb_to_color = (int<32> red, int<32> green, int<32> blue) int<32>
+@end example
+
+Getting and setting the foreground and background colors is performed
+using the @code{term_get_color}, @code{term_set_color},
+@code{term_get_fgcolor} and @code{term_set_fgcolor} functions, with
+signatures:
+
+@example
+fun term_get_color = int<32>
+fun term_set_color = (int<32> color) void
+fun term_get_bgcolor = int<32>
+fun term_set_bgcolor = (int<32> color) void
+@end example
+
+@node Terminal Styling
+@subsection Terminal Styling
+
+Styling of the output sent to the terminal is supported in the form of
+@dfn{styling classes}.  Each class is characterized by a name, a
+string.
+
+A class is activated by using the function @code{term_begin_class},
+and deactivated by using the function @code{term_end_class}.  Several
+classes can be activated simultaneously.  It is down to the
+implementation to decide how to honor some given class, @i{i.e.} to
+decide how to characterize it physically (visually, or audibly, or
+using an electrical discharge on the keyboard, or whatever) The class
+may very well be ignored all together.  Poke programs should never
+rely on how a specific class is implemented.
+
+The @code{term_begin_class} and @code{term_end_class} functions have
+the following signatures:
+
+@example
+fun term_begin_class = (string class) void
+fun term_end_class = (string class) void
+@end example
+
+@noindent
+Styling classes can overlap, but trying to end a class that is not
+active is an error.  If such a thing is attempted then an
+@code{E_term_no_class} exception is raised.
+
+@node Terminal Hyperlinks
+@subsection Terminal Hyperlinks
+
+The poke terminal supports terminal hyperlinks.  Each hyperlink is
+characterized by an URL, and an ID.  The @code{term_begin_hyperlink}
+and @code{term_end_hyperlink} functions have the following signatures:
+
+@example
+fun term_begin_hyperlink = (string url, string id) void
+fun term_end_hyperlink = void
+@end example
+
+@noindent
+Hyperlinks can overlap, but trying to end an hyperlink when there is
+no t a currently open one will result in a @code{E_term_no_hyperlink}
+exception raised.
+
 @node Printing
 @section Printing
 
@@ -10042,7 +10149,6 @@ simple unformatted output, and formatted output.
 @menu
 * print::			simple output.
 * printf::			formatted output.
-* Pretty Printers::		improve the legibility of your data structures.
 @end menu
 
 @node print
@@ -10182,11 +10288,6 @@ This is a NAME: xxx
 (poke) printf "Name: %<string:%s%> Age: %<integer:%i32d%>, "Jose", 39
 Name: Jose Age: 39
 @end example
-
-@node Pretty Printers
-@subsection Pretty Printers
-@cindex pretty printing
-XXX
 
 @node Comments
 @section Comments
@@ -10666,8 +10767,8 @@ Often a format encodes a date and time expressed as the number of
 seconds since midnight, January@tie{}1st 1970@.  You could map these
 simply as integers.  However, the standard library provides two types
 @code{POSIX_Time32} and @code{POSIX_Time64} which include
-pretty-printers (@pxref{Pretty Printers}) to display the date in a
-human readable format.  The definition is:
+pretty-printers to display the date in a human readable format.  The
+definition is:
 
 @example
 type POSIX_Time@var{size} = struct
