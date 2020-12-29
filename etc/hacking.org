@@ -37,7 +37,6 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   example, could be implemented in a pickle =bitpatterns.pk=.
 
 * Maintenance
-
 ** Global Maintainer
 
    Jose E. Marchesi	<jemarch@gnu.org>
@@ -177,7 +176,6 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    adding a record to DEV-NEWS
 
 * Development Environment
-
 ** Autotools
 
    This distribution uses whatever versions of Automake, Autoconf, and
@@ -375,7 +373,6 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
    : https://gitlab.com/gnu-poke/ci-distcheck/pipelines
    : https://gitlab.com/gnu-poke/ci-distcheck/-/jobs?scope=finished
-
 
 * Coding Style and Conventions
 
@@ -1602,8 +1599,7 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    : (poke) [1#B,2#B]
    : <span class="array">[<span class="offset"><span class="integer">0x1</span>#B</span>,<span class="offset"><span class="integer">0x2</span>#B</span>]</span><br/>(poke)
 
-* Debugging Poke
-
+* Debugging poke
 ** Building with Debugging support
 
    Short summary: at the present time Poke and its Jittery VM are not
@@ -1764,3 +1760,15 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    when =mullu= is executed are a pair of stupid signed integers,
    which are not boxed and not what the instruction expects.  Mystery
    solved.
+* Profiling poke
+** Building with profiling support
+
+   poke supports a couple of commands that can be used to profile Poke
+   programs:
+
+   : .vm profile reset
+   : .vm profile show
+
+   For these commands to work you need to build poke with profiling
+   support.  This is done by passing the =--enable-pvm-profiling=
+   command line option to =configure=.

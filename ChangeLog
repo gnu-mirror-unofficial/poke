@@ -1,5 +1,11 @@
 2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/hacking.org (Building with profiling support): New section.
+	* HACKING: Regenerate.
+	* DEV-NEWS: Update.
+
+2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.h: Prototype for pvm_ref_struct_cstr.
 	* libpoke/pvm-val.c (pvm_ref_struct_cstr): New function.
 	(pvm_ref_struct): Rewrite to use pvm_ref_struct_cstr.

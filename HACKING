@@ -100,12 +100,14 @@ _________________
 .. 1. pk-term
 .. 2. Styling Classes
 .. 3. Debugging Styling
-15. Debugging Poke
+15. Debugging poke
 .. 1. Building with Debugging support
 .. 2. Invoking GDB to debug an uninstalled poke
 .. 3. Using GDB extensions
 .. 4. Valgrind and Poke
 .. 5. Debugging PVM Assembly Code
+16. Profiling poke
+.. 1. Building with profiling support
 
 
 Welcome, adventurous poker! This file contains useful information for
@@ -2009,7 +2011,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-15 Debugging Poke
+15 Debugging poke
 =================
 
 15.1 Building with Debugging support
@@ -2201,3 +2203,23 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   We recompile, re-run, and we find out that the elements at the TOS
   when `mullu' is executed are a pair of stupid signed integers, which
   are not boxed and not what the instruction expects.  Mystery solved.
+
+
+16 Profiling poke
+=================
+
+16.1 Building with profiling support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  poke supports a couple of commands that can be used to profile Poke
+  programs:
+
+  ,----
+  | .vm profile reset
+  | .vm profile show
+  `----
+
+
+  For these commands to work you need to build poke with profiling
+  support.  This is done by passing the `--enable-pvm-profiling'
+  command line option to `configure'.

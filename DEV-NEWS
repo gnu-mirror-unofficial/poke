@@ -7,6 +7,11 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2020-12-28
+* poke can now be built with profiling support passing the
+  --enable-pvm-profiling to configure.  See HACKING `Profiling poke' for
+  more information.
+
 2020-12-22
 * Please see the new section in HACKING `Building after a git pull',
   as it contains information on how to workaround a little defect in
