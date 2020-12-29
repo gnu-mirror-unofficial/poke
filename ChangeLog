@@ -1,3 +1,12 @@
+2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm-val.h (PVM_MAKE_LONG): Define.
+	(PVM_MAKE_ULONG): Likewise.
+	(PVM_MAKE_LONG_ULONG): Likewise.
+	* libpoke/pvm-val.c (pvm_make_long_ulong): Remove function.
+	* libpoke/pvm.jitter: Use macros instead of functions to create
+	values.
+
 2020-12-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Handle --enable-pvm-profiling.

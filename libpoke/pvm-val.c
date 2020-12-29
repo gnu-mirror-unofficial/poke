@@ -43,26 +43,16 @@ pvm_make_uint (uint32_t value, int size)
   return PVM_MAKE_UINT (value, size);
 }
 
-static inline pvm_val
-pvm_make_long_ulong (int64_t value, int size, int tag)
-{
-  uint64_t *ll = pvm_alloc (sizeof (uint64_t) * 2);
-
-  ll[0] = value;
-  ll[1] = (size - 1) & 0x3f;
-  return ((uint64_t) (uintptr_t) ll) | tag;
-}
-
 pvm_val
 pvm_make_long (int64_t value, int size)
 {
-  return pvm_make_long_ulong (value, size, PVM_VAL_TAG_LONG);
+  return PVM_MAKE_LONG_ULONG (value, size, PVM_VAL_TAG_LONG);
 }
 
 pvm_val
 pvm_make_ulong (uint64_t value, int size)
 {
-  return pvm_make_long_ulong (value, size, PVM_VAL_TAG_ULONG);
+  return PVM_MAKE_LONG_ULONG (value, size, PVM_VAL_TAG_ULONG);
 }
 
 static pvm_val_box

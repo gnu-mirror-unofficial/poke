@@ -78,10 +78,6 @@ wrapped-functions
   pvm_env_pop_frame
   pvm_env_push_frame
   pvm_env_toplevel
-  pvm_make_int
-  pvm_make_uint
-  pvm_make_long
-  pvm_make_ulong
   pvm_make_string
   pvm_make_array
   pvm_make_struct
@@ -263,29 +259,29 @@ late-header-c
 
 /* Binary numeric operations.
   ( TYPE TYPE -- TYPE TYPE TYPE ) */
-# define PVM_BINOP(TYPEA,TYPEB,TYPER,TYPERLC,OP)                             \
+# define PVM_BINOP(TYPEA,TYPEB,TYPER,OP)                                     \
    do                                                                        \
     {                                                                        \
       int size = PVM_VAL_##TYPER##_SIZE (JITTER_UNDER_TOP_STACK ());       \
-      pvm_val res = pvm_make_##TYPERLC (PVM_VAL_##TYPEA (JITTER_UNDER_TOP_STACK ()) \
-                                        OP PVM_VAL_##TYPEB (JITTER_TOP_STACK ()), size); \
+      pvm_val res = PVM_MAKE_##TYPER (PVM_VAL_##TYPEA (JITTER_UNDER_TOP_STACK ()) \
+                                      OP PVM_VAL_##TYPEB (JITTER_TOP_STACK ()), size); \
       JITTER_PUSH_STACK (res);                                               \
     } while (0)
 
 /* Same, but with division by zero run-time check.  */
-# define PVM_CHECKED_BINOP(TYPEA,TYPEB,TYPER,TYPERLC,OP)                     \
+# define PVM_CHECKED_BINOP(TYPEA,TYPEB,TYPER,OP)                             \
    if (PVM_VAL_##TYPEB (JITTER_TOP_STACK ()) == 0)                           \
    {                                                                         \
       PVM_RAISE_DFL (PVM_E_DIV_BY_ZERO);                                     \
    }                                                                         \
    else                                                                      \
    {                                                                         \
-      PVM_BINOP (TYPEA, TYPEB, TYPER, TYPERLC, OP);                          \
+      PVM_BINOP (TYPEA, TYPEB, TYPER, OP);                                   \
    }
 
 /* Same, but for left-shifts, which includes an overflow check on the
    bit count.  */
-# define PVM_BINOP_SL(TYPEA, TYPEB,TYPER,TYPERLC,OP)                         \
+# define PVM_BINOP_SL(TYPEA, TYPEB,TYPER, OP)                                \
    {                                                                         \
      pvm_val type = pvm_typeof (JITTER_UNDER_TOP_STACK ());                  \
      uint64_t size = PVM_VAL_INTEGRAL (PVM_VAL_TYP_I_SIZE (type));           \
@@ -296,7 +292,7 @@ late-header-c
      }                                                                       \
      else                                                                    \
      {                                                                       \
-        PVM_BINOP (TYPEA, TYPEB, TYPER, TYPERLC, OP);                        \
+        PVM_BINOP (TYPEA, TYPEB, TYPER, OP);                                 \
      }                                                                       \
    }
 
@@ -1324,8 +1320,8 @@ instruction iosize ()
     if (io == NULL)
       PVM_RAISE_DFL (PVM_E_NO_IOS);
 
-    JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_size (io), 64),
-                                        pvm_make_ulong (1, 64)));
+    JITTER_PUSH_STACK (pvm_make_offset (PVM_MAKE_ULONG (ios_size (io), 64),
+                                        PVM_MAKE_ULONG (1, 64)));
   end
 end
 
@@ -1350,8 +1346,8 @@ instruction iogetb ()
     if (io == NULL)
       PVM_RAISE_DFL (PVM_E_NO_IOS);
 
-    JITTER_PUSH_STACK (pvm_make_offset (pvm_make_ulong (ios_get_bias (io), 64),
-                                        pvm_make_ulong (1, 64)));
+    JITTER_PUSH_STACK (pvm_make_offset (PVM_MAKE_ULONG (ios_get_bias (io), 64),
+                                        PVM_MAKE_ULONG (1, 64)));
   end
 end
 
@@ -2139,7 +2135,7 @@ end
 
 instruction addi ()
   code
-    PVM_BINOP (INT, INT, INT, int,  +);
+    PVM_BINOP (INT, INT, INT, +);
   end
 end
 
@@ -2152,7 +2148,7 @@ end
 
 instruction addiu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint,  +);
+    PVM_BINOP (UINT, UINT, UINT, +);
   end
 end
 
@@ -2164,7 +2160,7 @@ end
 
 instruction addl ()
   code
-    PVM_BINOP (LONG, LONG, LONG, long,  +);
+    PVM_BINOP (LONG, LONG, LONG, +);
   end
 end
 
@@ -2177,7 +2173,7 @@ end
 
 instruction addlu ()
   code
-    PVM_BINOP (ULONG, ULONG, ULONG, ulong,  +);
+    PVM_BINOP (ULONG, ULONG, ULONG, +);
   end
 end
 
@@ -2190,7 +2186,7 @@ end
 
 instruction subi ()
   code
-    PVM_BINOP (INT, INT, INT, int,  -);
+    PVM_BINOP (INT, INT, INT, -);
   end
 end
 
@@ -2203,7 +2199,7 @@ end
 
 instruction subiu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint,  -);
+    PVM_BINOP (UINT, UINT, UINT, -);
   end
 end
 
@@ -2216,7 +2212,7 @@ end
 
 instruction subl ()
   code
-    PVM_BINOP (LONG, LONG, LONG, long,  -);
+    PVM_BINOP (LONG, LONG, LONG, -);
   end
 end
 
@@ -2229,7 +2225,7 @@ end
 
 instruction sublu ()
   code
-    PVM_BINOP (ULONG, ULONG, ULONG, ulong,  -);
+    PVM_BINOP (ULONG, ULONG, ULONG, -);
   end
 end
 
@@ -2242,7 +2238,7 @@ end
 
 instruction muli ()
   code
-    PVM_BINOP (INT, INT, INT, int,  *);
+    PVM_BINOP (INT, INT, INT, *);
   end
 end
 
@@ -2255,7 +2251,7 @@ end
 
 instruction muliu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint,  *);
+    PVM_BINOP (UINT, UINT, UINT, *);
   end
 end
 
@@ -2268,7 +2264,7 @@ end
 
 instruction mull ()
   code
-    PVM_BINOP (LONG, LONG, LONG, long,  *);
+    PVM_BINOP (LONG, LONG, LONG, *);
   end
 end
 
@@ -2281,7 +2277,7 @@ end
 
 instruction mullu ()
   code
-    PVM_BINOP (ULONG, ULONG, ULONG, ulong,  *);
+    PVM_BINOP (ULONG, ULONG, ULONG, *);
   end
 end
 
@@ -2296,7 +2292,7 @@ end
 
 instruction divi ()
   code
-    PVM_CHECKED_BINOP (INT, INT, INT, int, /);
+    PVM_CHECKED_BINOP (INT, INT, INT, /);
   end
 end
 
@@ -2311,7 +2307,7 @@ end
 
 instruction diviu ()
   code
-    PVM_CHECKED_BINOP (UINT, UINT, UINT, uint, /);
+    PVM_CHECKED_BINOP (UINT, UINT, UINT, /);
   end
 end
 
@@ -2325,7 +2321,7 @@ end
 
 instruction divl ()
   code
-    PVM_CHECKED_BINOP (LONG, LONG, LONG, long, /);
+    PVM_CHECKED_BINOP (LONG, LONG, LONG, /);
   end
 end
 
@@ -2340,7 +2336,7 @@ end
 
 instruction divlu ()
   code
-    PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, ulong, /);
+    PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, /);
   end
 end
 
@@ -2354,7 +2350,7 @@ end
 
 instruction modi ()
   code
-    PVM_CHECKED_BINOP (INT, INT, INT, int, %);
+    PVM_CHECKED_BINOP (INT, INT, INT, %);
   end
 end
 
@@ -2369,7 +2365,7 @@ end
 
 instruction modiu ()
   code
-    PVM_CHECKED_BINOP (UINT, UINT, UINT, uint, %);
+    PVM_CHECKED_BINOP (UINT, UINT, UINT, %);
   end
 end
 
@@ -2383,7 +2379,7 @@ end
 
 instruction modl ()
   code
-    PVM_CHECKED_BINOP (LONG, LONG, LONG, long, %);
+    PVM_CHECKED_BINOP (LONG, LONG, LONG, %);
   end
 end
 
@@ -2397,7 +2393,7 @@ end
 
 instruction modlu ()
   code
-    PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, ulong, %);
+    PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, %);
   end
 end
 
@@ -3023,7 +3019,7 @@ end
 
 instruction bxori ()
   code
-    PVM_BINOP (INT, INT, INT, int, ^);
+    PVM_BINOP (INT, INT, INT, ^);
   end
 end
 
@@ -3036,7 +3032,7 @@ end
 
 instruction bxoriu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint, ^);
+    PVM_BINOP (UINT, UINT, UINT, ^);
   end
 end
 
@@ -3049,7 +3045,7 @@ end
 
 instruction bxorl ()
   code
-    PVM_BINOP (LONG, LONG, LONG, long, ^);
+    PVM_BINOP (LONG, LONG, LONG, ^);
   end
 end
 
@@ -3062,7 +3058,7 @@ end
 
 instruction bxorlu ()
   code
-    PVM_BINOP (ULONG, ULONG, ULONG, ulong, ^);
+    PVM_BINOP (ULONG, ULONG, ULONG, ^);
   end
 end
 
@@ -3074,7 +3070,7 @@ end
 
 instruction bori ()
   code
-    PVM_BINOP (INT, INT, INT, int, |);
+    PVM_BINOP (INT, INT, INT, |);
   end
 end
 
@@ -3087,7 +3083,7 @@ end
 
 instruction boriu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint, |);
+    PVM_BINOP (UINT, UINT, UINT, |);
   end
 end
 
@@ -3099,7 +3095,7 @@ end
 
 instruction borl ()
   code
-    PVM_BINOP (LONG, LONG, LONG, long, |);
+    PVM_BINOP (LONG, LONG, LONG, |);
   end
 end
 
@@ -3111,7 +3107,7 @@ end
 
 instruction borlu ()
   code
-    PVM_BINOP (ULONG, ULONG, ULONG, ulong, |);
+    PVM_BINOP (ULONG, ULONG, ULONG, |);
   end
 end
 
@@ -3123,7 +3119,7 @@ end
 
 instruction bandi ()
   code
-    PVM_BINOP (INT, INT, INT, int, &);
+    PVM_BINOP (INT, INT, INT, &);
   end
 end
 
@@ -3136,7 +3132,7 @@ end
 
 instruction bandiu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint, &);
+    PVM_BINOP (UINT, UINT, UINT, &);
   end
 end
 
@@ -3148,7 +3144,7 @@ end
 
 instruction bandl ()
   code
-    PVM_BINOP (LONG, LONG, LONG, long, &);
+    PVM_BINOP (LONG, LONG, LONG, &);
   end
 end
 
@@ -3161,7 +3157,7 @@ end
 
 instruction bandlu ()
   code
-    PVM_BINOP (ULONG, ULONG, ULONG, ulong, &);
+    PVM_BINOP (ULONG, ULONG, ULONG, &);
   end
 end
 
@@ -3230,7 +3226,7 @@ end
 
 instruction bsli () # ( INT UINT -- INT UINT INT )
   code
-    PVM_BINOP_SL (INT, UINT, INT, int, <<);
+    PVM_BINOP_SL (INT, UINT, INT, <<);
   end
 end
 
@@ -3248,7 +3244,7 @@ end
 
 instruction bsliu () # ( UINT UINT -- UINT UINT UINT )
   code
-    PVM_BINOP_SL (UINT, UINT, UINT, uint, <<);
+    PVM_BINOP_SL (UINT, UINT, UINT, <<);
   end
 end
 
@@ -3265,7 +3261,7 @@ end
 
 instruction bsll () # ( LONG UINT -- LONG UINT LONG )
   code
-    PVM_BINOP_SL (LONG, UINT, LONG, long, <<);
+    PVM_BINOP_SL (LONG, UINT, LONG, <<);
   end
 end
 
@@ -3283,7 +3279,7 @@ end
 
 instruction bsllu () # ( ULONG UINT -- ULONG UINT ULONG )
   code
-    PVM_BINOP_SL (ULONG, UINT, ULONG, ulong, <<);
+    PVM_BINOP_SL (ULONG, UINT, ULONG, <<);
   end
 end
 
@@ -3296,7 +3292,7 @@ end
 
 instruction bsri ()
   code
-    PVM_BINOP (INT, UINT, INT, int, >>);
+    PVM_BINOP (INT, UINT, INT, >>);
   end
 end
 
@@ -3309,7 +3305,7 @@ end
 
 instruction bsriu ()
   code
-    PVM_BINOP (UINT, UINT, UINT, uint, >>);
+    PVM_BINOP (UINT, UINT, UINT, >>);
   end
 end
 
@@ -3322,7 +3318,7 @@ end
 
 instruction bsrl ()
   code
-    PVM_BINOP (LONG, UINT, LONG, long, >>);
+    PVM_BINOP (LONG, UINT, LONG, >>);
   end
 end
 
@@ -3335,7 +3331,7 @@ end
 
 instruction bsrlu ()
   code
-    PVM_BINOP (ULONG, UINT, ULONG, ulong, >>);
+    PVM_BINOP (ULONG, UINT, ULONG, >>);
   end
 end
 
@@ -3946,7 +3942,7 @@ instruction mka ()
     pvm_val arr = pvm_make_array (JITTER_TOP_STACK (),
                                   JITTER_UNDER_TOP_STACK ());
 
-    PVM_VAL_ARR_OFFSET (arr) = pvm_make_ulong (0, 64);
+    PVM_VAL_ARR_OFFSET (arr) = PVM_MAKE_ULONG (0, 64);
     JITTER_DROP_STACK ();
     JITTER_DROP_STACK ();
     JITTER_PUSH_STACK (arr);
@@ -5583,14 +5579,14 @@ end
 instruction time ()
   code
     struct timespec ts;
-    pvm_val arr = pvm_make_array (pvm_make_ulong (2, 64),
+    pvm_val arr = pvm_make_array (PVM_MAKE_ULONG (2, 64),
                                   pvm_make_integral_type (64, 1));
 
     gettime (&ts);
-    (void) pvm_array_insert (arr, pvm_make_long (0, 64),
-                             pvm_make_long (ts.tv_sec, 64));
-    (void) pvm_array_insert (arr, pvm_make_long (1, 64),
-                             pvm_make_long (ts.tv_nsec, 64));
+    (void) pvm_array_insert (arr, PVM_MAKE_LONG (0, 64),
+                             PVM_MAKE_LONG (ts.tv_sec, 64));
+    (void) pvm_array_insert (arr, PVM_MAKE_LONG (1, 64),
+                             PVM_MAKE_LONG (ts.tv_nsec, 64));
 
     JITTER_PUSH_STACK (arr);
   end
@@ -5605,7 +5601,7 @@ end
 instruction siz ()
   code
     uint64_t size = pvm_sizeof (JITTER_TOP_STACK ());
-    JITTER_PUSH_STACK (pvm_make_ulong (size, 64));
+    JITTER_PUSH_STACK (PVM_MAKE_ULONG (size, 64));
   end
 end
 

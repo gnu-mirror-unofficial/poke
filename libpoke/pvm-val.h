@@ -100,14 +100,24 @@
 #define _PVM_VAL_LONG_ULONG_VAL(V) (((int64_t *) ((((uintptr_t) V) & ~0x7)))[0])
 #define _PVM_VAL_LONG_ULONG_SIZE(V) ((int) (((int64_t *) ((((uintptr_t) V) & ~0x7)))[1]) + 1)
 
+#define PVM_MAKE_LONG_ULONG(V,S,T)                       \
+  ({ uint64_t *ll = pvm_alloc (sizeof (uint64_t) * 2);   \
+    ll[0] = (V);                                         \
+    ll[1] = ((S) - 1) & 0x3f;                            \
+    ((uint64_t) (uintptr_t) ll) | (T); })
+
 #define PVM_VAL_LONG_SIZE(V) (_PVM_VAL_LONG_ULONG_SIZE (V))
 #define PVM_VAL_LONG(V) (_PVM_VAL_LONG_ULONG_VAL ((V))           \
                          << (64 - PVM_VAL_LONG_SIZE ((V)))      \
                          >> (64 - PVM_VAL_LONG_SIZE ((V))))
+#define PVM_MAKE_LONG(V,S)                              \
+  (PVM_MAKE_LONG_ULONG ((V),(S),PVM_VAL_TAG_LONG))
 
 #define PVM_VAL_ULONG_SIZE(V) (_PVM_VAL_LONG_ULONG_SIZE (V))
 #define PVM_VAL_ULONG(V) (_PVM_VAL_LONG_ULONG_VAL ((V))                 \
                           & ((uint64_t) (~( ((~0ull) << ((PVM_VAL_ULONG_SIZE ((V)))-1)) << 1 ))))
+#define PVM_MAKE_ULONG(V,S)                             \
+  (PVM_MAKE_LONG_ULONG ((V),(S),PVM_VAL_TAG_ULONG))
 
 #define PVM_MAX_ULONG(size) ((1LU << (size)) - 1)
 
