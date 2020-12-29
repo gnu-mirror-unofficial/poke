@@ -1,5 +1,10 @@
 2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter: Store exception structs in the exceptions
+	stack and not pointers.
+
+2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.h (PVM_MAKE_LONG): Define.
 	(PVM_MAKE_ULONG): Likewise.
 	(PVM_MAKE_LONG_ULONG): Likewise.

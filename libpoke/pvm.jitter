@@ -44,7 +44,7 @@ end
 
 stack x
   long-name "exceptionstack"
-  c-element-type "struct pvm_exception_handler *"
+  c-element-type "struct pvm_exception_handler"
   non-tos-optimized
   element-no 65536
   guard-underflow
@@ -198,22 +198,22 @@ late-header-c
                                     pvm_make_string ("code")));       \
    while (1)                                                          \
    {                                                                  \
-     struct pvm_exception_handler *ehandler                           \
+     struct pvm_exception_handler ehandler                            \
        = JITTER_TOP_EXCEPTIONSTACK ();                                \
-     int handler_exception = ehandler->exception;                     \
+     int handler_exception = ehandler.exception;                      \
                                                                       \
      JITTER_DROP_EXCEPTIONSTACK ();                                   \
                                                                       \
      if (handler_exception == 0                                       \
          || handler_exception == exception_code)                      \
      {                                                                \
-       JITTER_SET_HEIGHT_STACK (ehandler->main_stack_height);         \
-       JITTER_SET_HEIGHT_RETURNSTACK (ehandler->return_stack_height); \
+       JITTER_SET_HEIGHT_STACK (ehandler.main_stack_height);          \
+       JITTER_SET_HEIGHT_RETURNSTACK (ehandler.return_stack_height);  \
                                                                       \
        JITTER_PUSH_STACK ((EXCEPTION));                               \
                                                                       \
-       jitter_state_runtime.env = ehandler->env;                      \
-       JITTER_BRANCH (ehandler->code);                                \
+       jitter_state_runtime.env = ehandler.env;                       \
+       JITTER_BRANCH (ehandler.code);                                 \
        break;                                                         \
      }                                                                \
    }                                                                  \
@@ -5395,18 +5395,17 @@ end
 
 instruction pushe (?l)
   code
-   struct pvm_exception_handler *ehandler
-      = pvm_alloc (sizeof (struct pvm_exception_handler));
+   struct pvm_exception_handler ehandler;
    pvm_val exception = JITTER_TOP_STACK ();
    pvm_val exception_code = pvm_ref_struct (exception,
                                             pvm_make_string ("code"));
 
-   ehandler->exception = PVM_VAL_INT (exception_code);
+   ehandler.exception = PVM_VAL_INT (exception_code);
    JITTER_DROP_STACK ();
-   ehandler->main_stack_height = JITTER_HEIGHT_STACK ();
-   ehandler->return_stack_height = JITTER_HEIGHT_RETURNSTACK ();
-   ehandler->code = JITTER_ARGP0;
-   ehandler->env = jitter_state_runtime.env;
+   ehandler.main_stack_height = JITTER_HEIGHT_STACK ();
+   ehandler.return_stack_height = JITTER_HEIGHT_RETURNSTACK ();
+   ehandler.code = JITTER_ARGP0;
+   ehandler.env = jitter_state_runtime.env;
 
    JITTER_PUSH_EXCEPTIONSTACK (ehandler);
   end
