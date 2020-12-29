@@ -268,13 +268,13 @@ pvm_make_struct (pvm_val nfields, pvm_val nmethods, pvm_val type)
 }
 
 pvm_val
-pvm_ref_struct (pvm_val sct, pvm_val name)
+pvm_ref_struct_cstr (pvm_val sct, const char *name)
 {
   size_t nfields, nmethods, i;
   struct pvm_struct_field *fields;
   struct pvm_struct_method *methods;
 
-  assert (PVM_IS_SCT (sct) && PVM_IS_STR (name));
+  assert (PVM_IS_SCT (sct));
 
   /* Lookup fields.  */
   nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (sct));
@@ -285,7 +285,7 @@ pvm_ref_struct (pvm_val sct, pvm_val name)
       if (!PVM_VAL_SCT_FIELD_ABSENT_P (sct, i)
           && fields[i].name != PVM_NULL
           && STREQ (PVM_VAL_STR (fields[i].name),
-                    PVM_VAL_STR (name)))
+                    name))
         return fields[i].value;
     }
 
@@ -296,11 +296,18 @@ pvm_ref_struct (pvm_val sct, pvm_val name)
   for (i = 0; i < nmethods; ++i)
     {
       if (STREQ (PVM_VAL_STR (methods[i].name),
-                 PVM_VAL_STR (name)))
+                 name))
         return methods[i].value;
     }
 
   return PVM_NULL;
+}
+
+pvm_val
+pvm_ref_struct (pvm_val sct, pvm_val name)
+{
+  assert (PVM_IS_STR (name));
+  return pvm_ref_struct_cstr (sct, PVM_VAL_STR (name));
 }
 
 pvm_val

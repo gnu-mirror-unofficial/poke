@@ -264,6 +264,7 @@ int pvm_val_equal_p (pvm_val val1, pvm_val val2);
 void pvm_print_string (pvm_val string);
 
 pvm_val pvm_ref_struct (pvm_val sct, pvm_val name);
+pvm_val pvm_ref_struct_cstr (pvm_val sct, const char *name);
 
 /* Given a struct value SCT and the name of a field in NAME, return
    the bit-offset of the referred field in BOFF.

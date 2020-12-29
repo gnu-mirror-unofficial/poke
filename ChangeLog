@@ -1,5 +1,13 @@
 2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.h: Prototype for pvm_ref_struct_cstr.
+	* libpoke/pvm-val.c (pvm_ref_struct_cstr): New function.
+	(pvm_ref_struct): Rewrite to use pvm_ref_struct_cstr.
+	* libpoke/pvm.jitter (PVM_RAISE_DIRECT): Use pvm_ref_struct_cstr.
+	(pushe): Likewise.
+
+2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter: Store exception structs in the exceptions
 	stack and not pointers.
 

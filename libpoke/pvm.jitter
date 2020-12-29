@@ -91,6 +91,7 @@ wrapped-functions
   pvm_typeof
   pvm_type_equal_p
   pvm_ref_struct
+  pvm_ref_struct_cstr
   pvm_set_struct
   pvm_val_reloc
   pvm_val_unmap
@@ -194,8 +195,8 @@ late-header-c
   do                                                                  \
   {                                                                   \
    int exception_code                                                 \
-     = PVM_VAL_INT (pvm_ref_struct ((EXCEPTION),                      \
-                                    pvm_make_string ("code")));       \
+     = PVM_VAL_INT (pvm_ref_struct_cstr ((EXCEPTION), "code"));       \
+                                                                      \
    while (1)                                                          \
    {                                                                  \
      struct pvm_exception_handler ehandler                            \
@@ -5397,8 +5398,7 @@ instruction pushe (?l)
   code
    struct pvm_exception_handler ehandler;
    pvm_val exception = JITTER_TOP_STACK ();
-   pvm_val exception_code = pvm_ref_struct (exception,
-                                            pvm_make_string ("code"));
+   pvm_val exception_code = pvm_ref_struct_cstr (exception, "code");
 
    ehandler.exception = PVM_VAL_INT (exception_code);
    JITTER_DROP_STACK ();
