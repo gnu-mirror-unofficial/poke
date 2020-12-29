@@ -5633,6 +5633,7 @@ with the PVM.
 
 @menu
 * @:.vm disassemble::		PVM and native disassembler.
+* @:.vm profile::               Profiling Poke programs.
 @end menu
 
 @node @:.vm disassemble
@@ -5658,6 +5659,21 @@ its writer function.
 The disassembler will provide a PVM disassembly by default, but it can
 be passed the flag @command{/n} to do a native disassembly instead in
 whatever architecture running poke.
+
+@node @:.vm profile
+@subsection @code{.vm profile}
+@cindex profiler
+
+The @command{.vm profile} command provides access to the PVM profiler.
+This profiler is only available if poke has been configured with PVM
+profiling support.  This command supports the following subcommands:
+
+@table @command
+@item .vm profile reset
+Resets the profiling counts in the virtual machine.
+@item .vm profile show
+Outputs a summary with both counts and sample information.
+@end table
 
 @node exit command
 @section @code{.exit}
