@@ -701,4 +701,7 @@ void pvm_allocate_struct_attrs (pvm_val nfields, pvm_val **fnames,
                                 pvm_val **ftypes);
 void pvm_allocate_closure_attrs (pvm_val nargs, pvm_val **atypes);
 
+void pvm_val_initialize (void);
+void pvm_val_finalize (void);
+
 #endif /* ! PVM_VAL_H */

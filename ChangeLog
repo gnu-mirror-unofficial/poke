@@ -1,5 +1,16 @@
 2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_val_initialize): New function.
+	(string_value): New variable.
+	(void_type): Likewise.
+	(any_type): Likewise.
+	(pvm_make_string_type): Reuse unitary value.
+	(pvm_make_void_type): Likewise.
+	(pvm_make_any_type): Likewise.
+	(pvm_val_finalize): Likewise.
+
+2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (@:.vm profile): New section.
 
 2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>

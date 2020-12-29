@@ -106,6 +106,9 @@ pvm_init (void)
   /* Initialize the memory allocation subsystem.  */
   pvm_alloc_initialize ();
 
+  /* Initialize values.  */
+  pvm_val_initialize ();
+
   /* Initialize the VM subsystem.  */
   pvm_initialize ();
 
@@ -207,6 +210,9 @@ pvm_shutdown (pvm apvm)
   pvm_alloc_remove_gc_roots
     (apvm->pvm_state.pvm_state_backing.jitter_stack_exceptionstack_backing.memory,
      apvm->pvm_state.pvm_state_backing.jitter_stack_exceptionstack_backing.element_no);
+
+  /* Finalize values.  */
+  pvm_val_initialize ();
 
   /* Finalize the VM state.  */
   pvm_state_finalize (&apvm->pvm_state);

@@ -31,6 +31,15 @@
 #include "pvm-alloc.h"
 #include "pk-utils.h"
 
+/* Unitary values that are always reused.
+
+   These values are created in pvm_val_initialize and disposed in
+   pvm_val_finalize.  */
+
+static pvm_val string_type;
+static pvm_val void_type;
+static pvm_val any_type;
+
 pvm_val
 pvm_make_int (int32_t value, int size)
 {
@@ -401,19 +410,19 @@ pvm_make_integral_type (pvm_val size, pvm_val signed_p)
 pvm_val
 pvm_make_string_type (void)
 {
-  return pvm_make_type (PVM_TYPE_STRING);
+  return string_type;
 }
 
 pvm_val
 pvm_make_void_type (void)
 {
-  return pvm_make_type (PVM_TYPE_VOID);
+  return void_type;
 }
 
 pvm_val
 pvm_make_any_type (void)
 {
-  return pvm_make_type (PVM_TYPE_ANY);
+  return any_type;
 }
 
 pvm_val
@@ -1670,4 +1679,24 @@ pvm_program
 pvm_val_cls_program (pvm_val cls)
 {
   return PVM_VAL_CLS_PROGRAM (cls);
+}
+
+void
+pvm_val_initialize (void)
+{
+  pvm_alloc_add_gc_roots (&string_type, 1);
+  pvm_alloc_add_gc_roots (&void_type, 1);
+  pvm_alloc_add_gc_roots (&any_type, 1);
+
+  string_type = pvm_make_type (PVM_TYPE_STRING);
+  void_type = pvm_make_type (PVM_TYPE_VOID);
+  any_type = pvm_make_type (PVM_TYPE_ANY);
+}
+
+void
+pvm_val_finalize (void)
+{
+  pvm_alloc_remove_gc_roots (&string_type, 1);
+  pvm_alloc_remove_gc_roots (&void_type, 1);
+  pvm_alloc_remove_gc_roots (&any_type, 1);
 }
