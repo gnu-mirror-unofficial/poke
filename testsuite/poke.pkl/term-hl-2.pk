@@ -3,5 +3,6 @@
 /* { dg-command { term_begin_hyperlink ("foo","") } } */
 /* { dg-command { term_begin_hyperlink ("foo","") } } */
 /* { dg-command { term_end_hyperlink } } */
+/* { dg-command { term_end_hyperlink } } */
 /* { dg-command {try term_end_hyperlink; catch if E_generic { print "caught\n"; } } } */
 /* { dg-output "caught" } */
