@@ -1,5 +1,10 @@
 2020-12-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-term.c (pop_active_class): Return a status code.
+	(pk_term_end_class): Adapt to new interface.
+
+2020-12-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h (struct pk_term_if): Change end_class_fn
 	prototype to return an error code.
 	* poke/pk-term.c (pk_term_end_class): Likewise.

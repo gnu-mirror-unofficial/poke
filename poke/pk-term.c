@@ -67,16 +67,19 @@ push_active_class (const char *name)
   active_classes = new;
 }
 
-static void
-pop_active_class (void)
+static int
+pop_active_class (const char *name)
 {
   struct class_entry *tmp;
 
-  assert (active_classes);
+  if (!active_classes || !STREQ (active_classes->class, name))
+    return 0;
+  
   tmp = active_classes;
   active_classes = active_classes->next;
   free (tmp->class);
   free (tmp);
+  return 1;
 }
 
 void
@@ -205,12 +208,10 @@ pk_term_class (const char *class)
 int
 pk_term_end_class (const char *class)
 {
-  if (!active_classes
-      || !STREQ (active_classes->class, class))
+  if (!pop_active_class (class))
     return 0;
 
   styled_ostream_end_use_class (pk_ostream, class);
-  pop_active_class ();
   return 1;
 }
 
