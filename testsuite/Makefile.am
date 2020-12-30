@@ -1683,6 +1683,11 @@ EXTRA_DIST = \
   poke.pkl/sub-offsets-8.pk \
   poke.pkl/suba-int-1.pk \
   poke.pkl/suba-offset-1.pk \
+  poke.pkl/term-class-1.pk \
+  poke.pkl/term-class-2.pk \
+  poke.pkl/term-class-3.pk \
+  poke.pkl/term-hl-1.pk \
+  poke.pkl/term-hl-2.pk \
   poke.pkl/trim-1.pk \
   poke.pkl/trim-2.pk \
   poke.pkl/trim-3.pk \

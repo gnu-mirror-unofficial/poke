@@ -23,12 +23,61 @@
 #include <string.h>
 #include <unistd.h> /* For isatty */
 #include <textstyle.h>
+#include <assert.h>
+#include <xalloc.h>
 
 #include "poke.h"
+#include "pk-utils.h"
 
 /* The following global is the libtextstyle output stream to use to
    emit contents to the terminal.  */
 static styled_ostream_t pk_ostream;
+
+/* Stack of active classes.  */
+
+struct class_entry
+{
+  char *class;
+  struct class_entry *next;
+};
+
+static struct class_entry *active_classes;
+
+static void
+dispose_active_classes (void)
+{
+  struct class_entry *entry, *tmp;
+
+  for (entry = active_classes; entry; entry = tmp)
+    {
+      tmp = entry->next;
+      free (entry->class);
+      free (entry);
+    }
+}
+
+static void
+push_active_class (const char *name)
+{
+  struct class_entry *new;
+
+  new = xmalloc (sizeof (struct class_entry));
+  new->class = xstrdup (name);
+  new->next = active_classes;
+  active_classes = new;
+}
+
+static void
+pop_active_class (void)
+{
+  struct class_entry *tmp;
+
+  assert (active_classes);
+  tmp = active_classes;
+  active_classes = active_classes->next;
+  free (tmp->class);
+  free (tmp);
+}
 
 void
 pk_term_init (int argc, char *argv[])
@@ -84,11 +133,15 @@ pk_term_init (int argc, char *argv[])
                                    style_file_name)
      : styled_ostream_create (STDOUT_FILENO, "(stdout)",
                               TTYCTL_AUTO, style_file_name));
+
+  /* Initialize the list of active classes.  */
+  active_classes = NULL;
 }
 
 void
 pk_term_shutdown ()
 {
+  dispose_active_classes ();
   styled_ostream_free (pk_ostream);
 }
 
@@ -146,12 +199,19 @@ void
 pk_term_class (const char *class)
 {
   styled_ostream_begin_use_class (pk_ostream, class);
+  push_active_class (class);
 }
 
-void
+int
 pk_term_end_class (const char *class)
 {
+  if (!active_classes
+      || !STREQ (active_classes->class, class))
+    return 0;
+
   styled_ostream_end_use_class (pk_ostream, class);
+  pop_active_class ();
+  return 1;
 }
 
 /* Counter of open hyperlinks.  */

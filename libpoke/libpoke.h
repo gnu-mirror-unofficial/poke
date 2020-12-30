@@ -60,8 +60,10 @@ struct pk_term_if
   /* Mark the beginning of a styling class with name CLASS.  */
   void (*class_fn) (const char *class);
 
-  /* Mark the end of a styling class with name CLASS.  */
-  void (*end_class_fn) (const char *class);
+  /* Mark the end of a styling class with name CLASS.  This function
+     returns 0 if the given class is not active and therefore can't be
+     ended.  1 otherwise.  */
+  int (*end_class_fn) (const char *class);
 
   /* Mark the beginning of an hyperlink with url URL and identifier
      ID.  The identifier can be NULL.  */

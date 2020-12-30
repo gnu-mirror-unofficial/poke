@@ -48,7 +48,7 @@ extern void pk_term_indent (unsigned int lvl,
 
 /* Class handling.  */
 extern void pk_term_class (const char *class);
-extern void pk_term_end_class (const char *class);
+extern int pk_term_end_class (const char *class);
 
 /* Hyperlinks.  */
 extern void pk_term_hyperlink (const char *url, const char *id);

@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+/* { dg-command {term_begin_class ("foo")} } */
+/* { dg-command {term_begin_class ("bar")} } */
+/* { dg-command {term_begin_class ("baz")} } */
+/* { dg-command {term_end_class ("baz")} } */
+/* { dg-command {term_end_class ("bar")} } */
+/* { dg-command {term_end_class ("foo")} } */
+

@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {try term_end_hyperlink (); catch if E_generic { print "caught\n"; } } } */
+/* { dg-output "caught" } */

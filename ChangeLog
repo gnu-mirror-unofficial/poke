@@ -1,3 +1,23 @@
+2020-12-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h (struct pk_term_if): Change end_class_fn
+	prototype to return an error code.
+	* poke/pk-term.c (pk_term_end_class): Likewise.
+	(dispose_active_classes): New function.
+	(push_active_class): Likewise.
+	(pop_active_class): Likewise.
+	(pk_term_class): Push the class.
+	(pk_term_end_class): Check for the class, then pop it.
+	* testsuite/poke.libpoke/term-if.h (pk_term_end_class): Likewise.
+	* libpoke/pvm.jitter (endsc): Raise an exception if the given
+	class is invalid.
+	* testsuite/poke.pkl/term-class-1.pk: New test.
+	* testsuite/poke.pkl/term-class-2.pk: Likewise.
+	* testsuite/poke.pkl/term-class-3.pk: Likewise.
+	* testsuite/poke.pkl/term-hl-1.pk: Likewise.
+	* testsuite/poke.pkl/term-hl-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2020-12-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.c (pvm_val_initialize): New function.

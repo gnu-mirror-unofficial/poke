@@ -1743,7 +1743,10 @@ end
 
 instruction endsc ()
   code
-    pk_term_end_class (PVM_VAL_STR (JITTER_TOP_STACK ()));
+    if (!pk_term_end_class (PVM_VAL_STR (JITTER_TOP_STACK ())))
+      PVM_RAISE (PVM_E_INVAL,
+                 "invalid class",
+                 PVM_E_INVAL_ESTATUS);
     JITTER_DROP_STACK ();
   end
 end

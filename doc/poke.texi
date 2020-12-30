@@ -10103,12 +10103,13 @@ string.
 
 A class is activated by using the function @code{term_begin_class},
 and deactivated by using the function @code{term_end_class}.  Several
-classes can be activated simultaneously.  It is down to the
-implementation to decide how to honor some given class, @i{i.e.} to
-decide how to characterize it physically (visually, or audibly, or
-using an electrical discharge on the keyboard, or whatever) The class
-may very well be ignored all together.  Poke programs should never
-rely on how a specific class is implemented.
+classes can be activated simultaneously, but they should be
+deactivated in reverse order.  It is down to the implementation to
+decide how to honor some given class, @i{i.e.} to decide how to
+characterize it physically (visually, or audibly, or using an
+electrical discharge on the keyboard, or whatever) The class may very
+well be ignored all together.  Poke programs should never rely on how
+a specific class is implemented.
 
 The @code{term_begin_class} and @code{term_end_class} functions have
 the following signatures:
@@ -10119,9 +10120,9 @@ fun term_end_class = (string class) void
 @end example
 
 @noindent
-Styling classes can overlap, but trying to end a class that is not
-active is an error.  If such a thing is attempted then an
-@code{E_term_no_class} exception is raised.
+Styling classes can overlap, but trying to deactivate them in the
+wrong order will cause an error in the form of an @code{E_inval}
+exception.
 
 @node Terminal Hyperlinks
 @subsection Terminal Hyperlinks
@@ -10137,8 +10138,8 @@ fun term_end_hyperlink = void
 
 @noindent
 Hyperlinks can overlap, but trying to end an hyperlink when there is
-no t a currently open one will result in a @code{E_term_no_hyperlink}
-exception raised.
+no t a currently open one will result in an @code{E_generic} exception
+raised.
 
 @node Printing
 @section Printing

@@ -53,7 +53,7 @@ pk_term_class (const char *class)
 {
 }
 
-void
+int
 pk_term_end_class (const char *class)
 {
 }
