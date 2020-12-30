@@ -40,6 +40,13 @@ typedef uint64_t pk_val;
 #define PK_EEOF 3
 #define PK_EINVAL 4
 
+struct pk_color
+{
+  int red;
+  int green;
+  int blue;
+};
+
 /* Terminal output callbacks.  */
 
 struct pk_term_if
@@ -74,20 +81,17 @@ struct pk_term_if
      otherwise.  */
   int (*end_hyperlink_fn) (void);
 
-  /* Transform RGB to a color.  */
-  int (*rgb_to_color_fn) (int red, int green, int blue);
-
   /* Get the current foreground color.  */
-  int (*get_color_fn) (void);
+  struct pk_color (*get_color_fn) (void);
 
   /* Get the current background color.  */
-  int (*get_bgcolor_fn) (void);
+  struct pk_color (*get_bgcolor_fn) (void);
 
   /* Set the foreground color.  */
-  void (*set_color_fn) (int color);
+  void (*set_color_fn) (struct pk_color color);
 
   /* Set the background color.  */
-  void (*set_bgcolor_fn) (int color);
+  void (*set_bgcolor_fn) (struct pk_color color);
 };
 
 /* Create and return a new Poke incremental compiler.

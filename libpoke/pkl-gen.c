@@ -689,28 +689,64 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
 
             break;
           }
-        case PKL_AST_BUILTIN_TERM_RGB_TO_COLOR:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0); /* red */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1); /* green */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 2); /* blue */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RGBTOC);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
-          break;
         case PKL_AST_BUILTIN_TERM_GET_COLOR:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOC);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
-          break;
         case PKL_AST_BUILTIN_TERM_GET_BGCOLOR:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOBC);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_integral_type (pvm_make_ulong (32, 64),
+                                                pvm_make_int (1, 32)));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (3, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA); /* ARR */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR); /* _ */
+          if (comp_stmt_builtin == PKL_AST_BUILTIN_TERM_GET_COLOR)
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOC); /* R G B */
+          else
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOBC); /* R G B */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);   /* B G R */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR); /* B G R ARR */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (0, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* B G ARR */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (1, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* B ARR */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (2, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* ARR */
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
           break;
         case PKL_AST_BUILTIN_TERM_SET_COLOR:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOC);
-          break;
         case PKL_AST_BUILTIN_TERM_SET_BGCOLOR:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOBC);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (0, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (1, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        pvm_make_ulong (2, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+          if (comp_stmt_builtin == PKL_AST_BUILTIN_TERM_SET_COLOR)
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOC);
+          else
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOBC);
           break;
         case PKL_AST_BUILTIN_TERM_BEGIN_CLASS:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);

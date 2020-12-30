@@ -1,5 +1,18 @@
 2020-12-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h (struct pk_color): New type.
+	(struct pk_term_if): Remove rgb_to_color_fn and modify get_(bg)color_fn
+	and set_(bg)color_fn to handle terminal colors.
+	* testsuite/poke.libpoke/term-if.h: Adapt to new API.
+	* poke/pk-term.c (lookup_color): New function.
+	* libpoke/pvm.jitter (pushoc): Adapt to new API.
+	(popoc): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Likewise.
+	* libpoke/pkl-insn.def: Remove the instruction rgbtoc.
+	* doc/poke.texi (Terminal Colors): Update to new semantics.
+
+2020-12-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-term.c (dispose_active_classes): Remove unneeded
 	function.
 	(pk_term_shutdown): Use pop_active_class instead of

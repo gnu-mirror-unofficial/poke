@@ -10052,34 +10052,23 @@ the sections below.
 @node Terminal Colors
 @subsection Terminal Colors
 
-@c XXX use only RGB at the Poke level
-@c XXX where default color is Term_Default_Color = [-1,-1,-1]
-
 At every moment the text terminal is configured to use certain
 foreground and background colors.  Initially, these are the
 @dfn{default colors}, which depend on the underlying terminal
 capabilities, and maybe also on some system wide configuration
 setting.
 
-Terminal colors are encoded using integer values.  These integers do
-not have any structural meaning (they are actually indexes to certain
-tables in the underlying implementation) and the specific values
-depend on the kind of physical terminal that is used, and its
-capabilities.
+Terminal colors are encoded in triplets of integers signifying RGB
+colors, @i{i.e.} levels of beams for red, green and blue.  These
+triplets are implemented as values of type @code{int<32>[3]}.
 
-Therefore, Poke programs must never rely on the specific values of
-color integers, and use them only to differentiate them from other
-colors.
-
-However, we need a way to actually specify a color in terms of its own
-nature.  Since characterizing colors in RGB is very common in
-computing, the poke terminal provides a function that, given the
-values of red, green and blue beams, the corresponding terminal color
-integer is returned.  This call is @code{term_rgb_to_color}, and has
-the following signature:
+The special value @code{[-1, -1, -1]} means the default color, for
+both foreground and background.  There are two predefined variables
+for this:
 
 @example
-fun term_rgb_to_color = (int<32> red, int<32> green, int<32> blue) int<32>
+var term_default_color = [-1,-1,-1];
+var term_default_bgcolor = [-1,-1,-1];
 @end example
 
 Getting and setting the foreground and background colors is performed
@@ -10088,10 +10077,10 @@ using the @code{term_get_color}, @code{term_set_color},
 signatures:
 
 @example
-fun term_get_color = int<32>
-fun term_set_color = (int<32> color) void
-fun term_get_bgcolor = int<32>
-fun term_set_bgcolor = (int<32> color) void
+fun term_get_color = int<32>[3]
+fun term_set_color = (int<32>[3] color) void
+fun term_get_bgcolor = int<32>[3]
+fun term_set_bgcolor = (int<32>[3] color) void
 @end example
 
 @node Terminal Styling

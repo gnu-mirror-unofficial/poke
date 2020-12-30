@@ -69,32 +69,28 @@ pk_term_end_hyperlink (void)
   return 1;
 }
 
-int
-pk_term_rgb_to_color (int red, int green, int blue)
-{
-  return 0;
-}
-
-int
+struct pk_color
 pk_term_get_color (void)
 {
-  return 0;
+  struct pk_color inv = {-1,-1,-1};
+  return inv;
 }
 
-int
+struct pk_color
 pk_term_get_bgcolor (void)
 {
-  return 0;
+  struct pk_color inv = {-1,-1,-1};
+  return inv;
 }
 
 void
-pk_term_set_color (int color)
+pk_term_set_color (struct pk_color color)
 {
 
 }
 
 void
-pk_term_set_bgcolor (int color)
+pk_term_set_bgcolor (struct pk_color color)
 {
 
 }
@@ -109,7 +105,6 @@ static struct pk_term_if poke_term_if =
     .end_class_fn = pk_term_end_class,
     .hyperlink_fn = pk_term_hyperlink,
     .end_hyperlink_fn = pk_term_end_hyperlink,
-    .rgb_to_color_fn = pk_term_rgb_to_color,
     .get_color_fn = pk_term_get_color,
     .get_bgcolor_fn = pk_term_get_bgcolor,
     .set_color_fn = pk_term_set_color,

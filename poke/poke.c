@@ -314,7 +314,6 @@ static struct pk_term_if poke_term_if =
     .end_class_fn = pk_term_end_class,
     .hyperlink_fn = pk_term_hyperlink,
     .end_hyperlink_fn = pk_term_end_hyperlink,
-    .rgb_to_color_fn = pk_term_rgb_to_color,
     .get_color_fn = pk_term_get_color,
     .set_color_fn = pk_term_set_color,
     .get_bgcolor_fn = pk_term_get_bgcolor,

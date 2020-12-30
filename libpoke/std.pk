@@ -65,6 +65,11 @@ type long = int64;
 type off64 = offset<int64,b>;
 type uoff64 = offset<uint64,b>;
 
+/*** Colors.  */
+
+var term_default_color = [-1,-1,-1];
+var term_default_bgcolor = [-1,-1,-1];
+
 /*** Conversion Functions.  */
 
 fun catos = (char[] chars) string:

@@ -33,7 +33,6 @@ extern struct pk_term_if libpoke_term_if;
 #define pk_term_end_class libpoke_term_if.end_class_fn
 #define pk_term_hyperlink libpoke_term_if.hyperlink_fn
 #define pk_term_end_hyperlink libpoke_term_if.end_hyperlink_fn
-#define pk_term_rgb_to_color libpoke_term_if.rgb_to_color_fn
 #define pk_term_get_color libpoke_term_if.get_color_fn
 #define pk_term_set_color libpoke_term_if.set_color_fn
 #define pk_term_get_bgcolor libpoke_term_if.get_bgcolor_fn
