@@ -6,4 +6,3 @@
 /* { dg-command {term_end_class ("baz")} } */
 /* { dg-command {term_end_class ("bar")} } */
 /* { dg-command {term_end_class ("foo")} } */
-

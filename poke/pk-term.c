@@ -44,19 +44,6 @@ struct class_entry
 static struct class_entry *active_classes;
 
 static void
-dispose_active_classes (void)
-{
-  struct class_entry *entry, *tmp;
-
-  for (entry = active_classes; entry; entry = tmp)
-    {
-      tmp = entry->next;
-      free (entry->class);
-      free (entry);
-    }
-}
-
-static void
 push_active_class (const char *name)
 {
   struct class_entry *new;
@@ -74,7 +61,7 @@ pop_active_class (const char *name)
 
   if (!active_classes || !STREQ (active_classes->class, name))
     return 0;
-  
+
   tmp = active_classes;
   active_classes = active_classes->next;
   free (tmp->class);
@@ -144,7 +131,8 @@ pk_term_init (int argc, char *argv[])
 void
 pk_term_shutdown ()
 {
-  dispose_active_classes ();
+  while (active_classes)
+    pop_active_class (active_classes->class);
   styled_ostream_free (pk_ostream);
 }
 

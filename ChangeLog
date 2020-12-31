@@ -1,3 +1,10 @@
+2020-12-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-term.c (dispose_active_classes): Remove unneeded
+	function.
+	(pk_term_shutdown): Use pop_active_class instead of
+	dispose_active_classes.
+
 2020-12-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-term.c (pop_active_class): Return a status code.
