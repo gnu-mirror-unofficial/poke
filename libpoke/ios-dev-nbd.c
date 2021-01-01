@@ -1,6 +1,6 @@
 /* ios-dev-nbd.c - NBD IO devices.  */
 
-/* Copyright (C) 2020 Eric Blake */
+/* Copyright (C) 2020, 2021 Eric Blake */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

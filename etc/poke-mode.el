@@ -1,6 +1,6 @@
 ;;; poke-mode.el --- Major mode for editing Poke programs  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020 Aurelien Aptel <aaptel@suse.com>
+;; Copyright (C) 2020, 2021 Aurelien Aptel <aaptel@suse.com>
 ;; SMIE grammar and help from Stefan Monnier <monnier@iro.umontreal.ca>
 ;; Version: 0
 

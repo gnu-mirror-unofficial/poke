@@ -1,6 +1,6 @@
 ;;; poke-ras-mode.el --- Major mode for editing poke MAP files
 
-;; Copyright (C) 2020 Jose E. Marchesi
+;; Copyright (C) 2020, 2021 Jose E. Marchesi
 
 ;; This file is NOT part of GNU Emacs.
 

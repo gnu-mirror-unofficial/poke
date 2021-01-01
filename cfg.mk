@@ -54,3 +54,5 @@ sc_tests_listed_in_makefile_am:
 	@cmp -s in-files in-makefile || \
           { diff -u in-files in-makefile; \
             msg='missing or extra tests in EXTRA_DIST' $(_sc_say_and_exit) }
+
+update-copyright-env = UPDATE_COPYRIGHT_HOLDER="Jose E. Marchesi"

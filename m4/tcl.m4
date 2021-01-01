@@ -6,7 +6,7 @@
 #
 # Copyright (c) 1999-2000 Ajuba Solutions.
 # Copyright (c) 2002-2005 ActiveState Corporation.
-# Copyright (c) 2020 Jose E. Marchesi.
+# Copyright (c) 2020, 2021 Jose E. Marchesi.
 #
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
