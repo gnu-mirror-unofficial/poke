@@ -1,3 +1,9 @@
+2021-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Motivation): New section.
+	(Dealing with Alternatives): Likewise.
+	(Offsets and Sizes): Likewise.
+
 2021-01-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Debugging Poke Programs): Demote and relocate.

@@ -106,6 +106,7 @@ Basic Editing
 * Weird Integers::		Incomplete bytes in numbers.
 * Unaligned Integers::		IO spaces are bit-oriented.
 * Integers of Different Sizes:: Promotion of integers in expressions.
+* Offsets and Sizes::           United values.
 * Buffers as IO Spaces::	Poking memory buffers.
 * Copying Bytes::		Moving data between IO spaces.
 * Saving Buffers in Files::	From memory to files.
@@ -125,6 +126,7 @@ Structuring Data
 * Variables in Structs::
 * Functions in Structs::
 * Struct Methods::		Operations provided by built structs.
+* Dealing with Alternatives::   Conditional decoding.
 
 Writing Pickles
 * Pretty-printers::		Conventions for pretty-printed output.
@@ -228,7 +230,162 @@ The Poke Virtual Machine
 @node Motivation
 @section Motivation
 
-XXX
+The main point of GNU poke is to manipulate structured binary data in
+terms of abstractions provided by the user.  The Poke type definitions
+can be seen as a sort of declarative specifications for decoding and
+encoding procedures.  The user specifies the structure of the data to
+be manipulated, and poke uses that information to automagically decode
+and encode the data.  Under this perspective, struct types correspond
+to sequences of instructions, array types to repetitions or loops,
+union types to alternatives or conditionals, and so on.
+
+@menu
+* Decode-Compute-Encode:: Encoded data and conventional languages.
+* Describe-Compute::      The poke approach.
+@end menu
+
+@node Decode-Compute-Encode
+@subsection Decode-Compute-Encode
+
+Computing with data whose form is not the most convenient way to be
+manipulated, like is often the case in unstructured binary data,
+requires performing a preliminary step that transforms the data into a
+more convenient representation, usually featuring a higher level of
+abstraction.  This step is known in computer jargon as
+@dfn{unmarshalling}, when the data is fetch from some storage or
+transmission media or, more generally, @dfn{decoding}.
+
+Once the computation has been performed, the result should be
+transformed back to the low-level representation to be stored or
+transmitted.  This is performed in a closing step known as
+@dfn{marshalling} or, more generally, @dfn{encoding}.
+
+Consider the following C program whose purpose is to read a 32-bit
+signed integer from a byte-oriented storage media at a given offset,
+multiply it by two, and store the result at the same offset.
+
+@example
+void double_number (int fd, off_t offset, int endian)
+@{
+   int number, i;
+   int b[4];
+
+   /* Decode.  */
+   lseek (fd, offset, SEEK_SET);
+   for (i = 0; i < 4; ++i)
+      read (fd, &amp;b[i], 1);
+
+   if (endian == BIG)
+     number = b[0] << 24 | b[1] << 16 | b[2] << 8 | b[3];
+   else                                                      
+     number = b[3] << 24 | b[2] << 16 | b[1] << 8 | b[0];
+                                                      
+   /* Compute.  */
+   number = number * 2;
+
+   /* Encode.  */
+   if (endian == BIG)
+   @{
+     b[0] = (number >> 24) & 0xff;
+     b[1] = (number >> 16) & 0xff;
+     b[2] = (number >> 8) & 0xff;
+     b[3] = number & 0xff;                            
+   @}
+   else
+   @{
+     b[3] = (number >> 24) & 0xff;
+     b[2] = (number >> 16) & 0xff;
+     b[1] = (number >> 8) & 0xff;
+     b[0] = number & 0xff;                            
+   @}
+                                                      
+   lseek (fd, offset, SEEK_SET);
+   for (i = 0; i < 4; ++i)
+      write (fd, &amp;b[i], 1);
+@}
+@end example
+
+As we can see, decoding takes care of fetching the data from the
+storage in simple units, bytes.  Then it mounts the more abstract
+entity on which the computation will be performed, in this case a
+signed 32-bit integer.  Considerations like endianness, negative
+encoding (which is assumed to be two's complement in this example and
+handled automatically by C) and error conditions (omitted in this
+example for clarity) should be handled properly.
+
+Conversely, encoding turns the signed 32-bit integer into a sequence
+of bytes and then writes them out to the storage at the desired
+offset.  Again, this requires taking endianness into account and
+handling error conditions.
+
+This example may look simplistic and artificial, and it is, but too
+often the computation proper (like multiplying the integer by two) is
+way more straightforward than the decoding and encoding of the data
+used for the computation.
+
+Generally speaking, decoding and encoding binary data is laborious and
+error prone.  Think about sequences of elements, variable-length and
+clever compact encodings, elements not aligned to byte boundaries, the
+always bug-prone endianness, and a long etc.  Dirty business,
+sometimes risky, and always @emph{boring}.
+
+@node Describe-Compute
+@subsection Describe-Compute
+
+This is where poke comes into play.  Basically, it allows you to
+describe the characteristics of the data you want to compute on, and
+then decodes and encodes it for you, taking care of the gory details.
+That way you can concentrate your energy on the @emph{fun} part:
+computing on the data at your pleasure.
+
+Of course, you are still required to provide a description of the
+data.  In the Poke language, these descriptions take the form of
+@dfn{type definitions}, which are @dfn{declarative}: you specify
+@emph{what} you want, and poke extracts the @emph{how} from that.
+
+For example, consider the following Poke type definition:
+
+@example
+type Packet =
+  struct
+  @{
+    uint<16> magic : magic == 0xef;
+    uint<32> size;
+    byte[size] data @@ 64#B;
+  @};
+@end example
+
+This tells poke that, in order to decode a @code{Packet}, it should
+perform the following procedure (a similar procedure is implied for
+encoding):
+
+@itemize @minus
+@item
+Read four bytes from the IO space, mount them into an unsigned 16-bit
+integer using whatever current endianness, and put it in @code{magic}.
+@item
+Read eight bytes, mount them into an unsigned 32-bit integer using the
+same endianness, and put it in @code{size}.
+@item
+Seek the IO space to advance 16 bits.
+@item
+Do @code{size} times:
+
+@itemize @minus
+@item
+Read one byte and mount it into an unsigned 8-bit integer.
+@item
+Put the integer in the proper place in the @code{data} array.
+@end itemize
+@end itemize
+
+If during this procedure an end of file is encountered, or a
+constraint fails, an appropriate error is raised.
+
+In the procedure sketched above we find a sequence of operations,
+implied by the struct type, and a loop, implied by the array type.  As
+we shall see below, it is also possible to decode conditionally.
+Union types are used for that purpose.
 
 @node Nomenclature
 @section Nomenclature
@@ -620,6 +777,7 @@ integers, and the like.
 * Weird Integers::		Incomplete bytes in numbers.
 * Unaligned Integers::		IO spaces are bit-oriented.
 * Integers of Different Sizes:: Promotion of integers in expressions.
+* Offsets and Sizes::           United values.
 * Buffers as IO Spaces::	Poking memory buffers.
 * Copying Bytes::		Moving data between IO spaces.
 * Saving Buffers in Files::	From memory to files.
@@ -2060,6 +2218,165 @@ result is a 32-bit integer.  This is equivalent to:
 3
 @end example
 
+@node Offsets and Sizes
+@section Offsets and Sizes
+
+Early in the design of what is becoming GNU poke I was struck by a
+problem that, to my surprise, would prove not easy to fix in a
+satisfactory way: would I make a byte-oriented program, or a
+bit-oriented program?  Considering that the program in question was
+nothing less than an editor for binary data, this was no petty
+dilemma.
+
+Since the very beginning I had a pretty clear idea of what I wanted to
+achieve: a binary editor that would be capable of editing user defined
+data structures, besides bytes and bits.  I also knew I needed some
+sort of domain specific language to describe these structures and
+operate on them.  How that language would look like, and what kind of
+abstractions it would provide, however, was not clear to me.  Not at
+all.
+
+So once I sketched an initial language design, barely something very
+similar to C structs, I was determined to not continue with the poke
+implementation until I had described as many as binary formats in my
+language as possible.  That, I reckoned, was the only way to make sure
+the implemented language would be expressive, complete and useful
+enough to fulfil my requirements.
+
+The first formats I implemented using my immature little language
+included ELF, FLV, MP3, BSON@dots{} of them describing structures
+based on whole bytes.  Even when they try to be compact, it is always
+by packing bit-fields in elements that are, invariably, sized as a
+multiple of bytes.  Consequently, the language I was evolving became
+byte oriented as well.  No doubt also influenced by my C inheritance,
+I would think of bit-fields either as a sort of second class citizen,
+or as mere results of shifting and masking.
+
+This worked well.  The language evolved to be able to express many
+different aspects of these formats in a very nice way, like
+variable-length data and holes in structures.  Consider the following
+definition, which is @strong{not} valid in today's Poke:
+
+@example
+type Data =
+  struct
+  @{
+    byte magic;
+    byte count;
+    byte dstart;
+
+    byte[count] data @@ dstart;
+  @};
+@end example
+
+The data starts with a byte that is a magic number.  Then the size of
+the data stored, in bytes, and then the data itself.  This data,
+however, doesn't start right after @code{dstart}: it starts at
+@code{dstart}, which is expressed as an offset, in bytes, since the
+beginning of the Data.  I conceived struct field labels to be any
+expression evaluating to an integer, which would be@dots{}, bytes
+obviously.
+
+@cindex deflate
+Then, one day, it was the turn for IETF RFC1951, which is the
+specification of the DEFLATE algorithm and associated file format.  Oh
+dear.  Near the beginning of the spec document it can be read:
+
+@quotation
+This document does not address the issue of the order in which bits of
+a byte are transmitted on a bit-sequential medium, since the final
+data format described here is byte- rather than bit-oriented.
+However, we describe the compressed block format in below, as a
+sequence of data elements of various bit lengths, not a sequence of
+bytes.
+@end quotation
+
+Then it goes on describing rules to pack the DEFLATE elements into
+bytes.  I was appalled, and certainly sort of deflated as well.  The
+purpose of my program was precisely to edit binary in terms of the
+data elements described by a format.  And in this case, these data
+elements came in all sort of bit lengths and alignments.  This can be
+seen in the following RFC1951 excerpt, that describes the header of a
+compressed block:
+
+@quotation
+Each block of compressed data begins with 3 header bits
+containing the following data:
+@example
+first bit       BFINAL
+next 2 bits     BTYPE
+@end example
+
+Note that the header bits do not necessarily begin on a byte boundary,
+since a block does not necessarily occupy an integral number of bytes.
+@end quotation
+
+At this point I understood that my little language on the works would
+never be capable to describe the DEFLATE structures naturally: C-like
+bit-fields, masking and shifting, all based on byte-oriented
+containers and boundaries, would never provide the slickness I wanted
+for my editor.  I mean, just use C and get done with it.
+
+This pissed me off.  Undoubtedly other formats and protocols would be
+impacted in a similar way.  Even when most formats are byte oriented,
+what am I supposed to tell to the people hacking bit-oriented stuff?
+``Sorry pal, this is not supported, this program is not for you''?  No
+way, I thought, not on my watch.
+
+The obvious solution for the problem, is to be general.  In this case,
+to express every offset and every memory size in bits instead of
+bytes.  While this obviously gives the language maximum expressiveness
+power, and is ideal for expressing the few bit-oriented formats, it
+has the disadvantage of being very inconvenient for most situations.
+
+To see how annoying this is, let's revisit the little Data element we
+saw above.  In a bit-oriented description language, we would need to
+write something like:
+
+@example
+type BitData =
+  struct
+  @{
+    byte magic;
+    byte count;
+    byte dstart;
+
+    byte[count] data @@ dstart * 8;
+  @};
+@end example
+
+Yeah@dots{} exactly.  The @key{*} and @key{8} keys in the keyboards of
+the poke users would wear out very fast, not to mention their patience
+as well.  Also, should I provide both @code{sizeof} and
+@code{bitsizeof} operators?  Nasty.
+
+I am very fond of the maxim ``Never write a program you would never
+use yourself''@footnote{Actually it is Lord Vetinari's ``Never build a
+dungeon you can't get out of.'' but the point is the same.}, so I
+resigned myself to make GNU poke byte oriented, and to provide as many
+facilities for operating on bit-fields as possible.
+
+@noindent
+Fortunately, I have smart friends@dots{}
+
+@cindex rabbit herd
+During one of the Rabbit Herd's Hacking
+Weekends@footnote{@url{http://www.jemarch.net/rhhw}} I shared my
+frustration and struggle with the other rabbits, and we came to
+realize that offsets and data sizes in Poke should not be pure
+magnitudes or mere integer values: they should be united.  They should
+have units.
+
+It makes full sense when you come to think about it.  For a program
+like poke, it is only natural to talk about different memory units,
+like bits, bytes, kilobytes, megabits, and so on.  Bits and bytes are
+just two common units.  Apart from allowing me to express values in
+different units, this approach also has other benefits as we will see
+shortly.
+
+I'm really grateful to Bruno Haible, Luca Saiu and Nacho Gonzalez for
+putting me on the right track.
+
 @node Buffers as IO Spaces
 @section Buffers as IO Spaces
 
@@ -2576,7 +2893,6 @@ get an error:
 @c @section Printing
 @c print and printf
 
-
 @node Structuring Data
 @chapter Structuring Data
 
@@ -2596,6 +2912,7 @@ This is achieved by defining data structures.
 * Variables in Structs::
 * Functions in Structs::
 * Struct Methods::              Operations provided by built structs.
+* Dealing with Alternatives::   Conditional decoding.
 @end menu
 
 @node The SBM Format
@@ -4554,6 +4871,219 @@ If you try to do this, the compiler will greet you with an ``invalid
 reference to struct method'' message.
 @end itemize
 
+@node Dealing with Alternatives
+@section Dealing with Alternatives
+
+@subsection BSON
+
+BSON @footnote{http://bsonspec.org/spec.html} is a binary encoding for
+JSON documents.  The top-level entity described by the spec is the
+@code{document}, which contains the total size of the document, a
+sequence of elements, and a trailing null byte.
+
+We can describe the above in Poke with the following type definition:
+
+@example
+type BSON_Doc =
+  struct
+  @{
+    offset<int<32>,B> size;
+    BSON_Elem[size - size'size - 1#B] elements;
+    byte endmark : endmark == 0x0;
+  @};
+@end example
+
+BSON elements come in different kinds, which correspond to the
+different types of JSON entities: 32-bit integers, 64-bit integers,
+strings, arrays, timestamps, and so on.  Every element starts with a
+tag, which is a 8-bit unsigned integer that identifies it's kind, and
+a name encoded as a NULL-terminated string.  What comes next depends
+on the kind of element.
+
+The following Poke type definition describes a subset of BSON
+elements, namely integers, big integers and strings:
+
+@example
+type BSON_Elem =
+  struct
+  @{
+    byte tag;
+    string name;
+
+    union
+    @{
+      int32 integer32 : tag == 0x10;
+      int64 integer64 : tag == 0x12;
+      BSON_String str : tag == 0x02;
+    @} value;
+  @};
+@end example
+
+The union in @code{BSON_Elem} corresponds to the variable part.  When
+poke decodes an union, it tries to decode each alternative (union
+field) in turn.  The first alternative that is successfully decoded
+without raising a constraint violation exception is the chosen one.
+If no alternative can be decoded, a constraint violation exception is
+raised.
+
+To see this process in action, let's use the BSON corresponding to the
+following little JSON document:
+
+@example
+@{
+    "name" : "Jose E. Marchesi",
+    "age" : 40,
+    "big" : 1076543210012345
+@}
+@end example
+
+Let's take a look to the different elements:
+
+@example
+(poke) .load bson.pk
+(poke) var d = BSON_Doc @ 0#B
+(poke) d.elements'length
+0x3UL
+(poke) d.elements[0]
+BSON_Elem @{
+  tag=0x2UB,
+  name="name",
+  value=struct @{
+    str=BSON_String @{
+      size=0x11,
+      value="Jose E. Marchesi",
+      chars=[0x4aUB,0x6fUB,0x73UB,0x65UB...]
+    @}
+  @}
+@}
+(poke) d.elements[1]
+BSON_Elem @{
+  tag=0x10UB,
+  name="age",
+  value=struct @{
+    integer32=0x27
+  @}
+@}
+(poke) d.elements[2]
+BSON_Elem @{
+  tag=0x12UB,
+  name="big",
+  value=struct @{
+    integer64=0x3d31c3f9e3eb9L
+  @}
+@}
+@end example
+
+Note how unions decode into structs featuring different fields. What
+field is available depends on the alternative chosen while decoding.
+
+In the session above, @code{d.elements[1].value} contains an
+@code{integer32} field, whereas @code{d.elements[2].value} contains an
+@code{integer64} field. Let's see what happens if we try to access the
+wrong field:
+
+@example
+(poke) d.elements[1].value.integer64
+unhandled invalid element exception
+@end example
+
+We get a run-time exception. This kind of errors cannot be catched at
+compile time, since both @code{integer32} and @code{integer64} are
+potentially valid fields in the union value.
+
+@subsection Unions are Tagged
+
+Unlike in C, Poke unions are tagged.  Unions have their own lexical
+closures, and it is the capured values that determine what field is
+chosen at every time.  Wherever the union goes, its tag accompanies
+it.
+
+To see this more clearly, consider the following alternative Poke
+description of the BSON elements:
+
+@example
+type BSON_Elem =
+  union
+  @{
+    struct
+    @{
+      byte tag : tag == 0x10;
+      string name;
+      int32 value;
+    @} integer32;
+
+    struct
+    @{
+      byte tag : tag == 0x12;
+      string name;
+      int64 value;
+    @} integer64;
+
+    struct
+    @{
+      byte tag : tag == 0x12;
+      string name;
+      BSON_String value;
+    @} str;
+  @};
+@end example
+
+This description is way more verbose than the one used in previous
+sections, but it shows a few important properties of Poke unions.
+
+First, the constraints guiding the decoding are not required to appear
+in the union itself: it is a recursive process.  In this example,
+@code{BSON_String} could have constraints on it's own, and these
+constraints will also impact the decoding of the union.
+
+Second, there are generally many different ways to express the same
+plain binary using different type structures.  This is no different
+than getting different parse trees from the same sequence of tokens
+using different grammars denoting the same language.
+
+See how different a BSON element looks (and feels) using this
+alternative description:
+
+@example
+(poke) d.elements[0]
+BSON_Elem @{
+  str=struct @{
+    tag=0x2UB,
+    name="name",
+    value=BSON_String @{
+      size=0x11,
+      value="Jose E. Marchesi",
+      chars=[0x4aUB,0x6fUB,0x73UB,0x65UB...]
+    @}
+  @}
+@}
+(poke) d.elements[1]
+BSON_Elem @{
+  integer32=struct @{
+    tag=0x10UB,
+    name="age",
+    value=0x27
+  @}
+@}
+(poke) d.elements[2]
+BSON_Elem @{
+  integer64=struct @{
+    tag=0x12UB,
+    name="big",
+    value=0x3d31c3f9e3eb9L
+  @}
+@}
+@end example
+
+What is the best way? It certainly depends on the kind of data you
+want to manipulate, and the level of abstraction you want to achieve.
+Ultimately, it is up to you.
+
+Generally speaking, the best structuring is the one that allows you to
+manipulate the data in terms of the structured abstractions as
+naturally as possible.  That's the art and craft of writing good
+pickles.
+
 @node Writing Pickles
 @chapter Writing Pickles
 
@@ -6408,7 +6938,6 @@ Poke uses united values to handle offsets and data sizes.  This is a
 very central concept in poke.
 
 @menu
-* Why Offsets::			Byte-oriented or bit-oriented?
 * Offset Literals::		Denoting offsets in Poke.
 * Offset Units::		Pears and potatoes.
 * Offset Types::		offset<@dots{}>.
@@ -6416,165 +6945,6 @@ very central concept in poke.
 * Offset Operations::		Operating with offsets.
 * Offset Attributes::           Accessing properties of offset values.
 @end menu
-
-@node Why Offsets
-@subsection Why Offsets
-
-Early in the design of what is becoming GNU poke I was struck by a
-problem that, to my surprise, would prove not easy to fix in a
-satisfactory way: would I make a byte-oriented program, or a
-bit-oriented program?  Considering that the program in question was
-nothing less than an editor for binary data, this was no petty
-dilemma.
-
-Since the very beginning I had a pretty clear idea of what I wanted to
-achieve: a binary editor that would be capable of editing user defined
-data structures, besides bytes and bits.  I also knew I needed some
-sort of domain specific language to describe these structures and
-operate on them.  How that language would look like, and what kind of
-abstractions it would provide, however, was not clear to me.  Not at
-all.
-
-So once I sketched an initial language design, barely something very
-similar to C structs, I was determined to not continue with the poke
-implementation until I had described as many as binary formats in my
-language as possible.  That, I reckoned, was the only way to make sure
-the implemented language would be expressive, complete and useful
-enough to fulfil my requirements.
-
-The first formats I implemented using my immature little language
-included ELF, FLV, MP3, BSON@dots{} of them describing structures
-based on whole bytes.  Even when they try to be compact, it is always
-by packing bit-fields in elements that are, invariably, sized as a
-multiple of bytes.  Consequently, the language I was evolving became
-byte oriented as well.  No doubt also influenced by my C inheritance,
-I would think of bit-fields either as a sort of second class citizen,
-or as mere results of shifting and masking.
-
-This worked well.  The language evolved to be able to express many
-different aspects of these formats in a very nice way, like
-variable-length data and holes in structures.  Consider the following
-definition, which is @strong{not} valid in today's Poke:
-
-@example
-type Data =
-  struct
-  @{
-    byte magic;
-    byte count;
-    byte dstart;
-
-    byte[count] data @@ dstart;
-  @};
-@end example
-
-The data starts with a byte that is a magic number.  Then the size of
-the data stored, in bytes, and then the data itself.  This data,
-however, doesn't start right after @code{dstart}: it starts at
-@code{dstart}, which is expressed as an offset, in bytes, since the
-beginning of the Data.  I conceived struct field labels to be any
-expression evaluating to an integer, which would be@dots{}, bytes
-obviously.
-
-@cindex deflate
-Then, one day, it was the turn for IETF RFC1951, which is the
-specification of the DEFLATE algorithm and associated file format.  Oh
-dear.  Near the beginning of the spec document it can be read:
-
-@quotation
-This document does not address the issue of the order in which bits of
-a byte are transmitted on a bit-sequential medium, since the final
-data format described here is byte- rather than bit-oriented.
-However, we describe the compressed block format in below, as a
-sequence of data elements of various bit lengths, not a sequence of
-bytes.
-@end quotation
-
-Then it goes on describing rules to pack the DEFLATE elements into
-bytes.  I was appalled, and certainly sort of deflated as well.  The
-purpose of my program was precisely to edit binary in terms of the
-data elements described by a format.  And in this case, these data
-elements came in all sort of bit lengths and alignments.  This can be
-seen in the following RFC1951 excerpt, that describes the header of a
-compressed block:
-
-@quotation
-Each block of compressed data begins with 3 header bits
-containing the following data:
-@example
-first bit       BFINAL
-next 2 bits     BTYPE
-@end example
-
-Note that the header bits do not necessarily begin on a byte boundary,
-since a block does not necessarily occupy an integral number of bytes.
-@end quotation
-
-At this point I understood that my little language on the works would
-never be capable to describe the DEFLATE structures naturally: C-like
-bit-fields, masking and shifting, all based on byte-oriented
-containers and boundaries, would never provide the slickness I wanted
-for my editor.  I mean, just use C and get done with it.
-
-This pissed me off.  Undoubtedly other formats and protocols would be
-impacted in a similar way.  Even when most formats are byte oriented,
-what am I supposed to tell to the people hacking bit-oriented stuff?
-``Sorry pal, this is not supported, this program is not for you''?  No
-way, I thought, not on my watch.
-
-The obvious solution for the problem, is to be general.  In this case,
-to express every offset and every memory size in bits instead of
-bytes.  While this obviously gives the language maximum expressiveness
-power, and is ideal for expressing the few bit-oriented formats, it
-has the disadvantage of being very inconvenient for most situations.
-
-To see how annoying this is, let's revisit the little Data element we
-saw above.  In a bit-oriented description language, we would need to
-write something like:
-
-@example
-type BitData =
-  struct
-  @{
-    byte magic;
-    byte count;
-    byte dstart;
-
-    byte[count] data @@ dstart * 8;
-  @};
-@end example
-
-Yeah@dots{} exactly.  The @key{*} and @key{8} keys in the keyboards of
-the poke users would wear out very fast, not to mention their patience
-as well.  Also, should I provide both @code{sizeof} and
-@code{bitsizeof} operators?  Nasty.
-
-I am very fond of the maxim ``Never write a program you would never
-use yourself''@footnote{Actually it is Lord Vetinari's ``Never build a
-dungeon you can't get out of.'' but the point is the same.}, so I
-resigned myself to make GNU poke byte oriented, and to provide as many
-facilities for operating on bit-fields as possible.
-
-@noindent
-Fortunately, I have smart friends@dots{}
-
-@cindex rabbit herd
-During one of the Rabbit Herd's Hacking
-Weekends@footnote{@url{http://www.jemarch.net/rhhw}} I shared my
-frustration and struggle with the other rabbits, and we came to
-realize that offsets and data sizes in Poke should not be pure
-magnitudes or mere integer values: they should be united.  They should
-have units.
-
-It makes full sense when you come to think about it.  For a program
-like poke, it is only natural to talk about different memory units,
-like bits, bytes, kilobytes, megabits, and so on.  Bits and bytes are
-just two common units.  Apart from allowing me to express values in
-different units, this approach also has other benefits as we will see
-shortly.
-
-I'm really grateful to Bruno Haible, Luca Saiu and Nacho Gonzalez for
-putting me on the right track.
 
 @node Offset Literals
 @subsection Offset Literals
