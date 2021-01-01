@@ -1,3 +1,8 @@
+2021-01-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Debugging Poke Programs): Demote and relocate.
+	(Writing Pickles): Relocate.
+
 2020-12-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h (struct pk_color): New type.
