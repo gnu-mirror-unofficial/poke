@@ -135,7 +135,7 @@ Description:
 + A new %-sequence shall be added to printf: %%.  This denotes a single
 + % in the formatted output.  The right place where to hack this is the
 + ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
-Target: 0.1
+Target: 1.0
 
 Summary: STRING ~ REGEXP operator
 Component: Language
@@ -517,7 +517,6 @@ Priority: 4
 Description:
 + This will require to subpass on fields.  i.e. a gen context:
 + in_integrator.
-Target: 0.1
 
 Summary: Support offsets in integral structs
 Component: Language
@@ -526,7 +525,6 @@ Priority: 4
 Description:
 + There is no reason for offsets to not be allowed as fields of integral
 + structs.  It is an arbitrary limitation.
-Target: 0.1
 
 Summary: Support for optional fields in integral structs
 Component: Language
@@ -1025,7 +1023,7 @@ Priority: 4
 Description:
 + A field in an union type cannot refer to other union alternatives, in
 + any case.  This applies to constraints, array bounds, etc.
-Target: 0.1
+Target: 1.0
 
 Summary: Fix GC roots in AST nodes
 Component: Compiler
@@ -1038,116 +1036,6 @@ Description:
 + roots in the `ast' structure instead.
 +
 + Look for calls to pvm_alloc*gc_roots in pkl-ast.c.
-Target: 0.1
-
-Summary: Promote struct constructor elements
-Component: Compiler
-Kind: BUG
-BZ: 26886
-Priority: 3
-Description:
-+ Initialization values in struct constructors are not currently
-+ promoted to the target types.  This is a PITA and must be fixed.
-+
-+ /* Promote initializers in struct constructors.  */
-+
-+ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_scons)
-+ {
-+   pkl_ast_node scons = PKL_PASS_NODE;
-+   pkl_ast_node scons_type = PKL_AST_SCONS_TYPE (scons);
-+   pkl_ast_node astruct = PKL_AST_SCONS_VALUE (scons);
-+   pkl_ast_node struct_elems = PKL_AST_STRUCT_ELEMS (astruct);
-+   pkl_ast_node elem = NULL;
-+   int restart = 0;
-+
-+   PKL_PASS_DONE;
-+
-+   for (elem = struct_elems; elem; elem = PKL_AST_CHAIN (elem))
-+     {
-+       pkl_ast_node type_elem;
-+       pkl_ast_node elem_name = PKL_AST_STRUCT_ELEM_NAME (elem);
-+       pkl_ast_node elem_exp = PKL_AST_STRUCT_ELEM_EXP (elem);
-+       pkl_ast_node elem_type = PKL_AST_TYPE (elem_exp);
-+
-+       for (type_elem = PKL_AST_TYPE_S_ELEMS (scons_type);
-+            type_elem;
-+            type_elem = PKL_AST_CHAIN (type_elem))
-+         {
-+           pkl_ast_node type_elem_name
-+             = PKL_AST_STRUCT_ELEM_TYPE_NAME (type_elem);
-+
-+           if (type_elem_name
-+               && strcmp (PKL_AST_IDENTIFIER_POINTER (type_elem_name),
-+                          PKL_AST_IDENTIFIER_POINTER (elem_name)) == 0)
-+             {
-+               pkl_ast_node type_elem_type
-+                 = PKL_AST_STRUCT_ELEM_TYPE_TYPE (type_elem);
-+               int this_restart;
-+
-+               if (PKL_AST_TYPE_CODE (type_elem_type) != PKL_TYPE_ARRAY
-+                   && pkl_ast_type_equal (type_elem_type, elem_type))
-+                 break;
-+
-+               switch (PKL_AST_TYPE_CODE (elem_type))
-+                 {
-+                 case PKL_TYPE_ANY:
-+                   break;
-+                 case PKL_TYPE_ARRAY:
-+                   if (!promote_array (PKL_PASS_AST,
-+                                       type_elem_type,
-+                                       &PKL_AST_STRUCT_ELEM_EXP (elem),
-+                                       &this_restart))
-+                     goto error;
-+                   break;
-+                 case PKL_TYPE_INTEGRAL:
-+                   if (!promote_integral (PKL_PASS_AST,
-+                                          PKL_AST_TYPE_I_SIZE (type_elem_type),
-+                                          PKL_AST_TYPE_I_SIGNED (type_elem_type),
-+                                          &PKL_AST_STRUCT_ELEM_EXP (elem),
-+                                          &this_restart))
-+                     goto error;
-+                   break;
-+                 case PKL_TYPE_OFFSET:
-+                   {
-+                     pkl_ast_node base_type
-+                       = PKL_AST_TYPE_O_BASE_TYPE (type_elem_type);
-+                     pkl_ast_node unit
-+                       = PKL_AST_TYPE_O_UNIT (type_elem_type);
-+
-+                     size_t size = PKL_AST_TYPE_I_SIZE (base_type);
-+                     int sign = PKL_AST_TYPE_I_SIGNED (base_type);
-+                     uint64_t unit_bits = PKL_AST_INTEGER_VALUE (unit);
-+
-+                     if (!promote_offset (PKL_PASS_AST,
-+                                          size, sign, unit_bits,
-+                                          &PKL_AST_STRUCT_ELEM_EXP (elem),
-+                                          &this_restart))
-+                       goto error;
-+                     break;
-+                   }
-+                 default:
-+                   pkl_ice (PKL_PASS_AST, PKL_AST_LOC (scons),
-+                            "non-promoteable struct constructor initializer\
-+ at promo time");
-+                   PKL_PASS_ERROR;
-+                   break;
-+                 }
-+
-+               restart |= this_restart;
-+             }
-+         }
-+     }
-+
-+   PKL_PASS_RESTART = restart;
-+   PKL_PASS_DONE;
-+
-+  error:
-+   pkl_ice (PKL_PASS_AST, PKL_AST_LOC (scons),
-+            "couldn't promote struct constructor initializer");
-+   PKL_PASS_ERROR;
-+ }
-+ PKL_PHASE_END_HANDLER
-Target: 0.1
 
 Summary: `load' doesn't load after an error
 Component: Compiler
@@ -1162,7 +1050,7 @@ Description:
 + error: fjdi
 + (poke) load foo
 + /* Does nothing.  */
-Target: 0.1
+Target: 1.0
 
 Summary: Fix %destructors in parser
 Component: Compiler
@@ -1172,7 +1060,7 @@ Priority: 3
 Description:
 + A suitable %destructor should be added to the Poke parser, to assure
 + no memory leaks when an error occurs (AST nodes).
-Target: 0.1
+Target: 1.0
 
 Summary: Do not leak decl AST nodes in parser
 Component: Compiler
@@ -1182,7 +1070,7 @@ Priority: 3
 Description:
 + Do not leak decl AST nodes if there is an error condition like an
 + already declared entity.
-Target: 0.1
+Target: 1.0
 
 Summary: Remove call to `abort' in pkl-lex.l
 Component: Compiler
@@ -1191,7 +1079,7 @@ BZ: 26893
 Priority: 3
 Description:
 + Code in libpoke should not call `abort' nor `exit'.
-Target: 0.1
+Target: 1.0
 
 Summary: The `muls' instruction in pvm.jitter calls xmalloc
 Component: Compiler
@@ -1200,7 +1088,7 @@ BZ: 26894
 Priority: 3
 Description:
 + libpoke code shouldn't abort, therefore xalloc shouldn't be used.
-Target: 0.1
+Target: 1.0
 
 Summary: Complete pvm_print_val for function types
 Component: PVM
@@ -1210,7 +1098,7 @@ Priority: 3
 Description:
 + pvm_print_val should print valid type descriptors for function types,
 + including optional arguments, varargs, etc.
-Target: 0.1
+Target: 1.0
 
 Summary: Function types are generated with its arguments reversed
 Component: Compiler
@@ -1220,7 +1108,7 @@ Priority: 4
 Description:
 + Either mktyc should get its arguments reversed (ugly) or the compiler
 + should reverse them before calling the instruction.
-Target: 0.1
+Target: 1.0
 
 Summary: pvm_array_set should check for size bounds
 Component: Compiler
@@ -1232,7 +1120,7 @@ Description:
 + instruction in pvm.jitter to pvm_array_set.  This later function
 + should be altered to return a code identifying out-of-bounds,
 + out-of-size, or OK.
-Target: 0.1
+Target: 1.0
 
 Summary: Allow .let #fieldw = ulong<field_type_size>64 in RAS
 Component: RAS
@@ -1258,7 +1146,6 @@ Kind: ENH
 Priority: 2
 Description:
 + This should be reported as invalid by RAS: int<40>
-Target: 0.1
 
 Summary: Adjustable recursion limit in the PVM
 Component: PVM
@@ -1427,7 +1314,7 @@ Summary: Pass the declaration's pk_value in callback pk_map_decl_fn
 Component: Library
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: Support IO transactions
 Component: IO
@@ -1517,7 +1404,7 @@ Description:
 + when they get IOS_EPERM.
 +
 + Obviously a new exception ``E_perm`` shall be added as well.
-Target: 0.1
+Target: 1.0
 
 Summary: .set with no arguments should give a summary of all options
 Component: CLI
@@ -1526,7 +1413,7 @@ Priority: 3
 Description:
 + This requires work in rec-cmd.c, because the current infrastructure
 + doens't support this.
-Target: 0.1
+Target: 1.0
 
 Summary: Support language-level construct for easy redirections to pipes/files
 Component: Language
@@ -1556,7 +1443,7 @@ Summary: Auto-complete value attributes
 Component: CLI
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: Use json-c instead of tcllib json modules in the GUI
 Component: GUI
@@ -1665,7 +1552,7 @@ Component: POKE
 Kind: ENH
 Priority: 3
 Description: hserver business should be encapsulated in pk-repl.c
-Target: 0.1
+Target: 1.0
 
 Summary: Auto-complete map names in .map
 Component: CLI
@@ -1676,7 +1563,7 @@ Summary: Auto-complete yes|no in commands
 Component: CLI
 Kind: ENH
 Priority: 3
-Target: 0.1
+Target: 1.0
 
 Summary: Routine to get an unique memory IO space name
 Component: IO
@@ -1716,7 +1603,7 @@ Description:
 +
 + Once we support docstrings in both fields and methods, the output of
 + ``.info type`` can be expanded to use them.
-Target: 0.1
+Target: 1.0
 
 Summary: .vm time
 Component: CLI
@@ -1793,57 +1680,56 @@ Description:
 + The dg testsuites are big.  We need to be able to run the tests in
 + parallel.  A good place where to look for inspiration for this task is
 + the GCC testing infrastructure.
-Target: 0.1
 
 Summary: Document language operand promotion rules in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: Document array casts in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: Document poke CSS classes in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: Note in the manual how arrays built from array literals are unbounded
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: document poke maps in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 0.1
+Target: 1.0
 
 Summary: document the libpoke API in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
 Description: Preferably generating it from libpoke.h
-Target: 0.1
+Target: 1.0
 RFC: yes
 
 Summary: Complete PVM values and PKL nodes support in poke-gdb.scm
 Component: Other
 Kind: ENH
 Priority: 3
-Target: 0.1
+Target: 1.0
 
 Summary: Gettextize strings in the codebase
 Component: Other
 Kind: ENH
 Priority: 3
-Target: 0.1
+Target: 1.0
 
 Summary: Use upper-letter names for macro arguments consistenly
 Component: Other
@@ -1863,14 +1749,14 @@ Description:
 + These are the values generated by the constructors of the several
 + types (integers, offsets, strings, arrays, structs).  Refer to this
 + section from array and struct constructor sections.
-Target: 0.1
+Target: 1.0
 
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
 %type: ReleaseDate date
 
-Version: 0.1
+Version: 1.0
 
 %rec: Hacker
 %key: Email
