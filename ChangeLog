@@ -1,3 +1,8 @@
+2021-01-25  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* testsuite/Makefile.am (check-DEJAGNU): Fix `make distcheck`
+	failure by removing the INPUTRC file after running the tests.
+
 2021-01-24  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* testsuite/Makefile.am (check-DEJAGNU): Set INPUTRC. Use custom
