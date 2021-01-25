@@ -10190,6 +10190,20 @@ example:
 raise Exception @{ code = 255; msg = "double upset event" @};
 @end example
 
+User-defined exceptions should be resgistered using @code{exception_code}
+function.  For example:
+
+@example
+var E_my_exception = Exception @{
+  code = exception_code,
+  msg = "double upset event",
+@};
+@end example
+
+@noindent
+where the @code{E_my_exception.code} is a unique number greater than or
+equal to @code{255}.
+
 Exception codes in the range @code{0..254} are reserved for poke.
 These are used in predefined exceptions which are standard, and have
 specific meanings:

@@ -77,7 +77,8 @@ type Exception =
 /* Standard exception codes.
    These codes should be in sync with PVM_E_* macros in pvm.h.
    Note that user-defined exceptions must have codes starting with
-   255.
+   255 (and should be registered using exception_code function defined
+   below).
    Note also that EC_generic _must_ be zero.  */
 
 var EC_generic       = 0;
@@ -134,6 +135,16 @@ var E_exit
   = Exception {code = EC_exit, msg = "exit", exit_status = 0};
 var E_assert
   = Exception {code = EC_assert, msg = "assertion failure", exit_status = 1};
+
+/* Registration of user-defined exceptions */
+
+type _ExceptionCodeGenerator = () int<32>;
+var exception_code = lambda _ExceptionCodeGenerator:
+  {
+    var n = 255; /* First available code for user-defined exceptions */
+
+    return lambda int<32>: { return n++; };
+  }();
 
 /* Default exception handler.
 
