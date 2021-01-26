@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { byte[1]; byte[1]; byte c : c == 0; };
+
+/* { dg-command { Foo { } } } */
+/* { dg-output "Foo \\\{\\\[0UB\\\],\\\[0UB\\\],c=0UB\\\}" } */

@@ -1,3 +1,17 @@
+2021-01-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-env.c (get_registered): The empty string is never
+	recognized as the name of a registered declaration.
+	* libpoke/pkl-tab.y (struct_type_field): Register anonymous struct
+	fields in the lexical environment.
+	* testsuite/poke.map/maps-structs-anonfield-1.pk: New test.
+	* testsuite/poke.map/maps-structs-anonfield-2.pk: Likewise.
+	* testsuite/poke.map/maps-structs-anonfield-3.pk: Likewise.
+	* testsuite/poke.pkl/scons-anon-field-1.pk: Likewise.
+	* testsuite/poke.pkl/scons-anon-field-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-anon-field-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2021-01-25  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/pkl-rt.pk (exception_code): New function.

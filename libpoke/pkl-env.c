@@ -104,6 +104,9 @@ get_registered (pkl_hash hash_table, const char *name)
   pkl_ast_node t;
   int hash;
 
+  if (STREQ (name, ""))
+    return NULL;
+
   hash = hash_string (name);
   for (t = hash_table[hash]; t != NULL; t = PKL_AST_CHAIN2 (t))
     {

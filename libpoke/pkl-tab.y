@@ -1644,36 +1644,43 @@ endianness:
 struct_type_field:
           endianness type_specifier struct_type_field_identifier
                   {
-                  if ($3 != NULL)
-                    {
-                      /* Register a variable IDENTIFIER in the current
-                         environment.  We do it in this mid-rule so
-                         the element can be used in the
-                         constraint.  */
+                    /* Register a variable in the current environment
+                       for the field.  We do it in this mid-rule so
+                       the element can be used in the constraint.  */
 
-                      pkl_ast_node dummy, decl;
+                    pkl_ast_node dummy, decl;
+                    pkl_ast_node identifier
+                      = ($3 != NULL
+                         ? $3
+                         : pkl_ast_make_identifier (pkl_parser->ast, ""));
 
-                      dummy = pkl_ast_make_integer (pkl_parser->ast, 0);
-                      PKL_AST_TYPE (dummy) = ASTREF ($2);
-                      decl = pkl_ast_make_decl (pkl_parser->ast,
-                                                PKL_AST_DECL_KIND_VAR,
-                                                $3, dummy,
-                                                NULL /* source */);
-                      PKL_AST_DECL_STRUCT_FIELD_P (decl) = 1;
-                      PKL_AST_LOC (decl) = @$;
 
-                      if (!pkl_env_register (pkl_parser->env,
-                                             PKL_ENV_NS_MAIN,
-                                             PKL_AST_IDENTIFIER_POINTER ($3),
-                                             decl))
-                        {
-                          pkl_error (pkl_parser->compiler, pkl_parser->ast, @3,
-                                     "duplicated struct element '%s'",
-                                     PKL_AST_IDENTIFIER_POINTER ($3));
-                          YYERROR;
-                        }
-                    }
-                }
+                    dummy = pkl_ast_make_integer (pkl_parser->ast, 0);
+                    PKL_AST_TYPE (dummy) = ASTREF ($2);
+                    decl = pkl_ast_make_decl (pkl_parser->ast,
+                                              PKL_AST_DECL_KIND_VAR,
+                                              identifier, dummy,
+                                              NULL /* source */);
+                    PKL_AST_DECL_STRUCT_FIELD_P (decl) = 1;
+                    PKL_AST_LOC (decl) = @$;
+
+                    if (!pkl_env_register (pkl_parser->env,
+                                           PKL_ENV_NS_MAIN,
+                                           PKL_AST_IDENTIFIER_POINTER (identifier),
+                                           decl))
+                      {
+                        pkl_error (pkl_parser->compiler, pkl_parser->ast, @3,
+                                   "duplicated struct element '%s'",
+                                   PKL_AST_IDENTIFIER_POINTER ($3));
+                        YYERROR;
+                      }
+
+                    if (identifier)
+                      {
+                        identifier = ASTREF (identifier);
+                        pkl_ast_node_free (identifier);
+                      }
+                  }
           struct_type_field_constraint_or_init struct_type_field_label
           struct_type_field_optcond ';'
                   {
