@@ -489,6 +489,7 @@ EXTRA_DIST = \
   poke.pickles/pickles.exp \
   poke.pickles/argp-test.pk \
   poke.pickles/color-test.pk \
+  poke.pickles/mbr-test.pk \
   poke.pickles/id3v1-test.pk \
   poke.pickles/rgb24-test.pk \
   poke.pkl/pkl.exp \

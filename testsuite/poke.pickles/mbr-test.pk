@@ -1,0 +1,116 @@
+/* mbr-test.pk - Tests for the mbr pickle.  */
+
+/* Copyright (C) 2021 The poke authors */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load pktest;
+load mbr;
+
+set_endian(ENDIAN_LITTLE);
+
+var data = open ("*data*");
+
+var tests = [
+  PkTest {
+    name = "magic number",
+    func = lambda (string name) void:
+      {
+        byte[512] @ data : 0#B = byte[512] ();
+
+        try
+          {
+            var m = MBR @ data : 0#B;
+
+            assert(0, "unreachable reached!");
+          }
+        catch if E_constraint
+          {
+            assert (1, "the magic number cannot be zero!");
+          }
+
+        /* Fix the magic number */
+        byte[2] @ data : 510#B = [0x55UB, 0xaaUB];
+
+        var m = MBR @ data : 0#B;
+      },
+  },
+  PkTest {
+    name = "CHS",
+    func = lambda (string name) void:
+      {
+        byte[510] @ data : 0#B = byte[510] ();
+        byte[2] @ data : 510#B = [0x55UB, 0xaaUB];
+
+        var m = MBR @ data : 0#B;
+        var chs = m.pte[0].start_chs;
+
+        assert(chs.head == 0);
+        assert(chs.cs.cylinder_hi == 0);
+        assert(chs.cs.sector == 0);
+        assert(chs.cylinder_lo == 0);
+        assert(chs.get_cylinder == 0);
+        assert((byte[chs'size] @ data : chs'offset) == [0UB, 0UB, 0UB]);
+
+        chs.set_cylinder(0x3ff);
+        assert(chs.head == 0);
+        assert(chs.cs.cylinder_hi == 3);
+        assert(chs.cs.sector == 0);
+        assert(chs.cylinder_lo == 0xff);
+        assert(chs.get_cylinder == 0x3ff);
+        assert((byte[chs'size] @ data : chs'offset) == [0UB, 0xc0UB, 0xffUB]);
+
+        chs.cs.cylinder_hi = 1;
+        assert(chs.head == 0);
+        assert(chs.cs.cylinder_hi == 1);
+        assert(chs.cs.sector == 0);
+        assert(chs.cylinder_lo == 0xff);
+        assert(chs.get_cylinder == 0x1ff);
+        assert((byte[chs'size] @ data : chs'offset) == [0UB, 0x40UB, 0xffUB]);
+
+        chs.head = 0xa5;
+        assert(chs.head == 0xa5);
+        assert(chs.cs.cylinder_hi == 1);
+        assert(chs.cs.sector == 0);
+        assert(chs.cylinder_lo == 0xff);
+        assert(chs.get_cylinder == 0x1ff);
+        assert((byte[chs'size] @ data : chs'offset) ==
+               [0xa5UB, 0x40UB, 0xffUB]);
+
+        chs.cs.sector = 0xff;  /* Only the 6 LSBs are relevant */
+        assert(chs.head == 0xa5);
+        assert(chs.cs.cylinder_hi == 1);
+        assert(chs.cs.sector == 0x3f);
+        assert(chs.cylinder_lo == 0xff);
+        assert(chs.get_cylinder == 0x1ff);
+        assert((byte[chs'size] @ data : chs'offset) ==
+               [0xa5UB, 0x7fUB, 0xffUB]);
+
+        chs.cylinder_lo = 0x81;
+        assert(chs.head == 0xa5);
+        assert(chs.cs.cylinder_hi == 1);
+        assert(chs.cs.sector == 0x3f);
+        assert(chs.cylinder_lo == 0x81);
+        assert(chs.get_cylinder == 0x181);
+        assert((byte[chs'size] @ data : chs'offset) ==
+               [0xa5UB, 0x7fUB, 0x81UB]);
+      },
+  },
+];
+
+var ec = pktest_run (tests) ? 0 : 1;
+
+close(data);
+exit (ec);

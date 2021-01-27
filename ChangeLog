@@ -1,5 +1,12 @@
 2021-01-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* pickles/mbr.pk: New pickle.
+	* pickles/Makefile.am (dist_pickles_DATA): Add `mbr.pk`.
+	* testsuite/poke.pickles/mbr-test.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2021-01-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/pkl-gen.pks (struct_writer): Fix bit-offset of mapped
 	integral struct.
 	* testsuite/poke.map/maps-int-structs-21.pk: New test.
