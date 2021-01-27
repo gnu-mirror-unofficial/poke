@@ -1,3 +1,17 @@
+2021-01-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pkl-gen.pks (struct_writer): Fix bit-offset of mapped
+	integral struct.
+	* testsuite/poke.map/maps-int-structs-21.pk: New test.
+	* testsuite/poke.map/maps-int-structs-22.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-23.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-24.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-25.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-26.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-27.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-28.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2021-01-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-env.c (get_registered): The empty string is never

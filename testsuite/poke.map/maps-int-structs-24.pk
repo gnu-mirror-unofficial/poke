@@ -1,0 +1,22 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Bar =
+  struct uint<32>
+  {
+    uint<16> a1;
+    uint<16> a2;
+  };
+
+type Foo =
+  struct
+  {
+    uint<16> a;
+    Bar b;
+    uint<8> c;
+  };
+
+/* { dg-command { .set endian little } } */
+/* { dg-command { .set obase 16} } */
+/* { dg-command { Foo @ 1#B } } */
+/* { dg-output {Foo {a=0x3020UH,b=Bar {a1=0x7060UH,a2=0x5040UH},c=0x80UB}\n} } */

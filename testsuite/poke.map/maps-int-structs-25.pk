@@ -1,0 +1,53 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Foo =
+  struct
+  {
+    type UI32 =
+      struct uint<32>
+      {
+        uint<16> b1;
+        uint<16> b2;
+      };
+
+    uint<8> a;
+    UI32 b;
+  };
+
+fun t = (Foo foo, uint<16> old1, uint<16> new1,
+         uint<16> old2, uint<16> new2) int<32>:
+  {
+    var i = 0;
+
+    /* check current expected values */
+    if (foo.b.b1 != old1)
+      return ++i;
+    if (foo.b.b2 != old2)
+      return ++i;
+
+    /* set new values */
+    foo.b.b1 = new1;
+    if (foo.b.b1 != new1)
+      return ++i;
+    foo.b.b2 = new2;
+    if (foo.b.b2 != new2)
+      return ++i;
+
+    /* revert to old values */
+    foo.b.b1 = old1;
+    if (foo.b.b1 != old1)
+      return ++i;
+    foo.b.b2 = old2;
+    if (foo.b.b2 != old2)
+      return ++i;
+
+    return 0;
+  }
+
+/* { dg-command { .set endian little } } */
+/* { dg-command { .set obase 16} } */
+/* { dg-command { t (Foo @ 0#B, 0x5040UH, 0x4050UH, 0x3020UH, 0x2030UH);  } } */
+/* { dg-output {0x0\n} } */
+/* { dg-command { Foo @ 0#B } } */
+/* { dg-output {Foo {a=0x10UB,b=UI32 {b1=0x5040UH,b2=0x3020UH}}\n} } */

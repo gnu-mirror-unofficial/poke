@@ -1624,9 +1624,10 @@
  .c {
         pushvar $sct            ; SCT
         mgetios                 ; SCT IOS
-        nip                     ; IOS
-        push ulong<64>0         ; IOS 0UL
-        pushvar $ivalue         ; IOS 0UL IVAL
+        swap                    ; IOS SCT
+        mgeto                   ; IOS SCT BOFF
+        nip                     ; IOS BOFF
+        pushvar $ivalue         ; IOS BOFF IVAL
  .c     PKL_PASS_SUBPASS (@struct_itype);
  .c }
         popf 1

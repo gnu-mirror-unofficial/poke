@@ -237,6 +237,14 @@ EXTRA_DIST = \
   poke.map/maps-int-structs-18.pk \
   poke.map/maps-int-structs-19.pk \
   poke.map/maps-int-structs-20.pk \
+  poke.map/maps-int-structs-21.pk \
+  poke.map/maps-int-structs-22.pk \
+  poke.map/maps-int-structs-23.pk \
+  poke.map/maps-int-structs-24.pk \
+  poke.map/maps-int-structs-25.pk \
+  poke.map/maps-int-structs-26.pk \
+  poke.map/maps-int-structs-27.pk \
+  poke.map/maps-int-structs-28.pk \
   poke.map/maps-ios-1.pk \
   poke.map/maps-ios-2.pk \
   poke.map/maps-ios-3.pk \
