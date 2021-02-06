@@ -1,3 +1,11 @@
+2021-02-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/poke.c (print_help): --script to --source.
+	Rename SCRIPT_ARG to SOURCE_ARG.
+	(long_options): Likewise.
+	(parse_args_2): Update accordingly.
+	* doc/poke.texi (Invoking poke): Update accordingly.
+
 2021-01-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* pickles/mbr.pk: New pickle.

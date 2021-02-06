@@ -449,9 +449,10 @@ a shebang (@pxref{Scripts}) to implement Poke scripts.
 Execute the given command.  Any number of @samp{-c} options can be
 specified, and they are executed in the given order.
 @item -s
-@itemx --script=@var{file}
-Load @var{file} as a poke script.  Any number of @samp{-s} options may
-be specified, and they are loaded in the given order.
+@itemx --source=@var{file}
+Load @var{file} as a command file.  Any number of @samp{-s} options may
+be specified, and they are loaded in the given order. @xref{Command
+Files}.
 @item --color=@var{how}
 @cindex styled output
 Whether to use styled output, and how.  Valid options for @var{how}

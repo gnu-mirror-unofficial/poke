@@ -149,7 +149,7 @@ enum
   LOAD_AND_EXIT_ARG,
   CMD_ARG,
   NO_INIT_FILE_ARG,
-  SCRIPT_ARG,
+  SOURCE_ARG,
   COLOR_ARG,
   STYLE_ARG,
   MI_ARG,
@@ -164,7 +164,7 @@ static const struct option long_options[] =
   {"quiet", no_argument, NULL, QUIET_ARG},
   {"load", required_argument, NULL, LOAD_ARG},
   {"command", required_argument, NULL, CMD_ARG},
-  {"script", required_argument, NULL, SCRIPT_ARG},
+  {"source", required_argument, NULL, SOURCE_ARG},
   {"no-init-file", no_argument, NULL, NO_INIT_FILE_ARG},
   {"color", required_argument, NULL, COLOR_ARG},
   {"style", required_argument, NULL, STYLE_ARG},
@@ -201,7 +201,7 @@ Interactive editor for binary files.\n"));
   pk_puts (_("\
 Commanding poke from the command line:\n\
   -c, --command=CMD                   execute the given command.\n\
-  -s, --script=FILE                   execute commands from FILE.\n"));
+  -s, --source=FILE                   execute commands from FILE.\n"));
 
   pk_puts ("\n");
   pk_puts (_("\
@@ -435,7 +435,7 @@ parse_args_2 (int argc, char *argv[])
             break;
           }
         case 's':
-        case SCRIPT_ARG:
+        case SOURCE_ARG:
           {
             poke_interactive_p = 0;
             if (!pk_cmd_exec_script (optarg))
