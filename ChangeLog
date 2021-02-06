@@ -1,5 +1,13 @@
 2021-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-ios.c (pk_cmd_source_file): New function.
+	(source_cmd): Define.
+	* poke/pk-cmd.c (source_cmd): Define.
+	(dot_cmds): Add source_cmd.
+	* doc/poke.texi (source command): New section.
+
+2021-02-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (print_help): --script to --source.
 	Rename SCRIPT_ARG to SOURCE_ARG.
 	(long_options): Likewise.

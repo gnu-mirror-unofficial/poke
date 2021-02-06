@@ -270,6 +270,29 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_source_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* source FILENAME */
+
+  char *arg;
+  char *emsg;
+
+  assert (argc == 1);
+  arg = PK_CMD_ARG_STR (argv[0]);
+
+  if ((emsg = pk_file_readable (arg)) != NULL)
+    {
+      pk_puts (emsg);
+      return 0;
+    }
+
+  if (!pk_cmd_exec_script (arg))
+    return 0;
+
+  return 1;
+}
+
+static int
 pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* mem NAME */
@@ -375,3 +398,6 @@ const struct pk_cmd info_ios_cmd =
 
 const struct pk_cmd load_cmd =
   {"load", "f", "", 0, NULL, pk_cmd_load_file, "load FILE-NAME", rl_filename_completion_function};
+
+const struct pk_cmd source_cmd =
+  {"source", "f", "", 0, NULL, pk_cmd_source_file, "source FILE-NAME", rl_filename_completion_function};

@@ -45,6 +45,7 @@ extern const struct pk_cmd nbd_cmd; /* pk-cmd-ios.c */
 #endif
 extern const struct pk_cmd close_cmd; /* pk-cmd-file.c */
 extern const struct pk_cmd load_cmd; /* pk-cmd-file.c */
+extern const struct pk_cmd source_cmd; /* pk-cmd-ios.c */
 extern const struct pk_cmd info_cmd; /* pk-cmd-info.c  */
 extern const struct pk_cmd exit_cmd; /* pk-cmd-misc.c  */
 extern const struct pk_cmd version_cmd; /* pk-cmd-misc.c */
@@ -69,6 +70,7 @@ static const struct pk_cmd *dot_cmds[] =
     &info_cmd,
     &close_cmd,
     &load_cmd,
+    &source_cmd,
     &help_cmd,
     &vm_cmd,
     &set_cmd,

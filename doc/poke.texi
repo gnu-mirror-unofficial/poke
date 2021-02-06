@@ -144,6 +144,7 @@ Audio
 
 Dot-Commands
 * load command::		Loading pickles.
+* source command::              Executing commands in files.
 * file command::		Opening and selecting file IO spaces.
 * mem command::			Opening and selecting memory IO spaces.
 * nbd command::			Opening and selecting NBD IO spaces.
@@ -5795,6 +5796,7 @@ non-option arguments.
 
 @menu
 * load command::		Loading pickles.
+* source command::              Executing commands in files.
 * file command::		Opening and selecting file IO spaces.
 * mem command::			Opening and selecting memory IO spaces.
 * nbd command::			Opening and selecting NBD IO spaces.
@@ -5825,6 +5827,21 @@ If the environment variable @code{POKEDATADIR} is defined, it replaces
 poke program before it gets installed in its final location.
 
 If an absolute path is provided, it is used as-is.
+
+@node source command
+@section @code{.source}
+@cindex @code{.source}
+@cindex executing command files
+The @command{.source} command executes command lines from some given
+file.  The syntax is:
+
+@example
+.source @var{path}
+@end example
+
+@noindent
+where @var{path} is a path to the file containing the commands.
+@xref{Command Files}.
 
 @node file command
 @section @code{.file}
