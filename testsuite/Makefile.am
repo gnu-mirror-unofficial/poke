@@ -1775,6 +1775,7 @@ EXTRA_DIST = \
   poke.pkl/union-diag-5.pk \
   poke.pkl/union-diag-6.pk \
   poke.pkl/union-diag-7.pk \
+  poke.pkl/union-diag-8.pk \
   poke.pkl/union-pretty-print-1.pk \
   poke.pkl/units-1.pk \
   poke.pkl/units-2.pk \

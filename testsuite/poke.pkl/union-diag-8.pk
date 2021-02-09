@@ -1,0 +1,9 @@
+/* { dg-do compile } */
+
+/* Check for anonymous members in unions.  */
+
+type Foo = union
+  {
+    int a;
+    int; /* { dg-error "" } */
+  };

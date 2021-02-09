@@ -120,7 +120,7 @@ type Dwarf_CFI =
                                   DW_CFA_val_expression];
 
       /* Other instructions have no operands. */
-      struct {};
+      struct {} nothing;
     } ops;
   };
 

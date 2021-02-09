@@ -260,7 +260,7 @@ type CTF_Type =
       CTF_Member[info.vlen] members    : info.kind in [CTF_KIND_STRUCT,CTF_KIND_UNION];
       CTF_Enum enum                    : info.kind == CTF_KIND_ENUM;
       CTF_Type_Id[info.vlen] arg_types : info.kind == CTF_KIND_FUNCTION;
-      struct {};
+      struct {} nothing;
     } data;
   };
 

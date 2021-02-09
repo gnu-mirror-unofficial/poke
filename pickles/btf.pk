@@ -164,7 +164,7 @@ type BTF_Type =
       BTF_Member[info.vlen] members      : info.kind == BTF_KIND_UNION;
       BTF_Var_SecInfo[info.vlen] datasec : info.kind == BTF_KIND_DATASEC;
 
-      struct {};
+      struct {} nothing;
     } data;
 
     method vararg_p = int:

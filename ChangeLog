@@ -1,3 +1,13 @@
+2021-02-08  David Faust  <david.faust@oracle.com>
+
+	* libbpoke/pkl-anal.c: Forbid anonymous members in unions.
+	* pickles/btf.pk (type BTF_Type): Give name to anonymous union member.
+	* pickles/ctf.pk (type CTF_Type): Likewise.
+	* pickles/dwarf-expr.pk (type Dwarf_Op): Likewise.
+	* pickles/dwarf-frame.pk (type Dwarf_CFI): Likewise.
+	* testsuite/poke.pkl/union-diag-8.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2021-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-ios.c (pk_cmd_source_file): New function.

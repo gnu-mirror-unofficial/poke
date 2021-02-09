@@ -248,6 +248,6 @@ type Dwarf_Op =
       Dwarf_Section_Offset offset : code == DW_OP_call_ref;
 
       /* Other operations have no arguments.  */
-      struct {};
+      struct {} nothing;
     } arg;
   };
