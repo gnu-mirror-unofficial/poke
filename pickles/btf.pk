@@ -122,10 +122,10 @@ type BTF_Type =
 
     union
     {
-      uint<32> size : (info.kind in [BTF_KIND_INT,
-                                     BTF_KIND_ENUM,
-                                     BTF_KIND_STRUCT,
-                                     BTF_KIND_UNION]);
+      offset<uint<32>,B> size : (info.kind in [BTF_KIND_INT,
+                                               BTF_KIND_ENUM,
+                                               BTF_KIND_STRUCT,
+                                               BTF_KIND_UNION]);
       BTF_Type_Id type_id;
     } attrs;
 
@@ -139,11 +139,11 @@ type BTF_Type =
         BTF_Type_Id type_id;
         union
         {
-          uint<32> member_offset : !info.kind_flag;
-          struct
+          offset<uint<32>,b> member_offset : !info.kind_flag;
+          struct uint<32>
           {
-            uint<8> bitfield_size;
-            uint<24> bit_offset;
+            offset<uint<8>,b> bitfield_size;
+            offset<uint<24>,b> bit_offset;
           } bitfield;
         } offset;
       };
@@ -161,7 +161,8 @@ type BTF_Type =
       BTF_Enum[info.vlen] enum           : info.kind == BTF_KIND_ENUM;
       BTF_Func_Proto func_proto          : info.kind == BTF_KIND_FUNC_PROTO;
       BTF_Variable variable              : info.kind == BTF_KIND_VAR;
-      BTF_Member[info.vlen] members      : info.kind == BTF_KIND_UNION;
+      BTF_Member[info.vlen] members      : (info.kind == BTF_KIND_UNION
+                                            || info.kind == BTF_KIND_STRUCT);
       BTF_Var_SecInfo[info.vlen] datasec : info.kind == BTF_KIND_DATASEC;
 
       struct {} nothing;
@@ -171,6 +172,11 @@ type BTF_Type =
       {
         var last_param = data.func_proto.params[info.vlen - 1];
         return (last_param.name == 0#B && last_param.param_type == 0);
+      }
+
+    method get_kind_name = string:
+      {
+        return btf_kind_names[info.kind];
       }
   };
 
@@ -190,12 +196,27 @@ type BTF_Header =
     offset<uint<32>,B> str_len;
   };
 
+type BTF_Section =
+  struct
+  {
+    BTF_Header header;
+    BTF_Type[header.type_len] types;
+    string[header.str_len] strings;
+
+    /* Given an offset into the BTF strings section, return the string.  */
+
+    method get_string = (offset<uint<32>,B> off) string:
+      {
+        return string @ strings'offset + off;
+      }
+  };
+
 fun btf_types = (BTF_Header hdr) BTF_Type[]:
   {
-   return BTF_Type[hdr.type_len] @ (hdr'offset + hdr'size + hdr.type_off);
+    return BTF_Type[hdr.type_len] @ (hdr'offset + hdr'size + hdr.type_off);
   }
 
 fun btf_strings = (BTF_Header hdr) string[]:
   {
-   return string[hdr.str_len] @ (hdr'offset + hdr'size + hdr.str_off);
+    return string[hdr.str_len] @ (hdr'offset + hdr'size + hdr.str_off);
   }
