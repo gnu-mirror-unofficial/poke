@@ -1,0 +1,205 @@
+/* btf-dump.pk - Utilities for dumping BTF information.  */
+
+/* Copyright (C) 2021 Oracle, Inc.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load btf;
+
+/* Dump a BTF integer encoding.  */
+
+fun btf_dump_int = (BTF_Int i) void:
+  {
+    printf (" offset=%v bits=%v %s%s%s",
+            i.offset#b, i.bits#b,
+            i.signed_p ? "SIGNED " : "",
+            i.bool_p ? "BOOL " : "", i.char_p ? "CHAR " : "");
+  }
+
+/* Dump a BTF array encoding.  */
+
+fun btf_dump_array = (BTF_Array arr) void:
+  {
+    printf (" element_type=%u32d index_type=%u32d nelemes=%u32d",
+            arr.elem_type, arr.index_type, arr.nelems);
+  }
+
+/* Dump enumerators.  */
+
+fun btf_dump_enum = (BTF_Section btf, BTF_Enum[] e) void:
+  {
+    for (member in e)
+      printf ("\n\t '%s'(%v) value=%i32d",
+              btf.get_string (member.name),
+              member.name,
+              member.val);
+  }
+
+/* Dump function prototype members.  */
+
+fun btf_dump_proto = (BTF_Section btf, BTF_Param[] ps) void:
+  {
+    for (param in ps)
+      printf ("\n\t param '%s' type=%u32d",
+              btf.get_string (param.name),
+              param.param_type);
+  }
+
+/* Dump BTF Variable information. Currently only linkage.  */
+
+fun btf_dump_var = (BTF_Variable v) void:
+  {
+    printf (" linkage=%u1d (%s)", v.linkage,
+            v.linkage == 0 ? "static" : "global");
+  }
+
+/* Dump members of a struct or union. Note that we take a BTF_Type, because
+   the BTF_Member type is internal to BTF_Type and not visible here.  */
+
+fun btf_dump_sou = (BTF_Section btf, BTF_Type t) void:
+  {
+    var members = t.data.members;
+    for (member in members)
+      {
+        printf ("\n\tmember '%s' type=%u32d ",
+                btf.get_string (member.name),
+                member.type_id);
+
+        if (t.info.kind_flag)
+          printf ("bitfield_size=%v bit_offset=%v",
+                  member.offset.bitfield.bitfield_size,
+                  member.offset.bitfield.bit_offset);
+        else
+          printf ("member_offset=%v", member.offset.member_offset);
+      }
+  }
+
+/* Dump Variable entries following a BTF_KIND_DATASEC.  */
+
+fun btf_dump_datasec = (BTF_Var_SecInfo[] entries) void:
+  {
+    for (entry in entries)
+      printf ("\n\t var type=%u32d offset=%v size=%v",
+              entry.var_type, entry.offset, entry.size);
+  }
+
+/* Dump the variable data portion of a BTF_Type.  */
+
+fun btf_dump_type_vdata = (BTF_Section btf, BTF_Type t) void:
+  {
+    /* Integer */
+    try
+    {
+      btf_dump_int (t.data.integer);
+      return;
+    }
+    catch if E_elem {}
+
+    /* Array */
+    try
+    {
+      btf_dump_array (t.data.array);
+      return;
+    }
+    catch if E_elem {}
+
+    /* Enum */
+    try
+    {
+      btf_dump_enum (btf, t.data.enum);
+      return;
+    }
+    catch if E_elem {}
+
+    /* Func proto */
+    try
+    {
+      btf_dump_proto (btf, t.data.func_proto.params);
+      return;
+    }
+    catch if E_elem {}
+
+    /* Variable.  */
+    try
+    {
+      btf_dump_var (t.data.variable);
+      return;
+    }
+    catch if E_elem {}
+
+    /* Struct or union.  */
+    try
+    {
+      btf_dump_sou (btf, t);
+      return;
+    }
+    catch if E_elem {}
+
+    /* Datasec */
+    try
+    {
+      btf_dump_datasec (t.data.datasec);
+    }
+    catch if E_elem {}
+  }
+
+/* Dump a complete BTF type. Includes lookup and display of any strings
+   referenced by that type (e.g. type name, struct member names, etc.).  */
+
+fun btf_dump_type = (BTF_Section btf, BTF_Type t) void:
+  {
+    var name = btf.get_string (t.name);
+    printf ("%s '%s'(%v) ", btf_kind_names[t.info.kind], name, t.name);
+    try
+    {
+      printf ("size=%v", t.attrs.size);
+    }
+    catch if E_elem
+    {
+      printf ("type=%u32d", t.attrs.type_id);
+    }
+
+    btf_dump_type_vdata (btf, t);
+    print "\n";
+  }
+
+/* Dump all BTF types known by the given header.  */
+
+fun btf_dump = (BTF_Section btf) void:
+  {
+    var i = 1UL;
+    for (t in btf.types)
+      {
+        var name = btf.get_string (t.name);
+        printf ("[%u32d] %s ", i, btf_kind_names[t.info.kind]);
+        if (t.name == 0#B)
+          printf ("<anonymous> ");
+        else
+          printf("'%s'(%v) ", name, t.name);
+        try
+          {
+            printf ("size=%v", t.attrs.size);
+          }
+        catch if E_elem
+          {
+            printf ("type=%u32d", t.attrs.type_id);
+          }
+
+        btf_dump_type_vdata (btf, t);
+
+        print "\n";
+        i = i + 1;
+      }
+  }
