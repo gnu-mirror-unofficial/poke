@@ -1911,7 +1911,7 @@ picture binary numbers in reverse order!
 
 With this new way of looking at bytes, we can now visualize what we
 mean exactly with the ``first half'' and ``second half'' of the
-trailing bit, in our 12 bits unsigned number:
+trailing byte, in our 12 bits unsigned number:
 
 @example
            byte 0         |           byte 1
