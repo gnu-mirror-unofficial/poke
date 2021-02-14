@@ -865,6 +865,7 @@ $ poke
 [@dots{}]
 (poke) .file foo.o
 The current IOS is now `./foo.o'.
+(poke)
 @end example
 
 @noindent
@@ -6208,15 +6209,12 @@ If @var{status} is omitted, then the exit status zero will be returned.
 
 At the most basic level, memory can be examined byte by byte.
 To do this, use the @command{dump} command.
-This command has the following prototype:
+
+This command has the following synopsis.
 
 @example
-fun dump = (off64 from = pk_dump_offset,
-              off64 size = pk_dump_size,
-              off64 group_by = pk_dump_group_by,
-              int cluster_by = pk_dump_cluster_by,
-              int ruler = pk_dump_ruler,
-              int ascii = pk_dump_ascii) void
+dump [:from @var{offset}] [:size @var{offset}] [:ruler @var{bool}] [:ascii @var{bool}]
+     [:group_by @var{int}] [:cluster_by @var{int}]
 @end example
 
 @noindent
@@ -6350,14 +6348,11 @@ will not need to explicitly pass them when you call the function.
 The command @command{copy} allows to copy regions of data inside an IO
 space, or between different IO spaces.
 
-This command has the following prototype:
+This command has the following synopsis.
 
 @example
-fun copy = (int from_ios = get_ios,
-              int to_ios = get_ios,
-              off64 from = 0#B,
-              off64 to = from,
-              off64 size = 0#B) void
+copy [:from @var{offset}] [:to @var{offset}] [:size @var{offset}]
+     [:from_ios @var{ios}] [:to_ios @var{ios}]
 @end example
 
 @noindent
@@ -6383,14 +6378,11 @@ overlap.
 Use the @command{save} command in order to write a region from an IO
 space into a file in your file system.
 
-This command has the following prototype:
+This command has the following synopsis.
 
 @example
-fun save = (int ios = get_ios,
-              string file = "",
-              off64 from = 0#B,
-              off64 size = 0#B,
-              int append = 0) void
+save [:ios @var{ios}] [:from @var{offset}] [:size @var{offset}] [:file @var{string}]
+     [:append @var{bool}] [:verbose @var{bool}]
 @end example
 
 @noindent
@@ -6427,16 +6419,16 @@ file.  In this case, the file should exist.
 Use the @command{extract} command in order to create a temporary
 memory IO space with the contents of a mapped value.
 
-This command the has the following prototype:
+This command the has the following synopsis.
 
 @example
-fun extract = (any val, string to) void
+extract :val @var{val} :to @var{ios_name}
 @end example
 
 @noindent
-Where @var{val} is a mapped value, and @var{to} is the name of the
-memory IOS to create (or use).  The contents of @var{val} are copied
-to the beginning of the memory IOS @code{*@var{to}*}.
+Where @code{:val} is a mapped value, and @var{:to} is the name of the
+memory IOS to create (or use).  The contents of @var{value} are copied
+to the beginning of the memory IOS @code{*@var{ios_name}*}.
 
 @node scrabble
 @section @command{scrabble}
@@ -6445,7 +6437,43 @@ to the beginning of the memory IOS @code{*@var{to}*}.
 The @command{scrabble} command rearranges portions of an IO space
 based on a transformation defined by a pair of patterns.
 
-XXX
+This command has the following synopsis:
+
+@example
+scrabble [:from @var{offset}] [:size @var{offset}]
+         [:from_pattern @var{string}] [:to_pattern @var{string}]
+         [:ent_size @var{offset}]
+         [:from_ios @var{ios}] [:to_ios @var{ios}]
+@end example
+
+@noindent
+The optional arguments are documented below.
+
+@table @code
+@item :from @var{offset}
+Beginning of the range in the origin IO space from where to start
+rearranging units.  Defaults to @code{0#B}.
+@item :size @var{offset}
+Size of the range to scrabble in the origin IO space.  Defaults to
+@code{0#B}.
+@item :from_pattern @var{string}
+String specifying a sequence of units.  Each character is an unit.
+Defaults to @code{""}.
+@item :to_pattern @var{string}
+String specifying the scrabbled units.  Each character is an unit.  If
+a character that doesn't appear in the @code{from_pattern} is found in
+this string, it is ignored.   Defaults to @code{from_pattern}.
+@item :ent_size @var{offset}
+Size of the entities to scrabble around.  Defaults to @code{1#B}.
+@item :from_ios @var{ios}
+IO space from where to obtain the data to scrabble.  Defaults to the
+current IO space.
+@item :to_ios @var{ios}
+The IO space to where write the scrabbled data.  Defaults to
+@code{from_ios}.
+@end table
+
+@c XXX add usage examples for scrabble.
 
 @node Configuration
 @chapter Configuration
