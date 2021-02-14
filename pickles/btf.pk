@@ -20,7 +20,7 @@
    documented in https://www.kernel.org/doc/html/latest/bpf/btf.html
    (fetched 2019-10-25) */
 
-var BTF_KIND_UKNONWN = 0,
+var BTF_KIND_UNKNOWN = 0,
     BTF_KIND_INT = 1,
     BTF_KIND_PTR = 2,
     BTF_KIND_ARRAY = 3,
