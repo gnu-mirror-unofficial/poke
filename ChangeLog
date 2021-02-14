@@ -1,3 +1,12 @@
+2021-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/poke.c (parse_args_2): -s doesn't imply that poke runs
+	non-interactively.
+	(main): Load user configuration file before handling -s arguments.
+	(parse_args_1): Handle NO_INIT_FILE_ARG here instead of
+	parse_args_2.
+	(parse_args_1): Likewise for QUIET_ARG.
+
 2021-02-08  David Faust  <david.faust@oracle.com>
 
 	* libbpoke/pkl-anal.c: Forbid anonymous members in unions.

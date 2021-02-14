@@ -382,6 +382,10 @@ parse_args_1 (int argc, char *argv[])
         case NO_HSERVER_ARG:
           poke_no_hserver_arg = 1;
           break;
+        case 'q':
+        case NO_INIT_FILE_ARG:
+          poke_load_init_file = 0;
+          break;
         default:
           break;
         }
@@ -416,10 +420,6 @@ parse_args_2 (int argc, char *argv[])
           poke_quiet_p = 1;
           pk_set_quiet_p (poke_compiler, 1);
           break;
-        case 'q':
-        case NO_INIT_FILE_ARG:
-          poke_load_init_file = 0;
-          break;
         case 'l':
         case LOAD_ARG:
           if (pk_compile_file (poke_compiler, optarg,
@@ -437,7 +437,6 @@ parse_args_2 (int argc, char *argv[])
         case 's':
         case SOURCE_ARG:
           {
-            poke_interactive_p = 0;
             if (!pk_cmd_exec_script (optarg))
               goto exit_failure;
             break;
@@ -460,6 +459,8 @@ parse_args_2 (int argc, char *argv[])
         case MI_ARG:
         case NO_AUTO_MAP_ARG:
         case NO_HSERVER_ARG:
+        case 'q':
+        case NO_INIT_FILE_ARG:
           /* These are handled in parse_args_1.  */
           break;
           /* libtextstyle arguments are handled in pk-term.c, not
@@ -686,13 +687,13 @@ main (int argc, char *argv[])
   /* Initialization.  */
   initialize (argc, argv);
 
-  /* Second round of argument parsing: loading files, opening files
-     for IO, etc etc */
-  parse_args_2 (argc, argv);
-
   /* User's initialization.  */
   if (poke_load_init_file)
     initialize_user ();
+
+  /* Second round of argument parsing: loading files, opening files
+     for IO, etc etc */
+  parse_args_2 (argc, argv);
 
   /* Enter the REPL or MI.  */
   if (poke_mi_p)
