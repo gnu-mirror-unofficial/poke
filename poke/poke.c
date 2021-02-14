@@ -271,7 +271,7 @@ pk_print_version (void)
      to do this.  In other cases it's probably best to leave it untranslated.  */
   pk_printf (_("\
 %s (C) %s The poke authors.\n\
-License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019, 2020");
+License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019-2021");
   pk_term_hyperlink ("http://gnu.org/licenses/gpl.html", NULL);
   pk_puts (" <http://gnu.org/licenses/gpl.html>");
   pk_term_end_hyperlink ();
