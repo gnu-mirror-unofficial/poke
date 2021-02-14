@@ -1383,10 +1383,16 @@ the average of the first byte values stored in @file{foo.o}.  We could
 do something like:
 
 @example
-(poke) var a = byte[3] @@ 0#B
-(poke) a
-[0x7fUB,0x45UB,0x4cUB]
-(poke) (a[0] + a[1] + a[2]) / 3UB
+(poke) a0 = byte @@ 0#B
+(poke) a1 = byte @@ 1#B
+(poke) a2 = byte @@ 2#B
+(poke) a0
+0x7fUB
+(poke) a1
+0x45UB
+(poke) a2
+0x4cUB
+(poke) (a0 + a1 + a2) / 3UB
 5UB
 @end example
 
@@ -1395,7 +1401,7 @@ That is obviously the wrong answer.  What happened?  Let's do it step
 by step.  First, we add the first two bytes:
 
 @example
-(poke) a[0] + a[1]
+(poke) a0 + a1
 0xc4UB
 @end example
 
@@ -1404,7 +1410,7 @@ Which is all right.  0xc4 is 0x7f plus 0x45.  But, let's add now the
 third byte:
 
 @example
-(poke) a[0] + a[1] + a[2]
+(poke) a0 + a1 + a2
 0x10UB
 @end example
 
