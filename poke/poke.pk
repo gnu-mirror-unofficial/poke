@@ -114,6 +114,4 @@ map_load_path = ".:" + map_load_path;
    regular expression, and the second element is the name of a
    map.  */
 
-var auto_map = [[".*\\.mp3$", "mp3"],
-                [".*\\.o$", "elf"],
-                ["a\\.out$", "elf"]];
+var auto_map = string[][]();

@@ -1,5 +1,9 @@
 2021-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk (auto_map): Initialize to an empty array.
+
+2021-02-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/ass-struct-int-5.pk: New test.
 	* testsuite/poke.pkl/ass-struct-int-6.pk: Likewise.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
