@@ -8575,10 +8575,28 @@ these operators work with struct values.
 @node Unions
 @subsection Unions
 @cindex unions
-XXX
 
-For performance purposes, it is good to always place the most common
-alternatives first in unions.
+Union types are defined much like struct types, using a very similar
+syntax:
+
+@example
+union
+@{
+  [... elements ...]
+@}
+@end example
+
+@noindent
+Like in structs, the main kind of elements are fields.  However,
+unlike in structs, the fields in an union type denote
+@dfn{alternatives}.  At any given time, only one alternative is
+selected, and therefore union @emph{values} have only one field.
+
+Which of the several alternatives is selected is determined by the
+data integrity defined by means of constraint expressions and other
+means.  Alternatives are considered in turn, in written order, and the
+first alternative that can be used without triggering a constraint
+violation exception is selected.
 
 @node Union Constructors
 @subsection Union Constructors
