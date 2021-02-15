@@ -1,10 +1,11 @@
 This NEWS file records noteworthy changes, very tersely.
 See the manual for detailed information.
 
-  Copyright 2019, 2020, 2021 Jose E. Marchesi.
+  Copyright 2019-2021 The poke authors.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 0.1-beta (dd MM YYYY)
+ Version 0.90 (20 February 2021)
+* Initial release!
