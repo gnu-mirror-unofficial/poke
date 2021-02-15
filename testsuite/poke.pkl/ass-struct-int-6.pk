@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+type Bar = struct { byte a; };
+type Foo = struct { Bar b; byte c : c == b.a; };
+var f = Foo {};
+
+/* { dg-command {try f.b = Bar { a = 10 }; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */
