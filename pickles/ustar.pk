@@ -1,0 +1,64 @@
+/* ustar.pk - USTAR filesystem.  */
+
+/* Copyright (C) 2021 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This pickle implement the USTAR filesystem, which is standardized
+   by POSIX.1-1988 and POISIX.1-2001.  */
+
+var USTAR_FILE = '0',
+    USTAR_HARD_LINK = '1',
+    USTAR_SYM_LINK = '2',
+    USTAR_CHAR_DEV = '3',
+    USTAR_BLOCK_DEV = '4',
+    USTAR_DIRECTORY = '5',
+    USTAR_FIFO = '6';
+
+type USTAR_Sector =
+  struct
+  {
+    char[100] file_name;
+    uint<64> file_mode;
+    uint<64> owner_user_id;
+    uint<64> group_user_id;
+    char[12] file_size;
+    char[12] last_mod_time;
+    uint<64> checksum;
+    char type_flag : type_flag in [USTAR_FILE, USTAR_HARD_LINK, USTAR_SYM_LINK,
+                                   USTAR_CHAR_DEV, USTAR_BLOCK_DEV, USTAR_DIRECTORY,
+                                   USTAR_FIFO];
+    char[100] linked_file_name;
+    uint<48> ustar;
+    char[2] ustar_version = ['0','0'];
+    char[32] owner_user_name;
+    char[32] owner_group_name;
+    uint<64> device_major_number;
+    uint<64> device_minor_number;
+    char[155] filename_prefix;
+
+    /* Both file_size and last_mod_time are encoded as ASCII strings
+       containing octal digits.  */
+    
+    method get_file_size = offset<uint<64>,B>:
+      {
+        return atoi (catos (file_size), 8)#B;
+      }
+
+     method get_last_mod_time = offset<uint<64>,B>:
+       {
+         return atoi (catos (file_size), 8)#B;
+       }
+  };

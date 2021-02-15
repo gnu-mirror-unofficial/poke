@@ -1,5 +1,10 @@
 2021-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/ustar.pk: New file.
+	* pickles/Makefile.am (dist_pickles_DATA): Add ustar.pk.
+
+2021-02-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Update version to 0.90.
 	* NEWS: Adapt to 0.90.
 
