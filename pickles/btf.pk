@@ -52,9 +52,9 @@ type BTF_Int =
     uint<1> bool_p;
     uint<1> char_p;
     uint<1> signed_p;
-    uint<8> offset;
+    offset<uint<8>,b> offset;
     uint<8>;
-    uint<8> bits;
+    offset<uint<8>,b> bits;
 
     /* XXX turn `encoding' into a nested integral struct once we
        support it in the compiler.  */
@@ -200,8 +200,12 @@ type BTF_Section =
   struct
   {
     BTF_Header header;
-    BTF_Type[header.type_len] types;
-    string[header.str_len] strings;
+
+    var type_off = OFFSET + header.type_off;
+    var str_off  = OFFSET + header.str_off;
+
+    BTF_Type[header.type_len] types @ type_off;
+    string[header.str_len] strings @ str_off;
 
     /* Given an offset into the BTF strings section, return the string.  */
 
@@ -210,13 +214,3 @@ type BTF_Section =
         return string @ strings'offset + off;
       }
   };
-
-fun btf_types = (BTF_Header hdr) BTF_Type[]:
-  {
-    return BTF_Type[hdr.type_len] @ (hdr'offset + hdr'size + hdr.type_off);
-  }
-
-fun btf_strings = (BTF_Header hdr) string[]:
-  {
-    return string[hdr.str_len] @ (hdr'offset + hdr'size + hdr.str_off);
-  }

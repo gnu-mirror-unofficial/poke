@@ -23,7 +23,7 @@ load btf;
 fun btf_dump_int = (BTF_Int i) void:
   {
     printf (" offset=%v bits=%v %s%s%s",
-            i.offset#b, i.bits#b,
+            i.offset, i.bits,
             i.signed_p ? "SIGNED " : "",
             i.bool_p ? "BOOL " : "", i.char_p ? "CHAR " : "");
   }
