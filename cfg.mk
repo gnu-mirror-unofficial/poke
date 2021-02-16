@@ -56,3 +56,5 @@ sc_tests_listed_in_makefile_am:
             msg='missing or extra tests in EXTRA_DIST' $(_sc_say_and_exit) }
 
 update-copyright-env = UPDATE_COPYRIGHT_HOLDER="Jose E. Marchesi"
+
+gendocs_options_ = -I $(abs_builddir)/doc/
