@@ -35,6 +35,18 @@
 	parse_args_2.
 	(parse_args_1): Likewise for QUIET_ARG.
 
+2021-02-12  David Faust  <david.faust@oracle.com>
+
+	* pickles/btf-dump.pk: New pickle.
+	* pickles/Makefile.am (dist_pickles_DATA): Add `btf-dump.pk`.
+
+2021-02-12  David Faust  <david.faust@oracle.com>
+
+	* pickles/btf.pk (BTF_Type) Make several fields `offset`s where
+	appropriate. Correct bitfield to use integral struct. Correct variable
+	data for BTF_KIND_STRUCT.
+	(BTF_Section) New type.
+
 2021-02-08  David Faust  <david.faust@oracle.com>
 
 	* libbpoke/pkl-anal.c: Forbid anonymous members in unions.
