@@ -1,3 +1,11 @@
+2021-02-16  David Faust  <david.faust@oracle.com>
+
+	* pickles/btf.pk (BTF_Int): Make `offset` and `bits` into offset types.
+	(BTF_Section): Properly use header type_off and str_off.
+	(btf_types): Remove now-redundant function.
+	(btf_strings): Likewise.
+	* pickles/btf-dump.pk (btf_dump_int): Account for above type changes.
+
 2021-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/ustar.pk: New file.
