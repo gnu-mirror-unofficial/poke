@@ -1,3 +1,14 @@
+2021-02-16  Indu Bhagat  <indu.bhagat@oracle.com>
+
+        * pickles/ctf.pk (CTF_Header): Use offset field type for cth_lbloff.
+        (CTF_Integer_Type): Use integral struct.
+        (CTF_Float_Type): Likewise.
+        (CTF_Slice): New definition.
+        (CTF_Type): CTF_KIND_ENUM is followed by a vlen number of enum records.
+        CTF_KIND_FUNCTION has a trailing padding of 4 bytes if the number of
+        function arguments is odd. Support CTF Slice.
+        (ctf_string): Use correct offset to the CTF string section.
+
 2021-02-16  David Faust  <david.faust@oracle.com>
 
 	* pickles/btf.pk (BTF_Int): Make `offset` and `bits` into offset types.

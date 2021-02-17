@@ -102,18 +102,18 @@ type CTF_Header =
   struct
   {
     CTF_Preamble cth_preamble;
-    CTF_Name cth_parlabel;		/* Ref to name of parent lbl uniq'd against.  */
-    CTF_Name cth_parname;		/* Ref to basename of parent.  */
-    CTF_Name cth_cuname;		/* Ref to CU name (may be 0).  */
-    CTF_Name cth_lbloff;		/* Offset of label section.  */
-    offset<uint32,B> cth_objtoff;	/* Offset of object section.  */
-    offset<uint32,B> cth_funcoff;	/* Offset of function section.  */
-    offset<uint32,B> cth_objtidxoff;	/* Offset of object index section.  */
-    offset<uint32,B> cth_funcidxoff;	/* Offset of function index section.  */
-    offset<uint32,B> cth_varoff;	/* Offset of variable section.  */
-    offset<uint32,B> cth_typeoff;	/* Offset of type section.  */
-    offset<uint32,B> cth_stroff;	/* Offset of string section.  */
-    offset<uint32,B> cth_strlen;	/* Length of string section in bytes.  */
+    CTF_Name cth_parlabel;              /* Ref to name of parent lbl uniq'd against.  */
+    CTF_Name cth_parname;               /* Ref to basename of parent.  */
+    CTF_Name cth_cuname;                /* Ref to CU name (may be 0).  */
+    offset<uint32,B> cth_lbloff;        /* Offset of label section.  */
+    offset<uint32,B> cth_objtoff;       /* Offset of object section.  */
+    offset<uint32,B> cth_funcoff;       /* Offset of function section.  */
+    offset<uint32,B> cth_objtidxoff;    /* Offset of object index section.  */
+    offset<uint32,B> cth_funcidxoff;    /* Offset of function index section.  */
+    offset<uint32,B> cth_varoff;        /* Offset of variable section.  */
+    offset<uint32,B> cth_typeoff;       /* Offset of type section.  */
+    offset<uint32,B> cth_stroff;        /* Offset of string section.  */
+    offset<uint32,B> cth_strlen;        /* Length of string section in bytes.  */
   };
 
 type CTF_Lblent =
@@ -157,7 +157,7 @@ var CTF_INT_SIGNED  = 0x01UB,
     CTF_INT_VARARGS = 0x08UB;
 
 type CTF_Integer_Type =
-  struct
+  struct uint<32>
   {
     uint<8> encoding : encoding <= CTF_INT_VARARGS;
     offset<uint<8>,b> offset;
@@ -178,7 +178,7 @@ var CTF_FP_SINGLE = 1UB,
     CTF_FP_LDIMAGRY = 12UB;
 
 type CTF_Float_Type =
-  struct
+  struct uint<32>
   {
     uint<8> encoding: encoding <= CTF_FP_LDIMAGRY;
     offset<uint<8>,b> offset;
@@ -217,6 +217,14 @@ type CTF_Enum =
     int<32> cte_value;
   };
 
+type CTF_Slice =
+  struct
+  {
+    CTF_Type_Id cts_type;
+    offset<uint<16>,b> cts_offset;
+    offset<uint<16>,b> cts_bits;
+  };
+
 type CTF_Type =
   struct
   {
@@ -251,15 +259,23 @@ type CTF_Type =
       } size;
     } common;
 
+    type CTF_Func_Args =
+    struct
+      {
+        CTF_Type_Id[info.vlen] arg_types;
+        uint32[info.vlen % 2] padding;
+      };
+
     /* Data, that depends on the kind of the type.  */
     union
     {
       CTF_Integer_Type integer         : info.kind == CTF_KIND_INTEGER;
       CTF_Float_Type float             : info.kind == CTF_KIND_FLOAT;
       CTF_Array array                  : info.kind == CTF_KIND_ARRAY;
+      CTF_Slice slice                  : info.kind == CTF_KIND_SLICE;
       CTF_Member[info.vlen] members    : info.kind in [CTF_KIND_STRUCT,CTF_KIND_UNION];
-      CTF_Enum enum                    : info.kind == CTF_KIND_ENUM;
-      CTF_Type_Id[info.vlen] arg_types : info.kind == CTF_KIND_FUNCTION;
+      CTF_Enum[info.vlen] enum         : info.kind == CTF_KIND_ENUM;
+      CTF_Func_Args func_args          : info.kind == CTF_KIND_FUNCTION;
       struct {} nothing;
     } data;
   };
@@ -268,10 +284,15 @@ fun ctf_string = (Elf64_File elf,
                   CTF_Header header,
                   CTF_Name name) string:
 {
- if (name.stid == CTF_STRTAB_0)
-   return string @ (header.cth_stroff + name.offset);
- else
-   return elf.get_string (name.offset);
+  if (name.stid == CTF_STRTAB_0)
+  {
+    if (name.offset >= header.cth_strlen)
+      raise E_inval;
+    return string @ (header'offset + header'size + header.cth_stroff
+                     + name.offset);
+  }
+  else
+    return elf.get_string (name.offset);
 }
 
 fun ctf_get_header = (Elf64_File elf) CTF_Header:
