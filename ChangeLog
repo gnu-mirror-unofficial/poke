@@ -1,5 +1,13 @@
 2021-02-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* testsuite/poke.mi-json/mi-json.c (test_json_pk_sct): Remove unused
+	variable(s).
+	(test_val_to_json): Likewise.
+	(read_json_object): Change the type of `cap` to `ssize_t` to make the
+	compiler happy (-Wsign-compare).
+
+2021-02-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/pvm.jitter (PVM_PRINTI): Fix bit-depth of printed negative
 	values in base 8 and 16.
 	(PVM_PRINTL): Likewise.

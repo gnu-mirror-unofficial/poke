@@ -248,7 +248,6 @@ test_json_pk_sct (json_object *pk_sct_obj, pk_val pk_sct)
 {
   json_object *current, *pk_sct_fields_obj, *pk_sct_field_obj;
   pk_val pk_sct_name, pk_sct_fname, pk_sct_fboffset, pk_sct_fvalue;
-  int signed_p;
   const char *typename;
 
   /* Poke struct properties are : "type", "name", "fields" and "mapping".  */
@@ -465,7 +464,7 @@ read_json_object (FILE *ifp)
   ssize_t nread, s_read = 0;
   size_t len = 0;
   char *line = NULL, *json_str = NULL;
-  size_t cap = 1024;
+  ssize_t cap = 1024;
 
   /* Optimistic allocation, to avoid multiple reallocations.  */
   json_str = (char *) malloc (cap);
@@ -555,10 +554,7 @@ test_val_to_json (const char *pk_obj_str, pk_val val)
 void
 test_json_file (const char *filename, FILE *ifp)
 {
-  char *poke_datadir, *line = NULL;
   const char *json_obj_str;
-  ssize_t nread;
-  size_t len = 0;
   pk_compiler pkc;
   pk_val val;
 
