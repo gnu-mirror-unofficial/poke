@@ -338,8 +338,7 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    32-bit binaries, you can build a 32-bit poke configuring like
    this:
 
-   : ../configure --host=i386-unknown-linux-gnu \
-   :    CFLAGS='-O2 -m32'
+   : ../configure --host=i386-unknown-linux-gnu CC='gcc -m32'
 
    This is of course for =x86_64=.  In your system, replace the
    triplet with the proper one for your architecture.
