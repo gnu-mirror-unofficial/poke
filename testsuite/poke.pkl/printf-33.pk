@@ -1,0 +1,3 @@
+/* { dg-do run } */
+
+printf "%i10o", -1;          /* { dg-output "1777" } */

@@ -1,3 +1,18 @@
+2021-02-20  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pvm.jitter (PVM_PRINTI): Fix bit-depth of printed negative
+	values in base 8 and 16.
+	(PVM_PRINTL): Likewise.
+	* testsuite/poke.pkl/printf-28.pk: New test.
+	* testsuite/poke.pkl/printf-29.pk: Likewise.
+	* testsuite/poke.pkl/printf-30.pk: Likewise.
+	* testsuite/poke.pkl/printf-31.pk: Likewise.
+	* testsuite/poke.pkl/printf-32.pk: Likewise.
+	* testsuite/poke.pkl/printf-33.pk: Likewise.
+	* testsuite/poke.pkl/printf-34.pk: Likewise.
+	* testsuite/poke.pkl/printf-35.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2021-02-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/dwarf-frame.pk (Dwarf_CIE): Fix constant.

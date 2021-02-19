@@ -1,0 +1,3 @@
+/* { dg-do run } */
+
+printf "%i2o", -1;          /* { dg-output "3" } */

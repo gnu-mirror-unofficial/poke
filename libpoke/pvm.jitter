@@ -430,6 +430,9 @@ late-header-c
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[6];  /* %0NNd */                                               \
+    uint32_t mask                                                           \
+        = JITTER_ARGN0 == 32 ? (uint32_t)-1                                 \
+                             : (((uint32_t)1 << JITTER_ARGN0) - 1);         \
                                                                             \
     fmt[0] = '%';                                                           \
     fmt[1] = '0';                                                           \
@@ -471,7 +474,7 @@ late-header-c
       fmt[5] = '\0';                                                        \
     }                                                                       \
                                                                             \
-    pk_printf (fmt, val);                                                   \
+    pk_printf (fmt, (BASE) == 10 ? val : val & mask);                       \
     JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
   } while (0)
@@ -481,6 +484,9 @@ late-header-c
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[7];  /* %0NNff */                                              \
+    uint64_t mask                                                           \
+        = JITTER_ARGN0 == 64 ? (uint64_t)-1                                 \
+                             : (((uint64_t)1 << JITTER_ARGN0) - 1);         \
                                                                             \
     fmt[0] = '%';                                                           \
     fmt[1] = '0';                                                           \
@@ -517,7 +523,7 @@ late-header-c
       fmt[6] = '\0';                                                        \
     }                                                                       \
                                                                             \
-    pk_printf (fmt, val);                                                   \
+    pk_printf (fmt, (BASE) == 10 ? val : val & mask);                       \
     JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
   } while (0)
