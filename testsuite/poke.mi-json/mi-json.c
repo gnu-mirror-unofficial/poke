@@ -23,6 +23,7 @@
 #include <string.h>
 #include <dejagnu.h>
 #include <dirent.h>
+#include <err.h>
 #include <json.h>
 
 #include "pk-mi-msg.h"
@@ -595,45 +596,35 @@ test_json_to_val_to_json ()
   DIR *directory;
   struct dirent *dir;
   const char *extension;
-  char *testdir, *testfile;
-  size_t testdir_len;
+  char *testfile;
 
-  testdir_len = strlen (TESTDIR);
-  testdir = (char *) malloc (testdir_len + 2);
-  memcpy (testdir, TESTDIR, testdir_len + 1);
-  strncat (testdir, "/", 1);
-  testdir_len = strlen (testdir);
+  directory = opendir (TESTDIR);
+  if (!directory)
+    err (1, "opendir (%s) failed", TESTDIR);
 
-  directory = opendir (testdir);
-  if (directory)
+  while ((dir = readdir (directory)) != NULL)
     {
-      while ((dir = readdir (directory)) != NULL)
-        {
-          /* If this file a .json file, proccess it.  */
-          extension = strrchr (dir->d_name, '.');
-          if (extension)
-            {
-              if (!strncmp (extension + 1, "json", 4))
-                {
-                  testfile = (char *) malloc (testdir_len
-                                                   + strlen (dir->d_name) + 1);
-                  memcpy (testfile, testdir, testdir_len + 1);
-                  strncat (testfile, dir->d_name, strlen (dir->d_name));
+      /* Ignore files without `.json` extension */
+      extension = strrchr (dir->d_name, '.');
+      if (!extension)
+        continue;
+      if (strncmp (extension + 1, "json", 4) != 0)
+        continue;
 
-                  ifp = fopen (testfile, "r");
-                  if (ifp)
-                    {
-                      test_json_file (dir->d_name, ifp);
-                      fclose (ifp);
-                    }
-                  free (testfile);
-                }
-            }
+      if (asprintf (&testfile, "%s/%s", TESTDIR, dir->d_name) == -1)
+        err (1, "asprintf () failed");
+
+      ifp = fopen (testfile, "r");
+      if (ifp)
+        {
+          test_json_file (dir->d_name, ifp);
+          fclose (ifp);
         }
-      closedir (directory);
+
+      free (testfile);
     }
 
-  free (testdir);
+  closedir (directory);
 }
 
 void

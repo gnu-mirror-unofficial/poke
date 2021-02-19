@@ -1,3 +1,8 @@
+2021-02-19  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* testsuite/poke.mi-json/mi-json.c (test_json_to_val_to_json):
+	Simplify the JSON file selection loop.
+
 2021-02-16  Indu Bhagat  <indu.bhagat@oracle.com>
 
         * pickles/ctf.pk (CTF_Header): Use offset field type for cth_lbloff.
