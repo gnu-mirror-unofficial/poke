@@ -59,12 +59,18 @@ html-local:
 	  $(builddir)/poke.html/*.html
 
 # Generation of the plain text manual.
+# We distribute it in the tarballs, since it requires makeinfo to make.
 
 pkgdata_DATA += poke.text
+EXTRA_DIST += poke.text
 
 poke.text: $(srcdir)/poke.texi
-	$(MAKEINFO) --plaintext $(srcdir)/poke.texi \
-          > poke.text
+	$(MAKEINFO) --plaintext $(srcdir)/poke.texi > poke.txmp
+	rm -f $(srcdir)/poke.text
+	mv poke.txmp $(srcdir)/poke.text
 
-clean-local:
-	rm -f pvm-insns.texi nodelist poke.text
+MOSTLYCLEANFILES = \
+  pvm-insns.texi \
+  nodelist \
+  poke.txmp
+MAINTAINERCLEANFILES = poke.text
