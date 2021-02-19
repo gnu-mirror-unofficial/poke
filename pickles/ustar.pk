@@ -1,4 +1,4 @@
-/* ustar.pk - USTAR filesystem.  */
+/* ustar.pk - USTAR file system.  */
 
 /* Copyright (C) 2021 Jose E. Marchesi.  */
 
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* This pickle implement the USTAR filesystem, which is standardized
+/* This pickle implement the USTAR file system, which is standardized
    by POSIX.1-1988 and POISIX.1-2001.  */
 
 var USTAR_FILE = '0',
@@ -51,7 +51,7 @@ type USTAR_Sector =
 
     /* Both file_size and last_mod_time are encoded as ASCII strings
        containing octal digits.  */
-    
+
     method get_file_size = offset<uint<64>,B>:
       {
         return atoi (catos (file_size), 8)#B;
