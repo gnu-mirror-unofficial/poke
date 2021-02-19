@@ -141,7 +141,7 @@ type Dwarf_CIE =
     {
       uint<32> u32 : (dwarf_bits == 32
                       && u32 == 0xffff_ffff);
-      uint<64> u64 : u64 == 0xffff_ffff_ffff_ffff;
+      uint<64> u64 : u64 == 0xffff_ffff_ffff_ffffLU;
     } cie_id;
 
     /* This version number is specific to the call frame information
