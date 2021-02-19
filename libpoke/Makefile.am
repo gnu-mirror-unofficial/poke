@@ -79,8 +79,7 @@ MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-asm.pkc.tmp
 EXTRA_DIST = pkl-tab.y pkl-lex.h ras
 
 BUILT_SOURCES = pkl-tab.h pkl-tab.c pkl-lex.c \
-                pkl-gen.pkc pkl-asm.pkc \
-                pvm-vm.h pvm-vm1.c pvm-vm2.c
+                pkl-gen.pkc pkl-asm.pkc
 
 pkl-tab.h pkl-tab.c: pkl-tab.y
 	$(POKE_BISON) -d -t --report=state --output pkl-tab.c \
@@ -126,6 +125,13 @@ libpoke_la_CPPFLAGS += $(JITTER_CPPFLAGS)
 BUILT_SOURCES += pvm-vm.h pvm-vm1.c pvm-vm2.c
 
 pvm-vm.h pvm-vm1.c pvm-vm2.c: pvm.jitter
-	$(JITTER) $(srcdir)/pvm.jitter --output $(builddir)
+	$(JITTER) $(srcdir)/pvm.jitter --output $(builddir) \
+	&& { test $(builddir) = $(srcdir) \
+	     || { mv pvm-vm.h $(srcdir)/pvm-vm.h \
+	          && mv pvm-vm1.c $(srcdir)/pvm-vm1.c \
+	          && mv pvm-vm2.c $(srcdir)/pvm-vm2.c; \
+	        }; \
+	   } \
+	|| { rm -f pvm-vm.h pvm-vm1.c pvm-vm2.c; false; }
 
 # End of Makefile.am
