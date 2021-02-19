@@ -65,10 +65,15 @@ if NBD
 libpoke_la_SOURCES += ios-dev-nbd.c
 endif NBD
 
+# *.pkc files are generated from *.pks, by using ras and pkl-insn.def.
+# Generate them in $(srcdir), since they are distributed in tarballs
+# (see <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>).
 .pks.pkc:
-	{ srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $@; } \
-          || { rm -f $@ && false; }
+	outfile=`basename "$@"`; \
+	srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $$outfile.tmp \
+	&& mv $$outfile.tmp $(srcdir)/$$outfile
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
+MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-asm.pkc.tmp
 
 # XXX Adding pkl-lex.h shouldn't be necessary?
 EXTRA_DIST = pkl-tab.y pkl-lex.h ras
