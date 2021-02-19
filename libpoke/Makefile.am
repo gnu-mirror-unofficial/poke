@@ -76,17 +76,55 @@ pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
 MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-asm.pkc.tmp
 
 # XXX Adding pkl-lex.h shouldn't be necessary?
-EXTRA_DIST = pkl-tab.y pkl-lex.h ras
+EXTRA_DIST = pkl-lex.h ras
 
-BUILT_SOURCES = pkl-tab.h pkl-tab.c pkl-lex.c \
+BUILT_SOURCES = pkl-lex.c \
                 pkl-gen.pkc pkl-asm.pkc
 
-pkl-tab.h pkl-tab.c: pkl-tab.y
-	$(POKE_BISON) -d -t --report=state --output pkl-tab.c \
-          $(srcdir)/pkl-tab.y
-
-AM_YFLAGS =
-MOSTLYCLEANFILES += pkl-tab.output pkl-tab.h pkl-tab.c
+AM_YFLAGS = -t --report=state
+# The Automake generated .y.c rule is broken: When executed in a VPATH build,
+#   - The .c file gets generated in the build directory. But since it requires
+#     special tools to rebuild it, we need to distribute it in the tarballs,
+#     and by the GNU Coding Standards
+#     <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>
+#     the file should be generated in the source directory.
+#   - The #line directives in the .c file refer to a nonexistent file once it
+#     has been moved from the build directory to the source directory. This
+#     leads to error if 'lcov' is used later.
+# Additionally, here we assume GNU Bison and therefore don't need the ylwrap
+# script.
+# Therefore we override this rule.
+# Since this is a rule that produces multiple files, we apply the idiom from
+# <https://lists.gnu.org/archive/html/bug-make/2020-09/msg00008.html>, so that
+# it works also in parallel 'make'.
+generate-pkl-tab:
+	$(AM_V_YACC)$(POKE_BISON) -d $(YFLAGS) $(AM_YFLAGS) $(srcdir)/pkl-tab.y \
+	&& test ':' = '$(POKE_BISON)' || { \
+	  sed -e 's|".*/pkl-tab\.y"|"pkl-tab.y"|' \
+	      -e 's|"pkl-tab\.tab\.c"|"pkl-tab.c"|' \
+	      -e 's|"pkl-tab\.tab\.h"|"pkl-tab.h"|' \
+	      < pkl-tab.tab.c > pkl-tab.c-tmp \
+	  && sed -e 's|".*/pkl-tab\.y"|"pkl-tab.y"|' \
+	         -e 's|"pkl-tab\.tab\.h"|"pkl-tab.h"|' \
+	         < pkl-tab.tab.h > pkl-tab.h-tmp \
+	  && rm -f pkl-tab.tab.c pkl-tab.tab.h \
+	  && mv pkl-tab.c-tmp $(srcdir)/pkl-tab.c \
+	  && mv pkl-tab.h-tmp $(srcdir)/pkl-tab.h; \
+	}
+.PHONY: generate-pkl-tab
+# The above rule will generate files with time stamp order
+# pkl-tab.y <= pkl-tab.c <= pkl-tab.h.
+pkl-tab.c: pkl-tab.y
+	@{ test -f $(srcdir)/pkl-tab.c && test ! $(srcdir)/pkl-tab.c -ot $(srcdir)/pkl-tab.y; } || $(MAKE) generate-pkl-tab
+pkl-tab.h: pkl-tab.c
+	@{ test -f $(srcdir)/pkl-tab.h && test ! $(srcdir)/pkl-tab.h -ot $(srcdir)/pkl-tab.c; } || $(MAKE) generate-pkl-tab
+BUILT_SOURCES += pkl-tab.c pkl-tab.h
+MOSTLYCLEANFILES += \
+  pkl-tab.tab.c pkl-tab.tab.h \
+  pkl-tab.c-tmp pkl-tab.h-tmp \
+  pkl-tab.output
+MAINTAINERCLEANFILES += pkl-tab.c pkl-tab.h
+EXTRA_DIST += pkl-tab.y pkl-tab.c pkl-tab.h
 
 AM_LFLAGS = -d
 
