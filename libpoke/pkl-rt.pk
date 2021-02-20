@@ -219,7 +219,7 @@ fun _pkl_base_prefix = (int<32> base) string:
    return "";
  }
 
-/* Return a string with the name corresponding to the given uni in
+/* Return a string with the name corresponding to the given unit in
    bits.  This may be an empty string for an unknown unit.
 
    This should go away once we have a run-time mechanism to store and
