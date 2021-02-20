@@ -71,6 +71,10 @@ config.h.in
 /libpoke/pvm-vm.h
 /libpoke/pvm-vm1.c
 /libpoke/pvm-vm2.c
+/poke/pk-map-lex.c
+/poke/pk-map-lex.h
+/poke/pk-map-tab.c
+/poke/pk-map-tab.h
 /testsuite/poke.log
 /testsuite/poke.sum
 /testsuite/site.bak
