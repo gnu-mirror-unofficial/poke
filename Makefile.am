@@ -2,6 +2,8 @@ ACLOCAL_AMFLAGS = -I m4 -I m4/libpoke -I m4/gui
 SUBDIRS = jitter gl maps pickles gl-libpoke gl-gui libpoke poke gui utils \
           doc man testsuite etc po
 
+EXTRA_DIST = INSTALL.generic DEPENDENCIES
+
 noinst_SCRIPTS = run
 
 # This (and the accompanying AC_SUBST of WITH_JITTER) is to be removed

@@ -7,7 +7,7 @@ poke/poke-poke.o
 stamp-h1
 /ABOUT-NLS
 /build-aux
-/INSTALL
+/INSTALL.generic
 *~
 *.a
 *.o

@@ -22,7 +22,8 @@ AC_INIT([GNU poke], [0.90], [poke-devel@gnu.org], [poke],
         [http://www.jemarch.net/poke.html])
 
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE
+dnl In order to have a custom INSTALL file, we need Automake option 'foreign'.
+AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_HEADERS(poke/config.h)
 AC_CONFIG_MACRO_DIRS([m4])
 

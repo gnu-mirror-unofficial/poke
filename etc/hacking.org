@@ -176,6 +176,9 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    adding a record to DEV-NEWS
 
 * Development Environment
+
+  The packages listed in the file DEPENDENCIES are needed.  Additionally:
+
 ** Autotools
 
    This distribution uses whatever versions of Automake, Autoconf, and
@@ -203,30 +206,6 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    recent versions of bison.  Bison 3.6.0 or later is required to
    boostrap and build poke from git.
 
-** readline
-
-   Poke uses GNU libreadline in order to provide a nice line editor in
-   the =(poke)= prompt.  Any recent version will suffice.  The package
-   name usually is:
-
-   - On Debian and Debian-based systems: libreadline-dev,
-   - On Red Hat distributions: readline-devel.
-
-** Boehm GC
-
-   poke uses the Boehm conservative garbage collector for managing the
-   memory of some of its subsystems.  Therefore, you must have it
-   installed.  The package name usually is:
-
-   - On Debian and Debian-based systems: libgc-dev,
-   - On Red Hat distributions: gc-devel.
-
-   Note that if you have the Boehm GC installed in a prefix different
-   from the one that contains pkg-config, you need to set
-   PKL_CONFIG_PATH so that pkg-config finds it:
-
-   : export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_LIBGC}/lib/pkgconfig
-
 ** Jitter
 
    In order to build and run poke, you need Luca Saiu's jitter.
@@ -242,40 +221,6 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
    mode= as Poke does, only generates static libraries and requires no
    installation.
 
-** JSON-C
-
-   The poke machine-interface uses a protocol to communicate with
-   clients, which is based on JSON.  poke uses the json-c library to
-   parse and build JSON strings.
-
-   If this library is not found, poke will build without MI support.
-
-** Tcl and Tk
-
-   The poke GUI uses Tcl and Tk, so you need to have the respective
-   development packages installed in your system.  Any recent version
-   will suffice.
-
-** libtextstyle
-
-   GNU poke uses libtextstyle in order to provide styled output.  If
-   the library is not found, then a dummy version of it from gnulib is
-   used instead... that does not do any styling!
-
-   At the moment libtextstyle lives in a subdirectory of GNU gettext.
-   See https://www.gnu.org/s/gettext for more information.
-
-** libnbd
-
-   GNU poke optionally uses libnbd to expose an io space for data
-   served by an arbitrary NBD (Network Block Device) server.  Testing
-   this further requires nbdkit to quickly provide an arbitrary NBD
-   server.  The package names are:
-
-  - On Red Hat distributions: libnbd-devel, nbdkit-basic-plugins
-
-  See http://libguestfs.org/libnbd.3.html for more information.
-
 ** Building
 
    After getting the git sources, and installing the tools above, you
@@ -283,25 +228,16 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
    : $ ./bootstrap --skip-po
 
-   Then, you can run =configure=::
+   Then, you can run =configure=, as described in the files INSTALL
+   and INSTALL.generic.  For example:
 
    : $ mkdir build/ && cd build
    : $ ../configure
 
-   Here, you can give as arguments to 'configure'
+   Finally:
 
-  - configure options, as listen in the 'configure --help' output,
-  - Makefile variable assignments for building the binaries, as
-    described in the INSTALL file,
-  - Makefile variable assignments for building the documentation,
-    for example
-    ~MAKEINFOFLAGS="--css-ref=http://www.jemarch.net/homepage.css"~
-    to get HTML documentation styled like the "Applied Pokology" blog.
-
-  Finally:
-
-  : $ make
-  : $ make check
+   : $ make
+   : $ make check
 
 ** Building after a git pull
 
@@ -323,25 +259,6 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 
    You can't rely on the maintainer-mode rules there, because of
    certain problem with the sub-package mode of Jitter.
-
-** Building the GUI
-
-   The poke GUI is optional and it is built by default, provided the
-   required dependencies are found at configure time.
-
-   To disable building the GUI, pass the =--disable-gui= option at
-   configure time.
-
-** Building a 32-bit poke
-
-   If you are in a 64-bit multilib system with support for building
-   32-bit binaries, you can build a 32-bit poke configuring like
-   this:
-
-   : ../configure --host=i386-unknown-linux-gnu CC='gcc -m32'
-
-   This is of course for =x86_64=.  In your system, replace the
-   triplet with the proper one for your architecture.
 
 ** Gettext
 

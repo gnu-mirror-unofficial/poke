@@ -1,0 +1,213 @@
+The following packages should be installed before GNU poke is installed
+(runtime dependencies that are also build dependencies):
+
+* Boehm GC
+  + Mandatory.
+    Poke uses the Boehm conservative garbage collector for managing the
+    memory of some of its subsystems.
+  + Homepage:
+    https://www.hboehm.info/gc/
+  + Download:
+    https://www.hboehm.info/gc/gc_source/
+  + Pre-built package name:
+    - On Debian and Debian-based systems: libgc-dev,
+    - On Red Hat distributions: gc-devel.
+    - Other: https://repology.org/project/boehm-gc/versions
+
+  + Note that if you have the Boehm GC installed in a prefix different
+    from the one that contains pkg-config, you need to set PKG_CONFIG_PATH
+    so that pkg-config finds it:
+
+    $ test -z "$PKG_CONFIG_PATH" \
+        || PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_PKGCONFIG}/lib/pkgconfig
+    $ export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_LIBGC}/lib/pkgconfig:${PKG_CONFIG_PATH}
+
+    or set the variables BDW_GC_CFLAGS, BDW_GC_LIBS when invoking 'configure'.
+
+* GNU readline
+  + Mandatory.
+    Poke uses GNU libreadline in order to provide a nice line editor in
+    the '(poke)' prompt.  Any recent version will suffice.
+  + Homepage:
+    https://www.gnu.org/software/readline/
+  + Download:
+    https://ftp.gnu.org/gnu/readline/
+  + Pre-built package name:
+    - On Debian and Debian-based systems: libreadline-dev,
+    - On Red Hat distributions: readline-devel.
+    - Other: https://repology.org/project/readline/versions
+  + If it is installed in a nonstandard directory, pass the option
+    --with-libreadline-prefix=DIR to 'configure'.
+
+* JSON-C
+  + Optional.
+    The poke machine-interface uses a protocol to communicate with
+    clients, which is based on JSON.  poke uses the json-c library to
+    parse and build JSON strings.
+    If this library is not found, poke will build without machine-interface
+    support.
+  + Homepage:
+    https://github.com/json-c/json-c/wiki
+  + Download:
+    https://s3.amazonaws.com/json-c_releases/releases/index.html
+  + Pre-built package name:
+    - On Debian and Debian-based systems: libjson-c-dev,
+    - On Red Hat distributions: json-c-devel.
+    - Other: https://repology.org/project/json-c/versions
+  + If it is installed in a nonstandard directory, you need to set
+    PKG_CONFIG_PATH so that pkg-config finds it:
+
+    $ test -z "$PKG_CONFIG_PATH" \
+        || PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_PKGCONFIG}/lib/pkgconfig
+    $ export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_JSON_C}/lib/pkgconfig:${PKG_CONFIG_PATH}
+
+    or set the variables JSON_C_CFLAGS, JSON_C_LIBS when invoking 'configure'.
+
+* Tcl and Tk
+  + Optional.
+    The poke GUI uses Tcl and Tk, so you need to have the respective
+    development packages installed in your system.  Any recent version
+    will suffice.
+  + Homepage:
+    https://www.tcl.tk/
+  + Download:
+    https://www.tcl.tk/software/tcltk/download.html
+  + Pre-built package name:
+    - On Debian and Debian-based systems: tcl-dev, tk-dev,
+    - On Red Hat distributions: tcl-devel, tk-devel.
+    - Other: https://repology.org/project/tk/versions
+
+* GNU libtextstyle
+  + Optional.
+    GNU poke uses libtextstyle in order to provide styled output.  If the
+    library is not found, then a dummy version of it from gnulib is used
+    instead... that does not do any styling!
+  + Homepage:
+    https://www.gnu.org/software/gettext/libtextstyle/manual/index.html
+  + Download:
+    At the moment libtextstyle lives in a subdirectory of GNU gettext.
+    https://ftp.gnu.org/gnu/gettext/
+  + Pre-built package name:
+    - On Debian and Debian-based systems: gettext (>= 0.21, in unstable),
+    - On Red Hat distributions: --.
+    - Other: https://repology.org/project/libtextstyle/versions
+  + If it is installed in a nonstandard directory, pass the option
+    --with-libtextstyle-prefix=DIR to 'configure'.
+
+* libnbd
+  + Optional.
+    GNU poke optionally uses libnbd to expose an io space for data served
+    by an arbitrary NBD (Network Block Device) server.  Testing this
+    further requires nbdkit to quickly provide an arbitrary NBD server.
+  + Homepage:
+    http://libguestfs.org/libnbd.3.html
+  + Download:
+    https://download.libguestfs.org/libnbd/
+  + Pre-built package name:
+    - On Debian and Debian-based systems: libnbd-dev,
+    - On Red Hat distributions: libnbd-devel, nbdkit-basic-plugins.
+    - Other: https://repology.org/project/libnbd/versions
+  + If it is installed in a nonstandard directory, you need to set
+    PKG_CONFIG_PATH so that pkg-config finds it:
+
+    $ test -z "$PKG_CONFIG_PATH" \
+        || PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_PKGCONFIG}/lib/pkgconfig
+    $ export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_LIBNBD}/lib/pkgconfig:${PKG_CONFIG_PATH}
+
+    or set the variables LIBNBD_CFLAGS, LIBNBD_LIBS when invoking 'configure'.
+
+
+The following packages should be installed when GNU poke is installed
+(runtime dependencies, but not build dependencies):
+
+None.
+
+
+The following should be installed when GNU poke is built, but are not
+needed later, once it is installed (build dependencies, but not runtime
+dependencies):
+
+* A C runtime, compiler, linker, etc.
+  + Mandatory.
+    Either the platform's native 'cc', or GCC 3.1 or newer.
+  + GCC Homepage:
+    https://gcc.gnu.org/
+  + Download:
+    https://ftp.gnu.org/gnu/gcc/
+
+* A 'make' utility.
+  + Mandatory.
+    Either the platform's native 'make' (for in-tree builds only),
+    or GNU Make 3.79.1 or newer.
+  + GNU Make Homepage:
+    https://www.gnu.org/software/make/
+  + Download:
+    https://ftp.gnu.org/gnu/make/
+
+* A shell
+  + Mandatory.
+    Either the platform's native 'sh', or Bash.
+  + Homepage:
+    https://www.gnu.org/software/bash/
+  + Download:
+    https://ftp.gnu.org/gnu/bash/
+
+* Core POSIX utilities, including:
+    [ basename cat chgrp chmod chown cp dd echo expand expr
+    false hostname install kill ln ls md5sum mkdir mkfifo
+    mknod mv printenv pwd rm rmdir sleep sort tee test touch
+    true uname
+  + Mandatory.
+    Either the platform's native utilities, or GNU coreutils.
+  + Homepage:
+    https://www.gnu.org/software/coreutils/
+  + Download:
+    https://ftp.gnu.org/gnu/coreutils/
+
+* The comparison utilities 'cmp' and 'diff'.
+  + Mandatory.
+    Either the platform's native utilities, or GNU diffutils.
+  + Homepage:
+    https://www.gnu.org/software/diffutils/
+  + Download:
+    https://ftp.gnu.org/gnu/diffutils/
+
+* Grep.
+  + Mandatory.
+    Either the platform's native grep, or GNU grep.
+  + Homepage:
+    https://www.gnu.org/software/grep/
+  + Download:
+    https://ftp.gnu.org/gnu/grep/
+
+* Awk.
+  + Mandatory.
+    Either the platform's native awk, mawk, or nawk, or GNU awk.
+  + Homepage:
+    https://www.gnu.org/software/gawk/
+  + Download:
+    https://ftp.gnu.org/gnu/gawk/
+
+* pkg-config
+  + Mandatory.
+    Needed to find the Boehm GC installation.
+  + Home page:
+    https://www.freedesktop.org/wiki/Software/pkg-config/
+  + Download:
+    https://pkgconfig.freedesktop.org/releases/
+  + Pre-built package name:
+    - On Debian and Debian-based systems: pkg-config,
+    - On Red Hat distributions: pkgconfig.
+    - Other: https://repology.org/project/pkg-config/versions
+
+* GNU DejaGnu
+  + Optional.
+    Needed for "make check" to actually test something.
+  + Home page:
+    https://www.gnu.org/software/dejagnu/
+  + Download:
+    https://ftp.gnu.org/gnu/dejagnu/
+  + Pre-built package name:
+    - On Debian and Debian-based systems: dejagnu,
+    - On Red Hat distributions: dejagnu.
+    - Other: https://repology.org/project/dejagnu/versions
