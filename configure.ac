@@ -84,7 +84,7 @@ dnl RAS requires a version of awk that supports gensub().  However,
 dnl since we are including the RAS-generated .pkc files in the
 dnl tarball, this should not be a hard dependency here: people
 dnl building poke from released tarballs are not required to have any
-dnl particular version of awk installed.  We therefore set POKE_AWK
+dnl particular version of awk installed.  We therefore set RAS_AWK
 dnl here, using the value ':' for when no suitable awk is found.  Then
 dnl in the `.pkc : .pks' rule in Makefile.am an error message is
 dnl emitted in case no proper AWK is present.
