@@ -87,7 +87,7 @@ generate-pk-map-lex:
 	  && mv pk-map-lex.h-tmp $(srcdir)/pk-map-lex.h; \
 	}
 .PHONY: generate-pk-map-lex
-# The above rule will generate files with time stamp order
+# The above rule will generate files with time-stamp order
 # pk-map-lex.l <= pk-map-lex.c <= pk-map-lex.h.
 pk-map-lex.c: pk-map-lex.l
 	@{ test -f $(srcdir)/pk-map-lex.c && test ! $(srcdir)/pk-map-lex.c -ot $(srcdir)/pk-map-lex.l; } || $(MAKE) generate-pk-map-lex
@@ -129,7 +129,7 @@ generate-pk-map-tab:
 	  && mv pk-map-tab.h-tmp $(srcdir)/pk-map-tab.h; \
 	}
 .PHONY: generate-pk-map-tab
-# The above rule will generate files with time stamp order
+# The above rule will generate files with time-stamp order
 # pk-map-tab.y <= pk-map-tab.c <= pk-map-tab.h.
 pk-map-tab.c: pk-map-tab.y
 	@{ test -f $(srcdir)/pk-map-tab.c && test ! $(srcdir)/pk-map-tab.c -ot $(srcdir)/pk-map-tab.y; } || $(MAKE) generate-pk-map-tab

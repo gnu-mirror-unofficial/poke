@@ -112,7 +112,7 @@ generate-pkl-lex:
 	  && mv pkl-lex.h-tmp $(srcdir)/pkl-lex.h; \
 	}
 .PHONY: generate-pkl-lex
-# The above rule will generate files with time stamp order
+# The above rule will generate files with time-stamp order
 # pkl-lex.l <= pkl-lex.c <= pkl-lex.h.
 pkl-lex.c: pkl-lex.l
 	@{ test -f $(srcdir)/pkl-lex.c && test ! $(srcdir)/pkl-lex.c -ot $(srcdir)/pkl-lex.l; } || $(MAKE) generate-pkl-lex
@@ -154,7 +154,7 @@ generate-pkl-tab:
 	  && mv pkl-tab.h-tmp $(srcdir)/pkl-tab.h; \
 	}
 .PHONY: generate-pkl-tab
-# The above rule will generate files with time stamp order
+# The above rule will generate files with time-stamp order
 # pkl-tab.y <= pkl-tab.c <= pkl-tab.h.
 pkl-tab.c: pkl-tab.y
 	@{ test -f $(srcdir)/pkl-tab.c && test ! $(srcdir)/pkl-tab.c -ot $(srcdir)/pkl-tab.y; } || $(MAKE) generate-pkl-tab
