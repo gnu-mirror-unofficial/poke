@@ -22,6 +22,10 @@ CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
+BUILT_SOURCES =
+
+EXTRA_DIST =
+
 dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk \
                     pk-extract.pk pk-scrabble.pk poke.pk
 
@@ -54,9 +58,45 @@ poke_LDADD = $(top_builddir)/gl/libgnu.la \
              $(LTLIBTEXTSTYLE)
 poke_LDFLAGS =
 
+
 AM_LFLAGS = -d
-BUILT_SOURCES = pk-map-lex.c
-EXTRA_DIST = pk-map-lex.h
+# The Automake generated .l.c rule is broken: When executed in a VPATH build,
+#   - The .c file gets generated in the build directory. But since it requires
+#     special tools to rebuild it, we need to distribute it in the tarballs,
+#     and by the GNU Coding Standards
+#     <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>
+#     the file should be generated in the source directory.
+#   - The #line directives in the .c file refer to a nonexistent file once it
+#     has been moved from the build directory to the source directory. This
+#     leads to error if 'lcov' is used later.
+# Additionally, here we assume Flex and therefore don't need the ylwrap script.
+# Therefore we override this rule.
+# Since this is a rule that produces multiple files, we apply the idiom from
+# <https://lists.gnu.org/archive/html/bug-make/2020-09/msg00008.html>, so that
+# it works also in parallel 'make'.
+generate-pk-map-lex:
+	$(AM_V_LEX)$(LEX) $(LFLAGS) $(AM_LFLAGS) -t $(srcdir)/pk-map-lex.l > pk-map-lex.c \
+	&& test ':' = '$(LEX)' || { \
+	  sed -e 's|".*/pk-map-lex\.l"|"pk-map-lex.l"|' \
+	      -e 's|"lex\.yy\.c"|"pk-map-lex.c"|' \
+	      < pk-map-lex.c > pk-map-lex.c-tmp \
+	  && sed -e 's|".*/pk-map-lex\.l"|"pk-map-lex.l"|' \
+	         < pk-map-lex.h > pk-map-lex.h-tmp \
+	  && rm -f pk-map-lex.c pk-map-lex.h \
+	  && mv pk-map-lex.c-tmp $(srcdir)/pk-map-lex.c \
+	  && mv pk-map-lex.h-tmp $(srcdir)/pk-map-lex.h; \
+	}
+.PHONY: generate-pk-map-lex
+# The above rule will generate files with time stamp order
+# pk-map-lex.l <= pk-map-lex.c <= pk-map-lex.h.
+pk-map-lex.c: pk-map-lex.l
+	@{ test -f $(srcdir)/pk-map-lex.c && test ! $(srcdir)/pk-map-lex.c -ot $(srcdir)/pk-map-lex.l; } || $(MAKE) generate-pk-map-lex
+pk-map-lex.h: pk-map-lex.c
+	@{ test -f $(srcdir)/pk-map-lex.h && test ! $(srcdir)/pk-map-lex.h -ot $(srcdir)/pk-map-lex.c; } || $(MAKE) generate-pk-map-lex
+BUILT_SOURCES += pk-map-lex.c pk-map-lex.h
+MOSTLYCLEANFILES += pk-map-lex.c-tmp pk-map-lex.h-tmp
+MAINTAINERCLEANFILES += pk-map-lex.c pk-map-lex.h
+EXTRA_DIST += pk-map-lex.l pk-map-lex.c pk-map-lex.h
 
 AM_YFLAGS = -t --report=state
 # The Automake generated .y.c rule is broken: When executed in a VPATH build,

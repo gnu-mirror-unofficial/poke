@@ -44,12 +44,13 @@ LT_INIT
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
-: ${LEX='flex'}
-: ${LEXLIB='-lfl'}
-: ${LEX_OUTPUT_ROOT='lex.yy'}
 AC_ARG_VAR([LEX], [The flex implementation to use.])
-AC_ARG_VAR([LEXLIB], [Options for linking with the flex runtime library.])
-AC_ARG_VAR([LEX_OUTPUT_ROOT], [Base of the file name that the lexer generates.])
+if test -n "$LEX"; then
+  AC_MSG_CHECKING([for flex])
+  AC_MSG_RESULT([$LEX])
+else
+  AC_PATH_PROG([LEX], [flex], [:])
+fi
 
 gl_PROG_BISON([POKE_BISON],[3.6])
 

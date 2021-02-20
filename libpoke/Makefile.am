@@ -75,11 +75,48 @@ endif NBD
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
 MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-asm.pkc.tmp
 
-# XXX Adding pkl-lex.h shouldn't be necessary?
-EXTRA_DIST = pkl-lex.h ras
+EXTRA_DIST = ras
 
-BUILT_SOURCES = pkl-lex.c \
-                pkl-gen.pkc pkl-asm.pkc
+BUILT_SOURCES = pkl-gen.pkc pkl-asm.pkc
+
+AM_LFLAGS = -d
+# The Automake generated .l.c rule is broken: When executed in a VPATH build,
+#   - The .c file gets generated in the build directory. But since it requires
+#     special tools to rebuild it, we need to distribute it in the tarballs,
+#     and by the GNU Coding Standards
+#     <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>
+#     the file should be generated in the source directory.
+#   - The #line directives in the .c file refer to a nonexistent file once it
+#     has been moved from the build directory to the source directory. This
+#     leads to error if 'lcov' is used later.
+# Additionally, here we assume Flex and therefore don't need the ylwrap script.
+# Therefore we override this rule.
+# Since this is a rule that produces multiple files, we apply the idiom from
+# <https://lists.gnu.org/archive/html/bug-make/2020-09/msg00008.html>, so that
+# it works also in parallel 'make'.
+generate-pkl-lex:
+	$(AM_V_LEX)$(LEX) $(LFLAGS) $(AM_LFLAGS) -t $(srcdir)/pkl-lex.l > pkl-lex.c \
+	&& test ':' = '$(LEX)' || { \
+	  sed -e 's|".*/pkl-lex\.l"|"pkl-lex.l"|' \
+	      -e 's|"lex\.yy\.c"|"pkl-lex.c"|' \
+	      < pkl-lex.c > pkl-lex.c-tmp \
+	  && sed -e 's|".*/pkl-lex\.l"|"pkl-lex.l"|' \
+	         < pkl-lex.h > pkl-lex.h-tmp \
+	  && rm -f pkl-lex.c pkl-lex.h \
+	  && mv pkl-lex.c-tmp $(srcdir)/pkl-lex.c \
+	  && mv pkl-lex.h-tmp $(srcdir)/pkl-lex.h; \
+	}
+.PHONY: generate-pkl-lex
+# The above rule will generate files with time stamp order
+# pkl-lex.l <= pkl-lex.c <= pkl-lex.h.
+pkl-lex.c: pkl-lex.l
+	@{ test -f $(srcdir)/pkl-lex.c && test ! $(srcdir)/pkl-lex.c -ot $(srcdir)/pkl-lex.l; } || $(MAKE) generate-pkl-lex
+pkl-lex.h: pkl-lex.c
+	@{ test -f $(srcdir)/pkl-lex.h && test ! $(srcdir)/pkl-lex.h -ot $(srcdir)/pkl-lex.c; } || $(MAKE) generate-pkl-lex
+BUILT_SOURCES += pkl-lex.c pkl-lex.h
+MOSTLYCLEANFILES += pkl-lex.c-tmp pkl-lex.h-tmp
+MAINTAINERCLEANFILES += pkl-lex.c pkl-lex.h
+EXTRA_DIST += pkl-lex.l pkl-lex.c pkl-lex.h
 
 AM_YFLAGS = -t --report=state
 # The Automake generated .y.c rule is broken: When executed in a VPATH build,
@@ -125,8 +162,6 @@ MOSTLYCLEANFILES += \
   pkl-tab.output
 MAINTAINERCLEANFILES += pkl-tab.c pkl-tab.h
 EXTRA_DIST += pkl-tab.y pkl-tab.c pkl-tab.h
-
-AM_LFLAGS = -d
 
 # Libtool's library version information for libpoke.
 # See the libtool documentation, section "Library interface versions".
