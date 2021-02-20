@@ -18,7 +18,10 @@ EXTRA_DIST = \
 
 COMMON = term-if.h
 
+if HAVE_DEJAGNU
 check_PROGRAMS = values api
+endif
+
 values_SOURCES = $(COMMON) values.c
 
 values_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \

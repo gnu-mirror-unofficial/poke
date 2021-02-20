@@ -16,6 +16,7 @@
 AUTOMAKE_OPTIONS = dejagnu
 
 check-DEJAGNU: site.exp
+if HAVE_DEJAGNU
 	@srcdir=`cd $(srcdir) && pwd`; export srcdir; \
 	r=`pwd`; export r; \
 	LC_ALL=C; export LC_ALL; \
@@ -38,9 +39,12 @@ check-DEJAGNU: site.exp
 			$(RUNTESTFLAGS); \
 		$(RM) $(top_builddir)/inputrc; \
 	else \
-	  >&2 echo "WARNING: could not find \`runtest'"; \
-	  exit 77; :;\
+	  >&2 echo "ERROR: could not find \`runtest'"; \
+	  exit 1; :;\
 	fi
+else
+	>&2 echo "WARNING: DejaGnu not installed"
+endif
 
 SUBDIRS = poke.libpoke poke.mi-json
 

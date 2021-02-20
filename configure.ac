@@ -179,6 +179,10 @@ AC_ARG_ENABLE([gui],
 
 AM_CONDITIONAL([GUI], [test "x$gui_enabled" = "xyes"])
 
+dnl The test framework is optional.
+AC_CHECK_HEADERS([dejagnu.h])
+AM_CONDITIONAL([HAVE_DEJAGNU], [test "$ac_cv_header_dejagnu_h" = yes])
+
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile

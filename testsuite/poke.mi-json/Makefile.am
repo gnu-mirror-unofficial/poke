@@ -20,7 +20,9 @@ EXTRA_DIST = \
 
 if POKE_MI
 
+if HAVE_DEJAGNU
 check_PROGRAMS = mi-json
+endif
 
 mi_json_SOURCES = mi-json.c \
                   $(top_srcdir)/poke/pk-mi-msg.c \
