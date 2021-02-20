@@ -70,7 +70,6 @@ poke.text: $(srcdir)/poke.texi
 	mv poke.txmp $(srcdir)/poke.text
 
 MOSTLYCLEANFILES = \
-  pvm-insns.texi \
   nodelist \
   poke.txmp
-MAINTAINERCLEANFILES = poke.text
+MAINTAINERCLEANFILES = pvm-insns.texi poke.text
