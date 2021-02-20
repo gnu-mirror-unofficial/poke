@@ -1,5 +1,17 @@
 2021-02-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (print_help): Use a puts statement for each header
+	and option, and do not finish them with periods.
+	* poke/pk-cmd-ios.c (pk_cmd_load_file): Use pk_fatal and an
+	uniform message when out of memory.
+	(pk_cmd_mem): Likewise.
+	* poke/pk-map.c (entry_name_to_varname): Likewise.
+	* poke/poke.h (pk_assert_alloc): Likewise.
+	* libpoke/pkl-trans.c (pkl_trans1_ps_print_stmt): Start error
+	messages with a lower case.
+
+2021-02-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* man/Makefile.am (poke.1): Avoid TAB-8-space indentation in
 	Makefile.
 	* libpoke/Makefile.am: Spell time-stamp.

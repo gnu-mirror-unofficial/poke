@@ -53,10 +53,7 @@ static inline void
 pk_assert_alloc (const void *m)
 {
   if (!m)
-    {
-      pk_printf (_("out of memory\n"));
-      exit (EXIT_FAILURE);
-    }
+    pk_fatal (_("out of memory"));
 }
 
 #endif /* !POKE_H */

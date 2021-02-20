@@ -606,11 +606,7 @@ pk_cmd_exec (const char *str)
 
           cmd_alloc = pk_str_concat (cmd, ";", NULL);
           if (!cmd_alloc)
-            {
-              pk_printf (_("out of memory\n"));
-              retval = 0;
-              goto cleanup;
-            }
+            pk_fatal (_("out of memory"));
 
           ecmd = cmd_alloc;
         }

@@ -242,7 +242,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       if (asprintf (&filename, "%s/%s", poke_datadir, arg) == -1)
         {
           /* filename is undefined now, don't free */
-          pk_puts ("Out of memory");
+          pk_fatal (_("out of memory"));
           return 0;
         }
 
@@ -305,10 +305,7 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char *mem_name;
 
   if (asprintf (&mem_name, "*%s*", arg_str) == -1)
-    {
-      pk_puts (_("Out of memory"));
-      return 0;
-    }
+    pk_fatal (_("out of memory"));
 
   if (pk_ios_search (poke_compiler, mem_name) != NULL)
     {

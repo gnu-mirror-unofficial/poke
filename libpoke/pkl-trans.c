@@ -777,7 +777,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
 
                 if (bits > 64)
                   {
-                    msg = _("Base with more than 64 bits");
+                    msg = _("base with more than 64 bits");
                     goto invalid_tag;
                   }
 
@@ -812,7 +812,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
               }
             else
               {
-                msg = _("Expected decimal digit after %u");
+                msg = _("expected decimal digit after %u");
                 goto invalid_tag;
               }
             ntag++;

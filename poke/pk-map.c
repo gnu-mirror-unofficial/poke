@@ -135,7 +135,7 @@ entry_name_to_varname (const char *name)
   char *varname;
 
   if (asprintf (&varname, "__map_entry_%lu_%s", next_map_id, name) == -1)
-    pk_fatal ("out of memory");
+    pk_fatal (_("out of memory"));
   return varname;
 }
 

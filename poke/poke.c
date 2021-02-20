@@ -191,43 +191,37 @@ Interactive editor for binary files.\n"));
   /* TRANSLATORS: --help output, GNU poke arguments.
      no-wrap */
   pk_puts (_("\
-  -l, --load=FILE                     load the given pickle at startup.\n\
-  -L FILE                             load the given pickle and exit.\n"));
+  -l, --load=FILE                     load the given pickle at startup\n\
+  -L FILE                             load the given pickle and exit\n"));
 
   pk_puts ("\n");
 
   /* TRANSLATORS: --help output, GNU poke arguments.
      no-wrap */
-  pk_puts (_("\
-Commanding poke from the command line:\n\
-  -c, --command=CMD                   execute the given command.\n\
-  -s, --source=FILE                   execute commands from FILE.\n"));
+  pk_puts (_("Commanding poke from the command line:\n"));
+  pk_puts (_("  -c, --command=CMD                   execute the given command\n"));
+  pk_puts (_("  -s, --source=FILE                   execute commands from FILE\n"));
 
   pk_puts ("\n");
-  pk_puts (_("\
-Styling text output:\n\
-      --color=(yes|no|auto|html|test) emit styled output.\n\
-      --style=STYLE_FILE              style file to use when styling.\n"));
+  pk_puts (_("Styling text output:\n"));
+  pk_puts (_("      --color=(yes|no|auto|html|test) emit styled output\n"));
+  pk_puts (_("      --style=STYLE_FILE              style file to use when styling\n"));
 
   pk_puts ("\n");
-  pk_puts (_("\
-Machine interface:\n\
-      --mi                            use the MI in stdin/stdout.\n"));
+  pk_puts (_("Machine interface:\n"));
+  pk_puts (_("      --mi                            use the MI in stdin/stdout\n"));
 
   pk_puts ("\n");
   /* TRANSLATORS: --help output, less used GNU poke arguments.
      no-wrap */
-  pk_puts (_("\
-  -q, --no-init-file                  do not load an init file.\n\
-      --no-auto-map                   disable auto-map.\n"));
+  pk_puts (_("  -q, --no-init-file                  do not load an init file\n"));
+  pk_puts (_("      --no-auto-map                   disable auto-map\n"));
 #if HAVE_HSERVER
-  pk_puts ("\
-      --no-hserver                    do not run the hyperlinks server.\n");
+  pk_puts (_("      --no-hserver                    do not run the hyperlinks server\n"));
 #endif
-  pk_puts (_("\
-      --quiet                         be as terse as possible.\n\
-      --help                          print a help message and exit.\n\
-      --version                       show version and exit.\n"));
+  pk_puts (_("      --quiet                         be as terse as possible\n"));
+  pk_puts (_("      --help                          print a help message and exit\n"));
+  pk_puts (_("      --version                       show version and exit\n"));
 
   pk_puts ("\n");
   /* TRANSLATORS: --help output 5+ (reports)
