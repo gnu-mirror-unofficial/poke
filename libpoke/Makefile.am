@@ -69,9 +69,14 @@ endif NBD
 # Generate them in $(srcdir), since they are distributed in tarballs
 # (see <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>).
 .pks.pkc:
+	if test "x$(RAS_AWK)" = ":"; then \
+	  echo "your AWK is not powerful enough.  Please install gawk" \
+          1>&2 && exit 1 || : ; \
+	fi
 	outfile=`basename "$@"`; \
-	srcdir=$(srcdir) $(AWK) -f $(srcdir)/ras $< > $$outfile.tmp \
+	srcdir=$(srcdir) $(RAS_AWK) -f $(srcdir)/ras $< > $$outfile.tmp \
 	&& mv $$outfile.tmp $(srcdir)/$$outfile
+
 pkl-gen.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
 MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-asm.pkc.tmp
 

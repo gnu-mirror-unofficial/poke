@@ -80,8 +80,17 @@ dnl i18n with gettext
 AM_GNU_GETTEXT_VERSION([0.19.8])
 AM_GNU_GETTEXT([external])
 
-# Poke requires a version of awk that supports gensub()
-AX_CHECK_AWK_GENSUB([], AC_MSG_ERROR([$AWK does not support gensub.]))
+dnl RAS requires a version of awk that supports gensub().  However,
+dnl since we are including the RAS-generated .pkc files in the
+dnl tarball, this should not be a hard dependency here: people
+dnl building poke from released tarballs are not required to have any
+dnl particular version of awk installed.  We therefore set POKE_AWK
+dnl here, using the value ':' for when no suitable awk is found.  Then
+dnl in the `.pkc : .pks' rule in Makefile.am an error message is
+dnl emitted in case no proper AWK is present.
+
+AX_CHECK_AWK_GENSUB([RAS_AWK=$AWK], [RAS_AWK=:])
+AC_SUBST([RAS_AWK])
 
 dnl The Boehm-Weiser garbage collector
 
