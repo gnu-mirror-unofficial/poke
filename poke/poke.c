@@ -179,20 +179,17 @@ print_help (void)
 {
   /* TRANSLATORS: --help output, GNU poke synopsis.
      no-wrap */
-  pk_puts (_("\
-Usage: poke [OPTION]... [FILE]\n"));
+  pk_puts (_("Usage: poke [OPTION]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, GNU poke summary.
      no-wrap */
-  pk_puts (_("\
-Interactive editor for binary files.\n"));
+  pk_puts (_("Interactive editor for binary files.\n"));
 
   pk_puts ("\n");
   /* TRANSLATORS: --help output, GNU poke arguments.
      no-wrap */
-  pk_puts (_("\
-  -l, --load=FILE                     load the given pickle at startup\n\
-  -L FILE                             load the given pickle and exit\n"));
+  pk_puts (_("  -l, --load=FILE                     load the given pickle at startup\n"));
+  pk_puts (_("  -L FILE                             load the given pickle and exit\n"));
 
   pk_puts ("\n");
 
