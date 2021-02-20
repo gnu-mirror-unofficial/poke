@@ -1,5 +1,14 @@
 2021-02-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/Makefile.am (.pks.pkc): Fix typo in command.
+
+2021-02-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-rt.pk: Fix typo in comment
+	.
+
+2021-02-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (print_help): Use a puts statement for each header
 	and option, and do not finish them with periods.
 	* poke/pk-cmd-ios.c (pk_cmd_load_file): Use pk_fatal and an

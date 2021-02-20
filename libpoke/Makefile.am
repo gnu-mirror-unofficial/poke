@@ -69,7 +69,7 @@ endif NBD
 # Generate them in $(srcdir), since they are distributed in tarballs
 # (see <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>).
 .pks.pkc:
-	if test "x$(RAS_AWK)" = ":"; then \
+	if test "$(RAS_AWK)" = ":"; then \
 	  echo "your AWK is not powerful enough.  Please install gawk" \
           1>&2 && exit 1 || : ; \
 	fi
