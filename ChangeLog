@@ -1,5 +1,10 @@
 2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Invoking poke): Leave empty lines between
+	argument descriptions, and add missing arguments.
+
+2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (pk_print_version): Print the poke hand
 	conditionally.
 	(parse_args_2): Do not print the poke hand in the --version

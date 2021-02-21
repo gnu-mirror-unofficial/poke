@@ -440,35 +440,74 @@ The following options are available.
 @itemx --load=@var{file}
 Load the given file as a Poke program.  Any number of @samp{-l}
 options can be specified, and they are loaded in the given order.
+
 @item -L @var{file}
 Load the given file as a Poke program and exit.  The rest of the
 command-line is not processed by poke, and is available to the Poke
 script in the @code{argv} variable.  This is commonly used along with
 a shebang (@pxref{Scripts}) to implement Poke scripts.
+@end table
+
+@noindent
+Commanding poke from the command line:
+
+@table @samp
 @item -c
 @itemx --command=@var{cmd}
 Execute the given command.  Any number of @samp{-c} options can be
 specified, and they are executed in the given order.
+
 @item -s
 @itemx --source=@var{file}
 Load @var{file} as a command file.  Any number of @samp{-s} options may
 be specified, and they are loaded in the given order. @xref{Command
 Files}.
+@end table
+
+@noindent
+Styling text output:
+
+@table @samp
 @item --color=@var{how}
 @cindex styled output
 Whether to use styled output, and how.  Valid options for @var{how}
 are @samp{yes}, @samp{no}, @samp{auto}, @samp{html} and @samp{test}.
+
 @item --style=@var{file}
 Use @var{file} as the CSS to use for styling poke, instead of the
 default style.
+@end table
+
+@noindent
+Machine interface:
+
+@table @code
+@item --mi
+Run poke in MI mode.  In this mode, poke communicates with a client
+using JSON messages in the standard input and output.
+@end table
+
+@noindent
+Other options:
+
+@table @code
 @item -q
 @itemx --no-init-file
 Do not load the @file{~/.pokerc} init file.
 @cindex @file{.pokerc}
+
+@item --no-auto-map
+Do not load map-files automatically when poke opens IO spaces.
+
+@item --no-hserver
+Do not run the terminal hyperlinks server.
+
 @item --quiet
 Be as terse as possible.
+
 @item --help
 Print a help message and exit.
+
 @item --version
 Show version and exit.
 @end table
