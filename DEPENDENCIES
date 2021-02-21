@@ -130,6 +130,7 @@ dependencies):
 * A C runtime, compiler, linker, etc.
   + Mandatory.
     Either the platform's native 'cc', or GCC 3.1 or newer.
+    Note: On Solaris 10, cc is too old; use GCC instead.
   + GCC Homepage:
     https://gcc.gnu.org/
   + Download:
