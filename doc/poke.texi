@@ -156,7 +156,7 @@ Dot-Commands
 * set command::			Querying and setting global options.
 * vm command::			Poke Virtual Machine services.
 * exit command::		Exiting poke :(
-* quit command::		LIkewise.
+* quit command::		Likewise.
 
 Commands
 * dump::			Binary dumps.
