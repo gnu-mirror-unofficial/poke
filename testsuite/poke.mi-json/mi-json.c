@@ -21,10 +21,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dejagnu.h>
 #include <dirent.h>
 #include <err.h>
 #include <json.h>
+
+/* DejaGnu should not use gnulib's vsnprintf replacement here.  */
+#undef vsnprintf
+#include <dejagnu.h>
 
 #include "pk-mi-msg.h"
 #include "pk-mi-json.h"

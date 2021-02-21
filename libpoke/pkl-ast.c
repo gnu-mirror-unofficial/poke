@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include "string-buffer.h"
 #include "xalloc.h"
 
 #include "pvm.h"
@@ -1153,12 +1154,13 @@ pkl_ast_type_is_complete (pkl_ast_node type)
   return complete;
 }
 
-/* Print a textual description of TYPE to the file OUT.  If TYPE is a
+
+/* Append the textual description of TYPE to BUFFER.  If TYPE is a
    named type then its given name is preferred if USE_GIVEN_NAME is
    1.  */
-
-void
-pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
+static void
+pkl_type_append_to (pkl_ast_node type, int use_given_name,
+                    struct string_buffer *buffer)
 {
   assert (PKL_AST_CODE (type) == PKL_AST_TYPE);
 
@@ -1167,8 +1169,7 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
   if (use_given_name
       && PKL_AST_TYPE_NAME (type))
     {
-      fprintf (out, "%s",
-               PKL_AST_IDENTIFIER_POINTER (PKL_AST_TYPE_NAME (type)));
+      sb_append (buffer, PKL_AST_IDENTIFIER_POINTER (PKL_AST_TYPE_NAME (type)));
       return;
     }
 
@@ -1179,26 +1180,26 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
   switch (PKL_AST_TYPE_CODE (type))
     {
     case PKL_TYPE_ANY:
-      fprintf (out, "any");
+      sb_append (buffer, "any");
       break;
     case PKL_TYPE_INTEGRAL:
       if (!PKL_AST_TYPE_I_SIGNED_P (type))
-        fputc ('u', out);
-      fprintf (out, "int<%zd>", PKL_AST_TYPE_I_SIZE (type));
+        sb_append (buffer, "u");
+      sb_appendf (buffer, "int<%zd>", PKL_AST_TYPE_I_SIZE (type));
       break;
     case PKL_TYPE_VOID:
-      fprintf (out, "void");
+      sb_append (buffer, "void");
       break;
     case PKL_TYPE_STRING:
-      fprintf (out, "string");
+      sb_append (buffer, "string");
       break;
     case PKL_TYPE_ARRAY:
       {
         pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (type);
 
-        pkl_print_type (out, PKL_AST_TYPE_A_ETYPE (type),
-                        use_given_name);
-        fputc ('[', out);
+        pkl_type_append_to (PKL_AST_TYPE_A_ETYPE (type), use_given_name,
+                            buffer);
+        sb_append (buffer, "[");
         if (bound != NULL)
           {
             pkl_ast_node bound_type = PKL_AST_TYPE (bound);
@@ -1207,17 +1208,17 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
                 && PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_INTEGRAL
                 && PKL_AST_CODE (bound) == PKL_AST_INTEGER)
               {
-                fprintf (out, "%" PRIu64, PKL_AST_INTEGER_VALUE (bound));
+                sb_appendf (buffer, "%" PRIu64, PKL_AST_INTEGER_VALUE (bound));
               }
           }
-        fputc (']', out);
+        sb_append (buffer, "]");
         break;
       }
     case PKL_TYPE_STRUCT:
       {
         pkl_ast_node t;
 
-        fputs ("struct {", out);
+        sb_append (buffer, "struct {");
 
         for (t = PKL_AST_TYPE_S_ELEMS (type); t;
              t = PKL_AST_CHAIN (t))
@@ -1227,14 +1228,16 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
                 pkl_ast_node ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
                 pkl_ast_node etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
 
-                pkl_print_type (out, etype, use_given_name);
+                pkl_type_append_to (etype, use_given_name, buffer);
                 if (ename)
-                  fprintf (out, " %s",
-                           PKL_AST_IDENTIFIER_POINTER (ename));
-                fputc (';', out);
+                  {
+                    sb_append (buffer, " ");
+                    sb_append (buffer, PKL_AST_IDENTIFIER_POINTER (ename));
+                  }
+                sb_append (buffer, ";");
               }
           }
-        fputs ("}", out);
+        sb_append (buffer, "}");
         break;
       }
     case PKL_TYPE_FUNCTION:
@@ -1243,7 +1246,7 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
 
         if (PKL_AST_TYPE_F_NARG (type) > 0)
           {
-            fputc ('(', out);
+            sb_append (buffer, "(");
 
             for (t = PKL_AST_TYPE_F_ARGS (type); t;
                  t = PKL_AST_CHAIN (t))
@@ -1252,45 +1255,44 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
                   = PKL_AST_FUNC_TYPE_ARG_TYPE (t);
 
                 if (PKL_AST_FUNC_TYPE_ARG_VARARG (t))
-                  fputs ("...", out);
+                  sb_append (buffer, "...");
                 else
                   {
                     if (t != PKL_AST_TYPE_F_ARGS (type))
-                      fputc (',', out);
-                    pkl_print_type (out, atype, use_given_name);
+                      sb_append (buffer, ",");
+                    pkl_type_append_to (atype, use_given_name, buffer);
                     if (PKL_AST_FUNC_TYPE_ARG_OPTIONAL (t))
-                      fputc ('?', out);
+                      sb_append (buffer, "?");
                   }
               }
 
-            fputc (')', out);
+            sb_append (buffer, ")");
           }
 
-        pkl_print_type (out,
-                        PKL_AST_TYPE_F_RTYPE (type),
-                        use_given_name);
-        fputc (':', out);
+        pkl_type_append_to (PKL_AST_TYPE_F_RTYPE (type), use_given_name,
+                            buffer);
+        sb_append (buffer, ":");
         break;
       }
     case PKL_TYPE_OFFSET:
       {
         pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (type);
 
-        fputs ("offset<", out);
-        pkl_print_type (out, PKL_AST_TYPE_O_BASE_TYPE (type),
-                        use_given_name);
-        fputc (',', out);
+        sb_append (buffer, "offset<");
+        pkl_type_append_to (PKL_AST_TYPE_O_BASE_TYPE (type), use_given_name,
+                            buffer);
+        sb_append (buffer, ",");
 
         if (PKL_AST_CODE (unit) == PKL_AST_TYPE)
-          pkl_print_type (out, unit, use_given_name);
+          pkl_type_append_to (unit, use_given_name, buffer);
         else if (PKL_AST_CODE (unit) == PKL_AST_IDENTIFIER)
-          fputs (PKL_AST_IDENTIFIER_POINTER (unit), out);
+          sb_append (buffer, PKL_AST_IDENTIFIER_POINTER (unit));
         else if (PKL_AST_CODE (unit) == PKL_AST_INTEGER)
-          fprintf (out, "%" PRIu64, PKL_AST_INTEGER_VALUE (unit));
+          sb_appendf (buffer, "%" PRIu64, PKL_AST_INTEGER_VALUE (unit));
         else
           assert (0);
 
-        fputc ('>', out);
+        sb_append (buffer, ">");
         break;
       }
     case PKL_TYPE_NOTYPE:
@@ -1300,19 +1302,35 @@ pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
     }
 }
 
-/* Like pkl_print_type, but return the string describing the type in a
-   string.  It is up to the caller to free the string memory.  */
+/* Return a string with a textual description of TYPE.  If TYPE is a
+   named type then its given name is preferred if USE_GIVEN_NAME is
+   1.  It is up to the caller to free the string memory.  */
 
 char *
 pkl_type_str (pkl_ast_node type, int use_given_name)
 {
+  struct string_buffer buffer;
   char *str;
-  size_t str_size;
-  FILE *buffer = open_memstream (&str, &str_size);
 
-  pkl_print_type (buffer, type, use_given_name);
-  fclose (buffer);
+  sb_init (&buffer);
+  pkl_type_append_to (type, use_given_name, &buffer);
+  str = sb_dupfree (&buffer);
+  if (str == NULL)
+    /* The only possible error here is out-of-memory.  */
+    xalloc_die ();
   return str;
+}
+
+/* Print a textual description of TYPE to the file OUT.  If TYPE is a
+   named type then its given name is preferred if USE_GIVEN_NAME is
+   1.  */
+
+void
+pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name)
+{
+  char *str = pkl_type_str (type, use_given_name);
+  fputs (str, out);
+  free (str);
 }
 
 /* Return a boolean telling whether the given type function only have

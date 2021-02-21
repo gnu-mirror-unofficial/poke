@@ -21,10 +21,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dejagnu.h>
 #include <err.h>
 #include "read-file.h"
 #include "libpoke.h"
+
+/* DejaGnu should not use gnulib's vsnprintf replacement here.  */
+#undef vsnprintf
+#include <dejagnu.h>
 
 #include "term-if.h"
 
