@@ -239,18 +239,21 @@ Report bugs in the bug tracker at\n\
 }
 
 void
-pk_print_version (void)
+pk_print_version (int hand_p)
 {
-  pk_term_class ("logo");
-  pk_puts ("     _____\n");
-  pk_puts (" ---'   __\\_______\n");
-  pk_printf ("            ______)  GNU poke %s\n", VERSION);
-  pk_puts ("            __)\n");
-  pk_puts ("           __)\n");
-  pk_puts (" ---._______)\n");
-  pk_term_end_class ("logo");
-  /* xgettext: no-wrap */
-  pk_puts ("\n");
+  if (hand_p)
+    {
+      pk_term_class ("logo");
+      pk_puts ("     _____\n");
+      pk_puts (" ---'   __\\_______\n");
+      pk_printf ("            ______)  GNU poke %s\n", VERSION);
+      pk_puts ("            __)\n");
+      pk_puts ("           __)\n");
+      pk_puts (" ---._______)\n");
+      pk_term_end_class ("logo");
+      /* xgettext: no-wrap */
+      pk_puts ("\n");
+    }
 
   /* It is important to separate the year from the rest of the message,
      as done here, to avoid having to retranslate the message when a new
@@ -404,7 +407,7 @@ parse_args_2 (int argc, char *argv[])
           goto exit_success;
           break;
         case VERSION_ARG:
-          pk_print_version ();
+          pk_print_version (0 /* hand_p */);
           goto exit_success;
           break;
         case QUIET_ARG:

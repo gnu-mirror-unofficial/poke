@@ -1,3 +1,13 @@
+2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/poke.c (pk_print_version): Print the poke hand
+	conditionally.
+	(parse_args_2): Do not print the poke hand in the --version
+	output.
+	* poke/pk-repl.c (banner): DO print the poke hand as part of the
+	poke banner :)
+	* poke/pk-cmd-misc.c (pk_cmd_version): Likewise.
+
 2021-02-21  Indu Bhagat  <indu.bhagat@oracle.com>
 	    Jose E. Marchesi  <jemarch@gnu.org>
 

@@ -55,7 +55,7 @@ static int
 pk_cmd_version (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* version */
-  pk_print_version ();
+  pk_print_version (1 /* hand_p */);
   return 1;
 }
 

@@ -175,7 +175,7 @@ banner (void)
 {
   if (!poke_quiet_p)
     {
-      pk_print_version ();
+      pk_print_version (1 /* hand_p */);
       pk_puts ("\n");
 
 #if HAVE_HSERVER
