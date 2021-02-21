@@ -86,7 +86,8 @@ fun save = (int ios = get_ios,
    output_offset = iosize (file_ios);
 
  /* Copy the stuff.  */
- copy :from_ios ios :to_ios file_ios :from from :size size;
+ copy :from_ios ios :to_ios file_ios :from from :to output_offset
+      :size size;
 
  /* Cleanup.  */
  close (file_ios);
