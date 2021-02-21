@@ -267,6 +267,14 @@ David Faust             <david.faust@oracle.com>
    You can't rely on the maintainer-mode rules there, because of
    certain problem with the sub-package mode of Jitter.
 
+** Building with local changes to gnulib or jitter
+
+   If you have local changes to gnulib or jitter, that are not yet
+   registered as submodule reference commits, the way to invoke
+   bootstrap such that it doesn't delete your changes is:
+
+   : $ ./bootstrap --skip-po --no-git --jitter-srcdir=jitter
+
 ** Gettext
 
    When updating gettext, besides the normal installation on the
