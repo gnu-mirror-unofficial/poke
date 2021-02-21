@@ -48,6 +48,7 @@ extern const struct pk_cmd load_cmd; /* pk-cmd-file.c */
 extern const struct pk_cmd source_cmd; /* pk-cmd-ios.c */
 extern const struct pk_cmd info_cmd; /* pk-cmd-info.c  */
 extern const struct pk_cmd exit_cmd; /* pk-cmd-misc.c  */
+extern const struct pk_cmd quit_cmd; /* pk-cmd-misc.c  */
 extern const struct pk_cmd version_cmd; /* pk-cmd-misc.c */
 extern const struct pk_cmd doc_cmd; /* pk-cmd-misc.c */
 extern const struct pk_cmd jmd_cmd; /* pk-cmd-misc.c */
@@ -64,6 +65,7 @@ static const struct pk_cmd *dot_cmds[] =
     &ios_cmd,
     &file_cmd,
     &exit_cmd,
+    &quit_cmd,
     &version_cmd,
     &doc_cmd,
     &jmd_cmd,

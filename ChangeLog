@@ -1,5 +1,11 @@
 2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-misc.c (quit_cmd): Define.
+	* poke/pk-cmd.c (dot_cmds): Add quit_cmd.
+	* doc/poke.texi (quit command): New section.
+
+2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/hacking.org: Add David Faust to the write after approval
 	list.
 

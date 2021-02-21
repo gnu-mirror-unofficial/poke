@@ -229,6 +229,9 @@ doc_completion_function (const char *x, int state)
 }
 
 
+const struct pk_cmd quit_cmd =
+  {"quit", "?i", "", 0, NULL, pk_cmd_exit, "quit [CODE]", NULL};
+
 const struct pk_cmd exit_cmd =
   {"exit", "?i", "", 0, NULL, pk_cmd_exit, "exit [CODE]", NULL};
 

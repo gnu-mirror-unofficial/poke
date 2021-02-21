@@ -156,6 +156,7 @@ Dot-Commands
 * set command::			Querying and setting global options.
 * vm command::			Poke Virtual Machine services.
 * exit command::		Exiting poke :(
+* quit command::		LIkewise.
 
 Commands
 * dump::			Binary dumps.
@@ -5854,6 +5855,7 @@ non-option arguments.
 * set command::			Querying and setting global options.
 * vm command::			Poke Virtual Machine services.
 * exit command::		Exiting poke :(
+* quit command::                Likewise.
 @end menu
 
 @node load command
@@ -6236,6 +6238,15 @@ The @code{.exit} command exits poke.  The syntax is:
 @noindent
 Poke will terminate, returning the exit status @var{status}.
 If @var{status} is omitted, then the exit status zero will be returned.
+
+@node quit command
+@section @code{.quit}
+@cindex @code{.quit}
+@cindex quitting
+@cindex @code{quit}
+
+The @code{.quit} command behaves exactly like @code{.exit}.
+@xref{exit command}.
 
 @node Commands
 @chapter Commands
