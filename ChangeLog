@@ -1,3 +1,7 @@
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/poke.pk: Do not assume HOME is defined in the environment.
+
 2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-misc.c (quit_cmd): Define.

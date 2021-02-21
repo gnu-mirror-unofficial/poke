@@ -98,7 +98,10 @@ catch if E_inval { map_load_path = "%DATADIR%/maps"; }
    https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html */
 
 try map_load_path = getenv ("XDG_DATA_HOME") + map_load_path;
-catch if E_inval { map_load_path = getenv ("HOME") + "/.local/share/poke:" + map_load_path; }
+catch if E_inval {
+  try map_load_path = getenv ("HOME") + "/.local/share/poke:" + map_load_path;
+  catch if E_inval {}
+}
 
 try map_load_path = getenv ("XDG_DATA_DIRS") + ":" + map_load_path;
 catch if E_inval { }
