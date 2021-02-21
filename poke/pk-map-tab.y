@@ -370,7 +370,6 @@ pk_map_parsed_map
 pk_map_parse_file (const char *filename, FILE *fp)
 {
   int ret;
-  char *stderr;
   struct pk_map_parser map_parser;
 
   map_parser.map = NULL;
