@@ -1,5 +1,9 @@
 2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/std.pk (crc32): Avoid too long lines.
+
+2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Invoking poke): Leave empty lines between
 	argument descriptions, and add missing arguments.
 
