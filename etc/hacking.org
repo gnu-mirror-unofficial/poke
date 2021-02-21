@@ -131,8 +131,14 @@ Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
 ** The source for this HACKING file
 
    This file (HACKING) is an ASCII export of the org-mode file in
-   etc/hacking.org.  In order to regenerate it, open it in Emacs and
-   run the =org-export-dispatch= function.
+   etc/hacking.org.  In order to regenerate it, you have two options:
+
+   - You can open it in Emacs and run the =org-export-dispatch=
+     function.  Replace the current contents of HACKING with the
+     output.
+
+   - You can run `make update-hacking' at the top build directory.
+     This will execute Emacs in batch mode and update HACKING.
 
 ** The Bugzilla
 

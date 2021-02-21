@@ -28,3 +28,12 @@ cyclo-$(PACKAGE).html: $(CYCLO_SRCS)
 			-v cut_dir=${top_srcdir}/ \
 			> $@-tmp
 	mv $@-tmp $@
+
+# Update the HACKING file from the contents of etc/hacking.org.
+# This requires Emacs.
+
+update-hacking:
+	emacs ${srcdir}/etc/hacking.org --batch -f org-ascii-export-to-ascii --kill
+	mv -f ${srcdir}/etc/hacking.txt ${srcdir}/HACKING
+
+.PHONY = update-hacking

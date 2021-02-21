@@ -10,6 +10,8 @@ poke.
 2021-02-21
 * New distributed files INSTALL and DEPENDENCIES.
   INSTALL has been renamed to INSTAL.generic.
+* New make target `update-hacking' to update HACKING from
+  etc/hacking.org.
 
 2020-12-28
 * poke can now be built with profiling support passing the

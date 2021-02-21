@@ -1,3 +1,10 @@
+2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* Makefile.am (update-hacking): New maintenance rule to regenerate
+	HACKING from etc/hacking.org.
+	* HACKING: Update.
+	* DEV-NEWS: Update.
+
 2021-02-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/Makefile.am (.pks.pkc): Fix typo in command.

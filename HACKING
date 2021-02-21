@@ -1,9 +1,9 @@
-                       __________________________
+		       __________________________
 
-                        GNU POKE - HACKING NOTES
+			GNU POKE - HACKING NOTES
 
-                            The poke hackers
-                       __________________________
+			    The poke hackers
+		       __________________________
 
 
 Table of Contents
@@ -28,20 +28,12 @@ _________________
 .. 2. Dejagnu
 .. 3. Flex
 .. 4. Bison
-.. 5. readline
-.. 6. Boehm GC
-.. 7. Jitter
-.. 8. JSON-C
-.. 9. Tcl and Tk
-.. 10. libtextstyle
-.. 11. libnbd
-.. 12. Building
-.. 13. Building after a git pull
-.. 14. Building the GUI
-.. 15. Building a 32-bit poke
-.. 16. Gettext
-.. 17. Running an Uninstalled Poke
-.. 18. Continuous Integration
+.. 5. Jitter
+.. 6. Building
+.. 7. Building after a git pull
+.. 8. Gettext
+.. 9. Running an Uninstalled Poke
+.. 10. Continuous Integration
 4. Coding Style and Conventions
 .. 1. Writing C
 ..... 1. Avoid Tabs
@@ -260,8 +252,13 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   This file (HACKING) is an ASCII export of the org-mode file in
-  etc/hacking.org.  In order to regenerate it, open it in Emacs and run
-  the `org-export-dispatch' function.
+  etc/hacking.org.  In order to regenerate it, you have two options:
+
+  - You can open it in Emacs and run the `org-export-dispatch' function.
+    Replace the current contents of HACKING with the output.
+
+  - You can run `make update-hacking' at the top build directory.  This
+    will execute Emacs in batch mode and update HACKING.
 
 
 2.10 The Bugzilla
@@ -312,6 +309,10 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 3 Development Environment
 =========================
 
+  The packages listed in the file DEPENDENCIES are needed.
+  Additionally:
+
+
 3.1 Autotools
 ~~~~~~~~~~~~~
 
@@ -347,37 +348,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   build poke from git.
 
 
-3.5 readline
-~~~~~~~~~~~~
-
-  Poke uses GNU libreadline in order to provide a nice line editor in
-  the `(poke)' prompt.  Any recent version will suffice.  The package
-  name usually is:
-
-  - On Debian and Debian-based systems: libreadline-dev,
-  - On Red Hat distributions: readline-devel.
-
-
-3.6 Boehm GC
-~~~~~~~~~~~~
-
-  poke uses the Boehm conservative garbage collector for managing the
-  memory of some of its subsystems.  Therefore, you must have it
-  installed.  The package name usually is:
-
-  - On Debian and Debian-based systems: libgc-dev,
-  - On Red Hat distributions: gc-devel.
-
-  Note that if you have the Boehm GC installed in a prefix different
-  from the one that contains pkg-config, you need to set PKL_CONFIG_PATH
-  so that pkg-config finds it:
-
-  ,----
-  | export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_LIBGC}/lib/pkgconfig
-  `----
-
-
-3.7 Jitter
+3.5 Jitter
 ~~~~~~~~~~
 
   In order to build and run poke, you need Luca Saiu's jitter.  Jitter
@@ -393,50 +364,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   installation.
 
 
-3.8 JSON-C
-~~~~~~~~~~
-
-  The poke machine-interface uses a protocol to communicate with
-  clients, which is based on JSON.  poke uses the json-c library to
-  parse and build JSON strings.
-
-  If this library is not found, poke will build without MI support.
-
-
-3.9 Tcl and Tk
-~~~~~~~~~~~~~~
-
-  The poke GUI uses Tcl and Tk, so you need to have the respective
-  development packages installed in your system.  Any recent version
-  will suffice.
-
-
-3.10 libtextstyle
-~~~~~~~~~~~~~~~~~
-
-  GNU poke uses libtextstyle in order to provide styled output.  If the
-  library is not found, then a dummy version of it from gnulib is used
-  instead... that does not do any styling!
-
-  At the moment libtextstyle lives in a subdirectory of GNU gettext.
-  See <https://www.gnu.org/s/gettext> for more information.
-
-
-3.11 libnbd
-~~~~~~~~~~~
-
-  GNU poke optionally uses libnbd to expose an io space for data served
-  by an arbitrary NBD (Network Block Device) server.  Testing this
-  further requires nbdkit to quickly provide an arbitrary NBD server.
-  The package names are:
-
-  - On Red Hat distributions: libnbd-devel, nbdkit-basic-plugins
-
-  See <http://libguestfs.org/libnbd.3.html> for more information.
-
-
-3.12 Building
-~~~~~~~~~~~~~
+3.6 Building
+~~~~~~~~~~~~
 
   After getting the git sources, and installing the tools above, you can
   run:
@@ -446,23 +375,14 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-  Then, you can run `configure'::
+  Then, you can run `configure', as described in the files INSTALL and
+  INSTALL.generic.  For example:
 
   ,----
   | $ mkdir build/ && cd build
   | $ ../configure
   `----
 
-
-  Here, you can give as arguments to 'configure'
-
-  - configure options, as listen in the 'configure --help' output,
-  - Makefile variable assignments for building the binaries, as
-    described in the INSTALL file,
-  - Makefile variable assignments for building the documentation, for
-    example
-    `MAKEINFOFLAGS="--css-ref=http://www.jemarch.net/homepage.css"' to
-    get HTML documentation styled like the "Applied Pokology" blog.
 
   Finally:
 
@@ -472,8 +392,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-3.13 Building after a git pull
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.7 Building after a git pull
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Usually issuing a `make' at the top build directory is enough to
   rebuild poke after changes have been fetched from the source repo.
@@ -494,34 +414,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   problem with the sub-package mode of Jitter.
 
 
-3.14 Building the GUI
-~~~~~~~~~~~~~~~~~~~~~
-
-  The poke GUI is optional and it is built by default, provided the
-  required dependencies are found at configure time.
-
-  To disable building the GUI, pass the `--disable-gui' option at
-  configure time.
-
-
-3.15 Building a 32-bit poke
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  If you are in a 64-bit multilib system with support for building
-  32-bit binaries, you can build a 32-bit poke configuring like this:
-
-  ,----
-  | ../configure --host=i386-unknown-linux-gnu \
-  |    CFLAGS='-O2 -m32'
-  `----
-
-
-  This is of course for `x86_64'.  In your system, replace the triplet
-  with the proper one for your architecture.
-
-
-3.16 Gettext
-~~~~~~~~~~~~
+3.8 Gettext
+~~~~~~~~~~~
 
   When updating gettext, besides the normal installation on the system,
   it is necessary to run gettextize -f in this hierarchy to update the
@@ -530,8 +424,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   for more information.
 
 
-3.17 Running an Uninstalled Poke
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.9 Running an Uninstalled Poke
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Once poke is compiled, you can run it before installing by using the
   `run' script built into the root of your build tree; this takes care
@@ -547,7 +441,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-3.18 Continuous Integration
+3.10 Continuous Integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   The package is built automatically, at regular intervals.  You find
@@ -2221,5 +2115,5 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 
 
   For these commands to work you need to build poke with profiling
-  support.  This is done by passing the `--enable-pvm-profiling'
-  command line option to `configure'.
+  support.  This is done by passing the `--enable-pvm-profiling' command
+  line option to `configure'.
