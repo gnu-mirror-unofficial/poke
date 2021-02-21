@@ -31,8 +31,9 @@ pvm-insns.texi: $(top_srcdir)/libpoke/pvm.jitter $(srcdir)/gen-pvm-insns.sh
 # Look for the macro SPACE_SUBSTITUTE in pk-repl.c to see how this
 # is used.
 nodelist: $(srcdir)/poke.texi
-	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $< | $(SED) -e 's| |/|g' \
-          > nodelist
+	$(SED) -n -e 's/^\* \([^:]*\)::.*/\1/p' $(srcdir)/poke.texi \
+	  | $(SED) -e 's| |/|g' \
+	  > nodelist
 	test -s nodelist || $(RM) nodelist
 
 INFO_DEPS = $(srcdir)/poke.info
