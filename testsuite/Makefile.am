@@ -1711,6 +1711,12 @@ EXTRA_DIST = \
   poke.pkl/sub-integers-3.pk \
   poke.pkl/sub-integers-4.pk \
   poke.pkl/sub-integers-5.pk \
+  poke.pkl/sub-integers-overflow-1.pk \
+  poke.pkl/sub-integers-overflow-2.pk \
+  poke.pkl/sub-integers-overflow-3.pk \
+  poke.pkl/sub-integers-overflow-diag-1.pk \
+  poke.pkl/sub-integers-overflow-diag-2.pk \
+  poke.pkl/sub-integers-overflow-diag-3.pk \
   poke.pkl/sub-int-struct-1.pk \
   poke.pkl/sub-int-struct-2.pk \
   poke.pkl/sub-int-struct-3.pk \

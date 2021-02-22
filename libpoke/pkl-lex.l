@@ -459,9 +459,9 @@ S ::
 
   if (width == 0)
   {
-    if (value >= 0x0000000080000000 && value <= 0x00000000ffffffff)
+    if (value > 0x0000000080000000 && value <= 0x00000000ffffffff)
       width = signed_p ? 64 : 32;
-    else if (value & 0xffffffff80000000)
+    else if (value & 0xffffffff00000000)
       width = 64;
     else
       width = 32;
