@@ -1,5 +1,10 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-promo.c (promote_node): Make sure to set `restart'
+	in any case.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map.c (entry_name_to_varname): Use PRIu64 instead of %lu
 	in printf format string.
 

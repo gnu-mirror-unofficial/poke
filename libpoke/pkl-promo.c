@@ -200,6 +200,8 @@ promote_node (pkl_ast ast,
 {
   pkl_ast_node node_type = PKL_AST_TYPE (*node);
 
+  *restart = 0;
+
   /* Note how we call promote array even if pkl_ast_type_equal_p
      declares that both types are equal.  This is because
      pkl_ast_type_equal_p doesnt' take into account the array
