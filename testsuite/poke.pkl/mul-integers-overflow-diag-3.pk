@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var res
+  = 4 as int<3> * 2 as int<3>; /* { dg-error "overflow" } */

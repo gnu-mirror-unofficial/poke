@@ -298,6 +298,26 @@ late-header-c
       JITTER_PUSH_STACK (PVM_MAKE_##TYPE (a - b, size));                     \
   } while (0)
 
+/* Signed multiplication.
+   The two operands and the result are assumed to be PVM integers, having
+   the same bit size.
+   We check for overflow, raising E_overflow whenever appropriate.  */
+
+# define PVM_MUL_SIGNED(TYPE,CTYPE)                                          \
+  do                                                                         \
+  {                                                                          \
+    CTYPE a = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                    \
+    CTYPE b = PVM_VAL_##TYPE (JITTER_TOP_STACK ());                          \
+    int size = PVM_VAL_##TYPE##_SIZE (JITTER_TOP_STACK ());                  \
+    int64_t a64 = ((int64_t) a << (64 - size));                              \
+    int64_t b64 = ((int64_t) b);                                             \
+                                                                             \
+    if (INT_MULTIPLY_OVERFLOW (a64, b64))                                    \
+      PVM_RAISE_DFL (PVM_E_OVERFLOW);                                        \
+    else                                                                     \
+      JITTER_PUSH_STACK (PVM_MAKE_##TYPE (a * b, size));                     \
+  } while (0)
+
 /* Binary numeric operations.
   ( TYPE TYPE -- TYPE TYPE TYPE ) */
 # define PVM_BINOP(TYPEA,TYPEB,TYPER,OP)                                     \
@@ -2289,7 +2309,7 @@ end
 
 instruction muli ()
   code
-    PVM_BINOP (INT, INT, INT, *);
+    PVM_MUL_SIGNED (INT, int);
   end
 end
 
@@ -2315,7 +2335,7 @@ end
 
 instruction mull ()
   code
-    PVM_BINOP (LONG, LONG, LONG, *);
+    PVM_MUL_SIGNED (LONG, int64_t);
   end
 end
 

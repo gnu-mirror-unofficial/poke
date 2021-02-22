@@ -577,6 +577,11 @@ EMUL_UU (bnoto) { return ~op; }
                   if (INT_SUBTRACT_OVERFLOW (op1_val, op2_val))         \
                     goto overflow;                                      \
                   break;                                                \
+                case PKL_AST_OP_MUL:                                    \
+                  if (INT_MULTIPLY_OVERFLOW (op1_val,                   \
+                                             PKL_AST_INTEGER_VALUE (op2))) \
+                    goto overflow;                                      \
+                  break;                                                \
                 default:                                                \
                   break;                                                \
                 }                                                       \

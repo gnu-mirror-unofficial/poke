@@ -22,19 +22,19 @@ unit b = 1;
 unit N = 4;
 unit B = 8;
 
-unit Kb = 10 ** 3;
-unit KB = 10 ** 3 * 8;
-unit Mb = 10 ** 6;
-unit MB = 10 ** 6 * 8;
-unit Gb = 10 ** 9;
-unit GB = 10 ** 9 * 8;
+unit Kb = 10UL ** 3;
+unit KB = 10UL ** 3 * 8;
+unit Mb = 10UL ** 6;
+unit MB = 10UL ** 6 * 8;
+unit Gb = 10UL ** 9;
+unit GB = 10UL ** 9 * 8;
 
-unit Kib = 2 ** 10;
-unit KiB = 2 ** 10 * 8;
-unit Mib = 2 ** 20;
-unit MiB = 2 ** 20 * 8;
-unit Gib = 2 ** 30;
-unit GiB = 2 ** 30 * 8;
+unit Kib = 2UL ** 10;
+unit KiB = 2UL ** 10 * 8;
+unit Mib = 2UL ** 20;
+unit MiB = 2UL ** 20 * 8;
+unit Gib = 2UL ** 30;
+unit GiB = 2UL ** 30 * 8;
 
 /*** Standard Integral Types.  */
 
@@ -100,7 +100,7 @@ fun stoca = (string s, char[] ca, char fill = 0) void:
 
 fun atoi = (string s, int b = 10) long:
   {
-    var result = 0;
+    var result = 0L;
 
     fun htoi = (char c) int:
       {

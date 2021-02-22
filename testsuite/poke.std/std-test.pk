@@ -36,7 +36,7 @@ var tests = [
 
         assert (atoi ("fce2", 16) == 64738L);
         assert (atoi ("bEeF", 16) == 48879L);
-        assert (atoi ("deadbeef", 16) == -559038737L);
+        assert (atoi ("deadbeef", 16) == 0xdeadbeef);
       },
   },
   PkTest {

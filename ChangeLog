@@ -1,6 +1,23 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-fold.c (OP_BINARY_III): Error while constant folding
+	signed multiplication if the operation would result in overflow.
+	* libpoke/pvm.jitter (PVM_SUB_SIGNED): Define.
+	(muli): Use PVM_SUB_SIGNED.
+	(mull): Likewise.
+	* libpoke/std.pk (atoi): Avoid overflow.
+	* testsuite/poke.std/std-test.pk: Update test.
+	* testsuite/poke.pkl/mul-integers-overflow-diag-1.pk: New test.
+	* testsuite/poke.pkl/mul-integers-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/mul-integers-overflow-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/mul-integers-overflow-1.pk: Likewise.
+	* testsuite/poke.pkl/mul-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/mul-integers-overflow-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-fold.c (OP_BINARY_III): Error while constant folding
 	signed subtraction if the operation would result in overflow.
 	* libpoke/pkl-lex.l: Fix promotion of constants to 64-bit.
 	* libpoke/pvm.jitter (PVM_SUB_SIGNED): Define.
