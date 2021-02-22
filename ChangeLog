@@ -1,4 +1,9 @@
-2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>w
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.jitter (PVM_MUL_SIGNED): Simplify a bit.
+	(PVM_DIV_SIGNED): Likewise.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-fold.c (OP_BINARY_III): Error while constant folding
 	signed division and ceil-division if the operation would result in

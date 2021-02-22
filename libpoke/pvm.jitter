@@ -310,9 +310,8 @@ late-header-c
     CTYPE b = PVM_VAL_##TYPE (JITTER_TOP_STACK ());                          \
     int size = PVM_VAL_##TYPE##_SIZE (JITTER_TOP_STACK ());                  \
     int64_t a64 = ((int64_t) a << (64 - size));                              \
-    int64_t b64 = ((int64_t) b);                                             \
                                                                              \
-    if (INT_MULTIPLY_OVERFLOW (a64, b64))                                    \
+    if (INT_MULTIPLY_OVERFLOW (a64, b))                                      \
       PVM_RAISE_DFL (PVM_E_OVERFLOW);                                        \
     else                                                                     \
       JITTER_PUSH_STACK (PVM_MAKE_##TYPE (a * b, size));                     \
@@ -332,9 +331,8 @@ late-header-c
     CTYPE b = PVM_VAL_##TYPE (JITTER_TOP_STACK ());                          \
     int size = PVM_VAL_##TYPE##_SIZE (JITTER_TOP_STACK ());                  \
     int64_t a64 = ((int64_t) a << (64 - size));                              \
-    int64_t b64 = ((int64_t) b);                                             \
                                                                              \
-    if (INT_DIVIDE_OVERFLOW (a64, b64))                                      \
+    if (INT_DIVIDE_OVERFLOW (a64, b))                                        \
       PVM_RAISE_DFL (PVM_E_OVERFLOW);                                        \
     else                                                                     \
       JITTER_PUSH_STACK (PVM_MAKE_##TYPE (a / b, size));                     \
