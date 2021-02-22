@@ -1,5 +1,11 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (libpoke_modules): Add intprops.
+	(gui_modules): Add alloca.
+	(gnulib_modules): Add host-cpu-c-abi.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt.pk (EC_overflow): Define.
 	(E_overflow): Likewise.
 	* libpoke/pvm.h (PVM_E_OVERFLOW): Define.
