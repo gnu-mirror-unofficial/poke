@@ -10367,6 +10367,9 @@ Generic IO exception.
 Invalid flags were tried while opening an IO device.
 @item E_assert
 Assertion failure exception.  This is raised by @code{assert} statement.
+@item E_overflow
+This exception is raised when signed overflow is detected in an
+arithmetic operation.
 @end table
 
 The exception codes of the standard exceptions are available in the

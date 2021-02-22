@@ -5,6 +5,7 @@
 	* libpoke/pvm.h (PVM_E_OVERFLOW): Define.
 	(PVM_E_OVERFLOW_MSG): Likewise.
 	(PVM_E_OVERFLOW_ESTATUS): Likewise.
+	* doc/poke.texi (Exceptions): Document E_overflow.
 
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
