@@ -146,6 +146,22 @@ dnl following macro is also supposed to work when cross-compiling.
 
 AC_C_BIGENDIAN
 
+dnl The following M4 macro from gnulib sets HOST_CPU_C_ABI_32BIT to
+dnl 'yes' if the C language ABI is a 32-bit one, to 'no' if it is
+dnl 64-bit, or to 'unknown'.
+dnl
+dnl We set POKE_HOST_32BIT accordingly, and warn if the 32bitness of
+dnl the host cannot be determined.
+
+gl_HOST_CPU_C_ABI_32BIT
+case "$HOST_CPU_C_ABI_32BIT" in
+  yes)
+    AC_DEFINE([POKE_HOST_32BIT],[1],[whether the host C ABI is 32-bit]);;
+  unknown)
+    AC_MSG_WARN([unable to determine whether the host C ABI is 32-bit]);;
+  *) ;;
+esac
+
 dnl Use libtextstyle if available.  Otherwise, use the dummy header
 dnl file provided by gnulib's libtextstyle-optional module.
 

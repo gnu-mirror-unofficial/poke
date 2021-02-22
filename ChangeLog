@@ -1,5 +1,15 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Invoke gl_HOST_CPU_C_ABI_32BIT and ac_define the
+	corresponding cpp macro.
+	* libpoke/pkl-asm.c (pkl_asm_insn): Use POKE_HOST_32BIT instead of
+	the undocumented and unportable __WORDSIZE.
+	(pkl_asm_note): Likewise.
+	* libpoke/pvm-program.c (pvm_program_append_push_instruction):
+	Likewise.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (libpoke_modules): Add intprops.
 	(gui_modules): Add alloca.
 	(gnulib_modules): Add host-cpu-c-abi.

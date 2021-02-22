@@ -158,11 +158,7 @@ pvm_program_append_push_instruction (pvm_program program,
   /* Due to some jitter limitations, we have to do some additional
      work.  */
 
-#if __WORDSIZE == 64
-  PVM_ROUTINE_APPEND_INSTRUCTION (routine, push);
-  pvm_routine_append_unsigned_literal_parameter (routine,
-                                                 (jitter_uint) val);
-#else
+#if defined POKE_HOST_32BIT
   /* Use the push-hi and push-lo instructions, to overcome jitter's
      limitation of only accepting a jitter_uint value as a literal
      argument, whose size is 32-bit in 32-bit hosts.  */
@@ -186,6 +182,10 @@ pvm_program_append_push_instruction (pvm_program program,
                                                      ((jitter_uint)
                                                       (val & 0xffffffff)));
     }
+#else
+  PVM_ROUTINE_APPEND_INSTRUCTION (routine, push);
+  pvm_routine_append_unsigned_literal_parameter (routine,
+                                                 (jitter_uint) val);
 #endif
 
   return PVM_OK;
