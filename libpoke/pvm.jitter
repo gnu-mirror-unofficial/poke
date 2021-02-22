@@ -318,6 +318,29 @@ late-header-c
       JITTER_PUSH_STACK (PVM_MAKE_##TYPE (a * b, size));                     \
   } while (0)
 
+/* Signed division.
+   We check for overflow, raising E_overflow whenever appropriate.  */
+
+# define PVM_DIV_SIGNED(TYPE,CTYPE)                                          \
+   if (PVM_VAL_##TYPE (JITTER_TOP_STACK ()) == 0)                            \
+   {                                                                         \
+      PVM_RAISE_DFL (PVM_E_DIV_BY_ZERO);                                     \
+   }                                                                         \
+   else                                                                      \
+   {                                                                         \
+    CTYPE a = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                    \
+    CTYPE b = PVM_VAL_##TYPE (JITTER_TOP_STACK ());                          \
+    int size = PVM_VAL_##TYPE##_SIZE (JITTER_TOP_STACK ());                  \
+    int64_t a64 = ((int64_t) a << (64 - size));                              \
+    int64_t b64 = ((int64_t) b);                                             \
+                                                                             \
+    if (INT_DIVIDE_OVERFLOW (a64, b64))                                      \
+      PVM_RAISE_DFL (PVM_E_OVERFLOW);                                        \
+    else                                                                     \
+      JITTER_PUSH_STACK (PVM_MAKE_##TYPE (a / b, size));                     \
+   }
+
+
 /* Binary numeric operations.
   ( TYPE TYPE -- TYPE TYPE TYPE ) */
 # define PVM_BINOP(TYPEA,TYPEB,TYPER,OP)                                     \
@@ -2363,7 +2386,7 @@ end
 
 instruction divi ()
   code
-    PVM_CHECKED_BINOP (INT, INT, INT, /);
+    PVM_DIV_SIGNED (INT, int);
   end
 end
 
@@ -2392,7 +2415,7 @@ end
 
 instruction divl ()
   code
-    PVM_CHECKED_BINOP (LONG, LONG, LONG, /);
+    PVM_DIV_SIGNED (LONG, int64_t);
   end
 end
 

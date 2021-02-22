@@ -579,7 +579,13 @@ EMUL_UU (bnoto) { return ~op; }
                   break;                                                \
                 case PKL_AST_OP_MUL:                                    \
                   if (INT_MULTIPLY_OVERFLOW (op1_val,                   \
-                                             PKL_AST_INTEGER_VALUE (op2))) \
+                                             (int64_t) PKL_AST_INTEGER_VALUE (op2))) \
+                    goto overflow;                                      \
+                  break;                                                \
+                case PKL_AST_OP_DIV:                                    \
+                case PKL_AST_OP_CEILDIV:                                \
+                  if (INT_DIVIDE_OVERFLOW (op1_val,                     \
+                                           (int64_t) PKL_AST_INTEGER_VALUE (op2))) \
                     goto overflow;                                      \
                   break;                                                \
                 default:                                                \

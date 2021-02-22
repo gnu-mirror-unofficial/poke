@@ -813,6 +813,11 @@ EXTRA_DIST = \
   poke.pkl/cdiv-integers-2.pk \
   poke.pkl/cdiv-integers-3.pk \
   poke.pkl/cdiv-integers-diag-1.pk \
+  poke.pkl/cdiv-integers-overflow-1.pk \
+  poke.pkl/cdiv-integers-overflow-2.pk \
+  poke.pkl/cdiv-integers-overflow-3.pk \
+  poke.pkl/cdiv-integers-overflow-diag-1.pk \
+  poke.pkl/cdiv-integers-overflow-diag-2.pk \
   poke.pkl/cdiv-int-struct-1.pk \
   poke.pkl/cdiv-int-struct-2.pk \
   poke.pkl/cdiv-int-struct-3.pk \
@@ -879,6 +884,11 @@ EXTRA_DIST = \
   poke.pkl/div-integers-2.pk \
   poke.pkl/div-integers-3.pk \
   poke.pkl/div-integers-diag-1.pk \
+  poke.pkl/div-integers-overflow-1.pk \
+  poke.pkl/div-integers-overflow-2.pk \
+  poke.pkl/div-integers-overflow-3.pk \
+  poke.pkl/div-integers-overflow-diag-1.pk \
+  poke.pkl/div-integers-overflow-diag-2.pk \
   poke.pkl/div-int-struct-1.pk \
   poke.pkl/div-int-struct-2.pk \
   poke.pkl/div-int-struct-3.pk \

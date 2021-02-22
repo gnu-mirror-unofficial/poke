@@ -1,4 +1,24 @@
-2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>w
+
+	* libpoke/pkl-fold.c (OP_BINARY_III): Error while constant folding
+	signed division and ceil-division if the operation would result in
+	overflow.
+	* libpoke/pvm.jitter (PVM_DIV_SIGNED): Define.
+	(divi): Use PVM_DIV_SIGNED.
+	(divl): Likewise.
+	* testsuite/poke.pkl/div-integers-overflow-diag-1.pk: New test.
+	* testsuite/poke.pkl/div-integers-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-integers-overflow-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-integers-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/div-integers-overflow-1.pk: Likewise.
+	* testsuite/poke.pkl/div-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/div-integers-overflow-3.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-integers-overflow-1.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/cdiv-integers-overflow-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>w
 
 	* libpoke/pkl-fold.c (OP_BINARY_III): Error while constant folding
 	signed multiplication if the operation would result in overflow.
