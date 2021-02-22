@@ -19,6 +19,7 @@
 #include <config.h>
 
 #include <stdio.h>
+#include <inttypes.h>
 #include <errno.h>
 #include <string.h>
 #include <xalloc.h>
@@ -134,7 +135,7 @@ entry_name_to_varname (const char *name)
 {
   char *varname;
 
-  if (asprintf (&varname, "__map_entry_%lu_%s", next_map_id, name) == -1)
+  if (asprintf (&varname, "__map_entry_%" PRIu64 "_%s", next_map_id, name) == -1)
     pk_fatal (_("out of memory"));
   return varname;
 }

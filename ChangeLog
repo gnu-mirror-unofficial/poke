@@ -1,5 +1,10 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-map.c (entry_name_to_varname): Use PRIu64 instead of %lu
+	in printf format string.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Fix --disable-feature In optional features that
 	use PKG_CHECK_MODULES.
 
