@@ -1,5 +1,13 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt.pk (EC_overflow): Define.
+	(E_overflow): Likewise.
+	* libpoke/pvm.h (PVM_E_OVERFLOW): Define.
+	(PVM_E_OVERFLOW_MSG): Likewise.
+	(PVM_E_OVERFLOW_ESTATUS): Likewise.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (libpoke_modules): Add the free-posix module.
 
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>

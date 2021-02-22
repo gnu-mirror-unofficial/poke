@@ -542,6 +542,10 @@ enum pvm_exit_code
 #define PVM_E_ASSERT_MSG "assertion failure"
 #define PVM_E_ASSERT_ESTATUS 1
 
+#define PVM_E_OVERFLOW     17
+#define PVM_E_OVERFLOW_MSG "overflow"
+#define PVM_E_OVERFLOW_ESTATUS 1
+
 typedef struct pvm *pvm;
 
 /* Initialize a new Poke Virtual Machine and return it.  */
