@@ -1,0 +1,13 @@
+/* { dg-do run } */
+
+/* Unsigned addition does not overflow: it wraps instead.  */
+
+var x = 0xffff_ffff_ffff_ffffLU;
+
+/* { dg-command {  try printf "%v\n", x + 1UL; catch if E_overflow { print "caught\n"; } } } */
+/* { dg-output "0UL" } */
+
+/* For constant folding: */
+
+/* { dg-command {0xffff_ffff_ffff_ffffUL + 1U} } */
+/* { dg-output "\n0UL" } */

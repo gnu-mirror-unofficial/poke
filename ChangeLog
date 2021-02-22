@@ -1,5 +1,22 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-fold.c (OP_BINARY_III): Error on overflow on certain
+	signed arithmetic operations.
+	* libpoke/pvm.jitter (PVM_ADD_SIGNED): Define.
+	(addi): Use PVM_ADD_SIGNED.
+	(addl): Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-1.pk: New test.
+	* testsuite/poke.pkl/add-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-3.pk: Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-4.pk: Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-5.pk: Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/add-integers-overflow-diag-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-promo.c (promote_node): Make sure to set `restart'
 	in any case.
 

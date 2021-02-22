@@ -553,6 +553,14 @@ EXTRA_DIST = \
   poke.pkl/add-integers-2.pk \
   poke.pkl/add-integers-3.pk \
   poke.pkl/add-integers-4.pk \
+  poke.pkl/add-integers-overflow-1.pk \
+  poke.pkl/add-integers-overflow-2.pk \
+  poke.pkl/add-integers-overflow-3.pk \
+  poke.pkl/add-integers-overflow-4.pk \
+  poke.pkl/add-integers-overflow-5.pk \
+  poke.pkl/add-integers-overflow-diag-1.pk \
+  poke.pkl/add-integers-overflow-diag-2.pk \
+  poke.pkl/add-integers-overflow-diag-3.pk \
   poke.pkl/add-int-struct-1.pk \
   poke.pkl/add-int-struct-2.pk \
   poke.pkl/add-int-struct-3.pk \

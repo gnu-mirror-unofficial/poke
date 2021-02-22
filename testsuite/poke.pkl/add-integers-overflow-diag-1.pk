@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var res
+  = 0x7fff_ffff + 1; /* { dg-error "overflow" } */

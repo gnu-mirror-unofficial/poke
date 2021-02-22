@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include "xalloc.h"
+#include "intprops.h"
 
 #include "pk-utils.h"
 
@@ -556,9 +557,29 @@ EMUL_UU (bnoto) { return ~op; }
           assert (PKL_AST_TYPE_I_SIGNED_P (op1)                         \
                   == PKL_AST_TYPE_I_SIGNED_P (op2));                    \
                                                                         \
-          if (PKL_AST_TYPE_I_SIGNED_P (op1))                            \
-            result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op1),          \
-                                  PKL_AST_INTEGER_VALUE (op2));         \
+          if (PKL_AST_TYPE_I_SIGNED_P (op1_type))                       \
+            {                                                           \
+              /* Check for overflow in several signed */                \
+              /* arithmetic operations.  */                             \
+              size_t size = PKL_AST_TYPE_I_SIZE (type);                 \
+              int64_t op1_val = ((int64_t) PKL_AST_INTEGER_VALUE (op1)  \
+                                 << (64 - size));                       \
+              int64_t op2_val = ((int64_t) PKL_AST_INTEGER_VALUE (op2)  \
+                                 << (64 - size));                       \
+                                                                        \
+              switch (PKL_AST_EXP_CODE (PKL_PASS_NODE))                 \
+                {                                                       \
+                case PKL_AST_OP_ADD:                                    \
+                  if (INT_ADD_OVERFLOW (op1_val, op2_val))              \
+                    goto overflow;                                      \
+                  break;                                                \
+                default:                                                \
+                  break;                                                \
+                }                                                       \
+                                                                        \
+              result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op1),        \
+                                    PKL_AST_INTEGER_VALUE (op2));       \
+            }                                                           \
           else                                                          \
             result = emul_u_##OP (PKL_AST_INTEGER_VALUE (op1),          \
                                   PKL_AST_INTEGER_VALUE (op2));         \
@@ -570,6 +591,11 @@ EMUL_UU (bnoto) { return ~op; }
           pkl_ast_node_free (PKL_PASS_NODE);                            \
           PKL_PASS_NODE = new;                                          \
           PKL_PASS_DONE;                                                \
+                                                                        \
+        overflow:                                                       \
+          PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE), "expression overflows"); \
+          PKL_FOLD_PAYLOAD->errors++;                                   \
+          PKL_PASS_ERROR;                                               \
         }                                                               \
     }                                                                   \
   while (0)
