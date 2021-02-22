@@ -1,5 +1,10 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Fix --disable-feature In optional features that
+	use PKG_CHECK_MODULES.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Invoke gl_HOST_CPU_C_ABI_32BIT and ac_define the
 	corresponding cpp macro.
 	* libpoke/pkl-asm.c (pkl_asm_insn): Use POKE_HOST_32BIT instead of

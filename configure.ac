@@ -100,11 +100,15 @@ PKG_CHECK_MODULES(BDW_GC,[bdw-gc],[have_gc=yes],[have_gc=no])
 
 dnl The JSON-C library for the machine-interface
 
-PKG_CHECK_MODULES(JSON_C,[json-c],[have_json_c=yes],[have_json_c=no])
 AC_ARG_ENABLE([mi],
               AS_HELP_STRING([--enable-mi],
                              [Enable the poke Machine-Interface (default is YES)]),
-              [mi_enabled=$enableval], [mi_enabled=$have_json_c])
+              [mi_enabled=$enableval], [mi_enabled=yes])
+
+if test "x$mi_enabled" = "xyes"; then
+  PKG_CHECK_MODULES(JSON_C,[json-c],[],[mi_enabled=no])
+fi
+
 AM_CONDITIONAL([POKE_MI], [test "x$mi_enabled" = "xyes"])
 if test "x$mi_enabled" = "xyes"; then
   AC_DEFINE([POKE_MI], 1,
@@ -127,14 +131,21 @@ if test "x$profiling_enabled" = "xyes"; then
   AC_DEFINE([JITTER_PROFILE_SAMPLE], [1], [use sample-based profiling in the PVM])
 fi
 
-dnl libnbd for nbd:// io spaces (optional). Testing it also requires nbdkit
-PKG_CHECK_MODULES([LIBNBD], [libnbd], [
-  AC_SUBST([LIBNBD_CFLAGS])
-  AC_SUBST([LIBNBD_LIBS])
-  AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
-  libnbd_enabled=yes
-  AC_PATH_PROGS([NBDKIT], [nbdkit], [no], [$PATH:/usr/local/sbin:/usr/sbin])
-], [libnbd_enabled=no NBDKIT=no])
+dnl libnbd for nbd:// io spaces (optional). Testing it also requires
+dnl nbdkit
+
+AC_ARG_ENABLE([libnbd],
+              AS_HELP_STRING([--enable-libnbd],
+                             [Enable building with NBD support (default is YES)]),
+              [libnbd_enabled=$enableval], [libnbd_enabled=yes])
+if test "x$libnbd_enabled" = "xyes"; then
+  PKG_CHECK_MODULES([LIBNBD], [libnbd], [
+    AC_SUBST([LIBNBD_CFLAGS])
+    AC_SUBST([LIBNBD_LIBS])
+    AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
+    AC_PATH_PROGS([NBDKIT], [nbdkit], [no], [$PATH:/usr/local/sbin:/usr/sbin])
+  ], [libnbd_enabled=no NBDKIT=no])
+fi
 AM_CONDITIONAL([NBD], [test "x$libnbd_enabled" = "xyes"])
 
 dnl Used in Makefile.am.  See the note there.
