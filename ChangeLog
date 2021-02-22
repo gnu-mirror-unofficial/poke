@@ -1,5 +1,9 @@
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (libpoke_modules): Add the free-posix module.
+
+2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk: Do not assume HOME is defined in the environment.
 
 2021-02-21  Jose E. Marchesi  <jemarch@gnu.org>
