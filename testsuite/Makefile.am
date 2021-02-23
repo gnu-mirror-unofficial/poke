@@ -1193,6 +1193,10 @@ EXTRA_DIST = \
   poke.pkl/mod-integers-2.pk \
   poke.pkl/mod-integers-3.pk \
   poke.pkl/mod-integers-diag-1.pk \
+  poke.pkl/mod-integers-overflow-1.pk \
+  poke.pkl/mod-integers-overflow-2.pk \
+  poke.pkl/mod-integers-overflow-diag-1.pk \
+  poke.pkl/mod-integers-overflow-diag-2.pk \
   poke.pkl/mod-offsets-1.pk \
   poke.pkl/mod-offsets-2.pk \
   poke.pkl/mod-offsets-3.pk \

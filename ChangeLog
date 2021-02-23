@@ -1,3 +1,16 @@
+2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-fold.c (OP_BINARY_III): Detect overflow constant
+	folding signed remainder.
+	* libpoke/pvm.jitter (PVM_MOD_SIGNED): Define.
+	(modi): Use PVM_MOD_SIGNED.
+	(modl): Likewise.
+	* testsuite/poke.pkl/mod-integers-overflow-diag-1.pk: New test.
+	* testsuite/poke.pkl/mod-integers-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/mod-integers-overflow-1.pk: Likewise.
+	* testsuite/poke.pkl/mod-integers-overflow-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2021-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.jitter (PVM_MUL_SIGNED): Simplify a bit.

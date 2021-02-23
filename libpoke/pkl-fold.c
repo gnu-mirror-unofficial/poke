@@ -588,6 +588,11 @@ EMUL_UU (bnoto) { return ~op; }
                                            (int64_t) PKL_AST_INTEGER_VALUE (op2))) \
                     goto overflow;                                      \
                   break;                                                \
+                case PKL_AST_OP_MOD:                                    \
+                  if (INT_REMAINDER_OVERFLOW (op1_val,                  \
+                                              (int64_t) PKL_AST_INTEGER_VALUE (op2))) \
+                    goto overflow;                                      \
+                  break;                                                \
                 default:                                                \
                   break;                                                \
                 }                                                       \
