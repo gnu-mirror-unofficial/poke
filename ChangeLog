@@ -1,5 +1,11 @@
 2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* AUTHORS: Add Indu.
+	* etc/hacking.org: Add Indu to the write-after-approval list.
+	* HACKING: Regenerate.
+
+2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (PVM_POWOP_SIGNED): Define.
 	(powi): Use PVM_POWOP_SIGNED.
 	(powl): Likewise.

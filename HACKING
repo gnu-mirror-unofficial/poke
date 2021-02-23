@@ -31,9 +31,10 @@ _________________
 .. 5. Jitter
 .. 6. Building
 .. 7. Building after a git pull
-.. 8. Gettext
-.. 9. Running an Uninstalled Poke
-.. 10. Continuous Integration
+.. 8. Building with local changes to gnulib or jitter
+.. 9. Gettext
+.. 10. Running an Uninstalled Poke
+.. 11. Continuous Integration
 4. Coding Style and Conventions
 .. 1. Writing C
 ..... 1. Avoid Tabs
@@ -191,6 +192,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
         Aurélien Aptel		<aaptel@suse.com>
         Mohammad-Reza Nabipoor	<m.nabipoor@yahoo.com>
         David Faust             <david.faust@oracle.com>
+        Indu Bhagat             <indu.bhagat@oracle.com>
 
 
 2.5 Personal Branches
@@ -415,7 +417,19 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   problem with the sub-package mode of Jitter.
 
 
-3.8 Gettext
+3.8 Building with local changes to gnulib or jitter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  If you have local changes to gnulib or jitter, that are not yet
+  registered as submodule reference commits, the way to invoke bootstrap
+  such that it doesn't delete your changes is:
+
+  ,----
+  | $ ./bootstrap --skip-po --no-git --jitter-srcdir=jitter
+  `----
+
+
+3.9 Gettext
 ~~~~~~~~~~~
 
   When updating gettext, besides the normal installation on the system,
@@ -425,8 +439,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   for more information.
 
 
-3.9 Running an Uninstalled Poke
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.10 Running an Uninstalled Poke
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Once poke is compiled, you can run it before installing by using the
   `run' script built into the root of your build tree; this takes care
@@ -442,7 +456,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-3.10 Continuous Integration
+3.11 Continuous Integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   The package is built automatically, at regular intervals.  You find
