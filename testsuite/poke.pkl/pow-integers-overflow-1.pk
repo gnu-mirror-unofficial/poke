@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var x = 2;
+
+/* { dg-command {  try x ** 31; catch if E_overflow { print "caught\n"; } } } */
+/* { dg-output "caught" } */

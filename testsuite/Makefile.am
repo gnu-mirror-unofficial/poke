@@ -1344,6 +1344,8 @@ EXTRA_DIST = \
   poke.pkl/pow-integers-1.pk \
   poke.pkl/pow-integers-2.pk \
   poke.pkl/pow-integers-3.pk \
+  poke.pkl/pow-integers-overflow-1.pk \
+  poke.pkl/pow-integers-overflow-2.pk \
   poke.pkl/pow-offsets-1.pk \
   poke.pkl/pow-offsets-2.pk \
   poke.pkl/pow-offsets-3.pk \

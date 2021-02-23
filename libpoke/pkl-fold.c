@@ -617,6 +617,11 @@ EMUL_UU (bnoto) { return ~op; }
                                               (int64_t) PKL_AST_INTEGER_VALUE (op2))) \
                     goto overflow;                                      \
                   break;                                                \
+                case PKL_AST_OP_POW:                                    \
+                  /* XXX constant-folding this implies to not use */    \
+                  /* ipow, but a version that checks overflow.  */      \
+                  PKL_PASS_DONE;                                        \
+                  break;                                                \
                 default:                                                \
                   break;                                                \
                 }                                                       \
