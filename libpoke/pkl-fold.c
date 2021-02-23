@@ -223,6 +223,25 @@ EMUL_UU (bnoto) { return ~op; }
             PKL_PASS_DONE;                                              \
                                                                         \
           if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
+            {                                                           \
+              /* Check for overflow in several signed */                \
+              /* arithmetic operations.  */                             \
+              size_t size = PKL_AST_TYPE_I_SIZE (type);                 \
+              int64_t op_val = ((int64_t) PKL_AST_INTEGER_VALUE (op)    \
+                                << (64 - size));                        \
+                                                                        \
+              switch (PKL_AST_EXP_CODE (PKL_PASS_NODE))                 \
+                {                                                       \
+                case PKL_AST_OP_NEG:                                    \
+                  if (INT_NEGATE_OVERFLOW (op_val))                     \
+                    goto overflow;                                      \
+                  break;                                                \
+                default:                                                \
+                  break;                                                \
+                }                                                       \
+            }                                                           \
+                                                                        \
+          if (PKL_AST_TYPE_I_SIGNED_P (type))                           \
             result = emul_s_##OP (PKL_AST_INTEGER_VALUE (op));          \
           else                                                          \
             result = emul_u_##OP (PKL_AST_INTEGER_VALUE (op));          \
@@ -234,6 +253,11 @@ EMUL_UU (bnoto) { return ~op; }
           pkl_ast_node_free (PKL_PASS_NODE);                            \
           PKL_PASS_NODE = new;                                          \
           PKL_PASS_DONE;                                                \
+                                                                        \
+        overflow:                                                       \
+          PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE), "expression overflows"); \
+          PKL_FOLD_PAYLOAD->errors++;                                   \
+          PKL_PASS_ERROR;                                               \
         }                                                               \
     }                                                                   \
   while (0)

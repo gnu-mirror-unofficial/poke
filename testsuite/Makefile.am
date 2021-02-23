@@ -1251,6 +1251,10 @@ EXTRA_DIST = \
   poke.pkl/ne-structs-2.pk \
   poke.pkl/ne-structs-diag-1.pk \
   poke.pkl/neg-diag-1.pk \
+  poke.pkl/neg-int-overflow-1.pk \
+  poke.pkl/neg-int-overflow-2.pk \
+  poke.pkl/neg-int-overflow-diag-1.pk \
+  poke.pkl/neg-int-overflow-diag-2.pk \
   poke.pkl/neg-integers-1.pk \
   poke.pkl/neg-integers-2.pk \
   poke.pkl/neg-int-struct-1.pk \
