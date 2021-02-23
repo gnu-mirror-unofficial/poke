@@ -254,6 +254,8 @@ pk_print_version (int hand_p)
       /* xgettext: no-wrap */
       pk_puts ("\n");
     }
+  else
+    pk_printf ("GNU poke %s\n\n", VERSION);
 
   /* It is important to separate the year from the rest of the message,
      as done here, to avoid having to retranslate the message when a new
