@@ -1,5 +1,19 @@
 2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-lex.l: Fix detection of overflow in signed integer
+	literals.
+	* testsuite/poke.pkl/cdiv-integers-overflow-2.pk: Update test.
+	* testsuite/poke.pkl/neg-int-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sub-integers-overflow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sub-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/neg-int-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/mod-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.pkl/div-integers-overflow-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/div-integers-overflow-2.pk: Likewise.
+	* testsuite/poke.libpoke/pk_equal_uint.test: Likewise.
+
+2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke.exp (poke-tmpdir): New procedure.
 	* testsuite/poke.repl/repl.exp: Do not rely on Tcl 8.6.
 

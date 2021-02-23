@@ -467,8 +467,8 @@ S ::
       width = 32;
   }
 
-  /* Handle -0xffff_ffff_ffff_ffff */
-  if (signed_p && value == 0xffffffffffffffff)
+  /* Handle overflow in signed integers. */
+  if (signed_p && value >= 0x8000000000000000)
     return INTEGER_OVERFLOW;
 
   type = pkl_ast_make_integral_type (yyextra->ast, width, signed_p);
