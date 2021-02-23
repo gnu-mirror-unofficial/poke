@@ -30,6 +30,9 @@ values_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                   -DPKGDATADIR=\"$(pkgdatadir)\" \
                   -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
 
+# Old DejaGnu versions need a specific old interpretation of 'inline'.
+values_CFLAGS = -fgnu89-inline
+
 values_LDADD = $(top_builddir)/gl/libgnu.la \
                $(top_builddir)/libpoke/libpoke.la \
                $(LTLIBTEXTSTYLE)
@@ -41,6 +44,9 @@ api_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                   -DTESTDIR=\"$(abs_srcdir)\" \
                   -DPKGDATADIR=\"$(pkgdatadir)\" \
                   -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
+
+# Old DejaGnu versions need a specific old interpretation of 'inline'.
+api_CFLAGS = -fgnu89-inline
 
 api_LDADD = $(top_builddir)/gl/libgnu.la \
                $(top_builddir)/libpoke/libpoke.la \

@@ -34,7 +34,9 @@ mi_json_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                    -DPKGDATADIR=\"$(pkgdatadir)\" \
                    -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
 
-mi_json_CFLAGS = $(JSON_C_CFLAGS)
+# Old DejaGnu versions need a specific old interpretation of 'inline'.
+mi_json_CFLAGS = -fgnu89-inline $(JSON_C_CFLAGS)
+
 mi_json_LDADD = $(JSON_C_LIBS) $(top_builddir)/gl/libgnu.la \
                 $(top_builddir)/libpoke/libpoke.la
 
