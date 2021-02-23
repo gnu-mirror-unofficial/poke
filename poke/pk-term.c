@@ -112,6 +112,8 @@ lookup_color (int red, int green, int blue)
   return entry;
 }
 
+#if defined HAVE_TEXTSTYLE_ACCESSORS_SUPPORT
+
 static struct color_entry *
 lookup_color_code (int code)
 {
@@ -145,6 +147,8 @@ register_color (int code, int red, int green, int blue)
       color_registry = entry;
     }
 }
+
+#endif /* HAVE_TEXTSTYLE_ACCESSORS_SUPPORT */
 
 static void
 dispose_color_registry (void)

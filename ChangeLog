@@ -1,5 +1,11 @@
 2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-term.c (lookup_color_code): Define only #if
+	HAVE_TEXTSTYLE_ACCESSORS_SUPPORT.
+	(register_color): Likewise.
+
+2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-lex.l: Fix detection of overflow in signed integer
 	literals.
 	* testsuite/poke.pkl/cdiv-integers-overflow-2.pk: Update test.
