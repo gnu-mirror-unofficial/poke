@@ -270,3 +270,23 @@ proc verified_host_execute {args} {
     catch close
     return ""
 }
+
+# Return the name of a temporary directory honoring $TMPDIR.  The
+# directory and all content therein will be cleaned up at the end of
+# the testsuite.
+#
+# poke-tmpdir
+
+proc poke-tmpdir { args } {
+    global poke_data_files
+
+    set tmpdir /tmp
+    catch {set tmpdir $::env(TMPDIR)}
+    set subdir [file join $tmpdir poketest.[pid]]
+
+    if {! [file exists $subdir]} {
+        file mkdir $subdir
+        lappend poke_data_files $subdir
+    }
+    return $subdir
+}

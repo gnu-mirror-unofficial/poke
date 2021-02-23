@@ -54,9 +54,11 @@ poke_exit
 set test "tab-completion-subcommand-3"
 poke_start
 for {set index 0}  {$index < 12}  {incr index} {
-    file tempfile file0
-    poke_test_cmd ".file $file0"  {}
-    file delete $file0
+    set fname "[poke-tmpdir]/tab-completion-subcommand-3-f$index"
+    set tmpfile [open $fname w]
+    close $tmpfile
+    poke_test_cmd ".file $fname"  {}
+    file delete $fname
 }
 poke_send ".ios #1\t\t" "#1   #10  #11"
 poke_exit

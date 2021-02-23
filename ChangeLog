@@ -1,5 +1,10 @@
 2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke.exp (poke-tmpdir): New procedure.
+	* testsuite/poke.repl/repl.exp: Do not rely on Tcl 8.6.
+
+2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke-dg.exp (dg-data): Avoid using the unportable
 	printf %q.
 
