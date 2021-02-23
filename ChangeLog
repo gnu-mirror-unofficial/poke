@@ -1,5 +1,10 @@
 2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke-dg.exp (dg-data): Avoid using the unportable
+	printf %q.
+
+2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* AUTHORS: Add Indu.
 	* etc/hacking.org: Add Indu to the write-after-approval list.
 	* HACKING: Regenerate.

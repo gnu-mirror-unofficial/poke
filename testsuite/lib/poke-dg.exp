@@ -125,7 +125,7 @@ proc dg-data { args } {
     # intended to be opened explicitly as part of the test procedure.
     if { [llength $args] < 4 } {
         set poke_commands \
-            "$poke_commands -c [exec printf %q ".file $output_file"]"
+            "$poke_commands -c [exec printf \'%s\' ".file $output_file"]"
     }
 
     if { [lsearch -exact $poke_data_files $output_file] == -1} {
