@@ -797,7 +797,7 @@ exec poke -L "$0" "$@@"
 !#
 
 load elf;
-printf ("%v\n", Elf4_Ehdr @@ 0#B);
+printf ("%v\n", Elf64_Ehdr @@ 0#B);
 @end example
 
 @node Basic Editing
@@ -7788,7 +7788,7 @@ Examples:
 [0,0]
 (poke) int[2](10)
 [10,10]
-(poke) offset<int,#B>[2](16#b)
+(poke) offset<int,B>[2](16#b)
 [2#B,2#B]
 (poke) string[3]()
 ["","",""]
@@ -10310,7 +10310,7 @@ example:
 raise Exception @{ code = 255; msg = "double upset event" @};
 @end example
 
-User-defined exceptions should be resgistered using @code{exception_code}
+User-defined exceptions should be registered using @code{exception_code}
 function.  For example:
 
 @example

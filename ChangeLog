@@ -1,3 +1,7 @@
+2021-02-23  Indu Bhagat  <indu.bhagat@oracle.com>
+
+	* doc/poke.texi: fix minor typos.
+
 2021-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/poke.c (pk_print_version): Print version even with no hand.
