@@ -30,7 +30,8 @@ bin_PROGRAMS = poke-gui
 
 poke_gui_SOURCES = poke-gui.c
 
-poke_gui_CPPFLAGS = -I$(top_builddir)/common -I$(top_srcdir)/gl-gui \
+poke_gui_CPPFLAGS = -I$(top_builddir)/common \
+                    -I$(top_builddir)/gl-gui -I$(top_srcdir)/gl-gui \
                     $(TCL_INCLUDE_SPEC) $(TK_INCLUDE_SPEC) \
                     -DPOKEGUIDIR=\"$(guifilesdir)\" \
                     -DLOCALEDIR=\"$(localedir)\"
