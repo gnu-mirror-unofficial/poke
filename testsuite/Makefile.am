@@ -37,7 +37,7 @@ if HAVE_DEJAGNU
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
                         SHELL="$(SHELL)" \
 			$(RUNTESTFLAGS); \
-		$(RM) $(top_builddir)/inputrc; \
+	  rm -f $(top_builddir)/inputrc; \
 	else \
 	  >&2 echo "ERROR: could not find \`runtest'"; \
 	  exit 1; :;\
