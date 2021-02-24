@@ -147,7 +147,8 @@ ios_dev_stream_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
 {
   struct ios_dev_stream *sio = iod;
   struct ios_buffer *buffer = sio->buffer;
-  size_t read_count, total_read_count = 0;
+  size_t read_count, total_read_count = 0, read_from_buffer_count = 0;
+  int potential_error;
 
   if (sio->flags & IOS_F_WRITE)
     return IOD_ERROR;
@@ -162,31 +163,37 @@ ios_dev_stream_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
 
   /* What was last read into the buffer may be before or after the
      offset that this function is provided with.  */
-  if (ios_buffer_get_end_offset (buffer) == offset)
+  if (ios_buffer_get_end_offset (buffer) > offset)
     {
-      do
-        {
-          read_count = fread (buf + total_read_count, count, 1, sio->file);
-          total_read_count += read_count;
-        }
-      while (total_read_count < count && read_count);
-
-      if (ios_buffer_pwrite (buffer, buf, total_read_count, offset)
-          || total_read_count < count)
-        return IOD_ERROR;
-
-      return IOS_OK;
+      /* Read from the buffer what's already avaılable.  */
+      read_from_buffer_count = ios_buffer_get_end_offset (buffer) - offset;
+      potential_error = ios_buffer_pread (buffer, buf,
+                                          read_from_buffer_count, offset);
+      if (potential_error != IOD_OK)
+        return potential_error;
+      total_read_count = read_count = read_from_buffer_count;
     }
-  else
+
+  /* Read the rest from the stream.  */
+  do
     {
-      size_t to_be_read = (offset + count) - ios_buffer_get_end_offset (buffer);
-      void *temp = malloc (to_be_read);
-      fread (temp, to_be_read, 1, sio->file);
-      if (ios_buffer_pwrite (buffer, temp, to_be_read, ios_buffer_get_end_offset (buffer)))
-        return IOD_ERROR;
-      free (temp);
-      return ios_buffer_pread (buffer, buf, count, offset);
+      read_count = fread (buf + total_read_count,
+                          count - total_read_count,
+                          1,
+                          sio->file);
+      total_read_count += read_count;
     }
+  while (total_read_count < count && read_count);
+
+  /* Write back to the buffer.  */
+  if (ios_buffer_pwrite (buffer,
+                         buf + read_from_buffer_count,
+                         count - read_from_buffer_count,
+                         ios_buffer_get_end_offset (buffer))
+      || total_read_count < count)
+    return IOD_ERROR;
+
+  return IOD_OK;
 }
 
 static int

@@ -1,3 +1,8 @@
+2021-02-24  Egeyar  Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios-dev-stream.c (ios_dev_stream_pread): Change internal
+	implementation.
+
 2021-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/gendocs_template: Use our own gendocs.sh template.
