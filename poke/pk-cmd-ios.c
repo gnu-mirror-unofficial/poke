@@ -135,7 +135,7 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       else
         {
           if (poke_interactive_p && !poke_quiet_p)
-            pk_printf (_("The current file is now `%s'.\n"),
+            pk_printf (_("The current IOS is now `%s'.\n"),
                        pk_ios_handler (pk_ios_cur (poke_compiler)));
         }
     }

@@ -1,4 +1,10 @@
-2021-02-24  Egeyar  Bagcioglu  <egeyar@gmail.com>
+2021-02-24  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* poke/pk-cmd-ios.c (pk_cmd_close): Replace "The current file is now
+	`%s'.\n" with "The current IOS is now `%s'.\n" for correctness and
+	consistency.
+
+2021-02-24  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-stream.c (ios_dev_stream_pread): Change internal
 	implementation.
