@@ -1,3 +1,7 @@
+2021-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Structured Integers): New section.
+
 2021-02-24  Indu Bhagat  <indu.bhagat@oracle.com>
 
 	* utils/pk-elfextractor.in: use get_section_name instead of get_string.
