@@ -1,3 +1,14 @@
+2021-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Maps and Map-files): New chapter.
+	(Editing using Variables): New section.
+	(poke Maps): Likewise.
+	(Loading Maps): Likewise.
+	(Multiple Maps): Likewise.
+	(Auto-map): Likewise.
+	(Constructing Maps): Likewise.
+	(Predefined Maps): Likewise.
+
 2021-02-23  Indu Bhagat  <indu.bhagat@oracle.com>
 
 	* doc/poke.texi: fix minor typos.

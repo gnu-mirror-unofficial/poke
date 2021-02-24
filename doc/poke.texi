@@ -51,6 +51,7 @@ Documentation License''.
 Using poke
 * Basic Editing::		Poking bits, bytes and simple data.
 * Structuring Data::		Poking your own abstractions.
+* Maps and Map-files::          Working with views of data.
 * Writing Pickles::		Sharing your abstractions the sane way.
 
 Pickles
@@ -127,6 +128,15 @@ Structuring Data
 * Functions in Structs::
 * Struct Methods::		Operations provided by built structs.
 * Dealing with Alternatives::   Conditional decoding.
+
+Maps and Map-files
+* Editing using Variables::     Data is usually edited mapping variables.
+* poke Maps::                   Maps and map-files.
+* Loading Maps::                Using maps defined in files.
+* Multiple Maps::               Multiple perspectives of the same data.
+* Auto-map::                    Loading maps automagically.
+* Constructing Maps::           Creating and managing maps on the fly.
+* Predefined Maps::             Collection of already-written maps.
 
 Writing Pickles
 * Pretty-printers::		Conventions for pretty-printed output.
@@ -5132,6 +5142,604 @@ Generally speaking, the best structuring is the one that allows you to
 manipulate the data in terms of the structured abstractions as
 naturally as possible.  That's the art and craft of writing good
 pickles.
+
+@node Maps and Map-files
+@chapter Maps and Map-files
+
+Editing data with GNU poke mainly involves creating mapped values and
+storing them in Poke variables.  However, this may not be that
+convenient when poking several files simultaneously, and when the
+complexity of the data increases.  poke provides a convenient
+mechanism for this: maps and map files.
+
+@menu
+* Editing using Variables::     Data is usually edited mapping variables.
+* poke Maps::                   Maps and map-files.
+* Loading Maps::                Using maps defined in files.
+* Multiple Maps::               Multiple perspectives of the same data.
+* Auto-map::                    Loading maps automagically.
+* Constructing Maps::           Creating and managing maps on the fly.
+* Predefined Maps::             Collection of already-written maps.
+@end menu
+
+@node Editing using Variables
+@section Editing using Variables
+
+Editing data with GNU poke mainly involves creating mapped values and
+storing them in Poke variables.  For example, if we were interested in
+altering the fields of the header in an ELF file, we would map an
+@code{Elf64_Ehdr} struct at the beginning of the underlying IO space
+(the file), like in:
+
+@example
+(poke) .file foo.o
+(poke) load elf
+(poke) var ehdr = Elf64_Ehdr @@ 0#B
+@end example
+
+At this point the variable @code{ehdr} holds an @code{Elf64_Ehdr}
+structure, which is mapped.  As such, altering any of the fields of
+the struct will update the corresponding bytes in @code{foo.o}.  For
+example:
+
+@example
+(poke) ehdr.e_entry = 0#B
+@end example
+
+A Poke value has three mapping related attributes: whether it is
+mapped, the offset at which it is mapped in an IO space, and in which
+IO space.  This information is accessible for both the user and Poke
+programs using the following attributes:
+
+@example
+(poke) ehdr'mapped
+1
+(poke) ehdr'offset
+0UL#b
+(poke) ehdr'ios
+0
+@end example
+
+Thats it, @code{ehdr} is mapped at offset zero byte in the IO space
+@code{#0}, which corresponds to @code{foo.o}:
+
+@example
+(poke) .info ios
+  Id   Type   Mode   Size           Name
+* #0   FILE   rw     0x000004c8#B   ./foo.o
+@end example
+
+Now that we have the ELF header, we may use it to get access to the
+ELF section header table in the file, that we will reference using
+another variable @code{shdr}:
+
+@example
+(poke) var shdr = Elf64_Shdr[ehdr.e_shnum] @@ ehdr.e_shoff
+(poke) shdr[1]
+Elf64_Shdr @{
+  sh_name=0x1bU#B,
+  sh_type=0x1U,
+  sh_flags=#<ALLOC,EXECINSTR>,
+  sh_addr=0x0UL#B,
+  sh_offset=0x40UL#B,
+  sh_size=0xbUL#B,
+  sh_link=0x0U,
+  sh_info=0x0U,
+  sh_addralign=0x1UL,
+  sh_entsize=0x0UL#b
+@}
+@end example
+
+Variables are convenient entities to manipulate in Poke.  Let's
+suppose that the file has a lot of sections and we want to do some
+transformation in every section.  It is a time consuming operation,
+and we may forget which sections we have already processed and which
+not. We could create an empty array to hold the sections already
+processed:
+
+@example
+(poke) var processed = Elf64_Shdr[] ()
+@end example
+
+And then, once we have processed some given section, add it to the
+array:
+
+@example
+... edit shdr[23] ...
+(poke) processed += [shdr[23]]
+@end example
+
+Note how the array =processed= is not mapped, but the sections
+contained in it are mapped: Poke uses copy by shared value.  So, after
+we spend the day carefully poking our ELF file, we can ask poke, are
+we done with all the sections in the file?
+
+@example
+(poke) shdr'length == processed'length
+1
+@end example
+
+Yes, we are.  This can be made as sophisticated as desired.  We could
+easily write a function that saves the contents of @code{processed} in
+files, so we can continue hacking tomorrow, for example.
+
+We can then concluding that using mapped variables to edit data
+structures stored in IO spaces works well in common and simple cases
+like the above: we make our ways mapping here and there, defining
+variables to hold data that interests us, and it is easy to remember
+that the variables @code{ehdr} and @code{shdr} are mapped, where are
+they mapped, and that they are mapped in the file @code{foo.o}.
+
+However, GNU poke allows to edit more than one IO space
+simultaneously.  Let's say we now want to poke the sections of another
+ELF file: @code{bar.o}.  We would start by opening the file:
+
+@example
+(poke) .file bar.o
+(poke) .info ios
+  Id   Type   Mode   Size           Name
+* #1   FILE   rw     0x000004c8#B   ./bar.o
+  #0   FILE   rw     0x000004c8#B   ./foo.o
+@end example
+
+Now that @code{bar.o} is the current IO space, we can map its header.
+But now, what variable to use?  We would rather not redefine
+@code{ehdr}, because that is already holding the header of
+@code{foo.o}.  We could adapt our naming schema on the fly:
+
+@example
+(poke) var foo_ehdr = ehdr
+(poke) var bar_ehdr = Elf64_Ehdr @@ 0#B
+@end example
+
+But then we would need to do the same for the other variables too:
+
+@example
+(poke) var foo_shdr = shdr
+(poke) var bar_shdr = Elf64_Shdr[bar_ehdr.e_shnum] @@ bar_ehdr.e_shoff
+@end example
+
+However, we can easily see how this can degenerate quickly: what about
+@code{processed}, for example?  In general, as the number of IO spaces
+being edited increases it becomes more and more difficult to manage
+our mapped variables, which are associated to each IO space.
+
+@node poke Maps
+@section poke Maps
+
+As we have seen mapping variables is a very powerful, general and
+flexible mean to edit stored binary data in one or more IO spaces.
+However it is easy to lose track of where the variables are mapped
+and, ideally speaking, we would want to have a mean to refer to, say,
+the ``ELF header'', and get the header as a mapped value regardless of
+what specific file we are editing.  Sort of a ``meta variable''.  GNU
+poke provides a way to do this: @dfn{maps}.
+
+A @dfn{map} can be conceived as a sort of ``view'' that can be applied
+to a given IO space.  Maps have entries, which are values mapped at
+some given offset, under certain conditions.  For example, we have
+seen an ELF file contains, among other things, a header at the
+beginning of the file and a table of section headers of certain size
+and located at certain location determined by the header.  These would
+be two entries of a so-called ELF map.
+
+poke maps are defined in @dfn{map files}.  These files use the
+@code{.map} extension.  A map file @code{self.map} (for
+sectioned/simple elf) defining the view of an ELF file as a header and
+a table of section header would look like this:
+
+@example
+/* self.map - map file for a simplified view of an ELF file.  */
+
+load elf;
+
+%%
+
+%entry
+%name ehdr
+%type Elf64_Ehdr
+%offset 0#B
+
+%entry
+%name shdr
+%type Elf64_Shdr[(Elf64_Ehdr @@ 0#B).e_shnum]
+%condition (Elf64_Ehdr @@ 0#B).e_shnum > 0
+%offset (Elf64_Ehdr @@ 0#B).e_shoff
+@end example
+
+This map file defines a view of an ELF file as a header entry
+@code{ehdr} and an entry with a table of section headers @code{shdr}.
+
+The first section of the file, which spans until the separator line
+containing @code{%%}, is arbitrary Poke code which as we shall see,
+gets evaluated before the map entries are processed.  This is called
+the map "prologue".  In this case, the prologue contains a comment
+explaining the purpose of the file, and a single statement @code{load}
+that loads the @code{elf.pk} pickle, since the entries below use
+definitions like @code{Elf64_Ehdr} that are defined by that pickle.
+The prologue is useful to define Poke functions and other entities
+that are then used in the definitions of the entries.
+
+A separator line containing only @code{%%} separates the prologue from
+the next section, which is a list of entries definitions.  Each entry
+definition starts with a line @code{%entry}, and has the following
+attributes:
+
+@table @code
+@item %name
+Like @code{ehdr} and @code{shdr}.  These names should follow the same
+rules than Poke variables, but as we shall see later, map entries are
+not Poke variables.  This attribute is mandatory.
+
+@item %type
+This can be any Poke expression denoting a type, like @code{int},
+@code{Elf64_Ehdr} or @code{Elf64_Shdr[(Elf64_Ehdr @@ 0#B).e_shnum]}.
+This attribute is mandatory.
+
+@item %condition
+If specified, will determine whether to include the entry in the map.
+In the example above, the map will have an entry @code{shdr} only if the
+ELF file has one or more sections.  Any Poke expression evaluating to
+a boolean can be used as conditions.  This attribute is optional:
+entries not having a condition will always be included in the map.
+
+@item %offset
+
+Offset in the IO space where the entry will be mapped.  Any Poke
+expression evaluating to an offset can be used as entry offset.  This
+attribute is mandatory.
+@end table
+
+@node Loading Maps
+@section Loading Maps
+
+So we have written our =self.map=, which denotes a view or structure
+of ELF files we are interested on, and that resides in the current
+working directory.  How to use it?
+
+The first step is to fire up poke and open some object file.  Let's
+start with @code{foo.o}:
+
+@example
+(poke) .file foo.o
+@end example
+
+@noindent
+Now, we can load the map using the @code{.map load} dot-command:
+
+@example
+(poke) .map load self
+[self](poke)
+@end example
+
+The @code{.map load self} command makes poke to look in certain
+directories for a file called @code{self.map}, and to load it.  The
+list of directories where poke looks for map files is encoded in the
+variable @code{map_load_path} as a string containing a maybe empty
+list of directories separated by @code{:} characters.  Each directory
+is tried in turn.  This variable is initialized with suitable
+defaults:
+
+@example
+(poke) map_load_path
+"/home/jemarch/.poke.d:.:/home/jemarch/.local/share/poke:[...]"
+@end example
+
+Once a map is loaded, observe how the prompt changed to contain a
+prefix @code{[self]}.  This means that the map @code{self} is loaded
+for the current IO space.  You can choose to not see this information
+in the prompt by setting the @code{prompt-maps} option either at the
+prompt or in your @file{.pokerc}:
+
+@example
+poke) .set prompt-maps no
+@end example
+
+By default @code{prompt-maps} is @code{yes}.  This prompt aid is
+intended to provide a cursory look of the "views" or maps loaded for
+the current IO space.  If we load another IO space and switch to it,
+the prompt changes accordingly:
+
+@example
+(poke) [self](poke) .mem foo
+The current IOS is now `*foo*'.
+(poke) .ios #0
+The current IOS is now `./foo.o'.
+[self](poke)
+@end example
+
+At any time the @code{.info maps} dot-command can be used to obtain a
+full list of loaded maps, with more information about them:
+
+@example
+(poke) .info maps
+IOS   Name   Source
+#0    self   ./self.map
+@end example
+
+In this case, there is a map @code{self} loaded in the IO space
+@code{#0}, which corresponds to @code{foo.o}.
+
+Once we make @code{foo.o} our current IO space, we can ask poke to
+show us the entries corresponding to this map using another
+dot-command:
+
+@example
+    : (poke) .map show self
+    : Offset     Entry
+    : 0x0UL#B    $self::ehdr
+    : 0x208UL#B  $self::shdr
+@end example
+
+This tells us there are two entries for @code{self} in @code{foo.o}:
+@code{$self::ehdr} and @code{$self::shdr=} Note how map entries use
+names that start with the @code{$} character, then contain the name of
+the map an the name of the entry we defined in the map file, separated
+by @code{::}.
+
+We can now use these entries at the prompt like if they were regular
+mapped variables:
+
+@example
+[self](poke) $self::ehdr
+Elf64_Ehdr @{
+  e_ident=struct @{
+    ei_mag=[0x7fUB,0x45UB,0x4cUB,0x46UB],
+    [...]
+  @},
+ e_type=0x1UH,
+ e_machine=0x3eUH,
+ [...]
+@}
+(poke) $self::shdr'length
+11UL
+@end example
+
+It is important to note, however, that map entries like
+@code{$foo::bar} are @emph{not} part of the Poke language, and are
+only available when using poke interactively.  Poke programs and
+scripts can't use them.
+
+Let's now open another ELF file, and the =self= map in it:
+
+@example
+(poke) .file /usr/local/lib/libpoke.so.0.0.0
+(poke) .map load self
+[self](poke)
+@end example
+
+So now we have two ELF files loaded in poke: @code{foo.o} and
+@code{libpoke.so.0.0.0}, and in both IO spaces we have the @code{self}
+map loaded.  We can easily see that the map entries are different
+depending on the current IO space:
+
+@example
+[self](poke) .map show self
+Offset       Entry
+0UL#B        $self::ehdr
+3158952UL#B  $self::shdr
+[self](poke) .ios #0
+The current IOS is now `./foo.o'.
+[self](poke) .map show self
+Offset   Entry
+0UL#B    $self::ehdr
+520UL#B  $self::shdr
+@end example
+
+@noindent
+@code{foo.o} is an object file, whereas @code{libpoke.so.0.0.0} is a
+DSO:
+
+@example
+(poke) .ios #0
+The current IOS is now `./foo.o'.
+[self](poke) $self::ehdr.e_type
+1UH
+[self](poke) .ios #2
+The current IOS is now `/usr/local/lib/libpoke.so.0.0.0'.
+[self](poke) $self::ehdr.e_type
+3UH
+@end example
+
+The interpretation of the map entry @code{$self::ehdr} is different
+depending on the current IO space.  This makes it possible to refer to
+the ``ELF header'' of the current file.
+
+Underneath, poke implements this by defining mapped variables and
+``redirecting'' the entry names @code{$foo::bar} to the right variable
+depending on the IO space that is currently selected.  It hides all
+that complexity from us.
+
+@node Multiple Maps
+@section Multiple Maps
+
+It is perfectly possible (and useful!) to load more than one map in
+the same IO space.  It is very natural for a single file, for example,
+to contain data that can be interpreted in several ways, or of
+different nature.
+
+Let's for example open again an ELF file, this time compiled with
+@code{-g}:
+
+@example
+(poke) .file foo.o
+@end example
+
+We now load our @code{self} map, to get a view of the file as a collection
+of sections:
+
+@example
+(poke) .map load self
+[self](poke)
+@end example
+
+And now we load the @code{dwarf} map that comes with poke, to get a
+view of the file as having debugging information encoded in DWARF:
+
+@example
+[self(poke) .map load dwarf
+[dwarf,self](poke)
+@end example
+
+See how the prompt now reflects the fact that the current IO space
+contains DWARF info!  Let's take a look:
+
+@example
+[dwarf,self](poke) .info maps
+IOS   Name    Source
+#0    dwarf   /home/jemarch/gnu/hacks/poke/maps/dwarf.map
+#0    self    ./self.map
+[dwarf,self](poke) .map show dwarf
+Offset    Entry
+0x5bUL#B  $dwarf::info
+@end example
+
+Now we can access entries from any of the loaded maps, @i{i.e.} access
+the file in terms of different perspectives.  As an ELF file:
+
+@example
+[dwarf,self](poke) $self::shdr[1]
+Elf64_Shdr @{
+  sh_name=0xb5U#B,
+  sh_type=0x11U,
+  sh_flags=#<>,
+  sh_addr=0x0UL#B,
+  sh_offset=0x40UL#B,
+  sh_size=0x8UL#B,
+  sh_link=0x18U,
+  sh_info=0xfU,
+  sh_addralign=0x4UL,
+  sh_entsize=0x4UL#b
+@}
+@end example
+
+@noindent
+And as a file containing DWARF info:
+
+@example
+[dwarf,self](poke) $dwarf::info
+Dwarf_CU_Header @{
+  unit_length=#<0x0000004eU#B>,
+  version=0x4UH,
+  debug_abbrev_offset=#<0x00000000U#B>,
+  address_size=0x8UB#B
+@}
+@end example
+
+If you are curious about how the DWARF entries are defined, look at
+@code{maps/dwarf.map} in the poke source distribution, or in your
+installed poke (@code{.info maps} will tell you the file the map got
+loaded from.)
+
+It is possible to unload or remove a map from a given IO space using
+the @code{.map remove} dot-command.  Say we are done looking at the
+DWARF in @file{foo.o}, and we are no longer interested in it as a file
+containing debugging info.  We can do:
+
+@example
+[dwarf,self](poke) .map remove dwarf
+[self](poke)
+@end example
+
+Note how the prompt was updated accordingly: only @code{self} remains
+as a loaded map on this file.
+
+@node Auto-map
+@section Auto-map
+
+Certain maps make sense when editing certain types of data.  For
+example, @file{dwarf.map} is intended to be used in ELF files.  In
+order to ease using maps, poke provides a feature called @dfn{auto
+mapping}, which is disabled by default.
+
+@noindent
+You can set auto mapping like this:
+
+@example
+(poke) .set auto-map yes
+@end example
+
+When auto mapping is enabled, poke will look to the value of the
+pre-defined variable @code{auto_map}, which must contain an array of
+pairs of strings, associating a regular expression with a map name.
+
+For example, you may want to initialize @code{auto_map} like this in
+your @file{.pokerc} file:
+
+@example
+auto_map = [[".*\\.mp3$", "mp3"],
+            [".*\\.o$", "elf"],
+            ["a\\.out$", "elf"]];
+@end example
+
+This will make poke to load =mp3.map= for every file whose name ends
+with @file{.mp3}, and @file{elf.map} for files having names like
+@file{foo.o} and @file{a.out}.
+
+Following the usual pokeish philosophy of being as less as intrusive
+by default as possible, the default value of @code{auto_map} is the
+empty string.
+
+@node Constructing Maps
+@section Constructing Maps
+
+As we have seen, we can define our own maps using map files like
+@file{self.map}, which contain a prologue and a set of map entries.
+However, sometimes it is useful to create maps ``on the fly'' while we
+explore some data with poke.
+
+To make this possible, poke provides a suitable set of dot-commands.
+Let's say we are poking some data, and we want to create a map for it.
+We can do that like this:
+
+@example
+(poke) .map create mymap
+@end example
+
+@noindent
+This creates an empty map named @code{mymap}, with no entries:
+
+@example
+[mymap](poke) .map show mymap
+Offset   Entry
+@end example
+
+Adding entries is easy.  First, we have to map some variable, and then
+use it as the base for the new entry:
+
+@example
+[mymap](poke) var foo = int[3] @ 0#B
+[mymap](poke) .map entry add mymap, foo
+[mymap](poke) .map show mymap
+Offset   Entry
+0x0UL#B  $mymap::foo
+@end example
+
+Note how the entry @code{$mymap::foo} gets created, associated to the
+current IO space and mapped at the same offset than the variable
+@code{foo}.
+
+We can remove entries from existing maps using the @code{.map entry
+remove} dot-command:
+
+@example
+[mymap](poke) .map entry remove mymap, foo
+[mymap](poke) .map show mymap
+Offset   Entry
+[mymap](poke)
+@end example
+
+We plan to add an additional command to save maps to map files.  The
+idea is that you can create your maps on the fly, save them, and then
+load them back some other day when you are ready to continue poking.
+This is not implemented yet though.
+
+@node Predefined Maps
+@section Predefined Maps
+
+GNU poke comes with a set of useful pre-written maps, which get
+installed in a system location.  We want to expand this collection, so
+please send us your map files!
 
 @node Writing Pickles
 @chapter Writing Pickles
