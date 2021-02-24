@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dirname.h"
+#include "basename-lgpl.h"
 
 #include "pkt.h"
 #include "pk-utils.h"

@@ -20,7 +20,7 @@
 #include <string.h>
 
 #include "xalloc.h"
-#include "dirname.h"
+#include "basename-lgpl.h"
 
 #include "poke.h"
 #include "pk-cmd.h"
@@ -43,7 +43,7 @@ print_var_decl (int kind,
 
   if (source)
     asprintf (&source_str, "%s:%d",
-              base_name (source), first_line);
+              last_component (source), first_line);
   else
     source_str = xstrdup ("<stdin>");
 
@@ -70,7 +70,7 @@ print_fun_decl (int kind,
 
   if (source)
     asprintf (&source_str, "%s:%d",
-              basename (source), first_line);
+              last_component (source), first_line);
   else
     source_str = xstrdup ("<stdin>");
 
@@ -96,7 +96,7 @@ print_type_decl (int kind,
 
   if (source)
     asprintf (&source_str, "%s:%d",
-              basename (source), first_line);
+              last_component (source), first_line);
   else
     source_str = xstrdup ("<stdin>");
 

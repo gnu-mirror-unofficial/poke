@@ -24,7 +24,7 @@
 #include <string.h>
 #include <xalloc.h>
 #include <assert.h>
-#include "dirname.h"
+#include "basename-lgpl.h"
 
 #include "poke.h"
 #include "pk-utils.h"
