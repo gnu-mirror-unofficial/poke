@@ -53,6 +53,7 @@ Using poke
 * Structuring Data::		Poking your own abstractions.
 * Maps and Map-files::          Working with views of data.
 * Writing Pickles::		Sharing your abstractions the sane way.
+* Configuration::		Tailoring the tool to your needs.
 
 Pickles
 * Time::			Handling time.
@@ -64,14 +65,13 @@ Pickles
 Reference Material
 * Dot-Commands::                Commanding the tool.
 * Commands::			Commands for editing data.
-* Configuration::		Tailoring the tool to your needs.
 * The Poke Language::		Poke reference manual.
 * The Standard Library::	Standard goodies for Poke programs.
 
 * The Machine-Interface::	Communicating your program with poke.
 
 Internals
-* Hacking Poke::		Extending poke.
+@c * Hacking Poke::		Extending poke.
 * The Poke Virtual Machine::	The PVM and its mysteries.
 
 Appendices
@@ -143,6 +143,11 @@ Writing Pickles
 * Pretty-printers::		Conventions for pretty-printed output.
 * Setters and Getters::		Anatomy getters and setters.
 
+Configuration
+* pokerc::			User's initialization file.
+* Load Path::			Determining location of modules.
+* Styling::			Changing the appearance of poke's output.
+
 Time
 * POSIX Time::			Encoding POSIX dates.
 
@@ -175,11 +180,6 @@ Commands
 * save::			Save data into a file.
 * extract::			Extract contents of values to buffers.
 * scrabble::			Scrabble memory chunks based on patterns.
-
-Configuration
-* pokerc::			User's initialization file.
-* Load Path::			Determining location of modules.
-* Styling::			Changing the appearance of poke's output.
 
 The Poke Language
 * Integers::			Whole numbers.
@@ -216,8 +216,8 @@ The Standard Library
 * Dates and Times::             Processing and displaying dates and times.
 * Offset Functions::            Useful functions that operate on offsets.
 
-Hacking poke
-* Writing Commands::		Extending poke with new commands.
+@c Hacking poke
+@c * Writing Commands::		Extending poke with new commands.
 
 The Machine-Interface
 * MI overview::			Description of the MI.
@@ -1758,22 +1758,14 @@ negative number depends on the specific interpretation.
 In computing there are two main ways to interpret the values of a
 group of bytes as a negative number: @dfn{one's complement} and
 @dfn{two's complement}.
-@c XXX: expand.
 
-GNU poke supports both interpretations, and the interpretation that is
-used depends on the global setting that can be changed using the
-@command{.set nenc} dot-command.  The possible values are @code{2c}
-for two's complement and @code{1c} for one's complement.
+At the moment GNU poke supports the two complement interpretation,
+which is really ubiquitous and is the negative encoding used by the
+vast majority of modern computers and operating systems.
 
-@example
-(poke) .set nenc
-2c
-(poke) .set nenc 1c
-@end example
-
-@noindent
-The default is two's complement, which is the negative encoding used
-in the vast majority of modern computers and operating systems.
+We may consider adding support for one's complement in the future, but
+only if there are real needs that would justify the effort (which
+wouldn't be a small one ;)).
 
 @subsection Signed Integers
 
@@ -6227,6 +6219,87 @@ criteria of the pickle writer.  For the tag above, I would say the
 preferred representations for the title, artist, album and year are
 string for title, artist and album, and an integer for the year.
 
+@node Configuration
+@chapter Configuration
+
+@menu
+* pokerc::			User's initialization file.
+* Load Path::			Determining location of modules.
+* Styling::			Changing the appearance of poke's output.
+@end menu
+
+@node pokerc
+@section @file{.pokerc}
+@cindex @file{.pokerc}
+
+Upon invocation poke will read and execute the commands of an
+initialization file, if it exists: the @file{pokerc} file.  There are
+two ways to keep an initialization file.
+
+The simple, traditional way is to have a file named @file{.pokerc} in
+your home directory.  GNU poke will look for a file like that first.
+
+If @file{.pokerc} is not found your home directory, poke looks in the
+locations specified by the @dfn{XDG Base Directory
+Specification}@footnote{https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html}
+for a file named @file{poke/pokerc.conf}.  For example, you could use
+@file{~/.config/poke/pokerc.conf}.
+
+Which way is better depends on your specific requirements and taste.
+
+GNU poke can be insturcted to not read the initialization file by
+passing @code{-q} or @code{--no-init-file} in the command line.
+
+Example of initialization file:
+
+@example
+# My poke configuration.
+.set endian host
+.set obase 16
+.set pretty-print yes
+pk_dump_cluster_by = 4
+.load ~/.poke.d/mypickles.pk
+@end example
+
+@node Load Path
+@section Load Path
+@cindex load path
+
+The @code{load_path} Poke variable contains a list of directories
+separated by the colon character (@code{:}).  When a module is loaded
+using the @code{load} construction, these directories are searched in
+sequential order for the file corresponding to the requested module.
+
+Empty directory names and entries that do not name existing
+directories are ignored.
+
+Some entries have special meanings:
+
+@table @code
+@item %DATADIR%
+This is interpreted as the system-wide datadir directory, that depends
+on the prefix where poke is installed.
+@end table
+
+For example, say you want to maintain @file{.pk} files in your
+@file{~/.poke.d} directory.  You will probably want to add that
+directory to the @code{load_path}, when poke initializes.  A way to do
+that is to add a command like this to your @file{pokerc} file:
+
+@example
+load_path = getenv ("HOME") + "/.poke.d:" + load_path
+@end example
+
+If the environment variable @code{POKE_LOAD_PATH} is defined in the
+environment, its value is added to @code{load_path} at poke startup
+time.
+
+@node Styling
+@section Styling
+@cindex styled output
+
+XXX
+
 @node Time
 @chapter Time
 
@@ -7300,87 +7373,6 @@ The IO space to where write the scrabbled data.  Defaults to
 @end table
 
 @c XXX add usage examples for scrabble.
-
-@node Configuration
-@chapter Configuration
-
-@menu
-* pokerc::			User's initialization file.
-* Load Path::			Determining location of modules.
-* Styling::			Changing the appearance of poke's output.
-@end menu
-
-@node pokerc
-@section @file{.pokerc}
-@cindex @file{.pokerc}
-
-Upon invocation poke will read and execute the commands of an
-initialization file, if it exists: the @file{pokerc} file.  There are
-two ways to keep an initialization file.
-
-The simple, traditional way is to have a file named @file{.pokerc} in
-your home directory.  GNU poke will look for a file like that first.
-
-If @file{.pokerc} is not found your home directory, poke looks in the
-locations specified by the @dfn{XDG Base Directory
-Specification}@footnote{https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html}
-for a file named @file{poke/pokerc.conf}.  For example, you could use
-@file{~/.config/poke/pokerc.conf}.
-
-Which way is better depends on your specific requirements and taste.
-
-GNU poke can be insturcted to not read the initialization file by
-passing @code{-q} or @code{--no-init-file} in the command line.
-
-Example of initialization file:
-
-@example
-# My poke configuration.
-.set endian host
-.set obase 16
-.set pretty-print yes
-pk_dump_cluster_by = 4
-.load ~/.poke.d/mypickles.pk
-@end example
-
-@node Load Path
-@section Load Path
-@cindex load path
-
-The @code{load_path} Poke variable contains a list of directories
-separated by the colon character (@code{:}).  When a module is loaded
-using the @code{load} construction, these directories are searched in
-sequential order for the file corresponding to the requested module.
-
-Empty directory names and entries that do not name existing
-directories are ignored.
-
-Some entries have special meanings:
-
-@table @code
-@item %DATADIR%
-This is interpreted as the system-wide datadir directory, that depends
-on the prefix where poke is installed.
-@end table
-
-For example, say you want to maintain @file{.pk} files in your
-@file{~/.poke.d} directory.  You will probably want to add that
-directory to the @code{load_path}, when poke initializes.  A way to do
-that is to add a command like this to your @file{pokerc} file:
-
-@example
-load_path = getenv ("HOME") + "/.poke.d:" + load_path
-@end example
-
-If the environment variable @code{POKE_LOAD_PATH} is defined in the
-environment, its value is added to @code{load_path} at poke startup
-time.
-
-@node Styling
-@section Styling
-@cindex styled output
-
-XXX
 
 @node The Poke Language
 @chapter The Poke Language
@@ -11541,6 +11533,10 @@ especially useful to debug the code generated by the compiler.
 @node The Standard Library
 @chapter The Standard Library
 
+GNU poke ships with a standard library for Poke programs that is
+available to Poke programs.  The following sections detail the
+facilities provided by the library.
+
 @menu
 * Standard Integral Types::	int, long and the like.
 * Standard Offset Types::	off64 and the like.
@@ -12154,17 +12150,17 @@ instance.  This is intended to be used for the client to show to the
 users.
 @end table
 
-@node Hacking Poke
-@chapter Hacking Poke
+@c @node Hacking Poke
+@c @chapter Hacking Poke
 
-@menu
-* Writing Commands::		Extending poke with new commands.
-@end menu
+@c @menu
+@c * Writing Commands::		Extending poke with new commands.
+@c @end menu
 
-@node Writing Commands
-@section Writing Commands
+@c @node Writing Commands
+@c @section Writing Commands
 
-XXX
+@c XXX
 
 @node The Poke Virtual Machine
 @chapter The Poke Virtual Machine
