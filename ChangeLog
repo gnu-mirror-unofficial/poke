@@ -1,5 +1,9 @@
 2021-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/gendocs_template: Use our own gendocs.sh template.
+
+2021-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Structured Integers): New section.
 
 2021-02-24  Indu Bhagat  <indu.bhagat@oracle.com>
