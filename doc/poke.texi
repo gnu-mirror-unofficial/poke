@@ -11610,17 +11610,28 @@ The following list of units are defined in the standard library.
 
 @cindex units
 
+@noindent
+Base units:
+
 @table @code
 @item b
 bits.
+@item N
+nibbles.
 @item B
 bytes.
+@end table
+
+@noindent
+Base 10 units:
+
+@table @code
 @item Kb
 @cindex kilobits
-kilo bits (1024 bits.)
+kilo bits (1000 bits.)
 @item KB
 @cindex kilobytes
-Kilo bytes (1024 bytes.)
+Kilo bytes (1000 bytes.)
 @item Mb
 @cindex megabits
 Mega bits.
@@ -11630,6 +11641,33 @@ Mega bytes.
 @item Gb
 @cindex gigabits
 Giga bits.
+@item GB
+@cindex gigabytes
+Giga bytes.
+@end table
+
+@noindent
+Base 2 units:
+
+@table @code
+@item Kib
+@cindex kibibits
+kilo bits (1000 bits.)
+@item KiB
+@cindex kibibytes
+Kilo bytes (1000 bytes.)
+@item Mib
+@cindex mebibits
+Mega bits.
+@item MiB
+@cindex mebibytes
+Mega bytes.
+@item Gib
+@cindex gibibits
+Giga bits.
+@item GiB
+@cindex gibibytes
+Giga bytes.
 @end table
 
 @node Conversion Functions

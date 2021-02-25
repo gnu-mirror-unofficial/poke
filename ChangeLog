@@ -1,3 +1,7 @@
+2021-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Standard Units): Update to reflect std.pk.
+
 2021-02-24  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* poke/pk-cmd-ios.c (pk_cmd_close): Replace "The current file is now
