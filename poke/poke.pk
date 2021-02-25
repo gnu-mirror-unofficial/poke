@@ -51,7 +51,6 @@ fun pk_help_add_topic = (Poke_HelpEntry entry) void:
        return;
      }
 
-  /* XXX use += ELEM instead.  */
   pk_help_topics += [entry];
 }
 
