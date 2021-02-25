@@ -67,7 +67,7 @@ var CTF_KIND_UNKNOWN  = 0,
 var ctf_kind_str =
   ["unknown", "integer", "float", "pointer", "array",
    "function", "struct", "union", "enum", "forward",
-   "typedef", "volatile", "const", "restrict"];
+   "typedef", "volatile", "const", "restrict", "slice"];
 
 type CTF_Name =
   struct uint<32>
@@ -96,6 +96,15 @@ type CTF_Preamble =
     uint<16> ctp_magic = CTF_MAGIC;
     byte ctp_version;
     byte ctp_flags;
+
+    method _print = void:
+      {
+        print "#<\n";
+        printf " Magic Number: %v\n", ctp_magic;
+        printf " Version: %v\n", ctp_version;
+        printf " Flags: %v\n", ctp_flags;
+        print ">\n";
+      }
   };
 
 type CTF_Header =
@@ -114,6 +123,16 @@ type CTF_Header =
     offset<uint32,B> cth_typeoff;       /* Offset of type section.  */
     offset<uint32,B> cth_stroff;        /* Offset of string section.  */
     offset<uint32,B> cth_strlen;        /* Length of string section in bytes.  */
+
+    method _print = void:
+      {
+        printf "%v", cth_preamble;
+
+        print "#<\n";
+        printf " Type Section: %u32d bytes\n", (cth_stroff-cth_typeoff)/#B;
+        printf " String Section: %u32d bytes\n", cth_strlen/#B;
+        print ">\n";
+      }
   };
 
 type CTF_Lblent =
@@ -231,11 +250,14 @@ type CTF_Type =
     CTF_Name name;
     CTF_Info info;
 
-    /* Some types have a size.  Others refer to other types.  */
+    /* Some types have a size.  Others refer to other types.
+       CTF_KIND_FORWARD is a distinct lone case where the field ttype refers
+       to the kind of forward (struct, union or enum).  */
     union
     {
       uint32 ttype : info.kind in [CTF_KIND_POINTER,
                                    CTF_KIND_FUNCTION,
+                                   CTF_KIND_FORWARD,
                                    CTF_KIND_TYPEDEF,
                                    CTF_KIND_VOLATILE,
                                    CTF_KIND_CONST,
@@ -280,22 +302,40 @@ type CTF_Type =
     } data;
   };
 
+type CTF_Dictionary =
+  struct
+  {
+    CTF_Header header;
+
+    var type_off = OFFSET + header.cth_typeoff;
+    var type_size = header.cth_stroff - header.cth_typeoff;
+
+    var str_off = OFFSET + header.cth_stroff;
+
+    CTF_Type[type_size] types @ type_off;
+    string[header.cth_strlen] strings @ str_off;
+
+    /* Given an offset into the CTF strings section, return the string.  */
+
+    method get_string = (offset<uint32,B> off) string:
+      {
+        if (off >= header.cth_strlen)
+          raise E_inval;
+        return string @ (strings'offset + off);
+      }
+  };
+
 fun ctf_string = (Elf64_File elf,
-                  CTF_Header header,
+                  CTF_Dictionary ctf,
                   CTF_Name name) string:
 {
   if (name.stid == CTF_STRTAB_0)
-  {
-    if (name.offset >= header.cth_strlen)
-      raise E_inval;
-    return string @ (header'offset + header'size + header.cth_stroff
-                     + name.offset);
-  }
+    return ctf.get_string (name.offset);
   else
     return elf.get_string (name.offset);
 }
 
-fun ctf_get_header = (Elf64_File elf) CTF_Header:
+fun ctf_get_dict = (Elf64_File elf) CTF_Dictionary:
 {
   var ctf_sections = elf.get_sections_by_name (".ctf");
 
@@ -303,11 +343,6 @@ fun ctf_get_header = (Elf64_File elf) CTF_Header:
   if (ctf_sections'length != 1)
      raise E_inval;
 
-  return CTF_Header @ ctf_sections[0].sh_offset;
-}
-
-fun ctf_get_types = (CTF_Header ctf) CTF_Type[]:
-{
-  return CTF_Type[ctf.cth_stroff - ctf.cth_typeoff]
-     @ (ctf'offset + ctf'size + ctf.cth_typeoff);
+  /* FIXME - handle ctf archives.  */
+  return CTF_Dictionary @ ctf_sections[0].sh_offset;
 }

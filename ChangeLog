@@ -1,3 +1,11 @@
+2021-02-25  Indu Bhagat  <indu.bhagat@oracle.com>
+
+	* pickles/ctf.pk (ctf_kind_str): Add string for slice.
+	(CTF_Dictionary): New type.
+	(CTF_Preamble): Add _print function.
+	(CTF_Header): Likewise.
+	(ctf_get_header): Rename to ctf_get_dict.
+
 2021-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-map.c (pk_cmd_map_save): Show a "not implemented
