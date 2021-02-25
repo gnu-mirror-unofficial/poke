@@ -440,6 +440,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
                   {
                     glob_t exp_result;
                     char *fname;
+                    char *filename;
 
                     if (p[0] == '\0')
                       GOTO_USAGE();
@@ -451,23 +452,22 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
                                   &exp_result))
                       {
                       case 0: /* Successful.  */
+                        if (exp_result.gl_pathc != 1)
+                          {
+                            free (fname);
+                            globfree (&exp_result);
+                            GOTO_USAGE();
+                          }
+
+                        filename = xstrdup (exp_result.gl_pathv[0]);
+                        globfree (&exp_result);
                         break;
                       default:
-                        free (fname);
-                        GOTO_USAGE();
+                        filename = xstrdup (fname);
                         break;
                       }
-                    if (exp_result.gl_pathc != 1)
-                      {
-                        free (fname);
-                        globfree (&exp_result);
-                        GOTO_USAGE();
-                      }
-
-                    char *filename = xstrdup (exp_result.gl_pathv[0]);
 
                     free (fname);
-                    globfree (&exp_result);
 
                     argv[argc].type = PK_CMD_ARG_STR;
                     argv[argc].val.str = filename;

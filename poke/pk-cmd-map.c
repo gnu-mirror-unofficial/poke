@@ -356,6 +356,8 @@ static int
 pk_cmd_map_save (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* XXX writeme */
+
+  pk_printf (".map save is not implemented yet, sorry :/\n");
   return 1;
 }
 

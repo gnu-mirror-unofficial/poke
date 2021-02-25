@@ -1,5 +1,13 @@
 2021-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-map.c (pk_cmd_map_save): Show a "not implemented
+	message".
+	* poke/pk-cmd.c (pk_cmd_exec_1): Invoke commands even if glob
+	fails.
+	* poke/pk-cmd-misc.c (pk_cmd_exit): Remove spurious code.
+
+2021-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Standard Units): Update to reflect std.pk.
 
 2021-02-24  Egeyar Bagcioglu  <egeyar@gmail.com>
