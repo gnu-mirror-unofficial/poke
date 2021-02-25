@@ -243,14 +243,15 @@ The Poke Virtual Machine
 @node Motivation
 @section Motivation
 
-The main point of GNU poke is to manipulate structured binary data in
-terms of abstractions provided by the user.  The Poke type definitions
-can be seen as a sort of declarative specifications for decoding and
-encoding procedures.  The user specifies the structure of the data to
-be manipulated, and poke uses that information to automagically decode
-and encode the data.  Under this perspective, struct types correspond
-to sequences of instructions, array types to repetitions or loops,
-union types to alternatives or conditionals, and so on.
+The main purpose of GNU poke is to manipulate structured binary data
+in terms of abstractions provided by the user.  The Poke type
+definitions can be seen as a sort of declarative specifications for
+decoding and encoding procedures.  The user specifies the structure of
+the data to be manipulated, and poke uses that information to
+automagically decode and encode the data.  Under this perspective,
+struct types correspond to sequences of instructions, array types to
+repetitions or loops, union types to alternatives or conditionals, and
+so on.
 
 @menu
 * Decode-Compute-Encode:: Encoded data and conventional languages.
@@ -286,7 +287,7 @@ void double_number (int fd, off_t offset, int endian)
    /* Decode.  */
    lseek (fd, offset, SEEK_SET);
    for (i = 0; i < 4; ++i)
-      read (fd, &amp;b[i], 1);
+      read (fd, &b[i], 1);
 
    if (endian == BIG)
      number = b[0] << 24 | b[1] << 16 | b[2] << 8 | b[3];
@@ -314,7 +315,7 @@ void double_number (int fd, off_t offset, int endian)
 
    lseek (fd, offset, SEEK_SET);
    for (i = 0; i < 4; ++i)
-      write (fd, &amp;b[i], 1);
+      write (fd, &b[i], 1);
 @}
 @end example
 
@@ -362,7 +363,7 @@ For example, consider the following Poke type definition:
 type Packet =
   struct
   @{
-    uint<16> magic : magic == 0xef;
+    uint<16> magic = 0xef;
     uint<32> size;
     byte[size] data @@ 64#B;
   @};
@@ -375,7 +376,9 @@ encoding):
 @itemize @minus
 @item
 Read four bytes from the IO space, mount them into an unsigned 16-bit
-integer using whatever current endianness, and put it in @code{magic}.
+integer using whatever current endianness, and put it in
+@code{magic}.  If this unsigned 16-bit integer doesn't equal to
+@code{0xef}, then stop and emit a ``data integrity'' error.
 @item
 Read eight bytes, mount them into an unsigned 32-bit integer using the
 same endianness, and put it in @code{size}.
@@ -392,13 +395,13 @@ Put the integer in the proper place in the @code{data} array.
 @end itemize
 @end itemize
 
-If during this procedure an end of file is encountered, or a
-constraint fails, an appropriate error is raised.
+If during this procedure an end of file is encountered, or some other
+erroneous condition happens, an appropriate error is raised.
 
 In the procedure sketched above we find a sequence of operations,
 implied by the struct type, and a loop, implied by the array type.  As
-we shall see below, it is also possible to decode conditionally.
-Union types are used for that purpose.
+we shall see later in this book, it is also possible to decode
+conditionally.  Union types are used for that purpose.
 
 @node Nomenclature
 @section Nomenclature
@@ -2950,8 +2953,9 @@ get an error:
 
 In the previous chapter we learned how to manipulate pre-defined
 entities like bytes, integers and strings.  One of the big points of
-poke, however, is that it allows you to define your own entities.
-This is achieved by defining data structures.
+poke, however, is that it allows you to define your own data
+abstractions, and to operate in term of them.  This is achieved by
+defining data structures.
 
 @menu
 * The SBM Format::              The Stupid BitMap Format
