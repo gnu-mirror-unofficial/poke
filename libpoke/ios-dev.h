@@ -53,21 +53,20 @@ struct ios_dev_if
   char *(*get_if_name) ();
 
   /* Determine whether the provided HANDLER is recognized as a valid
-     device spec by this backend, and if so, copy its normalized
-     form into newhandler (caller will free).  In case of error,
-     return the error code.  If not, return IOD_OK.  */
+     device spec by this backend, and if so, return its normalized
+     form (caller will free).  In case of error, return NULL.  This function
+     sets the ERROR to error code or to IOD_OK.  */
 
-  int (*handler_normalize) (const char *handler, uint64_t flags, char **newhandler);
+  char * (*handler_normalize) (const char *handler, uint64_t flags, int* error);
 
-  /* Open a device using the provided HANDLER.  Fill DEV with the opened
-     device, or return the error code.  Note that this function assumes that
-     HANDLER is recognized as a handler by the backend, i.e. HANDLER_P
-     returns 1 if HANDLER is passed to it.  */
+  /* Open a device using the provided HANDLER.  Return the opened
+     device, or NULL in case of errors.  Set the ERROR to error code or to
+     IOD_OK.  Note that this function assumes that HANDLER is recognized as a
+     handler by the backend.  */
 
-  int (*open) (const char *handler, uint64_t flags, void **dev);
+  void * (*open) (const char *handler, uint64_t flags, int *error);
 
   /* Close the given device.  Return 0 if there was an error during
-
      the operation, 1 otherwise.  */
 
   int (*close) (void *dev);
@@ -97,7 +96,7 @@ struct ios_dev_if
   int (*flush) (void *dev, ios_dev_off offset);
 };
 
-#define IOS_FILE_HANDLER_NORMALIZE(handler, newhandler)                 \
+#define IOS_FILE_HANDLER_NORMALIZE(handler, new_handler)                \
   do                                                                    \
     {                                                                   \
       /* File devices are special, in the sense that they accept any */ \
@@ -111,8 +110,8 @@ struct ios_dev_if
                                                                         \
       if (handler[0] == '/'                                             \
           || strspn (handler, safe) == strlen (handler))                \
-        (newhandler) = strdup ((handler));                              \
-      else if (asprintf (&(newhandler), "./%s", (handler)) == -1)       \
-        (newhandler) = NULL;                                            \
+        (new_handler) = strdup ((handler));                             \
+      else if (asprintf (&(new_handler), "./%s", (handler)) == -1)      \
+        (new_handler) = NULL;                                           \
     }                                                                   \
   while (0)

@@ -49,32 +49,35 @@ ios_dev_nbd_get_if_name () {
   return "NBD";
 }
 
-static int
-ios_dev_nbd_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
+static char *
+ios_dev_nbd_handler_normalize (const char *handler, uint64_t flags, int* error)
 {
+  char * new_handler = NULL;
   if (startswith (handler, "nbd://")
       || startswith (handler, "nbd+unix://"))
     {
-      *newhandler = strdup (handler);
-      if (*newhandler == NULL)
-        return IOD_ENOMEM;
+      new_handler = strdup (handler);
+      if (new_handler == NULL && error)
+        *error = IOD_ENOMEM;
     }
-  return IOD_OK;
+  if (error)
+    *error = IOD_OK;
+  return new_handler;
 }
 
-static int
-ios_dev_nbd_open (const char *handler, uint64_t flags, void **dev)
+static void *
+ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_nbd *nio = NULL;
   struct nbd_handle *nbd = NULL;
   uint8_t flags_mode = flags & IOS_FLAGS_MODE;
-  int err = IOD_ERROR;
+  int internal_error = IOD_ERROR;
   int64_t size;
 
   /* We don't permit truncation.  */
   if (flags_mode & IOS_F_TRUNCATE)
     {
-      err = IOD_EFLAGS;
+      internal_error = IOD_EFLAGS;
       goto err;
     }
 
@@ -88,7 +91,7 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, void **dev)
 
   if (flags_mode & IOS_F_WRITE && nbd_is_read_only (nbd))
     {
-      err = IOD_EINVAL;
+      internal_error = IOD_EINVAL;
       goto err;
     }
   else if (flags_mode == 0)
@@ -105,14 +108,14 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, void **dev)
   nio = malloc (sizeof *nio);
   if (!nio)
     {
-      err = IOD_ENOMEM;
+      internal_error = IOD_ENOMEM;
       goto err;
     }
 
   nio->uri = strdup (handler);
   if (!nio->uri)
     {
-      err = IOD_ENOMEM;
+      internal_error = IOD_ENOMEM;
       goto err;
     }
 
@@ -120,8 +123,9 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, void **dev)
   nio->size = size;
   nio->flags = flags;
 
-  *dev = nio;
-  return IOD_OK;
+  if (error)
+    *error = IOD_OK;
+  return nio;
 
  err:
   /* Worth logging nbd_get_error ()?  */
@@ -130,8 +134,9 @@ ios_dev_nbd_open (const char *handler, uint64_t flags, void **dev)
   free (nio);
 
   nbd_close (nbd);
-
-  return err;
+  if (error)
+    *error = internal_error;
+  return NULL;
 }
 
 static int

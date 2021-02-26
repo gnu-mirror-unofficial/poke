@@ -46,23 +46,29 @@ ios_dev_file_get_if_name () {
   return "FILE";
 }
 
-static int
-ios_dev_file_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
+static char *
+ios_dev_file_handler_normalize (const char *handler, uint64_t flags, int* error)
 {
-  IOS_FILE_HANDLER_NORMALIZE (handler, *newhandler);
+  char *new_handler = NULL;
+  IOS_FILE_HANDLER_NORMALIZE (handler, new_handler);
 
-  /* Every handler is accepted as a file handler.  */
-  if (*newhandler == NULL)
-    return IOD_ENOMEM;
-  else
-    return IOD_OK;
+  if (error)
+    {
+      if (new_handler == NULL)
+        *error = IOD_ENOMEM;
+      else
+        *error = IOD_OK;
+    }
+
+  return new_handler;
 }
 
-static int
-ios_dev_file_open (const char *handler, uint64_t flags, void **dev)
+static void *
+ios_dev_file_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_file *fio = NULL;
   FILE *f;
+  int internal_error = IOD_ERROR;
   const char *mode;
   uint8_t flags_mode = flags & IOS_FLAGS_MODE;
 
@@ -78,7 +84,10 @@ ios_dev_file_open (const char *handler, uint64_t flags, void **dev)
       else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
         mode = "w+b";
       else
-          return IOD_EFLAGS;
+        {
+          internal_error = IOD_EFLAGS;
+          goto err;
+        }
 
       f = fopen (handler, mode);
     }
@@ -109,8 +118,9 @@ ios_dev_file_open (const char *handler, uint64_t flags, void **dev)
   fio->file = f;
   fio->flags = flags;
 
-  *dev = fio;
-  return IOD_OK;
+  if (error)
+    *error = IOD_OK;
+  return fio;
 
 err:
   if (fio)
@@ -120,13 +130,19 @@ err:
   if (f)
     fclose (f);
 
-  if (errno == ENOMEM)
-    return IOD_ENOMEM;
-  else if (errno == EINVAL)
-    return IOD_EINVAL;
-  /* Should never happen.  */
-  else
-    return IOD_ERROR;
+  if (error)
+    {
+      if (internal_error != IOD_ERROR)
+        *error = internal_error;
+      else if (errno == ENOMEM)
+        *error = IOD_ENOMEM;
+      else if (errno == EINVAL)
+        *error = IOD_EINVAL;
+      /* Should never happen.  */
+      else
+        *error = IOD_ERROR;
+    }
+  return NULL;
 }
 
 static int

@@ -1,3 +1,20 @@
+2021-02-26  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize): Take error
+	as an argument rather than having it as return value.
+	(ios_dev_file_open): Likewise.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_handler_normalize): Likewise.
+	(ios_dev_mem_open): Likewise.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_handler_normalize): Likewise.
+	(ios_dev_nbd_open): Likewise.
+	* libpoke/ios-dev-stream.c (ios_dev_stream_handler_normalize):
+	Likewise.
+	(ios_dev_stream_open): Likewise.
+	* libpoke/ios-dev.h (handler_normalize): Likewise.
+	(open): Likewise.
+	(IOS_FILE_HANDLER_NORMALIZE): Rename newhandler as new_handler.
+	* ios.c (ios_open): Adjust calls to handler_normalize and open.
+
 2021-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/Makefile.am (EXTRA_DIST): Distribute etc/poke.rec.
@@ -34,7 +51,7 @@
 	`%s'.\n" with "The current IOS is now `%s'.\n" for correctness and
 	consistency.
 
-2021-02-24  Egeyar Bagcioglu  <egeyar@gmail.com>
+2021-02-24  Egeyar  Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-stream.c (ios_dev_stream_pread): Change internal
 	implementation.

@@ -130,8 +130,6 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
   if (!io)
     return IOS_ENOMEM;
 
-  io->handler = NULL;
-  io->dev = NULL;
   io->next = NULL;
   io->bias = 0;
 
@@ -139,8 +137,8 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
      handler.  */
   for (dev_if = ios_dev_ifs; *dev_if; ++dev_if)
     {
-      iod_error = (*dev_if)->handler_normalize (handler, flags, &io->handler);
-      if (iod_error)
+      io->handler = (*dev_if)->handler_normalize (handler, flags, &iod_error);
+      if (iod_error != IOD_OK)
         goto error;
       if (io->handler)
         break;
@@ -160,7 +158,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
       }
 
   /* Open the device using the interface found above.  */
-  iod_error = io->dev_if->open (handler, flags, &io->dev);
+  io->dev = io->dev_if->open (handler, flags, &iod_error);
   if (iod_error || io->dev == NULL)
     goto error;
 

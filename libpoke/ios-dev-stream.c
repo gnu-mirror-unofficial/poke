@@ -51,39 +51,42 @@ ios_dev_stream_get_dev_if_name () {
   return "STREAM";
 }
 
-static int
-ios_dev_stream_handler_normalize (const char *handler, uint64_t flags, char **newhandler)
+static char *
+ios_dev_stream_handler_normalize (const char *handler, uint64_t flags, int *error)
 {
+  char *new_handler = NULL;
   /* TODO handle the case where strdup fails. */
   if (STREQ (handler, IOS_STDIN_HANDLER)
       || STREQ (handler, IOS_STDOUT_HANDLER)
       || STREQ (handler, IOS_STDERR_HANDLER))
     {
-      *newhandler = strdup (handler);
-      if (*newhandler == NULL)
-        return IOD_ENOMEM;
+      new_handler = strdup (handler);
+      if (new_handler == NULL && error)
+        *error = IOD_ENOMEM;
     }
-  return IOD_OK;
+  if (error)
+    *error = IOD_OK;
+  return new_handler;
 }
 
-static int
-ios_dev_stream_open (const char *handler, uint64_t flags, void **dev)
+static void *
+ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_stream *sio;
-  int error = IOD_ERROR;
+  int internal_error = IOD_ERROR;
 
   sio = malloc (sizeof (struct ios_dev_stream));
   if (!sio)
     {
-      error = IOD_ENOMEM;
-      goto error;
+      internal_error = IOD_ENOMEM;
+      goto err;
     }
 
   sio->handler = strdup (handler);
   if (!sio->handler)
     {
-      error = IOD_ENOMEM;
-      goto error;
+      internal_error = IOD_ENOMEM;
+      goto err;
     }
 
   if (STREQ (handler, IOS_STDIN_HANDLER))
@@ -93,8 +96,8 @@ ios_dev_stream_open (const char *handler, uint64_t flags, void **dev)
       sio->buffer = ios_buffer_init ();
       if (!sio->buffer)
         {
-          error = IOD_ENOMEM;
-          goto error;
+          internal_error = IOD_ENOMEM;
+          goto err;
         }
     }
   else if (STREQ (handler, IOS_STDOUT_HANDLER))
@@ -110,17 +113,20 @@ ios_dev_stream_open (const char *handler, uint64_t flags, void **dev)
       sio->write_offset = 0;
     }
   else
-    goto error;
+    goto err;
 
-  *dev = sio;
-  return IOD_OK;
+  if (error)
+   *error = IOD_OK;
+  return sio;
 
-error:
+err:
   if (sio)
     free (sio->handler);
   free (sio);
 
-  return error;
+  if (error)
+    *error = internal_error;
+  return NULL;
 }
 
 static int
