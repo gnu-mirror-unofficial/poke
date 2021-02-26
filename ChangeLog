@@ -1,3 +1,9 @@
+2021-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Update version number to 1.0.
+	* NEWS: Update for 1.0.
+	* doc/gendocs_template: Likewise.
+
 2021-02-25  Indu Bhagat  <indu.bhagat@oracle.com>
 
 	* pickles/ctf.pk (ctf_kind_str): Add string for slice.
