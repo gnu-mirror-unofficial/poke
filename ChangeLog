@@ -1,3 +1,8 @@
+2021-02-27  Morten Linderud  <morten@linderud.pw>
+
+	* poke/poke.pk: Fix setting of map_load_path when XDG_DATA_HOME is
+	set.
+
 2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* m4/ax_create_pkgconfig_info.m4: Import file from autoconf
