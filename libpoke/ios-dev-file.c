@@ -67,7 +67,7 @@ static void *
 ios_dev_file_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_file *fio = NULL;
-  FILE *f;
+  FILE *f = NULL;
   int internal_error = IOD_ERROR;
   const char *mode;
   uint8_t flags_mode = flags & IOS_FLAGS_MODE;

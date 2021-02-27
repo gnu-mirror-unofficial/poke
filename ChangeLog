@@ -1,3 +1,8 @@
+2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_open): Avoid accessing to
+	an uninitialized variable.
+
 2021-02-27  Thomas Weißschuh <thomas@t-8ch.de>
 
 	* configure.ac: Call AX_CREATE_PKGCONFIG_INFO.
