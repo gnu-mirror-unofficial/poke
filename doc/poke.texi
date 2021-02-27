@@ -365,7 +365,7 @@ type Packet =
   @{
     uint<16> magic = 0xef;
     uint<32> size;
-    byte[size] data @@ 64#B;
+    byte[size] data @@ 8#B;
   @};
 @end example
 
@@ -375,12 +375,12 @@ encoding):
 
 @itemize @minus
 @item
-Read four bytes from the IO space, mount them into an unsigned 16-bit
+Read two bytes from the IO space, mount them into an unsigned 16-bit
 integer using whatever current endianness, and put it in
 @code{magic}.  If this unsigned 16-bit integer doesn't equal to
 @code{0xef}, then stop and emit a ``data integrity'' error.
 @item
-Read eight bytes, mount them into an unsigned 32-bit integer using the
+Read four bytes, mount them into an unsigned 32-bit integer using the
 same endianness, and put it in @code{size}.
 @item
 Seek the IO space to advance 16 bits.
