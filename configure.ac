@@ -240,6 +240,10 @@ AC_CONFIG_FILES(Makefile
                 testsuite/poke.mi-json/Makefile)
 AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
+
+dnl pkg-config description
+AX_CREATE_PKGCONFIG_INFO('libpoke/poke.pc', , , 'libpoke')
+
 AC_OUTPUT
 
 dnl Report warnings

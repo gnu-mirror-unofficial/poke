@@ -1,3 +1,10 @@
+2021-02-27  Thomas Weißschuh <thomas@t-8ch.de>
+
+	* configure.ac: Call AX_CREATE_PKGCONFIG_INFO.
+	* libpoke/Makefile.am (dist_pkgconfig_lib_DATA): Distribute
+	poke.pc.
+	* .gitignore: Update.
+
 2021-02-26  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-file.c (ios_dev_file_handler_normalize): Take error

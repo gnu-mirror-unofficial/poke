@@ -79,3 +79,7 @@ config.h.in
 /testsuite/poke.sum
 /testsuite/site.bak
 /testsuite/site.exp
+/poke.pc
+/poke.pc.in
+/poke-uninstalled.pc
+/poke-uninstalled.sh
