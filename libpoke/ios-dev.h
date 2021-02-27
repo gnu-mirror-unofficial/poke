@@ -66,8 +66,8 @@ struct ios_dev_if
 
   void * (*open) (const char *handler, uint64_t flags, int *error);
 
-  /* Close the given device.  Return 0 if there was an error during
-     the operation, 1 otherwise.  */
+  /* Close the given device.  Return the error code if there was an error
+     during the operation, IOD_OK otherwise.  */
 
   int (*close) (void *dev);
 

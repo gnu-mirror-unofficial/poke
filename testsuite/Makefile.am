@@ -837,6 +837,7 @@ EXTRA_DIST = \
   poke.pkl/chars-9.pk \
   poke.pkl/close-1.pk \
   poke.pkl/close-2.pk \
+  poke.pkl/close-diag-1.pk \
   poke.pkl/compiler-passes-1.pk \
   poke.pkl/cond-exp-1.pk \
   poke.pkl/cond-exp-2.pk \

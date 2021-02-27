@@ -134,11 +134,15 @@ ios_dev_stream_close (void *iod)
 {
   struct ios_dev_stream *sio = iod;
 
+  /* Do not close std IO files.
+     The user may be in interactive mode.  */
+
   if (sio->flags & IOS_F_READ)
     ios_buffer_free (sio->buffer);
+  free (sio->handler);
   free (sio);
 
-  return 1;
+  return IOD_OK;
 }
 
 static uint64_t

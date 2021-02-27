@@ -120,7 +120,7 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       io = pk_ios_search_by_id (poke_compiler, io_id);
       if (io == NULL)
         {
-          pk_printf (_("No such file #%d\n"), io_id);
+          pk_printf (_("No such IO space: #%d\n"), io_id);
           return 0;
         }
     }

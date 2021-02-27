@@ -1,0 +1,14 @@
+/* { dg-do run } */
+
+fun catcher = void :
+{
+ try
+   close (42);
+ catch if E_no_ios
+   {
+     print ("caught exception\n");
+   }
+}
+
+/* { dg-command {  catcher () } } */
+/* { dg-output "caught exception" } */

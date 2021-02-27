@@ -158,9 +158,10 @@ typedef int64_t ios_off;
 int ios_open (const char *handler, uint64_t flags, int set_cur);
 
 /* Close the given IO space, freing all used resources and flushing
-   the space cache associated with the space.  */
+   the space cache associated with the space.  Return IOS_OK on success
+   and the error code on failure.  */
 
-void ios_close (ios io);
+int ios_close (ios io);
 
 /* Return the flags which are active in a given IO.  Note that this
    doesn't necessarily correspond to the flags passed when opening the

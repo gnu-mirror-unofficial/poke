@@ -186,22 +186,20 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
   return error;
 }
 
-void
+int
 ios_close (ios io)
 {
   struct ios *tmp;
-  int r;
+  int ret;
 
   /* XXX: if not saved, ask before closing.  */
 
   /* Close the device operated by the IO space.
-     XXX: handle errors.  */
-  r = io->dev_if->close (io->dev);
-  assert (r);
+     XXX: Errors may be received from fclose.  What do we do in that case?  */
+  ret = io->dev_if->close (io->dev);
 
   /* Unlink the IOS from the list.  */
-  assert (io_list != NULL); /* The list must contain at least one IO
-                               space.  */
+  assert (io_list != NULL); /* The list contains at least this IO space.  */
   if (io_list == io)
     io_list = io_list->next;
   else
@@ -216,6 +214,8 @@ ios_close (ios io)
     cur_io = io_list;
 
   free (io);
+
+  return IOD_ERROR_TO_IOS_ERROR (ret);
 }
 
 uint64_t

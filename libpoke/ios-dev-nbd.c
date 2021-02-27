@@ -149,7 +149,7 @@ ios_dev_nbd_close (void *iod)
   free (nio->uri);
   free (nio);
 
-  return 1;
+  return IOD_OK;
 }
 
 static uint64_t

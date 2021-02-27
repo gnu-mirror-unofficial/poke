@@ -1373,10 +1373,10 @@ end
 # on the stack as a signed integer.
 #
 # If the specified IO space doesn't exist, this instruction raises
-# PVM_E_IO.
+# PVM_E_NO_IOS. If the operation fails, it raises PVM_E_IO.
 #
 # Stack: ( INT -- )
-# Exceptions: PVM_E_IO
+# Exceptions: PVM_E_NO_IOS, PVM_E_IO
 
 instruction close ()
   code
@@ -1384,9 +1384,11 @@ instruction close ()
     ios io = ios_search_by_id (io_id);
 
     if (io == NULL)
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
+
+    if (ios_close (io) != IOS_OK)
       PVM_RAISE_DFL (PVM_E_IO);
 
-    ios_close (io);
     JITTER_DROP_STACK ();
   end
 end

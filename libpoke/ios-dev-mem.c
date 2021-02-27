@@ -96,7 +96,7 @@ ios_dev_mem_close (void *iod)
   free (mio->pointer);
   free (mio);
 
-  return 1;
+  return IOD_OK;
 }
 
 static uint64_t

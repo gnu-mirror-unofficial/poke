@@ -1,3 +1,22 @@
+2021-02-27  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* doc/poke.texi (close): Mention the exception, E_ios.
+	* libpoke/ios-dev-file.c (ios_dev_file_close): Handle errors properly.
+	Return IOD_ERROR on failure, IOD_OK otherwise.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_close): Return IOD_OK.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_close): Likewise.
+	* libpoke/ios-dev-stream.c (ios_dev_stream_close): Likewise.
+	* libpoke/ios-dev.h (close): Return IOD_ERROR on failure, IOD_OK on
+	success.
+	* libpoke/ios.c (ios_close): Return IOS_OK on success and the error code on
+	failure. Do not assert that dev_if->close is successful.
+	* libpoke/ios.h (ios_close): Likewise.
+	* libpoke/pvm.jitter (close): Raise PVM_E_NO_IOS if the IO space to be
+	closed does not exist. Raise PVM_E_IO if ios_close fails.
+	* pk-cmd-ios.c (pk_cmd_close): Replace "file" with "IO space".
+	* testsuite/Makefile.am: Add new testcase.
+	* testsuite/poke.pkl/close-diag-1.pk: New testcase.
+
 2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pk-val.c (pk_val_offset): Return PK_NULL if the given

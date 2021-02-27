@@ -10403,6 +10403,9 @@ is written to the underlying IO device.
 If the IO space specified to @code{close} doesn't exist then an
 @code{E_no_ios} exception is raised.
 
+If errors occured while closing the IO space, then @code{E_ios}
+exception is raised.
+
 @node flush
 @subsubsection @code{flush}
 @cindex @code{flush}

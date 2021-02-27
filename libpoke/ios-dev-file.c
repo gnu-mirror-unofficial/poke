@@ -150,12 +150,19 @@ ios_dev_file_close (void *iod)
 {
   struct ios_dev_file *fio = iod;
 
-  if (fclose (fio->file) != 0)
-    perror (fio->filename);
-  free (fio->filename);
-  free (fio);
-
-  return 1;
+  if (fclose (fio->file) == 0)
+    {
+      free (fio->filename);
+      free (fio);
+      return IOD_OK;
+    }
+  else
+    {
+      perror (fio->filename);
+      free (fio->filename);
+      free (fio);
+      return IOD_ERROR;
+    }
 }
 
 static uint64_t
