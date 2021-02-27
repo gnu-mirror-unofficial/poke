@@ -190,7 +190,7 @@ get_tagged_value (tagged_value values, int tag)
 
 /* Error printer.  */
 
-void
+static void
 pk_map_printf_error (struct pk_map_parser *map_parser,
                      YYLTYPE loc, const char *format, ...)
 {
@@ -239,7 +239,7 @@ check_entry_duplicated_tags (struct pk_map_parser *map_parser,
             {
               pk_map_printf_error (map_parser,
                                    value2->loc,
-                                   "duplicated tag");
+                                   "duplicated tag\n");
               return 0;
             }
         }
@@ -318,11 +318,11 @@ map_entry:
                   if (!name || !type || !offset)
                     {
                       if (!name)
-                        pk_map_printf_error (map_parser, @$, "entry lacks a %name");
+                        pk_map_printf_error (map_parser, @$, "entry lacks a %%name\n");
                       else if (!type)
-                        pk_map_printf_error (map_parser, @$, "entry lacks a %type");
+                        pk_map_printf_error (map_parser, @$, "entry lacks a %%type\n");
                       else if (!offset)
-                        pk_map_printf_error (map_parser, @$, "entry lacks an %offset");
+                        pk_map_printf_error (map_parser, @$, "entry lacks an %%offset\n");
                       else
                         assert (0);
 

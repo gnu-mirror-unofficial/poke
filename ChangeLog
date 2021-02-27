@@ -1,3 +1,9 @@
+2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-map-tab.y (tagged_value_list): Fix error messages.
+	(check_entry_duplicated_tags): Likewise.
+	(pk_map_printf_error): Make static.
+
 2021-02-27  Morten Linderud  <morten@linderud.pw>
 
 	* poke/poke.pk: Fix setting of map_load_path when XDG_DATA_HOME is
