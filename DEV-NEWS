@@ -7,6 +7,10 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2021-02-27
+* HACKING now contains some instructions on how to backport patches
+  to maintenance branches.
+
 2021-02-21
 * New distributed files INSTALL and DEPENDENCIES.
   INSTALL has been renamed to INSTAL.generic.

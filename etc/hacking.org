@@ -183,6 +183,40 @@ Indu Bhagat             <indu.bhagat@oracle.com>
    existing interface, or a new auxiliary tool, or ... please consider
    adding a record to DEV-NEWS
 
+** Backporting to maintenance branches
+
+   At any time we keep several branches open to development in poke:
+
+   - =master= is the main branch where development happens.  The next
+     major release of poke will be branched from it.
+
+   - =maint/poke-N= is the maintenance branch for poke =N.x=.  The
+     next bugfix release for poke version =N= will be made from it.
+
+   When applying a patch to poke, the maintainer should decide to
+   which branches she wants to apply the patch:
+
+   - Work on new features should go to =master=, and only to
+     =master=.  As tempting as it may be to add a simple but useful
+     new feature to a maintenance branch, please don't.   We release
+     poke often, so the new feature will soon reach the users.
+
+   - Bug fixes always go to =master= and, if appropriate, also to
+     maintenance branches.
+
+   If in doubt, please ask in poke-devel.
+
+   When a given patch is to be backported to a maintenance branch, use
+   the following strategy:
+
+   1. Commit the patch to =master= as usual.
+   2. Checkout =maint/poke-N= and make sure it is up to date.
+   3. cherry-pick commit (or commits) from master.  This may result in
+      conflicts.  In that case, resolve them and finish the
+      cherry-pick.
+   4. Retest in =maint/poke-N=, including make syntax-check.
+   5. Push both =master= and =maint/poke-N= to savannah.
+
 * Development Environment
 
   The packages listed in the file DEPENDENCIES are needed.  Additionally:
