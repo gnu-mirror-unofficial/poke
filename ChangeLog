@@ -1,5 +1,12 @@
 2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pk-val.c (pk_val_offset): Return PK_NULL if the given
+	value is not mapped.
+	* testsuite/poke.libpoke/values.c (test_simple_values): Check that
+	pk_val_offset returns PK_NULL for simple values.
+
+2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-map-tab.y (tagged_value_list): Fix error messages.
 	(check_entry_duplicated_tags): Likewise.
 	(pk_map_printf_error): Make static.

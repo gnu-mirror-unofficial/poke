@@ -66,6 +66,7 @@ test_simple_values ()
   T ("pk_make_int_1", val != PK_NULL);
   T ("pk_int_value_1", pk_int_value (val) == 666);
   T ("pk_int_size_1", pk_int_size (val) == 32);
+  T ("pk_val_offset", pk_val_offset (val) == PK_NULL);
 
   val = pk_make_int (-666, 32);
   T ("pk_make_int_2", val != PK_NULL);
@@ -78,6 +79,7 @@ test_simple_values ()
   T ("pk_make_uint_0", val != PK_NULL);
   T ("pk_uint_value_0", pk_uint_value (val) == (UINT64_MAX >> 1));
   T ("pk_uint_size_0", pk_uint_size (val) == 63);
+  T ("pk_val_offset", pk_val_offset (val) == PK_NULL);
 
   val = pk_make_uint (0, 64);
   T ("pk_make_uint_1", val != PK_NULL);
@@ -94,6 +96,7 @@ test_simple_values ()
   val = pk_make_string (awesome);
   T ("pk_make_string_0", val != PK_NULL);
   T ("pk_string_str_0", STREQ (pk_string_str (val), awesome));
+  T ("pk_val_offset", pk_val_offset (val) == PK_NULL);
 
   {
     char *bigstr;
@@ -142,6 +145,7 @@ test_simple_values ()
   assert (unit != PK_NULL);
 
   val = pk_make_offset (mag, unit);
+  T ("pk_val_offset", pk_val_offset (val) == PK_NULL);
   T ("pk_make_offset_2", val != PK_NULL);
   T ("pk_offset_magnitude_2",
      pk_uint_value (pk_offset_magnitude (val)) == UINT64_MAX);
