@@ -1,5 +1,10 @@
 2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* m4/ax_create_pkgconfig_info.m4: Import file from autoconf
+	archive.
+
+2021-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/hacking.org (Backporting to maintenance branches): New
 	section.
 	* HACKING: Regenerate.
