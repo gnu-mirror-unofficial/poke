@@ -1,5 +1,14 @@
 2021-02-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (CASE_INTEGRAL): Emit a compilation error
+	for INTEGRAL/OFFSET and INTEGRAL/^OFFSET.
+	* testsuite/poke.pkl/div-integers-diag-2.pk: New test.
+	* testsuite/poke.pkl/cdiv-integers-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/mod-integers-diag-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-02-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.time/time32.pk: Do not use host endianness in the
 	test.
 

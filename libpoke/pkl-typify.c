@@ -623,14 +623,19 @@ PKL_PHASE_END_HANDLER
 #define CASE_INTEGRAL                                                   \
   case PKL_TYPE_INTEGRAL:                                               \
   {                                                                     \
-    int signed_p = (PKL_AST_TYPE_I_SIGNED_P (t1)                        \
-                    && PKL_AST_TYPE_I_SIGNED_P (t2));                   \
-    int size = MAX (PKL_AST_TYPE_I_SIZE (t1),                           \
-                    PKL_AST_TYPE_I_SIZE (t2));                          \
+    if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)                    \
+      goto error;                                                       \
+    else                                                                \
+      {                                                                 \
+        int signed_p = (PKL_AST_TYPE_I_SIGNED_P (t1)                    \
+                        && PKL_AST_TYPE_I_SIGNED_P (t2));               \
+        int size = MAX (PKL_AST_TYPE_I_SIZE (t1),                       \
+                        PKL_AST_TYPE_I_SIZE (t2));                      \
                                                                         \
-    type = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);   \
-    break;                                                              \
-  }
+        type = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p); \
+        break;                                                          \
+      }                                                                 \
+    }
 
 #undef CASE_OFFSET
 #define CASE_OFFSET                                                     \

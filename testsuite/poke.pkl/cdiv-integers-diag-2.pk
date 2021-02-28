@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var o = 13#B;
+var res = 10 /^ 13#B; /* { dg-error "invalid operands" } */
