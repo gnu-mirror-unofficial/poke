@@ -1,3 +1,8 @@
+2021-02-27  Sergei Trofimovich <slyfox@gentoo.org>
+
+	* pickles/Makefile.am (dist_pickles_DATA): Package rest of *.pk files
+	to tarball: mcr.pk dwarf-expr.pk dwarf-info.pk id3v2.pk.
+
 2021-02-27  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* doc/poke.texi (close): Mention the exception, E_ios.
