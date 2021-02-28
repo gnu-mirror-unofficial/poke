@@ -1,3 +1,8 @@
+2021-02-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/Makefile.am (MOSTLYCLEANFILES): handle removal of files
+	created by AX_CREATE_PKGCONFIG_INFO at make distclean.
+
 2021-02-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* poke/pk-cmd-map.c (SET_TO_CUR_IOS_ID): Add new macro to find the

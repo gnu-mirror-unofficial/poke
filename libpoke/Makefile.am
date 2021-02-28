@@ -190,6 +190,15 @@ libpoke_la_LIBADD = ../gl-libpoke/libgnu.la libpvmjitter.la \
                     $(LIBNBD_LIBS)
 libpoke_la_LDFLAGS = -version-info $(LTV_CURRENT):$(LTV_REVISION):$(LTV_AGE)
 
+# Delete a few files created by AX_CREATE_PKGCONFIG_INFO at make
+# distclean.
+
+MOSTLYCLEANFILES += \
+   poke-uninstalled.pc \
+   poke.pc \
+   poke-uninstalled.sh \
+   poke.pc.in
+
 # Integration with jitter.
 
 noinst_LTLIBRARIES = libpvmjitter.la
