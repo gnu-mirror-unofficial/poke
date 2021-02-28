@@ -27,6 +27,21 @@
 #include "pk-map.h"
 #include "pk-table.h"
 
+#define SET_TO_CUR_IOS_ID(ios_id)                                             \
+  do                                                                          \
+    {                                                                         \
+      pk_ios cur_ios = pk_ios_cur (poke_compiler);                            \
+                                                                              \
+      if (!cur_ios)                                                           \
+        {                                                                     \
+          pk_printf (_ ("No current IOS\n"));                                 \
+          return 0;                                                           \
+        }                                                                     \
+                                                                              \
+      ios_id = pk_ios_get_id (cur_ios);                                       \
+    }                                                                         \
+  while (0)
+
 static int
 pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -47,17 +62,7 @@ pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
-    {
-      pk_ios cur_ios = pk_ios_cur (poke_compiler);
-
-      if (!cur_ios)
-        {
-          pk_printf (_("No current IOS\n"));
-          return 0;
-        }
-
-      ios_id = pk_ios_get_id (cur_ios);
-    }
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[1]);
@@ -98,7 +103,7 @@ pk_cmd_map_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[1]);
@@ -134,7 +139,7 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[1]);
@@ -207,7 +212,7 @@ pk_cmd_map_entry_add (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   varname = PK_CMD_ARG_STR (argv[1]);
 
   if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[2]);
@@ -276,7 +281,7 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   entryname = PK_CMD_ARG_STR (argv[1]);
 
   if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[2]);
@@ -319,7 +324,7 @@ pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   mapname = PK_CMD_ARG_STR (argv[0]);
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[1]);
@@ -371,7 +376,7 @@ pk_cmd_info_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    ios_id = pk_ios_get_id (pk_ios_cur (poke_compiler));
+    SET_TO_CUR_IOS_ID (ios_id);
   else
     {
       ios_id = PK_CMD_ARG_TAG (argv[0]);

@@ -1,3 +1,15 @@
+2021-02-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* poke/pk-cmd-map.c (SET_TO_CUR_IOS_ID): Add new macro to find the
+	current IOS id.
+	(pk_cmd_map_create): Use `SET_TO_CUR_IOS_ID` macro.
+	(pk_cmd_map_remove): Likewise.
+	(pk_cmd_map_show): Likewise.
+	(pk_cmd_map_entry_add): Likewise.
+	(pk_cmd_map_entry_remove): Likewise.
+	(pk_cmd_map_load): Likewise.
+	(pk_cmd_info_maps): Likewise.
+
 2021-02-27  Sergei Trofimovich <slyfox@gentoo.org>
 
 	* pickles/Makefile.am (dist_pickles_DATA): Package rest of *.pk files
