@@ -162,7 +162,7 @@ const struct pk_cmd info_var_cmd =
 
 const struct pk_cmd info_fun_cmd =
   {"functions", "", "", 0, NULL, pk_cmd_info_fun,
-   "info funtions", NULL};
+   "info functions", NULL};
 
 const struct pk_cmd info_types_cmd =
   {"types", "", "", 0, NULL, pk_cmd_info_types,

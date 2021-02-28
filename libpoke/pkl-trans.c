@@ -1025,7 +1025,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
           if ((int64_t) initializer_index < 0)
             {
               PKL_ERROR (PKL_AST_LOC (initializer_index_node),
-                         "array dimentions may not be negative");
+                         "array dimensions may not be negative");
               PKL_TRANS_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }

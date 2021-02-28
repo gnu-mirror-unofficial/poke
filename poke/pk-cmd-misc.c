@@ -146,7 +146,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jmd> I thought I'd just poke my nose in here and see what's "
      "going on.",
      "[jmd wonders if jemarch has \"export EDITOR=poke\" in his .bashrc]",
-     "<jmd> everytime I type \"killall -11 poke\", poke segfaults.",
+     "<jmd> every time I type \"killall -11 poke\", poke segfaults.",
      "<jemarch> a bugfix a day keeps jmd away",
      "<jmd> Did you know that \"Poke\" is a Hawaiian salad?",
      "<jmd> I never place periods after my strncpy.",
