@@ -1,5 +1,10 @@
 2021-02-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.time/time32.pk: Do not use host endianness in the
+	test.
+
+2021-02-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/Makefile.am (MOSTLYCLEANFILES): handle removal of files
 	created by AX_CREATE_PKGCONFIG_INFO at make distclean.
 

@@ -3,7 +3,7 @@
 load time;
 
 /* { dg-command {.set pretty-print yes} } */
-/* { dg-command {.set endian host} } */
+/* { dg-command {.set endian little} } */
 
 
 /* { dg-data {i*} {0 1576140896 68173323} } */
