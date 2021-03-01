@@ -170,7 +170,9 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   messages to the list with the patches they push.  This helps to keep
   the other hackers aware of what is going on in other areas.
 
-        etc/poke-mode.el	Aurélien Aptel <aaptel@suse.com>
+        etc/poke-mode.el        Aurélien Aptel <aaptel@suse.com>
+        doc/learn-poke-language-in-y-minutes.pk
+                                Mohammad-Reza Nabipoor <m.nabipoor@yahoo.com>
 
 
 2.4 Write After Approval

@@ -58,7 +58,9 @@ along with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
    keep the other hackers aware of what is going on in other areas.
 
 #+BEGIN_VERSE
-etc/poke-mode.el	Aurélien Aptel <aaptel@suse.com>
+etc/poke-mode.el        Aurélien Aptel <aaptel@suse.com>
+doc/learn-poke-language-in-y-minutes.pk
+                        Mohammad-Reza Nabipoor <m.nabipoor@yahoo.com>
 #+END_VERSE
 
 ** Write After Approval
