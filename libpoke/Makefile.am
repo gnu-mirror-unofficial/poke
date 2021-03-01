@@ -188,7 +188,8 @@ libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
 libpoke_la_LIBADD = ../gl-libpoke/libgnu.la libpvmjitter.la \
                     $(BDW_GC_LIBS) \
                     $(LIBNBD_LIBS)
-libpoke_la_LDFLAGS = -version-info $(LTV_CURRENT):$(LTV_REVISION):$(LTV_AGE)
+libpoke_la_LDFLAGS = -version-info $(LTV_CURRENT):$(LTV_REVISION):$(LTV_AGE) \
+                     -lc -no-undefined
 
 # Delete a few files created by AX_CREATE_PKGCONFIG_INFO at make
 # distclean.
