@@ -16,7 +16,7 @@
 info_TEXINFOS = poke.texi
 poke_TEXINFOS = fdl.texi pvm-insns.texi
 
-EXTRA_DIST = gen-pvm-insns.sh
+EXTRA_DIST = gen-pvm-insns.sh learn-poke-language-in-y-minutes.pk
 
 # The description of PVM instructions is generated from the
 # libpoke/pvm.jitter file.
