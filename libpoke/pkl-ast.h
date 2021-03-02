@@ -1935,9 +1935,6 @@ ASTDEREF (pkl_ast_node ast)
    node in the AST and its descendants.  This function is used by the
    bison parser.  */
 
-#define HASH_TABLE_SIZE 1008
-typedef pkl_ast_node pkl_hash[HASH_TABLE_SIZE];
-
 struct pkl_ast
 {
   size_t uid;
