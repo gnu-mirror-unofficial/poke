@@ -1,5 +1,21 @@
 2021-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-set.c (pk_cmd_set_oacutoff): Fix error message.
+	(pk_cmd_set_obase): Likewise.
+	(pk_cmd_set_endian): Likewise.
+	(pk_cmd_set_nenc): Likewise.
+	(pk_cmd_set_auto_map): Likewise.
+	(pk_cmd_set_prompt_maps): Likewise.
+	(pk_cmd_set_pretty_print): Likewise.
+	(pk_cmd_set_odepth): Likewise.
+	(pk_cmd_set_oindent): Likewise.
+	(pk_cmd_set_omaps): Likewise.
+	(pk_cmd_set_omode): Likewise.
+	* poke/pk-cmd-ios.c (pk_cmd_file): Likewise.
+	* poke/pk-repl.c (banner): Likewise.
+
+2021-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (ains): Raise E_inval with a more informative
 	message.
 	(map): Likewise.

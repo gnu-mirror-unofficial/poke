@@ -43,9 +43,9 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       if (base != 10 && base != 16 && base != 2 && base != 8)
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts ("obase should be one of 2, 8, 10 or 16.\n");
+          pk_puts (_("obase should be one of 2, 8, 10 or 16\n"));
           return 0;
         }
 
@@ -115,9 +115,9 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       else
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts ("endian should be one of `little', `big', `host' or `network'.\n");
+          pk_puts (_("endian should be one of `little', `big', `host' or `network'\n"));
           return 0;
         }
 
@@ -158,9 +158,9 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       else
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (" nenc should be one of `1c' or `2c'.\n");
+          pk_puts (_("nenc should be one of `1c' or `2c'\n"));
           return 0;
         }
 
@@ -203,9 +203,9 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       else
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (" auto-map should be one of `yes' or `no'\n");
+          pk_puts (_("auto-map should be one of `yes' or `no'\n"));
           return 0;
         }
     }
@@ -246,9 +246,9 @@ pk_cmd_set_prompt_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       else
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (" prompt-maps should be one of `yes' or `no'\n");
+          pk_puts (_("prompt-maps should be one of `yes' or `no'\n"));
           return 0;
         }
     }
@@ -291,9 +291,9 @@ pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       else
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (" pretty-print should be one of `yes' or `no'.\n");
+          pk_puts (_("pretty-print should be one of `yes' or `no'\n"));
           return 0;
         }
 
@@ -319,9 +319,9 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       if (cutoff < 0 || cutoff > 15)
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (_(" cutoff should be between 0 and 15.\n"));
+          pk_puts (_("cutoff should be between 0 and 15\n"));
           return 0;
         }
 
@@ -347,9 +347,9 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       if (odepth < 0 || odepth > 15)
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (_(" odepth should be between 0 and 15.\n"));
+          pk_puts (_("odepth should be between 0 and 15\n"));
           return 0;
         }
 
@@ -375,9 +375,9 @@ pk_cmd_set_oindent (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       if (oindent < 1 || oindent > 10)
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (_(" oindent should be >=1 and <= 10.\n"));
+          pk_puts (_("oindent should be >=1 and <= 10\n"));
           return 0;
         }
 
@@ -415,7 +415,7 @@ pk_cmd_set_omaps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           pk_term_class ("error");
           pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (_(" omap should be one of `yes' or `no'.\n"));
+          pk_puts (_("omap should be one of `yes' or `no'\n"));
           return 0;
         }
 
@@ -459,7 +459,7 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           pk_term_class ("error");
           pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts (_(" omode should be one of `flat' or `tree'.\n"));
+          pk_puts (_("omode should be one of `flat' or `tree'\n"));
           return 0;
         }
 
@@ -505,9 +505,9 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
       else
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts ("error-on-warning should be one of `yes' or `no'.\n");
+          pk_puts (_("error-on-warning should be one of `yes' or `no'\n"));
           return 0;
         }
 
@@ -544,9 +544,9 @@ pk_cmd_set_doc_viewer (int argc, struct pk_cmd_arg argv[],
       if (STRNEQ (arg, "info") && STRNEQ (arg, "less"))
         {
           pk_term_class ("error");
-          pk_puts ("error: ");
+          pk_puts (_("error: "));
           pk_term_end_class ("error");
-          pk_puts ("doc-viewer should be one of `info' or `less'.\n");
+          pk_puts (_("doc-viewer should be one of `info' or `less'\n"));
           return 0;
         }
 

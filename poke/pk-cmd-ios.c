@@ -92,7 +92,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   if (PK_IOS_NOID == pk_open_ios (filename, 1 /* set_cur_p */))
     {
       pk_term_class ("error");
-      pk_puts ("error: ");
+      pk_puts (_("error: "));
       pk_term_end_class ("error");
 
       pk_printf (_("opening %s\n"), filename);
