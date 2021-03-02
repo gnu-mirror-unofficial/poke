@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "pkl-compiler.h"
 #include "pvm.h"
 
 /*** Compiler Services.  ***/
@@ -35,6 +36,8 @@
    entities, namely variables, types and functions, and statements.
 
    The PKL compiler works as follows:
+
+   A Poke compiler is represented by a `pkl_compiler'.
 
    First, a compiler is created and initialized with `pkl_new'.  At
    this point, the internal program is almost empty, but not quite:
@@ -59,9 +62,6 @@
    Finally, `pkl_free' should be invoked when the compiler is no
    longer needed, in order to do some finalization tasks and free
    resources.  */
-
-typedef struct pkl_compiler *pkl_compiler; /* This data structure is
-                                              defined in pkl.c */
 
 /* Initialization and finalization functions.  */
 

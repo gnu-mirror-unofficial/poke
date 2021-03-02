@@ -34,6 +34,7 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pkt.h \
                      pkl.h pkl.c \
                      pkl-ast.h pkl-ast.c \
+                     pkl-compiler.h \
                      pkl-env.h pkl-env.c \
                      pkl-pass.h pkl-pass.c \
                      pkl-promo.h pkl-promo.c \

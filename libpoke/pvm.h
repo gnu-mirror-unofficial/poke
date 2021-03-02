@@ -26,6 +26,7 @@
 #include <stdarg.h>
 
 #include "ios.h"
+#include "pkl-compiler.h"
 
 /* **************** Status Codes **************** */
 
@@ -672,8 +673,6 @@ void pvm_set_oacutoff (pvm vm, unsigned int cutoff);
 
    It there is no compiler associated with VM, pvm_compiler returns
    NULL.  */
-
-typedef struct pkl_compiler *pkl_compiler;
 
 pkl_compiler pvm_compiler (pvm vm);
 
