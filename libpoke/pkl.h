@@ -140,9 +140,9 @@ pvm pkl_get_vm (pkl_compiler compiler);
 
 /* Return the current compile-time environment in COMPILER.  */
 
-typedef struct pkl_env *pkl_env;  /* Struct defined in pkl-env.c */
+struct pkl_env;  /* Defined in pkl-env.c */
 
-pkl_env pkl_get_env (pkl_compiler compiler);
+struct pkl_env *pkl_get_env (pkl_compiler compiler);
 
 /* Returns a boolean telling whether the compiler has been
    bootstrapped.  */
