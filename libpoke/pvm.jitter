@@ -4152,7 +4152,8 @@ instruction ains ()
     else
     {
       if (!pvm_array_insert (arr, idx, val))
-        PVM_RAISE_DFL (PVM_E_INVAL);
+        PVM_RAISE (PVM_E_INVAL, "invalid index in ains",
+                   PVM_E_INVAL_ESTATUS);
     }
   end
 end
@@ -4684,7 +4685,7 @@ instruction map ()
     pvm_val val = JITTER_TOP_STACK ();
 
     if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
-      PVM_RAISE_DFL (PVM_E_INVAL);
+      PVM_RAISE (PVM_E_INVAL, "not mappable value", PVM_E_INVAL_ESTATUS);
 
     PVM_VAL_SET_MAPPED_P (JITTER_TOP_STACK (), 1);
   end
@@ -4725,7 +4726,7 @@ instruction reloc ()
     JITTER_PUSH_STACK (boffset);
 
     if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
-      PVM_RAISE_DFL (PVM_E_INVAL);
+      PVM_RAISE (PVM_E_INVAL, "not mappable value", PVM_E_INVAL_ESTATUS);
 
     pvm_val_reloc (val, ios, boffset);
   end
@@ -4745,7 +4746,7 @@ instruction ureloc ()
       pvm_val val = JITTER_TOP_STACK ();
 
       if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
-        PVM_RAISE_DFL (PVM_E_INVAL);
+        PVM_RAISE (PVM_E_INVAL, "not mappable value", PVM_E_INVAL_ESTATUS);
 
       pvm_val_ureloc (val);
   end

@@ -1,5 +1,13 @@
 2021-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (ains): Raise E_inval with a more informative
+	message.
+	(map): Likewise.
+	(reloc): Likewise.
+	(ureloc): Likewise.
+
+2021-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Padding and Alignment): New section.
 
 2021-03-01  Jose E. Marchesi  <jemarch@gnu.org>
