@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <stdint.h>
+#include "pvm-program-point.h"
 
 /* The least-significative bits of pvm_val are reserved for the tag,
    which specifies the type of the value.  */
@@ -501,7 +502,6 @@ typedef struct pvm_type *pvm_type;
 #define PVM_VAL_CLS_ENV(V) (PVM_VAL_CLS((V))->env)
 
 typedef struct pvm_program *pvm_program;
-typedef void *pvm_program_program_point;
 
 struct pvm_cls
 {

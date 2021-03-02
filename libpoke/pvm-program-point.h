@@ -1,4 +1,4 @@
-/* pvm-program.h - Internal header for PVM programs.  */
+/* pvm-program-point.h - Type of program entry point.  */
 
 /* Copyright (C) 2020, 2021 Jose E. Marchesi */
 
@@ -16,22 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PVM_PROGRAM_H
-#define PVM_PROGRAM_H
+#ifndef PVM_PROGRAM_POINT_H
+#define PVM_PROGRAM_POINT_H
 
-#include "pvm-program-point.h"
-#include "pvm-vm.h"
+typedef void *pvm_program_program_point; /* XXX better name */
 
-/* Initialize and finalize the pvm-program subsystem.  */
-
-void pvm_program_init (void);
-void pvm_program_fini (void);
-
-/* Return the program point corresponding to the beginning of the
-   given program.  */
-pvm_program_program_point pvm_program_beginning (pvm_program program);
-
-/* Get the jitter routine associated with the program PROGRAM.  */
-pvm_routine pvm_program_routine (pvm_program program);
-
-#endif /* ! PVM_PROGRAM_H */
+#endif /* ! PVM_PROGRAM_POINT_H */
