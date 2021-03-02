@@ -1,3 +1,7 @@
+2021-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Padding and Alignment): New section.
+
 2021-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/hacking.org (Maintainers): Add Mohammadd-Reza Nabipoor as

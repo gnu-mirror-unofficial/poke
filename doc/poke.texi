@@ -125,6 +125,7 @@ Structuring Data
 * Variables in Structs::
 * Functions in Structs::
 * Struct Methods::		Operations provided by built structs.
+* Padding and Alignment::       Reserved fields, payloads and more.
 * Dealing with Alternatives::   Conditional decoding.
 * Structured Integers::         Structs that are stored like integers.
 
@@ -2966,6 +2967,7 @@ defining data structures.
 * Variables in Structs::
 * Functions in Structs::
 * Struct Methods::              Operations provided by built structs.
+* Padding and Alignment::       Reserved fields, payloads and more.
 * Dealing with Alternatives::   Conditional decoding.
 * Structured Integers::         Structs that are stored like integers.
 @end menu
@@ -4925,6 +4927,462 @@ at that time, there is no struct value yet to pass to the method.
 If you try to do this, the compiler will greet you with an ``invalid
 reference to struct method'' message.
 @end itemize
+
+@node Padding and Alignment
+@section Padding and Alignment
+@cindex padding
+@cindex alignment
+
+It is often the case in binary formats that certain elements are
+separated by some data that is not really used for any meaningful
+purpose other than occupy that space.  The reason for keeping that
+space varies from case to case; sometimes to reserve it for future
+use, sometimes to make sure that the following data is aligned to some
+particular alignment.  This is known as @dfn{padding}.  There are
+several ways to implement padding in GNU poke.  This article shows
+these techniques and discusses their advantages and disadvantages.
+
+@menu
+* Esoteric and exoteric padding::       External and internal padding.
+* Reserved fields::                     Extra space not to be used.
+* Payloads::                            Extra space to be used.
+* Aligning struct fields::              Some stuff requires an alignment.
+* Padding array elements::              An useful idiom.
+@end menu
+
+@node Esoteric and exoteric padding
+@subsection Esoteric and exoteric padding
+
+Padding is the technique of keeping some amount of space between two
+different elements in some data stream.  GNU poke provides two
+different ways to express sequences of data elements: the fields of a
+struct type, which are defined one after the other, and elements in an
+array.
+
+We call adding space between two struct fields @dfn{esoteric} (or
+internal) padding.
+
+We call adding space between two array elements @dfn{exoteric} (or
+external) padding.
+
+The following sections contain examples of the two kinds of padding
+and how to better handle them in Poke.
+
+@node Reserved fields
+@subsection Reserved fields
+
+People designing binary encoded formats tend to be cautious and try to
+avoid future backward incompatibilities by keeping some unused fields
+that are reserved for future use.  This is the first kind of padding
+we will be looking at, and is particularly common in structures like
+headers.
+
+See for example the header used to characterize compressed section
+contents in ELF files:
+
+@example
+type Elf64_Chdr =
+  struct
+  @{
+    Elf_Word ch_type;
+    Elf_Word ch_reserved;
+    offset<Elf64_Xword,B> ch_size;
+    offset<Elf64_Xword,B> ch_addralign;
+  @};
+@end example
+
+where the @code{ch_reserved} field is reserved for future use.  When
+the time comes the space occupied by that field (32 bits in this case)
+will be used to hold additional data in the form of one or more
+fields.  The idea is that implementations of the older formats will
+still work.
+
+The most obvious way to handle this in Poke is using a named field
+like @code{ch_reserved} above.  This field will be decoded/encoded by
+poke when constructing/mapping/writing struct values of this type, and
+will be available to the user as @code{chdr.ch_reserved}.
+
+Sometimes reserved space is required to be filled with certain data
+values, such as zeroes.  This may be to simplify things, or to force
+data producers to initialize the memory in order to avoid potential
+leaking of sensible information.  In these cases we can use Poke
+initial values:
+
+@example
+type Elf64_Chdr =
+  struct
+  @{
+    Elf_Word ch_type;
+    Elf_Word ch_reserved = 0;
+    offset<Elf64_Xword,B> ch_size;
+    offset<Elf64_Xword,B> ch_addralign;
+  @};
+@end example
+
+This will make poke to check that @code{ch_reserved} is zero when
+constructing or mapping headers for compressed sections raising a
+constraint violation exception otherwise.  It will also make poke to
+make sure @code{ch_reserved} to 0 when constructing @code{Elf64_Chdr}
+struct values:
+
+@example
+(poke) Elf64_Chdr @{ ch_reserved = 23 @}
+unhandled constraint violation exception
+@end example
+
+An alternative way to characterize reserved space in Poke is to use
+anonymous fields.  For example:
+
+@example
+type Elf64_Chdr =
+  struct
+  @{
+    Elf_Word ch_type;
+    Elf_Word;
+    offset<Elf64_Xword,B> ch_size;
+    offset<Elf64_Xword,B> ch_addralign;
+  @};
+@end example
+
+Using Poke anonymous fields to implement reserved fields has at least
+two advantages.  First, the user cannot anymore temper with the data
+in the reserved space in an easy way, @i{i.e.} @code{chdr.ch_reserved
+= 666} is no longer valid.  Second, the printed representation of
+anonymous struct fields is more compact and denotes better than the
+involved space is not to be messed with:
+
+@example
+(poke) Elf64_Chdr @{@}
+Elf64_Chdr @{
+  ch_type=0x0U,
+  0x0U,
+  ch_size=0x0UL#B,
+  ch_addralign=0x0UL#B
+@}
+@end example
+
+A disadvantage of using anonymous fields is that you cannot specify
+constraint expressions for them, nor initial values.  At some point we
+will probably add syntax to declare certain struct fields as
+read-only.
+
+At this point, it is important to note that anonymous fields are still
+encoded/decoded by poke every time the struct value is mapped or
+written, exactly like regular fields.  Therefore using them doesn't
+pose any advantage in terms of performance.
+
+@node Payloads
+@subsection Payloads
+
+The reserved fields discussed in the previous section are most often
+discrete units like words, double-words, and the like, they are
+usually of some fixed size, and they are used to delimit some space
+that is not to be used.
+
+Another kind of padding happens when an entity contains space to be
+used to store some kind of payload whose contents are not determined.
+This would be such an example:
+
+@example
+type Packet =
+  struct
+  @{
+    offset<uint<32>,B> payload_size;
+    byte[payload_size] payload;
+    int flags;
+  @};
+@end example
+
+In this example we are using a @code{payload} field which is an array
+of bytes.  The size of the payload is determined by the packet header,
+and the contents are not determined.  Of course this assumes that the
+payload sizes are divisible in whole bytes; a bit-oriented format may
+need to use an array of bits instead.
+
+This approach of using a byte (or bit) array like in the example above
+has the advantage of providing a field with the bytes (or bits) to the
+user, for inspection and modification:
+
+@example
+(poke) packet.payload
+[23UB, ...]
+(poke) packet.payload[0] = 0
+@end example
+
+The user can still map whatever payload structure in that space using
+the attributes of a mapped @code{Packet}.  For example, if the packet
+contains an array of ULEB128 numbers, we could do:
+
+@example
+(poke) var numbers = ULEB128[packet.payload'size] @@ packet.payload'offset
+@end example
+
+But this approach has a disadvantage: every time the packet structure
+is mapped or written the entire payload array gets decoded and
+encoded.  If the payloads are big enough (think about the data blocks
+of a file described by a file system i-node for example) this can be a
+big problem in terms of performance.
+
+Another problem of using byte (or bit) arrays for payloads is that the
+printed representation of the struct values include the contents of
+the arrays, and most often the user won't be interested in seeing
+that:
+
+@example
+(poke) Packet @{ payload_size = 23#B @}
+Packet @{
+  payload_size=0x17U#B,
+  payload=[0x0UB,0x0UB,0x0UB,0x0UB,0x0UB,...],
+  flags=0x0
+@}
+@end example
+
+Another alternative is to implement the padding implied by a payload
+using field labels:
+
+@example
+type Packet =
+  struct
+  @{
+    offset<uint<32>,B> payload_size;:
+    int flags @@ OFFSET + payload_size;
+  @};
+@end example
+
+  Note how a @code{payload} field no longer exists in the struct type,
+  and the field @code{flags} is defined to start at offset
+  @code{OFFSET + payload_size}.  This way no explicit array is
+  encoded/decoded when manipulating @code{Packet} values:
+
+@example
+(poke) .set omaps yes
+(poke) Packet @{ payload_size = 500#Mb @}
+Packet @{
+  payload_size=62500000U#B @@ 0UL#b,
+  flags=0 @@ 4000000032UL#b
+@} @@ 0UL#b
+@end example
+
+In this example we used the @code{omaps} option, which asks poke to
+print the offsets of the fields.  The offset of @code{flags} is
+4000000032 bits, or 500 megabytes:
+
+@example
+(poke) 4000000032UL #b/#MB
+500UL
+@end example
+
+Mapping this new @code{Packet} involves reading and decoding five
+bytes, for the @code{payload_size} and @code{flags} only.  This is
+clearly much faster and avoids unneeded IO.
+
+However you may be wondering, if there is no explicit @code{payload}
+field, how to access the payload space?  A way is to define a method
+to the struct to provide the payload attributes:
+
+@example
+type Packet =
+  struct
+  @{
+    offset<uint<32>,B> payload_size;:
+    var payload_offset = OFFSET;
+    int flags @@ OFFSET + payload_size;
+
+    method get_payload_offset = off64:
+    @{
+      return payload_offset;
+    @}
+  @};
+@end example
+
+Note how we captured the offset of the payload using a variable in the
+strict type definition.  Returning @code{OFFSET} in
+@code{get_payload_offset} wouldn't work for obvious reasons: in the
+body of the method @code{OFFSET} evaluates to the end of @code{flags}
+in this case.
+
+Using this method you can easily access the payload (again as an array
+of ULEB128 numbers) like this:
+
+@example
+var numbers = ULEB128[packet.payload_size @@ packet.get_payload_offset
+@end example
+
+Finally, using labels for this purpose makes the printed
+representation of the struct values more readable by not including the
+payload bytes in it:
+
+@example
+(poke) Packet @{@}
+Packet @{
+  payload_size=0x0U#B,
+  flags=0x0
+@}
+@end example
+
+@node Aligning struct fields
+@subsection Aligning struct fields
+
+Another kind of esoteric padding happens when certain fields in
+entities are required to be aligned to some particular alignment.  For
+example, suppose that the @code{flags} field in the packets used in
+the previous sections is required to always be aligned to 4 bytes
+regardless of the size of the payload.  This would be a common
+requirement if the format is intended to be implemented in systems
+where data is to be accessed using its ``natural'' alignment.
+
+Using explicit fields for both the payload and the additional padding,
+we could come with:
+
+@example
+type Packet =
+  struct
+  @{
+    offset<uint<32>,B> payload_size;
+    byte[payload_size] payload;
+    byte[alignto (OFFSET, 4#B)] padding;
+    int flags;
+  @};
+@end example
+
+Where @code{alignto} is a little function defined in the Poke standard
+library, like this:
+
+@example
+fun alignto = (uoff64 offset, uoff64 to) uoff64:
+@{
+  return (to - (offset % to)) % to;
+@}
+@end example
+
+Alternatively, using the labels approach (which is generally better as
+we discussed in the last section) the definition would become:
+
+@example
+type Packet =
+  struct
+  @{
+    offset<uint<32>,B> payload_size;:
+    var payload_offset = OFFSET;
+    int flags @@ OFFSET + payload_size + alignto (payload_size, 4#B);
+
+    method get_payload_offset = off64:
+    @{
+      return payload_offset;
+    @}
+  @};
+@end example
+
+In this case, the payload space is still completely characterized by
+the @code{payload_size} field and the @code{get_payload_offset}
+method.
+
+@node Padding array elements
+@subsection Padding array elements
+
+Up to now all the examples of padding we have shown are in the
+category of esoteric or internal padding, @i{i.e.} it was intended to
+add space between fields of some particular entity.
+
+However, sometimes we want to specify some padding between the
+elements of a sequence of entities.  In Poke this basically means an
+array.
+
+Suppose we have a simple file system that is conformed by a sequence of
+inodes.  The contents of the file system have the following form:
+
+@example
++-----------------+
+|      inode      |
++-----------------+
+:                 :
+:      data       :
+:                 :
++-----------------+
+|      inode      |
++-----------------+
+:                 :
+:      data       :
+:                 :
++-----------------+
+|      ...        |
+@end example
+
+That's it, each inode describes a block of data of variable size that
+immediately follows.  Then more pairs of inode-data follow until the
+end of the device.  However, a requirement is that each inode has to
+be aligned to 128 bytes.
+
+Let's start by writing a simple type definition for the inodes:
+
+@example
+type Inode =
+  struct
+  @{
+    string filename;
+    int perms;
+    offset<uint<32>,B> data_size;
+  @};
+@end example
+
+This definition is simple enough, but it doesn't allow us to just map
+an array of inodes like this:
+
+@example
+(poke) Inode[] @ 0#B
+@end example
+
+We could of course add the data and padding explicitly to the inode
+structure:
+
+@example
+type Inode =
+  struct
+  @{
+    string filename;
+    int perms;
+    offset<uint<32>,B> data_size;
+    byte[data_size] data;
+    byte[alignto (data_size, 128#B) padding;
+  @};
+@end example
+
+Then we could just map @code{Inode[] @@ 0#B} and we would the get expected
+result.
+
+But this is not a good idea.  On one hand because, as we know, this
+would imply mapping the full file system data byte by byte, and that
+would be very very slow.  On the other hand, because the data is not
+part of the inode, conceptually speaking.
+
+A better solution is to use this idiom:
+
+@example
+type Inode =
+  struct
+  @{
+    string filename;
+    int perms;
+    offset<uint<32>,B> data_size;
+
+    byte[0] @@ OFFSET + data_size + alignto (data_size, 128#B);
+  @};
+@end example
+
+This uses an anonymous field at the end of the struct type, of size
+zero, located at exactly the offset where the data plus padding would
+end in the version with explicit fields.
+
+This later solution is fast and still allows us to get an array of
+inodes reflecting the whole file system with:
+
+@example
+(poke) var inodes = Inode[] @@ 0#B
+@end example
+
+Like in the previous sections, a method =get_data_offset= can be added
+to the struct type in order to allow accessing the data blocks
+corresponding to a given inode.
 
 @node Dealing with Alternatives
 @section Dealing with Alternatives
