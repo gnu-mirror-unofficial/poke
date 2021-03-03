@@ -1,3 +1,7 @@
+2021-03-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Getting Started): New section.
+
 2021-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-set.c (pk_cmd_set_oacutoff): Fix error message.

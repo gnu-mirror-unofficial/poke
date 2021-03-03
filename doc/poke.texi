@@ -47,6 +47,7 @@ later version.
 * Introduction::		Introducing GNU poke.
 
 Using poke
+* Getting Started::             Prior customizations for new users.
 * Basic Editing::		Poking bits, bytes and simple data.
 * Structuring Data::		Poking your own abstractions.
 * Maps and Map-files::          Working with views of data.
@@ -94,6 +95,7 @@ Introduction
 * Commanding poke::		Interactive and non-interactive usage.
 
 Basic Editing
+* Getting Started::             Prior customizations for new users.
 * Binary Files::		Text vs.@: binary.
 * Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
@@ -812,6 +814,29 @@ exec poke -L "$0" "$@@"
 load elf;
 printf ("%v\n", Elf64_Ehdr @@ 0#B);
 @end example
+
+@node Getting Started
+@chapter Getting Started
+
+GNU poke is a spartan program, and therefore tries to be as simple as
+possible by default, without fancy displays.  Therefore, before
+exploring poke you may want to configure it minimally.  This section
+contains a few recommendations in that respect.
+
+First we must say that poke reads a per-user configuration from the
+@file{~/.pokerc} file.  @xref{pokerc}.
+
+We recommend new users to set the following options:
+
+@example
+.set endian little
+.set omode tree
+.set oacutoff 5
+.set pretty-print yes
+@end example
+
+@noindent
+These options are explained later in this manual.  @xref{set command}.
 
 @node Basic Editing
 @chapter Basic Editing
