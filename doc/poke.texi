@@ -865,6 +865,7 @@ integers, and the like.
 * From Bytes to Characters::	Working with ASCII codes
 * ASCII Strings::		NULL-terminated strings.
 * From Strings to Characters::	Indexing strings.
+* Strings are not Arrays::      Converting between strings and arrays.
 @end menu
 
 @node Binary Files
@@ -2968,9 +2969,49 @@ get an error:
        ^
 @end example
 
-@c XXX
-@c @section Printing
-@c print and printf
+@node Strings are not Arrays
+@section Strings are not Arrays
+
+Arrays are collections of homogeneous data organized in a sequence.
+We have already seen (briefly) arrays of bytes, which use the type
+specifier @code{byte[]}.
+
+Similarly, it is possible to arrange characters (which are basically
+little numbers) in an array, like in:
+
+@example
+(poke) ['a','b','c']
+[0x61UB,0x62UB,0x63UB]
+@end example
+
+@noindent
+However, the array above is @emph{not} equivalent to the string
+@code{"abc"}.  The later is a simple value, whereas an array is a
+composite value, and also is implicitly terminated with a NULL
+character, @i{i.e.} a 0 byte.
+
+The Poke standard library provides a couple of utility functions to
+convert between string values and character arrays: @code{catos} and
+@code{stoca}.
+
+@code{catos} gets an array of characters and returns an equivalent
+string.  For example:
+
+@example
+(poke) catos (['a','b','c'])
+"abc"
+@end example
+
+@noindent
+@code{stoca} gets a string and an array and sets the element of the
+array to the characters composing the string.  For example:
+
+@example
+(poke) var a = char[3]()
+(poke) stoca ("abc", a)
+(poke) a
+[0x61UB,0x62UB,0x63UB]
+@end example
 
 @node Structuring Data
 @chapter Structuring Data
