@@ -3039,7 +3039,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           && (PKL_AST_TYPE_CODE (PKL_AST_TYPE (array_type_bound))
               == PKL_TYPE_INTEGRAL))
         {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOTE, pvm_make_string ("bounder"));
+          pkl_asm_note (PKL_GEN_ASM, "bounder");
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                         PKL_AST_TYPE_A_BOUNDER (array_type));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
