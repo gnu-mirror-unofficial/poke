@@ -135,7 +135,7 @@ Description:
 + A new %-sequence shall be added to printf: %%.  This denotes a single
 + % in the formatted output.  The right place where to hack this is the
 + ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
-Target: 1.0
+Target: 2.0
 
 Summary: STRING ~ REGEXP operator
 Component: Language
@@ -1023,7 +1023,7 @@ Priority: 4
 Description:
 + A field in an union type cannot refer to other union alternatives, in
 + any case.  This applies to constraints, array bounds, etc.
-Target: 1.0
+Target: 1.1
 
 Summary: Fix GC roots in AST nodes
 Component: Compiler
@@ -1050,7 +1050,7 @@ Description:
 + error: fjdi
 + (poke) load foo
 + /* Does nothing.  */
-Target: 1.0
+Target: 1.1
 
 Summary: Fix %destructors in parser
 Component: Compiler
@@ -1060,7 +1060,7 @@ Priority: 3
 Description:
 + A suitable %destructor should be added to the Poke parser, to assure
 + no memory leaks when an error occurs (AST nodes).
-Target: 1.0
+Target: 1.1
 
 Summary: Do not leak decl AST nodes in parser
 Component: Compiler
@@ -1070,7 +1070,7 @@ Priority: 3
 Description:
 + Do not leak decl AST nodes if there is an error condition like an
 + already declared entity.
-Target: 1.0
+Target: 1.1
 
 Summary: Remove call to `abort' in pkl-lex.l
 Component: Compiler
@@ -1079,7 +1079,7 @@ BZ: 26893
 Priority: 3
 Description:
 + Code in libpoke should not call `abort' nor `exit'.
-Target: 1.0
+Target: 1.1
 
 Summary: The `muls' instruction in pvm.jitter calls xmalloc
 Component: Compiler
@@ -1088,7 +1088,7 @@ BZ: 26894
 Priority: 3
 Description:
 + libpoke code shouldn't abort, therefore xalloc shouldn't be used.
-Target: 1.0
+Target: 1.1
 
 Summary: Complete pvm_print_val for function types
 Component: PVM
@@ -1098,7 +1098,7 @@ Priority: 3
 Description:
 + pvm_print_val should print valid type descriptors for function types,
 + including optional arguments, varargs, etc.
-Target: 1.0
+Target: 1.1
 
 Summary: Function types are generated with its arguments reversed
 Component: Compiler
@@ -1108,7 +1108,7 @@ Priority: 4
 Description:
 + Either mktyc should get its arguments reversed (ugly) or the compiler
 + should reverse them before calling the instruction.
-Target: 1.0
+Target: 1.1
 
 Summary: pvm_array_set should check for size bounds
 Component: Compiler
@@ -1120,7 +1120,7 @@ Description:
 + instruction in pvm.jitter to pvm_array_set.  This later function
 + should be altered to return a code identifying out-of-bounds,
 + out-of-size, or OK.
-Target: 1.0
+Target: 2.0
 
 Summary: Allow .let #fieldw = ulong<field_type_size>64 in RAS
 Component: RAS
@@ -1314,7 +1314,7 @@ Summary: Pass the declaration's pk_value in callback pk_map_decl_fn
 Component: Library
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 2.0
 
 Summary: Support IO transactions
 Component: IO
@@ -1404,7 +1404,7 @@ Description:
 + when they get IOS_EPERM.
 +
 + Obviously a new exception ``E_perm`` shall be added as well.
-Target: 1.0
+Target: 2.0
 
 Summary: .set with no arguments should give a summary of all options
 Component: CLI
@@ -1413,7 +1413,7 @@ Priority: 3
 Description:
 + This requires work in rec-cmd.c, because the current infrastructure
 + doens't support this.
-Target: 1.0
+Target: 2.0
 
 Summary: Support language-level construct for easy redirections to pipes/files
 Component: Language
@@ -1443,7 +1443,7 @@ Summary: Auto-complete value attributes
 Component: CLI
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 2.0
 
 Summary: Use json-c instead of tcllib json modules in the GUI
 Component: GUI
@@ -1552,7 +1552,7 @@ Component: POKE
 Kind: ENH
 Priority: 3
 Description: hserver business should be encapsulated in pk-repl.c
-Target: 1.0
+Target: 2.0
 
 Summary: Auto-complete map names in .map
 Component: CLI
@@ -1563,7 +1563,7 @@ Summary: Auto-complete yes|no in commands
 Component: CLI
 Kind: ENH
 Priority: 3
-Target: 1.0
+Target: 2.0
 
 Summary: Routine to get an unique memory IO space name
 Component: IO
@@ -1603,7 +1603,7 @@ Description:
 +
 + Once we support docstrings in both fields and methods, the output of
 + ``.info type`` can be expanded to use them.
-Target: 1.0
+Target: 2.0
 
 Summary: .vm time
 Component: CLI
@@ -1685,51 +1685,50 @@ Summary: Document language operand promotion rules in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 1.1
 
 Summary: Document array casts in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 1.1
 
 Summary: Document poke CSS classes in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 1.1
 
 Summary: Note in the manual how arrays built from array literals are unbounded
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 1.1
 
 Summary: document poke maps in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
-Target: 1.0
+Target: 1.1
 
 Summary: document the libpoke API in the manual
 Component: Documentation
 Kind: ENH
 Priority: 2
 Description: Preferably generating it from libpoke.h
-Target: 1.0
+Target: 1.1
 RFC: yes
 
 Summary: Complete PVM values and PKL nodes support in poke-gdb.scm
 Component: Other
 Kind: ENH
 Priority: 3
-Target: 1.0
 
 Summary: Gettextize strings in the codebase
 Component: Other
 Kind: ENH
 Priority: 3
-Target: 1.0
+Target: 1.1
 
 Summary: Use upper-letter names for macro arguments consistenly
 Component: Other
@@ -1749,7 +1748,7 @@ Description:
 + These are the values generated by the constructors of the several
 + types (integers, offsets, strings, arrays, structs).  Refer to this
 + section from array and struct constructor sections.
-Target: 1.0
+Target: 1.1
 
 %rec: Release
 %key: Version
@@ -1757,6 +1756,11 @@ Target: 1.0
 %type: ReleaseDate date
 
 Version: 1.0
+ReleaseDate: 2021-02-26
+
+Version: 1.1
+
+Version: 2.0
 
 %rec: Hacker
 %key: Email
@@ -1793,3 +1797,9 @@ Email: aaptel@suse.com
 
 Name: Mohammad-Reza Nabipoor
 Email: m.nabipoor@yahoo.com
+
+Name: David Faust
+Email: david.faust@oracle.com
+
+Name: Indu Bhagat
+Email: indu.bhagat@oracle.com
