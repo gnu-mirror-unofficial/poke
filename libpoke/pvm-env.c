@@ -78,10 +78,10 @@ pvm_env_register (pvm_env env, pvm_val val)
   if (env->num_vars % env->step == 0)
     {
       size_t size = ((env->num_vars + env->step)
-                     * sizeof (void*));
+                     * sizeof (pvm_val));
       env->vars = pvm_realloc (env->vars, size);
       memset (env->vars + env->num_vars, 0,
-              env->step * sizeof (void*));
+              env->step * sizeof (pvm_val));
     }
 
   env->vars[env->num_vars++] = val;
