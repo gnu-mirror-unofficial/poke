@@ -61,6 +61,9 @@ Pickles
 * Object Formats::		Editing executables and libraries.
 * Programs::			Facilities to write binary utilities.
 
+poke and Emacs
+* Programming Emacs Modes::     Modes to write Poke and RAS programs.
+
 Reference Material
 * Dot-Commands::                Commanding the tool.
 * Commands::			Commands for editing data.
@@ -158,6 +161,11 @@ Colors
 
 Audio
 * MP3::				Editing MP3 files.
+
+Programming Emacs Modes
+* poke-mode::                   Major mode for writing Poke programs.
+* poke-map-mode::               Major mode for writing map-files.
+* poke-ras-mode::               Major mode for writing RAS programs.
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -7207,6 +7215,39 @@ The special option @code{--}, if found in the command line, stops the
 processing of options.  Everything found about it is considered
 non-option arguments.
 
+@node Programming Emacs Modes
+@chapter Programming Emacs Modes
+
+GNU poke ships with a bunch of Emacs major modes that eases writing
+Poke and PVM assembly.  This chapter documents these modes.
+
+@menu
+* poke-mode::                   Major mode for writing Poke programs.
+* poke-map-mode::               Major mode for writing map-files.
+* poke-ras-mode::               Major mode for writing RAS programs.
+@end menu
+
+@node poke-mode
+@section poke-mode
+
+@code{poke-mode} is a major mode for editing Poke source files,
+@i{i.e.} @file{.pk} files.  It provides font-lock, auto-completion and
+indentation features.
+
+@node poke-map-mode
+@section poke-map-mode
+
+@code{poke-map-mode} is a major mode for editing poke map-files.  It
+provides font-lock.  @xref{Maps and Map-files}.
+
+@node poke-ras-mode
+@section poke-ras-mode
+
+@code{poke-ras-mode} is a major mode for editing PVM assembly.  It is
+used in the development of GNU poke.  See the file @code{libpoke/ras}
+in the source distribution for more information about RAS, our
+Retarded Assembler.
+
 @node Dot-Commands
 @chapter Dot-Commands
 
@@ -10817,6 +10858,7 @@ values.  Mapping is perhaps the most important concept in Poke.
 * Mapping Simple Types::	Mapping integers, offsets and strings.
 * Mapping Structs::		Mapping collections of fields.
 * Mapping Arrays::		Mapping sequences of things.
+* Mapping Functions::           Orthogonality is important.
 * Non-strict Mapping::          Working with incorrect data.
 * Unmapping::			From mapped values to regular values.
 @end menu
@@ -11364,6 +11406,28 @@ don't want the mapping bounds of @code{relocs} to be tied to
 
 Since simple values (such as the size above) are not mapped, this
 trick works as intended.
+
+@node Mapping Functions
+@subsection Mapping Functions
+
+Struct fields can be of any type, and that includes function types or
+closures.  This is especially useful to build interfaces.
+
+For orthogonality, it is possible to map function types.  The result
+of the mapping is not very useful though: mapping a function type
+results in a function with an empty body.  If the function returns a
+value, a default value (zero for integral types, empty arrays for
+array types, @i{etc}) is returned.
+
+Example:
+
+@example
+(poke) type Fun = (int) int
+(poke) Fun @@ 0#B
+#<closure>
+(poke) (Fun @@ 0#B) (10)
+0x0
+@end example
 
 @node Non-strict Mapping
 @subsection Non-strict Mapping

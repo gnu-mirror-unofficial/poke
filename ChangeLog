@@ -1,3 +1,11 @@
+2021-03-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Mapping Functions): New section.
+	(Programming Emacs Modes): New chapter.
+	(poke-mode): New section.
+	(ras-mode): Likewise.
+	(poke-map-mode): Likewise.
+
 2021-03-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Strings are not Arrays): New section.
