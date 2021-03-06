@@ -576,39 +576,42 @@ late-header-c
 
 /* Macros to implement printi* and printl* instructions.  */
 
-#define PVM_PRINTI(TYPE,TYPEC,IFORMAT,BASE)                                 \
+#define PVM_PRINTI(TYPE,TYPEC,SIGNED_P,BASE)                                \
   do                                                                        \
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
-    char fmt[6];  /* %0NNd */                                               \
+    char fmt[16];  /* %0NNd */                                              \
+    char *iformat = "";                                                     \
     uint32_t mask                                                           \
         = JITTER_ARGN0 == 32 ? (uint32_t)-1                                 \
                              : (((uint32_t)1 << JITTER_ARGN0) - 1);         \
                                                                             \
     fmt[0] = '%';                                                           \
     fmt[1] = '0';                                                           \
+    fmt[2] = '\0';                                                          \
     if ((BASE) == 10)                                                       \
     {                                                                       \
-      fmt[2] = IFORMAT;                                                     \
-      fmt[3] = '\0';                                                        \
+      iformat = SIGNED_P ? PRIi32 : PRIu32;                                 \
+      strcat (fmt, iformat);                                                \
     }                                                                       \
     else                                                                    \
     {                                                                       \
+      char *basefmt = "";                                                   \
       int prec = 0;                                                         \
                                                                             \
       if ((BASE) == 256)                                                    \
       {                                                                     \
-        fmt[4] = 'c';                                                       \
+        iformat = "c";                                                      \
         prec = 1;                                                           \
       }                                                                     \
       else if ((BASE) == 16)                                                \
       {                                                                     \
-        fmt[4] = 'x';                                                       \
+        iformat = PRIx32;                                                   \
         prec = (JITTER_ARGN0 / 4) + ((JITTER_ARGN0 % 4) != 0);              \
       }                                                                     \
       else if ((BASE) == 8)                                                 \
       {                                                                     \
-        fmt[4] = 'o';                                                       \
+        basefmt = PRIo32;                                                   \
         prec = (JITTER_ARGN0 / 3) + ((JITTER_ARGN0 % 3) != 0);              \
       }                                                                     \
       else if ((BASE) == 2)                                                 \
@@ -622,7 +625,9 @@ late-header-c
       assert (prec != 0);                                                   \
       fmt[2] = '0' + (prec / 10);                                           \
       fmt[3] = '0' + prec - (prec / 10 * 10);                               \
-      fmt[5] = '\0';                                                        \
+      fmt[4] = '\0';                                                        \
+      strcat (fmt, iformat);                                                \
+      strcat (fmt, basefmt);                                                \
     }                                                                       \
                                                                             \
     pk_printf (fmt, (BASE) == 10 ? val : val & mask);                       \
@@ -630,35 +635,37 @@ late-header-c
     JITTER_DROP_STACK ();                                                   \
   } while (0)
 
-#define PVM_PRINTL(TYPE,TYPEC,IFORMAT,BASE)                                 \
+#define PVM_PRINTL(TYPE,TYPEC,SIGNED_P,BASE)                                \
   do                                                                        \
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
-    char fmt[7];  /* %0NNff */                                              \
+    char fmt[16];  /* %0NNfff */                                            \
+    char *iformat = "";                                                     \
     uint64_t mask                                                           \
         = JITTER_ARGN0 == 64 ? (uint64_t)-1                                 \
                              : (((uint64_t)1 << JITTER_ARGN0) - 1);         \
                                                                             \
     fmt[0] = '%';                                                           \
     fmt[1] = '0';                                                           \
-    fmt[4] = 'l';                                                           \
+    fmt[2] = '\0';                                                          \
     if ((BASE) == 10)                                                       \
     {                                                                       \
-      fmt[2] = IFORMAT;                                                     \
-      fmt[3] = '\0';                                                        \
+      iformat = SIGNED_P ? PRIi64 : PRIu64;                                 \
+      strcat (fmt, iformat);                                                \
     }                                                                       \
     else                                                                    \
     {                                                                       \
+      char *basefmt = "";                                                   \
       int prec = 0;                                                         \
                                                                             \
       if ((BASE) == 16)                                                     \
       {                                                                     \
-        fmt[5] = 'x';                                                       \
+        iformat = PRIx64;                                                   \
         prec = (JITTER_ARGN0 / 4) + ((JITTER_ARGN0 % 4) != 0);              \
       }                                                                     \
       else if ((BASE) == 8)                                                 \
       {                                                                     \
-        fmt[5] = 'o';                                                       \
+        basefmt = PRIo64;                                                   \
         prec = (JITTER_ARGN0 / 3) + ((JITTER_ARGN0 % 3) != 0);              \
       }                                                                     \
       else if ((BASE) == 2)                                                 \
@@ -671,7 +678,9 @@ late-header-c
                                                                             \
       fmt[2] = '0' + (prec / 10);                                           \
       fmt[3] = '0' + prec - (prec / 10 * 10);                               \
-      fmt[6] = '\0';                                                        \
+      fmt[4] = '\0';                                                        \
+      strcat (fmt, iformat);                                                \
+      strcat (fmt, basefmt);                                                \
     }                                                                       \
                                                                             \
     pk_printf (fmt, (BASE) == 10 ? val : val & mask);                       \
@@ -1780,7 +1789,7 @@ end
 instruction printi (?n popf_printer)
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
-    PVM_PRINTI (INT, int32_t, 'd', base);
+    PVM_PRINTI (INT, int32_t, 1 /* signed_p */, base);
   end
 end
 
@@ -1794,7 +1803,7 @@ end
 instruction printiu (?n popf_printer)
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
-    PVM_PRINTI (UINT, uint32_t, 'u', base);
+    PVM_PRINTI (UINT, uint32_t, 0 /* signed_p */, base);
   end
 end
 
@@ -1808,7 +1817,7 @@ end
 instruction printl (?n popf_printer)
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
-    PVM_PRINTL (LONG, int64_t, 'd', base);
+    PVM_PRINTL (LONG, int64_t, 1 /* signed_p */, base);
   end
 end
 
@@ -1822,7 +1831,7 @@ end
 instruction printlu (?n popf_printer)
   code
    int base = PVM_VAL_INT (JITTER_TOP_STACK ());
-   PVM_PRINTL (ULONG, uint64_t, 'u', base);
+   PVM_PRINTL (ULONG, uint64_t, 0 /* signed_p */, base);
   end
 end
 
