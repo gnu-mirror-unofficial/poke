@@ -1,5 +1,9 @@
 2021-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Set NBDKIT to `no' if --disable-libnbd is used.
+
+2021-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-trans.c (pkl_trans1_ps_print_stmt): Fix error
 	message.
 

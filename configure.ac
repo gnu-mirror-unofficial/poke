@@ -145,6 +145,8 @@ if test "x$libnbd_enabled" = "xyes"; then
     AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
     AC_PATH_PROGS([NBDKIT], [nbdkit], [no], [$PATH:/usr/local/sbin:/usr/sbin])
   ], [libnbd_enabled=no NBDKIT=no])
+else
+  NBDKIT=no
 fi
 AM_CONDITIONAL([NBD], [test "x$libnbd_enabled" = "xyes"])
 
