@@ -812,7 +812,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
               }
             else
               {
-                msg = _("expected decimal digit after %u");
+                if (p[1] == 'u')
+                  msg = _("expected decimal digit after %u");
+                else
+                  msg = _("expected decimal digit after %i");
+
                 goto invalid_tag;
               }
             ntag++;
