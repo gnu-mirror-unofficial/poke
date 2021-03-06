@@ -1,5 +1,10 @@
 2021-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/Makefile.am (check-DEJAGNU): `make check' now exits
+	with an error status if runtest fails.
+
+2021-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.h (PVM_VAL_OFF_UNIT_GIGIBYTES): Avoid using a LU
 	suffix, fixing 32-bit.
 	(PVM_VAL_OFF_UNIT_GIGABYTES): Likewise.

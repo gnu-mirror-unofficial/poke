@@ -36,7 +36,7 @@ if HAVE_DEJAGNU
           POKE_LOAD_PATH="$(top_srcdir)/poke" \
 		$$runtest --tool $(DEJATOOL) --srcdir $${srcdir} --objdir $(builddir) \
                         SHELL="$(SHELL)" \
-			$(RUNTESTFLAGS); \
+			$(RUNTESTFLAGS) || exit $$1; \
 	  rm -f $(top_builddir)/inputrc; \
 	else \
 	  >&2 echo "ERROR: could not find \`runtest'"; \
