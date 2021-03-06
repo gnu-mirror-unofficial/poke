@@ -988,8 +988,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
     {
       pkl_ast_node initializer_index_node
         = PKL_AST_ARRAY_INITIALIZER_INDEX (tmp);
-      size_t initializer_index;
-      size_t elems_appended, effective_index;
+      uint64_t initializer_index;
+      uint64_t elems_appended, effective_index;
 
       /* Set the index of the initializer.  */
       if (initializer_index_node == NULL)
