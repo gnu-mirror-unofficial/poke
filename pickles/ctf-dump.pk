@@ -1,0 +1,202 @@
+/* ctf-dump.pk - Utilities for dumping CTF information.  */
+
+/* Copyright (C) 2021 Oracle Inc.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This file contains routines for dumping out CTF information.  Currently, it
+   only supports CTF dictionary.  */
+
+load ctf;
+
+/* Dump all strings in the CTF string section.  */
+
+fun ctf_dump_all_strings = (CTF_Dictionary ctf) void:
+{
+  for (s in ctf.strings)
+    printf ("   %s \n", s);
+}
+
+/* Dump CTF integer type.  */
+
+fun ctf_dump_int = (CTF_Integer_Type t) void:
+{
+  var signed_p = t.encoding & CTF_INT_SIGNED;
+  var char_p = t.encoding & CTF_INT_CHAR;
+  var bool_p = t.encoding & CTF_INT_BOOL;
+
+  printf (" %s%s%s",
+          signed_p ? "(signed)" : "",
+          char_p ? "(char)" : "",
+          bool_p ? "(bool)" : "");
+}
+
+/* Dump CTF array type.  */
+
+fun ctf_dump_array = (CTF_Array t) void:
+{
+  printf (" [%u32d], (ID %u32d)",
+          t.cta_nelems, t.cta_contents);
+}
+
+/* Dump CTF slice type.  */
+
+fun ctf_dump_slice = (CTF_Dictionary ctf, CTF_Slice t) void:
+{
+  printf (" [offset=%v,bits=%u16d] --> ID %u32d",
+          t.cts_offset, t.cts_bits/#b, t.cts_type);
+  /* XXX - forward declaration of ctf_dump_type is not allowed.  So, this call
+     to ctf_dump_type cannot be made.  */
+  /* ctf_dump_type (ctf, ctf.types[t.cts_type-1], 0); */
+}
+
+/* Dump CTF struct or union members.  */
+
+fun ctf_dump_sou_members = (CTF_Dictionary ctf, CTF_Member[] t) void:
+{
+  for (m in t)
+    {
+      printf ("\n        [%v] %s (ID %u32d)",
+              m.ctm_offset,
+              ctf.get_string (m.ctm_name.offset),
+              m.ctm_type);
+    }
+}
+
+/* Dump CTF enum type.  */
+
+fun ctf_dump_enum = (CTF_Dictionary ctf, CTF_Enum[] enums) void:
+{
+  printf (" {");
+  var eid = 0;
+  for (var eid = 0; eid < enums'length; eid++)
+    {
+      if (eid != 0) print ", ";
+      var e = enums[eid];
+      printf ("%s=%u32d",
+              ctf.get_string (e.cte_name.offset), e.cte_value);
+    }
+  printf ("}");
+}
+
+/* Dump CTF function type.  */
+
+fun ctf_dump_func = (CTF_Dictionary ctf, CTF_Type t) void:
+{
+  /* XXX CTF_Func_Args declaration scoped within CTF_Type is not available.
+     So, for now put an explicit check for the expected kind.  */
+  if (t.info.kind != CTF_KIND_FUNCTION)
+    return;
+
+  if (t.info.vlen != 0)
+    print " {";
+  for (var argc = 0; argc < t.info.vlen; argc++)
+    {
+      if (argc != 0) print ", ";
+      printf ("arg[%u32d]=ID:%u32d", argc, t.data.func_args.arg_types[argc]);
+    }
+  if (t.info.vlen != 0)
+    print "}";
+}
+
+/* Dump CTF information in the variable length number of bytes following the
+   CTF Type.  */
+
+fun ctf_dump_vlen_data = (CTF_Dictionary ctf, CTF_Type t) void:
+{
+  try ctf_dump_int (t.data.integer);
+  catch if E_elem {};
+
+  try ctf_dump_array (t.data.array);
+  catch if E_elem {};
+
+  try ctf_dump_slice (ctf, t.data.slice);
+  catch if E_elem {};
+
+  try ctf_dump_sou_members (ctf, t.data.members);
+  catch if E_elem {};
+
+  try ctf_dump_enum (ctf, t.data.enum);
+  catch if E_elem {};
+
+  /* XXX CTF_Func_Args declaration scoped within CTF_Type is not available.  */
+  try ctf_dump_func (ctf, t);
+  catch if E_elem {};
+}
+
+/* Dump the given CTF type.  */
+
+fun ctf_dump_type = (CTF_Dictionary ctf, CTF_Type t, int dump_vlen) void:
+{
+  var name = ctf.get_string (t.name.offset);
+  printf (" (kind %u6d) %s %s",
+          t.info.kind, ctf_kind_str[t.info.kind], name);
+
+  if (t.info.kind == CTF_KIND_FORWARD)
+    printf (" %s ", ctf_kind_str[t.common.ttype]);
+
+  /* Print the size from ctf base type, except for arrays.  */
+  if (t.info.kind != CTF_KIND_ARRAY)
+    {
+      try printf (" (size %u32d)", t.common.size.normal);
+      catch if E_elem
+        {
+          if (t.info.kind != CTF_KIND_FORWARD)
+            {
+              printf (" --> ID %u32d:", t.common.ttype);
+              /* Offset by 1 as the ctf.types[] array is mapped starting at
+                 offset 0.  In the types section of the CTF dictionary,
+                 however, the first valid CTF type is at offset 1.  */
+              ctf_dump_type (ctf, ctf.types[t.common.ttype-1], 0);
+            }
+        }
+    }
+
+  if (dump_vlen == 1)
+    ctf_dump_vlen_data (ctf, t);
+}
+
+/* Dump all CTF types in the given CTF dictionary.  */
+
+fun ctf_dump_all_types = (CTF_Dictionary ctf) void:
+{
+  var type_id = 1;
+  /* To avoid recursion, dump vlen bytes when a type is encountered the first
+     time only.  */
+  var dump_vlen = 1;
+
+  print "Types:\n";
+  for (t in ctf.types)
+    {
+      printf ("   %v: ", type_id);
+      ctf_dump_type (ctf, t, dump_vlen);
+      printf ("\n");
+      type_id++;
+    }
+}
+
+/* Dump all strings in the CTF string section.  */
+
+fun ctf_dump_all_strings = (CTF_Dictionary ctf) void:
+{
+  var str_offset = 0;
+
+  print "Strings:\n";
+  for (s in ctf.strings)
+    {
+      printf ("   %v: %s \n", str_offset, s);
+      str_offset = str_offset + s'length + 1;
+    }
+}
