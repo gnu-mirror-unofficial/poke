@@ -25,8 +25,8 @@
 #
 #  ./run my_script   # where my_script in turn calls poke
 
-s=$(cd @abs_srcdir@ && pwd)
-b=$(cd @abs_builddir@ && pwd)
+s=`cd @abs_srcdir@ && pwd`
+b=`cd @abs_builddir@ && pwd`
 
 # setup to run uninstalled poke
 PATH=$b/poke:$b/gui:$PATH
@@ -43,7 +43,7 @@ export POKE_LOAD_PATH POKEDOCDIR POKEGUIDIR POKEMAPSDIR
 
 # Cheap way to find some use-after-free and uninit read problems with glibc
 MALLOC_CHECK_=1
-random_val="$(@AWK@ 'BEGIN{srand(); print 1+int(255*rand())}' < /dev/null)"
+random_val=`@AWK@ 'BEGIN{srand(); print 1+int(255*rand())}' < /dev/null`
 MALLOC_PERTURB_=$random_val
 export MALLOC_CHECK_ MALLOC_PERTURB_
 
