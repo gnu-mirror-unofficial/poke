@@ -30,12 +30,16 @@
 #include "pk-cmd.h"
 #include "pk-utils.h"
 
+#ifndef PATH_MAX /* GNU/Hurd */
+# define PATH_MAX (64 * 1024)
+#endif
+
 static int
 pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   const char *editor;
   char *cmdline;
-  char tmpfile[1024];
+  char tmpfile[PATH_MAX];
   int des;
   FILE *fp;
 
