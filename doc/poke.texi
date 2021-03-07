@@ -5002,6 +5002,64 @@ If you try to do this, the compiler will greet you with an ``invalid
 reference to struct method'' message.
 @end itemize
 
+Something to keep in mind about methods is that they can destroy the
+integrity of the data stored in a struct.  Consider for example the
+following struct type:
+
+@example
+type Packet =
+  struct
+  @{
+    byte magic = 0xab;
+    byte size : size <= 4096;
+    [...]
+
+    method set_size = (byte s) void:
+    @{
+      if (s == 0)
+        size = packet_special;
+      else
+        size = s;
+    @}
+  @};
+@end example
+
+@noindent
+Observe how this new version of @code{Packet} has an additional
+constraint that specifies @code{size} should not exceed 4096.
+However, when the method @code{set_size} is executed the constraints
+are not checked again.  This is useful at times, but can also lead to
+unintended data corruption.
+
+A solution for this problem is to make methods aware of the
+restrictions.  Like in this case:
+
+@example
+type Packet =
+  struct
+  @{
+    var MAXSIZE = 4096;
+
+    byte magic = 0xab;
+    byte size : size <= MAXSIZE;
+    [...]
+
+    method set_size = (byte s) void:
+    @{
+      if (s == 0)
+        size = packet_special;
+      else if (s > MAXSIZE)
+        raise E_inval;
+      else
+        size = s;
+    @}
+  @};
+@end example
+
+@noindent
+Note how we use a variable @code{MAXSIZE} in order to avoid
+hard-coding 4096 twice in the struct definition.
+
 @node Padding and Alignment
 @section Padding and Alignment
 @cindex padding

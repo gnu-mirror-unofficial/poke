@@ -1,5 +1,10 @@
 2021-03-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Struct Methods): Explain how methods have the
+	ability to break data integrity.
+
+2021-03-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Check for recfix.
 	* cfg.mk (sc_recfix_poke_rec): New rule.
 
