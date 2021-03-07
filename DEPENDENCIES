@@ -15,14 +15,27 @@ The following packages should be installed before GNU poke is installed
     - Other: https://repology.org/project/boehm-gc/versions
 
   + Note that if you have the Boehm GC installed in a prefix different
-    from the one that contains pkg-config, you need to set PKG_CONFIG_PATH
-    so that pkg-config finds it:
+    from the one that contains pkg-config, you either need to set
+    PKG_CONFIG_PATH so that pkg-config finds it:
 
     $ test -z "$PKG_CONFIG_PATH" \
         || PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_PKGCONFIG}/lib/pkgconfig
     $ export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_LIBGC}/lib/pkgconfig:${PKG_CONFIG_PATH}
 
     or set the variables BDW_GC_CFLAGS, BDW_GC_LIBS when invoking 'configure'.
+
+    Which one to use, depends how the Boehm GC is installed:
+    - If it is installed as a binary package from the vendor, you usually
+      don't need to set any variable.
+      Except on Solaris 11, where you have to set BDW_GC_LIBS="-lbgc".
+    - If it is installed as a binary package in /usr/local, such as e.g. on
+      FreeBSD, set
+      BDW_GC_CFLAGS="-I/usr/local/include" BDW_GC_LIBS="-L/usr/local/lib -lgc"
+    - If it is installed from source with the same --prefix as you are using
+      for GNU poke, set
+      BDW_GC_LIBS="-lgc"
+    - If it is installed from source with a different --prefix, set
+      PKG_CONFIG_PATH as shown above.
 
 * GNU readline
   + Mandatory.
@@ -120,7 +133,17 @@ The following packages should be installed before GNU poke is installed
 The following packages should be installed when GNU poke is installed
 (runtime dependencies, but not build dependencies):
 
-None.
+* Tcl library.
+  + Optional.
+    Required by the poke GUI.
+  + Homepage:
+    https://core.tcl-lang.org/index.html
+  + Download:
+    https://core.tcl-lang.org/tcllib/wiki?name=Downloads
+  + Pre-built package name:
+    - On Debian and Debian-based systems: tcllib,
+    - On Red Hat distributions: --.
+    - Other: https://repology.org/project/tcllib/versions
 
 
 The following should be installed when GNU poke is built, but are not
