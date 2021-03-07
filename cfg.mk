@@ -55,6 +55,10 @@ sc_tests_listed_in_makefile_am:
           { diff -u in-files in-makefile; \
             msg='missing or extra tests in EXTRA_DIST' $(_sc_say_and_exit) }
 
+sc_recfix_poke_rec:
+	@$(RECFIX) $(top_srcdir)/etc/poke.rec || \
+            { msg='integrity problems found in etc/poke.rec' $(_sc_say_and_exit) }
+
 update-copyright-env = UPDATE_COPYRIGHT_HOLDER="Jose E. Marchesi"
 
 gendocs_options_ = -I $(abs_builddir)/doc/
