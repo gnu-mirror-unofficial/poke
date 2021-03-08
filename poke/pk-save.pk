@@ -76,7 +76,7 @@ fun save = (int ios = get_ios,
  if (append)
    flags = flags | IOS_F_READ;
  else
-   flags = flags | IOS_F_TRUNCATE | IOS_F_CREATE;
+   flags = flags | IOS_F_CREATE;
 
  var file_ios = open (file, flags);
 

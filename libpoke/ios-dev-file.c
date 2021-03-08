@@ -77,11 +77,14 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
       /* Decide what mode to use to open the file.  */
       if (flags_mode == IOS_F_READ)
         mode = "rb";
-      else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
+      else if (flags_mode == IOS_F_WRITE)
         mode = "wb";
       else if (flags_mode == (IOS_F_READ | IOS_F_WRITE))
         mode = "r+b";
-      else if (flags_mode == (IOS_F_WRITE | IOS_F_CREATE | IOS_F_TRUNCATE))
+      else if (flags_mode == (IOS_F_READ | IOS_F_WRITE | IOS_F_CREATE)
+               || flags_mode == (IOS_F_READ | IOS_F_WRITE | IOS_F_TRUNCATE)
+               || flags_mode == (IOS_F_WRITE | IOS_F_CREATE)
+               || flags_mode == (IOS_F_WRITE | IOS_F_TRUNCATE))
         mode = "w+b";
       else
         {
