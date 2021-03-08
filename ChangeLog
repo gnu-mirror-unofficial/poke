@@ -1,5 +1,9 @@
 2021-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* .x-sc_prohibit_path_max_allocation: New file.
+
+2021-03-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ios-dev-file.c (ios_dev_file_open): Handle `open' flags
 	better.
 	* poke/pk-save.pk (save): Adapt to new handling of flags in the
