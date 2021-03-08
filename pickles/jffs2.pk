@@ -1,0 +1,655 @@
+/* JFFS2 Implementation for GNU poke */
+
+/* Copyright (C) 2021 Matthew T. Ihlenfield.  */
+
+/* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
+ * Based on https://elixir.bootlin.com/linux/latest/source/include/uapi/linux/jffs2.h
+ * and https://kernel.googlesource.com/pub/scm/linux/kernel/git/rw/mtd-utils/+/refs/heads/master/mkfs.jffs2.c
+ * and https://www.sourceware.org/jffs2/jffs2.pdf
+ *
+ * Note: This was tested with file systems created by mkfs.jffs2 and sumtool
+ */
+
+var JFFS2_MAGIC = 0x1985;
+var JFFS2_MAGIC_OLD = 0x1984;
+
+var JFFS2_NODE_ACCURATE = 0x2000;
+
+/*
+ * Part of the node_type that tells the OS what to do if it doesn't
+ * know what the node type is
+ */
+// INCOMPAT: Refuse to mount the file system
+var JFFS2_FEATURE_INCOMPAT = 0xc000;
+// ROCOMPAT: Ignore the node, but mount the FS read only
+var JFFS2_FEATURE_ROCOMPAT = 0x8000;
+// RWCOMPAT_COPY: Ignore the node, and move it somewhere else on garbage collection
+var JFFS2_FEATURE_RWCOMPAT_COPY = 0x4000;
+// RWCOMPAT_DELETE: Ignore the node and delete it on next garbage collection
+var JFFS2_FEATURE_RWCOMPAT_DELETE = 0x0000;
+
+var JFFS2_NODETYPE_DIRENT = (JFFS2_FEATURE_INCOMPAT | JFFS2_NODE_ACCURATE | 1);
+var JFFS2_NODETYPE_INODE = (JFFS2_FEATURE_INCOMPAT | JFFS2_NODE_ACCURATE | 2);
+var JFFS2_NODETYPE_CLEANMARKER = (JFFS2_FEATURE_RWCOMPAT_DELETE | JFFS2_NODE_ACCURATE | 3);
+var JFFS2_NODETYPE_PADDING = (JFFS2_FEATURE_RWCOMPAT_DELETE | JFFS2_NODE_ACCURATE | 4) ;
+var JFFS2_NODETYPE_SUMMARY = (JFFS2_FEATURE_RWCOMPAT_DELETE | JFFS2_NODE_ACCURATE | 6);
+var JFFS2_NODETYPE_XATTR = (JFFS2_FEATURE_INCOMPAT | JFFS2_NODE_ACCURATE | 8);
+var JFFS2_NODETYPE_XREF = (JFFS2_FEATURE_INCOMPAT | JFFS2_NODE_ACCURATE | 9);
+
+var jffs2_nodetypes = [
+    JFFS2_NODETYPE_DIRENT,
+    JFFS2_NODETYPE_INODE,
+    JFFS2_NODETYPE_CLEANMARKER,
+    JFFS2_NODETYPE_PADDING,
+    JFFS2_NODETYPE_SUMMARY,
+    JFFS2_NODETYPE_XATTR,
+    JFFS2_NODETYPE_XREF
+];
+
+// inode compression types
+var JFFS2_COMPR_NONE = 0x00;
+var JFFS2_COMPR_ZERO = 0x01;
+var JFFS2_COMPR_RTIME = 0x02;
+var JFFS2_COMPR_RUBINMIPS = 0x03;
+var JFFS2_COMPR_COPY = 0x04;
+var JFFS2_COMPR_DYNRUBIN = 0x05;
+var JFFS2_COMPR_ZLIB = 0x06;
+var JFFS2_COMPR_LZO = 0x07;
+
+var jffs2_inode_comp_types = [
+    JFFS2_COMPR_NONE,
+    JFFS2_COMPR_ZERO,
+    JFFS2_COMPR_RTIME,
+    JFFS2_COMPR_RUBINMIPS,
+    JFFS2_COMPR_COPY,
+    JFFS2_COMPR_DYNRUBIN,
+    JFFS2_COMPR_ZLIB,
+    JFFS2_COMPR_LZO
+];
+
+// dirent types
+// These are the same as the linux dirent values and could
+// probably be moved to a dirent pickle someday
+var JFFS2_DT_UNKNOWN = 0x0;
+var JFFS2_DT_FIFO = 0x1;
+var JFFS2_DT_CHR = 0x2;
+var JFFS2_DT_DIR = 0x4;
+var JFFS2_DT_BLK = 0x6;
+var JFFS2_DT_REG = 0x8;
+var JFFS2_DT_LNK = 0xa;
+var JFFS2_DT_SOCK = 0xc;
+var JFFS2_DT_WHT = 0xe;
+
+var jffs2_dirent_types = [
+    JFFS2_DT_UNKNOWN,
+    JFFS2_DT_FIFO,
+    JFFS2_DT_CHR,
+    JFFS2_DT_DIR,
+    JFFS2_DT_BLK,
+    JFFS2_DT_REG,
+    JFFS2_DT_LNK,
+    JFFS2_DT_SOCK,
+    JFFS2_DT_WHT
+];
+
+var JFFS2_ALIGNMENT = 4#B;
+var JFFS2_HEADER_SIZE = 0xc#B;
+
+fun jffs2_nodetype_to_str = (uint<16> node_type) string: {
+    if (node_type == JFFS2_NODETYPE_DIRENT) {
+        return "DIRENT";
+    }
+
+    if (node_type == JFFS2_NODETYPE_INODE) {
+        return "INODE";
+    }
+
+    if (node_type == JFFS2_NODETYPE_CLEANMARKER) {
+        return "CLEANMARKER";
+    }
+
+    if (node_type == JFFS2_NODETYPE_PADDING) {
+        return "PADDING";
+    }
+
+    if (node_type == JFFS2_NODETYPE_SUMMARY) {
+        return "SUMMARY";
+    }
+
+    if (node_type == JFFS2_NODETYPE_XATTR) {
+        return "XATTR";
+    }
+
+    if (node_type == JFFS2_NODETYPE_XREF) {
+        return "XREF";
+    }
+
+    return "UNKNOWN";
+};
+
+
+/*
+ * Similar to a linux dirent - represents an entry within
+ * a directory. Could be a regular file, dir, device, link,
+ * etc...
+ */
+type JFFS2_Dirent =
+struct
+{
+    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> node_type = JFFS2_NODETYPE_DIRENT;
+    offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
+    uint<32> node_header_crc;
+    uint<32> pino; // Parent inode number
+    uint<32> version;
+    uint<32> ino; // inode number
+    uint<32> mctime; // time of the last modification in secs
+    offset<uint<8>, B> nsize; // length of the file name
+    uint<8> dir_type : dir_type in jffs2_dirent_types;
+    uint<8>[2];
+    uint<32> node_crc; // crc of data from node magic to unused
+    uint<32> name_crc; // crc of name[nsize]
+    char[nsize] name; // file name
+
+    // padding
+    byte[0] @ total_len + alignto(total_len, JFFS2_ALIGNMENT);
+
+    method get_name = string:
+    {
+        return catos(name);
+    }
+};
+
+/*
+ * Holds file data and metadata of a particular inode
+ *
+ * Nodes have a configurable maximum size (the default for mkfs.jffs2
+ * is 4Kb), that is usually driven by hardware limitations. So a file
+ * larger than the maximum size will be broken up in to several nodes,
+ * each representing a range of data within the file. The "offset" field
+ * in the Inode struct is the start of the range for that node.
+ *
+ * Any time a file is written to, a new node is created for that data.
+ * If the data overwrites the data that is held by some previous node,
+ * that previous node may become obselete, and may be garbage collected.
+ *
+ */
+type JFFS2_Inode =
+struct
+{
+    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> node_type = JFFS2_NODETYPE_INODE;
+    offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
+    uint<32> node_header_crc;
+    uint<32> ino; // inode number
+    uint<32> version; // log version
+    uint<32> mode; // stat
+    uint<16> uid; // user id
+    uint<16> gid; // group id
+    uint<32> isize; // file size
+    uint<32> atime; // last access time
+    uint<32> mtime; // last modification time
+    uint<32> ctime; // last time of status change
+    offset<uint<32>, B> offset; // where to begin write
+    offset<uint<32>, B> csize;  // compressed data size
+    offset<uint<32>, B> dsize; // uncompressed data size
+    uint<8> compr : compr in jffs2_inode_comp_types;
+    uint<8> usercompr : usercompr in jffs2_inode_comp_types;
+    uint<16> flags;
+    uint<32> data_crc; // crc of data[csize]
+    uint<32> node_crc; // crc from jffs2 to magic to flags
+
+    var rel_data_offset = OFFSET;
+
+    // end of data + padding for alignment
+    byte[0] @ total_len + alignto(total_len, JFFS2_ALIGNMENT);
+
+    method get_data_offset = uoff64:
+    {
+        return rel_data_offset;
+    }
+};
+
+/*
+ * Holds a single extended attribute name/value pair
+ *
+ * Associated to a file (ino) via an XRef node.
+ * This allows XAttr nodes to be reused by multiple files
+ */
+type JFFS2_XAttr =
+struct
+{
+    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> node_type = JFFS2_NODETYPE_XATTR;
+    offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
+    uint<32> node_header_crc;
+    uint<32> xid;
+    uint<32> version;
+    uint<8> xprefix;
+    offset<uint<8>, B> name_len;
+    offset<uint<16>, B> value_len;
+    uint<32> data_crc;
+    uint<32> node_crc;
+    char[name_len] name if name_len != 0#B;
+
+    var rel_value_offset = OFFSET;
+
+    // end of data + padding for alignment
+    byte[0] @ total_len + alignto(total_len, JFFS2_ALIGNMENT);
+
+    method get_name = string:
+    {
+        try return catos(name);
+        catch if E_elem { return ""; }
+    }
+
+    method get_value_offset = uoff64:
+    {
+        return rel_value_offset;
+    }
+};
+
+/*
+ * Associates an XAttr to a file (ino)
+ */
+type JFFS2_XRef =
+struct
+{
+    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> node_type = JFFS2_NODETYPE_XREF;
+    offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
+    uint<32> node_header_crc;
+    uint<32> ino; // ino to add attr to
+    uint<32> xid; // attr to add
+    uint<32> xseqno;
+    uint<32> node_crc;
+};
+
+/*
+ * Represents an inode in a summary node
+ */
+type JFFS2_Sum_Inode =
+struct
+{
+    uint<16> node_type = JFFS2_NODETYPE_INODE;
+    uint<32> inode; /* inode number */
+    uint<32> version; /* inode version */
+    offset<uint<32>, B> offset; /* offset on jeb */
+    offset<uint<32>, B> totlen; /* record length */
+};
+
+/*
+ * Represents a dirent in a summary node
+ */
+type JFFS2_Sum_Dirent =
+struct
+{
+    uint<16> node_type = JFFS2_NODETYPE_DIRENT;
+    uint<32> totlen; /* record length */
+    offset<uint<32>, B> offset; /* ofset on jeb */
+    uint<32> pino; /* parent inode */
+    uint<32> version; /* dirent version */
+    uint<32> ino; /* == zero for unlink */
+    offset<uint<8>, B> nsize; /* dirent name size */
+    uint<8> dir_type; /* dirent type */
+    char[nsize] name; /* dirent name */
+
+    method get_name = string:
+    {
+        return catos(name);
+    }
+};
+
+/*
+ * Represents an xattr in a summary node
+ */
+type JFFS2_Sum_XAttr =
+struct
+{
+    uint<16> node_type = JFFS2_NODETYPE_XATTR;
+    uint<32> xid; /* xattr identifier */
+    uint<32> version; /* version number */
+    uint<32> offset; /* offset on jeb */
+    uint<32> totlen; /* node length */
+};
+
+/*
+ * Represents an xref in a summary node
+ */
+type JFFS2_Sum_XRef =
+struct
+{
+    uint<16> node_type = JFFS2_NODETYPE_XREF;
+    uint<32> offset; /* offset on jeb */
+};
+
+/*
+ * Represents in an unknown node in a summary node
+ */
+type JFFS2_Sum_Unk =
+struct
+{
+    uint<16> node_type; // Could be anything
+};
+
+/*
+ * JFFS2 Summary node record
+ * Exists within a summary node, but represents a JFFS2
+ * node in the surrounding eraseblock
+ */
+type JFFS2_Sum_Rec =
+union {
+    JFFS2_Sum_Dirent dirent;
+    JFFS2_Sum_Inode inode;
+    JFFS2_Sum_XAttr xattr;
+    JFFS2_Sum_XRef xref;
+    JFFS2_Sum_Unk unknown;
+
+     method get_node_type = uint<16>:
+     {
+       try return dirent.node_type; catch if E_elem {}
+       try return inode.node_type; catch if E_elem {}
+       try return xattr.node_type; catch if E_elem {}
+       try return xref.node_type; catch if E_elem {}
+
+       return unknown.node_type;
+     }
+};
+
+/*
+ * An Erase Block Summary (EBS) provides a "summary" of a JFFS2 erase
+ * block. If a jffs2 fs has summaries they will be at the end of
+ * each eraseblock, and will contain a summary record for each JFFS2
+ * node (dirents, inodes, xattrs, and xrefs) in the eraseblock.
+ *
+ * EBS was added to make mounting JFFS2 file systems faster: instead
+ * of parsing through all the data in an eraseblock, you could jump
+ * to the end and parse the summary node
+ */
+type JFFS2_Summary =
+struct
+{
+    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> node_type = JFFS2_NODETYPE_SUMMARY;
+    offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
+    uint<32> node_header_crc;
+    uint<32> sum_num;
+    uint<32> cln_mkr;
+    uint<32> padded;
+    uint<32> sum_crc;
+    uint<32> node_crc;
+
+    var rel_records_offset = OFFSET;
+    byte[0] records;
+
+    // records end + padding
+    byte[0] @ total_len + alignto(total_len, JFFS2_ALIGNMENT);
+
+    method get_records = JFFS2_Sum_Rec[]:
+    {
+        return JFFS2_Sum_Rec[sum_num] @ records'offset;
+    }
+
+    method get_records_offset = uoff64:
+    {
+        return rel_records_offset;
+    }
+
+};
+
+/*
+ * Used for nodes with no extra data, or for unknown nodes.
+ *
+ * If a JFFS2 implementation encounters a node_type it isn't familiar
+ * with, it checks the FEATURE bits in the node_type to see how to handle
+ * it.
+ *
+ * CLEANMARKER and PADDING nodes also use the JFFS2_Unk_Node struct.
+ *
+ */
+type JFFS2_Unk_Node =
+struct
+{
+    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> node_type; // could be anything
+    offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
+    uint<32> node_header_crc;
+    byte[0] data;
+
+    // data + padding
+    byte[0] @ total_len + alignto(total_len, JFFS2_ALIGNMENT);
+
+    method get_data_offset = uoff64:
+    {
+        return data'offset;
+    }
+};
+
+type JFFS2_Node =
+union {
+    JFFS2_Dirent dirent;
+    JFFS2_Inode inode;
+    JFFS2_XAttr xattr;
+    JFFS2_XRef xref;
+    JFFS2_Summary summary;
+    JFFS2_Unk_Node padding : padding.node_type == JFFS2_NODETYPE_PADDING;
+    JFFS2_Unk_Node clean_marker : padding.node_type == JFFS2_NODETYPE_CLEANMARKER;
+    JFFS2_Unk_Node unknown;
+
+     method get_node_type = uint<16>:
+     {
+       try return dirent.node_type; catch if E_elem {}
+       try return inode.node_type; catch if E_elem {}
+       try return xattr.node_type; catch if E_elem {}
+       try return xref.node_type; catch if E_elem {}
+       try return summary.node_type; catch if E_elem {}
+       try return padding.node_type; catch if E_elem {}
+       try return clean_marker.node_type; catch if E_elem {}
+
+       return unknown.node_type;
+     }
+};
+
+/*
+ * JFFS2 is a logging file system that exists on flash as
+ * a circular buffer of node structures. Changes are made
+ * to the file system by adding new versions of nodes to
+ * the tail of the buffer.
+ *
+ * JFFS2 nodes cannot be larger than a set page size
+ * which, in the case of NAND flash, is determined by
+ * physical attributes of the flash chip.
+ *
+ * JFFS2 nodes also cannot be split across a physical
+ * eraseblock on the flash chip. When writing a new node,
+ * a JFFS2 driver must write it to the first eraseblock
+ * with enough space to hold the entire node.
+ */
+type JFFS2_FS =
+struct
+{
+    JFFS2_Node[] nodes;
+
+    method get_nodes_by_type = (uint<16> node_type) JFFS2_Node[]:
+    {
+        var res_nodes = JFFS2_Node[]();
+        for (node in nodes where node.get_node_type() == node_type) {
+            res_nodes += [node];
+        }
+
+        return res_nodes;
+    }
+};
+
+/* Nothing below here is part of the JFFS2 spec. Just utility types and funcitons */
+
+type JFFS2_Entry =
+struct
+{
+    string name;
+    uint<32> ino;
+    uint<32> pino;
+    uint<8> entry_type;
+    uint<32>[] children; // FTODO change this to JFFS2_Entry[] when self-referential structs are supported
+
+    method add_child = (uint<32> ino) void:
+    {
+        children += [ino];
+    }
+
+    method get_children = uint<32>[]:
+    {
+        return children;
+    }
+};
+
+type JFFS2_Entry_Table =
+struct
+{
+    JFFS2_Entry[] table;
+
+    method init = (string fs_name) void:
+    {
+        table += [JFFS2_Entry {
+            name = fs_name,
+            ino = 1,
+            pino = 0,
+            entry_type = JFFS2_DT_DIR
+        }];
+    }
+
+    method add_entry = (JFFS2_Dirent dirent) void:
+    {
+        table += [JFFS2_Entry {
+            name = dirent.get_name(),
+            ino = dirent.ino,
+            pino = dirent.pino,
+            entry_type = dirent.dir_type
+        }];
+    }
+
+    method get_entry = (uint<32> ino) JFFS2_Entry:
+    {
+        for (entry in table) {
+            if (entry.ino == ino) {
+                return entry;
+            }
+        }
+
+        raise Exception {
+            code = EC_inval,
+            msg = "No such JFFS2 inode"
+        };
+    }
+
+    method get_entries = JFFS2_Entry[]:
+    {
+        return table;
+    }
+
+    method get_root = JFFS2_Entry:
+    {
+        return get_entry(1);
+    }
+};
+
+fun jffs2_create_entry_tables = (JFFS2_FS fs) JFFS2_Entry_Table[]:
+{
+    var tables = [JFFS2_Entry_Table {}];
+    var fs_index = 0;
+    var inos = uint<32>[]();
+
+    tables[fs_index].init("fs_" + ltos(fs_index));
+
+    // First pass, just create the tables
+    for (node in fs.nodes) {
+        if (node.get_node_type() != JFFS2_NODETYPE_DIRENT) {
+            continue;
+        }
+
+        var dirent = node.dirent;
+
+        if (dirent.ino == 0) {
+            // An ino of 0 means an unlinked file.
+            continue;
+        }
+
+        if (dirent.ino in inos) {
+            // Found a new fs
+            tables += [JFFS2_Entry_Table {}];
+            fs_index += 1;
+            tables[fs_index].init("fs_" + ltos(fs_index));
+            inos = uint<32>[]();
+        }
+
+        inos += [dirent.ino];
+        tables[fs_index].add_entry(dirent);
+
+    }
+
+    // Second pass, add children to entries
+    for (table in tables) {
+        for (entry in table.get_entries()) {
+            if (entry.pino == 0) {
+                // root entry. skip it
+                continue;
+            }
+
+            var parent = table.get_entry(entry.pino);
+            parent.add_child(entry.ino);
+        }
+    }
+
+    return tables;
+}
+
+fun jffs2_dump_fs_tree = (JFFS2_FS fs) void:
+{
+    fun walk_dir = (JFFS2_Entry_Table table, JFFS2_Entry dir, string prefix) void:
+    {
+        var idx = 0;
+        for (ino in dir.children) {
+            var pointer = "";
+            var prefix_ext = "";
+
+            if (idx == (dir.children'length - 1)) {
+              pointer = "└── ";
+              prefix_ext = "    ";
+            } else {
+              pointer = "├── ";
+              prefix_ext = "│   ";
+            }
+
+            var entry = table.get_entry(ino);
+
+            printf("%s%s%s\n", prefix, pointer, entry.name);
+
+            if (entry.entry_type == JFFS2_DT_DIR) {
+                walk_dir(table, entry, prefix + prefix_ext);
+            }
+
+            idx += 1;
+        }
+    }
+
+    var tables = jffs2_create_entry_tables(fs);
+    for (table in tables) {
+        var root = table.get_root();
+        printf("%s\n", root.name);
+        walk_dir(table, root, "");
+    }
+}
