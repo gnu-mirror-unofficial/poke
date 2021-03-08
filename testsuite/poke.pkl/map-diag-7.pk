@@ -1,5 +1,0 @@
-/* { dg-do compile } */
-
-type Foo = struct { int i; struct { any[] a; } s; };
-
-Foo @ 0#B; /* { dg-error "" } */

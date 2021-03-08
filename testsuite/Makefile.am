@@ -1187,8 +1187,6 @@ EXTRA_DIST = \
   poke.pkl/map-diag-3.pk \
   poke.pkl/map-diag-4.pk \
   poke.pkl/map-diag-5.pk \
-  poke.pkl/map-diag-6.pk \
-  poke.pkl/map-diag-7.pk \
   poke.pkl/map-ios-diag-1.pk \
   poke.pkl/map-ios-diag-2.pk \
   poke.pkl/map-offset-expr-1.pk \
@@ -1733,6 +1731,10 @@ EXTRA_DIST = \
   poke.pkl/struct-types-diag-9.pk \
   poke.pkl/struct-types-diag-10.pk \
   poke.pkl/struct-types-diag-11.pk \
+  poke.pkl/struct-types-diag-12.pk \
+  poke.pkl/struct-types-diag-13.pk \
+  poke.pkl/struct-types-diag-14.pk \
+  poke.pkl/struct-types-diag-15.pk \
   poke.pkl/struct-types-endian-1.pk \
   poke.pkl/struct-types-endian-diag-1.pk \
   poke.pkl/struct-types-endian-diag-2.pk \

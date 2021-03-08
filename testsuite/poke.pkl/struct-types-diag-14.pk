@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+type Foo = struct { int i;
+                    any[] a; /* { dg-error "" } */
+                  };

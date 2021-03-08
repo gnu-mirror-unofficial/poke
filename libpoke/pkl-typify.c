@@ -2570,10 +2570,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
   pkl_ast_node elem_label
     = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
 
-  /* Any and void types cant appear in the definition of a struct type
-     element.  */
-  if (PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_ANY
-      || PKL_AST_TYPE_CODE (elem_type) == PKL_TYPE_VOID)
+  /* Make sure the type of the field is valid in a struct.  For now,
+     these are the types that are map-able.  */
+  if (!pkl_ast_type_mappable_p (elem_type))
     {
       PKL_ERROR (PKL_AST_LOC (elem_type),
                  "invalid type in struct field");

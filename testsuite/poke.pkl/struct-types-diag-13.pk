@@ -1,0 +1,9 @@
+/* { dg-do compile } */
+
+type Bar =
+  struct
+  {
+    int i;
+    any[][3] j; /* { dg-error "invalid type" } */
+    fun ja = void: {}
+  };
