@@ -299,7 +299,10 @@ catch if E_inval { load_path = "%DATADIR%/pickles" + ":" + load_path; }
    https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html */
 
 try load_path = getenv ("XDG_DATA_HOME") + ":" + load_path;
-catch if E_inval { load_path = getenv ("HOME") + "/.local/share/poke:" + load_path; }
+catch if E_inval {
+  try load_path = getenv ("HOME") + "/.local/share/poke:" + load_path;
+  catch if E_inval {}
+}
 
 try load_path = getenv ("XDG_DATA_DIRS") + ":" + load_path;
 catch if E_inval { }
