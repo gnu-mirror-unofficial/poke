@@ -15,12 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_SCRIPTS = pk-elfextractor
+bin_SCRIPTS = pk-elfextractor pk-strings
 CLEANFILES = $(bin_SCRIPTS)
-EXTRA_DIST = pk-elfextractor.in
+EXTRA_DIST = pk-elfextractor.in pk-strings.in
 
 do_subst = sed -e 's,[@]bindir[@],$(bindir),g'
 
 pk-elfextractor: pk-elfextractor.in Makefile
 	$(do_subst) < $(srcdir)/pk-elfextractor.in > pk-elfextractor
 	chmod +x pk-elfextractor
+
+pk-strings: pk-strings.in Makefile
+	$(do_subst) < $(srcdir)/pk-strings.in > pk-strings
+	chmod +x pk-strings

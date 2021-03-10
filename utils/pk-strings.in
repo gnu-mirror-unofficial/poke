@@ -1,0 +1,41 @@
+#!@bindir@/poke -L
+!#
+
+/* pk-strings - Print printable characters in a given file.  */
+
+/* Copyright (C) 2021 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+var stdin = open ("<stdin>");
+var stdout = open ("<stdout>");
+
+var offset = 0#B;
+
+try
+{
+  flush (stdin, offset);
+  
+  var b = byte @ stdin : offset;
+  /* If the byte is a printable character, poke it in stdout.  */
+  if (b >= 0x20 && b <= 0x7e)
+    byte @ stdout : iosize (stdout) = b;
+
+  offset += 1#B;
+}
+until E_eof;
+
+close (stdin);
+close (stdout);
