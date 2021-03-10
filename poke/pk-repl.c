@@ -193,8 +193,8 @@ banner (void)
           char *help_hyperlink
             = pk_hserver_make_hyperlink ('e', ".help");
 
-          pk_puts (_("For help, type"));
-          pk_puts (" \"");
+          pk_puts (_("For help, type: "));
+          pk_puts ("\"");
           pk_term_hyperlink (help_hyperlink, NULL);
           pk_puts (".help");
           pk_term_end_hyperlink ();

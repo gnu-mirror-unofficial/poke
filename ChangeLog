@@ -1,5 +1,10 @@
 2021-03-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-repl.c (banner): Avoid incomplete sentences in
+	translatable strings.
+
+2021-03-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt.pk: Do not raise an exception if HOME is not
 	defined in the environment.
 
