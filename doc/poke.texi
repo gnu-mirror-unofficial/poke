@@ -64,6 +64,9 @@ Pickles
 poke and Emacs
 * Programming Emacs Modes::     Modes to write Poke and RAS programs.
 
+poke and Vim
+* Vim Syntax Highlighting::     Poke Syntax Highlighting in Vim.
+
 Reference Material
 * Dot-Commands::                Commanding the tool.
 * Commands::			Commands for editing data.
@@ -166,6 +169,9 @@ Programming Emacs Modes
 * poke-mode::                   Major mode for writing Poke programs.
 * poke-map-mode::               Major mode for writing map-files.
 * poke-ras-mode::               Major mode for writing RAS programs.
+
+Vim Syntax Highlighting
+* @file{poke.vim}::    Poke syntax highlighter
 
 Dot-Commands
 * load command::		Loading pickles.
@@ -7305,6 +7311,28 @@ provides font-lock.  @xref{Maps and Map-files}.
 used in the development of GNU poke.  See the file @code{libpoke/ras}
 in the source distribution for more information about RAS, our
 Retarded Assembler.
+
+@node Vim Syntax Highlighting
+@chapter Vim Syntax Highlighting
+
+GNU poke ships with a vim syntax highlighter for *.pk files. This
+chapter explains how to install it.
+
+@menu
+* @file{poke.vim}::    Poke syntax highlighter
+@end menu
+
+@node poke.vim
+@section @file{poke.vim}
+
+@code{etc/poke.vim} is a syntax highlighter for Poke source
+@i{i.e.} @file{.pk} files. To use it, first place the file in your
+@code{~/.vimrc/syntax/} folder on Unix based systems, or in
+@code{$HOME/vimfiles/syntax/} on Windows. There are a few ways to tell
+Vim to use @code{poke.vim} for @file{.pk} files, but the quickest is
+to add the following line to your @code{.vimrc}:
+
+@code{au BufRead,BufNewFile *.pk set filetype=poke}
 
 @node Dot-Commands
 @chapter Dot-Commands
