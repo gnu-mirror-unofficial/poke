@@ -7322,7 +7322,7 @@ chapter explains how to install it.
 * @file{poke.vim}::    Poke syntax highlighter
 @end menu
 
-@node poke.vim
+@node @file{poke.vim}
 @section @file{poke.vim}
 
 @code{etc/poke.vim} is a syntax highlighter for Poke source
