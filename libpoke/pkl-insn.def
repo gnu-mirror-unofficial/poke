@@ -531,6 +531,10 @@ PKL_DEF_INSN(PKL_INSN_MODO,"aa","modo")
 PKL_DEF_INSN(PKL_INSN_REMAP,"","remap")
 PKL_DEF_INSN(PKL_INSN_WRITE,"","write")
 
+/* Macro-instructions to manipulate the stack.  */
+
+PKL_DEF_INSN(PKL_INSN_REV,"n","rev")
+
 /* Printing macro-instructions.  */
 
 PKL_DEF_INSN(PKL_INSN_PRINT,"a","print")

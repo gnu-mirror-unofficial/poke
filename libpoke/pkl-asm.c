@@ -435,6 +435,24 @@ pkl_asm_insn_peekd (pkl_asm pasm, pkl_ast_node type)
     assert (0);
 }
 
+/* Macro-instruction: REV depth
+   ( VAL1 VAL2 ... VALdepth-1 -- VALdepth-1 ... VAL2 VAL1 )
+*/
+
+static void
+pkl_asm_insn_rev (pkl_asm pasm, unsigned int depth)
+{
+  if (depth == 2)
+    pkl_asm_insn (pasm, PKL_INSN_SWAP);
+  else if (depth == 3)
+    {
+      pkl_asm_insn (pasm, PKL_INSN_SWAP);
+      pkl_asm_insn (pasm, PKL_INSN_ROT);
+    }
+  else if (depth > 1)
+    pkl_asm_insn (pasm, PKL_INSN_REVN, depth);
+}
+
 /* Macro-instruction: PRINT type
    ( OBASE VAL -- )
 */
@@ -1373,6 +1391,17 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
             va_end (valist);
 
             pkl_asm_insn_print (pasm, type);
+            break;
+          }
+        case PKL_INSN_REV:
+          {
+            unsigned int depth;
+
+            va_start (valist, insn);
+            depth = va_arg (valist, unsigned int);
+            va_end (valist);
+
+            pkl_asm_insn_rev (pasm, depth);
             break;
           }
         case PKL_INSN_PEEKD:

@@ -1333,15 +1333,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
 
       /* Reverse the arguments in the stack so we can print it in the
          right order.  */
-      if (nexp == 2)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-      else if (nexp == 3)
-        {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-        }
-      else if (nexp > 1)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nexp);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REV, nexp);
 
       /* Now print out the stuff.  */
       if (prefix)
@@ -1573,15 +1565,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
     {
       /* The actuals are stored in the stack in reverse order.
          Reverse them.  */
-      if (aindex == 2)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-      else if (aindex == 3)
-        {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-        }
-      else if (aindex > 1)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, aindex);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REV, aindex);
 
       /* Create the array of variable arguments.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_any_type ());
@@ -1654,16 +1638,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_func)
 
       if (method_p)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-
-      if (nargs == 2)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-      else if (nargs == 3)
-        {
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-        }
-      else if (nargs > 1)
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REVN, nargs);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_REV, nargs);
 
       if (method_p)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
