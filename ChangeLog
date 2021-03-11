@@ -1,3 +1,9 @@
+2021-03-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* cfg.mk (sc_unitalicised_etc): Change rule so it is not triggered
+	by mentions to files in etc/.
+	* utils/pk-strings.in: Remove trailing whitespaces.
+
 2021-03-10  Matt Ihlenfield  <mtihlenfield@protonmail.com>
 
 	* etc/poke.vim: New vim syntax highlighter

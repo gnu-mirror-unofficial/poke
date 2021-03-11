@@ -27,7 +27,7 @@ var offset = 0#B;
 try
 {
   flush (stdin, offset);
-  
+
   var b = byte @ stdin : offset;
   /* If the byte is a printable character, poke it in stdout.  */
   if (b >= 0x20 && b <= 0x7e)

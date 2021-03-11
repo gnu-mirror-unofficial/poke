@@ -34,7 +34,7 @@ sc_unitalicised_ie:
 	  $(_sc_search_regexp)
 
 sc_unitalicised_etc:
-	@prohibit='\betc\b'				  \
+	@prohibit='\betc\b[^/]'				  \
 	in_vc_files='$(texinfo_suffix_re_)'		  \
 	exclude='@i{etc}'                              \
 	halt='found unitalicised "etc" in Texinfo source.  Use @i{etc}' \
