@@ -7885,8 +7885,10 @@ Retarded Assembler.
 @node Vim Syntax Highlighting
 @chapter Vim Syntax Highlighting
 
-GNU poke ships with a vim syntax highlighter for *.pk files. This
-chapter explains how to install it.
+GNU poke ships with a vim syntax highlighter for *.pk files.
+Normally this should be installed as part of your existing poke installation
+and work out of the box.
+If that is not the case this chapter explains how to install it manually.
 
 @menu
 * @file{poke.vim}::    Poke syntax highlighter
@@ -7895,7 +7897,7 @@ chapter explains how to install it.
 @node @file{poke.vim}
 @section @file{poke.vim}
 
-@code{etc/poke.vim} is a syntax highlighter for Poke source
+@code{etc/vim/syntax/poke.vim} is a syntax highlighter for Poke source
 @i{i.e.} @file{.pk} files. To use it, first place the file in your
 @code{~/.vimrc/syntax/} folder on Unix based systems, or in
 @code{$HOME/vimfiles/syntax/} on Windows. There are a few ways to tell

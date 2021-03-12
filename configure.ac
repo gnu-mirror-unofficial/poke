@@ -227,6 +227,18 @@ dnl The test framework is optional.
 AC_CHECK_HEADERS([dejagnu.h])
 AM_CONDITIONAL([HAVE_DEJAGNU], [test "$ac_cv_header_dejagnu_h" = yes])
 
+dnl editor syntax definitions
+AC_ARG_WITH([vimdir],
+ [AS_HELP_STRING([--with-vimdir],
+                 [override the default vim directory])],
+ [ vimdir="$withval"
+   AC_MSG_CHECKING([where vim files should go])
+   AC_MSG_RESULT([$vimdir])],
+ [ vimdir='${datadir}/vim/vimfiles' ]
+)
+AC_SUBST([vimdir])
+
+
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
@@ -242,6 +254,7 @@ AC_CONFIG_FILES(Makefile
                 man/Makefile
                 po/Makefile.in
                 etc/Makefile
+                etc/vim/Makefile
                 testsuite/Makefile
                 testsuite/poke.libpoke/Makefile
                 testsuite/poke.mi-json/Makefile)
