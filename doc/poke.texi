@@ -28,7 +28,7 @@ later version.
 @titlepage
 @title GNU poke Manual
 @subtitle for version @value{VERSION}, @value{UPDATED}
-@author by Jose E. Marchesi
+@author by Jose E. Marchesi et al.
 @page
 @vskip 0pt plus 1filll
 @insertcopying
