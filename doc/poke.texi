@@ -2221,7 +2221,7 @@ bits, not a space of bytes, and the poke values are mapped on this
 space of bits.  The following figure shows this:
 
 @example
-poke values      |        uint<16> @@ 2#b         |
+poke values      |        uint<16> @@ 2#b        |
 -----------      |                               |
 IO space     |b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|b|
 -----------  |               |               |               |
@@ -2256,7 +2256,7 @@ Let's map an unaligned 16 bit unsigned integer in @file{foo.o}:
 Graphically:
 
 @example
-poke values      |        uint<16> @@ 2#b         |
+poke values      |        uint<16> @@ 2#b        |
 -----------      |                               |
 IO space     |0|1|1|1|1|1|1|1|0|1|0|0|0|1|0|1|0|1|0|0|1|1|0|0|
 -----------  |               |               |               |
@@ -2284,7 +2284,7 @@ bytes'' above the space of bits provided by the IO space.
 Graphically:
 
 @example
-poke values       |        uint<16> @@ 2#b         |
+poke values       |        uint<16> @@ 2#b        |
 -----------       |                               |
 Virtual bytes     | virt. byte1   |  virt. byte2  |
 -----------       |               |               |
