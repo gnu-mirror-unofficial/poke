@@ -518,14 +518,6 @@ Description:
 + This will require to subpass on fields.  i.e. a gen context:
 + in_integrator.
 
-Summary: Support offsets in integral structs
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ There is no reason for offsets to not be allowed as fields of integral
-+ structs.  It is an arbitrary limitation.
-
 Summary: Support for optional fields in integral structs
 Component: Language
 Kind: ENH
