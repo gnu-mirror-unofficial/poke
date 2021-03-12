@@ -1,5 +1,9 @@
 2021-03-16  Thomas Weißschuh <thomas@t-8ch.de>
 
+	* etc/Makefile.am: Distribute Emacs syntax highlighting.
+
+2021-03-16  Thomas Weißschuh <thomas@t-8ch.de>
+
 	* etc/vim/Makefile.am: Distribute vim syntax highlighting.
 
 2021-03-15  Egeyar Bagcioglu  <egeyar@gmail.com>

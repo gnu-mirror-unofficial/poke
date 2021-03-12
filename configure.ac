@@ -238,6 +238,7 @@ AC_ARG_WITH([vimdir],
 )
 AC_SUBST([vimdir])
 
+AM_PATH_LISPDIR
 
 dnl Generate output files
 AC_CONFIG_FILES(Makefile
