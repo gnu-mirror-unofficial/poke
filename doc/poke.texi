@@ -52,6 +52,7 @@ Using poke
 * Structuring Data::		Poking your own abstractions.
 * Maps and Map-files::          Working with views of data.
 * Writing Pickles::		Sharing your abstractions the sane way.
+* Writing Binary Utilities::    Standalone Poke programs.
 * Configuration::		Tailoring the tool to your needs.
 
 Pickles
@@ -149,6 +150,14 @@ Maps and Map-files
 Writing Pickles
 * Pretty-printers::		Conventions for pretty-printed output.
 * Setters and Getters::		Anatomy getters and setters.
+
+Writing Binary Utilities
+* Poke Scripts::                Using poke as an interpreter.
+* Command-Line Arguments::      Handling command-line arguments.
+* Exiting from Scripts::        Exit with an error status.
+* Loading pickles as Modules::  Importing pickles in programs.
+* elfextractor::                An example Poke binary utility.
+* Filters::                     Writing filters for binary data.
 
 Configuration
 * pokerc::			User's initialization file.
@@ -6817,6 +6826,457 @@ criteria of the pickle writer.  For the tag above, I would say the
 preferred representations for the title, artist, album and year are
 string for title, artist and album, and an integer for the year.
 
+@node Writing Binary Utilities
+@chapter Writing Binary Utilities
+
+GNU poke is, first and foremost, intended to be used as an interactive
+editor, either directly on the command line or using a graphical user
+interface built on it.  However, since its conception poke was
+intended to also provide a suitable and useful foundation on which
+other programs, the so-called binary utilities, could be written.
+This chapter shows how to write Poke scripts and programs.
+
+@menu
+* Poke Scripts::                Using poke as an interpreter.
+* Command-Line Arguments::      Handling command-line arguments.
+* Exiting from Scripts::        Exit with an error status.
+* Loading pickles as Modules::  Importing pickles in programs.
+* elfextractor::                An example Poke binary utility.
+* Filters::                     Writing filters for binary data.
+@end menu
+
+@node Poke Scripts
+@section Poke Scripts
+
+In interactive usage, there are two main ways to execute Poke code: at
+the interactive prompt (or REPL), and loading ``pickles''.
+
+Executing Poke code at the REPL is as easy as introducing a statement
+or expression:
+
+@example
+(poke) print "Hello\n"
+Hello
+@end example
+
+Executing Poke code in a pickle is performed by loading the file
+containing the code:
+
+@example
+(poke) .load say-hello.pk
+Hello
+@end example
+
+@noindent
+Where @file{say-hello.pk} contains simply:
+
+@example
+print "Hello\n";
+@end example
+
+However, we would like to have Poke scripts, @i{i.e}. to be able to
+execute Poke programs as standalone programs, from the shell.  In
+other words, we want to use GNU poke as an interpreter.  This is
+achieved by using a shebang, which should appear at the top of the
+script file.  The poke shebang looks like this:
+
+@example
+#!/usr/bin/poke -L
+!#
+@end example
+
+The @option{-L} command line option tells poke that it is being used
+as an interpreter.  Additional arguments for poke can be specified
+before @option{-L} (but not after).  The @code{#!  ... !#} is an
+alternative syntax for multi-line comments, which allows to have the
+shebang at the top of a Poke program without causing a syntax error.
+This nice trick has been borrowed from guile.
+
+Therefore, we could write say-hello as a Poke script like this:
+
+@example
+#!/usr/bin/poke -L
+!#
+
+print "Hello\n";
+@end example
+
+@noindent
+And then execute it like any other program or script:
+
+@example
+$ ./say-hello
+@end example
+
+@node Command-Line Arguments
+@section Command-Line Arguments
+
+When a Poke script is executed, the command line arguments passed to
+the script become available in the array argv.  Example:
+
+@example
+#!/usr/bin/poke -L
+!#
+
+for (arg in argv)
+  print "Argument: " + arg + "\n";
+@end example
+
+@noindent
+Executing this script results in:
+
+@example
+$ ./printargs foo bar 'baz quux'
+Argument: foo
+Argument: bar
+Argument: baz quux
+@end example
+
+Note how it is not needed to have an argc variable, since the number
+of elements stored in a Poke array can be queried using an attribute:
+@code{argv'length}.
+
+Note also that @code{argv} is only defined when poke runs as an
+interpreter:
+
+@example
+$ poke
+[...]
+(poke) argv
+<stdin>:1:1: error: undefined variable 'argv'
+argv;
+^~~~
+@end example
+
+Accessing the @code{argv} is more than enough for many simple
+programs.  However, we may need a more sophisticated handling of
+command-line options: support for both short and long style options,
+adherence to the GNU coding standards, and the like.  For these cases
+poke provides a pickle @code{argp}.  @xref{argp}.
+
+@node Exiting from Scripts
+@section Exiting from Scripts
+
+By default a Poke script will communicate a successful status to the
+environment, upon exiting:
+
+@example
+$ cat hello
+#!/usr/bin/poke -L
+!#
+
+print "hello\n";
+$ ./hello && echo $?
+0
+@end example
+
+In order to exit with some other status code, most typically to signal
+an erroneous situation, the Pokeish way is to raise an @code{E_exit}
+exception with the desired exit status code:
+
+@example
+raise Exception @{ code = EC_exit, exit_status = 1 @};
+@end example
+
+This can be a bit cumbersome to write, so poke provides a more
+conventional syntax in the form of an @code{exit} function:
+
+@example
+fun exit = (int<32> exit_code = 0) void:
+@{
+  raise Exception @{ code = EC_exit, exit_status = exit_code @};
+@}
+@end example
+
+@noindent
+Using @code{exit}, the above raise statement becomes the much simpler:
+
+@example
+exit (1);
+@end example
+
+@node Loading pickles as Modules
+@section Loading pickles as Modules
+
+Suppose we want to write a Poke program to extract the contents of
+sections in a given ELF object file.  Extracting sections requires
+dealing with several data structures encoded in the ELF file, such as
+the header, the section header table, the string table (that contains
+the names of the sections) and so on.  It would be of course possible
+to define Poke types for these structures in the script itself but, as
+it happens, GNU poke ships with an already written pickle that
+describes the ELF structures.  It is called @file{elf.pk}.
+
+So a script needing to mess with ELF data structures can just make use
+of @file{elf.pk} using the load construction:
+
+@example
+load elf;
+@end example
+
+This looks for a file called @file{elf.pk} in a set of directories,
+which are predefined by poke, and loads it.  The list of directories
+where poke looks for pickles is stored in the load_path variable as a
+colon separated list of directory names, and can be customized:
+
+@example
+$ poke
+[...]
+(poke) load_path
+"/home/jemarch/.poke.d:.:/home/jemarch/.local/share/poke:..."
+@end example
+
+The default value of @code{load_path} contains both user-specific
+directories and system-wide directories.  This assures that all the
+pickles installed by poke are available, and that the user can load
+her own pickles in her scripts.
+
+Once a pickle is loaded in a script the types, functions and variables
+defined in it (either directly or indirectly by loading its own
+pickles) become available.
+
+@node elfextractor
+@section elfextractor
+
+As an example, in this section we will be hacking a very simple
+utility called elfextractor, that extracts the contents of the
+sections of an ELF file, whose name is provided as an argument in the
+command line, into several output files.  This is the synopsis of the
+program:
+
+@example
+elfextractor @var{file} [@var{section_name}]
+@end example
+
+Where @var{file} is the name of the ELF file from which to extract
+sections, and an optional @var{section_name} specifies the name of the
+section to extract.
+
+Say we have a file @file{foo.o} and we would like to extract its text
+section.  We would use elfextractor like:
+
+@example
+$ elfextractor foo.o .text
+@end example
+
+Provided @file{foo.o} indeed has a section named @code{.text}, the
+utility will create a file @file{foo.o.text} with the section's
+contents.  Note how the names of the output files are derived
+concatenating the name of the input ELF file and the name of the
+extracted section.
+
+If no section name is specified, then all sections are extracted.  For
+example:
+
+@example
+$ elfextractor foo.o
+$ ls foo.o*
+foo.o          foo.o.eh_frame       foo.o.shstrtab  foo.o.symtab
+foo.o.comment  foo.o.rela.eh_frame  foo.o.strtab    foo.o.text
+@end example
+
+This is a possible implementation of elfextractor:
+
+@example
+#!/usr/bin/poke -L
+!#
+
+/* elfextractor - Extract sections from ELF64 files. */
+
+load elf;
+
+if (!(argv'length in [1,2]))
+  @{
+    print "Usage: elfextractor FILE [SECTION_NAME]\n";
+    exit (1);
+  @}
+
+var file_name = argv[0];
+var section_name = (argv'length > 1) ? argv[1] : "";
+
+try
+  @{
+    var fd = open (file_name, IOS_M_RDONLY);
+    var elf = Elf64_File @@ fd : 0#B;
+
+    for (shdr in elf.shdr where shdr.sh_type != 0x0)
+      @{
+        var sname = elf.get_string (shdr.sh_name);
+
+        if (section_name == "" || sname == section_name)
+          save :ios elf'ios :file file_name + sname
+               :from shdr.sh_offset :size shdr.sh_size;
+      @}
+
+    close (fd);
+  @}
+catch (Exception e)
+  @{
+    if (e == E_constraint)
+      printf ("error: `%s' is not a valid ELF64 file\n", file_name);
+    else if (e == E_io)
+      printf ("error: couldn't open file `%s'\n", file_name);
+    else
+      raise e;
+
+    exit (1);
+  @}
+@end example
+
+First the command line arguments are handled.  The script checks
+whether the right number of arguments have been passed (either 1 or 2)
+exiting with an error code otherwise.  The file name and the section
+name are then extracted from the @code{argv} array.
+
+Once we have the file name and the optional desired section name, it
+is time to do the real work.  The code is enclosed in a try-catch
+block statement, because some of the operations may result on
+exceptions being raised.
+
+First, the ELF file whose name is specified in the command line is
+opened for reading:
+
+@example
+var fd = open (file_name, IOS_M_RDONLY);
+@end example
+
+The built-in function @code{open} returns a file descriptor that can
+be subsequently used in mapping operations.  If the provided file name
+doesn't identify a file, or if the file can't be read for whatever
+reason, an @code{E_io} exception is raised.  Note how the exception is
+handled in the @code{catch} block, emitting an appropriate diagnostic
+message and exiting with an error status.
+
+Once the ELF file is open for reading, we map an @code{Elf64_File} on
+it, at the expected offset (zero bytes from the beginning of the
+file):
+
+@example
+var elf = Elf64_File @@ fd : 0#B;
+@end example
+
+If the file doesn't contain valid ELF data, this map will fail and
+raise an @code{E_constraint} exception.  Again, the @code{catch} block
+handles this situation.
+
+At this point the variable @code{elf} contains an @code{Elf64_File}.
+Since we want to extract the sections contained in the file, we need
+to somehow iterate on them.  The section header table is available in
+@code{elf.shdr}.  A for-in-where loop is used to iterate on all the
+headers, skipping the ``null'' ELF sections which are always empty,
+and are characterized by a @code{shdr.sh_type} of 0.  An inner
+conditional filters out sections whose name do not match the provided
+name in the command line, if it was specified at all.
+
+For each matching section we then save its contents in a file named
+after the input ELF file, by calling a function @code{save}, which is
+provided by poke:
+
+@example
+save :ios elf'ios :file file_name + sname
+     :from shdr.sh_offset :size shdr.sh_size;
+@end example
+
+The above is exactly what we would have written at the poke REPL!
+(modulus trailing semicolon).  How is this supposed to work?  Thing
+is, GNU poke commands are implemented as Poke functions.  Let's
+consider @code{save}, for example.  It is defined as a function having
+the following prototype:
+
+@example
+fun save = (int ios = get_ios,
+              string file = "",
+              off64 from = 0#B,
+              off64 size = 0#B,
+              int append = 0,
+              int verbose = 0) void:
+@{ ... @}
+@end example
+
+Once a Poke function is defined in the environment, it becomes
+available as such.  Therefore, in a poke session we could call it
+like:
+
+@example
+(poke) save (get_ios, "filename", 0#B, 12#B, 0, 1)
+@end example
+
+However, this is cumbersome and error prone.  To begin with, we should
+remember the name, position and nature of each argument accepted by
+the command.  What is even more annoying, we are forced to provide
+explicit values for them, like in the example above we have to pass
+the current IOS (the default), and 0 for @code{append} (the default)
+just to being able to set @code{verbose}.  Too bad.
+
+To ease commanding poke, the Poke language supports an alternative
+syntax to call functions, in which the function arguments are referred
+by name, can be given in any order, and can be omitted.  The command
+above can be thus written like:
+
+@example
+(poke) save :from 0#B :size 12#B :verbose 1
+@end example
+
+This syntax is mostly intended to be used interactively, but nothing
+prevents to use it in Poke programs and scripts whenever it is deemed
+appropriate, like we did in elfextractor.  We could of course have
+used the more conventional syntax:
+
+@example
+if (section_name == "" || sname == section_name)
+  save (elf'ios, file_name + sname,
+        shdr.sh_offset, shdr.sh_size, 0, 0);
+@end example
+
+@noindent
+What style to use is certainly a matter of taste.
+
+Anyhow, once the sections have been written out, the file descriptor
+is closed and the program exits with the default status, which is
+success.  Should the @code{save} function find any problem saving the
+data, such as a full disk, not enough permissions or the like,
+exceptions will be raised, caught and maybe handled by our
+@code{catch} block.
+
+And this is it!  The complete program is 44 lines long.  This is a
+good example that shows how, given a pickle providing a reasonable
+description of some binary-oriented format (ELF in this case) poke can
+be leveraged to achieve a lot in a very concise way, free from the
+many details involved in the encoding, reading and writing of binary
+data.
+
+@node Filters
+@section Filters
+
+XXX
+
+@example
+#!/usr/local/bin/poke -L
+!#
+
+/* Printable ASCII characters: 0x20..0x7e */
+
+var stdin = open ("<stdin>");
+var stdout = open ("<stdout>");
+
+var offset = 0#B;
+
+try
+@{
+  flush (stdin, offset);
+
+  var b = byte @@ stdin : offset;
+  if (b >= 0x20 && b <= 0x7e)
+    byte @ stdout : iosize (stdout) = b;
+
+  offset = offset + 1#B;
+@}
+until E_eof;
+
+close (stdin);
+close (stdout);
+@end example
+
 @node Configuration
 @chapter Configuration
 
@@ -7332,7 +7792,9 @@ chapter explains how to install it.
 Vim to use @code{poke.vim} for @file{.pk} files, but the quickest is
 to add the following line to your @code{.vimrc}:
 
-@code{au BufRead,BufNewFile *.pk set filetype=poke}
+@example
+au BufRead,BufNewFile *.pk set filetype=poke
+@end example
 
 @node Dot-Commands
 @chapter Dot-Commands
