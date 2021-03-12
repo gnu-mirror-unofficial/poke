@@ -841,10 +841,10 @@ printf ("%v\n", Elf64_Ehdr @@ 0#B);
 @node Getting Started
 @chapter Getting Started
 
-GNU poke is a spartan program, and therefore tries to be as simple as
-possible by default, without fancy displays.  Therefore, before
-exploring poke you may want to configure it minimally.  This section
-contains a few recommendations in that respect.
+GNU poke is a spartan program that tries to be as simple as possible
+by default, without fancy displays.  Therefore, before exploring poke
+you may want to configure it minimally.  This section contains a few
+recommendations in that respect.
 
 First we must say that poke reads a per-user configuration from the
 @file{~/.pokerc} file.  @xref{pokerc}.
