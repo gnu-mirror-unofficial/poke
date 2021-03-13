@@ -187,11 +187,11 @@ fun dump = (int<32> ios = get_ios,
       }
   }
 
-  /* The `dump' command is byte-oriented.  Both the base offset and
-     the size of the dump are truncated to bytes.  Hence the casts
-     below.  */
+  /* The `dump' command is byte-oriented.
+     The base offset is truncated to bytes.
+     The offset is rounded up to the next byte.  */
   var offset = from as offset<uint<64>,B>;
-  var top = (from + size) as offset<uint<64>,B>;
+  var top = from + size + (size % 1#B);
 
   if (ruler)
     print_ruler;

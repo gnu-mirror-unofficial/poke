@@ -1,5 +1,12 @@
 2021-03-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk: Round :size up to the next byte instead of
+	truncating.
+	* testsuite/poke.cmd/dump-9.pk (pk_dump_ascii): New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2021-03-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_ass_stmt): Use SSET instead of
 	SSETI for values mapped in non-strict mode.
 	* testsuite/poke.map/nsmap-5.pk: New test.
