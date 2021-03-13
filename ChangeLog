@@ -1,3 +1,8 @@
+2021-03-14  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* doc/learn-poke-language-in-y-minutes.pk: Add a new example of
+	using both constraints and initializers in fields.
+
 2021-03-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y (struct_type_field): Adapt to

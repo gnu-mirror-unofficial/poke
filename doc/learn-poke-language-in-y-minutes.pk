@@ -507,9 +507,17 @@ type HeaderWithInit =
 var hdrauto = HeaderWithInit {};
 /* hdrauto.magic == 100UB && hdrauto.version == 3UB */
 
-/* The only limitation is that we cannot specify a constraint for initialized
- * fields.
+/* It is also possible to specify both a constraint and an initializer in
+ * the same field.
  */
+type HeaderMagicVersion =
+  struct
+  {
+    uint<8> magic : magic in [0xaaUB, 0x55UB] = 0x55UB;
+    uint<8> version = 2UB : version in [1UB, 2UB];
+  };
+var hdrmagver = HeaderMagicVersion {};
+/* hdrmagver.magic == 0x55UB && hdrmagver.version == 0x2UB */
 
 
 /* Integral Structs
