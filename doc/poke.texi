@@ -137,6 +137,7 @@ Structuring Data
 * Padding and Alignment::       Reserved fields, payloads and more.
 * Dealing with Alternatives::   Conditional decoding.
 * Structured Integers::         Structs that are stored like integers.
+* Working with Incorrect Data:: Non-strict mapping to the rescue.
 
 Maps and Map-files
 * Editing using Variables::     Data is usually edited mapping variables.
@@ -3059,6 +3060,7 @@ defining data structures.
 * Padding and Alignment::       Reserved fields, payloads and more.
 * Dealing with Alternatives::   Conditional decoding.
 * Structured Integers::         Structs that are stored like integers.
+* Working with Incorrect Data:: Non-strict mapping to the rescue.
 @end menu
 
 @node The SBM Format
@@ -5903,6 +5905,114 @@ positive, negative, bit-concatenation, condition in conditional expression.
 
 Note that the above list doesn't include relational operators, since
 these operators work with struct values.
+
+@node Working with Incorrect Data
+@section Working with Incorrect Data
+
+We have seen how Poke type definitions very often include constraint
+expressions reflecting the integrity of the data stored in these
+types.
+
+Consider for example the following abbreviated description of the
+header of an ELF file:
+
+@example
+type Elf64_Ehdr =
+  struct
+  @{
+    struct
+    @{
+      byte[4] ei_mag = [0x7fUB, 'E', 'L', 'F'];
+      byte ei_class;
+      [...]
+    @} e_ident;
+
+    Elf_Half e_type;
+    Elf_Half e_machine;
+    Elf_Word e_version = EV_CURRENT;
+    [...]
+    Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
+  @};
+@end example
+
+@noindent
+There are three constraint expressions in the definition above:
+
+@itemize
+@item The constraint expression in the field @code{ei_mag} makes sure that a
+right magic number begins the header.
+@item The constraint expression in @code{e_version} checks that the ELF version is the current version.
+@item The constraint expression in @code{e_shstrndx} checks that
+the index stored in the field doesn't overflow the section header
+table of the file.
+@end itemize
+
+Every time we construct or map an @code{Elf64_Ehdr} value the
+constraint expressions are checked.  In case any of the constraints
+are not satisfied we get a ``constraint violation exception''.  This
+is useful to realize that we are facing invalid data (when mapping) or
+that we are trying to build an invalid ELF header (when constructing.)
+
+However, the exception avoids the completion of the mapping or
+construction operation.  Sometimes this is inconvenient:
+
+@itemize
+@item When we are given invalid data that we want to explore or fix.
+Imagine for example a programmer investigating a possible assembler or
+linker bug that results in an invalid ELF file.
+@item When we are discovering or inferring the structure of some data:
+we suspect at some point there may be something that is similar to an
+ELF header.
+@item When we want to create invalid data.  Suppose for example a
+programmer who is building a test case for the linker, that requires a
+corrupted ELF file.
+@end itemize
+
+The way poke provides support for these situation is using the concept
+of @dfn{map strictness}.  Suppose we map an ELF header in some IO
+space:
+
+@example
+(poke) load elf
+(poke) var ehdr = Elf64_Ehdr @@ 0#B
+@end example
+
+@noindent
+The mapping operator @code{@@} performs a @dfn{strict mapping}.  This
+means that constraint expressions are evaluated and the operation is
+interrupted if any constraint fails, as described above.  Also, this
+means the integrity will be checked when the data is modified:
+
+@example
+(poke) ehdr.e_version = 666
+unhandled constraint violation exception
+@end example
+
+@noindent
+So the mapping operator generates ``strict'' values.  We can check the
+strictness of a mapped value using the @code{'strict} attribute:
+
+@example
+(poke) ehdr'strict
+1
+@end example
+
+If we know that we are facing corrupted data, or if we want to corrupt
+the ELF header, we perform a @dfn{non-strict mapping} using a variant
+of the mapping operator:
+
+@example
+(poke) var ehdr_ns = Elf64_Ehdr @@! 0#B
+(poke) ehdr_ns'strict
+0
+@end example
+
+@noindent
+We can corrupt the header using this non-strict value:
+
+@example
+(poke) ehdr_ns.e_version = 666
+@end example
 
 @node Maps and Map-files
 @chapter Maps and Map-files
