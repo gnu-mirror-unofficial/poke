@@ -1,0 +1,13 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x66 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Foo = struct {byte a : a != 0x20;  byte b; };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { var foo = Foo @ 1#B } } */
+/* { dg-command { var foo_ns = Foo @! 1#B } } */
+/* { dg-command {try foo.a = 0x20; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */
+/* { dg-command { foo_ns.a = 0x20 } } */
+/* { dg-command { foo_ns.a } } */
+/* { dg-output "\n0x20UB" } */

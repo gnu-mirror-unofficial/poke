@@ -1008,11 +1008,30 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
 
         pkl_ast_node sct = PKL_AST_INDEXER_ENTITY (lvalue);
         pkl_ast_node struct_type = PKL_AST_TYPE (sct);
+        pvm_program_label label1 = pkl_asm_fresh_label (PKL_GEN_ASM);
+        pvm_program_label label2 = pkl_asm_fresh_label (PKL_GEN_ASM);
 
         assert (PKL_AST_TYPE_S_CONSTRUCTOR (struct_type) != PVM_NULL);
 
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OVER); /* VAL SCT ID SCT */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETS); /* VAL SCT ID SCT STRICT_P */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);  /* VAL SCT ID STRICT_P */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label1);
+
+        /* Strict value: set with integriy.  */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSETI, struct_type);
+
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, label2);
+        pkl_asm_label (PKL_GEN_ASM, label1);
+
+        /* Non-strict value: set with no integrity.  */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSET, struct_type);
+
+        pkl_asm_label (PKL_GEN_ASM, label2);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_WRITE);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* The struct
                                                       value.  */
