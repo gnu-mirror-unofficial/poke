@@ -337,6 +337,7 @@ load_module (struct pkl_parser *parser,
 
 %union {
   pkl_ast_node ast;
+  pkl_ast_node astpair[2];
   enum pkl_ast_op opcode;
   int integer;
 }
@@ -520,7 +521,8 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> function_type_specifier function_type_arg_list function_type_arg
 %type <ast> struct_type_specifier string_type_specifier
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
-%type <ast> struct_type_field_constraint_or_init struct_type_field_label
+%type <ast> struct_type_field_label
+%type <astpair> struct_type_field_constraint_and_init
 %type <ast> struct_type_field_optcond
 %type <ast> declaration simple_declaration
 %type <ast> defvar defvar_list deftype deftype_list
@@ -1681,73 +1683,73 @@ struct_type_field:
                         pkl_ast_node_free (identifier);
                       }
                   }
-          struct_type_field_constraint_or_init struct_type_field_label
+          struct_type_field_constraint_and_init struct_type_field_label
           struct_type_field_optcond ';'
                   {
-                  pkl_ast_node constraint = NULL;
-                  pkl_ast_node initializer = NULL;
+                    pkl_ast_node constraint = $5[0];
+                    pkl_ast_node initializer = $5[1];
 
-                  if ($5 && PKL_AST_EXP_FLAG ($5))
-                    {
-                      pkl_ast_node field_decl, field_var;
-                      int back, over;
+                    if (initializer)
+                      {
+                        pkl_ast_node field_decl, field_var;
+                        int back, over;
 
-                      /* We need a field name.  */
-                      if ($3 == NULL)
-                        {
-                          pkl_error (pkl_parser->compiler, pkl_parser->ast, @$,
-                                     "no initializer allowed in anonymous field");
-                          YYERROR;
-                        }
+                        /* We need a field name.  */
+                        if ($3 == NULL)
+                          {
+                            pkl_error (pkl_parser->compiler, pkl_parser->ast, @$,
+                                       "no initializer allowed in anonymous field");
+                            YYERROR;
+                          }
 
-                      initializer = $5;
+                        /* Build a constraint derived from the
+                           initializer if a constraint has not been
+                           specified.  */
+                        if (constraint == NULL)
+                          {
+                            field_decl = pkl_env_lookup (pkl_parser->env,
+                                                         PKL_ENV_NS_MAIN,
+                                                         PKL_AST_IDENTIFIER_POINTER ($3),
+                                                         &back, &over);
+                            assert (field_decl);
 
-                      /* Build a constraint derived from the
-                         initializer.  */
-                      field_decl = pkl_env_lookup (pkl_parser->env,
-                                                   PKL_ENV_NS_MAIN,
-                                                   PKL_AST_IDENTIFIER_POINTER ($3),
-                                                   &back, &over);
-                      assert (field_decl);
+                            field_var = pkl_ast_make_var (pkl_parser->ast,
+                                                          $3,
+                                                          field_decl,
+                                                          back, over);
+                            PKL_AST_LOC (field_var) = PKL_AST_LOC (initializer);
 
-                      field_var = pkl_ast_make_var (pkl_parser->ast,
-                                                    $3,
-                                                    field_decl,
-                                                    back, over);
-                      PKL_AST_LOC (field_var) = PKL_AST_LOC (initializer);
+                            constraint = pkl_ast_make_binary_exp (pkl_parser->ast,
+                                                                  PKL_AST_OP_EQ,
+                                                                  field_var,
+                                                                  initializer);
+                            PKL_AST_LOC (constraint) = PKL_AST_LOC (initializer);
+                          }
+                      }
 
-                      constraint = pkl_ast_make_binary_exp (pkl_parser->ast,
-                                                            PKL_AST_OP_EQ,
-                                                            field_var,
-                                                            initializer);
-                      PKL_AST_LOC (constraint) = PKL_AST_LOC (initializer);
-                    }
-                  else
-                    constraint = $5;
+                    $$ = pkl_ast_make_struct_type_field (pkl_parser->ast, $3, $2,
+                                                         constraint, initializer,
+                                                         $6, $1, $7);
+                    PKL_AST_LOC ($$) = @$;
 
-                  $$ = pkl_ast_make_struct_type_field (pkl_parser->ast, $3, $2,
-                                                       constraint, initializer,
-                                                       $6, $1, $7);
-                  PKL_AST_LOC ($$) = @$;
+                    /* If endianness is empty, bison includes the
+                       blank characters before the type field as if
+                       they were part of this rule.  Therefore the
+                       location should be adjusted here.  */
+                    if ($1 == PKL_AST_ENDIAN_DFL)
+                      {
+                        PKL_AST_LOC ($$).first_line = @2.first_line;
+                        PKL_AST_LOC ($$).first_column = @2.first_column;
+                      }
 
-                  /* If endianness is empty, bison includes the blank
-                     characters before the type field as if they were
-                     part of this rule.  Therefore the location should
-                     be adjusted here.  */
-                  if ($1 == PKL_AST_ENDIAN_DFL)
-                    {
-                      PKL_AST_LOC ($$).first_line = @2.first_line;
-                      PKL_AST_LOC ($$).first_column = @2.first_column;
-                    }
-
-                  if ($3 != NULL)
-                    {
-                      PKL_AST_LOC ($3) = @3;
-                      PKL_AST_TYPE ($3) = pkl_ast_make_string_type (pkl_parser->ast);
-                      PKL_AST_TYPE ($3) = ASTREF (PKL_AST_TYPE ($3));
-                      PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
-                    }
-                }
+                    if ($3 != NULL)
+                      {
+                        PKL_AST_LOC ($3) = @3;
+                        PKL_AST_TYPE ($3) = pkl_ast_make_string_type (pkl_parser->ast);
+                        PKL_AST_TYPE ($3) = ASTREF (PKL_AST_TYPE ($3));
+                        PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
+                      }
+                  }
         ;
 
 struct_type_field_identifier:
@@ -1767,23 +1769,39 @@ struct_type_field_label:
                 }
         ;
 
-struct_type_field_constraint_or_init:
+struct_type_field_constraint_and_init:
           %empty
                 {
-                  $$ = NULL;
+                  $$[0] = NULL;
+                  $$[1] = NULL;
                 }
           | ':' expression
-                  {
-                  $$ = $2;
-                  PKL_AST_LOC ($$) = @$;
+                {
+                  $$[0] = $2;
+                  $$[1] = NULL;
+                  PKL_AST_LOC ($$[0]) = @$;
                 }
           | '=' expression
-                  {
-                  $$ = $2;
-                  /* Use use the flag to distinguish between
-                     constraint and initializer.  */
-                  PKL_AST_EXP_FLAG ($$) = 1;
-                  PKL_AST_LOC ($$) = @$;
+                {
+                  $$[0] = NULL;
+                  $$[1] = $2;
+                  PKL_AST_LOC ($$[1]) = @$;
+                }
+          | '=' expression ':' expression
+                {
+                  $$[0] = $4;
+                  $$[1] = $2;
+
+                  PKL_AST_LOC ($$[0]) = @4;
+                  PKL_AST_LOC ($$[1]) = @2;
+                }
+          | ':' expression '=' expression
+                {
+                  $$[0] = $2;
+                  $$[1] = $4;
+
+                  PKL_AST_LOC ($$[0]) = @2;
+                  PKL_AST_LOC ($$[1]) = @4;
                 }
           ;
 

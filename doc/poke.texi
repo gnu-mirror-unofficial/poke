@@ -10326,8 +10326,20 @@ Packet @{
 @}
 @end example
 
-Note that it is not possible to specify both a constraint and an
-initializer in a struct type field.
+It is possible to specify both a constraint and an initializer in the
+same field.  Suppose we want to support several kinds of packets,
+characterized by several markers.  The supported markers are however a
+closed set.  We could do it like this:
+
+@example
+type Packet =
+  struct
+  @{
+    byte marker = 0xff : marker in [0xffUB, 0xfeUB];
+    byte length;
+    byte[length] payload;
+  @};
+@end example
 
 Note also that it is considered good practice to design struct types
 in a way that a constructor with no arguments will result in something

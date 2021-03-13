@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { byte a : a in [10, 20, 30] = 50; };
+
+/* { dg-command {try Foo {}; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */

@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type Foo = struct { byte a = 10 : a in [10, 20, 30]; };
+
+/* { dg-command {var f = Foo {} } } */
+/* { dg-command {f} } */
+/* { dg-output "Foo \{a=10UB\}" } */

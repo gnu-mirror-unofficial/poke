@@ -1,5 +1,20 @@
 2021-03-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (struct_type_field): Adapt to
+	struct_type_field_constraint_and_init.
+	(struct_type_field_constraint_and_init): Rename from
+	struct_type_field_constraint_or_init.
+	* doc/poke.texi (Field Initializers): Document that both
+	initializers and constructors are valid.
+	* testsuite/poke.pkl/field-init-diag-3.pk: Remove test.
+	* testsuite/poke.pkl/field-init-9.pk: New test.
+	* testsuite/poke.pkl/field-init-10.pk: Likewise.
+	* testsuite/poke.pkl/field-init-11.pk: Likewise.
+	* testsuite/poke.pkl/field-init-12.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2021-03-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-dump.pk: Round :size up to the next byte instead of
 	truncating.
 	* testsuite/poke.cmd/dump-9.pk (pk_dump_ascii): New test.
