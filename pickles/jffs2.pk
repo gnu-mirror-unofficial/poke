@@ -150,7 +150,7 @@ fun jffs2_nodetype_to_str = (uint<16> node_type) string: {
 type JFFS2_Dirent =
 struct
 {
-    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
     uint<16> node_type = JFFS2_NODETYPE_DIRENT;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
@@ -191,7 +191,7 @@ struct
 type JFFS2_Inode =
 struct
 {
-    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
     uint<16> node_type = JFFS2_NODETYPE_INODE;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
@@ -207,8 +207,8 @@ struct
     offset<uint<32>, B> offset; // where to begin write
     offset<uint<32>, B> csize;  // compressed data size
     offset<uint<32>, B> dsize; // uncompressed data size
-    uint<8> compr : compr in jffs2_inode_comp_types;
-    uint<8> usercompr : usercompr in jffs2_inode_comp_types;
+    uint<8> compr = JFFS2_COMPR_NONE : compr in jffs2_inode_comp_types;
+    uint<8> usercompr = JFFS2_COMPR_NONE : usercompr in jffs2_inode_comp_types;
     uint<16> flags;
     uint<32> data_crc; // crc of data[csize]
     uint<32> node_crc; // crc from jffs2 to magic to flags
@@ -233,7 +233,7 @@ struct
 type JFFS2_XAttr =
 struct
 {
-    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
     uint<16> node_type = JFFS2_NODETYPE_XATTR;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
@@ -269,7 +269,7 @@ struct
 type JFFS2_XRef =
 struct
 {
-    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
     uint<16> node_type = JFFS2_NODETYPE_XREF;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
@@ -383,7 +383,7 @@ union {
 type JFFS2_Summary =
 struct
 {
-    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
     uint<16> node_type = JFFS2_NODETYPE_SUMMARY;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
@@ -424,7 +424,7 @@ struct
 type JFFS2_Unk_Node =
 struct
 {
-    uint<16> magic : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
+    uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
     uint<16> node_type; // could be anything
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;

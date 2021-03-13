@@ -1,5 +1,15 @@
 2021-03-14  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* pickles/jffs2.pk (JFFS2_Dirent): Add initializer to `magic` field.
+	(JFFS2_XAttr): Likewise.
+	(JFFS2_XRef): Likewise.
+	(JFFS2_Summary): Likewise.
+	(JFFS2_Unk_Node): Likewise.
+	(JFFS2_Inode): Add initializer to `magic`, `compr` and `usercompr`
+	fields.
+
+2021-03-14  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* doc/learn-poke-language-in-y-minutes.pk: Add a new example of
 	using both constraints and initializers in fields.
 
