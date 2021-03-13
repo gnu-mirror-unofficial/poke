@@ -11988,7 +11988,7 @@ However, sometimes we have to work with incorrect or incomplete data.
 In these cases, we want to inspect that data and complete it using
 poke.
 
-For this purpose poke provides an alternate map operator @code{@!}
+For this purpose poke provides an alternate map operator @code{@@!}
 that behaves exactly like the normal operator, but inhibits the
 control of data integrity.
 
