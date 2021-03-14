@@ -63,34 +63,64 @@ ios_dev_file_handler_normalize (const char *handler, uint64_t flags, int* error)
   return new_handler;
 }
 
+/* Returns 0 when the flags are inconsistent.  */
+static inline int
+ios_dev_file_convert_flags (int mode_flags, char **mode_for_fdopen)
+{
+  int flags_for_open = 0;
+
+  if ((mode_flags & IOS_F_READ)
+      && (mode_flags & IOS_F_WRITE))
+    {
+      flags_for_open |= O_RDWR;
+      *mode_for_fdopen = "r+b";
+    }
+  else if (mode_flags & IOS_F_READ)
+    {
+      flags_for_open |= O_RDONLY;
+      *mode_for_fdopen = "rb";
+    }
+  else if (mode_flags & IOS_F_WRITE)
+    {
+      flags_for_open |= O_WRONLY;
+      *mode_for_fdopen = "wb";
+    }
+  else
+    /* Cannot open a file neither to write nor to read.  */
+    return 0;
+
+  if (mode_flags & IOS_F_CREATE)
+    flags_for_open |= O_CREAT;
+
+  return flags_for_open;
+}
+
 static void *
 ios_dev_file_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_file *fio = NULL;
   FILE *f = NULL;
   int internal_error = IOD_ERROR;
-  const char *mode;
-  uint8_t flags_mode = flags & IOS_FLAGS_MODE;
 
-  if (flags_mode != 0)
+  uint8_t mode_flags = flags & IOS_FLAGS_MODE;
+  char *mode_for_fdopen = NULL;
+  int flags_for_open = 0;
+  int fd;
+
+  if (mode_flags != 0)
     {
       /* Decide what mode to use to open the file.  */
-      if (flags_mode == IOS_F_READ)
-        mode = "rb";
-      else if (flags_mode == IOS_F_WRITE)
-        mode = "wb";
-      else if (flags_mode == (IOS_F_READ | IOS_F_WRITE))
-        mode = "r+b";
-      else if (flags_mode == (IOS_F_READ | IOS_F_WRITE | IOS_F_CREATE)
-               || flags_mode == (IOS_F_WRITE | IOS_F_CREATE))
-        mode = "w+b";
-      else
+      flags_for_open
+        = ios_dev_file_convert_flags (mode_flags, &mode_for_fdopen);
+      if (flags_for_open == 0)
         {
           internal_error = IOD_EFLAGS;
           goto err;
         }
-
-      f = fopen (handler, mode);
+      fd = open (handler, flags_for_open);
+      if (fd == -1)
+        goto err;
+      f = fdopen (fd, mode_for_fdopen);
     }
   else
     {

@@ -1,5 +1,10 @@
 2021-03-15  Egeyar Bagcioglu  <egeyar@gmail.com>
 
+	* libpoke/ios-dev-file.c (ios_dev_file_convert_flags): New function.
+	(ios_dev_file_open): Open files with the right flags via "open".
+
+2021-03-15  Egeyar Bagcioglu  <egeyar@gmail.com>
+
 	* doc/poke.texi: Remove IOS_F_TRUNCATE.
 	* etc/poke-mode.el: Likewise.
 	* etc/poke.vim: Likewise.
