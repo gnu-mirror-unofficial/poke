@@ -1,5 +1,9 @@
 2021-03-15  Egeyar Bagcioglu  <egeyar@gmail.com>
 
+	* .gitignore: Add /build /gl-libutils /doc/poke.text and tags
+
+2021-03-15  Egeyar Bagcioglu  <egeyar@gmail.com>
+
 	* libpoke/ios-dev-file.c (ios_dev_file_convert_flags): New function.
 	(ios_dev_file_open): Open files with the right flags via "open".
 

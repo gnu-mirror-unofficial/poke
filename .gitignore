@@ -7,6 +7,7 @@ poke/poke-poke.o
 stamp-h1
 /ABOUT-NLS
 /build-aux
+/build
 /INSTALL.generic
 *~
 *.a
@@ -22,6 +23,7 @@ config.h.in
 /configure.lineno
 /gl
 /gl-libpoke
+/gl-libutils
 /gl-gui
 /po/.gitignore
 /po/.reference
@@ -54,6 +56,7 @@ config.h.in
 /doc/poke.cp
 /doc/poke.cps
 /doc/poke.log
+/doc/poke.text
 /doc/poke.toc
 /doc/poke.tree
 /doc/poke.tree.err
@@ -83,3 +86,6 @@ config.h.in
 /poke.pc.in
 /poke-uninstalled.pc
 /poke-uninstalled.sh
+
+## Tag files created by ctags
+tags
