@@ -49,11 +49,10 @@ var ENDIAN_BIG = 1;
    all IOD backends and are defined below.  The most-significative 32
    bits are reserved for backend-specific flags.
 
-   Please keep these values in sync with the constants in ios.c.  */
+   Please keep these values in sync with the constants in ios.h.  */
 
 var IOS_F_READ   = 1;
 var IOS_F_WRITE  = 2;
-var IOS_F_TRUNCATE = 8;
 var IOS_F_CREATE = 16;
 
 var IOS_M_RDONLY = IOS_F_READ;

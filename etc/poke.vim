@@ -76,7 +76,7 @@ syn keyword pokeBuiltinType big little any
 
 " Poke constants
 syn keyword pokeConstant ENDIAN_LITTLE ENDIAN_BIG
-syn keyword pokeConstant IOS_F_READ IOS_F_WRITE IOS_F_TRUNCATE IOS_F_CREATE
+syn keyword pokeConstant IOS_F_READ IOS_F_WRITE IOS_F_CREATE
 syn keyword pokeConstant IOS_M_RDONLY IOS_M_WRONLY IOS_M_RDWR
 syn keyword pokeConstant load_path NULL OFFSET
 

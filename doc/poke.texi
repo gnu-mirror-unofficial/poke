@@ -11589,17 +11589,14 @@ the compiler.  These are:
 The IO space is intended to be read.
 @item IOS_F_WRITE
 The IO space is intended to be written.
-@item IOS_F_TRUNCATE
-The IO space shall be truncated upon opening.
 @item IOS_F_CREATE
 If the IO device doesn't exist, then create it, usually empty.
 @end table
 
 @noindent
-Note that the specific meanings of these flags depend on the on the
-nature of the IO space that is opened: for example, it is optional
-whether a file is truncated, but a memory buffer is truncated by
-default, and an NBD iospace does not support truncation.
+Note that the specific behaviour of these flags depend on the nature
+of the IO space that is opened. For example a memory buffer is always
+truncated at creation by default.
 
 In order to ease the usage of @code{open}, a few pre-made bitmaps are
 provided to specify opening @dfn{modes}:

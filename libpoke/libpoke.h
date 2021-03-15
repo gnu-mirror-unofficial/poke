@@ -318,7 +318,6 @@ uint64_t pk_ios_size (pk_ios ios) LIBPOKE_API;
 
 #define PK_IOS_F_READ     1
 #define PK_IOS_F_WRITE    2
-#define PK_IOS_F_TRUNCATE 8
 #define PK_IOS_F_CREATE  16
 
 uint64_t pk_ios_flags (pk_ios ios) LIBPOKE_API;
