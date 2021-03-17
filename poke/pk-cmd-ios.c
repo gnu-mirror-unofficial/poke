@@ -89,7 +89,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_IOS_NOID == pk_open_ios (filename, 1 /* set_cur_p */))
+  if (PK_IOS_NOID == pk_open_file (filename, 1 /* set_cur_p */))
     {
       pk_term_class ("error");
       pk_puts (_("error: "));

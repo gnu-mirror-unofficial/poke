@@ -21,7 +21,7 @@
 
 #include <config.h>
 
-/* Open a new IO space in the application and return its IOS id.
+/* Open a file in the application and return its IOS id.
 
    HANDLER is the handler identifying the IO space.  This is typically
    the name of a file.
@@ -32,6 +32,6 @@
    Return the IOS id of the newly opened IOS, or PK_IOS_ERROR if the
    given handler coulnd't be opened.  */
 
-int pk_open_ios (const char *handler, int set_cur_p);
+int pk_open_file (const char *handler, int set_cur_p);
 
 #endif /* ! PK_IOS_H */

@@ -472,16 +472,14 @@ parse_args_2 (int argc, char *argv[])
   if (optind < argc)
     {
       char *filename = argv[optind++];
-      int xxx = poke_auto_map_p;
 
-      poke_auto_map_p = 0; /* XXX */
-      if (pk_open_ios (filename, 1 /* set_cur_p */) == PK_IOS_NOID)
+      if (pk_ios_open (poke_compiler,
+                       filename, 0, 1 /* set_cur_p */) == PK_IOS_NOID)
         {
           if (!poke_quiet_p)
             pk_printf (_("cannot open file %s\n"), filename);
           goto exit_failure;
         }
-      poke_auto_map_p = xxx; /* XXX */
 
       optind++;
     }

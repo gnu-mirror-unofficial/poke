@@ -1,3 +1,12 @@
+2021-03-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-ios.h: Rename pk_open_ios to pk_open_file.
+	* poke/pk-ios.c (pk_open_file): Likewise.
+	(pk_open_file): Pass set_cur_p to pk_ios_open.
+	* poke/pk-cmd-ios.c (pk_cmd_file): Reflect rename.
+	* poke/poke.c (parse_args_2): Use pk_ios_open instead of
+	pk_open_file.
+
 2021-03-16  Thomas Weißschuh <thomas@t-8ch.de>
 
 	* etc/Makefile.am: Distribute Emacs syntax highlighting.
