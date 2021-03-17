@@ -117,7 +117,7 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
           internal_error = IOD_EFLAGS;
           goto err;
         }
-      fd = open (handler, flags_for_open);
+      fd = open (handler, flags_for_open, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
       if (fd == -1)
         goto err;
       f = fdopen (fd, mode_for_fdopen);

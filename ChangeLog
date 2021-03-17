@@ -1,3 +1,8 @@
+2021-03-17  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_open): Create files with
+	adequate flags.
+
 2021-03-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-ios.h: Rename pk_open_ios to pk_open_file.
