@@ -1,3 +1,9 @@
+2021-03-17  Kostas Chasialis <sdi1600195@di.uoa.gr>
+
+	* doc/gen-pvm-insns.sh: A more portable version of the script.
+	* cfg.mk (sc_tests_listed_in_makefile_am): Now correctly finds
+	tests on srcdir builds.
+
 2021-03-17  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* libpoke/ios-dev-file.c (ios_dev_file_open): Create files with

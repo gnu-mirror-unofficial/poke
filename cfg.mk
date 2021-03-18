@@ -48,7 +48,7 @@ sc_tabs_in_source:
 
 sc_tests_listed_in_makefile_am:
 	@find $(top_srcdir)/testsuite/ -name '*.pk' \
-           | sed -e 's#../testsuite/##g' | sort > in-files
+           | sed -e 's#^.*testsuite/##g' | sort > in-files
 	@egrep -e '\.pk *\\$$' $(top_srcdir)/testsuite/Makefile.am \
            | sed -e 's/ *\\$$//' -e 's/^ *//' | sort  > in-makefile
 	@cmp -s in-files in-makefile || \

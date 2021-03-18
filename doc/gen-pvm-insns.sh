@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 CONTENTS=$(egrep '^#.*$' < $1 \
-           | sed -n -e '1,/^### Begin of instructions/d' \
-                    -e '1,/^### End of instructions/p')
+           | sed -e '1,/^### Begin of instructions/d' \
+           | sed -n -e '1,/^### End of instructions/p')
 
 SUBSECTIONS=$(echo "$CONTENTS" | egrep '^## .*' \
               | sed -e 's/## \(.*\)/\1/')
@@ -36,7 +36,7 @@ do
     sed_cmd='/^## '$sub'/,/^## /p'
     SUBCONTENTS=$(echo "$CONTENTS" \
                   | sed -n -e "$sed_cmd" \
-                  | head --line=-1)
+                  | sed '$d')
 
     echo ""
     echo "@node $sub"
@@ -53,10 +53,11 @@ do
     # Instruction subsections
     echo "$SUBCONTENTS" \
         | sed -e 's/## .*//' \
-              -e 's/# Stack: \(.*\)/\nStack: @code{\1}/' \
-              -e 's/# Exceptions Stack: \(.*\)/\nException Stack: @code{\1}/' \
-              -e 's/# Exceptions: \(.*\)/\nExceptions: @code{\1}/' \
-              -e 's/# Instruction: \([^ ][^ ]*\)\(.*\)/\n@node Instruction \1\n@subsubsection Instruction \1\n\nSynopsys:\n\n@example\n\1\2\n@end example\n\n/' \
-              -e 's/^# //' -e 's/^#//' \
+        | sed -e 's/# Stack: \(.*\)/\nStack: @code{\1}/' \
+        | sed -e 's/# Exceptions Stack: \(.*\)/\nException Stack: @code{\1}/' \
+        | sed -e 's/# Exceptions: \(.*\)/\nExceptions: @code{\1}/' \
+        | sed -e 's/# Instruction: \([^ ][^ ]*\)\(.*\)/\n@node Instruction \1\n@subsubsection Instruction \1\n\nSynopsys:\n\n@example\n\1\2\n@end example\n\n/' \
+        | sed -e 's/^# //' \
+        | sed -e 's/^#//' \
         | uniq
 done <<< "$SUBSECTIONS"
