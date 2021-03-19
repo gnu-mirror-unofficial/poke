@@ -1,3 +1,8 @@
+2021-03-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/Makefile.am (dist_lisp_DATA): Avoid byte-compiling emacs
+	modes.
+
 2021-03-17  Kostas Chasialis <sdi1600195@di.uoa.gr>
 
 	* doc/gen-pvm-insns.sh: A more portable version of the script.
