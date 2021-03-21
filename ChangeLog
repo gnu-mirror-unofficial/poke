@@ -1,3 +1,7 @@
+2021-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* NEWS: Update for 1.1.
+
 2021-03-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/Makefile.am (dist_lisp_DATA): Avoid byte-compiling emacs

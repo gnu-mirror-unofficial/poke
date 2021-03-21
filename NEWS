@@ -7,5 +7,35 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.1 (21 March 2021)
+* User visible changes
+  - The IOS_F_TRUNCATE `open' flag has been removed.
+  - Constraint expressions and initializers can be now
+    used together in struct fields.
+* Bug fixes
+  - The infamous bug preventing poke work on 32-bit systems is now
+    fixed.
+  - Better handling of open modes in the file IOD.
+  - Improve some translatable strings.
+  - poke won't raise an exception when starting if HOME
+    is not defined in the environment.
+  - The compiler now emits an error if it sees un-map-able
+    fields in a struct type.
+  - Properly handle the absence of current IOS in the map command.
+  - Install Emacs modes.
+  - Portability fixes for:
+    + Mac OS X 10.5.
+    + GNU/Hurd.
+    + Solaris 11 OpenIndiana.
+    + AIX.
+    + mingw.
+* Manual
+  - Relicensed to GPLv3+.
+  - Expand section on struct methods.
+  - New section on data padding and alignment.
+  - Document the Emacs modes provided by poke.
+  - Provide a recommended pokerc configuration for beginners.
+  - Other minor fixes based on user feedback.
+
  Version 1.0 (26 February 2021)
 * Initial release!
