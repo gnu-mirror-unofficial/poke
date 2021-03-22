@@ -29,6 +29,7 @@
 
 #include "poke.h"
 
+#include "pk-mi.h"
 #include "pk-mi-msg.h"
 #include "pk-mi-json.h"
 
@@ -271,16 +272,17 @@ pk_mi_send (pk_mi_msg msg)
 static void
 pk_mi_dispatch_msg (pk_mi_msg msg)
 {
-  if (pk_mi_msg_type (msg) == PK_MI_MSG_REQUEST)
+  if (pk_mi_msg_kind (msg) == PK_MI_MSG_REQUEST)
     {
       switch (pk_mi_msg_req_type (msg))
         {
         case PK_MI_REQ_EXIT:
           {
             pk_mi_msg resp
-              = pk_mi_make_resp_exit (pk_mi_msg_number (msg),
-                                      1 /* success_p */,
-                                      NULL /* errmsg */);
+              = pk_mi_make_resp (PK_MI_RESP_EXIT,
+                                 pk_mi_msg_number (msg),
+                                 1 /* success_p */,
+                                 NULL /* errmsg */);
             pk_mi_send (resp);
             pk_mi_msg_free (resp);
             pk_mi_exit_p = 1;
@@ -304,8 +306,11 @@ pk_mi_dispatch_msg (pk_mi_msg msg)
 int
 pk_mi (void)
 {
-  pk_mi_msg initialized_msg
-    = pk_mi_make_event_initialized (VERSION);
+  pk_mi_msg initialized_msg;
+
+  initialized_msg = pk_mi_make_event (PK_MI_EVENT_INITIALIZED);
+  pk_mi_set_arg (initialized_msg, "mi_version", pk_make_int (MI_VERSION, 32));
+  pk_mi_set_arg (initialized_msg, "version", pk_make_string (VERSION));
 
   if (!initialized_msg)
     return 0;

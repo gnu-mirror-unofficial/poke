@@ -146,7 +146,7 @@ EXTRA_DIST += pk-map-tab.y pk-map-tab.c pk-map-tab.h
 # Machine interface
 if POKE_MI
 poke_SOURCES += pk-mi.c pk-mi.h \
-                pk-mi-msg.c pk-mi-msg.h \
+                pk-mi-msg.def pk-mi-msg.c pk-mi-msg.h \
                 pk-mi-json.c pk-mi-json.h
 poke_CFLAGS += $(JSON_C_CFLAGS)
 poke_LDADD += $(JSON_C_LIBS)

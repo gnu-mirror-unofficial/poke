@@ -21,11 +21,48 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <xalloc.h>
 
-#include "pk-mi.h" /* For MI_VERSION */
+#include "libpoke.h" /* For pk_val */
+#include "pk-utils.h"
 #include "pk-mi-msg.h"
 
-/*** Data structures.  ***/
+/*** Message database  ***/
+
+/* The _arginfo tables keep information of the different arguments
+   accepted by the different kind of messages.  */
+
+struct pk_mi_msg_arginfo
+{
+  char *name;
+  int kind; /* One of PK_* defined in libpoke.h  */
+};
+
+static struct pk_mi_msg_arginfo req_arginfo[][PK_MI_MAX_ARGS] =
+{
+#define PK_DEF_ARG(N,T) { #N, T }
+#define PK_DEF_NOARG { NULL, PK_UNKNOWN }
+#define PK_DEF_REQ(ID,ARGS) { ARGS, PK_DEF_NOARG },
+#include "pk-mi-msg.def"
+};
+
+static struct pk_mi_msg_arginfo resp_arginfo[][PK_MI_MAX_ARGS] =
+{
+#define PK_DEF_ARG(N,T) { #N, T }
+#define PK_DEF_NOARG { NULL, PK_UNKNOWN }
+#define PK_DEF_RESP(ID,ARGS) { ARGS, PK_DEF_NOARG },
+#include "pk-mi-msg.def"
+};
+
+static struct pk_mi_msg_arginfo event_arginfo[][PK_MI_MAX_ARGS] =
+{
+#define PK_DEF_ARG(N,T) { #N, T }
+#define PK_DEF_NOARG { NULL, PK_UNKNOWN }
+#define PK_DEF_EVENT(ID,ARGS) { ARGS, PK_DEF_NOARG },
+#include "pk-mi-msg.def"
+};
+
+/*** Messages.  ***/
 
 /* Requests are initiated by the client.
 
@@ -33,28 +70,15 @@
    is paired with the triggering request by the request's sequence
    number.
 
-   TYPE identifies the kind of request.  It is one of the PK_MI_REQ_*
-   enumerated values defined below.
+   TYPE identifies the kind of request.  It is one of the
+   PK_MI_REQ_* enumerated values defined below.  */
 
-   ARGS are the arguments of the request.  They depend on the specific
-   request type, and are described below.
+#define PK_MI_MSG_REQ_TYPE(MSG) ((MSG)->data.req.type)
 
-   The following request types are supported:
-
-   PK_MI_REQ_EXIT requests poke to finalize and exit.  */
-
-#define PK_MI_REQ_TYPE(REQ) ((REQ)->type)
-
-struct pk_mi_req
+struct pk_mi_msg_req
 {
   enum pk_mi_req_type type;
-
-  union
-  {
-  } args;
 };
-
-typedef struct pk_mi_req *pk_mi_req;
 
 /* Responses are initiated by poke, in response to a request received
    from the client.
@@ -71,32 +95,21 @@ typedef struct pk_mi_req *pk_mi_req;
    be performed successfully.
 
    RESULT is the result of the associated request.  Its contents
-   depend on the specific request type, and are described below.
+   depend on the specific request type, and are described
+   below.  */
 
-   The following responses are supported:
+#define PK_MI_MSG_RESP_TYPE(MSG) ((MSG)->data.resp.type)
+#define PK_MI_MSG_RESP_REQ_NUMBER(MSG) ((MSG)->data.resp.req_number)
+#define PK_MI_MSG_RESP_SUCCESS_P(MSG) ((MSG)->data.resp.success_p)
+#define PK_MI_MSG_RESP_ERRMSG(MSG) ((MSG)->data.resp.errmsg)
 
-   PK_MI_RESP_EXIT is the response to a PK_MI_REQ_EXIT request.  */
-
-#define PK_MI_RESP_TYPE(RESP) ((RESP)->type)
-#define PK_MI_RESP_REQ_NUMBER(RESP) ((RESP)->req_number)
-#define PK_MI_RESP_SUCCESS_P(RESP) ((RESP)->success_p)
-#define PK_MI_RESP_ERRMSG(RESP) ((RESP)->errmsg)
-
-struct pk_mi_msg;
-
-struct pk_mi_resp
+struct pk_mi_msg_resp
 {
   enum pk_mi_resp_type type;
   pk_mi_seqnum req_number;
   int success_p;
   char *errmsg;
-
-  union
-  {
-  } result;
 };
-
-typedef struct pk_mi_resp *pk_mi_resp;
 
 /* Events are initiated by poke.
 
@@ -104,62 +117,35 @@ typedef struct pk_mi_resp *pk_mi_resp;
    enumerated values described below.
 
    ARGS contains the arguments of the event.  Their contents depend on
-   the specific request type, and are described below.
+   the specific request type, and are described below.  */
 
-   The following events are supported:
+#define PK_MI_MSG_EVENT_TYPE(MSG) ((MSG)->data.event.type)
 
-   PK_MI_EVENT_INITIALIZED indicates the client that poke is
-   initialized and ready to process requests.  No request shall be
-   sent to poke until this event is received.  This event is sent just
-   once.  This event has the following arguments:
-
-      INITIALIZED_MI_VERSION is an integer specifying the version of
-      the MI protocol that this poke speaks.
-
-      INITIALIZED_VERSION is a NULL-terminated string with the
-      version of the poke program sending the event.
-*/
-
-#define PK_MI_EVENT_TYPE(EVENT) ((EVENT)->type)
-#define PK_MI_EVENT_INITIALIZED_MI_VERSION(EVENT) ((EVENT)->args.initialized.mi_version)
-#define PK_MI_EVENT_INITIALIZED_VERSION(EVENT) ((EVENT)->args.initialized.version)
-
-struct pk_mi_event
+struct pk_mi_msg_event
 {
   enum pk_mi_event_type type;
-  union
-  {
-    struct
-    {
-      /* MI version this poke speaks.  */
-      int mi_version;
-      /* String with the version of poke.  */
-      char *version;
-    } initialized;
-
-  } args;
 };
 
-typedef struct pk_mi_event *pk_mi_event;
-
-/* Messages.  */
+/* The message itself.  */
 
 #define PK_MI_MSG_NUMBER(MSG) ((MSG)->number)
-#define PK_MI_MSG_TYPE(MSG) ((MSG)->type)
-#define PK_MI_MSG_REQUEST(MSG) ((MSG)->data.request)
-#define PK_MI_MSG_RESPONSE(MSG) ((MSG)->data.response)
-#define PK_MI_MSG_EVENT(MSG) ((MSG)->data.event)
+#define PK_MI_MSG_KIND(MSG) ((MSG)->kind)
+#define PK_MI_MSG_NUM_ARGS(MSG) ((MSG)->num_args)
+#define PK_MI_MSG_ARGS(MSG) ((MSG)->args)
 
 struct pk_mi_msg
 {
   pk_mi_seqnum number;
-  enum pk_mi_msg_type type;
+  enum pk_mi_msg_kind kind;
+
   union
   {
-    struct pk_mi_req *request;
-    struct pk_mi_resp *response;
-    struct pk_mi_event *event;
+    struct pk_mi_msg_req req;
+    struct pk_mi_msg_resp resp;
+    struct pk_mi_msg_event event;
   } data;
+
+  pk_val *args;
 };
 
 typedef struct pk_mi_msg *pk_mi_msg;
@@ -169,355 +155,168 @@ typedef struct pk_mi_msg *pk_mi_msg;
 /* Global with the next available message sequence number.  */
 static pk_mi_seqnum next_seqnum;
 
-static pk_mi_req
-pk_mi_make_req (enum pk_mi_req_type type)
-{
-  pk_mi_req req = malloc (sizeof (struct pk_mi_req));
-
-  if (req)
-    PK_MI_REQ_TYPE (req) = type;
-
-  return req;
-}
-
-static pk_mi_resp
-pk_mi_make_resp (enum pk_mi_resp_type type)
-{
-  pk_mi_resp resp = malloc (sizeof (struct pk_mi_resp));
-
-  if (resp)
-    PK_MI_RESP_TYPE (resp) = type;
-
-  return resp;
-}
-
-static pk_mi_event
-pk_mi_make_event (enum pk_mi_event_type type)
-{
-  pk_mi_event event = malloc (sizeof (struct pk_mi_event));
-
-  if (event)
-    {
-      PK_MI_EVENT_TYPE (event) = type;
-
-      switch (type)
-        {
-        case PK_MI_EVENT_INITIALIZED:
-          PK_MI_EVENT_INITIALIZED_VERSION (event) = NULL;
-          break;
-        default:
-          assert (0);
-        }
-    }
-
-  return event;
-}
 
 static pk_mi_msg
-pk_mi_make_msg (enum pk_mi_msg_type type)
+pk_mi_make_msg (enum pk_mi_msg_kind kind)
 {
-  pk_mi_msg msg = malloc (sizeof (struct pk_mi_msg));
+  pk_mi_msg msg = xmalloc (sizeof (struct pk_mi_msg));
 
-  if (msg)
-    {
-      msg->number = next_seqnum++;
-      msg->type = type;
-    }
+  PK_MI_MSG_NUMBER (msg) = next_seqnum++;
+  PK_MI_MSG_KIND (msg) = kind;
+  PK_MI_MSG_ARGS (msg) = NULL;
 
   return msg;
 }
 
-void
-pk_mi_req_free (pk_mi_req req)
+static void
+pk_mi_allocate_msg_args (pk_mi_msg msg,
+                         struct pk_mi_msg_arginfo arginfo[][PK_MI_MAX_ARGS],
+                         int type)
 {
-  if (req)
-    {
-      switch (PK_MI_REQ_TYPE (req))
-        {
-        case PK_MI_REQ_EXIT:
-          /* Nothing to do.  */
-          break;
-        default:
-          assert (0);
-        }
+  pk_val *args = NULL;
+  struct pk_mi_msg_arginfo *ai;
+  int nargs = 0, i;
 
-      free (req);
-    }
-}
+  for (ai = arginfo[type]; ai->name != NULL; ai++)
+    nargs++;
 
-void
-pk_mi_resp_free (pk_mi_resp resp)
-{
-  if (resp)
-    {
-      switch (PK_MI_RESP_TYPE (resp))
-        {
-        case PK_MI_RESP_EXIT:
-          /* Nothing to do here.  */
-          break;
-        default:
-          assert (0);
-        }
+  args = xmalloc (sizeof (pk_val) * nargs);
+  for (i = 0; i < nargs; ++i)
+    args[i] = PK_NULL;
 
-      free (PK_MI_RESP_ERRMSG (resp));
-      free (resp);
-    }
-}
-
-void
-pk_mi_event_free (pk_mi_event event)
-{
-  if (event)
-    {
-      switch (PK_MI_EVENT_TYPE (event))
-        {
-        case PK_MI_EVENT_INITIALIZED:
-          free (PK_MI_EVENT_INITIALIZED_VERSION (event));
-          break;
-        default:
-          assert (0);
-        }
-
-      free (event);
-    }
-}
-
-pk_mi_req
-pk_mi_req_dup (pk_mi_req req)
-{
-  pk_mi_req new = pk_mi_make_req (PK_MI_REQ_TYPE (req));
-
-  if (new)
-    {
-      switch (PK_MI_REQ_TYPE (req))
-        {
-        case PK_MI_REQ_EXIT:
-          /* Nothing to do.  */
-          break;
-        default:
-          assert (0);
-        }
-    }
-
-  return new;
-}
-
-pk_mi_resp
-pk_mi_resp_dup (pk_mi_resp resp)
-{
-  pk_mi_resp new = pk_mi_make_resp (PK_MI_RESP_TYPE (resp));
-
-  if (new)
-    {
-      switch (PK_MI_RESP_TYPE (resp))
-        {
-        case PK_MI_RESP_EXIT:
-          /* Nothing to do here.  */
-          break;
-        default:
-          assert (0);
-        }
-
-      PK_MI_RESP_REQ_NUMBER (new) = PK_MI_RESP_REQ_NUMBER (resp);
-      PK_MI_RESP_SUCCESS_P (new) = PK_MI_RESP_SUCCESS_P (resp);
-
-      PK_MI_RESP_ERRMSG (new) = strdup (PK_MI_RESP_ERRMSG (resp));
-      if (!PK_MI_RESP_ERRMSG (new))
-        {
-          free (new);
-          return NULL;
-        }
-    }
-
-  return new;
-}
-
-pk_mi_event
-pk_mi_event_dup (pk_mi_event event)
-{
-  pk_mi_event new = pk_mi_make_event (PK_MI_EVENT_TYPE (event));
-
-  if (new)
-    {
-      switch (PK_MI_EVENT_TYPE (event))
-        {
-        case PK_MI_EVENT_INITIALIZED:
-          PK_MI_EVENT_INITIALIZED_VERSION (new)
-            = strdup PK_MI_EVENT_INITIALIZED_VERSION (event);
-
-          if (!PK_MI_EVENT_INITIALIZED_VERSION (new))
-            {
-              free (new);
-              return NULL;
-            }
-          break;
-        default:
-          assert (0);
-        }
-    }
-
-  return new;
+  PK_MI_MSG_ARGS (msg) = args;
 }
 
 pk_mi_msg
-pk_mi_msg_dup (pk_mi_msg msg)
+pk_mi_make_req (enum pk_mi_req_type type)
 {
-  pk_mi_msg new = pk_mi_make_msg (PK_MI_MSG_TYPE (msg));
+  pk_mi_msg msg = pk_mi_make_msg (PK_MI_MSG_REQUEST);
 
-  if (new)
-    {
-      switch (PK_MI_MSG_TYPE (msg))
-        {
-        case PK_MI_MSG_REQUEST:
-          PK_MI_MSG_REQUEST (new)
-            = pk_mi_req_dup (PK_MI_MSG_REQUEST (msg));
+  PK_MI_MSG_REQ_TYPE (msg) = type;
+  pk_mi_allocate_msg_args (msg, req_arginfo, type);
 
-          if (!PK_MI_MSG_REQUEST (new))
-            {
-              free (new);
-              return NULL;
-            }
-          break;
-        case PK_MI_MSG_RESPONSE:
-          PK_MI_MSG_RESPONSE (new)
-            = pk_mi_resp_dup (PK_MI_MSG_RESPONSE (msg));
-
-          if (!PK_MI_MSG_RESPONSE (new))
-            {
-              free (new);
-              return NULL;
-            }
-          break;
-        case PK_MI_MSG_EVENT:
-          PK_MI_MSG_EVENT (new)
-            = pk_mi_event_dup (PK_MI_MSG_EVENT (msg));
-
-          if (!PK_MI_MSG_EVENT (new))
-            {
-              free (new);
-              return NULL;
-            }
-        default:
-          assert (0);
-        }
-    }
-
-  return new;
-}
-
-pk_mi_msg
-pk_mi_make_req_exit (void)
-{
-  pk_mi_req req;
-  pk_mi_msg msg;
-
-  req = pk_mi_make_req (PK_MI_REQ_EXIT);
-  if (!req)
-    return NULL;
-
-  msg = pk_mi_make_msg (PK_MI_MSG_REQUEST);
-  if (!msg)
-    {
-      free (req);
-      return NULL;
-    }
-
-  PK_MI_MSG_REQUEST (msg) = req;
-  return msg;
-}
-
-pk_mi_msg pk_mi_make_resp_exit (pk_mi_seqnum req_seqnum,
-                                int success_p, const char *errmsg)
-{
-  pk_mi_resp resp;
-  pk_mi_msg msg;
-
-  resp = pk_mi_make_resp (PK_MI_RESP_EXIT);
-  if (!resp)
-    return NULL;
-
-  PK_MI_RESP_REQ_NUMBER (resp) = req_seqnum;
-  PK_MI_RESP_SUCCESS_P (resp) = success_p;
-  if (errmsg)
-    {
-      PK_MI_RESP_ERRMSG (resp) = strdup (errmsg);
-      if (!PK_MI_RESP_ERRMSG (resp))
-        {
-          free (resp);
-          return NULL;
-        }
-    }
-  else
-    PK_MI_RESP_ERRMSG (resp) = NULL;
-
-  msg = pk_mi_make_msg (PK_MI_MSG_RESPONSE);
-  if (!msg)
-    {
-      free (resp);
-      return NULL;
-    }
-
-  PK_MI_MSG_RESPONSE (msg) = resp;
   return msg;
 }
 
 pk_mi_msg
-pk_mi_make_event_initialized (const char *version)
+pk_mi_make_resp (enum pk_mi_resp_type type,
+                 pk_mi_seqnum req_seqnum,
+                 int success_p,
+                 const char *errmsg)
 {
-  pk_mi_event event;
-  pk_mi_msg msg;
+  pk_mi_msg msg = pk_mi_make_msg (PK_MI_MSG_RESPONSE);
 
-  event = pk_mi_make_event (PK_MI_EVENT_INITIALIZED);
-  if (!event)
-    return NULL;
+  PK_MI_MSG_RESP_TYPE (msg) = type;
+  PK_MI_MSG_RESP_REQ_NUMBER (msg) = req_seqnum;
+  PK_MI_MSG_RESP_SUCCESS_P (msg) = success_p;
+  PK_MI_MSG_RESP_ERRMSG (msg) = xstrdup (errmsg);
+  pk_mi_allocate_msg_args (msg, resp_arginfo, type);
 
-  PK_MI_EVENT_INITIALIZED_MI_VERSION (event) = MI_VERSION;
-  PK_MI_EVENT_INITIALIZED_VERSION (event) = strdup (version);
-  if (!PK_MI_EVENT_INITIALIZED_VERSION (event))
-    {
-      free (event);
-      return NULL;
-    }
-
-  msg = pk_mi_make_msg (PK_MI_MSG_EVENT);
-  if (!msg)
-    {
-      free (event);
-      return NULL;
-    }
-
-  PK_MI_MSG_EVENT (msg) = event;
   return msg;
 }
+
+pk_mi_msg
+pk_mi_make_event (enum pk_mi_event_type type)
+{
+  pk_mi_msg msg = pk_mi_make_msg (PK_MI_MSG_EVENT);
+
+  PK_MI_MSG_EVENT_TYPE (msg) = type;
+  pk_mi_allocate_msg_args (msg, event_arginfo, type);
+
+  return msg;
+}
+
 
 void
 pk_mi_msg_free (pk_mi_msg msg)
 {
-  if (msg)
+  switch (PK_MI_MSG_KIND (msg))
     {
-      switch (PK_MI_MSG_TYPE (msg))
-        {
-        case PK_MI_MSG_REQUEST:
-          pk_mi_req_free (PK_MI_MSG_REQUEST (msg));
-          break;
-        case PK_MI_MSG_RESPONSE:
-          pk_mi_resp_free (PK_MI_MSG_RESPONSE (msg));
-          break;
-        case PK_MI_MSG_EVENT:
-          pk_mi_event_free (PK_MI_MSG_EVENT (msg));
-          break;
-        default:
-          assert (0);
-        }
-
-      free (msg);
+    case PK_MI_MSG_RESPONSE:
+      free (PK_MI_MSG_RESP_ERRMSG (msg));
+      break;
+    case PK_MI_MSG_REQUEST:
+    case PK_MI_MSG_EVENT:
+      break;
     }
+
+  free (PK_MI_MSG_ARGS (msg));
+  free (msg);
 }
 
-enum pk_mi_msg_type
-pk_mi_msg_type (pk_mi_msg msg)
+static int
+pk_mi_get_arg_index (pk_mi_msg msg, const char *argname,
+                     int *kind)
 {
-  return PK_MI_MSG_TYPE (msg);
+  int argindex = -1;
+
+#define LOOKUP_ARGINFO(TABLE,TYPE)                      \
+  do                                                    \
+    {                                                   \
+    int i;                                              \
+    for (i = 0; (TABLE)[(TYPE)][i].name; ++i)           \
+      {                                                 \
+        if (STREQ ((TABLE)[(TYPE)][i].name, argname))   \
+          {                                             \
+            argindex = i;                               \
+            if (kind)                                   \
+              *kind = (TABLE)[(TYPE)][i].kind;          \
+            break;                                      \
+          }                                             \
+      }                                                 \
+    }                                                   \
+  while (0)
+
+  switch (PK_MI_MSG_KIND (msg))
+    {
+    case PK_MI_MSG_REQUEST:
+      LOOKUP_ARGINFO (req_arginfo, PK_MI_MSG_REQ_TYPE (msg));
+      break;
+    case PK_MI_MSG_RESPONSE:
+      LOOKUP_ARGINFO (resp_arginfo, PK_MI_MSG_RESP_TYPE (msg));
+      break;
+    case PK_MI_MSG_EVENT:
+      LOOKUP_ARGINFO (event_arginfo, PK_MI_MSG_EVENT_TYPE (msg));
+      break;
+    }
+
+  return argindex;
+}
+
+pk_val
+pk_mi_get_arg (pk_mi_msg msg, const char *argname)
+{
+  int argindex = pk_mi_get_arg_index (msg, argname, NULL /* kind */);
+
+  if (argindex == -1)
+    /* Argument not found in message.  */
+    assert (0);
+
+  return PK_MI_MSG_ARGS (msg)[argindex];
+}
+
+void
+pk_mi_set_arg (pk_mi_msg msg, const char *argname, pk_val value)
+{
+  int kind;
+  int argindex = pk_mi_get_arg_index (msg, argname, &kind);
+  pk_val type = pk_typeof (value);
+
+  if (argindex == -1)
+    /* Argument not found in message.  */
+    assert (0);
+
+  /* Check that VALUE is of the right kind for this argument.  */
+  assert (pk_type_code (type) == kind);
+
+  /* Ok, set the value for this argument.  */
+  PK_MI_MSG_ARGS (msg)[argindex] = value;
+}
+
+enum pk_mi_msg_kind
+pk_mi_msg_kind (pk_mi_msg msg)
+{
+  return PK_MI_MSG_KIND (msg);
 }
 
 pk_mi_seqnum
@@ -535,47 +334,72 @@ pk_mi_set_msg_number (pk_mi_msg msg, pk_mi_seqnum number)
 enum pk_mi_req_type
 pk_mi_msg_req_type (pk_mi_msg msg)
 {
-  return PK_MI_REQ_TYPE (PK_MI_MSG_REQUEST (msg));
+  return PK_MI_MSG_REQ_TYPE (msg);
 }
 
 enum pk_mi_resp_type
 pk_mi_msg_resp_type (pk_mi_msg msg)
 {
-  return PK_MI_RESP_TYPE (PK_MI_MSG_RESPONSE (msg));
-}
-
-pk_mi_seqnum
-pk_mi_msg_resp_req_number (pk_mi_msg msg)
-{
-  return PK_MI_RESP_REQ_NUMBER (PK_MI_MSG_RESPONSE (msg));
-}
-
-int
-pk_mi_msg_resp_success_p (pk_mi_msg msg)
-{
-  return PK_MI_RESP_SUCCESS_P (PK_MI_MSG_RESPONSE (msg));
-}
-
-const char *
-pk_mi_msg_resp_errmsg (pk_mi_msg msg)
-{
-  return PK_MI_RESP_ERRMSG (PK_MI_MSG_RESPONSE (msg));
+  return PK_MI_MSG_RESP_TYPE (msg);
 }
 
 enum pk_mi_event_type
 pk_mi_msg_event_type (pk_mi_msg msg)
 {
-  return PK_MI_EVENT_TYPE (PK_MI_MSG_EVENT (msg));
+  return PK_MI_MSG_EVENT_TYPE (msg);
 }
 
-const char *
-pk_mi_msg_event_initialized_version (pk_mi_msg msg)
+pk_mi_seqnum
+pk_mi_msg_resp_req_number (pk_mi_msg msg)
 {
-  return PK_MI_EVENT_INITIALIZED_VERSION (PK_MI_MSG_EVENT (msg));
+  return PK_MI_MSG_RESP_REQ_NUMBER (msg);
 }
 
 int
-pk_mi_msg_event_initialized_mi_version (pk_mi_msg msg)
+pk_mi_msg_resp_success_p (pk_mi_msg msg)
 {
-  return PK_MI_EVENT_INITIALIZED_MI_VERSION (PK_MI_MSG_EVENT (msg));
+  return PK_MI_MSG_RESP_SUCCESS_P (msg);
+}
+
+const char *
+pk_mi_msg_resp_errmsg (pk_mi_msg msg)
+{
+  return PK_MI_MSG_RESP_ERRMSG (msg);
+}
+
+int
+pk_mi_msg_arg_map (pk_mi_msg msg, pk_mi_arg_map_fn cb,
+                   void *user1, void *user2)
+{
+  int res = 1;
+
+#define ITER_MSGS(RES,TABLE,TYPE)                                       \
+  do                                                                    \
+    {                                                                   \
+      int i;                                                            \
+      int res_p = 1;                                                    \
+      struct pk_mi_msg_arginfo *ai;                                     \
+                                                                        \
+      for (i = 0, ai = (TABLE)[(TYPE)]; ai->name != NULL; i++, ai++)    \
+        res_p = res_p && (cb) (ai->name,                                \
+                               PK_MI_MSG_ARGS (msg)[i],                 \
+                               user1, user2);                           \
+      (RES) = res_p;                                                    \
+    }                                                                   \
+  while (0)
+
+  switch (PK_MI_MSG_KIND (msg))
+    {
+    case PK_MI_MSG_REQUEST:
+      ITER_MSGS (res, req_arginfo, PK_MI_MSG_REQ_TYPE (msg));
+      break;
+    case PK_MI_MSG_RESPONSE:
+      ITER_MSGS (res, resp_arginfo, PK_MI_MSG_RESP_TYPE (msg));
+      break;
+    case PK_MI_MSG_EVENT:
+      ITER_MSGS (res, event_arginfo, PK_MI_MSG_EVENT_TYPE (msg));
+      break;
+    }
+
+  return res;
 }

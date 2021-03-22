@@ -1,0 +1,114 @@
+/* pk-mi-msg.def -- Definition of the MI messages for poke.  */
+
+/* Copyright (C) 2021 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This file contains the definitions of all the messages used by the
+   poke Machine-Interface.
+
+   Each message is defined using one of the following macros:
+
+   PK_DEF_REQ defines a request.
+   PK_DEF_RESP defines a response.
+   PK_DEF_EVENT defines an event.
+
+   In each entry:
+
+   The first column is an identifier that univocally identifies the
+   message in its category.
+
+   The second column is the list of named arguments accepted by the
+   message.  Each argument is characterized by a name and a PK value
+   kind (integer, unsigned integer, string, array, etc) */
+
+/* Do not force the #includer to define every macro.  */
+
+#if !defined PK_DEF_EVENT
+# define PK_DEF_EVENT(I,A)
+#endif
+
+#if !defined PK_DEF_REQ
+# define PK_DEF_REQ(I,A)
+#endif
+
+#if !defined PK_DEF_RESP
+# define PK_DEF_RESP(I,A)
+#endif
+
+#if !defined PK_DEF_NOARG
+# define PK_DEF_NOARG PK_DEF_ARGS ()
+#endif
+
+#if !defined PK_DEF_ARGS
+# define PK_DEF_ARGS(...) __VA_ARGS__
+#endif
+
+#if !defined PK_DEF_ARG
+# define PK_DEF_ARG(N,T)
+#endif
+
+/* Number of maximum number of arguments a message can have.  */
+
+#define PK_MI_MAX_ARGS 8
+
+/* Event: INITIALIZED
+
+   Sent by poke when it finishes initializing and is ready to receive
+   requests.
+
+   Arguments:
+
+   mi_version (int)
+     Version of the MI protocol that this poke instance speaks.
+   version (string)
+     Printable representation of the version of poke.
+*/
+
+PK_DEF_EVENT (INITIALIZED,
+              PK_DEF_ARGS (PK_DEF_ARG (mi_version, PK_INT),
+                           PK_DEF_ARG (version, PK_STRING)))
+
+/* Request/Response: EXIT
+
+   Ask poke to exit in an orderly way.  A response indicates that poke
+   will now exit.  */
+
+PK_DEF_REQ (EXIT, PK_DEF_NOARG)
+PK_DEF_RESP (EXIT, PK_DEF_NOARG)
+
+/* Request/Response: PRINTV
+
+   Get the printed representation of a given Poke value.  A response
+   is expected with a string contatining the printed representation of
+   the given value, if the request was processed successfully.  */
+
+PK_DEF_REQ (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (value, PK_ANY)))
+PK_DEF_RESP (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (string, PK_STRING)))
+
+/* Cleanup.  */
+
+#undef PK_DEF_EVENT
+#undef PK_DEF_REQ
+#undef PK_DEF_RESP
+#undef PK_DEF_ARGS
+#undef PK_DEF_NOARG
+#undef PK_DEF_ARG
+
+/*
+Local variables:
+mode:c
+End:
+*/

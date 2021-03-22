@@ -22,33 +22,41 @@
 #include <config.h>
 #include <stdint.h>
 
+#include <libpoke.h> /* For pk_val */
+
 /* Each MI message contains a "sequence number".  The protocol uses
    this number to univocally identify certain messages.  */
 
 typedef uint32_t pk_mi_seqnum;
 
-/* Types of messages, requests, responses and events.  */
+/* MI messages are of three kinds: requests, responses and events.
 
-enum pk_mi_msg_type
+   Then there are several types of messages in each kind, which are
+   defined in a declarative way in pk-mi-msg.def.  */
+
+enum pk_mi_msg_kind
 {
-  PK_MI_MSG_REQUEST,
+  PK_MI_MSG_REQUEST = 0,
   PK_MI_MSG_RESPONSE,
   PK_MI_MSG_EVENT,
 };
 
 enum pk_mi_req_type
 {
-  PK_MI_REQ_EXIT,
+#define PK_DEF_REQ(ID,ATTRS) PK_MI_REQ_##ID,
+#include "pk-mi-msg.def"
 };
 
 enum pk_mi_resp_type
 {
-  PK_MI_RESP_EXIT,
+#define PK_DEF_RESP(ID,ATTRS) PK_MI_RESP_##ID,
+#include "pk-mi-msg.def"
 };
 
 enum pk_mi_event_type
 {
-  PK_MI_EVENT_INITIALIZED,
+#define PK_DEF_EVENT(ID,ATTRS) PK_MI_EVENT_##ID,
+#include "pk-mi-msg.def"
 };
 
 /* The opaque pk_mi_msg type is fully defined in pk-mi-msg.c */
@@ -57,20 +65,12 @@ typedef struct pk_mi_msg *pk_mi_msg;
 
 /*** API for building messages.  ***/
 
-/* Requests.
+/* Build a new request message.
+   Return NULL in case there is an error.  */
 
-   The argument accepted by specific request constructors are
-   described before the corresponding prototype.
+pk_mi_msg pk_mi_make_req (enum pk_mi_req_type type);
 
-   The request constructors below return NULL in case there is any
-   error, such as out of memory.  */
-
-pk_mi_msg pk_mi_make_req_exit (void);
-
-/* Responses.
-
-   The response constructors below get some arguments which are common
-   to all of them:
+/* Build a new response message.
 
    REQ_SEQNUM is the sequence number of the request that is answered
    by this response.
@@ -82,47 +82,65 @@ pk_mi_msg pk_mi_make_req_exit (void);
    reason why the operation couldn't be performed.  This argument
    should be NULL in responses in which SUCCESS_P is not 0.
 
-   Many constructors accept other arguments.  These are described
-   below before the individual constructor prototypes.
+   Return NULL in case there is an error.  */
 
-   If there is an error running a constructor, such as out of memory,
-   then NULL is returned.  */
+pk_mi_msg pk_mi_make_resp (enum pk_mi_resp_type type,
+                           pk_mi_seqnum req_seqnum,
+                           int success_p,
+                           const char *errmsg);
 
-/* Build and return an EXIT response.  */
+/* Build a new event message.
+   Return NULL in case there is an error.  */
 
-pk_mi_msg pk_mi_make_resp_exit (pk_mi_seqnum req_seqnum,
-                                int success_p, const char *errmsg);
+pk_mi_msg pk_mi_make_event (enum pk_mi_event_type type);
 
-/* Events.
+/*** Getting and setting message attributes.  */
 
-   The arguments accepted by specific event constructors are described
-   before the corresponding prototype.
+/* Return the kind of a given message.  */
 
-   The event constructors below return NULL in case there is any
-   error, such as out of memory.  */
+enum pk_mi_msg_kind pk_mi_msg_kind (pk_mi_msg msg);
 
-/* Build and return an INITIALIZED event.
+/* Get and set the sequence number of a given message.  */
 
-   VERSION is a NULL-terminated string containing the version of the
-   server program (i.e. poke) issuing the event.  */
-
-pk_mi_msg pk_mi_make_event_initialized (const char *version);
-
-/*** API for getting properties of messages.   */
-
-enum pk_mi_msg_type pk_mi_msg_type (pk_mi_msg msg);
 pk_mi_seqnum pk_mi_msg_number (pk_mi_msg msg);
+void pk_mi_set_msg_number (pk_mi_msg msg, pk_mi_seqnum number);
+
+/* Get the type of a given message.  Note that the given message
+   should be of the right kind, and this is not checked at
+   compile-time.  */
 
 enum pk_mi_req_type pk_mi_msg_req_type (pk_mi_msg msg);
-
 enum pk_mi_resp_type pk_mi_msg_resp_type (pk_mi_msg msg);
+enum pk_mi_event_type pk_mi_msg_event_type (pk_mi_msg msg);
+
+/* Get attributes of response messages.  */
+
 pk_mi_seqnum pk_mi_msg_resp_req_number (pk_mi_msg msg);
 int pk_mi_msg_resp_success_p (pk_mi_msg msg);
 const char *pk_mi_msg_resp_errmsg (pk_mi_msg msg);
 
-enum pk_mi_event_type pk_mi_msg_event_type (pk_mi_msg msg);
-const char *pk_mi_msg_event_initialized_version (pk_mi_msg msg);
-int pk_mi_msg_event_initialized_mi_version (pk_mi_msg msg);
+/*** API for handling message arguments.  ***/
+
+/* Get the value of an argumnt from a message.
+
+   ARGNAME is a string identifying the name of the argument.
+
+   If the given message doesnt have an argument named ARGNAME then
+   this function aborts.  Note that it is perfectly valid for an
+   argument to have a value of PK_NULL */
+
+pk_val pk_mi_get_arg (pk_mi_msg msg, const char *argname);
+
+/* Set an argument in a given message.
+
+   ARGNAME is a string identifying the name of the argument.  VALUE is
+   a PK value.
+
+   If the given message doesn't accept an argument named ARGNAME, or if
+   the given value is not of the right kind for the argument, then  this
+   function aborts.  */
+
+void pk_mi_set_arg (pk_mi_msg msg, const char *argname, pk_val value);
 
 /*** Other operations on messages.  ***/
 
@@ -133,5 +151,17 @@ void pk_mi_set_msg_number (pk_mi_msg msg, pk_mi_seqnum number);
 /* Free the resources used by the given message MSG.  */
 
 void pk_mi_msg_free (pk_mi_msg msg);
+
+/* Map on the arguments of a given message executing an user-provided
+   handler.
+
+   The value returned by the map operation is the logical and of the
+   values returned by the invocations of the callback.  */
+
+typedef int (*pk_mi_arg_map_fn) (const char *name, pk_val value,
+                                 void *user1, void *user2);
+
+int pk_mi_msg_arg_map (pk_mi_msg msg, pk_mi_arg_map_fn cb,
+                       void *user1, void *user2);
 
 #endif /* ! PK_MI_PROT */

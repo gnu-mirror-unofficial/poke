@@ -1,3 +1,14 @@
+2021-03-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-mi-msg.def: New file.
+	* poke/pk-mi-msg.c: Rewrite based on pk-mi-msg.def.
+	* poke/pk-mi-msg.h: Likewise.
+	* poke/pk-mi-json.c: Likewise.
+	* poke/Makefile.am (poke_SOURCES): Add pk-mi-msg.def.
+	* testsuite/poke.mi-json/Makefile.am (mi_json_SOURCES): Add
+	common/pk-utils.c.
+	(mi_json_CPPFLAGS): Add common/.
+
 2021-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Update version to 1.1.

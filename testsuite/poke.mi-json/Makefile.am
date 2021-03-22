@@ -26,10 +26,12 @@ endif
 
 mi_json_SOURCES = mi-json.c \
                   $(top_srcdir)/poke/pk-mi-msg.c \
-                  $(top_srcdir)/poke/pk-mi-json.c
+                  $(top_srcdir)/poke/pk-mi-json.c \
+                  $(top_srcdir)/common/pk-utils.c
 
 mi_json_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                    -I$(top_srcdir)/poke -I$(top_builddir)/poke \
+                   -I$(top_srcdir)/common \
                    -DTESTDIR=\"$(abs_srcdir)\" \
                    -DPKGDATADIR=\"$(pkgdatadir)\" \
                    -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke

@@ -888,7 +888,8 @@ pk_val pk_val_ios (pk_val val) LIBPOKE_API;
 /* Return the offset in which the given value is mapped.
    If the value is not mapped, return PK_NULL.  */
 
-pk_val pk_val_offset (pk_val val) LIBPOKE_API;
+pk_val pk_val_offset
+(pk_val val) LIBPOKE_API;
 
 /* Other operations on values.  */
 
