@@ -1130,7 +1130,7 @@ pk_mi_json_object_to_msg (json_object *json)
 {
   enum pk_mi_msg_kind msg_kind;
   int msg_number;
-  json_object *obj;
+  json_object *obj, *msg_json, *args_json;
   pk_mi_msg msg = NULL;
 
   if (!json_object_is_type (json, json_type_object))
@@ -1155,18 +1155,18 @@ pk_mi_json_object_to_msg (json_object *json)
     return NULL;
   msg_kind = json_object_get_int (obj);
 
+  /* Get the message data.  */
+  if (!json_object_object_get_ex (json, "data", &msg_json))
+    return NULL;
+  if (!json_object_is_type (msg_json, json_type_object))
+    return NULL;
+
   switch (msg_kind)
     {
     case PK_MI_MSG_REQUEST:
       {
-        json_object *req_json, *req_type, *args_json;
+        json_object *req_type;
         enum pk_mi_req_type msg_req_type;
-
-        /* Get the request data.  */
-        if (!json_object_object_get_ex (json, "data", &req_json))
-          return NULL;
-        if (!json_object_is_type (req_json, json_type_object))
-          return NULL;
 
         /* Get the request type.  */
         if (!json_object_object_get_ex (json, "type", &req_type))
@@ -1175,48 +1175,34 @@ pk_mi_json_object_to_msg (json_object *json)
           return NULL;
         msg_req_type = json_object_get_int (req_type);
 
-        /* Create the message and adds the arguments.  */
+        /* Create the message.   */
         msg = pk_mi_make_req (msg_req_type);
-
-        if (!json_object_object_get_ex (req_json, "args", &args_json))
-          return NULL;
-        if (!json_object_is_type (args_json, json_type_object))
-          return NULL;
-        if (!pk_mi_msg_json_to_args (msg, args_json))
-          return NULL;
-
         break;
       }
     case PK_MI_MSG_RESPONSE:
       {
-        json_object *resp_json, *obj, *args_json;
+        json_object *obj;
         enum pk_mi_resp_type resp_type;
         pk_mi_seqnum req_number;
         int success_p;
         const char *errmsg;
 
-        /* Get the response data.  */
-        if (!json_object_object_get_ex (json, "data", &resp_json))
-          return NULL;
-        if (!json_object_is_type (resp_json, json_type_object))
-          return NULL;
-
         /* Get the response type.  */
-        if (!json_object_object_get_ex (resp_json, "type", &obj))
+        if (!json_object_object_get_ex (msg_json, "type", &obj))
           return NULL;
         if (!json_object_is_type (obj, json_type_int))
           return NULL;
         resp_type = json_object_get_int (obj);
 
         /* Get the request number.  */
-        if (!json_object_object_get_ex (resp_json, "req_number", &obj))
+        if (!json_object_object_get_ex (msg_json, "req_number", &obj))
           return NULL;
         if (!json_object_is_type (obj, json_type_int))
           return NULL;
         req_number = json_object_get_int (obj);
 
         /* Get success_p.  */
-        if (!json_object_object_get_ex (resp_json, "succcess_p", &obj))
+        if (!json_object_object_get_ex (msg_json, "succcess_p", &obj))
           return NULL;
         if (!json_object_is_type (obj, json_type_boolean))
           return NULL;
@@ -1227,61 +1213,47 @@ pk_mi_json_object_to_msg (json_object *json)
           errmsg = NULL;
         else
           {
-            if (!json_object_object_get_ex (resp_json, "errmsg", &obj))
+            if (!json_object_object_get_ex (msg_json, "errmsg", &obj))
               return NULL;
             if (!json_object_is_type (obj, json_type_string))
               return NULL;
             errmsg = json_object_get_string (obj);
           }
 
-        /* Create the message and add the arguments.  */
+        /* Create the message.  */
         msg = pk_mi_make_resp (resp_type,
                                req_number,
                                success_p,
                                errmsg);
-
-        if (!json_object_object_get_ex (resp_json, "args", &args_json))
-          return NULL;
-        if (!json_object_is_type (args_json, json_type_object))
-          return NULL;
-        if (!pk_mi_msg_json_to_args (msg, args_json))
-          return NULL;
-
         break;
       }
     case PK_MI_MSG_EVENT:
       {
-        json_object *event_json, *obj, *args_json;
+        json_object *obj;
         enum pk_mi_event_type event_type;
 
-        /* Get the event data.  */
-        if (!json_object_object_get_ex (json, "data", &event_json))
-          return NULL;
-        if (!json_object_is_type (event_json, json_type_object))
-          return NULL;
-
         /* The event type.  */
-        if (!json_object_object_get_ex (event_json, "type", &obj))
+        if (!json_object_object_get_ex (msg_json, "type", &obj))
           return NULL;
         if (!json_object_is_type (obj, json_type_int))
           return NULL;
         event_type = json_object_get_int (obj);
 
-        /* Create the message and adds the arguments.  */
+        /* Create the message.  */
         msg = pk_mi_make_event (event_type);
-
-        if (!json_object_object_get_ex (event_json, "args", &args_json))
-          return NULL;
-        if (!json_object_is_type (args_json, json_type_object))
-          return NULL;
-        if (!pk_mi_msg_json_to_args (msg, args_json))
-          return NULL;
-
         break;
       }
     default:
       return NULL;
     }
+
+  /* Add the arguments of the message.  */
+  if (!json_object_object_get_ex (msg_json, "args", &args_json))
+    return NULL;
+  if (!json_object_is_type (args_json, json_type_object))
+    return NULL;
+  if (!pk_mi_msg_json_to_args (msg, args_json))
+    return NULL;
 
   pk_mi_set_msg_number (msg, msg_number);
   return msg;
