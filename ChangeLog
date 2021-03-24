@@ -1,3 +1,8 @@
+2021-03-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/leb128.pk: Fix method `value' for both LEB128 and
+	ULEB128.
+
 2021-03-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-mi-json.c (pk_mi_json_object_to_msg): Small

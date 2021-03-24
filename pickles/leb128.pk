@@ -36,7 +36,7 @@ type ULEB128 =
       {
        var shift = 0;
        var result = 0UL;
-       fun extract = (byte b) byte: { return (b & 0x7f) <<. shift; }
+       fun extract = (uint<64> b) uint<64>: { return (b & 0x7f) <<. shift; }
 
        /* poke supports up to 64-bit integers.  */
        if (variable'length > 8)
@@ -82,7 +82,7 @@ type LEB128 =
       {
        var shift = 0;
        var result = 0UL;
-       fun extract = (byte b) byte: { return (b & 0x7f) <<. shift; }
+       fun extract = (int<64> b) int<64>: { return (b & 0x7f) <<. shift; }
 
        /* poke supports up to 64-bit integers.  */
        if (variable'length > 8)
