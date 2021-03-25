@@ -63,6 +63,9 @@ pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+#define PK_FILE_UFLAGS "c"
+#define PK_FILE_F_CREATE 0x1
+
 static int
 pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -74,13 +77,20 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* Create a new IO space.  */
   const char *arg_str = PK_CMD_ARG_STR (argv[0]);
   const char *filename = arg_str;
+  int create_p = uflags & PK_FILE_F_CREATE;
 
   if (access (filename, R_OK) != 0)
     {
-      char *why = strerror (errno);
-      pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
-      return 0;
+      if (!create_p)
+        {
+          char *why = strerror (errno);
+          pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
+          return 0;
+        }
     }
+  else
+    /* /c has no effect if the file exists.  */
+    create_p = 0;
 
   if (pk_ios_search (poke_compiler, filename) != NULL)
     {
@@ -89,7 +99,7 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_IOS_NOID == pk_open_file (filename, 1 /* set_cur_p */))
+  if (PK_IOS_NOID == pk_open_file (filename, 1 /* set_cur_p */, create_p))
     {
       pk_term_class ("error");
       pk_puts (_("error: "));
@@ -377,7 +387,8 @@ const struct pk_cmd ios_cmd =
   {"ios", "t", "", 0, NULL, pk_cmd_ios, "ios #ID", ios_completion_function};
 
 const struct pk_cmd file_cmd =
-  {"file", "f", "", 0, NULL, pk_cmd_file, "file FILE-NAME", rl_filename_completion_function};
+  {"file", "f", PK_FILE_UFLAGS, 0, NULL, pk_cmd_file, "file FILE-NAME",
+   rl_filename_completion_function};
 
 const struct pk_cmd mem_cmd =
   {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};

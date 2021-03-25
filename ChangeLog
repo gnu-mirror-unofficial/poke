@@ -1,3 +1,13 @@
+2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-ios.c (PK_FILE_UFLAGS): Define.
+	(PK_FILE_F_CREATE): Likewise.
+	(pk_cmd_file): Maybe create file.
+	(file_cmd): Register PK_FILE_UFLAGS.
+	* poke/pk-ios.c (pk_open_file): Get a new argument create_p.
+	* poke/pk-ios.h: Update prototype for pk_open_file accordingly.
+	* doc/poke.texi (file command): Document the flag /c.
+
 2021-03-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/leb128.pk: Fix method `value' for both LEB128 and

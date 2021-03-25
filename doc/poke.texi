@@ -7993,6 +7993,14 @@ program will operate on that IO space:
 The current file is now `foo.o'.
 @end example
 
+When @command{.file} opens a file, it is opened in whatever mode makes
+more sense: if the file allows to be written and read then the IO
+space is open in read/write mode, for example.
+
+If the specified file path doesn't exist then poke emits an error.
+However, the flag @command{/c} ( for ``create'') can be passed to the
+command to tell poke it should create a new file.
+
 @node mem command
 @section @code{.mem}
 @cindex @code{.mem}

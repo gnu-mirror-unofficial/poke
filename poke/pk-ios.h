@@ -29,9 +29,12 @@
    SET_CUR_P is 1 if the IOS is to become the current IOS after being
    opened.  0 otherwise.
 
+   CREATE_P is 1 if a file is to be created if HANDLER doesn't exist.
+   The new file is created with read/write permissions.
+
    Return the IOS id of the newly opened IOS, or PK_IOS_ERROR if the
    given handler coulnd't be opened.  */
 
-int pk_open_file (const char *handler, int set_cur_p);
+int pk_open_file (const char *handler, int set_cur_p, int create_p);
 
 #endif /* ! PK_IOS_H */

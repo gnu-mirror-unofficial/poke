@@ -25,11 +25,18 @@
 #include "pk-map.h"
 
 int
-pk_open_file (const char *handler, int set_cur_p)
+pk_open_file (const char *handler, int set_cur_p, int create_p)
 {
   int ios_id;
+  uint64_t open_flags;
 
-  ios_id = pk_ios_open (poke_compiler, handler, 0, set_cur_p);
+  if (create_p)
+    open_flags = PK_IOS_F_READ | PK_IOS_F_WRITE | PK_IOS_F_CREATE;
+  else
+    open_flags = 0;
+
+  ios_id = pk_ios_open (poke_compiler, handler,
+                        open_flags, set_cur_p);
   if (ios_id == PK_IOS_NOID)
     return ios_id;
 
