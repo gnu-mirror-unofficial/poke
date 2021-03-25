@@ -144,10 +144,6 @@ void pk_mi_set_arg (pk_mi_msg msg, const char *argname, pk_val value);
 
 /*** Other operations on messages.  ***/
 
-/* Set the sequence number of a given MSG.  */
-
-void pk_mi_set_msg_number (pk_mi_msg msg, pk_mi_seqnum number);
-
 /* Free the resources used by the given message MSG.  */
 
 void pk_mi_msg_free (pk_mi_msg msg);

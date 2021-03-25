@@ -1,5 +1,12 @@
 2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-mi-msg.def: New event INVREQ.
+	* poke/pk-mi.c (pk_mi_dispatch_msg): Send an INVREQ event whenever
+	appropriate.
+	* poke/pk-mi-msg.h: Remove redundant prototype.
+
+2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-ios.c (PK_FILE_UFLAGS): Define.
 	(PK_FILE_F_CREATE): Likewise.
 	(pk_cmd_file): Maybe create file.

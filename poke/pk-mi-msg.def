@@ -98,6 +98,20 @@ PK_DEF_RESP (EXIT, PK_DEF_NOARG)
 PK_DEF_REQ (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (value, PK_ANY)))
 PK_DEF_RESP (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (string, PK_STRING)))
 
+/* Event: INVREQ
+
+   Sent by poke when it receives a request that it doesn't know how to
+   handle.  The invalid request is effectively ignored and this event
+   is to inform the client.
+
+   Arguments:
+
+   reqnum (uint)
+     Sequence number of the invalid request.
+*/
+
+PK_DEF_EVENT (INVREQ, PK_DEF_ARGS (PK_DEF_ARG (reqnum, PK_UINT)))
+
 /* Cleanup.  */
 
 #undef PK_DEF_EVENT
