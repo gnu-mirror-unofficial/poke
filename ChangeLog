@@ -1,5 +1,10 @@
 2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-mi-msg.c (pk_mi_set_arg): An ANY msg argument can be of
+	any type.
+
+2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-mi.c (pk_mi_dispatch_msg): free invreq_msg once sent.
 
 2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>

@@ -307,7 +307,8 @@ pk_mi_set_arg (pk_mi_msg msg, const char *argname, pk_val value)
     assert (0);
 
   /* Check that VALUE is of the right kind for this argument.  */
-  assert (pk_type_code (type) == kind);
+  assert (pk_type_code (type) == PK_ANY
+          || pk_type_code (type) == kind);
 
   /* Ok, set the value for this argument.  */
   PK_MI_MSG_ARGS (msg)[argindex] = value;
