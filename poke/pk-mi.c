@@ -299,6 +299,7 @@ pk_mi_dispatch_msg (pk_mi_msg msg)
       pk_mi_set_arg (invreq_msg, "reqnum",
                      pk_make_uint (pk_mi_msg_number (msg), 64));
       pk_mi_send (invreq_msg);
+      pk_mi_msg_free (invreq_msg);
     }
 
   pk_mi_msg_free (msg);

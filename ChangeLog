@@ -1,5 +1,9 @@
 2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-mi.c (pk_mi_dispatch_msg): free invreq_msg once sent.
+
+2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-mi-msg.def: New event INVREQ.
 	* poke/pk-mi.c (pk_mi_dispatch_msg): Send an INVREQ event whenever
 	appropriate.
