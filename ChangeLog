@@ -1,3 +1,10 @@
+2021-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-pass.c (pkl_do_pass_1): PKL_AST_LOOP_STMT_HEAD is a
+	chain.
+	* testsuite/poke.pkl/for-13.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2021-03-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-mi-msg.c (pk_mi_set_arg): An ANY msg argument can be of
