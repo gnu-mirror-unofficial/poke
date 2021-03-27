@@ -1,5 +1,12 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-ios.c (pk_cmd_file): Do not check for read
+	permissions before actually attempting to open the file.
+	* libpoke/ios-dev-file.c (ios_dev_file_open): Try to open in
+	write-only mode if flags are not specified.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (Add IOS_EPERM and exception E_perm): Removed as
 	done.
 

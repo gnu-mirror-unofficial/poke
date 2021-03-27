@@ -125,13 +125,19 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
   else
     {
       /* Try read-write initially.
-         If that fails, then try read-only. */
+         If that fails, then try read-only.
+         If that fails, then try write-only.  */
       f = fopen (handler, "r+b");
       flags |= (IOS_F_READ | IOS_F_WRITE);
       if (!f)
         {
           f = fopen (handler, "rb");
           flags &= ~IOS_F_WRITE;
+        }
+      if (!f)
+        {
+          f = fopen (handler, "w");
+          flags = IOS_F_WRITE;
         }
     }
 

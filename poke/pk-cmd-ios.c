@@ -79,16 +79,8 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   const char *filename = arg_str;
   int create_p = uflags & PK_FILE_F_CREATE;
 
-  if (access (filename, R_OK) != 0)
-    {
-      if (!create_p)
-        {
-          char *why = strerror (errno);
-          pk_printf (_("%s: file cannot be read: %s\n"), arg_str, why);
-          return 0;
-        }
-    }
-  else
+  if (access (filename, F_OK) == 0
+      && create_p)
     /* /c has no effect if the file exists.  */
     create_p = 0;
 
