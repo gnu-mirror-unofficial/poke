@@ -1,5 +1,10 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Add IOS_EPERM and exception E_perm): Removed as
+	done.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Exceptions): Document E_perm.
 
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
