@@ -32,13 +32,14 @@
 #include "ios.h"
 #include "ios-dev.h"
 
-#define IOS_GET_C_ERR_CHCK(c, io, off)                                \
-  {                                                                \
-    uint8_t ch;                                                        \
-    int ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off);         \
-    if (ret == IOD_EOF)                                                \
-      return IOS_EIOFF;                                                \
-    (c) = ch;                                                        \
+#define IOS_GET_C_ERR_CHCK(c, io, off)                                  \
+  {                                                                     \
+    uint8_t ch;                                                         \
+    int ret;                                                            \
+    ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off);                 \
+    if (ret == IOD_EOF)                                                 \
+      return IOS_EIOFF;                                                 \
+    (c) = ch;                                                           \
   }
 
 #define IOS_PUT_C_ERR_CHCK(c, io, len, off)                \
@@ -696,6 +697,10 @@ ios_read_int (ios io, ios_off offset, int flags,
               enum ios_nenc nenc,
               int64_t *value)
 {
+  /* The IOS should be readable.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_READ))
+    return IOS_EPERM;
+
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
@@ -820,6 +825,10 @@ ios_read_uint (ios io, ios_off offset, int flags,
                enum ios_endian endian,
                uint64_t *value)
 {
+  /* The IOS should be readable.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_READ))
+    return IOS_EPERM;
+
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
@@ -923,6 +932,10 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
   char *str = NULL;
   size_t i = 0;
   int ret;
+
+  /* The IOS should be readable.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_READ))
+    return IOS_EPERM;
 
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
@@ -1161,6 +1174,10 @@ ios_write_int_common (ios io, ios_off offset, int flags,
   /* Number of significant bits in the last byte.  */
   int lastbyte_bits = (bits + (offset % 8)) % 8;
   lastbyte_bits = lastbyte_bits == 0 ? 8 : lastbyte_bits;
+
+  /* The IOS should be readable to get the completing byte.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_READ))
+    return IOS_EPERM;
 
   switch (bytes_minus1)
   {

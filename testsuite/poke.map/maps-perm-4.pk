@@ -1,0 +1,10 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x51 0x23 0x45 0x67 0x89 0xab 0xcd 0xef} foo } */
+
+/* This tests that trying to write partial bytes in non-readable IO
+   spaces triggers E_perm.  This is because the operation requires
+   reading "completing bytes".  */
+
+/* { dg-command { var fd = open ("foo", IOS_M_WRONLY) } } */
+/* { dg-command { try uint<3> @ fd : 1#B = 2; catch if E_perm { print "caught\n"; } } } */
+/* { dg-output "caught" } */

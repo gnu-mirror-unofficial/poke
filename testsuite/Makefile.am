@@ -266,6 +266,10 @@ EXTRA_DIST = \
   poke.map/maps-offsets-1.pk \
   poke.map/maps-offsets-2.pk \
   poke.map/maps-offsets.pk \
+  poke.map/maps-perm-1.pk \
+  poke.map/maps-perm-2.pk \
+  poke.map/maps-perm-3.pk \
+  poke.map/maps-perm-4.pk \
   poke.map/maps-simple-1.pk \
   poke.map/maps-simple-2.pk \
   poke.map/maps-simple-3.pk \
