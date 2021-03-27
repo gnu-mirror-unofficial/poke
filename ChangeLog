@@ -1,5 +1,15 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ios-dev-mem.c (ios_dev_mem_open): Memory IOS are always
+	read/write.
+	* poke/pk-dump.pk (Arguments): Raise E_perm if the specified IOS
+	is not readable.
+	* testsuite/poke.cmd/dump-10.pk: New test.
+	* testsuite/poke.cmd/dump-11.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (builtin): Rule for BUILTIN_IOFLAGS.
 	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_IOFLAGS): Define.
 	* libpoke/pkl-lex.l: Handle __PKL_BUILTIN_IOFLAGS__.
