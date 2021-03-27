@@ -32,14 +32,16 @@
 #include "ios.h"
 #include "ios-dev.h"
 
-#define IOS_GET_C_ERR_CHCK(c, io, off)                                  \
-  {                                                                     \
-    uint8_t ch;                                                         \
-    int ret;                                                            \
-    ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off);                 \
-    if (ret == IOD_EOF)                                                 \
-      return IOS_EIOFF;                                                 \
-    (c) = ch;                                                           \
+#define IOS_GET_C_ERR_CHCK(c, io, off)                                 \
+  {                                                                    \
+    uint8_t ch;                                                        \
+    int ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off);            \
+    /* If the pread reports an EOF, it means the partial byte */       \
+    /* we are writing is past the end of the IOS.  That may or */      \
+    /* may not be supported in the underlying IOD, but in any */       \
+    /* case that will be resolved when the completed byte is */        \
+    /* written back.  */                                               \
+    (c) = ret == IOD_EOF ? 0 : ch;                                     \
   }
 
 #define IOS_PUT_C_ERR_CHCK(c, io, len, off)                \

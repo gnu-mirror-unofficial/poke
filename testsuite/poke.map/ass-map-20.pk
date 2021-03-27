@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {.mem foo} } */
+/* { dg-command {var is = iosize} } */
+/* { dg-command {uint<3> @ is = 2} } */
+/* { dg-command {uint<3> @ is} } */
+/* { dg-output ".uint<3>. 2" } */

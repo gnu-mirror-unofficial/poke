@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x66 0x6f 0x6f 0x00  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+/* Writing a string partially past the end of the IO space is allowed.
+   The IO space grows.  */
+
+/* { dg-command { string @ 8#B + 1#b = "quux" } } */
+/* { dg-command { iosize/#B } } */
+/* { dg-output "13UL" } */
+/* { dg-command { string @ 8#B + 1#b } } */
+/* { dg-output "\n\"quux\"" } */

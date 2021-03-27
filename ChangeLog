@@ -1,3 +1,10 @@
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.map/ass-map-20.pk: New test.
+	* testsuite/poke.map/maps-strings-4.pk: Renamed from
+	maps-strings-diag-4.pk.
+	* testsuite/Makefile.am (EXTRA_DIST): Update accordingly.
+
 2021-03-27  David Faust  <david.faust@oracle.com>
 
 	* libpoke/ios-dev-file.c (ios_dev_file_convert_flags): Return
