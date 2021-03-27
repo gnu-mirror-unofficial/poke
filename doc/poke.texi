@@ -12264,6 +12264,10 @@ Assertion failure exception.  This is raised by @code{assert} statement.
 @item E_overflow
 This exception is raised when signed overflow is detected in an
 arithmetic operation.
+@item E_perm
+This exception is raised when some operation can't be performed due to
+incorrect (lack of) permissions or capabilities.  An example is
+writing to a read-only IO space.
 @end table
 
 The exception codes of the standard exceptions are available in the

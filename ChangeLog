@@ -1,5 +1,9 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Exceptions): Document E_perm.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ios.c (ios_read_uint): Return IOS_EPERM if the IO space
 	is not readable.
 	(ios_read_int): Likewise.
