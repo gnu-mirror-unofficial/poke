@@ -199,7 +199,7 @@ pk_mi_offset_to_json (pk_val pk_offset, char **errmsg)
   json_object *magnitude_object;
   json_object *unit_object, *unit_type_object, *unit_size_object;
   json_object *unit_value_object;
-  pk_val off_unit;
+  pk_val off_mag, off_unit;
 
   assert (pk_type_code (pk_typeof (pk_offset)) == PK_OFFSET);
 
@@ -207,7 +207,10 @@ pk_mi_offset_to_json (pk_val pk_offset, char **errmsg)
   PK_MI_CHECK (errmsg, offset_type_object != NULL,
               "json_object_new_object () failed");
 
-  magnitude_object = pk_mi_int_to_json (pk_offset_magnitude (pk_offset), errmsg);
+  off_mag = pk_offset_magnitude (pk_offset);
+  magnitude_object = pk_type_code (pk_typeof (off_mag)) == PK_INT
+                         ? pk_mi_int_to_json (off_mag, errmsg)
+                         : pk_mi_uint_to_json (off_mag, errmsg);
 
   unit_type_object = json_object_new_string ("UnsignedInteger");
   PK_MI_CHECK (errmsg, unit_type_object != NULL,
