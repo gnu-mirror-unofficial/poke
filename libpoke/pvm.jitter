@@ -510,6 +510,8 @@ late-header-c
             PVM_RAISE_DFL (PVM_E_EOF);                                       \
          else if (ret == IOS_ENOMEM)                                         \
             PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);         \
+         else if (ret == IOS_EPERM)                                          \
+            PVM_RAISE_DFL (PVM_E_PERM);                                      \
          else                                                                \
             PVM_RAISE_DFL (PVM_E_IO);                                        \
          JITTER_TOP_STACK () = PVM_NULL;                                     \
@@ -549,6 +551,8 @@ late-header-c
        {                                                                     \
          if (ret == IOS_EIOFF)                                               \
             PVM_RAISE_DFL (PVM_E_EOF);                                       \
+         else if (ret == IOS_EPERM)                                          \
+            PVM_RAISE_DFL (PVM_E_PERM);                                      \
          else                                                                \
             PVM_RAISE_DFL (PVM_E_IO);                                        \
        }                                                                     \
@@ -5535,6 +5539,8 @@ instruction peeks ()
          PVM_RAISE_DFL (PVM_E_EOF);
       else if (ret == IOS_ENOMEM)
          PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);
+      else if (ret == IOS_EPERM)
+         PVM_RAISE_DFL (PVM_E_PERM);
       else
          PVM_RAISE_DFL (PVM_E_IO);
       JITTER_TOP_STACK () = PVM_NULL;
@@ -5572,6 +5578,8 @@ instruction pokes ()
     {
       if (ret == IOS_EIOFF)
          PVM_RAISE_DFL (PVM_E_EOF);
+      else if (ret == IOS_EPERM)
+         PVM_RAISE_DFL (PVM_E_PERM);
       else
          PVM_RAISE_DFL (PVM_E_IO);
     }

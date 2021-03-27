@@ -1,5 +1,14 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ios.h (IOS_EPERM): Define.
+	* libpoke/pvm.jitter (PVM_PEEK): Raise PVM_E_PERM if the IO
+	subsystem reports IOS_EPERM.
+	(PVM_POKE): Likewise.
+	(peeks): Likewise.
+	(pokes): Likewise.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.h (PVM_E_PERM): Define.
 	(PVM_E_PERM_MSG): Likewise.
 	(PVM_E_PERM_ESTATUS): Likewise.

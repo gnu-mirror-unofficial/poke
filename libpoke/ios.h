@@ -100,6 +100,9 @@ typedef int64_t ios_off;
 
 #define IOS_EOPEN  -7  /* IO space is already open.  */
 
+#define IOS_EPERM  -8  /* Insufficient permissions to perform the
+                          requested operation.  */
+
 #define IOD_ERROR_TO_IOS_ERROR(error_no) (error_no)
 
 /* **************** IOS flags ******************************
