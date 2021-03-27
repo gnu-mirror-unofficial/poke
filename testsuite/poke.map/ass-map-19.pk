@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var fd = open ("*foo*");
+type Foo = struct { byte[] someBytes; bit[] someBits; };
+var f = Foo { someBytes = [1UB,2UB], someBits = [1 as bit, 0 as bit, 1 as bit] };
+
+/* { dg-command { try Foo @ iosize + 4096#B = f; catch if E_eof { print "eof\n"; } } } */
+/* { dg-output "eof" } */
+/* { dg-command { f } } */
+/* { dg-output "\nFoo \{someBytes=\\\[1UB,2UB\\\],someBits=\\\[.uint<1>. 1,.uint<1>. 0,.uint<1>. 1\\\]\}" } */

@@ -1718,12 +1718,26 @@
         tor                     ; IOS BOFF VAL [VAL]
         nrot                    ; VAL IOS BOFF [VAL]
         fromr                   ; VAL IOS BOFF VAL
-        ;; Invoke it.
+        ;; Invoke the writer.  But the writing operation may
+        ;; raise an exception, like EOF for example.  We have
+        ;; to make sure to undo the relocation above also in
+        ;; that case.
+        push PVM_E_GENERIC
+        pushe .write_failed
         .c PKL_GEN_DUP_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (@type);
         .c PKL_GEN_POP_CONTEXT;
+        pope
+        ba .write_succeeded
         ;; Undo the relocation.
+.write_failed:
+                                ; VAL EXCEPTION
+        swap                    ; EXCEPTION VAL
+        ureloc                  ; VAL
+        drop                    ; EXCEPTION
+        raise
+.write_succeeded:
         ureloc                  ; VAL
         drop                    ; _
         .end

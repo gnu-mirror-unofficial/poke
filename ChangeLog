@@ -1,3 +1,11 @@
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+	    Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pkl-gen.pks (complex_lmap): Make sure to leave the
+	l-value in a good state if the writer raises an exception.
+	* testsuite/poke.map/ass-map-19.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2021-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-pass.c (pkl_do_pass_1): PKL_AST_LOOP_STMT_HEAD is a

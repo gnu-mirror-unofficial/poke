@@ -123,6 +123,7 @@ EXTRA_DIST = \
   poke.map/ass-map-16.pk \
   poke.map/ass-map-17.pk \
   poke.map/ass-map-18.pk \
+  poke.map/ass-map-19.pk \
   poke.map/ass-map-struct-int-1.pk \
   poke.map/func-map-1.pk \
   poke.map/func-map-2.pk \
