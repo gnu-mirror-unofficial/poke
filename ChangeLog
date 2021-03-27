@@ -1,3 +1,9 @@
+2021-03-27  David Faust  <david.faust@oracle.com>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_convert_flags): Return
+	-1 for bad flags to avoid collision with O_RDONLY == 0.
+	(ios_dev_file_open): Update flags_for_open check accordingly.
+
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-dump.pk (dump): Raise E_perm instead of E_no_ios if

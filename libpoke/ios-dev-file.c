@@ -87,7 +87,7 @@ ios_dev_file_convert_flags (int mode_flags, char **mode_for_fdopen)
     }
   else
     /* Cannot open a file neither to write nor to read.  */
-    return 0;
+    return -1;
 
   if (mode_flags & IOS_F_CREATE)
     flags_for_open |= O_CREAT;
@@ -112,7 +112,7 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error)
       /* Decide what mode to use to open the file.  */
       flags_for_open
         = ios_dev_file_convert_flags (mode_flags, &mode_for_fdopen);
-      if (flags_for_open == 0)
+      if (flags_for_open == -1)
         {
           internal_error = IOD_EFLAGS;
           goto err;
