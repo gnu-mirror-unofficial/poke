@@ -1,3 +1,11 @@
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.h (PVM_E_PERM): Define.
+	(PVM_E_PERM_MSG): Likewise.
+	(PVM_E_PERM_ESTATUS): Likewise.
+	* libpoke/pkl-rt.pk (EC_perm): New variable.
+	(E_perm): Likewise.
+
 2021-03-27  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* poke/pk-mi-json.c (pk_mi_offset_to_json): Add support for `uint`

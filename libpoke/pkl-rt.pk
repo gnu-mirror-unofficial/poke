@@ -99,6 +99,7 @@ var EC_inval         = 14;
 var EC_exit          = 15;
 var EC_assert        = 16;
 var EC_overflow      = 17;
+var EC_perm          = 18;
 
 /* Standard exceptions.  */
 
@@ -138,6 +139,8 @@ var E_assert
   = Exception {code = EC_assert, msg = "assertion failure", exit_status = 1};
 var E_overflow
   = Exception {code = EC_overflow, msg = "overflow", exit_status = 1};
+var E_perm
+  = Exception {code = EC_perm, msg = "wrong permissions", exit_status = 1};
 
 /* Registration of user-defined exceptions */
 

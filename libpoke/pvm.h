@@ -547,6 +547,10 @@ enum pvm_exit_code
 #define PVM_E_OVERFLOW_MSG "overflow"
 #define PVM_E_OVERFLOW_ESTATUS 1
 
+#define PVM_E_PERM         18
+#define PVM_E_PERM_MSG     "wrong permissions"
+#define PVM_E_PERM_ESTATUS 1
+
 typedef struct pvm *pvm;
 
 /* Initialize a new Poke Virtual Machine and return it.  */
