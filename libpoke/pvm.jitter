@@ -1470,6 +1470,27 @@ instruction popios ()
   end
 end
 
+# Instruction: ioflags
+#
+# Push an unsigned 64-bit integer with the flags of the given IO space
+# on the stack.  The IO space is identified by a descriptor, which is
+# a signed integer.  If the given IO space doesn't exist, raise
+# PVM_E_NO_IOS.
+#
+# Stack: ( INT -- INT ULONG )
+# Exceptions: PVM_E_NO_IOS
+
+instruction ioflags ()
+  code
+    ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
+
+    if (io == NULL)
+      PVM_RAISE_DFL (PVM_E_NO_IOS);
+
+    JITTER_PUSH_STACK (PVM_MAKE_ULONG (ios_flags (io), 64));
+  end
+end
+
 # Instruction: iosize
 #
 # Push the size of the given IO space on the stack, as an offset.  The

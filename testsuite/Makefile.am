@@ -817,6 +817,9 @@ EXTRA_DIST = \
   poke.pkl/cdiv-integers-3.pk \
   poke.pkl/cdiv-integers-diag-1.pk \
   poke.pkl/cdiv-integers-diag-2.pk \
+  poke.pkl/ioflags-1.pk \
+  poke.pkl/ioflags-2.pk \
+  poke.pkl/ioflags-3.pk \
   poke.pkl/cdiv-integers-overflow-1.pk \
   poke.pkl/cdiv-integers-overflow-2.pk \
   poke.pkl/cdiv-integers-overflow-3.pk \

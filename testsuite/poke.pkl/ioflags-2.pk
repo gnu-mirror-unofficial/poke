@@ -1,0 +1,9 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x01 0x02 0x03} foo.data } */
+
+/* { dg-command { .set obase 10 } } */
+/* { dg-command { var foo = open ("foo.data", IOS_M_RDONLY) } } */
+/* { dg-command { !! (ioflags (foo) & IOS_F_READ) } } */
+/* { dg-output "1" } */
+/* { dg-command { !! (ioflags (foo) & IOS_F_WRITE) } } */
+/* { dg-output "\n0" } */

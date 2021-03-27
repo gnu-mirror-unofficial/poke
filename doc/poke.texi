@@ -11560,6 +11560,7 @@ memory of some process.
 * get_ios::			Getting the current IO space.
 * set_ios::			Setting the current IO space.
 * iosize::			Getting the size of an IO space.
+* ioflags::                     Getting the flags of an IO space.
 @end menu
 
 @node open
@@ -11712,10 +11713,25 @@ The @code{iosize} builtin returns the size of a given IO space, as an
 offset.  It has the following prototype:
 
 @example
-fun iosize = (int<32> ios) offset<uint<64>,1>
+fun iosize = (int<32> ios = get_ios) offset<uint<64>,1>
 @end example
 
 If the IO space specified to @code{iosize} doesn't exist,
+@code{E_no_ios} will be raised.
+
+@node ioflags
+@subsubsection @code{ioflags}
+@cindex @code{ioflags}
+
+The @code{ioflags} builtin returns the flags active in a given IO
+space, encoded in an unsigned 64-bit integer.  It has the following
+prototype:
+
+@example
+fun ioflags = (int<32> ios = get_ios) uint<64>
+@end example
+
+If the IO space specified to @code{ioflags} doesn't exist,
 @code{E_no_ios} will be raised.
 
 @node The Map Operator

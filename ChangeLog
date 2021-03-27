@@ -1,4 +1,20 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y (builtin): Rule for BUILTIN_IOFLAGS.
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_IOFLAGS): Define.
+	* libpoke/pkl-lex.l: Handle __PKL_BUILTIN_IOFLAGS__.
+	* libpoke/pkl-insn.def: New instruction ioflags.
+	* libpoke/pvm.jitter: Likewise.
+	* libpoke/pkl-rt.pk (ioflags): Define function.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Generate code for the
+	ioflags builtin.
+	* doc/poke.texi (ioflags): New section.
+	* testsuite/poke.pkl/ioflags-1.pk: New test.
+	* testsuite/poke.pkl/ioflags-2.pk: Likewise.
+	* testsuite/poke.pkl/ioflags-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 	    Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* libpoke/pkl-gen.pks (complex_lmap): Make sure to leave the

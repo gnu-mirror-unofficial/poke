@@ -26,6 +26,7 @@ fun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
 fun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
 fun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
 fun iosize = (int<32> ios = get_ios) offset<uint<64>,1>: __PKL_BUILTIN_IOSIZE__;
+fun ioflags = (int<32> ios = get_ios) uint<64>: __PKL_BUILTIN_IOFLAGS__;
 fun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
 fun flush = (int<32> ios, offset<uint<64>,1> offset) void: __PKL_BUILTIN_FORGET__;
 fun get_time = int<64>[2]: __PKL_BUILTIN_GET_TIME__;
