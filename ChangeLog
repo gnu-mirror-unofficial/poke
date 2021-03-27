@@ -1,3 +1,8 @@
+2021-03-27  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pk-val.c (pk_val_offset): Fix the unit of offset to use
+	`uint<64>` instead of `uint<32>`.
+
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/ios-dev-mem.c (ios_dev_mem_open): Memory IOS are always

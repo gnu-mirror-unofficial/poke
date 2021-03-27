@@ -159,10 +159,10 @@ pk_val_offset (pk_val val)
      bits.  */
   if (bit_offset % 8 == 0)
     return pvm_make_offset (pvm_make_ulong (bit_offset / 8, 64),
-                            pvm_make_ulong (8, 32));
+                            pvm_make_ulong (8, 64));
   else
     return pvm_make_offset (PVM_VAL_OFFSET (val),
-                            pvm_make_ulong (1, 32));
+                            pvm_make_ulong (1, 64));
 }
 
 int
