@@ -1,5 +1,11 @@
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk (dump): Raise E_perm instead of E_no_ios if
+	the specified IO space exists but is not readable.
+	* testsuite/poke.cmd/dump-10.pk: Update accordingly.
+
+2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Import the gnulib `access'
 	module.
 

@@ -189,8 +189,7 @@ fun dump = (int<32> ios = get_ios,
 
   /* First of all, we require a readable IO space.  */
   if (! (ioflags (ios) & IOS_F_READ))
-    /* XXX change to E_perm when it becomes available.  */
-    raise E_no_ios;
+    raise E_perm;
 
   /* The `dump' command is byte-oriented.
      The base offset is truncated to bytes.
