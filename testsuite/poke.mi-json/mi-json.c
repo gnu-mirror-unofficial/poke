@@ -18,6 +18,7 @@
 
 #include <config.h>
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,6 +34,7 @@
 #include "pk-mi-json.h"
 #include "libpoke.h"
 #include "../poke.libpoke/term-if.h"
+#include "pk-utils.h"
 
 #define PASS 1
 #define FAIL 0
@@ -83,276 +85,310 @@ parse_json_str_object (const char *json_str, json_object **pk_obj)
 
 int test_json_pk_val (json_object *obj, pk_val val);
 
-int
-test_json_pk_int (json_object *pk_int_obj, pk_val pk_int)
-{
-  json_object *current;
-  const char *typename;
+#define J_OK 1
+#define J_NOK 0 /* Not OK */
 
-  /* Poke integers properties are : "type", "value" and "size".  */
-  if (json_object_object_length (pk_int_obj) != 3)
-    return FAIL;
+#define JFIELD_IMPL(funcname, line, jobj, field, jval, ...)                   \
+  do                                                                          \
+    {                                                                         \
+      if (json_object_object_get_ex ((jobj), (field), (jval)) != J_OK)        \
+        {                                                                     \
+          fprintf (stderr, "%s:%d ", (funcname), (line));                     \
+          fprintf (stderr, __VA_ARGS__);                                      \
+          fputs ("\n", stderr);                                               \
+          return FAIL;                                                        \
+        }                                                                     \
+    }                                                                         \
+  while (0)
+#define JFIELD(...) JFIELD_IMPL (__func__, __LINE__, __VA_ARGS__)
 
-  if (!json_object_object_get_ex (pk_int_obj, "type", &current))
-    return FAIL;
+#define CHK_IMPL(funcname, line, cond, ...)                                   \
+  do                                                                          \
+    {                                                                         \
+      if (!(cond))                                                            \
+        {                                                                     \
+          fprintf (stderr, "%s:%d ", (funcname), (line));                     \
+          fprintf (stderr, __VA_ARGS__);                                      \
+          fputs ("\n", stderr);                                               \
+          return FAIL;                                                        \
+        }                                                                     \
+    }                                                                         \
+  while (0)
+#define CHK(...) CHK_IMPL (__func__, __LINE__, __VA_ARGS__)
 
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "Integer", strlen ("Integer")))
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_int_obj, "value", &current))
-    return FAIL;
-
-  if (json_object_get_int64 (current) != pk_int_value (pk_int))
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_int_obj, "size", &current))
-    return FAIL;
-
-  if (json_object_get_int (current) != pk_int_size (pk_int))
-    return FAIL;
-  return PASS;
-}
-
-int
-test_json_pk_uint (json_object *pk_uint_obj, pk_val pk_uint)
-{
-  json_object *current;
-  const char *typename;
-
-  /* Poke unsigned integers properties are : "type", "value" and "size".  */
-  if (json_object_object_length (pk_uint_obj) != 3)
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_uint_obj, "type", &current))
-    return FAIL;
-
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "UnsignedInteger",
-               strlen ("UnsignedInteger")))
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_uint_obj, "value", &current))
-    return FAIL;
-
-  /* NOTE: This version of libjson-c does not support *_get_uint64 so we use
-     the int64 version and always cast to the unsigned type.  */
-  if ((uint64_t) json_object_get_int64 (current) != pk_uint_value (pk_uint))
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_uint_obj, "size", &current))
-    return FAIL;
-
-  if (json_object_get_int (current) != pk_uint_size (pk_uint))
-    return FAIL;
-
-  return PASS;
-}
+#define STREQ_LIT(str, string_literal)                                        \
+  (strncmp (str, string_literal, strlen (string_literal)) == 0)
 
 int
-test_json_pk_string (json_object *pk_string_obj, pk_val pk_string)
+test_json_pk_int (json_object *j_int, pk_val p_int)
 {
-  json_object *current;
-  const char *typename, *json_str_value, *pk_string_value;
+  json_object *j_type, *j_value, *j_size;
 
-  /* Poke string properties are : "type" and "value".  */
-  if (json_object_object_length (pk_string_obj) != 2)
-    return FAIL;
+  CHK (json_object_object_length (j_int) == 3,
+       "Integer expects 3 fields: type, value, size");
 
-  if (!json_object_object_get_ex (pk_string_obj, "type", &current))
-    return FAIL;
+  JFIELD (j_int, "type", &j_type, "Integer expects `type` field");
+  JFIELD (j_int, "value", &j_value, "Integer expects `value` field");
+  JFIELD (j_int, "size", &j_size, "Integer expects `size` field");
 
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "String", strlen ("String")))
-    return FAIL;
+  {
+    const char *str = json_object_get_string (j_type);
 
-  if (!json_object_object_get_ex (pk_string_obj, "value", &current))
-    return FAIL;
+    CHK (STREQ_LIT (str, "Integer"),
+         "Integer type: expects `Integer`, got `%s`", str);
+  }
+  {
+    int64_t value = pk_int_value (p_int);
+    int64_t v = json_object_get_int64 (j_value);
 
-  json_str_value = json_object_get_string (current);
-  pk_string_value = pk_string_str (pk_string);
-  if (strncmp (json_str_value, pk_string_value, strlen (pk_string_value)))
-    return FAIL;
+    CHK (value == v, "Integer value: expects %" PRIi64 ", got %" PRIi64, value,
+         v);
+  }
+  {
+    int size = pk_int_size (p_int);
+    int s = json_object_get_int (j_size);
+
+    CHK (size == s, "Integer size: expects %d, got %d", size, s);
+  }
 
   return PASS;
 }
 
 int
-test_json_pk_offset (json_object *pk_offset_obj, pk_val pk_offset)
+test_json_pk_uint (json_object *j_uint, pk_val p_uint)
 {
-  json_object *current;
-  pk_val pk_magnitude, pk_unit;
-  const char *typename;
-  int signed_p;
+  json_object *j_type, *j_value, *j_size;
+
+  CHK (json_object_object_length (j_uint) == 3,
+       "UnsignedInteger expects 3 fields: type, value, size");
+
+  JFIELD (j_uint, "type", &j_type, "UnsignedInteger expects `type` field");
+  JFIELD (j_uint, "value", &j_value,
+          "UnsignedInteger expects `value` field");
+  JFIELD (j_uint, "size", &j_size, "UnsignedInteger expects `size` field");
+
+  {
+    const char *str = json_object_get_string (j_type);
+
+    CHK (STREQ_LIT (str, "UnsignedInteger"),
+         "UnsignedInteger type: expects `UnsignedInteger`, got `%s`", str);
+  }
+  {
+    /* Older versions of libjson-c (0.3.1 & older) do not support
+     * `json_object_get_uint64` (only `json_object_get_int64`).
+     */
+    uint64_t v = (uint64_t)json_object_get_int64 (j_value);
+    uint64_t value = pk_uint_value (p_uint);
+
+    CHK (value == v,
+         "UnsignedInteger value: expects %" PRIi64 ", got %" PRIi64, value, v);
+  }
+  {
+    int s = json_object_get_int (j_size);
+    int size = pk_uint_size (p_uint);
+
+    CHK (size == s, "UnsignedInteger size: expects %d, got %d", size, s);
+  }
+
+  return PASS;
+}
+
+int
+test_json_pk_string (json_object *j_string, pk_val p_string)
+{
+  json_object *j_type, *j_value;
+
+  CHK (json_object_object_length (j_string) == 2,
+       "String expects 2 fields: type, value");
+
+  JFIELD (j_string, "type", &j_type, "String expects `type` field");
+  JFIELD (j_string, "value", &j_value, "String expects `value` field");
+
+  {
+    const char *str = json_object_get_string (j_type);
+
+    CHK (STREQ_LIT (str, "String"),
+         "String type: expects `String`, got `%s`", str);
+  }
+  {
+    const char* str = pk_string_str (p_string);
+    const char* s = json_object_get_string (j_value);
+
+    CHK (STREQ (str, s), "String value: expects \"%s\", got \"%s\"",
+         str, s);
+  }
+
+  return PASS;
+}
+
+int
+test_json_pk_offset (json_object *j_offset, pk_val p_offset)
+{
+  json_object *j_type, *j_magnitude, *j_unit;
+
+  CHK (json_object_object_length (j_offset) == 3,
+       "Offset expects 3 fields: type, magnitude, unit");
 
   /* Poke offset properties are : "type", "magnitude" and "unit".  */
-  if (json_object_object_length (pk_offset_obj) != 3)
-    return FAIL;
+  JFIELD (j_offset, "type", &j_type, "Offset expects `type` field");
+  JFIELD (j_offset, "magnitude", &j_magnitude,
+          "Offset expects `magnitude` field");
+  JFIELD (j_offset, "unit", &j_unit, "Offset expects `unit` field");
 
-  if (!json_object_object_get_ex (pk_offset_obj, "type", &current))
-    return FAIL;
+  {
+    const char *str = json_object_get_string (j_type);
 
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "Offset", strlen ("Offset")))
-    return FAIL;
+    CHK (STREQ_LIT (str, "Offset"), "Offset type: expects `Offset`, got `%s`",
+         str);
+  }
+  {
+    pk_val p_mag, p_unit;
+    int signed_p;
+    uint64_t size;
 
-  if (!json_object_object_get_ex (pk_offset_obj, "magnitude", &current))
-    return FAIL;
+    p_mag = pk_offset_magnitude (p_offset);
+    signed_p = pk_int_value (pk_integral_type_signed_p (pk_typeof (p_mag)));
 
-  /* "magnitude" is either an UnsignedInteger or an Integer.
-      Check if its UnsignedInteger or Integer.  */
-  pk_magnitude = pk_offset_magnitude (pk_offset);
-  signed_p = pk_int_value (pk_integral_type_signed_p (pk_typeof (pk_magnitude)));
-  if (signed_p && test_json_pk_int (current, pk_magnitude) == FAIL)
-    return FAIL;
+    if (signed_p)
+      CHK (test_json_pk_int (j_magnitude, p_mag) == PASS,
+           "Invalid Offset magnitude");
+    else
+      CHK (test_json_pk_uint (j_magnitude, p_mag) == PASS,
+           "Invalid Offset magnitude");
 
-  if (!signed_p && test_json_pk_uint (current, pk_magnitude) == FAIL)
-    return FAIL;
+    p_unit = pk_offset_unit (p_offset);
+    signed_p = pk_int_value (pk_integral_type_signed_p (pk_typeof (p_unit)));
 
-  /* "unit" is an UnsignedInteger.  */
-  if (!json_object_object_get_ex (pk_offset_obj, "unit", &current))
-    return FAIL;
-
-  pk_unit = pk_offset_unit (pk_offset);
-  if (test_json_pk_uint (current, pk_unit) == FAIL)
-    return FAIL;
-
-  return PASS;
-}
-
-int
-test_json_pk_null (json_object *pk_null_obj, pk_val pk_null)
-{
-  json_object *current;
-  const char *typename;
-
-  /* Poke null properties are : "type" and "value".  */
-  if (json_object_object_length (pk_null_obj) != 2)
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_null_obj, "type", &current))
-    return FAIL;
-
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "Null", strlen ("Null")))
-    return FAIL;
-
-  if (!json_object_object_get_ex (pk_null_obj, "value", &current))
-    return FAIL;
-
-  if (current != NULL)
-    return FAIL;
+    /* `unit` is a uint<64> */
+    CHK (!signed_p, "Offset unit: expects to be unsigned");
+    CHK (test_json_pk_uint (j_unit, p_unit) == PASS, "Invalid Offset unit");
+    CHK ((size = pk_uint_value (pk_integral_type_size (pk_typeof (p_unit))))
+             == 64,
+         "Offset unit: expects uint<64>, got uint<%d>", size);
+  }
 
   return PASS;
 }
 
 int
-test_json_pk_sct (json_object *pk_sct_obj, pk_val pk_sct)
+test_json_pk_null (json_object *j_null, pk_val p_null)
 {
-  json_object *current, *pk_sct_fields_obj, *pk_sct_field_obj;
-  pk_val pk_sct_name, pk_sct_fname, pk_sct_fboffset, pk_sct_fvalue;
-  const char *typename;
+  json_object *j_type, *j_value;
+  const char *str = json_object_get_string (j_type);
 
-  /* Poke struct properties are : "type", "name", "fields" and "mapping".  */
-  if (json_object_object_length (pk_sct_obj) != 4)
-    return FAIL;
+  CHK (json_object_object_length (j_null) == 2,
+       "Null expects 2 fields: type, value");
 
-  if (!json_object_object_get_ex (pk_sct_obj, "type", &current))
-    return FAIL;
+  JFIELD (j_null, "type", &j_type, "Null expects `type` field");
+  JFIELD (j_null, "value", &j_value, "Null expects `value` field");
 
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "Struct", strlen ("Struct")))
-    return FAIL;
+  CHK (STREQ_LIT (str, "Null"), "Null type: expects `Null`, got `%s`", str);
+  CHK (json_object_is_type (j_value, json_type_null),
+       "Null value: expects `null`, got `%s`",
+       json_type_to_name (json_object_get_type (j_value)));
 
-  if (!json_object_object_get_ex (pk_sct_obj, "name", &current))
-    return FAIL;
+  return PASS;
+}
 
-  pk_sct_name = pk_struct_type_name (pk_struct_type (pk_sct));
+int
+test_json_pk_sct (json_object *j_sct, pk_val p_sct)
+{
+  json_object *j_type, *j_name, *j_fields, *j_mapping;
+  uint64_t nfields;
 
-  if (test_json_pk_string (current, pk_sct_name) == FAIL)
-    return FAIL;
+  CHK (json_object_object_length (j_sct) == 4,
+       "Struct expects 4 fields: type, name, fields, mapping");
 
-  /* Get the fields of a struct and check them.  */
-  if (!json_object_object_get_ex (pk_sct_obj, "fields", &pk_sct_fields_obj))
-    return FAIL;
+  JFIELD (j_sct, "type", &j_type, "Struct expects `type` field");
+  JFIELD (j_sct, "name", &j_name, "Struct expects `name` field");
+  JFIELD (j_sct, "fields", &j_fields, "Struct expects `fields` field");
+  JFIELD (j_sct, "mapping", &j_mapping, "Struct expects `fields` field");
 
-  for (size_t i = 0 ; i < pk_uint_value (pk_struct_nfields (pk_sct)) ; i++)
-      pk_sct_fboffset = pk_struct_field_boffset (pk_sct, i);
+  {
+    const char *str = json_object_get_string (j_type);
 
-  for (size_t i = 0 ; i < pk_uint_value (pk_struct_nfields (pk_sct)) ; i++)
+    CHK (STREQ_LIT (str, "Struct"), "Struct type: expects `Struct`, got `%s`",
+         str);
+  }
+  CHK (test_json_pk_string (j_name,
+                            pk_struct_type_name (pk_struct_type (p_sct))),
+       "Struct name: name mismatch");
+
+  nfields = pk_uint_value (pk_struct_nfields (p_sct));
+  CHK (nfields == json_object_array_length (j_fields),
+       "Struct fields: length mismatch");
+  for (uint64_t i = 0; i < nfields; i++)
     {
-      pk_sct_fname = pk_struct_field_name (pk_sct, i);
-      pk_sct_fboffset = pk_struct_field_boffset (pk_sct, i);
-      pk_sct_fvalue = pk_struct_field_value (pk_sct, i);
+      json_object *j_field, *j_fname, *j_fvalue, *j_fboffset;
 
-      pk_sct_field_obj = json_object_array_get_idx (pk_sct_fields_obj, i);
+      j_field = json_object_array_get_idx (j_fields, i);
+      assert (j_field != NULL);
 
-      if (!json_object_object_get_ex (pk_sct_field_obj, "name", &current))
-        return FAIL;
+      JFIELD (j_field, "name", &j_fname,
+              "Struct field at index %zu expects `name` field", i);
+      JFIELD (j_field, "value", &j_fvalue,
+              "Struct field at index %zu expects `value` field", i);
+      JFIELD (j_field, "boffset", &j_fboffset,
+              "Struct field at index %zu expects `boffset` field", i);
 
-      if (test_json_pk_string (current, pk_sct_fname) == FAIL)
-        return FAIL;
-
-      if (!json_object_object_get_ex (pk_sct_field_obj, "boffset", &current))
-        return FAIL;
-
-      if (test_json_pk_uint (current, pk_sct_fboffset) == FAIL)
-        return FAIL;
-
-      if (!json_object_object_get_ex (pk_sct_field_obj, "value", &current))
-        return FAIL;
-
-      if (test_json_pk_val (current, pk_sct_fvalue) == FAIL)
-        return FAIL;
+      CHK (test_json_pk_string (j_fname, pk_struct_field_name (p_sct, i))
+               == PASS,
+           "Struct field at index %zu: invalid name", i);
+      CHK (test_json_pk_val (j_fvalue, pk_struct_field_value (p_sct, i))
+               == PASS,
+           "Struct field at index %zu: invalid value", i);
+      CHK (test_json_pk_uint (j_fboffset, pk_struct_field_boffset (p_sct, i))
+               == PASS,
+           "Struct field at index %zu: invalid boffset", i);
     }
+  /* TODO: add test for mapping */
 
-  /* TODO: add test for mapping when its added on pk-mi-json.c.  */
   return PASS;
 }
 
 int
-test_json_pk_array (json_object *pk_array_obj, pk_val pk_array)
+test_json_pk_array (json_object *j_array, pk_val p_array)
 {
-  json_object *current, *pk_array_elems_obj, *pk_array_elem_obj;
-  pk_val pk_array_elem_value, pk_array_elem_boff;
-  const char *typename;
+  json_object *j_type, *j_elems, *j_boffset, *j_mapping, *j_elem, *j_elem_boff,
+      *j_elem_value;
+  pk_val p_elem_value, p_elem_boff;
+  uint64_t nelems;
 
-  /* Poke array properties are : "type", "elements" and "mapping".  */
-  if (json_object_object_length (pk_array_obj) != 3)
-    return FAIL;
+  CHK (json_object_object_length (j_array) == 3,
+       "Array expects 3 fields: type, elements, mapping (got %d keys)",
+       json_object_object_length (j_array));
 
-  if (!json_object_object_get_ex (pk_array_obj, "type", &current))
-    return FAIL;
+  JFIELD (j_array, "type", &j_type, "Array expects `type` field");
+  JFIELD (j_array, "elements", &j_elems, "Array expects `elements` field");
+  JFIELD (j_array, "mapping", &j_mapping, "Array expects `mapping` field");
 
-  typename = json_object_get_string (current);
-  if (strncmp (typename, "Array", strlen ("Array")))
-    return FAIL;
+  {
+    const char *str = json_object_get_string (j_type);
 
-  if (!json_object_object_get_ex (pk_array_obj, "elements", &pk_array_elems_obj))
-    return FAIL;
+    CHK (STREQ_LIT (str, "Array"), "Array type: expects `Array`, got `%s`",
+         str);
+  }
 
-  /* Access every element of the array and check it.  */
-  for (size_t i = 0 ; i < pk_uint_value (pk_array_nelem (pk_array)) ; i++)
+  nelems = pk_uint_value (pk_array_nelem (p_array));
+  for (uint64_t i = 0; i < nelems; i++)
     {
-      pk_array_elem_value = pk_array_elem_val (pk_array, i);
-      pk_array_elem_boff = pk_array_elem_boffset (pk_array, i);
+      j_elem = json_object_array_get_idx (j_elems, i);
+      JFIELD (j_elem, "boffset", &j_elem_boff,
+              "Array type: expects `boffset` field for element at index %zu",
+              i);
+      JFIELD (j_elem, "value", &j_elem_value,
+              "Array type: expects `value` field for element at index %zu", i);
 
-      pk_array_elem_obj = json_object_array_get_idx (pk_array_elems_obj, i);
+      p_elem_value = pk_array_elem_val (p_array, i);
+      p_elem_boff = pk_array_elem_boffset (p_array, i);
 
-      if (!json_object_object_get_ex (pk_array_elem_obj, "boffset", &current))
-        return FAIL;
-
-      if (test_json_pk_uint (current, pk_array_elem_boff) == FAIL)
-        return FAIL;
-
-      if (!json_object_object_get_ex (pk_array_elem_obj, "value", &current))
-        return FAIL;
-
-      if (test_json_pk_val (current, pk_array_elem_value) == FAIL)
-        return FAIL;
+      CHK (test_json_pk_uint (j_elem_boff, p_elem_boff) == PASS,
+           "Array type: invalid `boffset` for element at index %zu", i);
+      CHK (test_json_pk_val (j_elem_value, p_elem_value) == PASS,
+           "Array type: invalid `value` for element at index %zu", i);
     }
+  /* TODO: add test for mapping */
 
-  /* TODO: add test for mapping when its added on pk-mi-json.c.  */
   return PASS;
 }
 
@@ -498,18 +534,23 @@ test_json_to_val (pk_compiler pk, const char *pk_obj_str, pk_val val)
   json_object *pk_obj, *current;
   char *errmsg;
 
-  if (pk_mi_json_to_val (&pk_test_val, pk_obj_str, &errmsg) == -1)
+  if (pk_mi_json_to_val (&pk_test_val, pk_obj_str, &errmsg) == -1) {
+    fprintf (stderr, "pk_mi_json_to_val () failed: %s\n", errmsg);
     return FAIL;
+  }
+
+  printf ("\nParsed value:\n  ");
+  pk_print_val_with_params (pk, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+  puts ("");
 
   /* Check if the pk_val returned from pk_mi_json_to_val
      is the same as the pk_val that we read from the test file.  */
 
   if (!pk_val_equal_p (pk_test_val, val))
     {
-      printf ("Expected value:\n");
+      printf ("Equality failure:\n  Expected value:\n    ");
       pk_print_val_with_params (pk, val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
-      printf ("\n");
-      printf ("Parsed value:\n");
+      printf ("\n  Parsed value:\n    ");
       pk_print_val_with_params (pk, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
       printf ("\n");
       return FAIL;

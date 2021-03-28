@@ -1,0 +1,18 @@
+##
+23U#B
+##
+{
+    "PokeValue" : {
+        "type" : "Offset",
+        "magnitude" : {
+            "type" : "UnsignedInteger",
+            "value" : 23,
+            "size" : 32
+        },
+        "unit" : {
+            "type" : "UnsignedInteger",
+            "value" : 8,
+            "size" : 64
+        }
+    }
+}

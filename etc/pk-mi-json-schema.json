@@ -105,9 +105,9 @@
             },
             "maxProperties" : 3,
             "required": [
-                "magnitude",
-                "base",
                 "type"
+                "magnitude",
+                "unit",
             ],
             "title": "Offset"
         },
@@ -168,24 +168,28 @@
                 },
                 "mapping" : {
                     "type" : "object",
-                    "oneOf" : [
-                        { "$ref" : "#/definitions/Mapping" },
-                        { "$ref" : "#/definitions/Null" }
+                    "$ref" : "#/definitions/Mapping"
                     ]
                 }
             },
             "maxProperties" : 4,
             "required": [
-                "fields",
                 "type",
-                "mapping",
-                "name"
+                "name",
+                "fields",
+                "mapping"
             ],
             "title": "Struct"
         },
         "Mapping": {
             "type": "object",
             "properties": {
+                "mapped": {
+                    "type": "boolean",
+                },
+                "strict": {
+                    "type": "boolean",
+                },
                 "IOS": {
                     "type": "integer",
                     "minimum" : -2147483648,
@@ -196,10 +200,9 @@
                     "$ref": "#/definitions/Offset"
                 }
             },
-            "maxProperties": 2,
+            "maxProperties": 4,
             "required": [
-                "IOS",
-                "offset"
+                "mapped"
             ],
             "title": "Mapping"
         },
@@ -211,7 +214,7 @@
                     "const" : "Array"
                 },
                 "elements" : {
-                "type": "array",
+                    "type": "array",
                     "items": {
                         "type": "object",
                         "properties" : {
@@ -224,7 +227,7 @@
                                     { "$ref": "#/definitions/Struct" },
                                     { "$ref": "#/definitions/Array" },
                                     { "$ref": "#/definitions/Offset" },
-                                    { "$ref": "#/definitions/Null" }
+                                    { "type": null }
                                 ]
                             },
                             "boffset" : {
@@ -248,10 +251,7 @@
                 },
                 "mapping" : {
                     "type" : "object",
-                        "oneOf" : [
-                            { "$ref" : "#/definitions/Mapping" },
-                            { "$ref" : "#/definitions/Null" }
-                        ]
+                    "$ref" : "#/definitions/Mapping"
                 }
             },
             "maxProperties" : 3,
@@ -260,24 +260,6 @@
                 "type",
                 "mapping"
             ]
-        },
-        "Null": {
-            "type": "object",
-            "properties" : {
-            "type" : {
-                    "type" : "string",
-                    "const" : "Null"
-                },
-                    "value" : {
-                    "type" : "null"
-                }
-            },
-            "maxProperties" : 2,
-            "required" : [
-                "type",
-                "value"
-            ],
-            "title": "Null"
         }
     },
     "type": "object",
@@ -291,7 +273,7 @@
             { "$ref": "#/definitions/Struct" },
             { "$ref": "#/definitions/Array" },
             { "$ref": "#/definitions/Offset" },
-            { "$ref": "#/definitions/Null" }
+            { "type": "null" }
           ]
       }
     },

@@ -1,0 +1,17 @@
+type Empty = struct {};
+##
+Empty { }
+##
+{
+    "PokeValue" : {
+        "type" : "Struct",
+        "name" : {
+            "type" : "String",
+            "value" : "Empty"
+        },
+        "fields" : [],
+        "mapping" : {
+            "mapped": false
+        }
+    }
+}

@@ -1,0 +1,33 @@
+var fd = open ("*mem*");
+type Empty = struct {};
+##
+Empty @ fd : 1#B
+##
+{
+    "PokeValue" : {
+        "type" : "Struct",
+        "name" : {
+            "type" : "String",
+            "value" : "Empty"
+        },
+        "fields" : [],
+        "mapping" : {
+            "mapped": true,
+            "strict": true,
+            "IOS": 0,
+            "offset": {
+                "type": "Offset",
+                "magnitude" : {
+                    "type" : "Integer",
+                    "value" : 1,
+                    "size" : 32
+                },
+                "unit" : {
+                    "type" : "UnsignedInteger",
+                    "value" : 8,
+                    "size" : 64
+                }
+            },
+        }
+    }
+}

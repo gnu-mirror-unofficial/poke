@@ -103,7 +103,7 @@
             }
         ],
         "mapping" : {
-            "type" : "Null", "value" : null
+            "mapped": false
         }
     }
 }

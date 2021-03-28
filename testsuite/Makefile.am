@@ -1917,5 +1917,8 @@ EXTRA_DIST = \
   poke.mi-json/pk_uint.json \
   poke.mi-json/pk_string.json \
   poke.mi-json/pk_offset.json \
+  poke.mi-json/pk_offset_uint.json \
   poke.mi-json/pk_array.json \
+  poke.mi-json/pk_sct_empty.json \
+  poke.mi-json/pk_sct_empty_mapped.json \
   poke.mi-json/pk_sct.json

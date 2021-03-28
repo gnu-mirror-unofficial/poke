@@ -44,8 +44,7 @@ Packet { i = 1, j = 2}
             }
         ],
         "mapping" : {
-            "type" : "Null",
-            "value" : null
+            "mapped": false
         }
     }
 }

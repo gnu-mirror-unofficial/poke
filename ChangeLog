@@ -1,5 +1,55 @@
 2021-03-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
+	* etc/pk-mi-json-schema.json: Re-order fields. Remove `Null` object.
+	Change `Mapping` to accept one required field `mapped` and three
+	optional fields: `strict`, `IOS` and `offset`.
+	* poke/pk-mi-json.c: Re-write the JSON to pk_val conversion.
+	(jerror): New function.
+	(jexpect): Likewise.
+	(pvalue): Likewise.
+	(pexpect): Likewise.
+	(pexpect_sct): Likewise.
+	(pexpect_aelem): Likewise.
+	(pexpect_arr): Likewise.
+	(pexpect_map): Likewise.
+	(pk_mi_jsonobj_to_val): Likewise.
+	(pk_mi_null_to_json): Removed.
+	(pk_mi_json_to_val_1): Likewise.
+	(pk_mi_json_poke_value_type): Likewise.
+	(pk_mi_json_to_int): Likewise.
+	(pk_mi_json_to_uint): Likewise.
+	(pk_mi_json_to_string): Likewise.
+	(pk_mi_json_to_offset): Likewise.
+	(pk_mi_json_to_mapping): Likewise.
+	(pk_mi_json_to_sct): Likewise.
+	(pk_mi_json_array_element_pair): Likewise.
+	(pk_mi_json_to_array): Likewise.
+	(collect_json_arg): Use `pk_mi_jsonobj_to_val` function.
+	(pk_mi_json_to_val): Re-write.
+	(RETURN_ON_JERR): New macro.
+	(RETURN_ERR_IF): Likewise.
+	* testsuite/poke.mi-json/mi-json.c (JFIELD_IMPL): New macro.
+	(JFIELD): Likewise.
+	(CHK_IMPL): Likewise.
+	(CHK): Likewise.
+	(STREQ_LIT): Likewise.
+	(test_json_pk_int): Re-write.
+	(test_json_pk_uint): Likewise.
+	(test_json_pk_string): Likewise.
+	(test_json_pk_offset): Likewise.
+	(test_json_pk_null): Likewise.
+	(test_json_pk_sct): Likewise.
+	(test_json_pk_array): Likewise.
+	(test_json_to_val): Report more info to the `stdout`.
+	* testsuite/poke.mi-json/pk_offset_uint.json: New sample file.
+	* testsuite/poke.mi-json/pk_sct_empty.json: Likewise.
+	* testsuite/poke.mi-json/pk_sct_empty_mapped.json: Likewise.
+	* testsuite/poke.mi-json/pk_array.json: Change `mapping`.
+	* testsuite/poke.mi-json/pk_sct.json: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Updated.
+
+2021-03-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
 	* libpoke/libpoke.h (pk_val_mappable_p): New function declaration.
 	(pk_val_set_mapped): Likewise.
 	(pk_val_strict_p): Likewise.
