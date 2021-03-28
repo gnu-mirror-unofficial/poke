@@ -1,3 +1,25 @@
+2021-03-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/libpoke.h (pk_val_mappable_p): New function declaration.
+	(pk_val_set_mapped): Likewise.
+	(pk_val_strict_p): Likewise.
+	(pk_val_set_strict): Likewise.
+	(pk_val_set_ios): Likewise.
+	(pk_val_set_offset): Likewise.
+	(pk_val_boffset): Likewise.
+	(pk_val_set_boffset): Likewise.
+	* libpoke/pvm-val.h (PVM_VAL_MAPPABLE_P): New macro.
+	* libpoke/pk-val.c (pk_val_mappable_p): New function definition.
+	(pk_val_set_mapped): Likewise.
+	(pk_val_strict_p): Likewise.
+	(pk_val_set_strict): Likewise.
+	(pk_val_set_ios): Likewise.
+	(pk_val_set_offset): Likewise.
+	(pk_val_boffset): Likewise.
+	(pk_val_set_boffset): Likewise.
+	* testsuite/poke.libpoke/values.c (test_simple_values_mapping):
+	New tests.
+
 2021-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.map/ass-map-20.pk: New test.

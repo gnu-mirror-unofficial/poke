@@ -131,15 +131,46 @@ pk_offset_unit (pk_val val)
 }
 
 int
+pk_val_mappable_p (pk_val val)
+{
+  return PVM_VAL_MAPPABLE_P (val);
+}
+
+int
 pk_val_mapped_p (pk_val val)
 {
   return PVM_VAL_MAPPED_P (val);
+}
+
+void
+pk_val_set_mapped (pk_val val, int mapped_p)
+{
+  PVM_VAL_SET_MAPPED_P (val, !!mapped_p);
+}
+
+int
+pk_val_strict_p (pk_val val)
+{
+  return PVM_VAL_STRICT_P (val);
+}
+
+void
+pk_val_set_strict (pk_val val, int strict_p)
+{
+  PVM_VAL_SET_STRICT_P (val, !!strict_p);
 }
 
 pk_val
 pk_val_ios (pk_val val)
 {
   return PVM_VAL_IOS (val);
+}
+
+void
+pk_val_set_ios (pk_val val, pk_val ios)
+{
+  if (PVM_IS_INT (ios) && PVM_VAL_INT_SIZE (ios) == 32)
+    PVM_VAL_SET_IOS (val, ios);
 }
 
 pk_val
@@ -163,6 +194,34 @@ pk_val_offset (pk_val val)
   else
     return pvm_make_offset (PVM_VAL_OFFSET (val),
                             pvm_make_ulong (1, 64));
+}
+
+void
+pk_val_set_offset (pk_val val, pk_val off)
+{
+  uint64_t boff;
+
+  if (!PVM_IS_OFF (off))
+    return;
+
+  boff = PVM_VAL_INTEGRAL (PVM_VAL_OFF_MAGNITUDE (off))
+         * PVM_VAL_ULONG (PVM_VAL_OFF_UNIT (off));
+  PVM_VAL_SET_OFFSET (val, pvm_make_ulong (boff, 64));
+}
+
+pk_val
+pk_val_boffset (pk_val val)
+{
+  pvm_val val_boffset = PVM_VAL_OFFSET (val);
+
+  return val_boffset == PVM_NULL ? PK_NULL : val_boffset;
+}
+
+void
+pk_val_set_boffset (pk_val val, pk_val boff)
+{
+  if (PVM_IS_ULONG (boff) && PVM_VAL_ULONG_SIZE (boff) == 64)
+    PVM_VAL_SET_OFFSET (val, boff);
 }
 
 int

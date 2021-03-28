@@ -584,6 +584,8 @@ typedef struct pvm_off *pvm_off;
    : PVM_IS_ULONG ((V)) ? PVM_VAL_ULONG ((V))    \
    : 0)
 
+#define PVM_VAL_MAPPABLE_P(V) (PVM_IS_ARR ((V)) || PVM_IS_SCT ((V)))
+
 /* The following macros allow to handle map-able PVM values (such as
    arrays and structs) polymorphically.
 

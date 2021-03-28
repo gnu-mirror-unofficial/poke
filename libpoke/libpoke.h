@@ -875,21 +875,73 @@ pk_val pk_array_type_bound (pk_val type) LIBPOKE_API;
 
 /* Mapped values.  */
 
+/* Return a boolean indicating whether the given value is mappable or
+   not.  */
+
+int pk_val_mappable_p (pk_val val) LIBPOKE_API;
+
 /* Return a boolean indicating whether the given value is mapped or
    not.  */
 
 int pk_val_mapped_p (pk_val val) LIBPOKE_API;
+
+/* Set MAPPED_P flag of the given value indicating whether the given
+   value is mapped or not.
+
+   For non-mappable values, this is a no-operation.  Note that this
+   just sets the flag.  */
+
+void pk_val_set_mapped (pk_val val, int mapped_p) LIBPOKE_API;
+
+/* Return a boolean indicating whether data integrity for the given
+   value is enforced or not.  */
+
+int pk_val_strict_p (pk_val val) LIBPOKE_API;
+
+/* Set STRICT flag of the given value indicating whether data
+   integrity is enforced or not.
+
+   For non-mappable values, this is a no-operation.  Note that this
+   just sets the flag.  */
+
+void pk_val_set_strict (pk_val val, int strict_p) LIBPOKE_API;
 
 /* Return the IOS identifier, an int<32>, in which the given value is
    mapped.  If the value is not mapped, return PK_NULL.  */
 
 pk_val pk_val_ios (pk_val val) LIBPOKE_API;
 
+/* Set the IOS, an int<32>, in which the given value is mapped.
+
+   For non-mappable values, this is a no-operation.  Note that this
+   just sets the IOS property.  */
+
+void pk_val_set_ios (pk_val val, pk_val ios) LIBPOKE_API;
+
 /* Return the offset in which the given value is mapped.
    If the value is not mapped, return PK_NULL.  */
 
-pk_val pk_val_offset
-(pk_val val) LIBPOKE_API;
+pk_val pk_val_offset (pk_val val) LIBPOKE_API;
+
+/* Set the offset in which the given value is mapped.
+
+   For non-mappable values, this is a no-operation.  Note that this
+   just sets the property.  */
+
+void pk_val_set_offset (pk_val val, pk_val offset) LIBPOKE_API;
+
+/* Return the bit offset in which the given value is mapped.
+   If the value is not mapped, return PK_NULL.  */
+
+pk_val pk_val_boffset (pk_val val) LIBPOKE_API;
+
+/* Set the bit offset in which the given value is mapped.
+   BOFFSET is expected to be an uint<64>.
+
+   For non-mappable values, this is a no-operation.  Note that this
+   just sets the property.  */
+
+void pk_val_set_boffset (pk_val val, pk_val boffset) LIBPOKE_API;
 
 /* Other operations on values.  */
 

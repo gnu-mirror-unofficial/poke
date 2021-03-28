@@ -154,6 +154,69 @@ test_simple_values ()
 #undef T
 }
 
+void
+test_simple_values_mapping ()
+{
+  pk_val simple_values[] = {
+    pk_make_int (1, 23),
+    pk_make_int (2, 46),
+    pk_make_uint (3, 23),
+    pk_make_uint (4, 46),
+    pk_make_string ("Poke"),
+    pk_make_offset (pk_make_uint (5, 64), pk_make_uint (6, 64)),
+  };
+  const int N = sizeof (simple_values) / sizeof (simple_values[0]);
+  pk_val i32 = pk_make_int (7, 32);
+  pk_val u64 = pk_make_uint (8, 64);
+
+/* test case */
+#define T0(cond, ...)                                                         \
+  do                                                                          \
+    {                                                                         \
+      if (cond)                                                               \
+        pass (__VA_ARGS__);                                                   \
+      else                                                                    \
+        fail (__VA_ARGS__);                                                   \
+    }                                                                         \
+  while (0)
+
+#define T(i, cond) T0 ((cond), "[%s:%d] i:%d " #cond, __func__, __LINE__, (i))
+
+  T0 (i32 != PK_NULL, "i32 != PK_NULL");
+  T0 (u64 != PK_NULL, "u64 != PK_NULL");
+  for (int i = 0; i < N; i++)
+    T (i, simple_values[i] != PK_NULL);
+
+  for (int i = 0; i < N; i++)
+    {
+      T (i, pk_val_mappable_p (simple_values[i]) == 0);
+
+      /* getters */
+      T (i, pk_val_ios (simple_values[i]) == PK_NULL);
+      T (i, pk_val_boffset (simple_values[i]) == PK_NULL);
+      T (i, pk_val_offset (simple_values[i]) == PK_NULL);
+      T (i, pk_val_mapped_p (simple_values[i]) == 0);
+      T (i, pk_val_strict_p (simple_values[i]) == 0);
+
+      /* setters: no-op for simple values! */
+      pk_val_set_ios (simple_values[i], i32);
+      pk_val_set_boffset (simple_values[i], u64);
+      pk_val_set_offset (simple_values[i], u64);
+      pk_val_set_mapped (simple_values[i], 1);
+      pk_val_set_strict (simple_values[i], 1);
+
+      /* re-check to confirm setters don't work on simple values */
+      T (i, pk_val_ios (simple_values[i]) == PK_NULL);
+      T (i, pk_val_boffset (simple_values[i]) == PK_NULL);
+      T (i, pk_val_offset (simple_values[i]) == PK_NULL);
+      T (i, pk_val_mapped_p (simple_values[i]) == 0);
+      T (i, pk_val_strict_p (simple_values[i]) == 0);
+    }
+
+#undef T
+#undef T0
+}
+
 #define STARTS_WITH(PREFIX, STR) (strncmp (PREFIX, STR, strlen (PREFIX)) == 0)
 
 void
@@ -266,6 +329,7 @@ int
 main (int argc, char *argv[])
 {
   test_simple_values ();
+  test_simple_values_mapping ();
   test_pk_val_equal_p ();
 
   totals ();
