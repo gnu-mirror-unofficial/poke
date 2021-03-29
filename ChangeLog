@@ -1,3 +1,10 @@
+2021-03-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/btf.pk (BTF_Section): Check that the header in the
+	section declares the right size.
+	Use header.hdr_len instead of OFFSET.
+	(BTF_Header): Use an initialization value for `magic'.
+
 2021-03-28  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
 
 	* etc/pk-mi-json-schema.json: Re-order fields. Remove `Null` object.
