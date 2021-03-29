@@ -1,3 +1,9 @@
+2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-insn.def: New instruction PKL_INSN_SLEEP.
+	* libpoke/pvm.jitter (sleep): New instruction.
+	* bootstrap.conf (libpoke_modules): Import module `nanosleep'.
+
 2021-03-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/btf.pk (BTF_Section): Check that the header in the

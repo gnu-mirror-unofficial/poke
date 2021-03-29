@@ -171,6 +171,7 @@ early-c
 #   include <stdlib.h>
 #   include <string.h>
 #   include <assert.h>
+#   include <time.h>
 #   include "xalloc.h"
 #   include "timespec.h"
 #   include "intprops.h"
@@ -5791,6 +5792,29 @@ instruction time ()
                              PVM_MAKE_LONG (ts.tv_nsec, 64));
 
     JITTER_PUSH_STACK (arr);
+  end
+end
+
+# Instruction: sleep
+#
+# Sleep for a given number of seconds and nanoseconds.
+#
+# If the provided number of nanoseconds are not in the range 0 to
+# 999999999 or the number of provided seconds is negative, raise
+# PVM_E_INVAL.
+#
+# Stack: ( LONG LONG -- LONG LONG )
+# Exceptions: PVM_E_INVAL
+
+instruction sleep ()
+  code
+    struct timespec ts;
+
+    ts.tv_sec = PVM_VAL_LONG (JITTER_UNDER_TOP_STACK ());
+    ts.tv_nsec = PVM_VAL_LONG (JITTER_TOP_STACK ());
+
+    if (nanosleep (&ts, NULL) == -1)
+      PVM_RAISE_DFL (PVM_E_INVAL);
   end
 end
 
