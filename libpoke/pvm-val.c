@@ -129,7 +129,11 @@ pvm_array_insert (pvm_val arr, pvm_val idx, pvm_val val)
   size_t nelem_to_add = index - nelem + 1;
   size_t val_size = pvm_sizeof (val);
   size_t array_boffset = PVM_VAL_ULONG (PVM_VAL_ARR_OFFSET (arr));
-  size_t elem_boffset = array_boffset + pvm_sizeof (arr);
+  size_t elem_boffset
+    = (nelem > 0
+       ? (PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (arr, nelem - 1)) +
+          pvm_sizeof (PVM_VAL_ARR_ELEM_VALUE (arr, nelem - 1)))
+       : array_boffset);
   size_t i;
 
   /* First of all, make sure that the given index doesn't correspond
