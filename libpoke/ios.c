@@ -36,6 +36,8 @@
   {                                                                    \
     uint8_t ch;                                                        \
     int ret = (io)->dev_if->pread ((io)->dev, &ch, 1, off);            \
+    if (ret != IOD_OK && ret != IOD_EOF)                               \
+      return IOD_ERROR_TO_IOS_ERROR (ret);                             \
     /* If the pread reports an EOF, it means the partial byte */       \
     /* we are writing is past the end of the IOS.  That may or */      \
     /* may not be supported in the underlying IOD, but in any */       \
@@ -44,11 +46,11 @@
     (c) = ret == IOD_EOF ? 0 : ch;                                     \
   }
 
-#define IOS_PUT_C_ERR_CHCK(c, io, len, off)                \
-  {                                                        \
-    if ((io)->dev_if->pwrite ((io)->dev, c, len, off)      \
-        == IOD_EOF)                                        \
-      return IOS_EIOFF;                                    \
+#define IOS_PUT_C_ERR_CHCK(c, io, len, off)                     \
+  {                                                             \
+    int ret = (io)->dev_if->pwrite ((io)->dev, c, len, off);    \
+    if (ret != IOD_OK)                                          \
+      return IOD_ERROR_TO_IOS_ERROR (ret);                      \
   }
 
 /* The following struct implements an instance of an IO space.
@@ -337,6 +339,8 @@ ios_read_int_common (ios io, ios_off offset, int flags,
                      enum ios_endian endian,
                      uint64_t *value)
 {
+  int ret;
+
   /* 64 bits might span at most 9 bytes.  */
   uint8_t c[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -351,8 +355,10 @@ ios_read_int_common (ios io, ios_off offset, int flags,
   lastbyte_bits = lastbyte_bits == 0 ? 8 : lastbyte_bits;
 
   /* Read the bytes and clear the unused bits.  */
-  if (io->dev_if->pread (io->dev, c, bytes_minus1 + 1, offset / 8) == IOD_EOF)
-    return IOS_EIOFF;
+  ret = io->dev_if->pread (io->dev, c, bytes_minus1 + 1, offset / 8);
+  if (ret != IOD_OK)
+    return IOD_ERROR_TO_IOS_ERROR (ret);
+
   IOS_CHAR_GET_LSB(&c[0], firstbyte_bits);
 
   switch (bytes_minus1)
@@ -711,9 +717,12 @@ ios_read_int (ios io, ios_off offset, int flags,
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     {
+      int ret;
       uint8_t c[8];
-      if (io->dev_if->pread (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
-        return IOS_EIOFF;
+
+      ret = io->dev_if->pread (io->dev, c, bits / 8, offset / 8);
+      if (ret != IOD_OK)
+        return IOD_ERROR_TO_IOS_ERROR (ret);
 
       switch (bits) {
       case 8:
@@ -839,9 +848,12 @@ ios_read_uint (ios io, ios_off offset, int flags,
   /* Fast track for byte-aligned 8x bits  */
   if (offset % 8 == 0 && bits % 8 == 0)
     {
+      int ret;
       uint8_t c[8];
-      if (io->dev_if->pread (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
-        return IOS_EIOFF;
+
+      ret = io->dev_if->pread (io->dev, c, bits / 8, offset / 8);
+      if (ret != IOD_OK)
+        return IOD_ERROR_TO_IOS_ERROR (ret);
 
       switch (bits) {
       case 8:
@@ -958,12 +970,9 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
                 goto error;
             }
 
-          if (io->dev_if->pread (io->dev, &str[i], 1,
-                                 offset / 8 + i) == IOD_EOF)
-            {
-              ret = IOS_EIOFF;
-              goto error;
-            }
+          ret = io->dev_if->pread (io->dev, &str[i], 1,  offset / 8 + i);
+          if (ret != IOD_OK)
+            return IOD_ERROR_TO_IOS_ERROR (ret);
         }
       while (str[i++] != '\0');
     }
@@ -986,7 +995,7 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
           ret = ios_read_uint (io, offset, flags, 8,
                                IOS_ENDIAN_MSB, /* Arbitrary.  */
                                &abyte);
-          if (ret == IOS_EIOFF)
+          if (ret == IOS_EOF)
             goto error;
 
           str[i] = (char) abyte;
@@ -1009,6 +1018,7 @@ ios_write_int_fast (ios io, ios_off offset, int flags,
                     enum ios_endian endian,
                     uint64_t value)
 {
+  int ret;
   uint8_t c[8];
 
   switch (bits)
@@ -1155,8 +1165,10 @@ ios_write_int_fast (ios io, ios_off offset, int flags,
       break;
     }
 
-  if (io->dev_if->pwrite (io->dev, c, bits / 8, offset / 8) == IOD_EOF)
-    return IOS_EIOFF;
+  ret = io->dev_if->pwrite (io->dev, c, bits / 8, offset / 8);
+  if (ret != IOD_OK)
+    return IOD_ERROR_TO_IOS_ERROR (ret);
+
   return IOS_OK;
 }
 
@@ -1523,9 +1535,10 @@ ios_write_string (ios io, ios_off offset, int flags,
       p = value;
       do
         {
-          if (io->dev_if->pwrite (io->dev, p, 1,
-                                  offset / 8 + p - value) == IOD_EOF)
-            return IOS_EIOFF;
+          int ret = io->dev_if->pwrite (io->dev, p, 1,
+                                        offset / 8 + p - value);
+          if (ret != IOD_OK)
+            return IOD_ERROR_TO_IOS_ERROR (ret);
         }
       while (*(p++) != '\0');
     }
@@ -1541,7 +1554,7 @@ ios_write_string (ios io, ios_off offset, int flags,
           int ret = ios_write_uint (io, offset, flags, 8,
                                     IOS_ENDIAN_MSB, /* Arbitrary.  */
                                     (uint64_t) *p);
-          if (ret == IOS_EIOFF)
+          if (ret == IOS_EOF)
             return ret;
 
           offset += 8;

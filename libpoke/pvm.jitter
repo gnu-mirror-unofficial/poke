@@ -508,7 +508,7 @@ late-header-c
      JITTER_DROP_STACK ();                                                   \
      if ((ret = ios_read_##IOTYPE (IOARGS)) != IOS_OK)                       \
        {                                                                     \
-         if (ret == IOS_EIOFF)                                               \
+         if (ret == IOS_EOF)                                                 \
             PVM_RAISE_DFL (PVM_E_EOF);                                       \
          else if (ret == IOS_ENOMEM)                                         \
             PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);         \
@@ -551,7 +551,7 @@ late-header-c
      offset = PVM_VAL_ULONG (offset_val);                                    \
      if ((ret = ios_write_##IOTYPE (IOARGS)) != IOS_OK)                      \
        {                                                                     \
-         if (ret == IOS_EIOFF)                                               \
+         if (ret == IOS_EOF)                                                 \
             PVM_RAISE_DFL (PVM_E_EOF);                                       \
          else if (ret == IOS_EPERM)                                          \
             PVM_RAISE_DFL (PVM_E_PERM);                                      \
@@ -5537,7 +5537,7 @@ instruction peeks ()
     JITTER_DROP_STACK ();
     if ((ret = ios_read_string (io, offset, 0 /* flags */, &ios_str)) != IOS_OK)
     {
-      if (ret == IOS_EIOFF)
+      if (ret == IOS_EOF)
          PVM_RAISE_DFL (PVM_E_EOF);
       else if (ret == IOS_ENOMEM)
          PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);
@@ -5578,7 +5578,7 @@ instruction pokes ()
     JITTER_DROP_STACK ();
     if ((ret = ios_write_string (io, offset, 0 /* flags */, str)) != IOS_OK)
     {
-      if (ret == IOS_EIOFF)
+      if (ret == IOS_EOF)
          PVM_RAISE_DFL (PVM_E_EOF);
       else if (ret == IOS_EPERM)
          PVM_RAISE_DFL (PVM_E_PERM);

@@ -1,3 +1,23 @@
+2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_pwrite): Return IOD_ERROR
+	in case ferror returns an error.
+	(ios_dev_file_pread): Return IOD_ERROR in
+	case ferror returns an error.
+	(ios_dev_file_pwrite): Likewise.
+	* libpoke/ios.c (IOS_PUT_C_ERR_CHCK): Handle errors from pwrite.
+	(ios_write_int_fast): Likewise.
+	(ios_write_string): Likewise.
+	(IOS_GET_C_ERR_CHCK): Handle IOD_ERROR from pread.
+	(ios_read_int_common): Likewise.
+	(ios_read_int): Likewise.
+	(ios_read_uint): Likewise.
+	(ios_read_string): Likewise.
+	(ios_read_string): Use IOS_EOF instead of IOS_EIOFF.
+	(ios_write_string): Likewise.
+	* libpoke/ios.h (IOS_EIOFF): Remove.
+	* libpoke/pvm.jitter: Use IOS_EOF instead of IOS_EIOFF.
+
 2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.cmd/dump-12.pk: New test.

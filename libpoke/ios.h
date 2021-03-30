@@ -255,15 +255,7 @@ void ios_set_bias (ios io, ios_off bias);
                                   ;) */
 
 /* The functions conforming the read/write API below return an integer
-   that reflects the state of the requested operation.  The following
-   values are supported, as well as the more generic IOS_OK and
-   IOS_ERROR, */
-
-#define IOS_EIOFF -2  /* The provided offset is invalid.  This happens
-                         for example when the offset translates into a
-                         byte offset that exceeds the capacity of the
-                         underlying IO device, or when a negative
-                         offset is provided in the wrong context.  */
+   that reflects the state of the requested operation.  */
 
 /* The following error code is returned when the IO backend can't
    handle the specified flags in ios_open. */

@@ -223,11 +223,17 @@ ios_dev_file_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
     return IOD_EOF;
   ret = fread (buf, 1, count, fio->file);
 
+  if (ferror (fio->file))
+    {
+      clearerr (fio->file);
+      return IOD_ERROR;
+    }
+
   /* XXX As long as count <= 9 because the ios layer reads at most an
      unaligned uint64_t, we are unlikely to hit short reads.  But if
      future code adds in large buffer reads, we may want to retry on
      short reads rather than giving up right away. */
-  return ret == count ? 0 : IOD_EOF;
+  return ret == count ? IOD_OK : IOD_EOF;
 }
 
 static int
@@ -243,7 +249,14 @@ ios_dev_file_pwrite (void *iod, const void *buf, size_t count,
     return IOD_EOF;
   ret = fwrite (buf, 1, count, fio->file);
 
-  return ret == count ? 0 : IOD_EOF;
+  if (ferror (fio->file))
+    {
+      perror ("write: ");
+      clearerr (fio->file);
+      return IOD_ERROR;
+    }
+
+  return ret == count ? IOD_OK : IOD_EOF;
 }
 
 static ios_dev_off
