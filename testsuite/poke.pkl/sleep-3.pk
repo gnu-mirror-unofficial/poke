@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* The range of allowed nanoseconds in `sleep' is [0..999999999] */
+
+/* { dg-command {try sleep (1, 999999999 + 1); catch if E_inval { print "caught\n"; } } } */
+/* { dg-output "caught" } */

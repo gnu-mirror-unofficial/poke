@@ -30,6 +30,7 @@ fun ioflags = (int<32> ios = get_ios) uint<64>: __PKL_BUILTIN_IOFLAGS__;
 fun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
 fun flush = (int<32> ios, offset<uint<64>,1> offset) void: __PKL_BUILTIN_FORGET__;
 fun get_time = int<64>[2]: __PKL_BUILTIN_GET_TIME__;
+fun sleep = (int<64> sec, int<64> nsec = 0) void: __PKL_BUILTIN_SLEEP__;
 fun strace = void: __PKL_BUILTIN_STRACE__;
 fun term_get_color = int<32>[3]: __PKL_BUILTIN_TERM_GET_COLOR__;
 fun term_set_color = (int<32>[3] color) void: __PKL_BUILTIN_TERM_SET_COLOR__;

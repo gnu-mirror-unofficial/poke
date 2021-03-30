@@ -172,6 +172,7 @@ early-c
 #   include <string.h>
 #   include <assert.h>
 #   include <time.h>
+#   include <errno.h>
 #   include "xalloc.h"
 #   include "timespec.h"
 #   include "intprops.h"
@@ -5803,8 +5804,11 @@ end
 # 999999999 or the number of provided seconds is negative, raise
 # PVM_E_INVAL.
 #
+# If there is any other error performing the operation then raise
+# PVM_E_GENERIC.
+#
 # Stack: ( LONG LONG -- LONG LONG )
-# Exceptions: PVM_E_INVAL
+# Exceptions: PVM_E_INVAL, PVM_E_GENERIC
 
 instruction sleep ()
   code
@@ -5814,7 +5818,14 @@ instruction sleep ()
     ts.tv_nsec = PVM_VAL_LONG (JITTER_TOP_STACK ());
 
     if (nanosleep (&ts, NULL) == -1)
-      PVM_RAISE_DFL (PVM_E_INVAL);
+    {
+      if (errno == EINTR)
+        /* This is most likely Ctrl-C.  Do nothing */;
+      else if (errno == EINVAL)
+        PVM_RAISE_DFL (PVM_E_INVAL);
+      else
+        PVM_RAISE_DFL (PVM_E_GENERIC);
+    }
   end
 end
 

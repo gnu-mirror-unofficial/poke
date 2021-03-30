@@ -251,6 +251,8 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_FORGET; }
 "__PKL_BUILTIN_GET_TIME__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_GET_TIME; }
+"__PKL_BUILTIN_SLEEP__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_SLEEP; }
 "__PKL_BUILTIN_STRACE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_STRACE; }
 "__PKL_BUILTIN_TERM_BEGIN_HYPERLINK__" {

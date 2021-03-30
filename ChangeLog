@@ -1,5 +1,23 @@
 2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_SLEEP): Define.
+	* libpoke/pkl-lex.l: Handle __PKL_BUILTIN_SLEEP__.
+	* libpoke/pkl-tab.y (builtin): Rule for the sleep builtin.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Generate code for the
+	`sleep' builtin.
+	* libpoke/pkl-rt.pk (sleep): Define builtin.
+	* libpoke/pvm.jitter (sleep): Do not raise an exception if
+	nanosleep gets interrupted and raise E_generic whenever
+	appropriate.
+	* bootstrap.conf (libpoke_modules): Import the module `errno' from
+	gnulib.
+	* testsuite/poke.pkl/sleep-1.pk: New test.
+	* testsuite/poke.pkl/sleep-2.pk: Likewise.
+	* testsuite/poke.pkl/sleep-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-insn.def: New instruction PKL_INSN_SLEEP.
 	* libpoke/pvm.jitter (sleep): New instruction.
 	* bootstrap.conf (libpoke_modules): Import module `nanosleep'.

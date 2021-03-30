@@ -1650,6 +1650,9 @@ EXTRA_DIST = \
   poke.pkl/sl-offsets-2.pk \
   poke.pkl/sla-int-1.pk \
   poke.pkl/sla-offset-1.pk \
+  poke.pkl/sleep-1.pk \
+  poke.pkl/sleep-2.pk \
+  poke.pkl/sleep-3.pk \
   poke.pkl/sr-diag-1.pk \
   poke.pkl/sr-diag-2.pk \
   poke.pkl/sr-integers-1.pk \
