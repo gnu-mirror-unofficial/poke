@@ -8470,6 +8470,10 @@ Another variable that the user can customize is
 contains the character to use in the ASCII dump to represent a
 non-printable character.
 
+Not all bytes from an IO space can be read, depending on the kind of
+IO device.  When @code{dump} cannot read a byte it will print
+@code{pk_dump_unknown_byte} instead, which is a string.
+
 If you have a personal preference on how memory dumps should appear,
 you can set the relevant @code{pk_dump_*} variables.   These
 global variables serve as the defaults for @command{dump}, so this way, you

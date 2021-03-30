@@ -1,5 +1,13 @@
 2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk (dump): Handle E_ios when peeking bytes.
+	(pk_dump_unknown_byte): Define.
+	* etc/poke-default.css (.dump-unknown): New class.
+	* doc/poke.texi (Presentation options for @command{dump}):
+	Document pk_dump_unknown_byte.
+
+2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ios-dev-file.c (ios_dev_file_pwrite): Return IOD_ERROR
 	in case ferror returns an error.
 	(ios_dev_file_pread): Return IOD_ERROR in

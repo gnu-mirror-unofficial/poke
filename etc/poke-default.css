@@ -21,6 +21,7 @@
 .dump-ruler { text-decoration: underline; }
 .dump-address { color : green; }
 .dump-ascii { color : brown; }
+.dump-unknown { color : yellow; }
 
 /* Classes for pickles in pickles/  */
 
