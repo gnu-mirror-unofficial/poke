@@ -1,3 +1,9 @@
+2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/ios-dev-zero.c: New file.
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add ios-dev-zero.c.
+	* libpoke/ios.c (ios_dev_ifs): Register ios_dev_zero.
+
 2021-03-31  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
 	* bootstrap.conf (gnulib_modules): Added vsnprintf-posix module.

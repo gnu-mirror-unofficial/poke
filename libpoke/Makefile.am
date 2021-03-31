@@ -59,6 +59,7 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pvm.jitter \
                      ios.c ios.h ios-dev.h \
                      ios-dev-file.c ios-dev-mem.c \
+                     ios-dev-zero.c \
                      ios-buffer.h ios-buffer.c \
                      ios-dev-stream.c
 
