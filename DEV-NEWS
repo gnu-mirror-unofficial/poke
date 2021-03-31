@@ -7,6 +7,10 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2021-03-30
+* A `zero' IOD is now available.  It is useful for testing poking at
+  very high offsets.
+
 2021-02-27
 * HACKING now contains some instructions on how to backport patches
   to maintenance branches.
