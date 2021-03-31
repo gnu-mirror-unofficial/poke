@@ -1,5 +1,12 @@
 2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-ios.c (pk_cmd_proc): New function.
+	(proc_cmd): Define.
+	* poke/pk-cmd.c (dot_cmds): Add proc_cmd.
+	* doc/poke.texi (proc command): New section.
+
+2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac (HAVE_PROC): Define if the host OS provides a proc/
 	directory.
 	* libpoke/ios-dev-proc.c: New file.

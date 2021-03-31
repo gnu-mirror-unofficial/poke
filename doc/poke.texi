@@ -189,6 +189,7 @@ Dot-Commands
 * file command::		Opening and selecting file IO spaces.
 * mem command::			Opening and selecting memory IO spaces.
 * nbd command::			Opening and selecting NBD IO spaces.
+* proc command::                Opening and selecting process IO spaces.
 * ios command::			Switching between IO spaces.
 * close command::		Closing IO spaces.
 * doc command::                 Online manual.
@@ -7917,6 +7918,7 @@ au BufRead,BufNewFile *.pk set filetype=poke
 * file command::		Opening and selecting file IO spaces.
 * mem command::			Opening and selecting memory IO spaces.
 * nbd command::			Opening and selecting NBD IO spaces.
+* proc command::                Opening and selecting process IO spaces.
 * ios command::			Switching between IO spaces.
 * close command::		Closing IO spaces.
 * doc command::                 Online manual.
@@ -8056,6 +8058,22 @@ $ poke
 (poke) .nbd nbd+unix:///socket=?/tmp/mysock
 The current file is now `nbd+unix:///socket=?/tmp/mysock'.
 @end example
+
+@node proc command
+@section @code{.proc}
+@cindex @code{.proc}
+
+The @command{.proc} command opens a new IO space backed by the memory
+mapped for some live process, or switches to a previously opened
+process.  The syntax is:
+
+@example
+.proc @var{pid}
+@end example
+
+@noindent
+where @var{pid} is a process identifier.  In most systems this is a
+number.
 
 @node ios command
 @section @code{.ios}

@@ -63,6 +63,41 @@ pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static int
+pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+#if defined HAVE_PROC
+  uint64_t pid;
+  char *handler;
+
+  /* Get the PID of the process to open.  */
+  assert (argc == 1);
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_INT);
+  pid = PK_CMD_ARG_INT (argv[0]);
+
+  /* Build the handler for the proc IOS.  */
+  if (asprintf (&handler, "pid://%ld", pid) == -1)
+    return 0;
+
+  /* Open the IOS.  */
+  if (pk_ios_open (poke_compiler, handler, 0, 1))
+    {
+      pk_printf (_("Error creating proc IOS %s\n"), handler);
+      free (handler);
+      return 0;
+    }
+
+  free (handler);
+  return 1;
+#else
+  pk_term_class ("error");
+  pk_puts (_("error: "));
+  pk_term_end_class ("error");
+  pk_printf (_("this poke hasn't been built with support for .proc\n"));
+  return 0;
+#endif /* HAVE_PROC */
+}
+
 #define PK_FILE_UFLAGS "c"
 #define PK_FILE_F_CREATE 0x1
 
@@ -381,6 +416,9 @@ const struct pk_cmd ios_cmd =
 const struct pk_cmd file_cmd =
   {"file", "f", PK_FILE_UFLAGS, 0, NULL, pk_cmd_file, "file FILE-NAME",
    rl_filename_completion_function};
+
+const struct pk_cmd proc_cmd =
+  {"proc", "i", "", 0, NULL, pk_cmd_proc, "proc PID", NULL};
 
 const struct pk_cmd mem_cmd =
   {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};
