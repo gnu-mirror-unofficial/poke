@@ -90,7 +90,7 @@ fun dump = (int<32> ios = get_ios,
             int ruler = pk_dump_ruler,
             int ascii = pk_dump_ascii) void:
 {
-  fun print_ruler = void:
+  fun print_ruler = (off64 offset) void:
   {
     var o = 0#B;
 
@@ -100,7 +100,11 @@ fun dump = (int<32> ios = get_ios,
       if (x >= 10 && x <= 15) return x + 'A' - 10;
     }
 
-    printf "%<dump-ruler:76543210 %>";
+   if (offset > 0xffff_ffff#B)
+     printf "%<dump-ruler:FEDCBA9876543210 %>";
+   else
+     printf "%<dump-ruler:76543210 %>";
+
     for (s in ["00", "11", "22", "33", "44", "55", "66",
 	       "77", "88", "99", "aa", "bb", "cc", "dd",
 	       "ee", "ff"])
@@ -158,7 +162,10 @@ fun dump = (int<32> ios = get_ios,
   {
     for (; offset < top; offset += step)
       {
-	printf ("%<dump-address:%u32x:%>", offset / #B);
+        if (offset > 0xffff_ffff#B)
+          printf ("%<dump-address:%u64x:%>", offset / #B);
+        else
+          printf ("%<dump-address:%u32x:%>", offset / #B);
 
 	var o = 0#B;
 	try
@@ -198,7 +205,7 @@ fun dump = (int<32> ios = get_ios,
   var top = from + size + (size % 1#B);
 
   if (ruler)
-    print_ruler;
+    print_ruler (offset);
 
   try print_data :offset offset :top top :step 16#B
                  :group_by group_by :cluster_by cluster_by;
