@@ -69,6 +69,10 @@ if NBD
 libpoke_la_SOURCES += ios-dev-nbd.c
 endif NBD
 
+if HAVE_PROC
+libpoke_la_SOURCES += ios-dev-proc.c
+endif HAVE_PROC
+
 # *.pkc files are generated from *.pks, by using ras and pkl-insn.def.
 # Generate them in $(srcdir), since they are distributed in tarballs
 # (see <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>).

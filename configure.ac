@@ -59,6 +59,20 @@ dnl System
 AC_CANONICAL_HOST
 canonical=$host
 
+dnl The proc IOD is currently Linux-specific, since it relies on the
+dnl availability of the /proc file-system.
+
+case "${host_os}" in
+  linux*)
+    have_proc=yes ;;
+  *)
+    have_proc=no ;;
+esac
+
+AC_DEFINE([HAVE_PROC], 1,
+          [Defined if the host system features a proc directory.])
+AM_CONDITIONAL([HAVE_PROC], [test "x$have_proc" = "xyes"])
+
 gl_INIT
 libpoke_INIT
 gui_INIT

@@ -97,6 +97,9 @@ extern struct ios_dev_if ios_dev_stream; /* ios-dev-stream.c */
 #ifdef HAVE_LIBNBD
 extern struct ios_dev_if ios_dev_nbd; /* ios-dev-nbd.c */
 #endif
+#ifdef HAVE_PROC
+extern struct ios_dev_if ios_dev_proc; /* ios-dev-proc.c */
+#endif
 extern struct ios_dev_if ios_dev_sub; /* ios-dev-sub.c */
 
 static struct ios_dev_if *ios_dev_ifs[] =
@@ -106,6 +109,9 @@ static struct ios_dev_if *ios_dev_ifs[] =
    &ios_dev_stream,
 #ifdef HAVE_LIBNBD
    &ios_dev_nbd,
+#endif
+#ifdef HAVE_PROC
+   &ios_dev_proc,
 #endif
    &ios_dev_sub,
    /* File must be last */

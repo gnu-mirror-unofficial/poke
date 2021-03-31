@@ -1,3 +1,11 @@
+2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac (HAVE_PROC): Define if the host OS provides a proc/
+	directory.
+	* libpoke/ios-dev-proc.c: New file.
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add ios-dev-proc.c.
+	* libpoke/ios.c (ios_dev_ifs): Add ios_dev_proc.
+
 2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/ios-dev.h: Prototypes for ios_get_dev and
