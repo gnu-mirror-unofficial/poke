@@ -39,14 +39,14 @@ static char *
 ios_dev_zero_handler_normalize (const char *handler, uint64_t flags, int *error)
 {
   char *new_handler = NULL;
-  
+
   if (STREQ (handler, "<zero>"))
     {
       new_handler = strdup (handler);
       if (new_handler == NULL && error)
         *error = IOD_ENOMEM;
     }
-  
+
   if (error)
     *error = IOD_OK;
   return new_handler;
