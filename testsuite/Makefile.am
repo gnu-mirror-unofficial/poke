@@ -71,6 +71,7 @@ EXTRA_DIST = \
   poke.cmd/dump-9.pk \
   poke.cmd/dump-10.pk \
   poke.cmd/dump-11.pk \
+  poke.cmd/dump-12.pk \
   poke.cmd/extract-1.pk \
   poke.cmd/file-mode.pk \
   poke.cmd/file-relative.pk \

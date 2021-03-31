@@ -1,5 +1,10 @@
 2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.cmd/dump-12.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ios-dev-zero.c: New file.
 	* libpoke/Makefile.am (libpoke_la_SOURCES): Add ios-dev-zero.c.
 	* libpoke/ios.c (ios_dev_ifs): Register ios_dev_zero.
