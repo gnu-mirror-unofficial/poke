@@ -7919,6 +7919,7 @@ au BufRead,BufNewFile *.pk set filetype=poke
 * mem command::			Opening and selecting memory IO spaces.
 * nbd command::			Opening and selecting NBD IO spaces.
 * proc command::                Opening and selecting process IO spaces.
+* sub command::                 Opening IO sub-spaces.
 * ios command::			Switching between IO spaces.
 * close command::		Closing IO spaces.
 * doc command::                 Online manual.
@@ -8075,6 +8076,22 @@ process.  The syntax is:
 where @var{pid} is a process identifier.  In most systems this is a
 number.
 
+@node sub command
+@section @code{.sub}
+@cindex @code{.sub}
+
+The @command{.sub} command opens a new IO sub-space.  The syntax is:
+
+@example
+.sub @var{ios}, @var{base}, @var{size}[, @var{name}]
+@end example
+
+@noindent
+where @var{ios} is the tag of some existing IO space, @var{base} and
+@var{size} are integers denoting the base and size of the range
+covered by the sub-space (in bytes) and @var{name} is an optional
+name.
+
 @node ios command
 @section @code{.ios}
 @cindex @code{.ios}
@@ -8102,7 +8119,10 @@ is:
 @end example
 
 @noindent
-where @var{#tag} is a tag identifying an open IO stream.
+where @var{#tag} is a tag identifying an open IO space.
+
+Note that closing an IO space with this dot-command implies closing
+any sub IO space having it as a base.
 
 @node doc command
 @section @code{.doc}

@@ -64,6 +64,46 @@ pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 }
 
 static int
+pk_cmd_sub (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  char *handler, *name;
+  int ios;
+  uint64_t base, size;
+
+  assert (argc == 4);
+
+  /* Collect and validate arguments.  */
+
+  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG);
+  ios = PK_CMD_ARG_TAG (argv[0]);
+
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_INT);
+  base = PK_CMD_ARG_INT (argv[1]);
+
+  assert (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_INT);
+  size = PK_CMD_ARG_INT (argv[2]);
+
+  assert (PK_CMD_ARG_TYPE (argv[3]) == PK_CMD_ARG_STR);
+  name = PK_CMD_ARG_STR (argv[3]);
+
+  /* Build the handler.  */
+  if (asprintf (&handler, "sub://%d/0x%lx/0x%lx/%s",
+                ios, base, size, name) == -1)
+    return 0;
+
+  /* Open the IOS.  */
+  if (pk_ios_open (poke_compiler, handler, 0, 1) == PK_IOS_NOID)
+    {
+      pk_printf (_("Error creating sub IOS %s\n"), handler);
+      free (handler);
+      return 0;
+    }
+
+  free (handler);
+  return 1;
+}
+
+static int
 pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
 #if defined HAVE_PROC
@@ -80,7 +120,7 @@ pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     return 0;
 
   /* Open the IOS.  */
-  if (pk_ios_open (poke_compiler, handler, 0, 1))
+  if (pk_ios_open (poke_compiler, handler, 0, 1) == PK_IOS_NOID)
     {
       pk_printf (_("Error creating proc IOS %s\n"), handler);
       free (handler);
@@ -139,20 +179,51 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static void
+close_if_sub_of (pk_ios io, void *data)
+{
+  const char *handler = pk_ios_handler (io);
+  int ios_id = (int) (intptr_t) data;
+
+  if (handler[0] == 's'
+      && handler[1] == 'u'
+      && handler[2] == 'b'
+      && handler[3] == ':'
+      && handler[4] == '/'
+      && handler[5] == '/')
+    {
+      int base_ios;
+      const char *p = handler + 6;
+      char *end;
+
+      /* Parse the base IOS number of this sub IOS.  Note that we can
+         assume the string has the right syntax.  */
+      base_ios = strtol (p, &end, 0);
+      assert (*p != '\0' && *end == '/');
+
+      if (base_ios == ios_id)
+        pk_ios_close (poke_compiler, io);
+    }
+}
+
 static int
 pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* close [#ID]  */
   pk_ios io;
   int changed;
+  int io_id;
 
   assert (argc == 1);
 
   if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
-    io = pk_ios_cur (poke_compiler);
+    {
+      io = pk_ios_cur (poke_compiler);
+      io_id = pk_ios_get_id (io);
+    }
   else
     {
-      int io_id = PK_CMD_ARG_TAG (argv[0]);
+      io_id = PK_CMD_ARG_TAG (argv[0]);
 
       io = pk_ios_search_by_id (poke_compiler, io_id);
       if (io == NULL)
@@ -176,6 +247,10 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
                        pk_ios_handler (pk_ios_cur (poke_compiler)));
         }
     }
+
+  /* All right, now we want to close all the open IOS which are subs
+     of the space we just closed.  */
+  pk_ios_map (poke_compiler, close_if_sub_of, (void *) (intptr_t) io_id);
 
   return 1;
 }
@@ -419,6 +494,9 @@ const struct pk_cmd file_cmd =
 
 const struct pk_cmd proc_cmd =
   {"proc", "i", "", 0, NULL, pk_cmd_proc, "proc PID", NULL};
+
+const struct pk_cmd sub_cmd =
+  {"sub", "t,i,i,?s", "", 0, NULL, pk_cmd_sub, "sub IOS, BASE, SIZE, [NAME]", NULL};
 
 const struct pk_cmd mem_cmd =
   {"mem", "s", "", 0, NULL, pk_cmd_mem, "mem NAME", NULL};

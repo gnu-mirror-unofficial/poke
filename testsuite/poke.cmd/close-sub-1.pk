@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+/* { dg-command {var mem1 = open ("*foo*")} } */
+/* { dg-command {var mem2 = open ("*bar*")} } */
+/* { dg-command {var sub1 = opensub (mem1, 0#B, 10#B, "sub1")} } */
+/* { dg-command {var sub2 = opensub (mem1, 0#B, 20#B, "sub2")} } */
+/* { dg-command {var sub3 = opensub (mem2, 0#B, 10#B, "sub3")} } */
+/* { dg-command {.close #0} } */
+/* { dg-command {.info ios} } */
+/* { dg-output ".*Id.*" } */
+/* { dg-output "\n.*sub3.*" } */
+/* { dg-output "\n.*\\*bar\\*.*" } */

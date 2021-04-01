@@ -1,3 +1,18 @@
+2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-ios.c (pk_cmd_sub): New function.
+	(sub_cmd): Define.
+	(close_if_sub_of): New function.
+	(pk_cmd_close): Close sub-IOS automatically.
+	* poke/pk-cmd.c (dot_cmds): Register sub_cmd.
+	* libpoke/ios.c (ios_map): Allow callbacks to remove the given
+	ios.
+	* testsuite/poke.cmd/close-sub-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+	* doc/poke.texi (close command): Note how .closing an IO space
+	also closes sub-spaces.
+	(sub command): New section.
+
 2021-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-ios.c (pk_cmd_proc): New function.

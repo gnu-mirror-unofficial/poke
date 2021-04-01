@@ -40,6 +40,7 @@
 extern const struct pk_cmd ios_cmd; /* pk-cmd-ios.c */
 extern const struct pk_cmd file_cmd; /* pk-cmd-ios.c  */
 extern const struct pk_cmd proc_cmd; /* pk-cmd-ios.c */
+extern const struct pk_cmd sub_cmd;  /* pk-cmd-sub.c */
 extern const struct pk_cmd mem_cmd; /* pk-cmd-ios.c */
 #ifdef HAVE_LIBNBD
 extern const struct pk_cmd nbd_cmd; /* pk-cmd-ios.c */
@@ -66,6 +67,7 @@ static const struct pk_cmd *dot_cmds[] =
     &ios_cmd,
     &file_cmd,
     &proc_cmd,
+    &sub_cmd,
     &exit_cmd,
     &quit_cmd,
     &version_cmd,

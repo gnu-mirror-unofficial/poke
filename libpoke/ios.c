@@ -327,9 +327,14 @@ void
 ios_map (ios_map_fn cb, void *data)
 {
   ios io;
+  ios io_next;
 
-  for (io = io_list; io; io = io->next)
-    (*cb) (io, data);
+  for (io = io_list; io; io = io_next)
+    {
+      /* Note that the handler may close IO.  */
+      io_next = io->next;
+      (*cb) (io, data);
+    }
 }
 
 /* Set all except the lowest SIGNIFICANT_BITS of VALUE to zero.  */

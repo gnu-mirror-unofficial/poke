@@ -139,7 +139,7 @@ ios_dev_sub_open (const char *handler, uint64_t flags, int *error)
     base_ios = ios_search_by_id (sub->base_ios_id);
     if (base_ios == NULL)
       goto error;
-    
+
     /* The interval [base,base+size) should be in range in the base
        IOS. */
     base_ios_size
@@ -226,7 +226,7 @@ ios_dev_sub_pwrite (void *iod, const void *buf, size_t count,
   /* Sub-range IOS dot accept writes past the end of the IOS.  */
   if (offset >= sub->size)
     return IOD_EOF;
-  
+
   return ios_get_dev_if (ios)->pwrite (ios_get_dev (ios),
                                        buf, count,
                                        sub->base + offset);
