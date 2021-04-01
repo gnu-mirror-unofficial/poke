@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var mem = open ("*foo*")} } */
+/* { dg-command {var sub = opensub (mem, 0#B, 4#B, "lala")} } */
+/* { dg-command {byte @ sub : 0#B = 0xff} } */
+/* { dg-command {byte @ mem : 0#B} } */
+/* { dg-output "0xffUB" } */

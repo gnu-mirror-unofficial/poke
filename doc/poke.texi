@@ -11559,6 +11559,7 @@ memory of some process.
 
 @menu
 * open::			Creating IO spaces.
+* opensub::                     IO sub spaces.
 * close::			Destroying IO spaces.
 * flush::			Flushing IO spaces.
 * get_ios::			Getting the current IO space.
@@ -11630,6 +11631,37 @@ will identify the just opened IOS until it gets closed.
 
 If there is a problem opening the specified IO device then @code{open}
 will raise an @code{E_no_ios} exception.
+
+@node opensub
+@subsubsection @code{opensub}
+@cindex @code{opensub}
+
+The @code{opensub} standard function allows you to create IO spaces
+that show a sub-region of some other IO space.  The prototype is:
+
+@example
+fun opensub = (int<32> @var{ios},
+               offset<uint<64>,B> @var{base}, offset<uint<64>,B> @var{size},
+               string @var{name} = "",
+               uint<64> @var{flags} = 0) int<32>
+@end example
+
+@noindent
+where @var{ios} is the ID of the base IOS, @var{base} is the offset in
+@var{ios} where the sub-range starts and @var{size} is the size of the
+range.
+
+The argument @var{name} is a descriptive name of the contents of the
+range, and it is empty by default.
+
+The argument @var{flags} is an ORed value of @code{IOS_F_*} flags.  If
+no explicit @var{flags} are specified then the sub space inherits the
+flags of the underlying base IOS.  If explicit @var{flags} are
+provided and they contradict the flags of the underlying IOS then
+@code{E_ios_flags} is raised.
+
+Trying to access a sub space whose base IOS has been closed results in
+a @code{E_io} exception.
 
 @node close
 @subsubsection @code{close}

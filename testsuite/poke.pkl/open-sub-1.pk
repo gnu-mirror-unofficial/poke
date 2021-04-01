@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command { .mem foo } } */
+/* { dg-command {try open ("sub://0/0x10/0x4/lala", IOS_F_CREATE); catch if E_io_flags { print "caught\n"; } } }*/
+/* { dg-output "caught" } */

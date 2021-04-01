@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+/* Sub-range IOS are allowed with empty names.  */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var mem = open ("*foo*")} } */
+/* { dg-command {var sub = opensub (mem, 10#B, 4#B, "")} } */
+/* { dg-command {close (sub)} } */

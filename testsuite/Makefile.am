@@ -1322,6 +1322,24 @@ EXTRA_DIST = \
   poke.pkl/open-1.pk \
   poke.pkl/open-2.pk \
   poke.pkl/open-3.pk \
+  poke.pkl/open-sub-1.pk \
+  poke.pkl/open-sub-10.pk \
+  poke.pkl/open-sub-11.pk \
+  poke.pkl/open-sub-12.pk \
+  poke.pkl/open-sub-13.pk \
+  poke.pkl/open-sub-14.pk \
+  poke.pkl/open-sub-15.pk \
+  poke.pkl/open-sub-16.pk \
+  poke.pkl/open-sub-17.pk \
+  poke.pkl/open-sub-18.pk \
+  poke.pkl/open-sub-2.pk \
+  poke.pkl/open-sub-3.pk \
+  poke.pkl/open-sub-4.pk \
+  poke.pkl/open-sub-5.pk \
+  poke.pkl/open-sub-6.pk \
+  poke.pkl/open-sub-7.pk \
+  poke.pkl/open-sub-8.pk \
+  poke.pkl/open-sub-9.pk \
   poke.pkl/optcond-1.pk \
   poke.pkl/optcond-1-diag.pk \
   poke.pkl/optcond-2.pk \

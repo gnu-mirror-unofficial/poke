@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {try open ("sub://666/0x10/0x4/lala"); catch if E_io { print "caught\n"; } } } */
+/* { dg-output "caught" } */

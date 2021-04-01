@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var mem = open ("*foo*")} } */
+/* { dg-command {var sub = opensub (mem, 10#B, 4#B, "lala", IOS_F_WRITE)} } */
+/* { dg-command {try byte @ sub : 2#B; catch if E_perm { print "caught\n"; } } } */
+/* { dg-output "caught" } */

@@ -115,3 +115,9 @@ struct ios_dev_if
         (new_handler) = NULL;                                           \
     }                                                                   \
   while (0)
+
+/* A few functions that are defined in ios.c and are intended to be
+   used by IOD implementations.  */
+
+extern void *ios_get_dev (ios ios);
+extern struct ios_dev_if *ios_get_dev_if (ios ios);

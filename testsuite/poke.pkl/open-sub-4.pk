@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* BASE out of range.  */
+
+/* { dg-command {.mem foo} } */
+/* { dg-command {try open ("sub://0/0x5000/0x10/lala"); catch if E_io { print "caught\n"; } } } */
+/* { dg-output "caught" } */

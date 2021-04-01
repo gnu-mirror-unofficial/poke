@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var mem = open ("*foo*")} } */
+/* { dg-command {var sub = opensub (mem, 0#B, iosize, "lala")} } */
+/* { dg-command {iosize (mem) == iosize (sub)} } */
+/* { dg-output "0x1" } */

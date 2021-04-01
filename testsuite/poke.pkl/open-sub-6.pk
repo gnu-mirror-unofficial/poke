@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {.mem foo} } */
+/* { dg-command {var sub = open ("sub://0/0x0/0x1000/lala");} } */
+/* { dg-command {iosize (sub)/#B} } */
+/* { dg-output "0x1000UL" } */

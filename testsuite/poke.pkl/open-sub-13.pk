@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+/* Accessing a sub whose base IOS has been closed raises E_io.  */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var mem = open ("*foo*")} } */
+/* { dg-command {var sub = opensub (mem, 10#B, 4#B, "")} } */
+/* { dg-command {close (mem)} } */
+/* { dg-command {try byte @ sub : 0#B; catch if E_io { print "caught\n"; } } } */

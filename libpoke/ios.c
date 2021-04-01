@@ -97,6 +97,7 @@ extern struct ios_dev_if ios_dev_stream; /* ios-dev-stream.c */
 #ifdef HAVE_LIBNBD
 extern struct ios_dev_if ios_dev_nbd; /* ios-dev-nbd.c */
 #endif
+extern struct ios_dev_if ios_dev_sub; /* ios-dev-sub.c */
 
 static struct ios_dev_if *ios_dev_ifs[] =
   {
@@ -106,6 +107,7 @@ static struct ios_dev_if *ios_dev_ifs[] =
 #ifdef HAVE_LIBNBD
    &ios_dev_nbd,
 #endif
+   &ios_dev_sub,
    /* File must be last */
    &ios_dev_file,
    NULL,
@@ -1486,6 +1488,10 @@ ios_write_int (ios io, ios_off offset, int flags,
                enum ios_nenc nenc,
                int64_t value)
 {
+  /* The IOS should be writable.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_WRITE))
+    return IOS_EPERM;
+
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
@@ -1507,6 +1513,10 @@ ios_write_uint (ios io, ios_off offset, int flags,
                 enum ios_endian endian,
                 uint64_t value)
 {
+  /* The IOS should be writable.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_WRITE))
+    return IOS_EPERM;
+
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
 
@@ -1523,6 +1533,10 @@ ios_write_string (ios io, ios_off offset, int flags,
                   const char *value)
 {
   const char *p;
+
+  /* The IOS should be writable.  */
+  if (!(io->dev_if->get_flags (io->dev) & IOS_F_WRITE))
+    return IOS_EPERM;
 
   /* Apply the IOS bias.  */
   offset += ios_get_bias (io);
@@ -1576,4 +1590,16 @@ int
 ios_flush (ios io, ios_off offset)
 {
   return io->dev_if->flush (io->dev, offset / 8);
+}
+
+void *
+ios_get_dev (ios ios)
+{
+  return ios->dev;
+}
+
+struct ios_dev_if *
+ios_get_dev_if (ios ios)
+{
+  return ios->dev_if;
 }

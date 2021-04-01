@@ -1,5 +1,38 @@
 2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ios-dev.h: Prototypes for ios_get_dev and
+	ios_get_dev_if.
+	* libpoke/ios.c (ios_get_dev): New function.
+	(ios_get_dev_if): Likewise.
+	(ios_dev_ifs): Register ios_dev_sub.
+	(ios_write_int): Return IOS_EPERM if the IOS is not writable.
+	(ios_write_uint): Likewise.
+	(ios_write_string): Likewise.
+	* libpoke/ios-dev-sub.c: New file.
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add ios-dev-sub.c.
+	* libpoke/std.pk (opensub): New function.
+	* testsuite/poke.pkl/open-sub-1.pk: New test.
+	* testsuite/poke.pkl/open-sub-2.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-3.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-4.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-5.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-6.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-7.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-8.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-9.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-10.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-11.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-12.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-13.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-14.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-15.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-16.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-17.pk: Likewise.
+	* testsuite/poke.pkl/open-sub-18.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/std.pk (ltos): Support an optional `base' argument.
 	* testsuite/poke.std/std-test.pk: Add tests for other bases in
 	ltos.

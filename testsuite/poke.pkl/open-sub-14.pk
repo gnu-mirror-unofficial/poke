@@ -1,0 +1,14 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} foo } */
+
+/* Several subrange IOS with the same base IOS.  */
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var file = open ("foo")} } */
+/* { dg-command {var sub1 = opensub (file, 4#B, 6#B, "")} } */
+/* { dg-command {var sub2 = opensub (file, 0#B, 11#B, "")} } */
+/* { dg-command {byte @ sub2 : 5#B = 0xff} } */
+/* { dg-command {byte @ sub1 : 1#B} } */
+/* { dg-output "0xffUB" } */
+/* { dg-command {byte @ file : 5#B} } */
+/* { dg-output "\n0xffUB" } */
