@@ -18,7 +18,11 @@
 
 #include <config.h>
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <regex.h>
+#include <inttypes.h>
+#include <assert.h>
 
 #include "poke.h"
 #include "pk-ios.h"
@@ -126,4 +130,102 @@ pk_open_file (const char *handler, int set_cur_p, int create_p)
   }
 
   return ios_id;
+}
+
+void
+pk_open_proc_maps (int ios_id, uint64_t pid, int all_p)
+{
+#if defined HAVE_PROC
+  char *mapfile_name = NULL;
+  FILE *mapfile = NULL;
+
+  /* Open the /proc/PID/maps file.  */
+  if (asprintf (&mapfile_name, "/proc/%" PRIi64 "/maps", pid)
+      == -1)
+    goto exit;
+
+  mapfile = fopen (mapfile_name, "r");
+  if (mapfile == NULL)
+    goto exit;
+
+  /* Each line in mapfile describes a mapped region in the process'
+     virtual memory space.
+
+     Create a sub IOS for each.  ALL_P determines whether to include
+     mapped files, which we recognize as entries with names starting
+     with /.
+
+     If we can't figure out the format of a line, it is simply
+     ignored.  */
+  {
+    char *line = NULL;
+    size_t linesize = 0;
+
+    while (getline (&line, &linesize, mapfile) != -1)
+      {
+        char *p, *end, *map_name;
+        uint64_t range_begin, range_end;
+        uint64_t flags = 0;
+        char *handler;
+
+        p = line;
+
+        /* Parse the begin of the range.  */
+        range_begin = strtoull (p, &end, 16);
+        if (*p == '\0' || *end != '-')
+          continue;
+        p = end + 1;
+
+        /* Parse the end of the range.  */
+        range_end = strtoull (p, &end, 16);
+        if (*p == '\0' || *end != ' ')
+          continue;
+        p = end + 1;
+
+        /* Parse the map permissions and determine the flags.  */
+        if (*p == 'r')
+          flags |= PK_IOS_F_READ;
+        else if (*p != '-')
+          continue;
+        p++;
+
+        if (*p == 'w')
+          flags |= PK_IOS_F_WRITE;
+        else if (*p != '-')
+          continue;
+        p += 3;
+
+        /* Get the map name from the end of the file.  */
+        p = line + linesize - 1;
+        while (*p != ' ' && *p != '\t')
+          --p;
+        map_name = p + 1;
+        map_name[strlen (map_name) - 1] = '\0'; /* Remove newline. */
+
+        if (all_p || map_name[0] != '/')
+          {
+            /* Ok create the sub IOS.  */
+            if (asprintf (&handler, "sub://%d/0x%lx/0x%lx/%s",
+                          ios_id,
+                          range_begin, range_end - range_begin,
+                          map_name) == -1)
+              assert (0);
+
+            if (pk_ios_open (poke_compiler, handler, flags, 0) == PK_IOS_NOID)
+              continue;
+
+            free (handler);
+          }
+
+        free (line);
+        line = NULL;
+        linesize = 0;
+      }
+  }
+
+ exit:
+  free (mapfile_name);
+  if (mapfile != NULL)
+    fclose (mapfile);
+#endif
 }

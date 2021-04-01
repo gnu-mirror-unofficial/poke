@@ -103,12 +103,17 @@ pk_cmd_sub (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+#define PK_PROC_UFLAGS "mM"
+#define PK_PROC_F_MAPS     0x1
+#define PK_PROC_F_MAPS_ALL 0x2
+
 static int
 pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
 #if defined HAVE_PROC
   uint64_t pid;
   char *handler;
+  int ios_id;
 
   /* Get the PID of the process to open.  */
   assert (argc == 1);
@@ -120,14 +125,20 @@ pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     return 0;
 
   /* Open the IOS.  */
-  if (pk_ios_open (poke_compiler, handler, 0, 1) == PK_IOS_NOID)
+  ios_id = pk_ios_open (poke_compiler, handler, 0, 1);
+  if (ios_id == PK_IOS_NOID)
     {
       pk_printf (_("Error creating proc IOS %s\n"), handler);
       free (handler);
       return 0;
     }
-
   free (handler);
+
+  /* Allright, now open sub spaces for the process' maps, if
+     requested.  */
+  if (uflags & PK_PROC_F_MAPS || uflags & PK_PROC_F_MAPS_ALL)
+    pk_open_proc_maps (ios_id, pid, uflags & PK_PROC_F_MAPS_ALL);
+
   return 1;
 #else
   pk_term_class ("error");
@@ -211,7 +222,6 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* close [#ID]  */
   pk_ios io;
-  int changed;
   int io_id;
 
   assert (argc == 1);
@@ -233,20 +243,7 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
     }
 
-  changed = (io == pk_ios_cur (poke_compiler));
   pk_ios_close (poke_compiler, io);
-
-  if (changed)
-    {
-      if (pk_ios_cur (poke_compiler) == NULL)
-        puts (_("No more IO spaces."));
-      else
-        {
-          if (poke_interactive_p && !poke_quiet_p)
-            pk_printf (_("The current IOS is now `%s'.\n"),
-                       pk_ios_handler (pk_ios_cur (poke_compiler)));
-        }
-    }
 
   /* All right, now we want to close all the open IOS which are subs
      of the space we just closed.  */
@@ -493,7 +490,7 @@ const struct pk_cmd file_cmd =
    rl_filename_completion_function};
 
 const struct pk_cmd proc_cmd =
-  {"proc", "i", "", 0, NULL, pk_cmd_proc, "proc PID", NULL};
+  {"proc", "i", PK_PROC_UFLAGS, 0, NULL, pk_cmd_proc, "proc PID", NULL};
 
 const struct pk_cmd sub_cmd =
   {"sub", "t,i,i,?s", "", 0, NULL, pk_cmd_sub, "sub IOS, BASE, SIZE, [NAME]", NULL};

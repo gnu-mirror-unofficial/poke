@@ -1,5 +1,13 @@
 2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-ios.c: Define.
+	(PK_PROC_F_MAPS_ALL): Likewise.
+	(PK_PROC_F_MAPS): Likewise.
+	* poke/pk-ios.h: Prototype for pk_open_proc_maps.
+	* poke/pk-ios.c (pk_open_proc_maps): New function.
+
+2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-ios.c (pk_cmd_sub): New function.
 	(sub_cmd): Define.
 	(close_if_sub_of): New function.

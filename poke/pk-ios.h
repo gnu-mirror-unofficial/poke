@@ -37,4 +37,13 @@
 
 int pk_open_file (const char *handler, int set_cur_p, int create_p);
 
+/* Open sub IO spaces for the given process PID maps, i.e. mapped
+   regions in the process' virtual memory.  If the operation can't be
+   performed by some reason, do nothing.
+
+   If ALL_P is set then include all known ranges.  Otherwise be
+   conservative.  */
+
+void pk_open_proc_maps (int ios_id, uint64_t pid, int all_p);
+
 #endif /* ! PK_IOS_H */
