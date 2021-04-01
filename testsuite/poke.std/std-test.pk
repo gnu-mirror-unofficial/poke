@@ -71,7 +71,10 @@ var tests = [
         assert (ltos (0) == "0");
         assert (ltos (10) == "10");
         assert (ltos (-1) == "-1");
-        assert (ltos (-10) == "-10");
+        assert (ltos (-10, 10) == "-10");
+        assert (ltos (15, 16) == "f");
+        assert (ltos (-15, 16) == "-f");
+        assert (ltos (123456, 8) == "361100");
       }
   },
   PkTest {

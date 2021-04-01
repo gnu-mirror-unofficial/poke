@@ -130,10 +130,14 @@ fun atoi = (string s, int b = 10) long:
     return result;
   }
 
-fun ltos = (long i) string:
+fun ltos = (long i, uint base = 10) string:
 {
+  var chars = "0123456789abcdef";
   var s = "";
   var o = i;
+
+  if (base > 16)
+    raise E_inval;
 
   if (i < 0)
     i = -i;
@@ -141,8 +145,8 @@ fun ltos = (long i) string:
     return "0";
   while (i)
   {
-    s = ('0' + (i % 10) as uint<8>) as string + s;
-    i = i / 10;
+    s = chars[i % base] as string + s;
+    i = i / base;
   }
 
   if (o < 0)

@@ -1,3 +1,10 @@
+2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/std.pk (ltos): Support an optional `base' argument.
+	* testsuite/poke.std/std-test.pk: Add tests for other bases in
+	ltos.
+	* doc/poke.texi (ltos): Document the `base' argument.
+
 2021-03-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-dump.pk (dump): Handle E_ios when peeking bytes.

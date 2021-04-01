@@ -13054,12 +13054,16 @@ after the parsed integer.  Thus, this works:
 @cindex @code{ltos}
 
 The @code{ltos} standard function converts a given long integer into
-its printed representation in base 10.  It has the following
+its printed representation in some given base.  It has the following
 prototype:
 
 @example
-fun ltos = (long i) string:
+fun ltos = (long @var{i}, uint @var{base} = 10) string:
 @end example
+
+@noindent
+where @var{i} is the number for which to calculate the printed
+representation, and @var{base} is a number between 0 and 16.
 
 @node Array Functions
 @section Array Functions
