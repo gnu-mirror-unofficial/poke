@@ -156,9 +156,9 @@ fun argp_parse = (string program,
                }
                else
                opt.handler ("");
-           }
-       }
-   }
-}
+            }
+        }
+    }
+  }
   return rest;
 }
