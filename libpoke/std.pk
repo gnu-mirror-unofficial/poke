@@ -352,7 +352,6 @@ fun opensub = (int<32> ios,
                string name = "",
                uint<64> flags = 0) int<32>:
 {
-  /* XXX we want the handler to have hexadecimal base and size.  */
   var handler = ("sub://"
                  + ltos (ios) + "/"
                  + "0x" + ltos (base/#B, 16) + "/"
