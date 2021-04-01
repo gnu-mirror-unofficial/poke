@@ -223,7 +223,7 @@ void ios_map (ios_map_fn cb, void *data);
 
 /* **************** IOS properties************************  */
 
-/* Return the size of the given IO, in bits.  */
+/* Return the size of the given IO, in bytes.  */
 
 uint64_t ios_size (ios io);
 

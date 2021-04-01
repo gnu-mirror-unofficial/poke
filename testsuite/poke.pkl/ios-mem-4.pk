@@ -6,10 +6,10 @@
 /* { dg-command { .set obase 10 } } */
 /* { dg-command { var buffer = open ("*foo*") } } */
 /* { dg-command { iosize (0) } } */
-/* { dg-output "32768UL#b" } */
+/* { dg-output "4096UL#B" } */
 /* { dg-command { byte @ 4096#B = 1 } } */
 /* { dg-command { iosize (0) } } */
-/* { dg-output "\n65536UL#b" } */
+/* { dg-output "\n8192UL#B" } */
 /* { dg-command { int @ 4096#B } } */
 /* { dg-output "\n16777216" } */
 /* { dg-command { close (buffer) } } */

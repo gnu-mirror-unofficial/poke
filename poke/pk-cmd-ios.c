@@ -285,7 +285,7 @@ print_info_ios (pk_ios io, void *data)
   {
     char *size;
 
-    asprintf (&size, "0x%08jx#B", pk_ios_size (io) / 8);
+    asprintf (&size, "0x%08jx#B", pk_ios_size (io));
     pk_table_column_cl (table, size, "offset");
     free (size);
   }

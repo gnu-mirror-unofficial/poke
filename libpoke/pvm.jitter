@@ -1514,7 +1514,7 @@ instruction iosize ()
       PVM_RAISE_DFL (PVM_E_NO_IOS);
 
     JITTER_PUSH_STACK (pvm_make_offset (PVM_MAKE_ULONG (ios_size (io), 64),
-                                        PVM_MAKE_ULONG (1, 64)));
+                                        PVM_MAKE_ULONG (8, 64)));
   end
 end
 

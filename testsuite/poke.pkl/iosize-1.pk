@@ -6,6 +6,6 @@
 /* { dg-command { var foo = open ("foo.data") } } */
 /* { dg-command { var bar = open ("bar.data") } } */
 /* { dg-command { iosize (foo) } } */
-/* { dg-output "24UL#b" } */
+/* { dg-output "3UL#B" } */
 /* { dg-command { iosize (bar) } } */
-/* { dg-output "\n64UL#b" } */
+/* { dg-output "\n8UL#B" } */

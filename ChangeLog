@@ -1,5 +1,16 @@
 2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: pk_ios_size now reports size in bytes.
+	* libpoke/ios.h: Likewise for ios_size.
+	* libpoke/ios.c (ios_size): Adjust accordingly.
+	* libpoke/pvm.jitter (iosize): Likewise.
+	* poke/pk-cmd-ios.c (print_info_ios): Likewise.
+	* libpoke/pkl-rt.pk (iosize): Likewise.
+	* testsuite/poke.pkl/ios-mem-4.pk: Adjust accordingly.
+	* testsuite/poke.pkl/iosize-1.pk: Likewise.
+
+2021-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-ios.c: Define.
 	(PK_PROC_F_MAPS_ALL): Likewise.
 	(PK_PROC_F_MAPS): Likewise.

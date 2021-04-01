@@ -310,7 +310,7 @@ int pk_ios_get_id (pk_ios ios) LIBPOKE_API;
 
 char *pk_ios_get_dev_if_name (pk_ios ios) LIBPOKE_API;
 
-/* Return the size of the given IO space, in bits.  */
+/* Return the size of the given IO space, in bytes.  */
 
 uint64_t pk_ios_size (pk_ios ios) LIBPOKE_API;
 
