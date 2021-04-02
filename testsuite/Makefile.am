@@ -74,6 +74,8 @@ EXTRA_DIST = \
   poke.cmd/dump-11.pk \
   poke.cmd/dump-12.pk \
   poke.cmd/extract-1.pk \
+  poke.cmd/file-bias-1.pk \
+  poke.cmd/file-bias-2.pk \
   poke.cmd/file-mode.pk \
   poke.cmd/file-relative.pk \
   poke.cmd/ios-1.pk \
@@ -1141,6 +1143,15 @@ EXTRA_DIST = \
   poke.pkl/integers-7.pk \
   poke.pkl/integers-diag-1.pk \
   poke.pkl/integers-diag-2.pk \
+  poke.pkl/iobias-1.pk \
+  poke.pkl/iobias-2.pk \
+  poke.pkl/iosetbias-1.pk \
+  poke.pkl/iosetbias-2.pk \
+  poke.pkl/iosetbias-3.pk \
+  poke.pkl/iosetbias-4.pk \
+  poke.pkl/iosetbias-5.pk \
+  poke.pkl/iosetbias-6.pk \
+  poke.pkl/iosetbias-7.pk\
   poke.pkl/ior-integers-1.pk \
   poke.pkl/ior-integers-2.pk \
   poke.pkl/ior-int-struct-1.pk \

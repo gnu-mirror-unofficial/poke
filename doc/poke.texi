@@ -993,8 +993,8 @@ about:
 
 @example
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-* #0	FILE	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #0	FILE	rw	0x00000000#B	0x00000398#B	./foo.o
 @end example
 
 The command @command{.info ios} gives us information about all the IO
@@ -1018,9 +1018,9 @@ clearly, let's open another file:
 (poke) .file bar.o
 The current IOS is now `./bar.o'.
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-* #1	FILE	rw	0x00000398#B	./bar.o
-  #0	FILE	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #1	FILE	rw	0x00000000#B	0x00000398#B	./bar.o
+  #0	FILE	rw	0x00000000#B	0x00000398#B	./foo.o
 @end example
 
 Ah, there we have both @file{foo.o} and @file{bar.o}.  Now the current
@@ -1034,9 +1034,9 @@ an IO space tag as an argument:
 (poke) .ios #0
 The current IOS is now `./foo.o'.
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-  #1	FILE	rw	0x00000398#B	./bar.o
-* #0	FILE	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Bias		Size		Name
+  #1	FILE	rw	0x00000000#B	0x00000398#B	./bar.o
+* #0	FILE	rw	0x00000000#B	0x00000398#B	./foo.o
 @end example
 
 @noindent
@@ -1046,8 +1046,8 @@ We are back to @file{foo.o}.  Since we are not really interested in
 @example
 (poke) .close #1
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-* #0	FILE	rw	0x00000398#B	./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #0	FILE	rw	0x00000000#B	0x00000398#B	./foo.o
 @end example
 
 @noindent
@@ -2493,8 +2493,8 @@ that opened a file as an IO space?
 (poke) .file foo.o
 The current IOS is now `./foo.o'.
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-* #0	FILE	rw	0x000004c8#B	./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #0	FILE	rw	0x00000000#B	0x000004c8#B	./foo.o
 @end example
 
 @noindent
@@ -2505,9 +2505,9 @@ Memory buffers can be created using a similar dot-command,
 (poke) .mem foo
 The current IOS is now `*foo*'.
 (poke) .info ios
-  Id	Type	Mode    Size            Name
-* #1	MEMORY		0x00001000#B    *foo*
-  #0	FILE	rw	0x000004c8#B    ./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #1	MEMORY		0x00000000#B	0x00001000#B    *foo*
+  #0	FILE	rw	0x00000000#B	0x000004c8#B    ./foo.o
 @end example
 
 Note how the name of the buffer is built by prepending and appending
@@ -2630,9 +2630,9 @@ we can continue our work tomorrow.  This is how we would do that:
 
 @example
 (poke) .info ios
-  Id    Type	Mode    Size            Name
-* #1	MEMORY		0x00001000#B    *scratch*
-  #0	FILE	rw	0x000f4241#B    ./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #1	MEMORY		0x00000000#B	0x00001000#B    *scratch*
+  #0	FILE	rw	0x00000000#B	0x000f4241#B    ./foo.o
 (poke) save :from 0#B :size iosize (1) :file "scratch.dat"
 @end example
 
@@ -3673,9 +3673,9 @@ $ poke p.sbm
 (poke) .mem scratch
 The current IOS is now `*scratch*'.
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-* #1	MEMORY		0x00001000#B	*scratch*
-  #0	FILE	rw	0x0000006e#B	./p.sbm
+  Id	Type	Mode	Bias		Size		Name
+* #1	MEMORY		0x00000000#B	0x00001000#B	*scratch*
+  #0	FILE	rw	0x00000000#B	0x0000006e#B	./p.sbm
 (poke) copy :from_ios 0 :from 0#B :to 0#B :size iosize (0)
 (poke) dump
 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
@@ -6077,8 +6077,8 @@ Thats it, @code{ehdr} is mapped at offset zero byte in the IO space
 
 @example
 (poke) .info ios
-  Id   Type   Mode   Size           Name
-* #0   FILE   rw     0x000004c8#B   ./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #0	FILE	rw	0x00000000#B	0x000004c8#B   ./foo.o
 @end example
 
 Now that we have the ELF header, we may use it to get access to the
@@ -6149,9 +6149,9 @@ ELF file: @code{bar.o}.  We would start by opening the file:
 @example
 (poke) .file bar.o
 (poke) .info ios
-  Id   Type   Mode   Size           Name
-* #1   FILE   rw     0x000004c8#B   ./bar.o
-  #0   FILE   rw     0x000004c8#B   ./foo.o
+  Id	Type	Mode	Bias		Size		Name
+* #1	FILE	rw	0x00000000#B	0x000004c8#B	./bar.o
+  #0	FILE	rw	0x00000000#B	0x000004c8#B	./foo.o
 @end example
 
 Now that @code{bar.o} is the current IO space, we can map its header.
@@ -8185,9 +8185,9 @@ Display a list of open files.
 
 @example
 (poke) .info ios
-Id	Type	Mode	Size		Name
-  #1	FILE	r	0x0000df78#B	foo.o
-* #0	FILE	rw	0x00000022#B	foo.bson
+  Id	Type	Mode	Bias		Size		Name
+  #1	FILE	r	0x00000000#B	0x0000df78#B	foo.o
+* #0	FILE	rw	0x00000000#B	0x00000022#B	foo.bson
 @end example
 
 @cindex IO space
@@ -8201,9 +8201,9 @@ switch to it as the new current IO space:
 (poke) .ios #1
 The current file is now `foo.o'.
 (poke) .info ios
-  Id	Type	Mode	Size		Name
-* #1	FILE	r	0x0000df78#B	foo.o
-  #0	FILE	rw	0x00000022#B	foo.bson
+  Id	Type	Mode	Bias		Size		Name
+* #1	FILE	r	0x00000000#B	0x0000df78#B	foo.o
+  #0	FILE	rw	0x00000000#B	0x00000022#B	foo.bson
 @end example
 
 @item .info variables

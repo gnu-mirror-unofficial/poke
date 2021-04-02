@@ -1,0 +1,9 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x61 0x62 0x63 0x64 0x65} foo.data } */
+
+/* { dg-command { .set obase 10 } } */
+/* { dg-command { var foo = open ("foo.data") } } */
+/* { dg-command { iosetbias (13#B) } } */
+/* { dg-command { iosetbias } } */
+/* { dg-command { iobias } } */
+/* { dg-output "0UL#B" } */

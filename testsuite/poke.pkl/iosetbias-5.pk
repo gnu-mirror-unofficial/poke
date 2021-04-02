@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x61 0x62 0x63 0x64 0x65} foo.data } */
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian big } } */
+/* { dg-command { var foo = open ("foo.data") } } */
+/* { dg-command { iosetbias (4#b) } } */
+/* { dg-command { iobias (foo)} } */
+/* { dg-output "4UL#b" } */
+/* { dg-command { byte @ 0x0#B } } */
+/* { dg-output "\n0x16UB" } */

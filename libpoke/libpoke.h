@@ -314,6 +314,10 @@ char *pk_ios_get_dev_if_name (pk_ios ios) LIBPOKE_API;
 
 uint64_t pk_ios_size (pk_ios ios) LIBPOKE_API;
 
+/* Return the bias of the given IO space, in bits.  */
+
+uint64_t pk_ios_get_bias (pk_ios ios) LIBPOKE_API;
+
 /* Return the flags which are active in a given IOS.  */
 
 #define PK_IOS_F_READ     1

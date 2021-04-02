@@ -524,6 +524,12 @@ pk_ios_size (pk_ios io)
   return ios_size ((ios) io);
 }
 
+uint64_t
+pk_ios_get_bias (pk_ios io)
+{
+  return ios_get_bias ((ios) io);
+}
+
 struct ios_map_fn_payload
 {
   pk_ios_map_fn cb;

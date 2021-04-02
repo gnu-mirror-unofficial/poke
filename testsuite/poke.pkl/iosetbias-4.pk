@@ -1,0 +1,15 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x61 0x62 0x63 0x64 0x65} foo.data } */
+/* { dg-data {c*} {0x61 0x62 0x63 0x64 0x65} bar.data } */
+
+/* { dg-command { .set obase 10 } } */
+/* { dg-command { var foo = open ("foo.data") } } */
+/* { dg-command { var bar = open ("bar.data") } } */
+/* { dg-command { iosetbias (42#b, bar) } } */
+/* { dg-command { iobias (foo)} } */
+/* { dg-output "0UL#B" } */
+/* { dg-command { iosetbias (5#B, foo) } } */
+/* { dg-command { iobias (foo) } } */
+/* { dg-output "\n5UL#B" } */
+/* { dg-command { iobias (bar) } } */
+/* { dg-output "\n42UL#b" } */

@@ -1,0 +1,13 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x61 0x62 0x63 0x64 0x65} foo.data } */
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { .set endian big } } */
+/* { dg-command { var foo = open ("foo.data") } } */
+/* { dg-command { iosetbias (9#b) } } */
+/* { dg-command { iobias (foo)} } */
+/* { dg-output "9UL#b" } */
+/* { dg-command { byte @ 0x7#b = 0xff } } */
+/* { dg-command { iosetbias } } */
+/* { dg-command { byte @ 0x2#B } } */
+/* { dg-output "\n0xffUB" } */

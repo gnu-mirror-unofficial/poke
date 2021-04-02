@@ -281,10 +281,21 @@ print_info_ios (pk_ios io, void *data)
   mode[2] = '\0';
   pk_table_column (table, mode);
 
+  /* Bias.  */
+  {
+    char *string;
+    uint64_t bias = pk_ios_get_bias (io);
+    if (bias % 8 == 0)
+      asprintf (&string, "0x%08jx#B", bias / 8);
+    else
+      asprintf (&string, "0x%08jx#b", bias);
+    pk_table_column_cl (table, string, "offset");
+    free (string);
+  }
+
   /* Size.  */
   {
     char *size;
-
     asprintf (&size, "0x%08jx#B", pk_ios_size (io));
     pk_table_column_cl (table, size, "offset");
     free (size);
@@ -316,11 +327,12 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   assert (argc == 0);
 
-  table = pk_table_new (5);
+  table = pk_table_new (6);
   pk_table_row_cl (table, "table-header");
   pk_table_column (table, "  Id");
   pk_table_column (table, "Type");
   pk_table_column (table, "Mode");
+  pk_table_column (table, "Bias");
   pk_table_column (table, "Size");
   pk_table_column (table, "Name");
 

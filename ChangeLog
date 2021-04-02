@@ -1,3 +1,36 @@
+2021-04-04  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* doc/poke.texi: Adjust the output of ".info ios".
+	* libpoke/libpoke.c (pk_ios_get_bias): New.
+	* libpoke/libpoke.h (pk_ios_get_bias): Likewise.
+	* libpoke/pkl-ast.h: Define PKL_AST_BUILTIN_IOGETB and
+	PKL_AST_BUILTIN_IOSETB.
+	* libpoke/pkl-gen.c (PKL_PHASE_BEGIN_HANDLER): Add the cases
+	PKL_AST_BUILTIN_IOGETB and PKL_AST_BUILTIN_IOSETB.
+	* libpoke/pkl-lex.l: Add "__PKL_BUILTIN_IOGETB__" and
+	"__PKL_BUILTIN_IOSETB__".
+	* libpoke/pkl-rt.pk: Declare iobias and iosetbias.
+	* libpoke/pkl-tab.y: Add BUILTIN_IOGETB and BUILTIN_IOSETB.
+	* libpoke/pvm.jitter (iogetb): If bias is 8-bit aligned, report it in
+	bytes, else in bits.
+	(iosetb): Swap the positions of bias and ios.
+	* poke/pk-cmd-ios.c (print_info_ios): Print the bias.
+	(pk_cmd_info_ios): Likewise.
+	* testsuite/Makefile.am: Add the new test files.
+	* testsuite/poke.cmd/file-bias-1.pk: New
+	* testsuite/poke.cmd/file-bias-2.pk: New.
+	* testsuite/poke.cmd/file-mode.pk: Adjust ".info ios".
+	* testsuite/poke.cmd/file-relative.pk: Likewise.
+	* testsuite/poke.pkl/iobias-1.pk: New.
+	* testsuite/poke.pkl/iobias-2.pk: New.
+	* testsuite/poke.pkl/iosetbias-1.pk: New.
+	* testsuite/poke.pkl/iosetbias-2.pk: New.
+	* testsuite/poke.pkl/iosetbias-3.pk: New.
+	* testsuite/poke.pkl/iosetbias-4.pk: New.
+	* testsuite/poke.pkl/iosetbias-5.pk: New.
+	* testsuite/poke.pkl/iosetbias-6.pk: New.
+	* testsuite/poke.pkl/iosetbias-7.pk: New.
+
 2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.jitter (exit): Mark instruction as `branching',
