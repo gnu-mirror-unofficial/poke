@@ -409,7 +409,7 @@ pk_hserver_make_hyperlink (char type,
 
   assert (cls != PK_NULL);
   ret = pk_call (poke_compiler, cls, &hyperlink,
-                 3 /* narg */, kind_val, cmd_val, PK_NULL);
+                 2 /* narg */, kind_val, cmd_val);
   assert (ret == PK_OK);
 
   return xstrdup (pk_string_str (hyperlink));
