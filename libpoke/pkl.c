@@ -602,8 +602,7 @@ pkl_compile_call (pkl_compiler compiler, pvm_val cls, pvm_val *ret,
   for (i = 0; i < narg; ++i)
     {
       arg = va_arg (ap, pvm_val);
-      if (arg != PVM_NULL)
-        pkl_asm_insn (pasm, PKL_INSN_PUSH, arg);
+      pkl_asm_insn (pasm, PKL_INSN_PUSH, arg);
     }
 
   /* Call the closure.  */
