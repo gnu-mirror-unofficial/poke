@@ -312,6 +312,16 @@ EXTRA_DIST = \
   poke.map/maps-structs-constraints-1.pk \
   poke.map/maps-structs-endian-1.pk \
   poke.map/maps-structs-endian-2.pk \
+  poke.map/maps-structs-endian-3.pk \
+  poke.map/maps-structs-endian-4.pk \
+  poke.map/maps-structs-endian-5.pk \
+  poke.map/maps-structs-endian-6.pk \
+  poke.map/maps-structs-endian-7.pk \
+  poke.map/maps-structs-endian-8.pk \
+  poke.map/maps-structs-endian-9.pk \
+  poke.map/maps-structs-endian-10.pk \
+  poke.map/maps-structs-endian-11.pk \
+  poke.map/maps-structs-endian-diag-1.pk \
   poke.map/maps-structs-init-1.pk \
   poke.map/maps-structs-init-2.pk \
   poke.map/maps-structs-labels-1.pk \
@@ -1776,8 +1786,6 @@ EXTRA_DIST = \
   poke.pkl/struct-types-diag-14.pk \
   poke.pkl/struct-types-diag-15.pk \
   poke.pkl/struct-types-endian-1.pk \
-  poke.pkl/struct-types-endian-diag-1.pk \
-  poke.pkl/struct-types-endian-diag-2.pk \
   poke.pkl/sub-integers-1.pk \
   poke.pkl/sub-integers-2.pk \
   poke.pkl/sub-integers-3.pk \
