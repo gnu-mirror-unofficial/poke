@@ -125,14 +125,16 @@ pvm_program pkl_compile_expression (pkl_compiler compiler,
    RET is set to the value returned by the function, or to PK_NULL if
    it is a void function.
 
-   AP contains a list of PVM values to be passed to the function as
-   arguments, terminated by PVM_NULL.
+   NARG is the number of actuals to pass to the function.
+
+   AP contains a list of NARG PVM values to be passed to the function
+   as actual arguments.
 
    Return the compiled PVM program, or NULL if there is a problem
    performing the operation.  */
 
 pvm_program pkl_compile_call (pkl_compiler compiler, pvm_val cls, pvm_val *ret,
-                              va_list ap);
+                              int narg, va_list ap);
 
 /* Return the VM associated with COMPILER.  */
 

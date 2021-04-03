@@ -36,7 +36,8 @@ pk_cmd_help (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   pk_help = pk_decl_val (poke_compiler, "pk_help");
   assert (pk_help != PK_NULL);
-  if (pk_call (poke_compiler, pk_help, &ret, topic, PK_NULL) == PK_ERROR)
+  if (pk_call (poke_compiler, pk_help, &ret, 1 /* narg */, topic)
+      == PK_ERROR)
     assert (0);
 
   return 1;

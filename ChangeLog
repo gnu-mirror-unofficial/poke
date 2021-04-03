@@ -1,3 +1,15 @@
+2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.c (pk_call): Allow passing PK_NULL as arguments,
+	for optional arguments.
+	* libpoke/pkl.c (pkl_compile_call): Likewise.
+	* poke/pk-cmd-help.c (pk_cmd_help): Adapt accordingly.
+	* poke/pk-hserver.c (pk_hserver_get_token): Likewise.
+	(pk_hserver_token_p): Likewise.
+	(pk_hserver_token_kind): Likewise.
+	(pk_hserver_cmd): Likewise.
+	(pk_hserver_make_hyperlink): Likewise.
+
 2021-04-03  Luca Saiu  <positron@gnu.org>
 
 	* etc/hacking.org: Documentation.

@@ -80,7 +80,7 @@ pk_hserver_get_token (void)
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &token, PK_NULL);
+  ret = pk_call (poke_compiler, cls, &token, 0 /* narg */);
   assert (ret == PK_OK);
 
   return pk_int_value (token);
@@ -95,7 +95,7 @@ pk_hserver_token_p (int token)
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &token_p, token_val, PK_NULL);
+  ret = pk_call (poke_compiler, cls, &token_p, 1 /* narg */, token_val);
   assert (ret == PK_OK);
 
   return pk_int_value (token_p);
@@ -110,7 +110,7 @@ pk_hserver_token_kind (int token)
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &token_kind, token_val, PK_NULL);
+  ret = pk_call (poke_compiler, cls, &token_kind, 1 /* narg */, token_val);
   assert (ret == PK_OK);
 
   return pk_uint_value (token_kind);
@@ -125,7 +125,7 @@ pk_hserver_cmd (int token)
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &cmd, token_val, PK_NULL);
+  ret = pk_call (poke_compiler, cls, &cmd, 1 /* narg */, token_val);
   assert (ret == PK_OK);
 
   return pk_string_str (cmd);
@@ -409,7 +409,7 @@ pk_hserver_make_hyperlink (char type,
 
   assert (cls != PK_NULL);
   ret = pk_call (poke_compiler, cls, &hyperlink,
-                 kind_val, cmd_val, PK_NULL);
+                 3 /* narg */, kind_val, cmd_val, PK_NULL);
   assert (ret == PK_OK);
 
   return xstrdup (pk_string_str (hyperlink));

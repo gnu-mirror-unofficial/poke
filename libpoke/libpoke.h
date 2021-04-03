@@ -412,14 +412,18 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
    RET is set to the value returned by the function, or to PK_NULL if
    it is a void function.
 
-   A variable number of function arguments follow, terminated by
-   PK_NULL.
+   NARG is the number of arguments that follow and that are passed in
+   the function call.  Note that PK_NULL values should be added for
+   "not specified" actuals for formals that have default values.
+
+   NARG function arguments follow.
 
    Return PK_ERROR if there is a problem performing the operation, or if the
    execution of the function results in an unhandled exception.
    Return PK_OK otherwise.  */
 
-int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...) LIBPOKE_API;
+int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret,
+             int narg, ...) LIBPOKE_API;
 
 /* Get and set properties of the incremental compiler.  */
 

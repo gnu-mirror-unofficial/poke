@@ -701,15 +701,15 @@ pk_defvar (pk_compiler pkc, const char *varname, pk_val val)
 }
 
 int
-pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, ...)
+pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, int narg, ...)
 {
   pvm_program program;
   va_list ap;
   enum pvm_exit_code rret;
 
   /* Compile a program that calls the function.  */
-  va_start (ap, ret);
-  program = pkl_compile_call (pkc->compiler, cls, ret, ap);
+  va_start (ap, narg);
+  program = pkl_compile_call (pkc->compiler, cls, ret, narg, ap);
   va_end (ap);
   if (!program)
     PK_RETURN (PK_ERROR);

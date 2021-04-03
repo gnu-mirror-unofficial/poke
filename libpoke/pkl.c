@@ -589,22 +589,22 @@ pkl_set_alien_token_fn (pkl_compiler compiler,
 
 pvm_program
 pkl_compile_call (pkl_compiler compiler, pvm_val cls, pvm_val *ret,
-                  va_list ap)
+                  int narg, va_list ap)
 {
   pvm_program program;
   pkl_asm pasm;
   pvm_val arg;
+  int i;
 
   pasm = pkl_asm_new (NULL /* ast */, compiler, 1 /* prologue */);
 
   /* Push the arguments for the function.  */
-  do
+  for (i = 0; i < narg; ++i)
     {
       arg = va_arg (ap, pvm_val);
       if (arg != PVM_NULL)
         pkl_asm_insn (pasm, PKL_INSN_PUSH, arg);
     }
-  while (arg != PVM_NULL);
 
   /* Call the closure.  */
   pkl_asm_insn (pasm, PKL_INSN_PUSH, cls);
