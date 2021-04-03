@@ -1,3 +1,13 @@
+2021-04-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-hserver.pk (hserver_get_token): Allow hserver_cur_token
+	to grow up to 2 ** 32.
+	(hserver_make_hyperlink): Wrap the token
+	number to a table index.
+	* poke/pk-hserver.c (pk_hserver_get_token): hserver_get_token
+	returns an unsigned int.
+	* poke/pk-hserver.h: Adapt prototype accordingly.
+
 2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl.c (pkl_compile_call): Fix passing PVM_NULL

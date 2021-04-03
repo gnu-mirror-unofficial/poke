@@ -72,7 +72,7 @@ pk_hserver_port (void)
   return pk_int_value (port);
 }
 
-int
+unsigned int
 pk_hserver_get_token (void)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_get_token");
@@ -83,7 +83,7 @@ pk_hserver_get_token (void)
   ret = pk_call (poke_compiler, cls, &token, 0 /* narg */);
   assert (ret == PK_OK);
 
-  return pk_int_value (token);
+  return pk_uint_value (token);
 }
 
 static int

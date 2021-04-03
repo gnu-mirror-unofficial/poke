@@ -29,7 +29,7 @@ void pk_hserver_start (void);
 void pk_hserver_shutdown (void);
 
 /* Get a new token.  */
-int pk_hserver_get_token (void);
+unsigned int pk_hserver_get_token (void);
 
 /* Return the port number where the server is listening.  This
    function shall be called after pk_hserver_init.  */
