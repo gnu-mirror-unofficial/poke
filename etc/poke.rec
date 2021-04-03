@@ -101,6 +101,7 @@
 %summary: Kind,Component,Priority,Summary
 
 Summary: Optimise code by improving the PVM and the compiler
+Component: PVM
 Priority: 5
 Kind: OPT
 Description: Generate better code, branching to raise instructions

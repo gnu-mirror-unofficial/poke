@@ -1,5 +1,10 @@
 2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Make pvm_print_val show integral structs as
+	integers): Add missing Component.
+
+2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.c (pk_call): Allow passing PK_NULL as arguments,
 	for optional arguments.
 	* libpoke/pkl.c (pkl_compile_call): Likewise.
