@@ -1,3 +1,14 @@
+2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-hserver.pk (HServer_Token): New field `function'.
+	(hserver_make_hyperlink): Handle hyperlinks of kind 'c'.
+	(hserver_token_function): New function.
+	* poke/pk-hserver.c (pk_hserver_function): New function.
+	(pk_hserver_make_hyperlink): Get a `function' argument.
+	(read_from_client): Dispatch 'c' hyperlinks.
+	* poke/pk-cmd-ios.c (print_info_ios): Adjust accordingly.
+	* poke/pk-repl.c (banner): Likewise.
+
 2021-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-hserver.pk (hserver_get_token): Allow hserver_cur_token

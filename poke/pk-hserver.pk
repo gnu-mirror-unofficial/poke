@@ -30,6 +30,8 @@ var hserver_port = 0;
 var hserver_max_tokens = 128;
 var hserver_cur_token = 0U;
 
+type HServer_Callback = ()void;
+
 type HServer_Token =
   struct
   {
@@ -37,6 +39,7 @@ type HServer_Token =
     int id;
     char kind;
     string cmd;
+    HServer_Callback function;
   };
 
 var hserver_tokens = HServer_Token[hserver_max_tokens]();
@@ -51,6 +54,12 @@ fun hserver_token_kind = (int token) char:
 fun hserver_token_cmd = (int token) string:
 {
   return hserver_tokens[token].cmd;
+}
+
+/* Get the function associated with a given token.  */
+fun hserver_token_function = (int token) HServer_Callback:
+{
+  return (hserver_tokens[token].function);
 }
 
 /* Determine whether a given token exists.  */
@@ -74,9 +83,11 @@ fun hserver_get_token = uint:
 
 /* Build a hserver hyperlink.  */
 
-fun hserver_make_hyperlink = (char kind, string cmd) string:
+fun hserver_make_hyperlink = (char kind,
+                              string cmd = "",
+                              HServer_Callback function = lambda void: {}) string:
 {
-  if (kind != 'i' && kind != 'e')
+  if (!(kind in ['i','e','c']))
     raise E_inval;
 
   var token = hserver_get_token;
@@ -84,6 +95,7 @@ fun hserver_make_hyperlink = (char kind, string cmd) string:
 
   hserver_tokens[index].kind = kind;
   hserver_tokens[index].cmd = cmd;
+  (hserver_tokens[index].function) = (function);
 
   return ("app://"
           + hserver_hostname

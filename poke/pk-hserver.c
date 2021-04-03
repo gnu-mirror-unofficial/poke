@@ -131,6 +131,21 @@ pk_hserver_cmd (int token)
   return pk_string_str (cmd);
 }
 
+static pk_val
+pk_hserver_function (int token)
+{
+  pk_val cls = pk_decl_val (poke_compiler, "hserver_token_function");
+  pk_val token_val = pk_make_int (token, 32);
+  pk_val function;
+  int ret;
+
+  assert (cls != PK_NULL);
+  ret = pk_call (poke_compiler, cls, &function, 1 /* narg */, token_val);
+  assert (ret == PK_OK);
+
+  return function;
+}
+
 static int
 make_socket (uint16_t port)
 {
@@ -198,6 +213,7 @@ read_from_client (int filedes)
       char kind;
       char *p = buffer;
       const char *cmd;
+      pk_val cls;
 
       /* Remove the newline at the end.  */
       buffer[nbytes-1] = '\0';
@@ -230,6 +246,18 @@ read_from_client (int filedes)
           pk_puts (p);
           pk_puts ("\n");
           pk_cmd_exec (cmd);
+          pk_repl_display_end ();
+          pthread_mutex_unlock (&hserver_mutex);
+          break;
+        case 'c':
+          /* Command 'closure'.  */
+          cls = pk_hserver_function (token);
+          pthread_mutex_lock (&hserver_mutex);
+          pk_repl_display_begin ();
+          pk_puts (p);
+          pk_puts ("\n");
+          /* Note we just ignore raised exceptions.  */
+          pk_call (poke_compiler, cls, NULL, 0);
           pk_repl_display_end ();
           pthread_mutex_unlock (&hserver_mutex);
           break;
@@ -398,7 +426,8 @@ pk_hserver_shutdown (void)
 
 char *
 pk_hserver_make_hyperlink (char type,
-                           const char *cmd)
+                           const char *cmd,
+                           pk_val function)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_make_hyperlink");
   pk_val hyperlink, kind_val, cmd_val;
@@ -409,7 +438,7 @@ pk_hserver_make_hyperlink (char type,
 
   assert (cls != PK_NULL);
   ret = pk_call (poke_compiler, cls, &hyperlink,
-                 2 /* narg */, kind_val, cmd_val);
+                 3 /* narg */, kind_val, cmd_val, PK_NULL);
   assert (ret == PK_OK);
 
   return xstrdup (pk_string_str (hyperlink));

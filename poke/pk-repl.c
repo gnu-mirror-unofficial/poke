@@ -191,7 +191,7 @@ banner (void)
       if (poke_hserver_p)
         {
           char *help_hyperlink
-            = pk_hserver_make_hyperlink ('e', ".help");
+            = pk_hserver_make_hyperlink ('e', ".help", PK_NULL);
 
           pk_puts (_("For help, type: "));
           pk_puts ("\"");

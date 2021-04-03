@@ -298,7 +298,7 @@ print_info_ios (pk_ios io, void *data)
     char *hyperlink;
 
     asprintf (&cmd, ".ios #%d", pk_ios_get_id (io));
-    hyperlink = pk_hserver_make_hyperlink ('e', cmd);
+    hyperlink = pk_hserver_make_hyperlink ('e', cmd, PK_NULL);
     free (cmd);
 
     pk_table_column_hl (table, pk_ios_handler (io), hyperlink);

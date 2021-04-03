@@ -20,6 +20,7 @@
 #define PK_HSERVER_H
 
 #include <config.h>
+#include "libpoke.h"
 
 /* Initialize the server.  */
 void pk_hserver_init (void);
@@ -36,6 +37,7 @@ unsigned int pk_hserver_get_token (void);
 int pk_hserver_port (void);
 
 /* Build hyperlinks.  */
-char *pk_hserver_make_hyperlink (char type, const char *cmd);
+char *pk_hserver_make_hyperlink (char type, const char *cmd,
+                                 pk_val function);
 
 #endif /* PK_HSERVER_H */
