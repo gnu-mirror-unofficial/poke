@@ -1,3 +1,12 @@
+2021-04-03  Luca Saiu  <positron@gnu.org>
+
+	* etc/hacking.org: Documentation.
+	* etc/poke.rec: Documentation.
+	* libpoke/pvm.jitter (wrapped-functions): Update.
+	Add new attributes for compatibility with Jitter changes and
+	no-threading, and for performance.
+	* HACKING: Regenerate.
+
 2021-04-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-trans.h (struct pkl_trans_payload): Add endianness

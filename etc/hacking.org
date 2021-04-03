@@ -1580,17 +1580,13 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    follow and confuse GDB.
 
    Jitter by default will use the most efficient dispatch which is
-   both stable and available for the current configuration.  The
-   remark about stability is important: at the time of writing there
-   are still bugs in the two most advanced dispatching modes,
-   =minimal-threading= and =no-threading=, which may result in subtly
-   incorrect compiled code.  For this reason Jitter disables those
-   dispatches by default; they will be re-enabled in Jitter as soon as
-   they are deemed ready for production use, at which point Poke will
-   make use of them automatically.
-
-   Jitter supports two alternative dispatches, slower but very stable
-   and friendly to debugging: =switch= and =direct-threading=.
+   both stable and available for the current configuration; the most
+   efficient dispatch is =no-threading=, which requires assembly
+   support in Jitter for the specific architecture and a supported
+   binary format.  =minimal-threading= is more portable than
+   =no-threading=, even if less efficient.
+   Jitter supports two alternative dispatches, slower but very stable,
+   portable and friendly to debugging: =switch= and =direct-threading=.
 
    Any dispatch can be selectively enabled or disabled from the Poke
    =configure= script, by passing the following options which will be
@@ -1602,7 +1598,7 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    - =--disable-dispatch-direct-threading=
    - =--enable-dispatch-minimal-threading=
    - =--disable-dispatch-minimal-threading=
-   - --enable-dispatch-no-threading=
+   - =--enable-dispatch-no-threading=
    - =--disable-dispatch-no-threading=
 
    When configured in sub-package mode, as is the case when used with
@@ -1728,6 +1724,28 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    when =mullu= is executed are a pair of stupid signed integers,
    which are not boxed and not what the instruction expects.  Mystery
    solved.
+
+*** PVM definition tips
+   When using advanced Jitter dispatches it becomes important that every
+   C function or global variable accessed by a relocatable VM instruction is
+   "wrapped": see the Jitter documentation [not yet existing at the time of
+   writing] for more information.
+   Non-relocatable instructions can access any global without need for
+   wrapping: the problem is strictly with VM instruction whose native
+   executable code gets copied to different memory addresses, therefore
+   breaking PC-relative access to globals.  Wrapping prevents this kind of
+   access, replacing it with a indirect access thru a local pointer.
+
+   It is important to remark that macros cannot be wrapped as functions:
+   rather it is necessary to consider any global variable or function
+   containsed in a macro expansion.
+
+   Notice that high-latency VM instructions (for example instructions performing
+   I/O) and infrequently run instructions (for example an instruction which
+   raises an error) can be made non-relocatable without loss of efficiency; in
+   fact making large VM instructions non-relocatable might improve code locality
+   at run time.
+
 * Profiling poke
 ** Building with profiling support
 

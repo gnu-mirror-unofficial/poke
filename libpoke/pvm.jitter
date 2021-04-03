@@ -66,9 +66,6 @@ end
 ## Functions and globals to wrap.
 
 wrapped-functions
-  pk_term_class
-  pk_term_end_class
-  pk_printf
   printf
   pvm_array_insert
   pvm_array_set
@@ -86,6 +83,7 @@ wrapped-functions
   pvm_make_string_type
   pvm_make_offset_type
   pvm_make_array_type
+  pvm_alloc
   pvm_allocate_struct_attrs
   pvm_make_struct_type
   pvm_typeof
@@ -96,10 +94,18 @@ wrapped-functions
   pvm_val_reloc
   pvm_val_unmap
   pvm_val_ureloc
+  ios_close
   ios_cur
+  ios_flags
+  ios_flush
+  ios_get_id
+  ios_open
   ios_read_int
   ios_read_uint
   ios_read_string
+  ios_search_by_id
+  ios_set_bias
+  ios_set_cur
   ios_write_string
   random
   srandom
@@ -998,6 +1004,7 @@ end
 # Exceptions: PVM_E_INVAL
 
 instruction popob ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int obase = PVM_VAL_INT (JITTER_TOP_STACK ());
@@ -1044,6 +1051,7 @@ end
 # Exceptions: PVM_E_INVAL
 
 instruction popom ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm vm = JITTER_STATE_BACKING_FIELD (vm);
     int omode = PVM_VAL_INT (JITTER_TOP_STACK ());
@@ -1337,6 +1345,7 @@ end
 # Exceptions: PVM_E_SIGNAL
 
 instruction sync ()
+  branching # because of PVM_RAISE_DIRECT
   code
     /* XXX for now we treat all signals the same way.
        As soon as we support exception arguments, we shall
@@ -1366,6 +1375,8 @@ end
 # Exceptions: PVM_E_IOFLAGS, PVM_E_IO
 
 instruction open ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
      char *filename = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
      uint64_t flags = PVM_VAL_ULONG (JITTER_TOP_STACK ());
@@ -1394,6 +1405,8 @@ end
 # Exceptions: PVM_E_NO_IOS, PVM_E_IO
 
 instruction close ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     int io_id = PVM_VAL_INT (JITTER_TOP_STACK ());
     ios io = ios_search_by_id (io_id);
@@ -1421,6 +1434,8 @@ end
 # Exceptions: PVM_E_IO
 
 instruction flush ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     ios_off offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());
     int io_id = PVM_VAL_INT (JITTER_UNDER_TOP_STACK ());
@@ -1447,6 +1462,8 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction pushios ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     ios cur_io = ios_cur ();
 
@@ -1466,6 +1483,8 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction popios ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1487,6 +1506,8 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction ioflags ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1507,6 +1528,8 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction iosize ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1533,6 +1556,8 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction iogetb ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1558,6 +1583,8 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction iosetb ()
+  branching # because of PVM_RAISE_DIRECT
+  # XXX make non-relocatable: see raise
   code
     pvm_val bias = JITTER_TOP_STACK();
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()));
@@ -1621,6 +1648,7 @@ end
 # Stack: ( -- )
 
 instruction return ()
+  returning
   code
     jitter_uint return_address;
 
@@ -1699,6 +1727,7 @@ end
 # Stack: ( -- VAL )
 
 instruction pushtopvar (?n)
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_env topenv = pvm_env_toplevel (jitter_state_runtime.env);
     pvm_val val = pvm_env_lookup (topenv, 0 /* back */,
@@ -1798,6 +1827,7 @@ end
 # Stack: ( INT INT -- )
 
 instruction indent ()
+  non-relocatable
   code
     pk_term_indent (PVM_VAL_INT (JITTER_UNDER_TOP_STACK ()),
                     PVM_VAL_INT (JITTER_TOP_STACK ()));
@@ -1814,6 +1844,7 @@ end
 # Stack: ( INT INT -- )
 
 instruction printi (?n popf_printer)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     PVM_PRINTI (INT, int32_t, 1 /* signed_p */, base);
@@ -1828,6 +1859,7 @@ end
 # Stack: ( UINT INT -- )
 
 instruction printiu (?n popf_printer)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     PVM_PRINTI (UINT, uint32_t, 0 /* signed_p */, base);
@@ -1842,6 +1874,7 @@ end
 # Stack: ( LONG INT -- )
 
 instruction printl (?n popf_printer)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     PVM_PRINTL (LONG, int64_t, 1 /* signed_p */, base);
@@ -1856,6 +1889,7 @@ end
 # Stack: ( ULONG INT -- )
 
 instruction printlu (?n popf_printer)
+  non-relocatable
   code
    int base = PVM_VAL_INT (JITTER_TOP_STACK ());
    PVM_PRINTL (ULONG, uint64_t, 0 /* signed_p */, base);
@@ -1869,6 +1903,7 @@ end
 # Stack: ( STR -- )
 
 instruction prints ()
+  non-relocatable
   code
     pvm_print_string (JITTER_TOP_STACK ());
     JITTER_DROP_STACK ();
@@ -1882,6 +1917,7 @@ end
 # Stack: ( STR STR -- )
 
 instruction beghl ()
+  non-relocatable
   code
     char *url = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
     char *id = PVM_VAL_STR (JITTER_TOP_STACK ());
@@ -1903,6 +1939,8 @@ end
 # Exceptions: PVM_E_GENERIC
 
 instruction endhl ()
+  non-relocatable
+  branching # because of PVM_RAISE_DIRECT
   code
     if (!pk_term_end_hyperlink ())
       PVM_RAISE (PVM_E_GENERIC,
@@ -1920,6 +1958,7 @@ end
 # Stack: ( STR -- )
 
 instruction begsc ()
+  non-relocatable
   code
     pk_term_class (PVM_VAL_STR (JITTER_TOP_STACK ()));
     JITTER_DROP_STACK ();
@@ -1934,6 +1973,8 @@ end
 # Stack: ( STR -- )
 
 instruction endsc ()
+  non-relocatable
+  branching # because of PVM_RAISE_DIRECT
   code
     if (!pk_term_end_class (PVM_VAL_STR (JITTER_TOP_STACK ())))
       PVM_RAISE (PVM_E_INVAL,
@@ -2332,6 +2373,7 @@ end
 # Exceptions: PVM_E_OVERFLOW
 
 instruction addi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_ADD_SIGNED (INT,int);
   end
@@ -2345,6 +2387,7 @@ end
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
 instruction addiu ()
+  # branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP (UINT, UINT, UINT, +);
   end
@@ -2359,6 +2402,7 @@ end
 # Exceptions: PVM_E_OVERFLOW
 
 instruction addl ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_ADD_SIGNED (LONG, int64_t);
   end
@@ -2372,6 +2416,7 @@ end
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
 instruction addlu ()
+  # branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP (ULONG, ULONG, ULONG, +);
   end
@@ -2385,6 +2430,7 @@ end
 # Stack: ( INT INT -- INT INT INT )
 
 instruction subi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_SUB_SIGNED (INT, int);
   end
@@ -2398,6 +2444,7 @@ end
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
 instruction subiu ()
+  # branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP (UINT, UINT, UINT, -);
   end
@@ -2411,6 +2458,7 @@ end
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
 instruction subl ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_SUB_SIGNED (LONG, int64_t);
   end
@@ -2424,6 +2472,7 @@ end
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
 instruction sublu ()
+  # branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP (ULONG, ULONG, ULONG, -);
   end
@@ -2437,6 +2486,7 @@ end
 # Stack: ( INT INT -- INT INT INT )
 
 instruction muli ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_MUL_SIGNED (INT, int);
   end
@@ -2450,6 +2500,7 @@ end
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
 instruction muliu ()
+  # branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP (UINT, UINT, UINT, *);
   end
@@ -2463,6 +2514,7 @@ end
 # Stack: ( LONG LONG -- LONG LONG LONG )
 
 instruction mull ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_MUL_SIGNED (LONG, int64_t);
   end
@@ -2476,6 +2528,7 @@ end
 # Stack: ( ULONG ULONG -- ULONG ULONG ULONG )
 
 instruction mullu ()
+  # branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP (ULONG, ULONG, ULONG, *);
   end
@@ -2491,6 +2544,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction divi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_DIV_SIGNED (INT, int);
   end
@@ -2506,6 +2560,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction diviu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (UINT, UINT, UINT, /);
   end
@@ -2520,6 +2575,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction divl ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_DIV_SIGNED (LONG, int64_t);
   end
@@ -2535,6 +2591,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction divlu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, /);
   end
@@ -2549,6 +2606,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_MOD_SIGNED (INT, int);
   end
@@ -2564,6 +2622,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modiu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (UINT, UINT, UINT, %);
   end
@@ -2578,6 +2637,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modl ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_MOD_SIGNED (LONG, int64_t);
   end
@@ -2592,6 +2652,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modlu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, %);
   end
@@ -2605,6 +2666,7 @@ end
 # Stack: ( INT -- INT INT )
 
 instruction negi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_NEG_SIGNED (INT, int);
   end
@@ -2618,6 +2680,7 @@ end
 # Stack: ( UINT -- UINT UINT UINT )
 
 instruction negiu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_UNOP (UINT, UINT, uint, -);
   end
@@ -2631,6 +2694,7 @@ end
 # Stack: ( LONG -- LONG LONG )
 
 instruction negl ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_NEG_SIGNED (LONG, int64_t);
   end
@@ -2644,6 +2708,7 @@ end
 # Stack: ( ULONG -- ULONG ULONG )
 
 instruction neglu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_UNOP (ULONG, ULONG, ulong, -);
   end
@@ -2658,6 +2723,7 @@ end
 # Stack: ( INT UINT -- INT UINT INT )
 
 instruction powi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POWOP_SIGNED (INT,int64_t,int);
   end
@@ -2672,6 +2738,7 @@ end
 # Stack: ( UINT UINT -- UINT UINT UINT )
 
 instruction powiu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POWOP (UINT,uint64_t,uint);
   end
@@ -2686,6 +2753,7 @@ end
 # Stack: ( LONG UINT -- LONG UINT LONG )
 
 instruction powl ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POWOP_SIGNED (LONG,int64_t,long);
   end
@@ -2700,6 +2768,7 @@ end
 # Stack: ( ULONG UINT -- ULONG UINT ULONG )
 
 instruction powlu ()
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POWOP (ULONG,uint64_t,ulong);
   end
@@ -3425,6 +3494,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction bsli () # ( INT UINT -- INT UINT INT )
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP_SL (INT, UINT, INT, <<);
   end
@@ -3443,6 +3513,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction bsliu () # ( UINT UINT -- UINT UINT UINT )
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP_SL (UINT, UINT, UINT, <<);
   end
@@ -3460,6 +3531,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction bsll () # ( LONG UINT -- LONG UINT LONG )
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP_SL (LONG, UINT, LONG, <<);
   end
@@ -3478,6 +3550,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction bsllu () # ( ULONG UINT -- ULONG UINT ULONG )
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_BINOP_SL (ULONG, UINT, ULONG, <<);
   end
@@ -3624,6 +3697,7 @@ end
 # Stack: ( -- )
 
 instruction ba (?f)
+  branching
   code
     JITTER_BRANCH_FAST(JITTER_ARGF0);
   end
@@ -3637,6 +3711,7 @@ end
 # Stack: ( VAL -- VAL )
 
 instruction bn (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (tmp != PVM_NULL, JITTER_ARGF0);
@@ -3651,6 +3726,7 @@ end
 # Stack: ( VAL -- VAL )
 
 instruction bnn (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (tmp == PVM_NULL, JITTER_ARGF0);
@@ -3665,6 +3741,7 @@ end
 # Stack: ( INT -- INT )
 
 instruction bzi (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (PVM_VAL_INT (tmp), JITTER_ARGF0);
@@ -3679,6 +3756,7 @@ end
 # Stack: ( UINT -- UINT )
 
 instruction bziu (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (PVM_VAL_UINT (tmp), JITTER_ARGF0);
@@ -3693,6 +3771,7 @@ end
 # Stack: ( LONG -- LONG )
 
 instruction bzl (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (PVM_VAL_LONG (tmp), JITTER_ARGF0);
@@ -3707,6 +3786,7 @@ end
 # Stack: ( ULONG -- ULONG )
 
 instruction bzlu (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_ZERO (PVM_VAL_ULONG (tmp), JITTER_ARGF0);
@@ -3721,6 +3801,7 @@ end
 # Stack: ( INT -- INT )
 
 instruction bnzi (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_NONZERO (PVM_VAL_INT (tmp), JITTER_ARGF0);
@@ -3735,6 +3816,7 @@ end
 # Stack: ( UINT -- UINT )
 
 instruction bnziu (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_NONZERO (PVM_VAL_UINT (tmp), JITTER_ARGF0);
@@ -3749,6 +3831,7 @@ end
 # Stack: ( LONG -- LONG )
 
 instruction bnzl (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_NONZERO (PVM_VAL_LONG (tmp), JITTER_ARGF0);
@@ -3763,6 +3846,7 @@ end
 # Stack: ( ULONG -- ULONG )
 
 instruction bnzlu (?f)
+  branching
   code
     pvm_val tmp = JITTER_TOP_STACK ();
     JITTER_BRANCH_FAST_IF_NONZERO (PVM_VAL_ULONG (tmp), JITTER_ARGF0);
@@ -4042,6 +4126,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction strref () # ( STR ULONG -- STR ULONG VAL )
+  branching # because of PVM_RAISE_DIRECT
   code
      pvm_val string = JITTER_UNDER_TOP_STACK ();
      pvm_val index = JITTER_TOP_STACK ();
@@ -4070,6 +4155,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val str;
     char *s;
@@ -4172,6 +4258,7 @@ end
 # Exceptions: PVM_E_INVAL
 
 instruction ains ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val val = JITTER_TOP_STACK ();
     pvm_val idx = JITTER_UNDER_TOP_STACK ();
@@ -4206,6 +4293,7 @@ end
 # Exception: PVM_E_OUT_OF_BOUNDS
 
 instruction arem ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val arr = JITTER_UNDER_TOP_STACK ();
     pvm_val idx = JITTER_TOP_STACK ();
@@ -4233,6 +4321,7 @@ end
 # Exceptions: PVM_E_CONV, PVM_E_OUT_OF_BOUNDS
 
 instruction aset ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val idx;
     pvm_val val;
@@ -4296,6 +4385,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction aref ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val array = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -4321,6 +4411,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction arefo ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val array = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -4428,6 +4519,7 @@ end
 # Stack: ( SCT STR VAL -- SCT )
 
 instruction sset ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val val = JITTER_TOP_STACK ();
     pvm_val name = JITTER_UNDER_TOP_STACK ();
@@ -4453,6 +4545,7 @@ end
 # Exceptions: PVM_E_ELEM
 
 instruction sref ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val val = pvm_ref_struct (JITTER_UNDER_TOP_STACK (),
                                   JITTER_TOP_STACK ());
@@ -4474,6 +4567,7 @@ end
 # Exceptions: PVM_E_ELEM
 
 instruction srefo ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val fname = JITTER_TOP_STACK ();
@@ -4531,6 +4625,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction srefi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -4556,6 +4651,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction srefia ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -4581,6 +4677,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction srefio ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -4606,6 +4703,7 @@ end
 # Exceptions: PVM_E_OUT_OF_BOUNDS
 
 instruction smodi ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val sct = JITTER_UNDER_TOP_STACK ();
     pvm_val index = JITTER_TOP_STACK ();
@@ -4717,6 +4815,7 @@ end
 # Exceptions: PVM_E_INVAL
 
 instruction map ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val val = JITTER_TOP_STACK ();
 
@@ -4752,6 +4851,7 @@ end
 # Exceptions: PVM_E_INVAL
 
 instruction reloc ()
+  branching # because of PVM_RAISE_DIRECT
   code
     pvm_val boffset = JITTER_TOP_STACK ();
     pvm_val ios = JITTER_UNDER_TOP_STACK ();
@@ -4778,6 +4878,7 @@ end
 # Exceptions: PVM_E_INVAL
 
 instruction ureloc ()
+  branching # because of PVM_RAISE_DIRECT
   code
       pvm_val val = JITTER_TOP_STACK ();
 
@@ -5270,6 +5371,7 @@ end
 
 instruction write ()
   caller
+  branching # because of PVM_RAISE_DIRECT
   code
      pvm_val val = JITTER_TOP_STACK ();
      pvm_val writer = pvm_val_writer (val);
@@ -5292,6 +5394,7 @@ end
 # Stack: ( INT ULONG -- INT )
 
 instruction peeki (?n nenc_printer,?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_PEEK (int, int, JITTER_ARGN0, JITTER_ARGN1, JITTER_ARGN2,
               PVM_IOS_ARGS_INT);
@@ -5307,6 +5410,7 @@ end
 # Stack: ( INT ULONG -- INT )
 
 instruction peekiu (?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
    PVM_PEEK (uint, uint, 0 /* unused */, JITTER_ARGN0, JITTER_ARGN1,
              PVM_IOS_ARGS_UINT);
@@ -5322,6 +5426,7 @@ end
 # Stack: ( INT ULONG -- LONG )
 
 instruction peekl (?n nenc_printer,?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_PEEK (long, int, JITTER_ARGN0, JITTER_ARGN1, JITTER_ARGN2,
               PVM_IOS_ARGS_INT);
@@ -5337,6 +5442,7 @@ end
 # Stack: ( INT ULONG -- ULONG )
 
 instruction peeklu (?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
    PVM_PEEK (ulong, uint, 0 /* unused */, JITTER_ARGN0, JITTER_ARGN1,
              PVM_IOS_ARGS_UINT);
@@ -5351,6 +5457,7 @@ end
 # Stack: ( INT ULONG -- INT )
 
 instruction peekdi (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_PEEK (int, int, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_INT);
@@ -5365,6 +5472,7 @@ end
 # Stack: ( INT ULONG -- UINT )
 
 instruction peekdiu (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_PEEK (uint, uint, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_UINT);
@@ -5379,6 +5487,7 @@ end
 # Stack: ( INT ULONG -- LONG )
 
 instruction peekdl (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_PEEK (long, int, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_INT);
@@ -5393,6 +5502,7 @@ end
 # Stack: ( INT ULONG -- ULONG )
 
 instruction peekdlu (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_PEEK (ulong, uint, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_UINT);
@@ -5408,6 +5518,7 @@ end
 # Stack: ( INT ULONG INT -- )
 
 instruction pokei (?n nenc_printer,?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POKE (INT, int, JITTER_ARGN0, JITTER_ARGN1, JITTER_ARGN2,
               PVM_IOS_ARGS_WRITE_INT);
@@ -5423,6 +5534,7 @@ end
 # Stack: ( INT ULONG INT -- )
 
 instruction pokeiu (?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
    PVM_POKE (UINT, uint, 0 /* unused */, JITTER_ARGN0, JITTER_ARGN1,
              PVM_IOS_ARGS_WRITE_UINT);
@@ -5438,6 +5550,7 @@ end
 # Stack: ( INT ULONG LONG -- )
 
 instruction pokel (?n nenc_printer,?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POKE (LONG, int, JITTER_ARGN0, JITTER_ARGN1, JITTER_ARGN2,
               PVM_IOS_ARGS_WRITE_INT);
@@ -5453,6 +5566,7 @@ end
 # Stack: ( INT ULONG ULONG -- )
 
 instruction pokelu (?n endian_printer,?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
    PVM_POKE (ULONG, uint, 0 /* unused */, JITTER_ARGN0, JITTER_ARGN1,
              PVM_IOS_ARGS_WRITE_UINT);
@@ -5467,6 +5581,7 @@ end
 # Stack: ( INT ULONG INT -- )
 
 instruction pokedi (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POKE (INT, int, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_WRITE_INT);
@@ -5481,6 +5596,7 @@ end
 # Stack: ( INT ULONG UINT -- )
 
 instruction pokediu (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POKE (UINT, uint, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_WRITE_UINT);
@@ -5495,6 +5611,7 @@ end
 # Stack: ( INT ULONG LONG -- )
 
 instruction pokedl (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POKE (LONG, int, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_WRITE_INT);
@@ -5509,6 +5626,7 @@ end
 # Stack: ( INT ULONG ULONG -- )
 
 instruction pokedlu (?n bits_printer)
+  branching # because of PVM_RAISE_DIRECT
   code
     PVM_POKE (ULONG, uint, jitter_state_runtime.nenc, jitter_state_runtime.endian,
               JITTER_ARGN0, PVM_IOS_ARGS_WRITE_UINT);
@@ -5522,6 +5640,7 @@ end
 # Stack: ( INT ULONG -- STR )
 
 instruction peeks ()
+  branching # because of PVM_RAISE_DIRECT
   code
     ios io;
     ios_off offset;
@@ -5559,6 +5678,7 @@ end
 # Stack: ( INT ULONG STR -- )
 
 instruction pokes ()
+  branching # because of PVM_RAISE_DIRECT
   code
     ios io;
     ios_off offset;
@@ -5637,6 +5757,13 @@ end
 # Exceptions Stack: ( -- )
 
 instruction raise ()
+  branching # because of PVM_RAISE_DIRECT
+
+  # XXX change the generated code to jump to raise instructions like this, rather
+  # than using PVM_RAISE_* from instruction bodies.  That will dramatically
+  # improve code locality and code size, and reduce the number of taken branches.
+
+  # XXX possibly make non-relocatable, for the same reasons.
   code
     pvm_val exception = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
@@ -5656,6 +5783,7 @@ end
 # Stack: ( -- )
 
 instruction strace (?n)
+  non-relocatable
   code
      pvm_val tmp[1024];
      int i = 0, j;
@@ -5693,6 +5821,7 @@ end
 # Stack: ( CLS -- CLS )
 
 instruction disas ()
+  non-relocatable
   code
     pvm_val cls = JITTER_TOP_STACK ();
     pvm_disassemble_program (PVM_VAL_CLS_PROGRAM (cls));
@@ -5811,6 +5940,7 @@ end
 # Exceptions: PVM_E_INVAL, PVM_E_GENERIC
 
 instruction sleep ()
+  branching # because of PVM_RAISE_DIRECT
   code
     struct timespec ts;
 

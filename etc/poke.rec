@@ -100,6 +100,16 @@
 %type: RFC bool
 %summary: Kind,Component,Priority,Summary
 
+Summary: Optimise code by improving the PVM and the compiler
+Priority: 5
+Kind: OPT
+Description: Generate better code, branching to raise instructions
++ instead of using complex instructions containing PVM_RAISE inside.
++ This will improve code size and locality, also reducing the number
++ of taken branches.
++ A promising way to achieve this is with Jitter "subsections": ask
++ Luca Saiu.
+
 Summary: Support bit-concatenation in l-value
 Component: Language
 Kind: ENH
