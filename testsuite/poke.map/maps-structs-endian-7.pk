@@ -1,0 +1,24 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+/* Note that the endianness of `c' is big, because of lexical scope of
+   endianness annotations.  */
+
+type Foo =
+  struct {
+    little offset<int<16>,B> l;
+    big int<16> b;
+    int16 c;
+  };
+
+type Bar =
+  struct {
+    little Foo f;
+    big int16 d;
+  };
+
+/* { dg-command {.set obase 16 } } */
+/* { dg-command {.set endian big} } */
+/* { dg-command {var bar = Bar @ 0#B} } */
+/* { dg-command { bar } } */
+/* { dg-output "Bar \{f=Foo \{l=0x2010H#B,b=0x3040H,c=0x5060H\},d=0x7080H\}" } */

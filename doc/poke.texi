@@ -10207,8 +10207,8 @@ The struct values are compares recursively.
 @subsection Field Endianness
 
 By default fields are accessed in IO space using the current default
-endianness.  However, it is possible to annotate integral fields with
-an explicit endianness, like in:
+endianness.  However, it is possible to annotate fields with an
+explicit endianness, like in:
 
 @example
 type Foo =
@@ -10223,6 +10223,52 @@ type Foo =
 In the example above, the field @code{a} will be stored using
 little-endian, the field @code{b} will be stored using big-endian, and
 the field @code{c} will be stored using whatever current endianness.
+
+The endianness annotations can be used in any kind of fields, like
+offsets, arrays and structs, and will impact the storage ofintegral fields defined in them.
+
+When endianness annotations are used in struct fields which are
+themselves structs, they effectively change the default endianness in
+the contained struct.  Therefore, in the following struct type:
+
+@example
+type Bar =
+  struct
+  @{
+    little struct
+    @{
+      big int a;
+      int b;
+    @} f;
+    int c;
+  @}
+@end example
+
+@noindent
+@code{a} is big endian, but @code{b} is little endian.
+
+However, note that the scope of the @code{big} and @code{little}
+annotations is lexical.  Therefore, in these types:
+
+@example
+type Foo =
+  struct
+  @{
+    int a;
+    int b;
+  @};
+
+type Bar =
+  struct
+  @{
+    big Foo f;
+    int c;
+  @};
+@end example
+
+@noindent
+The endianness of the @code{a} and @code{b} fields stored in @code{f}
+is the default endianness, not @code{big}.
 
 @node Accessing Fields
 @subsection Accessing Fields

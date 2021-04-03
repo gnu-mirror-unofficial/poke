@@ -824,8 +824,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_funcall)
 }
 PKL_PHASE_END_HANDLER
 
-/* Endianness specifiers in struct fields are only valid when applied
-   to integral types.  */
+/* Emit a warning when an endianness field annotation is useless due
+   to lexical structure of the code.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_struct_type_field)
 {
@@ -833,13 +833,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_struct_type_field)
   pkl_ast_node type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
 
   if (PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field) != PKL_AST_ENDIAN_DFL
-      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_INTEGRAL)
-    {
-      PKL_ERROR (PKL_AST_LOC (field),
-                 "endianness can only be specified in integral fields");
-      PKL_ANAL_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+      && (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+          || PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY)
+      && PKL_AST_TYPE_NAME (type))
+    PKL_WARNING (PKL_AST_LOC (field),
+                 "useless endianness annotation in field");
 }
 PKL_PHASE_END_HANDLER
 

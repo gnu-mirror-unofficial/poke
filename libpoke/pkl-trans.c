@@ -62,6 +62,25 @@
 
 #define PKL_TRANS_PAYLOAD ((pkl_trans_payload) PKL_PASS_PAYLOAD)
 
+
+#define PKL_TRANS_ENDIAN                          \
+  (PKL_TRANS_PAYLOAD->endian[PKL_TRANS_PAYLOAD->cur_endian])
+
+#define PKL_TRANS_PUSH_ENDIAN(ENDIAN)                                   \
+  do                                                                    \
+    {                                                                   \
+      assert (PKL_TRANS_PAYLOAD->cur_endian < PKL_TRANS_MAX_ENDIAN);    \
+      PKL_TRANS_PAYLOAD->endian[++PKL_TRANS_PAYLOAD->cur_endian] = (ENDIAN); \
+    } while (0)
+
+#define PKL_TRANS_POP_ENDIAN                      \
+  do                                              \
+    {                                             \
+      assert (PKL_TRANS_PAYLOAD->cur_endian > 0); \
+      PKL_TRANS_PAYLOAD->cur_endian--;            \
+    }                                             \
+  while (0)
+
 static int pkl_trans_in_functions (pkl_ast_node functions[],
                                    int next_function,
                                    pkl_ast_node function)
@@ -1105,6 +1124,34 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_comp_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* Push current endianness annotation.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_pr_struct_type_field)
+{
+  pkl_ast_node field = PKL_PASS_NODE;
+  int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
+
+  if (endian != PKL_AST_ENDIAN_DFL)
+    PKL_TRANS_PUSH_ENDIAN (PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field));
+}
+PKL_PHASE_END_HANDLER
+
+/* Annotate struct type fields with the current endiannes annotation
+   if necessary.  And also pop endianness.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_struct_type_field)
+{
+  pkl_ast_node field = PKL_PASS_NODE;
+  int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field);
+
+  if (endian == PKL_AST_ENDIAN_DFL)
+    PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (field) = PKL_TRANS_ENDIAN;
+
+  if (endian != PKL_AST_ENDIAN_DFL)
+    PKL_TRANS_POP_ENDIAN;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_trans1 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
@@ -1124,6 +1171,8 @@ struct pkl_phase pkl_phase_trans1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_COMP_STMT, pkl_trans1_ps_comp_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT_ITERATOR, pkl_trans1_ps_loop_stmt_iterator),
    PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT, pkl_trans1_ps_loop_stmt),
+   PKL_PHASE_PR_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_trans1_pr_struct_type_field),
+   PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_trans1_ps_struct_type_field),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_trans1_ps_op_attr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_trans1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_trans1_ps_type_function),

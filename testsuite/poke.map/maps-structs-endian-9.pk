@@ -1,0 +1,17 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type Bar =
+  struct {
+    little struct
+      {
+        int<16>[3] a;
+      } s;
+    int<16>[3] b;
+  };
+
+/* { dg-command {.set obase 16 } } */
+/* { dg-command {.set endian big} } */
+/* { dg-command {var bar = Bar @ 0#B} } */
+/* { dg-command { bar } } */
+/* { dg-output "Bar \{s=struct \{a=\\\[0x2010H,0x4030H,0x6050H\\\]\},b=\\\[0x7080H,0x90a0H,0xb0c0H\\\]\}" } */

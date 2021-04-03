@@ -1,0 +1,25 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    big struct
+    {
+      little struct
+      {
+        big int<16> a = 0x1020;
+        int<16> b = 0x3040;
+      } s3;
+
+      int<16> c = 0x5060;
+    } s2;
+    int<16> d = 0x7080;
+  };
+
+/* { dg-command {.set obase 16 } } */
+/* { dg-command {.set endian little} } */
+/* { dg-command {var s1 = Foo {} } } */
+/* { dg-command {.mem foo} } */
+/* { dg-command {Foo @ 0#B = s1} } */
+/* { dg-command {byte[8] @ 0#B} } */
+/* { dg-output "\\\[0x10UB,0x20UB,0x40UB,0x30UB,0x50UB,0x60UB,0x80UB,0x70UB\\\]" } */

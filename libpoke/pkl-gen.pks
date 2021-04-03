@@ -702,8 +702,9 @@
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
-        .c PKL_GEN_PAYLOAD->endian = endian; }
-                                        ; STRICT BOFF VAL
+        .c PKL_GEN_PAYLOAD->endian = endian;
+        .c }
+                                ; STRICT BOFF VAL
         pope
         pope
         ba .val_ok
@@ -1539,7 +1540,8 @@
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
         .c PKL_GEN_POP_CONTEXT;
-        .c PKL_GEN_PAYLOAD->endian = endian; }
+        .c PKL_GEN_PAYLOAD->endian = endian;
+        .c }
         ba .next
 .omitted_field:
         drop                    ; IOS SCT I

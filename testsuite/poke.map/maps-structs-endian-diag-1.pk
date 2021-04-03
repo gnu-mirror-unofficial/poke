@@ -1,0 +1,15 @@
+/* { dg-do compile } */
+
+type Foo =
+  struct
+  {
+    int a;
+    int b;
+  };
+
+type Bar =
+  struct
+  {
+    big Foo f; /* { dg-warning "useless" } */
+    int c;
+  };

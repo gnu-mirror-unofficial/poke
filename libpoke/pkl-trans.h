@@ -36,9 +36,16 @@
    depth relative to the current function.
 
    NEXT_FUNCTION - 1 is the index for the enclosing function in
-   FUNCTIONS.  NEXT_FUNCTION is 0 if not in a function.  */
+   FUNCTIONS.  NEXT_FUNCTION is 0 if not in a function.
+
+   ENDIAN is a stack whose top indicates the endianness to be used
+   when mapping and writing integral types.
+
+   CUR_ENDIAN is the index to ENDIAN and marks the top of the stack of
+   endianness.  Initially PKL_AST_ENDIAN_DFL.  */
 
 #define PKL_TRANS_MAX_FUNCTION_NEST 32
+#define PKL_TRANS_MAX_ENDIAN 25
 
 struct pkl_trans_payload
 {
@@ -47,6 +54,8 @@ struct pkl_trans_payload
   pkl_ast_node functions[PKL_TRANS_MAX_FUNCTION_NEST];
   int function_back[PKL_TRANS_MAX_FUNCTION_NEST];
   int next_function;
+  enum pkl_ast_endian endian[PKL_TRANS_MAX_ENDIAN];
+  int cur_endian;
 };
 
 typedef struct pkl_trans_payload *pkl_trans_payload;
@@ -60,6 +69,7 @@ static inline void
 pkl_trans_init_payload (pkl_trans_payload payload)
 {
   memset (payload, 0, sizeof (struct pkl_trans_payload));
+  payload->endian[0] = PKL_AST_ENDIAN_DFL;
 }
 
 #endif /* PKL_TRANS_H */

@@ -53,6 +53,9 @@
    functions.  Assemblers in PASM2 are used for compiling struct
    constructors.
 
+   ENDIAN is the endianness to be used when mapping and writing
+   integral types.
+
    CUR_PASM and CUR_PASM2 are the pointers to the top of PASM and
    PASM2, respectively.
 
@@ -67,9 +70,6 @@
    CUR_CONTEXT is the index to CONTEXT and marks the top of the stack
    of contexts.  Initially 0.
 
-   ENDIAN is the endianness to be used when mapping and writing
-   integral types.
-
    MAPPER_DEPTH and CONSTRUCTOR_DEPTH are used in the array mapper and
    constructor generation handlers.
 
@@ -83,11 +83,11 @@ struct pkl_gen_payload
   pkl_asm pasm[PKL_GEN_MAX_PASM];
   pkl_asm pasm2[PKL_GEN_MAX_PASM];
   uint32_t context[PKL_GEN_MAX_CTX];
+  enum pkl_ast_endian endian;
   int cur_pasm;
   int cur_pasm2;
   int cur_context;
   pvm_program program;
-  int endian;
   int constructor_depth;
   int mapper_depth;
   int in_file_p;
