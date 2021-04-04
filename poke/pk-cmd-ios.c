@@ -318,6 +318,22 @@ print_info_ios (pk_ios io, void *data)
   else
 #endif
   pk_table_column (table, pk_ios_handler (io));
+
+#if HAVE_HSERVER
+  if (poke_hserver_p)
+    {
+      /* [close] button.  */
+      char *cmd;
+      char *hyperlink;
+
+      asprintf (&cmd, ".close #%d", pk_ios_get_id (io));
+      hyperlink = pk_hserver_make_hyperlink ('e', cmd, PK_NULL);
+      free (cmd);
+
+      pk_table_column_hl (table, "[close]", hyperlink);
+      free (hyperlink);
+    }
+#endif /* HAVE_HSERVER */
 }
 
 static int
@@ -326,8 +342,13 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_table table;
 
   assert (argc == 0);
+#if HAVE_HSERVER
+  if (poke_hserver_p)
+    table = pk_table_new (7);
+  else
+#endif
+    table = pk_table_new (6);
 
-  table = pk_table_new (6);
   pk_table_row_cl (table, "table-header");
   pk_table_column (table, "  Id");
   pk_table_column (table, "Type");
@@ -335,6 +356,10 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_table_column (table, "Bias");
   pk_table_column (table, "Size");
   pk_table_column (table, "Name");
+#if HAVE_HSERVER
+  if (poke_hserver_p)
+    pk_table_column (table, ""); /* [close] button */
+#endif
 
   pk_ios_map (poke_compiler, print_info_ios, table);
 

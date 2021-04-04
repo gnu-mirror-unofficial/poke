@@ -1,3 +1,9 @@
+2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-ios.c (pk_cmd_info_ios): Add column for button
+	[close].
+	(print_info_ios): Emit a [close] button as a hyperlink.
+
 2021-04-04  Egeyar Bagcioglu  <egeyar@gmail.com>
 
 	* doc/poke.texi: Adjust the output of ".info ios".
