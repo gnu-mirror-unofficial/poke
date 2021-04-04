@@ -561,10 +561,6 @@ initialize (int argc, char *argv[])
   /* Initialize the global map.  */
   pk_map_init ();
 
-  /* Initialize the command subsystem.  This should be done even if
-     called non-interactively.  */
-  pk_cmd_init ();
-
 #ifdef HAVE_HSERVER
   poke_hserver_p = (poke_interactive_p
                     && pk_term_color_p ()
@@ -578,6 +574,10 @@ initialize (int argc, char *argv[])
       pk_hserver_start ();
     }
 #endif
+
+  /* Initialize the command subsystem.  This should be done even if
+     called non-interactively.  */
+  pk_cmd_init ();
 
   /* Initialize the documentation viewer.  */
   poke_doc_viewer = xstrdup ("info");

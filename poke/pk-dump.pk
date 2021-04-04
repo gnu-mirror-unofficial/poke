@@ -74,6 +74,7 @@ var pk_dump_ruler = 1;
 var pk_dump_ascii = 1;
 var pk_dump_nonprintable_char = '.';
 var pk_dump_unknown_byte = "??";
+var pk_dump_addr_hyperlinks = 0;
 
 /* `pk_dump_offset' keeps the last base offset used by `dump'.  It is
    the offset to be used in case the command is invoked with no :from
@@ -179,8 +180,15 @@ fun dump = (int<32> ios = get_ios,
                 var b = byte @ ios : (offset + o);
                 if (o % group_by == 0#B)
                      print " ";
+                if (pk_dump_addr_hyperlinks)
+                {
+                  var hl = hserver_make_hyperlink ('i', ltos (b, 16));
+                  term_begin_hyperlink (hl);
+                }
                 printf ("%u8x", b);
-              }
+                if (pk_dump_addr_hyperlinks)
+                  term_end_hyperlink;
+             }
               catch if E_io
               {
                 if (o % group_by == 0#B)
