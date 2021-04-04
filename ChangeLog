@@ -1,5 +1,12 @@
 2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-hserver.c (read_from_client): Print a string hint after
+	the prompt when dispatching 'c' hyperlinks.
+	* poke/pk-hserver.pk (hserver_print_hl): Get an optional
+	`function' argument.
+
+2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.pk (HServer_Token): New field `function'.
 	(hserver_make_hyperlink): Handle hyperlinks of kind 'c'.
 	(hserver_token_function): New function.

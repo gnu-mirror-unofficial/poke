@@ -244,6 +244,7 @@ read_from_client (int filedes)
           pthread_mutex_lock (&hserver_mutex);
           pk_repl_display_begin ();
           pk_puts (p);
+          pk_puts (cmd);
           pk_puts ("\n");
           pk_cmd_exec (cmd);
           pk_repl_display_end ();
@@ -252,9 +253,11 @@ read_from_client (int filedes)
         case 'c':
           /* Command 'closure'.  */
           cls = pk_hserver_function (token);
+          cmd = pk_hserver_cmd (token);
           pthread_mutex_lock (&hserver_mutex);
           pk_repl_display_begin ();
           pk_puts (p);
+          pk_puts (cmd);
           pk_puts ("\n");
           /* Note we just ignore raised exceptions.  */
           pk_call (poke_compiler, cls, NULL, 0);

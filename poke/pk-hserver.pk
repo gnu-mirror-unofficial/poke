@@ -107,9 +107,10 @@ fun hserver_make_hyperlink = (char kind,
 
 /* Print an hserver-served hyperlink.  */
 
-fun hserver_print_hl = (char kind, string str, string href) void:
+fun hserver_print_hl = (char kind, string str, string cmd,
+                        HServer_Callback function = lambda void: {}) void:
 {
-  var url = hserver_make_hyperlink (kind, href);
+  var url = hserver_make_hyperlink (kind, cmd, (function));
 
   term_begin_hyperlink (url, "");
   print str;
