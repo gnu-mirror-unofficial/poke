@@ -908,6 +908,7 @@ end
 # Stack: ( -- )
 
 instruction exit ()
+  branching
   code
     /* The element at the top of the stack is the exit
        code to report to the PVM caller.  */
