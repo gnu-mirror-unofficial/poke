@@ -1,3 +1,9 @@
+2021-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-hserver.c (pk_hserver_load): New function.
+	* poke/poke.c (initialize): Make sure pk-hserver.pk gets loaded
+	before poke.pk and the cmd subsystem.
+
 2021-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-ios.c (pk_cmd_info_ios): Add column for button

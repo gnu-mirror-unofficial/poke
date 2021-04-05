@@ -346,13 +346,17 @@ hserver_thread_worker (void *data)
 }
 
 void
-pk_hserver_init (void)
+pk_hserver_load (void)
 {
-  char hostname[128];
-
   /* Load the Poke components of the hserver.  */
   if (!pk_load (poke_compiler, "pk-hserver"))
     pk_fatal ("unable to load the pk-hserver module");
+}
+
+void
+pk_hserver_init (void)
+{
+  char hostname[128];
 
   hserver_tokens = pk_decl_val (poke_compiler, "hserver_tokens");
   assert (hserver_tokens != PK_NULL);

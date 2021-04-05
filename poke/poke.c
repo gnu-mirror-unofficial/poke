@@ -553,10 +553,14 @@ initialize (int argc, char *argv[])
                  pk_make_int (poke_interactive_p, 32)) == PK_ERROR)
     pk_fatal ("defining poke_interactive_p");
 
+  /* The Poke hyperlinks facilities must be loaded before poke.pk and
+     the cmd subsystem.  This is done even if the hserver is
+     disabled.  */
+  pk_hserver_load ();
+
   /* Load poke.pk  */
   if (!pk_load (poke_compiler, "poke"))
     pk_fatal ("unable to load the poke module");
-
 
   /* Initialize the global map.  */
   pk_map_init ();
