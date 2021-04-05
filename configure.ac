@@ -146,8 +146,8 @@ AC_ARG_ENABLE([pvm-profiling],
               [profiling_enabled=$enableval], [profiling_enabled=no])
 
 if test "x$profiling_enabled" = "xyes"; then
-  AC_DEFINE([JITTER_PROFILE_COUNT], [1], [use count-based profiling in the PVM])
-  AC_DEFINE([JITTER_PROFILE_SAMPLE], [1], [use sample-based profiling in the PVM])
+  AC_DEFINE([PVM_PROFILE_COUNT], [1], [use count-based profiling in the PVM])
+  AC_DEFINE([PVM_PROFILE_SAMPLE], [1], [use sample-based profiling in the PVM])
 fi
 
 dnl libnbd for nbd:// io spaces (optional). Testing it also requires
