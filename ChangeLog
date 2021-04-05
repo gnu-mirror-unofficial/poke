@@ -1,5 +1,13 @@
 2021-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk (pk_help): Generate hyperlinks for help topics.
+	* poke/pk-dump.pk (pk_dump_addr_hyperlinks): New variable.
+	(dump): Support emitting hyperlinnks for printed bytes.
+	* doc/poke.texi (Presentation options for @command{dump}):
+	Document the hyperlinks support in dump.
+
+2021-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-hserver.c (pk_hserver_load): New function.
 	* poke/poke.c (initialize): Make sure pk-hserver.pk gets loaded
 	before poke.pk and the cmd subsystem.

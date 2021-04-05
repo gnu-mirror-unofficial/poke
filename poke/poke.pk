@@ -64,7 +64,11 @@ fun pk_help = (string topic) void:
     print "Available help topics:\n\n";
     print "Commands:\n";
     for (entry in pk_help_topics where entry.category == "commands")
-      printf ("\t%s - %s\n", entry.topic, entry.summary);
+    {
+      print ("\t");
+      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
+      printf (" - %s\n", entry.summary);
+    }
     print "\n";
     print "To access the poke manual, type \".doc TOPIC\".\n";
     return;

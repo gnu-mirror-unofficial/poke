@@ -8512,6 +8512,11 @@ Not all bytes from an IO space can be read, depending on the kind of
 IO device.  When @code{dump} cannot read a byte it will print
 @code{pk_dump_unknown_byte} instead, which is a string.
 
+If the variable @code{pk_dump_addr_hyperlinks} is 1 then the
+@command{dump} command will emit hyperlinks in the printed bytes.
+Clicking on a byte value will result on the address of that byte to be
+inserted at the prompt.
+
 If you have a personal preference on how memory dumps should appear,
 you can set the relevant @code{pk_dump_*} variables.   These
 global variables serve as the defaults for @command{dump}, so this way, you
