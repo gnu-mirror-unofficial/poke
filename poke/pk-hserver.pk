@@ -47,25 +47,29 @@ var hserver_tokens = HServer_Token[hserver_max_tokens]();
 /* Get the kind of a given token.  */
 fun hserver_token_kind = (int token) char:
 {
-  return hserver_tokens[token].kind;
+  var index = token % hserver_max_tokens;
+  return hserver_tokens[index].kind;
 }
 
 /* Get the command associated with a given token.  */
 fun hserver_token_cmd = (int token) string:
 {
-  return hserver_tokens[token].cmd;
+  var index = token % hserver_max_tokens;
+  return hserver_tokens[index].cmd;
 }
 
 /* Get the function associated with a given token.  */
 fun hserver_token_function = (int token) HServer_Callback:
 {
-  return (hserver_tokens[token].function);
+  var index = token % hserver_max_tokens;
+  return (hserver_tokens[index].function);
 }
 
 /* Determine whether a given token exists.  */
 fun hserver_token_p = (int token) int:
 {
-  return hserver_tokens[token].used_p;
+  var index = token % hserver_max_tokens;
+  return hserver_tokens[index].used_p;
 }
 
 /* Allocate and get a random token.  */
