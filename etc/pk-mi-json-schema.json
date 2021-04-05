@@ -183,28 +183,56 @@
         },
         "Mapping": {
             "type": "object",
+            "title": "Mapping",
             "properties": {
                 "mapped": {
-                    "type": "boolean",
+                    "type": "boolean"
                 },
                 "strict": {
                     "type": "boolean",
+                    "default": true
                 },
                 "IOS": {
-                    "type": "integer",
-                    "minimum" : -2147483648,
-                    "maximum" :  2147483647
+                    "oneOf": [
+                        {
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "null"
                 },
                 "offset": {
                     "type": "object",
-                    "$ref": "#/definitions/Offset"
+                    "$ref": "#/definitions/Offset",
+                    "default": {
+                        "PokeValue" : {
+                            "type" : "Offset",
+                            "magnitude" : {
+                                "type" : "UnsignedInteger",
+                                "value" : 0,
+                                "size" : 64
+                            },
+                            "unit" : {
+                                "type" : "UnsignedInteger",
+                                "value" : 8,
+                                "size" : 64
+                            }
+                        }
+                    }
                 }
             },
+            "additionalProperties": false,
             "maxProperties": 4,
             "required": [
-                "mapped"
-            ],
-            "title": "Mapping"
+                "mapped",
+                "strict",
+                "IOS",
+                "offset"
+            ]
         },
         "Array": {
             "type" : "object",

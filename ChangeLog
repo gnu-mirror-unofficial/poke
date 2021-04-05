@@ -1,3 +1,8 @@
+2021-04-05  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	* etc/pk-mi-json-schema.json (schema): Added all "required" fields to
+	"Mapping". "IOS" can now take null.
+
 2021-04-05  Luca Saiu  <positron@gnu.org>
 
 	* configure.ac (JITTER_PROFILE_COUNT, JITTER_PROFILE_SAMPLE):
