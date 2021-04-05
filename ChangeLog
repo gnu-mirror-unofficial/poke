@@ -1,3 +1,8 @@
+2021-04-05  Egeyar Bagcioglu  <egeyar@gmail.com>
+
+	* etc/git-hooks/pre-push: Report it clearly when the pre-push hook
+	fails due to remote containing unfetched commits.
+
 2021-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-hserver.pk (hserver_token_kind): The token is no longer

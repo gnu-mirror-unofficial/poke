@@ -42,8 +42,17 @@ do
 			# New branch, examine all commits
 			range="$local_sha"
 		else
-			# Update to existing branch, examine new commits
-			range="$remote_sha..$local_sha"
+			# Without this check, the "git diff-tree" below fails and
+			# this hook falsely reports "ChangeLog is missing." when the
+			# remote has unfetched commits.
+			if test $(git cat-file -t $remote_sha^{commit})
+			then
+				# Update to existing branch, examine new commits
+				range="$remote_sha..$local_sha"
+			else
+				echo "Remote contains unfetched commits"
+				exit 1
+			fi
 		fi
 
 		# Check for ChangeLog being in each commits
