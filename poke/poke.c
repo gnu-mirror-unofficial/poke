@@ -556,7 +556,8 @@ initialize (int argc, char *argv[])
   /* The Poke hyperlinks facilities must be loaded before poke.pk and
      the cmd subsystem.  This is done even if the hserver is
      disabled.  */
-  pk_hserver_load ();
+  if (!pk_load (poke_compiler, "pk-hserver"))
+    pk_fatal ("unable to load the pk-hserver module");
 
   /* Load poke.pk  */
   if (!pk_load (poke_compiler, "poke"))

@@ -1,5 +1,11 @@
 2021-04-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (initialize): Load pk-hserver.pk directly.
+	* poke/pk-hserver.h: Remove pk_hserver_load.
+	* poke/pk-hserver.c (pk_hserver_load): Remove function.
+
+2021-04-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk (pk_help): Generate hyperlinks for help topics.
 	* poke/pk-dump.pk (pk_dump_addr_hyperlinks): New variable.
 	(dump): Support emitting hyperlinnks for printed bytes.

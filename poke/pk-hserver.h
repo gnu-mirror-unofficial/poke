@@ -25,9 +25,6 @@
 /* Initialize the server.  */
 void pk_hserver_init (void);
 
-/* Load the Poke components of the server.  */
-void pk_hserver_load (void);
-
 /* Start and shutdown the server.  */
 void pk_hserver_start (void);
 void pk_hserver_shutdown (void);
