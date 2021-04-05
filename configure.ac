@@ -69,8 +69,10 @@ case "${host_os}" in
     have_proc=no ;;
 esac
 
-AC_DEFINE([HAVE_PROC], 1,
-          [Defined if the host system features a proc directory.])
+if test "x$have_proc" = "xyes"; then
+  AC_DEFINE([HAVE_PROC], 1,
+            [Defined if the host system features a proc directory.])
+fi
 AM_CONDITIONAL([HAVE_PROC], [test "x$have_proc" = "xyes"])
 
 gl_INIT
