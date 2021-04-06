@@ -183,7 +183,7 @@ fun dump = (int<32> ios = get_ios,
                 if (pk_dump_addr_hyperlinks)
                 {
                   var hl = hserver_make_hyperlink ('i',
-                                                   ltos ((offset + o)/#B, 16) + "#B");
+                                                   "0x" + ltos ((offset + o)/#B, 16) + "#B");
                   term_begin_hyperlink (hl);
                 }
                 printf ("%u8x", b);
