@@ -11166,6 +11166,7 @@ The value computed by the expression will be discarded.
 * Calling Functions::		Invoking functions.
 * Function Types::		Useful for defining interfaces.
 * Lambdas::                     Functions in expressions.
+* Function Comparison::         Comparing function values.
 * Function Attributes::         Accessing properties of function values.
 @end menu
 
@@ -11386,6 +11387,25 @@ reasons):
 
 @example
 var double = lambda (int i) int: @{ return i * 2 @};
+@end example
+
+@node Function Comparison
+@subsection Function Comparison
+
+The equality operator (@code{==}) and the inequality operator
+(@code{!=}) can be applied to functions.  They evaluate to true if the
+operands are the same function value.  Examples:
+
+@example
+(poke) lambda void: @{@} == lambda void: @{@}
+0
+(poke) lambda void: @{@} != lambda void: @{@}
+1
+(poke) var f = void: @{@}
+(poke) f == f
+1
+(poke) f != f
+0
 @end example
 
 @node Function Attributes

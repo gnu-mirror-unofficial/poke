@@ -3858,6 +3858,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_rela)
     case PKL_TYPE_ARRAY:
       /* Fallthrough.  */
     case PKL_TYPE_STRUCT:
+      /* Fallthrough.  */
+    case PKL_TYPE_FUNCTION:
       assert (exp_code == PKL_AST_OP_EQ
               || exp_code == PKL_AST_OP_NE);
       /* Fallthrough.  */

@@ -228,6 +228,9 @@ PKL_DEF_INSN(PKL_INSN_GTS,"","gts")
 PKL_DEF_INSN(PKL_INSN_GES,"","ges")
 PKL_DEF_INSN(PKL_INSN_LES,"","les")
 
+PKL_DEF_INSN(PKL_INSN_EQC,"","eqc")
+PKL_DEF_INSN(PKL_INSN_NEC,"","nec")
+
 /* String instructions.  */
 
 PKL_DEF_INSN(PKL_INSN_SCONC,"","sconc")

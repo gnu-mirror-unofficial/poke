@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {  lambda (int i)void: {} != lambda (int i)void: {} } } */
+/* { dg-output "1" } */

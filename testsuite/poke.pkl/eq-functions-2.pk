@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var f = lambda (int i) void: {};
+
+/* { dg-command {  f == f } } */
+/* { dg-output "1" } */

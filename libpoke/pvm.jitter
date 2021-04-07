@@ -3218,6 +3218,38 @@ instruction les ()
   end
 end
 
+# Instruction: eqc
+#
+# Push 1 on the stack if the two closures at the top of the stack are
+# equal.  Otherwise push 0.
+#
+# Stack: ( CLS CLS -- CLS CLS INT )
+
+instruction eqc ()
+  code
+    pvm_val res = PVM_MAKE_INT (JITTER_UNDER_TOP_STACK ()
+                                == JITTER_TOP_STACK (),
+                                32);
+    JITTER_PUSH_STACK (res);
+  end
+end
+
+# Instruction: nec
+#
+# Push 1 on the stack if the two closures at the top of the stack are
+# not equal.  Otherwise push 0.
+#
+# Stack: ( CLS CLS -- CLS CLS INT )
+
+instruction nec ()
+  code
+    pvm_val res = PVM_MAKE_INT (JITTER_UNDER_TOP_STACK ()
+                                != JITTER_TOP_STACK (),
+                                32);
+    JITTER_PUSH_STACK (res);
+  end
+end
+
 
 ## Concatenation instructions
 

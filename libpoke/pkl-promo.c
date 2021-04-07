@@ -592,6 +592,7 @@ PKL_PHASE_END_HANDLER
            OFFSET   x OFFSET   -> BOOL
            ARRAY    x ARRAY    -> BOOL
            STRUCT   x STRUCT   -> BOOL
+           FUNCTION x FUNCTION -> BOOL
 
    In the I x I -> I configuration, the types of the operands are
    promoted in a way both operands end having the same type, following
@@ -600,8 +601,8 @@ PKL_PHASE_END_HANDLER
    The same logic is applied to the magnitudes of the offset operands
    in the O x O -> O configuration.
 
-   No operand promotion is performed in the S x S -> S
-   configuration.  Ditto for A x A -> A.  */
+   No operand promotion is performed in the S x S -> B
+   configuration.  Ditto for A x A -> B and F x F -> B.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
 {
@@ -681,6 +682,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_rela)
     case PKL_TYPE_ARRAY:
       /* Fallthrough.  */
     case PKL_TYPE_STRUCT:
+      /* Nothing to do.  */
+      break;
+    case PKL_TYPE_FUNCTION:
       /* Nothing to do.  */
       break;
     default:

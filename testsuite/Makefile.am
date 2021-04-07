@@ -952,6 +952,8 @@ EXTRA_DIST = \
   poke.pkl/eq-arrays-diag-1.pk \
   poke.pkl/eq-arrays-diag-2.pk \
   poke.pkl/eq-arrays-diag-4.pk \
+  poke.pkl/eq-functions-1.pk \
+  poke.pkl/eq-functions-2.pk \
   poke.pkl/eq-integers-1.pk \
   poke.pkl/eq-integers-2.pk \
   poke.pkl/eq-integers-3.pk \
@@ -1066,6 +1068,7 @@ EXTRA_DIST = \
   poke.pkl/funcall-vararg-diag-1.pk \
   poke.pkl/funcall-vararg-diag-2.pk \
   poke.pkl/ge-arrays-diag-1.pk \
+  poke.pkl/ge-functions-diag-1.pk \
   poke.pkl/ge-integers-1.pk \
   poke.pkl/ge-integers-2.pk \
   poke.pkl/ge-integers-3.pk \
@@ -1084,6 +1087,7 @@ EXTRA_DIST = \
   poke.pkl/getenv-1.pk \
   poke.pkl/getenv-2.pk \
   poke.pkl/gt-arrays-diag-1.pk \
+  poke.pkl/gt-functions-diag-1.pk \
   poke.pkl/gt-integers-1.pk \
   poke.pkl/gt-integers-2.pk \
   poke.pkl/gt-integers-3.pk \
@@ -1185,6 +1189,7 @@ EXTRA_DIST = \
   poke.pkl/lambda-4.pk \
   poke.pkl/lambda-diag-1.pk \
   poke.pkl/le-arrays-diag-1.pk \
+  poke.pkl/le-functions-diag-1.pk \
   poke.pkl/le-integers-1.pk \
   poke.pkl/le-integers-2.pk \
   poke.pkl/le-integers-3.pk \
@@ -1211,6 +1216,7 @@ EXTRA_DIST = \
   poke.pkl/loop-3.pk \
   poke.pkl/loop-4.pk \
   poke.pkl/lt-arrays-diag-1.pk \
+  poke.pkl/lt-functions-diag-1.pk \
   poke.pkl/lt-integers-1.pk \
   poke.pkl/lt-integers-2.pk \
   poke.pkl/lt-integers-3.pk \
@@ -1289,6 +1295,8 @@ EXTRA_DIST = \
   poke.pkl/ne-arrays-10.pk \
   poke.pkl/ne-arrays-diag-1.pk \
   poke.pkl/ne-arrays-diag-2.pk \
+  poke.pkl/ne-functions-1.pk \
+  poke.pkl/ne-functions-2.pk \
   poke.pkl/ne-structs-1.pk \
   poke.pkl/ne-structs-2.pk \
   poke.pkl/ne-structs-diag-1.pk \

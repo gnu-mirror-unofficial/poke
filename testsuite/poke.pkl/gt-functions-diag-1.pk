@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+var e = lambda void: {} > lambda void: {}; /* { dg-error "invalid operands" } */

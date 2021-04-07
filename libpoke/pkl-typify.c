@@ -169,6 +169,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
         }
         break;
       }
+    case PKL_TYPE_FUNCTION:
+      {
+        /* Only EQ and NE are supported for functions.  */
+        if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
+          goto invalid_operands;
+        break;
+      }
     case PKL_TYPE_STRUCT:
       {
         /* Only EQ and NE are supported for structs.  */

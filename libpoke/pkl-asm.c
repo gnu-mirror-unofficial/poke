@@ -916,8 +916,12 @@ pkl_asm_insn_cmp (pkl_asm pasm,
     }
   else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
     {
-      /* Function values are never equal.  */
-      pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (0, 32));
+      if (insn == PKL_INSN_EQ)
+        pkl_asm_insn (pasm, PKL_INSN_EQC);
+      else if (insn == PKL_INSN_NE)
+        pkl_asm_insn (pasm, PKL_INSN_NEC);
+      else
+        assert (0);
     }
   else
     assert (0);

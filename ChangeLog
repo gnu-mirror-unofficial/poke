@@ -1,3 +1,26 @@
+2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_op_rela): Handle function
+	arguments.
+	* libpoke/pkl-promo.c (pkl_promo_ps_op_rela): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_op_rela): Likewise.
+	* libpoke/pkl-insn.def: New instructions PKL_INSN_EQC and
+	PKL_INSN_NEC.
+	* libpoke/pvm.jitter (eqc): New instruction.
+	(nec): Likewise.
+	* libpoke/pkl-asm.c (pkl_asm_insn_cmp): Support EQ and NE for
+	function values.
+	* doc/poke.texi (Function Comparison): New section.
+	* testsuite/poke.pkl/gt-functions-diag-1.pk: New test.
+	* testsuite/poke.pkl/ge-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/le-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/lt-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/ne-functions-2.pk: Likewise.
+	* testsuite/poke.pkl/ne-functions-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-functions-2.pk: Likewise.
+	* testsuite/poke.pkl/eq-functions-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2021-04-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-dump.pk (dump): Fix printing of hyperlink.
