@@ -802,9 +802,9 @@ pkl_asm_insn_cdivo (pkl_asm pasm,
    Macro-instruction: LE type
    ( VAL VAL -- INT )
 
-   Generate code for perfoming a comparison operation, to either
-   integral or string operands.  INSN identifies the operation to
-   perform, and TYPE the type of the operands.  */
+   Generate code for perfoming a comparison operation.
+   INSN identifies the operation to perform, and TYPE
+   the type of the operands.  */
 
 static void
 pkl_asm_insn_cmp (pkl_asm pasm,
