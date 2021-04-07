@@ -1,5 +1,24 @@
 2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter (popob): Use jitter macros instead of pvm
+	calls to access the runtime state.
+	(pushend): Likewise.
+	(popend): Likewise.
+	(pushob): Likewise.
+	(pushom): Likewise.
+	(popom): Likewise.
+	(pushoo): Likewise.
+	(popoo): Likewise.
+	(pushoi): Likewise.
+	(popoi): Likewise.
+	(pushod): Likewise.
+	(popod): Likewise.
+	(popoac): Likewise.
+	(pushopp): Likewise.
+	(popopp): Likewise.
+
+2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_op_rela): Handle function
 	arguments.
 	* libpoke/pkl-promo.c (pkl_promo_ps_op_rela): Likewise.
