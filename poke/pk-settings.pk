@@ -76,71 +76,7 @@ type Poke_Setting =
 type Poke_Setting_Registry =
   struct
     {
-      Poke_Setting[] settings =
-        [
-          Poke_Setting {
-            name = "pretty-print",
-            kind = POKE_SETTING_BOOL,
-            summary = "whether poke should use struct pretty-printers",
-            getter = lambda any:
-              {
-                return vm_opprint;
-              },
-            setter = lambda (any v) string:
-              {
-                vm_set_opprint (v as int<32>);
-                return "";
-              }
-          },
-          Poke_Setting {
-            name = "obase",
-            kind = POKE_SETTING_INT,
-            summary = "numerical base to use when printing integral values",
-            getter = lambda any:
-              {
-                return vm_obase;
-              },
-            setter = lambda (any v) string:
-              {
-                var obase = v as int<32>;
-
-                try vm_set_obase (obase);
-                catch if E_inval {
-                  return "obase should be one of 2, 8, 10 or 16";
-                }
-                return "";
-              }
-          },
-          Poke_Setting {
-            name = "endian",
-            kind = POKE_SETTING_STR,
-            summary = "endianness used while accessing the IO spaces",
-            getter = lambda any:
-              {
-                return get_endian;
-              },
-            setter = lambda (any v) string:
-              {
-                var s = v as string;
-                var endian = ENDIAN_LITTLE;
-
-                if (s == "big")
-                  endian = ENDIAN_BIG;
-                else if (s == "little")
-                  endian = ENDIAN_LITTLE;
-                else if (s == "host")
-                  endian = pk_host_endian;
-                else if (s == "network")
-                  endian = pk_network_endian;
-                else
-                  return
-                    "endian should be one of `little', `big', `host' or `network'\n";
-
-                set_endian (endian);
-                return "";
-              }
-          },
-        ] : 1 /* XXX to avoid implicit constraint.  */;
+      Poke_Setting[] entries;
 
       /* Search for a given setting by name.
 
@@ -149,9 +85,25 @@ type Poke_Setting_Registry =
 
       method search = (string name) Poke_Setting:
         {
-          for (s in settings)
-            if (s.name == name)
-              return s;
+          for (e in entries)
+            if (e.name == name)
+              return e;
+          raise E_inval;
+        }
+
+      /* Add a new global setting to the registry.
+
+         If the global setting already exists in the registry, raise
+         E_inval.  */
+
+      method add = (Poke_Setting entry) void:
+        {
+          try search (entry.name);
+          catch if E_inval {
+            entries += [entry];
+            return;
+          }
+
           raise E_inval;
         }
 
@@ -217,11 +169,81 @@ type Poke_Setting_Registry =
       }
     };
 
+/* Create the registry.  */
+
 var pk_settings = Poke_Setting_Registry {};
+
+pk_settings.add
+  :entry Poke_Setting {
+           name = "pretty-print",
+           kind = POKE_SETTING_BOOL,
+           summary = "whether poke should use struct pretty-printers",
+           getter = lambda any:
+             {
+               return vm_opprint;
+             },
+           setter = lambda (any v) string:
+             {
+               vm_set_opprint (v as int<32>);
+               return "";
+             }
+         };
+
+pk_settings.add
+  :entry Poke_Setting {
+           name = "obase",
+           kind = POKE_SETTING_INT,
+           summary = "numerical base to use when printing integral values",
+           getter = lambda any:
+             {
+               return vm_obase;
+             },
+           setter = lambda (any v) string:
+             {
+               var obase = v as int<32>;
+
+               try vm_set_obase (obase);
+               catch if E_inval {
+                 return "obase should be one of 2, 8, 10 or 16";
+               }
+               return "";
+             }
+         };
+
+pk_settings.add
+  :entry Poke_Setting {
+           name = "endian",
+           kind = POKE_SETTING_STR,
+           summary = "endianness used while accessing the IO spaces",
+           getter = lambda any:
+             {
+               return get_endian;
+             },
+           setter = lambda (any v) string:
+             {
+               var s = v as string;
+               var endian = ENDIAN_LITTLE;
+
+               if (s == "big")
+                 endian = ENDIAN_BIG;
+               else if (s == "little")
+                 endian = ENDIAN_LITTLE;
+               else if (s == "host")
+                 endian = pk_host_endian;
+               else if (s == "network")
+                 endian = pk_network_endian;
+               else
+                 return
+                   "endian should be one of `little', `big', `host' or `network'\n";
+
+               set_endian (endian);
+               return "";
+             }
+         };
 
 /* Create help topics for the global settings defined above.  */
 
-for (setting in pk_settings.settings)
+for (setting in pk_settings.entries)
   pk_help_add_topic
     :entry Poke_HelpEntry {
              category = "settings",
