@@ -1,5 +1,10 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-help.pk (Poke_HelpEntry): Add constraint to make sure
+	the summary doesn't span for multiple lines.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-mode.el (poke-mode-syntax-table): Fix syntax of //
 	comments.
 

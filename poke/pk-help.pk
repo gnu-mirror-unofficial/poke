@@ -29,7 +29,7 @@ type Poke_HelpEntry =
   {
     string category;
     string topic;
-    string summary;
+    string summary : strchr (summary, '\n') == summary'length;
     string description;
   };
 
