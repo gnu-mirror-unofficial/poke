@@ -189,7 +189,7 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (*arg == '\0')
     {
-      if (pk_auto_map_p ())
+      if (pk_var_int ("pk_auto_map_p"))
         pk_puts ("yes\n");
       else
         pk_puts ("no\n");
@@ -197,9 +197,9 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       if (STREQ (arg, "yes"))
-        pk_set_auto_map (1);
+        pk_set_var_int ("pk_auto_map_p", 1);
       else if (STREQ (arg, "no"))
-        pk_set_auto_map (0);
+        pk_set_var_int ("pk_auto_map_p", 0);
       else
         {
           pk_term_class ("error");
@@ -232,7 +232,7 @@ pk_cmd_set_prompt_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (*arg == '\0')
     {
-      if (poke_prompt_maps_p)
+      if (pk_var_int ("pk_prompt_maps_p"))
         pk_puts ("yes\n");
       else
         pk_puts ("no\n");
@@ -240,9 +240,9 @@ pk_cmd_set_prompt_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       if (STREQ (arg, "yes"))
-        poke_prompt_maps_p = 1;
+        pk_set_var_int ("pk_prompt_maps_p", 1);
       else if (STREQ (arg, "no"))
-        poke_prompt_maps_p = 0;
+        pk_set_var_int ("pk_prompt_maps_p", 0);
       else
         {
           pk_term_class ("error");

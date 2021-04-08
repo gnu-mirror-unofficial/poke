@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**** C-set Globals. ****/
+/**** Globals. ****/
 
-/* The following variables are set by poke.c when poke initializes,
-   after loading this file.  */
+/* Many of the following variables are set by poke.c when poke
+   initializes, after loading this file.  */
 
 /* The endianness of the running host.  */
 var pk_host_endian = ENDIAN_BIG;
@@ -30,7 +30,11 @@ var pk_network_endian = ENDIAN_BIG;
 
 /* Whether auto-maps shall be acknowleged when loading files or
    not. */
-var poke_auto_map_p = 0;
+var pk_auto_map_p = 0;
+
+/* Whether map information shall be included in the REPL prompt.
+   Defaults to `yes'.  */
+var pk_prompt_maps_p = 1;
 
 /* Online help system.  */
 

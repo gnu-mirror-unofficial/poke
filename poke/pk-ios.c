@@ -44,7 +44,7 @@ pk_open_file (const char *handler, int set_cur_p, int create_p)
   if (ios_id == PK_IOS_NOID)
     return ios_id;
 
-  if (pk_auto_map_p ())
+  if (pk_var_int ("pk_auto_map_p"))
   {
     int i;
     pk_val auto_map;
@@ -119,7 +119,8 @@ pk_open_file (const char *handler, int set_cur_p, int create_p)
                     break;
                   }
 
-                if (poke_interactive_p && !poke_quiet_p && !poke_prompt_maps_p)
+                if (poke_interactive_p && !poke_quiet_p
+                    && ! pk_var_int ("pk_prompt_maps_p"))
                   pk_printf ("auto-map: map `%s' loaded\n",
                              pk_string_str (mapname));
               }

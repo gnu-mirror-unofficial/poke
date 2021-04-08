@@ -280,7 +280,7 @@ pk_prompt (void)
 {
   char *prompt = "";
 
-  if (poke_prompt_maps_p)
+  if (pk_var_int ("pk_prompt_maps_p"))
     {
       pk_ios cur_ios;
 

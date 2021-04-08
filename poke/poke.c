@@ -121,11 +121,6 @@ int poke_default_auto_map_p = 1;
 
 int poke_no_hserver_arg = 0;
 
-/* The following global determines whether map information shall be
-   included in the REPL prompt.  Defaults to `yes'.  */
-
-int poke_prompt_maps_p = 1;
-
 /* This is used by commands to indicate to the REPL that it must
    exit.  */
 
@@ -319,19 +314,19 @@ static struct pk_term_if poke_term_if =
   };
 
 int
-pk_auto_map_p (void)
+pk_var_int (const char *name)
 {
-  pk_val val = pk_decl_val (poke_compiler, "poke_auto_map_p");
+  pk_val val = pk_decl_val (poke_compiler, name);
 
   assert (val != PK_NULL);
   return pk_int_value (val);
 }
 
 void
-pk_set_auto_map (int auto_map_p)
+pk_set_var_int (const char *name, int value)
 {
-  pk_decl_set_val (poke_compiler, "poke_auto_map_p",
-                   pk_make_int (auto_map_p, 32));
+  pk_decl_set_val (poke_compiler, name,
+                   pk_make_int (value, 32));
 }
 
 static void
@@ -615,7 +610,7 @@ initialize (int argc, char *argv[])
     pk_decl_set_val (poke_compiler, "pk_host_endian", host_endian);
     pk_decl_set_val (poke_compiler, "pk_network_endian", network_endian);
 
-    pk_decl_set_val (poke_compiler, "poke_auto_map_p",
+    pk_decl_set_val (poke_compiler, "pk_auto_map_p",
                      pk_make_int (poke_default_auto_map_p, 32));
   }
 
