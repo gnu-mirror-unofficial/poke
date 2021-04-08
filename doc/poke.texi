@@ -12934,6 +12934,8 @@ running the Poke programs.
 @menu
 * @code{pk_obase}::         Get the output base.
 * @code{pk_set_obase}::     Set the output base.
+* @code{pk_opprint}::       Get whether pretty-printers are used.
+* @code{pk_set_opprint}::   Set whether pretty-printers are used.
 @end menu
 
 @node @code{pk_obase}
@@ -12961,6 +12963,28 @@ Where @var{obase} is the output base to set.  The base must be one of
 2 (for binary), 8 (for octal), 10 (for decimal) or 16 (for
 hexadecimal).  If the provided base is not contained in that set,
 @code{pk_set_obase} raises @code{E_inval}.
+
+@node @code{pk_opprint}
+@subsection @code{pk_opprint}
+
+The pre-defined function @code{pk_opprint} returns a boolean
+indicating whether pretty-printers are used when printing struct
+values, or not.  It has the following prototype:
+
+@example
+fun pk_opprint = int<32>:
+@end example
+
+@node @code{pk_set_opprint}
+@subsection @code{pk_set_opprint}
+
+The pre-defined function @code{pk_set_opprint} sets a flag in the
+underlying VM, indicating whether pretty-printers are used when
+printing struct values.  It has the following prototype:
+
+@example
+fun pk_set_opprint = (int<32> @var{pretty_print_p}) void:
+@end example
 
 @node Debugging
 @section Debugging

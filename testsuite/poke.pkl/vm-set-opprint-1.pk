@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type Foo = struct { int i; method _print = void: { print "foo"; } };
+
+/* { dg-command { vm_set_opprint (0) } } */
+/* { dg-command { Foo {} } } */
+/* { dg-output "Foo \{i=0\}" } */
+/* { dg-command { vm_set_opprint (1) } } */
+/* { dg-command { Foo {} } } */
+/* { dg-output "\nfoo" } */
+/* { dg-command { vm_opprint } } */
+/* { dg-output "\n1" } */

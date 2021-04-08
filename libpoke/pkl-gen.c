@@ -797,6 +797,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOB);
           break;
+        case PKL_AST_BUILTIN_VM_OPPRINT:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOPP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_OPPRINT:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOPP);
+          break;
         default:
           assert (0);
         }

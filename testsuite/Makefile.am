@@ -1919,8 +1919,10 @@ EXTRA_DIST = \
   poke.pkl/uu-file-1.pk \
   poke.pkl/uu-line-1.pk \
   poke.pkl/vm-obase-1.pk \
+  poke.pkl/vm-opprint-1.pk \
   poke.pkl/vm-set-obase-1.pk \
   poke.pkl/vm-set-obase-diag-1.pk \
+  poke.pkl/vm-set-opprint-1.pk \
   poke.pkl/while-1.pk \
   poke.pkl/while-2.pk \
   poke.pkl/while-3.pk \

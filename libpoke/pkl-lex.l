@@ -279,7 +279,10 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OBASE; }
 "__PKL_BUILTIN_VM_SET_OBASE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OBASE; }
-
+"__PKL_BUILTIN_VM_OPPRINT__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OPPRINT; }
+"__PKL_BUILTIN_VM_SET_OPPRINT__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OPPRINT; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

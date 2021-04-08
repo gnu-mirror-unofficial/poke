@@ -76,9 +76,6 @@ type Poke_Setting =
 type Poke_Setting_Registry =
   struct
     {
-      /* Storage used by some of the settings below.  */
-      var pretty_print_p = 0;
-
       Poke_Setting[] settings =
         [
           Poke_Setting {
@@ -87,11 +84,11 @@ type Poke_Setting_Registry =
             summary = "whether poke should use struct pretty-printers",
             getter = lambda any:
               {
-                return pretty_print_p;
+                return vm_opprint;
               },
             setter = lambda (any v) string:
               {
-                pretty_print_p = v as int<32>;
+                vm_set_opprint (v as int<32>);
                 return "";
               }
           },

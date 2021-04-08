@@ -1214,7 +1214,7 @@ end
 instruction pushopp ()
   code
     int pp = JITTER_STATE_RUNTIME_FIELD (pretty_print);
-    JITTER_PUSH_STACK (PVM_MAKE_INT (pp, 32));
+    JITTER_PUSH_STACK (PVM_MAKE_INT (!!pp, 32));
   end
 end
 

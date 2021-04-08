@@ -45,6 +45,8 @@ fun term_end_hyperlink = void: __PKL_BUILTIN_TERM_END_HYPERLINK__;
 
 fun vm_obase = int<32>: __PKL_BUILTIN_VM_OBASE__;
 fun vm_set_obase = (int<32> obase) void: __PKL_BUILTIN_VM_SET_OBASE__;
+fun vm_opprint = int<32>: __PKL_BUILTIN_VM_OPPRINT__;
+fun vm_set_opprint = (int<32> pprint_p) void: __PKL_BUILTIN_VM_SET_OPPRINT__;
 
 var ENDIAN_LITTLE = 0;
 var ENDIAN_BIG = 1;

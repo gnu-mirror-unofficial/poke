@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {.set pretty-print no} } */
+/* { dg-command {vm_opprint} } */
+/* { dg-output "0" } */
