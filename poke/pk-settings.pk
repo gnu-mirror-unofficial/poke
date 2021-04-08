@@ -93,8 +93,8 @@ type Poke_Setting_Registry =
 
       /* Add a new global setting to the registry.
 
-         If the global setting already exists in the registry, raise
-         E_inval.  */
+         If a setting with the given name already exists in the
+         registry, raise E_inval.  */
 
       method add_setting = (Poke_Setting entry) void:
         {
