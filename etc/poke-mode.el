@@ -158,6 +158,7 @@
     ;; // and /* */ comments
     (modify-syntax-entry ?\/ ". 124b" st)
     (modify-syntax-entry ?\* ". 23" st)
+    (modify-syntax-entry ?\n "> b" st)
     ;; balenced punct {} []
     ;; (parens are already done from inherited standard syntax)
     (modify-syntax-entry ?\{ "(}" st)

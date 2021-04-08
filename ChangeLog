@@ -1,5 +1,10 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke-mode.el (poke-mode-syntax-table): Fix syntax of //
+	comments.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk: Define pk_doc_viewer.
 	* poke/poke.c: Remove global poke_doc_viewer.
 	(initialize): Do not initialize poke_doc_viewer.
