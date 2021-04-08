@@ -96,7 +96,7 @@ type Poke_Setting_Registry =
          If the global setting already exists in the registry, raise
          E_inval.  */
 
-      method add = (Poke_Setting entry) void:
+      method add_setting = (Poke_Setting entry) void:
         {
           try search (entry.name);
           catch if E_inval {
@@ -150,7 +150,7 @@ type Poke_Setting_Registry =
 
 var pk_settings = Poke_Setting_Registry {};
 
-pk_settings.add
+pk_settings.add_setting
   :entry Poke_Setting {
            name = "pretty-print",
            kind = POKE_SETTING_BOOL,
@@ -166,7 +166,7 @@ pk_settings.add
              }
          };
 
-pk_settings.add
+pk_settings.add_setting
   :entry Poke_Setting {
            name = "obase",
            kind = POKE_SETTING_INT,
@@ -187,7 +187,7 @@ pk_settings.add
              }
          };
 
-pk_settings.add
+pk_settings.add_setting
   :entry Poke_Setting {
            name = "endian",
            kind = POKE_SETTING_STR,
