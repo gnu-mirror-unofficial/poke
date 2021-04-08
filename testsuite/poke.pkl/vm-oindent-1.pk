@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command { .set oindent 2 } } */
+/* { dg-command { vm_oindent } } */
+/* { dg-output "2" } */

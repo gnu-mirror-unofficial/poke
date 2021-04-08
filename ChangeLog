@@ -1,5 +1,31 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (@code{vm_oacutoff}): New section.
+	(@code{vm_set_oacutoff}): Likewise.
+	(@code{vm_odepth}): Likewise.
+	(@code{vm_oindent}): Likewise.
+	(@code{vm_set_oindent}): Likewise.
+	(@code{vm_omaps}): Likewise.
+	(@code{vm_set_omaps}): Likewise.
+	(@code{vm_omode}): Likewise.
+
+	* libpoke/pkl-tab.y: New tokens.
+	* libpoke/pkl-lex.l: Handle new tokens.
+	* libpoke/pkl-rt.pk: Define new built-ins.
+	* libpoke/pkl-gen.c: Generate code for new built-ins.
+	* testsuite/poke.pkl/vm-oacutoff-1.pk: New test.
+	* testsuite/poke.pkl/vm-set-oacutoff-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-odepth-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-set-odepth-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-oindent-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-set-oindent-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-omaps-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-set-omaps-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-omode-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-set-omode-1.pk: Likewise.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-settings.pk: Simplify handling of boolean settings.
 
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>

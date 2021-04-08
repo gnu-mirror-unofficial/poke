@@ -1,0 +1,11 @@
+/* { dg-do run } */
+
+type Foo = struct {};
+
+/* { dg-command {vm_set_omode (VM_OMODE_PLAIN)} } */
+/* { dg-command { Foo {} } } */
+/* { dg-output "Foo \{\}" } */
+/* { dg-command {vm_set_omode (VM_OMODE_TREE)} } */
+/* { dg-command { Foo {} } } */
+/* { dg-output "\nFoo \{" } */
+/* { dg-output "\n\}" } */

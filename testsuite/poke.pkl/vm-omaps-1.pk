@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command { .set omaps yes } } */
+/* { dg-command { vm_omaps } } */
+/* { dg-output "1" } */

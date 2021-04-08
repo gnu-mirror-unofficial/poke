@@ -805,6 +805,46 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOPP);
           break;
+        case PKL_AST_BUILTIN_VM_OACUTOFF:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOAC);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_OACUTOFF:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOAC);
+          break;
+        case PKL_AST_BUILTIN_VM_ODEPTH:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOD);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_ODEPTH:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD);
+          break;
+        case PKL_AST_BUILTIN_VM_OINDENT:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOI);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_OINDENT:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOI);
+          break;
+        case PKL_AST_BUILTIN_VM_OMAPS:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOO);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_OMAPS:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOO);
+          break;
+        case PKL_AST_BUILTIN_VM_OMODE:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOM);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_OMODE:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM);
+          break;
         default:
           assert (0);
         }

@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {.set omode tree} } */
+/* { dg-command {vm_omode == VM_OMODE_TREE} } */
+/* { dg-output "1" } */

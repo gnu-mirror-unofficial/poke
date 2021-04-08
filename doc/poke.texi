@@ -12932,59 +12932,202 @@ used to access and modify properties of the underlying implementation
 running the Poke programs.
 
 @menu
-* @code{pk_obase}::         Get the output base.
-* @code{pk_set_obase}::     Set the output base.
-* @code{pk_opprint}::       Get whether pretty-printers are used.
-* @code{pk_set_opprint}::   Set whether pretty-printers are used.
+* @code{vm_obase}::         Get the output base.
+* @code{vm_set_obase}::     Set the output base.
+* @code{vm_opprint}::       Get whether pretty-printers are used.
+* @code{vm_set_opprint}::   Set whether pretty-printers are used.
+* @code{vm_oacutoff}::      Get the cutoff limit for array printing.
+* @code{vm_set_oacutoff}::  Set the cutoff limit for array printing.
+* @code{vm_odepth}::        Get the maximum output depth level.
+* @code{vm_set_odepth}::    Set the maximum output depth level.
+* @code{vm_oindent}::       Get the output indentation step.
+* @code{vm_set_oindent}::   Set the output indentation step.
+* @code{vm_omaps}::         Get whether output maps get printed.
+* @code{vm_set_omaps}::     Set whether output maps get printed.
+* @code{vm_omode}::         Get the current output mode.
+* @code{vm_set_omode}::     Set the current output mode.
 @end menu
 
-@node @code{pk_obase}
-@subsection @code{pk_obase}
+@node @code{vm_obase}
+@subsection @code{vm_obase}
 
-The pre-defined function @code{pk_obase} returns the current output
+The pre-defined function @code{vm_obase} returns the current output
 base in use in the underlying VM.  It has the following prototype:
 
 @example
-fun pk_obase = int<32>:
+fun vm_obase = int<32>:
 @end example
 
-@node @code{pk_set_obase}
-@subsection @code{pk_set_obase}
+@node @code{vm_set_obase}
+@subsection @code{vm_set_obase}
 
-The pre-defined function @code{pk_set_obase} sets the output base in
+The pre-defined function @code{vm_set_obase} sets the output base in
 the underlying VM.  It has the following prototype:
 
 @example
-fun pk_set_obase = (int<32> @var{obase}) void:
+fun vm_set_obase = (int<32> @var{obase}) void:
 @end example
 
 @noindent
 Where @var{obase} is the output base to set.  The base must be one of
 2 (for binary), 8 (for octal), 10 (for decimal) or 16 (for
 hexadecimal).  If the provided base is not contained in that set,
-@code{pk_set_obase} raises @code{E_inval}.
+@code{vm_set_obase} raises @code{E_inval}.
 
-@node @code{pk_opprint}
-@subsection @code{pk_opprint}
+@node @code{vm_opprint}
+@subsection @code{vm_opprint}
 
-The pre-defined function @code{pk_opprint} returns a boolean
+The pre-defined function @code{vm_opprint} returns a boolean
 indicating whether pretty-printers are used when printing struct
 values, or not.  It has the following prototype:
 
 @example
-fun pk_opprint = int<32>:
+fun vm_opprint = int<32>:
 @end example
 
-@node @code{pk_set_opprint}
-@subsection @code{pk_set_opprint}
+@node @code{vm_set_opprint}
+@subsection @code{vm_set_opprint}
 
-The pre-defined function @code{pk_set_opprint} sets a flag in the
+The pre-defined function @code{vm_set_opprint} sets a flag in the
 underlying VM, indicating whether pretty-printers are used when
 printing struct values.  It has the following prototype:
 
 @example
-fun pk_set_opprint = (int<32> @var{pretty_print_p}) void:
+fun vm_set_opprint = (int<32> @var{pretty_print_p}) void:
 @end example
+
+@node @code{vm_oacutoff}
+@subsection @code{vm_oacutoff}
+
+The pre-defined function @code{vm_oacutoff} returns an integer
+indicating the current cutoff limit used when printing array values.
+It has the following prototype:
+
+@example
+fun vm_oacutoff = int<32>:
+@end example
+
+@node @code{vm_set_oacutoff}
+@subsection @code{vm_set_oacutoff}
+
+The pre-defined function @code{vm_set_oacutoff} sets the current
+cutoff limit used when printing array values.  It has the following
+prototype:
+
+@example
+fun vm_set_oacutoff = (int<32> @var{cutoff}) void:
+@end example
+
+@noindent
+where @var{cutoff} is an integer specifying the maximum number of
+array elements that get printed.
+
+@node @code{vm_odepth}
+@subsection @code{vm_odepth}
+
+The pre-defined function @code{vm_odepth} returns an integer
+indicating the maximum depth level used when printing nested
+structures.  It has the following prototype:
+
+@example
+fun vm_odepth = int<32>:
+@end example
+
+@node @code{vm_set_odepth}
+@subsection @code{vm_set_odepth}
+
+The pre-defined function @code{vm_set_odepth} sets the maximum depth
+level to be used when printing nested structures.  It has the
+following prototype:
+
+@example
+fun vm_set_odepth = (int<32> @var{depth_level}) void:
+@end example
+
+@noindent
+where @var{depth_level} specifies the number of depth levels in nested
+structs to consider when printing nested structures.
+
+@node @code{vm_oindent}
+@subsection @code{vm_oindent}
+
+The pre-defined function @code{vm_oindent} returns an integer
+indicating the indentation step.  It has the following prototype:
+
+@example
+fun vm_oindent = int<32>:
+@end example
+
+@node @code{vm_set_oindent}
+@subsection @code{vm_set_oindent}
+
+The pre-defined function @code{vm_set_oindent} sets the indentation
+level used when printing nested structures.  It has the following
+prototype:
+
+@example
+fun vm_set_oindent = (int<32> @var{step}) void:
+@end example
+
+@noindent
+where @var{step} specifies how much to indent when printing nested
+structures.  This value typically translates into the number of white
+spaces (or tabs) used in terminals, but this must not be relied on
+since other printing media may interpret it differently.
+
+@node @code{vm_omaps}
+@subsection @code{vm_omaps}
+
+The pre-defined function @code{vm_omaps} returns a boolean indicating
+whether offset information is included when printing out values.  It
+has the following prototype:
+
+@example
+fun vm_omaps = int<32>:
+@end example
+
+@node @code{vm_set_omaps}
+@subsection @code{vm_set_omaps}
+
+The pre-defined function @code{vm_set_omaps} sets whether offset
+information is included when printing out values. It has the following
+prototype:
+
+@example
+fun vm_set_omaps = (int<32> @var{omaps_p}) void:
+@end example
+
+@node @code{vm_omode}
+@subsection @code{vm_omode}
+
+The pre-defined function @code{vm_omode} returns an integer indicating
+the currently enabled output mode.  It has the following prototype:
+
+@example
+fun vm_omode = int<32>:
+@end example
+
+@noindent
+There are currently two supported output modes:
+
+@example
+var VM_OMODE_PLAIN = 0;
+var VM_OMODE_TREE = 1;
+@end example
+
+@node @code{vm_set_omode}
+@subsection @code{vm_set_omode}
+
+The pre-defined function @code{vm_set_omode} sets the output mode to
+use by default when printing values.  It has the following prototype:
+
+@example
+fun vm_set_omode = (int<32> @var{omode}) void:
+@end example
+
+@noindent
+Where @var{omode} is one of the @code{VM_OMODE_*} values documented
+above.
 
 @node Debugging
 @section Debugging

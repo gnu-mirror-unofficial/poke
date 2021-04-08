@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command { .set odepth 3 } } */
+/* { dg-command { vm_odepth } } */
+/* { dg-output "3" } */

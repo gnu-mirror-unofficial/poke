@@ -279,6 +279,26 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OBASE; }
 "__PKL_BUILTIN_VM_SET_OBASE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OBASE; }
+"__PKL_BUILTIN_VM_OACUTOFF__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OACUTOFF; }
+"__PKL_BUILTIN_VM_SET_OACUTOFF__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OACUTOFF; }
+"__PKL_BUILTIN_VM_ODEPTH__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_ODEPTH; }
+"__PKL_BUILTIN_VM_SET_ODEPTH__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_ODEPTH; }
+"__PKL_BUILTIN_VM_OINDENT__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OINDENT; }
+"__PKL_BUILTIN_VM_SET_OINDENT__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OINDENT; }
+"__PKL_BUILTIN_VM_OMAPS__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OMAPS; }
+"__PKL_BUILTIN_VM_SET_OMAPS__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OMAPS; }
+"__PKL_BUILTIN_VM_OMODE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OMODE; }
+"__PKL_BUILTIN_VM_SET_OMODE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OMODE; }
 "__PKL_BUILTIN_VM_OPPRINT__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OPPRINT; }
 "__PKL_BUILTIN_VM_SET_OPPRINT__" {

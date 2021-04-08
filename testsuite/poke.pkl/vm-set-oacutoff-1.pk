@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command { vm_set_oacutoff (2) } } */
+/* { dg-command { vm_oacutoff } } */
+/* { dg-output "2" } */
+/* { dg-command {[1,2,3,4]} } */
+/* { dg-output "\n\\\[1,2,\\.\\.\\.\\\]" } */

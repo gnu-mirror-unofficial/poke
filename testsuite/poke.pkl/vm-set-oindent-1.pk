@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+type Foo = struct { int a; };
+
+/* { dg-command { vm_set_oindent (5) } } */
+/* { dg-command { printf "%Tv\n", Foo {} } } */
+/* { dg-output "Foo \{" } */
+/* { dg-output "\n     a=0" } */
+/* { dg-output "\n\}" } */

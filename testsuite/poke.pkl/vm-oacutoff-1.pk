@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command { .set oacutoff 3 } } */
+/* { dg-command { vm_oacutoff } } */
+/* { dg-output "3" } */

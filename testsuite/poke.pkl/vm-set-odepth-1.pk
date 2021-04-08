@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+type Bar = struct { };
+type Foo = struct { Bar bar; };
+
+/* { dg-command { vm_set_odepth (1) } } */
+/* { dg-command { vm_odepth } } */
+/* { dg-output "1" } */
+/* { dg-command {Foo {}} } */
+/* { dg-output "\nFoo \{bar=Bar \{\\.\\.\\.\}\}" } */

@@ -47,9 +47,24 @@ fun vm_obase = int<32>: __PKL_BUILTIN_VM_OBASE__;
 fun vm_set_obase = (int<32> obase) void: __PKL_BUILTIN_VM_SET_OBASE__;
 fun vm_opprint = int<32>: __PKL_BUILTIN_VM_OPPRINT__;
 fun vm_set_opprint = (int<32> pprint_p) void: __PKL_BUILTIN_VM_SET_OPPRINT__;
+fun vm_oacutoff = int<32>: __PKL_BUILTIN_VM_OACUTOFF__;
+fun vm_set_oacutoff = (int<32> oacutoff) void: __PKL_BUILTIN_VM_SET_OACUTOFF__;
+fun vm_odepth = int<32>: __PKL_BUILTIN_VM_ODEPTH__;
+fun vm_set_odepth = (int<32> odepth) void: __PKL_BUILTIN_VM_SET_ODEPTH__;
+fun vm_oindent = int<32>: __PKL_BUILTIN_VM_OINDENT__;
+fun vm_set_oindent = (int<32> oindent) void: __PKL_BUILTIN_VM_SET_OINDENT__;
+fun vm_omaps = int<32>: __PKL_BUILTIN_VM_OMAPS__;
+fun vm_set_omaps = (int<32> omaps) void: __PKL_BUILTIN_VM_SET_OMAPS__;
+fun vm_omode = int<32>: __PKL_BUILTIN_VM_OMODE__;
+fun vm_set_omode = (int<32> omode) void: __PKL_BUILTIN_VM_SET_OMODE__;
 
 var ENDIAN_LITTLE = 0;
 var ENDIAN_BIG = 1;
+
+/* Please keep the following two variables in sync with enum pvm_omode
+   in pvm.h.  */
+var VM_OMODE_PLAIN = 0;
+var VM_OMODE_TREE = 1;
 
 /* IOS flags and modes.
 
