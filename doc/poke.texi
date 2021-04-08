@@ -228,6 +228,7 @@ The Poke Language
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
 * System::			Accessing the system from within Poke.
+* VM::                          Tweaking the PVM in Poke programs.
 * Debugging::                   Debugging Poke programs.
 
 The Standard Library
@@ -8680,6 +8681,7 @@ The IO space to where write the scrabbled data.  Defaults to
 * Comments::			Documenting Poke programs.
 * Modules::			Loading pickles from Poke programs.
 * System::                      Accessing the system from within Poke.
+* VM::                          Accessing the PVM in Poke programs.
 * Debugging::                   Debugging Poke programs.
 @end menu
 
@@ -12921,6 +12923,44 @@ pseudo-random number generator very easily:
 @example
 srand (get_time[1])
 @end example
+
+@node VM
+@section VM
+
+The Poke language provides a set of pre-defined functions which can be
+used to access and modify properties of the underlying implementation
+running the Poke programs.
+
+@menu
+* @code{pk_obase}::         Get the output base.
+* @code{pk_set_obase}::     Set the output base.
+@end menu
+
+@node @code{pk_obase}
+@subsection @code{pk_obase}
+
+The pre-defined function @code{pk_obase} returns the current output
+base in use in the underlying VM.  It has the following prototype:
+
+@example
+fun pk_obase = int<32>:
+@end example
+
+@node @code{pk_set_obase}
+@subsection @code{pk_set_obase}
+
+The pre-defined function @code{pk_set_obase} sets the output base in
+the underlying VM.  It has the following prototype:
+
+@example
+fun pk_set_obase = (int<32> @var{obase}) void:
+@end example
+
+@noindent
+Where @var{obase} is the output base to set.  The base must be one of
+2 (for binary), 8 (for octal), 10 (for decimal) or 16 (for
+hexadecimal).  If the provided base is not contained in that set,
+@code{pk_set_obase} raises @code{E_inval}.
 
 @node Debugging
 @section Debugging

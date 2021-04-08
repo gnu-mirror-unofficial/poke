@@ -275,6 +275,11 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_GET_BGCOLOR; }
 "__PKL_BUILTIN_TERM_SET_BGCOLOR__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_TERM_SET_BGCOLOR; }
+"__PKL_BUILTIN_VM_OBASE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OBASE; }
+"__PKL_BUILTIN_VM_SET_OBASE__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OBASE; }
+
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

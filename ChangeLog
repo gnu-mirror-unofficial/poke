@@ -1,5 +1,28 @@
 2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y: New tokens BUILTIN_VM_OBASE and
+	BUILTIN_VM_SET_OBASE.
+	(builtin): Add rules for them.
+	* libpoke/pkl-lex.l: Recognize new tokens.
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_VM_OBASE): Define.
+	(PKL_AST_BUILTIN_VM_SET_OBASE): Likewise.
+	* libpoke/pkl-rt.pk (vm_obase): New function.
+	(vm_set_obase): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Generate code for new
+	builtins.
+	* poke/pk-settings.pk: Use new builtins.
+	* libpoke/pvm.jitter: Move obase from the runtime state to the
+	backing state.
+	* libpoke/pvm.c (PVM_STATE_OBASE): Redefine accordingly.
+	* testsuite/poke.pkl/vm-obase-1.pk: New test.
+	* testsuite/poke.pkl/vm-set-obase-1.pk: Likewise.
+	* testsuite/poke.pkl/vm-set-obase-diag-1.pk: Likewise.
+	* doc/poke.texi (VM): New section.
+	(pk_obase): New subsection.
+	(pk_set_obase): Likewise.
+
+2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-settings.pk: New file.
 	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-settings.pk
 	* poke/poke.pk: Load pk-settings.pk.

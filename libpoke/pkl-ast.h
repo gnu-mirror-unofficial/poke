@@ -1437,6 +1437,8 @@ pkl_ast_node pkl_ast_make_incrdecr (pkl_ast ast,
 #define PKL_AST_BUILTIN_SLEEP 24
 #define PKL_AST_BUILTIN_IOGETB 25
 #define PKL_AST_BUILTIN_IOSETB 26
+#define PKL_AST_BUILTIN_VM_OBASE 27
+#define PKL_AST_BUILTIN_VM_SET_OBASE 28
 
 struct pkl_ast_comp_stmt
 {

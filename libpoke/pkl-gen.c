@@ -789,7 +789,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
         case PKL_AST_BUILTIN_TERM_END_HYPERLINK:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ENDHL);
           break;
-
+        case PKL_AST_BUILTIN_VM_OBASE:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOB);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          break;
+        case PKL_AST_BUILTIN_VM_SET_OBASE:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOB);
+          break;
         default:
           assert (0);
         }

@@ -101,15 +101,16 @@ type Poke_Setting_Registry =
             summary = "numerical base to use when printing integral values",
             getter = lambda any:
               {
-                /* XXX get the obase from the IOS.  */
-                return 10;
+                return vm_obase;
               },
             setter = lambda (any v) string:
               {
                 var obase = v as int<32>;
-                if (!(obase in [2, 8, 10, 16]))
+
+                try vm_set_obase (obase);
+                catch if E_inval {
                   return "obase should be one of 2, 8, 10 or 16";
-                /* XXX set the obase in the IOS.  */
+                }
                 return "";
               }
           }
