@@ -1,5 +1,47 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd.c (pk_cmd_exec_1): Set argv[0] to a string argument
+	containing the dot-command name.
+	* poke/pk-cmd-help.c (pk_cmd_help): Likewise.
+	* poke/pk-cmd-editor.c (pk_cmd_editor): Adjust accordingly.
+	* poke/pk-cmd-vm.c (pk_cmd_vm_disas_exp): Likewise.
+	(pk_cmd_vm_disas_fun): Likewise.
+	* poke/pk-cmd-set.c (pk_cmd_set_obase): Likewise.
+	(pk_cmd_set_endian): Likewise.
+	(pk_cmd_set_nenc): Likewise.
+	(pk_cmd_set_auto_map): Likewise.
+	(pk_cmd_set_prompt_maps): Likewise.
+	(pk_cmd_set_pretty_print): Likewise.
+	(pk_cmd_set_oacutoff): Likewise.
+	(pk_cmd_set_odepth): Likewise.
+	(pk_cmd_set_oindent): Likewise.
+	(pk_cmd_set_omaps): Likewise.
+	(pk_cmd_set_omode): Likewise.
+	(pk_cmd_set_error_on_warning): Likewise.
+	(pk_cmd_set_doc_viewer): Likewise.
+	* poke/pk-cmd-misc.c (pk_cmd_exit): Likewise.
+	(pk_cmd_doc): Likewise.
+	(pk_cmd_jmd): Likewise.
+	* poke/pk-cmd-map.c (pk_cmd_map_create): Likewise.
+	(pk_cmd_map_remove): Likewise.
+	(pk_cmd_map_show): Likewise.
+	(pk_cmd_map_entry_add): Likewise.
+	(pk_cmd_map_entry_remove): Likewise.
+	(pk_cmd_map_load): Likewise.
+	(pk_cmd_info_maps): Likewise.
+	* poke/pk-cmd-ios.c (pk_cmd_ios): Likewise.
+	(pk_cmd_sub): Likewise.
+	(pk_cmd_proc): Likewise.
+	(pk_cmd_file): Likewise.
+	(pk_cmd_close): Likewise.
+	(pk_cmd_info_ios): Likewise.
+	(pk_cmd_load_file): Likewise.
+	(pk_cmd_source_file): Likewise.
+	(pk_cmd_mem): Likewise.
+	(pk_cmd_nbd): Likewise.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h: Prototype for pk_struct_ref_field_value.
 	* libpoke/pk-val.c (pk_struct_ref_field_value): New function.
 	* poke/pk-cmd-set.c (pk_cmd_set_init): New function.

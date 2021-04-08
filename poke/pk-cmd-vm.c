@@ -33,10 +33,10 @@ pk_cmd_vm_disas_exp (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ret;
   const char *expr;
 
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
-  expr = PK_CMD_ARG_STR (argv[0]);
+  expr = PK_CMD_ARG_STR (argv[1]);
   ret = pk_disassemble_expression (poke_compiler, expr,
                                    uflags & PK_VM_DIS_F_NAT);
 
@@ -60,10 +60,10 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   const char *expr;
   pk_val cls;
 
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
-  expr = PK_CMD_ARG_STR (argv[0]);
+  expr = PK_CMD_ARG_STR (argv[1]);
   ret = pk_compile_expression (poke_compiler, expr, NULL, &cls);
 
   if (ret != PK_OK)

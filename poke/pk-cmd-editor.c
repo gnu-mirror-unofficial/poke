@@ -48,7 +48,7 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     return 1;
 
   /* editor */
-  assert (argc == 0);
+  assert (argc == 1);
 
   /* Get the value of EDITOR.  */
   editor = getenv ("EDITOR");

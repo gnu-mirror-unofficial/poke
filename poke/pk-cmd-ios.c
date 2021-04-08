@@ -44,10 +44,10 @@ pk_cmd_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int io_id;
   pk_ios io;
 
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_TAG);
 
-  io_id = PK_CMD_ARG_TAG (argv[0]);
+  io_id = PK_CMD_ARG_TAG (argv[1]);
   io = pk_ios_search_by_id (poke_compiler, io_id);
   if (io == NULL)
     {
@@ -70,21 +70,21 @@ pk_cmd_sub (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ios;
   uint64_t base, size;
 
-  assert (argc == 4);
+  assert (argc == 5);
 
   /* Collect and validate arguments.  */
 
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_TAG);
-  ios = PK_CMD_ARG_TAG (argv[0]);
-
-  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_INT);
-  base = PK_CMD_ARG_INT (argv[1]);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_TAG);
+  ios = PK_CMD_ARG_TAG (argv[1]);
 
   assert (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_INT);
-  size = PK_CMD_ARG_INT (argv[2]);
+  base = PK_CMD_ARG_INT (argv[2]);
 
-  assert (PK_CMD_ARG_TYPE (argv[3]) == PK_CMD_ARG_STR);
-  name = PK_CMD_ARG_STR (argv[3]);
+  assert (PK_CMD_ARG_TYPE (argv[3]) == PK_CMD_ARG_INT);
+  size = PK_CMD_ARG_INT (argv[3]);
+
+  assert (PK_CMD_ARG_TYPE (argv[4]) == PK_CMD_ARG_STR);
+  name = PK_CMD_ARG_STR (argv[4]);
 
   /* Build the handler.  */
   if (asprintf (&handler, "sub://%d/0x%lx/0x%lx/%s",
@@ -116,9 +116,9 @@ pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ios_id;
 
   /* Get the PID of the process to open.  */
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_INT);
-  pid = PK_CMD_ARG_INT (argv[0]);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_INT);
+  pid = PK_CMD_ARG_INT (argv[1]);
 
   /* Build the handler for the proc IOS.  */
   if (asprintf (&handler, "pid://%ld", pid) == -1)
@@ -157,11 +157,11 @@ pk_cmd_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* file FILENAME */
 
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
   /* Create a new IO space.  */
-  const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+  const char *arg_str = PK_CMD_ARG_STR (argv[1]);
   const char *filename = arg_str;
   int create_p = uflags & PK_FILE_F_CREATE;
 
@@ -224,16 +224,16 @@ pk_cmd_close (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_ios io;
   int io_id;
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     {
       io = pk_ios_cur (poke_compiler);
       io_id = pk_ios_get_id (io);
     }
   else
     {
-      io_id = PK_CMD_ARG_TAG (argv[0]);
+      io_id = PK_CMD_ARG_TAG (argv[1]);
 
       io = pk_ios_search_by_id (poke_compiler, io_id);
       if (io == NULL)
@@ -341,7 +341,7 @@ pk_cmd_info_ios (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   pk_table table;
 
-  assert (argc == 0);
+  assert (argc == 1);
 #if HAVE_HSERVER
   if (poke_hserver_p)
     table = pk_table_new (7);
@@ -377,8 +377,8 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char *filename = NULL;
   char *emsg;
 
-  assert (argc == 1);
-  arg = PK_CMD_ARG_STR (argv[0]);
+  assert (argc == 2);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if ((emsg = pk_file_readable (arg)) == NULL)
     filename = arg;
@@ -423,8 +423,8 @@ pk_cmd_source_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   char *arg;
   char *emsg;
 
-  assert (argc == 1);
-  arg = PK_CMD_ARG_STR (argv[0]);
+  assert (argc == 2);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if ((emsg = pk_file_readable (arg)) != NULL)
     {
@@ -443,11 +443,11 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* mem NAME */
 
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
   /* Create a new memory IO space.  */
-  const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+  const char *arg_str = PK_CMD_ARG_STR (argv[1]);
   char *mem_name;
 
   if (asprintf (&mem_name, "*%s*", arg_str) == -1)
@@ -483,11 +483,11 @@ pk_cmd_nbd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* nbd URI */
 
-  assert (argc == 1);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
   /* Create a new NBD IO space.  */
-  const char *arg_str = PK_CMD_ARG_STR (argv[0]);
+  const char *arg_str = PK_CMD_ARG_STR (argv[1]);
   char *nbd_name = xstrdup (arg_str);
 
   if (pk_ios_search (poke_compiler, nbd_name) != NULL)

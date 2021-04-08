@@ -50,10 +50,10 @@ pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ios_id;
   const char *mapname;
 
-  assert (argc == 2);
+  assert (argc == 3);
 
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  mapname = pk_map_normalize_name (PK_CMD_ARG_STR (argv[0]));
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  mapname = pk_map_normalize_name (PK_CMD_ARG_STR (argv[1]));
 
   if (strlen (mapname) == 0)
     {
@@ -61,11 +61,11 @@ pk_cmd_map_create (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[1]);
+      ios_id = PK_CMD_ARG_TAG (argv[2]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);
@@ -91,10 +91,10 @@ pk_cmd_map_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ios_id;
   const char *mapname;
 
-  assert (argc == 2);
+  assert (argc == 3);
 
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  mapname = PK_CMD_ARG_STR (argv[0]);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  mapname = PK_CMD_ARG_STR (argv[1]);
 
   if (strlen (mapname) == 0)
     {
@@ -102,11 +102,11 @@ pk_cmd_map_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
       return 0;
     }
 
-  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[1]);
+      ios_id = PK_CMD_ARG_TAG (argv[2]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);
@@ -135,14 +135,14 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_table table;
 
   /* Get arguments.  */
-  assert (argc == 2);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 3);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
-  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[1]);
+      ios_id = PK_CMD_ARG_TAG (argv[2]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);
@@ -150,7 +150,7 @@ pk_cmd_map_show (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         }
     }
 
-  mapname = PK_CMD_ARG_STR (argv[0]);
+  mapname = PK_CMD_ARG_STR (argv[1]);
 
   /* Make sure the map exists.  */
   map = pk_map_search (ios_id, mapname);
@@ -204,18 +204,18 @@ pk_cmd_map_entry_add (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_val val;
 
   /* Get arguments.  */
-  assert (argc == 3);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 4);
   assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  assert (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_STR);
 
-  mapname = PK_CMD_ARG_STR (argv[0]);
-  varname = PK_CMD_ARG_STR (argv[1]);
+  mapname = PK_CMD_ARG_STR (argv[1]);
+  varname = PK_CMD_ARG_STR (argv[2]);
 
-  if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[3]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[2]);
+      ios_id = PK_CMD_ARG_TAG (argv[3]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);
@@ -273,18 +273,18 @@ pk_cmd_map_entry_remove (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   const char *entryname;
 
   /* Get arguments.  */
-  assert (argc == 3);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
+  assert (argc == 4);
   assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  assert (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_STR);
 
-  mapname = PK_CMD_ARG_STR (argv[0]);
-  entryname = PK_CMD_ARG_STR (argv[1]);
+  mapname = PK_CMD_ARG_STR (argv[1]);
+  entryname = PK_CMD_ARG_STR (argv[2]);
 
-  if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[3]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[2]);
+      ios_id = PK_CMD_ARG_TAG (argv[3]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);
@@ -319,15 +319,15 @@ pk_cmd_map_load (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   const char *mapname, *filename;
   char *emsg;
 
-  assert (argc == 2);
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  mapname = PK_CMD_ARG_STR (argv[0]);
+  assert (argc == 3);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  mapname = PK_CMD_ARG_STR (argv[1]);
 
-  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[2]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[1]);
+      ios_id = PK_CMD_ARG_TAG (argv[2]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);
@@ -373,13 +373,13 @@ pk_cmd_info_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ios_id;
   pk_map maps, map;
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     SET_TO_CUR_IOS_ID (ios_id);
   else
     {
-      ios_id = PK_CMD_ARG_TAG (argv[0]);
+      ios_id = PK_CMD_ARG_TAG (argv[1]);
       if (pk_ios_search_by_id (poke_compiler, ios_id) == NULL)
         {
           pk_printf (_("No such IOS #%d\n"), ios_id);

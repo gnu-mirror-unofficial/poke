@@ -29,10 +29,10 @@ pk_cmd_help (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_val ret;
   pk_val topic;
   pk_val pk_help;
-  assert (argc == 1);
+  assert (argc == 2);
 
-  assert (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_STR);
-  topic = pk_make_string (PK_CMD_ARG_STR (argv[0]));
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  topic = pk_make_string (PK_CMD_ARG_STR (argv[1]));
 
   pk_help = pk_decl_val (poke_compiler, "pk_help");
   assert (pk_help != PK_NULL);

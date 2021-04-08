@@ -30,7 +30,7 @@
 static int
 pk_cmd_set_int (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  assert (argc == 1);
+  assert (argc == 2);
 
   return 1;
 }
@@ -38,6 +38,8 @@ pk_cmd_set_int (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static int
 pk_cmd_set_bool_str (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
+  assert (argc == 2);
+
   return 1;
 }
 
@@ -46,13 +48,13 @@ pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set obase [{2,8,10,16}] */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     pk_printf ("%d\n", pk_obase (poke_compiler));
   else
     {
-      int base = PK_CMD_ARG_INT (argv[0]);
+      int base = PK_CMD_ARG_INT (argv[1]);
 
       if (base != 10 && base != 16 && base != 2 && base != 8)
         {
@@ -74,9 +76,9 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set endian {little,big,host,network}  */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     {
       enum pk_endian endian = pk_endian (poke_compiler);
 
@@ -91,7 +93,7 @@ pk_cmd_set_endian (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       enum pk_endian endian;
-      const char *arg = PK_CMD_ARG_STR (argv[0]);
+      const char *arg = PK_CMD_ARG_STR (argv[1]);
 
       if (STREQ (arg, "little"))
         endian = PK_ENDIAN_LSB;
@@ -146,9 +148,9 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set nenc {1c,2c}  */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     {
       enum pk_nenc nenc = pk_nenc (poke_compiler);
 
@@ -163,7 +165,7 @@ pk_cmd_set_nenc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       enum pk_nenc nenc;
-      const char *arg = PK_CMD_ARG_STR (argv[0]);
+      const char *arg = PK_CMD_ARG_STR (argv[1]);
 
       if (STREQ (arg, "1c"))
         nenc = PK_NENC_1;
@@ -196,10 +198,10 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      always 1 here, and we determine when no value was specified by
      checking whether the passed string is empty or not.  */
 
-  if (argc != 1)
+  if (argc != 2)
     assert (0);
 
-  arg = PK_CMD_ARG_STR (argv[0]);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if (*arg == '\0')
     {
@@ -239,10 +241,10 @@ pk_cmd_set_prompt_maps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      always 1 here, and we determine when no value was specified by
      checking whether the passed string is empty or not.  */
 
-  if (argc != 1)
+  if (argc != 2)
     assert (0);
 
-  arg = PK_CMD_ARG_STR (argv[0]);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if (*arg == '\0')
     {
@@ -282,10 +284,10 @@ pk_cmd_set_pretty_print (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      always 1 here, and we determine when no value was specified by
      checking whether the passed string is empty or not.  */
 
-  if (argc != 1)
+  if (argc != 2)
     assert (0);
 
-  arg = PK_CMD_ARG_STR (argv[0]);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if (*arg == '\0')
     {
@@ -322,13 +324,13 @@ pk_cmd_set_oacutoff (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set oacutoff [CUTOFF]  */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     pk_printf ("%d\n", pk_oacutoff (poke_compiler));
   else
     {
-      int cutoff = PK_CMD_ARG_INT (argv[0]);
+      int cutoff = PK_CMD_ARG_INT (argv[1]);
 
       if (cutoff < 0 || cutoff > 15)
         {
@@ -350,13 +352,13 @@ pk_cmd_set_odepth (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set odepth [DEPTH]  */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     pk_printf ("%d\n", pk_odepth (poke_compiler));
   else
     {
-      int odepth = PK_CMD_ARG_INT (argv[0]);
+      int odepth = PK_CMD_ARG_INT (argv[1]);
 
       if (odepth < 0 || odepth > 15)
         {
@@ -378,13 +380,13 @@ pk_cmd_set_oindent (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set oindent [INDENT]  */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     pk_printf ("%d\n", pk_oindent (poke_compiler));
   else
     {
-      int oindent = PK_CMD_ARG_INT (argv[0]);
+      int oindent = PK_CMD_ARG_INT (argv[1]);
 
       if (oindent < 1 || oindent > 10)
         {
@@ -406,9 +408,9 @@ pk_cmd_set_omaps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set omaps {yes|no} */
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     {
       if (pk_omaps (poke_compiler))
         pk_puts ("yes\n");
@@ -418,7 +420,7 @@ pk_cmd_set_omaps (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       int omaps_p = 0;
-      const char *arg = PK_CMD_ARG_STR (argv[0]);
+      const char *arg = PK_CMD_ARG_STR (argv[1]);
 
       if (STREQ (arg, "yes"))
         omaps_p = 1;
@@ -446,9 +448,9 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   enum pk_omode omode;
 
-  assert (argc == 1);
+  assert (argc == 2);
 
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     {
       omode = pk_omode (poke_compiler);
 
@@ -462,7 +464,7 @@ pk_cmd_set_omode (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     }
   else
     {
-      const char *arg = PK_CMD_ARG_STR (argv[0]);
+      const char *arg = PK_CMD_ARG_STR (argv[1]);
 
       if (STREQ (arg, "flat"))
         omode = PK_PRINT_FLAT;
@@ -496,10 +498,10 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
      always 1 here, and we determine when no value was specified by
      checking whether the passed string is empty or not.  */
 
-  if (argc != 1)
+  if (argc != 2)
     assert (0);
 
-  arg = PK_CMD_ARG_STR (argv[0]);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if (*arg == '\0')
     {
@@ -544,10 +546,10 @@ pk_cmd_set_doc_viewer (int argc, struct pk_cmd_arg argv[],
      always 1 here, and we determine when no value was specified by
      checking whether the passed string is empty or not.  */
 
-  if (argc != 1)
+  if (argc != 2)
     assert (0);
 
-  arg = PK_CMD_ARG_STR (argv[0]);
+  arg = PK_CMD_ARG_STR (argv[1]);
 
   if (*arg == '\0')
     {
@@ -677,7 +679,7 @@ pk_cmd_set_init ()
   assert (setting_bool != PK_NULL);
   setting_str = pk_decl_val (poke_compiler, "POKE_SETTING_STR");
   assert (setting_str != PK_NULL);
-  
+
   /* Build set_cmds based on the contents of the global settings
      registry (see pk-settings.pk).  We want a .set SUBCOMMAND for
      each setting.  */

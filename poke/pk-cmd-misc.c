@@ -35,11 +35,11 @@ pk_cmd_exit (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   /* exit CODE */
 
   int code;
-  assert (argc == 1);
-  if (PK_CMD_ARG_TYPE (argv[0]) == PK_CMD_ARG_NULL)
+  assert (argc == 2);
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     code = 0;
   else
-    code = (int) PK_CMD_ARG_INT (argv[0]);
+    code = (int) PK_CMD_ARG_INT (argv[1]);
 
   poke_exit_p = 1;
   poke_exit_code = code;
@@ -87,9 +87,9 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
               }
             while (bytes >= size);
 
-            if (argv[0].type == PK_CMD_ARG_STR)
+            if (argv[1].type == PK_CMD_ARG_STR)
               {
-                const char *node = argv[0].val.str;
+                const char *node = argv[1].val.str;
                 cmd = xrealloc (cmd, bytes + 7 + strlen (node));
                 strcat (cmd, " -n \"");
                 strcat (cmd, node);
@@ -113,7 +113,7 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
           }
 
         asprintf (&cmd, "less -p '%s' %s/poke.text",
-                  argv[0].val.str, poke_docdir);
+                  argv[1].val.str, poke_docdir);
         assert (cmd != NULL);
       }
 
@@ -128,7 +128,7 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 static int
 pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  assert (argc == 0);
+  assert (argc == 1);
 
   static const char *strings[] =
     {
@@ -153,6 +153,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jmd> pokie pokie!",
      "<jmd> Hokus Pokus",
      "<mnabipoor> I wanted making a zero-length array for a long (!) time",
+     "<jmd> Please don't talk whilst people are interrupting!",
      NULL
     };
   static int num_strings = 0;

@@ -282,7 +282,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
   const char *p;
   const struct pk_cmd *cmd;
   int argc = 0;
-  struct pk_cmd_arg argv[8];
+  struct pk_cmd_arg argv[9];
   uint64_t uflags;
   const char *a;
   int besilent = 0;
@@ -314,6 +314,11 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
       pk_printf (_("%s: command not found.\n"), cmd_name);
       return 0;
     }
+
+  /* argv[0] is the command name.  */
+  argv[argc].type = PK_CMD_ARG_STR;
+  argv[argc].val.str = xstrdup (cmd_name);
+  argc += 1;
 
   /* Process user flags.  */
   uflags = 0;
@@ -738,7 +743,7 @@ pk_cmd_init (void)
   /* The set_cmds are built dynamically.  */
   pk_cmd_set_init ();
   set_trie = pk_trie_from_cmds (set_cmds);
-  
+
   /* Compile commands written in Poke.  */
   if (!pk_load (poke_compiler, "pk-cmd"))
     pk_fatal ("unable to load the pk-cmd module");
