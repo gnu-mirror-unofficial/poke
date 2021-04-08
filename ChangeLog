@@ -1,3 +1,15 @@
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/poke.h: Remove global poke_auto_map_p.
+	* poke/poke.c: Rename poke_auto_map_p to poke_default_auto_map_p.
+	(initialize): Set the default value of poke_auto_map_p.
+	(pk_auto_map_p): New function.
+	* poke/pk-cmd-set.c (pk_cmd_set_auto_map): Use the new functions
+	instead of referring to the global.
+	* poke/pk-ios.c (pk_open_file): Likewise.
+	* poke/pk-map.pk: Declare poke_auto_map_p.
+	* poke/pk-settings.pk: Add new global setting auto-map.
+
 2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-settings.pk (Poke_Setting_Registry): New method `add'.

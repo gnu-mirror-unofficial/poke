@@ -43,8 +43,10 @@ extern char *poke_mapsdir;
 extern char *poke_docdir;
 extern char *poke_cmdsdir;
 extern char *poke_doc_viewer;
-extern int poke_auto_map_p;
 extern int poke_prompt_maps_p;
+
+int pk_auto_map_p (void);
+void pk_set_auto_map (int auto_map_p);
 
 void pk_print_version (int hand_p);
 void pk_fatal (const char *errmsg) __attribute__ ((noreturn));

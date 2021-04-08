@@ -44,7 +44,7 @@ pk_open_file (const char *handler, int set_cur_p, int create_p)
   if (ios_id == PK_IOS_NOID)
     return ios_id;
 
-  if (poke_auto_map_p)
+  if (pk_auto_map_p ())
   {
     int i;
     pk_val auto_map;

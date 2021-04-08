@@ -218,6 +218,19 @@ pk_settings.add_setting
              }
          };
 
+pk_settings.add_setting
+  :entry Poke_Setting {
+      name = "auto-map",
+      kind = POKE_SETTING_BOOL,
+      summary = "whether poke auto-loads maps when opening IO spaces",
+      getter = lambda any: { return poke_auto_map_p; },
+      setter = lambda (any val) string:
+        {
+          poke_auto_map_p = val as int<32>;
+          return "";
+        }
+    };
+
 /* Create help topics for the global settings defined above.  */
 
 for (setting in pk_settings.entries)

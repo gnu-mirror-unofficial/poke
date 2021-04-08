@@ -189,7 +189,7 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (*arg == '\0')
     {
-      if (poke_auto_map_p)
+      if (pk_auto_map_p ())
         pk_puts ("yes\n");
       else
         pk_puts ("no\n");
@@ -197,9 +197,9 @@ pk_cmd_set_auto_map (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     {
       if (STREQ (arg, "yes"))
-        poke_auto_map_p = 1;
+        pk_set_auto_map (1);
       else if (STREQ (arg, "no"))
-        poke_auto_map_p = 0;
+        pk_set_auto_map (0);
       else
         {
           pk_term_class ("error");

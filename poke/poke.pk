@@ -21,17 +21,25 @@
 /* The following variables are set by poke.c when poke initializes,
    after loading this file.  */
 
+/* The endianness of the running host.  */
 var pk_host_endian = ENDIAN_BIG;
+
+/* The endianness of the network to which the running host is
+   connected.  */
 var pk_network_endian = ENDIAN_BIG;
+
+/* Whether auto-maps shall be acknowleged when loading files or
+   not. */
+var poke_auto_map_p = 0;
 
 /* Online help system.  */
 
 load "pk-help.pk";
 
-/* Global settings registry.  */
-
-load "pk-settings.pk";
-
 /* Maps support.  */
 
 load "pk-map.pk";
+
+/* Global settings registry.  */
+
+load "pk-settings.pk";

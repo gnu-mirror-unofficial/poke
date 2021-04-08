@@ -111,9 +111,10 @@ char *poke_docdir;
 char *poke_doc_viewer = NULL;
 
 /* The following global determines whether auto-maps shall be
-   acknowleged when loading files or not.  Defaults to `yes'.  */
+   acknowleged when loading files by default.  Defaults to 1, but can
+   be changed to 0 using the --no-auto-map command-line option.  */
 
-int poke_auto_map_p = 1;
+int poke_default_auto_map_p = 1;
 
 /* The following global determines whether the user specified that the
    hyperlinks server should not be activated, in the command line.  */
@@ -317,6 +318,22 @@ static struct pk_term_if poke_term_if =
     .set_bgcolor_fn = pk_term_set_bgcolor,
   };
 
+int
+pk_auto_map_p (void)
+{
+  pk_val val = pk_decl_val (poke_compiler, "poke_auto_map_p");
+
+  assert (val != PK_NULL);
+  return pk_int_value (val);
+}
+
+void
+pk_set_auto_map (int auto_map_p)
+{
+  pk_decl_set_val (poke_compiler, "poke_auto_map_p",
+                   pk_make_int (auto_map_p, 32));
+}
+
 static void
 set_script_args (int argc, char *argv[])
 {
@@ -374,7 +391,7 @@ parse_args_1 (int argc, char *argv[])
           poke_interactive_p = 0;
           return;
         case NO_AUTO_MAP_ARG:
-          poke_auto_map_p = 0;
+          poke_default_auto_map_p = 0;
           break;
         case NO_HSERVER_ARG:
           poke_no_hserver_arg = 1;
@@ -597,6 +614,9 @@ initialize (int argc, char *argv[])
 
     pk_decl_set_val (poke_compiler, "pk_host_endian", host_endian);
     pk_decl_set_val (poke_compiler, "pk_network_endian", network_endian);
+
+    pk_decl_set_val (poke_compiler, "poke_auto_map_p",
+                     pk_make_int (poke_default_auto_map_p, 32));
   }
 
   /* Initialize the global map.  */
