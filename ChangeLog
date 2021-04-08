@@ -1,5 +1,14 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: Prototype for pk_struct_ref_field_value.
+	* libpoke/pk-val.c (pk_struct_ref_field_value): New function.
+	* poke/pk-cmd-set.c (pk_cmd_set_init): New function.
+	(pk_cmd_set_int): New function.
+	(pk_cmd_set_bool_str): Likewise.
+	* poke/pk-cmd.c (pk_cmd_init): Call pk_cmd_set_init.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-settings.pk: Add settings oacutoff, odepth, oindent,
 	omaps, omode.
 

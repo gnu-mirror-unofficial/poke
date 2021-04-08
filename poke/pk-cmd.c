@@ -35,6 +35,10 @@
 #include "pk-cmd.h"
 #include "pk-utils.h"
 
+/* This function is defined in pk-cmd-set.c and used below in
+   pk_cmd_init.  */
+extern void pk_cmd_set_init (void);
+
 /* Table of supported commands.  */
 
 extern const struct pk_cmd ios_cmd; /* pk-cmd-ios.c */
@@ -728,10 +732,13 @@ pk_cmd_init (void)
   vm_trie = pk_trie_from_cmds (vm_cmds);
   vm_disas_trie = pk_trie_from_cmds (vm_disas_cmds);
   vm_profile_trie = pk_trie_from_cmds (vm_profile_cmds);
-  set_trie = pk_trie_from_cmds (set_cmds);
   map_trie = pk_trie_from_cmds (map_cmds);
   map_entry_trie = pk_trie_from_cmds (map_entry_cmds);
 
+  /* The set_cmds are built dynamically.  */
+  pk_cmd_set_init ();
+  set_trie = pk_trie_from_cmds (set_cmds);
+  
   /* Compile commands written in Poke.  */
   if (!pk_load (poke_compiler, "pk-cmd"))
     pk_fatal ("unable to load the pk-cmd module");

@@ -269,7 +269,14 @@ pk_struct_nfields (pk_val sct)
   return PVM_VAL_SCT_NFIELDS (sct);
 }
 
-pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx)
+pk_val
+pk_struct_ref_field_value (pk_val sct, const char *fname)
+{
+  return pvm_ref_struct_cstr (sct, fname);
+}
+
+pk_val
+pk_struct_field_boffset (pk_val sct, uint64_t idx)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     return PVM_VAL_SCT_FIELD_OFFSET (sct, idx);
@@ -277,13 +284,15 @@ pk_val pk_struct_field_boffset (pk_val sct, uint64_t idx)
     return PK_NULL;
 }
 
-void pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset)
+void
+pk_struct_set_field_boffset (pk_val sct, uint64_t idx, pk_val boffset)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     PVM_VAL_SCT_FIELD_OFFSET (sct, idx) = boffset;
 }
 
-pk_val pk_struct_field_name (pk_val sct, uint64_t idx)
+pk_val
+pk_struct_field_name (pk_val sct, uint64_t idx)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     return PVM_VAL_SCT_FIELD_NAME (sct, idx);
@@ -291,13 +300,15 @@ pk_val pk_struct_field_name (pk_val sct, uint64_t idx)
     return PK_NULL;
 }
 
-void pk_struct_set_field_name (pk_val sct, uint64_t idx, pk_val name)
+void
+pk_struct_set_field_name (pk_val sct, uint64_t idx, pk_val name)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     PVM_VAL_SCT_FIELD_NAME (sct, idx) = name;
 }
 
-pk_val pk_struct_field_value (pk_val sct, uint64_t idx)
+pk_val
+pk_struct_field_value (pk_val sct, uint64_t idx)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     return PVM_VAL_SCT_FIELD_VALUE (sct, idx);
@@ -305,7 +316,8 @@ pk_val pk_struct_field_value (pk_val sct, uint64_t idx)
     return PK_NULL;
 }
 
-void pk_struct_set_field_value (pk_val sct, uint64_t idx, pk_val value)
+void
+pk_struct_set_field_value (pk_val sct, uint64_t idx, pk_val value)
 {
   if (idx < pk_uint_value (pk_struct_nfields (sct)))
     PVM_VAL_SCT_FIELD_VALUE (sct, idx) = value;

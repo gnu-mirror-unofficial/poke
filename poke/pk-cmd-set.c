@@ -28,6 +28,20 @@
 #include "pk-utils.h"
 
 static int
+pk_cmd_set_int (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  assert (argc == 1);
+
+  return 1;
+}
+
+static int
+pk_cmd_set_bool_str (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  return 1;
+}
+
+static int
 pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   /* set obase [{2,8,10,16}] */
@@ -644,6 +658,76 @@ set_completion_function (const char *x, int state)
     }
 
   return NULL;
+}
+
+const struct pk_cmd **new_set_cmds = NULL;
+
+void
+pk_cmd_set_init ()
+{
+  pk_val setting_int, setting_bool, setting_str;
+  pk_val registry, registry_settings, nsettings;
+  int i;
+
+  /* Get the values used to identify setting types.  */
+
+  setting_int = pk_decl_val (poke_compiler, "POKE_SETTING_INT");
+  assert (setting_int != PK_NULL);
+  setting_bool = pk_decl_val (poke_compiler, "POKE_SETTING_BOOL");
+  assert (setting_bool != PK_NULL);
+  setting_str = pk_decl_val (poke_compiler, "POKE_SETTING_STR");
+  assert (setting_str != PK_NULL);
+  
+  /* Build set_cmds based on the contents of the global settings
+     registry (see pk-settings.pk).  We want a .set SUBCOMMAND for
+     each setting.  */
+
+  registry = pk_decl_val (poke_compiler, "pk_settings");
+  assert (registry != PK_NULL);
+  registry_settings = pk_struct_ref_field_value (registry, "entries");
+  assert (registry_settings != PK_NULL);
+  nsettings = pk_array_nelem (registry_settings);
+
+  new_set_cmds = xmalloc ((sizeof (struct pk_cmd *)
+                           * pk_int_value (nsettings)) + 1);
+
+  for (i = 0; i < pk_int_value (nsettings); ++i)
+    {
+      pk_val setting = pk_array_elem_val (registry_settings, i);
+      pk_val setting_name = pk_struct_ref_field_value (setting, "name");
+      pk_val setting_kind = pk_struct_ref_field_value (setting, "kind");
+      struct pk_cmd *cmd;
+
+      assert (setting_name != PK_NULL && setting_kind != PK_NULL);
+
+      cmd = xmalloc (sizeof (struct pk_cmd));
+      cmd->name = xstrdup (pk_string_str (setting_name));
+      cmd->uflags = "";
+      cmd->flags = 0;
+      cmd->subtrie = NULL;
+
+      if (pk_int_value (setting_kind) == pk_int_value (setting_int))
+        {
+          cmd->arg_fmt = "?i";
+          cmd->usage = "lala";
+          cmd->completer = NULL;
+          cmd->handler = &pk_cmd_set_int;
+        }
+      else
+        {
+          /* Booleans and strings both use a string cmd argument.  */
+          cmd->arg_fmt = "?s";
+          cmd->usage = "lala";
+          cmd->completer = NULL;
+          cmd->handler = &pk_cmd_set_bool_str;
+        }
+
+      /* Add this command to set_cmds.  */
+      new_set_cmds[i] = cmd;
+    }
+
+  /* Finish set_cmds with the null command.  */
+  new_set_cmds[i] = &null_cmd;
 }
 
 struct pk_trie *set_trie;

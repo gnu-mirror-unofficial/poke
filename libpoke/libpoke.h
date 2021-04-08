@@ -588,6 +588,14 @@ pk_val pk_make_struct (pk_val nfields, pk_val type) LIBPOKE_API;
 
 pk_val pk_struct_nfields (pk_val sct) LIBPOKE_API;
 
+/* Get the value of a struct field given the name of the field.
+
+   If FNAME doesn't identify a field in the struct, PK_NULL is
+   returned.  */
+
+pk_val pk_struct_ref_field_value (pk_val sct, const char *fname)
+  LIBPOKE_API;
+
 /* Get the bit-offset of the field of a struct, relative to the
    beginning of the struct.
 
