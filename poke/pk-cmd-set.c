@@ -19,7 +19,6 @@
 #include <config.h>
 #include <assert.h>
 #include <string.h>
-#include <arpa/inet.h> /* For htonl */
 #include <stdlib.h>
 #include "xalloc.h"
 
@@ -28,21 +27,86 @@
 #include "pk-utils.h"
 
 static int
-pk_cmd_set_int (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+pk_cmd_set (int int_p,
+            int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
   assert (argc == 2);
+
+  pk_val registry, retval;
+  char *setting_name = PK_CMD_ARG_STR (argv[0]);
+
+  registry = pk_decl_val (poke_compiler, "pk_settings");
+  assert (registry != PK_NULL);
+
+  if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
+    {
+      pk_val registry_get;
+
+      registry_get = pk_struct_ref_field_value (registry, "get");
+      assert (registry_get != PK_NULL);
+
+      if (pk_call (poke_compiler, registry_get, &retval,
+                   2, pk_make_string (setting_name), registry)
+          == PK_ERROR)
+        /* This shouldn't happen.  */
+        assert (0);
+
+      if (int_p)
+        pk_printf ("%ld\n", pk_int_value (retval));
+      else
+        pk_printf ("%s\n", pk_string_str (retval));
+    }
+  else
+    {
+      pk_val registry_set;
+      pk_val val;
+      const char *retmsg;
+
+      if (int_p)
+        val = pk_make_int (PK_CMD_ARG_INT (argv[1]), 32);
+      else
+        val = pk_make_string (PK_CMD_ARG_STR (argv[1]));
+
+      registry_set = pk_struct_ref_field_value (registry, "set");
+      assert (registry_set != PK_NULL);
+
+      if (pk_call (poke_compiler, registry_set, &retval,
+                   3, pk_make_string (setting_name), val, registry)
+          == PK_ERROR)
+        /* This shouldn't happen, since we know `newval' is of the
+           right type.  */
+        assert (0);
+
+      /* `retval' is a string.  If it is empty, everything went ok, if
+         it is not it is an explicative message on what went
+         wrong.  */
+      retmsg = pk_string_str (retval);
+      if (*retmsg != '\0')
+        {
+          pk_term_class ("error");
+          pk_puts (_("error: "));
+          pk_term_end_class ("error");
+          pk_printf ("%s\n", retmsg);
+          return 0;
+        }
+    }
 
   return 1;
 }
 
 static int
-pk_cmd_set_bool_str (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+pk_cmd_set_int (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  assert (argc == 2);
-
-  return 1;
+  return pk_cmd_set (1 /* int_p */, argc, argv, uflags);
 }
 
+static int
+pk_cmd_set_bool_str (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  return pk_cmd_set (0 /* int_p */, argc, argv, uflags);
+}
+
+#if 0
 static int
 pk_cmd_set_obase (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -572,9 +636,11 @@ pk_cmd_set_doc_viewer (int argc, struct pk_cmd_arg argv[],
 
   return 1;
 }
+#endif
 
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
+#if 0
 const struct pk_cmd set_oacutoff_cmd =
   {"oacutoff", "?i", "", 0, NULL, pk_cmd_set_oacutoff, "set oacutoff [CUTOFF]", NULL};
 
@@ -636,6 +702,9 @@ const struct pk_cmd *set_cmds[] =
    &set_prompt_maps,
    &null_cmd
   };
+#endif
+
+const struct pk_cmd **set_cmds;
 
 static char *
 set_completion_function (const char *x, int state)
@@ -662,8 +731,6 @@ set_completion_function (const char *x, int state)
   return NULL;
 }
 
-const struct pk_cmd **new_set_cmds = NULL;
-
 void
 pk_cmd_set_init ()
 {
@@ -686,12 +753,13 @@ pk_cmd_set_init ()
 
   registry = pk_decl_val (poke_compiler, "pk_settings");
   assert (registry != PK_NULL);
+
   registry_settings = pk_struct_ref_field_value (registry, "entries");
   assert (registry_settings != PK_NULL);
   nsettings = pk_array_nelem (registry_settings);
 
-  new_set_cmds = xmalloc ((sizeof (struct pk_cmd *)
-                           * pk_int_value (nsettings)) + 1);
+  set_cmds = xmalloc ((sizeof (struct pk_cmd *)
+                       * pk_int_value (nsettings)) + 1);
 
   for (i = 0; i < pk_int_value (nsettings); ++i)
     {
@@ -725,11 +793,11 @@ pk_cmd_set_init ()
         }
 
       /* Add this command to set_cmds.  */
-      new_set_cmds[i] = cmd;
+      set_cmds[i] = cmd;
     }
 
   /* Finish set_cmds with the null command.  */
-  new_set_cmds[i] = &null_cmd;
+  set_cmds[i] = &null_cmd;
 }
 
 struct pk_trie *set_trie;

@@ -424,7 +424,11 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
 
    Return PK_ERROR if there is a problem performing the operation, or if the
    execution of the function results in an unhandled exception.
-   Return PK_OK otherwise.  */
+   Return PK_OK otherwise.
+
+   Note that calling a method needs for the corresponding struct value
+   holding the method to be passed as the _last_ argument in the
+   pk_call.  */
 
 int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret,
              int narg, ...) LIBPOKE_API;

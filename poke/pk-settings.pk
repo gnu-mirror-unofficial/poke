@@ -221,7 +221,7 @@ pk_settings.add_setting
                  endian = pk_network_endian;
                else
                  return
-                   "endian should be one of `little', `big', `host' or `network'\n";
+                   "endian should be one of `little', `big', `host' or `network'";
 
                set_endian (endian);
                return "";
@@ -313,11 +313,11 @@ pk_settings.add_setting
     summary = "output mode for printing values",
     getter = lambda any:
       {
-        var omaps = vm_omaps;
+        var omode = vm_omode;
 
-        if (omaps == VM_OMODE_PLAIN)
+        if (omode == VM_OMODE_PLAIN)
           return "plain";
-        else if (omaps == VM_OMODE_TREE)
+        else if (omode == VM_OMODE_TREE)
           return "tree";
 
         assert (0, "this point shouln't be reached");
@@ -326,12 +326,12 @@ pk_settings.add_setting
       {
         var s = val as string;
 
-        if (s == "plain")
-          vm_set_omaps (VM_OMODE_PLAIN);
+        if (s == "flat")
+          vm_set_omode (VM_OMODE_PLAIN);
         else if (s == "tree")
-          vm_set_omaps (VM_OMODE_TREE);
+          vm_set_omode (VM_OMODE_TREE);
         else
-          return "omode should be one of `flat' or `tree'\n";
+          return "omode should be one of `flat' or `tree'";
 
         return "";
       }

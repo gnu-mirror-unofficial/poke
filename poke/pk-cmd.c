@@ -575,7 +575,7 @@ extern struct pk_trie *vm_disas_trie; /* pk-cmd-vm.c */
 extern const struct pk_cmd *vm_profile_cmds[]; /* pk-cmd-vm.c */
 extern struct pk_trie *vm_profile_trie; /* pk-cmd-vm.c */
 
-extern const struct pk_cmd *set_cmds[]; /* pk-cmd-set.c */
+extern const struct pk_cmd **set_cmds; /* pk-cmd-set.c */
 extern struct pk_trie *set_trie; /* pk-cmd-set.c */
 
 extern const struct pk_cmd *map_cmds[]; /* pk-cmd-map.c */
