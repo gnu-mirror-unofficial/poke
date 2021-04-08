@@ -337,6 +337,24 @@ pk_settings.add_setting
       }
     };
 
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "doc-viewer",
+    kind = POKE_SETTING_STR,
+    summary = "program to show document from the manual",
+    getter = lambda any: { return pk_doc_viewer; },
+    setter = lambda (any val) string:
+      {
+        var s = val as string;
+
+        if (s != "info" && s != "less")
+          return "doc-viewer should be one of `info' or `less'";
+
+        pk_doc_viewer = s;
+        return "";
+      }
+    };
+
 /* Create help topics for the global settings defined above.  */
 
 for (setting in pk_settings.entries)
@@ -347,3 +365,14 @@ for (setting in pk_settings.entries)
              summary = setting.summary,
              description = setting.description
            };
+
+/* Create the help topic for error-on-warning, which is handled in C
+   only and therefore is not in the settings registry.  */
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+           category = "settings",
+           topic = "error-on-warning",
+           summary = "whether the compiler must emit errors instead of warnings",
+           description = "",
+    };

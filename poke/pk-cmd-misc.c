@@ -70,7 +70,7 @@ pk_cmd_doc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
     /* Unless the doc viewer is set to `less', try first to use
        `info'.  */
 
-    if (STRNEQ (poke_doc_viewer, "less"))
+    if (STRNEQ (pk_var_string ("pk_doc_viewer"), "less"))
       {
         const char info_prog_name[] = "info";
         const char *ip = find_in_path (info_prog_name);

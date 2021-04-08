@@ -25,7 +25,6 @@
 #include <string.h>
 #include <locale.h>
 #include <textstyle.h>
-#include "xalloc.h"
 #include <assert.h>
 #include <arpa/inet.h> /* For htonl */
 
@@ -103,12 +102,6 @@ char *poke_mapsdir;
    poke.  */
 
 char *poke_docdir;
-
-/* The following global contains the name of the program to use to
-   display documentation.  Valid values are `info' and `less'.  It
-   defaults to `info'.  */
-
-char *poke_doc_viewer = NULL;
 
 /* The following global determines whether auto-maps shall be
    acknowleged when loading files by default.  Defaults to 1, but can
@@ -312,6 +305,15 @@ static struct pk_term_if poke_term_if =
     .get_bgcolor_fn = pk_term_get_bgcolor,
     .set_bgcolor_fn = pk_term_set_bgcolor,
   };
+
+const char *
+pk_var_string (const char *name)
+{
+  pk_val val = pk_decl_val (poke_compiler, name);
+
+  assert (val != PK_NULL);
+  return pk_string_str (val);
+}
 
 int
 pk_var_int (const char *name)
@@ -634,9 +636,6 @@ initialize (int argc, char *argv[])
       pk_hserver_start ();
     }
 #endif
-
-  /* Initialize the documentation viewer.  */
-  poke_doc_viewer = xstrdup ("info");
 }
 
 static void

@@ -42,10 +42,10 @@ extern char *poke_picklesdir;
 extern char *poke_mapsdir;
 extern char *poke_docdir;
 extern char *poke_cmdsdir;
-extern char *poke_doc_viewer;
 
 int pk_var_int (const char *name);
 void pk_set_var_int (const char *name, int value);
+const char *pk_var_string (const char *name);
 
 void pk_print_version (int hand_p);
 void pk_fatal (const char *errmsg) __attribute__ ((noreturn));

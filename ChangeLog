@@ -1,5 +1,15 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk: Define pk_doc_viewer.
+	* poke/poke.c: Remove global poke_doc_viewer.
+	(initialize): Do not initialize poke_doc_viewer.
+	(pk_var_string): New function.
+	* poke/pk-cmd-misc.c (pk_cmd_doc): Use pk_var_string instead of
+	poke_doc_viewer.
+	* poke/pk-settings.pk: Add setting for doc-viewer.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-set.c (pk_cmd_set): New function.
 	(pk_cmd_set_int): Likewise.
 	(pk_cmd_set_bool_str): Likewise.
