@@ -1,5 +1,12 @@
 2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-settings.pk: New file.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-settings.pk
+	* poke/poke.pk: Load pk-settings.pk.
+	(pk_help): Print summary of available "settings" help topics.
+
+2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm.jitter (popob): Use jitter macros instead of pvm
 	calls to access the runtime state.
 	(pushend): Likewise.

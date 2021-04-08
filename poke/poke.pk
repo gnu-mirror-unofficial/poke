@@ -62,6 +62,14 @@ fun pk_help = (string topic) void:
   {
     print "Usage: .help TOPIC\n";
     print "Available help topics:\n\n";
+    print "Global settings:\n";
+    for (entry in pk_help_topics where entry.category == "settings")
+    {
+      print ("\t");
+      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
+      printf (" - %s\n", entry.summary);
+    }
+    print "\n";
     print "Commands:\n";
     for (entry in pk_help_topics where entry.category == "commands")
     {
@@ -86,6 +94,10 @@ fun pk_help = (string topic) void:
   print "Sorry no clue about that.
 Type .help with no topic for a list of topics.\n";
 }
+
+/**** Global settings.  */
+
+load "pk-settings.pk";
 
 /**** Set the default load path for maps ****/
 

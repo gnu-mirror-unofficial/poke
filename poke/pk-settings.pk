@@ -1,0 +1,204 @@
+/* poke.pk - Global settings.  */
+
+/* Copyright (C) 2021 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This file implements the infrastructure for maintining a global
+   database of settings in the poke application.  The .set dot-command
+   operates in a generic way on the structures defined here.  */
+
+
+/* The Poke_Setting type describes a poke global setting.
+
+   NAME is a string identifying the setting.  Please choose reasonably
+   short names.  When adding compound words, like "pretty-print",
+   please use dash characters and not underline characters.
+
+   KIND identifies the nature of the setting.
+
+   SUMMARY is a one line string with a terse description of the
+   setting.  It is used by the help subsystem.
+
+   DESCRIPTION is a long description of the global setting,
+   multi-line, and preferably showing some usage example.  It is used
+   by the help subsystem.
+
+   GETTER is a function that retuns the current value of the global
+   setting.
+
+   SETTER is a function that, given a value, tries to set it as the
+   new value for the global setting.  If the operation succeeds, this
+   function must return the empty string, otherwise an error message
+   indicating what went wrong.  For example, for a setting accepting
+   values "yes", "no" and "perhaps", SETTER ("foobar") may return a
+   string like "the value must one of `yes', `no' or `perhaps'".  The
+   setters can assume that the given value is of the right type
+   according to the kind.
+
+   Note how Poke_Setting doesn't provide a recipient to store the
+   value of the global setting itself: it is up to the getter and
+   setter to do provide it if needed (via a lexical closure, see
+   examples below.)  */
+
+
+var POKE_SETTING_INT = 0;
+var POKE_SETTING_BOOL = 1;
+var POKE_SETTING_STR = 2;
+
+type Poke_Setting =
+  struct
+    {
+      string name;
+      int kind : kind in [POKE_SETTING_INT,
+                          POKE_SETTING_BOOL,
+                          POKE_SETTING_STR];
+      string summary : strchr (summary, '\n') == summary'length;
+      string description;
+      ()any getter;
+      (any)string setter;
+    };
+
+/* The global settings registry.  */
+
+type Poke_Setting_Registry =
+  struct
+    {
+      /* Storage used by some of the settings below.  */
+      var pretty_print_p = 0;
+
+      Poke_Setting[] settings =
+        [
+          Poke_Setting {
+            name = "pretty-print",
+            kind = POKE_SETTING_BOOL,
+            summary = "whether poke should use struct pretty-printers",
+            getter = lambda any:
+              {
+                return pretty_print_p;
+              },
+            setter = lambda (any v) string:
+              {
+                pretty_print_p = v as int<32>;
+                return "";
+              }
+          },
+          Poke_Setting {
+            name = "obase",
+            kind = POKE_SETTING_INT,
+            summary = "numerical base to use when printing integral values",
+            getter = lambda any:
+              {
+                /* XXX get the obase from the IOS.  */
+                return 10;
+              },
+            setter = lambda (any v) string:
+              {
+                var obase = v as int<32>;
+                if (!(obase in [2, 8, 10, 16]))
+                  return "obase should be one of 2, 8, 10 or 16";
+                /* XXX set the obase in the IOS.  */
+                return "";
+              }
+          }
+        ] : 1 /* XXX to avoid implicit constraint.  */;
+
+      /* Search for a given setting by name.
+
+         If the given name doesn't identify a setting in pk_settings,
+         raise E_inval.  */
+
+      method search = (string name) Poke_Setting:
+        {
+          for (s in settings)
+            if (s.name == name)
+              return s;
+          raise E_inval;
+        }
+
+      /* Get the value of a global setting given its name.  */
+
+      method get = (string name) any:
+      {
+        var s = search (name);
+        return s.getter;
+      }
+
+      method get_int = (string name) int<32>:
+      {
+        try return get (name) as int<32>;
+        catch if E_conv { raise E_inval; }
+      }
+
+      method get_bool = (string name) int<32>:
+      {
+        try return get (name) as int<32>;
+        catch if E_conv { raise E_inval; }
+      }
+
+      method get_string = (string name) string:
+      {
+        try return get (name) as string;
+        catch if E_conv { raise E_inval; }
+      }
+
+      /* Set the value of a global setting given its name.
+
+         If the provided name doesn't name a setting, or the given
+         value is not of the right kind for the setting, raise
+         E_inval.
+
+         If the provided value doesn't satify the constraints enforced
+         by the setting, an explicative error message is returned.
+
+         If the value is successfully set as the new value of the
+         global setting, return an empty string.  */
+
+      method set = (string name, any val) string:
+      {
+        var s = search (name);
+
+        try return s.setter (val);
+        catch if E_conv { raise E_inval; }
+      }
+
+      method set_int = (string name, int<32> val) string:
+      {
+        return set (name, !!val);
+      }
+
+      method set_bool = (string name, int<32> val) string:
+      {
+        return set (name, val);
+      }
+
+      method set_string = (string name, string  val) string:
+      {
+        return set (name, val);
+      }
+    };
+
+var pk_settings = Poke_Setting_Registry {};
+
+/* Create help topics for the global settings defined above.  */
+
+for (setting in pk_settings.settings)
+  pk_help_add_topic
+    :entry Poke_HelpEntry {
+             category = "settings",
+             topic = setting.name,
+             summary = setting.summary,
+             description = setting.description
+           };
