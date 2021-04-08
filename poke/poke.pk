@@ -16,6 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**** C-set Globals. ****/
+
+/* The following variables are set by poke.c when poke initializes,
+   after loading this file.  */
+
+var pk_host_endian = ENDIAN_BIG;
+var pk_network_endian = ENDIAN_BIG;
+
 /**** Online help system.  ****/
 
 /* The pk_help_topics global variable contains an array of entries

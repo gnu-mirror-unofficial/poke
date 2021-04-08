@@ -110,7 +110,36 @@ type Poke_Setting_Registry =
                 }
                 return "";
               }
-          }
+          },
+          Poke_Setting {
+            name = "endian",
+            kind = POKE_SETTING_STR,
+            summary = "endianness used while accessing the IO spaces",
+            getter = lambda any:
+              {
+                return get_endian;
+              },
+            setter = lambda (any v) string:
+              {
+                var s = v as string;
+                var endian = ENDIAN_LITTLE;
+
+                if (s == "big")
+                  endian = ENDIAN_BIG;
+                else if (s == "little")
+                  endian = ENDIAN_LITTLE;
+                else if (s == "host")
+                  endian = pk_host_endian;
+                else if (s == "network")
+                  endian = pk_network_endian;
+                else
+                  return
+                    "endian should be one of `little', `big', `host' or `network'\n";
+
+                set_endian (endian);
+                return "";
+              }
+          },
         ] : 1 /* XXX to avoid implicit constraint.  */;
 
       /* Search for a given setting by name.

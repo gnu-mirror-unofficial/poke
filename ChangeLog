@@ -1,5 +1,14 @@
 2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk (pk_host_endian): New variable.
+	(pk_network_endian): Likewise.
+	* poke/poke.c (initialize): Initialize the values of
+	pk_host_endian and pk_network_endian.
+	* poke/pk-settings.pk (Poke_Setting_Registry): add the `endian'
+	global setting.
+
+2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: New tokens BUILTIN_VM_OPPRINT and
 	BUILTIN_VM_SET_OPPRINT.
 	(builtin): Add rules for them.

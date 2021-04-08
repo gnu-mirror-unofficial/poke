@@ -27,6 +27,7 @@
 #include <textstyle.h>
 #include "xalloc.h"
 #include <assert.h>
+#include <arpa/inet.h> /* For htonl */
 
 #ifdef HAVE_HSERVER
 #  include "pk-hserver.h"
@@ -562,6 +563,41 @@ initialize (int argc, char *argv[])
   /* Load poke.pk  */
   if (!pk_load (poke_compiler, "poke"))
     pk_fatal ("unable to load the poke module");
+
+  /* Set the values of a few global variables defined in poke.pk.  */
+  {
+    uint32_t canary = 0x11223344;
+    pk_val endian_big = pk_decl_val (poke_compiler, "ENDIAN_BIG");
+    pk_val endian_little = pk_decl_val (poke_compiler, "ENDIAN_LITTLE");
+    pk_val host_endian;
+    pk_val network_endian;
+
+#ifdef WORDS_BIGENDIAN
+    host_endian = endian_big;
+#else
+    host_endian = endian_little;
+#endif
+
+    if (canary == htonl (canary))
+      {
+#ifdef WORDS_BIGENDIAN
+        network_endian = endian_big;
+#else
+        network_endian = endian_little;
+#endif
+      }
+    else
+      {
+#ifdef WORDS_BIGENDIAN
+        network_endian = endian_little;
+#else
+        network_endian = endian_big;
+#endif
+      }
+
+    pk_decl_set_val (poke_compiler, "pk_host_endian", host_endian);
+    pk_decl_set_val (poke_compiler, "pk_network_endian", network_endian);
+  }
 
   /* Initialize the global map.  */
   pk_map_init ();
