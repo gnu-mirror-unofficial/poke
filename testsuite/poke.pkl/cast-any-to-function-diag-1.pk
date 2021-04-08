@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+type Func = ()void;
+fun foo = (any a) void:
+{
+  a as Func; /* { dg-error "casting" } */
+};

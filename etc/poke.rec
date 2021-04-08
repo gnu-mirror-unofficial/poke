@@ -1759,6 +1759,16 @@ Description:
 + Jitter detects this and gives an error.  We need a mutex to protect
 + the PVM, and make the hserver and the prompt to use it.
 
+Summary: support casts from `any' to function types
+Kind: ENH
+Component: Compiler
+Component: PVM
+Priority: 3
+Description: 
++ Right now we are not allowing casting from `any' to a function type.
++ Supporting this requires to tag the PVM closure values with their
++ corresponding type.
+
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/

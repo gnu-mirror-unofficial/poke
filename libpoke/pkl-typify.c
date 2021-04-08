@@ -403,8 +403,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
-  /* Casting to ANY is always forbidden.  But casting from ANY is
-     always allowed.  */
+  /* Casting to ANY is always forbidden.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)
     {
       PKL_ERROR (PKL_AST_LOC (cast),
@@ -413,8 +412,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
+  /* But casting from ANY is always allowed, with the exception of
+     function types.  This is because for this to work we need to tag
+     the PVM closure values with their type, which is XXX.  */
   if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ANY)
-    goto done;
+    {
+      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
+        {
+          PKL_ERROR (PKL_AST_LOC (cast),
+                     "casting `any' to a function type is not allowed");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      goto done;
+    }
 
   /* Casting from offset to offset is allowed, but not any other cast
      involving offsets.  */
