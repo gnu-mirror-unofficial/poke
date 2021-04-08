@@ -1,5 +1,9 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-settings.pk: Simplify handling of boolean settings.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk (pk_prompt_maps_p): New global.
 	* poke/pk-settings.pk: Setting for prompt-maps.
 

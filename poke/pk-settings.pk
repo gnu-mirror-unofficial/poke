@@ -112,7 +112,12 @@ type Poke_Setting_Registry =
       method get = (string name) any:
       {
         var s = search (name);
-        return s.getter;
+        var val = s.getter;
+
+        if (s.kind == POKE_SETTING_BOOL)
+          val = val as int<32> ? "yes" : "no";
+
+        return val;
       }
 
       /* Set the value of a global setting given its name.
@@ -139,6 +144,8 @@ type Poke_Setting_Registry =
 
             if (!(val as string in ["yes", "no"]))
               return s.name + " should be one of `yes' or `no'";
+
+            val = (val as string == "yes");
           }
 
         try return s.setter (val);
@@ -157,11 +164,11 @@ pk_settings.add_setting
            summary = "whether poke should use struct pretty-printers",
            getter = lambda any:
              {
-               return vm_opprint ? "yes" : "no";
+               return vm_opprint;
              },
            setter = lambda (any val) string:
              {
-               vm_set_opprint (val as string == "yes");
+               vm_set_opprint (val as int<32>);
                return "";
              }
          };
@@ -223,10 +230,10 @@ pk_settings.add_setting
       name = "auto-map",
       kind = POKE_SETTING_BOOL,
       summary = "whether poke auto-loads maps when opening IO spaces",
-      getter = lambda any: { return pk_auto_map_p ? "yes" : "no"; },
+      getter = lambda any: { return pk_auto_map_p; },
       setter = lambda (any val) string:
         {
-          pk_auto_map_p = (val as string == "yes");
+          pk_auto_map_p = val as int<32>;
           return "";
         }
     };
@@ -236,10 +243,10 @@ pk_settings.add_setting
     name = "prompt-maps",
     kind = POKE_SETTING_BOOL,
     summary = "whether map information should be included in the prompt",
-    getter = lambda any: { return pk_prompt_maps_p ? "yes" : "no"; },
+    getter = lambda any: { return pk_prompt_maps_p; },
     setter = lambda (any val) string:
       {
-        pk_prompt_maps_p = (val as string == "yes");
+        pk_prompt_maps_p = val as int<32>;
         return "";
       }
     };
