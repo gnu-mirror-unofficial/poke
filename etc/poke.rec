@@ -1739,6 +1739,26 @@ Description:
 + section from array and struct constructor sections.
 Target: 1.1
 
+Summary: add mutex to avoid concurrency crash with hyperlinks
+Component: POKE
+Kind: ENH
+Priority: 4
+Description: 
++ Until we figure out how to implement concurrency in Poke, we have to
++ avoid running nested PVMs, which happens easily with hyperlinks:
++ 
++   hserver_print_hl ('i', "crashme", "", lambda void: { print "die\n"; });
++   print "\n";
++ 
++   while (1)
++     {
++       print ("looping peacefully...");
++       sleep (1);
++     }
++ 
++ Jitter detects this and gives an error.  We need a mutex to protect
++ the PVM, and make the hserver and the prompt to use it.
+
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
