@@ -1,5 +1,10 @@
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-settings.pk: Add settings oacutoff, odepth, oindent,
+	omaps, omode.
+
+2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (@code{vm_oacutoff}): New section.
 	(@code{vm_set_oacutoff}): Likewise.
 	(@code{vm_odepth}): Likewise.

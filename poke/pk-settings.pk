@@ -201,7 +201,10 @@ pk_settings.add_setting
            summary = "endianness used while accessing the IO spaces",
            getter = lambda any:
              {
-               return get_endian;
+               if (get_endian == ENDIAN_BIG)
+                  return "big";
+               else
+                  return "little";
              },
            setter = lambda (any v) string:
              {
@@ -247,6 +250,89 @@ pk_settings.add_setting
     setter = lambda (any val) string:
       {
         pk_prompt_maps_p = val as int<32>;
+        return "";
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "oacutoff",
+    kind = POKE_SETTING_INT,
+    summary = "cutoff value used when printing array elements",
+    getter = lambda any: { return vm_oacutoff; },
+    setter = lambda (any val) string:
+      {
+        vm_set_oacutoff (val as int<32>);
+        return "";
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "odepth",
+    kind = POKE_SETTING_INT,
+    summary = "maximum depth to include when printing nested structures",
+    getter = lambda any: { return vm_odepth; },
+    setter = lambda (any val) string:
+      {
+        vm_set_odepth (val as int<32>);
+        return "";
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "oindent",
+    kind = POKE_SETTING_INT,
+    summary = "witdh of each indentation leveel when printing structures",
+    getter = lambda any: { return vm_oindent; },
+    setter = lambda (any val) string:
+      {
+        vm_set_oindent (val as int<32>);
+        return "";
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "omaps",
+    kind = POKE_SETTING_BOOL,
+    summary = "whether include offset information when printing values",
+    getter = lambda any: { return vm_omaps; },
+    setter = lambda (any val) string:
+      {
+        vm_set_omaps (val as int<32>);
+        return "";
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "omode",
+    kind = POKE_SETTING_STR,
+    summary = "output mode for printing values",
+    getter = lambda any:
+      {
+        var omaps = vm_omaps;
+
+        if (omaps == VM_OMODE_PLAIN)
+          return "plain";
+        else if (omaps == VM_OMODE_TREE)
+          return "tree";
+
+        assert (0, "this point shouln't be reached");
+      },
+    setter = lambda (any val) string:
+      {
+        var s = val as string;
+
+        if (s == "plain")
+          vm_set_omaps (VM_OMODE_PLAIN);
+        else if (s == "tree")
+          vm_set_omaps (VM_OMODE_TREE);
+        else
+          return "omode should be one of `flat' or `tree'\n";
+
         return "";
       }
     };
