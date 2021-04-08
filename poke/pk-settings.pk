@@ -115,32 +115,15 @@ type Poke_Setting_Registry =
         return s.getter;
       }
 
-      method get_int = (string name) int<32>:
-      {
-        try return get (name) as int<32>;
-        catch if E_conv { raise E_inval; }
-      }
-
-      method get_bool = (string name) int<32>:
-      {
-        try return get (name) as int<32>;
-        catch if E_conv { raise E_inval; }
-      }
-
-      method get_string = (string name) string:
-      {
-        try return get (name) as string;
-        catch if E_conv { raise E_inval; }
-      }
-
       /* Set the value of a global setting given its name.
 
          If the provided name doesn't name a setting, or the given
          value is not of the right kind for the setting, raise
          E_inval.
 
-         If the provided value doesn't satify the constraints enforced
-         by the setting, an explicative error message is returned.
+         If the provided value doesn't satisfy the constraints
+         enforced by the setting, an explicative error message is
+         returned.
 
          If the value is successfully set as the new value of the
          global setting, return an empty string.  */
@@ -149,23 +132,17 @@ type Poke_Setting_Registry =
       {
         var s = search (name);
 
+        if (s.kind == POKE_SETTING_BOOL)
+          {
+            if (!(val isa string))
+              raise E_inval;
+
+            if (!(val as string in ["yes", "no"]))
+              return s.name + " should be one of `yes' or `no'";
+          }
+
         try return s.setter (val);
         catch if E_conv { raise E_inval; }
-      }
-
-      method set_int = (string name, int<32> val) string:
-      {
-        return set (name, !!val);
-      }
-
-      method set_bool = (string name, int<32> val) string:
-      {
-        return set (name, val);
-      }
-
-      method set_string = (string name, string  val) string:
-      {
-        return set (name, val);
       }
     };
 
