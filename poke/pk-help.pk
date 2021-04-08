@@ -1,0 +1,94 @@
+/* pk-help.pk - poke online help subsystem.  */
+
+/* Copyright (C) 2020, 2021 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* The pk_help_topics global variable contains an array of entries
+   with the form:
+
+   ["TOPIC" "... description of topic ..."]
+
+   The .help TOPIC command searches in this table and displays the
+   corresponding description.  */
+
+type Poke_HelpEntry =
+  struct
+  {
+    string category;
+    string topic;
+    string summary;
+    string description;
+  };
+
+var pk_help_topics = Poke_HelpEntry[] ();
+
+/* Add a new entry to pk_help_topics.  */
+
+fun pk_help_add_topic = (Poke_HelpEntry entry) void:
+{
+  /* If the topic already exists in the table, replace its description
+     with the new one.  */
+  for (var i = 0; i < pk_help_topics'length; i++)
+   if (pk_help_topics[i].category == entry.category
+       && pk_help_topics[i].topic == entry.topic)
+     {
+       pk_help_topics[i] = entry;
+       return;
+     }
+
+  pk_help_topics += [entry];
+}
+
+/* Print some help about a given topic.  */
+
+fun pk_help = (string topic) void:
+{
+  if (topic == "")
+  {
+    print "Usage: .help TOPIC\n";
+    print "Available help topics:\n\n";
+    print "Global settings:\n";
+    for (entry in pk_help_topics where entry.category == "settings")
+    {
+      print ("\t");
+      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
+      printf (" - %s\n", entry.summary);
+    }
+    print "\n";
+    print "Commands:\n";
+    for (entry in pk_help_topics where entry.category == "commands")
+    {
+      print ("\t");
+      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
+      printf (" - %s\n", entry.summary);
+    }
+    print "\n";
+    print "To access the poke manual, type \".doc TOPIC\".\n";
+    return;
+  }
+
+  for (entry in pk_help_topics)
+    if (entry.topic == topic)
+    {
+      printf ("%s - %s\n", entry.topic, entry.summary);
+      if (entry.description != "")
+        printf ("%s\n", entry.description);
+      return;
+    }
+
+  print "Sorry no clue about that.
+Type .help with no topic for a list of topics.\n";
+}

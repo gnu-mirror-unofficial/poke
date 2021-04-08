@@ -1,5 +1,13 @@
 2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-help.pk: New file.
+	* poke/pk-map.pk: Likewise.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-help.pk and
+	pk-map.pk
+	* poke/poke.pk: Move definitions to the new files and load them.
+	
+2021-04-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk (pk_host_endian): New variable.
 	(pk_network_endian): Likewise.
 	* poke/poke.c (initialize): Initialize the values of

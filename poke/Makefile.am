@@ -27,7 +27,8 @@ BUILT_SOURCES =
 EXTRA_DIST =
 
 dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk \
-                    pk-extract.pk pk-scrabble.pk poke.pk pk-settings.pk
+                    pk-extract.pk pk-scrabble.pk poke.pk pk-settings.pk \
+                    pk-help.pk pk-map.pk
 
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \
