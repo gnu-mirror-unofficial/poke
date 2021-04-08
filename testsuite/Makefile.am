@@ -1918,10 +1918,20 @@ EXTRA_DIST = \
   poke.pkl/units-diag-3.pk \
   poke.pkl/uu-file-1.pk \
   poke.pkl/uu-line-1.pk \
+  poke.pkl/vm-oacutoff-1.pk \
   poke.pkl/vm-obase-1.pk \
+  poke.pkl/vm-odepth-1.pk \
+  poke.pkl/vm-oindent-1.pk \
+  poke.pkl/vm-omaps-1.pk \
+  poke.pkl/vm-omode-1.pk \
   poke.pkl/vm-opprint-1.pk \
+  poke.pkl/vm-set-oacutoff-1.pk \
   poke.pkl/vm-set-obase-1.pk \
   poke.pkl/vm-set-obase-diag-1.pk \
+  poke.pkl/vm-set-odepth-1.pk \
+  poke.pkl/vm-set-oindent-1.pk \
+  poke.pkl/vm-set-omaps-1.pk \
+  poke.pkl/vm-set-omode-1.pk \
   poke.pkl/vm-set-opprint-1.pk \
   poke.pkl/while-1.pk \
   poke.pkl/while-2.pk \
