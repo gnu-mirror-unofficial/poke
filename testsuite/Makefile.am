@@ -326,6 +326,7 @@ EXTRA_DIST = \
   poke.map/maps-structs-endian-diag-1.pk \
   poke.map/maps-structs-init-1.pk \
   poke.map/maps-structs-init-2.pk \
+  poke.map/maps-structs-init-3.pk \
   poke.map/maps-structs-labels-1.pk \
   poke.map/maps-structs-labels-2.pk \
   poke.map/maps-structs-methods-1.pk \
@@ -995,9 +996,11 @@ EXTRA_DIST = \
   poke.pkl/field-init-10.pk \
   poke.pkl/field-init-11.pk \
   poke.pkl/field-init-12.pk \
+  poke.pkl/field-init-13.pk \
   poke.pkl/field-init-diag-1.pk \
   poke.pkl/field-init-diag-2.pk \
   poke.pkl/field-init-diag-4.pk \
+  poke.pkl/field-init-diag-5.pk \
   poke.pkl/for-1.pk \
   poke.pkl/for-2.pk \
   poke.pkl/for-3.pk \

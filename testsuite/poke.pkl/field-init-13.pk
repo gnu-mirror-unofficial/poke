@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+/* Test promotion of struct type field initializers when == is used.
+*/
+
+type Foo = struct { int i == 100L; };
+
+/* { dg-command { try Foo { i = 3 }; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */

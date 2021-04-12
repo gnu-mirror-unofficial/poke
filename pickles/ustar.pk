@@ -42,7 +42,7 @@ type USTAR_Sector =
                                    USTAR_FIFO];
     char[100] linked_file_name;
     uint<48> ustar;
-    char[2] ustar_version = ['0','0'];
+    char[2] ustar_version == ['0','0'];
     char[32] owner_user_name;
     char[32] owner_group_name;
     uint<64> device_major_number;

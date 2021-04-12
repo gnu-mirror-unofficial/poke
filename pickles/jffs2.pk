@@ -151,7 +151,7 @@ type JFFS2_Dirent =
 struct
 {
     uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
-    uint<16> node_type = JFFS2_NODETYPE_DIRENT;
+    uint<16> node_type == JFFS2_NODETYPE_DIRENT;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
     uint<32> pino; // Parent inode number
@@ -192,7 +192,7 @@ type JFFS2_Inode =
 struct
 {
     uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
-    uint<16> node_type = JFFS2_NODETYPE_INODE;
+    uint<16> node_type == JFFS2_NODETYPE_INODE;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
     uint<32> ino; // inode number
@@ -234,7 +234,7 @@ type JFFS2_XAttr =
 struct
 {
     uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
-    uint<16> node_type = JFFS2_NODETYPE_XATTR;
+    uint<16> node_type == JFFS2_NODETYPE_XATTR;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
     uint<32> xid;
@@ -270,7 +270,7 @@ type JFFS2_XRef =
 struct
 {
     uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
-    uint<16> node_type = JFFS2_NODETYPE_XREF;
+    uint<16> node_type == JFFS2_NODETYPE_XREF;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
     uint<32> ino; // ino to add attr to
@@ -298,7 +298,7 @@ struct
 type JFFS2_Sum_Dirent =
 struct
 {
-    uint<16> node_type = JFFS2_NODETYPE_DIRENT;
+    uint<16> node_type == JFFS2_NODETYPE_DIRENT;
     uint<32> totlen; /* record length */
     offset<uint<32>, B> offset; /* ofset on jeb */
     uint<32> pino; /* parent inode */
@@ -320,7 +320,7 @@ struct
 type JFFS2_Sum_XAttr =
 struct
 {
-    uint<16> node_type = JFFS2_NODETYPE_XATTR;
+    uint<16> node_type == JFFS2_NODETYPE_XATTR;
     uint<32> xid; /* xattr identifier */
     uint<32> version; /* version number */
     uint<32> offset; /* offset on jeb */
@@ -333,7 +333,7 @@ struct
 type JFFS2_Sum_XRef =
 struct
 {
-    uint<16> node_type = JFFS2_NODETYPE_XREF;
+    uint<16> node_type == JFFS2_NODETYPE_XREF;
     uint<32> offset; /* offset on jeb */
 };
 
@@ -384,7 +384,7 @@ type JFFS2_Summary =
 struct
 {
     uint<16> magic = JFFS2_MAGIC : magic in [JFFS2_MAGIC, JFFS2_MAGIC_OLD];
-    uint<16> node_type = JFFS2_NODETYPE_SUMMARY;
+    uint<16> node_type == JFFS2_NODETYPE_SUMMARY;
     offset<uint<32>, B> total_len : total_len >= JFFS2_HEADER_SIZE;
     uint<32> node_header_crc;
     uint<32> sum_num;

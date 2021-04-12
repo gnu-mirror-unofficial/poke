@@ -1,3 +1,41 @@
+2021-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y (field_cons_init): New type in %union.
+	(struct_type_field_constraint_and_init): Return a field_cons_init.
+	(struct_type_field): Adjust rule accordingly.
+	* testsuite/poke.pkl/field-init-2.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-9.pk: Likewise.
+	* testsuite/poke.map/maps-structs-init-1.pk: Likewise.
+	* testsuite/poke.map/maps-structs-init-2.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-20.pk: Adapt test.
+	* testsuite/poke.pkl/field-init-diag-5.pk: New test.
+	* testsuite/poke.pkl/field-init-13.pk: Likewise.
+	* testsuite/poke.map/maps-structs-init-3.pk: Likewise.
+	* pickles/bmp.pk (BMP_Header): Use == instead of = in type.
+	* pickles/bpf.pk (BPF_Insn_Regs): Likewise.
+	* pickles/cpio.pk (CPIO_Old_Header): Likewise.
+	* pickles/ctf.pk (CTF_Preamble): Likewise.
+	* pickles/elf.pk (Elf64_Ehdr): Likewise.
+	* pickles/id3v1.pk (ID3V1_Tag): Likewise.
+	* pickles/id3v2.pk (ID3V2_Hdr): Likewise.
+	* pickles/jffs2.pk (JFFS2_Dirent): Likewise.
+	(JFFS2_Inode): Likewise.
+	(JFFS2_XAttr): Likewise.
+	(JFFS2_XRef): Likewise.
+	(JFFS2_Sum_Dirent): Likewise.
+	(JFFS2_Sum_XAttr): Likewise.
+	(JFFS2_Sum_XRef): Likewise.
+	(JFFS2_Summary): Likewise.
+	* pickles/mbr.pk (MBR): Likewise.
+	* pickles/ustar.pk (USTAR_Sector): Likewise.
+	* doc/poke.texi (Field Initializers): Document the syntax in field
+	initializers.
+
+2021-04-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: Rule for `== EXPRESSION' in struct field
+	types, and modify semantics of `= EXPRESSION'.
+
 2021-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Do not allow casting

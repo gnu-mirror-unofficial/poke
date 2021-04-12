@@ -93,7 +93,7 @@ type CTF_Type_Id =
 type CTF_Preamble =
   struct
   {
-    uint<16> ctp_magic = CTF_MAGIC;
+    uint<16> ctp_magic == CTF_MAGIC;
     byte ctp_version;
     byte ctp_flags;
 

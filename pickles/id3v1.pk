@@ -59,7 +59,7 @@ fun id3v1_search_genre = (string name) uint<8>:
 type ID3V1_Tag =
   struct
   {
-    char[3] id = ['T', 'A', 'G'];
+    char[3] id == ['T', 'A', 'G'];
 
     char[30] title;
     char[30] artist;

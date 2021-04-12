@@ -29,7 +29,7 @@ var IHS_BMP_V2 = 12#B, IHS_BMP_V3 = 40#B;
 type BMP_Header =
   struct
   {
-    byte[2] magic = ['B','M'];
+    byte[2] magic == ['B','M'];
     offset<uint<32>,B> file_size;
     uint<16>; /* Reserved.  */
     uint<16>; /* Reserved.  */

@@ -101,5 +101,5 @@ type MBR =
     uint32 signature;
     byte[2] reserved;
     MBR_PTE[4] pte;
-    uint16 magic = 0xaa55UH;
+    uint16 magic == 0xaa55UH;
   };

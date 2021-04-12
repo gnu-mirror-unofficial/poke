@@ -1,7 +1,7 @@
 /* { dg-do run } */
 
 type Magic = struct { byte a; byte b; };
-type Packet = struct { Magic magic = Magic { a = 10, b = 20 }; byte data; };
+type Packet = struct { Magic magic == Magic { a = 10, b = 20 }; byte data; };
 
 /* { dg-command { try Packet { magic = Magic { a = 10, b = 30 } }; catch if E_constraint { print "caught\n"; } } } */
 /* { dg-output "caught" } */

@@ -7,7 +7,7 @@ type Foo =
     struct uint<32>
     {
       uint<16> a1;
-      uint<16> a2 = 0x2010;
+      uint<16> a2 == 0x2010;
     } a;
   };
 

@@ -21,7 +21,7 @@
 type ID3V2_Hdr =
   struct
   {
-    char[3] head = ['I','D','3'];
+    char[3] head == ['I','D','3'];
     byte ver_major : ver_major != 0xff;
     byte ver_revision : ver_revision != 0xff;
 

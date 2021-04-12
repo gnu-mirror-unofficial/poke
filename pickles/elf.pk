@@ -567,7 +567,7 @@ type Elf64_Ehdr =
   {
     struct
     {
-      byte[4] ei_mag = [0x7fUB, 'E', 'L', 'F'];
+      byte[4] ei_mag == [0x7fUB, 'E', 'L', 'F'];
       byte ei_class;
       byte ei_data :
         (ei_data == ELFDATA2LSB) ? set_endian (ENDIAN_LITTLE) : set_endian (ENDIAN_BIG);

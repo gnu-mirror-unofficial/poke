@@ -337,7 +337,12 @@ load_module (struct pkl_parser *parser,
 
 %union {
   pkl_ast_node ast;
-  pkl_ast_node astpair[2];
+  struct
+  {
+    pkl_ast_node constraint;
+    pkl_ast_node initializer;
+    int impl_constraint_p;
+  } field_const_init;
   enum pkl_ast_op opcode;
   int integer;
 }
@@ -530,7 +535,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> struct_type_specifier string_type_specifier
 %type <ast> struct_type_elem_list struct_type_field struct_type_field_identifier
 %type <ast> struct_type_field_label
-%type <astpair> struct_type_field_constraint_and_init
+%type <field_const_init> struct_type_field_constraint_and_init
 %type <ast> struct_type_field_optcond
 %type <ast> declaration simple_declaration
 %type <ast> defvar defvar_list deftype deftype_list
@@ -1694,8 +1699,9 @@ struct_type_field:
           struct_type_field_constraint_and_init struct_type_field_label
           struct_type_field_optcond ';'
                   {
-                    pkl_ast_node constraint = $5[0];
-                    pkl_ast_node initializer = $5[1];
+                    pkl_ast_node constraint = $5.constraint;
+                    pkl_ast_node initializer = $5.initializer;
+                    int impl_constraint_p = $5.impl_constraint_p;
 
                     if (initializer)
                       {
@@ -1713,7 +1719,7 @@ struct_type_field:
                         /* Build a constraint derived from the
                            initializer if a constraint has not been
                            specified.  */
-                        if (constraint == NULL)
+                        if (impl_constraint_p)
                           {
                             field_decl = pkl_env_lookup (pkl_parser->env,
                                                          PKL_ENV_NS_MAIN,
@@ -1780,36 +1786,46 @@ struct_type_field_label:
 struct_type_field_constraint_and_init:
           %empty
                 {
-                  $$[0] = NULL;
-                  $$[1] = NULL;
+                  $$.constraint = NULL;
+                  $$.initializer = NULL;
+                  $$.impl_constraint_p = 0;
                 }
           | ':' expression
                 {
-                  $$[0] = $2;
-                  $$[1] = NULL;
-                  PKL_AST_LOC ($$[0]) = @$;
+                  $$.constraint = $2;
+                  PKL_AST_LOC ($$.constraint) = @2;
+                  $$.initializer = NULL;
+                  $$.impl_constraint_p = 0;
                 }
           | '=' expression
                 {
-                  $$[0] = NULL;
-                  $$[1] = $2;
-                  PKL_AST_LOC ($$[1]) = @$;
+                  $$.constraint = NULL;
+                  $$.initializer = $2;
+                  PKL_AST_LOC ($$.initializer) = @2;
+                  $$.impl_constraint_p = 0;
                 }
           | '=' expression ':' expression
                 {
-                  $$[0] = $4;
-                  $$[1] = $2;
-
-                  PKL_AST_LOC ($$[0]) = @4;
-                  PKL_AST_LOC ($$[1]) = @2;
+                  $$.constraint = $4;
+                  PKL_AST_LOC ($$.constraint) = @4;
+                  $$.initializer = $2;
+                  PKL_AST_LOC ($$.initializer) = @2;
+                  $$.impl_constraint_p = 0;
                 }
           | ':' expression '=' expression
                 {
-                  $$[0] = $2;
-                  $$[1] = $4;
-
-                  PKL_AST_LOC ($$[0]) = @2;
-                  PKL_AST_LOC ($$[1]) = @4;
+                  $$.constraint = $2;
+                  PKL_AST_LOC ($$.constraint) = @2;
+                  $$.initializer = $4;
+                  PKL_AST_LOC ($$.initializer) = @4;
+                  $$.impl_constraint_p = 0;
+                }
+          | EQ expression
+                {
+                  $$.constraint = NULL;
+                  $$.initializer = $2;
+                  PKL_AST_LOC ($$.initializer) = @2;
+                  $$.impl_constraint_p = 1;
                 }
           ;
 

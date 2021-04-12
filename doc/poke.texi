@@ -10411,16 +10411,9 @@ type Packet =
 @end example
 
 Note how the syntax is different than the one used for constraints.
-When a field in a struct type has an initializer, two things happen:
-
-@itemize @bullet
-@item On one side, an implicit constraint is created for the field, of
-the form @code{@var{field} == @var{initializer_expression}}.
-@item On the other, the struct constructor will use the initializer
-expression as the initial value for the field.
-@end itemize
-
-This achieves exactly what we want, in a very natural way:
+When a field in a struct type has an initializer, the struct
+constructor will use the initializer expression as the initial value
+for the field.  For example:
 
 @example
 (poke) Packet @{@}
@@ -10446,9 +10439,40 @@ type Packet =
   @};
 @end example
 
-Note also that it is considered good practice to design struct types
-in a way that a constructor with no arguments will result in something
-usable.
+Note however that struct mappers do not make use of field
+initializers, since the mapped IO space provides values for all the
+fields in the struct type.  If we mapped the @code{Packet} type above,
+we would need to add also a constraint to make sure the value of
+@code{marker} is the right one.  This also applies to constructing
+@code{Packet} types where an initial value is explicitly specified.
+We could do it by specifying both an initial value, and a constraint
+expression:
+
+@example
+type Packet =
+  struct
+  @{
+    byte marker = 0xff : marker == 0xff;
+    byte length;
+    byte[length] payload;
+  @};
+@end example
+
+This idiom is to common that Poke provides a more compact syntax to
+denote it, that avoids verbosity and replicated logic:
+
+@example
+type Packet =
+  struct
+  @{
+    byte marker == 0xff;
+    byte length;
+    byte[length] payload;
+  @};
+@end example
+
+It is considered good practice to design struct types in a way that a
+constructor with no arguments will result in something usable.
 
 @node Field Labels
 @subsection Field Labels
