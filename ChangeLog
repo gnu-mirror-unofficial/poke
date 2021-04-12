@@ -1,5 +1,11 @@
 2021-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/field-init-diag-6.pk: New test.
+	* testsuite/poke.pkl/field-init-diag-7.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-04-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (field_cons_init): New type in %union.
 	(struct_type_field_constraint_and_init): Return a field_cons_init.
 	(struct_type_field): Adjust rule accordingly.

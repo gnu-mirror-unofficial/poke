@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+type Foo
+  = struct
+    {
+      int a == 10 : a == 20; /* { dg-error "" } */
+    };
