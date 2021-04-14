@@ -1,5 +1,17 @@
 2021-04-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_op_impl): New handler.
+	(pkl_phase_gen): Register handler.
+	* testsuite/poke.pkl/impl-1.pk: New test.
+	* testsuite/poke.pkl/impl-2.pk: Likewise.
+	* testsuite/poke.pkl/impl-3.pk: Likewise.
+	* testsuite/poke.pkl/impl-4.pk: Likewise.
+	* testsuite/poke.pkl/impl-5.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (Boolean Operators): Mention the => operator.
+
+2021-04-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ops.def: Add entry for IMPL.
 	* libpoke/pkl-tab.y: New token IMPL.
 	(expression): Add rule for the IMPL operator.
@@ -10,7 +22,7 @@
 	pkl_promo_ps_op_binary.
 	* testsuite/poke.pkl/impl-diag-1.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
-	
+
 2021-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/field-init-diag-6.pk: New test.

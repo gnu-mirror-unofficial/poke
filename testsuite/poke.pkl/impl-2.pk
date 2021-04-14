@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var a = 0UL;
+
+/* { dg-command { a => 1 } } */
+/* { dg-output "1" } */
+
+/* For constant folding: */
+/* { dg-command { 0 => 1 } } */
+/* { dg-output "\n1" } */

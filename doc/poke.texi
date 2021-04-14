@@ -5897,7 +5897,8 @@ in all contexts where an integer is expected:
 @item Operator to an addition, subtraction, multiplication, division,
 ceil division, bit left shift, bit right shift, bit-wise not, bit-wise
 and, bit-wise or, bit-wise xor, logical and, logical or, logical not,
-positive, negative, bit-concatenation, condition in conditional expression.
+logical implication, positive, negative, bit-concatenation, condition
+in conditional expression.
 @item Argument to a function whose formal expects an integer.
 @item Value returned from a function that returns an integer.
 @item Condition in loop statement.
@@ -9031,6 +9032,7 @@ The following left-associative, short-circuited binary logical
 operators are supported, in descending precedence order:
 
 @itemize
+@item Logical implication: @code{=>}.
 @item Logical AND: @code{&&}.
 @item Inclusive OR: @code{||}.
 @end itemize

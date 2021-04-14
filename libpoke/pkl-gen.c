@@ -3885,6 +3885,34 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_not)
 }
 PKL_PHASE_END_HANDLER
 
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_impl)
+{
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);
+
+  pvm_program_label label1 = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label label2 = pkl_asm_fresh_label (PKL_GEN_ASM);
+
+  PKL_PASS_SUBPASS (op1);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label1);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, label2);
+
+  pkl_asm_label (PKL_GEN_ASM, label1);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+  PKL_PASS_SUBPASS (op2);
+  /* Normalize the result to 0 or 1.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NOT);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
+
+  pkl_asm_label (PKL_GEN_ASM, label2);
+
+  PKL_PASS_BREAK;
+}
+PKL_PHASE_END_HANDLER
+
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_rela)
 {
   pkl_asm pasm = PKL_GEN_ASM;
@@ -4272,6 +4300,7 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_gen_ps_op_binexp),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_AND, pkl_gen_pr_op_and),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_OR, pkl_gen_pr_op_or),
+   PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_IMPL, pkl_gen_pr_op_impl),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_gen_ps_op_not),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EQ, pkl_gen_ps_op_rela),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NE, pkl_gen_ps_op_rela),
