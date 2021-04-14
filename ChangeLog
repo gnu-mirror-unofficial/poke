@@ -1,7 +1,5 @@
 2021-04-14  Jose E. Marchesi  <jemarch@gnu.org>
 
-	* testsuite/poke.pkl/impl-diag-1.pk: New test.
-
 	* libpoke/pkl-ops.def: Add entry for IMPL.
 	* libpoke/pkl-tab.y: New token IMPL.
 	(expression): Add rule for the IMPL operator.
@@ -10,6 +8,8 @@
 	with pkl_typify1_ps_op_boolean.
 	* libpoke/pkl-promo.c (pkl_phase_promo): Handle OP_IMPL nodes with
 	pkl_promo_ps_op_binary.
+	* testsuite/poke.pkl/impl-diag-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
 	
 2021-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
