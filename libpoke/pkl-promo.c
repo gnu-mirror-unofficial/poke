@@ -1601,6 +1601,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_promo_ps_op_binary_intoffstrarr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_AND, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_OR, pkl_promo_ps_op_binary),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IMPL, pkl_promo_ps_op_binary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_promo_ps_op_unary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NEG, pkl_promo_ps_op_unary),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POS, pkl_promo_ps_op_unary),

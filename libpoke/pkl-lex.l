@@ -326,6 +326,7 @@ S ::
 
 "||"                { return OR; }
 "&&"                { return AND; }
+"=>"                { return IMPL; }
 "=="                { return EQ; }
 "!="                { return NE; }
 "<="                { return LE; }

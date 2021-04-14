@@ -1,3 +1,16 @@
+2021-04-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/impl-diag-1.pk: New test.
+
+	* libpoke/pkl-ops.def: Add entry for IMPL.
+	* libpoke/pkl-tab.y: New token IMPL.
+	(expression): Add rule for the IMPL operator.
+	* libpoke/pkl-lex.l: Recognize the token =>.
+	* libpoke/pkl-typify.c (pkl_phase_typify1): Handle OP_IMPL nodes
+	with pkl_typify1_ps_op_boolean.
+	* libpoke/pkl-promo.c (pkl_phase_promo): Handle OP_IMPL nodes with
+	pkl_promo_ps_op_binary.
+	
 2021-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.pkl/field-init-diag-6.pk: New test.

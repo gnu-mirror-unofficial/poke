@@ -458,6 +458,7 @@ token <integer> UNION    _("keyword `union'")
 
 %token OR               _("logical or operator")
 %token AND              _("logical and operator")
+%token IMPL             _("logical implication operator")
 %token '|'              _("bit-wise or operator")
 %token '^'              _("bit-wise xor operator")
 %token '&'              _("bit-wise and operator")
@@ -500,6 +501,7 @@ token <integer> UNION    _("keyword `union'")
 
 /* Operator tokens and their precedences, in ascending order.  */
 
+%right IMPL
 %right '?' ':'
 %left OR
 %left AND
@@ -894,6 +896,12 @@ expression:
         | expression OR expression
                 {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_OR,
+                                                $1, $3);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | expression IMPL expression
+                {
+                  $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_IMPL,
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
