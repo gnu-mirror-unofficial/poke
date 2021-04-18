@@ -1,3 +1,9 @@
+2021-04-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Bump poke version to 1.2.
+	* doc/gendocs_template: Likewise.
+	* NEWS: Add entry for 1.2.
+
 2021-04-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_op_impl): New handler.
