@@ -155,6 +155,7 @@
         push null
         ba .arraymounted
 .constraint_error:
+        pope
         ;; Remove the partial element from the stack.
                                 ; ARR EOFF EOFF EXCEPTION
         drop
@@ -696,9 +697,9 @@
         fromr                   ; STRICT BOFF STRICT BOFF IOS
         swap                    ; STRICT BOFF STRICT IOS BOFF
         push PVM_E_CONSTRAINT
-        pushe .constraint_error_or_eof
+        pushe .constraint_error
         push PVM_E_EOF
-        pushe .constraint_error_or_eof
+        pushe .eof
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
@@ -708,9 +709,11 @@
         pope
         pope
         ba .val_ok
-.constraint_error_or_eof:
+.eof:
+        pope
+.constraint_error:
         ;; This is to keep the right lexical environment in
-        ;; case the subpass above raises a constraint exception.
+        ;; case the subpass above raises an exception.
         push null
         regvar $val
         raise
@@ -804,13 +807,14 @@
  .c     continue;
  .c   }
         .label .alternative_failed
+        .label .constraint_in_alternative
         .label .eof_in_alternative
  .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
  .c   {
         push PVM_E_EOF
         pushe .eof_in_alternative
         push PVM_E_CONSTRAINT
-        pushe .alternative_failed
+        pushe .constraint_in_alternative
  .c   }
  .c   if (PKL_AST_TYPE_S_ITYPE (@type_struct))
  .c   {
@@ -918,6 +922,9 @@
      .c {
         raise
      .c }
+        ba .alternative_failed
+.constraint_in_alternative:
+        pope
 .alternative_failed:
         ;; Drop the exception and try next alternative.
         drop                    ; ...[EBOFF ENAME EVAL] NEBOFF
