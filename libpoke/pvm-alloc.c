@@ -29,6 +29,17 @@ pvm_alloc (size_t size)
 }
 
 void *
+pvm_alloc_uncollectable (size_t size)
+{
+  return GC_MALLOC_UNCOLLECTABLE (size);
+}
+
+void pvm_free_uncollectable (void *ptr)
+{
+  GC_FREE (ptr);
+}
+
+void *
 pvm_realloc (void *ptr, size_t size)
 {
   return GC_REALLOC (ptr, size);

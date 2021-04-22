@@ -46,6 +46,19 @@ void *pvm_alloc (size_t size)
   __attribute__ ((malloc))
   __attribute__ ((alloc_size (1)));
 
+
+/* Allocate SIZE bytes and return a pointer to the allocated memory.
+   SIZE has the same semantics as in malloc(3).  This function is
+   identical to pvm_alloc, except that the resulting object is not
+   automatically deallocated.  On error, return NULL.  */
+
+void *pvm_alloc_uncollectable (size_t size)
+  __attribute__ ((malloc))
+  __attribute__ ((alloc_size (1)));
+
+void pvm_free_uncollectable (void *ptr);
+
+
 /* Reallocate the given pointer to occupy SIZE bytes and return a
    pointer to the allocated memory.  SIZE has the same semantics as in
    realloc(3).  On error, return NULL.  */

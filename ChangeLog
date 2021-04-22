@@ -1,3 +1,31 @@
+2021-04-22  Mohammad-Reza Nabipoor  <m.nabipoor@yahoo.com>
+
+	* libpoke/pvm-alloc.h (pvm_alloc_uncollectable): New function decl.
+	(pvm_free_uncollectable): Likewise.
+	* libpoke/pvm-alloc.c (pvm_alloc_uncollectable): New function def.
+	(pvm_free_uncollectable): Likewise.
+	* libpoke/pkl-ast.h (struct pkl_ast_type): For both arrays and
+	structs, replace the PVM closure fields with pointer to `pvm_val`.
+	(PKL_AST_TYPE_A_CLOSURES): Re-define accordingly.
+	(PKL_AST_TYPE_A_MAPPER): Likewise.
+	(PKL_AST_TYPE_A_WRITER): Likewise.
+	(PKL_AST_TYPE_A_BOUNDER): Likewise.
+	(PKL_AST_TYPE_A_CONSTRUCTOR): Likewise.
+	(PKL_AST_TYPE_A_PRINTER): Likewise.
+	(PKL_AST_TYPE_S_CLOSURES): Likewise.
+	(PKL_AST_TYPE_S_MAPPER): Likewise.
+	(PKL_AST_TYPE_S_WRITER): Likewise.
+	(PKL_AST_TYPE_S_CONSTRUCTOR): Likewise.
+	(PKL_AST_TYPE_S_PRINTER): Likewise.
+	(PKL_AST_TYPE_S_COMPARATOR): Likewise.
+	(PKL_AST_TYPE_S_INTEGRATOR): Likewise.
+	* libpoke/pkl-ast.c (pkl_ast_make_array_type): Initialize the
+	`closures` field with a pointer to uncollectable memory. Remove
+	the `pvm_alloc_add_gc_roots` function calls.
+	(pkl_ast_make_struct_type): Likewise.
+	(pkl_ast_node_free): Free the uncollectable memory for arrays and
+	structs.
+
 2021-04-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Bump poke version to 1.2.

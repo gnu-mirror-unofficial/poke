@@ -892,23 +892,25 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_I_SIGNED_P(AST) ((AST)->type.val.integral.signed_p)
 #define PKL_AST_TYPE_A_BOUND(AST) ((AST)->type.val.array.bound)
 #define PKL_AST_TYPE_A_ETYPE(AST) ((AST)->type.val.array.etype)
-#define PKL_AST_TYPE_A_MAPPER(AST) ((AST)->type.val.array.mapper)
-#define PKL_AST_TYPE_A_WRITER(AST) ((AST)->type.val.array.writer)
-#define PKL_AST_TYPE_A_BOUNDER(AST) ((AST)->type.val.array.bounder)
-#define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.constructor)
-#define PKL_AST_TYPE_A_PRINTER(AST) ((AST)->type.val.array.printer)
+#define PKL_AST_TYPE_A_CLOSURES(AST) ((AST)->type.val.array.closures)
+#define PKL_AST_TYPE_A_MAPPER(AST) ((AST)->type.val.array.closures[0])
+#define PKL_AST_TYPE_A_WRITER(AST) ((AST)->type.val.array.closures[1])
+#define PKL_AST_TYPE_A_BOUNDER(AST) ((AST)->type.val.array.closures[2])
+#define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.closures[3])
+#define PKL_AST_TYPE_A_PRINTER(AST) ((AST)->type.val.array.closures[4])
 #define PKL_AST_TYPE_S_NFIELD(AST) ((AST)->type.val.sct.nfield)
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
 #define PKL_AST_TYPE_S_ELEMS(AST) ((AST)->type.val.sct.elems)
 #define PKL_AST_TYPE_S_PINNED_P(AST) ((AST)->type.val.sct.pinned_p)
 #define PKL_AST_TYPE_S_UNION_P(AST) ((AST)->type.val.sct.union_p)
-#define PKL_AST_TYPE_S_MAPPER(AST) ((AST)->type.val.sct.mapper)
-#define PKL_AST_TYPE_S_WRITER(AST) ((AST)->type.val.sct.writer)
-#define PKL_AST_TYPE_S_CONSTRUCTOR(AST) ((AST)->type.val.sct.constructor)
-#define PKL_AST_TYPE_S_PRINTER(AST) ((AST)->type.val.sct.printer)
-#define PKL_AST_TYPE_S_COMPARATOR(AST) ((AST)->type.val.sct.comparator)
-#define PKL_AST_TYPE_S_INTEGRATOR(AST) ((AST)->type.val.sct.integrator)
+#define PKL_AST_TYPE_S_CLOSURES(AST) ((AST)->type.val.sct.closures)
+#define PKL_AST_TYPE_S_MAPPER(AST) ((AST)->type.val.sct.closures[0])
+#define PKL_AST_TYPE_S_WRITER(AST) ((AST)->type.val.sct.closures[1])
+#define PKL_AST_TYPE_S_CONSTRUCTOR(AST) ((AST)->type.val.sct.closures[2])
+#define PKL_AST_TYPE_S_PRINTER(AST) ((AST)->type.val.sct.closures[3])
+#define PKL_AST_TYPE_S_COMPARATOR(AST) ((AST)->type.val.sct.closures[4])
+#define PKL_AST_TYPE_S_INTEGRATOR(AST) ((AST)->type.val.sct.closures[5])
 #define PKL_AST_TYPE_S_ITYPE(AST) ((AST)->type.val.sct.itype)
 #define PKL_AST_TYPE_O_UNIT(AST) ((AST)->type.val.off.unit)
 #define PKL_AST_TYPE_O_BASE_TYPE(AST) ((AST)->type.val.off.base_type)
@@ -943,11 +945,9 @@ struct pkl_ast_type
     {
       union pkl_ast_node *bound;
       union pkl_ast_node *etype;
-      pvm_val mapper;
-      pvm_val writer;
-      pvm_val bounder;
-      pvm_val constructor;
-      pvm_val printer;
+      /* Uncollectable array for MAPPER, BOUNDER, WRITER, CONSTRUCTOR
+         and PRINTER.  */
+      pvm_val *closures;
     } array;
 
     struct
@@ -959,12 +959,9 @@ struct pkl_ast_type
       union pkl_ast_node *itype;
       int pinned_p;
       int union_p;
-      pvm_val mapper;
-      pvm_val writer;
-      pvm_val constructor;
-      pvm_val comparator;
-      pvm_val integrator;
-      pvm_val printer;
+      /* Uncollectable array for MAPPER, WRITER, CONSTRUCTOR, COMPARATOR,
+         INTEGRATOR and PRINTER.  */
+      pvm_val *closures;
     } sct;
 
     struct

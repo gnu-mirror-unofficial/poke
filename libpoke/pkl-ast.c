@@ -27,7 +27,7 @@
 #include "xalloc.h"
 
 #include "pvm.h"
-#include "pvm-alloc.h" /* For pvm_alloc_{add/remove}_gc_roots */
+#include "pvm-alloc.h" /* For pvm_{alloc,free}_uncollectable.  */
 #include "pk-utils.h"
 #include "pkl-ast.h"
 
@@ -370,6 +370,7 @@ pkl_ast_node
 pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
+  const int nclosures = 5; /* mapper, writer, bounder, constructor, printer */
 
   assert (etype);
 
@@ -378,18 +379,14 @@ pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
   if (bound)
     PKL_AST_TYPE_A_BOUND (type) = ASTREF (bound);
 
+  /* Prevent GC to collect these PVM values.  */
+  PKL_AST_TYPE_A_CLOSURES (type)
+      = pvm_alloc_uncollectable (nclosures * sizeof (pvm_val));
   PKL_AST_TYPE_A_MAPPER (type) = PVM_NULL;
   PKL_AST_TYPE_A_WRITER (type) = PVM_NULL;
   PKL_AST_TYPE_A_BOUNDER (type) = PVM_NULL;
   PKL_AST_TYPE_A_CONSTRUCTOR (type) = PVM_NULL;
   PKL_AST_TYPE_A_PRINTER (type) = PVM_NULL;
-
-  /* The closure slots are GC roots.  */
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_MAPPER (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_WRITER (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_BOUNDER (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_CONSTRUCTOR (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_A_PRINTER (type), 1);
 
   return type;
 }
@@ -444,6 +441,8 @@ pkl_ast_make_struct_type (pkl_ast ast,
                           int pinned_p, int union_p)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
+  const int nclosures
+      = 6; /* writer, mapper, constructor, comparator, integrator, printer.  */
 
   PKL_AST_TYPE_CODE (type) = PKL_TYPE_STRUCT;
   PKL_AST_TYPE_S_NELEM (type) = nelem;
@@ -455,20 +454,16 @@ pkl_ast_make_struct_type (pkl_ast ast,
     PKL_AST_TYPE_S_ITYPE (type) = ASTREF (itype);
   PKL_AST_TYPE_S_PINNED_P (type) = pinned_p;
   PKL_AST_TYPE_S_UNION_P (type) = union_p;
+
+  /* Prevent GC to collect these PVM values.  */
+  PKL_AST_TYPE_S_CLOSURES (type)
+      = pvm_alloc_uncollectable (nclosures * sizeof (pvm_val));
   PKL_AST_TYPE_S_MAPPER (type) = PVM_NULL;
   PKL_AST_TYPE_S_WRITER (type) = PVM_NULL;
   PKL_AST_TYPE_S_CONSTRUCTOR (type) = PVM_NULL;
   PKL_AST_TYPE_S_COMPARATOR (type) = PVM_NULL;
   PKL_AST_TYPE_S_INTEGRATOR (type) = PVM_NULL;
   PKL_AST_TYPE_S_PRINTER (type) = PVM_NULL;
-
-  /* The closure slots are GC roots.  */
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_WRITER (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_MAPPER (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_CONSTRUCTOR (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_COMPARATOR (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_INTEGRATOR (type), 1);
-  pvm_alloc_add_gc_roots (&PKL_AST_TYPE_S_PRINTER (type), 1);
 
   return type;
 }
@@ -1987,24 +1982,13 @@ pkl_ast_node_free (pkl_ast_node ast)
       switch (PKL_AST_TYPE_CODE (ast))
         {
         case PKL_TYPE_ARRAY:
-          /* Remove GC roots.  */
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_MAPPER (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_WRITER (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_BOUNDER (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_CONSTRUCTOR (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_A_PRINTER (ast), 1);
+          pvm_free_uncollectable (PKL_AST_TYPE_A_CLOSURES (ast));
 
           pkl_ast_node_free (PKL_AST_TYPE_A_BOUND (ast));
           pkl_ast_node_free (PKL_AST_TYPE_A_ETYPE (ast));
           break;
         case PKL_TYPE_STRUCT:
-          /* Remove GC roots.  */
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_WRITER (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_MAPPER (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_CONSTRUCTOR (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_COMPARATOR (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_INTEGRATOR (ast), 1);
-          pvm_alloc_remove_gc_roots (&PKL_AST_TYPE_S_PRINTER (ast), 1);
+          pvm_free_uncollectable (PKL_AST_TYPE_S_CLOSURES (ast));
 
           for (t = PKL_AST_TYPE_S_ELEMS (ast); t; t = n)
             {
