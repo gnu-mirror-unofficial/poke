@@ -2105,9 +2105,9 @@ when building integers using poke.
 @subsection Quantum Bytenics
 
 The second kind of weird numbers are integers using less than 8 bits.
-These ``sub-byte'' numbers do not use all the bytes of their
-containing byte.  Consider for example the written form of an unsigned
-integer of size 5 bits:
+These ``sub-byte'' numbers do not use all the bits of their containing
+byte.  Consider for example the written form of an unsigned integer of
+size 5 bits:
 
 @example
     byte
