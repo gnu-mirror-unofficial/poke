@@ -30,8 +30,9 @@ Synopsis:
 Arguments:
 
   :from (offset)
-         Beginning of the range to dump.  Defaults to
-         `pk_dump_offset', initially 0#B.
+         Beginning of the range to dump. When this argument is not
+         specified, `dump' uses the last used offset in the selected
+         IO space, which is initially 0#B.
 
   :size (offset)
          How much data to dump.  Defaults to `pk_dump_size', initially
@@ -58,9 +59,6 @@ Arguments:
 If there is not a current IO space available `dump' raises an E_no_ios
 exception.
 
-Note that `dump' updates the `pk_dump_offset' global variable to
-reflect the last used offset.
-
 See `.doc dump' for more information."
           };
 
@@ -76,16 +74,41 @@ var pk_dump_nonprintable_char = '.';
 var pk_dump_unknown_byte = "??";
 var pk_dump_addr_hyperlinks = 0;
 
-/* `pk_dump_offset' keeps the last base offset used by `dump'.  It is
-   the offset to be used in case the command is invoked with no :from
-   argument.  */
+/* `pk_dump_offsets' keeps the last base offset used by `dump', per IO
+   space.  These are the offsets to be used in case the command is
+   invoked with no :from argument.  */
 
-var pk_dump_offset = 0#B;
+type Pk_Dump_Offset =
+  struct
+  {
+    int<32> ios;
+    off64 offset;
+  };
+
+var pk_dump_offsets = Pk_Dump_Offset[]();
+
+fun pk_dump_get_offset = (int<32> ios) off64:
+{
+  for (e in pk_dump_offsets where e.ios == ios)
+    return e.offset;
+  return 0#B;
+}
+
+fun pk_dump_set_offset = (int<32> ios, off64 offset) void:
+{
+  for (e in pk_dump_offsets where e.ios == ios)
+    {
+      e.offset = offset;
+      return;
+    }
+
+  pk_dump_offsets += [Pk_Dump_Offset { ios = ios, offset = offset }];
+}
 
 /* And the command itself.  */
 
 fun dump = (int<32> ios = get_ios,
-            off64 from = pk_dump_offset,
+            off64 from = pk_dump_get_offset (ios),
             off64 size = pk_dump_size,
             off64 group_by = pk_dump_group_by,
             int cluster_by = pk_dump_cluster_by,
@@ -235,5 +258,5 @@ fun dump = (int<32> ios = get_ios,
                  :group_by group_by :cluster_by cluster_by;
   catch if E_eof { print "\n"; }
 
-  pk_dump_offset = from;
+  pk_dump_set_offset (ios, from);
 }

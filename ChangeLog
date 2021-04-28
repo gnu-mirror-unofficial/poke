@@ -1,3 +1,12 @@
+2021-04-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-dump.pk (Pk_Dump_Offset): New type.
+	(pk_dump_offsets): New variable.
+	(pk_dump_get_offset): New function.
+	(pk_dump_set_offset): Likewise.
+	(dump): Use the pk_dump_offsets registry for default offsets when
+	`from' is not specified.
+
 2021-04-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (struct_mapper): Avoid "leaking" slots in
