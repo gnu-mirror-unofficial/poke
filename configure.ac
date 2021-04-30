@@ -230,12 +230,15 @@ fi
 dnl The GUI is optional, and depends on the availability of Tcl and
 dnl Tk.
 
-POKE_TCLTK
-
 AC_ARG_ENABLE([gui],
               AS_HELP_STRING([--enable-gui],
                              [Enable the GUI (default is YES)]),
-              [gui_enabled=$enableval], [gui_enabled=$has_tcltk])
+              [gui_enabled=$enableval], [gui_enabled=yes])
+
+if test "x$gui_enabled" = "xyes"; then
+ POKE_TCLTK
+ gui_enabled=$has_tcltk
+fi
 
 AM_CONDITIONAL([GUI], [test "x$gui_enabled" = "xyes"])
 
