@@ -75,6 +75,13 @@ ios_dev_sub_open (const char *handler, uint64_t flags, int *error)
   char *end;
   int explicit_flags_p = (flags != 0);
 
+  if (sub == NULL)
+    {
+      if (error)
+        *error = IOD_ENOMEM;
+      return NULL;
+    }
+
   sub->name = NULL; /* To ease error management below.  */
 
   /* Flags: only IOS_F_READ and IOS_F_WRITE are allowed.  */

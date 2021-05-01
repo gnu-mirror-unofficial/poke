@@ -2547,12 +2547,7 @@ yyreport_syntax_error (const yypcontext_t *ctx,
                        struct pkl_parser *pkl_parser)
 {
   int res = 0;
-  char *errmsg;
   yysymbol_kind_t lookahead = yypcontext_token (ctx);
-
-  errmsg = strdup ("syntax error");
-  if (!errmsg)
-    return YYENOMEM;
 
   /* if the unexpected token is alien, then report
      pkl_parser->alien_err_msg.  */
@@ -2575,21 +2570,11 @@ yyreport_syntax_error (const yypcontext_t *ctx,
         res = nexpected;
       else
         {
-          /* XXX use expected?  */
-#if 0
-          int i;
+          char *errmsg = strdup ("syntax error");
 
-          for (i = 0; i < nexpected; ++i)
-            {
-              char *tmp = pk_str_concat (errmsg,
-                                         i == 0 ? ": expected " : " or ",
-                                         yysymbol_name (expected[i]),
-                                         NULL);
-              free (errmsg);
-              errmsg = tmp;
-            }
-#endif
-          /* XXX use a table with better names for tokens.  */
+          if (!errmsg)
+            return YYENOMEM;
+
           if (lookahead != YYSYMBOL_YYEMPTY)
             {
               char *tmp = pk_str_concat (errmsg,

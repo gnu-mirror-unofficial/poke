@@ -1,5 +1,14 @@
 2021-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (yyreport_syntax_error): Fix memory leak.
+	* libpoke/ios.c (ios_open): Avoid freeing an uninitialized
+	pointer.
+	(ios_read_string): Fix handling of errors from ios_read_uint.
+	* libpoke/ios-dev-sub.c (ios_dev_sub_open): Handle ENOMEM.
+	* libpoke/ios-dev-proc.c (ios_dev_proc_open): Likewise.
+
+2021-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-settings.pk: New field `usage'.
 	Add `usage' fields to predefined settings.
 	* poke/pk-cmd-set.c (pk_cmd_set_init): Use usage messages from

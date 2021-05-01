@@ -145,6 +145,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
   if (!io)
     return IOS_ENOMEM;
 
+  io->handler = NULL;
   io->next = NULL;
   io->bias = 0;
 
@@ -1008,7 +1009,7 @@ ios_read_string (ios io, ios_off offset, int flags, char **value)
           ret = ios_read_uint (io, offset, flags, 8,
                                IOS_ENDIAN_MSB, /* Arbitrary.  */
                                &abyte);
-          if (ret == IOS_EOF)
+          if (ret != IOS_OK)
             goto error;
 
           str[i] = (char) abyte;

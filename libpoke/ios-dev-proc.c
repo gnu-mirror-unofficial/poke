@@ -75,6 +75,13 @@ ios_dev_proc_open (const char *handler, uint64_t flags, int *error)
 {
   struct ios_dev_proc *proc = malloc (sizeof (struct ios_dev_proc));
 
+  if (proc == NULL)
+    {
+      if (error)
+        *error = IOD_ENOMEM;
+      return NULL;
+    }
+
   /* Ok, first of all extract the PID of the process, which must be
      expressed after the pid:// part as a decimal integer
      constant.  */
