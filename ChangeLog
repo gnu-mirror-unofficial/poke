@@ -1,3 +1,10 @@
+2021-05-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-settings.pk: New field `usage'.
+	Add `usage' fields to predefined settings.
+	* poke/pk-cmd-set.c (pk_cmd_set_init): Use usage messages from
+	settings.
+
 2021-04-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Do not check for tcl/tk if --disable-gui is

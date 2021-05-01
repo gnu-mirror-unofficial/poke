@@ -61,11 +61,15 @@ var POKE_SETTING_STR = 2;
 type Poke_Setting =
   struct
     {
+      fun is_line_p
+        = (string s) int<32>: { return strchr (s, '\n') == s'length; }
+
       string name;
       int kind : kind in [POKE_SETTING_INT,
                           POKE_SETTING_BOOL,
                           POKE_SETTING_STR];
-      string summary : strchr (summary, '\n') == summary'length;
+      string summary : is_line_p (summary);
+      string usage : is_line_p (usage);
       string description;
       ()any getter;
       (any)string setter;
@@ -178,6 +182,7 @@ pk_settings.add_setting
            name = "obase",
            kind = POKE_SETTING_INT,
            summary = "numerical base to use when printing integral values",
+           usage = ".set obase {2,8,10,16}",
            getter = lambda any:
              {
                return vm_obase;
@@ -199,6 +204,7 @@ pk_settings.add_setting
            name = "endian",
            kind = POKE_SETTING_STR,
            summary = "endianness used while accessing the IO spaces",
+           usage = ".set endian {little,big,host,network}",
            getter = lambda any:
              {
                if (get_endian == ENDIAN_BIG)
@@ -233,6 +239,7 @@ pk_settings.add_setting
       name = "auto-map",
       kind = POKE_SETTING_BOOL,
       summary = "whether poke auto-loads maps when opening IO spaces",
+      usage = ".set auto-map {yes,no}",
       getter = lambda any: { return pk_auto_map_p; },
       setter = lambda (any val) string:
         {
@@ -246,6 +253,7 @@ pk_settings.add_setting
     name = "prompt-maps",
     kind = POKE_SETTING_BOOL,
     summary = "whether map information should be included in the prompt",
+    usage = ".set prompt-maps {yes,no}",
     getter = lambda any: { return pk_prompt_maps_p; },
     setter = lambda (any val) string:
       {
@@ -259,6 +267,7 @@ pk_settings.add_setting
     name = "oacutoff",
     kind = POKE_SETTING_INT,
     summary = "cutoff value used when printing array elements",
+    usage = ".set oacutoff INTEGER",
     getter = lambda any: { return vm_oacutoff; },
     setter = lambda (any val) string:
       {
@@ -272,6 +281,7 @@ pk_settings.add_setting
     name = "odepth",
     kind = POKE_SETTING_INT,
     summary = "maximum depth to include when printing nested structures",
+    usage = ".set odepth INTEGER",
     getter = lambda any: { return vm_odepth; },
     setter = lambda (any val) string:
       {
@@ -285,6 +295,7 @@ pk_settings.add_setting
     name = "oindent",
     kind = POKE_SETTING_INT,
     summary = "witdh of each indentation leveel when printing structures",
+    usage = ".set oindent INTEGER",
     getter = lambda any: { return vm_oindent; },
     setter = lambda (any val) string:
       {
@@ -298,6 +309,7 @@ pk_settings.add_setting
     name = "omaps",
     kind = POKE_SETTING_BOOL,
     summary = "whether include offset information when printing values",
+    usage = ".set omaps {yes,no}",
     getter = lambda any: { return vm_omaps; },
     setter = lambda (any val) string:
       {
@@ -311,12 +323,13 @@ pk_settings.add_setting
     name = "omode",
     kind = POKE_SETTING_STR,
     summary = "output mode for printing values",
+    usage = ".set omode {flat,tree}",
     getter = lambda any:
       {
         var omode = vm_omode;
 
         if (omode == VM_OMODE_PLAIN)
-          return "plain";
+          return "flat";
         else if (omode == VM_OMODE_TREE)
           return "tree";
 
@@ -342,6 +355,7 @@ pk_settings.add_setting
     name = "doc-viewer",
     kind = POKE_SETTING_STR,
     summary = "program to show document from the manual",
+    usage = ".set doc-viewer {info,less}",
     getter = lambda any: { return pk_doc_viewer; },
     setter = lambda (any val) string:
       {

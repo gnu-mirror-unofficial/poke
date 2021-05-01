@@ -221,12 +221,14 @@ pk_cmd_set_init ()
       pk_val setting = pk_array_elem_val (registry_settings, i);
       pk_val setting_name = pk_struct_ref_field_value (setting, "name");
       pk_val setting_kind = pk_struct_ref_field_value (setting, "kind");
+      pk_val setting_usage = pk_struct_ref_field_value (setting, "usage");
       struct pk_cmd *cmd;
 
       assert (setting_name != PK_NULL && setting_kind != PK_NULL);
 
       cmd = xmalloc (sizeof (struct pk_cmd));
       cmd->name = xstrdup (pk_string_str (setting_name));
+      cmd->usage = xstrdup (pk_string_str (setting_usage));
       cmd->uflags = "";
       cmd->flags = 0;
       cmd->subtrie = NULL;
@@ -234,7 +236,6 @@ pk_cmd_set_init ()
       if (pk_int_value (setting_kind) == pk_int_value (setting_int))
         {
           cmd->arg_fmt = "?i";
-          cmd->usage = "lala";
           cmd->completer = NULL;
           cmd->handler = &pk_cmd_set_int;
         }
@@ -242,7 +243,6 @@ pk_cmd_set_init ()
         {
           /* Booleans and strings both use a string cmd argument.  */
           cmd->arg_fmt = "?s";
-          cmd->usage = "lala";
           cmd->completer = NULL;
           cmd->handler = &pk_cmd_set_bool_str;
         }
