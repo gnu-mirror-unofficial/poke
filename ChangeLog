@@ -1,5 +1,10 @@
 2021-05-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/Makefile.am: use DISTCLEANFILES for the files generated
+	by AX_CREATE_PKGCONFIG_INFO, not MOSTLYCLEANFILES.
+
+2021-05-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/Makefile.am (generate-vm-files): New rule.
 	(pvm-vm.h): Likewise.
 	(pvm-vm1.c): Likewise.
