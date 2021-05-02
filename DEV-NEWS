@@ -7,6 +7,14 @@ poke.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2021-05-02
+* `make maintainer-clean' now removes the source files generated
+  by jitterc, i.e. pvm-vm.h, pvm-vm1.c and pvm-vm2.c.  This is
+  useful when switching poke branches that use different versions
+  of the jitter submodule.
+* `make maintainer-clean' now actually also removes the flex and
+  bison generated files.
+
 2021-03-30
 * A `zero' IOD is now available.  It is useful for testing poking at
   very high offsets.

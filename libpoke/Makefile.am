@@ -128,7 +128,7 @@ pkl-lex.h: pkl-lex.c
 	@{ test -f $(srcdir)/pkl-lex.h && test ! $(srcdir)/pkl-lex.h -ot $(srcdir)/pkl-lex.c; } || $(MAKE) generate-pkl-lex
 BUILT_SOURCES += pkl-lex.c pkl-lex.h
 MOSTLYCLEANFILES += pkl-lex.c-tmp pkl-lex.h-tmp
-MAINTAINERCLEANFILES += pkl-lex.c pkl-lex.h
+MAINTAINERCLEANFILES += $(srcdir)/pkl-lex.c $(srcdir)/pkl-lex.h
 EXTRA_DIST += pkl-lex.l pkl-lex.c pkl-lex.h
 
 AM_YFLAGS = -t --report=state
@@ -173,7 +173,7 @@ MOSTLYCLEANFILES += \
   pkl-tab.tab.c pkl-tab.tab.h \
   pkl-tab.c-tmp pkl-tab.h-tmp \
   pkl-tab.output
-MAINTAINERCLEANFILES += pkl-tab.c pkl-tab.h
+MAINTAINERCLEANFILES += $(srcdir)/pkl-tab.c $(srcdir)/pkl-tab.h
 EXTRA_DIST += pkl-tab.y pkl-tab.c pkl-tab.h
 
 # Libtool's library version information for libpoke.
@@ -219,6 +219,7 @@ libpvmjitter_la_LIBADD = $(JITTER_LIBADD)
 libpoke_la_CPPFLAGS += $(JITTER_CPPFLAGS)
 
 BUILT_SOURCES += pvm-vm.h pvm-vm1.c pvm-vm2.c
+MAINTAINERCLEANFILES += $(srcdir)/pvm-vm.h $(srcdir)/pvm-vm1.c $(srcdir)/pvm-vm2.c
 
 pvm-vm.h pvm-vm1.c pvm-vm2.c: pvm.jitter
 	$(JITTER) $(srcdir)/pvm.jitter --output $(builddir) \

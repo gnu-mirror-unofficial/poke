@@ -96,7 +96,7 @@ pk-map-lex.h: pk-map-lex.c
 	@{ test -f $(srcdir)/pk-map-lex.h && test ! $(srcdir)/pk-map-lex.h -ot $(srcdir)/pk-map-lex.c; } || $(MAKE) generate-pk-map-lex
 BUILT_SOURCES += pk-map-lex.c pk-map-lex.h
 MOSTLYCLEANFILES += pk-map-lex.c-tmp pk-map-lex.h-tmp
-MAINTAINERCLEANFILES += pk-map-lex.c pk-map-lex.h
+MAINTAINERCLEANFILES += $(srcdir)/pk-map-lex.c $(srcdir)/pk-map-lex.h
 EXTRA_DIST += pk-map-lex.l pk-map-lex.c pk-map-lex.h
 
 AM_YFLAGS = -t --report=state
@@ -141,7 +141,7 @@ MOSTLYCLEANFILES += \
   pk-map-tab.tab.c pk-map-tab.tab.h \
   pk-map-tab.c-tmp pk-map-tab.h-tmp \
   pk-map-tab.output
-MAINTAINERCLEANFILES += pk-map-tab.c pk-map-tab.h
+MAINTAINERCLEANFILES += $(srcdir)/pk-map-tab.c $(srcdir)/pk-map-tab.h
 EXTRA_DIST += pk-map-tab.y pk-map-tab.c pk-map-tab.h
 
 # Machine interface
