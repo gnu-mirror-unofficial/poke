@@ -1,3 +1,8 @@
+2021-05-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* README: Add instructions on how to offer software to the GNU
+	Project.
+
 2021-05-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y (yyreport_syntax_error): Fix memory leak.
