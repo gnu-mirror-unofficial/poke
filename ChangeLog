@@ -1,5 +1,12 @@
 2021-05-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/Makefile.am (generate-vm-files): New rule.
+	(pvm-vm.h): Likewise.
+	(pvm-vm1.c): Likewise.
+	(pvm-vm2.c): Likewise.
+
+2021-05-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/Makefile.am (MAINTAINERCLEANFILES): Add jitterc
 	generated files and add $(srcdir) prefix to lex and bison
 	generated files.

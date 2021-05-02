@@ -221,7 +221,10 @@ libpoke_la_CPPFLAGS += $(JITTER_CPPFLAGS)
 BUILT_SOURCES += pvm-vm.h pvm-vm1.c pvm-vm2.c
 MAINTAINERCLEANFILES += $(srcdir)/pvm-vm.h $(srcdir)/pvm-vm1.c $(srcdir)/pvm-vm2.c
 
-pvm-vm.h pvm-vm1.c pvm-vm2.c: pvm.jitter
+# Since this is a rule that produces multiple files, we apply the idiom from
+# <https://lists.gnu.org/archive/html/bug-make/2020-09/msg00008.html>, so that
+# it works also in parallel 'make'.
+generate-vm-files:
 	$(JITTER) $(srcdir)/pvm.jitter --output $(builddir) \
 	&& { test $(builddir) = $(srcdir) \
 	     || { mv pvm-vm.h $(srcdir)/pvm-vm.h \
@@ -230,5 +233,14 @@ pvm-vm.h pvm-vm1.c pvm-vm2.c: pvm.jitter
 	        }; \
 	   } \
 	|| { rm -f pvm-vm.h pvm-vm1.c pvm-vm2.c; false; }
+.PHONY: generate-vm-files
+# The above rule will generate files with time-stamp order
+# pvm.jitter <= pvm-vm.h <= pvm-vm1.c <= pvm-vm2.c
+pvm-vm.h: pvm.jitter
+	@{ test -f $(srcdir)/pvm-vm.h && test ! $(srcdir)/pvm-vm.h -ot $(srcdir)/pvm.jitter; } || $(MAKE) generate-vm-files
+pvm-vm1.c: pvm-vm.h
+	@{ test -f $(srcdir)/pvm-vm1.c && test ! $(srcdir)/pvm-vm1.c -ot $(srcdir)/pvm-vm.h; } || $(MAKE) generate-vm-files
+pvm-vm2.c: pvm-vm1.c
+	@{ test -f $(srcdir)/pvm-vm2.c && test ! $(srcdir)/pvm-vm2.c -ot $(srcdir)/pvm-vm1.c; } || $(MAKE) generate-vm-files
 
 # End of Makefile.am
