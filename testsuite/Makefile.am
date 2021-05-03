@@ -312,6 +312,8 @@ EXTRA_DIST = \
   poke.map/maps-structs-anonfield-2.pk \
   poke.map/maps-structs-anonfield-3.pk \
   poke.map/maps-structs-constraints-1.pk \
+  poke.map/maps-structs-constraints-2.pk \
+  poke.map/maps-structs-constraints-3.pk \
   poke.map/maps-structs-endian-1.pk \
   poke.map/maps-structs-endian-2.pk \
   poke.map/maps-structs-endian-3.pk \
