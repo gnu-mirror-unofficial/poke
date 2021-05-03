@@ -469,7 +469,7 @@
 ;;; false, then add an absent field, i.e. both the field name and
 ;;; the field value are PVM_NULL.
 
-;;; RAS_MACRO_CHECK_STRUCT_FIELD_CONSTRAINT @field
+;;; RAS_MACRO_CHECK_STRUCT_FIELD_CONSTRAINT @struct_type @field
 ;;; ( -- )
 ;;;
 ;;; Evaluate the given struct field's constraint, raising an
@@ -479,7 +479,7 @@
 ;;;
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 
-        .macro check_struct_field_constraint @field
+        .macro check_struct_field_constraint @struct_type @field
    .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
    .c {
         .c PKL_GEN_DUP_CONTEXT;
@@ -489,13 +489,37 @@
         bnzi .constraint_ok
         drop
         push PVM_E_CONSTRAINT
+        ;; If the field is named, add the name of the field to the
+        ;; E_constraint message to make people's life better.
+   .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
+   .c if (field_name)
+   .c {
+        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
+        push "msg"
+        push "constraint violation in "
+   .c  pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);
+   .c  if (struct_type_name)
+   .c  {
+        .let #type_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (struct_type_name))
+        push #type_name
+        sconc
+        nip2
+        push "."
+        sconc
+        nip2
+   .c  }
+        push #field_name_str
+        sconc
+        nip2
+        sset
+   .c }
         raise
 .constraint_ok:
         drop
    .c }
         .end
 
-;;; RAS_MACRO_HANDLE_STRUCT_FIELD_CONSTRAINTS @field
+;;; RAS_MACRO_HANDLE_STRUCT_FIELD_CONSTRAINTS @struct_type @field
 ;;; ( STRICT BOFF STR VAL -- BOFF STR VAL NBOFF )
 ;;;
 ;;; Given a `field', evaluate its optcond and integrity constraints,
@@ -504,7 +528,7 @@
 ;;; STRICT determines whether to check for data integrity.
 ;;;
 ;;; Macro-arguments:
-;;; @struct_type is a pkl_ast_node iwth the struct type being mapped.
+;;; @struct_type is a pkl_ast_node with the struct type being mapped.
 ;;; @field is a pkl_ast_node with the struct field being mapped.
 ;;;
 ;;; `vars_registered' is a size_t that contains the number
@@ -555,7 +579,7 @@
    .c {
         bzi .constraint_done
    .c }
-        .e check_struct_field_constraint @field
+        .e check_struct_field_constraint @struct_type, @field
 .constraint_done:
         drop                    ; BOFF STR VAL
         ;; Calculate the offset marking the end of the field, which is
