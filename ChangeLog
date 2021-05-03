@@ -1,3 +1,8 @@
+2021-05-31  Luca Saiu  <positron@gnu.org>
+
+	* cfg.mk (submodule-checks): Override setting in maint.mk, fixing
+	a distcheck failure.
+
 2021-05-26  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pvm.jitter (wrapped-functions): Add std string functions.
@@ -289,11 +294,6 @@
 
 	* poke/pk-cmd-set.c (pk_cmd_set_init): Change xmalloc argument,
 	making the allocated size correct.
-
-2021-05-03  Luca Saiu  <positron@gnu.org>
-
-	* cfg.mk (submodule-checks): Override setting in maint.mk, fixing
-	a distcheck failure.
 
 2021-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
