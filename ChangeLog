@@ -1,3 +1,8 @@
+2021-05-03  Luca Saiu  <positron@gnu.org>
+
+	* cfg.mk (submodule-checks): Override setting in maint.mk, fixing
+	a distcheck failure.
+
 2021-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.map/maps-structs-constraints-2.pk: New test.
