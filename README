@@ -7,9 +7,9 @@ If you are interested in helping in the development, please check out
 the source code repository (see https://savannah.gnu.org/git/?group=poke)
 and start by reading the file HACKING carefully.
 
-This is a GNU program, developed by the GNU Project and part of the
-GNU Operating System. If you are the author of an awesome program and
-want to join us in writing Free Software, please consider making it an
+This is a GNU program, part of the GNU Operating System, developed by
+the GNU Project.  If you are the author of an awesome program and want
+to join us in writing Free Software, please consider making it an
 official GNU program and become a GNU maintainer.  You can find
 instructions on how to do so at http://www.gnu.org/help/evaluation.
 We are looking forward to hacking with you! :)
