@@ -1,3 +1,8 @@
+2021-05-05  Luca Saiu  <positron@gnu.org>
+
+	* poke/pk-cmd-set.c (pk_cmd_set_init): Change xmalloc argument,
+	making the allocated size correct.
+
 2021-05-03  Luca Saiu  <positron@gnu.org>
 
 	* cfg.mk (submodule-checks): Override setting in maint.mk, fixing

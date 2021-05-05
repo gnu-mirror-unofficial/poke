@@ -213,8 +213,8 @@ pk_cmd_set_init ()
   assert (registry_settings != PK_NULL);
   nsettings = pk_array_nelem (registry_settings);
 
-  set_cmds = xmalloc ((sizeof (struct pk_cmd *)
-                       * pk_int_value (nsettings)) + 2);
+  set_cmds = xmalloc (sizeof (struct pk_cmd *)
+                      * (pk_int_value (nsettings) + 2));
 
   for (i = 0; i < pk_int_value (nsettings); ++i)
     {
