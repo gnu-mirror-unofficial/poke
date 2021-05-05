@@ -1,5 +1,24 @@
 2021-05-05  Luca Saiu  <positron@gnu.org>
 
+	* libpoke/pvm.jitter (canary, exit, pushend, popend, pushob, popob)
+	(pushom, poppm, pushoo, popoo, pushoi, popoi, pushod, popod)
+	(pushoac, popoac, pushopp, popopp, strace): Rename
+	JITTER_STATE_BACKING_FIELD and JITTER_STATE_RUNTIME_FIELD into
+	PVM_STATE_BACKING_FIELD and PVM_STATE_RUNTIME_FIELD, following
+	Jitter incompatible change.
+
+	* libpoke/pvm.c (PVM_STATE_RESULT_VALUE, PVM_STATE_EXIT_CODE)
+	(PVM_STATE_VM, PVM_STATE_ENV, PVM_STATE_ENDIAN, PVM_STATE_NENC)
+	(PVM_STATE_PRETTY_PRINT, PVM_STATE_OMODE, PVM_STATE_OBASE)
+	(PVM_STATE_OMAPS, PVM_STATE_ODEPTH, PVM_STATE_OINDENT)
+	(PVM_STATE_OACUTOFF): Redefine macros using new Jitter-generated
+	macros PVM_STATE_RUNTIME_FIELD and PVM_STATE_BACKING_FIELD.
+	(pvm_initialize_state): Change implementation, again using
+	PVM_STATE_RUNTIME_FIELD and PVM_STATE_BACKING_FIELD.
+	(pvm_call_closure): Likewise.
+
+2021-05-05  Luca Saiu  <positron@gnu.org>
+
 	* poke/pk-cmd-set.c (pk_cmd_set_init): Change xmalloc argument,
 	making the allocated size correct.
 

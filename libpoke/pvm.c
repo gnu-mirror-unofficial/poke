@@ -34,31 +34,31 @@
 /* The following struct defines a Poke Virtual Machine.  */
 
 #define PVM_STATE_RESULT_VALUE(PVM)                     \
-  ((PVM)->pvm_state.pvm_state_backing.result_value)
+  (PVM_STATE_BACKING_FIELD (& (PVM)->pvm_state, result_value))
 #define PVM_STATE_EXIT_CODE(PVM)                        \
-  ((PVM)->pvm_state.pvm_state_backing.exit_code)
+  (PVM_STATE_BACKING_FIELD (& (PVM)->pvm_state, exit_code))
 #define PVM_STATE_VM(PVM)                               \
-  ((PVM)->pvm_state.pvm_state_backing.vm)
+  (PVM_STATE_BACKING_FIELD (& (PVM)->pvm_state, vm))
 #define PVM_STATE_ENV(PVM)                              \
-  ((PVM)->pvm_state.pvm_state_runtime.env)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, env))
 #define PVM_STATE_ENDIAN(PVM)                           \
-  ((PVM)->pvm_state.pvm_state_runtime.endian)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, endian))
 #define PVM_STATE_NENC(PVM)                             \
-  ((PVM)->pvm_state.pvm_state_runtime.nenc)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, nenc))
 #define PVM_STATE_PRETTY_PRINT(PVM)                     \
-  ((PVM)->pvm_state.pvm_state_runtime.pretty_print)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, pretty_print))
 #define PVM_STATE_OMODE(PVM)                            \
-  ((PVM)->pvm_state.pvm_state_runtime.omode)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, omode))
 #define PVM_STATE_OBASE(PVM)                            \
-  ((PVM)->pvm_state.pvm_state_runtime.obase)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, obase))
 #define PVM_STATE_OMAPS(PVM)                            \
-  ((PVM)->pvm_state.pvm_state_runtime.omaps)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, omaps))
 #define PVM_STATE_ODEPTH(PVM)                           \
-  ((PVM)->pvm_state.pvm_state_runtime.odepth)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, odepth))
 #define PVM_STATE_OINDENT(PVM)                          \
-  ((PVM)->pvm_state.pvm_state_runtime.oindent)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, oindent))
 #define PVM_STATE_OACUTOFF(PVM)                         \
-  ((PVM)->pvm_state.pvm_state_runtime.oacutoff)
+  (PVM_STATE_RUNTIME_FIELD (& (PVM)->pvm_state, oacutoff))
 
 struct pvm
 {
@@ -75,25 +75,34 @@ struct pvm
 static void
 pvm_initialize_state (pvm apvm, struct pvm_state *state)
 {
+  struct jitter_stack_backing *mainstack_backing;
+  struct jitter_stack_backing *returnstack_backing;
+  struct jitter_stack_backing *exceptionstack_backing;
+
   /* Call the Jitter state initializer.  */
   pvm_state_initialize (state);
 
+  /* Access stack backings. */
+  mainstack_backing
+    = & PVM_STATE_BACKING_FIELD (state, jitter_stack_stack_backing);
+  returnstack_backing
+    = & PVM_STATE_BACKING_FIELD (state, jitter_stack_returnstack_backing);
+  exceptionstack_backing
+    = & PVM_STATE_BACKING_FIELD (state, jitter_stack_exceptionstack_backing);
+
   /* Register GC roots.  */
-  pvm_alloc_add_gc_roots (&state->pvm_state_runtime.env, 1);
-  pvm_alloc_add_gc_roots
-    (state->pvm_state_backing.jitter_stack_stack_backing.memory,
-     state->pvm_state_backing.jitter_stack_stack_backing.element_no);
-  pvm_alloc_add_gc_roots
-    (state->pvm_state_backing.jitter_stack_returnstack_backing.memory,
-     state->pvm_state_backing.jitter_stack_returnstack_backing.element_no);
-  pvm_alloc_add_gc_roots
-    (state->pvm_state_backing.jitter_stack_exceptionstack_backing.memory,
-     state->pvm_state_backing.jitter_stack_exceptionstack_backing.element_no);
+  pvm_alloc_add_gc_roots (& PVM_STATE_RUNTIME_FIELD (state, env), 1);
+  pvm_alloc_add_gc_roots (mainstack_backing->memory,
+                          mainstack_backing->element_no);
+  pvm_alloc_add_gc_roots (returnstack_backing->memory,
+                          returnstack_backing->element_no);
+  pvm_alloc_add_gc_roots (exceptionstack_backing->memory,
+                          exceptionstack_backing->element_no);
 
   /* Initialize the global environment.  Note we do this after
      registering GC roots, since we are allocating memory.  */
-  state->pvm_state_runtime.env = pvm_env_new (0 /* hint */);
-  state->pvm_state_backing.vm = apvm;
+  PVM_STATE_RUNTIME_FIELD (state, env) = pvm_env_new (0 /* hint */);
+  PVM_STATE_BACKING_FIELD (state, vm) = apvm;
 }
 
 pvm
@@ -196,20 +205,32 @@ pvm_call_closure (pvm vm, pvm_val cls, ...)
 void
 pvm_shutdown (pvm apvm)
 {
+  struct jitter_stack_backing *mainstack_backing;
+  struct jitter_stack_backing *returnstack_backing;
+  struct jitter_stack_backing *exceptionstack_backing;
+
+  /* Access stack backings. */
+  mainstack_backing
+    = & PVM_STATE_BACKING_FIELD (& apvm->pvm_state,
+                                 jitter_stack_stack_backing);
+  returnstack_backing
+    = & PVM_STATE_BACKING_FIELD (& apvm->pvm_state,
+                                 jitter_stack_returnstack_backing);
+  exceptionstack_backing
+    = & PVM_STATE_BACKING_FIELD (& apvm->pvm_state,
+                                 jitter_stack_exceptionstack_backing);
+
   /* Finalize pvm-program.  */
   pvm_program_fini ();
 
   /* Deregister GC roots.  */
   pvm_alloc_remove_gc_roots (&PVM_STATE_ENV (apvm), 1);
-  pvm_alloc_remove_gc_roots
-    (apvm->pvm_state.pvm_state_backing.jitter_stack_stack_backing.memory,
-     apvm->pvm_state.pvm_state_backing.jitter_stack_stack_backing.element_no);
-  pvm_alloc_remove_gc_roots
-    (apvm->pvm_state.pvm_state_backing.jitter_stack_returnstack_backing.memory,
-     apvm->pvm_state.pvm_state_backing.jitter_stack_returnstack_backing.element_no);
-  pvm_alloc_remove_gc_roots
-    (apvm->pvm_state.pvm_state_backing.jitter_stack_exceptionstack_backing.memory,
-     apvm->pvm_state.pvm_state_backing.jitter_stack_exceptionstack_backing.element_no);
+  pvm_alloc_remove_gc_roots (mainstack_backing->memory,
+                             mainstack_backing->element_no);
+  pvm_alloc_remove_gc_roots (returnstack_backing->memory,
+                             returnstack_backing->element_no);
+  pvm_alloc_remove_gc_roots (exceptionstack_backing->memory,
+                             exceptionstack_backing->element_no);
 
   /* Finalize values.  */
   pvm_val_initialize ();

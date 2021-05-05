@@ -896,7 +896,7 @@ end
 
 instruction canary ()
   code
-     JITTER_STATE_BACKING_FIELD (canary) = JITTER_HEIGHT_STACK ();
+     PVM_STATE_BACKING_FIELD (canary) = JITTER_HEIGHT_STACK ();
   end
 end
 
@@ -912,20 +912,20 @@ instruction exit ()
   code
     /* The element at the top of the stack is the exit
        code to report to the PVM caller.  */
-    JITTER_STATE_BACKING_FIELD (exit_code)
+    PVM_STATE_BACKING_FIELD (exit_code)
       = PVM_VAL_INT (JITTER_TOP_STACK());
 
     JITTER_DROP_STACK ();
 
     /* Get the result of the execution, if any.  */
-    JITTER_STATE_BACKING_FIELD (result_value)
+    PVM_STATE_BACKING_FIELD (result_value)
                 = JITTER_TOP_STACK();
     JITTER_DROP_STACK ();
 
     /* Check for the stack centinel, but only if it was
        installed.  */
-    if (JITTER_STATE_BACKING_FIELD (canary) != NULL)
-      assert (JITTER_STATE_BACKING_FIELD (canary)
+    if (PVM_STATE_BACKING_FIELD (canary) != NULL)
+      assert (PVM_STATE_BACKING_FIELD (canary)
               == JITTER_HEIGHT_STACK ());
 
     /* Clear pending signals.  */
@@ -950,7 +950,7 @@ end
 
 instruction pushend ()
   code
-    int endian = JITTER_STATE_RUNTIME_FIELD (endian);
+    int endian = PVM_STATE_RUNTIME_FIELD (endian);
     JITTER_PUSH_STACK (PVM_MAKE_INT (endian, 32));
   end
 end
@@ -966,7 +966,7 @@ end
 instruction popend ()
   code
     uint32_t endian = PVM_VAL_INT (JITTER_TOP_STACK ());
-    JITTER_STATE_RUNTIME_FIELD (endian) = endian;
+    PVM_STATE_RUNTIME_FIELD (endian) = endian;
     JITTER_DROP_STACK ();
   end
 end
@@ -983,7 +983,7 @@ end
 
 instruction pushob ()
   code
-    int obase = JITTER_STATE_RUNTIME_FIELD (obase);
+    int obase = PVM_STATE_RUNTIME_FIELD (obase);
     JITTER_PUSH_STACK (PVM_MAKE_INT (obase, 32));
   end
 end
@@ -1010,7 +1010,7 @@ instruction popob ()
     if (obase != 2 && obase != 8 && obase != 10 && obase != 16)
       PVM_RAISE (PVM_E_INVAL, "invalid output base", PVM_E_INVAL_ESTATUS);
 
-    JITTER_STATE_RUNTIME_FIELD (obase) = obase;
+    PVM_STATE_RUNTIME_FIELD (obase) = obase;
     JITTER_DROP_STACK ();
   end
 end
@@ -1027,7 +1027,7 @@ end
 
 instruction pushom ()
   code
-    int omode = JITTER_STATE_RUNTIME_FIELD (omode);
+    int omode = PVM_STATE_RUNTIME_FIELD (omode);
     JITTER_PUSH_STACK (PVM_MAKE_INT (omode, 32));
   end
 end
@@ -1054,7 +1054,7 @@ instruction popom ()
     if (omode != PVM_PRINT_FLAT && omode != PVM_PRINT_TREE)
       PVM_RAISE (PVM_E_INVAL, "invalid output mode", PVM_E_INVAL_ESTATUS);
 
-    JITTER_STATE_RUNTIME_FIELD (omode) = omode;
+    PVM_STATE_RUNTIME_FIELD (omode) = omode;
     JITTER_DROP_STACK ();
   end
 end
@@ -1070,7 +1070,7 @@ end
 
 instruction pushoo ()
   code
-    int omaps = JITTER_STATE_RUNTIME_FIELD (omaps);
+    int omaps = PVM_STATE_RUNTIME_FIELD (omaps);
     JITTER_PUSH_STACK (PVM_MAKE_INT (omaps, 32));
   end
 end
@@ -1089,7 +1089,7 @@ instruction popoo ()
   code
     int omaps = PVM_VAL_INT (JITTER_TOP_STACK ());
 
-    JITTER_STATE_RUNTIME_FIELD (omaps) = omaps;
+    PVM_STATE_RUNTIME_FIELD (omaps) = omaps;
     JITTER_DROP_STACK ();
   end
 end
@@ -1107,7 +1107,7 @@ end
 
 instruction pushoi ()
   code
-    int oindent = JITTER_STATE_RUNTIME_FIELD (oindent);
+    int oindent = PVM_STATE_RUNTIME_FIELD (oindent);
     JITTER_PUSH_STACK (PVM_MAKE_INT (oindent, 32));
   end
 end
@@ -1127,7 +1127,7 @@ instruction popoi ()
   code
     int oindent = PVM_VAL_INT (JITTER_TOP_STACK ());
 
-    JITTER_STATE_RUNTIME_FIELD (oindent) = oindent;
+    PVM_STATE_RUNTIME_FIELD (oindent) = oindent;
     JITTER_DROP_STACK ();
   end
 end
@@ -1143,7 +1143,7 @@ end
 
 instruction pushod ()
   code
-    int odepth = JITTER_STATE_RUNTIME_FIELD (odepth);
+    int odepth = PVM_STATE_RUNTIME_FIELD (odepth);
     JITTER_PUSH_STACK (PVM_MAKE_INT (odepth, 32));
   end
 end
@@ -1161,7 +1161,7 @@ instruction popod ()
   code
     int odepth = PVM_VAL_INT (JITTER_TOP_STACK ());
 
-    JITTER_STATE_RUNTIME_FIELD (odepth) = odepth;
+    PVM_STATE_RUNTIME_FIELD (odepth) = odepth;
     JITTER_DROP_STACK ();
   end
 end
@@ -1178,7 +1178,7 @@ end
 
 instruction pushoac ()
   code
-    int oacutoff = JITTER_STATE_RUNTIME_FIELD (oacutoff);
+    int oacutoff = PVM_STATE_RUNTIME_FIELD (oacutoff);
     JITTER_PUSH_STACK (PVM_MAKE_INT (oacutoff, 32));
   end
 end
@@ -1197,7 +1197,7 @@ instruction popoac ()
   code
     int oacutoff = PVM_VAL_INT (JITTER_TOP_STACK ());
 
-    JITTER_STATE_RUNTIME_FIELD (oacutoff) = oacutoff;
+    PVM_STATE_RUNTIME_FIELD (oacutoff) = oacutoff;
     JITTER_DROP_STACK ();
   end
 end
@@ -1213,7 +1213,7 @@ end
 
 instruction pushopp ()
   code
-    int pp = JITTER_STATE_RUNTIME_FIELD (pretty_print);
+    int pp = PVM_STATE_RUNTIME_FIELD (pretty_print);
     JITTER_PUSH_STACK (PVM_MAKE_INT (!!pp, 32));
   end
 end
@@ -1231,7 +1231,7 @@ instruction popopp ()
   code
     int pp = PVM_VAL_INT (JITTER_TOP_STACK ());
 
-    JITTER_STATE_RUNTIME_FIELD (pretty_print) = pp;
+    PVM_STATE_RUNTIME_FIELD (pretty_print) = pp;
     JITTER_DROP_STACK ();
   end
 end
@@ -5808,10 +5808,10 @@ instruction strace (?n)
 
      while (((num_elems == 0 || i < num_elems)
              && (JITTER_HEIGHT_STACK () !=
-                 JITTER_STATE_BACKING_FIELD (canary))))
+                 PVM_STATE_BACKING_FIELD (canary))))
         {
           assert (i < 1024);
-          pvm_print_val_with_params (JITTER_STATE_BACKING_FIELD (vm),
+          pvm_print_val_with_params (PVM_STATE_BACKING_FIELD (vm),
                                      JITTER_TOP_STACK (),
                                      0 /* depth */,
                                      PVM_PRINT_FLAT,
