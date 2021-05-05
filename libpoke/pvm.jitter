@@ -903,7 +903,7 @@ end
 # Instruction: exit
 #
 # Do some cleanup and finish execution of a PVM program.  This checks
-# the stack centinel installed by the `canary' instruction.
+# the stack sentinel installed by the `canary' instruction.
 #
 # Stack: ( -- )
 
@@ -922,7 +922,7 @@ instruction exit ()
                 = JITTER_TOP_STACK();
     JITTER_DROP_STACK ();
 
-    /* Check for the stack centinel, but only if it was
+    /* Check for the stack sentinel, but only if it was
        installed.  */
     if (PVM_STATE_BACKING_FIELD (canary) != NULL)
       assert (PVM_STATE_BACKING_FIELD (canary)

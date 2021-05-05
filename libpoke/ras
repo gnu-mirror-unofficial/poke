@@ -588,7 +588,7 @@ BEGIN {
 
 # Every line in the assembly program is expected to match one of the
 # rules below.  In case a line isn't recognized by any rule, it will
-# choke on the catch-all centinel at the end of the file, and that
+# choke on the catch-all sentinel at the end of the file, and that
 # ain't be fun.
 #
 # In what probably is terrible awk style, each rule below uses `next'
@@ -936,7 +936,7 @@ BEGIN {
     next
 }
 
-## Catch-all centinel rule
+## Catch-all sentinel rule
 
 {
     error(FNR ": Excuse me: What is this crap?")

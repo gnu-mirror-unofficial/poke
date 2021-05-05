@@ -1,5 +1,10 @@
 2021-05-05  Luca Saiu  <positron@gnu.org>
 
+	* libpoke/ras: Comments.
+	* libpoke/pvm.jitter: Comments.
+
+2021-05-05  Luca Saiu  <positron@gnu.org>
+
 	* libpoke/pvm.jitter (canary, exit, pushend, popend, pushob, popob)
 	(pushom, poppm, pushoo, popoo, pushoi, popoi, pushod, popod)
 	(pushoac, popoac, pushopp, popopp, strace): Rename
