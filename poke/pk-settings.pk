@@ -387,6 +387,6 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
            category = "settings",
            topic = "error-on-warning",
-           summary = "whether the compiler must emit errors instead of warnings",
+           summary = "emit errors instead of warnings",
            description = "",
     };

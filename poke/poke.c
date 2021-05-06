@@ -614,6 +614,14 @@ initialize (int argc, char *argv[])
 
     pk_decl_set_val (poke_compiler, "pk_auto_map_p",
                      pk_make_int (poke_default_auto_map_p, 32));
+
+    pk_decl_set_val (poke_compiler, "pk_have_libnbd_p",
+#if defined HAVE_LIBNBD
+                     pk_make_int (1, 32)
+#else
+                     pk_make_int (0, 32)
+#endif
+                     );
   }
 
   /* Initialize the global map.  */

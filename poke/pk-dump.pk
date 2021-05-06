@@ -20,7 +20,7 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
           category = "commands",
           topic = "dump",
-          summary = "display the contents of a range in the current IO space.",
+          summary = "display the contents of a range in the current IO space",
           description="
 Synopsis:
 

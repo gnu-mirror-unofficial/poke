@@ -20,7 +20,7 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
           category = "commands",
           topic = "extract",
-          summary = "Extract the contents of a mapped value to a mem IOS.",
+          summary = "Extract the contents of a mapped value to a mem IOS",
           description ="
 Get the bytes corresponding to a given mapped value and create a
 memory IO space that contains them.

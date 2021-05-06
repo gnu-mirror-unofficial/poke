@@ -27,10 +27,16 @@
 type Poke_HelpEntry =
   struct
   {
+    fun is_line_p = (string s) int<32>:
+      { return strchr (s, '\n') == s'length;; }
+
     string category;
     string topic;
-    string summary : strchr (summary, '\n') == summary'length;
+    string summary : is_line_p (summary);
     string description;
+    ()int<32> active_p = lambda int<32>: { return 1; };
+    string synopsis : is_line_p (synopsis)
+      if category in ["commands", "dot-commands"];
   };
 
 var pk_help_topics = Poke_HelpEntry[] ();
@@ -56,25 +62,29 @@ fun pk_help_add_topic = (Poke_HelpEntry entry) void:
 
 fun pk_help = (string topic) void:
 {
+  fun print_summaries_for_category = (string category) void:
+  {
+    for (entry in pk_help_topics
+         where entry.active_p && entry.category == category)
+    {
+      print ("\t");
+      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
+      printf (" - %s\n", entry.summary);
+    }
+  }
+
   if (topic == "")
   {
     print "Usage: .help TOPIC\n";
     print "Available help topics:\n\n";
     print "Global settings:\n";
-    for (entry in pk_help_topics where entry.category == "settings")
-    {
-      print ("\t");
-      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
-      printf (" - %s\n", entry.summary);
-    }
+    print_summaries_for_category ("settings");
+    print "\n";
+    print "Dot-Commands:\n";
+    print_summaries_for_category ("dot-commands");
     print "\n";
     print "Commands:\n";
-    for (entry in pk_help_topics where entry.category == "commands")
-    {
-      print ("\t");
-      hserver_print_hl ('e', entry.topic, ".help " + entry.topic);
-      printf (" - %s\n", entry.summary);
-    }
+    print_summaries_for_category ("commands");
     print "\n";
     print "To access the poke manual, type \".doc TOPIC\".\n";
     return;
@@ -85,10 +95,241 @@ fun pk_help = (string topic) void:
     {
       printf ("%s - %s\n", entry.topic, entry.summary);
       if (entry.description != "")
+       {
+         try {
+           printf "\nSynopsis:\n\n  %s\n\n", entry.synopsis;
+         } catch if E_elem {}
         printf ("%s\n", entry.description);
+       }
       return;
     }
 
   print "Sorry no clue about that.
 Type .help with no topic for a list of topics.\n";
 }
+
+/* Help entries for the dot-commands.  */
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".help",
+      synopsis = ".help [TOPIC]",
+      summary = "display help on some given topic",
+      description = "\
+Where TOPIC identifies the topic for which to get help.
+To get a list of available help topics, type `.help' without arguments."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".set",
+      synopsis = ".set SETTING [,VALUE]",
+      summary = "show or set the value of a global setting",
+      description = "\
+Set the global SETTING to VALUE, or print its current value.
+If VALUE is not specified, print the current value of SETTING."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".info",
+      synopsis = ".info {ios,maps,variables,functions,types}",
+      summary = "list IO spaces, maps, and other entities",
+      description = "\
+Show information about some given entities.
+
+.info ios
+  List the currently opened IO spaces.
+.info maps
+  List the active maps.
+.info variables
+  List the variables which are currently defined.
+.info functions
+  List the functions which are currently defined.
+.info types
+  List the types which are currently defined."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".ios",
+      synopsis = ".ios #N",
+      summary = "switch to a different IO space",
+      description = "Where #N is the tag of some given IO space."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".file",
+      synopsis = ".file FILE",
+      summary = "open a file",
+      description = "\
+Open the given file as a new IO space and switch to it.  The
+open flags will be inferred from the permissions of the file."
+    };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".proc",
+      synopsis = ".proc[/mM] PID",
+      summary = "open a process' memory",
+      description = "\
+Open a proc IO space to edit the memory of the proces with
+process id PID.
+
+If the /m flag is used, sub-IOS are opened showing the several
+maps in the process virtual address space.
+
+If the /M flag is used, even more maps are shown, like the ones
+corresponding to mapped executables and DSOs."
+    };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".sub",
+      synopsis = ".sub #N, BASE, SIZE, [NAME]",
+      summary = "create a sub IO space",
+      description = "\
+Create a sub IO space showing an area into some other given IO space.
+
+#N is the tag of the parent IO space.
+
+BASE is the offset in bytes from the beginning of the parent IO space
+from which to create the sub IO space.
+
+SIZE is the size, in bytes."
+    };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".mem",
+      synopsis = ".mem NAME",
+      summary = "create a memory IO space",
+      description = "\
+Create a memory backed IO space named *NAME*.
+
+The created memory IOS contains zero bytes and has a default size of
+4096 bytes.  The buffer will grow automatically when a value is mapped
+beyond its current size."
+    };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".nbd",
+      synopsis = ".nbd URI",
+      summary = "open a NBD IO space",
+      active_p = lambda int<32>: { return pk_have_libnbd_p; },
+      description = "\
+Create a IO space providing access to a Network Block Device
+identified by the given URI."
+    };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".close",
+      synopsis = ".close [#N]",
+      summary = "close an IO space",
+      description = "\
+Close the current IO space, or #N if it is specified."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".load",
+      synopsis = ".load FILE",
+      summary = "execute a file of Poke code",
+      description = "Execute a file of Poke code named FILE."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".source",
+      synopsis = ".source FILE",
+      summary = "source a commands file",
+      description = "Execute a commands file named FILE."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".doc",
+      synopsis = ".doc TOPIC",
+      summary = "access the poke manual",
+      description = "\
+Given a TOPIC, search for it in the poke manual and show the relevant
+part.  The setting `doc-viewer' determines the program used to visualize
+the manual."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".editor",
+      synopsis = ".editor",
+      summary = "compose input for poke in $EDITOR",
+      description = "\
+Open your $EDITOR and use whatever you write in it as input for a poke
+command.  Note that whatever text you compose is converted to a single
+line by removing newlines."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".jmd",
+      synopsis = ".jmd",
+      summary = "do NOT use this command",
+      description = "\
+Seriously, DO NOT USE THIS COMMAND.
+You have been warned."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".exit",
+      synopsis = ".exit",
+      summary = "exit poke :(",
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".vm",
+      synopsis = ".vm {disassemble,profile}",
+      summary = "PVM related commands",
+      description = "\
+Perform an operation related to the Poke Virtual Machine.
+
+.vm disassemble expression EXPR
+  Show the PVM code for which EXPR is compiled.
+.vm disassemble function EXPR
+  Show the PVM code for the body of EXPR, which should evaluate
+  to a function.
+
+.vm profile reset
+  Reset the profiling counters.
+.vm profile show
+  Print a report with collected profiling information."
+  };
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+      category = "dot-commands",
+      topic = ".version",
+      synopsis = ".version",
+      summary = "display the poke version",
+      description = "Print the version of poke and copyright information."
+  };

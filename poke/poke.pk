@@ -40,6 +40,9 @@ var pk_prompt_maps_p = 1;
    display documentation.  Valid values are `info' and `less'.  */
 var pk_doc_viewer = "info";
 
+/* Whether poke was built with support for libNBD.  */
+var pk_have_libnbd_p = 0;
+
 /**** Online help system.  ****/
 
 load "pk-help.pk";

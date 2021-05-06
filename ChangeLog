@@ -1,5 +1,18 @@
 2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-help.pk (Poke_HelpEntry): Add fields `predicate and
+	`synopsis'.
+	* poke/poke.c (initialize): Initialize the value of have_libnbd_p.
+	* poke/poke.pk: Define pk_have_libnbd_p.
+	* poke/pk-save.pk: Likewise.
+	* poke/pk-extract.pk: Likewise.
+	* poke/pk-copy.pk: Likewise.
+	* poke/pk-dump.pk: remove dot at the end of the summary.
+	* poke/pk-help.pk (pk_help): Print summary lines for dot-commands.
+	Add help topics for dot-commands.
+
+2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_constructor): Use
 	check_struct_field_constraint.
 	* testsuite/poke.pkl/scons-constraints-1.pk: New test.
