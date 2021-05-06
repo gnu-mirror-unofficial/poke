@@ -1644,6 +1644,8 @@ EXTRA_DIST = \
   poke.pkl/scons-anon-field-1.pk \
   poke.pkl/scons-anon-field-2.pk \
   poke.pkl/scons-anon-field-3.pk \
+  poke.pkl/scons-constraints-1.pk \
+  poke.pkl/scons-constraints-2.pk \
   poke.pkl/scons-diag-1.pk \
   poke.pkl/scons-diag-2.pk \
   poke.pkl/scons-diag-3.pk \

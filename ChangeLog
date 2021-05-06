@@ -1,5 +1,13 @@
 2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_constructor): Use
+	check_struct_field_constraint.
+	* testsuite/poke.pkl/scons-constraints-1.pk: New test.
+	* testsuite/poke.pkl/scons-constraints-2.pk: Likewise.
+	* testsuite/poke.pktest/pktest-12.pk: Update test.
+
+2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_printer): Skip absent fields.
 	* testsuite/poke.pkl/printf-value-16.pk: New test.
 	* testsuite/poke.pkl/printf-value-17.pk: Likewise.

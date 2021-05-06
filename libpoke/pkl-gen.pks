@@ -1189,6 +1189,7 @@
  .c {
         .label .alternative_failed
         .label .constraint_ok
+        .label .constraint_failed
         .label .optcond_ok
         .label .omitted_field
         .label .got_value
@@ -1325,25 +1326,21 @@
 .optcond_ok:
         drop                    ; ENAME EVAL
         ;; Evaluate the constraint expression.
-   .c if (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field) != NULL)
-   .c {
-        .c PKL_GEN_DUP_CONTEXT;
-        .c PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
-        .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (@field));
-        .c PKL_GEN_POP_CONTEXT;
-        bnzi .constraint_ok
-        drop
+        push PVM_E_CONSTRAINT
+        pushe .constraint_failed
+        .e check_struct_field_constraint @type_struct, @field
+        pope
+        ba .constraint_ok
+.constraint_failed:
    .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
    .c   {
         ;; Alternative failed: try next alternative.
-        push null
+;        push null
         ba .alternative_failed
    .c   }
-        push PVM_E_CONSTRAINT
-        raise
+        raise                   ; Re-raise E_exception in the stack.
 .constraint_ok:
-        drop
-   .c }
+                                ; ... ENAME EVAL
         ;; Determine the offset of this element, and increase $boff
         ;; with its size.
    .c if (PKL_AST_TYPE_S_PINNED_P (@type_struct))

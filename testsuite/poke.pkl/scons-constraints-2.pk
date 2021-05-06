@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Packet = struct { byte a; struct { byte b : b != a; } s; };
+
+/* { dg-command { try Packet {}; catch (Exception e) { if (e.code == EC_constraint) print e.msg + "\n"; } } } */
+/* { dg-output "constraint violation in field b" } */
