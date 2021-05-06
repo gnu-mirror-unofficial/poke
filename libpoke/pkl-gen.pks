@@ -2132,7 +2132,7 @@
  .c      @field;
  .c      @field = PKL_AST_CHAIN (@field))
  .c {
-        .label .process_next_alternative
+        .label .process_next_field
         .let #i = pvm_make_ulong (i, 64)
  .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c       continue;
@@ -2147,13 +2147,15 @@
         push #name_str          ; SCT STR
         srefnt                  ; SCT STR EVAL
         nip                     ; SCT EVAL
-        bn .process_next_alternative
+        bn .process_next_field
  .c }
  .c else
  .c {
         push #i                 ; SCT I
         srefi                   ; SCT I EVAL
         nip                     ; SCT EVAL
+        ;; If the field is absent, skip it.
+        bn .process_next_field
  .c   if (i > 0)
         ;; Print the separator with the previous field if this
         ;; is not the first field.
@@ -2208,7 +2210,7 @@
         ba .fields_done
  .c }
         push null               ; SCT null
-.process_next_alternative:
+.process_next_field:
         drop                    ; SCT
  .c    i = i + 1;
  .c }

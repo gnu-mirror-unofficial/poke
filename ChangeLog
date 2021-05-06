@@ -1,3 +1,10 @@
+2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_printer): Skip absent fields.
+	* testsuite/poke.pkl/printf-value-16.pk: New test.
+	* testsuite/poke.pkl/printf-value-17.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2021-05-05  Luca Saiu  <positron@gnu.org>
 
 	* libpoke/ras: Comments.

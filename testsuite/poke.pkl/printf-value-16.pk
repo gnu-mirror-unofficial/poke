@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+/* Check that the struct printer do the right thing with absent
+   fields, i.e. skip them.  */
+
+type Foo = struct { int i = 20; int j if i != 20; int k; };
+
+/* { dg-command { printf "%v\n", Foo {} } } */
+/* { dg-output "Foo \{i=20,k=0\}" } */
