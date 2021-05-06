@@ -19,6 +19,7 @@
 #ifndef LIBPOKE_H
 #define LIBPOKE_H
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
 
@@ -1002,5 +1003,48 @@ void pk_print_val_with_params (pk_compiler pkc, pk_val val,
                                int depth, int mode, int base,
                                int indent, int acutoff,
                                uint32_t flags) LIBPOKE_API;
+
+/* Foreign IO devices interface.  */
+
+typedef uint64_t pk_iod_off;
+
+/* These must match the IOD_* values in ios-dev.h  */
+#define PK_IOD_OK      0
+#define PK_IOD_ERROR  -1
+#define PK_IOD_EIOFF  -2
+#define PK_IOD_EFLAGS -3
+#define PK_IOD_ENOMEM -4
+#define PK_IOD_EOF    -5
+#define PK_IOD_EINVAL -6
+
+/* See the ios_dev_if struct in ios-dev.h for an explanation of the
+   interface functions.  */
+
+struct pk_iod_if
+{
+  char *(*get_if_name) ();
+  char *(*handler_normalize) (const char *handler, uint64_t flags, int *error);
+  void * (*open) (const char *handler, uint64_t flags, int *error);
+  int (*close) (void *dev);
+  int (*pread) (void *dev, void *buf, size_t count, pk_iod_off offset);
+  int (*pwrite) (void *dev, const void *buf, size_t count, pk_iod_off offset);
+  uint64_t (*get_flags) (void *dev);
+  pk_iod_off (*size) (void *dev);
+  int (*flush) (void *dev, pk_iod_off offset);
+};
+
+/* Register a foreign IO device in the Poke compiler.
+
+   IOD_IF is a pointer to a struct pk_iod_if containing pointers to
+   functions providing the IO device implementation.
+
+   At the moment it is only supported to register just one foreign IO
+   device.
+
+   Return PK_ERROR if a foreign IO device has already been registered.
+   Return PK_OK otherwise. */
+
+int pk_register_iod (pk_compiler pkc, struct pk_iod_if *iod_if)
+  LIBPOKE_API;
 
 #endif /* ! LIBPOKE_H */

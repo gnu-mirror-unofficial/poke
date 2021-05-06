@@ -104,6 +104,7 @@ extern struct ios_dev_if ios_dev_sub; /* ios-dev-sub.c */
 
 static struct ios_dev_if *ios_dev_ifs[] =
   {
+   NULL, /* Optional foreign IOD.  */
    &ios_dev_zero,
    &ios_dev_mem,
    &ios_dev_stream,
@@ -151,14 +152,25 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
 
   /* Look for a device interface suitable to operate on the given
      handler.  */
-  for (dev_if = ios_dev_ifs; *dev_if; ++dev_if)
+  dev_if = ios_dev_ifs;
+  do
     {
+      if (*dev_if == NULL)
+        {
+          /* Skip the foreign IO device if it is not set.  */
+          ++dev_if;
+          continue;
+        }
+        
       io->handler = (*dev_if)->handler_normalize (handler, flags, &iod_error);
       if (iod_error != IOD_OK)
         goto error;
       if (io->handler)
         break;
+
+      ++dev_if;
     }
+  while (*dev_if);
 
   if (*dev_if == NULL)
     goto error;
@@ -1614,4 +1626,20 @@ struct ios_dev_if *
 ios_get_dev_if (ios ios)
 {
   return ios->dev_if;
+}
+
+struct ios_dev_if *
+ios_foreign_iod (void)
+{
+  return ios_dev_ifs[0];
+}
+
+int
+ios_register_foreign_iod (struct ios_dev_if *iod_if)
+{
+  if (ios_dev_ifs[0] != NULL)
+    return IOS_ERROR;
+
+  ios_dev_ifs[0] = iod_if;
+  return IOS_OK;
 }

@@ -29,6 +29,7 @@
 #include "pvm.h"
 #include "pvm-val.h" /* XXX */
 #include "libpoke.h"
+#include "ios-dev.h" /* for struct ios_dev_if */
 
 struct pk_compiler
 {
@@ -937,4 +938,33 @@ pk_print_val_with_params (pk_compiler pkc, pk_val val,
   pvm_print_val_with_params (pkc->vm, val,
                              depth, mode, base,
                              indent, acutoff, flags);
+}
+
+static struct ios_dev_if foreign_iod_if;
+
+int
+pk_register_iod (pk_compiler pkc, struct pk_iod_if *iod_if)
+{
+  pkc->status = PK_OK;
+
+  if (ios_foreign_iod () == NULL)
+    {
+      pkc->status = PK_ERROR;
+      return pkc->status;
+    }
+
+#define CF(FN) foreign_iod_if.FN = iod_if->FN
+  CF (get_if_name);
+  CF (handler_normalize);
+  CF (open);
+  CF (close);
+  CF (pread);
+  CF (pwrite);
+  CF (get_flags);
+  CF (size);
+  CF (flush);
+#undef CF
+
+  (void) ios_register_foreign_iod (&foreign_iod_if);
+  return pkc->status;
 }

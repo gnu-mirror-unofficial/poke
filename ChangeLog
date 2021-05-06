@@ -1,3 +1,11 @@
+2021-05-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h (struct pk_ios_if): New type.
+	* libpoke/ios.c (ios_register_foreign_iod): New function.
+	(ios_foreign_iod): Likewise.
+	(ios_open): Acknowledge the foreign IO device.
+	* libpoke/libpoke.c (pk_register_iod): Likewise.
+	
 2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (struct_constructor): Remove spurious

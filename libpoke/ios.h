@@ -347,4 +347,23 @@ int ios_flush (ios io, ios_off offset);
 
 /* XXX: writeme.  */
 
+/* **************** Foreign IO device **************** */
+
+/* Get the registered foreign IO device interface.
+
+   If no forereign IO device is registered, return NULL.
+   Otherwise return a pointer to the interface.  */
+
+struct ios_dev_if *ios_foreign_iod (void);
+
+/* Register a foreign IO device.
+
+   Return IOS_ERROR if a foreign IO device has been already
+   registered.
+
+   Return IOS_OK otherwise.  */
+
+struct ios_dev_if;
+int ios_register_foreign_iod (struct ios_dev_if *iod_if);
+
 #endif /* ! IOS_H */
