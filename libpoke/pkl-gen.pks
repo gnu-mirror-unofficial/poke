@@ -1335,7 +1335,6 @@
    .c   if (PKL_AST_TYPE_S_UNION_P (@type_struct))
    .c   {
         ;; Alternative failed: try next alternative.
-;        push null
         ba .alternative_failed
    .c   }
         raise                   ; Re-raise E_exception in the stack.

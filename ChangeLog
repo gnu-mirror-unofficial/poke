@@ -1,5 +1,10 @@
 2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_constructor): Remove spurious
+	commented insn.
+
+2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-help.pk (Poke_HelpEntry): Add fields `predicate and
 	`synopsis'.
 	* poke/poke.c (initialize): Initialize the value of have_libnbd_p.
