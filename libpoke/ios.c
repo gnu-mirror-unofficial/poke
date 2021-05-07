@@ -161,7 +161,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
           ++dev_if;
           continue;
         }
-        
+
       io->handler = (*dev_if)->handler_normalize (handler, flags, &iod_error);
       if (iod_error != IOD_OK)
         goto error;

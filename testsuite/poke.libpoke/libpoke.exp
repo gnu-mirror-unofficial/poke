@@ -7,3 +7,6 @@ if { [verified_host_execute "poke.libpoke/values"] ne "" } {
 if { [verified_host_execute "poke.libpoke/api"] ne "" } {
     fail "api had an execution error"
 }
+if { [verified_host_execute "poke.libpoke/foreign-iod"] ne "" } {
+    fail "foreign-iod had an execution error"
+}

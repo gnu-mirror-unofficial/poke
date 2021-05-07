@@ -19,35 +19,35 @@ EXTRA_DIST = \
 COMMON = term-if.h
 
 if HAVE_DEJAGNU
-check_PROGRAMS = values api
+check_PROGRAMS = values api foreign-iod
 endif
 
-values_SOURCES = $(COMMON) values.c
+# Common variables used for all/most test programs.
 
-values_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
+COMMON_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
                   -I$(top_srcdir)/common \
                   -DTESTDIR=\"$(abs_srcdir)\" \
                   -DPKGDATADIR=\"$(pkgdatadir)\" \
                   -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
-
 # Old DejaGnu versions need a specific old interpretation of 'inline'.
-values_CFLAGS = -fgnu89-inline
-
-values_LDADD = $(top_builddir)/gl/libgnu.la \
+COMMON_CFLAGS = -fgnu89-inline
+COMMON_LDADD = $(top_builddir)/gl/libgnu.la \
                $(top_builddir)/libpoke/libpoke.la \
                $(LTLIBTEXTSTYLE)
+
+# The test programs.
+
+values_SOURCES = $(COMMON) values.c
+values_CPPFLAGS = $(COMMON_CPPFLAGS)
+values_CFLAGS = $(COMMON_CFLAGS)
+values_LDADD = $(COMMON_LDADD)
 
 api_SOURCES = $(COMMON) api.c
+api_CPPFLAGS = $(COMMON_CPPFLAGS)
+api_CFLAGS = $(COMMON_CFLAGS)
+api_LDADD = $(COMMON_LDADD)
 
-api_CPPFLAGS = -I$(top_builddir)/gl -I$(top_srcdir)/gl \
-                  -I$(top_srcdir)/common \
-                  -DTESTDIR=\"$(abs_srcdir)\" \
-                  -DPKGDATADIR=\"$(pkgdatadir)\" \
-                  -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke
-
-# Old DejaGnu versions need a specific old interpretation of 'inline'.
-api_CFLAGS = -fgnu89-inline
-
-api_LDADD = $(top_builddir)/gl/libgnu.la \
-               $(top_builddir)/libpoke/libpoke.la \
-               $(LTLIBTEXTSTYLE)
+foreign_iod_SOURCES = $(COMMON) foreign-iod.c
+foreign_iod_CPPFLAGS = $(COMMON_CPPFLAGS)
+foreign_iod_CFLAGS = $(COMMON_CFLAGS)
+foreign_iod_LDADD = $(COMMON_LDADD)

@@ -5,7 +5,15 @@
 	(ios_foreign_iod): Likewise.
 	(ios_open): Acknowledge the foreign IO device.
 	* libpoke/libpoke.c (pk_register_iod): Likewise.
-	
+	* testsuite/poke.libpoke/foreign-iod.c: New file.
+	* testsuite/poke.libpoke/Makefile.am (check_PROGRAMS): Add
+	foreign-iod.
+	(foreign_iod_SOURCES): New rule.
+	(foreign_iod_CPPFLAGS): Likewise.
+	(foreign_iod_CFLAGS): Likewise.
+	(foreign_iod_LDADD): Likewise.
+	* testsuite/poke.libpoke/libpoke.exp: Execute foreign-iod test.
+
 2021-05-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (struct_constructor): Remove spurious

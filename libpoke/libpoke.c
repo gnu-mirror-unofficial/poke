@@ -947,7 +947,7 @@ pk_register_iod (pk_compiler pkc, struct pk_iod_if *iod_if)
 {
   pkc->status = PK_OK;
 
-  if (ios_foreign_iod () == NULL)
+  if (ios_foreign_iod () != NULL)
     {
       pkc->status = PK_ERROR;
       return pkc->status;
