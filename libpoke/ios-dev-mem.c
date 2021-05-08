@@ -35,7 +35,7 @@ struct ios_dev_mem
 
 #define MEM_STEP (512 * 8)
 
-static char *
+static const char *
 ios_dev_mem_get_if_name () {
   return "MEMORY";
 }

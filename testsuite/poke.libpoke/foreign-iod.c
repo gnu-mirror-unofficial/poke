@@ -57,7 +57,7 @@ int iod_opened_p = 0;
 
 /* Implementation of the test foreign IO device.  */
 
-char *
+const char *
 iod_get_if_name (void)
 {
   return "FOREIGN";

@@ -29,7 +29,7 @@
 #include "ios-dev.h"
 #include "pk-utils.h"
 
-static char *
+static const char *
 ios_dev_zero_get_if_name ()
 {
   return "ZERO";

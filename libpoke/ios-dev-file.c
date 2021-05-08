@@ -41,7 +41,7 @@ struct ios_dev_file
   uint64_t flags;
 };
 
-static char *
+static const char *
 ios_dev_file_get_if_name () {
   return "FILE";
 }

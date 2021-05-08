@@ -201,7 +201,7 @@ int ios_get_id (ios io);
 
 /* Return the name of the device interface.  */
 
-char *ios_get_dev_if_name (ios io);
+const char *ios_get_dev_if_name (ios io);
 
 /* Return the first IO space.  */
 

@@ -309,7 +309,7 @@ int pk_ios_get_id (pk_ios ios) LIBPOKE_API;
 
 /* Return the name of the device interface.  */
 
-char *pk_ios_get_dev_if_name (pk_ios ios) LIBPOKE_API;
+const char *pk_ios_get_dev_if_name (pk_ios ios) LIBPOKE_API;
 
 /* Return the size of the given IO space, in bytes.  */
 
@@ -1022,7 +1022,7 @@ typedef uint64_t pk_iod_off;
 
 struct pk_iod_if
 {
-  char *(*get_if_name) ();
+  const char *(*get_if_name) ();
   char *(*handler_normalize) (const char *handler, uint64_t flags, int *error);
   void * (*open) (const char *handler, uint64_t flags, int *error);
   int (*close) (void *dev);

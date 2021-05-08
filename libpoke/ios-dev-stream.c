@@ -46,7 +46,7 @@ struct ios_dev_stream
     };
 };
 
-static char *
+static const char *
 ios_dev_stream_get_dev_if_name () {
   return "STREAM";
 }

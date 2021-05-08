@@ -39,7 +39,7 @@ struct ios_dev_sub
   uint64_t flags;
 };
 
-static char *
+static const char *
 ios_dev_sub_get_if_name () {
   return "SUB";
 }

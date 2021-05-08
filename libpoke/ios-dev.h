@@ -53,7 +53,7 @@ struct ios_dev_if
 {
   /* Return the name of this device interface. Cannot return NULL. */
 
-  char *(*get_if_name) ();
+  const char *(*get_if_name) ();
 
   /* Determine whether the provided HANDLER is recognized as a valid
      device spec by this backend, and if so, return its normalized

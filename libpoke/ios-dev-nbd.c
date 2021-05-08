@@ -44,7 +44,7 @@ startswith (const char *str, const char *prefix)
   return strncmp (str, prefix, strlen (prefix)) == 0;
 }
 
-static char *
+static const char *
 ios_dev_nbd_get_if_name () {
   return "NBD";
 }

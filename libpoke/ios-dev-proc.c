@@ -41,7 +41,7 @@ struct ios_dev_proc
   void *memfile;
 };
 
-static char *
+static const char *
 ios_dev_proc_get_if_name ()
 {
   return "PROC";
