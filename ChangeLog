@@ -1,5 +1,24 @@
 2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+
+	* libpoke/ios-dev.h (struct ios_dev_if): Make the get_if_name hook
+	to return a const char pointer.
+	* libpoke/ios.c (ios_get_dev_if_name): Return a constant char
+	pointer.
+	* libpoke/ios.h: Likewise.
+	* testsuite/poke.libpoke/foreign-iod.c (iod_get_if_name): Likewise.
+	* libpoke/libpoke.h (struct pk_iod_if): Likewise.
+	* libpoke/libpoke.c (pk_ios_get_dev_if_name): Likewise.
+	* libpoke/ios-dev-zero.c (ios_dev_zero_get_if_name): Likewise.
+	* libpoke/ios-dev-sub.c (ios_dev_sub_get_if_name): Likewise.
+	* libpoke/ios-dev-stream.c (ios_dev_stream_get_dev_if_name): Likewise.
+	* libpoke/ios-dev-proc.c (ios_dev_proc_get_if_name): Likewise.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_get_if_name): Likewise.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_get_if_name): Likewise.
+	* libpoke/ios-dev-file.c (ios_dev_file_get_if_name): Likewise.
+
+2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.libpoke/foreign-iod.c: Do not include assert.h.
 
 2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>
