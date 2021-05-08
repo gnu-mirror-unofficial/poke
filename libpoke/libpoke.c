@@ -947,12 +947,6 @@ pk_register_iod (pk_compiler pkc, struct pk_iod_if *iod_if)
 {
   pkc->status = PK_OK;
 
-  if (ios_foreign_iod () != NULL)
-    {
-      pkc->status = PK_ERROR;
-      return pkc->status;
-    }
-
 #define CF(FN) foreign_iod_if.FN = iod_if->FN
   CF (get_if_name);
   CF (handler_normalize);

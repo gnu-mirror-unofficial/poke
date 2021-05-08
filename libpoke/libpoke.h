@@ -1059,7 +1059,7 @@ struct pk_iod_if
    At the moment it is only supported to register just one foreign IO
    device.
 
-   Return PK_ERROR if a foreign IO device has already been registered.
+   Return PK_ERROR if some error occurs.
    Return PK_OK otherwise. */
 
 int pk_register_iod (pk_compiler pkc, struct pk_iod_if *iod_if)
