@@ -1,5 +1,20 @@
-2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>
+2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>,
 
+	* poke/pk-map.c: New variable alien_token.
+	(pk_map_alien_token_handler): Adapt to new interface.
+
+	* libpoke/libpoke.h (struct pk_alien_token): Define.
+	(PK_ALIEN_TOKEN_NOTOKEN): Likewise.
+	(PK_ALIEN_TOKEN_IDENTIFIER): Likewise.
+	(PK_ALIEN_TOKEN_INTEGER): Likewise.
+	(pk_alien_token_handler_fn): Return an alien token struct.
+	* libpoke/pkl.h (struct pkl_alien_token): Likewise.
+	(PKL_ALIEN_TOKEN_NOTOKEN): Likewise.
+	(PKL_ALIEN_TOKEN_IDENTIFIER): Likewise.
+	(PKL_ALIEN_TOKEN_INTEGER): Likewise.
+	* libpoke/pkl-lex.l: Handle better alien tokens.
+
+2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>,
 
 	* libpoke/ios-dev.h (struct ios_dev_if): Make the get_if_name hook
 	to return a const char pointer.

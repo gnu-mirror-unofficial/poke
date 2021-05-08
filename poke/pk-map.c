@@ -140,7 +140,9 @@ entry_name_to_varname (const char *name)
   return varname;
 }
 
-static char *
+static struct pk_alien_token alien_token;
+
+static struct pk_alien_token *
 pk_map_alien_token_handler (const char *id, char **errmsg)
 {
   char *map_name = NULL;
@@ -162,6 +164,7 @@ pk_map_alien_token_handler (const char *id, char **errmsg)
      holds for ID, and extract the fields.  */
 
   entry_name = strstr (id, "::");
+  printf ("ID: '%s' ENTRY NAME: '%s'\n", id, entry_name);
   if (!entry_name || strstr (entry_name + 2, "::"))
     goto error;
 
@@ -186,7 +189,12 @@ pk_map_alien_token_handler (const char *id, char **errmsg)
                entry = PK_MAP_ENTRY_CHAIN (entry))
             {
               if (STREQ (PK_MAP_ENTRY_NAME (entry), entry_name))
-                return xstrdup (PK_MAP_ENTRY_VARNAME (entry));
+                {
+                  alien_token.kind = PK_ALIEN_TOKEN_IDENTIFIER;
+                  alien_token.value.identifier
+                    = xstrdup (PK_MAP_ENTRY_VARNAME (entry));
+                  return &alien_token;
+                }
             }
         }
 

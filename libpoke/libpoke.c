@@ -177,7 +177,7 @@ pk_set_lexical_cuckolding_p (pk_compiler pkc, int lexical_cuckolding_p)
 void
 pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb)
 {
-  pkl_set_alien_token_fn (pkc->compiler, cb);
+  pkl_set_alien_token_fn (pkc->compiler, (pkl_alien_token_handler_fn) cb);
   pkc->status = PK_OK;
 }
 
