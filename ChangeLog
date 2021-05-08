@@ -1,3 +1,8 @@
+2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h: Make the header C++ compliant.
+	* libpoke/libpoke.c: Vandalize accordingly :(
+
 2021-05-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h (struct pk_ios_if): New type.

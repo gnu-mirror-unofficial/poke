@@ -29,8 +29,8 @@
 #define LIBPOKE_API
 #endif
 
-typedef struct pk_compiler *pk_compiler;
-typedef struct pk_ios *pk_ios;
+typedef struct _pk_compiler *pk_compiler;
+typedef struct _pk_ios *pk_ios;
 typedef uint64_t pk_val;
 
 /* The following status codes are returned by pk_errno function.  */
@@ -66,12 +66,12 @@ struct pk_term_if
   void (*indent_fn) (unsigned int lvl, unsigned int step);
 
   /* Mark the beginning of a styling class with name CLASS.  */
-  void (*class_fn) (const char *class);
+  void (*class_fn) (const char *aclass);
 
   /* Mark the end of a styling class with name CLASS.  This function
      returns 0 if the given class is not active and therefore can't be
      ended.  1 otherwise.  */
-  int (*end_class_fn) (const char *class);
+  int (*end_class_fn) (const char *aclass);
 
   /* Mark the beginning of an hyperlink with url URL and identifier
      ID.  The identifier can be NULL.  */

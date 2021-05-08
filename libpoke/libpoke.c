@@ -31,7 +31,7 @@
 #include "libpoke.h"
 #include "ios-dev.h" /* for struct ios_dev_if */
 
-struct pk_compiler
+struct _pk_compiler
 {
   pkl_compiler compiler;
   pvm vm;
@@ -57,7 +57,7 @@ pk_compiler_new (struct pk_term_if *term_if)
       || !term_if->hyperlink_fn || !term_if->end_hyperlink_fn)
     return NULL;
 
-  pkc = malloc (sizeof (struct pk_compiler));
+  pkc = malloc (sizeof (struct _pk_compiler));
   if (pkc)
     {
       /* Determine the path to the compiler's runtime files.  */
