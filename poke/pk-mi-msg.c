@@ -145,6 +145,7 @@ struct pk_mi_msg
     struct pk_mi_msg_event event;
   } data;
 
+  int num_args;
   pk_val *args;
 };
 
@@ -184,6 +185,7 @@ pk_mi_allocate_msg_args (pk_mi_msg msg,
   for (i = 0; i < nargs; ++i)
     args[i] = PK_NULL;
 
+  PK_MI_MSG_NUM_ARGS (msg) = nargs;
   PK_MI_MSG_ARGS (msg) = args;
 }
 
