@@ -1,0 +1,46 @@
+/* std.pk - Standard types for poke.  */
+
+/* Copyright (C) 2021 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*** Standard Integral Types.  */
+
+type bit = uint<1>;
+type nibble = uint<4>;
+
+type uint8 = uint<8>;
+type uint16 = uint<16>;
+type uint32 = uint<32>;
+type uint64 = uint<64>;
+
+type int8 = int<8>;
+type int16 = int<16>;
+type int32 = int<32>;
+type int64 = int<64>;
+
+type uint = uint32;
+type int = int32;
+type char = uint8;
+type byte = uint8;
+type ushort = uint16;
+type short = int16;
+type ulong = uint64;
+type long = int64;
+
+/*** Standard Offset Types.  */
+
+type off64 = offset<int64,b>;
+type uoff64 = offset<uint64,b>;

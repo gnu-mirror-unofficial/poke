@@ -73,7 +73,7 @@ struct pkl_compiler
 };
 
 pkl_compiler
-pkl_new (pvm vm, const char *rt_path)
+pkl_new (pvm vm, const char *rt_path, uint32_t flags)
 {
   pkl_compiler compiler
     = calloc (1, sizeof (struct pkl_compiler));
@@ -120,21 +120,29 @@ pkl_new (pvm vm, const char *rt_path)
     compiler->bootstrapped = 1;
   }
 
-  /* Load the standard library.  */
-  {
-    char *poke_std_pk = pk_str_concat (rt_path, "/std.pk", NULL);
-    if (!poke_std_pk)
-      goto out_of_memory;
+#define LOAD_RT(NAME)                                           \
+  do                                                            \
+    {                                                           \
+      char *path = pk_str_concat (rt_path, "/" NAME, NULL);     \
+      if (!path)                                                \
+        goto out_of_memory;                                     \
+                                                                \
+      if (!pkl_execute_file (compiler, path, NULL))             \
+        {                                                       \
+          free (path);                                          \
+          pkl_free (compiler);                                  \
+          return NULL;                                          \
+        }                                                       \
+                                                                \
+      free (path);                                              \
+    }                                                           \
+  while (0)
 
-    if (!pkl_execute_file (compiler, poke_std_pk, NULL))
-      {
-        free (poke_std_pk);
-        pkl_free (compiler);
-        return NULL;
-      }
-
-    free (poke_std_pk);
-  }
+  /* Load the standard library.  Note that the standard types may not
+     be loaded, depending on how the compiler is configured.  */
+  LOAD_RT ("std.pk");
+  if (!(flags & PKL_F_NOSTDTYPES))
+    LOAD_RT ("std-types.pk");
 
   return compiler;
 

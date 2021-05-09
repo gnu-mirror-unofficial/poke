@@ -45,7 +45,7 @@ struct pk_term_if libpoke_term_if;
 #define PK_RETURN(code) do { return pkc->status = (code); } while (0)
 
 pk_compiler
-pk_compiler_new (struct pk_term_if *term_if)
+pk_compiler_new_with_flags (struct pk_term_if *term_if, uint32_t flags)
 {
   pk_compiler pkc;
 
@@ -60,6 +60,11 @@ pk_compiler_new (struct pk_term_if *term_if)
   pkc = malloc (sizeof (struct _pk_compiler));
   if (pkc)
     {
+      uint32_t pkl_flags = 0;
+
+      if (flags & PK_F_NOSTDTYPES)
+        pkl_flags |= PKL_F_NOSTDTYPES;
+
       /* Determine the path to the compiler's runtime files.  */
       const char *libpoke_datadir = getenv ("POKEDATADIR");
       if (libpoke_datadir == NULL)
@@ -71,7 +76,8 @@ pk_compiler_new (struct pk_term_if *term_if)
       if (pkc->vm == NULL)
         goto error;
       pkc->compiler = pkl_new (pkc->vm,
-                               libpoke_datadir);
+                               libpoke_datadir,
+                               pkl_flags);
       if (pkc->compiler == NULL)
         goto error;
       pkc->complete_type = NULL;
@@ -86,6 +92,13 @@ pk_compiler_new (struct pk_term_if *term_if)
   free (pkc);
   return NULL;
 }
+
+pk_compiler
+pk_compiler_new (struct pk_term_if *term_if)
+{
+  return pk_compiler_new_with_flags (term_if, 0 /* flags */);
+}
+
 
 void
 pk_compiler_free (pk_compiler pkc)

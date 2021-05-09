@@ -74,10 +74,14 @@
    RT_PATH should contain the name of a directory where the compiler can
    find its run-time support files.
 
+   FLAGS is an ORed value of PKL_F_* values, or 0.
+
    If there is an error creating the compiler this function returns
    NULL.  */
 
-pkl_compiler pkl_new (pvm vm, const char *rt_path);
+#define PKL_F_NOSTDTYPES 1 /* Do not define standard types.  */
+
+pkl_compiler pkl_new (pvm vm, const char *rt_path, uint32_t flags);
 
 void pkl_free (pkl_compiler compiler);
 

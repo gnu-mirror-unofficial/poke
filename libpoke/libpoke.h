@@ -109,6 +109,14 @@ struct pk_term_if
 
 pk_compiler pk_compiler_new (struct pk_term_if *term_if) LIBPOKE_API;
 
+/* Like pk_compiler_new, but accepts an extra argument with flags,
+   which are defined below.  */
+
+#define PK_F_NOSTDTYPES 1 /* Do not define standard types.  */
+
+pk_compiler pk_compiler_new_with_flags (struct pk_term_if *term_if,
+                                        uint32_t flags) LIBPOKE_API;
+
 /* Destroy an instance of a Poke incremental compiler.
 
    PKC is a previously created incremental compiler.  */

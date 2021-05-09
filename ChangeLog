@@ -1,3 +1,20 @@
+2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.c (pk_compiler_new_with_flags): Rename from
+	pk_compiler_new.
+	(pk_compiler_new): Define.
+	* libpoke/libpoke.h: Prototype for pk_compiler_new_with_flags.
+	(PK_F_NOSTDTYPES): Define.
+	* libpoke/pkl.h: Add `flags' argument to pkl_new.
+	(PKL_F_NOSTDTYPES): Define.
+	* libpoke/std-types.pk: New file.
+	* libpoke/Makefile.am (dist_pkgdata_DATA): Add std-types.pk.
+	* libpoke/std.pk: Do not use standard types.
+	* libpoke/pkl.c (pkl_new): Load std-types.pk
+	(pkl_new): Get a `flags' argument and do not define standard types
+	if PKL_F_NOSTDTYPES is specified.
+
+
 2021-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y: New token OFFSET.
