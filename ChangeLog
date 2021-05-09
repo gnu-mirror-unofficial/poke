@@ -1,3 +1,17 @@
+2021-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: New token OFFSET.
+	(primary): OFFSET is a primary.
+	* libpoke/pkl-lex.l: Handle offsets in alien tokens.
+	* libpoke/libpoke.h (struct pk_alien_token): Add support for
+	offset tokens and string tokens.
+	(PK_ALIEN_TOKEN_OFFSET): Define.
+	(PK_ALIEN_TOKEN_STRING): Likewise.
+	* libpoke/pkl.h (struct pkl_alien_token): Add support for offset
+	tokens and string tokens.
+	(PKL_ALIEN_TOKEN_OFFSET): Define.
+	(PKL_ALIEN_TOKEN_STRING): Likewise.
+
 2021-05-08  Jose E. Marchesi  <jemarch@gnu.org>,
 
 	* libpoke/libpoke.c (pk_register_iod): Allow replacing the foreign

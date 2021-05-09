@@ -178,6 +178,8 @@ void pkl_set_quiet_p (pkl_compiler compiler, int quiet_p);
 
 #define PKL_ALIEN_TOKEN_IDENTIFIER 0
 #define PKL_ALIEN_TOKEN_INTEGER    1
+#define PKL_ALIEN_TOKEN_OFFSET     2
+#define PKL_ALIEN_TOKEN_STRING     3
 
 struct pkl_alien_token
 {
@@ -185,12 +187,27 @@ struct pkl_alien_token
   union
   {
     char *identifier;
+
     struct
     {
       uint64_t magnitude;
       int width;
       int signed_p;
     } integer;
+
+    struct
+    {
+      uint64_t magnitude;
+      int width;
+      int signed_p;
+      uint64_t unit;
+    } offset;
+
+    struct
+    {
+      const char *str;
+    } string;
+
   } value;
 };
 

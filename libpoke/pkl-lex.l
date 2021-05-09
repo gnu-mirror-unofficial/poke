@@ -395,6 +395,17 @@ S ::
             return IDENTIFIER;
             break;
           }
+        case PKL_ALIEN_TOKEN_STRING:
+          {
+            pkl_ast_node type = pkl_ast_make_string_type (yyextra->ast);
+
+            yylval->ast
+              = pkl_ast_make_string (yyextra->ast, token->value.string.str);
+            PKL_AST_TYPE (yylval->ast) = ASTREF (type);
+
+            return STR;
+            break;
+          }
         case PKL_ALIEN_TOKEN_INTEGER:
           {
             uint64_t value = token->value.integer.magnitude;
@@ -427,6 +438,52 @@ S ::
             PKL_AST_TYPE (yylval->ast) = ASTREF (type);
 
             return INTEGER;
+            break;
+          }
+        case PKL_ALIEN_TOKEN_OFFSET:
+          {
+            uint64_t value = token->value.offset.magnitude;
+            int signed_p = token->value.offset.signed_p;
+            int width = token->value.offset.width;
+            pkl_ast_node unit, magnitude, magnitude_type, offset_type, unit_type;
+
+            /* As with regular integer tokens, the type of the integer
+               constant is the smallest signed or unsigned integer
+               capable of holding it, starting with 32 bits, in steps
+               of power of two and up to 64 bits. */
+
+            if (width == 0)
+              {
+                if (value > 0x0000000080000000 && value <= 0x00000000ffffffff)
+                  width = signed_p ? 64 : 32;
+                else if (value & 0xffffffff00000000)
+                  width = 64;
+                else
+                  width = 32;
+              }
+
+            /* Handle overflow in signed integers. */
+            if (signed_p && value >= 0x8000000000000000)
+              return INTEGER_OVERFLOW;
+
+            /* Build the offset magnitude.  */
+            magnitude_type = pkl_ast_make_integral_type (yyextra->ast, width, signed_p);
+            magnitude = pkl_ast_make_integer (yyextra->ast, value);
+            PKL_AST_TYPE (magnitude) = ASTREF (magnitude_type);
+
+            /* Build the offset unit.  */
+            unit_type = pkl_ast_make_integral_type (yyextra->ast, 64, 0);
+            unit = pkl_ast_make_integer (yyextra->ast, token->value.offset.unit);
+            PKL_AST_TYPE (unit) = ASTREF (unit_type);
+
+            /* Build the offset value itself.  */
+            offset_type = pkl_ast_make_offset_type (yyextra->ast,
+                                                    magnitude_type,
+                                                    unit);
+            yylval->ast = pkl_ast_make_offset (yyextra->ast,
+                                               magnitude, unit);
+            PKL_AST_TYPE (yylval->ast) = ASTREF (offset_type);
+            return OFFSET;
             break;
           }
         default:

@@ -380,6 +380,7 @@ load_module (struct pkl_parser *parser,
 %token <ast> IDENTIFIER  _("identifier")
 %token <ast> TYPENAME    _("type name")
 %token <ast> UNIT        _("offset unit")
+%token <ast> OFFSET      _("offset")
 
 /* Reserved words.  */
 
@@ -975,6 +976,11 @@ expression:
                     if (PKL_AST_TYPE ($1))
                         PKL_AST_LOC (PKL_AST_TYPE ($1)) = @1;
                     PKL_AST_LOC ($$) = @$;
+                }
+        | OFFSET
+                {
+                  $$ = $1;
+                  PKL_AST_LOC ($$) = @$;
                 }
         | expression UNIT
                 {

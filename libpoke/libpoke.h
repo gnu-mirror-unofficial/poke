@@ -238,6 +238,8 @@ void pk_set_quiet_p (pk_compiler pkc, int quiet_p) LIBPOKE_API;
 
 #define PK_ALIEN_TOKEN_IDENTIFIER 0
 #define PK_ALIEN_TOKEN_INTEGER    1
+#define PK_ALIEN_TOKEN_OFFSET     2
+#define PK_ALIEN_TOKEN_STRING     3
 
 struct pk_alien_token
 {
@@ -245,12 +247,27 @@ struct pk_alien_token
   union
   {
     char *identifier;
+
     struct
     {
       uint64_t magnitude;
       int width;
       int signed_p;
     } integer;
+
+    struct
+    {
+      uint64_t magnitude;
+      int width;
+      int signed_p;
+      uint64_t unit;
+    } offset;
+
+    struct
+    {
+      const char *str;
+    } string;
+
   } value;
 };
 
