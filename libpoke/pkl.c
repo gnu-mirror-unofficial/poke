@@ -120,7 +120,7 @@ pkl_new (pvm vm, const char *rt_path, uint32_t flags)
     compiler->bootstrapped = 1;
   }
 
-#define LOAD_RT(NAME)                                           \
+#define LOAD_STD(NAME)                                          \
   do                                                            \
     {                                                           \
       char *path = pk_str_concat (rt_path, "/" NAME, NULL);     \
@@ -140,9 +140,9 @@ pkl_new (pvm vm, const char *rt_path, uint32_t flags)
 
   /* Load the standard library.  Note that the standard types may not
      be loaded, depending on how the compiler is configured.  */
-  LOAD_RT ("std.pk");
+  LOAD_STD ("std.pk");
   if (!(flags & PKL_F_NOSTDTYPES))
-    LOAD_RT ("std-types.pk");
+    LOAD_STD ("std-types.pk");
 
   return compiler;
 

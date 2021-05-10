@@ -1,5 +1,9 @@
 2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl.c (LOAD_STD): Renamed from LOAD_RT.
+
+2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>,
+
 	* libpoke/libpoke.c (pk_compiler_new_with_flags): Rename from
 	pk_compiler_new.
 	(pk_compiler_new): Define.
@@ -13,7 +17,6 @@
 	* libpoke/pkl.c (pkl_new): Load std-types.pk
 	(pkl_new): Get a `flags' argument and do not define standard types
 	if PKL_F_NOSTDTYPES is specified.
-
 
 2021-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
