@@ -1,0 +1,13 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x60 0x50 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+type record = struct {
+    var n = 10;
+    int foo if n > 20;
+    int bar : lambda (int val) int<32>: { printf "%v\n", val;  return 1; } (n);
+};
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {.set endian big} } */
+/* { dg-command { record @ 0#B } } */
+/* { dg-output "0x0000000a\nrecord \{bar=0x10203040\}" } */

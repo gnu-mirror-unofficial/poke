@@ -1,5 +1,25 @@
 2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (check_struct_field_constraint): Use
+	PKL_GEN_PUSH_CONTEXT instead of DUP_CONTEXT + CLEAR_CONTEXT.  It
+	is more robust.
+	(array_writer): Likewise.
+	(array_bounder): Likewise.
+	(handle_struct_field_label): Likewise.
+	(handle_struct_field_constraints): Likewise.
+	(struct_mapper): Likewise.
+	(struct_constructor): Likewise.
+	(struct_field_writer): Likewise.
+	(struct_writer): Likewise.
+	(struct_integrator): Likewise.
+	(complex_lmap): Likewise.
+
+	* testsuite/poke.pkl/scons-constraints-3.pk: New test.
+	* testsuite/poke.map/maps-structs-constraints-4.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_mapper): Fix vars_registered with
 	declarations in struct types.
 	(struct_constructor): Likewise.

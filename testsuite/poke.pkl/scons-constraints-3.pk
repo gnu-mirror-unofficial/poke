@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+type record = struct {
+    var n = 10;
+    int foo if n > 20;
+    int bar : lambda (int val) int<32>: { printf "%v\n", val;  return 1; } (n);
+};
+
+/* { dg-command { record {} } } */
+/* { dg-output "10\nrecord \{bar=0\}" } */
