@@ -828,6 +828,10 @@
  .c     PKL_PASS_SUBPASS (@field);
  .c     PKL_GEN_POP_CONTEXT;
  .c
+ .c     if (PKL_AST_DECL_KIND (@field) == PKL_AST_DECL_KIND_VAR
+ .c         || PKL_AST_DECL_KIND (@field) == PKL_AST_DECL_KIND_FUNC)
+ .c       vars_registered++;
+ .c
  .c     continue;
  .c   }
         .label .alternative_failed
@@ -1202,6 +1206,10 @@
  .c     PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
  .c     PKL_PASS_SUBPASS (@field);
  .c     PKL_GEN_POP_CONTEXT;
+ .c
+ .c     if (PKL_AST_DECL_KIND (@field) == PKL_AST_DECL_KIND_VAR
+ .c         || PKL_AST_DECL_KIND (@field) == PKL_AST_DECL_KIND_FUNC)
+ .c       vars_registered++;
  .c
  .c     continue;
  .c   }

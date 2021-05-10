@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type record = struct {
+
+  var v = 10;
+  int foo if 1;
+  int bar : v == 10;
+  int baz @ v#B;
+};
+
+/* { dg-command {record {}} } */
+/* { dg-output {record \{foo=0,bar=0,baz=0\}} } */

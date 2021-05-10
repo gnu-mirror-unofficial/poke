@@ -1,3 +1,12 @@
+2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_mapper): Fix vars_registered with
+	declarations in struct types.
+	(struct_constructor): Likewise.
+	* testsuite/poke.pkl/optcond-21.pk: New test.
+	* testsuite/poke.map/map-optcond-12.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2021-05-10  Kostas Chasialis  <sdi1600195@di.uoa.gr>
 
 	* poke/pk-mi-msg.c (struct pk_mi_msg): Added num_args field.

@@ -149,6 +149,7 @@ EXTRA_DIST = \
   poke.map/map-optcond-9.pk \
   poke.map/map-optcond-10.pk \
   poke.map/map-optcond-11.pk \
+  poke.map/map-optcond-12.pk \
   poke.map/map-optcond-int-struct-1.pk \
   poke.map/map-optcond-int-struct-2.pk \
   poke.map/map-size-1.pk \
@@ -1406,6 +1407,7 @@ EXTRA_DIST = \
   poke.pkl/optcond-18.pk \
   poke.pkl/optcond-19.pk \
   poke.pkl/optcond-20.pk \
+  poke.pkl/optcond-21.pk \
   poke.pkl/or-1.pk \
   poke.pkl/or-2.pk \
   poke.pkl/or-3.pk \
