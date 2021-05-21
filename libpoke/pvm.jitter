@@ -1639,7 +1639,7 @@ instruction return ()
 
     /* Restore the environment of the caller.  Note the cast to
        jitter_uint is to avoid a warning in 32-bit.  */
-    jitter_state_runtime.env = (pvm_env) (jitter_int) JITTER_TOP_RETURNSTACK ();
+    jitter_state_runtime.env = (pvm_env) (jitter_uint) JITTER_TOP_RETURNSTACK ();
     JITTER_DROP_RETURNSTACK();
 
     return_address = JITTER_TOP_RETURNSTACK();
@@ -1678,7 +1678,7 @@ instruction popf (?n popf_printer)
   code
     jitter_uint i;
 
-    for (i = 0; i < JITTER_ARGN0; ++i)
+    for (i = 0; i < JITTER_ARGU0; ++i)
         jitter_state_runtime.env
            = pvm_env_pop_frame (jitter_state_runtime.env);
   end
@@ -1801,7 +1801,7 @@ end
 # 16 - print the number in hexadecimal.
 # Any other value - print the number in decimal.
 
-# Instruction: printind
+# Instruction: indent
 #
 # Indent the output in the terminal for LVL levels of indentation,
 # using STEP white chars in each indentation level.
@@ -3249,7 +3249,6 @@ instruction sconc ()
      res = pvm_make_string_nodup (s);
 
      JITTER_PUSH_STACK (res);
-#undef F
   end
 end
 
@@ -3810,7 +3809,7 @@ instruction bzlu (?f)
   end
 end
 
-# Instruction: bzni LABEL
+# Instruction: bnzi LABEL
 #
 # Branch to the given LABEL if the integer at the top of the stack
 # is nonzero.
@@ -4160,7 +4159,7 @@ end
 
 # Instruction: substr
 #
-# Given a string and two indexes FROM AND to conforming a semi-open
+# Given a string and two indices FROM and TO conforming a semi-open
 # interval [FROM,TO), push the substring enclosed by that interval.
 #
 # Both indexes are zero-based.
@@ -4244,7 +4243,6 @@ instruction mka ()
     pvm_val arr = pvm_make_array (JITTER_TOP_STACK (),
                                   JITTER_UNDER_TOP_STACK ());
 
-    PVM_VAL_ARR_OFFSET (arr) = PVM_MAKE_ULONG (0, 64);
     JITTER_DROP_STACK ();
     JITTER_DROP_STACK ();
     JITTER_PUSH_STACK (arr);
@@ -4253,8 +4251,7 @@ end
 
 # Instruction: ains
 #
-# Insert a new element VAL, with bit-offset BOFF, at the end of
-# the array ARR, making it grow.
+# Insert a new element VAL, at the end of the array ARR, making it grow.
 #
 # If IDX is less than the current size of the array, the value is
 # stored in the referred argument.
@@ -4266,9 +4263,9 @@ end
 #
 # a = [a1, a2, a3]
 #
-# [a1, a2, a3] BOFF 2 VAL ains -> INVAL exception
-# [a1, a2, a3] BOFF 3 VAL ains -> [a1, a2, a3, VAL]
-# [a1, a2, a3] BOFF 5 VAL ains -> [a1, a2, a3, VAL, VAL, VAL]
+# [a1, a2, a3] 2 VAL ains -> INVAL exception
+# [a1, a2, a3] 3 VAL ains -> [a1, a2, a3, VAL]
+# [a1, a2, a3] 5 VAL ains -> [a1, a2, a3, VAL, VAL, VAL]
 #
 # Stack: ( ARR IDX VAL -- ARR )
 # Exceptions: PVM_E_INVAL

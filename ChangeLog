@@ -1,5 +1,17 @@
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.jitter (return): s/jitter_int/jitter_uint/.
+	(popf): s/JITTER_ARGN0/JITTER_ARGU0/.
+	(sconc): Remove useless `#undef F`.
+	(bnzi): Fix type s/bzni/bnzi/.
+	(substr): Fix doc.
+	(ains): Likewise.
+	(indent): Fix typo.
+	(mka): Remove redundant array offset initialization.
+	* libpoke/ras (BEGIN): Use `\"` instead of `\\\"`.
+
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-rt.pk (_pkl_unit_name): Fix typo. s/gigi/gibi/
 	(_pkl_unit_gibibit): Likewise.
 	(_pkl_unit_gibibyte): Likewise.
