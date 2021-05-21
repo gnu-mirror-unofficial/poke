@@ -1,3 +1,10 @@
+2021-05-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (LMAP): Simplify code, and re-compile writers
+	for anonymous struct types as well as array types.
+	* libpoke/pkl-gen.pks (struct_writer): Use @type_struct instead of
+	type_struct.
+
 2021-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (check_struct_field_constraint): Use

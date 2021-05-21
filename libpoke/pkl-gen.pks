@@ -1607,7 +1607,7 @@
  .c {
  .c      uint64_t i;
         .let @field
- .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (type_struct);
+ .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
  .c      @field;
  .c      @field = PKL_AST_CHAIN (@field))
  .c {

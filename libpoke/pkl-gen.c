@@ -896,31 +896,35 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
       switch (lvalue_type_code)                                         \
         {                                                               \
         case PKL_TYPE_ARRAY:                                            \
-          /* Make sure the array type has a writer.  */                 \
-          /* Note how anonymous array types from within structs */      \
-          /* need the writer to be re-compiled.  This sucks :/ */       \
-          if (PKL_AST_TYPE_A_WRITER ((TYPE)) == PVM_NULL                \
-              || !PKL_AST_TYPE_NAME ((TYPE)))                           \
-            {                                                           \
-              pvm_val writer;                                           \
-                                                                        \
-              PKL_GEN_DUP_CONTEXT;                                      \
-              PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);              \
-              RAS_FUNCTION_ARRAY_WRITER (writer, (TYPE));               \
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */ \
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */ \
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */ \
-              PKL_GEN_POP_CONTEXT;                                      \
-                                                                        \
-              PKL_AST_TYPE_A_WRITER ((TYPE)) = writer;                  \
-            }                                                           \
-          /* Fallthrough.  */                                           \
         case PKL_TYPE_STRUCT:                                           \
           {                                                             \
             pvm_val writer =                                            \
               (lvalue_type_code == PKL_TYPE_ARRAY                       \
                ? PKL_AST_TYPE_A_WRITER ((TYPE))                         \
                : PKL_AST_TYPE_S_WRITER ((TYPE)));                       \
+                                                                        \
+            /* Make sure the type has a writer.  */                     \
+            /* Note how anonymous types from within structs */          \
+            /* need the writer to be re-compiled.  This sucks :/ */     \
+            if (writer == PVM_NULL                                      \
+                || !PKL_AST_TYPE_NAME ((TYPE)))                         \
+            {                                                           \
+              PKL_GEN_DUP_CONTEXT;                                      \
+              PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);              \
+              if (lvalue_type_code == PKL_TYPE_ARRAY)                   \
+                RAS_FUNCTION_ARRAY_WRITER (writer, (TYPE));             \
+              else                                                      \
+                RAS_FUNCTION_STRUCT_WRITER (writer, (TYPE));            \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, writer); /* CLS */ \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);          /* CLS */ \
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);         /* _ */ \
+              PKL_GEN_POP_CONTEXT;                                      \
+                                                                        \
+              if (lvalue_type_code == PKL_TYPE_ARRAY)                   \
+                PKL_AST_TYPE_A_WRITER ((TYPE)) = writer;                \
+              else                                                      \
+                PKL_AST_TYPE_S_WRITER ((TYPE)) = writer;                \
+            }                                                           \
                                                                         \
             /* VAL IOS BOFF */                                          \
             RAS_MACRO_COMPLEX_LMAP ((TYPE), writer); /* _ */            \
