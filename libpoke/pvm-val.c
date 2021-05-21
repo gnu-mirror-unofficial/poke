@@ -83,6 +83,15 @@ pvm_make_string (const char *str)
 }
 
 pvm_val
+pvm_make_string_nodup (char *str)
+{
+  pvm_val_box box = pvm_make_box (PVM_VAL_TAG_STR);
+
+  PVM_VAL_BOX_STR (box) = str;
+  return PVM_BOX (box);
+}
+
+pvm_val
 pvm_make_array (pvm_val nelem, pvm_val type)
 {
   pvm_val_box box = pvm_make_box (PVM_VAL_TAG_ARR);

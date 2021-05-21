@@ -1,5 +1,14 @@
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.h (pvm_make_string_nodup): New function declaration.
+	* libpoke/pvm-val.c (pvm_make_string_nodup): New function definition.
+	* libpoke/pvm.jitter: Do not include `xalloc.h`.
+	(muls): Use `pvm_alloc` instead of `xmalloc`.
+	* etc/poke.rec (The `muls' instruction in pvm.jitter calls xmalloc):
+	Remove as done.
+
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* doc/learn-poke-in-y-minutes.pk (Struct Field Initializers): Update
 	the example according to the recent change in behavior of field
 	initializers.

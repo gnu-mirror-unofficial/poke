@@ -1084,15 +1084,6 @@ Description:
 + Code in libpoke should not call `abort' nor `exit'.
 Target: 1.1
 
-Summary: The `muls' instruction in pvm.jitter calls xmalloc
-Component: Compiler
-Kind: BUG
-BZ: 26894
-Priority: 3
-Description:
-+ libpoke code shouldn't abort, therefore xalloc shouldn't be used.
-Target: 1.1
-
 Summary: Complete pvm_print_val for function types
 Component: PVM
 Kind: BUG

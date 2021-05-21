@@ -76,6 +76,7 @@ wrapped-functions
   pvm_env_push_frame
   pvm_env_toplevel
   pvm_make_string
+  pvm_make_string_nodup
   pvm_make_array
   pvm_make_struct
   pvm_make_offset
@@ -179,7 +180,6 @@ early-c
 #   include <assert.h>
 #   include <time.h>
 #   include <errno.h>
-#   include "xalloc.h"
 #   include "timespec.h"
 #   include "intprops.h"
 
@@ -4213,14 +4213,13 @@ instruction muls ()
   code
     pvm_val str = JITTER_UNDER_TOP_STACK ();
     size_t i, num = PVM_VAL_ULONG (JITTER_TOP_STACK ());
-    char *res = xmalloc (strlen (PVM_VAL_STR (str)) * num + 1);
+    char *res = pvm_alloc (strlen (PVM_VAL_STR (str)) * num + 1);
 
     *res = '\0';
     for (i = 0; i < num; ++i)
       strcat (res, PVM_VAL_STR (str));
 
-    JITTER_PUSH_STACK (pvm_make_string (res));
-    free (res);
+    JITTER_PUSH_STACK (pvm_make_string_nodup (res));
   end
 end
 

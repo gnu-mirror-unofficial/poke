@@ -214,6 +214,10 @@ pvm_val pvm_make_ulong (uint64_t value, int size);
 
 pvm_val pvm_make_string (const char *value);
 
+/* Make a string PVM value without STRDUPing the VALUE.  */
+
+pvm_val pvm_make_string_nodup (char *value);
+
 /* Make an offset PVM value.
 
    MAGNITUDE is a PVM integral value.
