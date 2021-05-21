@@ -1,5 +1,11 @@
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-rt.pk (_pkl_unit_name): Fix typo. s/gigi/gibi/
+	(_pkl_unit_gibibit): Likewise.
+	(_pkl_unit_gibibyte): Likewise.
+
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (sconc): Replace `pvm_make_string` with
 	`pvm_make_string_nodup`.
 	(ctos): Likewise.

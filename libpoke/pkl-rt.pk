@@ -269,8 +269,8 @@ var _pkl_unit_kibibit = _pkl_unit_bit * 1024;
 var _pkl_unit_kibibyte = _pkl_unit_byte * 1024;
 var _pkl_unit_mebibit = _pkl_unit_kibibit * 1024;
 var _pkl_unit_mebibyte = _pkl_unit_kibibyte * 1024;
-var _pkl_unit_gigibit = _pkl_unit_mebibit * 1024;
-var _pkl_unit_gigibyte = _pkl_unit_mebibyte * 1024;
+var _pkl_unit_gibibit = _pkl_unit_mebibit * 1024;
+var _pkl_unit_gibibyte = _pkl_unit_mebibyte * 1024;
 
 fun _pkl_unit_name = (uint<64> bits) string:
  {
@@ -300,9 +300,9 @@ fun _pkl_unit_name = (uint<64> bits) string:
        return "Mib";
     if (bits == _pkl_unit_mebibyte)
        return "MiB";
-    if (bits == _pkl_unit_gigibit)
+    if (bits == _pkl_unit_gibibit)
        return "Gib";
-    if (bits == _pkl_unit_gigibyte)
+    if (bits == _pkl_unit_gibibyte)
        return "GiB";
 
     return "";
