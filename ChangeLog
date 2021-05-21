@@ -1,3 +1,9 @@
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* doc/learn-poke-in-y-minutes.pk (Struct Field Initializers): Update
+	the example according to the recent change in behavior of field
+	initializers.
+
 2021-05-21  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* AUTHORS: Change my email address to gnu account.

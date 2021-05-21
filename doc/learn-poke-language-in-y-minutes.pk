@@ -455,6 +455,27 @@ var packet_size     = 1#Packet / 1#B;    /* 10 */
 var two_packet_size = 2 #Packet/#B;      /* 20 */
 
 
+/* Struct Field Initializers
+ *
+ * Initialize the field to an expression.
+ */
+type HeaderWithInit =
+  struct
+  {
+    uint<8> magic = 100UB;
+    uint<8> version = 3;
+
+    offset<uint<32>,B> data_length;
+    uint<8>[data_length] data;
+  };
+
+var hdrauto = HeaderWithInit {};
+/* hdrauto.magic == 100UB && hdrauto.version == 3UB */
+
+/* It is possible to change the value of initialized fields: */
+hdrauto.magic = 200UB;
+
+
 /* Struct Field Constraints
  *
  * It is common for struct fields to be constrained to their values to
@@ -485,27 +506,10 @@ var hdrmagic =
     magic = 100UB,
   };
 
-/* There is another way to specify the constraints: field initializers  */
-
-/* Struct Field Initializers
- *
- * Field initializer has two roles:
- *   - Introduce constraint of the form: `field == initializer_expression`
- *   - Initialize the field with initializer expression
+/* The following statement will raise an exception, because it violates
+ * the field constraint.
  */
-type HeaderWithInit =
-  struct
-  {
-    uint<8> magic = 100UB;
-    uint<8> version = 3;
-
-    offset<uint<32>,B> data_length;
-    uint<8>[data_length] data;
-  };
-
-/* With field initializers, this is possible: */
-var hdrauto = HeaderWithInit {};
-/* hdrauto.magic == 100UB && hdrauto.version == 3UB */
+/* hdrmagic.magic = 200UB; */
 
 /* It is also possible to specify both a constraint and an initializer in
  * the same field.
@@ -518,6 +522,7 @@ type HeaderMagicVersion =
   };
 var hdrmagver = HeaderMagicVersion {};
 /* hdrmagver.magic == 0x55UB && hdrmagver.version == 0x2UB */
+hdrmagver.magic = 0xaaUB;
 
 
 /* Integral Structs
