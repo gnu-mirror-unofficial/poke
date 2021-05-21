@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var s = "Earth";
+
+/* { dg-command {__pkl_unsafe_string_set (s, s'length, "")} } */
+/* { dg-command {s} } */
+/* { dg-output "Earth" } */

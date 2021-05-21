@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command {var s = "Hello, Jose!"} } */
+/* { dg-command {__pkl_unsafe_string_set (s, 7, "Luca")} } */
+/* { dg-command {s} } */
+/* { dg-output "Hello, Luca!" } */

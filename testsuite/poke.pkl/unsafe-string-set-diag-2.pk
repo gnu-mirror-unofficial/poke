@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+var s = "Mars";
+
+__pkl_unsafe_string_set (s, 0, "Earth");  /* { dg-output "unhandled out of bounds exception" } */

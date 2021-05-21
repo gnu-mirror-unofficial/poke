@@ -303,6 +303,8 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_OPPRINT; }
 "__PKL_BUILTIN_VM_SET_OPPRINT__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_VM_SET_OPPRINT; }
+"__PKL_BUILTIN_UNSAFE_STRING_SET__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_UNSAFE_STRING_SET; }
 
 "uint<"         { return UINTCONSTR; }
 "int<"          { return INTCONSTR; }

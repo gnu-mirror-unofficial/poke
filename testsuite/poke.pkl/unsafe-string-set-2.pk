@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+/* { dg-command {var s = "Poke"} } */
+/* { dg-command {__pkl_unsafe_string_set (s, 0, "")} } */
+/* { dg-command {s} } */
+/* { dg-output {"Poke"} } */
+/* { dg-command {__pkl_unsafe_string_set (s, 1, "")} } */
+/* { dg-command {s} } */
+/* { dg-output {\n"Poke"} } */

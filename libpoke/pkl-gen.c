@@ -845,6 +845,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM);
           break;
+        case PKL_AST_BUILTIN_UNSAFE_STRING_SET:
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 2);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_STRSET);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          break;
         default:
           assert (0);
         }

@@ -112,6 +112,7 @@ wrapped-functions
   srandom
   secure_getenv
   gettime
+  memcpy
 end
 
 #wrapped-globals
@@ -4154,6 +4155,41 @@ instruction strref () # ( STR ULONG -- STR ULONG VAL )
 
     JITTER_PUSH_STACK (PVM_MAKE_UINT (PVM_VAL_STR (string)[PVM_VAL_ULONG (index)],
                                       8));
+  end
+end
+
+# Instruction: strset
+#
+# Given a string STR, an index FROM and a string NEWSTR, copy the content
+# of NEWSTR to STR at index FROM.
+#
+# Index is zero-based.
+#
+# If FROM >= the size of the string, or if FROM+len(NEWSTR) > the size
+# of the string, raise the PVM_E_OUT_OF_BOUNDS exception.
+#
+# Stack: ( STR ULONG NEWSTR -- STR )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction strset ()
+  branching # because of PVM_RAISE_DIRECT
+  code
+    pvm_val newstr = JITTER_TOP_STACK ();
+    uint64_t from = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
+    pvm_val str;
+    size_t slen, nslen = strlen (PVM_VAL_STR (newstr));
+
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    str = JITTER_TOP_STACK ();
+    slen = strlen (PVM_VAL_STR (str));
+
+    if (from > slen || from + nslen > slen)
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
+
+    /* Using `strncpy` will emit a false compiler warning
+       (-Wstringop-overflow=).  */
+    memcpy (PVM_VAL_STR (str) + from, PVM_VAL_STR (newstr), nslen);
   end
 end
 

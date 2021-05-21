@@ -1938,6 +1938,13 @@ EXTRA_DIST = \
   poke.pkl/units-diag-1.pk \
   poke.pkl/units-diag-2.pk \
   poke.pkl/units-diag-3.pk \
+  poke.pkl/unsafe-string-set-1.pk \
+  poke.pkl/unsafe-string-set-2.pk \
+  poke.pkl/unsafe-string-set-3.pk \
+  poke.pkl/unsafe-string-set-4.pk \
+  poke.pkl/unsafe-string-set-5.pk \
+  poke.pkl/unsafe-string-set-diag-1.pk \
+  poke.pkl/unsafe-string-set-diag-2.pk \
   poke.pkl/uu-file-1.pk \
   poke.pkl/uu-line-1.pk \
   poke.pkl/vm-oacutoff-1.pk \

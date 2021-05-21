@@ -1,0 +1,3 @@
+/* { dg-do run } */
+
+/* { dg-command {__pkl_unsafe_string_set ("Jose", 0, "Luca")} } */

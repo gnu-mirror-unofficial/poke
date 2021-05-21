@@ -58,6 +58,9 @@ fun vm_set_omaps = (int<32> omaps) void: __PKL_BUILTIN_VM_SET_OMAPS__;
 fun vm_omode = int<32>: __PKL_BUILTIN_VM_OMODE__;
 fun vm_set_omode = (int<32> omode) void: __PKL_BUILTIN_VM_SET_OMODE__;
 
+fun __pkl_unsafe_string_set = (string dst, uint<64> index, string str) void:
+  __PKL_BUILTIN_UNSAFE_STRING_SET__;
+
 var ENDIAN_LITTLE = 0;
 var ENDIAN_BIG = 1;
 

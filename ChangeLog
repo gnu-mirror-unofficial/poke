@@ -1,5 +1,25 @@
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.jitter (strset): New instruction.
+	(wrapped-functions): Add `memcpy`.
+	* libpoke/pkl-insn.def (STRSET): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Emit code.
+	* libpoke/pkl-lex.l: Recognize `BUILTIN_UNSAFE_STRING_SET`.
+	* libpoke/pkl-tab.y: Define token `BUILTIN_UNSAFE_STRING_SET`.
+	(comp_stmt): New rule.
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_UNSAFE_STRING_SET): Define.
+	* libpoke/pkl-rt.pk (__pkl_unsafe_string_set): New function.
+	* testsuite/poke.pkl/unsafe-string-set-1.pk: New test.
+	* testsuite/poke.pkl/unsafe-string-set-2.pk: Likewise.
+	* testsuite/poke.pkl/unsafe-string-set-3.pk: Likewise.
+	* testsuite/poke.pkl/unsafe-string-set-4.pk: Likewise.
+	* testsuite/poke.pkl/unsafe-string-set-5.pk: Likewise.
+	* testsuite/poke.pkl/unsafe-string-set-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/unsafe-string-set-diag-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (return): s/jitter_int/jitter_uint/.
 	(popf): s/JITTER_ARGN0/JITTER_ARGU0/.
 	(sconc): Remove useless `#undef F`.
