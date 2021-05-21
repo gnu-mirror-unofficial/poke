@@ -1,5 +1,12 @@
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.jitter (sconc): Replace `pvm_make_string` with
+	`pvm_make_string_nodup`.
+	(ctos): Likewise.
+	(substr): Likewise.
+
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.h (pvm_make_string_nodup): New function declaration.
 	* libpoke/pvm-val.c (pvm_make_string_nodup): New function definition.
 	* libpoke/pvm.jitter: Do not include `xalloc.h`.

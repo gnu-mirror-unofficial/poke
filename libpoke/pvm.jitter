@@ -3246,7 +3246,7 @@ instruction sconc ()
      char *s = pvm_alloc (strlen (sa) + strlen (sb) + 1);
      strcpy (s, sa);
      strcat (s, sb);
-     res = pvm_make_string (s);
+     res = pvm_make_string_nodup (s);
 
      JITTER_PUSH_STACK (res);
 #undef F
@@ -3887,7 +3887,7 @@ instruction ctos ()
     str[0] = c;
     str[1] = '\0';
 
-    JITTER_PUSH_STACK (pvm_make_string (str));
+    JITTER_PUSH_STACK (pvm_make_string_nodup (str));
   end
 end
 
@@ -4195,7 +4195,7 @@ instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
              slen);
     s[slen] = '\0';
 
-    JITTER_PUSH_STACK (pvm_make_string (s));
+    JITTER_PUSH_STACK (pvm_make_string_nodup (s));
   end
 end
 
