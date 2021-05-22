@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var s = "A\x01\x02B";
+
+/* { dg-command { printf "%v\n", s } } */
+/* { dg-output {"A\\x01\\x02B"} } */

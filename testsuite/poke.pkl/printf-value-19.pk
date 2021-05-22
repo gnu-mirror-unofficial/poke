@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var s = "A\x20B";
+
+/* { dg-command { printf "%v\n", s } } */
+/* { dg-output {"A B"} } */

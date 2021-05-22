@@ -1529,6 +1529,10 @@ EXTRA_DIST = \
   poke.pkl/printf-value-15.pk \
   poke.pkl/printf-value-16.pk \
   poke.pkl/printf-value-17.pk \
+  poke.pkl/printf-value-18.pk \
+  poke.pkl/printf-value-19.pk \
+  poke.pkl/printf-value-20.pk \
+  poke.pkl/printf-value-21.pk \
   poke.pkl/promo-array-arg-1.pk \
   poke.pkl/promo-array-arg-2.pk \
   poke.pkl/promo-array-arg-3.pk \

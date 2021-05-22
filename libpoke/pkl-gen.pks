@@ -1893,6 +1893,7 @@
         begsc
         push "\""
         prints
+        .call _pkl_escape_string; VAL
         prints
         push "\""
         prints

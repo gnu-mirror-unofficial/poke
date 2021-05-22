@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var s = "\x18\x7f";
+
+/* { dg-command { printf "%v\n", s } } */
+/* { dg-output {"\\x18\\x7f"} } */

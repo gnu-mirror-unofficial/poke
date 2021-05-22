@@ -1,5 +1,17 @@
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-rt.pk (_pkl_escape_string): New function.
+	* libpoke/pkl-gen.pks (string_printer): Use `_pkl_escape_string` to
+	print valid string literals (replace non-printable characters with
+	escape sequence).
+	* testsuite/poke.pkl/printf-value-18.pk: New test.
+	* testsuite/poke.pkl/printf-value-19.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-20.pk: Likewise.
+	* testsuite/poke.pkl/printf-value-21.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (strset): New instruction.
 	(wrapped-functions): Add `memcpy`.
 	* libpoke/pkl-insn.def (STRSET): Likewise.
