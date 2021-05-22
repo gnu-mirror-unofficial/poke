@@ -1343,7 +1343,7 @@
         ;; with its size.
    .c if (PKL_AST_TYPE_S_PINNED_P (@type_struct))
    .c {
-        push uint<64>0         ; ... ENAME EVAL EBOFF
+        push ulong<64>0        ; ... ENAME EVAL EBOFF
         dup                    ; ... ENAME EVAL EBOFF NEBOFF
    .c }
    .c else

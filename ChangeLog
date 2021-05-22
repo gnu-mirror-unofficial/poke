@@ -1,3 +1,11 @@
+2021-05-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_constructor): s/uint<64>/ulong<64>.
+	* libpoke/pvm-val.c (pvm_make_int): Add assertion for `size` argument.
+	(pvm_make_uint): Likewise.
+	(pvm_make_long): Likewise.
+	(pvm_make_ulong): Likewise.
+
 2021-05-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-rt.pk (_pkl_escape_string): New function.

@@ -43,24 +43,28 @@ static pvm_val any_type;
 pvm_val
 pvm_make_int (int32_t value, int size)
 {
+  assert (0 < size && size <= 32);
   return PVM_MAKE_INT (value, size);
 }
 
 pvm_val
 pvm_make_uint (uint32_t value, int size)
 {
+  assert (0 < size && size <= 32);
   return PVM_MAKE_UINT (value, size);
 }
 
 pvm_val
 pvm_make_long (int64_t value, int size)
 {
+  assert (0 < size && size <= 64);
   return PVM_MAKE_LONG_ULONG (value, size, PVM_VAL_TAG_LONG);
 }
 
 pvm_val
 pvm_make_ulong (uint64_t value, int size)
 {
+  assert (0 < size && size <= 64);
   return PVM_MAKE_LONG_ULONG (value, size, PVM_VAL_TAG_ULONG);
 }
 
