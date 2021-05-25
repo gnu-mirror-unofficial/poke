@@ -113,6 +113,10 @@ wrapped-functions
   secure_getenv
   gettime
   memcpy
+  strlen
+  strcmp
+  strcpy
+  strncpy
 end
 
 #wrapped-globals

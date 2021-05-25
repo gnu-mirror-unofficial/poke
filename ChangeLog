@@ -1,3 +1,7 @@
+2021-05-26  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pvm.jitter (wrapped-functions): Add std string functions.
+
 2021-05-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-gen.pks (struct_constructor): s/uint<64>/ulong<64>.
