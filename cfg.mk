@@ -63,10 +63,12 @@ update-copyright-env = UPDATE_COPYRIGHT_HOLDER="Jose E. Marchesi"
 
 gendocs_options_ = -I $(abs_builddir)/doc/
 
-# Override the following line in maint.mk:
+# Override the following two (non-consecutive) lines in maint.mk:
+#   gl_public_submodule_commit ?= public-submodule-commit
 #   submodule-checks ?= no-submodule-changes public-submodule-commit
 # That default prevents us from using commits from non-main branches in
 # submodules; this is notably a problem with Jitter, which keeps specific
 # public branches for poke releases; but according to the test in maint.mk
 # those branches do not count as "public".
 submodule-checks = no-submodule-changes
+gl_public_submodule_commit =

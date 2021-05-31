@@ -1,5 +1,10 @@
 2021-05-31  Luca Saiu  <positron@gnu.org>
 
+	* cfg.mk (gl_public_submodule_commit): Define as empty.  Update
+	comment.
+
+2021-05-31  Luca Saiu  <positron@gnu.org>
+
 	* cfg.mk (submodule-checks): Override setting in maint.mk, fixing
 	a distcheck failure.
 
