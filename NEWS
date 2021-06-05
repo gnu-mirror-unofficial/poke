@@ -7,6 +7,24 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.3 (5 June 2021)
+* User visible changes
+  - The `dump' command now remembers and re-uses the last used offset
+    per IO space.  Before it was a global offset used for all IO
+    spaces, which was very confusing.
+  - The text accompanying constraint violation exceptions now indicate
+    the type and the field whose constraint failed.
+  - libpoke.h is now compatible with C++.
+  - printf "%v" now gives valid literals for strings in all cases,
+    even if they contain non-printable characters.  It uses
+    hexadecimal escape sequences \xNN in that case.
+* Bug fixes
+  - We were overflowing the Boehm GC roots capacity under certain
+    circumstances.  This has been fixed in this release.
+  - Avoid leaking slots in the exceptions stack.
+  - Fix struct printers to skip absent fields.
+  - Other bug fixes.
+
  Version 1.2 (18 April 2021)
 * User visible changes
   - The .file dot-command now supports a /c flag for creating new,
