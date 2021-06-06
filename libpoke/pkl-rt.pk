@@ -251,6 +251,74 @@ fun _pkl_base_prefix = (int<32> base) string:
    return "";
  }
 
+/* Concatenate three strings.  */
+
+fun _pkl_strcat3 = (string a, string b, string c) string:
+  {
+    var la = a'length,
+        lab = la + b'length,
+        labc = lab + c'length,
+        s = "?" * labc;
+
+    __pkl_unsafe_string_set (s, 0, a);
+    __pkl_unsafe_string_set (s, la, b);
+    __pkl_unsafe_string_set (s, lab, c);
+    return s;
+  }
+
+/* Given a DEPTH, indentation step ISTEP and OMODE, returns a string for
+   indentation.  */
+
+fun _pkl_indentation = (int<32> depth, int<32> istep, int<32> omode) string:
+  {
+    if (omode != VM_OMODE_TREE)
+      return "";
+
+    var s = " " * (1 + istep * depth);
+
+    __pkl_unsafe_string_set (s, 0, "\n");
+    return s;
+  }
+
+/* Return the suffix corresponding to the integral type with signedness
+   SIGNED_P and size SIZE.  */
+
+fun _pkl_format_int_suffix = (int<32> signed_p, uint<64> size) string:
+  {
+    return (signed_p ? "" : "U") +
+           (size == 4 ? "N" :
+            size == 8 ? "B" :
+            size == 16 ? "H" :
+            size == 64 ? "L" : "");
+  }
+
+/* Reduces an array of string to a single string by concatenting the
+   NELEM elements of ARR starting from specified INDEX.  */
+
+fun _pkl_reduce_string_array = (string[] arr,
+                                uint<64> index, uint<64> nelem) string:
+  {
+    var slen = 0UL,
+        first = index,
+        last = index + nelem;
+
+    while (first < last)
+      {
+        slen += arr[first]'length;
+        ++first;
+      }
+
+    var s = " " * slen;  /* Allocate the final string once.  */
+
+    first = index;
+    for (var cursor = 0UL; first < last; ++first)
+      {
+        __pkl_unsafe_string_set (s, cursor, arr[first]);
+        cursor += arr[first]'length;
+      }
+    return s;
+  }
+
 /* Return a new string in which all the non-printable characters are replaced
    with a escape sequence (\xXX).  */
 

@@ -107,6 +107,34 @@ pk_print_binary (void (*puts_fn) (const char *str),
     puts_fn (sign ? "N" : "UN");
 }
 
+int
+pk_format_binary (char* out, size_t outlen,
+                  uint64_t val, int size, int sign)
+{
+  char b[64 /* digits */ + 2 /* suffix */ + 1 /* nul */];
+
+  for (int z = 0; z < size; z++) {
+    b[size-1-z] = ((val >> z) & 0x1) + '0';
+  }
+  b[size] = '\0';
+
+  if (size == 64)
+    strcat (b, sign ? "L" : "UL");
+  else if (size == 16)
+    strcat (b, sign ? "H" : "UH");
+  else if (size == 8)
+    strcat (b, sign ? "B" : "UB");
+  else if (size == 4)
+    strcat (b, sign ? "N" : "UN");
+
+  if (strlen (b) < outlen)
+    {
+      strcpy (out, b);
+      return 0;  /* success */
+    }
+  return 1;  /* fail */
+}
+
 /* Concatenate 2+ strings.
  * Last argument must be NULL.
  * Returns the malloc'ed concatenated string or NULL when out of memory.

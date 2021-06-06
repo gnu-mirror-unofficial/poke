@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {format("Hello, %s!", "World")} } */
+/* { dg-output {"Hello, World!"} } */

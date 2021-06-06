@@ -27,6 +27,7 @@
 #include "pkl-pass.h"
 #include "pkl-asm.h"
 #include "pvm.h"
+#include "pk-utils.h"
 
 /* The following macros are used in the rules below, to reduce
    verbosity.  */
@@ -1409,6 +1410,192 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_exp_stmt)
 PKL_PHASE_END_HANDLER
 
 /*
+ * FORMAT
+ * | ARG
+ * | ...
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_format)
+{
+  pkl_ast_node format = PKL_PASS_NODE;
+  pkl_ast_node format_args = PKL_AST_FORMAT_ARGS (format);
+  pkl_ast_node arg;
+  char *prefix = PKL_AST_FORMAT_PREFIX (format);
+  int nstr = 0;
+  /* XXX this hard limit should go away.
+     See pkl-tran.c:pkl_trans1_ps_format.  */
+#define MAX_CLASS_TAGS 32
+  int nclasses = 0;
+  struct
+  {
+    char *name;
+    int index;
+  } classes[MAX_CLASS_TAGS];
+
+  /* Save all the intermediate strings in an array of strings and at the
+     end, concatenate all of elements into a single string on the stack.  */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string_type ());
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYA);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                pvm_make_ulong (0, 64)); /* FIXME use better hint */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA);
+
+  if (prefix)
+    {
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (0, 64));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (prefix));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);
+      ++nstr;
+    }
+
+  for (arg = format_args; arg; arg = PKL_AST_CHAIN (arg))
+    {
+      pkl_ast_node exp = PKL_AST_FORMAT_ARG_EXP (arg);
+      char *begin_sc = PKL_AST_FORMAT_ARG_BEGIN_SC (arg);
+      char *end_sc = PKL_AST_FORMAT_ARG_END_SC (arg);
+      char *suffix = PKL_AST_FORMAT_ARG_SUFFIX (arg);
+      int base = PKL_AST_FORMAT_ARG_BASE (arg);
+      pkl_ast_node exp_type;
+      int arg_omode;
+      int arg_odepth;
+
+      if (begin_sc)
+        {
+          assert (nclasses < MAX_CLASS_TAGS);
+          classes[nclasses].name = begin_sc;
+          classes[nclasses].index = nstr;
+          ++nclasses;
+        }
+
+      if (end_sc)
+        {
+          char* cname;
+          int cindex, n;
+          pvm_val idx;
+
+          assert (nclasses > 0);
+          --nclasses;
+          cname = classes[nclasses].name;
+          cindex = classes[nclasses].index;
+
+          assert (STREQ (cname, end_sc) == 0);
+
+          n = nstr - cindex;
+          if (n > 0)
+            {
+              nstr = cindex + 1;
+              idx = pvm_make_ulong (cindex, 64);
+
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);       /* ARR ARR */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, idx); /* ARR ARR IDX */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                            pvm_make_ulong (n, 64));         /* ARR ARR IDX LEN */
+              pkl_asm_call (PKL_GEN_ASM, "_pkl_reduce_string_array"); /* ARR STR */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* STR ARR */
+
+              for (; n > 1; --n)
+                {
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, idx);
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREM);
+                }
+
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, idx); /* STR ARR IDX */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);       /* ARR IDX STR */
+
+              /* Set the string style property.  */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL);
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                            pvm_make_ulong (0, 64));
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* STR 0UL LEN */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                            pvm_make_string (cname)); /* STR 0UL LEN CLASS */
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SPROPS); /* ARR STR */
+
+              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ASET); /* ARR */
+            }
+        }
+
+      if (!exp)
+        goto fmt_suffix;
+
+      /* Generate code to put the value on the stack.  */
+      PKL_PASS_SUBPASS (exp);
+
+      /* Everything except %v.  */
+      if (!PKL_AST_FORMAT_ARG_VALUE_P (arg))
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                        base ? pvm_make_int (base, 32) : PVM_NULL);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FORMAT, PKL_AST_TYPE (exp));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (nstr++, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);
+          goto fmt_suffix;
+        }
+
+      /* Generate code to format the literal value (%v).  */
+      exp_type = PKL_AST_TYPE (exp);
+      arg_omode = PKL_AST_FORMAT_ARG_FORMAT_MODE (arg);
+      arg_odepth = PKL_AST_FORMAT_ARG_FORMAT_DEPTH (arg);
+
+      /* Set the argument's own omode and odepth, saving
+         the VM's own.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOM); /* OMODE */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_int (arg_omode, 32)); /* OMODE NOMODE */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM);  /* OMODE */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOD); /* OMODE ODEPTH */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_int (arg_odepth, 32)); /* OMODE ODEPTH NODEPTH */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD);   /* OMODE ODEPTH */
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* OMODE ODEPTH EXP */
+
+      /* Format the value.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_int (0, 32)); /* OMODE ODEPTH EXP DEPTH */
+      PKL_GEN_PUSH_CONTEXT;
+      PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_FORMATER);
+      PKL_PASS_SUBPASS (exp_type); /* OMODE ODEPTH STR */
+      PKL_GEN_POP_CONTEXT;
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT); /* STR OMODE ODEPTH */
+
+      /* Restore the current omode and odepth in the VM.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD); /* ARR STR OMODE */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM); /* ARR STR */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_ulong (nstr++, 64)); /* ARR STR IDX */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);  /* ARR IDX STR */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* ARR */
+
+    fmt_suffix:
+      if (suffix)
+        {
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (nstr++, 64));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (suffix));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);
+        }
+    }
+
+  if (nstr)
+    {
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (0, 64));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (nstr, 64));
+      pkl_asm_call (PKL_GEN_ASM, "_pkl_reduce_string_array");
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+    }
+
+  PKL_PASS_BREAK;
+
+#undef MAX_CLASS_TAGS
+}
+PKL_PHASE_END_HANDLER
+
+/*
  * PRINT_STMT
  * | ARG
  * | ...
@@ -1417,13 +1604,19 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
 {
   pkl_ast_node print_stmt = PKL_PASS_NODE;
-  pkl_ast_node print_stmt_args = PKL_AST_PRINT_STMT_ARGS (print_stmt);
-  pkl_ast_node print_stmt_fmt = PKL_AST_PRINT_STMT_FMT (print_stmt);
+  pkl_ast_node print_stmt_str_exp = PKL_AST_PRINT_STMT_STR_EXP (print_stmt);
 
-  if (print_stmt_fmt)
+  if (print_stmt_str_exp) /* print statement */
     {
+      PKL_PASS_SUBPASS (print_stmt_str_exp);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS);
+    }
+  else /* printf statement */
+    {
+      pkl_ast_node print_stmt_fmt = PKL_AST_PRINT_STMT_FORMAT (print_stmt);
+      pkl_ast_node print_stmt_args = PKL_AST_FORMAT_ARGS (print_stmt_fmt);
       pkl_ast_node arg;
-      char *prefix = PKL_AST_PRINT_STMT_PREFIX (print_stmt);
+      char *prefix = PKL_AST_FORMAT_PREFIX (print_stmt_fmt);
       int nexp;
 
       /* First, compute the arguments and push them to the stack.  */
@@ -1432,7 +1625,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
            arg;
            arg = PKL_AST_CHAIN (arg))
         {
-          pkl_ast_node exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
+          pkl_ast_node exp = PKL_AST_FORMAT_ARG_EXP (arg);
 
           if (exp)
             {
@@ -1456,11 +1649,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
         {
           /* Handle the argument.  */
 
-          pkl_ast_node exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
-          char *begin_sc = PKL_AST_PRINT_STMT_ARG_BEGIN_SC (arg);
-          char *end_sc = PKL_AST_PRINT_STMT_ARG_END_SC (arg);
-          char *suffix = PKL_AST_PRINT_STMT_ARG_SUFFIX (arg);
-          int base = PKL_AST_PRINT_STMT_ARG_BASE (arg);
+          pkl_ast_node exp = PKL_AST_FORMAT_ARG_EXP (arg);
+          char *begin_sc = PKL_AST_FORMAT_ARG_BEGIN_SC (arg);
+          char *end_sc = PKL_AST_FORMAT_ARG_END_SC (arg);
+          char *suffix = PKL_AST_FORMAT_ARG_SUFFIX (arg);
+          int base = PKL_AST_FORMAT_ARG_BASE (arg);
 
           if (begin_sc)
             {
@@ -1478,12 +1671,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
 
           if (exp)
             {
-              if (PKL_AST_PRINT_STMT_ARG_VALUE_P (arg))
+              if (PKL_AST_FORMAT_ARG_VALUE_P (arg))
                 {
                   /* Generate code to print the value.  */
                   pkl_ast_node exp_type = PKL_AST_TYPE (exp);
-                  int arg_omode = PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg);
-                  int arg_odepth = PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg);
+                  int arg_omode = PKL_AST_FORMAT_ARG_FORMAT_MODE (arg);
+                  int arg_odepth = PKL_AST_FORMAT_ARG_FORMAT_DEPTH (arg);
 
                   /* Set the argument's own omode and odepth, saving
                      the VM's own.  */
@@ -1525,11 +1718,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_print_stmt)
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS);
             }
         }
-    }
-  else
-    {
-      PKL_PASS_SUBPASS (print_stmt_args);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS);
     }
 
   PKL_PASS_BREAK;
@@ -1983,6 +2171,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_offset)
     {
                                                 /* VAL DEPTH */
       RAS_MACRO_OFFSET_PRINTER (PKL_PASS_NODE); /* _ */
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_FORMATER))
+    {
+                                                /* VAL DEPTH */
+      RAS_MACRO_OFFSET_FORMATER (PKL_PASS_NODE); /* _ */
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
@@ -2735,6 +2929,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
                                                   /* VAL DEPTH */
       RAS_MACRO_INTEGRAL_PRINTER (PKL_PASS_NODE); /* _ */
     }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_FORMATER))
+    {
+                                                  /* VAL DEPTH */
+      RAS_MACRO_INTEGRAL_FORMATER (PKL_PASS_NODE); /* _ */
+    }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     {
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
@@ -2847,6 +3046,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                     pvm_make_string ("#<closure>"));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS);
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_FORMATER))
+    {
+      /* Stack: VAL DEPTH  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* DEPTH is not used.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL is not used.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    pvm_make_string ("#<closure>"));
       PKL_PASS_BREAK;
     }
 }
@@ -3091,6 +3299,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
       PKL_PASS_BREAK;
     }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_FORMATER))
+    {
+      /* Stack: ARR DEPTH */
+
+      pkl_ast_node array_type = PKL_PASS_NODE;
+      pvm_val formater_closure = PKL_AST_TYPE_A_FORMATER (array_type);
+
+      /* If the array type doesn't have a formater, compile one.  */
+      if (formater_closure == PVM_NULL)
+        {
+          RAS_FUNCTION_ARRAY_FORMATER (formater_closure, array_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, formater_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+          PKL_AST_TYPE_A_FORMATER (array_type) = formater_closure;
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, formater_closure);
+
+      /* Invoke the formater.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
+      PKL_PASS_BREAK;
+    }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_CONSTRUCTOR))
     {
       /* Stack: null */
@@ -3246,6 +3476,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
     {
       /* Stack: VAL DEPTH */
       RAS_MACRO_STRING_PRINTER; /* _ */
+    }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_FORMATER))
+    {
+      /* Stack: VAL DEPTH */
+      RAS_MACRO_STRING_FORMATER; /* _ */
     }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYS);
@@ -3489,6 +3724,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
 
       /* Invoke the printer.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_FORMATER))
+    {
+      /* Stack: SCT DEPTH */
+
+      pkl_ast_node struct_type = PKL_PASS_NODE;
+      pvm_val formater_closure = PKL_AST_TYPE_S_FORMATER (struct_type);
+
+      /* If the struct type doesn't have a formater, compile one.  */
+      if (formater_closure == PVM_NULL)
+        {
+          RAS_FUNCTION_STRUCT_FORMATER (formater_closure, struct_type);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, formater_closure);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+          PKL_AST_TYPE_S_FORMATER (struct_type) = formater_closure;
+        }
+      else
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, formater_closure);
+
+      /* Invoke the formater.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
       PKL_PASS_BREAK;
     }
@@ -4265,6 +4522,7 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PR_HANDLER (PKL_AST_RETURN_STMT, pkl_gen_pr_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_gen_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_EXP_STMT, pkl_gen_ps_exp_stmt),
+   PKL_PHASE_PR_HANDLER (PKL_AST_FORMAT, pkl_gen_pr_format),
    PKL_PHASE_PR_HANDLER (PKL_AST_PRINT_STMT, pkl_gen_pr_print_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_RAISE_STMT, pkl_gen_ps_raise_stmt),
    PKL_PHASE_PR_HANDLER (PKL_AST_TRY_CATCH_STMT, pkl_gen_pr_try_catch_stmt),

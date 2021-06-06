@@ -1,0 +1,11 @@
+/* { dg-do run } */
+
+type S = struct
+  {
+    Exception ex;
+  };
+
+/* { dg-command {vm_set_obase (10)} } */
+/* { dg-command {vm_set_omaps (1)} } */
+/* { dg-command {format("%1v", S{})} } */
+/* { dg-output {S {ex=Exception {...} @ 0x0000000000000000#b @ 0x0000000000000000#b} @ 0x0000000000000000#b} } */

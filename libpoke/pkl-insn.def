@@ -60,9 +60,12 @@ PKL_DEF_INSN(PKL_INSN_PUSH,"v","push")
 PKL_DEF_INSN(PKL_INSN_PUSHR,"r","pushr")
 PKL_DEF_INSN(PKL_INSN_POPR,"r","popr")
 PKL_DEF_INSN(PKL_INSN_DROP,"","drop")
+PKL_DEF_INSN(PKL_INSN_DROP2,"","drop2")
+PKL_DEF_INSN(PKL_INSN_DROP3,"","drop3")
 PKL_DEF_INSN(PKL_INSN_SWAP,"","swap")
 PKL_DEF_INSN(PKL_INSN_NIP,"","nip")
 PKL_DEF_INSN(PKL_INSN_NIP2,"","nip2")
+PKL_DEF_INSN(PKL_INSN_NIP3,"","nip3")
 PKL_DEF_INSN(PKL_INSN_DUP,"","dup")
 PKL_DEF_INSN(PKL_INSN_OVER,"","over")
 PKL_DEF_INSN(PKL_INSN_ROT,"","rot")
@@ -241,6 +244,13 @@ PKL_DEF_INSN(PKL_INSN_MULS,"","muls")
 PKL_DEF_INSN(PKL_INSN_SPROPS,"","sprops")
 PKL_DEF_INSN(PKL_INSN_SPROPH,"","sproph")
 PKL_DEF_INSN(PKL_INSN_SPROPC,"","spropc")
+
+/* Format instructions. */
+
+PKL_DEF_INSN(PKL_INSN_FORMATI,"n","formati")
+PKL_DEF_INSN(PKL_INSN_FORMATIU,"n","formatiu")
+PKL_DEF_INSN(PKL_INSN_FORMATL,"n","formatl")
+PKL_DEF_INSN(PKL_INSN_FORMATLU,"n","formatlu")
 
 /* Offset instructions.  */
 
@@ -547,6 +557,10 @@ PKL_DEF_INSN(PKL_INSN_REV,"n","rev")
 /* Printing macro-instructions.  */
 
 PKL_DEF_INSN(PKL_INSN_PRINT,"a","print")
+
+/* Format macro-instructions.  */
+
+PKL_DEF_INSN(PKL_INSN_FORMAT,"a","format")
 
 /*
 Local variables:

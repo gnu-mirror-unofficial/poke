@@ -57,6 +57,8 @@ enum pkl_ast_code
   PKL_AST_FUNCALL_ARG,
   PKL_AST_VAR,
   PKL_AST_LAMBDA,
+  PKL_AST_FORMAT,
+  PKL_AST_FORMAT_ARG,
   PKL_AST_INCRDECR,
   PKL_AST_GCD,
   PKL_AST_LAST_EXP = PKL_AST_GCD,
@@ -88,7 +90,6 @@ enum pkl_ast_code
   PKL_AST_CONTINUE_STMT,
   PKL_AST_RAISE_STMT,
   PKL_AST_LAST_STMT = PKL_AST_RAISE_STMT,
-  PKL_AST_PRINT_STMT_ARG,
   PKL_AST_LAST
 };
 
@@ -850,8 +851,8 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    number of elements, then BOUND is an expression that must evaluate
    to an integer.  If the array type is bounded by size, then BOUND is
    an expression that must evaluate to an offset.  If the array type
-   is unbounded, then BOUND is NULL.  MAPPER, WRITER, PRINTER,
-   CONSTRUCTOR and BOUNDCLS are used to hold closures, or
+   is unbounded, then BOUND is NULL.  MAPPER, WRITER, FORMATER,
+   PRINTER, CONSTRUCTOR and BOUNDCLS are used to hold closures, or
    PVM_NULL. The field LEX_CORRECTED is used by the transl phase, to
    keep record of array types that have been lexically corrected; this
    is to avoid processing the same type more than once.
@@ -861,9 +862,9 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    declarations.  ELEMS is a chain of elements, which can be
    PKL_AST_STRUCT_TYPE_FIELD or PKL_AST_DECL nodes, potentially mixed.
    PINNED_P is 1 if the struct is pinned, 0 otherwise.  MAPPER, WRITER
-   CONSTRUCTOR, PRINTER, COMPARATOR and INTEGRATOR are used to hold
-   closures, or PVM_NULL.  INT_TYPE, if not NULL, is an AST node with
-   an integral type, that defines the nature of this struct type as
+   CONSTRUCTOR, FORMATER, PRINTER, COMPARATOR and INTEGRATOR are used to
+   hold closures, or PVM_NULL.  INT_TYPE, if not NULL, is an AST node
+   with an integral type, that defines the nature of this struct type as
    integral.
 
    In offset types, BASE_TYPE is a PKL_AST_TYPE with the base type for
@@ -898,6 +899,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_A_BOUNDER(AST) ((AST)->type.val.array.closures[2])
 #define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.closures[3])
 #define PKL_AST_TYPE_A_PRINTER(AST) ((AST)->type.val.array.closures[4])
+#define PKL_AST_TYPE_A_FORMATER(AST) ((AST)->type.val.array.closures[5])
 #define PKL_AST_TYPE_S_NFIELD(AST) ((AST)->type.val.sct.nfield)
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
@@ -911,6 +913,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_S_PRINTER(AST) ((AST)->type.val.sct.closures[3])
 #define PKL_AST_TYPE_S_COMPARATOR(AST) ((AST)->type.val.sct.closures[4])
 #define PKL_AST_TYPE_S_INTEGRATOR(AST) ((AST)->type.val.sct.closures[5])
+#define PKL_AST_TYPE_S_FORMATER(AST) ((AST)->type.val.sct.closures[6])
 #define PKL_AST_TYPE_S_ITYPE(AST) ((AST)->type.val.sct.itype)
 #define PKL_AST_TYPE_O_UNIT(AST) ((AST)->type.val.off.unit)
 #define PKL_AST_TYPE_O_BASE_TYPE(AST) ((AST)->type.val.off.base_type)
@@ -945,8 +948,8 @@ struct pkl_ast_type
     {
       union pkl_ast_node *bound;
       union pkl_ast_node *etype;
-      /* Uncollectable array for MAPPER, BOUNDER, WRITER, CONSTRUCTOR
-         and PRINTER.  */
+      /* Uncollectable array for MAPPER, BOUNDER, WRITER, CONSTRUCTOR,
+         PRINTER and FORMATER.  */
       pvm_val *closures;
     } array;
 
@@ -960,7 +963,7 @@ struct pkl_ast_type
       int pinned_p;
       int union_p;
       /* Uncollectable array for MAPPER, WRITER, CONSTRUCTOR, COMPARATOR,
-         INTEGRATOR and PRINTER.  */
+         INTEGRATOR, PRINTER and FORMATER.  */
       pvm_val *closures;
     } sct;
 
@@ -1286,6 +1289,100 @@ struct pkl_ast_funcall_arg
 
 pkl_ast_node pkl_ast_make_funcall_arg (pkl_ast ast, pkl_ast_node exp,
                                        pkl_ast_node name);
+
+/* PKL_AST_FORMAT nodes represent `format'.
+
+   ARGS is a chained list of PKL_AST_FORMAT_ARG nodes.  This may
+   contain zero or more nodes, and the types of their expressions
+   should match the format expressed in FMT.
+
+   FMT is the format string node.
+
+   TYPES is a linked list of type nodes, corresponding to the %-
+   directives in FMT.  Note that %<class> and %</class> directives
+   have type PKL_TYPE_VOID.
+
+   NARGS is the number of arguments in ARGS.
+
+   PREFIX, if not NULL, is a C string that comes before the arguments.
+
+   FMT_PROCESSED_P is a boolean indicating whether the format string
+   has been already processed in this node.  */
+
+#define PKL_AST_FORMAT_FMT(AST) ((AST)->format.fmt)
+#define PKL_AST_FORMAT_TYPES(AST) ((AST)->format.types)
+#define PKL_AST_FORMAT_ARGS(AST) ((AST)->format.args)
+#define PKL_AST_FORMAT_NARGS(AST) ((AST)->format.nargs)
+#define PKL_AST_FORMAT_PREFIX(AST) ((AST)->format.prefix)
+#define PKL_AST_FORMAT_FMT_PROCESSED_P(AST) ((AST)->format.fmt_processed_p)
+
+struct pkl_ast_format
+{
+  struct pkl_ast_common common;
+
+  int nargs;
+  char *prefix;
+  int fmt_processed_p;
+  union pkl_ast_node *fmt;
+  union pkl_ast_node *types;
+  union pkl_ast_node *args;
+};
+
+pkl_ast_node pkl_ast_make_format (pkl_ast ast, pkl_ast_node fmt,
+                                  pkl_ast_node args, int printf_p);
+
+/* PKL_AST_FORMAT_ARG nodes represent expression arguments to `format'.
+
+   EXP is an expression node evaluating to the value to format.
+
+   BASE is the numeration base to use when formating this argument.
+
+   BEGIN_SC, if not NULL, marks that this argument is a %<class>
+   directive, and is a NULL-terminated string with the name of the
+   styling class to begin.
+
+   END_SC, if not NULL, marks that this argument is a %</class>
+   directive, and is a NULL-terminated string with the name of the
+   styling class to end.
+
+   SUFFIX, if not NULL, is a C string that should be appended after the
+   value of EXP, respectively.
+
+   VALUE_P indicates whether the argument shall be printed as a PVM
+   value or not (whether this arguement corresponds to a %v or not).
+
+   FORMAT_MODE and FORMAT_DEPTH specify how the argument shall be
+   printed if VALUE_P is true.  FORMAT_MODE can be one of the
+   PKL_AST_FORMAT_MODE_* constants defined below, while FORMAT_DEPTH can
+   be zero or a positive integer.  */
+
+#define PKL_AST_FORMAT_ARG_EXP(AST) ((AST)->format_arg.exp)
+#define PKL_AST_FORMAT_ARG_BASE(AST) ((AST)->format_arg.base)
+#define PKL_AST_FORMAT_ARG_SUFFIX(AST) ((AST)->format_arg.suffix)
+#define PKL_AST_FORMAT_ARG_BEGIN_SC(AST) ((AST)->format_arg.begin_sc)
+#define PKL_AST_FORMAT_ARG_END_SC(AST) ((AST)->format_arg.end_sc)
+#define PKL_AST_FORMAT_ARG_VALUE_P(AST) ((AST)->format_arg.value_p)
+#define PKL_AST_FORMAT_ARG_FORMAT_MODE(AST) ((AST)->format_arg.format_mode)
+#define PKL_AST_FORMAT_ARG_FORMAT_DEPTH(AST) ((AST)->format_arg.format_depth)
+
+#define PKL_AST_FORMAT_MODE_FLAT 0
+#define PKL_AST_FORMAT_MODE_TREE 1
+
+struct pkl_ast_format_arg
+{
+  struct pkl_ast_common common;
+
+  char *begin_sc;
+  char *end_sc;
+  int base;
+  int value_p;
+  int format_mode;
+  int format_depth;
+  char *suffix;
+  union pkl_ast_node *exp;
+};
+
+pkl_ast_node pkl_ast_make_format_arg (pkl_ast ast, pkl_ast_node exp);
 
 /* PKL_AST_VAR nodes represent variable references.
 
@@ -1704,103 +1801,28 @@ pkl_ast_node pkl_ast_make_try_catch_stmt (pkl_ast ast,
                                           pkl_ast_node code, pkl_ast_node handler,
                                           pkl_ast_node arg, pkl_ast_node exp);
 
-/* PKL_AST_PRINT_STMT nodes represent `print' statements.
+/* PKL_AST_PRINT_STMT nodes represent `print' and `printf' statements.
 
-   ARGS is a chained list of PKL_AST_PRINT_STMT_ARG nodes.  In `print'
-   statements, this only contains one argument, whose expression
-   should be of type string.  In `printf' statements, this may contain
-   zero or more nodes, and the types of their expressions should match
-   teh format expressed in FMT.
+   STR_EXP, if not NULL, is an expression node of type string.  In
+   `print' statements this is not NULL, but in `printf' statements
+   this should be NULL.
 
-   FMT, if not NULL, is a format string node.
+   FORMAT, if not NULL, is a PKL_AST_FORMAT node capturing all the
+   information corresponding to the `printf' statements.  */
 
-   TYPES is a linked list of type nodes, corresponding to the %-
-   directives in FMT.  Note that %<class> and %</class> directives
-   have type PKL_TYPE_VOID.
-
-   NARGS is the number of arguments in ARGS.
-
-   PREFIX, if not NULL, is a C string that should be printed before
-   the arguments.
-
-   FMT_PROCESSED_P is a boolean indicating whether the format string
-   has been already processed in this node.  */
-
-#define PKL_AST_PRINT_STMT_FMT(AST) ((AST)->print_stmt.fmt)
-#define PKL_AST_PRINT_STMT_TYPES(AST) ((AST)->print_stmt.types)
-#define PKL_AST_PRINT_STMT_ARGS(AST) ((AST)->print_stmt.args)
-#define PKL_AST_PRINT_STMT_NARGS(AST) ((AST)->print_stmt.nargs)
-#define PKL_AST_PRINT_STMT_PREFIX(AST) ((AST)->print_stmt.prefix)
-#define PKL_AST_PRINT_STMT_FMT_PROCESSED_P(AST) ((AST)->print_stmt.fmt_processed_p)
+#define PKL_AST_PRINT_STMT_STR_EXP(AST) ((AST)->print_stmt.str_exp)
+#define PKL_AST_PRINT_STMT_FORMAT(AST) ((AST)->print_stmt.format)
 
 struct pkl_ast_print_stmt
 {
   struct pkl_ast_common common;
 
-  int nargs;
-  char *prefix;
-  int fmt_processed_p;
-  union pkl_ast_node *fmt;
-  union pkl_ast_node *types;
-  union pkl_ast_node *args;
+  union pkl_ast_node *str_exp;
+  union pkl_ast_node *format;
 };
 
 pkl_ast_node pkl_ast_make_print_stmt (pkl_ast ast,
-                                      pkl_ast_node fmt, pkl_ast_node args);
-
-/* PKL_AST_PRINT_STMT_ARG nodes represent expression arguments to
-   `printf' statements.
-
-   EXP is an expression node evaluating to the value to print.
-
-   BASE is the numeration base to use when printing this argument.
-
-   BEGIN_SC, if not NULL, marks that this argument is a %<class>
-   directive, and is a NULL-terminated string with the name of the
-   styling class to begin.
-
-   END_SC, if not NULL, marks that this argument is a %</class>
-   directive, and is a NULL-terminated string with the name of the
-   styling class to end.
-
-   SUFFIX, if not NULL, is a C string that should be printed after the
-   value of EXP, respectively.
-
-   VALUE_P indicates whether the argument shall be printed as a PVM
-   value or not.
-
-   PRINT_MODE and PRINT_DEPTH specify how the argument shall be
-   printed if VALUE_P is true.  PRINT_MODE can be one of the
-   PKL_AST_PRINT_MODE_* constants defined below, while PRINT_DEPTH can
-   be zero or a positive integer.  */
-
-#define PKL_AST_PRINT_STMT_ARG_EXP(AST) ((AST)->print_stmt_arg.exp)
-#define PKL_AST_PRINT_STMT_ARG_BASE(AST) ((AST)->print_stmt_arg.base)
-#define PKL_AST_PRINT_STMT_ARG_SUFFIX(AST) ((AST)->print_stmt_arg.suffix)
-#define PKL_AST_PRINT_STMT_ARG_BEGIN_SC(AST) ((AST)->print_stmt_arg.begin_sc)
-#define PKL_AST_PRINT_STMT_ARG_END_SC(AST) ((AST)->print_stmt_arg.end_sc)
-#define PKL_AST_PRINT_STMT_ARG_VALUE_P(AST) ((AST)->print_stmt_arg.value_p)
-#define PKL_AST_PRINT_STMT_ARG_PRINT_MODE(AST) ((AST)->print_stmt_arg.print_mode)
-#define PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH(AST) ((AST)->print_stmt_arg.print_depth)
-
-#define PKL_AST_PRINT_MODE_FLAT 0
-#define PKL_AST_PRINT_MODE_TREE 1
-
-struct pkl_ast_print_stmt_arg
-{
-  struct pkl_ast_common common;
-
-  char *begin_sc;
-  char *end_sc;
-  int base;
-  int value_p;
-  int print_mode;
-  int print_depth;
-  char *suffix;
-  union pkl_ast_node *exp;
-};
-
-pkl_ast_node pkl_ast_make_print_stmt_arg (pkl_ast ast, pkl_ast_node exp);
+                                      int printf_p, pkl_ast_node fmt);
 
 /* PKL_AST_CONTINUE_STMT nodes represent `continue' statements.  Each
    continue statement is associated to a loop node.
@@ -1891,6 +1913,8 @@ union pkl_ast_node
   struct pkl_ast_funcall_arg funcall_arg;
   struct pkl_ast_var var;
   struct pkl_ast_lambda lambda;
+  struct pkl_ast_format format;
+  struct pkl_ast_format_arg format_arg;
   struct pkl_ast_incrdecr incrdecr;
   /* Types.  */
   struct pkl_ast_type type;
@@ -1917,7 +1941,6 @@ union pkl_ast_node
   struct pkl_ast_continue_stmt continue_stmt;
   struct pkl_ast_raise_stmt raise_stmt;
   struct pkl_ast_print_stmt print_stmt;
-  struct pkl_ast_print_stmt_arg print_stmt_arg;
 };
 
 static inline pkl_ast_node __attribute__ ((always_inline, warn_unused_result))

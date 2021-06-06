@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {vm_set_obase (10)} } */
+/* { dg-command {format("%v", E_generic)} } */
+/* { dg-output {"Exception {code=0,msg=\\"generic\\",exit_status=1}"} } */

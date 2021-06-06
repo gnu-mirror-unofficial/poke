@@ -1,0 +1,20 @@
+/* { dg-do run } */
+
+var eq = [
+  format("%i1d", 0) == "0",
+  format("%i8d", 0) == "0",
+  format("%i8d", 1) == "1",
+  format("%i8d", -1) == "-1",
+  format("%u8d", 1) == "1",
+  format("%u8d", -1) == "255",
+  format("%i13d", -1) == "-1",
+  format("%i16d", -1) == "-1",
+  format("%i16d", 0xa5) == "165",
+  format("%u16d", 0xa5) == "165",
+  format("%i32d", 0xdeadbeef) == "-559038737",
+  format("%u32d", 0xdeadbeef) == "3735928559",
+  format("%u63d", -1 as uint<64>) == "9223372036854775807",
+  format("%u64d", -1 as uint<64>) == "18446744073709551615",
+];
+
+for (i in eq) printf ("%i32d", i); /* { dg-output "11111111111111" } */

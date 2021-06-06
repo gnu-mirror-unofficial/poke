@@ -1,0 +1,7 @@
+/* {dg-run} */
+
+var a = ["aaa", "bb", "c", "", "d"];
+var s = _pkl_reduce_string_array (a, 2, 3);
+
+/* { dg-command {s} } */
+/* { dg-output {"cd"} } */

@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {format("%v", "A\x01B")} } */
+/* { dg-output {"\\"A\\\\x01B\\""} } */

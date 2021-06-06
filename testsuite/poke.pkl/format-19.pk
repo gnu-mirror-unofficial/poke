@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {vm_set_oacutoff (4)} } */
+/* { dg-command {format("%v", ["GNU", "poke", "by", "Jose", "Marchesi"])} } */
+/* { dg-output {"\[\\"GNU\\",\\"poke\\",\\"by\\",\\"Jose\\"...]"} } */

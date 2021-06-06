@@ -643,13 +643,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_trimmer)
 }
 PKL_PHASE_END_HANDLER
 
-/* Decode format strings in `printf' instructions.  */
+/* Decode format strings in `format' and `printf'.  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
+PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
 {
-  pkl_ast_node print_stmt = PKL_PASS_NODE;
-  pkl_ast_node args = PKL_AST_PRINT_STMT_ARGS (print_stmt);
-  pkl_ast_node print_fmt = PKL_AST_PRINT_STMT_FMT (print_stmt);
+  pkl_ast_node format = PKL_PASS_NODE;
+  pkl_ast_node args = PKL_AST_FORMAT_ARGS (format);
+  pkl_ast_node format_fmt = PKL_AST_FORMAT_FMT (format);
   char *fmt, *p;
   pkl_ast_node t, arg;
   int ntag, nargs = 0;
@@ -663,24 +663,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
   /* Calculate the number of arguments.  */
   for (t = args; t; t = PKL_AST_CHAIN (t))
     nargs++;
-  PKL_AST_PRINT_STMT_NARGS (print_stmt) = nargs;
+  PKL_AST_FORMAT_NARGS (format) = nargs;
 
-  /* If this is a `print', or if the format string has been already
-     processed, then we are done.  */
-  if (!print_fmt
-      || PKL_AST_PRINT_STMT_FMT_PROCESSED_P (print_stmt))
+  /* If the format string has been already processed, then we are done.  */
+  if (PKL_AST_FORMAT_FMT_PROCESSED_P (format))
     PKL_PASS_DONE;
 
-  fmt = PKL_AST_STRING_POINTER (print_fmt);
+  fmt = PKL_AST_STRING_POINTER (format_fmt);
   p = fmt;
 
   /* Process the prefix string, if any.  */
   if (*p != '%')
     {
       p = strchrnul (fmt, '%');
-      PKL_AST_PRINT_STMT_PREFIX (print_stmt) = strndup (fmt, p - fmt);
-      if (!PKL_AST_PRINT_STMT_PREFIX (print_stmt))
-        PKL_ICE (PKL_AST_LOC (print_stmt), _("out of memory"));
+      PKL_AST_FORMAT_PREFIX (format) = strndup (fmt, p - fmt);
+      if (!PKL_AST_FORMAT_PREFIX (format))
+        PKL_ICE (PKL_AST_LOC (format), _("out of memory"));
     }
 
   /* Process the format string.  */
@@ -696,8 +694,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
       assert (*p == '%');
       if (ntag >= nargs && p[1] != '>' && p[1] != '<')
         {
-          PKL_ERROR (PKL_AST_LOC (print_stmt),
-                     "not enough arguments in printf");
+          PKL_ERROR (PKL_AST_LOC (format), "not enough format arguments");
           PKL_TRANS_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -733,44 +730,44 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
         {
         case 'v':
           p += 2;
-          PKL_AST_PRINT_STMT_ARG_BASE (arg) = 0; /* Arbitrary.  */
+          PKL_AST_FORMAT_ARG_BASE (arg) = 0; /* Arbitrary.  */
           atype = pkl_ast_make_any_type (PKL_PASS_AST);
-          PKL_AST_PRINT_STMT_ARG_VALUE_P (arg) = 1;
-          PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH (arg)
+          PKL_AST_FORMAT_ARG_VALUE_P (arg) = 1;
+          PKL_AST_FORMAT_ARG_FORMAT_DEPTH (arg)
             = (prefix == -1 ? 0 : prefix);
           switch (flag)
             {
             case 'T':
-              PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg)
-                = PKL_AST_PRINT_MODE_TREE;
+              PKL_AST_FORMAT_ARG_FORMAT_MODE (arg)
+                = PKL_AST_FORMAT_MODE_TREE;
               break;
             case 'F':
               /* Fallthrough.  */
             case 0:
-              PKL_AST_PRINT_STMT_ARG_PRINT_MODE (arg)
-                = PKL_AST_PRINT_MODE_FLAT;
+              PKL_AST_FORMAT_ARG_FORMAT_MODE (arg)
+                = PKL_AST_FORMAT_MODE_FLAT;
               break;
             default:
               msg = _("invalid flag");
               goto invalid_tag;
             }
-          PKL_AST_LOC (atype) = PKL_AST_LOC (print_fmt);
+          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;
           break;
         case 's':
           p += 2;
-          PKL_AST_PRINT_STMT_ARG_BASE (arg) = 10; /* Arbitrary.  */
+          PKL_AST_FORMAT_ARG_BASE (arg) = 10; /* Arbitrary.  */
           atype = pkl_ast_make_string_type (PKL_PASS_AST);
-          PKL_AST_LOC (atype) = PKL_AST_LOC (print_fmt);
+          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;
           break;
         case 'c':
           p += 2;
-          PKL_AST_PRINT_STMT_ARG_BASE (arg) = 256;  /* Arbitrary */
+          PKL_AST_FORMAT_ARG_BASE (arg) = 256;  /* Arbitrary */
           atype = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
-          PKL_AST_LOC (atype) = PKL_AST_LOC (print_fmt);
+          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;
           break;
@@ -802,12 +799,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
 
                 switch (p[base_idx])
                   {
-                  case 'b': PKL_AST_PRINT_STMT_ARG_BASE (arg) = 2; break;
-                  case 'o': PKL_AST_PRINT_STMT_ARG_BASE (arg) = 8; break;
-                  case 'd': PKL_AST_PRINT_STMT_ARG_BASE (arg) = 10; break;
-                  case 'x': PKL_AST_PRINT_STMT_ARG_BASE (arg) = 16; break;
+                  case 'b': PKL_AST_FORMAT_ARG_BASE (arg) = 2; break;
+                  case 'o': PKL_AST_FORMAT_ARG_BASE (arg) = 8; break;
+                  case 'd': PKL_AST_FORMAT_ARG_BASE (arg) = 10; break;
+                  case 'x': PKL_AST_FORMAT_ARG_BASE (arg) = 16; break;
                   case 'c':
-                    PKL_AST_PRINT_STMT_ARG_BASE (arg) = 256;
+                    PKL_AST_FORMAT_ARG_BASE (arg) = 256;
                     if (bits != 8)
                       {
                         msg = _("char format only makes sense with 8 bits");
@@ -819,9 +816,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
                     goto invalid_tag;
                   }
 
+                if (bits == 0)
+                  {
+                    msg = _("invalid bit-width");
+                    goto invalid_tag;
+                  }
                 atype = pkl_ast_make_integral_type (PKL_PASS_AST,
                                                     bits, p[1] == 'i');
-                PKL_AST_LOC (atype) = PKL_AST_LOC (print_fmt);
+                PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
                 types = pkl_ast_chainon (types, atype);
 
                 if (base_idx == 4)
@@ -897,22 +899,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
 
             /* Create the new arg and add it to the list of
                arguments.  */
-            new_arg = pkl_ast_make_print_stmt_arg (PKL_PASS_AST,
+            new_arg = pkl_ast_make_format_arg (PKL_PASS_AST,
                                                    NULL);
-            PKL_AST_LOC (new_arg) = PKL_AST_LOC (print_fmt);
+            PKL_AST_LOC (new_arg) = PKL_AST_LOC (format_fmt);
 
             if (end_sc)
-              PKL_AST_PRINT_STMT_ARG_END_SC (new_arg) = xstrdup (class);
+              PKL_AST_FORMAT_ARG_END_SC (new_arg) = xstrdup (class);
             else
-              PKL_AST_PRINT_STMT_ARG_BEGIN_SC (new_arg) = class;
+              PKL_AST_FORMAT_ARG_BEGIN_SC (new_arg) = class;
 
             if (arg)
               {
-                if (arg == PKL_AST_PRINT_STMT_ARGS (print_stmt))
+                if (arg == PKL_AST_FORMAT_ARGS (format))
                   {
                     /* Prepend.  */
                     PKL_AST_CHAIN (new_arg) = arg;
-                    PKL_AST_PRINT_STMT_ARGS (print_stmt)
+                    PKL_AST_FORMAT_ARGS (format)
                       = ASTREF (new_arg);
                   }
                 else
@@ -925,12 +927,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
             else
               {
                 /* Append.  */
-                if (!PKL_AST_PRINT_STMT_ARGS (print_stmt))
-                  PKL_AST_PRINT_STMT_ARGS (print_stmt)
+                if (!PKL_AST_FORMAT_ARGS (format))
+                  PKL_AST_FORMAT_ARGS (format)
                     = ASTREF (new_arg);
                 else
-                  PKL_AST_PRINT_STMT_ARGS (print_stmt)
-                    = pkl_ast_chainon (PKL_AST_PRINT_STMT_ARGS (print_stmt),
+                  PKL_AST_FORMAT_ARGS (format)
+                    = pkl_ast_chainon (PKL_AST_FORMAT_ARGS (format),
                                        new_arg);
               }
 
@@ -939,7 +941,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
             /* The type corresponding to a styling class format
                directive is `void'.  */
             atype = pkl_ast_make_void_type (PKL_PASS_AST);
-            PKL_AST_LOC (atype) = PKL_AST_LOC (print_fmt);
+            PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
             types = pkl_ast_chainon (types, atype);
 
             break;
@@ -953,9 +955,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
       if (*p != '\0' && *p != '%')
         {
           char *end = strchrnul (p, '%');
-          PKL_AST_PRINT_STMT_ARG_SUFFIX (arg) = strndup (p, end - p);
-          if (!PKL_AST_PRINT_STMT_ARG_SUFFIX (arg))
-            PKL_ICE (PKL_AST_LOC (print_stmt), _("out of memory"));
+          PKL_AST_FORMAT_ARG_SUFFIX (arg) = strndup (p, end - p);
+          if (!PKL_AST_FORMAT_ARG_SUFFIX (arg))
+            PKL_ICE (PKL_AST_LOC (format), _("out of memory"));
           p = end;
         }
     }
@@ -969,19 +971,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_print_stmt)
 
   if (nargs > ntag)
     {
-      PKL_ERROR (PKL_AST_LOC (print_stmt),
-                 "too many arguments in printf");
+      PKL_ERROR (PKL_AST_LOC (format), "too many format arguments");
       PKL_TRANS_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
 
-  PKL_AST_PRINT_STMT_TYPES (print_stmt) = ASTREF (types);
+  PKL_AST_FORMAT_TYPES (format) = ASTREF (types);
 
-  PKL_AST_PRINT_STMT_FMT_PROCESSED_P (print_stmt) = 1;
+  PKL_AST_FORMAT_FMT_PROCESSED_P (format) = 1;
   PKL_PASS_DONE;
 
  invalid_tag:
-  PKL_ERROR (PKL_AST_LOC (print_fmt),
+  PKL_ERROR (PKL_AST_LOC (format_fmt),
              "invalid %%- tag in format string: %s", msg);
   PKL_TRANS_PAYLOAD->errors++;
   PKL_PASS_ERROR;
@@ -1163,7 +1164,7 @@ struct pkl_phase pkl_phase_trans1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_VAR, pkl_trans1_ps_var),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC, pkl_trans1_ps_func),
    PKL_PHASE_PS_HANDLER (PKL_AST_TRIMMER, pkl_trans1_ps_trimmer),
-   PKL_PHASE_PS_HANDLER (PKL_AST_PRINT_STMT, pkl_trans1_ps_print_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_FORMAT, pkl_trans1_ps_format),
    PKL_PHASE_PR_HANDLER (PKL_AST_DECL, pkl_trans1_pr_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_DECL, pkl_trans1_ps_decl),
    PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_trans1_ps_array),

@@ -1,5 +1,149 @@
 2021-06-06  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* common/pk-utils.h (pk_format_binary): New function declaration.
+	* common/pk-utils.c (pk_format_binary): New function definition.
+	* libpoke/pkl-lex.l (format): Recognize `format`.
+	* libpoke/pkl-ast.h (PKL_AST_FORMAT): Define.
+	(PKL_AST_FORMAT_ARG): Likewise.
+	(PKL_AST_TYPE_A_FORMATER): Likewise.
+	(PKL_AST_TYPE_S_FORMATER): Likewise.
+	(PKL_AST_FORMAT_FMT): Likewise.
+	(PKL_AST_FORMAT_TYPES): Likewise.
+	(PKL_AST_FORMAT_ARGS): Likewise.
+	(PKL_AST_FORMAT_NARGS): Likewise.
+	(PKL_AST_FORMAT_PREFIX): Likewise.
+	(PKL_AST_FORMAT_FMT_PROCESSED_P): Likewise.
+	(struct pkl_ast_format): New struct.
+	(pkl_ast_make_format): New function declaration.
+	(PKL_AST_FORMAT_ARG_EXP): Define.
+	(PKL_AST_FORMAT_ARG_BASE): Likewise.
+	(PKL_AST_FORMAT_ARG_SUFFIX): Likewise.
+	(PKL_AST_FORMAT_ARG_BEGIN_SC): Likewise.
+	(PKL_AST_FORMAT_ARG_END_SC): Likewise.
+	(PKL_AST_FORMAT_ARG_VALUE_P): Likewise.
+	(PKL_AST_FORMAT_ARG_FORMAT_MODE): Likewise.
+	(PKL_AST_FORMAT_ARG_FORMAT_DEPTH): Likewise.
+	(PKL_AST_FORMAT_MODE_FLAT): Likewise.
+	(PKL_AST_FORMAT_MODE_TREE): Likewise.
+	(struct pkl_ast_format_arg): New struct.
+	(pkl_ast_make_format_arg): New function declaration.
+	(struct pkl_ast_print_stmt): Delegate all format processing to a
+	PKL_AST_FORMAT node.
+	(pkl_ast_make_print_stmt): Change API.
+	(PKL_AST_PRINT_STMT_FMT): Remove.
+	(PKL_AST_PRINT_STMT_TYPES): Likewise.
+	(PKL_AST_PRINT_STMT_ARGS): Likewise.
+	(PKL_AST_PRINT_STMT_NARGS): Likewise.
+	(PKL_AST_PRINT_STMT_PREFIX): Likewise.
+	(PKL_AST_PRINT_STMT_FMT_PROCESSED_P): Likewise.
+	(PKL_AST_PRINT_STMT_ARG): Likewise.
+	(struct pkl_ast_print_stmt_arg): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_EXP): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_BASE): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_SUFFIX): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_BEGIN_SC): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_END_SC): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_VALUE_P): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_PRINT_MODE): Likewise.
+	(PKL_AST_PRINT_STMT_ARG_PRINT_DEPTH): Likewise.
+	(PKL_AST_PRINT_MODE_FLAT): Likewise.
+	(PKL_AST_PRINT_MODE_TREE): Likewise.
+	(pkl_ast_make_print_stmt_arg): Likewise.
+	* libpoke/pkl-ast.c (pkl_ast_make_array_type): Add formater closure.
+	(pkl_ast_make_struct_type): Add formater closure.
+	(pkl_ast_make_format): New function definition.
+	(pkl_ast_make_format_arg): Likewise.
+	(pkl_ast_node_free): Handle `PKL_AST_FORMAT` and `PKL_AST_FORMAT_ARG`.
+	Remove `PKL_AST_PRINT_STMT_ARG` case. Revise `PKL_AST_PRINT_STMT` case.
+	(pkl_ast_print_1): Likewise.
+	(pkl_ast_make_print_stmt): Revise.
+	(pkl_ast_make_print_stmt_arg): Remove.
+	* libpoke/pkl-tab.y: Define token `FORMAT`.
+	(primary): Add `format` support.
+	(format_arg): New rule.
+	(format_arg_list): Likewise.
+	(print_stmt_arg_list): Remove.
+	* libpoke/pvm.jitter (wrapped-functions): Add `snprintf`.
+	(PVM_FORMATI): Define.
+	(PVM_FORMATL): Likewise.
+	(formati): New instruction.
+	(formatiu): Likewise.
+	(formatl): Likewise.
+	(formatlu): Likewise.
+	(push-drop-to-nop): New rule.
+	* libpoke/pkl-insn.def: Add `format{i,iu,l,lu}` instructions. Add
+	`format` macro instruction.
+	And also add previously defined instructions: `drop2`, `drop3`, `nip3`.
+	* libpoke/pkl-asm.c (pkl_asm_insn_format): New function definition.
+	(pkl_asm_insn): Add support for format macro instruction.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Handle `PKL_AST_FORMAT_ARG`
+	and `PKL_AST_FORMAT`. Remove `PKL_AST_PRINT_STMT_ARG`. Revise
+	`PKL_AST_PRINT_STMT`.
+	* libpoke/pkl-trans.c (pkl_trans1_ps_format): New phase.
+	(pkl_trans1_ps_print_stmt): Remove.
+	(pkl_phase_trans1): Revise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_format): New phase.
+	(pkl_typify1_ps_print_stmt): Revise.
+	(pkl_phase_typify1): Register new phase.
+	* libpoke/pkl-promo.c (pkl_promo_ps_format): New phase.
+	(pkl_promo_ps_print_stmt): Remove.
+	(pkl_phase_promo): Revise.
+	* libpoke/pkl-gen.h (PKL_GEN_CTX_IN_FORMATER): Define.
+	* libpoke/pkl-gen.c (pkl_gen_pr_format): Generate code for `format`.
+	(pkl_phase_gen): Register new phase.
+	(pkl_gen_pr_type_offset): Add formater context.
+	(pkl_gen_ps_type_integral): Likewise.
+	(pkl_gen_pr_type_function): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	* libpoke/pkl-rt.pk (_pkl_strcat3): New function.
+	(_pkl_indentation): Likewise.
+	(_pkl_format_int_suffix): Likewise.
+	(_pkl_reduce_string_array): Likewise.
+	* libpoke/pkl-gen.pks (format_int_suffix): New RAS macro.
+	(integral_formater): Likewise.
+	(offset_formater): Likewise.
+	(string_formater): Likewise.
+	(format_boffset): Likewise.
+	(array_formater): New RAS function.
+	(struct_formater): Likewise.
+	* testsuite/poke.pkl/format-1.pk: New test.
+	* testsuite/poke.pkl/format-2.pk: Likewise.
+	* testsuite/poke.pkl/format-3.pk: Likewise.
+	* testsuite/poke.pkl/format-4.pk: Likewise.
+	* testsuite/poke.pkl/format-5.pk: Likewise.
+	* testsuite/poke.pkl/format-6.pk: Likewise.
+	* testsuite/poke.pkl/format-7.pk: Likewise.
+	* testsuite/poke.pkl/format-8.pk: Likewise.
+	* testsuite/poke.pkl/format-9.pk: Likewise.
+	* testsuite/poke.pkl/format-10.pk: Likewise.
+	* testsuite/poke.pkl/format-11.pk: Likewise.
+	* testsuite/poke.pkl/format-12.pk: Likewise.
+	* testsuite/poke.pkl/format-13.pk: Likewise.
+	* testsuite/poke.pkl/format-14.pk: Likewise.
+	* testsuite/poke.pkl/format-15.pk: Likewise.
+	* testsuite/poke.pkl/format-16.pk: Likewise.
+	* testsuite/poke.pkl/format-17.pk: Likewise.
+	* testsuite/poke.pkl/format-18.pk: Likewise.
+	* testsuite/poke.pkl/format-19.pk: Likewise.
+	* testsuite/poke.pkl/format-20.pk: Likewise.
+	* testsuite/poke.pkl/format-21.pk: Likewise.
+	* testsuite/poke.pkl/format-22.pk: Likewise.
+	* testsuite/poke.pkl/format-23.pk: Likewise.
+	* testsuite/poke.pkl/format-24.pk: Likewise.
+	* testsuite/poke.pkl/format-25.pk: Likewise.
+	* testsuite/poke.pkl/format-26.pk: Likewise.
+	* testsuite/poke.pkl/format-27.pk: Likewise.
+	* testsuite/poke.pkl/format-28.pk: Likewise.
+	* testsuite/poke.pkl/format-29.pk: Likewise.
+	* testsuite/poke.pkl/format-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/reduce-array-1.pk: Likewise.
+	* testsuite/poke.pkl/reduce-array-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-06-06  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_function): Add comment.
 	(pkl_gen_pr_type_array): Save computed closure for printer in
 	AST node.

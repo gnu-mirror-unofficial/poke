@@ -1,0 +1,7 @@
+/* {dg-run} */
+
+var a = ["Hello", ", ", "World", "!"];
+var s = _pkl_reduce_string_array (a, 0, a'length);
+
+/* { dg-command {s} } */
+/* { dg-output {"Hello, World!"} } */

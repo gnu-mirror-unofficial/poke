@@ -453,6 +453,34 @@ pkl_asm_insn_rev (pkl_asm pasm, unsigned int depth)
     pkl_asm_insn (pasm, PKL_INSN_REVN, depth);
 }
 
+/* Macro-instruction: FORMAT type
+   ( OBASE VAL -- )
+*/
+
+static void
+pkl_asm_insn_format (pkl_asm pasm, pkl_ast_node type)
+{
+  int type_code = PKL_AST_TYPE_CODE (type);
+
+  if (type_code == PKL_TYPE_STRING)
+    pkl_asm_insn (pasm, PKL_INSN_DROP); /* The base.  */
+  else if (type_code == PKL_TYPE_INTEGRAL)
+    {
+      static const int format_table[2][2] =
+        {
+         {PKL_INSN_FORMATIU, PKL_INSN_FORMATI},
+         {PKL_INSN_FORMATLU, PKL_INSN_FORMATL}
+        };
+      size_t size = PKL_AST_TYPE_I_SIZE (type);
+      int signed_p = PKL_AST_TYPE_I_SIGNED_P (type);
+
+      pkl_asm_insn (pasm, format_table[size > 32][signed_p],
+                    (unsigned int) size);
+    }
+  else
+    assert (0);
+}
+
 /* Macro-instruction: PRINT type
    ( OBASE VAL -- )
 */
@@ -1384,6 +1412,17 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
               pkl_asm_insn_peek (pasm, type, nenc, endian);
             else
               pkl_asm_insn_poke (pasm, type, nenc, endian);
+            break;
+          }
+        case PKL_INSN_FORMAT:
+          {
+            pkl_ast_node type;
+
+            va_start (valist, insn);
+            type = va_arg (valist, pkl_ast_node);
+            va_end (valist);
+
+            pkl_asm_insn_format (pasm, type);
             break;
           }
         case PKL_INSN_PRINT:

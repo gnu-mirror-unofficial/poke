@@ -1187,21 +1187,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_return_stmt)
 }
 PKL_PHASE_END_HANDLER
 
-/* Promote arguments to printf.  */
+/* Promote arguments to format.  */
 
-PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_print_stmt)
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_format)
 {
-  pkl_ast_node print_stmt = PKL_PASS_NODE;
-  pkl_ast_node print_stmt_types = PKL_AST_PRINT_STMT_TYPES (print_stmt);
-  pkl_ast_node print_stmt_args = PKL_AST_PRINT_STMT_ARGS (print_stmt);
+  pkl_ast_node format = PKL_PASS_NODE;
+  pkl_ast_node format_types = PKL_AST_FORMAT_TYPES (format);
+  pkl_ast_node format_args = PKL_AST_FORMAT_ARGS (format);
 
   pkl_ast_node type, arg;
 
-  for (arg = print_stmt_args, type = print_stmt_types;
+  for (arg = format_args, type = format_types;
        arg && type;
        arg = PKL_AST_CHAIN (arg), type = PKL_AST_CHAIN (type))
     {
-      pkl_ast_node arg_exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
+      pkl_ast_node arg_exp = PKL_AST_FORMAT_ARG_EXP (arg);
 
       /* Skip arguments without associated values.  Also skip
          arguments with declared type ANY (%v) */
@@ -1211,11 +1211,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_print_stmt)
           int restart;
 
           if (!promote_node (PKL_PASS_AST,
-                             &PKL_AST_PRINT_STMT_ARG_EXP (arg),
+                             &PKL_AST_FORMAT_ARG_EXP (arg),
                              type, &restart))
             {
               PKL_ICE (PKL_AST_LOC (arg),
-                       "couldn't promote printf argument initializer");
+                       "couldn't promote format argument initializer");
               PKL_PASS_ERROR;
             }
 
@@ -1623,7 +1623,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL, pkl_promo_ps_funcall),
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_promo_ps_ass_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_promo_ps_return_stmt),
-   PKL_PHASE_PS_HANDLER (PKL_AST_PRINT_STMT, pkl_promo_ps_print_stmt),
+   PKL_PHASE_PS_HANDLER (PKL_AST_FORMAT, pkl_promo_ps_format),
    PKL_PHASE_PS_HANDLER (PKL_AST_IF_STMT, pkl_promo_ps_if_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT, pkl_promo_ps_loop_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_promo_ps_struct_type_field),

@@ -1767,6 +1767,557 @@
         drop                    ; _
         .end
 
+;;; RAS_MACRO_FORMAT_INT_SUFFIX @type
+;;; ( -- STR )
+;;;
+;;; Push the suffix corresponding to the specified integral type
+;;; to the stack.
+;;;
+;;; Macro-arguments:
+;;; @type
+;;;   pkl_ast_node with an integral type.
+
+        .macro format_int_suffix @type
+        .let #signed_p = pvm_make_int (PKL_AST_TYPE_I_SIGNED_P (@type), 32)
+        .let #size = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@type), 64)
+        push #signed_p
+        push #size
+        .call _pkl_format_int_suffix
+        .end
+
+;;; RAS_MACRO_INTEGRAL_FORMATER @type
+;;; ( VAL DEPTH -- STR )
+;;;
+;;; Given an integral value and a depth in the stack, push the
+;;; string representation to the stack.
+;;;
+;;; Macro-arguments:
+;;; @type
+;;;   pkl_ast_node with the type of the value in the stack.
+
+        .macro integral_formater @type
+        drop                    ; VAL
+        pushob                  ; VAL OBASE
+        ;; Calculate and format the prefix.
+        dup                     ; VAL OBASE OBASE
+        .call _pkl_base_prefix  ; VAL OBASE PREFIX
+        nrot                    ; PREFIX VAL OBASE
+        ;; Format the value.
+        format @type            ; PREFIX STR
+        ;; Push the suffix
+        .e format_int_suffix @type ; PREFIX STR SUFFIX
+        .call _pkl_strcat3      ; STR
+        sel                     ; STR LEN
+        push ulong<64>0         ; STR LEN IDX
+        swap                    ; STR IDX LEN
+        push "integer"          ; STR IDX LEN CLASS
+        sprops                  ; STR
+        .end
+
+;;; RAS_MACRO_OFFSET_FORMATER @type
+;;; ( VAL DEPTH -- STR )
+;;;
+;;; Given an offset value in the stack and a depth level,
+;;; push the string representation of the offset to the stack.
+;;;
+;;; Macro-arguments:
+;;; @type
+;;;   pkl_ast_node with the type of the value in the stack.
+
+        .macro offset_formater @type
+        ;; Format the offset magnitude
+        .let @unit = PKL_AST_TYPE_O_UNIT (@type)
+        .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@type)
+        swap                    ; DEPTH VAL
+        ogetm                   ; DEPTH VAL MAG
+        rot                     ; VAL MAG DEPTH
+        .c PKL_PASS_SUBPASS (@base_type);
+                                ; VAL STR
+        ;; Separator
+        push "#"                ; VAL STR #
+        rot                     ; STR # VAL
+        ;; Format the offset unit.
+        ;; If the unit has a name, use it.
+        ;; Otherwise, format the unit in decimal.
+        .let @unit_type = PKL_AST_TYPE (@unit)
+        ogetu                   ; STR # VAL UNIT
+        nip                     ; STR # UNIT
+        dup                     ; STR # UNIT UNIT
+        .call _pkl_unit_name    ; STR # UNIT STR
+        sel                     ; STR # UNIT STR SEL
+        bzlu .no_unit_name
+        drop                    ; STR # UNIT STR
+        nip                     ; STR # STR
+        ba .unit_name_done
+.no_unit_name:
+        drop2                   ; STR # UNIT
+        push int<32>10          ; STR # UNIT 10
+        format @unit_type       ; STR # STR
+.unit_name_done:
+        .call _pkl_strcat3      ; STR
+        sel                     ; STR LEN
+        push ulong<64>0         ; STR LEN IDX
+        swap                    ; STR IDX LEN
+        push "offset"           ; STR IDX LEN CLASS
+        sprops                  ; STR
+        .end
+
+;;; RAS_MACRO_STRING_FORMATER
+;;; ( VAL DEPTH -- STR )
+;;;
+;;; Given a string value and a depth in the stack, push the
+;;; the string representation to the stack.
+
+        .macro string_formater
+        drop                    ; VAL
+        .call _pkl_escape_string; VAL
+        push "\""               ; VAL "
+        swap                    ; " VAL
+        push "\""               ; " VAL "
+        .call _pkl_strcat3      ; STR
+        sel                     ; STR LEN
+        push ulong<64>0         ; STR LEN IDX
+        swap                    ; STR IDX LEN
+        push "offset"           ; STR IDX LEN CLASS
+        sprops                  ; STR
+        .end
+
+;;; RAS_MACRO_FORMAT_BOFFSET
+;;; ( ULONG -- STR )
+;;;
+;;; Given a bit-offset in the stack, format it out like a real
+;;; offset in hexadecimal, and push it to the stack .
+
+        .macro format_boffset
+        push int<32>16          ; ULONG 16
+        formatlu 64             ; STR
+        push "0x"
+        swap                    ; 0x STR
+        sconc
+        nip2                    ; STR
+        sel                     ; STR LEN
+        push ulong<64>0         ; STR LEN IDX
+        swap                    ; STR IDX LEN
+        push "integer"          ; STR IDX LEN CLASS
+        sprops                  ; STR
+        ;; RAS turns "#b" into "(B_arg)"; so we use '\x62' for 'b'.
+        push "#\x62"            ; STR #b
+        sconc
+        nip2                    ; STR
+        sel                     ; STR LEN
+        push ulong<64>0         ; STR LEN IDX
+        swap                    ; STR IDX LEN
+        push "offset"           ; STR IDX LEN CLASS
+        sprops                  ; STR
+        .end
+
+;;; RAS_FUNCTION_ARRAY_FORMATER @array_type
+;;; ( ARR DEPTH -- STR )
+;;;
+;;; Assemble a function that gets an array value and a depth
+;;; level in the stack and formats the array and push it to
+;;; the stack.
+;;;
+;;; Macro-arguments:
+;;; @array_type
+;;;   pkl_ast_node with the type of the array value to print.
+
+        .function array_formater @array_type
+        prolog
+        pushf 1
+        regvar $depth           ; ARR
+        sel                     ; ARR SEL
+        dup
+        regvar $sel
+        ;; Find the number of elems that will be formated: NELEM
+        pushoac                 ; ARR SEL OACUTOFF
+        bzi .no_cut_off
+        itolu 64
+        nip                     ; ARR SEL OACUTOFFL
+        ltlu                    ; ARR SEL OACUTOFFL (SEL<OACUTOFFL)
+        bzi .sel_gte_cutoff
+        nrot                    ; ARR (SEL<OACUTOFFL) SEL OACUTOFFL
+.sel_gte_cutoff:
+        drop
+        nip                     ; ARR NELEM
+        push null
+.no_cut_off:
+        drop                    ; ARR NELEM
+        dup
+        regvar $nelem           ; ARR NELEM
+        pushvar $sel
+        eqlu
+        nip2                    ; ARR (NELEM==SEL)
+        regvar $no_ellip        ; ARR
+        mktys
+        push null
+        mktya                   ; ARR TYPA
+        push ulong<64>0
+        mka                     ; ARR SARR
+        push ulong<64>0
+        push "["
+        ains
+        swap                    ; SARR ARR
+        ;; Iterate on the values stored in the array, formating them
+        ;; in turn.
+        push ulong<64>0         ; SARR ARR IDX
+        dup
+        ;; Temporary variable.
+        regvar $idx
+     .while
+        pushvar $nelem          ; SARR ARR IDX NELEM
+        over                    ; SARR ARR IDX NELEM IDX
+        swap                    ; SARR ARR IDX IDX NELEM
+        ltlu                    ; SARR ARR IDX IDX NELEM (IDX<NELEM)
+        nip2                    ; SARR ARR IDX (IDX<NELEM)
+     .loop
+        ;; Insert a comma if this is not the first element of the
+        ;; array.
+        push ulong<64>0         ; SARR ARR IDX 0UL
+        eql
+        nip                     ; SARR ARR IDX (IDX==0UL)
+        bnzi .l1
+        drop                    ; SARR ARR IDX
+        rot                     ; ARR IDX SARR
+        sel
+        push ","
+        ains                    ; ARR IDX SARR
+        nrot                    ; SARR ARR IDX
+        push null
+.l1:
+        drop                    ; SARR ARR IDX
+        ;; Now format the array element.
+        .let @array_elem_type = PKL_AST_TYPE_A_ETYPE (@array_type)
+        aref                    ; SARR ARR IDX EVAL
+        pushvar $depth          ; SARR ARR IDX EVAL DEPTH
+        .c PKL_PASS_SUBPASS (@array_elem_type);
+                                ; SARR ARR IDX STR
+        swap
+        popvar $idx             ; SARR ARR STR
+        rot                     ; ARR STR SARR
+        sel
+        rot                     ; ARR SARR SEL STR
+        ains
+        swap                    ; SARR ARR
+        pushvar $idx
+        ;; Format the element offset if required.
+        pushoo                  ; SARR ARR IDX OMAPS
+        bzi .l3
+        drop
+        rot                     ; ARR IDX SARR
+        sel                     ; ARR IDX SARR SLEN
+        push " @ "
+        ains                    ; ARR IDX SARR
+        nrot                    ; SARR ARR IDX
+        arefo                   ; SARR ARR IDX BOFF
+        .e format_boffset       ; SARR ARR IDX STR
+        swap
+        popvar $idx             ; SARR ARR STR
+        rot                     ; ARR STR SARR
+        sel                     ; ARR STR SARR SLEN
+        rot                     ; ARR SARR SLEN STR
+        ains                    ; ARR SARR
+        swap                    ; SARR ARR
+        pushvar $idx            ; SARR ARR IDX
+        push null
+.l3:
+        drop
+        ;; Increase index to process next element.
+        push ulong<64>1
+        addlu
+        nip2                    ; SARR ARR (IDX+1)
+     .endloop
+        drop
+        ;; Honor oacutoff.
+        pushvar $no_ellip       ; SARR ARR NOELLIP
+        bnzi .push_ket
+        drop
+        push "..."
+        push ulong<64>0
+        push ulong<64>3
+        push "ellipsis"
+        sprops                  ; SARR ARR ...
+        rot
+        sel                     ; ARR ... SARR SLEN
+        rot                     ; ARR SARR SLEN ...
+        ains
+        swap
+        push null
+.push_ket:
+        drop                    ; SARR ARR
+        swap
+        sel
+        push "]"
+        ains                    ; ARR SARR
+        ;; Format the array offset if required.
+        pushoo                  ; ARR SARR OMAPS
+        bzi .done
+        drop
+        sel
+        push " @ "
+        ains
+        swap                    ; SARR ARR
+        mgeto                   ; SARR ARR BOFF
+        .e format_boffset       ; SARR ARR STR
+        rot                     ; ARR STR SARR
+        sel                     ; ARR STR SARR SLEN
+        rot                     ; ARR SARR SLEN STR
+        ains                    ; ARR SARR
+        push null
+.done:
+        ;; We are done.  Cleanup and bye bye.
+        drop
+        nip                     ; SARR
+        sel                     ; SARR SLEN
+        push ulong<64>0         ; SARR SLEN IDX
+        swap                    ; SARR IDX SLEN
+        .call _pkl_reduce_string_array
+                                ; STR
+        sel                     ; STR LEN
+        push ulong<64>0         ; STR LEN IDX
+        swap                    ; STR IDX LEN
+        push "array"            ; STR IDX LEN CLASS
+        sprops                  ; STR
+        popf 1
+        return
+        .end
+
+;;; RAS_FUNCTION_STRUCT_FORMATER @struct_type
+;;; ( SCT DEPTH -- STR )
+;;;
+;;; Assemble a function that gets a struct value and a depth
+;;; level in the stack and push the string representation of
+;;; the struct to the stack.
+;;;
+;;; Macro-arguments:
+;;; @struct_type
+;;;   pkl_ast_node with the type fo the struct value to format.
+
+        .function struct_formater @struct_type
+        prolog
+        pushf 1
+        regvar $depth           ; SCT
+        .let #is_union_p = pvm_make_int(PKL_AST_TYPE_S_UNION_P (@struct_type), 32)
+        ;; Make the string[] which will contain all the formatted struct
+        mktys                   ; SCT STYP
+        push null
+        mktya                   ; SCT ATYP
+        push ulong<64>0
+        mka                     ; SCT SARR
+        swap                    ; SARR SCT
+        typof                   ; SARR SCT TYP
+        tysctn                  ; SARR SCT STR
+        nip
+        bnn .named_struct
+        ;; anonymous struct/union
+        drop
+        push #is_union_p        ; SARR SCT INT
+        bnzi .anonymous_union
+        drop
+        push "struct"           ; SARR SCT STR
+        ba .named_struct
+.anonymous_union:
+        drop
+        push "union"
+.named_struct:
+        sel
+        push ulong<64>0
+        swap
+        push "struct-type-name" ; SARR SCT STR IDX LEN CLASS
+        sprops                  ; SARR SCT STR
+        rot                     ; SCT STR SARR
+        push ulong<64>0         ; SCT STR SARR IDX
+        rot                     ; SCT SARR IDX STR
+        ains
+        swap                    ; SARR SCT
+        ;; Stop here if we are past the maximum depth configured in
+        ;; the VM.
+        pushod                  ; SARR SCT MDEPTH
+        bzi .depth_ok
+        pushvar $depth          ; SARR SCT MDEPTH DEPTH
+        lei
+        nip2                    ; SARR SCT (MDEPTH<=DEPTH)
+        bzi .depth_ok
+        drop                    ; SARR SCT
+        push " {...}"
+        rot                     ; SCT STR SARR
+        sel                     ; SCT STR SARR IDX
+        rot                     ; SCT SARR IDX STR
+        ains                    ; SCT SARR
+        swap
+        ba .body_done
+.depth_ok:
+        drop                    ; SARR SCT
+        ;; Iterate on the elements stored in the struct, formating them
+        ;; in order.
+        swap                    ; SCT SARR
+        sel
+        push " {"
+        ains                    ; SCT SARR
+        swap                    ; SARR SCT
+        .let @field
+ .c      uint64_t i;
+ .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (@struct_type);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c   {
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .label .process_struct_field
+        .label .process_next_alternative
+        .label .l1
+        .label .l2
+        .label .l3
+        .let #i = pvm_make_ulong (i, 64)
+        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        ;; Get the value of this field.  If this an union we have to
+        ;; refer to the field by name, and the first one we found is
+        ;; the only one.
+        push #is_union_p
+        bzi .process_struct_field
+        ;; union
+        drop
+        .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        push #name_str          ; SARR SCT STR
+        srefnt                  ; SARR SCT STR EVAL
+        nip                     ; SARR SCT EVAL
+        bn .process_next_alternative
+        ba .l2
+.process_struct_field:
+        drop
+        push #i                 ; SARR SCT I
+        srefi                   ; SARR SCT I EVAL
+        swap                    ; SARR SCT EVAL I
+        bzlu .l1
+        drop
+        ;; Insert the separator if this is not the first field.
+        rot                     ; SCT EVAL SARR
+        sel
+        push ","
+        ains                    ; SCT EVAL SARR
+        ba .l3
+.l1:
+        drop
+.l2:
+        rot                     ; SCT EVAL SARR
+.l3:
+        ;; Indent if in tree-mode.
+        sel                     ; SCT EVAL SARR IDX
+        pushvar $depth          ; SCT EVAL SARR IDX DEPTH
+        push int<32>1
+        addi
+        nip2                    ; SCT EVAL SARR IDX (DEPTH+1)
+        pushoi                  ; SCT EVAL SARR IDX (DEPTH+1) ISTEP
+        pushom                  ; SCT EVAL SARR IDX DEPTH ISTEP OMODE
+        .call _pkl_indentation  ; SCT EVAL SARR IDX STR
+        ains                    ; SCT EVAL SARR
+        ;; Field name
+ .c   if (@field_name)
+ .c   {
+        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        sel                     ; SCT EVAL SARR IDX
+        push #field_name_str
+        sel
+        push ulong<64>0
+        swap
+        push "struct-field-name"
+        sprops                  ; SCT EVAL SARR IDX STR
+        ains                    ; SCT EVAL SARR
+        sel
+        push "="
+        ains                    ; SCT EVAL SARR
+ .c   }
+        nrot                    ; SARR SCT EVAL
+        pushvar $depth          ; SARR SCT EVAL DEPTH
+        push int<32>1
+        addi
+        nip2                    ; SARR SCT EVAL (DEPTH+1)
+        .c PKL_PASS_SUBPASS (@field_type);
+                                ; SARR SCT STR
+        rot                     ; SCT STR SARR
+        sel                     ; SCT STR SARR IDX
+        rot                     ; SCT SARR IDX STR
+        ains                    ; SCT SARR
+        ;; Format the field offset, if required.
+        .label .no_elem_offset
+        pushoo                  ; SCT SARR OMAPS
+        bzi .no_elem_offset
+        drop                    ; SCT SARR
+        sel
+        push " @ "              ; SCT SARR IDX STR
+        ains
+        swap                    ; SARR SCT
+        push #i
+        srefio
+        nip                     ; SARR SCT BOFF
+        .e format_boffset       ; SARR SCT STR
+        rot                     ; SCT STR SARR
+        sel
+        rot                     ; SCT SARR IDX STR
+        ains
+        push null               ; SCT SARR NULL
+.no_elem_offset:
+        drop
+        swap                    ; SARR SCT
+        push #is_union_p
+        ;; Unions only have one field => we are done.
+        bnzi .fields_done
+.process_next_alternative:
+        drop                    ; SARR SCT
+ .c    i = i + 1;
+ .c }
+        ba .l4
+.fields_done:
+        drop
+.l4:
+        ;; Indent if in tree-mode.
+        pushvar $depth          ; SARR SCT DEPTH
+        pushoi                  ; SARR SCT DEPTH ISTEP
+        pushom                  ; SARR SCT DEPTH ISTEP OMODE
+        .call _pkl_indentation  ; SARR SCT STR
+        rot                     ; SCT STR SARR
+        sel                     ; SCT STR SARR IDX
+        rot                     ; SCT SARR IDX STR
+        ains
+        sel
+        push "}"
+        ains                    ; SCT SARR
+        swap
+.body_done:
+        ;; Format the struct offset if required.
+        pushoo                  ; SARR SCT OMAPS
+        bzi .no_omaps
+        drop                    ; SARR SCT
+        mgeto
+        nip                     ; SARR BOFF
+        swap                    ; BOFF SARR
+        sel                     ; BOFF SARR IDX
+        push " @ "              ; BOFF SARR IDX STR
+        ains                    ; BOFF SARR
+        sel                     ; BOFF SARR IDX
+        rot                     ; SARR IDX BOFF
+        .e format_boffset       ; SARR IDX STR
+        ains                    ; SARR
+        ba .done
+.no_omaps:
+        drop2
+.done:
+                                ; SARR
+        sel
+        push ulong<64>0
+        swap                    ; SARR IDX LEN
+        .call _pkl_reduce_string_array
+                                ; STR
+        sel
+        push ulong<64>0
+        swap                    ; STR IDX LEN
+        push "struct"
+        sprops                  ; STR
+        popf 1
+        return
+        .end
+
 ;;; RAS_MACRO_PRINT_INT_SUFFIX @type
 ;;; ( -- )
 ;;;

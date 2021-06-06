@@ -422,6 +422,7 @@ token <integer> UNION    _("keyword `union'")
 %token PRINTF            _("keyword `printf'")
 %token LOAD              _("keyword `load'")
 %token LAMBDA            _("keyword `lambda'")
+%token FORMAT            _("keyword `format'")
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE BUILTIN_IOFLAGS BUILTIN_IOGETB BUILTIN_IOSETB
@@ -531,6 +532,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> expression expression_list expression_opt primary
 %type <ast> identifier bconc map
 %type <ast> funcall funcall_arg_list funcall_arg
+%type <ast> format_arg_list format_arg
 %type <ast> array array_initializer_list array_initializer
 %type <ast> struct_field_list struct_field
 %type <ast> typename type_specifier simple_type_specifier cons_type_specifier
@@ -545,7 +547,7 @@ token <integer> UNION    _("keyword `union'")
 %type <ast> defvar defvar_list deftype deftype_list
 %type <ast> defunit defunit_list
 %type <ast> function_specifier function_arg_list function_arg function_arg_initial
-%type <ast> simple_stmt simple_stmt_list comp_stmt stmt_decl_list stmt print_stmt_arg_list
+%type <ast> simple_stmt simple_stmt_list comp_stmt stmt_decl_list stmt
 %type <ast> funcall_stmt funcall_stmt_arg_list funcall_stmt_arg
 %type <ast> integral_struct
 %type <integer> struct_type_pinned integral_type_sign struct_or_union
@@ -1176,6 +1178,18 @@ primary:
                   pkl_ast_finish_returns ($3);
                   $$ = pkl_ast_make_lambda (pkl_parser->ast, $3);
                 }
+        | FORMAT '(' STR format_arg_list ')'
+                {
+                  $$ = pkl_ast_make_format (pkl_parser->ast, $3, $4,
+                                            0 /* printf_p */);
+                  PKL_AST_TYPE ($$)
+                      = ASTREF (pkl_ast_make_string_type (pkl_parser->ast));
+                  PKL_AST_LOC ($3) = @3;
+                  if (PKL_AST_TYPE ($3))
+                    PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
+                  PKL_AST_LOC ($$) = @$;
+                  PKL_AST_LOC (PKL_AST_TYPE ($$)) = @$;
+                }
         | expression INC
                 {
                   $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $1,
@@ -1211,9 +1225,31 @@ funcall_arg_list:
 
 funcall_arg:
            expression
-                  {
+                {
                   $$ = pkl_ast_make_funcall_arg (pkl_parser->ast,
                                                  $1, NULL /* name */);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        ;
+
+format_arg_list:
+          %empty
+                { $$ = NULL; }
+        | format_arg
+        | format_arg_list ',' expression
+                {
+                  pkl_ast_node arg
+                    = pkl_ast_make_format_arg (pkl_parser->ast, $3);
+                  PKL_AST_LOC (arg) = @3;
+
+                  $$ = pkl_ast_chainon ($1, arg);
+                }
+        ;
+
+format_arg:
+           expression
+                {
+                  $$ = pkl_ast_make_format_arg (pkl_parser->ast, $1);
                   PKL_AST_LOC ($$) = @$;
                 }
         ;
@@ -2176,10 +2212,14 @@ simple_stmt:
                                               $1);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | PRINTF '(' STR print_stmt_arg_list ')'
+        | PRINTF '(' STR format_arg_list ')'
                 {
+                  pkl_ast_node format =
+                    pkl_ast_make_format (pkl_parser->ast, $3, $4,
+                                         1 /* printf_p */);
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
-                                                $3, $4);
+                                                1 /* printf_p */, format);
+                  PKL_AST_LOC (format) = @$;
                   PKL_AST_LOC ($3) = @3;
                   if (PKL_AST_TYPE ($3))
                     PKL_AST_LOC (PKL_AST_TYPE ($3)) = @3;
@@ -2459,32 +2499,21 @@ stmt:
         | PRINT expression ';'
                 {
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
-                                                NULL /* fmt */, $2);
+                                                0 /* printf_p */, $2);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | PRINTF STR print_stmt_arg_list ';'
+        | PRINTF STR format_arg_list ';'
                 {
+                  pkl_ast_node format =
+                    pkl_ast_make_format (pkl_parser->ast, $2, $3,
+                                         1 /* printf_p */);
                   $$ = pkl_ast_make_print_stmt (pkl_parser->ast,
-                                                $2, $3);
+                                                1 /* printf_p */, format);
+                  PKL_AST_LOC (format) = @$;
                   PKL_AST_LOC ($2) = @2;
                   if (PKL_AST_TYPE ($2))
                     PKL_AST_LOC (PKL_AST_TYPE ($2)) = @2;
                   PKL_AST_LOC ($$) = @$;
-                }
-        ;
-
-print_stmt_arg_list:
-          %empty
-                {
-                  $$ = NULL;
-                }
-        | print_stmt_arg_list ',' expression
-                {
-                  pkl_ast_node arg
-                    = pkl_ast_make_print_stmt_arg (pkl_parser->ast, $3);
-                  PKL_AST_LOC (arg) = @3;
-
-                  $$ = pkl_ast_chainon ($1, arg);
                 }
         ;
 

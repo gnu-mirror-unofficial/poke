@@ -1027,6 +1027,36 @@ EXTRA_DIST = \
   poke.pkl/for-in-4.pk \
   poke.pkl/for-in-5.pk \
   poke.pkl/for-in-int-struct-1.pk \
+  poke.pkl/format-1.pk \
+  poke.pkl/format-2.pk \
+  poke.pkl/format-3.pk \
+  poke.pkl/format-4.pk \
+  poke.pkl/format-5.pk \
+  poke.pkl/format-6.pk \
+  poke.pkl/format-7.pk \
+  poke.pkl/format-8.pk \
+  poke.pkl/format-9.pk \
+  poke.pkl/format-10.pk \
+  poke.pkl/format-11.pk \
+  poke.pkl/format-12.pk \
+  poke.pkl/format-13.pk \
+  poke.pkl/format-14.pk \
+  poke.pkl/format-15.pk \
+  poke.pkl/format-16.pk \
+  poke.pkl/format-17.pk \
+  poke.pkl/format-18.pk \
+  poke.pkl/format-19.pk \
+  poke.pkl/format-20.pk \
+  poke.pkl/format-21.pk \
+  poke.pkl/format-22.pk \
+  poke.pkl/format-23.pk \
+  poke.pkl/format-24.pk \
+  poke.pkl/format-25.pk \
+  poke.pkl/format-26.pk \
+  poke.pkl/format-27.pk \
+  poke.pkl/format-28.pk \
+  poke.pkl/format-29.pk \
+  poke.pkl/format-diag-1.pk \
   poke.pkl/formfeedchar.pk \
   poke.pkl/fun-types-1.pk \
   poke.pkl/fun-types-2.pk \
@@ -1579,6 +1609,8 @@ EXTRA_DIST = \
   poke.pkl/redef-1.pk \
   poke.pkl/redef-2.pk \
   poke.pkl/redef-3.pk \
+  poke.pkl/reduce-array-1.pk \
+  poke.pkl/reduce-array-2.pk \
   poke.pkl/return-1.pk \
   poke.pkl/return-2.pk \
   poke.pkl/return-diag-1.pk \

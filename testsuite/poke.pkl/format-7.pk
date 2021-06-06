@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {format("%s%s%s", "GNU", "", "poke")} } */
+/* { dg-output {"GNUpoke"} } */

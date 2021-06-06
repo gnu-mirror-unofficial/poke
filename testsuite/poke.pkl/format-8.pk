@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {vm_set_obase (16)} } */
+/* { dg-command {format("%v", 1)} } */
+/* { dg-output {"0x00000001"\n} } */
+/* { dg-command {format("%v", 1U)} } */
+/* { dg-output {"0x00000001U"\n} } */

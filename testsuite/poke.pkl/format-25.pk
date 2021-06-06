@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {vm_set_obase (16)} } */
+/* { dg-command {vm_set_oindent (4)} } */
+/* { dg-command {vm_set_omode (VM_OMODE_TREE)} } */  /* No effect.  */
+/* { dg-command {format("%v", E_generic)} } */
+/* { dg-output {"Exception {code=0x00000000,msg=\\"generic\\",exit_status=0x00000001}"} } */

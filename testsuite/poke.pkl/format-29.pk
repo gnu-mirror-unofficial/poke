@@ -1,0 +1,11 @@
+/* { dg-do run } */
+
+type S = struct
+  {
+    int<32>[] i;
+  };
+
+/* { dg-command {vm_set_obase (10)} } */
+/* { dg-command {var s = S{ i=[1,2,3]} } } */
+/* { dg-command {format("%v", s)} } */
+/* { dg-output {"S {i=\[1,2,3]}"} } */

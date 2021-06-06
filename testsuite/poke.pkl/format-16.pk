@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {vm_set_obase (10)} } */
+/* { dg-command {format("%v", [1,2,3])} } */
+/* { dg-output {"\[1,2,3]"\n} } */
+/* { dg-command {format("%v", [1UB,2UB,3UB])} } */
+/* { dg-output {"\[1UB,2UB,3UB]"\n} } */

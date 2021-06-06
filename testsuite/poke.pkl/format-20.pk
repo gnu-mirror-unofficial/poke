@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+/* { dg-command {vm_set_obase (10)} } */
+/* { dg-command {vm_set_omaps (1)} } */
+/* { dg-command {vm_set_oacutoff (3)} } */
+/* { dg-command {format("%v", ["GNU", "poke", "by", "Jose", "Marchesi"])} } */
+/* { dg-output {"\[\\"GNU\\" @ 0x0000000000000000#b,\\"poke\\" @ 0x0000000000000020#b,\\"by\\" @ 0x0000000000000048#b...] @ 0x0000000000000000#b"} } */

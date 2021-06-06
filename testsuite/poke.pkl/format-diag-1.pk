@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+format("%i0b", 0);   /* { dg-error "invalid bit-width" } */

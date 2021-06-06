@@ -1,0 +1,11 @@
+/* { dg-do run } */
+
+type S = struct
+  {
+    Exception ex;
+  };
+
+/* { dg-command {vm_set_obase (10)} } */
+/* { dg-command {vm_set_odepth (1)} } */    /* No effect.  */
+/* { dg-command {format("%v", S{})} } */
+/* { dg-output {"S {ex=Exception {code=0,msg=\\"\\",exit_status=0}}"} } */

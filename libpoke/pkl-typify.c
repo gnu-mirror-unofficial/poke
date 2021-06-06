@@ -2240,70 +2240,77 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt_iterator)
 }
 PKL_PHASE_END_HANDLER
 
-/* Type-check `print' and `printf' statements.  */
+/* Type-check `format'.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_format)
+{
+  pkl_ast_node format = PKL_PASS_NODE;
+  pkl_ast_node format_args = PKL_AST_FORMAT_ARGS (format);
+  pkl_ast_node format_types = PKL_AST_FORMAT_TYPES (format);
+  pkl_ast_node format_fmt = PKL_AST_FORMAT_FMT (format);
+  pkl_ast_node type;
+  pkl_ast_node arg;
+
+  assert (format_fmt);
+
+  /* Make sure the type of the ARGS match the types in TYPES.  */
+
+  for (arg = format_args, type = format_types;
+       arg && type;
+       arg = PKL_AST_CHAIN (arg),
+       type = PKL_AST_CHAIN (type))
+    {
+      pkl_ast_node arg_exp = PKL_AST_FORMAT_ARG_EXP (arg);
+
+      /* Skip arguments without associated values.  */
+      if (!arg_exp)
+        continue;
+
+      pkl_ast_node arg_type = PKL_AST_TYPE (arg_exp);
+
+      if (PKL_AST_TYPE_CODE (arg_type) == PKL_TYPE_ANY)
+        {
+          PKL_ERROR (PKL_AST_LOC (arg),
+                     "invalid format argument of type `any'");
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+
+      if (!pkl_ast_type_promoteable_p (arg_type, type, 0))
+        {
+          char *found_type = pkl_type_str (arg_type, 1);
+          char *expected_type = pkl_type_str (type, 1);
+
+          PKL_ERROR (PKL_AST_LOC (arg),
+                     "format argument is of an invalid type\n\
+expected %s, got %s",
+                     expected_type, found_type);
+          free (found_type);
+          free (expected_type);
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
+/* Type-check `print' statement.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_print_stmt)
 {
   pkl_ast_node print_stmt = PKL_PASS_NODE;
-  pkl_ast_node print_stmt_args = PKL_AST_PRINT_STMT_ARGS (print_stmt);
-  pkl_ast_node print_stmt_types = PKL_AST_PRINT_STMT_TYPES (print_stmt);
-  pkl_ast_node print_stmt_fmt = PKL_AST_PRINT_STMT_FMT (print_stmt);
+  pkl_ast_node print_stmt_sexp = PKL_AST_PRINT_STMT_STR_EXP (print_stmt);
 
-  if (print_stmt_fmt)
+  if (print_stmt_sexp)
     {
-      /* This is a printf.  Make sure the type of the ARGS match the
-         types in TYPES.  */
-
-      pkl_ast_node type;
-      pkl_ast_node arg;
-
-      for (arg = print_stmt_args, type = print_stmt_types;
-           arg && type;
-           arg = PKL_AST_CHAIN (arg),
-           type = PKL_AST_CHAIN (type))
-        {
-          pkl_ast_node arg_exp = PKL_AST_PRINT_STMT_ARG_EXP (arg);
-
-          /* Skip arguments without associated values.  */
-          if (arg_exp)
-            {
-              pkl_ast_node arg_type = PKL_AST_TYPE (arg_exp);
-
-              if (PKL_AST_TYPE_CODE (arg_type) == PKL_TYPE_ANY)
-                {
-                  PKL_ERROR (PKL_AST_LOC (arg),
-                             "invalid printf argument of type `any'");
-                  PKL_TYPIFY_PAYLOAD->errors++;
-                  PKL_PASS_ERROR;
-                }
-
-              if (!pkl_ast_type_promoteable_p (arg_type, type, 0))
-                {
-                  char *found_type = pkl_type_str (arg_type, 1);
-                  char *expected_type = pkl_type_str (type, 1);
-
-                  PKL_ERROR (PKL_AST_LOC (arg),
-                             "printf argument is of an invalid type\n\
-expected %s, got %s",
-                             expected_type, found_type);
-                  free (found_type);
-                  free (expected_type);
-                  PKL_TYPIFY_PAYLOAD->errors++;
-                  PKL_PASS_ERROR;
-                }
-            }
-        }
-    }
-  else
-    {
-      /* This is a print.  The type of the single element in ARGS
+      /* This is a `print'.  The type of the single element in STR_EXP
          should be a string.  */
 
-      pkl_ast_node arg_type = PKL_AST_TYPE (print_stmt_args);
+      pkl_ast_node sexp_type = PKL_AST_TYPE (print_stmt_sexp);
 
-      if (PKL_AST_TYPE_CODE (arg_type) != PKL_TYPE_STRING)
+      if (PKL_AST_TYPE_CODE (sexp_type) != PKL_TYPE_STRING)
         {
-          PKL_ERROR (PKL_AST_LOC (arg_type),
+          PKL_ERROR (PKL_AST_LOC (sexp_type),
                      "expected a string");
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
@@ -2901,6 +2908,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_REF, pkl_typify1_ps_struct_ref),
    PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT, pkl_typify1_ps_loop_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_LOOP_STMT_ITERATOR, pkl_typify1_ps_loop_stmt_iterator),
+   PKL_PHASE_PS_HANDLER (PKL_AST_FORMAT, pkl_typify1_ps_format),
    PKL_PHASE_PS_HANDLER (PKL_AST_PRINT_STMT, pkl_typify1_ps_print_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_RAISE_STMT, pkl_typify1_ps_raise_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_TRY_CATCH_STMT, pkl_typify1_ps_try_catch_stmt),

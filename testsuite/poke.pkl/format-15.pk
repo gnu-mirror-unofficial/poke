@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {format("%v", int[]())} } */
+/* { dg-output {"\[]"} } */

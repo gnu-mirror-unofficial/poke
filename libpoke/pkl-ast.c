@@ -370,7 +370,8 @@ pkl_ast_node
 pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
-  const int nclosures = 5; /* mapper, writer, bounder, constructor, printer */
+  const int nclosures
+      = 6; /* mapper, writer, bounder, constructor, printer, formater. */
 
   assert (etype);
 
@@ -386,6 +387,7 @@ pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
   PKL_AST_TYPE_A_WRITER (type) = PVM_NULL;
   PKL_AST_TYPE_A_BOUNDER (type) = PVM_NULL;
   PKL_AST_TYPE_A_CONSTRUCTOR (type) = PVM_NULL;
+  PKL_AST_TYPE_A_FORMATER (type) = PVM_NULL;
   PKL_AST_TYPE_A_PRINTER (type) = PVM_NULL;
 
   return type;
@@ -441,8 +443,8 @@ pkl_ast_make_struct_type (pkl_ast ast,
                           int pinned_p, int union_p)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
-  const int nclosures
-      = 6; /* writer, mapper, constructor, comparator, integrator, printer.  */
+  const int nclosures = 7; /* writer, mapper, constructor, comparator,
+                              integrator, printer, formater.  */
 
   PKL_AST_TYPE_CODE (type) = PKL_TYPE_STRUCT;
   PKL_AST_TYPE_S_NELEM (type) = nelem;
@@ -463,6 +465,7 @@ pkl_ast_make_struct_type (pkl_ast ast,
   PKL_AST_TYPE_S_CONSTRUCTOR (type) = PVM_NULL;
   PKL_AST_TYPE_S_COMPARATOR (type) = PVM_NULL;
   PKL_AST_TYPE_S_INTEGRATOR (type) = PVM_NULL;
+  PKL_AST_TYPE_S_FORMATER (type) = PVM_NULL;
   PKL_AST_TYPE_S_PRINTER (type) = PVM_NULL;
 
   return type;
@@ -1569,6 +1572,33 @@ pkl_ast_make_funcall_arg (pkl_ast ast, pkl_ast_node exp,
   return funcall_arg;
 }
 
+/* Build and return an AST node for `format'.  */
+
+pkl_ast_node
+pkl_ast_make_format (pkl_ast ast,
+                     pkl_ast_node fmt, pkl_ast_node args, int printf_p)
+{
+  pkl_ast_node format = pkl_ast_make_node (ast, PKL_AST_FORMAT);
+
+  PKL_AST_FORMAT_FMT (format) = ASTREF (fmt);
+  if (args)
+    PKL_AST_FORMAT_ARGS (format) = ASTREF (args);
+
+  return format;
+}
+
+/* Build and return an AST node for a `format' argument.  */
+
+pkl_ast_node
+pkl_ast_make_format_arg (pkl_ast ast, pkl_ast_node exp)
+{
+  pkl_ast_node format_arg = pkl_ast_make_node (ast, PKL_AST_FORMAT_ARG);
+
+  if (exp)
+    PKL_AST_FORMAT_ARG_EXP (format_arg) = ASTREF (exp);
+  return format_arg;
+}
+
 /* Build and return an AST node for a variable reference.  */
 
 pkl_ast_node
@@ -1815,30 +1845,18 @@ pkl_ast_make_try_catch_stmt (pkl_ast ast, pkl_ast_node code,
 
 pkl_ast_node
 pkl_ast_make_print_stmt (pkl_ast ast,
-                         pkl_ast_node fmt, pkl_ast_node args)
+                         int printf_p, pkl_ast_node fmt)
 {
-  pkl_ast_node print_stmt = pkl_ast_make_node (ast,
-                                               PKL_AST_PRINT_STMT);
+  pkl_ast_node print_stmt = pkl_ast_make_node (ast, PKL_AST_PRINT_STMT);
 
-  if (fmt)
-    PKL_AST_PRINT_STMT_FMT (print_stmt) = ASTREF (fmt);
-  if (args)
-    PKL_AST_PRINT_STMT_ARGS (print_stmt) = ASTREF (args);
+  assert (fmt != NULL);
+
+  if (printf_p) /* printf statement */
+    PKL_AST_PRINT_STMT_FORMAT (print_stmt) = ASTREF (fmt);
+  else /* print statement */
+    PKL_AST_PRINT_STMT_STR_EXP (print_stmt) = ASTREF (fmt);
 
   return print_stmt;
-}
-
-/* Build and return an AST node for a `printf' argument.  */
-
-pkl_ast_node
-pkl_ast_make_print_stmt_arg (pkl_ast ast, pkl_ast_node exp)
-{
-  pkl_ast_node print_stmt_arg = pkl_ast_make_node (ast,
-                                                   PKL_AST_PRINT_STMT_ARG);
-
-  if (exp)
-    PKL_AST_PRINT_STMT_ARG_EXP (print_stmt_arg) = ASTREF (exp);
-  return print_stmt_arg;
 }
 
 /* Build and return an AST node for a `break' statement.  */
@@ -2250,27 +2268,34 @@ pkl_ast_node_free (pkl_ast_node ast)
       pkl_ast_node_free (PKL_AST_TRY_UNTIL_STMT_EXP (ast));
       break;
 
-    case PKL_AST_PRINT_STMT_ARG:
-      free (PKL_AST_PRINT_STMT_ARG_SUFFIX (ast));
-      free (PKL_AST_PRINT_STMT_ARG_BEGIN_SC (ast));
-      free (PKL_AST_PRINT_STMT_ARG_END_SC (ast));
-      pkl_ast_node_free (PKL_AST_PRINT_STMT_ARG_EXP (ast));
+    case PKL_AST_FORMAT_ARG:
+      free (PKL_AST_FORMAT_ARG_SUFFIX (ast));
+      free (PKL_AST_FORMAT_ARG_BEGIN_SC (ast));
+      free (PKL_AST_FORMAT_ARG_END_SC (ast));
+      pkl_ast_node_free (PKL_AST_FORMAT_ARG_EXP (ast));
       break;
+
+    case PKL_AST_FORMAT:
+      {
+        free (PKL_AST_FORMAT_PREFIX (ast));
+        for (t = PKL_AST_FORMAT_ARGS (ast); t; t = n)
+          {
+            n = PKL_AST_CHAIN (t);
+            pkl_ast_node_free (t);
+          }
+        for (t = PKL_AST_FORMAT_TYPES (ast); t; t = n)
+          {
+            n = PKL_AST_CHAIN (t);
+            pkl_ast_node_free (t);
+          }
+        pkl_ast_node_free (PKL_AST_FORMAT_FMT (ast));
+        break;
+      }
 
     case PKL_AST_PRINT_STMT:
       {
-        free (PKL_AST_PRINT_STMT_PREFIX (ast));
-        for (t = PKL_AST_PRINT_STMT_ARGS (ast); t; t = n)
-          {
-            n = PKL_AST_CHAIN (t);
-            pkl_ast_node_free (t);
-          }
-        for (t = PKL_AST_PRINT_STMT_TYPES (ast); t; t = n)
-          {
-            n = PKL_AST_CHAIN (t);
-            pkl_ast_node_free (t);
-          }
-        pkl_ast_node_free (PKL_AST_PRINT_STMT_FMT (ast));
+        pkl_ast_node_free (PKL_AST_PRINT_STMT_STR_EXP (ast));
+        pkl_ast_node_free (PKL_AST_PRINT_STMT_FORMAT (ast));
         break;
       }
 
@@ -3024,6 +3049,28 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (function, LAMBDA_FUNCTION);
       break;
 
+    case PKL_AST_FORMAT_ARG:
+      IPRINTF ("FORMAT_ARG::\n");
+      PRINT_COMMON_FIELDS;
+      if (PKL_AST_FORMAT_ARG_BEGIN_SC (ast))
+        PRINT_AST_IMM (begin_sc, FORMAT_ARG_BEGIN_SC, "'%s'");
+      if (PKL_AST_FORMAT_ARG_END_SC (ast))
+        PRINT_AST_IMM (end_sc, FORMAT_ARG_END_SC, "'%s'");
+      if (PKL_AST_FORMAT_ARG_SUFFIX (ast))
+        PRINT_AST_IMM (suffix, FORMAT_ARG_SUFFIX, "'%s'");
+      PRINT_AST_SUBAST (exp, FORMAT_ARG_EXP);
+      break;
+
+    case PKL_AST_FORMAT:
+      IPRINTF ("FORMAT::\n");
+      PRINT_COMMON_FIELDS;
+      if (PKL_AST_FORMAT_PREFIX (ast))
+        PRINT_AST_IMM (prefix, FORMAT_PREFIX, "'%s'");
+      PRINT_AST_SUBAST (fmt, FORMAT_FMT);
+      PRINT_AST_SUBAST_CHAIN (FORMAT_TYPES);
+      PRINT_AST_SUBAST_CHAIN (FORMAT_ARGS);
+      break;
+
     case PKL_AST_INCRDECR:
       IPRINTF ("INCRDECR::\n");
 
@@ -3112,26 +3159,13 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_AST_SUBAST (try_until_stmt_exp, TRY_UNTIL_STMT_EXP);
       break;
 
-    case PKL_AST_PRINT_STMT_ARG:
-      IPRINTF ("PRINT_STMT_ARG::\n");
-      PRINT_COMMON_FIELDS;
-      if (PKL_AST_PRINT_STMT_ARG_BEGIN_SC (ast))
-        PRINT_AST_IMM (begin_sc, PRINT_STMT_ARG_BEGIN_SC, "'%s'");
-      if (PKL_AST_PRINT_STMT_ARG_END_SC (ast))
-        PRINT_AST_IMM (end_sc, PRINT_STMT_ARG_END_SC, "'%s'");
-      if (PKL_AST_PRINT_STMT_ARG_SUFFIX (ast))
-        PRINT_AST_IMM (suffix, PRINT_STMT_ARG_SUFFIX, "'%s'");
-      PRINT_AST_SUBAST (exp, PRINT_STMT_ARG_EXP);
-      break;
-
     case PKL_AST_PRINT_STMT:
       IPRINTF ("PRINT_STMT::\n");
       PRINT_COMMON_FIELDS;
-      if (PKL_AST_PRINT_STMT_PREFIX (ast))
-        PRINT_AST_IMM (prefix, PRINT_STMT_PREFIX, "'%s'");
-      PRINT_AST_SUBAST (fmt, PRINT_STMT_FMT);
-      PRINT_AST_SUBAST_CHAIN (PRINT_STMT_TYPES);
-      PRINT_AST_SUBAST_CHAIN (PRINT_STMT_ARGS);
+      if (PKL_AST_PRINT_STMT_STR_EXP (ast))
+        PRINT_AST_SUBAST (pexp, PRINT_STMT_STR_EXP);
+      if (PKL_AST_PRINT_STMT_FORMAT (ast))
+        PRINT_AST_SUBAST (format, PRINT_STMT_FORMAT);
       break;
 
     case PKL_AST_BREAK_STMT:
