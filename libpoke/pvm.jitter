@@ -4262,6 +4262,53 @@ instruction muls ()
   end
 end
 
+# Instruction: sprops
+#
+# Given a string STR, set the styling class of the substring with
+# length LEN from index IDX to CLASS.
+#
+# Stack: ( STR IDX LEN CLASS -- STR )
+
+instruction sprops ()
+  code
+    /* FIXME not implemented yet */
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+  end
+end
+
+# Instruction: sproph
+#
+# Given a string STR, set the hyperlink property (which characterized
+# by a URL and an ID) of the substring with length LEN from index IDX.
+#
+# Stack: ( STR IDX LEN URL ID -- STR )
+
+instruction sproph ()
+  code
+    /* FIXME not implemented yet */
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+  end
+end
+
+
+# Instruction: spropc
+#
+# Given a string on the stack, push the copy of the string with all
+# properties cleared.
+#
+# Stack: ( STR -- STR )
+
+instruction spropc ()
+  code
+    /* FIXME not implemented yet */
+  end
+end
+
 
 ## Array instructions
 

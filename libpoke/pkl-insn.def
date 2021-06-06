@@ -238,6 +238,9 @@ PKL_DEF_INSN(PKL_INSN_STRREF,"","strref")
 PKL_DEF_INSN(PKL_INSN_STRSET,"","strset")
 PKL_DEF_INSN(PKL_INSN_SUBSTR,"","substr")
 PKL_DEF_INSN(PKL_INSN_MULS,"","muls")
+PKL_DEF_INSN(PKL_INSN_SPROPS,"","sprops")
+PKL_DEF_INSN(PKL_INSN_SPROPH,"","sproph")
+PKL_DEF_INSN(PKL_INSN_SPROPC,"","spropc")
 
 /* Offset instructions.  */
 

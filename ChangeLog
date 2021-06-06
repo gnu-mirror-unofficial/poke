@@ -1,3 +1,13 @@
+2021-06-06  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pvm.jitter (sprops): Add instruction for
+	"string property style", but with no implementation.
+	(sproph): Add instruction for "string property hyperlink", but with
+	no implementation.
+	(spropc): Add instruction for "string property clear", but with no
+	implementation.
+	* libpoke/pkl-insn.def: Add new instructions.
+
 2021-06-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Update for 1.3.
