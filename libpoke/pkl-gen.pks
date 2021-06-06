@@ -1918,10 +1918,8 @@
         printlu 64              ; _
         push "integer"
         endsc
-        ;; XXX RAS turns "#b" into "(B_arg)"
-        push "#"
-        prints
-        push "b"
+        ;; RAS turns "#b" into "(B_arg)"; so we use '\x62' for 'b'.
+        push "#\x62"
         prints
         push "offset"
         endsc
@@ -2121,7 +2119,7 @@
         prints
  .c      uint64_t i;
         .let @field
- .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (struct_type);
+ .c for (i = 0, @field = PKL_AST_TYPE_S_ELEMS (@struct_type);
  .c      @field;
  .c      @field = PKL_AST_CHAIN (@field))
  .c {

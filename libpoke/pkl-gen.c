@@ -2843,7 +2843,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_function)
     {
       /* Stack: VAL DEPTH  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* DEPTH is not used.  */
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL is not used.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                     pvm_make_string ("#<closure>"));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PRINTS);
@@ -3082,6 +3082,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
           RAS_FUNCTION_ARRAY_PRINTER (printer_closure, array_type);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+          PKL_AST_TYPE_A_PRINTER (array_type) = printer_closure;
         }
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
@@ -3482,6 +3483,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
           RAS_FUNCTION_STRUCT_PRINTER (printer_closure, struct_type);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);
+          PKL_AST_TYPE_S_PRINTER (struct_type) = printer_closure;
         }
       else
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, printer_closure);
