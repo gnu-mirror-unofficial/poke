@@ -309,7 +309,7 @@ multiply it by two, and store the result at the same offset.
 void double_number (int fd, off_t offset, int endian)
 @{
    int number, i;
-   int b[4];
+   unsigned char b[4];
 
    /* Decode.  */
    lseek (fd, offset, SEEK_SET);
