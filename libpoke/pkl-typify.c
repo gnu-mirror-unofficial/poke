@@ -493,8 +493,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
       && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_STRUCT)
     {
-      PKL_ERROR (PKL_AST_LOC (exp_type),
-                 "invalid cast, expected struct");
+      char *found_type = pkl_type_str (exp_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (exp),
+                 "invalid cast, expected struct, got %s", found_type);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -509,9 +511,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
         ;
       else
         {
-          PKL_ERROR (PKL_AST_LOC (type),
-                     "invalid cast, expected struct%s",
-                     PKL_AST_TYPE_S_ITYPE (exp_type) ? " or integer" : "");
+          char *type_str = pkl_type_str (type, 1);
+
+          PKL_ERROR (
+              PKL_AST_LOC (type), "invalid cast, expected struct%s, got %s",
+              PKL_AST_TYPE_S_ITYPE (exp_type) ? " or integral type" : "",
+              type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }

@@ -1,3 +1,8 @@
+2021-07-06  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Make cast error
+	messages more helpful.
+
 2021-07-04  Guillermo E. Martinez  <guillermo.e.martinez@oracle.com>
 
 	* doc/poke.texi (Decode-Compute-Encode): Fix `double_number`
