@@ -1,3 +1,7 @@
+2021-07-12  Fangrui Song  <i@maskray.me>
+
+	* doc/poke.texi: Fix a couple of code errors in examples.
+
 2021-07-06  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Make cast error

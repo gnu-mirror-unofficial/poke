@@ -2748,7 +2748,7 @@ do:
 @example
 (poke) b
 0x37UB
-(poke) '0' - b
+(poke) b - '0'
 7UB
 @end example
 
@@ -12332,7 +12332,7 @@ This is useful when we want to read a data structure from the IO space
 changing the underlying IO space.  We would do something like:
 
 @example
-(poke) var a = unmap (int[1] @@ 10#B)
+(poke) var a = unmap (int[3] @@ 10#B)
 (poke) a[2] = 100
 @end example
 
