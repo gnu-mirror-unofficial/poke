@@ -1,3 +1,7 @@
+2021-08-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/libpoke.h: Add missing doc for pk_compile_expression.
+
 2021-07-12  Fangrui Song  <i@maskray.me>
 
 	* doc/poke.texi: Fix a couple of code errors in examples.

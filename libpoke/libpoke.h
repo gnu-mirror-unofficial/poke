@@ -170,7 +170,9 @@ int pk_compile_statement (pk_compiler pkc, const char *buffer,
    expression, which evaluates to a value.
 
    VAL, if given, is a pointer to a pk_val variable that is set to the
-   result value of executing the expression.  */
+   result value of executing the expression.
+
+   Return PK_ERROR in case of a compilation error, PK_OK otherwise.  */
 
 int pk_compile_expression (pk_compiler pkc, const char *buffer,
                            const char **end, pk_val *val) LIBPOKE_API;
