@@ -1760,6 +1760,21 @@ Description:
 + Supporting this requires to tag the PVM closure values with their
 + corresponding type.
 
+Summary: support references to values in the MI protocol
+Kind: ENH
+Component: MI
+Priority: 3
+Description: 
++ Some values are big.  Think about complex nested data structures and
++ arrays containing many arguments.  In order to avoid transferring
++ these values through the MI communication channel every time, we shall
++ support a new kind of value in the MI: a reference.
++ 
++ References refer to PVM values using a numerical identifier, which is
++ a pointer in the machine where poke is running.
++ 
++ This also will allow us to support closures in the MI.
+
 %rec: Release
 %key: Version
 %type: Version regexp /^[0-9]+\.[0-9]+$/
