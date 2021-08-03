@@ -299,29 +299,6 @@ Kind: ENH
 Priority: 3
 Description: ^1024#B -> 1#Kb
 
-Summary: `format' support
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ We want to add a new language construction ``format``, which has the
-+ form:
-+
-+   format (FMT, ARGS...)
-+
-+ or:
-+
-+   format FMT, ARGS...
-+
-+ ``format`` works like printf, but instead of printing out the
-+ formatted string it returns it.  This task requires adding support for
-+ this construction to the compiler.  In principle no PVM changes are
-+ necessary.
-+
-+   format "%a%b%c", a, b, c
-+
-+ This requires propertized string support in the PVM.
-
 Summary: `system' support
 Component: Language
 Kind: ENH
@@ -1027,18 +1004,6 @@ Description:
 + A field in an union type cannot refer to other union alternatives, in
 + any case.  This applies to constraints, array bounds, etc.
 Target: 1.1
-
-Summary: Fix GC roots in AST nodes
-Component: Compiler
-Kind: BUG
-BZ: 26885
-Priority: 4
-Description:
-+ There is a limit on the number of GC roots that can be registered, so
-+ having them in each AST node is not an option.  We need a list of GC
-+ roots in the `ast' structure instead.
-+
-+ Look for calls to pvm_alloc*gc_roots in pkl-ast.c.
 
 Summary: `load' doesn't load after an error
 Component: Compiler
@@ -1772,6 +1737,9 @@ Description:
 + 
 + References refer to PVM values using a numerical identifier, which is
 + a pointer in the machine where poke is running.
++
++ We also need new API functions to notify the GC that there are external
++ references to these PVM values: `pk_gc_pin' and `pk_gc_unpin'.
 + 
 + This also will allow us to support closures in the MI.
 
