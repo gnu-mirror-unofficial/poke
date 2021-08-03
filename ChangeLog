@@ -1,3 +1,8 @@
+2021-08-03  Kostas Chasialis  <sdi1600195@di.uoa.gr>
+
+	* poke/pk-mi.c (pk_mi_dispatch_msg): Added PRINTV request.
+	* doc/poke.texi (MI Requests-Responses): Added PRINTV in both.
+
 2021-08-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* etc/poke.rec (support references to values in the MI protocol):

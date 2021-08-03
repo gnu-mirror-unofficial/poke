@@ -13804,6 +13804,8 @@ received from the client.
 
 @menu
 * Request EXIT::	ask poke to exit.
+* Request PRINTV:: ask poke to return the printed representation of the
+given Poke value.
 @end menu
 
 @node Request EXIT
@@ -13812,11 +13814,24 @@ received from the client.
 This request asks poke to exit in an orderly way.  It has no
 arguments.
 
+@node Request PRINTV
+@subsubsection Request PRINTV
+
+This request is used to get the printed representation of a given Poke value.
+
+Arguments:
+
+@table @var
+@item value
+The Poke value to get the printed representation of.
+@end table
+
 @node MI Responses
 @subsection MI Responses
 
 @menu
 * Response EXIT::	poke confirms it will exit.
+* Response PRINTV:: poke returns the printed representation of the value.
 @end menu
 
 @node Response EXIT
@@ -13833,6 +13848,25 @@ poke to exit.
 @item errmsg
 If @var{success_p} is @code{false}, this attribute contains a string
 indicating the reason why poke refuses to exit.
+@end table
+
+@node Response PRINTV
+@subsubsection Response PRINTV
+
+This is the response to the PRINTV request.
+
+Attributes:
+
+@table @var
+@item success_p
+If @code{true}, poke was able to get the printed representation of the value.
+If @code{false}, an error occurred that prevented poke to handle the request.
+@item string
+If @var{success_p} is @code{true}, this attribute contains the printed
+representation of the Poke value that was passed to the request.
+@item errmsg
+If @var{success_p} is @code{false}, this attribute contains a string indicating
+the reason why poke could not get the printed representation of the value.
 @end table
 
 @node MI Events

@@ -288,6 +288,29 @@ pk_mi_dispatch_msg (pk_mi_msg msg)
             pk_mi_exit_p = 1;
             break;
           }
+        case PK_MI_REQ_PRINTV:
+          {
+            int ok;
+            pk_mi_msg resp;
+            pk_val arg, val;
+
+            arg = pk_mi_get_arg (msg, "value");
+
+            ok = pk_defvar (poke_compiler, "__pkl_mi_value", arg);
+            assert (ok == PK_OK);
+
+            ok = pk_compile_expression (poke_compiler,
+                                        "format (\"%v\", __pkl_mi_value)",
+                                        NULL, &val);
+            assert (ok == PK_OK);
+
+            resp = pk_mi_make_resp (PK_MI_RESP_PRINTV, pk_mi_msg_number (msg),
+                                    1 /* success_p */, NULL /* errmsg */);
+            pk_mi_set_arg (resp, "string", val);
+            pk_mi_send (resp);
+            pk_mi_msg_free (resp);
+            break;
+          }
         default:
           assert (0);
         }
