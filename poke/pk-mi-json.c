@@ -97,11 +97,33 @@ jerror (int ok, char **out, const char *fmt, ...)
     }                                                                         \
   while (0)
 
+#define GOTO_ON_JERR(cond, label, errmsg, ...)                                \
+  do                                                                          \
+    {                                                                         \
+      int _cond = (cond);                                                     \
+                                                                              \
+      if (_cond == J_OK)                                                      \
+        break;                                                                \
+      jerror (_cond, errmsg, __VA_ARGS__);                                    \
+      goto label;                                                             \
+    }                                                                         \
+  while (0)
+
 #define RETURN_ERR_IF(cond, errmsg, ...)                                      \
   do                                                                          \
     {                                                                         \
       if ((cond))                                                             \
         return jerror (J_NOK, errmsg, __VA_ARGS__);                           \
+    }                                                                         \
+  while (0)
+
+#define GOTO_ERR_IF(cond, label, errmsg, ...)                                 \
+  do                                                                          \
+    {                                                                         \
+      if (!(cond))                                                            \
+        break;                                                                \
+      jerror (J_NOK, errmsg, __VA_ARGS__);                                    \
+      goto label;                                                             \
     }                                                                         \
   while (0)
 
@@ -575,13 +597,6 @@ pk_mi_val_to_json (pk_val val, char **errmsg)
 static int pvalue (json_object *j, pk_val *pval, char **errmsg);
 static int pexpect (json_object *j, int type_code, pk_val *pval,
                     char **errmsg);
-
-/* Adapter function */
-static int
-pk_mi_jsonobj_to_val (pk_val *value, json_object *obj, char **errmsg)
-{
-  return pvalue (obj, value, errmsg) == J_OK ? 0 : -1;
-}
 
 int
 pk_mi_json_to_val (pk_val *value, const char *json_str, char **errmsg)
@@ -1073,7 +1088,7 @@ collect_json_arg (const char *name, pk_val value /* Note unused */,
 
   if (!json_object_object_get_ex (args, name, &obj))
     return 0;
-  if (!pk_mi_jsonobj_to_val (&val, obj, NULL))
+  if (pvalue (obj, &val, NULL /* errmsg */) != J_OK)
     return 0;
 
   pk_mi_set_arg (msg, name, val);
@@ -1213,7 +1228,7 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
 }
 
 static pk_mi_msg
-pk_mi_json_object_to_msg (json_object *json)
+pk_mi_json_object_to_msg (json_object *json, char** errmsg)
 {
   enum pk_mi_msg_kind msg_kind;
   int msg_number;
@@ -1221,32 +1236,26 @@ pk_mi_json_object_to_msg (json_object *json)
   pk_mi_msg msg = NULL;
 
   if (!json_object_is_type (json, json_type_object))
-    return NULL;
+    GOTO_ON_JERR (
+      J_NOK, failed, errmsg,"invalid message: expects JSON object");
 
   /* Get the message number.  */
   {
     json_object *number;
 
-    if (!json_object_object_get_ex (json, "seq", &number))
-      return NULL;
-    if (!json_object_is_type (number, json_type_int))
-      return NULL;
-
+    GOTO_ON_JERR (jexpect (json, "seq", json_type_int, &number, errmsg),
+                  failed, errmsg, "invalid message");
     msg_number = json_object_get_int (number);
   }
 
   /* Get the message type.  */
-  if (!json_object_object_get_ex (json, "type", &obj))
-    return NULL;
-  if (!json_object_is_type (obj, json_type_int))
-    return NULL;
+  GOTO_ON_JERR (jexpect (json, "type", json_type_int, &obj, errmsg), failed,
+                errmsg, "invalid message");
   msg_kind = json_object_get_int (obj);
 
   /* Get the message data.  */
-  if (!json_object_object_get_ex (json, "data", &msg_json))
-    return NULL;
-  if (!json_object_is_type (msg_json, json_type_object))
-    return NULL;
+  GOTO_ON_JERR (jexpect (json, "data", json_type_object, &msg_json, errmsg),
+                failed, errmsg, "invalid message");
 
   switch (msg_kind)
     {
@@ -1256,10 +1265,9 @@ pk_mi_json_object_to_msg (json_object *json)
         enum pk_mi_req_type msg_req_type;
 
         /* Get the request type.  */
-        if (!json_object_object_get_ex (json, "type", &req_type))
-          return NULL;
-        if (!json_object_is_type (req_type, json_type_int))
-          return NULL;
+        GOTO_ON_JERR (
+          jexpect (msg_json, "type", json_type_int, &req_type, errmsg),
+          failed, errmsg, "invalid request message");
         msg_req_type = json_object_get_int (req_type);
 
         /* Create the message.   */
@@ -1272,46 +1280,41 @@ pk_mi_json_object_to_msg (json_object *json)
         enum pk_mi_resp_type resp_type;
         pk_mi_seqnum req_number;
         int success_p;
-        const char *errmsg;
+        const char *emsg;
 
         /* Get the response type.  */
-        if (!json_object_object_get_ex (msg_json, "type", &obj))
-          return NULL;
-        if (!json_object_is_type (obj, json_type_int))
-          return NULL;
+        GOTO_ON_JERR (jexpect (msg_json, "type", json_type_int, &obj, errmsg),
+                      failed, errmsg, "invalid response message");
         resp_type = json_object_get_int (obj);
 
         /* Get the request number.  */
-        if (!json_object_object_get_ex (msg_json, "req_number", &obj))
-          return NULL;
-        if (!json_object_is_type (obj, json_type_int))
-          return NULL;
+        GOTO_ON_JERR (
+          jexpect (msg_json, "req_number", json_type_int, &obj, errmsg),
+          failed, errmsg, "invalid response message");
         req_number = json_object_get_int (obj);
 
         /* Get success_p.  */
-        if (!json_object_object_get_ex (msg_json, "succcess_p", &obj))
-          return NULL;
-        if (!json_object_is_type (obj, json_type_boolean))
-          return NULL;
+        GOTO_ON_JERR (
+          jexpect (msg_json, "success_p", json_type_boolean, &obj, errmsg),
+          failed, errmsg, "invalid response message");
         success_p = json_object_get_boolean (obj);
 
         /* Get errmsg.  */
         if (success_p)
-          errmsg = NULL;
+          emsg = NULL;
         else
           {
-            if (!json_object_object_get_ex (msg_json, "errmsg", &obj))
-              return NULL;
-            if (!json_object_is_type (obj, json_type_string))
-              return NULL;
-            errmsg = json_object_get_string (obj);
+            GOTO_ON_JERR (
+              jexpect (msg_json, "errmsg", json_type_string, &obj, errmsg),
+              failed, errmsg, "invalid response message");
+            emsg = json_object_get_string (obj);
           }
 
         /* Create the message.  */
         msg = pk_mi_make_resp (resp_type,
                                req_number,
                                success_p,
-                               errmsg);
+                               emsg);
         break;
       }
     case PK_MI_MSG_EVENT:
@@ -1320,10 +1323,8 @@ pk_mi_json_object_to_msg (json_object *json)
         enum pk_mi_event_type event_type;
 
         /* The event type.  */
-        if (!json_object_object_get_ex (msg_json, "type", &obj))
-          return NULL;
-        if (!json_object_is_type (obj, json_type_int))
-          return NULL;
+        GOTO_ON_JERR (jexpect (msg_json, "type", json_type_int, &obj, errmsg),
+                      failed, errmsg, "invalid event message");
         event_type = json_object_get_int (obj);
 
         /* Create the message.  */
@@ -1331,19 +1332,27 @@ pk_mi_json_object_to_msg (json_object *json)
         break;
       }
     default:
-      return NULL;
+      GOTO_ON_JERR (J_NOK, failed, errmsg, "invalid message type");
     }
 
   /* Add the arguments of the message.  */
-  if (!json_object_object_get_ex (msg_json, "args", &args_json))
-    return NULL;
-  if (!json_object_is_type (args_json, json_type_object))
-    return NULL;
-  if (!pk_mi_msg_json_to_args (msg, args_json))
-    return NULL;
+  if (json_object_object_get_ex (msg_json, "args", &args_json)) {
+    if (json_object_is_type (args_json, json_type_null))
+      goto done;
+    GOTO_ON_JERR (json_object_is_type (args_json, json_type_object),
+                  failed, errmsg, "invalid message arguments");
+    GOTO_ERR_IF (!pk_mi_msg_json_to_args (msg, args_json), failed, errmsg,
+                 "unable to set message arguments");
+  }
 
+done:
   pk_mi_set_msg_number (msg, msg_number);
   return msg;
+
+failed:
+  if (msg)
+    pk_mi_msg_free (msg);
+  return NULL;
 }
 
 const char *
@@ -1360,7 +1369,7 @@ pk_mi_msg_to_json (pk_mi_msg msg)
 }
 
 pk_mi_msg
-pk_mi_json_to_msg (const char *str)
+pk_mi_json_to_msg (const char *str, char **errmsg)
 {
   pk_mi_msg msg = NULL;
   json_tokener *tokener;
@@ -1375,7 +1384,7 @@ pk_mi_json_to_msg (const char *str)
 
   if (json)
     {
-      msg = pk_mi_json_object_to_msg (json);
+      msg = pk_mi_json_object_to_msg (json, errmsg);
       assert (json_object_put (json) == 1);
     }
 

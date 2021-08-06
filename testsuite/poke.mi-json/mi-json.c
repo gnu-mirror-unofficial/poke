@@ -45,7 +45,7 @@ test_json_to_msg ()
   pk_mi_msg msg;
 
   /* Invalid JSON should result in NULL.  */
-  msg = pk_mi_json_to_msg ("\"foo");
+  msg = pk_mi_json_to_msg ("\"foo", NULL);
   if (msg == NULL)
     pass ("json_to_msg_1");
   else

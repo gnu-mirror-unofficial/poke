@@ -31,7 +31,7 @@
 
    In case of error return NULL.  */
 
-pk_mi_msg pk_mi_json_to_msg (const char *str);
+pk_mi_msg pk_mi_json_to_msg (const char *str, char **errmsg);
 
 /* Given a MI message, return a string with the JSON representation of
    the message.

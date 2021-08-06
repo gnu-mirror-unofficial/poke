@@ -57,14 +57,12 @@ static void pk_mi_dispatch_msg (pk_mi_msg msg);
 static void
 pk_mi_process_frame_msg (int size, char *frame_msg)
 {
-  pk_mi_msg msg = pk_mi_json_to_msg (frame_msg);
+  pk_mi_msg msg = pk_mi_json_to_msg (frame_msg, NULL);
 
-  if (!msg)
-    /* Bad message.  Ignore it.  */
-    /* XXX: raise an event to communicate this to the client?  */
-    return;
-
-  pk_mi_dispatch_msg (msg);
+  if (msg)
+    pk_mi_dispatch_msg (msg);
+  else
+    ; /* XXX: raise an event to communicate this to the client.  */
 }
 
 static int
