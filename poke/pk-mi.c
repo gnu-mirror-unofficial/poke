@@ -53,16 +53,19 @@
 #define MAXMSG 2048
 
 static void pk_mi_dispatch_msg (pk_mi_msg msg);
+static void pk_mi_send_invalid_msg (pk_mi_msg msg, const char* errmsg);
 
 static void
 pk_mi_process_frame_msg (int size, char *frame_msg)
 {
-  pk_mi_msg msg = pk_mi_json_to_msg (frame_msg, NULL);
+  char *errmsg = NULL;
+  pk_mi_msg msg = pk_mi_json_to_msg (frame_msg, &errmsg);
 
   if (msg)
     pk_mi_dispatch_msg (msg);
   else
-    ; /* XXX: raise an event to communicate this to the client.  */
+    pk_mi_send_invalid_msg (msg, errmsg);
+  free (errmsg);
 }
 
 static int
@@ -268,61 +271,79 @@ pk_mi_send (pk_mi_msg msg)
 /* Message dispatcher.  */
 
 static void
+pk_mi_send_invalid_msg (pk_mi_msg msg, const char* errmsg)
+{
+  pk_mi_seqnum seq = msg ? pk_mi_msg_number (msg) : -1;
+  pk_mi_msg invreq_msg = pk_mi_make_event (PK_MI_EVENT_INVREQ);
+
+  if (errmsg == NULL)
+    errmsg = "";
+
+  pk_mi_set_arg (invreq_msg, "reqnum", pk_make_uint (seq, 64));
+  pk_mi_set_arg (invreq_msg, "errmsg", pk_make_string (errmsg));
+  pk_mi_send (invreq_msg);
+  pk_mi_msg_free (invreq_msg);
+}
+
+static void
 pk_mi_dispatch_msg (pk_mi_msg msg)
 {
-  if (pk_mi_msg_kind (msg) == PK_MI_MSG_REQUEST)
+  const char* errmsg = "";
+
+  if (pk_mi_msg_kind (msg) != PK_MI_MSG_REQUEST)
     {
-      switch (pk_mi_msg_req_type (msg))
-        {
-        case PK_MI_REQ_EXIT:
-          {
-            pk_mi_msg resp
-              = pk_mi_make_resp (PK_MI_RESP_EXIT,
-                                 pk_mi_msg_number (msg),
-                                 1 /* success_p */,
-                                 NULL /* errmsg */);
-            pk_mi_send (resp);
-            pk_mi_msg_free (resp);
-            pk_mi_exit_p = 1;
-            break;
-          }
-        case PK_MI_REQ_PRINTV:
-          {
-            int ok;
-            pk_mi_msg resp;
-            pk_val arg, val;
-
-            arg = pk_mi_get_arg (msg, "value");
-
-            ok = pk_defvar (poke_compiler, "__pkl_mi_value", arg);
-            assert (ok == PK_OK);
-
-            ok = pk_compile_expression (poke_compiler,
-                                        "format (\"%v\", __pkl_mi_value)",
-                                        NULL, &val);
-            assert (ok == PK_OK);
-
-            resp = pk_mi_make_resp (PK_MI_RESP_PRINTV, pk_mi_msg_number (msg),
-                                    1 /* success_p */, NULL /* errmsg */);
-            pk_mi_set_arg (resp, "string", val);
-            pk_mi_send (resp);
-            pk_mi_msg_free (resp);
-            break;
-          }
-        default:
-          assert (0);
-        }
-    }
-  else
-    {
-      pk_mi_msg invreq_msg = pk_mi_make_event (PK_MI_EVENT_INVREQ);
-
-      pk_mi_set_arg (invreq_msg, "reqnum",
-                     pk_make_uint (pk_mi_msg_number (msg), 64));
-      pk_mi_send (invreq_msg);
-      pk_mi_msg_free (invreq_msg);
+      errmsg = "expects request message";
+      goto error;
     }
 
+  switch (pk_mi_msg_req_type (msg))
+    {
+    case PK_MI_REQ_EXIT:
+      {
+        pk_mi_msg resp
+          = pk_mi_make_resp (PK_MI_RESP_EXIT,
+                             pk_mi_msg_number (msg),
+                             1 /* success_p */,
+                             NULL /* errmsg */);
+        pk_mi_send (resp);
+        pk_mi_msg_free (resp);
+        pk_mi_exit_p = 1;
+        break;
+      }
+    case PK_MI_REQ_PRINTV:
+      {
+        int ok;
+        pk_mi_msg resp;
+        pk_val arg, val;
+
+        arg = pk_mi_get_arg (msg, "value");
+
+        ok = pk_defvar (poke_compiler, "__pkl_mi_value", arg);
+        assert (ok == PK_OK);
+
+        ok = pk_compile_expression (poke_compiler,
+                                    "format (\"%v\", __pkl_mi_value)",
+                                    NULL, &val);
+        assert (ok == PK_OK);
+
+        resp = pk_mi_make_resp (PK_MI_RESP_PRINTV, pk_mi_msg_number (msg),
+                                1 /* success_p */, NULL /* errmsg */);
+        pk_mi_set_arg (resp, "string", val);
+        pk_mi_send (resp);
+        pk_mi_msg_free (resp);
+        break;
+      }
+    default:
+      errmsg = "invalid request type";
+      goto error;
+    }
+
+  goto done;
+
+error:
+  pk_mi_send_invalid_msg (msg, errmsg);
+
+done:
   pk_mi_msg_free (msg);
 }
 

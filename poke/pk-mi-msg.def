@@ -108,9 +108,13 @@ PK_DEF_RESP (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (string, PK_STRING)))
 
    reqnum (uint)
      Sequence number of the invalid request.
+   errmsg (string)
+     Invalidity reason.
 */
 
-PK_DEF_EVENT (INVREQ, PK_DEF_ARGS (PK_DEF_ARG (reqnum, PK_UINT)))
+PK_DEF_EVENT (INVREQ,
+              PK_DEF_ARGS (PK_DEF_ARG (reqnum, PK_UINT),
+                           PK_DEF_ARG (errmsg, PK_STRING)))
 
 /* Cleanup.  */
 

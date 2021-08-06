@@ -208,6 +208,9 @@ pk_mi_make_resp (enum pk_mi_resp_type type,
 {
   pk_mi_msg msg = pk_mi_make_msg (PK_MI_MSG_RESPONSE);
 
+  if (errmsg == NULL)
+    errmsg = "";
+
   PK_MI_MSG_RESP_TYPE (msg) = type;
   PK_MI_MSG_RESP_REQ_NUMBER (msg) = req_seqnum;
   PK_MI_MSG_RESP_SUCCESS_P (msg) = success_p;
@@ -309,8 +312,7 @@ pk_mi_set_arg (pk_mi_msg msg, const char *argname, pk_val value)
     assert (0);
 
   /* Check that VALUE is of the right kind for this argument.  */
-  assert (pk_type_code (type) == PK_ANY
-          || pk_type_code (type) == kind);
+  assert (kind == PK_ANY || pk_type_code (type) == kind);
 
   /* Ok, set the value for this argument.  */
   PK_MI_MSG_ARGS (msg)[argindex] = value;
