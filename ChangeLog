@@ -1,3 +1,8 @@
+2021-08-26  Kostas Chasialis  <koschasialis@gmail.com>
+
+	* etc/hacking.org: Email change.
+	* HACKING: Likewise.
+
 2021-08-06  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poke/pk-mi-msg.c (pk_mi_make_resp): Prevents `errmsg` to be `NULL`.

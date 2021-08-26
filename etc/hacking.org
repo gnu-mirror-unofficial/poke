@@ -79,7 +79,7 @@ Bruno Haible		<bruno@clisp.org>
 Carlo Caione		<ccaione@baylibre.com>
 Eric Blake		<eblake@redhat.com>
 Tim Ruehsen		<tim.ruehsen@gmx.de>
-Kostas Chasialis	<sdi1600195@di.uoa.gr>
+Kostas Chasialis	<koschasialis@gmail.com>
 Aurélien Aptel		<aaptel@suse.com>
 Mohammad-Reza Nabipoor	<mnabipoor@gnu.org>
 David Faust             <david.faust@oracle.com>
