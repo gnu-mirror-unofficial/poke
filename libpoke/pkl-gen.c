@@ -2941,8 +2941,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
                                     64));
 
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
-                    pvm_make_uint (PKL_AST_TYPE_I_SIGNED_P (integral_type),
-                                   32));
+                    pvm_make_int (PKL_AST_TYPE_I_SIGNED_P (integral_type),
+                                  32));
 
       pkl_asm_insn (pasm, PKL_INSN_MKTYI);
     }

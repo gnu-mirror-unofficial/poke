@@ -1,3 +1,11 @@
+2021-08-30  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_ps_type_integral): Fix argument of
+	MKTYI instruction to be signed integer.
+	* libpoke/pvm-val.c (pvm_make_exception): Fix args of
+	`pvm_make_integral_type` invocation.
+	* libpoke/pvm.jitter (time): Likewise.
+
 2021-08-26  Kostas Chasialis  <koschasialis@gmail.com>
 
 	* etc/hacking.org: Email change.

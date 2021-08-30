@@ -1667,7 +1667,8 @@ pvm_make_exception (int code, char *message, int exit_status)
   pvm_allocate_struct_attrs (nfields, &field_names, &field_types);
 
   field_names[0] = code_name;
-  field_types[0] = pvm_make_integral_type (32, 1);
+  field_types[0] = pvm_make_integral_type (pvm_make_ulong (32, 64),
+                                           PVM_MAKE_INT (1, 32));
 
   field_names[1] = msg_name;
   field_types[1] = pvm_make_string_type ();

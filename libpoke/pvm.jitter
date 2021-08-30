@@ -6212,8 +6212,9 @@ end
 instruction time ()
   code
     struct timespec ts;
-    pvm_val arr = pvm_make_array (PVM_MAKE_ULONG (2, 64),
-                                  pvm_make_integral_type (64, 1));
+    pvm_val arr = pvm_make_array (
+      PVM_MAKE_ULONG (2, 64),
+      pvm_make_integral_type (PVM_MAKE_ULONG (64, 64), PVM_MAKE_INT (1, 32)));
 
     gettime (&ts);
     (void) pvm_array_insert (arr, PVM_MAKE_LONG (0, 64),
