@@ -1,3 +1,10 @@
+2021-09-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poke/pk-mi-json.c (MI Messages): Use "kind" instead of "type" for
+	messages.
+	(pk_mi_msg_to_json_object): Likewise.
+	(pk_mi_json_object_to_msg): Likewise.
+
 2021-08-30  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/libpoke.h: Fix the comment of `pk_call`.

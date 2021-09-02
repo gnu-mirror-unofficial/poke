@@ -133,11 +133,11 @@ jerror (int ok, char **out, const char *fmt, ...)
 /* Message::
    {
      "seq"  : integer
-     "type" : MessageType
+     "kind" : MessageKind
      "data" : Request | Response | Event
    }
 
-   MessageType:: ( 0 => request | 1 => response | 2 => event )
+   MessageKind:: ( 0 => request | 1 => response | 2 => event )
 
    Request::
    {
@@ -1127,7 +1127,7 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
 
     if (!integer)
       goto out_of_memory;
-    json_object_object_add (json, "type", integer);
+    json_object_object_add (json, "kind", integer);
   }
 
   /* Add the data.  */
@@ -1248,8 +1248,8 @@ pk_mi_json_object_to_msg (json_object *json, char** errmsg)
     msg_number = json_object_get_int (number);
   }
 
-  /* Get the message type.  */
-  GOTO_ON_JERR (jexpect (json, "type", json_type_int, &obj, errmsg), failed,
+  /* Get the message kind.  */
+  GOTO_ON_JERR (jexpect (json, "kind", json_type_int, &obj, errmsg), failed,
                 errmsg, "invalid message");
   msg_kind = json_object_get_int (obj);
 
