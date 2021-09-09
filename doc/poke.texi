@@ -1936,7 +1936,7 @@ The reason is that poke is not limited to integers composed of a whole
 number of bytes. You can actually have integers having @emph{any}
 number of bits, between 1 and 64.  So yes, @code{int<3>} is a type
 specifier for signed 3-bit integers, and @code{uint<17>} is a type
-specifier for unsigned 7-bit integers.
+specifier for unsigned 17-bit integers.
 
 We call integers like this @dfn{weird integers}.
 

@@ -1,3 +1,7 @@
+2021-09-10  Guillermo E. Martinez  <guillermo.e.martinez@oracle.com>
+
+	* doc/poke.texi (Weird Integers): Fix typo.
+
 2021-09-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poke/pk-mi-json.c (MI Messages): Use "kind" instead of "type" for
