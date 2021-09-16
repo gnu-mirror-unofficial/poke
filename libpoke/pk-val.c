@@ -17,6 +17,7 @@
  */
 
 #include <config.h>
+#include <assert.h>
 
 #include "pvm.h"
 #include "pvm-val.h"
@@ -176,15 +177,18 @@ pk_val_set_ios (pk_val val, pk_val ios)
 pk_val
 pk_val_offset (pk_val val)
 {
-  pvm_val val_offset = PVM_VAL_OFFSET (val);
+  pvm_val val_offset;
   uint64_t bit_offset;
 
-  if (val_offset == PVM_NULL)
+  if (!PVM_VAL_MAPPED_P (val))
     return PK_NULL;
+
+  val_offset = PVM_VAL_OFFSET (val);
+  assert (val_offset != PVM_NULL);
 
   /* The offset in the PVM value is a bit-offset.  Convert to a proper
      offset.  */
-  bit_offset = PVM_VAL_ULONG (PVM_VAL_OFFSET (val));
+  bit_offset = PVM_VAL_ULONG (val_offset);
 
   /* XXX "upunit" properly so we get a nice unit, not just bytes or
      bits.  */
@@ -192,8 +196,7 @@ pk_val_offset (pk_val val)
     return pvm_make_offset (pvm_make_ulong (bit_offset / 8, 64),
                             pvm_make_ulong (8, 64));
   else
-    return pvm_make_offset (PVM_VAL_OFFSET (val),
-                            pvm_make_ulong (1, 64));
+    return pvm_make_offset (val_offset, pvm_make_ulong (1, 64));
 }
 
 void
