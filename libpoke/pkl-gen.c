@@ -2447,7 +2447,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
           PKL_GEN_POP_CONTEXT;
         }
       else
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHIOS);
 
       PKL_GEN_DUP_CONTEXT;
       PKL_GEN_CLEAR_CONTEXT (PKL_GEN_CTX_IN_LVALUE);
@@ -2466,7 +2466,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_map)
       if (map_ios)
         PKL_PASS_SUBPASS (map_ios);
       else
-        /* PVM_NULL means use the current IO space, if any.  */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHIOS);
 
       /* Push the offset of the map and convert to a bit-offset.  Note

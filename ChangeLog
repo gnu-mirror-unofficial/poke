@@ -1,3 +1,9 @@
+2021-09-16  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_map): Use `PUSHIOS` instruction to
+	get the current IOS, instead of using `PVM_NULL`.
+	And also remove the old (incorrect) comment.
+
 2021-09-10  Guillermo E. Martinez  <guillermo.e.martinez@oracle.com>
 
 	* doc/poke.texi (Weird Integers): Fix typo.
