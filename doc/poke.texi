@@ -3189,7 +3189,7 @@ The image has seven lines, and there are five pixels per line,
 @i{i.e.} the dimension of the image in pixels is 5x7.  Also, the pixels
 denoted by asterisks are red, whereas the pixels denoted with empty
 spaces are white.  In other words, our image uses a red foreground
-over a write background.  The ``painted'' pixels are called foreground
+over a white background.  The ``painted'' pixels are called foreground
 pixels, the non painted pixels are called background pixels.
 
 @subsection Preparing the Canvas
