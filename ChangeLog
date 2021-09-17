@@ -1,3 +1,9 @@
+2021-09-17  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* testsuite/poke.map/ass-map-21.pk: New test.
+	* testsuite/poke.map/ass-map-22.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2021-09-16  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pk-val.c: Include `assert.h`.

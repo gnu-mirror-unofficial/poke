@@ -1,0 +1,13 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x70 0x6f 0x6b 0x65  0x00} } */
+
+/* { dg-command {string @ 0#B} } */
+/* { dg-output "\"poke\"" } */
+/* { dg-command {.mem foo} } */
+/* { dg-command {string @ 0#B} } */
+/* { dg-output "\n\"\"" } */
+/* { dg-command {string @ 0#B = "POKE"} } */
+/* { dg-command {string @ 0 : 0#B} } */
+/* { dg-output "\n\"poke\"" } */
+/* { dg-command {string @ 1 : 0#B} } */
+/* { dg-output "\n\"POKE\"" } */

@@ -1,0 +1,17 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x12 0x34 0x56 0x78} ass_map_22.data } */
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {.mem foo} } */
+/* { dg-command {uint32 @ 0#B} } */
+/* { dg-output "0x0U" } */
+/* { dg-command {.file ass_map_22.data} } */
+/* { dg-command {.mem bar} } */
+/* { dg-command {uint32 @ 0#B = 0xabcdef00} } */
+/* { dg-command {.ios #1} } */
+/* { dg-command {uint32 @ 0#B} } */
+/* { dg-output "\n0x12345678U" } */
+/* { dg-command {.ios #0} } */
+/* { dg-command {uint32 @ 0#B} } */
+/* { dg-output "\n0x0U" } */
