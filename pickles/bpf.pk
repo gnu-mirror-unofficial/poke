@@ -210,7 +210,7 @@ type BPF_Insn_Opcode =
 type BPF_Insn_Regs =
   struct
   {
-    var little_p == (get_endian == ENDIAN_LITTLE);
+    var little_p = (get_endian == ENDIAN_LITTLE);
 
     BPF_Reg src @ !little_p * 4#b;
     BPF_Reg dst @ little_p * 4#b;
