@@ -1,3 +1,7 @@
+2021-09-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/bpf.pk: Adapt to new syntax for field initial values.
+
 2021-09-17  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* testsuite/poke.map/ass-map-21.pk: New test.
