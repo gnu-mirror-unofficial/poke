@@ -1477,6 +1477,7 @@ EXTRA_DIST = \
   poke.pkl/predecr-2.pk \
   poke.pkl/predecr-1.pk \
   poke.pkl/preincr-offset-1.pk \
+  poke.pkl/print-diag-1.pk \
   poke.pkl/preincr-field-1.pk \
   poke.pkl/preincr-diag-2.pk \
   poke.pkl/preincr-diag-1.pk \

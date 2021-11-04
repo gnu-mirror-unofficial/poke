@@ -1003,7 +1003,9 @@ Priority: 4
 Description:
 + A field in an union type cannot refer to other union alternatives, in
 + any case.  This applies to constraints, array bounds, etc.
-Target: 1.1
++
++ For example: type Foo = union { int i; int j : i != 10; }
+Target: 2.0
 
 Summary: `load' doesn't load after an error
 Component: Compiler
@@ -1018,7 +1020,8 @@ Description:
 + error: fjdi
 + (poke) load foo
 + /* Does nothing.  */
-Target: 1.1
+Target: 2.0
+Note: What about reverting to _not_ keep a list of loaded modules - jemarch
 
 Summary: Fix %destructors in parser
 Component: Compiler

@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+for (e in [1,2,3])
+    print e; /* { dg-error "expected a string" } */
