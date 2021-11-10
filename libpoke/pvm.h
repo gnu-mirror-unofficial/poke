@@ -477,7 +477,7 @@ enum pvm_exit_code
   };
 
 /* Exceptions.  These should be in sync with the exception code
-   variables, and the exception messages, declared in pkl-rt.pkl */
+   variables, and the exception messages, declared in pkl-rt-1.pk */
 
 #define PVM_E_GENERIC       0
 #define PVM_E_GENERIC_MSG "generic"

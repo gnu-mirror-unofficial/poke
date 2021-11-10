@@ -160,7 +160,7 @@
 #
 # The called function should be defined in the global environment.
 # Most typically this directive is used to call functions defined in
-# the compiler's run-time library (pkl-rt.pk).
+# the compiler's run-time library (pkl-rt*.pk).
 #
 # Literal C Code
 # --------------

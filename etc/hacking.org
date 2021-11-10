@@ -451,7 +451,7 @@ Indu Bhagat             <indu.bhagat@oracle.com>
     complex formulae or to perform some operation defined recursively.
 
     In these situations, the solution is to first write a Poke
-    function in the compiler's runtime library, =pkl-rt.pk=, like:
+    function in the compiler's runtime library, =pkl-rt*.pk=, like:
 
     : fun _pkl_foo = (uint<64> ival, uint<64> eval,
     :                 uint<32> ivalw, uint<32> fieldw) uint<64>:
@@ -1256,7 +1256,7 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    :      break;
 
    : The final step is to define the built-in function proper, in the
-   : compiler run-time, in =pkl-rt.pk=:
+   : compiler run-time, in =pkl-rt-1.pk=:
 
    : fun rand = int<32>: __PKL_BUILTIN_RAND__;
 
@@ -1265,10 +1265,10 @@ have a testsuite in =testsuite/poke.FOO= with a driver
 ** Exception Handling
 
    Exception types or codes are signed 32-bit integers, and are
-   defined in =libpoke/pkl-rt.pk= as =EC_*= variables.
+   defined in =libpoke/pkl-rt-1.pk= as =EC_*= variables.
 
    The exceptions themselves are struct values of type Exception, also
-   defined in =libpoke/pkl-rt.pk=.
+   defined in =libpoke/pkl-rt-1.pk=.
 
    There are two ways an exception can be raised in the PVM:
 
@@ -1291,7 +1291,7 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    =libpoke/pkl-asm.c:pkl_asm_new= and
    =libpoke/pkl-asm.c:pkl_asm_finish=.  It calls the function
    =_pkl_exception_handler=, that is defined in the compiler runtime
-   in =libpoke/pkl-rt.pkl=.
+   in =libpoke/pkl-rt-1.pkl=.
 
 ** Signal Handling
 

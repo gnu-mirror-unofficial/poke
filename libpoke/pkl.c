@@ -72,6 +72,26 @@ struct pkl_compiler
   pkl_alien_token_handler_fn alien_token_fn;
 };
 
+
+static int
+pkl_load_rt (pkl_compiler compiler, char *poke_rt_pk)
+{
+  if (!pkl_execute_file (compiler, poke_rt_pk, NULL))
+    {
+      free (poke_rt_pk);
+
+      pk_term_class ("error");
+      pk_puts ("internal error: ");
+      pk_term_end_class ("error");
+      pk_puts ("compiler failed to bootstrap itself\n");
+
+      pkl_free (compiler);
+      return 0;
+    }
+  free (poke_rt_pk);
+  return 1;
+}
+
 pkl_compiler
 pkl_new (pvm vm, const char *rt_path, uint32_t flags)
 {
@@ -99,23 +119,19 @@ pkl_new (pvm vm, const char *rt_path, uint32_t flags)
   /* Bootstrap the compiler.  An error bootstraping is an internal
      error and should be reported as such.  */
   {
-    char *poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt.pk", NULL);
+    char *poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt-1.pk", NULL);
     if (!poke_rt_pk)
       goto out_of_memory;
 
-    if (!pkl_execute_file (compiler, poke_rt_pk, NULL))
-      {
-        free (poke_rt_pk);
+    if (!pkl_load_rt (compiler, poke_rt_pk))
+      return NULL;
 
-        pk_term_class ("error");
-        pk_puts ("internal error: ");
-        pk_term_end_class ("error");
-        pk_puts ("compiler failed to bootstrap itself\n");
+    poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt-2.pk", NULL);
+    if (!poke_rt_pk)
+      goto out_of_memory;
 
-        pkl_free (compiler);
-        return NULL;
-      }
-    free (poke_rt_pk);
+    if (!pkl_load_rt (compiler, poke_rt_pk))
+      return NULL;
 
     compiler->bootstrapped = 1;
   }

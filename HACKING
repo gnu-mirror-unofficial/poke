@@ -631,7 +631,7 @@ with GNU poke.  If not, see [https://www.gnu.org/licenses/].
   to perform some operation defined recursively.
 
   In these situations, the solution is to first write a Poke function in
-  the compiler's runtime library, `pkl-rt.pk', like:
+  the compiler's runtime library, `pkl-rt*.pk', like:
 
   ,----
   | fun _pkl_foo = (uint<64> ival, uint<64> eval,
@@ -1572,7 +1572,7 @@ with GNU poke.  If not, see [https://www.gnu.org/licenses/].
 
   ,----
   | The final step is to define the built-in function proper, in the
-  | compiler run-time, in =pkl-rt.pk=:
+  | compiler run-time, in =pkl-rt-1.pk=:
   `----
 
   ,----
@@ -1587,10 +1587,10 @@ with GNU poke.  If not, see [https://www.gnu.org/licenses/].
 ~~~~~~~~~~~~~~~~~~~~~~~
 
   Exception types or codes are signed 32-bit integers, and are defined
-  in `libpoke/pkl-rt.pk' as `EC_*' variables.
+  in `libpoke/pkl-rt-1.pk' as `EC_*' variables.
 
   The exceptions themselves are struct values of type Exception, also
-  defined in `libpoke/pkl-rt.pk'.
+  defined in `libpoke/pkl-rt-1.pk'.
 
   There are two ways an exception can be raised in the PVM:
 
@@ -1611,7 +1611,7 @@ with GNU poke.  If not, see [https://www.gnu.org/licenses/].
   is installed by the macro-assembler in `libpoke/pkl-asm.c:pkl_asm_new'
   and `libpoke/pkl-asm.c:pkl_asm_finish'.  It calls the function
   `_pkl_exception_handler', that is defined in the compiler runtime in
-  `libpoke/pkl-rt.pkl'.
+  `libpoke/pkl-rt-1.pkl'.
 
 
 12.2 Signal Handling

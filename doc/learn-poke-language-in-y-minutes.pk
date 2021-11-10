@@ -581,7 +581,7 @@ catch (Exception e)
   }
 
 /* Exception codes in the range `0..254` are reserved for Poke. These codes
- * are defined by `EC_*` variables in `pkl-rt.pk` file.
+ * are defined by `EC_*` variables in `pkl-rt-1.pk` file.
  *
  * Users also can define their own exceptions by calling `exception_code`
  * function.

@@ -1,4 +1,4 @@
-/* pkl-rt.pkl - Run-time library for the poke compiler.  */
+/* pkl-rt-1.pk - Run-time library for the poke compiler.  */
 
 /* Copyright (C) 2019, 2020, 2021 Jose E. Marchesi.  */
 
@@ -194,26 +194,6 @@ fun _pkl_exception_handler = (Exception exception) int<32>:
      }
 
    return exception.exit_status;
-  }
-
-/* Assertion function.
-
-   The compiler transforms assert statement to invocation of this
-   function.  COND is first argument of assert statement, and MSG is
-   the optional second argument.  LINEINFO contains the source location
-   of the assert statement formatted like "<FILENAME>:<LINE>:<COLUMN>".
-   */
-
-fun _pkl_assert = (uint<64> cond, string msg, string lineinfo) void:
-  {
-    if (cond)
-      return;
-
-    raise Exception {
-      code = EC_assert,
-      msg = "assertion failed at " + lineinfo + (msg'length ? ": " + msg : ""),
-      exit_status = 1,
-    };
   }
 
 /* Exit a Poke program with the given exit status code.  This is equivalent

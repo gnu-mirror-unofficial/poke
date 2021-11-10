@@ -1,3 +1,23 @@
+2021-11-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-tab.y (pkl_make_assertion): Change the invocation of
+	`_pkl_assert` to pass FILENAME, LINE and COLUMN as separate arguments
+	instead of passing as a pre-formated string.
+	* libpoke/pkl.c (pkl_load_rt): New function to load runtime library.
+	(pkl_new): Load `pkl-rt-1.pk` and `pkl-rt-2.pk` runtime libraries.
+	* libpoke/pkl-rt.pk: Rename to `libpoke/pkl-rt-1`.
+	(_pkl_assert): Remove.
+	* libpoke/pkl-rt-1.pk: New file.
+	* libpoke/pkl-rt-2.pk: New file. New implementation of `_pkl_assert`
+	which uses `format` to report FILENAME, LINE and COLUMN.
+	* libpoke/Makefile.am (dist_pkgdata_DATA): Update
+	* etc/hacking.org: Rename `pkl-rt.pk` to what's appropriate.
+	* HACKING: Likewise.
+	* doc/learn-poke-language-in-y-minutes.pk: Likewise.
+	* libpoke/pvm.h: Likewise.
+	* libpoke/pvm-val.c: Likewise.
+	* libpoke/ras: Likewise.
+
 2021-11-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_print_stmt): Fix error location.
