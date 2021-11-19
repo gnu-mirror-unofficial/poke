@@ -783,6 +783,10 @@ void pk_array_set_elem (pk_val array, uint64_t idx, pk_val val) LIBPOKE_API;
 
 pk_val pk_array_elem_boffset (pk_val array, uint64_t idx) LIBPOKE_API;
 
+/* Return the size of VAL, in bits.  */
+
+uint64_t pk_sizeof (pk_val val) LIBPOKE_API;
+
 /* Integral types.  */
 
 /* Build and return an integral type.

@@ -2,9 +2,12 @@
 -3500 as int<32>
 ##
 {
-    "PokeValue" : {
-        "type" : "Integer",
-        "value" : -3500,
-        "size" : 32
-    }
+    "type": {
+        "code": "Integral",
+        "info": {
+            "size": 32,
+            "signed_p": true
+        }
+    },
+    "value": -3500
 }

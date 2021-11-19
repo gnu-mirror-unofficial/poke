@@ -1,13 +1,13 @@
 ##
-3500 as uint<32>
+-3500 as int<32>
 ##
 {
     "type": {
         "code": "Integral",
         "info": {
             "size": 32,
-            "signed_p": false
+            "signed_p": true
         }
     },
-    "value": 3500
+    "value": 1234
 }

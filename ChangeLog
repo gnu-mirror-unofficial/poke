@@ -1,3 +1,73 @@
+2021-11-19  Kostas Chasialis  <koschasialis@gmail.com>
+
+	* etc/pk-mi-json-schema.json (JSON Schema): Refactored the JSON schema.
+	* libpoke/libpoke.h (pk_sizeof): Function declaration.
+	* libpoke/pk-val.c (pk_sizeof): Function definition.
+	* poke/pk-mi-json.c (pk_val_to_json): New function.
+	(pk_type_to_json): Likewise.
+	(pk_type_to_json_integral): Likewise.
+	(pk_type_to_json_string): Likewise.
+	(pk_type_to_json_offset): Likewise.
+	(pk_type_to_json_struct): Likewise.
+	(pk_type_to_json_array): Likewise.
+	(pk_type_to_json_any): Likewise.
+	(pk_type_to_json_null): Likewise.
+	(pk_val_to_json_int): Likewise.
+	(pk_val_to_json_uint): Likewise.
+	(pk_val_to_json_string): Likewise.
+	(pk_val_to_json_offset): Likewise.
+	(pk_val_to_json_struct): Likewise.
+	(pk_val_to_json_array): Likewise.
+	(pk_val_to_json_any): Likewise.
+	(pk_val_to_json_map): Likewise.
+	(json_to_pk_val): Likewise.
+	(json_to_pk_type): Likewise.
+	(json_to_pk_type_integral): Likewise.
+	(json_to_pk_type_offset): Likewise.
+	(json_to_pk_type_struct): Likewise.
+	(json_to_pk_type_array): Likewise.
+	(json_to_pk_val_int): Likewise.
+	(json_to_pk_val_uint): Likewise.
+	(json_to_pk_val_string): Likewise.
+	(json_to_pk_val_offset): Likewise.
+	(json_to_pk_val_struct): Likewise.
+	(json_to_pk_val_array): Likewise.
+	(json_to_pk_val_any): Likewise.
+	(pexpect_aelem): Likewise.
+	(collect_json_arg): Adapted accordingly.
+	* testsuite/Makefile.am (EXTRA_DIST): Added new tests.
+	* testsuite/poke.mi-json/mi-json.c (test_val_to_json): Adapted to new
+	changes.
+	(test_json_to_val): Likewise.
+	(test_json_pk_val): Deleted function.
+	(test_json_pk_int): Likewise.
+	(test_json_pk_uint): Likewise.
+	(test_json_pk_string): Likewise.
+	(test_json_pk_offset): Likewise.
+	(test_json_pk_sct): Likewise.
+	(test_json_pk_array): Likewise.
+	(test_json_pk_null): Likewise.
+	* testsuite/poke.mi-json/pk_array.json: Deleted test.
+	* testsuite/poke.mi-json/pk_array_bounded.json: New test.
+	* testsuite/poke.mi-json/pk_array_bounded_offset.json: Likewise.
+	* testsuite/poke.mi-json/pk_array_unbounded.json: Likewise.
+	* testsuite/poke.mi-json/pk_int.json: Adapted test to JSON schema changes.
+	* testsuite/poke.mi-json/pk_offset.json: Likewise.
+	* testsuite/poke.mi-json/pk_offset_uint.json: Likewise.
+	* testsuite/poke.mi-json/pk_sct.json: Likewise.
+	* testsuite/poke.mi-json/pk_sct_empty.json: Likewise.
+	* testsuite/poke.mi-json/pk_sct_empty_mapped.json: Likewise.
+	* testsuite/poke.mi-json/pk_string.json: Likewise.
+	* testsuite/poke.mi-json/pk_uint.json: Likewise.
+	* testsuite/poke.mi-json/pk_int_fail.json: New test.
+	* testsuite/poke.mi-json/pk_uint_fail.json: Likewise.
+	* testsuite/poke.mi-json/pk_string_fail.json: Likewise.
+	* testsuite/poke.mi-json/pk_offset_fail.json: Likewise.
+	* testsuite/poke.mi-json/pk_offset_uint_fail.json: Likewise.
+	* testsuite/poke.mi-json/pk_sct_fail.json: Likewise.
+	* testsuite/poke.mi-json/pk_array_bounded_fail.json: Likewise.
+	* testsuite/poke.mi-json/pk_array_bounded_offset_fail.json: Likewise.
+
 2021-11-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-tab.y (pkl_make_assertion): Change the invocation of

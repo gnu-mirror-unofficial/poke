@@ -508,3 +508,9 @@ pk_array_set_elem_boffset (pk_val array, uint64_t idx, pk_val boffset)
   if (idx < pk_uint_value (pk_array_nelem (array)))
     PVM_VAL_ARR_ELEM_OFFSET (array, idx) = boffset;
 }
+
+uint64_t
+pk_sizeof (pk_val val)
+{
+  return pvm_sizeof (val);
+}

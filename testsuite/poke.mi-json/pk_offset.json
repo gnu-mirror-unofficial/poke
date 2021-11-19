@@ -2,17 +2,18 @@
 23#B
 ##
 {
-    "PokeValue" : {
-        "type" : "Offset",
-        "magnitude" : {
-            "type" : "Integer",
-            "value" : 23,
-            "size" : 32
-        },
-        "unit" : {
-            "type" : "UnsignedInteger",
-            "value" : 8,
-            "size" : 64
+    "type": {
+        "code": "Offset",
+        "info": {
+            "magnitude": {
+                "code": "Integral",
+                "info": {
+                    "size": 32,
+                    "signed_p": true
+                }
+            },
+            "unit": 8
         }
-    }
+    },
+    "value": 23
 }

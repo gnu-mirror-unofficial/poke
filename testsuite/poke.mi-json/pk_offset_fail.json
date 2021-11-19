@@ -1,5 +1,5 @@
 ##
-23U#B
+23#B
 ##
 {
     "type": {
@@ -9,11 +9,11 @@
                 "code": "Integral",
                 "info": {
                     "size": 32,
-                    "signed_p": false
+                    "signed_p": true
                 }
             },
             "unit": 8
         }
     },
-    "value": 23
+    "value": 1234
 }

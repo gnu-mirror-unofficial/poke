@@ -9,7 +9,7 @@ Packet { i = 1, j = 2}
             "name": "Packet",
             "fields": [
                 {
-                    "name": "i",
+                    "name": "z",
                     "type": {
                         "code": "Integral",
                         "info": {
@@ -33,8 +33,8 @@ Packet { i = 1, j = 2}
     },
     "value": {
         "fields": [
-            1,
-            2
+            -1234,
+            2345
         ],
         "boffsets": [
             0,

@@ -1,0 +1,46 @@
+##
+[1L, 2L, 3L, 15L, 25L, -35L, 64L, 9223372036854775807L] as int<64>[]
+##
+{
+    "type": {
+        "code": "Array",
+        "info": {
+            "bound": null,
+            "etype": {
+                "code": "Integral",
+                "info": {
+                    "size": 64,
+                    "signed_p": true
+                }
+            }
+        }
+    },
+    "value": {
+        "elements": [
+            1,
+            2,
+            3,
+            15,
+            25,
+            -35,
+            64,
+            9223372036854775807
+        ],
+        "boffsets": [
+            0,
+            64,
+            128,
+            192,
+            256,
+            320,
+            384,
+            448
+        ],
+        "mapping": {
+            "mapped": false,
+            "strict": true,
+            "IOS": null,
+            "offset": null
+        }
+    }
+}

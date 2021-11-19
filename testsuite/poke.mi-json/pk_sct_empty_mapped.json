@@ -4,30 +4,36 @@ type Empty = struct {};
 Empty @ fd : 1#B
 ##
 {
-    "PokeValue" : {
-        "type" : "Struct",
-        "name" : {
-            "type" : "String",
-            "value" : "Empty"
-        },
-        "fields" : [],
-        "mapping" : {
+    "type": {
+        "code": "Struct",
+        "info": {
+            "name": "Empty",
+            "fields": []
+        }
+    },
+    "value": {
+        "fields": [],
+        "boffsets": [],
+        "mapping": {
             "mapped": true,
             "strict": true,
             "IOS": 0,
             "offset": {
-                "type": "Offset",
-                "magnitude" : {
-                    "type" : "Integer",
-                    "value" : 1,
-                    "size" : 32
+                "type": {
+                    "code": "Offset",
+                    "info": {
+                        "magnitude": {
+                            "code": "Integral",
+                            "info": {
+                                "size": 64,
+                                "signed_p": false
+                            }
+                        },
+                        "unit": 8
+                    }
                 },
-                "unit" : {
-                    "type" : "UnsignedInteger",
-                    "value" : 8,
-                    "size" : 64
-                }
-            },
+                "value": 1
+            }
         }
     }
 }
