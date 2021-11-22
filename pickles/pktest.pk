@@ -30,7 +30,7 @@ type PkTest = struct
     /* Skip reason. If non-empty, test will be skipped */
     string skip;
     /* TODO reason. If non-empty, test will be marked as TODO */
-    string todo : todo == "" || (todo != "" && skip == "");
+    string todo : todo != "" => skip == "";
     PkTestFn func;
   };
 

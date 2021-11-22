@@ -1,5 +1,9 @@
 2021-11-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* pickles/pktest.pk (PkTest): Use logical implication operator.
+
+2021-11-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* doc/learn-poke-language-in-y-minutes.pk
 	(Logical implication operator): Add new section.
 	(format): Likewise.
