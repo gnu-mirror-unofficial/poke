@@ -1,3 +1,10 @@
+2021-11-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* doc/learn-poke-language-in-y-minutes.pk
+	(Logical implication operator): Add new section.
+	(format): Likewise.
+	(Signed Arithmetic Overflow Detection): Add a newline to `print`.
+
 2021-11-19  Kostas Chasialis  <koschasialis@gmail.com>
 
 	* etc/pk-mi-json-schema.json (JSON Schema): Refactored the JSON schema.

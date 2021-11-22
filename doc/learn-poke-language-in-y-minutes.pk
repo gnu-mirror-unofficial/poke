@@ -524,6 +524,28 @@ var hdrmagver = HeaderMagicVersion {};
 /* hdrmagver.magic == 0x55UB && hdrmagver.version == 0x2UB */
 hdrmagver.magic = 0xaaUB;
 
+/* Logical implication operator =>
+ *
+ * When appropriate, using logical implication operator can lead to more
+ * readable conditions than using its logical equivalent:
+ *
+ *   (A => B) == (!A || B)
+ */
+type HeaderMagicVersionImpl =
+  struct
+  {
+    uint<8> magic = 0xaaUB : magic in [0x55UB, 0xaaUB];
+    uint<8> version = 2UB : (magic == 0xaaUB => version == 2UB) &&
+                            (magic == 0x55UB => version == 1UB);
+  };
+
+var hdrmagver_1 = HeaderMagicVersionImpl{},
+    hdrmagver_2 = HeaderMagicVersionImpl
+      {
+        magic = 0x55UB,
+        version = 1UB,
+      };
+
 
 /* Integral Structs
  *
@@ -973,6 +995,30 @@ PointPair {
 }
 */
 
+/* `format` function
+ *
+ * `format` is like `printf` but instead of writing the result in the
+ * `stdout`, it'll returns a string.
+ */
+var pointpair_str =
+  format ("%2Tv",
+          PointPair { first = Point {x = 1, y = -1},
+                      second = Point {x = -1, y = 1}, });
+
+/* We're using multi-line string literal. */
+if (pointpair_str == "\
+PointPair {
+  first=Point {
+    x=0x00000001,
+    y=0xffffffff
+  },
+  second=Point {
+    x=0xffffffff,
+    y=0x00000001
+  }
+}")
+  print "`format` works!\n";
+
 
 /* Now, the most important concept in Poke: mapping! */
 
@@ -1064,7 +1110,7 @@ try
   2**33;    /* `2` is of type `int32` */
 catch if E_overflow
   {
-    print ("Overflow detected in 2**33");
+    print ("Overflow detected in 2**33\n");
   }
 
 
