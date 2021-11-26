@@ -32,6 +32,23 @@
 #define J_OK 1
 #define J_NOK 0 /* Not OK */
 
+
+/* At some point json-c changed the interface of
+   json_object_object_add in order to return a status code.  We wrap
+   these calls in the function below to support both APIs.  */
+
+static inline int
+pk_json_object_object_add (struct json_object* obj, const char *key,
+                           struct json_object *val)
+{
+#if JSON_C_MAJOR_VERSION == 0 && JSON_C_MINOR_VERSION < 13
+  json_object_object_add (obj, key, val);
+  return J_OK;
+#else
+  return json_object_object_add (obj, key, val);
+#endif
+}
+
 /* Error message handling */
 
 /* Prepend the error message to OUT */
@@ -158,9 +175,9 @@ jfree_all (json_object *j[], const int len)
 #define JSON_OBJECT_OBJECT_ADD(obj, key, val, label, errmsg)                  \
   do                                                                          \
   {                                                                           \
-    int ret = json_object_object_add (obj, key, val);                         \
+    int ret = pk_json_object_object_add (obj, key, val);                      \
     val = NULL;                                                               \
-    GOTO_IF (ret != 0, label, errmsg, "json_object_object_add (%s) failed",   \
+    GOTO_IF (ret != 0, label, errmsg, "pk_json_object_object_add (%s) failed",\
              key);                                                            \
   } while (0)
 
@@ -1744,8 +1761,8 @@ collect_msg_arg (const char *name, pk_val value,
 {
   json_object *args = (json_object *) user1;
 
-  json_object_object_add (args, name,
-                          pk_mi_val_to_json_1 (value, NULL /* errmsg */));
+  pk_json_object_object_add (args, name,
+                             pk_mi_val_to_json_1 (value, NULL /* errmsg */));
   return 1;
 }
 
@@ -1806,7 +1823,7 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
 
     if (!number)
       goto out_of_memory;
-    json_object_object_add (json, "seq", number);
+    pk_json_object_object_add (json, "seq", number);
   }
 
   /* Add the type.  */
@@ -1815,7 +1832,7 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
 
     if (!integer)
       goto out_of_memory;
-    json_object_object_add (json, "kind", integer);
+    pk_json_object_object_add (json, "kind", integer);
   }
 
   /* Add the data.  */
@@ -1833,13 +1850,13 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
       req_type = json_object_new_int (msg_req_type);
       if (!req_type)
         goto out_of_memory;
-      json_object_object_add (req, "type", req_type);
+      pk_json_object_object_add (req, "type", req_type);
 
       args = pk_mi_msg_args_to_json (msg);
       if (args)
-        json_object_object_add (req, "args", args);
+        pk_json_object_object_add (req, "args", args);
 
-      json_object_object_add (json, "data", req);
+      pk_json_object_object_add (json, "data", req);
       break;
     }
   case PK_MI_MSG_RESPONSE:
@@ -1854,17 +1871,17 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
       resp_type = json_object_new_int (msg_resp_type);
       if (!resp_type)
         goto out_of_memory;
-      json_object_object_add (resp, "type", resp_type);
+      pk_json_object_object_add (resp, "type", resp_type);
 
       success_p
         = json_object_new_boolean (pk_mi_msg_resp_success_p (msg));
       if (!success_p)
         goto out_of_memory;
-      json_object_object_add (resp, "success_p", success_p);
+      pk_json_object_object_add (resp, "success_p", success_p);
 
       req_number
         = json_object_new_int (pk_mi_msg_resp_req_number (msg));
-      json_object_object_add (resp, "req_number", req_number);
+      pk_json_object_object_add (resp, "req_number", req_number);
 
       if (pk_mi_msg_resp_errmsg (msg))
         {
@@ -1873,14 +1890,14 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
 
           if (!errmsg)
             goto out_of_memory;
-          json_object_object_add (resp, "errmsg", errmsg);
+          pk_json_object_object_add (resp, "errmsg", errmsg);
         }
 
       args = pk_mi_msg_args_to_json (msg);
       if (args)
-        json_object_object_add (resp, "args", args);
+        pk_json_object_object_add (resp, "args", args);
 
-      json_object_object_add (json, "data", resp);
+      pk_json_object_object_add (json, "data", resp);
       break;
     }
   case PK_MI_MSG_EVENT:
@@ -1895,13 +1912,13 @@ pk_mi_msg_to_json_object (pk_mi_msg msg)
       event_type = json_object_new_int (msg_event_type);
       if (!event_type)
         goto out_of_memory;
-      json_object_object_add (event, "type", event_type);
+      pk_json_object_object_add (event, "type", event_type);
 
       args = pk_mi_msg_args_to_json (msg);
       if (args)
-        json_object_object_add (event, "args", args);
+        pk_json_object_object_add (event, "args", args);
 
-      json_object_object_add (json, "data", event);
+      pk_json_object_object_add (json, "data", event);
       break;
     }
   default:

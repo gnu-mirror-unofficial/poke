@@ -1,3 +1,10 @@
+2021-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-mi-json.c (pk_json_object_object_add): Define.
+	(JSON_OBJECT_OBJECT_ADD): Use pk_json_object_object_add.
+	(collect_msg_arg): Likewise.
+	(pk_mi_msg_to_json_object): Likewise.
+
 2021-11-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* pickles/pktest.pk (PkTest): Use logical implication operator.
