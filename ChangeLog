@@ -1,3 +1,11 @@
+2021-11-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.mi-json/mi-json.c (J_UND): Define.
+	(test_val_to_json): Return J_UND if json_object_equal is not
+	available.
+	(test_json_file): Mark test as `unresolved' whenever appropriate.
+	* poke/pk-mi-json.c (pk_json_object_object_add): Fix return value.
+
 2021-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-mi-json.c (pk_json_object_object_add): Define.

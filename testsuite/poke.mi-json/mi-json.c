@@ -35,8 +35,9 @@
 #include "../poke.libpoke/term-if.h"
 #include "pk-utils.h"
 
+#define J_NOK 0
 #define J_OK 1
-#define J_NOK 0 /* Not OK */
+#define J_UND 2
 
 void
 test_json_to_msg ()
@@ -236,6 +237,10 @@ test_val_to_json (pk_compiler pkc, const char *obj_str, pk_val val)
       return J_NOK;
     }
 
+  /* json_object_equal was introduced in libjson-c 0.13  */
+#if JSON_C_MAJOR_VERSION == 0 && JSON_C_MINOR_VERSION < 13
+  return J_UND;
+#else
   if (!json_object_equal (j_value, j_test))
     {
       printf ("json_object_equal () failed\n");
@@ -249,6 +254,7 @@ test_val_to_json (pk_compiler pkc, const char *obj_str, pk_val val)
 
       return J_NOK;
     }
+#endif
 
   return J_OK;
 }
@@ -259,7 +265,7 @@ test_json_file (const char *filename, FILE *ifp)
   const char *json_obj_str;
   pk_compiler pkc;
   pk_val val;
-  int should_fail;
+  int should_fail, ret;
 
   should_fail = strstr (filename, "fail") != NULL;
   pkc = pk_compiler_new (&poke_term_if);
@@ -279,8 +285,11 @@ test_json_file (const char *filename, FILE *ifp)
   if (test_json_to_val (pkc, json_obj_str, val) == J_NOK)
     goto error;
 
-  if (test_val_to_json (pkc, json_obj_str, val) == J_NOK)
+  ret = test_val_to_json (pkc, json_obj_str, val);
+  if (ret == J_NOK)
     goto error;
+  else if (ret == J_UND)
+    goto unresolved;
 
   pass (filename);
   return;
@@ -290,6 +299,10 @@ error:
     xfail (filename);
   else
     fail (filename);
+  return;
+
+ unresolved:
+  unresolved (filename);
 }
 
 void

@@ -43,7 +43,7 @@ pk_json_object_object_add (struct json_object* obj, const char *key,
 {
 #if JSON_C_MAJOR_VERSION == 0 && JSON_C_MINOR_VERSION < 13
   json_object_object_add (obj, key, val);
-  return J_OK;
+  return 0; /* Always success.  */
 #else
   return json_object_object_add (obj, key, val);
 #endif
