@@ -1,5 +1,10 @@
 2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pk-val.c (pk_array_set_elem_boffset): Remove unused
+	function.
+
+2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/std.pk (exit): Moved from pkl-rt-1.pk.
 
 2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
