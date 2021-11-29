@@ -1,5 +1,11 @@
 2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-copy.pk (pk_copy_size): New variable.
+	(pk_copy_from): Likewise.
+	Use actual default values for help string.
+
+2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-dump.pk: Format the help string for the `dump' command
 	to reflect actual default values for the arguments.
 

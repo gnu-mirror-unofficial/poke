@@ -16,12 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* The operation of `copy' can be configured by the user by
+customizing the following variables.  */
+
+var pk_copy_from = 0#B;
+var pk_copy_size = 0#B;
+
 pk_help_add_topic
   :entry Poke_HelpEntry {
           category = "commands",
           topic = "copy",
           summary = "Copy a range of memory",
-          description = "
+          description = format ("
 Copy a range of bytes from a given offset at the given IO space to
 another given offset in the same or another IO space.
 
@@ -33,11 +39,11 @@ Synopsis:
 Arguments:
 
   :from (offset)
-         Beginning of the range to copy.  Defaults to 0#B.
+         Beginning of the range to copy.  Defaults to %v.
 
   :size (offset)
          Size of the range to copy.  The offset provided in this
-         argument is truncated to bytes.
+         argument is truncated to bytes.  Defaults to %v.
 
   :to (offset)
          Offset where to copy the specified range.  Defaults to
@@ -52,7 +58,8 @@ Arguments:
 If there is not a current IO space available, or any of the specified
 IO spaces don't exist, `copy' raises an E_no_ios exception.
 
-See `.doc copy' for more information."
+See `.doc copy' for more information.",
+                                pk_copy_from, pk_copy_size)
          };
 
 fun copy = (int from_ios = get_ios,
