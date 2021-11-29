@@ -346,3 +346,12 @@ fun alignto = (offset<uint<64>,b> offset,
   {
     return (to - (offset % to)) % to;
   }
+
+/* Exit a Poke program with the given exit status code.  This is equivalent
+   to raise an E_exit exception, but provides a more conventional
+   syntax.  */
+
+fun exit = (int<32> exit_code = 0) void:
+  {
+    raise Exception { code = EC_exit, exit_status = exit_code };
+  }

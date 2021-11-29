@@ -196,15 +196,6 @@ fun _pkl_exception_handler = (Exception exception) int<32>:
    return exception.exit_status;
   }
 
-/* Exit a Poke program with the given exit status code.  This is equivalent
-   to raise an E_exit exception, but provides a more conventional
-   syntax.  */
-
-fun exit = (int<32> exit_code = 0) void:
-  {
-    raise Exception { code = EC_exit, exit_status = exit_code };
-  }
-
 /* Find the greatest common divisor of two unsigned 64-bit integrals A
    and B using the Euclidean algorithm.  */
 
