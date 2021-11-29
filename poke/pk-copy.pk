@@ -64,9 +64,9 @@ See `.doc copy' for more information.",
 
 fun copy = (int from_ios = get_ios,
               int to_ios = get_ios,
-              off64 from = 0#B,
+              off64 from = pk_copy_from,
               off64 to = from,
-              off64 size = 0#B) void:
+              off64 size = pk_copy_size) void:
 {
  if (size == 0#B
      || (to == from && to_ios == from_ios))

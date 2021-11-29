@@ -1,5 +1,20 @@
 2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-scrabble.pk (pk_scrabble_from): New variable.
+	(pk_scrabble_size): Likewise.
+	(pk_scrabble_from_pattern): Likewise.
+	(pk_scrabble_ent_size): Likewise.
+	(scrabble): Use the variables above as default values for
+	arguments.
+	Use actual default values for help string.
+
+2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-copy.pk (copy): Actually use pk_copy_from and
+	pk_copy_size as default values for the arguments.
+
+2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-save.pk (pk_save_from): New variable.
 	(pk_save_size): Likewise.
 	(pk_save_append): Likewise.

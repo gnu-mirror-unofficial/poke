@@ -16,12 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var pk_scrabble_from = 0#B;
+var pk_scrabble_size = 0#B;
+var pk_scrabble_from_pattern = "";
+var pk_scrabble_ent_size = 1#B;
+
 pk_help_add_topic
   :entry Poke_HelpEntry {
            category = "commands",
            topic = "scrabble",
            summary = "Scrabble part of an IO space based on patterns",
-           description="
+           description = format ("
 Rearrange portions of an IO space based on a transformation defined
 by a pair of patterns.
 
@@ -36,15 +41,15 @@ Arguments:
 
   :from OFFSET
          Beginning of the range in the origin IO space from where start
-         rearranging units.  Defaults to 0#B.
+         rearranging units.  Defaults to %v.
 
   :size OFFSET
          Size of the range to scrabble in the origin IO space.
-         Defaults to 0#B
+         Defaults to %v.
 
   :from_pattern STRING
          String specifying a sequence of units.  Each character is an unit.
-         Defaults to \"\".
+         Defaults to %v.
 
   :to_pattern STRING
          String specifying the scrabbled units.  Each character is an unit.
@@ -52,7 +57,7 @@ Arguments:
          in this string, it is ignored.  Defaults to `from_pattern'.
 
   :ent_size OFFSET
-         Size of the entities to scrabble around.  Defaults to 1#B.
+         Size of the entities to scrabble around.  Defaults to %v.
 
   :from_ios IOS
          IOS from where obtain the data to scrabble.  Defaults to the
@@ -61,14 +66,17 @@ Arguments:
   :to_ios IOS
          IOS to where write the scrabbled data.  Defaults to `from_ios'.
 
-See `.doc scrabble' for more information."
+See `.doc scrabble' for more information.",
+                         pk_scrabble_from, pk_scrabble_size,
+                         pk_scrabble_from_pattern,
+                         pk_scrabble_ent_size)
          };
 
-fun scrabble = (off64 from = 0#B,
-                off64 size = 0#B,
-                string from_pattern = "",
+fun scrabble = (off64 from = pk_scrabble_from,
+                off64 size = pk_scrabble_size,
+                string from_pattern = pk_scrabble_from_pattern,
                 string to_pattern = from_pattern,
-                off64 ent_size = 1#B,
+                off64 ent_size = pk_scrabble_ent_size,
                 int from_ios = get_ios,
                 int to_ios = from_ios) void:
 {
