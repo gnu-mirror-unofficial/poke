@@ -1,5 +1,10 @@
 2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk: Format the help string for the `dump' command
+	to reflect actual default values for the arguments.
+
+2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pk-val.c (pk_array_set_elem_boffset): Remove unused
 	function.
 
