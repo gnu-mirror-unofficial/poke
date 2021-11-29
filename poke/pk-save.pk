@@ -16,12 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var pk_save_from = 0#B;
+var pk_save_size = 0#B;
+var pk_save_append = 0;
+var pk_save_verbose = 0;
+
 pk_help_add_topic
   :entry Poke_HelpEntry {
           category = "commands",
           topic = "save",
           summary = "Save a range of an IO space to a file",
-          description = "
+          description = format ("
 Get the bytes corresponding to a given mapped value and create a
 memory IO space that contains them.
 
@@ -38,11 +43,12 @@ Arguments:
 
   :from (offset)
          Beginning of the data to save, in the selected IO space.
+         Defaults to %v.
 
   :size (offset)
 
          Size of the data to save.  This argument is truncated to
-         bytes.
+         bytes.  Defaults to %v.
 
   :file (string)
          Name of the file where to save the data.
@@ -50,22 +56,24 @@ Arguments:
   :append (bool)
          By default the output file is truncated if it already
          exists. If this argument is true, then the data is instead
-         appended at the end of the file.
+         appended at the end of the file.  Defaults to %i32d.
 
   :verbose (bool)
-         Be verbose.
+         Be verbose.  Defaults to %i32d.
 
 If the given value is not mapped `extract' raises E_map.
 
-See `.doc save' for more information."
+See `.doc save' for more information.",
+                                pk_save_from, pk_save_size,
+                                pk_save_append, pk_save_verbose)
          };
 
 fun save = (int ios = get_ios,
             string file = "",
-            off64 from = 0#B,
-            off64 size = 0#B,
-            int append = 0,
-            int verbose = 0) void:
+            off64 from = pk_save_from,
+            off64 size = pk_save_size,
+            int append = pk_save_append,
+            int verbose = pk_save_verbose) void:
 {
  if (file == "" || size == 0#B)
    return;
