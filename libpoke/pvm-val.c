@@ -1653,13 +1653,13 @@ pvm_call_pretty_printer (pvm vm, pvm_val val)
    definition of the struct Exception in pkl-rt-1.pk.  */
 
 pvm_val
-pvm_make_exception (int code, char *message, int exit_status)
+pvm_make_exception (int code, char *name, int exit_status)
 {
   pvm_val nfields = pvm_make_ulong (3, 64);
   pvm_val nmethods = pvm_make_ulong (0, 64);
   pvm_val struct_name = pvm_make_string ("Exception");
   pvm_val code_name = pvm_make_string ("code");
-  pvm_val msg_name = pvm_make_string ("msg");
+  pvm_val name_name = pvm_make_string ("name");
   pvm_val exit_status_name = pvm_make_string ("exit_status");
   pvm_val *field_names, *field_types, type;
   pvm_val exception;
@@ -1670,7 +1670,7 @@ pvm_make_exception (int code, char *message, int exit_status)
   field_types[0] = pvm_make_integral_type (pvm_make_ulong (32, 64),
                                            PVM_MAKE_INT (1, 32));
 
-  field_names[1] = msg_name;
+  field_names[1] = name_name;
   field_types[1] = pvm_make_string_type ();
 
   type = pvm_make_struct_type (nfields, struct_name,
@@ -1682,9 +1682,9 @@ pvm_make_exception (int code, char *message, int exit_status)
   PVM_VAL_SCT_FIELD_VALUE (exception, 0)
     = PVM_MAKE_INT (code, 32);
 
-  PVM_VAL_SCT_FIELD_NAME (exception, 1) = msg_name;
+  PVM_VAL_SCT_FIELD_NAME (exception, 1) = name_name;
   PVM_VAL_SCT_FIELD_VALUE (exception, 1)
-    = pvm_make_string (message);
+    = pvm_make_string (name);
 
   PVM_VAL_SCT_FIELD_NAME (exception, 2) = exit_status_name;
   PVM_VAL_SCT_FIELD_VALUE (exception, 2)

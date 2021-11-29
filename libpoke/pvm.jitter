@@ -246,7 +246,7 @@ late-header-c
 #define PVM_RAISE_DFL(BASE)                                           \
  do                                                                   \
  {                                                                    \
-   PVM_RAISE (BASE,BASE##_MSG,BASE##_ESTATUS);                        \
+   PVM_RAISE (BASE,BASE##_NAME,BASE##_ESTATUS);                        \
  } while (0)
 
     /* Macros to implement different kind of instructions.  These are to

@@ -477,82 +477,82 @@ enum pvm_exit_code
   };
 
 /* Exceptions.  These should be in sync with the exception code
-   variables, and the exception messages, declared in pkl-rt-1.pk */
+   variables, and the exception names, declared in pkl-rt-1.pk */
 
 #define PVM_E_GENERIC       0
-#define PVM_E_GENERIC_MSG "generic"
+#define PVM_E_GENERIC_NAME "generic"
 #define PVM_E_GENERIC_ESTATUS 1
 
 #define PVM_E_DIV_BY_ZERO   1
-#define PVM_E_DIV_BY_ZERO_MSG "division by zero"
+#define PVM_E_DIV_BY_ZERO_NAME "division by zero"
 #define PVM_E_DIV_BY_ZERO_ESTATUS 1
 
 #define PVM_E_NO_IOS        2
-#define PVM_E_NO_IOS_MSG "no IOS"
+#define PVM_E_NO_IOS_NAME "no IOS"
 #define PVM_E_NO_IOS_ESTATUS 1
 
 #define PVM_E_NO_RETURN     3
-#define PVM_E_NO_RETURN_MSG "no return"
+#define PVM_E_NO_RETURN_NAME "no return"
 #define PVM_E_NO_RETURN_ESTATUS 1
 
 #define PVM_E_OUT_OF_BOUNDS 4
-#define PVM_E_OUT_OF_BOUNDS_MSG "out of bounds"
+#define PVM_E_OUT_OF_BOUNDS_NAME "out of bounds"
 #define PVM_E_OUT_OF_BOUNDS_ESTATUS 1
 
 #define PVM_E_MAP_BOUNDS    5
-#define PVM_E_MAP_BOUNDS_MSG "out of map bounds"
+#define PVM_E_MAP_BOUNDS_NAME "out of map bounds"
 #define PVM_E_MAP_BOUNDS_ESTATUS 1
 
 #define PVM_E_EOF           6
-#define PVM_E_EOF_MSG "EOF"
+#define PVM_E_EOF_NAME "EOF"
 #define PVM_E_EOF_ESTATUS 1
 
 #define PVM_E_MAP           7
-#define PVM_E_MAP_MSG "no map"
+#define PVM_E_MAP_NAME "no map"
 #define PVM_E_MAP_ESTATUS 1
 
 #define PVM_E_CONV          8
-#define PVM_E_CONV_MSG "conversion error"
+#define PVM_E_CONV_NAME "conversion error"
 #define PVM_E_CONV_ESTATUS 1
 
 #define PVM_E_ELEM          9
-#define PVM_E_ELEM_MSG "invalid element"
+#define PVM_E_ELEM_NAME "invalid element"
 #define PVM_E_ELEM_ESTATUS 1
 
 #define PVM_E_CONSTRAINT   10
-#define PVM_E_CONSTRAINT_MSG "constraint violation"
+#define PVM_E_CONSTRAINT_NAME "constraint violation"
 #define PVM_E_CONSTRAINT_ESTATUS 1
 
 #define PVM_E_IO           11
-#define PVM_E_IO_MSG "generic IO"
+#define PVM_E_IO_NAME "generic IO"
 #define PVM_E_IO_ESTATUS 1
 
 #define PVM_E_SIGNAL       12
-#define PVM_E_SIGNAL_MSG ""
+#define PVM_E_SIGNAL_NAME ""
 #define PVM_E_SIGNAL_ESTATUS 1
 
 #define PVM_E_IOFLAGS      13
-#define PVM_E_IOFLAGS_MSG "invalid IO flags"
+#define PVM_E_IOFLAGS_NAME "invalid IO flags"
 #define PVM_E_IOFLAGS_ESTATUS 1
 
 #define PVM_E_INVAL        14
-#define PVM_E_INVAL_MSG "invalid argument"
+#define PVM_E_INVAL_NAME "invalid argument"
 #define PVM_E_INVAL_ESTATUS 1
 
 #define PVM_E_EXIT         15
-#define PVM_E_EXIT_MSG ""
+#define PVM_E_EXIT_NAME ""
 #define PVM_E_EXIT_ESTATUS 0
 
 #define PVM_E_ASSERT       16
-#define PVM_E_ASSERT_MSG "assertion failure"
+#define PVM_E_ASSERT_NAME "assertion failure"
 #define PVM_E_ASSERT_ESTATUS 1
 
 #define PVM_E_OVERFLOW     17
-#define PVM_E_OVERFLOW_MSG "overflow"
+#define PVM_E_OVERFLOW_NAME "overflow"
 #define PVM_E_OVERFLOW_ESTATUS 1
 
 #define PVM_E_PERM         18
-#define PVM_E_PERM_MSG     "wrong permissions"
+#define PVM_E_PERM_NAME     "wrong permissions"
 #define PVM_E_PERM_ESTATUS 1
 
 typedef struct pvm *pvm;

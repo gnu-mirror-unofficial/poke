@@ -7,7 +7,7 @@ fun a = (int cond) void:
     try assert (cond); /* Line 7. Assert statement starts at column 9. */
     catch (Exception ex)
       {
-        print (ex.msg + "\n");
+        print (ex.name + "\n");
       }
   }
 

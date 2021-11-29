@@ -69,7 +69,7 @@ fun pktest_run = (PkTest[] tests, string skip = "") int:
         catch (Exception ex)
           {
             ok = 0;
-            printf "not ok %u64d %s: %s", i, t.name, ex.msg;
+            printf "not ok %u64d %s: %s", i, t.name, ex.name;
             todo ();
             continue;
           }

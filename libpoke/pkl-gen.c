@@ -509,7 +509,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_var)
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_exception (PVM_E_ELEM, PVM_E_ELEM_MSG,
+                        pvm_make_exception (PVM_E_ELEM, PVM_E_ELEM_NAME,
                                             PVM_E_ELEM_ESTATUS));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
           pkl_asm_label (PKL_GEN_ASM, label);
@@ -707,7 +707,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          pvm_make_exception (PVM_E_INVAL, PVM_E_INVAL_MSG,
+                          pvm_make_exception (PVM_E_INVAL, PVM_E_INVAL_NAME,
                                               PVM_E_INVAL_ESTATUS));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
             pkl_asm_label (PKL_GEN_ASM, label);
@@ -1077,7 +1077,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
 
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          pvm_make_exception (PVM_E_CONV, PVM_E_CONV_MSG,
+                          pvm_make_exception (PVM_E_CONV, PVM_E_CONV_NAME,
                                               PVM_E_CONV_ESTATUS));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
 
@@ -1737,7 +1737,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_raise_stmt)
      exception to raise, which by default, is 0.  */
   if (PKL_AST_RAISE_STMT_EXP (raise_stmt) == NULL)
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                  pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG,
+                  pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_NAME,
                                       PVM_E_GENERIC_ESTATUS));
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
@@ -1795,7 +1795,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_try_catch_stmt)
     PKL_PASS_SUBPASS (catch_exp);
   else
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                  pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_MSG,
+                  pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_NAME,
                                       PVM_E_GENERIC_ESTATUS));
 
   pkl_asm_try (PKL_GEN_ASM, catch_arg);
@@ -2065,7 +2065,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
   else
     {
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_MSG,
+                    pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_NAME,
                                         PVM_E_NO_RETURN_ESTATUS));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
     }
@@ -2269,7 +2269,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cast)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_exception (PVM_E_CONV, PVM_E_CONV_MSG,
+                    pvm_make_exception (PVM_E_CONV, PVM_E_CONV_NAME,
                                         PVM_E_CONV_ESTATUS));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
       pkl_asm_label (PKL_GEN_ASM, label);
@@ -4253,7 +4253,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label);
 
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_exception (PVM_E_CONV, PVM_E_CONV_MSG,
+                        pvm_make_exception (PVM_E_CONV, PVM_E_CONV_NAME,
                                             PVM_E_CONV_ESTATUS));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
 
@@ -4317,7 +4317,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
 
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          pvm_make_exception (PVM_E_MAP, PVM_E_MAP_MSG,
+                          pvm_make_exception (PVM_E_MAP, PVM_E_MAP_NAME,
                                               PVM_E_MAP_ESTATUS));
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
             pkl_asm_label (PKL_GEN_ASM, label);
@@ -4339,7 +4339,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
           }
         default:
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_exception (PVM_E_MAP, PVM_E_MAP_MSG,
+                        pvm_make_exception (PVM_E_MAP, PVM_E_MAP_NAME,
                                             PVM_E_MAP_ESTATUS));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
           break;

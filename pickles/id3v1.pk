@@ -51,7 +51,7 @@ fun id3v1_search_genre = (string name) uint<8>:
         return i;
 
   raise Exception { code = EC_inval,
-                    msg = "cannot find ID3V1 genre" };
+                    name = "invalid ID3V1 genre" };
 }
 
 /* The ID3V1_Tag type denotes an ID3 tag.  */

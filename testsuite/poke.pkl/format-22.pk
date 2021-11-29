@@ -2,4 +2,4 @@
 
 /* { dg-command {vm_set_obase (10)} } */
 /* { dg-command {format("%Fv", E_generic)} } */
-/* { dg-output {"Exception {code=0,msg=\\"generic\\",exit_status=1}"} } */
+/* { dg-output {"Exception {code=0,name=\\"generic\\",exit_status=1}"} } */

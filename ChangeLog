@@ -1,3 +1,33 @@
+2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-rt-1.pk (Exception): Rename field `msg' to `name'.
+	(_pkl_exception_handler): Update accordingly.
+	* libpoke/pkl-rt-2.pk (_pkl_assert): Likewise.
+	* libpoke/pvm-val.c (pvm_make_exception): Likewise.
+	* libpoke/pvm.h (PVM_E_*_NAME): Rename from PVM_E_*_MSG.
+	* libpoke/ras: Use PVM_E_*_NAME instead of PVM_E_*_MSG.
+	* libpoke/pvm.jitter (PVM_RAISE_DFL): Likewise.
+	* libpoke/pkl-gen.c: Likewise.
+	* libpoke/pkl-asm.c (pkl_asm_new): Likewise.
+	* pickles/pktest.pk (pktest_run): Use `name' instead of `msg'.
+	* pickles/argp.pk: Likewise.
+	* pickles/id3v1.pk: Likewise.
+	* pickles/jffs2.pk: Likewise.
+	* libpoke/pkl-gen.pks (check_struct_field_constraint): Likewise.
+	* testsuite/poke.pkl/format-21.pk: Update expected pattern.
+	* testsuite/poke.pkl/format-26.pk: Likewise.
+	* testsuite/poke.pkl/format-25.pk: Likewise.
+	* testsuite/poke.pkl/format-24.pk: Likewise.
+	* testsuite/poke.pkl/format-23.pk: Likewise.
+	* testsuite/poke.pkl/format-22.pk: Likewise.
+	* testsuite/poke.pkl/scons-constraints-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-constraints-1.pk: Likewise.
+	* testsuite/poke.pkl/assert-4.pk: Likewise.
+	* testsuite/poke.map/maps-structs-constraints-2.pk: Likewise.
+	* testsuite/poke.map/maps-structs-constraints-3.pk: Likewise.
+	* testsuite/poke.pkl/continue-for-3.pk: Likewise.
+	* testsuite/poke.pkl/raise-6.pk: Likewise.
+
 2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-scrabble.pk (pk_scrabble_from): New variable.

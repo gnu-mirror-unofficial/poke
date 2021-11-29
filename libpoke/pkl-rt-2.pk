@@ -32,8 +32,8 @@ fun _pkl_assert = (uint<64> cond, string msg, string filename,
 
     raise Exception {
       code = EC_assert,
-      msg = format ("assertion failed at %s:%u64d:%u64d%s",
-                    filename, line, col, msg'length ? ": " + msg : ""),
+      name = format ("assertion failed at %s:%u64d:%u64d%s",
+                     filename, line, col, msg'length ? ": " + msg : ""),
       exit_status = 1,
     };
   }

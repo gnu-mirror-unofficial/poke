@@ -492,7 +492,7 @@
    .c if (field_name)
    .c {
         .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
-        push "msg"
+        push "name"
         push "constraint violation in field "
    .c  pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);
    .c  if (struct_type_name)

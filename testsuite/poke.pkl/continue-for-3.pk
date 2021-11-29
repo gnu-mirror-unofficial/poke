@@ -18,7 +18,7 @@ fun foo = void:
         try f();
         catch (Exception ex)
         {
-          printf ("FAIL %s\n", ex.msg);
+          printf ("FAIL %s\n", ex.name);
           continue;
         }
         print ("PASS\n");

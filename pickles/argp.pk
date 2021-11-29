@@ -100,7 +100,7 @@ fun argp_parse = (string program,
       rest += ["-" + arg];
     else
       raise Exception {code = EC_generic,
-                       msg = "unknown option -" + arg};
+                       name = "unknown option -" + arg};
   }
 
   for (var i = 0; i < argv'length; i++)
@@ -128,13 +128,13 @@ fun argp_parse = (string program,
 
           if (optarg_p && !opt.arg_required)
              raise Exception {code = EC_inval,
-                              msg = "option " + arg + " doesn't require an argument"};
+                              name = "option " + arg + " doesn't require an argument"};
 
           if (opt.arg_required)
              {
                if (!optarg_p)
                   raise Exception {code = EC_inval,
-                                   msg = "option " + arg + " requires an argument"};
+                                   name = "option " + arg + " requires an argument"};
                 opt.handler (optarg);
               }
           else
@@ -151,7 +151,7 @@ fun argp_parse = (string program,
                {
                  if (i + 1 == argv'length || argv[i + 1][0] == '-')
                    raise Exception {code = EC_inval,
-                                    msg = "option " + arg + " requires an argument"};
+                                    name = "option " + arg + " requires an argument"};
                  opt.handler (argv[(i++) + 1]);
                }
                else

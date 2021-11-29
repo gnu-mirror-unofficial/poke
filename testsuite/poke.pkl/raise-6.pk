@@ -2,8 +2,8 @@
 
 fun foo = void:
   {
-   raise Exception { code = EC_io, msg = "double upset event" };
+   raise Exception { code = EC_io, name = "double upset event" };
   }
 
-/* { dg-command { try foo; catch (Exception e) { if (e.code == EC_io) printf "IO error: %s", e.msg; else raise e; } } } */
+/* { dg-command { try foo; catch (Exception e) { if (e.code == EC_io) printf "IO error: %s", e.name; else raise e; } } } */
 /* { dg-output "IO error: double upset event" } */

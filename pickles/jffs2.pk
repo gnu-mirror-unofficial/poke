@@ -552,7 +552,7 @@ struct
 
         raise Exception {
             code = EC_inval,
-            msg = "No such JFFS2 inode"
+            name = "No such JFFS2 inode"
         };
     }
 

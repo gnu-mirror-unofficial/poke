@@ -96,7 +96,7 @@ type Exception =
   struct
   {
     int<32> code;
-    string msg;
+    string name;
     int<32> exit_status;
   };
 
@@ -130,43 +130,43 @@ var EC_perm          = 18;
 /* Standard exceptions.  */
 
 var E_generic
-  = Exception {code = EC_generic, msg = "generic", exit_status = 1};
+  = Exception {code = EC_generic, name = "generic", exit_status = 1};
 var E_div_by_zero
-  = Exception {code = EC_div_by_zero, msg = "division by zero", exit_status = 1};
+  = Exception {code = EC_div_by_zero, name = "division by zero", exit_status = 1};
 var E_no_ios
-  = Exception {code = EC_no_ios, msg = "no IOS", exit_status = 1};
+  = Exception {code = EC_no_ios, name = "no IOS", exit_status = 1};
 var E_no_return
-  = Exception {code = EC_no_return, msg = "no return", exit_status = 1};
+  = Exception {code = EC_no_return, name = "no return", exit_status = 1};
 var E_out_of_bounds
-  = Exception {code = EC_out_of_bounds, msg = "out of bounds", exit_status = 1};
+  = Exception {code = EC_out_of_bounds, name = "out of bounds", exit_status = 1};
 var E_map_bounds
-  = Exception {code = EC_map_bounds, msg = "out of map bounds", exit_status = 1};
+  = Exception {code = EC_map_bounds, name = "out of map bounds", exit_status = 1};
 var E_eof
-  = Exception {code = EC_eof, msg = "EOF", exit_status = 0 };
+  = Exception {code = EC_eof, name = "EOF", exit_status = 0 };
 var E_map
-  = Exception {code = EC_map, msg = "no map", exit_status = 1};
+  = Exception {code = EC_map, name = "no map", exit_status = 1};
 var E_conv
-  = Exception {code = EC_conv, msg = "conversion error", exit_status = 1};
+  = Exception {code = EC_conv, name = "conversion error", exit_status = 1};
 var E_elem
-  = Exception {code = EC_elem, msg = "invalid element", exit_status = 1};
+  = Exception {code = EC_elem, name = "invalid element", exit_status = 1};
 var E_constraint
-  = Exception {code = EC_constraint, msg = "constraint violation", exit_status = 1};
+  = Exception {code = EC_constraint, name = "constraint violation", exit_status = 1};
 var E_io
-  = Exception {code = EC_io, msg = "generic IO", exit_status = 1};
+  = Exception {code = EC_io, name = "generic IO", exit_status = 1};
 var E_signal
   = Exception {code = EC_signal, exit_status = 1};
 var E_io_flags
-  = Exception {code = EC_io_flags, msg = "invalid IO flags", exit_status = 1};
+  = Exception {code = EC_io_flags, name = "invalid IO flags", exit_status = 1};
 var E_inval
-  = Exception {code = EC_inval, msg = "invalid argument", exit_status = 1};
+  = Exception {code = EC_inval, name = "invalid argument", exit_status = 1};
 var E_exit
-  = Exception {code = EC_exit, msg = "exit", exit_status = 0};
+  = Exception {code = EC_exit, name = "exit", exit_status = 0};
 var E_assert
-  = Exception {code = EC_assert, msg = "assertion failure", exit_status = 1};
+  = Exception {code = EC_assert, name = "assertion failure", exit_status = 1};
 var E_overflow
-  = Exception {code = EC_overflow, msg = "overflow", exit_status = 1};
+  = Exception {code = EC_overflow, name = "overflow", exit_status = 1};
 var E_perm
-  = Exception {code = EC_perm, msg = "wrong permissions", exit_status = 1};
+  = Exception {code = EC_perm, name = "wrong permissions", exit_status = 1};
 
 /* Registration of user-defined exceptions */
 
@@ -189,7 +189,7 @@ fun _pkl_exception_handler = (Exception exception) int<32>:
    if (exception.code != EC_exit && exception.code != EC_signal)
      {
        print ("unhandled "
-              + (exception.msg == "" ? "unknown" : exception.msg)
+              + (exception.name == "" ? "unknown" : exception.name)
               + " exception\n");
      }
 
