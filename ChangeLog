@@ -1,3 +1,10 @@
+2021-11-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.c (pkl_type_append_to): Generate syntactically
+	correct types for functions.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_funcall): Clarify error
+	message.
+
 2021-11-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.mi-json/mi-json.c (J_UND): Define.

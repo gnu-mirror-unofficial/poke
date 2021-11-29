@@ -1242,34 +1242,31 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
       {
         pkl_ast_node t;
 
-        if (PKL_AST_TYPE_F_NARG (type) > 0)
+        sb_append (buffer, "(");
+        for (t = PKL_AST_TYPE_F_ARGS (type); t;
+             t = PKL_AST_CHAIN (t))
           {
-            sb_append (buffer, "(");
+            pkl_ast_node atype
+              = PKL_AST_FUNC_TYPE_ARG_TYPE (t);
 
-            for (t = PKL_AST_TYPE_F_ARGS (type); t;
-                 t = PKL_AST_CHAIN (t))
+            if (t != PKL_AST_TYPE_F_ARGS (type))
+              sb_append (buffer, ",");
+
+            if (PKL_AST_FUNC_TYPE_ARG_VARARG (t))
+              sb_append (buffer, "...");
+            else
               {
-                pkl_ast_node atype
-                  = PKL_AST_FUNC_TYPE_ARG_TYPE (t);
-
-                if (PKL_AST_FUNC_TYPE_ARG_VARARG (t))
-                  sb_append (buffer, "...");
-                else
-                  {
-                    if (t != PKL_AST_TYPE_F_ARGS (type))
-                      sb_append (buffer, ",");
-                    pkl_type_append_to (atype, use_given_name, buffer);
-                    if (PKL_AST_FUNC_TYPE_ARG_OPTIONAL (t))
-                      sb_append (buffer, "?");
-                  }
+                if (t != PKL_AST_TYPE_F_ARGS (type))
+                  sb_append (buffer, ",");
+                pkl_type_append_to (atype, use_given_name, buffer);
+                if (PKL_AST_FUNC_TYPE_ARG_OPTIONAL (t))
+                  sb_append (buffer, "?");
               }
-
-            sb_append (buffer, ")");
           }
+        sb_append (buffer, ")");
 
         pkl_type_append_to (PKL_AST_TYPE_F_RTYPE (type), use_given_name,
                             buffer);
-        sb_append (buffer, ":");
         break;
       }
     case PKL_TYPE_OFFSET:

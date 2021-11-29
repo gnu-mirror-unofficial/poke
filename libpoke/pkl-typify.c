@@ -1456,8 +1456,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
 
   if (PKL_AST_FUNCALL_NARG (funcall) < mandatory_args)
     {
+      char *function_type_str = pkl_type_str (funcall_function_type,
+                                              0 /* use_given_name */);
+
       PKL_ERROR (PKL_AST_LOC (funcall_function),
-                 "too few arguments passed to function");
+                 "too few arguments passed to function\n\
+of type %s",
+                 function_type_str);
+      free (function_type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -1492,7 +1498,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
 
       PKL_ERROR (PKL_AST_LOC (funcall_function),
                  "too many arguments passed to function\n\
-with prototype %s",
+of type %s",
                  function_type_str);
       free (function_type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
