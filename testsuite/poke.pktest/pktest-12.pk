@@ -14,4 +14,5 @@ var tests = [
   },
 ];
 
-/* { dg-output "unhandled constraint violation in field PkTest.todo exception" } */
+/* { dg-output "unhandled constraint violation exception\n" } */
+/* { dg-output "constraint expression failed for field PkTest.todo" } */

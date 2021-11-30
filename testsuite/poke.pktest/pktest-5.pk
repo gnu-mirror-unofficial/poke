@@ -13,7 +13,7 @@ var tests = [
 ];
 
 /* { dg-command {var ok = pktest_run (tests)} } */
-/* { dg-output "1..1\\nnot ok 1 a failing test: assertion failed at" } */
-/* { dg-output " .*:10:9\\n" } */
+/* { dg-output "1..1\\nnot ok 1 a failing test: assertion failure at" } */
+/* { dg-output " .*:10:9:\\n" } */
 /* { dg-command {ok} } */
 /* { dg-output "0" } */

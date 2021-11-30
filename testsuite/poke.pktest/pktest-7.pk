@@ -21,8 +21,8 @@ var tests = [
 
 /* { dg-command {var ok = pktest_run (tests)} } */
 /* { dg-output "1..2\\nnot ok 1 a failing test:" } */
-/* { dg-output " assertion failed at .*:10:9\\n" } */
+/* { dg-output " assertion failure at .*:10:9:\\n" } */
 /* { dg-output "not ok 2 another failing test:" } */
-/* { dg-output " assertion failed at .*:17:9\\n" } */
+/* { dg-output " assertion failure at .*:17:9:\\n" } */
 /* { dg-command {ok} } */
 /* { dg-output "0" } */

@@ -1,3 +1,12 @@
+2021-11-30  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* pickles/pktest.pk (pktest_run): Report location and message of
+	failed assertion (if available) in output.
+	* testsuite/poke.pktest/pktest-5.pk: Update accordingly.
+	* testsuite/poke.pktest/pktest-7.pk: Likewise.
+	* testsuite/poke.pktest/pktest-11.pk: Likewise.
+	* testsuite/poke.pktest/pktest-12.pk: Likewise.
+
 2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.c (pvm_array_set): Avoid calculating the size of

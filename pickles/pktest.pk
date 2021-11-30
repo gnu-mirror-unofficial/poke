@@ -68,8 +68,11 @@ fun pktest_run = (PkTest[] tests, string skip = "") int:
         try t.func(t.name);
         catch (Exception ex)
           {
+            var loc = ex.location'length == 0 ? "" : " at " + ex.location;
+            var msg = ex.msg'length == 0 ? "" : " " + ex.msg;
+
             ok = 0;
-            printf "not ok %u64d %s: %s", i, t.name, ex.name;
+            printf "not ok %u64d %s: %s", i, t.name, ex.name + loc + msg;
             todo ();
             continue;
           }

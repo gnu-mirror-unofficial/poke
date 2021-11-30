@@ -27,7 +27,7 @@ var tests = [
 /* { dg-command {var ok = pktest_run (tests)} } */
 /* { dg-output "1..2\\nok 1 a failing test # SKIP" } */
 /* { dg-output " reason to skip this test case\\n" } */
-/* { dg-output "not ok 2 another failing test: assertion failed at" } */
-/* { dg-output ".*:22:9 # TODO WIP\\n" } */
+/* { dg-output "not ok 2 another failing test: assertion failure at" } */
+/* { dg-output ".*:22:9: # TODO WIP\\n" } */
 /* { dg-command {ok} } */
 /* { dg-output "0" } */
