@@ -1,5 +1,10 @@
 2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt-2.pk (_pkl_assert): Use the `location' and `msg'
+	fields of Exception.
+
+2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_make_exception): Likewise.
 	* libpoke/pkl-asm.c (pkl_asm_new): Adapt caller accordingly.
 	* libpoke/pvm.jitter (PVM_RAISE): Likewise.
