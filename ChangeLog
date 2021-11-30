@@ -1,5 +1,10 @@
 2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_array_set): Avoid calculating the size of
+	the remaining elements of the array.
+
+2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/assert-4.pk: Update to new assertion
 	exception fields.
 	* testsuite/poke.pkl/assert-diag-1.pk: Likewise.

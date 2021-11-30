@@ -197,26 +197,28 @@ pvm_array_set (pvm_val arr, pvm_val idx, pvm_val val)
 {
   size_t index = PVM_VAL_ULONG (idx);
   size_t nelem = PVM_VAL_ULONG (PVM_VAL_ARR_NELEM (arr));
-  size_t elem_boffset;
   size_t i;
+  ssize_t size_diff;
 
   /* Make sure that the given index is within bounds.  */
   if (index >= nelem)
     return 0;
+
+  /* Calculate the difference of size introduced by the new
+     elemeent.  */
+  size_diff = ((ssize_t) pvm_sizeof (val)
+               - (ssize_t) pvm_sizeof (PVM_VAL_ARR_ELEM_VALUE (arr, index)));
 
   /* Update the element with the given value.  */
   PVM_VAL_ARR_ELEM_VALUE (arr, index) = val;
 
   /* Recalculate the bit-offset of all the elemens following the
      element just updated.  */
-  elem_boffset
-    = (PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (arr, index))
-       + pvm_sizeof (PVM_VAL_ARR_ELEM_VALUE (arr, index)));
-
   for (i = index + 1; i < nelem; ++i)
     {
+      size_t elem_boffset
+        = (ssize_t) PVM_VAL_ULONG (PVM_VAL_ARR_ELEM_OFFSET (arr, i)) + size_diff;
       PVM_VAL_ARR_ELEM_OFFSET (arr, i) = pvm_make_ulong (elem_boffset, 64);
-      elem_boffset += pvm_sizeof (PVM_VAL_ARR_ELEM_VALUE (arr, i));
     }
 
   return 1;
