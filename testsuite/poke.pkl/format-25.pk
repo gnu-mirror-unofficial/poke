@@ -1,7 +1,15 @@
 /* { dg-do run } */
 
+type E = struct
+  {
+    int<32> code;
+    string name;
+    int<32> exit_status;
+  };
+var e = E {code = 0, name = "generic", exit_status = 1};
+
 /* { dg-command {vm_set_obase (16)} } */
 /* { dg-command {vm_set_oindent (4)} } */
 /* { dg-command {vm_set_omode (VM_OMODE_TREE)} } */  /* No effect.  */
-/* { dg-command {format("%v", E_generic)} } */
-/* { dg-output {"Exception {code=0x00000000,name=\\"generic\\",exit_status=0x00000001}"} } */
+/* { dg-command {format("%v", e)} } */
+/* { dg-output {"E {code=0x00000000,name=\\"generic\\",exit_status=0x00000001}"} } */

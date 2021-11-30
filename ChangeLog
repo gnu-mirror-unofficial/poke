@@ -1,3 +1,15 @@
+2021-11-30  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* testsuite/poke.pkl/format-21.pk: Replace `Exception` with locally
+	defined type `E`.
+	* testsuite/poke.pkl/format-22.pk: Likewise.
+	* testsuite/poke.pkl/format-23.pk: Likewise.
+	* testsuite/poke.pkl/format-24.pk: Likewise.
+	* testsuite/poke.pkl/format-25.pk: Likewise.
+	* testsuite/poke.pkl/format-26.pk: Likewise.
+	* testsuite/poke.pkl/format-27.pk: Likewise.
+	* testsuite/poke.pkl/format-28.pk: Likewise.
+
 2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-rt-1.pk (Exception): Rename field `msg' to `name'.

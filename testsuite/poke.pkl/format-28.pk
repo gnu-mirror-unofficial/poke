@@ -1,11 +1,17 @@
 /* { dg-do run } */
 
+type E = struct
+  {
+    int<32> code;
+    string name;
+    int<32> exit_status;
+  };
 type S = struct
   {
-    Exception ex;
+    E ex;
   };
 
 /* { dg-command {vm_set_obase (10)} } */
 /* { dg-command {vm_set_omaps (1)} } */
 /* { dg-command {format("%1v", S{})} } */
-/* { dg-output {S {ex=Exception {...} @ 0x0000000000000000#b @ 0x0000000000000000#b} @ 0x0000000000000000#b} } */
+/* { dg-output {S {ex=E {...} @ 0x0000000000000000#b @ 0x0000000000000000#b} @ 0x0000000000000000#b} } */

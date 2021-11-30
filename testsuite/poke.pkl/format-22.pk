@@ -1,5 +1,13 @@
 /* { dg-do run } */
 
+type E = struct
+  {
+    int<32> code;
+    string name;
+    int<32> exit_status;
+  };
+var e = E {code = 0, name = "generic", exit_status = 1};
+
 /* { dg-command {vm_set_obase (10)} } */
-/* { dg-command {format("%Fv", E_generic)} } */
-/* { dg-output {"Exception {code=0,name=\\"generic\\",exit_status=1}"} } */
+/* { dg-command {format("%Fv", e)} } */
+/* { dg-output {"E {code=0,name=\\"generic\\",exit_status=1}"} } */
