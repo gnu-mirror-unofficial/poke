@@ -364,10 +364,14 @@ void pvm_val_ureloc (pvm_val val);
    map-able then this is a no-operation.  */
 void pvm_val_unmap (pvm_val val);
 
-/* Return a PVM value for an exception with the given CODE, MESSAGE
-   and EXIT_STATUS.  */
+/* Return a PVM value for an exception with the given CODE, NAME,
+   EXIT_STATUS, LOCATION and MSG.
 
-pvm_val pvm_make_exception (int code, char *message, int exit_status);
+   Both LOCATION and MSG are optional.  If NULL is passed for them
+   then a suitable default value is used.  */
+
+pvm_val pvm_make_exception (int code, const char *name, int exit_status,
+                            const char *location, const char *message);
 
 
 /* **************** The Run-Time Environment ****************  */

@@ -98,6 +98,8 @@ type Exception =
     int<32> code;
     string name;
     int<32> exit_status;
+    string location;
+    string msg;
   };
 
 /* Standard exception codes.
@@ -191,6 +193,13 @@ fun _pkl_exception_handler = (Exception exception) int<32>:
        print ("unhandled "
               + (exception.name == "" ? "unknown" : exception.name)
               + " exception\n");
+
+       if (exception.location != "" || exception.msg != "")
+         {
+           if (exception.location != "")
+             print (exception.location + " ");
+           print (exception.msg + "\n");
+         }
      }
 
    return exception.exit_status;

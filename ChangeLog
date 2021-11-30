@@ -1,3 +1,14 @@
+2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm-val.c (pvm_make_exception): Likewise.
+	* libpoke/pkl-asm.c (pkl_asm_new): Adapt caller accordingly.
+	* libpoke/pvm.jitter (PVM_RAISE): Likewise.
+	* libpoke/pkl-gen.c: Likewise.
+	* libpoke/ras: Likewise.
+	* libpoke/pkl-rt-1.pk (Exception): New fields `location' and
+	`msg'.
+	(_pkl_exception_handler): Handle `location' and `msg'.
+
 2021-11-30  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* testsuite/poke.pkl/format-21.pk: Replace `Exception` with locally

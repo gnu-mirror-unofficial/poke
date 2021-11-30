@@ -883,7 +883,8 @@ BEGIN {
     $0 = gensub ("\\.([a-zA-Z][0-9a-zA-Z_]*)", "\\1_label", "g", $0);
 
     # Substitute and check exception arguments.
-    $0 = gensub (expt_re, "pvm_make_exception (\\1, \\1_NAME, \\1_ESTATUS)", "g", $0);
+    $0 = gensub (expt_re, "pvm_make_exception (\\1, \\1_NAME, \\1_ESTATUS, NULL, NULL)",
+                 "g", $0);
 
     # Substitute and check macro arguments.
     $0 = gensub (marg_re, "(\\2_arg)", "g", $0);

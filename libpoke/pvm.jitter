@@ -239,7 +239,8 @@ late-header-c
 #define PVM_RAISE(CODE,STR,ESTATUS)                                   \
  do                                                                   \
  {                                                                    \
-   pvm_val exception = pvm_make_exception ((CODE),(STR),(ESTATUS));   \
+   pvm_val exception = pvm_make_exception ((CODE),(STR),(ESTATUS),    \
+                                           NULL, NULL);               \
    PVM_RAISE_DIRECT (exception);                                      \
  } while (0)
 

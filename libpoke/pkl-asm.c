@@ -1202,7 +1202,7 @@ pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
       /* Install the default signal handler.  */
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
                     pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_NAME,
-                                        PVM_E_GENERIC_ESTATUS));
+                                        PVM_E_GENERIC_ESTATUS, NULL, NULL));
       pkl_asm_insn (pasm, PKL_INSN_PUSHE, pasm->error_label);
       pkl_asm_note (pasm, "#end prologue");
     }
