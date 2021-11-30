@@ -1,3 +1,3 @@
 /* { dg-do run } */
 
-assert ("foo" == "bar");  /* { dg-output "unhandled assertion failed at " } */
+assert ("foo" == "bar");  /* { dg-output "unhandled assertion failure " } */

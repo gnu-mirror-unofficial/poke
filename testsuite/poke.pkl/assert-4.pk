@@ -7,10 +7,10 @@ fun a = (int cond) void:
     try assert (cond); /* Line 7. Assert statement starts at column 9. */
     catch (Exception ex)
       {
-        print (ex.name + "\n");
+        print (ex.name + " at " + ex.location + "\n");
       }
   }
 
 /* { dg-command { a (1) } } */
 /* { dg-command { a (0) } } */
-/* { dg-output "assertion failed at .*:7:9" } */
+/* { dg-output "assertion failure at .*:7:9" } */
