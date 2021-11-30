@@ -40,6 +40,22 @@ static pvm_val string_type;
 static pvm_val void_type;
 static pvm_val any_type;
 
+/* We are currently only supporting a relatively small number of
+   integral types, i.e. signed and unsigned types of sizes 1 to 64
+   bits.  It is therefore possible to cache these types to avoid
+   allocating them again and again.
+
+   The contents of this table are initialized in pvm_val_initialize
+   and finalized in pvm_val_finalize.  New types are installed by
+   pvm_make_integral_type.
+
+   Note that the first entry of the table is unused; it would
+   correspond to an integer of "zero" bits.  This is more efficient
+   than correcting the index at every access at the cost of only
+   64-bits.  */
+
+static pvm_val common_int_types[65][2];
+
 pvm_val
 pvm_make_int (int32_t value, int size)
 {
@@ -416,13 +432,29 @@ pvm_make_type (enum pvm_type_code code)
   return PVM_BOX (box);
 }
 
-pvm_val
-pvm_make_integral_type (pvm_val size, pvm_val signed_p)
+static inline pvm_val
+pvm_make_integral_type_1 (pvm_val size, pvm_val signed_p)
 {
   pvm_val itype = pvm_make_type (PVM_TYPE_INTEGRAL);
 
   PVM_VAL_TYP_I_SIZE (itype) = size;
   PVM_VAL_TYP_I_SIGNED_P (itype) = signed_p;
+  return itype;
+}
+
+pvm_val
+pvm_make_integral_type (pvm_val size, pvm_val signed_p)
+{
+  uint64_t bits = PVM_VAL_ULONG (size);
+  int32_t sign = PVM_VAL_INT (signed_p);
+  pvm_val itype = common_int_types[bits][sign];
+
+  if (itype == PVM_NULL)
+    {
+      itype = pvm_make_integral_type_1 (size, signed_p);
+      common_int_types[bits][sign] = itype;
+    }
+
   return itype;
 }
 
@@ -1725,13 +1757,21 @@ pvm_val_cls_program (pvm_val cls)
 void
 pvm_val_initialize (void)
 {
+  uint64_t i;
+  int32_t j;
+
   pvm_alloc_add_gc_roots (&string_type, 1);
   pvm_alloc_add_gc_roots (&void_type, 1);
   pvm_alloc_add_gc_roots (&any_type, 1);
+  pvm_alloc_add_gc_roots (&common_int_types, 65 * 2);
 
   string_type = pvm_make_type (PVM_TYPE_STRING);
   void_type = pvm_make_type (PVM_TYPE_VOID);
   any_type = pvm_make_type (PVM_TYPE_ANY);
+
+  for (i = 0; i < 65; ++i)
+    for (j = 0; j < 2; ++j)
+      common_int_types[i][j] = PVM_NULL;
 }
 
 void
@@ -1740,4 +1780,5 @@ pvm_val_finalize (void)
   pvm_alloc_remove_gc_roots (&string_type, 1);
   pvm_alloc_remove_gc_roots (&void_type, 1);
   pvm_alloc_remove_gc_roots (&any_type, 1);
+  pvm_alloc_remove_gc_roots (&common_int_types, 65 * 2);
 }
