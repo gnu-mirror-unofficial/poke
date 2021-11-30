@@ -1,3 +1,8 @@
+2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.c (pvm_shutdown): Call pvm_val_finalize instead of
+	pvm_val_initialize.
+
 2021-11-30  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* pickles/pktest.pk (pktest_run): Report location and message of

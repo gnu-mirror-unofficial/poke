@@ -233,7 +233,7 @@ pvm_shutdown (pvm apvm)
                              exceptionstack_backing->element_no);
 
   /* Finalize values.  */
-  pvm_val_initialize ();
+  pvm_val_finalize ();
 
   /* Finalize the VM state.  */
   pvm_state_finalize (&apvm->pvm_state);
