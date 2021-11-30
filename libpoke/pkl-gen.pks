@@ -486,14 +486,17 @@
         bnzi .constraint_ok
         drop
         push PVM_E_CONSTRAINT
+        push "name"
+        push "constraint violation"
+        sset
         ;; If the field is named, add the name of the field to the
         ;; E_constraint message to make people's life better.
    .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
    .c if (field_name)
    .c {
         .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
-        push "name"
-        push "constraint violation in field "
+        push "msg"
+        push "constraint expression failed for field "
    .c  pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);
    .c  if (struct_type_name)
    .c  {

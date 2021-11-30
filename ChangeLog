@@ -1,5 +1,15 @@
 2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (check_struct_field_constraint): Use
+	`location' and `msg' fields of Exception.
+	* testsuite/poke.map/maps-structs-constraints-2.pk: Update
+	accordingly.
+	* testsuite/poke.pkl/scons-constraints-2.pk: Likewise.
+	* testsuite/poke.pkl/scons-constraints-1.pk: Likewise.
+	* testsuite/poke.map/maps-structs-constraints-3.pk: Likewise.
+
+2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt-2.pk (_pkl_assert): Use the `location' and `msg'
 	fields of Exception.
 

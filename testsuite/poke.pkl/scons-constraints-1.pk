@@ -2,5 +2,5 @@
 
 type Packet = struct { byte a; byte b : b != a; };
 
-/* { dg-command { try Packet {}; catch (Exception e) { if (e.code == EC_constraint) print e.name + "\n"; } } } */
-/* { dg-output "constraint violation in field Packet\\.b" } */
+/* { dg-command { try Packet {}; catch (Exception e) { if (e.code == EC_constraint) print e.msg + "\n"; } } } */
+/* { dg-output "constraint expression failed for field Packet\\.b" } */
