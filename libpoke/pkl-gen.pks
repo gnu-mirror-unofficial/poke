@@ -368,7 +368,7 @@
         ;; Build the type of the constructed array.
         .c PKL_GEN_PUSH_CONTEXT;
         .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
-        .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
+        .c PKL_PASS_SUBPASS (@array_type);
         .c PKL_GEN_POP_CONTEXT;
                                 ; ATYPE
         push ulong<64>0         ; ATYPE 0UL

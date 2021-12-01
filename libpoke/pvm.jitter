@@ -4739,6 +4739,7 @@ instruction asettb () # ( ARR BOUND -- ARR )
   code
     pvm_val type = PVM_VAL_ARR_TYPE (JITTER_UNDER_TOP_STACK ());
 
+    assert (PVM_VAL_TYP_CODE (type) == PVM_TYPE_ARRAY);
     PVM_VAL_TYP_A_BOUND (type) = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
   end

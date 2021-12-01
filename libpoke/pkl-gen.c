@@ -720,6 +720,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                         pvm_make_integral_type (pvm_make_ulong (32, 64),
                                                 pvm_make_int (1, 32)));
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYA);
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                         pvm_make_ulong (3, 64));
           pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA); /* ARR */
@@ -1867,6 +1869,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_funcall)
 
       /* Create the array of variable arguments.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_any_type ());
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYA);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                     pvm_make_ulong (aindex, 64));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA);

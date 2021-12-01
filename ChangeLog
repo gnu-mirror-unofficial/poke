@@ -1,3 +1,14 @@
+2021-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (array_constructor): Generate the correct
+	PVM type for the constructed array.
+	* libpoke/pkl-gen.c (pkl_gen_pr_funcall): Likewise for the array
+	of anys containing the varargs.
+	(pkl_gen_ps_comp_stmt): Likewise for the array returned/consumed
+	by the term_get_{bg}color builtins.
+	* libpoke/pvm.jitter (asettb): Add an assertion to detect future
+	occurrences of this problem.
+
 2021-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.c (common_int_types): New variable.
