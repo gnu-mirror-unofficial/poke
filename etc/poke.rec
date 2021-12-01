@@ -100,7 +100,7 @@
 %type: RFC bool
 %summary: Kind,Component,Priority,Summary
 
-Summary: Optimise code by improving the PVM and the compiler
+Summary: Avoid mid-instruction PVM_RAISE
 Component: PVM
 Priority: 5
 Kind: OPT
@@ -110,6 +110,33 @@ Description: Generate better code, branching to raise instructions
 + of taken branches.
 + A promising way to achieve this is with Jitter "subsections": ask
 + Luca Saiu.
++
++ So instead of having:
++
++ instruction sleep ()
++ begin
++  ...
++  if (status == ERROR)
++    PVM_RAISE (E_ERROR);
++ end
++
++ We have:
++
++ instruction sleep ()
++ begin
++  ...
++  PVM_PUSH_STACK (status);
++ end
++
++ And then the compiler generates:
++
++   push 100
++   push 0
++   sleep
++   bnz .noerror
++   raise E_ERROR
++ .noerror:
+
 
 Summary: Support bit-concatenation in l-value
 Component: Language
@@ -133,11 +160,6 @@ Description:
 + 20:00 <jemarch> you just write:
 + 20:00 <jemarch> a:::b:::c = val;
 
-Summary: Support labels and a goto statement
-Component: Language
-Kind: ENH
-Priority: 2
-
 Summary: Support %% in printf string literals
 Component: Language
 Kind: ENH
@@ -146,7 +168,7 @@ Description:
 + A new %-sequence shall be added to printf: %%.  This denotes a single
 + % in the formatted output.  The right place where to hack this is the
 + ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
-Target: 2.0
+Target: 1.4
 
 Summary: STRING ~ REGEXP operator
 Component: Language
@@ -273,6 +295,16 @@ Description:
 + In order for searching to be more efficient, alignment constraints
 + should be used whenever possible.  For both the struct itself, and
 + also fields.
++
++ Possible syntax:
++
++   struct (arg1, arg2)
++   {
++     int a;
++     long b;
++   }
++   alignment (8)
+Target: 2.0
 
 Summary: Named constraints in struct types
 Component: Language
@@ -297,13 +329,11 @@ Summary: Operator to upunit an offset
 Component: Language
 Kind: ENH
 Priority: 3
-Description: ^1024#B -> 1#Kb
-
-Summary: `system' support
-Component: Language
-Kind: ENH
-Priority: 3
-Description: system ("command")
+Description:
++ ^1024#B -> 1#Kb
++ or
++ upunit (1024#B)
+Target: 2.0
 
 Summary: casts from integral to array and from array to integral
 Component: Language
@@ -314,19 +344,54 @@ Description:
 + [0x12UB,0x34UB] as int -> 0x1234 (with big endian)
 +
 + This is a bit redundant with l-value bit-concatenation.
-
-Summary: Support for hyperlinks in printf
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ It should be possible to emit hyperlinks using printf.  Each hyperlink
-+ is characterized by an url, and a text:
 +
-+   %<href//URL: TEXT %>
++ This would involve:
 +
-+ Something like the above.  This shall be discussed in the mailing
-+ list.
++      INT as ARRAY
++
++ - In typify1, check that the array is an array of integral
++   elements.
++
++ - In promo, it will simplify the codegen to promote the
++   integer to be signed or unsigned like the lements of the array
++   and also to be of the exact same size.
++
++         10 as uint<16>[2]
++
++   promow will promote the 10 to uint<32>
++
++         10B as uint<16>[2]
++
++   promo will promote the 10 to uint<32>
++
++         10B as int<8>[8]
++
++   promo will promote the 10B to int<64>
++
++         10 as uint<8>[]
++
++   promo will promote the 10 to 10U, i.e. uint<32>
++
++         10H as uint<8>[]
++
++   promo will promote the 10H to 10HU.
++
++         10H as uint<24>[]
++
++   promo will promote the 10H to uint<24>.
++
++ - In gen
++
++   First, introduce two macro-instructions:
++   + atoi
++   + itoa
++
++   Then, add relevant cases to pkl_gen_pr_cast.
++
++ OR, implement integrators/deintegrators for array types like
++ they are implemented for struct types.  Probably this is better
++ than the macro instructions.
+Target: 2.0
 
 Summary: Support recursive definitions
 Component: Language
@@ -396,16 +461,6 @@ Description:
 +     };
 Requires: Support recursive definitions
 
-Summary: Support hidden field names
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ This allows to have nameless fields with constraints, like for padding
-+ initialized to 0.
-+
-+ Also for optional fields.
-
 Summary: Support a pipe IOS
 Component: Language
 Kind: ENH
@@ -415,12 +470,18 @@ Description:
 +
 +   var ios = open ("|cmd")
 +
++ This could return an array of two IO descriptors, one read-only stream
++ connected to the standard ouput of |cmd.  And one write-only stream
++ connected to the standard input of |cmd.
++
 + That runs CMD in a subprocess.  Reading from IOS results in accessing
 + the process' standard output, and writing to IOS results in writing to
 + the process' standard input.
 +
-+ This should leverage the existing stream IOD.
++ This should leverage the existing Stream IOD.
++ Modeled after the Tcl open(3tcl)
 RFC: yes
+Target: 2.0
 
 Summary: Exception predicate operator !?
 Component: Language
@@ -428,6 +489,8 @@ Kind: ENH
 Priority: 3
 Description:
 + expr !? Exception
++ or
++ expr ?! Exception
 +
 + if (do_foo () !? E_constraint)
 +   ...;
@@ -470,18 +533,6 @@ Description:
 + Is `SELF' the right keyword to use?  Using uppercase reduces the odds
 + of collision with user defined identifiers.
 
-Summary: Constraint expressions for whole structs
-Component: Language
-Kind: ENH
-Priority: 3
-Description: Not sure if useful enough:
-+
-+    type Foo = struct
-+     {
-+      ...
-+     } : EXPRESSION;
-RFC: yes
-
 Summary: Support nested integral structs
 Component: Language
 Kind: ENH
@@ -489,6 +540,7 @@ Priority: 4
 Description:
 + This will require to subpass on fields.  i.e. a gen context:
 + in_integrator.
+Target: 2.0
 
 Summary: Support for optional fields in integral structs
 Component: Language
@@ -622,18 +674,6 @@ Description:
 + - Casts: u?int<*> -> u?int<N>, u?int<N> -> u?int<*>
 RFC: yes
 
-Summary: Support for i18n with gettext in Poke programs
-Component: Language
-Kind: ENH
-Priority: 2
-Description:
-+ In order to support internationalization of Poke programs, we need to
-+ add support in gettext for Poke.  This involves hacking certain
-+ support in gettext.  The end result should be:
-+
-+   var msg = _("this is translated");
-RFC: yes
-
 Summary: Support for big numbers
 Component: Language
 Kind: ENH
@@ -674,6 +714,7 @@ Description:
 + integral value into an integral struct:
 +
 +   2 as Foo -> Foo {hi=0UB,lo=2UB}
+Target: 2.0
 
 Summary: Alien tokens for IO space names: $<path/to/file>
 Component: CLI
@@ -683,7 +724,15 @@ Description:
 + Currently the only way to refer to IO space is by either ID (a number)
 + or via a variable where the number is stored.  However, referring to
 + them by name at the prompt is important.
++
++ With auto-complete.
++
++ Programmatically: iosearch ("*foo*")
++
++ Interactively: $<*foo*>
++                $<foo.o>
 RFC: yes
+Target: 2.0
 
 Summary: Support arguments in type constructors
 Component: Language
@@ -713,6 +762,7 @@ Description:
 + - Further passes and phases ignore ERROR_MARK nodes.
 + - At some points a pass is invoked that checks for ERROR_MARK nodes
 +   and emit error messages and then abort the compilation.
+Target: 2.0
 
 Summary: Constant-fold array trims
 Component: Compiler
@@ -774,18 +824,6 @@ Description:
 + This task is about identifying these cases, and to move the
 + corresponding check to anal1.
 
-Summary: Make pvm_print_val show integral structs as integers
-Component: PVM
-Kind: ENH
-Priority: 3
-Description:
-+ Foo { ... } (IVAL)
-+
-+ With option: (poke) .set print-integral-struct-ival (yes|no)
-+
-+ But this required having the struct values annotated as integral in
-+ the PVM, i.e. the integrator should be available in struct values.
-
 Summary: remove unneeded locs in the passes/phases
 Component: Compiler
 Kind: ENH
@@ -815,17 +853,12 @@ Description:
 +
 + Likewise, there is some code duplication in the assembler which may be
 + optimized: pkl_asm_break_label_1 vs. pkl_asm_continue_label_1.
+Target: 2.0
 
 Summary: Do tail recursion optimization in the compiler
 Component: Compiler
 Kind: ENH
 Priority: 3
-
-Summary: Finish i18n of the bison parsers
-Component: Compiler
-Kind: ENH
-Priority: 3
-Description: See the section `Enabling Internationalization' in bison.info
 
 Summary: Support lazy mapping
 Component: PVM
@@ -845,15 +878,6 @@ Description:
 + non-strict values.
 RFC: yes
 
-Summary: Mapping anonymous complete struct fields
-Component: Compiler
-Kind: OPT
-Priority: 2
-Description:
-+ If a field is anonymous and it is complete, then there is no need to
-+ actually decode it.  Adjusting the current offset and adding a NULL
-+ element is enough: it will never be accessed.
-
 Summary: Consider struct types as complete if all labels are literal
 Component: Compiler
 Kind: OPT
@@ -869,6 +893,7 @@ Description:
 +   }
 +
 + Should be considered complete.
+Target: 2.0
 
 Summary: Unions can be completed
 Component: Compiler
@@ -887,6 +912,7 @@ Description:
 +   }
 +
 + The type above is complete, with size 32#b known at compile time.
+Target: 2.0
 
 Summary: Save a nton instruction in pkl_asm_while
 Component: Compiler
@@ -1015,7 +1041,7 @@ Priority: 3
 Description:
 + A suitable %destructor should be added to the Poke parser, to assure
 + no memory leaks when an error occurs (AST nodes).
-Target: 1.1
+Target: 1.4
 
 Summary: Do not leak decl AST nodes in parser
 Component: Compiler
@@ -1025,7 +1051,7 @@ Priority: 3
 Description:
 + Do not leak decl AST nodes if there is an error condition like an
 + already declared entity.
-Target: 1.1
+Target: 1.4
 
 Summary: Remove call to `abort' in pkl-lex.l
 Component: Compiler
@@ -1034,9 +1060,9 @@ BZ: 26893
 Priority: 3
 Description:
 + Code in libpoke should not call `abort' nor `exit'.
-Target: 1.1
+Target: 1.4
 
-Summary: Complete pvm_print_val for function types
+Summary: Complete C and Poke printers for function types
 Component: PVM
 Kind: BUG
 BZ: 26895
@@ -1044,7 +1070,9 @@ Priority: 3
 Description:
 + pvm_print_val should print valid type descriptors for function types,
 + including optional arguments, varargs, etc.
-Target: 1.1
++
++ Ditto for the PVM printer and formatter.
+Target: 1.4
 
 Summary: Function types are generated with its arguments reversed
 Component: Compiler
@@ -1054,19 +1082,7 @@ Priority: 4
 Description:
 + Either mktyc should get its arguments reversed (ugly) or the compiler
 + should reverse them before calling the instruction.
-Target: 1.1
-
-Summary: pvm_array_set should check for size bounds
-Component: Compiler
-Kind: ENH
-Priority: 3
-Description:
-+ The logic that checks for the violation of the size bound when setting
-+ the value of an array element should be moved from the `aset'
-+ instruction in pvm.jitter to pvm_array_set.  This later function
-+ should be altered to return a code identifying out-of-bounds,
-+ out-of-size, or OK.
-Target: 2.0
+Target: 1.4
 
 Summary: Allow .let #fieldw = ulong<field_type_size>64 in RAS
 Component: RAS
@@ -1093,18 +1109,6 @@ Priority: 2
 Description:
 + This should be reported as invalid by RAS: int<40>
 
-Summary: Adjustable recursion limit in the PVM
-Component: PVM
-Kind: ENH
-Priority: 2
-Description:
-+ Right now the PVM return stack can be overflown easily
-+ doing recursion.  It should be possible to set a limit
-+ to avoid this.
-+
-+ If Jitter ever gains support for detecting stack overflow
-+ this will no longer be necessary.
-
 Summary: Support for string properties
 Component: PVM
 Kind: ENH
@@ -1124,6 +1128,7 @@ Description:
 +    push "integer"
 +    sprop ; String propertize  ( STR IDX LENGTH CLASS -- STR )
 RFC: yes
+Target: 2.0
 
 Summary: pvm_print_val should emit hyperlinks in collapsed structs
 Component: PVM
@@ -1216,6 +1221,19 @@ Description:
 +
 + 2. Avoid logic replication in ``print_unit_name`` and the set of
 +    ``PVM_VAL_OFF_UNIT_*`` constants defined in ``pvm-val.h``.
++
++ A _better_ way to do this is without impacting the PVM:
++
++   _pkl_unit_names -> array of [ULONG STR] elements...
++
++  Compiler generates:
++   defunit: add new entry to the beginning of _pkl_unit_names.
++   End of scope where unit is defined: remove first matching entry from
++     _pkl_unit_names.  Or mark as invalid.
++
++  Run-time option to switch this on and off. ounames -> output unit names.
+Target: 2.0
+
 
 Summary: Unbox small strings in the PVM
 Component: PVM
@@ -1235,15 +1253,7 @@ Description:
 + defun strok = (string s, string sep) char[]:
 + Returns an array of tokens.
 RFC: yes
-
-Summary: Add an API for client-provided IOD implementations to libpoke
-Component: Library
-Kind: ENH
-Priority: 3
-Description:
-+ A suitable API shall be provided in libpoke.h in order to allow
-+ tadding additional IOD implementations.
-RFC: yes
+Target: 2.0
 
 Summary: Add an elisp MI interface to poke.el
 Component: Emacs
@@ -1260,7 +1270,7 @@ Summary: Pass the declaration's pk_value in callback pk_map_decl_fn
 Component: Library
 Kind: ENH
 Priority: 2
-Target: 2.0
+Target: 1.4
 
 Summary: Support IO transactions
 Component: IO
@@ -1287,16 +1297,6 @@ Description:
 + .set endian {big,ittle} (sets the word endianness)
 + set group-endian {big,little} (sets the group endianness)
 + normal users will just use .set endian {big,little}
-
-Summary: Process IOD
-Component: IO
-Kind: ENH
-Priority: 3
-Description:
-+ Handler syntax:  pid://NUMBER
-+
-+ Provides access to poke the memory of some given process.
-+ The process is specified by process-id: pid://1234
 
 Summary: Support Poke IOS Translators
 Component: IO
@@ -1345,31 +1345,7 @@ Priority: 3
 Description:
 + This requires work in rec-cmd.c, because the current infrastructure
 + doens't support this.
-Target: 2.0
-
-Summary: Support language-level construct for easy redirections to pipes/files
-Component: Language
-Kind: ENH
-Priority: 2
-Description:
-+ Support the syntax in `print' and `printf', like AWK does:
-+
-+   print "foo" > OUTPUT-FILE
-+   print "foo" >> OUTPUT-FILE
-+   print "foo" | COMMAND
-+   print "foo" |& COMMAND
-+
-+ Or have `send' and `receive'?
-+
-+   send "foo" |& COMMAND
-+   receive
-+
-+ Or `pipe'?
-+
-+   pipe VAL > OUTPUT-FILE
-+   pipe VAL >> OUTPUT-FILE
-+   pipe VAL | COMMAND
-RFC: yes
+Target: 1.4
 
 Summary: Auto-complete value attributes
 Component: CLI
@@ -1479,13 +1455,6 @@ Description:
 + function is NULL.
 RFC: yes
 
-Summary: Move the initialization of the hserver to pk-repl.c
-Component: POKE
-Kind: ENH
-Priority: 3
-Description: hserver business should be encapsulated in pk-repl.c
-Target: 2.0
-
 Summary: Auto-complete map names in .map
 Component: CLI
 Kind: ENH
@@ -1549,6 +1518,7 @@ Description:
 + - Time spent in the compiler.
 + - Time spent in the PVM.
 +  - Total amount of time.
+Target: 2.0
 
 Summary: Write IEEE754 pickle
 Component: Pickles
@@ -1612,6 +1582,7 @@ Description:
 + The dg testsuites are big.  We need to be able to run the tests in
 + parallel.  A good place where to look for inspiration for this task is
 + the GCC testing infrastructure.
+Target: 2.0
 
 Summary: Document language operand promotion rules in the manual
 Component: Documentation
@@ -1656,17 +1627,6 @@ Component: Other
 Kind: ENH
 Priority: 3
 
-Summary: Gettextize strings in the codebase
-Component: Other
-Kind: ENH
-Priority: 3
-Target: 1.1
-
-Summary: Use upper-letter names for macro arguments consistenly
-Component: Other
-Kind: ENH
-Priority: 2
-
 Summary: Make boehm-gc.suppressions more generic
 Component: Other
 Kind: ENH
@@ -1701,6 +1661,7 @@ Description:
 +
 + Jitter detects this and gives an error.  We need a mutex to protect
 + the PVM, and make the hserver and the prompt to use it.
+Target: 2.0
 
 Summary: support casts from `any' to function types
 Kind: ENH
@@ -1711,6 +1672,7 @@ Description:
 + Right now we are not allowing casting from `any' to a function type.
 + Supporting this requires to tag the PVM closure values with their
 + corresponding type.
+Target: 2.0
 
 Summary: support references to values in the MI protocol
 Kind: ENH
@@ -1729,6 +1691,7 @@ Description:
 + references to these PVM values: `pk_gc_pin' and `pk_gc_unpin'.
 +
 + This also will allow us to support closures in the MI.
+Target: 2.0
 
 %rec: Release
 %key: Version
