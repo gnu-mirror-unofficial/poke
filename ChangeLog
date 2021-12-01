@@ -1,5 +1,10 @@
 2021-12-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (set command): Remove mention of a limit that is
+	no longer applicable.
+
+2021-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (array_constructor): Generate the correct
 	PVM type for the constructed array.
 	* libpoke/pkl-gen.c (pkl_gen_pr_funcall): Likewise for the array
