@@ -315,14 +315,6 @@ Description:
 +
 + This is a bit redundant with l-value bit-concatenation.
 
-Summary: Support %< and %> in different printf.  E_sc_underflow
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ But when to raise it??  Function exit?  Program exit only?
-+ The `exit' instruction should empty the stack.
-
 Summary: Support for hyperlinks in printf
 Component: Language
 Kind: ENH
@@ -335,14 +327,6 @@ Description:
 +
 + Something like the above.  This shall be discussed in the mailing
 + list.
-
-Summary: Support for referring to current offset in struct types
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ We need a token like . or OFFSET to mean the current offset to the
-+ beginning of the struct being defined.
 
 Summary: Support recursive definitions
 Component: Language

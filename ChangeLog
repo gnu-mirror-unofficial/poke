@@ -1,5 +1,13 @@
 2021-12-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Support %< and %> in different printf.
+	E_sc_underflow): Item removed, as it is no longer necessary due to
+	begin_sc and end_sc.
+	(Support for referring to current offset in struct types): Removed
+	as done.
+
+2021-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (set command): Remove mention of a limit that is
 	no longer applicable.
 
