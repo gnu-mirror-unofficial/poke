@@ -390,3 +390,22 @@ pk_help_add_topic
            summary = "emit errors instead of warnings",
            description = "",
     };
+
+
+/* Dump current settings.  */
+
+fun pk_settings_dump = void:
+  {
+    for (setting in pk_settings.entries)
+      {
+        if (setting.kind == POKE_SETTING_INT)
+          printf ("%s %i32d\n", setting.name, setting.getter as int);
+        else if (setting.kind == POKE_SETTING_BOOL)
+          printf ("%s %s\n", setting.name,
+                  setting.getter as int ? "yes" : "no");
+        else if (setting.kind == POKE_SETTING_STR)
+          printf ("%s %s\n", setting.name, setting.getter as string);
+        else
+          assert (0, "uknown kind");
+      }
+  }

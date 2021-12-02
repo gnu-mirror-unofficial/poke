@@ -27,6 +27,21 @@
 #include "pk-utils.h"
 
 static int
+pk_cmd_set_dump (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  pk_val registry_printer, retval;
+
+  registry_printer = pk_decl_val (poke_compiler, "pk_settings_dump");
+  assert (registry_printer != PK_NULL);
+
+  if (pk_call (poke_compiler, registry_printer, &retval, 0) == PK_ERROR)
+    assert (0); /* This shouldn't happen.  */
+  pk_printf ("error-on-warning %s\n",
+             pk_error_on_warning (poke_compiler) ? "yes" : "no");
+  return 0;
+}
+
+static int
 pk_cmd_set (int int_p,
             int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
@@ -261,4 +276,4 @@ pk_cmd_set_init ()
 struct pk_trie *set_trie;
 
 const struct pk_cmd set_cmd =
-  {"set", "", "", 0, &set_trie, NULL, "set PROPERTY", set_completion_function};
+  {"set", "", "", 0, &set_trie, pk_cmd_set_dump, "", set_completion_function};

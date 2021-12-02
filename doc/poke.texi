@@ -8226,17 +8226,16 @@ were defined.
 
 @cindex global settings
 The @command{.set} command allows you to inspect and set the value of
-global settings.  The syntax is:
+global settings.  The following invocations are valid:
 
-@example
-.set @var{setting} [@var{value}]
-@end example
-
-@noindent
-where @var{setting} is an identifier identifying the setting to
-inspect or modify.  If @var{value} is specified, then it is the new
-value for the setting.  If @var{value} is not specified the current
-value of the setting is displayed.
+@table @code
+@item .set
+Prints all settings along with their values.
+@item .set @var{setting}
+Prints the value of the given @var{setting}.
+@item .set @var{setting} @var{value}
+Sets the value of @var{setting} to @var{value}.
+@end table
 
 The following settings can be handled with @command{.set}:
 

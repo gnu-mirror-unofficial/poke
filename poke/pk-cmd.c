@@ -286,6 +286,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
   uint64_t uflags;
   const char *a;
   int besilent = 0;
+  int run_default_handler_p = 0;
 
   /* Skip blanks, and return if the command is composed by only blank
      characters.  */
@@ -350,7 +351,10 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
     {
       p = skip_blanks (p);
       if (*p == '\0')
-        GOTO_USAGE();
+        {
+          run_default_handler_p = 1;
+          GOTO_USAGE();
+        }
       return pk_cmd_exec_1 (p, *cmd->subtrie, cmd_name);
     }
 
@@ -549,6 +553,13 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
 
   besilent = 1;
   usage:
+  if (!besilent && run_default_handler_p)
+    {
+      if (cmd->handler)
+        ret = (*cmd->handler) (argc, argv, uflags);
+      else
+        run_default_handler_p = 0;
+    }
   /* Free arguments occupying memory.  */
   for (int i = 0; i < argc; ++i)
     {
@@ -556,7 +567,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
         free (argv[i].val.str);
     }
 
-  if (!besilent)
+  if (!besilent && !run_default_handler_p)
     pk_printf (_("Usage: %s\n"), cmd->usage);
 
   return ret;

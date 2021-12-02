@@ -1,3 +1,16 @@
+2021-12-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poke/pk-cmd.c (pk_cmd_exec_1): Introduce a new predicate
+	`run_default_handler_p`. Now if user calls commands (which has
+	sub-commands) with no arguments, it'll try to call the top-level
+	handler (if there's one) instead of showing the usage string.
+	If there's no top-level handler, the usage string will be shown.
+	* poke/pk-cmd-set.c (pk_cmd_set_dump): New function to dump all
+	settings.
+	(set_cmd): Use `pk_cmd_set_dump`, and remove usage string.
+	* poke/pk-settings.pk (pk_settings_dump): New helper function.
+	* doc/poke.texi (set command): Update.
+
 2021-12-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Bump poke version to 1.4.
