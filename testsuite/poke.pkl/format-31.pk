@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var s = "a\tb";
+
+/* { dg-command {format("%v", s)} } */
+/* { dg-output {"\\"a\\\\tb\\""} } */

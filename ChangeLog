@@ -1,5 +1,16 @@
 2021-12-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-rt-1.pk (_pkl_escape_string): Add special cases for
+	tab (\t), new-line ('\n'), double-quote ('"') and backslash ('\\').
+	* testsuite/poke.pkl/format-30.pk: New test.
+	* testsuite/poke.pkl/format-31.pk: Likewise.
+	* testsuite/poke.pkl/format-32.pk: Likewise.
+	* testsuite/poke.pkl/format-33.pk: Likewise.
+	* testsuite/poke.pkl/format-34.pk: Likewise.
+	* testsuite/poke.pkl/format-35.pk: Likewise.
+
+2021-12-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (strace): Re-implement using
 	`JITTER_AT_DEPTH_STACK`.
 
