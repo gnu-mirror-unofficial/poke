@@ -1387,7 +1387,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_incrdecr)
       /* Get the step.  The type of the expression is safe as per
          typify.  */
       step = pkl_ast_type_incr_step (PKL_PASS_AST, incrdecr_exp_type);
-      assert (step); /* XXX turn to ICE.  */
+      if (!step)
+        PKL_ICE (PKL_AST_NOLOC,
+                 "pkl_ast_type_incr_step failed in pkl_trans2_ps_incrdecr");
 
       /* Build a statement EXP = EXP +/- STEP  */
       exp_plus_one = pkl_ast_make_binary_exp (PKL_PASS_AST, op,

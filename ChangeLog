@@ -1,3 +1,8 @@
+2021-12-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-trans.c (pkl_trans2_ps_incrdecr): Substitute an
+	assert with an ICE.
+
 2021-12-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_format): Fix assertion.
