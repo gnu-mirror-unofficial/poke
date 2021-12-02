@@ -6087,31 +6087,30 @@ end
 instruction strace (?n)
   non-relocatable
   code
-     pvm_val tmp[1024];
-     int i = 0, j;
-     int num_elems = (int) JITTER_ARGN0;
+    int i = 0;
+    int num_elems = (int) JITTER_ARGN0;
+    int num_elems_in_stack;
 
-     while (((num_elems == 0 || i < num_elems)
-             && (JITTER_HEIGHT_STACK () !=
-                 PVM_STATE_BACKING_FIELD (canary))))
-        {
-          assert (i < 1024);
-          pvm_print_val_with_params (PVM_STATE_BACKING_FIELD (vm),
-                                     JITTER_TOP_STACK (),
-                                     0 /* depth */,
-                                     PVM_PRINT_FLAT,
-                                     16 /* base */,
-                                     2 /* indent */,
-                                     0 /* acutoff */,
-                                     PVM_PRINT_F_MAPS);
-          pk_puts ("\n");
-          tmp[i++] = JITTER_TOP_STACK ();
-          JITTER_DROP_STACK ();
-        }
+    assert (PVM_STATE_BACKING_FIELD (canary) != NULL);
 
-     /* Restore the stack.  */
-     for (j = (i - 1); j >= 0; j--)
-        JITTER_PUSH_STACK (tmp[j]);
+    num_elems_in_stack = (pvm_val *)JITTER_HEIGHT_STACK ()
+                         - (pvm_val *)PVM_STATE_BACKING_FIELD (canary);
+    if (num_elems == 0 || num_elems > num_elems_in_stack)
+      num_elems = num_elems_in_stack;
+
+    while (i < num_elems)
+      {
+        pvm_print_val_with_params (PVM_STATE_BACKING_FIELD (vm),
+                                   JITTER_AT_DEPTH_STACK (i),
+                                   0 /* depth */,
+                                   PVM_PRINT_FLAT,
+                                   16 /* base */,
+                                   2 /* indent */,
+                                   0 /* acutoff */,
+                                   PVM_PRINT_F_MAPS);
+        pk_puts ("\n");
+        i++;
+      }
   end
 end
 

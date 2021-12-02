@@ -1,3 +1,8 @@
+2021-12-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pvm.jitter (strace): Re-implement using
+	`JITTER_AT_DEPTH_STACK`.
+
 2021-12-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/poke.rec: Triage.
