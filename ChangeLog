@@ -1,5 +1,9 @@
 2021-12-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_format): Fix assertion.
+
+2021-12-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-rt-1.pk (_pkl_escape_string): Add special cases for
 	tab (\t), new-line ('\n'), double-quote ('"') and backslash ('\\').
 	* testsuite/poke.pkl/format-30.pk: New test.

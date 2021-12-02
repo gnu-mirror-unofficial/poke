@@ -1481,7 +1481,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_format)
           cname = classes[nclasses].name;
           cindex = classes[nclasses].index;
 
-          assert (STREQ (cname, end_sc) == 0);
+          assert (STREQ (cname, end_sc));
 
           n = nstr - cindex;
           if (n > 0)
