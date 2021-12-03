@@ -105,6 +105,7 @@ EXTRA_DIST = \
   poke.cmd/set-obase-3.pk \
   poke.cmd/set-obase-4.pk \
   poke.cmd/set-obase-5.pk \
+  poke.cmd/set-obase-6.pk \
   poke.cmd/set-odepth-1.pk \
   poke.cmd/set-odepth-2.pk \
   poke.cmd/set-oindent.pk \

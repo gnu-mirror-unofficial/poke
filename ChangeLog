@@ -1,5 +1,12 @@
 2021-12-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poke/pk-cmd.c (pk_cmd_exec_1): Update `cmd_name` after finding
+	the sub-command.
+	* testsuite/poke.cmd/set-obase-6.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2021-12-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poke/pk-cmd.c (pk_cmd_exec_1): Introduce a new predicate
 	`run_default_handler_p`. Now if user calls commands (which has
 	sub-commands) with no arguments, it'll try to call the top-level

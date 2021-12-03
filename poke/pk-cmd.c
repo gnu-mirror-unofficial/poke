@@ -315,6 +315,7 @@ pk_cmd_exec_1 (const char *str, struct pk_trie *cmds_trie, char *prefix)
       pk_printf (_("%s: command not found.\n"), cmd_name);
       return 0;
     }
+  strncpy (cmd_name, cmd->name, MAX_CMD_NAME - 1);
 
   /* argv[0] is the command name.  */
   argv[argc].type = PK_CMD_ARG_STR;
