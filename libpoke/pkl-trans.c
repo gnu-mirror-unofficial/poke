@@ -659,6 +659,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
 #define MAX_CLASS_TAGS 32
   int nclasses = 0;
   char *classes[MAX_CLASS_TAGS];
+  int add_new_percent_arg_p = 0;
+  int add_new_style_arg_p = 0;
+  char *new_style_class = NULL;
 
   /* Calculate the number of arguments.  */
   for (t = args; t; t = PKL_AST_CHAIN (t))
@@ -692,7 +695,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
       int prefix = -1;
 
       assert (*p == '%');
-      if (ntag >= nargs && p[1] != '>' && p[1] != '<')
+      if (ntag >= nargs && p[1] != '%' && p[1] != '>' && p[1] != '<')
         {
           PKL_ERROR (PKL_AST_LOC (format), "not enough format arguments");
           PKL_TRANS_PAYLOAD->errors++;
@@ -728,6 +731,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
       /* Now process the rest of the tag.  */
       switch (p[1])
         {
+        case '%':
+          p += 2;
+          add_new_percent_arg_p = 1;
+          break;
         case 'v':
           p += 2;
           PKL_AST_FORMAT_ARG_BASE (arg) = 0; /* Arbitrary.  */
@@ -850,7 +857,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
             int end_sc = 0;
             char *class = xmalloc (strlen (fmt) + 1);
             size_t j;
-            pkl_ast_node new_arg;
 
             end_sc = (p[1] == '>');
             p += 2;
@@ -897,58 +903,73 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
                 class = classes[--nclasses];
               }
 
-            /* Create the new arg and add it to the list of
-               arguments.  */
-            new_arg = pkl_ast_make_format_arg (PKL_PASS_AST,
-                                                   NULL);
-            PKL_AST_LOC (new_arg) = PKL_AST_LOC (format_fmt);
-
-            if (end_sc)
-              PKL_AST_FORMAT_ARG_END_SC (new_arg) = xstrdup (class);
-            else
-              PKL_AST_FORMAT_ARG_BEGIN_SC (new_arg) = class;
-
-            if (arg)
-              {
-                if (arg == PKL_AST_FORMAT_ARGS (format))
-                  {
-                    /* Prepend.  */
-                    PKL_AST_CHAIN (new_arg) = arg;
-                    PKL_AST_FORMAT_ARGS (format)
-                      = ASTREF (new_arg);
-                  }
-                else
-                  {
-                    /* Add after.  */
-                    PKL_AST_CHAIN (new_arg) = PKL_AST_CHAIN (prev_arg);
-                    PKL_AST_CHAIN (prev_arg) = ASTREF (new_arg);
-                  }
-              }
-            else
-              {
-                /* Append.  */
-                if (!PKL_AST_FORMAT_ARGS (format))
-                  PKL_AST_FORMAT_ARGS (format)
-                    = ASTREF (new_arg);
-                else
-                  PKL_AST_FORMAT_ARGS (format)
-                    = pkl_ast_chainon (PKL_AST_FORMAT_ARGS (format),
-                                       new_arg);
-              }
-
-            arg = new_arg;
-
-            /* The type corresponding to a styling class format
-               directive is `void'.  */
-            atype = pkl_ast_make_void_type (PKL_PASS_AST);
-            PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
-            types = pkl_ast_chainon (types, atype);
-
+            assert (new_style_class == NULL);
+            new_style_class = end_sc ? xstrdup (class) : class;
+            add_new_style_arg_p = 1;
             break;
           }
         default:
           msg = _("invalid format specifier");
           goto invalid_tag;
+        }
+
+      assert (!(add_new_percent_arg_p && add_new_style_arg_p));
+      if (add_new_percent_arg_p || add_new_style_arg_p)
+        {
+          pkl_ast_node new_arg;
+
+          /* Create the new arg and add it to the list of arguments.  */
+          new_arg = pkl_ast_make_format_arg (PKL_PASS_AST, NULL);
+          PKL_AST_LOC (new_arg) = PKL_AST_LOC (format_fmt);
+
+          if (add_new_percent_arg_p)
+            PKL_AST_FORMAT_ARG_SUFFIX (new_arg) = xstrdup ("%");
+          else if (add_new_style_arg_p)
+            {
+              int end_sc = p[-1] == '>';
+
+              assert (new_style_class != NULL);
+              if (end_sc)
+                PKL_AST_FORMAT_ARG_END_SC (new_arg) = new_style_class;
+              else
+                PKL_AST_FORMAT_ARG_BEGIN_SC (new_arg) = new_style_class;
+              new_style_class = NULL;
+            }
+
+          if (arg)
+            {
+              if (arg == PKL_AST_FORMAT_ARGS (format))
+                {
+                  /* Prepend.  */
+                  PKL_AST_CHAIN (new_arg) = arg;
+                  PKL_AST_FORMAT_ARGS (format) = ASTREF (new_arg);
+                }
+              else
+                {
+                  /* Add after.  */
+                  PKL_AST_CHAIN (new_arg) = PKL_AST_CHAIN (prev_arg);
+                  PKL_AST_CHAIN (prev_arg) = ASTREF (new_arg);
+                }
+            }
+          else
+            {
+              /* Append.  */
+              if (!PKL_AST_FORMAT_ARGS (format))
+                PKL_AST_FORMAT_ARGS (format) = ASTREF (new_arg);
+              else
+                PKL_AST_FORMAT_ARGS (format)
+                  = pkl_ast_chainon (PKL_AST_FORMAT_ARGS (format), new_arg);
+            }
+
+          arg = new_arg;
+
+          /* The type corresponding to new arg is `void'.  */
+          atype = pkl_ast_make_void_type (PKL_PASS_AST);
+          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
+          types = pkl_ast_chainon (types, atype);
+
+          add_new_percent_arg_p = 0;
+          add_new_style_arg_p = 0;
         }
 
       /* Add the optional suffix to the argument.  */

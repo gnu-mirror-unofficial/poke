@@ -1,5 +1,14 @@
 2021-12-04  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans1_ps_format): Add support for `%%`
+	in format string of `printf` and `format`.
+	* doc/poke.texi (printf): Update.
+	* testsuite/poke.pkl/printf-36.pk: New test.
+	* testsuite/poke.pkl/format-36.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2021-12-04  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/libpoke.h (pk_map_decl_fn): Add new param (`pk_val value`).
 	* libpoke/libpoke.c (my_decl_map_fn): Lookup var name in runtime env.
 	(pk_decl_map): Pass runtime env to the callback.

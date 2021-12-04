@@ -12786,6 +12786,8 @@ cannot be empty.
 @item %>
 End the last opened styling class.  All styling classes should be
 ended before finishing the format string.
+@item %%
+Print @code{%} character.
 @end table
 
 Note that styling classes can be nested, but all classes should be

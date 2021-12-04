@@ -1065,6 +1065,7 @@ EXTRA_DIST = \
   poke.pkl/format-33.pk \
   poke.pkl/format-34.pk \
   poke.pkl/format-35.pk \
+  poke.pkl/format-36.pk \
   poke.pkl/format-diag-1.pk \
   poke.pkl/formfeedchar.pk \
   poke.pkl/fun-types-1.pk \
@@ -1525,6 +1526,7 @@ EXTRA_DIST = \
   poke.pkl/printf-33.pk \
   poke.pkl/printf-34.pk \
   poke.pkl/printf-35.pk \
+  poke.pkl/printf-36.pk \
   poke.pkl/printf-binary-1.pk \
   poke.pkl/printf-binary-2.pk \
   poke.pkl/printf-binary-3.pk \
