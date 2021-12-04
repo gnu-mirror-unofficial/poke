@@ -422,6 +422,7 @@ typedef void (*pk_map_decl_fn) (int kind,
                                 const char *type,
                                 int first_line, int last_line,
                                 int first_column, int last_column,
+                                pk_val value,
                                 void *data);
 void pk_decl_map (pk_compiler pkc, int kind,
                   pk_map_decl_fn handler, void *data) LIBPOKE_API;

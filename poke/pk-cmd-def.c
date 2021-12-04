@@ -33,6 +33,7 @@ print_var_decl (int kind,
                 const char *type,
                 int first_line, int last_line,
                 int first_column, int last_column,
+                pk_val val,
                 void *data)
 {
   char *source_str = NULL;
@@ -58,6 +59,7 @@ print_fun_decl (int kind,
                 const char *type,
                 int first_line, int last_line,
                 int first_column, int last_column,
+                pk_val val,
                 void *data)
 {
   char *source_str = NULL;
@@ -85,6 +87,7 @@ print_type_decl (int kind,
                 const char *type,
                 int first_line, int last_line,
                 int first_column, int last_column,
+                pk_val val,
                 void *data)
 {
   char *source_str = NULL;

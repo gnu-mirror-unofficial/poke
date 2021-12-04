@@ -570,6 +570,7 @@ pk_ios_map (pk_compiler pkc,
 struct decl_map_fn_payload
 {
   pk_map_decl_fn cb;
+  pvm_env runtime_env;
   void *data;
 };
 
@@ -582,6 +583,7 @@ my_decl_map_fn (pkl_ast_node decl, void *data)
   pkl_ast_node initial = PKL_AST_DECL_INITIAL (decl);
   pkl_ast_loc loc = PKL_AST_LOC (decl);
   char *source =  PKL_AST_DECL_SOURCE (decl);
+  int order = PKL_AST_DECL_ORDER (decl);
   char *type = NULL;
   int kind;
 
@@ -612,6 +614,7 @@ my_decl_map_fn (pkl_ast_node decl, void *data)
                type,
                loc.first_line, loc.last_line,
                loc.first_column, loc.last_column,
+               pvm_env_lookup (payload->runtime_env, 0, order),
                payload->data);
   free (type);
 }
@@ -620,7 +623,8 @@ void
 pk_decl_map (pk_compiler pkc, int kind,
              pk_map_decl_fn handler, void *data)
 {
-  struct decl_map_fn_payload payload = { handler, data };
+  struct decl_map_fn_payload payload
+      = { handler, pvm_get_env (pkc->vm), data };
   pkl_env compiler_env = pkl_get_env (pkc->compiler);
   int pkl_kind;
 
