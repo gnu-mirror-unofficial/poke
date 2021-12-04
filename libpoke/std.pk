@@ -90,18 +90,37 @@ fun atoi = (string s, int<32> b = 10) int<64>:
          ((c >= 'a') && (c <= 'f')) || ((c >= 'A') && (c <= 'F'));
       }
 
+    fun signchar = (string str) int<8>:
+      {
+        if (str'length > 1) return str[0];
+        return 0;
+      }
+
+    fun signum = (uint<8> c) int<32>:
+      {
+        if (c == '-') return -1;
+        if (c == '+') return +1;
+        return 0;
+      }
+
     if (!(b in [2, 8, 10, 16]))
       raise E_inval;
+
+    var sign = signum (signchar (s));
+    if (sign == 0)
+      sign = +1;
+    else
+      s = s[1:];
 
     for (c in s)
     {
       if (!valid(c, b))
-        return result;
+        break;
 
-      result = result * b + htoi(c);
+      result = result * b + htoi (c);
     }
 
-    return result;
+    return sign * result;
   }
 
 fun ltos = (int<64> i, uint<32> base = 10) string:

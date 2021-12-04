@@ -1,3 +1,10 @@
+2021-12-03  Jordan Yelloz  <jordan@yelloz.me>
+
+	* libpoke/std.pk (atoi): Added code that extracts any single leading '+'
+	or '-', decides a polarity of the number to parse, and shifts over the
+	input string by 1 character if necessary before parsing the digits.
+	* testsuite/poke.std/std-test.pk: Added tests for new behaviors.
+
 2021-12-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poke/pk-cmd.c (pk_cmd_exec_1): Update `cmd_name` after finding

@@ -24,19 +24,31 @@ var tests = [
     func = lambda (string name) void:
       {
         assert (atoi ("0", 2) == 0L);
+        assert (atoi ("+0", 2) == 0L);
+        assert (atoi ("-0", 2) == 0L);
         assert (atoi ("1", 2) == 1L);
+        assert (atoi ("+1", 2) == 1L);
+        assert (atoi ("-1", 2) == -1L);
         assert (atoi ("111111111", 2) == 511L);
         assert (atoi ("x", 2) == 0L);
+        assert (atoi ("+x", 2) == 0L);
+        assert (atoi ("-x", 2) == 0L);
         assert (atoi ("1111x234", 2) == 15L);
 
         assert (atoi ("1777", 8) == 1023L);
+        assert (atoi ("+1777", 8) == 1023L);
+        assert (atoi ("-1777", 8) == -1023L);
 
         assert (atoi ("1777", 10) == 1777L);
         assert (atoi ("1777") == 1777L);
+        assert (atoi ("+1777") == 1777L);
+        assert (atoi ("-1777") == -1777L);
 
         assert (atoi ("fce2", 16) == 64738L);
         assert (atoi ("bEeF", 16) == 48879L);
         assert (atoi ("deadbeef", 16) == 0xdeadbeef);
+        assert (atoi ("+deadbeef", 16) == 0xdeadbeef);
+        assert (atoi ("-deadbeef", 16) == -0xdeadbeef);
       },
   },
   PkTest {
