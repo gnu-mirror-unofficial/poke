@@ -391,7 +391,7 @@ type Elf64_Group =
 /* Section types.  */
 
 var SHT_NULL = 0,
-    SHT_PROGBIGS = 1,
+    SHT_PROGBITS = 1,
     SHT_SYMTAB = 2,
     SHT_STRTAB = 3,
     SHT_RELA = 4,
