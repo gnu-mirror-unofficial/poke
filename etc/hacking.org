@@ -1603,7 +1603,12 @@ have a testsuite in =testsuite/poke.FOO= with a driver
 
    When configured in sub-package mode, as is the case when used with
    Poke, Jitter will only actually compile the single most efficient
-   enabled dispatch.
+   enabled dispatch.  This means that in order to select some
+   sub-optimal dispatch method, one has to disable the more efficient
+   ones.  For example, this is the best options for debugging:
+
+   - =--disable-dispatch-no-threading --disable-dispatch-minimal-threading
+   - =--disable-dispatch-direct-threading
 
 ** Invoking GDB to debug an uninstalled poke
 
