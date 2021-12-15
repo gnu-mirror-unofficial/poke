@@ -1,3 +1,10 @@
+2021-12-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cond_exp): Specify expected
+	type in error message.
+	* testsuite/poke.pkl/cond-exp-diag-2.pk: Adjust to new error message.
+	* testsuite/poke.pkl/cond-exp-diag-3.pk: Likewise.
+
 2021-12-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/hacking.org (Building with Debugging support): Clarify how

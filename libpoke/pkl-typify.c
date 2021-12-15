@@ -2845,9 +2845,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
 
   if (!pkl_ast_type_equal_p (then_type, else_type))
     {
-      PKL_ERROR (PKL_AST_LOC (cond_exp),
-                 "alternatives in conditional expression shall be of\n"
-                 "exactly the same type.");
+      char *then_type_str = pkl_type_str (then_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (else_exp),
+                 "alternative is of the wrong type\nexpected %s.",
+                 then_type_str);
+
+      free (then_type_str);
+
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
