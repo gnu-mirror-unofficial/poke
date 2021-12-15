@@ -1,5 +1,10 @@
 2021-12-15  David Faust  <david.faust@oracle.com>
 
+	* pickles/btf-ext.pk: New pickle.
+	* pickles/Makefile.am: Add it to dist_pickles_DATA.
+
+2021-12-15  David Faust  <david.faust@oracle.com>
+
 	* pickles/btf.pk (BTF_KIND_FLOAT): New kind.
 	(BTF_KIND_DECL_TAG): Likewise.
 	(BTF_KIND_TYPE_TAG): Likewise.

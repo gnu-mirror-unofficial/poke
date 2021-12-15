@@ -1,0 +1,181 @@
+/* btf-ext.pk - BTF.ext implementation for GNU poke.  */
+
+/* Copyright (C) 2021 Oracle, Inc.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This file contains a description of of the Linux BPF Type Format
+   .BTF.ext information section. The .BTF.ext section contains extra
+   information to aid in the loading and debugging of BPF programs.
+   It is a supplement to BTF information for the same object.
+
+   The .BTF.ext section does not have a string table of its own; all strings
+   which are nominally part of the BTF.ext information are stored in the
+   .BTF section string table instead.  */
+
+/* Note that the interpretation of 'insn_off' in the following types is the ELF
+   API interpretation; that is, the byte offset from the beginning of the
+   referenced section. This differs from the kernel API interpretation (where
+   it is an offset in units of struct bpf_insn).  */
+
+type BTF_Ext_Func_Info_Rec =
+  struct
+  {
+    offset<uint<32>,B> insn_off;
+    uint<32> type_id; /* A BTF_KIND_FUNC type */
+  };
+
+type BTF_Ext_Line_Info_Rec =
+  struct
+  {
+    offset<uint<32>,B> insn_off;
+    offset<uint<32>,B> file_name_off;
+    offset<uint<32>,B> line_off;
+    struct uint<32>
+    {
+      uint<22> num; /* Line number of source line.  */
+      uint<10> col; /* Column in source line.  */
+    } line;
+  };
+
+/* BPF Compile Once - Run Everywhere (CO-RE) relocation information.  */
+var BPF_RELO_FIELD_BYTE_OFFSET = 0,
+    BPF_RELO_FIELD_BYTE_SIZE = 1,
+    BPF_RELO_FIELD_EXISTS = 2,
+    BPF_RELO_FIELD_SIGNED = 3,
+    BPF_RELO_FIELD_LSHIFT_U64 = 4,
+    BPF_RELO_FIELD_RSHIFT_U64 = 5,
+    BPF_RELO_TYPE_ID_LOCAL = 6,
+    BPF_RELO_TYPE_ID_TARGET = 7,
+    BPF_RELO_TYPE_EXISTS = 8,
+    BPF_RELO_TYPE_SIZE = 9,
+    BPF_RELO_ENUMVAL_EXISTS = 10,
+    BPF_RELO_ENUMVAL_VALUE = 11;
+
+type BTF_Ext_Core_Info_Rec =
+  struct
+  {
+    /* Offset of instruction to be modified.  */
+    offset<uint<32>,B> insn_off;
+
+    /* BTF type ID of the outermost containing entity of a relocatable type
+       or field.  */
+    uint<32> type_id;
+
+    /* Offset to "access string" in the .BTF string table, describing the
+       relocation to be performed.  */
+    offset<uint<32>,B> access_str_off;
+
+    /* Kind of relocation to perform.  */
+    uint<32> kind;
+  };
+
+type BTF_Ext_Sec_Header =
+  struct
+    {
+      /* Offset to the name of the (ELF) section in the .BTF string table.  */
+      offset<uint<32>,B> sec_name_off;
+
+      /* Number of records for this section.  */
+      uint<32> num_recs;
+    };
+
+/* .BTF.ext function info records for a single ELF section.  */
+type BTF_Ext_Func_Info_Sec =
+  struct
+    {
+      BTF_Ext_Sec_Header header;
+      BTF_Ext_Func_Info_Rec [header.num_recs] recs;
+    };
+
+/* .BTF.ext line info records for a single ELF section.  */
+type BTF_Ext_Line_Info_Sec =
+  struct
+    {
+      BTF_Ext_Sec_Header header;
+      BTF_Ext_Line_Info_Rec [header.num_recs] recs;
+    };
+
+/* BPF CO-RE relocations for a single ELF section.  */
+type BTF_Ext_Core_Info_Sec =
+  struct
+    {
+      BTF_Ext_Sec_Header header;
+      BTF_Ext_Core_Info_Rec [header.num_recs] recs;
+    };
+
+type BTF_Ext_Header =
+  struct
+  {
+    uint<16> magic : ((magic == 0x9feb && set_endian (ENDIAN_BIG))
+                        || (magic == 0xeb9f && set_endian (ENDIAN_LITTLE)));
+    uint<8> version;
+    uint<8> flags;
+    offset<uint<32>,B> hdr_len; /* == BTF_Ext_Header'size  */
+
+    offset<uint<32>,B> func_info_off;
+    offset<uint<32>,B> func_info_len;
+
+    offset<uint<32>,B> line_info_off;
+    offset<uint<32>,B> line_info_len;
+
+    /* "Optional" part of .BTF.ext header.  */
+    offset<uint<32>,B> core_info_off;
+    offset<uint<32>,B> core_info_len;
+  };
+
+/* A complete .BTF.ext section.  */
+type BTF_Ext_Section =
+  struct
+  {
+    BTF_Ext_Header header : header.hdr_len == header'size;
+
+    var func_info_off = header.hdr_len + header.func_info_off;
+    var line_info_off = header.hdr_len + header.line_info_off;
+    var core_info_off = header.hdr_len + header.core_info_off;
+
+    var has_func_info = header.func_info_len > 0#B;
+    var has_line_info = header.line_info_len > 0#B;
+    var has_core_info = header.core_info_len > 0#B;
+
+    fun secsz = (offset<uint<32>,b> len, offset<uint<32>,b> s) offset<uint<32>,b> :
+      { return len < s ? 0U#b : len - s; }
+
+    type BTF_Ext_Func_Info =
+      struct
+        {
+          offset<uint<32>,B> recsz;
+          BTF_Ext_Func_Info_Sec [secsz (header.func_info_len, recsz'size)] sections;
+        };
+
+    type BTF_Ext_Line_Info =
+      struct
+        {
+          offset<uint<32>,B> recsz;
+          BTF_Ext_Line_Info_Sec [secsz (header.line_info_len, recsz'size)] sections;
+        };
+
+    type BTF_Ext_Core_Info =
+      struct
+        {
+          offset<uint<32>,B> recsz;
+          BTF_Ext_Core_Info_Sec [secsz (header.core_info_len, recsz'size)] sections;
+        };
+
+    BTF_Ext_Func_Info func_info @ func_info_off if has_func_info;
+    BTF_Ext_Line_Info line_info @ line_info_off if has_line_info;
+    BTF_Ext_Core_Info core_info @ core_info_off if has_core_info;
+
+  };
