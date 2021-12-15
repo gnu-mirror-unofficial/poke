@@ -35,12 +35,15 @@ var BTF_KIND_UNKNOWN = 0,
     BTF_KIND_FUNC = 12,
     BTF_KIND_FUNC_PROTO = 13,
     BTF_KIND_VAR = 14,
-    BTF_KIND_DATASEC = 15;
+    BTF_KIND_DATASEC = 15,
+    BTF_KIND_FLOAT = 16,
+    BTF_KIND_DECL_TAG = 17,
+    BTF_KIND_TYPE_TAG = 18;
 
 var btf_kind_names =
   ["unkn", "int", "ptr", "array", "struct", "union", "enum",
    "fwd", "typedef", "volatile", "const", "restrict", "func",
-   "func_proto", "var", "datasec"];
+   "func_proto", "var", "datasec", "float", "decl_tag", "type_tag"];
 
 type BTF_Type_Id = uint<32>;
 
@@ -100,6 +103,16 @@ type BTF_Var_SecInfo =
     offset<uint<32>,B> size;
   };
 
+var BTF_DECL_TAG_SELF = -1;
+
+type BTF_Decl_Tag =
+  struct
+  {
+    /* -1 if the tag is applied to the type itself,
+       else the index of the tagged field/parameter/etc.  */
+    int<32> component_idx;
+  };
+
 type BTF_Type =
   struct
   {
@@ -108,8 +121,8 @@ type BTF_Type =
     struct uint<32>
     {
       uint<1> kind_flag;
-      uint<3>;
-      uint<4> kind;
+      uint<2>;
+      uint<5> kind;
       uint<8>;
       uint<16> vlen;
 
@@ -123,9 +136,11 @@ type BTF_Type =
     union
     {
       offset<uint<32>,B> size : (info.kind in [BTF_KIND_INT,
+                                               BTF_KIND_FLOAT,
                                                BTF_KIND_ENUM,
                                                BTF_KIND_STRUCT,
-                                               BTF_KIND_UNION]);
+                                               BTF_KIND_UNION,
+                                               BTF_KIND_DATASEC]);
       BTF_Type_Id type_id;
     } attrs;
 
@@ -164,6 +179,7 @@ type BTF_Type =
       BTF_Member[info.vlen] members      : (info.kind == BTF_KIND_UNION
                                             || info.kind == BTF_KIND_STRUCT);
       BTF_Var_SecInfo[info.vlen] datasec : info.kind == BTF_KIND_DATASEC;
+      BTF_Decl_Tag decl_tag              : info.kind == BTF_KIND_DECL_TAG;
 
       struct {} nothing;
     } data;

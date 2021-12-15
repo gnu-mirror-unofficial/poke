@@ -1,3 +1,14 @@
+2021-12-15  David Faust  <david.faust@oracle.com>
+
+	* pickles/btf.pk (BTF_KIND_FLOAT): New kind.
+	(BTF_KIND_DECL_TAG): Likewise.
+	(BTF_KIND_TYPE_TAG): Likewise.
+	(BTF_DECL_TAG_SELF): New.
+	(BTF_Decl_Tag): New type.
+	(BTF_Type): Update `info` bits usage to accomodate new type kinds.
+	BTF_KIND_DATASEC uses `size` variant of `attrs`.
+	Add `decl_tag` variant to `data`.
+
 2021-12-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_cond_exp): Specify expected
