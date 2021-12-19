@@ -10733,6 +10733,27 @@ type ID3V2_Tag =
 If both a constraint and an optional field expression are specified,
 the second should follow the first.
 
+One important characteristic of optional fields to keep in mind is
+that they are always constructed or mapped, even when they are
+omitted.  This is because, generally speaking, the value of an
+optional field may be necessary in order to determine whether the
+optional field is present or not.
+
+This may result on unexpected results for the unaware pokist, like in
+the example below:
+
+@example
+struct
+@{
+  Header hdr;
+  byte[hdr.len - hdr.padding] data if hdr.len >= hdr.padding;
+@}
+@end example
+
+@noindent
+where the array index may underflow if @code{hdr.len} is less or equal
+than @code{hdr.padding}.
+
 For obvious reasons, optional fields are not allowed in unions.
 
 @node Casting Structs

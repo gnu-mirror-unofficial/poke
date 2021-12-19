@@ -1,3 +1,8 @@
+2021-12-19  Jose E. Marchesi  <jemarch@termi>
+
+	* doc/poke.texi (Optional Fields): Explain how optional fields are
+	always constructed/mapped.
+
 2021-12-15  David Faust  <david.faust@oracle.com>
 
 	* pickles/btf-ext.pk: New pickle.
