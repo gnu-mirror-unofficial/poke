@@ -662,7 +662,7 @@
         nton @struct_itype, @field_type
    .c }
         nip                             ; STRICT BOFF VALC
-        ;; At this point we have either the value of the field is in the
+        ;; At this point the value of the field is in the
         ;; stack.  If the field is an offset, construct it.
    .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
    .c {
