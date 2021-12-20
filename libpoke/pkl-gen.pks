@@ -463,10 +463,6 @@
    .c }
         .end
 
-;;; If `field' is an optional field, evaluate the optcond.  If it is
-;;; false, then add an absent field, i.e. both the field name and
-;;; the field value are PVM_NULL.
-
 ;;; RAS_MACRO_CHECK_STRUCT_FIELD_CONSTRAINT @struct_type @field
 ;;; ( -- )
 ;;;
