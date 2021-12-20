@@ -1607,8 +1607,8 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    sub-optimal dispatch method, one has to disable the more efficient
    ones.  For example, this is the best options for debugging:
 
-   - =--disable-dispatch-no-threading --disable-dispatch-minimal-threading
-   - =--disable-dispatch-direct-threading
+   - =--disable-dispatch-no-threading --disable-dispatch-minimal-threading=
+   - =--disable-dispatch-direct-threading=
 
 ** Invoking GDB to debug an uninstalled poke
 
