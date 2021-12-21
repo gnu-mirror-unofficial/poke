@@ -84,6 +84,34 @@ var STV_DEFAULT = 0,
 var elf_stv_names =
   ["default", "internal", "hidden", "protected"];
 
+/* Types for ELF symbol information, including binding, type and
+   visibility.  */
+
+type Elf_Sym_Info =
+  struct uint<8>
+  {
+    uint<4> st_bind;
+    uint<4> st_type;
+
+    method _print = void:
+    {
+      printf ("#<stb:%s,stt:%s>",
+              elf_stb_names[st_bind], elf_stt_names[st_type]);
+    }
+  };
+
+type Elf_Sym_Other_Info =
+  struct uint<8>
+  {
+    uint<5>;
+    uint<3> st_visibility;
+
+    method _print = void:
+      {
+        print "#<stv:" + elf_stv_names[st_visibility] + ">";
+      }
+  };
+
 /* Compression algorithm identificators.  */
 
 var ELFCOMPRESS_ZLIB = 1,

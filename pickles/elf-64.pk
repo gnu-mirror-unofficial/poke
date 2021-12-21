@@ -72,29 +72,8 @@ type Elf64_Sym =
   struct
   {
     offset<Elf_Word,B> st_name;
-    struct uint<8>
-    {
-      uint<4> st_bind;
-      uint<4> st_type;
-
-      method _print = void:
-        {
-          printf ("#<stb:%s,stt:%s>",
-                  elf_stb_names[st_bind], elf_stt_names[st_type]);
-        }
-    } st_info;
-
-    struct uint<8>
-    {
-      uint<5>;
-      uint<3> st_visibility;
-
-      method _print = void:
-        {
-          print "#<stv:" + elf_stv_names[st_visibility] + ">";
-        }
-    } st_other;
-
+    Elf_Sym_Info st_info;
+    Elf_Sym_Other_Info st_other;
     Elf_Half st_shndx;
     Elf64_Addr st_value;
     Elf64_Xword st_size;

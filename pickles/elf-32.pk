@@ -63,3 +63,16 @@ type Elf32_Rela =
     Elf32_RelInfo r_info;
     Elf_Sword r_addend;
   };
+
+/* ELF32 symbol.  */
+
+type Elf32_Sym =
+  struct
+  {
+    offset<Elf_Word,B> st_name;
+    Elf32_Addr st_value;
+    offset<Elf_Word,B> st_size;
+    Elf_Sym_Info st_info;
+    Elf_Sym_Other_Info st_other;
+    Elf_Half st_shndx;
+  };

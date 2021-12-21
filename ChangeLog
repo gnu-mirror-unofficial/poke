@@ -1,5 +1,13 @@
 2021-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf-32.pk (Elf32_Sym): New type.
+	* pickles/elf-common.pk (Elf_Sym_Info): Likewise.
+	(Elf_Sym_Other_Info): Likewise.
+	* pickles/elf-64.pk (Elf64_Sym): Use Elf_Sym_Info and
+	Elf_Sym_Other_Info.
+
+2021-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf64.pk: New file.
 	* pickles/elf32.pk: Likewise.
 	* pickles/elf-common.pk: Likewise.
