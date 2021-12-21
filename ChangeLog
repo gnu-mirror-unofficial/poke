@@ -1,3 +1,24 @@
+2021-12-21  Jose E. Marchesi  <jemarch@termi>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Use PKL_GEN_PUSH_CONTEXT
+	instead of PKL_GEN_DUP_CONTEXT.
+	(LMAP): Likewise.
+	(pkl_gen_pr_ass_stmt): Likewise.
+	(pkl_gen_pr_print_stmt): Likewise.
+	(pkl_gen_pr_funcall): Likewise.
+	(pkl_gen_pr_func): Likewise.
+	(pkl_gen_pr_func_arg): Likewise.
+	(pkl_gen_ps_isa): Likewise.
+	(pkl_gen_pr_cast): Likewise.
+	(pkl_gen_ps_cons): Likewise.
+	(pkl_gen_pr_map): Likewise.
+	(pkl_gen_pr_array): Likewise.
+	(pkl_gen_pr_type_function): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	(PKL_GEN_DUP_CONTEXT): Remove.
+	* libpoke/ras: Update comment to use GEN_PUSH_CONTEXT.
+
 2021-12-19  Jose E. Marchesi  <jemarch@termi>
 
 	* doc/poke.texi (Optional Fields): Explain how optional fields are
