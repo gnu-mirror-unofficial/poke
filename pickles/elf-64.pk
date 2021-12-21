@@ -1,0 +1,454 @@
+/* elf-64.pk - 64-bit ELF definitions.  */
+
+/* Copyright (C) 2019, 2020, 2021 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load "elf-common.pk";
+
+/* ELF64 basic types.  */
+
+type Elf64_Xword = uint<64>,
+     Elf64_Sxword = int<64>,
+     Elf64_Addr = offset<uint<64>,B>,
+     Elf64_Off = offset<uint<64>,B>;
+
+/* ELF64 relocation info.
+
+   r_sym is the symbol table index with respect to which the
+   relocation must be made.
+
+   r_type is the type of relocation to apply, which is
+   architecture-specific.  */
+
+type Elf64_RelInfo =
+  struct Elf64_Xword
+  {
+    uint<32> r_sym;
+    uint<32> r_type;
+  };
+
+/* ELF64 REL relocation entry.  */
+
+type Elf64_Rel =
+  struct
+  {
+    Elf64_Addr r_offset;
+    Elf64_RelInfo r_info;
+  };
+
+/* ELF64 RELA relocation entry.
+
+   r_offset holds a section offset in relocatable files, a virtual
+   address in executable and shared object files.
+
+   r_addend holds a constant value to be added to the relocation's
+   value.  In architectures using Rel relocations this addend is
+   somehow stored in the relocation's memory location.  */
+
+type Elf64_Rela =
+  struct
+  {
+    Elf64_Addr r_offset;
+    Elf64_RelInfo r_info;
+    Elf64_Sxword r_addend;
+  };
+
+/* ELF64 symbol.  */
+
+type Elf64_Sym =
+  struct
+  {
+    offset<Elf_Word,B> st_name;
+    struct uint<8>
+    {
+      uint<4> st_bind;
+      uint<4> st_type;
+
+      method _print = void:
+        {
+          printf ("#<stb:%s,stt:%s>",
+                  elf_stb_names[st_bind], elf_stt_names[st_type]);
+        }
+    } st_info;
+
+    struct uint<8>
+    {
+      uint<5>;
+      uint<3> st_visibility;
+
+      method _print = void:
+        {
+          print "#<stv:" + elf_stv_names[st_visibility] + ">";
+        }
+    } st_other;
+
+    Elf_Half st_shndx;
+    Elf64_Addr st_value;
+    Elf64_Xword st_size;
+  };
+
+/* ELF64 notes.  */
+
+type Elf64_Note =
+  struct
+  {
+    /* The first `namesz' bytes in `name' contain a NULL-terminated
+    character representation of the entry's owner or originator.  */
+    Elf64_Xword namesz;
+
+    /* The first `descsz' bytes in `desc' hold the note descriptor.
+    The ABI places no constraints on a descriptor's contents.  */
+    Elf64_Xword descsz;
+
+    byte[namesz] name;
+    byte[alignto (OFFSET, 8#B)];
+
+    byte[descsz] desc;
+    byte[alignto (OFFSET, 8#B)];
+  };
+
+/* Compressed section header, used in sections flagged with
+   SHF_COMPRESSED.  */
+
+type Elf64_Chdr =
+  struct
+  {
+    Elf_Word ch_type;
+    Elf_Word ch_reserved;
+    offset<Elf64_Xword,B> ch_size;
+    offset<Elf64_Xword,B> ch_addralign;
+  };
+
+/* The ELF64 dynamic section contents.  */
+
+type Elf64_Dyn =
+  struct
+  {
+    Elf64_Sxword d_tag;
+
+    union
+      {
+      /* Entries in the dynamic tags in a position >= DT_ENCODING
+         follow an uniform rule regarding what field is used for the
+         data: even entries use d_ptr while odd entries use d_val.  */
+
+        Elf64_Addr d_ptr
+          : (d_tag in [DT_PLTGOT, DT_HASH, DT_STRTAB, DT_SYMTAB, DT_RELA,
+                       DT_SYMENT, DT_INIT, DT_FINI, DT_REL, DT_JMPREL,
+                       DT_INIT_ARRAY, DT_FINI_ARRAY]
+             || (d_tag >= DT_ENCODING && d_tag %2 != 0));
+
+        Elf64_Xword d_val;
+    } d_data;
+  };
+
+/* ELF64 section group.  */
+
+type Elf64_Group =
+  struct
+  {
+    Elf_Word flags;
+    Elf_Word[] entries;  /* Section header indices.  */
+  };
+
+/* ELF64 section flags.  */
+
+type Elf64_SectionFlags =
+  struct
+  {
+    Elf64_Xword flags;
+
+    method _print = void:
+      {
+        var s = "";
+
+        if (flags & SHF_WRITE)
+          s = s + "WRITE,";
+        if (flags & SHF_ALLOC)
+          s = s + "ALLOC,";
+        if (flags & SHF_EXECINSTR)
+          s = s + "EXECINSTR,";
+        if (flags & SHF_MERGE)
+          s = s + "MERGE,";
+        if (flags & SHF_STRINGS)
+          s = s + "STRINGS,";
+        if (flags & SHF_INFO_LINK)
+          s = s + "INFO_LINK,";
+        if (flags & SHF_LINK_ORDER)
+          s = s + "LINK_ORDER,";
+        if (flags & SHF_OS_NONCONFORMING)
+          s = s + "OS_NONCONFORMING,";
+        if (flags & SHF_GROUP)
+          s = s + "GROUP,";
+        if (flags & SHF_TLS)
+          s = s + "TLS,";
+        if (flags & SHF_COMPRESSED)
+          s = s + "COMPRESSED,";
+        if (flags & SHF_MASKOS)
+          /* XXX call os-specific printer in elf-OS.pk */
+          ;
+        if (flags & SHF_MASKPROC)
+          /* XXX call arch-specific printer in elf-ARCH.pk */
+          ;
+
+        print "#<" + rtrim (s, ",") + ">";
+      }
+  };
+
+/* ELF64 section header table entry.
+
+   sh_name specifies the name of the section.  It is an index into the
+   file's string table.
+
+   sh_type is the type of the section, one of the SHT_* values defined
+   above.
+
+   sh_flags is the ORed value of the 1-bit flags SHF_* defined
+   above.  */
+
+type Elf64_Shdr =
+  struct
+  {
+    offset<Elf_Word,B> sh_name;
+    Elf_Word sh_type;
+    Elf64_SectionFlags sh_flags;
+    Elf64_Addr sh_addr;
+    Elf64_Off sh_offset;
+    offset<Elf64_Xword,B> sh_size;
+    Elf_Word sh_link;
+    Elf_Word sh_info;
+    Elf64_Xword sh_addralign;
+    offset<Elf64_Xword,b> sh_entsize;
+  };
+
+/* ELF64 segment flags.  */
+
+type Elf64_SegmentFlags =
+  struct
+  {
+    Elf_Word flags;
+
+    method _print = void:
+      {
+        var s = "";
+
+        if (flags & PF_R)
+          s = s + "R,";
+        if (flags & PF_W)
+          s = s + "W,";
+        if (flags & PF_X)
+          s = s + "X,";
+        if (flags & PF_MASKOS)
+          /* XXX call os-specific printer in elf-OS.pk */
+          ;
+        if (flags & PF_MASKPROC)
+          /* XXX call arch-specific printer in elf-ARCH.pk */
+          ;
+
+        print "#<" + rtrim (s, ",") + ">";
+      }
+  };
+
+/* ELF64 program header table entry.  */
+
+type Elf64_Phdr =
+  struct
+  {
+    Elf_Word p_type;
+    Elf64_SegmentFlags p_flags;
+    Elf64_Off p_offset;
+    Elf64_Addr p_vaddr;
+    Elf64_Addr p_paddr;
+    Elf64_Xword p_filesz;
+    Elf64_Xword p_memsz;
+    Elf64_Xword p_align;
+  };
+
+/* ELF64 file header.  */
+
+type Elf64_Ehdr =
+  struct
+  {
+    struct
+    {
+      byte[4] ei_mag == [0x7fUB, 'E', 'L', 'F'];
+      byte ei_class;
+      byte ei_data :
+        (ei_data == ELFDATA2LSB) ? set_endian (ENDIAN_LITTLE) : set_endian (ENDIAN_BIG);
+      byte ei_version;
+      byte ei_osabi;
+      byte ei_abiversion;
+      byte[6] ei_pad;
+      offset<byte,B> ei_nident;
+    } e_ident;
+
+    Elf_Half e_type;
+    Elf_Half e_machine;
+    Elf_Word e_version = EV_CURRENT;
+
+    Elf64_Addr e_entry;
+    Elf64_Off e_phoff;
+    Elf64_Off e_shoff;
+
+    Elf_Word e_flags;
+    offset<Elf_Half,B> e_ehsize;
+    offset<Elf_Half,B> e_phentsize;
+    Elf_Half e_phnum;
+    offset<Elf_Half,B> e_shentsize;
+    Elf_Half e_shnum;
+    Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
+  };
+
+/* ELF64 file.  */
+
+type Elf64_File =
+  struct
+  {
+    Elf64_Ehdr ehdr;
+
+    Elf64_Shdr[ehdr.e_shnum] shdr @ ehdr.e_shoff
+      if ehdr.e_shnum > 0;
+
+    Elf64_Phdr[ehdr.e_phnum] phdr @ ehdr.e_phoff
+      if ehdr.e_phnum > 0;
+
+    /* Given an offset into the ELF file's section string table, return
+       the string.  */
+
+    method get_section_name = (offset<Elf_Word,B> offset) string:
+      {
+        var strtab = ehdr.e_shstrndx;
+        return string @ (shdr[strtab].sh_offset + offset);
+      }
+
+    /* Given a symtab and an offset into its associated symbol string
+       table, return the string.  */
+
+    method get_symbol_name = (Elf64_Shdr symtab, offset<Elf_Word,B> offset) string:
+      {
+        var strtab = symtab.sh_link;
+        return string @ (shdr[strtab].sh_offset + offset);
+      }
+
+    /* Given a section name, return an array of section headers in the
+       ELF file having that name.  */
+
+    method get_sections_by_name = (string name) Elf64_Shdr[]:
+      {
+        var sections = Elf64_Shdr[]();
+
+        for (s in shdr where get_section_name (s.sh_name) == name)
+          sections += [s];
+
+        return sections;
+      }
+
+    /* Given a section type (SHT_* value) return an array of section
+       headers in the ELF file with that type.  */
+
+    method get_sections_by_type = (Elf_Word stype) Elf64_Shdr[]:
+      {
+        var sections = Elf64_Shdr[]();
+
+        for (s in shdr where s.sh_type == stype)
+          sections += [s];
+
+        return sections;
+      }
+
+    /* Given a section name, return whether it exists in this
+       file.  */
+
+    method section_name_p = (string name) int:
+      {
+        var sections = Elf64_Shdr[]();
+
+        try sections = get_sections_by_name (name);
+        catch if E_inval { return 0; }
+
+        return sections'length;
+      }
+
+    /* Given an offset, return the string stored at that offset in the
+       "default" string table of the ELF file.  This is the string table
+       section named ".strtab".  If such a section doesn't exist, or it
+       doesn't contain a string table, then raise E_inval.  */
+    method get_string = (offset<Elf_Word,B> offset) string:
+     {
+       if (!section_name_p (".strtab"))
+          raise E_inval;
+
+       var strtab = get_sections_by_name (".strtab")[0];
+       return string @ strtab.sh_offset + offset;
+     }
+
+    /* Return the signature corresponding to a given group section.
+       If the given section header doesn't correspond to a group
+       section then raise E_inval.  */
+
+    method get_group_signature = (Elf64_Shdr section) string:
+      {
+        if (section.sh_type != SHT_GROUP)
+          raise E_inval;
+
+        var symtab = shdr[section.sh_link];
+        var symtab_data
+          = Elf64_Sym [symtab.sh_size] @ symtab.sh_offset;
+        var symbol = symtab_data[section.sh_info];
+        var symbol_name = get_symbol_name (symtab, symbol.st_name);
+
+        return symbol_name;
+      }
+
+    /* Return an array of strings with the signatures of the section
+       groups present in this ELF file.  */
+
+    method get_group_signatures = string[]:
+      {
+        var signatures = string[]();
+
+        for (section in shdr where section.sh_type == SHT_GROUP)
+          signatures += [get_group_signature (section)];
+
+        return signatures;
+      }
+
+    /* Given the name of a section group, return an array with the
+       section headers corresponding to all the sections in that
+       group.  If the given name doesn't identify a section group in
+       the ELF file then return an empty array.  */
+
+    method get_section_group = (string group_name) Elf64_Shdr[]:
+      {
+        var section_group = Elf64_Shdr[]();
+
+        var group_sections = get_sections_by_type (SHT_GROUP);
+        for (sec in group_sections
+             where get_group_signature (sec) == group_name)
+          {
+            var group_entries
+              = (Elf_Word[sec.sh_size - sizeof (Elf_Word)]
+                 @ sec.sh_offset + sizeof (Elf_Word));
+
+            for (entry in group_entries)
+              section_group += [shdr[entry]];
+
+            break;
+         }
+
+       return section_group;
+     }
+  };

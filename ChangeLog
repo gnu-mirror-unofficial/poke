@@ -1,3 +1,13 @@
+2021-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf64.pk: New file.
+	* pickles/elf32.pk: Likewise.
+	* pickles/elf-common.pk: Likewise.
+	* pickles/elf.pk: Move contents to elf-common.pk and elf64.pk and
+	load these pickles.
+	* pickles/Makefile.am (dist_pickles_DATA): Add elf-64.pk,
+	elf-32.pk and elf-common.pk.
+
 2021-12-21  Jose E. Marchesi  <jemarch@termi>
 
 	* libpoke/pkl-gen.c (PKL_GEN_PUSH_SET_CONTEXT): Define.

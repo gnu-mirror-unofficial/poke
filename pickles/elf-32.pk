@@ -1,0 +1,65 @@
+/* elf-32.pk - 32-bit ELF definitions.  */
+
+/* Copyright (C) 2019, 2020, 2021 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load "elf-common.pk";
+
+/* ELF32 basic types.  */
+
+type Elf32_Addr = offset<uint<32>,B>,
+     Elf32_Off = offset<uint<32>,B>;
+
+/* ELF32 relocation info.
+
+   r_sym is the symbol table index with respect to which the
+   relocation must be made.
+
+   r_type is the type of relocation to apply, which is
+   architecture-specific.  */
+
+type Elf32_RelInfo =
+  struct Elf_Word
+  {
+    uint<24> r_sym;
+    uint<8> r_type;
+  };
+
+/* ELF32 REL relocation entry. */
+
+type Elf32_Rel =
+  struct
+  {
+    Elf32_Addr r_offset;
+    Elf32_RelInfo r_info;
+  };
+
+/* ELF32 RELA relocation entry.
+
+   r_offset holds a section offset in relocatable files, a virtual
+   address in executable and shared object files.
+
+   r_addend holds a constant value to be added to the relocation's
+   value.  In architectures using Rel relocations this addend is
+   somehow stored in the relocation's memory location.  */
+
+type Elf32_Rela =
+  struct
+  {
+    Elf32_Addr r_offset;
+    Elf32_RelInfo r_info;
+    Elf_Sword r_addend;
+  };
