@@ -77,8 +77,7 @@
         ;; both bounded and unbounded array types.  Also, this avoids
         ;; evaluating the boundary expression in the array type
         ;; twice.
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_POP_CONTEXT;
                                 ; ETYPE
@@ -280,8 +279,7 @@
         swap                    ; EBOFF VAL
         pushvar $ios            ; EBOFF VAL IOS
         nrot                    ; IOS EOFF VAL
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (PKL_AST_TYPE_A_ETYPE (@array_type));
         .c PKL_GEN_POP_CONTEXT;
                                 ; _
@@ -366,8 +364,7 @@
         regvar $eidx            ; BOFF
         regvar $eboff           ; _
         ;; Build the type of the constructed array.
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@array_type);
         .c PKL_GEN_POP_CONTEXT;
                                 ; ATYPE
@@ -993,8 +990,7 @@
         ;;  Push the number of fields
         pushvar $nfield         ; BOFF [EBOFF STR VAL]... NFIELD
         ;; Finally, push the struct type and call mksct.
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_POP_CONTEXT;
                                 ; BOFF [EBOFF STR VAL]... NFIELD TYP
@@ -1279,8 +1275,7 @@
    .c   if (PKL_AST_TYPE_A_BOUNDER (@field_type) == PVM_NULL)
    .c   {
    .c      bounder_created_p = 1;
-   .c      PKL_GEN_PUSH_CONTEXT;
-   .c      PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
+   .c      PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
    .c      PKL_PASS_SUBPASS (@field_type);
    .c      PKL_GEN_POP_CONTEXT;
    .c    }
@@ -1438,8 +1433,7 @@
  .c }
         ;; Push the number of fields, create the struct and return it.
         pushvar $nfield        ; null [OFF STR VAL]... NMETHOD NFIELD
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
         .c PKL_PASS_SUBPASS (@type_struct);
         .c PKL_GEN_POP_CONTEXT;
                                 ; null [OFF STR VAL]... NMETHOD NFIELD TYP
@@ -1560,8 +1554,7 @@
         swap                    ; IOS EOFF EVAL
         .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
         .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field));
         .c PKL_GEN_POP_CONTEXT;
         .c PKL_GEN_PAYLOAD->endian = endian;
@@ -1597,8 +1590,7 @@
   .c {
         ;; Note that the constructor consumes the null
         ;; on the stack.
-  .c    PKL_GEN_PUSH_CONTEXT;
-  .c    PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
+  .c    PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
   .c    PKL_PASS_SUBPASS (@struct_itype);
   .c    PKL_GEN_POP_CONTEXT;
   .c }
@@ -1679,8 +1671,7 @@
         push null
         ;; Note that the constructor consumes the null
         ;; on the stack.
-  .c    PKL_GEN_PUSH_CONTEXT;
-  .c    PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
+  .c    PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
   .c    PKL_PASS_SUBPASS (@struct_itype);
   .c    PKL_GEN_POP_CONTEXT;
         regvar $ivalue
@@ -1748,8 +1739,7 @@
         ;; that case.
         push PVM_E_GENERIC
         pushe .write_failed
-        .c PKL_GEN_PUSH_CONTEXT;
-        .c PKL_GEN_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
         .c PKL_PASS_SUBPASS (@type);
         .c PKL_GEN_POP_CONTEXT;
         pope
