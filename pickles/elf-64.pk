@@ -92,6 +92,11 @@ type Elf64_Note =
     The ABI places no constraints on a descriptor's contents.  */
     Elf64_Xword descsz;
 
+    /* This word gives the interpretation of the descriptor.  Each
+       originator controls its own types.  They must be non-negative.
+       The ABI does not define what descriptors mean.  */
+    Elf64_Xword _type;
+    
     byte[namesz] name;
     byte[alignto (OFFSET, 8#B)];
 
@@ -105,8 +110,12 @@ type Elf64_Note =
 type Elf64_Chdr =
   struct
   {
-    Elf_Word ch_type;
+    /* This member specifies the compression algorithm.  */
+    Elf_Word ch_type : (ch_type == ELFCOMPRESS_ZLIB
+                        || (ch_type >= ELFCOMPRESS_LOOS && ch_type <= ELFCOMPRESS_HIOS)
+                        || (ch_type >= ELFCOMPRESS_LOPROC && ch_type <= ELFCOMPRESS_HIPROC));
     Elf_Word ch_reserved;
+    /* Size and required alignment of the uncompressed data.  */
     offset<Elf64_Xword,B> ch_size;
     offset<Elf64_Xword,B> ch_addralign;
   };

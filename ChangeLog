@@ -1,3 +1,10 @@
+2021-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf-64.pk (Elf64_Note): Add field _type.
+	(Elf64_Chdr): Add constraint and comments.
+	* pickles/elf-32.pk (Elf32_Note): New type.
+	(Elf32_Chdr): Likewise.
+
 2021-12-22  Luca Saiu  <positron@gnu.org>
 
 	* configure.ac (AC_JITTER_SUBPACKAGE): Rename to
