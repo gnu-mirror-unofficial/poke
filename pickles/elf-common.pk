@@ -304,6 +304,42 @@ var SHF_WRITE = 0x1,
     SHF_MASKOS = 0x0ff0_0000,
     SHF_MASKPROC = 0xf000_0000;
 
+fun elf_pretty_print_section_flags = (uint<64> flags) void:
+{
+  var s = "";
+
+  if (flags & SHF_WRITE)
+    s = s + "WRITE,";
+  if (flags & SHF_ALLOC)
+    s = s + "ALLOC,";
+  if (flags & SHF_EXECINSTR)
+    s = s + "EXECINSTR,";
+  if (flags & SHF_MERGE)
+    s = s + "MERGE,";
+  if (flags & SHF_STRINGS)
+    s = s + "STRINGS,";
+  if (flags & SHF_INFO_LINK)
+    s = s + "INFO_LINK,";
+  if (flags & SHF_LINK_ORDER)
+    s = s + "LINK_ORDER,";
+  if (flags & SHF_OS_NONCONFORMING)
+    s = s + "OS_NONCONFORMING,";
+  if (flags & SHF_GROUP)
+    s = s + "GROUP,";
+  if (flags & SHF_TLS)
+    s = s + "TLS,";
+  if (flags & SHF_COMPRESSED)
+    s = s + "COMPRESSED,";
+  if (flags & SHF_MASKOS)
+   /* XXX call os-specific printer in elf-OS.pk */
+    ;
+  if (flags & SHF_MASKPROC)
+   /* XXX call arch-specific printer in elf-ARCH.pk */
+    ;
+
+  print "#<" + rtrim (s, ",") + ">";
+}
+
 /* Segment types.  */
 
 var PT_NULL = 0,
@@ -326,6 +362,32 @@ var PF_X = 0x1,
     PF_R = 0x4,
     PF_MASKOS = 0x0ff0_0000,
     PF_MASKPROC = 0xf000_0000;
+
+type Elf_SegmentFlags =
+  struct
+  {
+    Elf_Word flags;
+
+    method _print = void:
+      {
+        var s = "";
+
+        if (flags & PF_R)
+          s = s + "R,";
+        if (flags & PF_W)
+          s = s + "W,";
+        if (flags & PF_X)
+          s = s + "X,";
+        if (flags & PF_MASKOS)
+          /* XXX call os-specific printer in elf-OS.pk */
+          ;
+        if (flags & PF_MASKPROC)
+          /* XXX call arch-specific printer in elf-ARCH.pk */
+          ;
+
+        print "#<" + rtrim (s, ",") + ">";
+      }
+  };
 
 /* Encoding of the ELF file.  */
 
@@ -374,3 +436,22 @@ type Elf_Note =
     byte[descsz] desc;
     byte[alignto (OFFSET, 4#B)];
 };
+
+/* ELF identification struct.
+
+   This is the first component in the ELF header for both ELF32 and
+   ELF64.  */
+
+type Elf_Ident =
+  struct
+  {
+    byte[4] ei_mag == [0x7fUB, 'E', 'L', 'F'];
+    byte ei_class;
+    byte ei_data :
+        (ei_data == ELFDATA2LSB) ? set_endian (ENDIAN_LITTLE) : set_endian (ENDIAN_BIG);
+    byte ei_version;
+    byte ei_osabi;
+    byte ei_abiversion;
+    byte[6] ei_pad;
+    offset<byte,B> ei_nident;
+  };

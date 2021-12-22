@@ -133,40 +133,9 @@ type Elf64_SectionFlags =
     Elf64_Xword flags;
 
     method _print = void:
-      {
-        var s = "";
-
-        if (flags & SHF_WRITE)
-          s = s + "WRITE,";
-        if (flags & SHF_ALLOC)
-          s = s + "ALLOC,";
-        if (flags & SHF_EXECINSTR)
-          s = s + "EXECINSTR,";
-        if (flags & SHF_MERGE)
-          s = s + "MERGE,";
-        if (flags & SHF_STRINGS)
-          s = s + "STRINGS,";
-        if (flags & SHF_INFO_LINK)
-          s = s + "INFO_LINK,";
-        if (flags & SHF_LINK_ORDER)
-          s = s + "LINK_ORDER,";
-        if (flags & SHF_OS_NONCONFORMING)
-          s = s + "OS_NONCONFORMING,";
-        if (flags & SHF_GROUP)
-          s = s + "GROUP,";
-        if (flags & SHF_TLS)
-          s = s + "TLS,";
-        if (flags & SHF_COMPRESSED)
-          s = s + "COMPRESSED,";
-        if (flags & SHF_MASKOS)
-          /* XXX call os-specific printer in elf-OS.pk */
-          ;
-        if (flags & SHF_MASKPROC)
-          /* XXX call arch-specific printer in elf-ARCH.pk */
-          ;
-
-        print "#<" + rtrim (s, ",") + ">";
-      }
+    {
+      elf_pretty_print_section_flags (flags);
+    }
   };
 
 /* ELF64 section header table entry.
@@ -195,47 +164,19 @@ type Elf64_Shdr =
     offset<Elf64_Xword,b> sh_entsize;
   };
 
-/* ELF64 segment flags.  */
-
-type Elf64_SegmentFlags =
-  struct
-  {
-    Elf_Word flags;
-
-    method _print = void:
-      {
-        var s = "";
-
-        if (flags & PF_R)
-          s = s + "R,";
-        if (flags & PF_W)
-          s = s + "W,";
-        if (flags & PF_X)
-          s = s + "X,";
-        if (flags & PF_MASKOS)
-          /* XXX call os-specific printer in elf-OS.pk */
-          ;
-        if (flags & PF_MASKPROC)
-          /* XXX call arch-specific printer in elf-ARCH.pk */
-          ;
-
-        print "#<" + rtrim (s, ",") + ">";
-      }
-  };
-
 /* ELF64 program header table entry.  */
 
 type Elf64_Phdr =
   struct
   {
     Elf_Word p_type;
-    Elf64_SegmentFlags p_flags;
+    Elf_SegmentFlags p_flags;
     Elf64_Off p_offset;
     Elf64_Addr p_vaddr;
     Elf64_Addr p_paddr;
-    Elf64_Xword p_filesz;
-    Elf64_Xword p_memsz;
-    Elf64_Xword p_align;
+    offset<Elf64_Xword,B> p_filesz;
+    offset<Elf64_Xword,B> p_memsz;
+    offset<Elf64_Xword,B> p_align;
   };
 
 /* ELF64 file header.  */
@@ -243,19 +184,7 @@ type Elf64_Phdr =
 type Elf64_Ehdr =
   struct
   {
-    struct
-    {
-      byte[4] ei_mag == [0x7fUB, 'E', 'L', 'F'];
-      byte ei_class;
-      byte ei_data :
-        (ei_data == ELFDATA2LSB) ? set_endian (ENDIAN_LITTLE) : set_endian (ENDIAN_BIG);
-      byte ei_version;
-      byte ei_osabi;
-      byte ei_abiversion;
-      byte[6] ei_pad;
-      offset<byte,B> ei_nident;
-    } e_ident;
-
+    Elf_Ident e_ident;
     Elf_Half e_type;
     Elf_Half e_machine;
     Elf_Word e_version = EV_CURRENT;

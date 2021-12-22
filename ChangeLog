@@ -1,5 +1,21 @@
 2021-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf-common.pk (elf_pretty_print_section_flags): New
+	function.
+	(Elf_SegmentFlags): New type.
+	(Elf_Ident): Likewise.
+	* pickles/elf-64.pk (Elf64_SectionFlags): Use
+	elf_pretty_print_section_flags.
+	(Elf64_SegmentFlags): Remove.
+	(elf64_Ehdr): Use Elf_Ident.
+	* pickles/elf-32.pk (Elf32_SectionFlags): New type.
+	(Elf32_Shdr): Likewise.
+	(Elf32_Phdr): Likewise.
+	(Elf32_Ehdr): Likewise.
+	(Elf32_File): Likewise.
+
+2021-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf-common.pk (Elf_Note): New type.
 	* pickles/elf-64.pk (Elf64_Note): Delete.
 	* pickles/elf-32.pk (Elf32_Note): Likewise.

@@ -88,3 +88,85 @@ type Elf32_Chdr =
     offset<Elf_Word,B> ch_size;
     offset<Elf_Word,B> ch_addralign;
   };
+
+/* ELF32 section flags.  */
+
+type Elf32_SectionFlags =
+  struct
+  {
+    Elf_Word flags;
+
+    method _print = void:
+    {
+      elf_pretty_print_section_flags (flags);
+    }
+  };
+
+/* ELF32 section header table entry.  */
+
+type Elf32_Shdr =
+  struct
+  {
+    offset<Elf_Word,B> sh_name;
+    Elf_Word sh_type;
+    Elf32_SectionFlags sh_flags;
+    Elf32_Addr sh_addr;
+    Elf32_Off sh_offset;
+    offset<Elf_Word,B> sh_size;
+    Elf_Word sh_link;
+    Elf_Word sh_info;
+    Elf_Word sh_addralign;
+    offset<Elf_Word,b> sh_entsize;
+  };
+
+/* ELF32 program header table entry.  */
+
+type Elf32_Phdr =
+  struct
+  {
+    Elf_Word p_type;
+    Elf32_Off p_offset;
+    Elf32_Addr p_vaddr;
+    Elf32_Addr p_paddr;
+    offset<Elf_Word,B> p_filesz;
+    offset<Elf_Word,B> p_memsz;
+    Elf_SegmentFlags p_flags;
+    offset<Elf_Word,B> p_align;
+  };
+
+/* ELF32 file header.  */
+
+type Elf32_Ehdr =
+  struct
+  {
+    Elf_Ident e_ident;
+    Elf_Half e_type;
+    Elf_Half e_machine;
+    Elf_Word e_version = EV_CURRENT;
+
+    Elf32_Addr e_entry;
+    Elf32_Off e_phoff;
+    Elf32_Off e_shoff;
+
+    Elf_Word e_flags;
+    offset<Elf_Half,B> e_ehsize;
+    offset<Elf_Half,B> e_phentsize;
+    Elf_Half e_phnum;
+    offset<Elf_Half,B> e_shentsize;
+    Elf_Half e_shnum;
+    Elf_Half e_shstrndx : e_shnum == 0 || e_shstrndx < e_shnum;
+  };
+
+/* ELF32 file.  */
+
+type Elf32_File =
+  struct
+  {
+    Elf32_Ehdr ehdr;
+
+    Elf32_Shdr[ehdr.e_shnum] shdr @ ehdr.e_shoff
+      if ehdr.e_shnum > 0;
+
+    Elf32_Phdr[ehdr.e_phnum] phdr @ ehdr.e_phoff
+      if ehdr.e_phnum > 0;
+  };
