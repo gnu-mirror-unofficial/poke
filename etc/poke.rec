@@ -1311,15 +1311,6 @@ Description:
 + This of course depends on support for setting methods in struct
 + constructors.
 
-Summary: .set with no arguments should give a summary of all options
-Component: CLI
-Kind: ENH
-Priority: 3
-Description:
-+ This requires work in rec-cmd.c, because the current infrastructure
-+ doens't support this.
-Target: 1.4
-
 Summary: Auto-complete value attributes
 Component: CLI
 Kind: ENH
