@@ -160,16 +160,6 @@ Description:
 + 20:00 <jemarch> you just write:
 + 20:00 <jemarch> a:::b:::c = val;
 
-Summary: Support %% in printf string literals
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ A new %-sequence shall be added to printf: %%.  This denotes a single
-+ % in the formatted output.  The right place where to hack this is the
-+ ``pkl_trans1_ps_print_stmt`` handler in ``src/pkl-trans.c``.
-Target: 1.4
-
 Summary: STRING ~ REGEXP operator
 Component: Language
 Kind: ENH
