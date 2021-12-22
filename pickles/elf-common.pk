@@ -344,3 +344,33 @@ type Elf_Hash_Table =
     Elf_Word[nbucket] bucket;
     Elf_Word[nchain] chain;
   };
+
+/* ELF notes.  */
+
+/* Note that the type below can be used for both ELF32 and ELF64
+   files.  The SYSV ABI says that 64-bit notes must be aligned to 8
+   bytes, but binutils is known to generate 64-bit notes aligned to 4
+   bytes instead.  */
+
+type Elf_Note =
+  struct
+  {
+    /* The first `namesz' bytes in `name' contain a NULL-terminated
+       character representation of the entry's owner or originator.  */
+    Elf_Word namesz;
+
+    /* The first `descsz' bytes in `desc' hold the note descriptor.
+       The ABI places no constraints on a descriptor's contents.  */
+    Elf_Word descsz;
+
+    /* This word gives the interpretation of the descriptor.  Each
+       originator controls its own types.  They must be non-negative.
+       The ABI does not define what descriptors mean.  */
+    Elf_Word _type;
+
+    byte[namesz] name;
+    byte[alignto (OFFSET, 4#B)];
+
+    byte[descsz] desc;
+    byte[alignto (OFFSET, 4#B)];
+};

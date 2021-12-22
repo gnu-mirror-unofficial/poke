@@ -1,5 +1,11 @@
 2021-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf-common.pk (Elf_Note): New type.
+	* pickles/elf-64.pk (Elf64_Note): Delete.
+	* pickles/elf-32.pk (Elf32_Note): Likewise.
+
+2021-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf-common.pk (elf_compress_algorithm_p): New function.
 	* pickles/elf-32.pk (Elf32_Chdr): Use elf_compress_algorithm_p in
 	constraint.

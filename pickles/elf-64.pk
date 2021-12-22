@@ -79,31 +79,6 @@ type Elf64_Sym =
     Elf64_Xword st_size;
   };
 
-/* ELF64 notes.  */
-
-type Elf64_Note =
-  struct
-  {
-    /* The first `namesz' bytes in `name' contain a NULL-terminated
-    character representation of the entry's owner or originator.  */
-    Elf64_Xword namesz;
-
-    /* The first `descsz' bytes in `desc' hold the note descriptor.
-    The ABI places no constraints on a descriptor's contents.  */
-    Elf64_Xword descsz;
-
-    /* This word gives the interpretation of the descriptor.  Each
-       originator controls its own types.  They must be non-negative.
-       The ABI does not define what descriptors mean.  */
-    Elf64_Xword _type;
-    
-    byte[namesz] name;
-    byte[alignto (OFFSET, 8#B)];
-
-    byte[descsz] desc;
-    byte[alignto (OFFSET, 8#B)];
-  };
-
 /* Compressed section header, used in sections flagged with
    SHF_COMPRESSED.  */
 
