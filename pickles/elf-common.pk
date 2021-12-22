@@ -120,6 +120,13 @@ var ELFCOMPRESS_ZLIB = 1,
     ELFCOMPRESS_LOPROC = 0x7000_0000,
     ELFCOMPRESS_HIPROC = 0x7fff_ffff;
 
+fun elf_compress_algorithm_p = (uint<64> ch_type) int:
+{
+  return (ch_type == ELFCOMPRESS_ZLIB
+          || (ch_type >= ELFCOMPRESS_LOOS && ch_type <= ELFCOMPRESS_HIOS)
+          || (ch_type >= ELFCOMPRESS_LOPROC && ch_type <= ELFCOMPRESS_HIPROC));
+}
+
 /* Dynamic tags.  */
 
 var DT_NULL = 0,  /* Tags the end of the dynamic array.  */

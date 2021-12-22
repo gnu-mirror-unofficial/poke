@@ -111,9 +111,7 @@ type Elf64_Chdr =
   struct
   {
     /* This member specifies the compression algorithm.  */
-    Elf_Word ch_type : (ch_type == ELFCOMPRESS_ZLIB
-                        || (ch_type >= ELFCOMPRESS_LOOS && ch_type <= ELFCOMPRESS_HIOS)
-                        || (ch_type >= ELFCOMPRESS_LOPROC && ch_type <= ELFCOMPRESS_HIPROC));
+    Elf_Word ch_type :  elf_compress_algorithm_p (ch_type);
     Elf_Word ch_reserved;
     /* Size and required alignment of the uncompressed data.  */
     offset<Elf64_Xword,B> ch_size;
