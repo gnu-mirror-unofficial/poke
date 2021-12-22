@@ -1239,12 +1239,6 @@ Description:
 + supported MI messages.
 RFC: yes
 
-Summary: Pass the declaration's pk_value in callback pk_map_decl_fn
-Component: Library
-Kind: ENH
-Priority: 2
-Target: 1.4
-
 Summary: Support IO transactions
 Component: IO
 Kind: ENH
