@@ -29,7 +29,7 @@ _________________
 .. 2. Dejagnu
 .. 3. Flex
 .. 4. Bison
-.. 5. Jitter
+.. 5. GNU Jitter
 .. 6. Building
 .. 7. Building after a git pull
 .. 8. Building with local changes to gnulib or jitter
@@ -390,13 +390,15 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   build poke from git.
 
 
-3.5 Jitter
-~~~~~~~~~~
+3.5 GNU Jitter
+~~~~~~~~~~~~~~
 
-  In order to build and run poke, you need Luca Saiu's jitter.  Jitter
-  is available at <http://ageinghacker.net/git/cgit.cgi/jitter>.
+  In order to build and run poke, you need Luca Saiu's GNU Jitter.
+  Jitter's git source repository, publicly readable over HTTP, is at
+  <http://git.ageinghacker.net/jitter> and its home page is
+  <https://www.gnu.org/software/jitter/>.
 
-  The appropriate version of Jitter is now downloaded and bootstrapped
+  The appropriate version of Jitter is downloaded and boostrapped
   automatically by Poke's `bootstrap' script, which frees the user from
   the annoyance of installing Jitter as a dependency.
 
@@ -2002,9 +2004,9 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   dispatch method, one has to disable the more efficient ones.  For
   example, this is the best options for debugging:
 
-  - =--disable-dispatch-no-threading
-    --disable-dispatch-minimal-threading
-  - =--disable-dispatch-direct-threading
+  - `--disable-dispatch-no-threading
+    --disable-dispatch-minimal-threading'
+  - `--disable-dispatch-direct-threading'
 
 
 15.2 Invoking GDB to debug an uninstalled poke

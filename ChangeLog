@@ -2,6 +2,8 @@
 
 	* configure.ac (AC_JITTER_SUBPACKAGE): Rename to
 	JITTER_JITTER_SUBPACKAGE, following the macro renaming in Jitter.
+	* etc/hacking.org: Documentation.
+	* HACKING: Regenerate documentation.
 
 2021-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 

@@ -250,15 +250,16 @@ Indu Bhagat             <indu.bhagat@oracle.com>
    recent versions of bison.  Bison 3.6.0 or later is required to
    boostrap and build poke from git.
 
-** Jitter
+** GNU Jitter
 
-   In order to build and run poke, you need Luca Saiu's jitter.
-   Jitter is available at http://ageinghacker.net/git/cgit.cgi/jitter.
+   In order to build and run poke, you need Luca Saiu's GNU Jitter.
+   Jitter's git source repository, publicly readable over HTTP, is at
+   http://git.ageinghacker.net/jitter and its home page is
+   https://www.gnu.org/software/jitter/.
 
-   The appropriate version of Jitter is now downloaded and
-   bootstrapped automatically by Poke's =bootstrap= script, which
-   frees the user from the annoyance of installing Jitter as a
-   dependency.
+   The appropriate version of Jitter is downloaded and boostrapped
+   automatically by Poke's =bootstrap= script, which frees the user
+   from the annoyance of installing Jitter as a dependency.
 
    Configuring and compiling Poke will also compile and configure
    Jitter in a subdirectory.  Jitter, when configured in =sub-package
