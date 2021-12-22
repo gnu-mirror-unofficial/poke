@@ -138,7 +138,7 @@ fi
 
 dnl Jitter
 
-AC_JITTER_SUBPACKAGE([jitter])
+JITTER_JITTER_SUBPACKAGE([jitter])
 
 dnl Profiling in the PVM
 

@@ -1,3 +1,8 @@
+2021-12-22  Luca Saiu  <positron@gnu.org>
+
+	* configure.ac (AC_JITTER_SUBPACKAGE): Rename to
+	JITTER_JITTER_SUBPACKAGE, following the macro renaming in Jitter.
+
 2021-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf-32.pk (Elf32_Sym): New type.
