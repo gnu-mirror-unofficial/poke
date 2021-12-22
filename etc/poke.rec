@@ -868,23 +868,6 @@ Description:
 + non-strict values.
 RFC: yes
 
-Summary: Consider struct types as complete if all labels are literal
-Component: Compiler
-Kind: OPT
-Priority: 3
-Description:
-+ Field labes that are literal should not result in the containing
-+ struct type to be considered not completed, i.e. this struct type:
-+
-+   struct
-+   {
-+     int a;
-+     byte[16] data @ 18#B;
-+   }
-+
-+ Should be considered complete.
-Target: 2.0
-
 Summary: Unions can be completed
 Component: Compiler
 Kind: OPT

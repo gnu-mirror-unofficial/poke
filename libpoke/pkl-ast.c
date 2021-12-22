@@ -996,20 +996,49 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
             if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
               {
                 pkl_ast_node elem_type;
+                pkl_ast_node field_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (t);
 
-                /* Struct fields with labels are not expected, as these
-                   cannot appear in complete struct types.  Ditto for
-                   optional fields.  */
-                assert (PKL_AST_STRUCT_TYPE_FIELD_LABEL (t) == NULL);
+                /* Struct fields with non-constant labels are not
+                   expected, as these cannot appear in complete struct
+                   types.  Ditto for optional fields.  */
+                assert (field_label == NULL
+                        || PKL_AST_CODE (field_label) == PKL_AST_OFFSET);
                 assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
 
+                /* If the field has a constant label and the label is
+                   bigger than the current accumulated size, replace
+                   the accumulated size with the label.  */
+                if (field_label)
+                  {
+                    pkl_ast_node label_magnitude, label_in_bits, cond;
+
+                    label_magnitude
+                      = pkl_ast_make_cast (ast, res_type,
+                                           PKL_AST_OFFSET_MAGNITUDE (field_label));
+                    PKL_AST_TYPE (label_magnitude) = ASTREF (res_type);
+
+                    label_in_bits = pkl_ast_make_binary_exp (ast,
+                                                             PKL_AST_OP_MUL,
+                                                             label_magnitude,
+                                                             PKL_AST_OFFSET_UNIT (field_label));
+                    PKL_AST_TYPE (label_in_bits) = ASTREF (res_type);
+
+                    cond = pkl_ast_make_binary_exp (ast, PKL_AST_OP_GT,
+                                                    label_in_bits, res);
+                    PKL_AST_TYPE (cond) = ASTREF (res_type);
+
+                    res = pkl_ast_make_cond_exp (ast, cond, label_in_bits, res);
+                    PKL_AST_TYPE (res) = ASTREF (res_type);
+                  }
+
+                /* Add the size of the field to the accumulated
+                   size.  */
                 elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
                 res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
                                                res,
                                                pkl_ast_sizeof_type (ast,
                                                                     elem_type));
                 PKL_AST_TYPE (res) = ASTREF (res_type);
-                PKL_AST_LOC (res) = PKL_AST_LOC (type);
               }
           }
 
@@ -1099,7 +1128,8 @@ pkl_ast_type_is_complete (pkl_ast_node type)
       complete = PKL_AST_TYPE_COMPLETE_NO;
       break;
       /* Struct types are complete if their fields are also of
-         complete types and there are no labels nor optconds.  */
+         complete types and there are non-constant labels nor
+         optconds.  */
     case PKL_TYPE_STRUCT:
       {
         pkl_ast_node elem;
@@ -1109,8 +1139,11 @@ pkl_ast_type_is_complete (pkl_ast_node type)
              elem;
              elem = PKL_AST_CHAIN (elem))
           {
+            pkl_ast_node elem_label
+              = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
+
             if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
-                && (PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem)
+                && ((elem_label && PKL_AST_CODE (elem_label) != PKL_AST_OFFSET)
                     || PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem)
                     || (pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))
                         == PKL_AST_TYPE_COMPLETE_NO)))

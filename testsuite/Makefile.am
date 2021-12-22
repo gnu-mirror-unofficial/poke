@@ -1402,6 +1402,9 @@ EXTRA_DIST = \
   poke.pkl/offsets-11.pk \
   poke.pkl/offsets-12.pk \
   poke.pkl/offsets-13.pk \
+  poke.pkl/offsets-14.pk \
+  poke.pkl/offsets-15.pk \
+  poke.pkl/offsets-16.pk \
   poke.pkl/offsets-53.pk \
   poke.pkl/offsets-diag-1.pk \
   poke.pkl/offsets-diag-2.pk \

@@ -1,3 +1,17 @@
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.c (pkl_ast_type_is_complete): Support constant
+	labels in completed structs.
+	(pkl_ast_sizeof_type): Take into account constant labels in
+	structs.
+	* testsuite/poke.pkl/offsets-14.pk: New test.
+	* testsuite/poke.pkl/offsets-15.pk: Likewise.
+	* testsuite/poke.pkl/offsets-16.pk: Likewise.
+	* testsuite/poke.pkl/offsets-diag-1.pk: Adjust.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* etc/poke.rec (Consider struct types as complete if all labels
+	are literal): Remove as done.
+
 2021-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf-common.pk (elf_pretty_print_section_flags): New

@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { byte a; byte b @ 2#B; };
+
+/* { dg-command { 1#Foo / #B } } */
+/* { dg-output "3" } */
