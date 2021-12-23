@@ -1,0 +1,240 @@
+/* asn1-ber.pk - ASN-1 Basic Encoding Rules.  */
+
+/* Copyright (C) 2021 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This file implements the BER encoding of ASN-1 as specified by the
+   standard ISO/IEC 8825-1:2003.  */
+
+/* The following variables define the set of universal tag numbers for
+   ASN-1 types.  Note that I didn't find these in the standard, but in
+   https://www.obj-sys.com/asn1tutorial/node124.html */
+
+var BER_TAG_RESERVED = 0,
+    BER_TAG_BOOLEAN = 1,
+    BER_TAG_INTEGER = 2,
+    BER_TAG_BIT_STRING = 3,
+    BER_TAG_OCTET_STRING = 4,
+    BER_TAG_NULL = 5,
+    BER_TAG_OBJ_IDENTIFIER = 6,
+    BER_TAG_OBJ_DESCRIPTOR = 7,
+    BER_TAG_INSTANCE = 8,
+    BER_TAG_REAL = 9,
+    BER_TAG_ENUMERATED = 10,
+    BER_TAG_EMBEDDED_PDV = 11,
+    BER_TAG_UTF8_STRING = 12,
+    BER_TAG_RELATIVE_OID = 13,
+    BER_TAG_SEQUENCE = 16,
+    BER_TAG_SET = 17,
+    BER_TAG_NUMERIC_STRING = 18,
+    BER_TAG_PRINTABLE_STRING = 19,
+    BER_TAG_TELETEX_STRING = 20,
+    BER_TAG_VIDEOTEX_STRING = 21,
+    BER_TAG_IA5_STRING = 22,
+    BER_TAG_UTC_TIME = 23,
+    BER_TAG_GENERALIZED_TIME = 24,
+    BER_TAG_GRAPHIC_STRING = 25,
+    BER_TAG_VISIBLE_STRING = 26,
+    BER_TAG_GENERAL_STRING = 27,
+    BER_TAG_UNIVERSAL_STRING = 28,
+    BER_TAG_CHARACTER_STRING = 29,
+    BER_TAG_BMP_STRING = 30;
+
+var ber_tag_name = [
+  "RESERVED", "boolean", "integer", "bit string", "octet string",
+  "null", "object identifier", "object descriptor", "instance",
+  "real", "enumerated", "embedded pdv", "utf8 string", "relative oid",
+  "N/A", "N/A", "sequence", "set", "numeric string", "printable string",
+  "teletex string", "videotex string", "IA5 string", "UTC time",
+  "generalized time", "graphic string", "visible string", "general string",
+  "universal string", "character string", "BMP string",
+];
+
+assert (ber_tag_name'length == 31,
+        "invalid ber_tag_name table");
+
+/* There are several namespaces for tag numbers: universal,
+   application, context specific and private.  */
+
+var BER_TAG_CLASS_UNIVERSAL = 0b00,
+    BER_TAG_CLASS_APPLICATION = 0b10,
+    BER_TAG_CLASS_CTXT_SPECIFIC = 0b10,
+    BER_TAG_CLASS_PRIVATE = 0b11;
+
+var ber_tag_class_name = [
+  "universal", "application", "ctxt-specific", "private"
+];
+
+/* A tag value may use either a `primitive' or a `constructed'
+   encoding. */
+
+var BER_ENCODING_PRIMITIVE = 0b0,
+    BER_ENCODING_CONSTRUCTED = 0b1;
+
+/* The "identifier octects", as they are called in the spec, act as a
+   sort of a header for BER data value.  It specifies the class,
+   encoding and number of a tag.  */
+
+type BER_Identifier =
+  struct
+  {
+    uint<2> tag_class;
+    uint<1> encoding;
+    uint<5> tag_number;
+
+    type Additional_Octet =
+      struct
+      {
+        uint<1> s = 1;
+        uint<7> rest;
+      };
+
+    Additional_Octet[] octects if tag_number == 0b11111;
+
+    method get_tag_number = uint<64>:
+    {
+      if (tag_number < 0b1111)
+       return tag_number;
+      else
+      {
+        var number = 0;
+        for (o in octects)
+          number += o.rest;
+        return number;
+      }
+    }
+
+    method _print = void:
+    {
+      printf ("#<class=%s,number=%u64d,encoding=%s>"
+              ber_tag_class_name[tag_class],
+              get_tag_number,
+              (encoding == BER_ENCODING_PRIMITIVE
+               ? "primitive" : "constructed"));
+    }
+  };
+
+/* BER uses two ways to specify the length of the data in a data value
+   (when it is definite).  A short form which is of fixed length (a
+   byte) and a long form that is of variable length.  */
+
+type BER_Length =
+  union
+  {
+    offset<byte,B> short_form : short_form'magnitude < 0b1000_0000;
+
+    struct
+    {
+      uint<1> first : first == 1;
+      uint<7> len;
+      byte[len] octects;
+    } long_form : long_form.first:::long_form.len != 0b1111_1111;
+
+    method get = offset<uint<64>,B>:
+    {
+      try return short_form;
+      catch if E_elem
+      {
+        var shift = 0;
+        var l = 0UL;
+
+        for (o in long_form.octects)
+          {
+            l += l | (o & 0x7f) <<. shift;
+            shift += 7;
+          }
+
+        return l#B;
+      }
+    }
+  };
+
+/* When the length of the contents of a BER data value is indefinite
+   (not explicitly specified) we shall read bytes until we find an end
+   marker that consists on two consecutive 0 bytes.
+
+   The `get_bytes' method returns an array of the bytes conforming the
+   contents.
+
+   If needed, data'offset and data'size can be used to demarcate the
+   contents as well.  */
+
+type BER_Variable_Contents =
+  struct
+  {
+    type Datum =
+      union
+      {
+        byte[2] pair : pair[1] != 0UB;
+        byte single : single != 0UB;
+      };
+
+    Datum[] data;
+    byte[2] end : end == [0UB,0UB];
+
+    method get_bytes = byte[]:
+    {
+      var bytes = byte[]();
+      for (d in data)
+        try bytes += d.pair;
+        catch if E_elem { bytes += [d.single]; }
+      return bytes;
+    }
+  };
+
+/* Each BER data value encodes an identifier or header, followed by
+   the lenght of the contents and the bytes conforming the contents.
+   The interpretation of these contents depends on the type of data
+   value, i.e. on the tag number.  */
+
+type BER_Data_Value =
+  struct
+  {
+    BER_Identifier identifier;
+    union
+    {
+      BER_Length definite
+        : identifier.encoding == BER_ENCODING_PRIMITIVE;
+      byte indefinite : indefinite == 0b1000_0000;
+
+      method is_indefinite = int:
+      {
+        try return indefinite || 1;
+        catch if E_elem { return 0; }
+      }
+
+      method get = offset<uint<64>,B>:
+      {
+        return is_indefinite ? 0UL#B : definite.get;
+      }
+    } length;
+
+    union
+    {
+      BER_Variable_Contents variable : !length.is_indefinite;
+      byte[length.get] fixed;
+    } contents;
+
+    method _print = void:
+    {
+      print "#<";
+      if (length.is_indefinite)
+        print "length=indefinite";
+      else
+        printf "length=%v", length.get;
+      print ">";
+    }
+  };
