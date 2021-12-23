@@ -51,6 +51,7 @@ struct
   int type; /* IOD_OP_READ or IOD_OP_WRITE */
   pk_iod_off offset;
   size_t count;
+  void *data;
 } iod_op;
 
 int iod_opened_p = 0;
@@ -81,9 +82,12 @@ iod_handler_normalize (const char *handler, uint64_t flags, int *error)
 }
 
 void *
-iod_open (const char *handler, uint64_t flags, int *error)
+iod_open (const char *handler, uint64_t flags, int *error, void *data)
 {
   iod_opened_p = 1;
+  iod_op.data = data;
+  if (error)
+    *error = PK_IOD_OK;
   return &iod_opened_p;
 }
 
@@ -136,6 +140,8 @@ iod_close (void *dev)
   return PK_OK;
 }
 
+static uint32_t USER_DATA = 0x706f6b65u; /* "poke" */
+
 struct pk_iod_if iod_if =
   {
     iod_get_if_name,
@@ -146,7 +152,8 @@ struct pk_iod_if iod_if =
     iod_pwrite,
     iod_get_flags,
     iod_size,
-    iod_flush
+    iod_flush,
+    (void*)&USER_DATA,
   };
 
 int
@@ -181,6 +188,11 @@ main (int argc, char *argv[])
     if (!iod_opened_p)
       {
         fail ("open not reflected in foreign IOD");
+        return 1;
+      }
+    if (*(uint32_t*)iod_op.data != USER_DATA)
+      {
+        fail ("user data not reflected in foreign IOD");
         return 1;
       }
 

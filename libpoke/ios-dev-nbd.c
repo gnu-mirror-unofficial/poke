@@ -66,7 +66,8 @@ ios_dev_nbd_handler_normalize (const char *handler, uint64_t flags, int* error)
 }
 
 static void *
-ios_dev_nbd_open (const char *handler, uint64_t flags, int *error)
+ios_dev_nbd_open (const char *handler, uint64_t flags, int *error,
+                  void *data __attribute__ ((unused)))
 {
   struct ios_dev_nbd *nio = NULL;
   struct nbd_handle *nbd = NULL;

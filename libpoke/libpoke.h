@@ -1074,13 +1074,14 @@ struct pk_iod_if
 {
   const char *(*get_if_name) ();
   char *(*handler_normalize) (const char *handler, uint64_t flags, int *error);
-  void * (*open) (const char *handler, uint64_t flags, int *error);
+  void * (*open) (const char *handler, uint64_t flags, int *error, void *data);
   int (*close) (void *dev);
   int (*pread) (void *dev, void *buf, size_t count, pk_iod_off offset);
   int (*pwrite) (void *dev, const void *buf, size_t count, pk_iod_off offset);
   uint64_t (*get_flags) (void *dev);
   pk_iod_off (*size) (void *dev);
   int (*flush) (void *dev, pk_iod_off offset);
+  void *data;
 };
 
 /* Register a foreign IO device in the Poke compiler.

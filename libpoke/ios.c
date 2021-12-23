@@ -186,7 +186,7 @@ ios_open (const char *handler, uint64_t flags, int set_cur)
       }
 
   /* Open the device using the interface found above.  */
-  io->dev = io->dev_if->open (handler, flags, &iod_error);
+  io->dev = io->dev_if->open (handler, flags, &iod_error, io->dev_if->data);
   if (iod_error || io->dev == NULL)
     goto error;
 

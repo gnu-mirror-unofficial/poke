@@ -65,9 +65,10 @@ struct ios_dev_if
   /* Open a device using the provided HANDLER.  Return the opened
      device, or NULL in case of errors.  Set the ERROR to error code or to
      IOD_OK.  Note that this function assumes that HANDLER is recognized as a
-     handler by the backend.  */
+     handler by the backend.  DATA is the `data' pointer below, intended to be
+     used as an IOD-specific payload specified by the author of IOD.  */
 
-  void * (*open) (const char *handler, uint64_t flags, int *error);
+  void * (*open) (const char *handler, uint64_t flags, int *error, void *data);
 
   /* Close the given device.  Return the error code if there was an error
      during the operation, IOD_OK otherwise.  */
@@ -94,9 +95,15 @@ struct ios_dev_if
 
   /* If called on a in-stream, free the buffer before OFFSET.  If called on
      an out-stream, flush the data till OFFSET and free the buffer before
-     OFFSET.  Otherwise, do not do anything.  Return IOS_OK ın success and
+     OFFSET.  Otherwise, do not do anything.  Return IOS_OK in success and
      an error code on failure.  */
+
   int (*flush) (void *dev, ios_dev_off offset);
+
+  /* IOD-specific data payload that will be passed to OPEN function.  If not
+     used, it should be NULL.  */
+
+  void *data;
 };
 
 #define IOS_FILE_HANDLER_NORMALIZE(handler, new_handler)                \

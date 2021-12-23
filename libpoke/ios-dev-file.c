@@ -96,7 +96,8 @@ ios_dev_file_convert_flags (int mode_flags, char **mode_for_fdopen)
 }
 
 static void *
-ios_dev_file_open (const char *handler, uint64_t flags, int *error)
+ios_dev_file_open (const char *handler, uint64_t flags, int *error,
+                   void *data __attribute__ ((unused)))
 {
   struct ios_dev_file *fio = NULL;
   FILE *f = NULL;

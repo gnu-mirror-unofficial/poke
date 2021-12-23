@@ -974,6 +974,7 @@ pk_register_iod (pk_compiler pkc, struct pk_iod_if *iod_if)
   CF (get_flags);
   CF (size);
   CF (flush);
+  CF (data);
 #undef CF
 
   (void) ios_register_foreign_iod (&foreign_iod_if);

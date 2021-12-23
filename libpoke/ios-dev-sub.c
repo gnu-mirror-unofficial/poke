@@ -68,7 +68,7 @@ ios_dev_sub_handler_normalize (const char *handler, uint64_t flags, int* error)
 }
 
 static void *
-ios_dev_sub_open (const char *handler, uint64_t flags, int *error)
+ios_dev_sub_open (const char *handler, uint64_t flags, int *error, void *data)
 {
   struct ios_dev_sub *sub = malloc (sizeof (struct ios_dev_sub));
   const char *p;

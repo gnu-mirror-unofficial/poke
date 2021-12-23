@@ -71,7 +71,8 @@ ios_dev_proc_handler_normalize (const char *handler, uint64_t flags, int *error)
 }
 
 static void *
-ios_dev_proc_open (const char *handler, uint64_t flags, int *error)
+ios_dev_proc_open (const char *handler, uint64_t flags, int *error,
+                   void *data __attribute__ ((unused)))
 {
   struct ios_dev_proc *proc = malloc (sizeof (struct ios_dev_proc));
 
@@ -112,7 +113,7 @@ ios_dev_proc_open (const char *handler, uint64_t flags, int *error)
 
   proc->memfile = ios_dev_file.open (proc->memfile_path,
                                      IOS_F_READ | IOS_F_WRITE,
-                                     error);
+                                     error, NULL);
   if (proc->memfile == NULL)
     {
       free (proc);

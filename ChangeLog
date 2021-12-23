@@ -1,3 +1,23 @@
+2021-12-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_open): Add new param `data`.
+	* libpoke/ios-dev-mem.c (ios_dev_mem_open): Likewise.
+	* libpoke/ios-dev-nbd.c (ios_dev_nbd_open): Likewise.
+	* libpoke/ios-dev-proc.c (ios_dev_proc_open): Likewise.
+	* libpoke/ios-dev-stream.c (ios_dev_stream_open): Likewise.
+	* libpoke/ios-dev-zero.c (ios_dev_zero_open): Likewise.
+	* libpoke/ios-dev-sub.c (ios_dev_sub_open): Likewise.
+	* libpoke/ios-dev.h (struct ios_dev_if): Change `open` to accept new
+	`data` param. Add new field `data`.
+	* libpoke/libpoke.h (struct pk_iod_if): Likewise.
+	* libpoke/ios.c (ios_open): Call `open` with IOD-specific data.
+	* testsuite/poke.libpoke/foreign-iod.c (iod_op): Add new field
+	`data`.
+	(iod_open): Add new param `data`. Report success through `error`.
+	(iod_if): Add user data.
+	(USER_DATA): New constant.
+	(main): Add test for user data.
+
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Casting Arrays): New section.

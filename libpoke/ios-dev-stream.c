@@ -70,7 +70,8 @@ ios_dev_stream_handler_normalize (const char *handler, uint64_t flags, int *erro
 }
 
 static void *
-ios_dev_stream_open (const char *handler, uint64_t flags, int *error)
+ios_dev_stream_open (const char *handler, uint64_t flags, int *error,
+                     void *data __attribute__ ((unused)))
 {
   struct ios_dev_stream *sio;
   int internal_error = IOD_ERROR;

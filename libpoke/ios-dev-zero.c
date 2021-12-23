@@ -53,7 +53,9 @@ ios_dev_zero_handler_normalize (const char *handler, uint64_t flags, int *error)
 }
 
 static void *
-ios_dev_zero_open (const char *handler, uint64_t flags, int *error)
+ios_dev_zero_open (const char *handler __attribute__ ((unused)),
+                   uint64_t flags __attribute__ ((unused)), int *error,
+                   void *data __attribute__ ((unused)))
 {
   /* This IOD doesn't need to keep any state.  */
   if (error)
