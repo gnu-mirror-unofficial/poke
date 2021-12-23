@@ -1517,12 +1517,6 @@ Kind: ENH
 Priority: 2
 Target: 1.1
 
-Summary: Document array casts in the manual
-Component: Documentation
-Kind: ENH
-Priority: 2
-Target: 1.1
-
 Summary: Document poke CSS classes in the manual
 Component: Documentation
 Kind: ENH

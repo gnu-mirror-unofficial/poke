@@ -9603,6 +9603,7 @@ Arrays are homogeneous collections of values.
 @menu
 * Array Literals::		Writing array values.
 * Array Types::			Bounded and unbounded arrays.
+* Casting Arrays::              Converting arrays from one type to another.
 * Array Constructors::		Constructing array values.
 * Array Comparison::		Comparing array values.
 * Array Indexing::		Accessing values stored in arrays.
@@ -9802,6 +9803,46 @@ So, as we have seen, Poke's way of handling boundaries in array types
 allows data structures to adjust to the particular data they contain,
 so usual in binary formats.  This is an important feature, that gives
 Poke part of its feel and magic.
+
+@node Casting Arrays
+@subsection Casting Arrays
+@cindex casting, arrays
+
+Poke allows to cast array values to array types that may have a
+different bounding.
+
+For example, we have seen that the type of an array literal is always
+bounded by a constant number of elements.  Thus the type of
+@code{[1,2,3]} is @code{int[3]}.
+
+We could cast the value above to an unbounded array type by doing:
+
+@example
+[1,2,3] as int[]
+@end example
+
+@noindent
+Or to an array bounded by size:
+
+@example
+[1,2,3] as int[12#B]
+@end example
+
+Of course trying to cast an array value to a type for which the
+bounding restrictions will fail.  This will give you a compile-time
+error:
+
+@example
+[1,2,3] as int[4]
+@end example
+
+@noindent
+And this will result in a run-time error:
+
+@example
+(poke) [1,2,3] as int[13#B]
+unhandled conversion error exception
+@end example
 
 @node Array Constructors
 @subsection Array Constructors

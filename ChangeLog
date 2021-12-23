@@ -1,5 +1,11 @@
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Casting Arrays): New section.
+	* etc/poke.rec (Document array casts in the manual): Removed as
+	done.
+
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_pr_func): Do not set location
 	information in generated type.
 	* libpoke/pkl-anal.c (pkl_anal1_pr_func): Fix checking for vararg
