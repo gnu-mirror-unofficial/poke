@@ -1,5 +1,15 @@
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans1_ps_array): Emit an error instead
+	of an ICE in case of a non-constant index in array initializer.
+	* libpoke/pkl-anal.c (pkl_anal2_ps_array): Remove.
+	(pkl_phase_anal2): Update accordingly.
+	* testsuite/poke.pkl/arrays-initializer-diag-1.pk: New test.
+	* testsuite/poke.pkl/arrays-initializer-diag-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.c (pkl_ast_sizeof_type): Do not add location
 	info to internally generated AST nodes.
 	* libpoke/pkl-fold.c (OP_UNARY_OO): Likewise.

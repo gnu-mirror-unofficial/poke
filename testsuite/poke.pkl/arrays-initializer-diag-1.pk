@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = 10;
+[.[2 + a] = 666]; /* { dg-error "constant" } */

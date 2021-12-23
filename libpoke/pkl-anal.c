@@ -906,37 +906,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
 }
 PKL_PHASE_END_HANDLER
 
-/* The indexes in array initializers shall be constant.  */
-
-PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_array)
-{
-  pkl_ast_node array = PKL_PASS_NODE;
-  pkl_ast_node initializers
-    = PKL_AST_ARRAY_INITIALIZERS (array);
-  pkl_ast_node initializer;
-
-  for (initializer = initializers;
-       initializer;
-       initializer = PKL_AST_CHAIN (initializer))
-    {
-      pkl_ast_node index
-        = PKL_AST_ARRAY_INITIALIZER_INDEX (initializer);
-
-      /* pkl_trans1_ps_array should install indexes in all
-         initializers.  */
-      assert (index);
-
-      if (PKL_AST_CODE (index) != PKL_AST_INTEGER)
-        {
-          PKL_ERROR (PKL_AST_LOC (index),
-                     "indexes in array initializers shall be constant");
-          PKL_ANAL_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-    }
-}
-PKL_PHASE_END_HANDLER
-
 struct pkl_phase pkl_phase_anal2 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_anal_ps_src),
@@ -949,7 +918,6 @@ struct pkl_phase pkl_phase_anal2 =
    PKL_PHASE_PS_HANDLER (PKL_AST_RETURN_STMT, pkl_anal2_ps_return_stmt),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNCALL, pkl_anal2_ps_funcall),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_anal2_ps_struct_type_field),
-   PKL_PHASE_PS_HANDLER (PKL_AST_ARRAY, pkl_anal2_ps_array),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal2_ps_type_struct),
    PKL_PHASE_PS_DEFAULT_HANDLER (pkl_anal_ps_default),
   };

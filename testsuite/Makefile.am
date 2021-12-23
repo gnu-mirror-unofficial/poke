@@ -659,6 +659,8 @@ EXTRA_DIST = \
   poke.pkl/arrays-index-diag-1.pk \
   poke.pkl/arrays-index-diag-2.pk \
   poke.pkl/arrays-index-diag-3.pk \
+  poke.pkl/arrays-initializer-diag-1.pk \
+  poke.pkl/arrays-initializer-diag-2.pk \
   poke.pkl/ass-1.pk \
   poke.pkl/ass-2.pk \
   poke.pkl/ass-3.pk \
