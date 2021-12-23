@@ -92,7 +92,12 @@ type BER_Identifier =
   struct
   {
     uint<2> tag_class;
-    uint<1> encoding;
+    uint<1> encoding : (tag_class in [BER_TAG_BOOLEAN, BER_TAG_INTEGER,
+                                      BER_TAG_REAL, BER_TAG_NULL,
+                                      BER_TAG_OBJ_IDENTIFIER, BER_TAG_RELATIVE_OID]
+                                  => encoding == BER_ENCODING_PRIMITIVE)
+                       && (tag_class in [BER_TAG_SEQUENCE, BER_TAG_SET]
+                                     => encoding == BER_ENCODING_CONSTRUCTED);
     uint<5> tag_number;
 
     type Additional_Octet =

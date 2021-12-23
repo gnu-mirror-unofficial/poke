@@ -1,5 +1,10 @@
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/asn1-ber.pk (BER_Identifier): Add integrity checks for
+	`encoding'.
+
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/asn1-ber.pk: New file.
 	* pickles/Makefile.am (dist_pickles_DATA): Add asn1-ber.pk.
 
