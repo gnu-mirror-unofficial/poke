@@ -344,14 +344,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_func)
 {
   pkl_ast_node func = PKL_PASS_NODE;
   pkl_ast_node fa;
+  int in_opt_args = 0;
 
-  for (fa = PKL_AST_FUNC_FIRST_OPT_ARG (func);
+  for (fa = PKL_AST_FUNC_ARGS (func);
        fa;
        fa = PKL_AST_CHAIN (fa))
     {
+      if (fa == PKL_AST_FUNC_FIRST_OPT_ARG (func))
+        in_opt_args = 1;
+
       /* All optional formal arguments in a function specifier should
          be at the end of the arguments list.  */
-      if (!PKL_AST_FUNC_ARG_INITIAL (fa))
+      if (in_opt_args && !PKL_AST_FUNC_ARG_INITIAL (fa))
         {
           PKL_ERROR (PKL_AST_LOC (fa),
                      "non-optional argument after optional arguments");
@@ -361,8 +365,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_func)
 
       /* If there is a vararg argument, it should be at the end of the
          list of arguments.  Also, it should be unique.  */
-      if (PKL_AST_FUNC_ARG_VARARG (fa) == 1
-          && PKL_AST_CHAIN (fa) != NULL)
+      if (PKL_AST_FUNC_ARG_VARARG (fa) == 1 && PKL_AST_CHAIN (fa) != NULL)
         {
           PKL_ERROR (PKL_AST_LOC (fa),
                      "vararg argument should be the last argument");
@@ -389,7 +392,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_function)
        arg = PKL_AST_CHAIN (arg))
     {
       if (PKL_AST_FUNC_TYPE_ARG_VARARG (arg)
-          && PKL_AST_CHAIN (arg) != NULL)
+          && PKL_AST_CHAIN (arg) != NULL
+          && PKL_AST_LOC_VALID (PKL_AST_LOC (arg)))
         {
           PKL_ERROR (PKL_AST_LOC (arg),
                      "vararg argument should be the last argument");

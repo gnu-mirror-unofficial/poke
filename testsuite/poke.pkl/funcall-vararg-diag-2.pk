@@ -2,5 +2,5 @@
 
 fun foo = (args..., int a) int: /* { dg-error "" } */
   {
-   return args[0];
+   return args[0] as int;
   }

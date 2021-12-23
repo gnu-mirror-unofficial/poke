@@ -1,5 +1,12 @@
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_pr_func): Do not set location
+	information in generated type.
+	* libpoke/pkl-anal.c (pkl_anal1_pr_func): Fix checking for vararg
+	arguments.
+
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-trans.c (pkl_trans1_ps_array): Emit an error instead
 	of an ICE in case of a non-constant index in array initializer.
 	* libpoke/pkl-anal.c (pkl_anal2_ps_array): Remove.

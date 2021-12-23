@@ -1359,9 +1359,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_pr_func)
         = pkl_ast_make_func_type_arg (PKL_PASS_AST,
                                       PKL_AST_FUNC_ARG_TYPE (t),
                                       PKL_AST_FUNC_ARG_IDENTIFIER (t));
-      PKL_AST_LOC (func_type_arg) = PKL_AST_LOC (t); /* XXX this
-                                                        shouldn't be
-                                                        necessary.  */
 
       func_type_args = pkl_ast_chainon (func_type_args,
                                         func_type_arg);
