@@ -814,24 +814,6 @@ Description:
 + This task is about identifying these cases, and to move the
 + corresponding check to anal1.
 
-Summary: remove unneeded locs in the passes/phases
-Component: Compiler
-Kind: ENH
-Priority: 3
-Description:
-+ In the past we used to force having location information for all nodes
-+ in the AST.  This would assure that a location was always available
-+ when printing error messages involving these nodes.  However, this
-+ leads on a miriad of locations that are simply not useful, so we
-+ removed the check.
-+
-+ This task is about:
-+ 1) Identifying which LOCs are not needed, and remove them, and
-+ 2) Emit an ICE if no location is found at error/warning emission time.
-+
-+ This will hopefully lead to have the minimum set of locations that is
-+ actually needed.
-
 Summary: unify `break' and `continue' in the same AST node
 Component: Compiler
 Kind: ENH

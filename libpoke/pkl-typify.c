@@ -105,7 +105,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_not)
       pkl_ast_node exp_type
         = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
 
-      PKL_AST_LOC (exp_type) = PKL_AST_LOC (PKL_PASS_NODE);
       PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (exp_type);
     }
 }
@@ -208,7 +207,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
 
   /* Set the type of the expression node.  */
   exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
-  PKL_AST_LOC (exp_type) = PKL_AST_LOC (PKL_PASS_NODE);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (exp_type);
   PKL_PASS_DONE;
 
@@ -272,7 +270,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_boolean)
     }
 
   type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
-  PKL_AST_LOC (type) = PKL_AST_LOC (PKL_PASS_NODE);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
@@ -343,7 +340,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_isa)
 
   pkl_ast_node bool_type
     = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
-  PKL_AST_LOC (bool_type) = PKL_AST_LOC (isa);
 
   if (PKL_AST_TYPE_CODE (isa_type) == PKL_TYPE_ANY)
     {
@@ -352,7 +348,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_isa)
       pkl_ast_node true_node = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
       PKL_AST_TYPE (true_node) = ASTREF (bool_type);
-      PKL_AST_LOC (true_node) = PKL_AST_LOC (isa);
 
       pkl_ast_node_free (PKL_PASS_NODE);
       PKL_PASS_NODE = true_node;
@@ -365,7 +360,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_isa)
 
 
       PKL_AST_TYPE (bool_node) = ASTREF (bool_type);
-      PKL_AST_LOC (bool_node) = PKL_AST_LOC (isa);
 
       pkl_ast_node_free (PKL_PASS_NODE);
       PKL_PASS_NODE = bool_node;
@@ -624,7 +618,6 @@ PKL_PHASE_END_HANDLER
         break;                                                          \
       }                                                                 \
                                                                         \
-    PKL_AST_LOC (type) = PKL_AST_LOC (exp);                             \
     PKL_AST_TYPE (exp) = ASTREF (type);                                 \
     PKL_PASS_DONE;                                                      \
                                                                         \
@@ -711,8 +704,6 @@ PKL_PHASE_END_HANDLER
                                           PKL_AST_OP_GCD,               \
                                           unit_type_1, unit_type_2);    \
                                                                         \
-        PKL_AST_LOC (unit) = PKL_AST_LOC (exp);                         \
-        PKL_AST_LOC (unit_type) = PKL_AST_LOC (exp);                    \
         PKL_AST_TYPE (unit) = ASTREF (unit_type);                       \
                                                                         \
         type = pkl_ast_make_offset_type (PKL_PASS_AST,                  \
@@ -749,11 +740,9 @@ TYPIFY_BIN (mod);
                                                                         \
     pkl_ast_node base_type                                              \
       = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);      \
-    PKL_AST_LOC (base_type) = PKL_AST_LOC (exp);                        \
                                                                         \
     /* The unit of the result is the GCD of the units involved.  */     \
     unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);       \
-    PKL_AST_LOC (unit_type) = PKL_AST_LOC (exp);                        \
                                                                         \
     if (PKL_AST_CODE (unit_type_1) == PKL_AST_INTEGER                   \
         && PKL_AST_CODE (unit_type_2) == PKL_AST_INTEGER)               \
@@ -769,7 +758,6 @@ TYPIFY_BIN (mod);
                                       PKL_AST_OP_GCD,                   \
                                       unit_type_1, unit_type_2);        \
                                                                         \
-    PKL_AST_LOC (unit) = PKL_AST_LOC (exp);                             \
     PKL_AST_TYPE (unit) = ASTREF (unit_type);                           \
                                                                         \
     type = pkl_ast_make_offset_type (PKL_PASS_AST,                      \
@@ -887,7 +875,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
       break;
     }
 
-  PKL_AST_LOC (type) = PKL_AST_LOC (exp);
   PKL_AST_TYPE (exp) = ASTREF (type);
   PKL_PASS_DONE;
 }
@@ -959,7 +946,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
 
       pkl_ast_node res_base_type
         = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);
-      PKL_AST_LOC (res_base_type) = PKL_AST_LOC (exp);
 
       /* The unit of the result is the unit of the offset operand */
       type = pkl_ast_make_offset_type (PKL_PASS_AST,
@@ -980,7 +966,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
         }
     }
 
-  PKL_AST_LOC (type) = PKL_AST_LOC (exp);
   PKL_AST_TYPE (exp) = ASTREF (type);
   PKL_PASS_DONE;
 
@@ -1039,7 +1024,6 @@ expected %s, got %s",
     }
 
   exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
-  PKL_AST_LOC (exp_type) = PKL_AST_LOC (exp);
   PKL_AST_TYPE (exp) = ASTREF (exp_type);
 }
 PKL_PHASE_END_HANDLER
@@ -1104,8 +1088,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_bconc)
                                          PKL_AST_TYPE_I_SIZE (t1)
                                          + PKL_AST_TYPE_I_SIZE (t2),
                                          PKL_AST_TYPE_I_SIGNED_P (t1));
-  PKL_AST_LOC (exp_type) = PKL_AST_LOC (exp);
-
   PKL_AST_TYPE (exp) = ASTREF (exp_type);
 }
 PKL_PHASE_END_HANDLER
@@ -1125,9 +1107,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_sizeof)
     = pkl_ast_make_offset_type (PKL_PASS_AST, itype, unit);
 
   PKL_AST_TYPE (unit) = ASTREF (itype);
-  PKL_AST_LOC (unit) = PKL_AST_LOC (PKL_PASS_NODE);
-  PKL_AST_LOC (itype) = PKL_AST_LOC (PKL_PASS_NODE);
-  PKL_AST_LOC (type) = PKL_AST_LOC (PKL_PASS_NODE);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
@@ -1160,9 +1139,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_offset)
       /* Calculate the size of the complete type in bits and put it in
          an integer node.  */
       new_unit = pkl_ast_sizeof_type (PKL_PASS_AST, unit);
-      PKL_AST_LOC (new_unit) = PKL_AST_LOC (unit);
-      PKL_AST_LOC (PKL_AST_TYPE (new_unit)) = PKL_AST_LOC (unit);
-
       pkl_ast_node_free (unit);
       unit = new_unit;
       PKL_AST_OFFSET_UNIT (offset) = ASTREF (unit);
@@ -1170,7 +1146,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_offset)
 
   type = pkl_ast_make_offset_type (PKL_PASS_AST,
                                    magnitude_type, unit);
-  PKL_AST_LOC (type) = PKL_AST_LOC (offset);
   PKL_AST_TYPE (offset) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
@@ -1213,11 +1188,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_array)
     pkl_ast_node array_type;
 
     PKL_AST_TYPE (bound) = ASTREF (bound_type);
-    PKL_AST_LOC (bound) = PKL_AST_LOC (PKL_PASS_NODE);
-    PKL_AST_LOC (bound_type) = PKL_AST_LOC (PKL_PASS_NODE);
 
     array_type = pkl_ast_make_array_type (PKL_PASS_AST, type, bound);
-    PKL_AST_LOC (array_type) = PKL_AST_LOC (PKL_PASS_NODE);
     PKL_AST_TYPE_COMPLETE (array_type) = PKL_AST_TYPE_COMPLETE (type);
     PKL_AST_TYPE (array) = ASTREF (array_type);
   }
@@ -1271,8 +1243,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
     new_type = pkl_ast_make_array_type (PKL_PASS_AST,
                                         PKL_AST_TYPE_A_ETYPE (entity_type),
                                         NULL /* bound */);
-    PKL_AST_LOC (new_type) = PKL_AST_LOC (entity_type);
-
     PKL_AST_TYPE (trimmer) = ASTREF (new_type);
   }
   else
@@ -1306,7 +1276,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_indexer)
       {
         /* The type of the indexer is a `char', i.e. a uint<8>.  */
         type = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
-        PKL_AST_LOC (type) = PKL_AST_LOC (indexer);
         break;
       }
     default:
@@ -1350,11 +1319,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
                                           NULL /* label */,
                                           PKL_AST_ENDIAN_DFL /* endian */,
                                           NULL /* optcond */);
-      PKL_AST_LOC (struct_type_field) = PKL_AST_LOC (t);
 
       struct_field_types = pkl_ast_chainon (struct_field_types,
                                             struct_type_field);
-
       if (!PKL_AST_TYPE_COMPLETE (PKL_AST_TYPE (t)))
         type_complete = 0;
     }
@@ -1368,7 +1335,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct)
                                    struct_field_types,
                                    0 /* pinned */,
                                    0 /* union */);
-  PKL_AST_LOC (type) = PKL_AST_LOC (node);
   PKL_AST_TYPE (node) = ASTREF (type);
   PKL_AST_TYPE_COMPLETE (type) = type_complete;
 }
@@ -1393,7 +1359,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_pr_func)
         = pkl_ast_make_func_type_arg (PKL_PASS_AST,
                                       PKL_AST_FUNC_ARG_TYPE (t),
                                       PKL_AST_FUNC_ARG_IDENTIFIER (t));
-      PKL_AST_LOC (func_type_arg) = PKL_AST_LOC (t);
+      PKL_AST_LOC (func_type_arg) = PKL_AST_LOC (t); /* XXX this
+                                                        shouldn't be
+                                                        necessary.  */
 
       func_type_args = pkl_ast_chainon (func_type_args,
                                         func_type_arg);
@@ -1410,7 +1378,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_pr_func)
                                      PKL_AST_FUNC_RET_TYPE (node),
                                      nargs,
                                      func_type_args);
-  PKL_AST_LOC (type) = PKL_AST_LOC (node);
   PKL_AST_TYPE (node) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
@@ -2243,7 +2210,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt_iterator)
       /* Container is a string.  */
       container_elem_type
         = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
-      PKL_AST_LOC (container_elem_type) = PKL_AST_LOC (container_type);
     }
 
   PKL_AST_TYPE (PKL_AST_DECL_INITIAL (decl))
@@ -2438,13 +2404,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       /* 'size is defined for all kind of values.  */
       /* The type of 'size is offset<uint<64>,1>  */
       offset_unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-      PKL_AST_LOC (offset_unit_type) = PKL_AST_LOC (exp);
       offset_unit = pkl_ast_make_integer (PKL_PASS_AST, 1);
-      PKL_AST_LOC (offset_unit) = PKL_AST_LOC (exp);
       PKL_AST_TYPE (offset_unit) = ASTREF (offset_unit_type);
 
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-      PKL_AST_LOC (exp_type) = PKL_AST_LOC (exp);
       exp_type = pkl_ast_make_offset_type (PKL_PASS_AST, exp_type, offset_unit);
 
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
@@ -2506,13 +2469,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
     case PKL_AST_ATTR_OFFSET:
       /* The type of 'offset is an offset<uint<64>,1>  */
       offset_unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-      PKL_AST_LOC (offset_unit_type) = PKL_AST_LOC (exp);
       offset_unit = pkl_ast_make_integer (PKL_PASS_AST, 1);
-      PKL_AST_LOC (offset_unit) = PKL_AST_LOC (exp);
       PKL_AST_TYPE (offset_unit) = ASTREF (offset_unit_type);
 
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-      PKL_AST_LOC (exp_type) = PKL_AST_LOC (exp);
       exp_type = pkl_ast_make_offset_type (PKL_PASS_AST, exp_type, offset_unit);
 
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
@@ -2535,8 +2495,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       PKL_PASS_ERROR;
       break;
     }
-
-  PKL_AST_LOC (exp_type) = PKL_AST_LOC (exp);
 
   PKL_PASS_DONE;
 

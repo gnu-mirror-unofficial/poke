@@ -941,7 +941,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_type_array)
         pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
         unit_bit = ASTREF (unit_bit);
-        PKL_AST_LOC (unit_bit) = PKL_AST_LOC (PKL_PASS_NODE);
 
         if (!promote_offset (PKL_PASS_AST,
                              64, 0, unit_bit,
@@ -988,7 +987,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_array_initializer)
           index_type = pkl_ast_make_integral_type (PKL_PASS_AST,
                                                    64, 0);
           PKL_AST_TYPE (index) = ASTREF (index_type);
-          PKL_AST_LOC (index_type) = PKL_AST_LOC (node);
           PKL_PASS_RESTART = 1;
         }
     }
@@ -1275,7 +1273,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_map)
   pkl_ast_node unit_bit = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
   unit_bit = ASTREF (unit_bit);
-  PKL_AST_LOC (unit_bit) = PKL_AST_LOC (PKL_PASS_NODE);
 
   if (!promote_offset (PKL_PASS_AST,
                        64, 0, unit_bit,

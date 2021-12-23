@@ -297,7 +297,6 @@ EMUL_UU (bnoto) { return ~op; }
                                                                         \
           magnitude = pkl_ast_make_integer (PKL_PASS_AST, result);      \
           PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);           \
-          PKL_AST_LOC (magnitude) = PKL_AST_LOC (PKL_PASS_NODE);        \
                                                                         \
           new = pkl_ast_make_offset (PKL_PASS_AST, magnitude,           \
                                      type_unit);                        \
@@ -430,7 +429,6 @@ EMUL_UU (bnoto) { return ~op; }
                                                                         \
           magnitude = pkl_ast_make_integer (PKL_PASS_AST, result);      \
           PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);           \
-          PKL_AST_LOC (magnitude) = PKL_AST_LOC (PKL_PASS_NODE);        \
                                                                         \
           new = pkl_ast_make_offset (PKL_PASS_AST, magnitude,           \
                                      type_unit);                        \
@@ -542,7 +540,6 @@ EMUL_UU (bnoto) { return ~op; }
                                                                         \
           magnitude = pkl_ast_make_integer (PKL_PASS_AST, result);      \
           PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);           \
-          PKL_AST_LOC (magnitude) = PKL_AST_LOC (PKL_PASS_NODE);        \
                                                                         \
           new = pkl_ast_make_offset (PKL_PASS_AST, magnitude,           \
                                      type_unit);                        \
@@ -826,7 +823,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_pow)
 
         magnitude = pkl_ast_make_integer (PKL_PASS_AST, result);
         PKL_AST_TYPE (magnitude) = ASTREF (type_base_type);
-        PKL_AST_LOC (magnitude) = PKL_AST_LOC (PKL_PASS_NODE);
 
         new = pkl_ast_make_offset (PKL_PASS_AST, magnitude,
                                    type_unit);
@@ -1073,7 +1069,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
                                    PKL_AST_INTEGER_VALUE (to_unit));
 
         PKL_AST_TYPE (new_unit) = ASTREF (unit_type);
-        PKL_AST_LOC (new_unit) = PKL_AST_LOC (unit);
         unit = new_unit;
       }
 
@@ -1084,7 +1079,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_cast)
           magnitude = pkl_ast_make_integer (PKL_PASS_AST,
                                             PKL_AST_INTEGER_VALUE (magnitude));
           PKL_AST_TYPE (magnitude) = ASTREF (to_base_type);
-          PKL_AST_LOC (magnitude) = PKL_AST_LOC (cast);
         }
 
       /* Transform magnitude to new unit.  */
@@ -1171,7 +1165,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_fold_ps_indexer)
             new_type = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
             new = pkl_ast_make_integer (PKL_PASS_AST, str[index_value]);
 
-            PKL_AST_LOC (new_type) = PKL_AST_LOC (index);
             PKL_AST_LOC (new) = PKL_AST_LOC (index);
             PKL_AST_TYPE (new) = ASTREF (new_type);
 

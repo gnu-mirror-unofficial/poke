@@ -956,7 +956,6 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
   pkl_ast_node res;
   pkl_ast_node res_type
     = pkl_ast_make_integral_type (ast, 64, 0);
-  PKL_AST_LOC (res_type) = PKL_AST_LOC (type);
 
   /* This function should only be called on complete types.  */
   assert (PKL_AST_TYPE_COMPLETE (type)
@@ -967,7 +966,6 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
     case PKL_TYPE_INTEGRAL:
       {
         res = pkl_ast_make_integer (ast, PKL_AST_TYPE_I_SIZE (type));
-        PKL_AST_LOC (res) = PKL_AST_LOC (type);
         PKL_AST_TYPE (res) = ASTREF (res_type);
         break;
       }
@@ -979,7 +977,6 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
         res= pkl_ast_make_binary_exp (ast, PKL_AST_OP_MUL,
                                       PKL_AST_TYPE_A_BOUND (type),
                                       sizeof_etype);
-        PKL_AST_LOC (res) = PKL_AST_LOC (type);
         PKL_AST_TYPE (res) = ASTREF (res_type);
         break;
       }
@@ -989,7 +986,6 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
 
         res = pkl_ast_make_integer (ast, 0);
         PKL_AST_TYPE (res) = ASTREF (res_type);
-        PKL_AST_LOC (res) = PKL_AST_LOC (type);
 
         for (t = PKL_AST_TYPE_S_ELEMS (type); t; t = PKL_AST_CHAIN (t))
           {
@@ -1049,7 +1045,6 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
         /* By convention functions have sizeof 0#b  */
         res = pkl_ast_make_integer (ast, 0);
         PKL_AST_TYPE (res) = ASTREF (res_type);
-        PKL_AST_LOC (res) = PKL_AST_LOC (type);
         break;
       }
     case PKL_TYPE_OFFSET:

@@ -224,10 +224,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_offset)
       pkl_ast_node magnitude
         = pkl_ast_make_integer (PKL_PASS_AST, 1);
 
-      PKL_AST_LOC (magnitude_type) = PKL_AST_LOC (offset);
-      PKL_AST_LOC (magnitude) = PKL_AST_LOC (offset);
       PKL_AST_TYPE (magnitude) = ASTREF (magnitude_type);
-
       PKL_AST_OFFSET_MAGNITUDE (offset) = ASTREF (magnitude);
     }
 }
@@ -609,9 +606,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_trimmer)
 
       from = pkl_ast_make_integer (PKL_PASS_AST, 0);
       PKL_AST_TYPE (from) = ASTREF (idx_type);
-      PKL_AST_LOC (idx_type) = PKL_AST_LOC (trimmer);
-      PKL_AST_LOC (from) = PKL_AST_LOC (trimmer);
-
       PKL_AST_TRIMMER_FROM (trimmer) = ASTREF (from);
     }
 
@@ -758,7 +752,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
               msg = _("invalid flag");
               goto invalid_tag;
             }
-          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;
           break;
@@ -766,7 +759,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
           p += 2;
           PKL_AST_FORMAT_ARG_BASE (arg) = 10; /* Arbitrary.  */
           atype = pkl_ast_make_string_type (PKL_PASS_AST);
-          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;
           break;
@@ -774,7 +766,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
           p += 2;
           PKL_AST_FORMAT_ARG_BASE (arg) = 256;  /* Arbitrary */
           atype = pkl_ast_make_integral_type (PKL_PASS_AST, 8, 0);
-          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
           ntag++;
           break;
@@ -830,7 +821,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
                   }
                 atype = pkl_ast_make_integral_type (PKL_PASS_AST,
                                                     bits, p[1] == 'i');
-                PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
                 types = pkl_ast_chainon (types, atype);
 
                 if (base_idx == 4)
@@ -920,7 +910,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
 
           /* Create the new arg and add it to the list of arguments.  */
           new_arg = pkl_ast_make_format_arg (PKL_PASS_AST, NULL);
-          PKL_AST_LOC (new_arg) = PKL_AST_LOC (format_fmt);
 
           if (add_new_percent_arg_p)
             PKL_AST_FORMAT_ARG_SUFFIX (new_arg) = xstrdup ("%");
@@ -965,7 +954,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
 
           /* The type corresponding to new arg is `void'.  */
           atype = pkl_ast_make_void_type (PKL_PASS_AST);
-          PKL_AST_LOC (atype) = PKL_AST_LOC (format_fmt);
           types = pkl_ast_chainon (types, atype);
 
           add_new_percent_arg_p = 0;
@@ -1037,16 +1025,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_array)
         {
           pkl_ast_node initializer_index_type
             = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-          PKL_AST_LOC (initializer_index_type)
-            = PKL_AST_LOC (tmp);
-
 
           initializer_index_node
             = pkl_ast_make_integer (PKL_PASS_AST, index);
           PKL_AST_TYPE (initializer_index_node)
             = ASTREF (initializer_index_type);
-          PKL_AST_LOC (initializer_index_node)
-            = PKL_AST_LOC (tmp);
 
           PKL_AST_ARRAY_INITIALIZER_INDEX (tmp)
             = ASTREF (initializer_index_node);
@@ -1377,8 +1360,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_type_offset)
   /* Calculate the size of the complete type in bytes and put it in
      an integer node.  */
   unit = pkl_ast_sizeof_type (PKL_PASS_AST, unit_type);
-  PKL_AST_LOC (unit) = PKL_AST_LOC (unit_type);
-  PKL_AST_LOC (PKL_AST_TYPE (unit)) = PKL_AST_LOC (unit_type);
 
   /* Replace the unit type with this expression.  */
   PKL_AST_TYPE_O_UNIT (type) = ASTREF (unit);
@@ -1466,24 +1447,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans3_ps_op_sizeof)
        an integer node.  */
     pkl_ast_node magnitude
       = pkl_ast_sizeof_type (PKL_PASS_AST, op);
-    PKL_AST_LOC (magnitude) = PKL_AST_LOC (node);
-    PKL_AST_LOC (PKL_AST_TYPE (magnitude)) = PKL_AST_LOC (node);
 
     /* Build an offset with that magnitude, and unit bits.  */
     unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-    PKL_AST_LOC (unit_type) = PKL_AST_LOC (node);
 
     unit = pkl_ast_make_integer (PKL_PASS_AST, PKL_AST_OFFSET_UNIT_BITS);
-    PKL_AST_LOC (unit) = PKL_AST_LOC (node);
     PKL_AST_TYPE (unit) = ASTREF (unit_type);
 
     offset = pkl_ast_make_offset (PKL_PASS_AST, magnitude, unit);
 
-    PKL_AST_LOC (offset) = PKL_AST_LOC (node);
     offset_type = pkl_ast_make_offset_type (PKL_PASS_AST,
                                             PKL_AST_TYPE (magnitude),
                                             unit);
-    PKL_AST_LOC (offset_type) = PKL_AST_LOC (node);
     PKL_AST_TYPE (offset) = ASTREF (offset_type);
   }
 

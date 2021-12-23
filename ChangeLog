@@ -1,5 +1,51 @@
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.c (pkl_ast_sizeof_type): Do not add location
+	info to internally generated AST nodes.
+	* libpoke/pkl-fold.c (OP_UNARY_OO): Likewise.
+	(OP_BINARY_OOO): Likewise.
+	(OP_BINARY_OIO): Likewise.
+	(pkl_fold_ps_cast): Likewise.
+	(pkl_fold_ps_indexer): Likewise.
+	* libpoke/pkl-promo.c (pkl_promo_ps_type_array): Likewise.
+	(pkl_promo_ps_array_initializer): Likewise.
+	(pkl_promo_ps_map): Likewise.
+	* libpoke/pkl-trans.c (pkl_trans1_ps_offset): Likewise
+	(pkl_trans1_ps_trimmer): Likewise.
+	(pkl_trans1_ps_format): Likewise.
+	(pkl_trans1_ps_array): Likewise.
+	(pkl_trans2_ps_type_offset): Likewise.
+	(pkl_trans3_ps_op_sizeof): Likewise.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_op_not): Likewise.
+	(pkl_typify1_ps_op_boolean): Likewise.
+	(pkl_typify1_ps_isa): Likewise.
+	(TYPIFY_BIN): Likewise.
+	(CASE_OFFSET): Likewise.
+	(CASE_OFFSET): Likewise.
+	(pkl_typify1_ps_bshift_pow): Likewise.
+	(pkl_typify1_ps_mul): Likewise.
+	(pkl_typify1_ps_op_in): Likewise.
+	(pkl_typify1_ps_op_bconc): Likewise.
+	(pkl_typify1_ps_op_sizeof): Likewise.
+	(pkl_typify1_ps_offset): Likewise.
+	(pkl_typify1_ps_array): Likewise.
+	(pkl_typify1_ps_trimmer): Likewise.
+	(pkl_typify1_ps_indexer): Likewise.
+	(pkl_typify1_ps_struct): Likewise.
+	(pkl_typify1_pr_func): Likewise.
+	(pkl_typify1_ps_loop_stmt_iterator): Likewise.
+	(pkl_typify1_ps_attr): Likewise.
+
+	* etc/poke.rec (remove unneeded locs in the passes/phases):
+	Removed as done.
+
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke.rec (Pass the declaration's pk_value in callback
+	pk_map_decl_fn): Removed as done.
+
+2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke.rec (.set with no arguments should give a summary of
 	all options): Removed as done.
 
