@@ -1529,12 +1529,6 @@ Kind: ENH
 Priority: 2
 Target: 1.1
 
-Summary: Note in the manual how arrays built from array literals are unbounded
-Component: Documentation
-Kind: ENH
-Priority: 2
-Target: 1.1
-
 Summary: document poke maps in the manual
 Component: Documentation
 Kind: ENH
