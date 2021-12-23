@@ -188,7 +188,7 @@ type BER_Variable_Contents =
       };
 
     Datum[] data;
-    byte[2] end == [0UB,0UB];
+    byte[2] end : end == [0UB,0UB];
 
     method get_bytes = byte[]:
     {
