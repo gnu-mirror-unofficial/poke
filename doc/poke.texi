@@ -12409,6 +12409,7 @@ provides an exceptions mechanism to deal with these situations.
 * try-catch::		Catching exceptions in programs.
 * try-until::		Running code until some exception occurs.
 * raise::		Raising exceptions in programs.
+* exception-predicate:: Turning exceptions into booleans.
 * assert::		Asserting conditions in programs.
 @end menu
 
@@ -12604,6 +12605,65 @@ raise @var{exception};
 @noindent
 where @var{exception} is an integer.  This integer can be any number,
 but most often is one of the @code{E_*} codes defined in Poke.
+
+@node exception-predicate
+@subsection exception-predicate
+
+It is often needed to determine whether the execution of some given
+code raised some particular exception.  A possibility is to use a
+@code{try-catch} statement like in the following example, a
+pretty-printer in an union type:
+
+@example
+method _print = void:
+@{
+  try print "#<%u32d>", simple_value;
+  catch if E_elem @{ print "%v\n", complex_value; @}
+@}
+@end example
+
+This works as intended, but it is somewhat verbose and not that easy
+to read for anyone not accustomed to the idiom.  It is better to use
+the @dfn{exception predicate} operator, @code{?!}, that has two forms:
+
+@example
+@var{exp} ?! @var{exception}
+@{ [@var{statements}...] @} ?! @var{exception}
+@end example
+
+In the first form, the expression @var{exp} is executed.  If the
+execution raises the exception @var{exception} then the result of the
+predicate is @code{0} (false), otherwise it is @code{1} (true).  The
+value of the expression is discarded.
+
+In the second form, the compound statement passed as the first operand
+is executed.  If the exception @var{exception} is raised, then the
+result of the predicate is @code{0} (false), otherwise it is @code{1}
+(true).
+
+Using exception predicates the pretty-printer above can be written in
+a much more readable way:
+
+@example
+method _print = void:
+@{
+  if (simple_value ?! E_elem)
+    print "#<%u32d>", simple_value;
+  else
+    print "%v\n", complex_value;
+@}
+@end example
+
+@noindent
+Or, alternatively (and slightly more efficiently):
+
+@example
+method _print = void:
+@{
+  (@{ print "<%u32d>", simple_value; @} ?! E_elem)
+    || print "%v\n", complex_value;
+@}
+@end example
 
 @node assert
 @subsection @code{assert}

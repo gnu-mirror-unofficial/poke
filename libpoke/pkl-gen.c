@@ -4037,6 +4037,53 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_impl)
 }
 PKL_PHASE_END_HANDLER
 
+/*
+ * EXCOND
+ * | EXP|STMT
+ * | EXCEPTION_ID
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_excond)
+{
+  pkl_asm pasm = PKL_GEN_ASM;
+
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
+
+  pvm_program_label exception_handler = pkl_asm_fresh_label (PKL_GEN_ASM);
+  pvm_program_label done = pkl_asm_fresh_label (PKL_GEN_ASM);
+
+  /* Push the provisional result of the operation, which is
+     `true'.  */
+  pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (1, 32));
+
+  /* Install a handler for the exception specified in the second
+     operand.  */
+  PKL_PASS_SUBPASS (op2);
+  pkl_asm_insn (pasm, PKL_INSN_PUSHE, exception_handler);
+
+  /* Execute the expression or statement in `op1'.  If it is an
+     expression, discard the result value.  */
+  PKL_PASS_SUBPASS (op1);
+  if (PKL_AST_IS_EXP (op1))
+    pkl_asm_insn (pasm, PKL_INSN_DROP);
+
+  pkl_asm_insn (pasm, PKL_INSN_BA, done);
+
+  /* The exception handler just drops the raised exception and the
+     provisional result `true' and pushes `false' to reflect the
+     exception was raised. */
+  pkl_asm_label (pasm, exception_handler);
+  pkl_asm_insn (pasm, PKL_INSN_DROP); /* The exception.  */
+  pkl_asm_insn (pasm, PKL_INSN_DROP); /* The provisional result.  */
+  pkl_asm_insn (pasm, PKL_INSN_PUSH, pvm_make_int (0, 32));
+
+  pkl_asm_label (pasm, done);
+  PKL_PASS_BREAK;
+}
+PKL_PHASE_END_HANDLER
+
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_rela)
 {
   pkl_asm pasm = PKL_GEN_ASM;
@@ -4437,6 +4484,7 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_gen_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_UNMAP, pkl_gen_ps_op_unmap),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_gen_ps_op_in),
+   PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_EXCOND, pkl_gen_pr_op_excond),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_VOID, pkl_gen_ps_type_void),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ANY, pkl_gen_ps_type_any),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_gen_ps_type_integral),

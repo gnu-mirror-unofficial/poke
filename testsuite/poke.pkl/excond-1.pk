@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command { 2 ?! E_generic } } */
+/* { dg-output "1" } */

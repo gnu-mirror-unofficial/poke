@@ -2856,6 +2856,41 @@ expected %s got %s",
 }
 PKL_PHASE_END_HANDLER
 
+/* The type of an EXCOND ?! operation is a boolean encoded in an
+   int<32>.
+
+   The first operand, when it is an expression, can be of any type.
+   The first operand, when it is a statement, has not type.
+
+   The second operand must be an Exception struct.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_excond)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
+  pkl_ast_node t2 = PKL_AST_TYPE (op2);
+
+  if (!pkl_ast_type_is_exception (t2))
+    {
+      char *t2_str = pkl_type_str (t2, 1);
+
+      PKL_ERROR (PKL_AST_LOC (op2), "operator has the wrong type\n\
+expected Exception, got %s", t2_str);
+      free (t2_str);
+
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+  else
+    {
+      pkl_ast_node int32_type
+        = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
+
+      PKL_AST_TYPE (exp) = ASTREF (int32_type);
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_typify1 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_typify_ps_src),
@@ -2921,6 +2956,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_UNMAP, pkl_typify1_ps_op_unmap),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_typify1_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_typify1_ps_op_in),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EXCOND, pkl_typify1_ps_op_excond),
 
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_typify1_ps_type_integral),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_typify1_ps_type_array),

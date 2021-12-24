@@ -1,3 +1,23 @@
+2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ops.def: Entry for PKL_AST_OP_EXCOND.
+	* libpoke/pkl-lex.l: Recognize `?!' as EXCOND.
+	* libpoke/pkl-tab.y (EXCOND): New token.
+	(expression): Add rule for EXCOND.
+	* libpoke/pkl-typify.c (pkl_phase_typify1): Install handler.
+	(pkl_typify1_ps_op_excond): New handler.
+	* libpoke/pkl-gen.c (pkl_gen_pr_op_excond): New handler.
+	(pkl_phase_gen): Install handler.
+	* testsuite/poke.pkl/excond-diag-1.pk: New test.
+	* testsuite/poke.pkl/excond-1.pk: Likewise.
+	* testsuite/poke.pkl/excond-2.pk: Likewise.
+	* testsuite/poke.pkl/excond-3.pk: Likewise.
+	* testsuite/poke.pkl/excond-4.pk: Likewise.
+	* testsuite/poke.pkl/excond-5.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* etc/poke.rec (Exception predicate operator !?): Remove as done.
+	* doc/poke.texi (exception-predicate): New section.
+
 2021-12-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm.jitter: Fix docstring for the instruction `pushe'.

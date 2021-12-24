@@ -500,6 +500,7 @@ token <integer> UNION    _("keyword `union'")
 %token '.'              _("dot operator")
 %token <ast> ATTR       _("attribute")
 %token UNMAP            _("unmap operator")
+%token EXCOND           _("conditional on exception operator")
 
 %token BIG              _("keyword `big'")
 %token LITTLE           _("keyword `little'")
@@ -515,6 +516,7 @@ token <integer> UNION    _("keyword `union'")
 /* Operator tokens and their precedences, in ascending order.  */
 
 %right IMPL
+%left EXCOND
 %right '?' ':'
 %left OR
 %left AND
@@ -939,6 +941,18 @@ expression:
                 {
                   $$ = pkl_ast_make_cond_exp (pkl_parser->ast,
                                               $1, $3, $5);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | comp_stmt EXCOND expression
+                {
+                  $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_EXCOND,
+                                                $1, $3);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | expression EXCOND expression
+                {
+                  $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_EXCOND,
+                                                $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
         | cons_type_specifier '(' expression_list opt_comma ')'

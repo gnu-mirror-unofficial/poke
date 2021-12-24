@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command { try { print "lala\n"; raise E_elem; } ?! E_div_by_zero; catch if E_elem { printf "lele\n"; } } } */
+/* { dg-output "lala\nlele" } */

@@ -320,13 +320,13 @@ S ::
 "%="                { return MODA; }
 "+="                { return ADDA; }
 "-="                { return SUBA; }
-"<<.="                { return SLA; }
-".>>="                { return SRA; }
+"<<.="              { return SLA; }
+".>>="              { return SRA; }
 "&="                { return BANDA; }
 "|="                { return IORA; }
 "^="                { return XORA; }
-":::"                { return BCONC; }
-
+":::"               { return BCONC; }
+"?!"                { return EXCOND; }
 "||"                { return OR; }
 "&&"                { return AND; }
 "=>"                { return IMPL; }

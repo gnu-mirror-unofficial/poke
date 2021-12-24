@@ -473,19 +473,6 @@ Description:
 RFC: yes
 Target: 2.0
 
-Summary: Exception predicate operator !?
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ expr !? Exception
-+ or
-+ expr ?! Exception
-+
-+ if (do_foo () !? E_constraint)
-+   ...;
-RFC: yes
-
 Summary: Introduce SELF in methods
 Component: Language
 Kind: ENH

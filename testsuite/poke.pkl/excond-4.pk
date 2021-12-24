@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command { { print "lala\n"; raise E_generic; } ?! E_generic } } */
+/* { dg-output "lala\n0" } */

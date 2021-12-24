@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a
+  = 2 ?! "foo"; /* { dg-error "wrong type.*\n.*expected Exception" } */
