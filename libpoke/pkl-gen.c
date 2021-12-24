@@ -112,6 +112,7 @@
 #define RAS_PUSH_ASM PKL_GEN_PUSH_ASM
 #define RAS_POP_ASM PKL_GEN_POP_ASM
 #include "pkl-gen.pkc"
+#include "pkl-gen-builtins.pkc"
 
 /*
  * SRC
@@ -618,243 +619,117 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_comp_stmt)
       switch (comp_stmt_builtin)
         {
         case PKL_AST_BUILTIN_RAND:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAND);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_RAND;
           break;
         case PKL_AST_BUILTIN_GET_ENDIAN:
-          /* Fallthrough.  */
+          RAS_MACRO_BUILTIN_GET_ENDIAN;
+          break;
         case PKL_AST_BUILTIN_GET_IOS:
-          if (comp_stmt_builtin == PKL_AST_BUILTIN_GET_ENDIAN)
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHEND);
-          else
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHIOS);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_GET_IOS;
           break;
         case PKL_AST_BUILTIN_SET_ENDIAN:
-          /* Fallthrough.  */
+          RAS_MACRO_BUILTIN_SET_ENDIAN;
+          break;
         case PKL_AST_BUILTIN_SET_IOS:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          if (comp_stmt_builtin == PKL_AST_BUILTIN_SET_ENDIAN)
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPEND);
-          else
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPIOS);
-          /* Always return `true' to facilitate using set_endian in
-             struct constraint expressions.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (1, 32));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_SET_IOS;
           break;
         case PKL_AST_BUILTIN_OPEN:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OPEN);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_OPEN;
           break;
         case PKL_AST_BUILTIN_CLOSE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CLOSE);
+          RAS_MACRO_BUILTIN_CLOSE;
           break;
         case PKL_AST_BUILTIN_IOSIZE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_IOSIZE);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_IOSIZE;
           break;
         case PKL_AST_BUILTIN_IOFLAGS:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_IOFLAGS);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_IOFLAGS;
           break;
         case PKL_AST_BUILTIN_IOGETB:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_IOGETB);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_IOBIAS;
           break;
         case PKL_AST_BUILTIN_IOSETB:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_IOSETB);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+          RAS_MACRO_BUILTIN_IOSETBIAS;
           break;
         case PKL_AST_BUILTIN_FORGET:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FLUSH);
+          RAS_MACRO_BUILTIN_FLUSH;
           break;
         case PKL_AST_BUILTIN_GET_TIME:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TIME);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_GET_TIME;
           break;
         case PKL_AST_BUILTIN_SLEEP:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SLEEP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          RAS_MACRO_BUILTIN_SLEEP;
           break;
         case PKL_AST_BUILTIN_STRACE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_STRACE, 0);
+          RAS_MACRO_BUILTIN_STRACE;
           break;
         case PKL_AST_BUILTIN_GETENV:
-          {
-            pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
-
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_GETENV);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNN, label);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          pvm_make_exception (PVM_E_INVAL, PVM_E_INVAL_NAME,
-                                              PVM_E_INVAL_ESTATUS, NULL, NULL));
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
-            pkl_asm_label (PKL_GEN_ASM, label);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
-
-            break;
-          }
+          RAS_MACRO_BUILTIN_GETENV;
+          break;
         case PKL_AST_BUILTIN_TERM_GET_COLOR:
         case PKL_AST_BUILTIN_TERM_GET_BGCOLOR:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_integral_type (pvm_make_ulong (32, 64),
-                                                pvm_make_int (1, 32)));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, PVM_NULL);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYA);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (3, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKA); /* ARR */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR); /* _ */
-          if (comp_stmt_builtin == PKL_AST_BUILTIN_TERM_GET_COLOR)
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOC); /* R G B */
-          else
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOBC); /* R G B */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);   /* B G R */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR); /* B G R ARR */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (0, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* B G ARR */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (1, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* B ARR */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (2, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS);  /* ARR */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_GET_COLOR_BGCOLOR;
           break;
         case PKL_AST_BUILTIN_TERM_SET_COLOR:
         case PKL_AST_BUILTIN_TERM_SET_BGCOLOR:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (0, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (1, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_ulong (2, 64));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TOR);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_FROMR);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-          if (comp_stmt_builtin == PKL_AST_BUILTIN_TERM_SET_COLOR)
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOC);
-          else
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOBC);
+          RAS_MACRO_BUILTIN_SET_COLOR_BGCOLOR;
           break;
         case PKL_AST_BUILTIN_TERM_BEGIN_CLASS:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BEGINSC);
+          RAS_MACRO_BUILTIN_TERM_BEGIN_CLASS;
           break;
         case PKL_AST_BUILTIN_TERM_END_CLASS:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ENDSC);
+          RAS_MACRO_BUILTIN_TERM_END_CLASS;
           break;
         case PKL_AST_BUILTIN_TERM_BEGIN_HYPERLINK:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BEGINHL);
+          RAS_MACRO_BUILTIN_TERM_BEGIN_HYPERLINK;
           break;
         case PKL_AST_BUILTIN_TERM_END_HYPERLINK:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ENDHL);
+          RAS_MACRO_BUILTIN_TERM_END_HYPERLINK;
           break;
         case PKL_AST_BUILTIN_VM_OBASE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOB);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_OBASE;
           break;
         case PKL_AST_BUILTIN_VM_SET_OBASE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOB);
+          RAS_MACRO_BUILTIN_VM_SET_OBASE;
           break;
         case PKL_AST_BUILTIN_VM_OPPRINT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOPP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_OPPRINT;
           break;
         case PKL_AST_BUILTIN_VM_SET_OPPRINT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOPP);
+          RAS_MACRO_BUILTIN_VM_SET_OPPRINT;
           break;
         case PKL_AST_BUILTIN_VM_OACUTOFF:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOAC);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_OACUTOFF;
           break;
         case PKL_AST_BUILTIN_VM_SET_OACUTOFF:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOAC);
+          RAS_MACRO_BUILTIN_VM_SET_OACUTOFF;
           break;
         case PKL_AST_BUILTIN_VM_ODEPTH:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOD);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_ODEPTH;
           break;
         case PKL_AST_BUILTIN_VM_SET_ODEPTH:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOD);
+          RAS_MACRO_BUILTIN_VM_SET_ODEPTH;
           break;
         case PKL_AST_BUILTIN_VM_OINDENT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOI);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_OINDENT;
           break;
         case PKL_AST_BUILTIN_VM_SET_OINDENT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOI);
+          RAS_MACRO_BUILTIN_VM_SET_OINDENT;
           break;
         case PKL_AST_BUILTIN_VM_OMAPS:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOO);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_OMAPS;
           break;
         case PKL_AST_BUILTIN_VM_SET_OMAPS:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOO);
+          RAS_MACRO_BUILTIN_VM_SET_OMAPS;
           break;
         case PKL_AST_BUILTIN_VM_OMODE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHOM);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
+          RAS_MACRO_BUILTIN_VM_OMODE;
           break;
         case PKL_AST_BUILTIN_VM_SET_OMODE:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPOM);
+          RAS_MACRO_BUILTIN_VM_SET_OMODE;
           break;
         case PKL_AST_BUILTIN_UNSAFE_STRING_SET:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 0);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 1);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSHVAR, 0, 2);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_STRSET);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+          RAS_MACRO_BUILTIN_UNSAFE_STRING_SET;
           break;
         default:
           assert (0);

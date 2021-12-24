@@ -1,3 +1,13 @@
+2021-12-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen-builtins.pks: New file.
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add
+	pkl-gen-builtins.pks and pkl-gen-builtins.pkc.
+	(MOSTLYCLEANFILES): Add pkl-gen-builtins.pkc.tmp.
+	(BUILT_SOURCES): Add pkl-gen-builtins.pkc.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Use the RAS
+	implementations of the compiler built-ins.
+
 2021-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/asn1-ber.pk (BER_Identifier): Add integrity checks for
