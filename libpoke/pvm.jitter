@@ -6015,7 +6015,7 @@ end
 
 # Instruction: pushe LABEL
 #
-# Given an exception code in the stack, push a handler for it on the
+# Given an Exception struct in the stack, push a handler for it on the
 # exceptions stack.  An exception code 0 means any exception.
 #
 # Stack: ( INT -- )
