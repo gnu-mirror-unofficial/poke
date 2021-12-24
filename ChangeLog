@@ -1,5 +1,9 @@
 2021-12-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.jitter: Fix docstring for the instruction `pushe'.
+
+2021-12-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen-builtins.pks: New file.
 	* libpoke/Makefile.am (libpoke_la_SOURCES): Add
 	pkl-gen-builtins.pks and pkl-gen-builtins.pkc.
