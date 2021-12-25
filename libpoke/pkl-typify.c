@@ -483,16 +483,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
-  /* Only structs can be casted to structs.  */
+  /* Only structs can be casted to structs.  Integers can also be
+     casted to integral structs.  */
   if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
       && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_STRUCT)
     {
-      char *found_type = pkl_type_str (exp_type, 1);
+      pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (type);
 
-      PKL_ERROR (PKL_AST_LOC (exp),
-                 "invalid cast, expected struct, got %s", found_type);
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+      if (!itype
+          || !pkl_ast_type_promoteable_p (itype, exp_type,
+                                          0 /* promote_array_of_any */))
+        {
+          char *found_type = pkl_type_str (exp_type, 1);
+
+          PKL_ERROR (PKL_AST_LOC (exp),
+                     "invalid cast, expected struct, got %s", found_type);
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
     }
 
   /* Structs can be casted to other structs.  Additionally, integral

@@ -1705,6 +1705,159 @@
         return
         .end
 
+;;; RAS_MACRO_DEINT_EXTRACT_FIELD_VALUE @uint64_type @itype @field_type #bit_offset
+;;; ( IVAL -- EVAL )
+;;;
+;;; Extract the portion of IVAL corresponding to the field with
+;;; type @FIELD_TYPE located at bit-offset @BIT_OFFSET in the containing
+;;; integral struct.
+;;;
+;;; Note that the extracted value is converted to the type of the
+;;; field.
+
+        .macro deint_extract_field_value @uint64_type @itype @field_type #bit_offset
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        .let @field_int_type = PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET ? PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type
+ .c     size_t field_type_size = PKL_AST_TYPE_I_SIZE (@field_int_type);
+ .c     size_t itype_bits = PKL_AST_TYPE_I_SIZE (@itype);
+        ;; Field extraction:
+        ;;   (IVAL <<. OFFSET) .>> (ITYPE_SIZE - FIELD_SIZE)
+        .let #shift_right_count = pvm_make_int (itype_bits - field_type_size, 32)
+        push #bit_offset
+        bsllu
+        nip2
+        push #shift_right_count
+        bsrlu
+        nip2
+        ;; Convert the extracted value to the type of the field. If
+        ;; the field is an offset, set an offset with the extracted
+        ;; value as magnitude and same unit.
+        nton @uint64_type, @field_int_type
+        nip
+ .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
+ .c {
+        .let @offset_unit = PKL_AST_TYPE_O_UNIT (@field_type)
+        .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (@offset_unit), 64)
+        push #unit
+        mko
+ .c }
+        .end
+
+;;; RAS_FUNCTION_STRUCT_DEINTEGRATOR @type_struct
+;;; ( VAL -- VAL )
+;;;
+;;; Assemble a function that, given an integral value, transforms it
+;;; into an equivalent integral struct with the given type.  The
+;;; integral value in the stack should of the same type than the
+;;; integral type of TYPE_STRUCT.
+;;;
+;;; Macro-arguments:
+;;;
+;;; @type_struct is a pkl_ast_node with the type of the struct to
+;;; which convert the integer.
+
+        .function struct_deintegrator @type_struct
+        prolog
+        pushf 2
+        ;; Convert the value to deintegrate to an ulong<64> to ease
+        ;; calculations below.
+        .let @itype = PKL_AST_TYPE_S_ITYPE (@type_struct)
+        .let @uint64_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0)
+        nton @itype, @uint64_type
+        nip
+        regvar $ival
+        ;; Create a struct of the given type using the type
+        ;; constructor, in non-strict mode.  All the fields of the
+        ;; constructed struct will be 0 (or 0#b).
+        push ulong<64>0         ; OFF
+        ;; Iterate over the struct named fields creating triplets for the
+        ;; fields, whose value is extracted from IVAL.  We know that
+        ;; IVAL has the same width than the struct fields all combined.
+        ;; Anonymous fields are handled in a loop below.
+        .let @field
+ .c      uint64_t i, bit_offset;
+ .c for (i = 0, bit_offset = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+ .c     size_t field_type_size
+ .c       = PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
+ .c         ? PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type);
+        ;; Anonymous fields are not handled in this loop, but we have
+        ;; to advance the offset nevertheless.
+        .let @type_field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
+ .c     if (@type_field_name == NULL)
+ .c     {
+ .c       bit_offset += field_type_size;
+ .c       continue;
+ .c     }
+        .let #bit_offset = pvm_make_int (bit_offset, 32)
+        ;; Extract the value for this field from IVAL
+        pushvar $ival           ; IVAL
+        .e deint_extract_field_value @uint64_type, @itype, @field_type, #bit_offset
+        ;; Create the triplet with the converted value.
+        .let #field_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@type_field_name))
+        .let #field_offset = pvm_make_ulong (bit_offset, 64)
+        push #field_offset      ; CVAL OFFSET
+        push #field_name        ; CVAL OFFSET NAME
+        rot                     ; OFFSET NAME CVAL
+ .c     bit_offset += field_type_size;
+ .c     i++;
+ .c }
+                                ; OFF [TRIPLETS...]
+        .let #nfields = pvm_make_ulong (i, 64)
+        push ulong<64>0         ; OFF [TRIPLETS...] NMETHODS
+        push #nfields           ; OFF [TRIPLETS...] NMETHODS NFIELDS
+  .c    PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+  .c    PKL_PASS_SUBPASS (@type_struct);
+  .c    PKL_GEN_POP_CONTEXT;
+                                ; OFF [TRIPLETS...] NMETHODS NFIELDS TYPE
+        mksct
+  .c    PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_CONSTRUCTOR);
+  .c    PKL_PASS_SUBPASS (@type_struct);
+  .c    PKL_GEN_POP_CONTEXT;
+                                ; SCT
+        ;; At this point the anonymous fields in the struct created above are
+        ;; all zero.  This is because we coudln't include them in the argument
+        ;; to the struct constructor.  So now we have to iterate over the
+        ;; fields again and set the value of the anonymous fields.  Fortunately
+        ;; this results in very concise code at run-time.
+ .c for (i = 0, bit_offset = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+ .c       size_t field_type_size
+ .c         = PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
+ .c           ? PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type);
+ .c     if (PKL_AST_STRUCT_TYPE_FIELD_NAME (@field))
+ .c     {
+ .c       bit_offset += field_type_size;
+ .c       i++;
+ .c       continue;
+ .c     }
+        .let #bit_offset = pvm_make_int (bit_offset, 32)
+        ;; Extract the value for this field from IVAL
+        pushvar $ival           ; SCT IVAL
+        .e deint_extract_field_value @uint64_type, @itype, @field_type, #bit_offset
+                                ; SCT CVAL
+        .let #index = pvm_make_ulong (i, 64)
+        push #index             ; SCT CVAL IDX
+        swap                    ; SCT IDX CVAL
+        sseti
+ .c
+ .c     bit_offset += field_type_size;
+ .c     i++;
+ .c }
+        popf 1
+        return
+        .end
+
 ;;; RAS_MACRO_COMPLEX_LMAP @type #writer
 ;;; ( VAL IOS BOFF -- )
 ;;;

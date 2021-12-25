@@ -1,0 +1,14 @@
+/* { dg-do run } */
+
+type Foo =
+  struct int<32>
+  {
+    type lala = int<3>;
+    int<16>;
+    var lolo = 32;
+    uint<16> b;
+  };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command { 0xdeadbeef as Foo } } */
+/* { dg-output "Foo \{\[0\]xdeadH,b=0xbeefUH\}" } */

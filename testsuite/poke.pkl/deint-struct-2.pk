@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct int<32> { int<16> a; uint<16> b;};
+
+/* { dg-command { 0UL as Foo } } */
+/* { dg-output "Foo {a=0H,b=0UH}" } */

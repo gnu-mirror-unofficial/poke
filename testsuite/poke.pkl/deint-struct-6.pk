@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type Foo = struct int<32> { int<16> a; offset<int<8>,B> b; uint<8> c; };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command { 0xdeadbeef as Foo } } */
+/* { dg-output "Foo \{a=0xdeadH,b=0xbeB#B,c=0xefUB\}" } */

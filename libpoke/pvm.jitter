@@ -4771,6 +4771,7 @@ end
 # offset of field, STR the name of the field or PVM_NULL if the field
 # is anonymous, and VAL is a value.
 #
+
 # Each method is specified as a tuple [STR VAL] where STR is the name
 # of the method and VAL is the closure value corresponding to the
 # method.

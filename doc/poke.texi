@@ -10864,6 +10864,16 @@ We can operate:
 0x100000003UL
 @end example
 
+Conversely, it is possible to cast an integral value to an integral struct:
+
+@example
+(poke) 0x100000003UL as Foo
+Foo @{
+  f1=0x1,
+  f2=0x3U
+@}
+@end example
+
 @node Declarations in Structs
 @subsection Declarations in Structs
 

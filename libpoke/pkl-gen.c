@@ -199,6 +199,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             pvm_val constructor_closure;
             pvm_val comparator_closure;
             pvm_val integrator_closure;
+            pvm_val deintegrator_closure;
 
             pkl_ast_node type_struct = initial;
 
@@ -282,6 +283,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 PKL_GEN_POP_CONTEXT;
 
                 PKL_AST_TYPE_S_INTEGRATOR (type_struct) = integrator_closure;
+              }
+
+            if (PKL_AST_TYPE_S_ITYPE (type_struct)
+                && PKL_AST_TYPE_S_DEINTEGRATOR (type_struct) == PVM_NULL)
+              {
+                /* Yes, the in_writer context is also used for
+                   deintegrators, since deintegrators do not call
+                   writers nor the other way around.  This eases
+                   sharing of code in the pks.  */
+                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+                {
+                  RAS_FUNCTION_STRUCT_DEINTEGRATOR (deintegrator_closure,
+                                                    type_struct);           /* CLS */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, deintegrator_closure); /* CLS */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                        /* CLS */
+                  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                       /* _ */
+                }
+                PKL_GEN_POP_CONTEXT;
+
+                PKL_AST_TYPE_S_DEINTEGRATOR (type_struct) = deintegrator_closure;
               }
 
             PKL_PASS_BREAK;
@@ -2205,6 +2226,36 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cast)
          struct.  */
       pkl_asm_insn (pasm, PKL_INSN_PUSH, constructor);
       pkl_asm_insn (pasm, PKL_INSN_CALL);
+    }
+  else if (PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_STRUCT
+           && PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_INTEGRAL)
+    {
+      pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (to_type);
+
+      /* This is guaranteed as per typify.  */
+      assert (itype);
+
+      /* Make sure the struct type has a deintegrator.  */
+      if (PKL_AST_TYPE_S_DEINTEGRATOR (to_type) == PVM_NULL)
+        {
+          pvm_val deintegrator_closure;
+
+          /* See note about in_writer in pkl_gen_pr_decl.  */
+          PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+          RAS_FUNCTION_STRUCT_DEINTEGRATOR (deintegrator_closure,
+                                            to_type);           /* CLS */
+
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, deintegrator_closure); /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                        /* CLS */
+          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                       /* _ */
+          PKL_GEN_POP_CONTEXT;
+
+          PKL_AST_TYPE_S_DEINTEGRATOR (to_type) = deintegrator_closure;
+        }
+
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                    PKL_AST_TYPE_S_DEINTEGRATOR (to_type));
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);
     }
   else if (PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_INTEGRAL
            && PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_STRUCT)

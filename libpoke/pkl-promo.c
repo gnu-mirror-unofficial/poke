@@ -1583,6 +1583,40 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cons)
 }
 PKL_PHASE_END_HANDLER
 
+/* When an integral value is casted to an integral struct, it shall be
+   promoted to the later integral type.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cast)
+{
+  pkl_ast_node cast = PKL_PASS_NODE;
+  pkl_ast_node exp = PKL_AST_CAST_EXP (cast);
+  pkl_ast_node to_type = PKL_AST_CAST_TYPE (cast);
+
+  if (PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_STRUCT)
+    {
+      pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (to_type);
+
+      if (itype)
+        {
+          int restart = 0;
+
+          if (!promote_integral (PKL_PASS_AST,
+                                 PKL_AST_TYPE_I_SIZE (itype),
+                                 PKL_AST_TYPE_I_SIGNED_P (itype),
+                                 &PKL_AST_CAST_EXP (cast),
+                                 &restart))
+            {
+              PKL_ICE (PKL_AST_LOC (exp),
+                       "couldn't promote integral to integral struct");
+              PKL_PASS_ERROR;
+            }
+
+          PKL_PASS_RESTART = restart;
+        }
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_promo =
   {
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EQ, pkl_promo_ps_op_rela),
@@ -1626,6 +1660,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_promo_ps_struct_type_field),
    PKL_PHASE_PS_HANDLER (PKL_AST_COND_EXP, pkl_promo_ps_cond_exp),
    PKL_PHASE_PS_HANDLER (PKL_AST_CONS, pkl_promo_ps_cons),
+   PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_promo_ps_cast),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_promo_ps_type_array),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_promo_ps_type_offset),
   };
