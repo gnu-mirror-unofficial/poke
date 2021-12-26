@@ -26,19 +26,7 @@
 pk_val
 pk_make_int (int64_t value, int size)
 {
-  pk_val new;
-
-  /* At the moment poke integers are limited to a maximum number of
-     bits.  */
-  if (size > 64)
-    return PK_NULL;
-
-  if (size <= 32)
-    new = pvm_make_int (value, size);
-  else
-    new = pvm_make_long (value, size);
-
-  return new;
+  return pvm_make_signed_integral (value, size);
 }
 
 int64_t
@@ -62,19 +50,7 @@ pk_int_size (pk_val val)
 pk_val
 pk_make_uint (uint64_t value, int size)
 {
-  pk_val new;
-
-  /* At the moment poke integers are limited to a maximum number of
-     bits.  */
-  if (size > 64)
-    return PK_NULL;
-
-  if (size <= 32)
-    new = pvm_make_uint (value, size);
-  else
-    new = pvm_make_ulong (value, size);
-
-  return new;
+  return pvm_make_unsigned_integral (value, size);
 }
 
 uint64_t

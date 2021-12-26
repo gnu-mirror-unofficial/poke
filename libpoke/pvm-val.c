@@ -88,7 +88,8 @@ pvm_make_ulong (uint64_t value, int size)
 pvm_val
 pvm_make_signed_integral (int64_t value, int size)
 {
-  assert (0 < size && size <= 64);
+  if (size > 64)
+    return PK_NULL;
 
   if (size <= 32)
     return PVM_MAKE_INT ((int32_t) value, size);
@@ -99,7 +100,8 @@ pvm_make_signed_integral (int64_t value, int size)
 pvm_val
 pvm_make_unsigned_integral (uint64_t value, int size)
 {
-  assert (0 < size && size <= 64);
+  if (size > 64)
+    return PK_NULL;
 
   if (size <= 32)
     return PVM_MAKE_UINT ((uint32_t) value, size);

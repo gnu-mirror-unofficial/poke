@@ -1,5 +1,15 @@
 2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_make_signed_integral): Return PK_NULL if
+	an invalid `size' argument is provided.
+	(pvm_make_unsigned_integral): Likewise.
+	* libpoke/pvm.h: Document that these functions return PK_NULL in
+	case an invalid size is provided.
+	* libpoke/pk-val.c (pk_make_uint): Use pvm_make_unsigned_integral.
+	(pk_make_int): Use pvm_make_signed_integral.
+
+2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/argp.pk (argp_parse): Remove dots after non-sentences in
 	the default help summaries.
 

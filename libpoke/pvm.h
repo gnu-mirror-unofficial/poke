@@ -211,7 +211,9 @@ pvm_val pvm_make_long (int64_t value, int size);
 pvm_val pvm_make_ulong (uint64_t value, int size);
 
 /* Make signed and unsigned integral values.
-   SIZE is measured in bits and should be in the range 1 to 64.  */
+
+   SIZE is measured in bits and should be in the range 1 to 64.  If an
+   invalid size is provided these functions return PVM_NULL.  */
 
 pvm_val pvm_make_signed_integral (int64_t value, int size);
 
