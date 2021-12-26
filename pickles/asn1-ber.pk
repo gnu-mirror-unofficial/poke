@@ -217,8 +217,7 @@ type BER_Data_Value =
 
       method is_indefinite = int:
       {
-        try return indefinite || 1;
-        catch if E_elem { return 0; }
+        return indefinite ?! E_elem;
       }
 
       method get = offset<uint<64>,B>:
