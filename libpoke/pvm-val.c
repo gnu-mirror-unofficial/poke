@@ -84,6 +84,29 @@ pvm_make_ulong (uint64_t value, int size)
   return PVM_MAKE_LONG_ULONG (value, size, PVM_VAL_TAG_ULONG);
 }
 
+
+pvm_val
+pvm_make_signed_integral (int64_t value, int size)
+{
+  assert (0 < size && size <= 64);
+
+  if (size <= 32)
+    return PVM_MAKE_INT ((int32_t) value, size);
+  else
+    return PVM_MAKE_LONG (value, size);
+}
+
+pvm_val
+pvm_make_unsigned_integral (uint64_t value, int size)
+{
+  assert (0 < size && size <= 64);
+
+  if (size <= 32)
+    return PVM_MAKE_UINT ((uint32_t) value, size);
+  else
+    return PVM_MAKE_ULONG (value, size);
+}
+
 static pvm_val_box
 pvm_make_box (uint8_t tag)
 {

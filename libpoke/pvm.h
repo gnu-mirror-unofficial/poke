@@ -210,6 +210,13 @@ pvm_val pvm_make_long (int64_t value, int size);
 
 pvm_val pvm_make_ulong (uint64_t value, int size);
 
+/* Make signed and unsigned integral values.
+   SIZE is measured in bits and should be in the range 1 to 64.  */
+
+pvm_val pvm_make_signed_integral (int64_t value, int size);
+
+pvm_val pvm_make_unsigned_integral (uint64_t value, int size);
+
 /* Make a string PVM value.  */
 
 pvm_val pvm_make_string (const char *value);
@@ -372,7 +379,6 @@ void pvm_val_unmap (pvm_val val);
 
 pvm_val pvm_make_exception (int code, const char *name, int exit_status,
                             const char *location, const char *message);
-
 
 /* **************** The Run-Time Environment ****************  */
 
