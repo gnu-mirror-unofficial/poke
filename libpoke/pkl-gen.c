@@ -990,7 +990,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_ass_stmt)
         /* Strict value: set with integriy.  */
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT);
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSETI, struct_type);
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSETC, struct_type);
 
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BA, label2);
         pkl_asm_label (PKL_GEN_ASM, label1);

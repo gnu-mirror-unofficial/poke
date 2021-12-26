@@ -327,10 +327,10 @@
         popf 1
         .end
 
-;;; SSETI @struct_type
+;;; SSETC @struct_type
 ;;; ( SCT STR VAL -- SCT )
 ;;;
-;;; SSET with data integrity.
+;;; Checked SSET with data integrity.
 ;;;
 ;;; Given a struct, a string containing the name of a struct element,
 ;;; and a value, set the value to the referred element.
@@ -339,7 +339,7 @@
 ;;; data stored in the struct (for example, a constraint expresssion
 ;;; fails) then the operation is aborted and PVM_E_CONSTRAINT is raised.
 
-        .macro sseti @struct_type
+        .macro ssetc @struct_type
         ;; First, save the previous value of the referred field
         ;; and also the field name.
         nrot                    ; VAL SCT STR

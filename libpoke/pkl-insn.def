@@ -534,7 +534,7 @@ PKL_DEF_INSN(PKL_INSN_AFILL,"","afill")
 
 /* Struct macro-instructions.  */
 
-PKL_DEF_INSN(PKL_INSN_SSETI,"a","sseti")
+PKL_DEF_INSN(PKL_INSN_SSETC,"a","ssetc")
 
 /* Offset macro-instructions.  */
 

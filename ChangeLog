@@ -1,5 +1,13 @@
 2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-asm.pks (ssetc): Renamed from sseti.
+	* libpoke/pkl-asm.c (pkl_asm_insn_ssetc): Likewise.
+	(pkl_asm_insn): Likewise.
+	* libpoke/pkl-insn.def: Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_ass_stmt): Likewise.
+
+2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ops.def: Entry for PKL_AST_OP_EXCOND.
 	* libpoke/pkl-lex.l: Recognize `?!' as EXCOND.
 	* libpoke/pkl-tab.y (EXCOND): New token.

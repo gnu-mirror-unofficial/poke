@@ -955,7 +955,7 @@ pkl_asm_insn_cmp (pkl_asm pasm,
     assert (0);
 }
 
-/* Macro-instruction: SSETI struct_type
+/* Macro-instruction: SSETC struct_type
    ( SCT STR VAL -- SCT )
 
    Given a struct, a string containing the name of a struct element,
@@ -965,9 +965,9 @@ pkl_asm_insn_cmp (pkl_asm pasm,
    operation is aborted and PVM_E_CONSTRAINT is raised.  */
 
 static void
-pkl_asm_insn_sseti (pkl_asm pasm, pkl_ast_node struct_type)
+pkl_asm_insn_ssetc (pkl_asm pasm, pkl_ast_node struct_type)
 {
-  RAS_MACRO_SSETI (struct_type);
+  RAS_MACRO_SSETC (struct_type);
 }
 
 /* Macro-instruction: ACONC array_elem_type
@@ -1628,7 +1628,7 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
         case PKL_INSN_AFILL:
           pkl_asm_insn_afill (pasm);
           break;
-        case PKL_INSN_SSETI:
+        case PKL_INSN_SSETC:
           {
             pkl_ast_node struct_type;
 
@@ -1636,7 +1636,7 @@ pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...)
             struct_type = va_arg (valist, pkl_ast_node);
             va_end (valist);
 
-            pkl_asm_insn_sseti (pasm, struct_type);
+            pkl_asm_insn_ssetc (pasm, struct_type);
             break;
           }
         case PKL_INSN_MACRO:
