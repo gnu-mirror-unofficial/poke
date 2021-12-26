@@ -4073,6 +4073,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_excond)
   if (PKL_AST_IS_EXP (op1))
     pkl_asm_insn (pasm, PKL_INSN_DROP);
 
+  pkl_asm_insn (pasm, PKL_INSN_POPE);
   pkl_asm_insn (pasm, PKL_INSN_BA, done);
 
   /* The exception handler just drops the raised exception and the

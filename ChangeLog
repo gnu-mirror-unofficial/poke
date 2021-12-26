@@ -1,3 +1,7 @@
+2021-12-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_op_excond): Add missing `pope` insn.
+
 2021-12-26  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-ast.h (struct pkl_ast_return_stmt): Add new field
