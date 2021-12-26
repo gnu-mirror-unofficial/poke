@@ -1259,6 +1259,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_return_stmt)
   pkl_ast_node return_stmt = PKL_PASS_NODE;
   pkl_ast_node function = PKL_AST_RETURN_STMT_FUNCTION (return_stmt);
   pkl_ast_node function_type = PKL_AST_TYPE (function);
+  int i;
+
+  for (i = 0; i < PKL_AST_RETURN_STMT_NPOPES (PKL_PASS_NODE); ++i)
+    pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_POPE);
 
   /* In a void function, return PVM_NULL in the stack.  */
   if (PKL_AST_TYPE_CODE (PKL_AST_TYPE_F_RTYPE (function_type))

@@ -1,3 +1,14 @@
+2021-12-26  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-ast.h (struct pkl_ast_return_stmt): Add new field
+	`npopes` (number of `pope`s).
+	(PKL_AST_RETURN_STMT_NPOPES): New macro.
+	* libpoke/pkl-ast.c (pkl_ast_finish_returns_1): Add new arg `npopes`
+	to count the `pope`s.
+	(pkl_ast_finish_returns): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_return_stmt): Insert necessary `pope`
+	instruction(s).
+
 2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.c (pvm_make_signed_integral): Return PK_NULL if
