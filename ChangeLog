@@ -1,5 +1,10 @@
 2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-insn.def: Define PKL_INSN_SSETI.
+	* libpoke/pvm.jitter (sseti): New instruction.
+
+2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-asm.pks (ssetc): Renamed from sseti.
 	* libpoke/pkl-asm.c (pkl_asm_insn_ssetc): Likewise.
 	(pkl_asm_insn): Likewise.

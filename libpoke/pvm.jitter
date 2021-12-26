@@ -4819,6 +4819,7 @@ end
 # does not have a field with the given name, then raise PVM_E_ELEM.
 #
 # Stack: ( SCT STR VAL -- SCT )
+# Exceptions: PVM_E_ELEM
 
 instruction sset ()
   branching # because of PVM_RAISE_DIRECT
@@ -4833,6 +4834,35 @@ instruction sset ()
     sct = JITTER_TOP_STACK ();
     if (!pvm_set_struct (sct, name, val))
        PVM_RAISE_DFL (PVM_E_ELEM);
+  end
+end
+
+# Instruction: sseti
+#
+# Given a struct, a field index and a value, replace the value
+# of the referred struct field with the given value.  If the
+# given index does not refer to a struct field, then raise
+# PVM_E_ELEM.
+#
+# Stack: (SCT IDX VAL -- SCT)
+# Exceptions: PVM_E_ELEM
+
+instruction sseti ()
+  branching # because of PVM_RAISE_DIRECT
+  code
+    pvm_val val = JITTER_TOP_STACK ();
+    pvm_val idx = JITTER_UNDER_TOP_STACK ();
+    size_t field_index = PVM_VAL_ULONG (idx);
+    pvm_val sct;
+
+    JITTER_DROP_STACK ();
+    JITTER_DROP_STACK ();
+
+    sct = JITTER_TOP_STACK ();
+
+    if (field_index >= PVM_VAL_SCT_NFIELDS (sct))
+      PVM_RAISE_DFL (PVM_E_ELEM);
+    PVM_VAL_SCT_FIELD_VALUE (sct, field_index) = val;
   end
 end
 

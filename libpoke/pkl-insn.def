@@ -285,6 +285,7 @@ PKL_DEF_INSN(PKL_INSN_SREFIO,"","srefio")
 PKL_DEF_INSN(PKL_INSN_SREFIA,"","srefia")
 PKL_DEF_INSN(PKL_INSN_SREFMNT,"","srefmnt")
 PKL_DEF_INSN(PKL_INSN_SSET,"","sset")
+PKL_DEF_INSN(PKL_INSN_SSETI,"","sseti")
 PKL_DEF_INSN(PKL_INSN_SMODI,"","smodi")
 
 /* Instructions to handle mapped values.  */
