@@ -77,13 +77,13 @@ fun argp_parse = (string program,
                handler = lambda (string val) void: { argp_do_help (program,
                                                                    summary,
                                                                    opts); },
-               summary = "print a help message and exit."
+               summary = "print a help message and exit"
            },
            Argp_Option {
                long_name = "version",
                handler = lambda (string val) void: { argp_do_version (program,
                                                                       version); },
-               summary = "show version and exit."
+               summary = "show version and exit"
            },
           ];
 

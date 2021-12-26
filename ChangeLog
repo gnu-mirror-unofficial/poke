@@ -1,5 +1,10 @@
 2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/argp.pk (argp_parse): Remove dots after non-sentences in
+	the default help summaries.
+
+2021-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/asn1-ber.pk (BER_Data_Value): Use the ?! operator in the
 	is_indefinite method.
 
