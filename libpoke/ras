@@ -224,6 +224,9 @@
 # Exception Arguments are written like PVM_E_*.  See the file pvm.h
 # for the set of valid exceptions.
 #
+# Endianness specifiers are written like IOS_ENDIAN_LSB, meaning
+# little-endian, and IOS_ENDIAN_MSB, meaning big-endian.
+#
 # PVM values passed as arguments to the current entity are written
 # like #this.
 #
@@ -505,6 +508,7 @@ BEGIN {
     string_re="(\"([^\"]|\")*\")"
     var_re="(\\$[a-zA-Z][0-9a-zA-Z_]*)"
     expt_re="(PVM_E_[A-Z_]+)"
+    endian_re="(IOS_ENDIAN_LSB|IOS_ENDIAN_MSB)"
     anode_re="@([a-zA-Z_][0-9a-zA-Z_]*)"
     aval_re="#([a-zA-Z_][0-9a-zA-Z_]*)"
     marg_re= "(@|#)([a-zA-Z_][0-9a-zA-Z_]*)"
@@ -560,7 +564,7 @@ BEGIN {
                         break
                     case "v":
                         re="(" null_re "|" int_re "|" long_re \
-                           "|" string_re "|" expt_re "|" aval_re ")"
+                           "|" string_re "|" expt_re "|" endian_re "|" aval_re ")"
                         break
                     case "r":
                         break

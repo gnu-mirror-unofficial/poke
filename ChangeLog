@@ -1,3 +1,8 @@
+2021-12-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/ras: Support IOS_ENDIAN_LSB and IOS_ENDIAN_MSB as
+	instruction values (v).
+
 2021-12-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pvm.jitter (state-struct-backing-c): Remove `canary` field.
