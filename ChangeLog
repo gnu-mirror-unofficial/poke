@@ -1,3 +1,10 @@
+2021-12-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* pickles/btf.pk (BTF_Type): s/enum/_enum/.
+	* pickles/ctf.pk (CTF_Type): Likewise.
+	* pickles/btf-dump.pk (btf_dump_type_vdata): Likewise.
+	* pickles/ctf-dump.pk (ctf_dump_vlen_data): Likewise.
+
 2021-12-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-lex.l: Recognize `enum' as a reserved word.

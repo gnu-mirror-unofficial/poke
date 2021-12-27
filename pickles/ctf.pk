@@ -296,7 +296,7 @@ type CTF_Type =
       CTF_Array array                  : info.kind == CTF_KIND_ARRAY;
       CTF_Slice slice                  : info.kind == CTF_KIND_SLICE;
       CTF_Member[info.vlen] members    : info.kind in [CTF_KIND_STRUCT,CTF_KIND_UNION];
-      CTF_Enum[info.vlen] enum         : info.kind == CTF_KIND_ENUM;
+      CTF_Enum[info.vlen] _enum        : info.kind == CTF_KIND_ENUM;
       CTF_Func_Args func_args          : info.kind == CTF_KIND_FUNCTION;
       struct {} nothing;
     } data;

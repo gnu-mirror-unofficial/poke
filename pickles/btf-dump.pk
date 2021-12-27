@@ -118,7 +118,7 @@ fun btf_dump_type_vdata = (BTF_Section btf, BTF_Type t) void:
     /* Enum */
     try
     {
-      btf_dump_enum (btf, t.data.enum);
+      btf_dump_enum (btf, t.data._enum);
       return;
     }
     catch if E_elem {}

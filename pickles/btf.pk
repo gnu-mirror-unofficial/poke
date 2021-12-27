@@ -173,7 +173,7 @@ type BTF_Type =
     {
       BTF_Int integer                    : info.kind == BTF_KIND_INT;
       BTF_Array array                    : info.kind == BTF_KIND_ARRAY;
-      BTF_Enum[info.vlen] enum           : info.kind == BTF_KIND_ENUM;
+      BTF_Enum[info.vlen] _enum          : info.kind == BTF_KIND_ENUM;
       BTF_Func_Proto func_proto          : info.kind == BTF_KIND_FUNC_PROTO;
       BTF_Variable variable              : info.kind == BTF_KIND_VAR;
       BTF_Member[info.vlen] members      : (info.kind == BTF_KIND_UNION

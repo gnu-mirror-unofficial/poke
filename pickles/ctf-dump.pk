@@ -128,7 +128,7 @@ fun ctf_dump_vlen_data = (CTF_Dictionary ctf, CTF_Type t) void:
   try ctf_dump_sou_members (ctf, t.data.members);
   catch if E_elem {};
 
-  try ctf_dump_enum (ctf, t.data.enum);
+  try ctf_dump_enum (ctf, t.data._enum);
   catch if E_elem {};
 
   /* XXX CTF_Func_Args declaration scoped within CTF_Type is not available.  */
