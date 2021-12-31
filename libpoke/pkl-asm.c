@@ -1921,11 +1921,9 @@ pkl_asm_for_condition (pkl_asm pasm)
 void
 pkl_asm_for_loop (pkl_asm pasm)
 {
-  pkl_asm_insn (pasm, PKL_INSN_BZI, pasm->level->label3);
+  pkl_asm_insn (pasm, PKL_INSN_BZI, pasm->level->label2);
   /* Pop the loop condition from the stack.  */
   pkl_asm_insn (pasm, PKL_INSN_DROP);
-  /* XXX label2 is unused.  */
-  pvm_program_append_label (pasm->program, pasm->level->label2);
 }
 
 void
@@ -1939,7 +1937,7 @@ pkl_asm_for_endloop (pkl_asm pasm)
 {
   pkl_asm_insn (pasm, PKL_INSN_SYNC);
   pkl_asm_insn (pasm, PKL_INSN_BA, pasm->level->label1);
-  pvm_program_append_label (pasm->program, pasm->level->label3);
+  pvm_program_append_label (pasm->program, pasm->level->label2);
   pkl_asm_insn (pasm, PKL_INSN_DROP); /* The condition boolean */
   pvm_program_append_label (pasm->program, pasm->level->break_label);
 
