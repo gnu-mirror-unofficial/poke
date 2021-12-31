@@ -10636,7 +10636,316 @@ field is processed: at that time the value will be overwritten.
 @subsection Integral Structs
 @cindex integral structs
 
-XXX
+Integral structs are useful to cover cases where data is stored in
+composited integral containers, i.e. where data is structured within
+stored integers.
+
+Basically, when we structure data using Poke structs, arrays and the
+like, we often use the same structure than a C programmer would use.
+For example, to model ELF RELA structures, which are defined in C
+like:
+
+@example
+type struct
+  @{
+    Elf64_Addr   r_offset;  /* Address */
+    Elf64_Xword  r_info;    /* Relocation type and symbol index */
+    Elf64_Sxword r_addend;  /* Addend */
+  @} Elf64_Rela;
+@end example
+
+@noindent
+we could use something like this in Poke:
+
+@example
+type Elf64_Rela =
+  struct
+  @{
+    Elf64_Addr r_offset;
+    Elf64_Xword r_info;
+    Elf64_Sxword r_addend;
+  @};
+@end example
+
+Here the Poke struct type is pretty equivalent to the C incarnation.
+In both cases the fields are always stored in the given order,
+regardless of endianness or any other consideration.
+
+However, there are situations where stored integral values are to be
+interpreted as composite data.  This is the case of the @code{r_info}
+field above, which is a 64-bit unsigned integer (@code{Elf64_Xword})
+which is itself composed by several fields, depicted here:
+
+@example
+ 63                                          0
++----------------------+----------------------+
+|       r_sym          |      r_type          |
++----------------------+----------------------+
+ MSB                                       LSB
+@end example
+
+In order to support this kind of composition of integers, C
+programmers usually resort to either bit masking (most often) or to
+the often obscure and undefined behaviour-prone C bit fields.  In the
+case of ELF, the GNU implementations define a few macros to access
+these @dfn{sub-fields}:
+
+@example
+#define ELF64_R_SYM(i)         ((i) >> 32)
+#define ELF64_R_TYPE(i)        ((i) & 0xffffffff)
+#define ELF64_R_INFO(sym,type) ((((Elf64_Xword) (sym)) << 32) + (type))
+@end example
+
+Where @code{ELF64_R_SYM} and @code{ELF64_R_TYPE} are used to extract
+the fields from an @code{r_info}, and @code{ELF64_R_INFO} is used to
+compose it.  This is typical of C data structures.
+
+We could of course mimic the C implementation in Poke:
+
+@example
+fun Elf64_R_Sym = (Elf64_Xword i) uint<32>:
+   @{ return i .>> 32; @}
+fun Elf64_R_Type = (Elf64_Xword i) uint<32>:
+   @{ return i & 0xffff_ffff; @}
+fun Elf64_R_Info = (uint<32> sym, uint<32> type) Elf64_Xword:
+   @{ return sym as Elf64_Xword <<. 32 + type; @}
+@end example
+
+However, this approach has a huge disadvantage: since we are not able
+to encode the logic of these "sub-fields" in proper Poke fields, they
+become second class citizens, with all that implies: no constraints on
+their own, can't be auto-completed, can't be assigned individually,
+etc etc.
+
+This is where @dfn{integral structs} come to play. These are structs
+that are defined exactly like your garden variety Poke structs, with a
+small addition:
+
+@example
+type Elf64_RelInfo =
+  struct uint<64>
+  @{
+    uint<32> r_sym;
+    uint<32> r_type;
+  @};
+@end example
+
+Note the @code{uint<64>} addition after @code{struct}.  This can be
+any integer type (signed or unsigned).  The fields of an integral
+struct should be integral themselves (this includes both integers and
+offsets) and the total size occupied by the fields should be the same
+size than the one declared in the struct's integer type.  This is
+checked and enforced by the compiler.
+
+The Elf64 RELA in Poke can then be encoded like:
+
+@example
+type Elf64_Rela =
+  struct
+  @{
+    Elf64_Addr r_offset;
+    struct Elf64_Xword
+    @{
+      uint<32> r_sym;
+      uint<32> r_type;
+    @} r_info;
+    Elf64_Sxword r_addend;
+  @};
+@end example
+
+When an integral struct is mapped from some IO space, the total number
+of bytes occupied by the struct is read as a single integer value, and
+then the values of the fields are extracted from it.  A similar
+process is using when writing.  That is what makes it different with
+respect a normal Poke struct.
+
+Consider for example we have the following sequence of bytes in our IO
+space (like a file):
+
+@example
+0x10 0x20 0x30 0x40  0x50 0x60 0x70 0x80
+@end example
+
+Let's see what happens when we map the integral struct above, in both
+big and little endian:
+
+@example
+(poke) .set endian big
+(poke) Elf64_RelInfo @@ 0#B
+Elf64_RelInfo @{
+  r_sym=0x10203040U,
+  r_type=0x50607080U
+@}
+(poke) .set endian little
+(poke) Elf64_RelInfo @@ 0#B
+Elf64_RelInfo @{
+  r_sym=0x80706050U,
+  r_type=0x40302010U
+@}
+@end example
+
+Looks good.  For comparison, this is what happens when we do the same
+with an "equivalent" (not really) non-integral struct operating on the
+same data:
+
+@example
+type Elf64_RelInfoBogus =
+  struct
+  @{
+    uint<32> r_sym;
+    uint<32> r_type;
+  @};
+@end example
+
+We would get:
+
+@example
+(poke) .set endian big
+(poke) Elf64_RelInfoBogus @@ 0#B
+Elf64_RelInfoBogus @{
+  r_sym=0x10203040U,
+  r_type=0x50607080U
+@}
+(poke) .set endian little
+(poke) Elf64_RelInfoBogus @ 0#B
+Elf64_RelInfoBogus @{
+  r_sym=0x40302010U,
+  r_type=0x80706050U
+@}
+@end example
+
+In this case, and unlike with integral structs, the endianness impacts
+the bytes of the individual fields, not of the whole struct.
+
+As you can see, integral structs can be used to denote a lot of
+commonly found idioms in data structures and this includes a lot of
+what is sometimes denoted in C bit field.  However, one should be
+cautious when "translating" C structures to Poke, especially when the
+C programmer has not been careful and incurres in sometimes obscure
+implementation-defined behavior.  An integral struct is not always the
+right abstraction to use when we see a C bit field!
+
+As an example of the above, consider the following C struct:
+
+@example
+struct regs
+@{
+ __u8 dst_reg:4;
+ __u8 src_reg:4;
+@};
+@end example
+
+Certain virtual architecture uses that data layout to store registers
+in instructions (no comment.)  Thing is, in bit fields like the above
+with sub-byte field sizes, the ordering of the fields is not clearly
+defined, and ultimately what order to use is up to the compiler,
+i.e. to lore and tradition.  As it happens, GCC encodes @code{src_reg}
+in the most significant nibble of the byte and @code{dst_reg} in the
+least significant nibble of the byte when compiling for a
+little-endian target, and the other way around when compiling for a
+little-endian target. (I may have had that wrong, this always confuses
+me.)
+
+How could we encode the C struct regs in Poke?  Let's see.
+
+A normal Poke struct clearly won't do it:
+
+@example
+type RegsBogus1 =
+  struct
+  @{
+    uint<4> src;
+    uint<4> dst;
+  @};
+@end example
+
+The reason being, the ordering of src and dst does not change when you
+switch endianness (since this is Poke, we can in fact talk about real
+ordering of bits)... remember, poke is WYPIWIG (what you poke is what
+you get) ;)
+
+What about an integral struct?
+
+@example
+type RegsBogus2 =
+  struct uint<8>
+ @{
+    uint<4> src;
+    uint<4> dst;
+ @};
+@end example
+
+This won't work either.  In fact, the net effect of the normal
+decoding of the normal struct type RegsBogus1 and the
+map-an-integer-and-extract-fields decoding of the integral struct
+RegsBogus2 is in this case totally equivalent.
+
+A solution is to use a normal struct, and field labels:
+
+@example
+type RegsBogus =
+  struct
+  @{
+    var little_p = (get_endian == ENDIAN_LITTLE);
+
+    uint<8> src @@ !little_p * 4#b;
+    uint<8> dst @@ little_p * 4#b;
+  @};
+@end example
+
+At this point, you may be wondering: is there anything particular in a
+field defined in an integral struct?  The answer is: no, not at all.
+These are regular, first-class fields.  Likewise, integral structs are
+perfectly regular structs.  And of course, since this is poke, you can
+have integral structs of say, 11 bits, or 3 bits, map them at offsets
+not aligned to bytes, and all the typical poke-atrocities that we
+enjoy so much.
+
+However, there exist a few restrictions, some of them fundamental, the
+others to be lifted eventually:
+
+@itemize @minus
+@item
+There are no integral unions.  This is a fundamental limitation and
+will most likely stay like that.
+@item
+Integral structs can only have integral fields.  This includes
+offsets.
+@item
+No labels are allowed in the fields of integral structs.  This is not
+a fundamental limitation, and may be supported at some point.
+@item
+No integral structs are supported inside other integral structs.  This
+is purely because of lazyness on my part.  This will be eventually
+supported.
+@item
+No optional fields are supported in integral structs.  Support for
+this is actually partially implemented (the mapper supports them but
+not the writer) and most probably will be completed one of these days.
+@end itemize
+
+Integral structs can be converted from/to integral structs to/from
+integers, so we can do things like:
+
+@example
+rel.r_info as uint<64>;
+@end example
+
+And also automatic promotions in arithmetic operators, like:
+
+@example
+rel.r_info + 20 * rel.r_info.r_type
+@end example
+
+Integers can also be ``structured'' into integral structs:
+
+@example
+(poke) 0xdeadbeef as Elf32_RelInfo
+Elf32_RelInfo @{
+  r_sym=(uint<24>) 0xdeadbe,
+  r_type=0xefUB
+@}
+@end example
 
 @node Unions
 @subsection Unions

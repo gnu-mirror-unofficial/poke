@@ -1,3 +1,11 @@
+2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Integral Structs): Add some text.
+
+2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/poke.rec (Support for struct deintegrators): Remove as done.
+
 2021-12-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_DEINTEGRATOR): Define.
