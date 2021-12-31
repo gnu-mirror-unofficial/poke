@@ -676,23 +676,6 @@ Description: Currently the PVM supports the following kind of integer values:
 + - Adapt the code generator to use the new instructions.
 RFC: yes
 
-Summary: Support for struct deintegrators
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ It is currently possible to "integrate" an integral struct into an
-+ integral value:
-+
-+   type Foo = struct int<16> {byte hi; byte lo;};
-+   Foo {} + 2  -> 2H
-+
-+ This is about supporting the reverse operation: "deintegrating" an
-+ integral value into an integral struct:
-+
-+   2 as Foo -> Foo {hi=0UB,lo=2UB}
-Target: 2.0
-
 Summary: Alien tokens for IO space names: $<path/to/file>
 Component: CLI
 Kind: ENH
