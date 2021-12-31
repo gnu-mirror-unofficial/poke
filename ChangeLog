@@ -1,5 +1,10 @@
 2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-parser.c (YYSTYPE): Remove XXX mark.
+	(YYLTYPE): Likewise.
+
+2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Integral Structs): Add some text.
 
 2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
