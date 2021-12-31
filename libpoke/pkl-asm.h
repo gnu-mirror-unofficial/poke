@@ -242,18 +242,6 @@ pvm_program_label pkl_asm_continue_label (pkl_asm pasm);
  *
  * pkl_asm_note (pasm, STR);
  * pkl_asm_loc (pasm, LOC);
- *
- * XXX: how to use pretty-printers in jitter in order to print
- * directives like:
- *
- * .note "foobar"      Does nothing.
- * .loc lb,le,cb,ce    Updates the current location in the PVM.
- *                     Used for debugging and error reporting.
- *
- * instead of using instructions like:
- *
- *       note "foobar"
- *       loc lb,le,cb,ce
  */
 
 void pkl_asm_note (pkl_asm pasm, const char *str);
