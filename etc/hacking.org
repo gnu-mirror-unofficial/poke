@@ -173,18 +173,6 @@ Indu Bhagat             <indu.bhagat@oracle.com>
   Status -> Closed as invalid
 #+END_VERSE
 
-** Recording noteworthy development changes
-
-   Sometimes the development of poke can be fast, and may be difficult
-   for hackers to stay up to date with the latest modifications and
-   changes.  The DEV-NEWS file records noteworthy changes in a terse
-   way, and it is intended to be a helper for developers.
-
-   If you change or add something that you think should be noted by
-   other hackers, such as the addition of a new API, or a change in an
-   existing interface, or a new auxiliary tool, or ... please consider
-   adding a record to DEV-NEWS
-
 ** Backporting to maintenance branches
 
    At any time we keep several branches open to development in poke:

@@ -1,5 +1,12 @@
 2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* DEV-NEWS: Remove file.
+	* etc/hacking.org: Remove section on recording noteworthy
+	development changes.
+	* HACKING: Regenerate.
+
+2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-asm.c (pkl_asm_for_loop): Do not create an extra
 	unused label and use label2.
 	(pkl_asm_for_endloop): Use label2 instead of label3.

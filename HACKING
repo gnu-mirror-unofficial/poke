@@ -22,8 +22,7 @@ _________________
 .. 9. The source for this HACKING file
 .. 10. The Bugzilla
 ..... 1. Dealing with spam in the Bugzilla
-.. 11. Recording noteworthy development changes
-.. 12. Backporting to maintenance branches
+.. 11. Backporting to maintenance branches
 3. Development Environment
 .. 1. Autotools
 .. 2. Dejagnu
@@ -299,21 +298,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
         Status -> Closed as invalid
 
 
-2.11 Recording noteworthy development changes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Sometimes the development of poke can be fast, and may be difficult
-  for hackers to stay up to date with the latest modifications and
-  changes.  The DEV-NEWS file records noteworthy changes in a terse way,
-  and it is intended to be a helper for developers.
-
-  If you change or add something that you think should be noted by other
-  hackers, such as the addition of a new API, or a change in an existing
-  interface, or a new auxiliary tool, or ... please consider adding a
-  record to DEV-NEWS
-
-
-2.12 Backporting to maintenance branches
+2.11 Backporting to maintenance branches
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   At any time we keep several branches open to development in poke:
