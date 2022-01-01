@@ -1,6 +1,6 @@
 /* ios-buffer.c - The buffer for IO devices.  */
 
-/* Copyright (C) 2020, 2021 Egeyar Bagcioglu */
+/* Copyright (C) 2020, 2021, 2022 Egeyar Bagcioglu */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

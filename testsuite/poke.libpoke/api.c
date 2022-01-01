@@ -1,6 +1,6 @@
 /* api.c -- Unit tests for the libpoke public API */
 
-/* Copyright (C) 2020, 2021 The poke authors */
+/* Copyright (C) 2020-2022 The poke authors */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

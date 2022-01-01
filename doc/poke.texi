@@ -10,7 +10,7 @@
 This manual describes GNU poke (version @value{VERSION},
 @value{UPDATED}).
 
-Copyright @copyright{} 2019-2021 The poke authors.
+Copyright @copyright{} 2019-2022 The poke authors.
 
 @quotation
 You can redistribute it and/or modify this manual under the terms of

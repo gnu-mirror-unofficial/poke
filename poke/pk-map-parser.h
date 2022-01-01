@@ -1,6 +1,6 @@
 /* pk-map-parser.h - Definitions for the map files parser.  */
 
-/* Copyright (C) 2020, 2021 Jose E. Marchesi.  */
+/* Copyright (C) 2020, 2021, 2022 Jose E. Marchesi.  */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

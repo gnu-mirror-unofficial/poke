@@ -1,6 +1,6 @@
 /* pkl-compiler.h - Type of Poke compiler.  */
 
-/* Copyright (C) 2019, 2020, 2021 Jose E. Marchesi */
+/* Copyright (C) 2019, 2020, 2021, 2022 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
