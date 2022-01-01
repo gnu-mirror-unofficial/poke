@@ -1766,14 +1766,12 @@
         nton @itype, @uint64_type
         nip
         regvar $ival
-        ;; Create a struct of the given type using the type
-        ;; constructor, in non-strict mode.  All the fields of the
-        ;; constructed struct will be 0 (or 0#b).
+        ;; This is the offset argument to the mksct instruction below.
         push ulong<64>0         ; OFF
         ;; Iterate over the struct named fields creating triplets for the
         ;; fields, whose value is extracted from IVAL.  We know that
         ;; IVAL has the same width than the struct fields all combined.
-        ;; Anonymous fields are handled in a loop below.
+        ;; Anonymous fields are handled in another loop below.
         .let @field
  .c      uint64_t i, bit_offset;
  .c for (i = 0, bit_offset = 0, @field = PKL_AST_TYPE_S_ELEMS (@type_struct);
