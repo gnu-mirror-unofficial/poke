@@ -188,6 +188,7 @@ fun strchr = (string s, uint<8> c) int<32>:
 
 /* Return S with leading characters belonging to the given set
    omitted.  By default the omitted characters are whitespaces.  */
+
 fun ltrim = (string s, string cs = " \t") string:
   {
     var cs_length = cs'length;
@@ -202,6 +203,7 @@ fun ltrim = (string s, string cs = " \t") string:
 
 /* Return S with trailing character belonging tot he given set
    omitted.  By default the omitted characters are whitespaces.  */
+
 fun rtrim = (string s, string cs = " \t") string:
   {
     var cs_length = cs'length;
