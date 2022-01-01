@@ -97,7 +97,8 @@ fun pk_help = (string topic) void:
       if (entry.description != "")
        {
          try {
-           printf "\nSynopsis:\n\n  %s\n\n", entry.synopsis;
+           if (entry.synopsis != "")
+             printf "\nSynopsis:\n\n  %s\n\n", entry.synopsis;
          } catch if E_elem {}
         printf ("%s\n", entry.description);
        }

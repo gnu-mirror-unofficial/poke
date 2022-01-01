@@ -1,3 +1,8 @@
+2022-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-help.pk (pk_help): Print synopsis only if it is actually
+	present.
+
 2021-12-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* DEV-NEWS: Remove file.
