@@ -10715,7 +10715,7 @@ However, this approach has a huge disadvantage: since we are not able
 to encode the logic of these "sub-fields" in proper Poke fields, they
 become second class citizens, with all that implies: no constraints on
 their own, can't be auto-completed, can't be assigned individually,
-etc etc.
+@i{etc}.
 
 This is where @dfn{integral structs} come to play. These are structs
 that are defined exactly like your garden variety Poke structs, with a
