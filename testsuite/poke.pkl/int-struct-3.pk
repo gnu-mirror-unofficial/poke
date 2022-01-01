@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+type Bar = struct int<16> { int<8> a; int<8> b; };
+type Foo = struct int<32> { Bar la; int<16> c; };

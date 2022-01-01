@@ -1060,6 +1060,29 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
   return res;
 }
 
+/* Return the size (in bits) of values of the given type, which must
+   be an integral, offset or integral struct type.  */
+
+size_t
+pkl_ast_sizeof_integral_type (pkl_ast_node type)
+{
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
+    return PKL_AST_TYPE_I_SIZE (type);
+  else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET)
+    {
+      pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (type);
+      return PKL_AST_TYPE_I_SIZE (base_type);
+    }
+  else if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+           && PKL_AST_TYPE_S_ITYPE (type) != NULL)
+    {
+      pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (type);
+      return PKL_AST_TYPE_I_SIZE (itype);
+    }
+  else
+    assert (0);
+}
+
 /* Return 1 if the given TYPE can be mapped in IO.  0 otherwise.  */
 
 int

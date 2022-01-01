@@ -1,3 +1,35 @@
+2022-01-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.h: Prototype for pkl_ast_sizeof_integral_type.
+	* libpoke/pkl-ast.c (pkl_ast_sizeof_integral_type): New function.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Allow
+	integral structs nested in other integral structs.
+	* libpoke/pkl-gen.h (PKL_GEN_CTX_IN_INTEGRATOR): Define.
+	(PKL_GEN_CTX_IN_DEINTEGRATOR): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Use a dedicated context
+	when compiling struct type integrators.
+	(pkl_gen_pr_cast): Likewise.
+	(pkl_gen_pr_type_struct): Add in_integrator and in_deintegrator
+	cases.
+	* libpoke/pkl-gen.pks (struct_field_extractor): Support nested
+	integral structs.
+	(struct_field_inserter): Likewise.
+	(struct_writer): Likewise.
+	(struct_integrator): Likewise.
+	(deint_extract_field_value): Likewise.
+	(struct_deintegrator): Likewise.
+	* testsuite/poke.pkl/int-struct-type-diag-9.pk: Rewrite test.
+	* testsuite/poke.pkl/int-struct-type-diag-15.pk: New test.
+	* testsuite/poke.pkl/int-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/int-struct-4.pk: Likewise.
+	* testsuite/poke.map/maps-int-structs-29.pk: Likewise.
+	* testsuite/poke.pkl/scons-int-struct-5.pk: Likewise.
+	* testsuite/poke.pkl/deint-struct-10.pk: Likewise.
+	* testsuite/poke.pkl/deint-struct-11.pk: Likewise.
+	* testsuite/poke.map/ass-map-24.pk: Likewise.
+	* testsuite/poke.map/asss-map-25.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-01-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/Makefile.am (EXTRA_DIST): Add missing test.

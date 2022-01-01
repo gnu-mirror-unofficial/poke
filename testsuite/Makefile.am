@@ -135,6 +135,8 @@ EXTRA_DIST = \
   poke.map/ass-map-21.pk \
   poke.map/ass-map-22.pk \
   poke.map/ass-map-23.pk \
+  poke.map/ass-map-24.pk \
+  poke.map/ass-map-25.pk \
   poke.map/ass-map-struct-int-1.pk \
   poke.map/func-map-1.pk \
   poke.map/func-map-2.pk \
@@ -264,6 +266,7 @@ EXTRA_DIST = \
   poke.map/maps-int-structs-26.pk \
   poke.map/maps-int-structs-27.pk \
   poke.map/maps-int-structs-28.pk \
+  poke.map/maps-int-structs-29.pk \
   poke.map/maps-ios-1.pk \
   poke.map/maps-ios-2.pk \
   poke.map/maps-ios-3.pk \
@@ -930,6 +933,8 @@ EXTRA_DIST = \
   poke.pkl/defvar-5.pk \
   poke.pkl/defvar-6.pk \
   poke.pkl/deint-struct-1.pk \
+  poke.pkl/deint-struct-10.pk \
+  poke.pkl/deint-struct-11.pk \
   poke.pkl/deint-struct-2.pk \
   poke.pkl/deint-struct-3.pk \
   poke.pkl/deint-struct-4.pk \
@@ -1203,6 +1208,8 @@ EXTRA_DIST = \
   poke.pkl/in-diag-3.pk \
   poke.pkl/int-struct-1.pk \
   poke.pkl/int-struct-2.pk \
+  poke.pkl/int-struct-3.pk \
+  poke.pkl/int-struct-4.pk \
   poke.pkl/int-struct-type-diag-1.pk \
   poke.pkl/int-struct-type-diag-2.pk \
   poke.pkl/int-struct-type-diag-3.pk \
@@ -1217,6 +1224,7 @@ EXTRA_DIST = \
   poke.pkl/int-struct-type-diag-12.pk \
   poke.pkl/int-struct-type-diag-13.pk \
   poke.pkl/int-struct-type-diag-14.pk \
+  poke.pkl/int-struct-type-diag-15.pk \
   poke.pkl/int-type-diag-1.pk \
   poke.pkl/int-type-diag-2.pk \
   poke.pkl/int-type.pk \
@@ -1741,6 +1749,7 @@ EXTRA_DIST = \
   poke.pkl/scons-int-struct-2.pk \
   poke.pkl/scons-int-struct-3.pk \
   poke.pkl/scons-int-struct-4.pk \
+  poke.pkl/scons-int-struct-5.pk \
   poke.pkl/scons-label-1.pk \
   poke.pkl/scons-offset-1.pk \
   poke.pkl/scons-offset-2.pk \

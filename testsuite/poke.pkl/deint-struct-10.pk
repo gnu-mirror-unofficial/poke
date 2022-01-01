@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type Foo = struct int<32> { struct int<16> { byte a; byte b; } la; uint<16> le; };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command { 0xdeadbeef as Foo } } */
+/* { dg-output "Foo \{la=struct \{a=0xdeUB,b=0xadUB\},le=0xbeefUH\}" } */

@@ -1,0 +1,14 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type Bar = struct int<24> { byte b; byte c; byte d; };
+
+type Foo = struct uint<32> { byte a; Bar e; };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {.set endian little} } */
+/* { dg-command {Foo @ 1#B = Foo { a = 0xde, e = Bar { b = 0xad, c = 0xbe, d = 0xef }}} } */
+/* { dg-command { int @ 1#B } } */
+/* { dg-output "0xdeadbeef" } */
+/* { dg-command { byte[4] @ 1#B } } */
+/* { dg-output"\n\\\[0xefUB,0xbeUB,0xadUB,0xdeUB\\\]" } */

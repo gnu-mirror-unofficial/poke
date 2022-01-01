@@ -671,7 +671,8 @@
         nip                             ; STRICT BOFF IVAL SCOUNT(U)
         ;; Using the calculated bit-count, extract the value of the
         ;; field from the struct ival.  The resulting value is converted
-        ;; to the type of the field. (base type if the field is offset.)
+        ;; to the type of the field. (base type if the field is offset,
+        ;; itype if the field is an integral struct.)
         sr @struct_itype
         nip2                            ; STRICT BOFF VAL
    .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
@@ -679,19 +680,31 @@
         .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@field_type)
         nton @struct_itype, @base_type
    .c }
+   .c else if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT)
+   .c {
+        .let @field_itype = PKL_AST_TYPE_S_ITYPE (@field_type)
+        nton @struct_itype, @field_itype
+   .c }
    .c else
    .c {
         nton @struct_itype, @field_type
    .c }
         nip                             ; STRICT BOFF VALC
         ;; At this point the value of the field is in the
-        ;; stack.  If the field is an offset, construct it.
+        ;; stack.  The field may be an integral or an offset
+        ;; or an integral struct.
    .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
    .c {
         .let @offset_unit = PKL_AST_TYPE_O_UNIT (@field_type)
         .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (@offset_unit), 64)
         push #unit                      ; STRICT BOFF MVALC UNIT
         mko                             ; STRICT BOFF VALC
+   .c }
+   .c else if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT)
+   .c {
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_DEINTEGRATOR);
+        .c PKL_PASS_SUBPASS (@field_type);
+        .c PKL_GEN_POP_CONTEXT;
    .c }
         dup                             ; STRICT BOFF VALC VALC
         regvar $val                     ; STRICT BOFF VALC
@@ -879,6 +892,8 @@
  .c     size_t field_type_size
  .c        = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
  .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (@field_type))
+ .c           : PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_S_ITYPE (@field_type))
  .c           : PKL_AST_TYPE_I_SIZE (@field_type));
         .let #fieldw = pvm_make_ulong (field_type_size, 64);
         ;; Note that at this point the field is assured to be
@@ -1540,6 +1555,16 @@
         nip                     ; SCT I (IVALW-REOFF-FIELDW) EVAL [IVAL]
         nton @base_type, @struct_itype
  .c   }
+ .c   else if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT)
+ .c   {
+        ;; EVAL is an integral struct.  Integrate it to get its integral
+        ;; value.
+        .let @field_itype = PKL_AST_TYPE_S_ITYPE (@field_type)
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_INTEGRATOR);
+        .c PKL_PASS_SUBPASS (@field_type);
+        .c PKL_GEN_POP_CONTEXT;
+        nton @field_itype, @struct_itype
+ .c   }
  .c   else
  .c   {
         nton @field_type, @struct_itype
@@ -1651,6 +1676,8 @@
  .c     size_t field_type_size
  .c        = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
  .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (@field_type))
+ .c           : PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_S_ITYPE (@field_type))
  .c           : PKL_AST_TYPE_I_SIZE (@field_type));
         .let #fieldw = pvm_make_ulong (field_type_size, 64);
         pushvar $ivalue          ; SCT I IVAL
@@ -1804,6 +1831,8 @@
  .c     size_t field_type_size
  .c        = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
  .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_O_BASE_TYPE (@field_type))
+ .c           : PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT
+ .c           ? PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_S_ITYPE (@field_type))
  .c           : PKL_AST_TYPE_I_SIZE (@field_type));
         .let #fieldw = pvm_make_ulong (field_type_size, 64);
         pushvar $ivalue          ; SCT I IVAL
@@ -1830,8 +1859,11 @@
 
         .macro deint_extract_field_value @uint64_type @itype @field_type #bit_offset
         .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
-        .let @field_int_type = PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET ? \
-                               PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type
+        .let @field_int_type = (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET \
+                                ? PKL_AST_TYPE_O_BASE_TYPE (@field_type) \
+                                : PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT \
+                                ? PKL_AST_TYPE_S_ITYPE (@field_type) \
+                                : @field_type)
  .c     size_t field_type_size = PKL_AST_TYPE_I_SIZE (@field_int_type);
  .c     size_t itype_bits = PKL_AST_TYPE_I_SIZE (@itype);
         ;; Field extraction:
@@ -1845,7 +1877,8 @@
         nip2
         ;; Convert the extracted value to the type of the field. If
         ;; the field is an offset, set an offset with the extracted
-        ;; value as magnitude and same unit.
+        ;; value as magnitude and same unit.  If the field is an
+        ;; integral struct, call its deintegrator.
         nton @uint64_type, @field_int_type
         nip
  .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET)
@@ -1854,6 +1887,12 @@
         .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (@offset_unit), 64)
         push #unit
         mko
+ .c }
+ .c else if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT)
+ .c {
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_DEINTEGRATOR);
+        .c PKL_PASS_SUBPASS (@field_type);
+        .c PKL_GEN_POP_CONTEXT;
  .c }
         .end
 
@@ -1896,8 +1935,11 @@
  .c       continue;
         .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
  .c     size_t field_type_size
- .c       = PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
- .c         ? PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type);
+ .c       = (PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET
+ .c                               ? PKL_AST_TYPE_O_BASE_TYPE (@field_type)
+ .c                               : PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT
+ .c                               ? PKL_AST_TYPE_S_ITYPE (@field_type)
+ .c                               : @field_type));
         ;; Anonymous fields are not handled in this loop, but we have
         ;; to advance the offset nevertheless.
         .let @type_field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
