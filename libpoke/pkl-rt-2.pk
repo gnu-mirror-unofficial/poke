@@ -16,6 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Any function that uses `format' cannot be used in `pkl-rt-1'.
+   The reason why the problem is happening is that `format' is using
+   `pkl_asm_call' to call `_pkl_reduce_string_array' and `pkl_asm_call'
+   relies on the global environment in the compiler and at that time the
+   on-going environment is not added yet.
+   So we have to put functions that use `format' here, in `pkl-rt-2'.  */
+
 /* Assertion function.
 
    The compiler transforms assert statement to invocation of this
