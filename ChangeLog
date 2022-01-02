@@ -1,5 +1,10 @@
 2022-01-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Allow splitting lines in RAS with \ at EOL):
+	Remove as done.
+
+2022-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ras: New rule to join continuation lines separated with
 	\.
 	* libpoke/pkl-gen.pks (struct_field_extractor): Split long lines.

@@ -1009,11 +1009,6 @@ Description:
 + should reverse them before calling the instruction.
 Target: 1.4
 
-Summary: Allow splitting lines in RAS with \ at EOL
-Component: RAS
-Kind: ENH
-Priority: 2
-
 Summary: Validate u?int and u?long args in RAS
 Component: RAS
 Kind: ENH
