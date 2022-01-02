@@ -460,6 +460,42 @@
    .c }
         .end
 
+;;; RAS_MACRO_FIELD_LOCATION_STR @struct_type @field
+;;; ( -- STR )
+;;;
+;;; Calculate a string with some location information for the given
+;;; field.  This may evaluate to an empty string if the struct type
+;;; has no name and the field is anonymous.
+;;;
+;;; Macro arguments:
+;;;
+;;; @struct_type is the type to which the field belongs.
+;;; @field is a pkl_ast_node with the struct field.
+
+        .macro field_location_str @struct_type @field
+ .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);        
+ .c if (field_name)
+ .c {
+        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
+ .c   pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);        
+ .c   if (struct_type_name)
+ .c   {
+        .let #type_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (struct_type_name))
+        push #type_name
+        push "."
+        sconc
+        nip2
+        push #field_name_str
+        sconc
+        nip2
+ .c   }
+ .c   else
+ .c   {
+        push #field_name_str
+ .c   }
+ .c }
+        .end
+
 ;;; RAS_MACRO_CHECK_STRUCT_FIELD_CONSTRAINT @struct_type @field
 ;;; ( -- )
 ;;;
@@ -487,21 +523,9 @@
    .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
    .c if (field_name)
    .c {
-        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
         push "msg"
         push "constraint expression failed for field "
-   .c  pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);
-   .c  if (struct_type_name)
-   .c  {
-        .let #type_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (struct_type_name))
-        push #type_name
-        sconc
-        nip2
-        push "."
-        sconc
-        nip2
-   .c  }
-        push #field_name_str
+        .e field_location_str @struct_type, @field
         sconc
         nip2
         sset
@@ -726,6 +750,17 @@
         pope
         ba .val_ok
 .eof:
+        ;; Set some location info in the exception's message
+   .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
+   .c if (field_name)
+   .c {
+        push "msg"
+        push "while mapping field "
+        .e field_location_str @struct_type, @field
+        sconc
+        nip2
+        sset
+   .c }
         pope
 .constraint_error:
         ;; This is to keep the right lexical environment in

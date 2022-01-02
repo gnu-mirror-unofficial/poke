@@ -331,6 +331,7 @@ EXTRA_DIST = \
   poke.map/maps-structs-endian-10.pk \
   poke.map/maps-structs-endian-11.pk \
   poke.map/maps-structs-endian-diag-1.pk \
+  poke.map/maps-structs-eof-1.pk \
   poke.map/maps-structs-init-1.pk \
   poke.map/maps-structs-init-2.pk \
   poke.map/maps-structs-init-3.pk \
