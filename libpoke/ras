@@ -102,6 +102,15 @@
 # the function into a pvm_program, and install it into a PVM closure
 # value that is assigned to CLOSURE.
 #
+# Splitting Long Lines
+# --------------------
+#
+# Logical long lines can be splitted into several physical lines by
+# finishing them with the \ character.  This is an example:
+#
+#   .macro struct_field_extractor @struct_type @field @struct_itype \
+#                                 @field_type #ivalw #fieldw
+#
 # Expanding Macros
 # ----------------
 #
@@ -599,6 +608,15 @@ BEGIN {
 # This keeps things simple.
 
 ## Miscellaneous rules
+
+# Allow splitting lines with \
+/\\$/ {
+    while ($0 ~ /\\$/)
+    {
+      getline record;
+      $0 = substr($0 , 0, length ($0) - 1) record;
+    }
+}
 
 # Keep blank lines (to improve readability)
 /^[ \t]*$/ {

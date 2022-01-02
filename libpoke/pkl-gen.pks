@@ -646,7 +646,8 @@
 ;;; `vars_registered' is a size_t that contains the number
 ;;; of field-variables registered so far.
 
-        .macro struct_field_extractor @struct_type @field @struct_itype @field_type #ivalw #fieldw
+        .macro struct_field_extractor @struct_type @field @struct_itype \
+                                      @field_type #ivalw #fieldw
         nrot                            ; STRICT IVAL BOFF SBOFF
         ;; Calculate the amount of bits that we have to right-shift
         ;; IVAL in order to extract the portion of the value
@@ -886,7 +887,8 @@
         swap                     ; ...[EBOFF ENAME EVAL] STRICT NEBOFF
         pushvar $boff
         pushvar $ivalue          ; ...[EBOFF ENAME EVAL] STRICT NEBOFF OFF IVAL
-        .e struct_field_extractor @type_struct, @field, @struct_itype, @field_type, #ivalw, #fieldw
+        .e struct_field_extractor @type_struct, @field, @struct_itype, @field_type, \
+                                  #ivalw, #fieldw
                                  ; ...[EBOFF ENAME EVAL] NEBOFF
  .c   }
  .c   else
@@ -1752,7 +1754,8 @@
 
         .macro deint_extract_field_value @uint64_type @itype @field_type #bit_offset
         .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
-        .let @field_int_type = PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET ? PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type
+        .let @field_int_type = PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_OFFSET ? \
+                               PKL_AST_TYPE_O_BASE_TYPE (@field_type) : @field_type
  .c     size_t field_type_size = PKL_AST_TYPE_I_SIZE (@field_int_type);
  .c     size_t itype_bits = PKL_AST_TYPE_I_SIZE (@itype);
         ;; Field extraction:
@@ -1877,7 +1880,8 @@
         .let #bit_offset = pvm_make_int (bit_offset, 32)
         ;; Extract the value for this field from IVAL
         pushvar $ival           ; SCT IVAL
-        .e deint_extract_field_value @uint64_type, @itype, @field_type, #bit_offset
+        .e deint_extract_field_value @uint64_type, @itype, @field_type, \
+                                     #bit_offset
                                 ; SCT CVAL
         .let #index = pvm_make_ulong (i, 64)
         push #index             ; SCT CVAL IDX

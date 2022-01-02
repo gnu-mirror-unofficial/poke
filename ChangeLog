@@ -1,5 +1,14 @@
 2022-01-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: New rule to join continuation lines separated with
+	\.
+	* libpoke/pkl-gen.pks (struct_field_extractor): Split long lines.
+	(struct_mapper): Likewise.
+	(deint_extract_field_value): Likewise.
+	(struct_deintegrator): Likewise.
+
+2022-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (field_location_str): New macro.
 	(check_struct_field_constraint): Use field_location_str.
 	(struct_field_mapper): Add location error message when EOF is
