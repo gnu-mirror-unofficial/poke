@@ -1836,8 +1836,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
                   PKL_PASS_ERROR;
                 }
 
-              /* XXX relax this restriction.  This needs work in the
-                 writer.  */
               if (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (field))
                 {
                   PKL_ERROR (PKL_AST_LOC (field),
