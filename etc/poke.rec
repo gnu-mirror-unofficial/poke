@@ -519,37 +519,6 @@ Description:
 + in_integrator.
 Target: 2.0
 
-Summary: Support for optional fields in integral structs
-Component: Language
-Kind: ENH
-Priority: 3
-Description:
-+ At the moment optional fields are not supported in integral structs.
-+ In particular, the lack of support is in the writer in
-+ pkl-gen.pks:struct_field_writer.
-+
-+ The struct writer uses the following strategy to poke integral
-+ structs:
-+
-+   Initialize IVAL to 0
-+   FOR each field
-+     IF field is not absent
-+       IVAL |= FIELD_VALUE << SHIFT;
-+   POKE IVAL to the corresponding offset
-+
-+ The problem with this approach is that if a field is not absent, the
-+ portion in IVAL corresponding to its value is 0, and not the value
-+ that currently exists in that portion in IO space.
-+
-+ Fixing this probably involves:
-+ 1. Initializing IVAL to the current contents in IO space instead of 0.
-+ 2. hacking ``struct_field_inserter`` in order to zero the portion of
-+    the field in IVAL before inserting it.
-+
-+ Once support is ready in ``struct_writer`` the compile-time check
-+ forbiding optional fields in ``pkl_typify1_ps_type_struct`` should be
-+ removed accordingly.
-
 Summary: Make endianness a type quality
 Component: Language
 Kind: ENH

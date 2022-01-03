@@ -1557,8 +1557,6 @@
         ba .next
 .omitted_field:
         ;; Field ommitted => IVAL stays unmodified.
-        ;; XXX this doens't work with absent fields, as it results
-        ;; on zeroes in the portions occupied by the absent field.
         drop                    ; IVAL SCT I
         drop                    ; IVAL SCT
         drop                    ; IVAL
