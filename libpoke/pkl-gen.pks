@@ -913,7 +913,7 @@
         tor
         tor
         tor
-        drop                    ; XXX fix this utter crap 8-)
+        drop                    ; Aieeee! :D
         fromr
         fromr
         fromr
