@@ -1,5 +1,11 @@
 2022-01-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c: Remove obsolete comments.  The GEN contexts
+	are now exclusive so the ordering of conditional clauses doesn't
+	matter anymore.
+
+2022-01-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (union_writer): New function.
 	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Compile an union writer for
 	unions.

@@ -2779,8 +2779,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_integral)
   pkl_asm pasm = PKL_GEN_ASM;
   pkl_ast_node integral_type = PKL_PASS_NODE;
 
-  /* Note that the check for in_writer should appear first than the
-     check for in_mapper.  */
   if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_WRITER))
     {
       /* Stack: IOS BOFF VAL */
@@ -3009,8 +3007,6 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 {
-  /* Note that the check for in_writer should appear first than the
-     check for in_mapper.  */
   if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_WRITER))
     {
       /* Stack: IOS OFF ARR */
@@ -3368,9 +3364,6 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_string)
 {
-  /* Note that the check for in_writer should appear first than the
-     check for in_mapper.  */
-
   if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_WRITER))
     {
       /* Stack: IOS BOFF STR */
@@ -3411,9 +3404,6 @@ PKL_PHASE_END_HANDLER
 
 PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
 {
-  /* Note that the check for in_writer should appear first than the
-     check for in_mapper.  */
-
   if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_WRITER))
     {
       /* Stack: IOS OFF SCT */
