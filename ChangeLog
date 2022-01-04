@@ -1,3 +1,8 @@
+2022-01-04  David Faust  <david.faust@oracle.com>
+
+	* pickles/btf.pk (BTF_Header): Adjust constraint on magic number
+	to properly set endianness as needed.
+
 2022-01-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Do not install a

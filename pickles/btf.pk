@@ -199,9 +199,9 @@ type BTF_Type =
 type BTF_Header =
   struct
   {
-    uint<16> magic : ((magic == 0x9feb && set_endian (ENDIAN_BIG)
-                       || (magic == 0xeb9f && set_endian (ENDIAN_LITTLE))))
-                   = (get_endian == ENDIAN_BIG ? 0x9feb : 0xeb9f);
+    uint<16> magic : (magic == 0xeb9f)
+                       || (magic == 0x9feb && set_endian (!get_endian))
+                   = 0xeb9f;
     uint<8> version;
     uint<8> flags;
     offset<uint<32>,B> hdr_len; /* Size of this header.  */
