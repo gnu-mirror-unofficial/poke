@@ -1,3 +1,9 @@
+2022-01-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_field_mapper): Fix backing up of GEN
+	endianness.
+	(struct_field_writer): Likewise.
+
 2022-01-04  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* pickles/btf-dump.pk (btf_dump_type_vdata): Use EXCOND operator.
