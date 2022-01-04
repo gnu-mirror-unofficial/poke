@@ -1,5 +1,9 @@
 2022-01-04  David Faust  <david.faust@oracle.com>
 
+	* testsuite/poke.pickles/btf-test.pk: New test.
+
+2022-01-04  David Faust  <david.faust@oracle.com>
+
 	* pickles/btf.pk (BTF_Header): Adjust constraint on magic number
 	to properly set endianness as needed.
 
