@@ -313,6 +313,7 @@ EXTRA_DIST = \
   poke.map/maps-structs-16.pk \
   poke.map/maps-structs-17.pk \
   poke.map/maps-structs-18.pk \
+  poke.map/maps-structs-19.pk \
   poke.map/maps-structs-anonfield-1.pk \
   poke.map/maps-structs-anonfield-2.pk \
   poke.map/maps-structs-anonfield-3.pk \
@@ -504,6 +505,7 @@ EXTRA_DIST = \
   poke.map/nsmap-3.pk \
   poke.map/nsmap-4.pk \
   poke.map/nsmap-5.pk \
+  poke.map/nsmap-6.pk \
   poke.map/strict-attr-1.pk \
   poke.map/strict-attr-2.pk \
   poke.map/strict-attr-3.pk \
@@ -528,6 +530,7 @@ EXTRA_DIST = \
   poke.map/write-unions-1.pk \
   poke.map/write-unions-2.pk \
   poke.map/write-unions-3.pk \
+  poke.map/write-structs-1.pk \
   poke.pickles/pickles.exp \
   poke.pickles/argp-test.pk \
   poke.pickles/color-test.pk \
@@ -1717,6 +1720,9 @@ EXTRA_DIST = \
   poke.pkl/scons-62.pk \
   poke.pkl/scons-63.pk \
   poke.pkl/scons-64.pk \
+  poke.pkl/scons-65.pk \
+  poke.pkl/scons-66.pk \
+  poke.pkl/scons-67.pk \
   poke.pkl/scons-anon-field-1.pk \
   poke.pkl/scons-anon-field-2.pk \
   poke.pkl/scons-anon-field-3.pk \

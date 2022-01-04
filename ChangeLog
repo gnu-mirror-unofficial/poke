@@ -1,3 +1,18 @@
+2022-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Compile type closures
+	conditionally but install environment unconditionally.
+	(LMAP): Likewise.
+	(pkl_gen_pr_array): Likewise.
+	(pkl_gen_pr_struct): Likewise.
+	* testsuite/poke.map/maps-structs-19.pk: Likewise.
+	* testsuite/poke.map/nsmap-6.pk: Likewise.
+	* testsuite/poke.pkl/scons-65.pk: New test.
+	* testsuite/poke.pkl/scons-66.pk: Likewise.
+	* testsuite/poke.pkl/scons-67.pk: Likewise.
+	* testsuite/poke.map/write-structs-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-01-04  David Faust  <david.faust@oracle.com>
 
 	* testsuite/poke.pickles/btf-test.pk: New test.

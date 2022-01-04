@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    byte[2] d;
+    byte c : c == d[0] + d[1];
+  };
+
+/* { dg-command {var f = Foo {}} } */
+/* { dg-command {try f.d = [2UB,3UB]; catch if E_constraint { printf "caught\n"; } } } */
+/* { dg-output "caught" } */

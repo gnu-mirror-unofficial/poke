@@ -1,0 +1,16 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    offset<uint<32>, B> rec_size;
+    uint<32> num_recs;
+
+    type Record = struct { uint<8> a; };
+
+    Record [rec_size * num_recs] recs;
+  };
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Foo { rec_size = 1#B, num_recs = 1 } } } */
+/* { dg-output "Foo \{rec_size=0x1U#B,num_recs=0x1U,recs=\\\[Record \{a=0x0UB\}\\\]\}" } */

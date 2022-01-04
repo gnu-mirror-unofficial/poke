@@ -1,0 +1,10 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+type S = struct { struct { uint<8> x; } b; };
+
+/* { dg-command { .set obase 16 } } */
+/* { dg-command { var s = S @ 1#B } } */
+/* { dg-command { s.b.x = 3 } } */
+/* { dg-command { byte @ 1#B } } */
+/* { dg-output "0x3UB" } */
