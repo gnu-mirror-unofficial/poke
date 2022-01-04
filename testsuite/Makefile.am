@@ -134,6 +134,7 @@ EXTRA_DIST = \
   poke.map/ass-map-20.pk \
   poke.map/ass-map-21.pk \
   poke.map/ass-map-22.pk \
+  poke.map/ass-map-23.pk \
   poke.map/ass-map-struct-int-1.pk \
   poke.map/func-map-1.pk \
   poke.map/func-map-2.pk \
@@ -524,6 +525,9 @@ EXTRA_DIST = \
   poke.map/valmap-struct-2.pk \
   poke.map/valmap-struct-3.pk \
   poke.map/valmap-struct-4.pk \
+  poke.map/write-unions-1.pk \
+  poke.map/write-unions-2.pk \
+  poke.map/write-unions-3.pk \
   poke.pickles/pickles.exp \
   poke.pickles/argp-test.pk \
   poke.pickles/color-test.pk \

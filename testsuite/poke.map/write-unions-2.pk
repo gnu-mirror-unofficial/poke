@@ -1,0 +1,19 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+var x = 10;
+
+type Foo =
+  union
+  {
+    byte a : x == 0;
+    uint<16> b;
+    byte c : x == 60;
+  };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {var f = Foo @ 4#B;} } */
+/* { dg-command {f.b = 0xff;} } */
+/* { dg-command {uint<16> @ 4#B} } */
+/* { dg-output "0xffUH" } */

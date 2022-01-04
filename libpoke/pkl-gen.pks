@@ -473,11 +473,11 @@
 ;;; @field is a pkl_ast_node with the struct field.
 
         .macro field_location_str @struct_type @field
- .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);        
+ .c pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
  .c if (field_name)
  .c {
         .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (field_name))
- .c   pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);        
+ .c   pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@struct_type);
  .c   if (struct_type_name)
  .c   {
         .let #type_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (struct_type_name))
@@ -1683,6 +1683,84 @@
  .c     PKL_PASS_SUBPASS (@struct_itype);
  .c }
         popf 1
+        push null
+        return
+        .end
+
+;;; RAS_FUNCTION_UNION_WRITER @type_struct
+;;; ( VAL -- )
+;;;
+;;; Assemble a function that pokes a mapped union value.
+;;;
+;;; @type_struct is a pkl_ast_node with the union type being
+;;; processed.
+
+        .function union_writer @type_struct
+        prolog
+        ;; This code relies on the following facts:
+        ;;
+        ;; 1. The struct value in the stack is of an union type.  This
+        ;;    means it only has one field member.
+        ;; 2. This member is not anonymous, as anonymous fields are not
+        ;;    allowed in unions.  The compiler guarantees this.
+        ;;
+        ;; The strategy is to iterate over all possible union type
+        ;; alternatives, trying to get them from the union value, by name.
+        ;; For non-taken alternatives this will result on an E_elem
+        ;; exception.
+        ;;
+        ;; The first alternative whose value is successfully retrieved
+        ;; from the struct value is the one we need to write out.  Then
+        ;; we are done.
+        .let @field
+ .c for (@field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .label .next_alternative
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
+        .let #field_name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        ;; Attempt to get this field and write out.
+        push PVM_E_ELEM
+        pushe .next_alternative
+        push #field_name_str
+        sref                    ; SCT STR VAL
+        tor                     ; SCT STR [VAL]
+        srefo                   ; SCT STR BOFF [VAL]
+        tor                     ; SCT STR [VAL BOFF]
+        drop                    ; SCT [VAL BOFF]
+        mgetios                 ; SCT IOS [VAL BOFF]
+        fromr                   ; SCT IOS BOFF [VAL]
+        fromr                   ; SCT IOS BOFF VAL
+        pope
+        .c { int endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
+        .c PKL_GEN_PAYLOAD->endian = PKL_AST_STRUCT_TYPE_FIELD_ENDIAN (@field);
+        .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+        .c PKL_PASS_SUBPASS (@field_type);
+        .c PKL_GEN_POP_CONTEXT;
+        .c PKL_GEN_PAYLOAD->endian = endian;
+        .c }
+        ba .done
+.next_alternative:
+        ;; Re-raise the exception if this was the last field.  This means
+        ;; we couldn't find a field to write, which is unexpected.
+ .c   if (PKL_AST_CHAIN (@field) == NULL)
+ .c   {
+        push "msg"
+        push "poke internal error in union_writer, please report this"
+        sset
+        raise
+ .c   }
+ .c   else
+ .c   {
+        drop                    ; The exception.
+ .c   }
+ .c }
+.done:
+        drop                    ; _
         push null
         return
         .end

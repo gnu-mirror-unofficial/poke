@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x00  0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00} } */
+
+var x = 10;
+type Foo = union { byte a : x == 0; int b; };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command {Foo @ 0x4#B = Foo { b = 0xdeadbeef } } } */
+/* { dg-command {int @ 0x4#B } } */
+/* { dg-output "0xdeadbeef" } */
