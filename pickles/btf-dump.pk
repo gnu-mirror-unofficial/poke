@@ -99,60 +99,13 @@ fun btf_dump_datasec = (BTF_Var_SecInfo[] entries) void:
 
 fun btf_dump_type_vdata = (BTF_Section btf, BTF_Type t) void:
   {
-    /* Integer */
-    try
-    {
-      btf_dump_int (t.data.integer);
-      return;
-    }
-    catch if E_elem {}
-
-    /* Array */
-    try
-    {
-      btf_dump_array (t.data.array);
-      return;
-    }
-    catch if E_elem {}
-
-    /* Enum */
-    try
-    {
-      btf_dump_enum (btf, t.data._enum);
-      return;
-    }
-    catch if E_elem {}
-
-    /* Func proto */
-    try
-    {
-      btf_dump_proto (btf, t.data.func_proto.params);
-      return;
-    }
-    catch if E_elem {}
-
-    /* Variable.  */
-    try
-    {
-      btf_dump_var (t.data.variable);
-      return;
-    }
-    catch if E_elem {}
-
-    /* Struct or union.  */
-    try
-    {
-      btf_dump_sou (btf, t);
-      return;
-    }
-    catch if E_elem {}
-
-    /* Datasec */
-    try
-    {
-      btf_dump_datasec (t.data.datasec);
-    }
-    catch if E_elem {}
+    ({ btf_dump_int (t.data.integer); } ?! E_elem)
+      || ({ btf_dump_array (t.data.array); } ?! E_elem)
+      || ({ btf_dump_enum (btf, t.data._enum); } ?! E_elem)
+      || ({ btf_dump_proto (btf, t.data.func_proto.params); } ?! E_elem)
+      || ({ btf_dump_var (t.data.variable); } ?! E_elem)
+      || ({ btf_dump_sou (btf, t); } ?! E_elem)
+      || ({ btf_dump_datasec (t.data.datasec); } ?! E_elem);
   }
 
 /* Dump a complete BTF type. Includes lookup and display of any strings

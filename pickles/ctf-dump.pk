@@ -116,24 +116,13 @@ fun ctf_dump_func = (CTF_Dictionary ctf, CTF_Type t) void:
 
 fun ctf_dump_vlen_data = (CTF_Dictionary ctf, CTF_Type t) void:
 {
-  try ctf_dump_int (t.data.integer);
-  catch if E_elem {};
-
-  try ctf_dump_array (t.data.array);
-  catch if E_elem {};
-
-  try ctf_dump_slice (ctf, t.data.slice);
-  catch if E_elem {};
-
-  try ctf_dump_sou_members (ctf, t.data.members);
-  catch if E_elem {};
-
-  try ctf_dump_enum (ctf, t.data._enum);
-  catch if E_elem {};
-
-  /* XXX CTF_Func_Args declaration scoped within CTF_Type is not available.  */
-  try ctf_dump_func (ctf, t);
-  catch if E_elem {};
+  ({ ctf_dump_int (t.data.integer); } ?! E_elem)
+    || ({ ctf_dump_array (t.data.array); } ?! E_elem)
+    || ({ ctf_dump_slice (ctf, t.data.slice); } ?! E_elem)
+    || ({ ctf_dump_sou_members (ctf, t.data.members); } ?! E_elem)
+    || ({ ctf_dump_enum (ctf, t.data._enum); } ?! E_elem)
+    /* XXX CTF_Func_Args declaration scoped within CTF_Type is not available.  */
+    || ({ ctf_dump_func (ctf, t); } ?! E_elem);
 }
 
 /* Dump the given CTF type.  */
