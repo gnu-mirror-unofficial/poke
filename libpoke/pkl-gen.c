@@ -3578,8 +3578,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                     /* _ */
           }
           PKL_GEN_POP_CONTEXT;
-
-          PKL_AST_TYPE_S_WRITER (type_struct) = type_struct_writer;
         }
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
