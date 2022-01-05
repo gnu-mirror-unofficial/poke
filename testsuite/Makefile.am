@@ -533,6 +533,7 @@ EXTRA_DIST = \
   poke.map/write-structs-1.pk \
   poke.pickles/pickles.exp \
   poke.pickles/argp-test.pk \
+  poke.pickles/btf-test.pk \
   poke.pickles/color-test.pk \
   poke.pickles/mbr-test.pk \
   poke.pickles/id3v1-test.pk \
