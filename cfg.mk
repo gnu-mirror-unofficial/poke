@@ -72,3 +72,6 @@ gendocs_options_ = -I $(abs_builddir)/doc/
 # those branches do not count as "public".
 submodule-checks = no-submodule-changes
 gl_public_submodule_commit =
+
+# Do not run the style check for indentation.
+INDENT_SOURCES =
