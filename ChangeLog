@@ -1,5 +1,13 @@
 2022-01-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Compile printer and
+	formater closures conditionally but install environment
+	unconditionally.
+	* testsuite/poke.pkl/printf-37.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Compile type closures
 	conditionally but install environment unconditionally.
 	(LMAP): Likewise.

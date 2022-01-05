@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type S = struct {};
+fun fun_nok = void: {printf "%Tv\n", S{}; };
+
+/* { dg-command { printf ("%v\n", S{}) } } */
+/* { dg-output "S \{\}" } */
