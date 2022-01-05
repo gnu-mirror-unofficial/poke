@@ -10637,8 +10637,8 @@ field is processed: at that time the value will be overwritten.
 @cindex integral structs
 
 Integral structs are useful to cover cases where data is stored in
-composited integral containers, i.e. where data is structured within
-stored integers.
+composited integral containers, @i{i.e.} where data is structured
+within stored integers.
 
 Basically, when we structure data using Poke structs, arrays and the
 like, we often use the same structure than a C programmer would use.
@@ -10839,12 +10839,12 @@ Certain virtual architecture uses that data layout to store registers
 in instructions (no comment.)  Thing is, in bit fields like the above
 with sub-byte field sizes, the ordering of the fields is not clearly
 defined, and ultimately what order to use is up to the compiler,
-i.e. to lore and tradition.  As it happens, GCC encodes @code{src_reg}
-in the most significant nibble of the byte and @code{dst_reg} in the
-least significant nibble of the byte when compiling for a
-little-endian target, and the other way around when compiling for a
-little-endian target. (I may have had that wrong, this always confuses
-me.)
+@i{i.e.} to lore and tradition.  As it happens, GCC encodes
+@code{src_reg} in the most significant nibble of the byte and
+@code{dst_reg} in the least significant nibble of the byte when
+compiling for a little-endian target, and the other way around when
+compiling for a little-endian target. (I may have had that wrong, this
+always confuses me.)
 
 How could we encode the C struct regs in Poke?  Let's see.
 
