@@ -137,14 +137,17 @@ parse_args (int argc, char *argv[])
 int
 load_script (const char *script)
 {
+  int ret;
   char *path
-    = alloca (strlen (poke_guidir) + strlen (script) + 2);
+    = malloc (strlen (poke_guidir) + strlen (script) + 2);
 
   strcpy (path, poke_guidir);
   strcat (path, "/");
   strcat (path, script);
 
-  return Tcl_EvalFile (tcl_interpreter, path);
+  ret = Tcl_EvalFile (tcl_interpreter, path);
+  free (path);
+  return ret;
 }
 
 int

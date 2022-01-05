@@ -1,5 +1,11 @@
 2022-01-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gui/poke-gui.c (load_script): Do not use alloca.
+	* bootstrap.conf (gui_modules): Do not use the gnulib alloca
+	module.
+
+2022-01-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_struct): Compile printer and
 	formater closures conditionally but install environment
 	unconditionally.
