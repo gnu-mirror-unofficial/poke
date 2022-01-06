@@ -1,5 +1,12 @@
 2022-01-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_field_inserter): Use 64-bit
+	arithmetic.
+	* testsuite/poke.pkl/deint-struct-12.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h: Prototype for pkl_ast_sizeof_integral_type.
 	* libpoke/pkl-ast.c (pkl_ast_sizeof_integral_type): New function.
 	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Allow

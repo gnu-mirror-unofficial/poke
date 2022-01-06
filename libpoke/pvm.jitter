@@ -3773,7 +3773,7 @@ instruction bsll () # ( LONG UINT -- LONG UINT LONG )
   end
 end
 
-# Instruction: bslu
+# Instruction: bsllu
 #
 # Left-shift the unsigned long at the under top of the stack the
 # number of bits indicated by the unsigned int at the top of the
