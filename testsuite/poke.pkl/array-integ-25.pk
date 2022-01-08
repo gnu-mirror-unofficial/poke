@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var a = ['1', '2', '3', '4'];
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {a as uint<32>} } */
+/* { dg-output {0x31323334U\n} } */
+/* { dg-command {['1', '2', '3', '4'] as uint<32>} } */
+/* { dg-output {0x31323334U} } */
+

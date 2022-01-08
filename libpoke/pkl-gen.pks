@@ -460,6 +460,115 @@
    .c }
         .end
 
+;;; RAS_FUNCTION_ARRAY_INTEGRATOR @array_type
+;;; ( ARR -- IVAL(ULONG) IVALSZ(UINT) )
+;;;
+;;; Assemble a function that, given an integrable array, returns
+;;; the corresponding integral value and its width in bits.
+;;;
+;;; Macro-arguments:
+;;;
+;;; @type_array is a pkl_ast_node with the type of the array
+;;; passed in the stack.
+
+        .function array_integrator @array_type
+        prolog
+        pushf 3
+        siz                     ; ARR ARRSZ
+        push ulong<64>64        ; ARR ARRSZ 64
+        gtlu                    ; ARR ARRSZ 64 (ARRSZ>64)
+        bnzi .too_wide
+        drop3                   ; ARR
+        ;; We start from the most significant bit (BOFF) in a ulong<64>,
+        ;; and put integral value of elements there. On each iteration,
+        ;; we increase the BOFF by element size.
+        ;; +--------+--------------+-----+
+        ;; | Elem 1 | ... | Elem N |     |
+        ;; +--------+-----+--------+-----+
+        ;; ^                       ^
+        ;; BOFF at start (64)      BOFF at the end of loop
+        push ulong<64>0         ; ARR IVAL
+        push uint<32>64         ; ARR IVAL BOFF
+        .let @array_elem_type = PKL_AST_TYPE_A_ETYPE (@array_type)
+        regvar $boff            ; ARR IVAL
+        regvar $ival            ; ARR
+        sel                     ; ARR NELEM
+        regvar $nelem           ; ARR
+        push ulong<64>0         ; ARR IDX
+     .while
+        pushvar $nelem          ; ARR IDX NELEM
+        over                    ; ARR IDX NELEM IDX
+        swap                    ; ARR IDX IDX NELEM
+        ltlu                    ; ARR IDX IDX NELEM (IDX<NELEM)
+        nip2                    ; ARR IDX (IDX<NELEM)
+     .loop
+        aref                    ; ARR IDX ELEM
+   .c if (PKL_AST_TYPE_CODE (@array_elem_type) == PKL_TYPE_ARRAY
+   .c     || PKL_AST_TYPE_CODE (@array_elem_type) == PKL_TYPE_STRUCT)
+   .c {
+   .c   PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_INTEGRATOR);
+   .c   PKL_PASS_SUBPASS (@array_elem_type);
+   .c   PKL_GEN_POP_CONTEXT;
+   .c }
+        ;; Integrator of arrays, leaves two values on the stack, the
+        ;; IVAL with type ulong<64> and WIDTH with type uint<32>.
+        ;; So we have to "fix" other cases (integers and integral structs).
+   .c if (PKL_AST_TYPE_CODE (@array_elem_type) == PKL_TYPE_INTEGRAL)
+   .c {
+        .e zero_extend_64 @array_elem_type
+        .let #elem_size \
+            = pvm_make_uint (PKL_AST_TYPE_I_SIZE (@array_elem_type), 32);
+        push #elem_size
+   .c }
+   .c else if (PKL_AST_TYPE_CODE (@array_elem_type) == PKL_TYPE_STRUCT)
+   .c {
+        .let @itype = PKL_AST_TYPE_S_ITYPE (@array_elem_type);
+        .e zero_extend_64 @itype
+        .let #elem_size = pvm_make_uint (                                     \
+            PKL_AST_TYPE_I_SIZE (PKL_AST_TYPE_S_ITYPE (@array_elem_type)),    \
+            32);
+        push #elem_size
+   .c }
+                                ; ARR IDX ELEM_UL ELEMSZ
+        pushvar $boff           ; ARR IDX ELEM_UL ELEMSZ BOFF
+        swap
+        subiu                   ; ARR IDX ELEM_UL BOFF ELEMSZ (BOFF-ELEMSZ)
+        nip2
+        dup                     ; ARR IDX ELEM_UL (BOFF-ELEMSZ) (BOFF-ELEMSZ)
+        quake                   ; ARR IDX (BOFF-ELEMSZ) ELEM_UL (BOFF-ELEMSZ)
+        bsllu
+        nip2                    ; ARR IDX (BOFF-ELEMSZ) (ELEM_UL<<BOFF)
+        pushvar $ival           ; ARR IDX (BOFF-ELEMSZ) (ELEM_UL<<BOFF) IVAL
+        borlu
+        nip2                    ; ARR IDX (BOFF-ELEMSZ) ((ELEM_UL<<BOFF)|IVAL)
+        popvar $ival            ; ARR IDX (BOFF-ELEMSZ)
+        popvar $boff            ; ARR IDX
+        push ulong<64>1
+        addlu
+        nip2
+     .endloop
+        drop2
+        pushvar $ival           ; IVAL
+        pushvar $boff           ; IVAL BOFF
+        ;; To create the final integral value (IVAL) and bit width (BOFF),
+        ;; we have to shift the IVAl to the right, and update the BOFF.
+        bsrlu                   ; IVAL BOFF (IVAL>>BOFF)
+        quake
+        nip                     ; BOFF (IVAL>>BOFF)
+        push uint<32>64         ; BOFF (IVAL>>BOFF) 64
+        rot                     ; (IVAL>>BOFF) 64 BOFF
+        subiu
+        nip2                    ; (IVAL>>BOFF) (BOFF-64)
+        popf 1
+        return
+.too_wide:
+        push PVM_E_CONV
+        push "msg"
+        push "arrays bigger than 64-bit cannot be casted to integral types"
+        sset
+        raise
+        .end
+
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL @field
 ;;; ( BOFF SBOFF - BOFF )
 ;;;

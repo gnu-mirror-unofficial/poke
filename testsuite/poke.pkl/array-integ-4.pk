@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var a = [[0xffUB],[0xf0UB]];
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {a as uint<16>} } */
+/* { dg-output {0xfff0UH\n} } */
+/* { dg-command {[[0xffUB],[0xf0UB]] as uint<16>} } */
+/* { dg-output {0xfff0UH} } */
+

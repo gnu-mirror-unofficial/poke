@@ -1,5 +1,56 @@
 2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-ast.h (pkl_ast_type_integrable_p): New function.
+	(struct pkl_ast_type): Add field for array integrator closure.
+	(PKL_AST_TYPE_A_INTEGRATOR): New accessor macro.
+	* libpoke/pkl-ast.c (pkl_ast_make_array_type): Add integrator field.
+	(pkl_ast_type_integrable_p): New function.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Handle cast from
+	array to integer.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Add array integrator.
+	(pkl_gen_pr_cast): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	* libpoke/pkl-gen.pks (array_integrator): Add implementation of
+	array integrator.
+	* testsuite/poke.pkl/array-integ-1.pk: New test.
+	* testsuite/poke.pkl/array-integ-1.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-2.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-3.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-4.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-5.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-6.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-7.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-8.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-9.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-10.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-11.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-12.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-13.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-14.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-15.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-16.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-17.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-18.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-19.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-20.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-21.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-22.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-23.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-24.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-25.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-26.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-27.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-28.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-29.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-30.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-31.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-32.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-33.pk: Likewise.
+	* testsuite/poke.pkl/array-integ-34.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_field_inserter): Use `zero_extend_64`.
 	(struct_deintegrator): Likewise.
 

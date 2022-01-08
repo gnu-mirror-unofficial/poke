@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var a = [0xffUB,0x0fUB];
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {a as int<16>} } */
+/* { dg-output {0xff0fH\n} } */
+/* { dg-command {[0xffUB,0x0fUB] as int<16>} } */
+/* { dg-output {0xff0fH} } */
+

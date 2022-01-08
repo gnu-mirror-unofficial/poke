@@ -371,7 +371,8 @@ pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
   const int nclosures
-      = 6; /* mapper, writer, bounder, constructor, printer, formater. */
+      = 7; /* mapper, writer, bounder, constructor, integrator, printer,
+              formater. */
 
   assert (etype);
 
@@ -387,6 +388,7 @@ pkl_ast_make_array_type (pkl_ast ast, pkl_ast_node etype, pkl_ast_node bound)
   PKL_AST_TYPE_A_WRITER (type) = PVM_NULL;
   PKL_AST_TYPE_A_BOUNDER (type) = PVM_NULL;
   PKL_AST_TYPE_A_CONSTRUCTOR (type) = PVM_NULL;
+  PKL_AST_TYPE_A_INTEGRATOR (type) = PVM_NULL;
   PKL_AST_TYPE_A_FORMATER (type) = PVM_NULL;
   PKL_AST_TYPE_A_PRINTER (type) = PVM_NULL;
 
@@ -945,6 +947,22 @@ pkl_ast_type_promoteable_p (pkl_ast_node ft, pkl_ast_node tt,
       && PKL_AST_TYPE_CODE (tt) == PKL_TYPE_INTEGRAL)
     return 1;
 
+  return 0;
+}
+
+/* Return whether the type TYPE is integrable or not.  */
+
+int
+pkl_ast_type_integrable_p (pkl_ast_node type)
+{
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL)
+    return 1;
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY)
+    return pkl_ast_type_integrable_p (PKL_AST_TYPE_A_ETYPE (type));
+  /* Integral structs are integrable.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (type) != NULL)
+    return 1;
   return 0;
 }
 

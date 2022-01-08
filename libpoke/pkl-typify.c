@@ -542,20 +542,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
     }
 
   /* Arrays can only be casted to other arrays of the right type,
-     i.e. only array boundaries may differ.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ARRAY
-      && !pkl_ast_type_equal_p (type, exp_type))
+     i.e. only array boundaries may differ, or if integrable to
+     integral types.  */
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ARRAY)
     {
-      char *type_str = pkl_type_str (type, 1);
-      char *found_type_str = pkl_type_str (exp_type, 1);
+      if (pkl_ast_type_equal_p (type, exp_type)
+          || ((PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
+               && pkl_ast_type_integrable_p (exp_type))))
+        ;
+      else
+        {
+          char *type_str = pkl_type_str (type, 1);
+          char *found_type_str = pkl_type_str (exp_type, 1);
 
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "invalid cast\nexpected %s, got %s",
-                 type_str, found_type_str);
-      free (type_str);
-      free (found_type_str);
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+          PKL_ERROR (PKL_AST_LOC (cast),
+                     "invalid cast\nexpected %s, got %s",
+                     type_str, found_type_str);
+          free (type_str);
+          free (found_type_str);
+          PKL_TYPIFY_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
     }
 
  done:

@@ -673,6 +673,40 @@ EXTRA_DIST = \
   poke.pkl/arrays-index-diag-3.pk \
   poke.pkl/arrays-initializer-diag-1.pk \
   poke.pkl/arrays-initializer-diag-2.pk \
+  poke.pkl/array-integ-1.pk \
+  poke.pkl/array-integ-2.pk \
+  poke.pkl/array-integ-3.pk \
+  poke.pkl/array-integ-4.pk \
+  poke.pkl/array-integ-5.pk \
+  poke.pkl/array-integ-6.pk \
+  poke.pkl/array-integ-7.pk \
+  poke.pkl/array-integ-8.pk \
+  poke.pkl/array-integ-9.pk \
+  poke.pkl/array-integ-10.pk \
+  poke.pkl/array-integ-11.pk \
+  poke.pkl/array-integ-12.pk \
+  poke.pkl/array-integ-13.pk \
+  poke.pkl/array-integ-14.pk \
+  poke.pkl/array-integ-15.pk \
+  poke.pkl/array-integ-16.pk \
+  poke.pkl/array-integ-17.pk \
+  poke.pkl/array-integ-18.pk \
+  poke.pkl/array-integ-19.pk \
+  poke.pkl/array-integ-20.pk \
+  poke.pkl/array-integ-21.pk \
+  poke.pkl/array-integ-22.pk \
+  poke.pkl/array-integ-23.pk \
+  poke.pkl/array-integ-24.pk \
+  poke.pkl/array-integ-25.pk \
+  poke.pkl/array-integ-26.pk \
+  poke.pkl/array-integ-27.pk \
+  poke.pkl/array-integ-28.pk \
+  poke.pkl/array-integ-29.pk \
+  poke.pkl/array-integ-30.pk \
+  poke.pkl/array-integ-31.pk \
+  poke.pkl/array-integ-32.pk \
+  poke.pkl/array-integ-33.pk \
+  poke.pkl/array-integ-34.pk \
   poke.pkl/ass-1.pk \
   poke.pkl/ass-2.pk \
   poke.pkl/ass-3.pk \

@@ -1,0 +1,19 @@
+/* { dg-do run } */
+
+type T = struct int<32>
+  {
+    int<16> a;
+    int<16> b;
+  };
+var a = [T {a=0xdead,b=0xbeef}];
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {a as int<32>} } */
+/* { dg-output {0xdeadbeef\n} } */
+/* { dg-command {a as int<16>} } */
+/* { dg-output {0xbeefH\n} } */
+/* { dg-command {a as int<17>} } */
+/* { dg-output {\(int<17>\) 0x1beef\n} } */
+/* { dg-command {a as int<64>} } */
+/* { dg-output {0xdeadbeefL\n} } */
+

@@ -370,11 +370,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 PKL_GEN_POP_CONTEXT;
                 PKL_AST_TYPE_A_CONSTRUCTOR (array_type) = constructor_closure;
               }
-
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                           PKL_AST_TYPE_A_CONSTRUCTOR (array_type)); /* CLS */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);               /* CLS */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);              /* _ */
+
+            if (pkl_ast_type_integrable_p (array_type))
+              {
+                if (PKL_AST_TYPE_A_INTEGRATOR (array_type) == PVM_NULL)
+                  {
+                    pvm_val integrator_closure;
+
+                    PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_INTEGRATOR);
+                    RAS_FUNCTION_ARRAY_INTEGRATOR (integrator_closure,
+                                                   array_type);
+                    PKL_GEN_POP_CONTEXT;
+                    PKL_AST_TYPE_A_INTEGRATOR (array_type) = integrator_closure;
+                  }
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                              PKL_AST_TYPE_A_INTEGRATOR (array_type)); /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);              /* CLS */
+                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);             /* _ */
+              }
 
             PKL_PASS_BREAK;
             break;
@@ -2245,6 +2262,20 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_cast)
       pkl_asm_insn (pasm, PKL_INSN_NTON, itype, to_type);
       pkl_asm_insn (pasm, PKL_INSN_NIP);
     }
+  else if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_ARRAY
+           && PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_INTEGRAL)
+    {
+      PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_INTEGRATOR);
+      PKL_PASS_SUBPASS (from_type);
+      PKL_GEN_POP_CONTEXT;
+
+                                          /* IVAL(ULONG) WIDTH(UINT) */
+      pkl_asm_insn (pasm, PKL_INSN_DROP); /* IVAL(ULONG) */
+      pkl_asm_insn (pasm, PKL_INSN_NTON,
+                    pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0),
+                    to_type);             /* IVAL(ULONG) IVAL */
+      pkl_asm_insn (pasm, PKL_INSN_NIP);  /* IVAL */
+    }
   else
     assert (0);
 
@@ -3148,6 +3179,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
 
       /* Invoke the formater.  */
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* _ */
+      PKL_PASS_BREAK;
+    }
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_INTEGRATOR))
+    {
+      /* Stack: ARR */
+
+      pkl_ast_node array_type = PKL_PASS_NODE;
+      pvm_val integrator_closure = PKL_AST_TYPE_A_INTEGRATOR (array_type);
+
+      /* If the array type doesn't have a integrator, compile one.  */
+      if (integrator_closure == PVM_NULL)
+        RAS_FUNCTION_ARRAY_INTEGRATOR (integrator_closure, array_type);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, integrator_closure); /* CLS */
+      if (!PKL_AST_TYPE_NAME (array_type))
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                    /* CLS */
+
+      /* Invoke the integrator.  IVAL is either ULONG or an offset with
+         ULONG as the base type.  */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL); /* IVAL(ULONG) WIDTH(UINT) */
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_CONSTRUCTOR))

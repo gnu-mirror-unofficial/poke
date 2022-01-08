@@ -852,8 +852,8 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    to an integer.  If the array type is bounded by size, then BOUND is
    an expression that must evaluate to an offset.  If the array type
    is unbounded, then BOUND is NULL.  MAPPER, WRITER, FORMATER,
-   PRINTER, CONSTRUCTOR and BOUNDCLS are used to hold closures, or
-   PVM_NULL. The field LEX_CORRECTED is used by the transl phase, to
+   PRINTER, CONSTRUCTOR, INTEGRATOR and BOUNDCLS are used to hold closures,
+   or PVM_NULL. The field LEX_CORRECTED is used by the transl phase, to
    keep record of array types that have been lexically corrected; this
    is to avoid processing the same type more than once.
 
@@ -863,7 +863,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
    PKL_AST_STRUCT_TYPE_FIELD or PKL_AST_DECL nodes, potentially mixed.
    PINNED_P is 1 if the struct is pinned, 0 otherwise.  MAPPER, WRITER
    CONSTRUCTOR, FORMATER, PRINTER, COMPARATOR, INTEGRATOR and
-   DEINTEGRATOR are used to hold closures, or PVM_NULL.  INT_TYPE, if
+   DEINTEGRATOR are used to hold closures, or PVM_NULL.  ITYPE, if
    not NULL, is an AST node with an integral type, that defines the
    nature of this struct type as integral.
 
@@ -900,6 +900,7 @@ pkl_ast_node pkl_ast_make_func_type_arg (pkl_ast ast,
 #define PKL_AST_TYPE_A_CONSTRUCTOR(AST) ((AST)->type.val.array.closures[3])
 #define PKL_AST_TYPE_A_PRINTER(AST) ((AST)->type.val.array.closures[4])
 #define PKL_AST_TYPE_A_FORMATER(AST) ((AST)->type.val.array.closures[5])
+#define PKL_AST_TYPE_A_INTEGRATOR(AST) ((AST)->type.val.array.closures[6])
 #define PKL_AST_TYPE_S_NFIELD(AST) ((AST)->type.val.sct.nfield)
 #define PKL_AST_TYPE_S_NDECL(AST) ((AST)->type.val.sct.ndecl)
 #define PKL_AST_TYPE_S_NELEM(AST) ((AST)->type.val.sct.nelem)
@@ -950,7 +951,7 @@ struct pkl_ast_type
       union pkl_ast_node *bound;
       union pkl_ast_node *etype;
       /* Uncollectable array for MAPPER, BOUNDER, WRITER, CONSTRUCTOR,
-         PRINTER and FORMATER.  */
+         INTEGRATOR, PRINTER and FORMATER.  */
       pvm_val *closures;
     } array;
 
@@ -1020,6 +1021,8 @@ int pkl_ast_type_is_exception (pkl_ast_node type);
 
 int pkl_ast_type_promoteable_p (pkl_ast_node ft, pkl_ast_node tt,
                                 int promote_array_of_any);
+
+int pkl_ast_type_integrable_p (pkl_ast_node type);
 
 pkl_ast_node pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type);
 

@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+var a = [[[[[[[[0xdeadH,0xbeefH]]]]]]]];
+
+/* { dg-command {.set obase 16} } */
+/* { dg-command {a as int<32>} } */
+/* { dg-output {0xdeadbeef\n} } */
+/* { dg-command {[[[[[[[[0xdeadH,0xbeefH]]]]]]]] as int<32>} } */
+/* { dg-output {0xdeadbeef} } */
+
