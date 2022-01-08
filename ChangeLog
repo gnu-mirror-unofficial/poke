@@ -1,5 +1,11 @@
 2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_print_val_1): Add `0x` prefix to
+	`{,u}long_fmt`.
+	* testsuite/poke.pkl/bconc-4.pk: Fix the test.
+
+2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-insn.def (PKL_INSN_LUTOLU): Fix to use `lutolu`
 	insn.
 	* poke.pkl/cast-integers-18.pk: New test.

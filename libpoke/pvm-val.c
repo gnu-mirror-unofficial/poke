@@ -1086,9 +1086,9 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       break;
     case 16:
       long64_fmt = "0x%" PRIx64 "L";
-      long_fmt = "(int<%d>) %" PRIx64;
+      long_fmt = "(int<%d>) 0x%" PRIx64;
       ulong64_fmt = "0x%" PRIx64 "UL";
-      ulong_fmt = "(uint<%d>) %" PRIx64;
+      ulong_fmt = "(uint<%d>) 0x%" PRIx64;
       int32_fmt = "0x%" PRIx32;
       int16_fmt = "0x%" PRIx32 "H";
       int8_fmt = "0x%" PRIx32 "B";
