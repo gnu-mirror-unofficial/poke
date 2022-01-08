@@ -1,5 +1,10 @@
 2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_field_inserter): Use `zero_extend_64`.
+	(struct_deintegrator): Likewise.
+
+2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-gen.pks (zero_extend_64): Add new macro.
 
 2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>

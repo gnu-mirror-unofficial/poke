@@ -1546,7 +1546,6 @@
 ;;; field being extracted.
 
         .macro struct_field_inserter @struct_itype @field_type #ivalw #fieldw
-        .let @uint64_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0)
         ;; Do not insert absent fields.
         srefia                  ; IVAL SCT I ABSENT_P
         bnzi .omitted_field
@@ -1558,8 +1557,7 @@
         ;;  Where REOFF is the _relative_ bit-offset of the field in
         ;;  the struct, i.e. EOFF - SOFF
         rot                     ; SCT I IVAL
-        nton @struct_itype, @uint64_type
-        nip
+        .e zero_extend_64 @struct_itype
         tor                     ; SCT I [IVAL]
         srefi                   ; SCT I EVAL [IVAL]
         tor                     ; SCT I [IVAL EVAL]
@@ -1586,7 +1584,7 @@
         .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@field_type)
         ogetm
         nip                     ; SCT I (IVALW-REOFF-FIELDW) EVAL [IVAL]
-        nton @base_type, @uint64_type
+        .e zero_extend_64 @base_type
  .c   }
  .c   else if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_STRUCT)
  .c   {
@@ -1596,28 +1594,14 @@
         .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_INTEGRATOR);
         .c PKL_PASS_SUBPASS (@field_type);
         .c PKL_GEN_POP_CONTEXT;
-        nton @field_itype, @uint64_type
+        .e zero_extend_64 @field_itype
  .c   }
  .c   else
  .c   {
-        nton @field_type, @uint64_type
+        .e zero_extend_64 @field_type
  .c   }
-        ;; Zero left unused bits of IVAL
-        push ulong<64>64
-        push #fieldw
-        sublu
-        nip2
-        lutoiu 32
-        nip
-        dup
-        quake
-        bsllu
-        nip2
-        swap
-        bsrlu
-        nip2
+                                ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
         ;; Finish the computation.
-        nip                     ; SCT I (IVALW-EOFF-FIELDW) EVAL [IVAL]
         swap                    ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL]
         lutoiu 32
         nip                     ; SCT I EVAL (IVALW-EOFF-FIELDW) [IVAL]
@@ -1627,6 +1611,7 @@
         borlu
         nip2                    ; SCT I ((EVAL<<(IVALW-EOFF-FIELDW))|IVAL)
         nip2                    ; ((EVAL<<(IVALW-EOFF-FIELDW))|IVAL)
+        .let @uint64_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0)
         nton @uint64_type, @struct_itype
         nip
         ba .next
@@ -1966,8 +1951,7 @@
         ;; calculations below.
         .let @itype = PKL_AST_TYPE_S_ITYPE (@type_struct)
         .let @uint64_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0)
-        nton @itype, @uint64_type
-        nip
+        .e zero_extend_64 @itype
         regvar $ival
         ;; This is the offset argument to the mksct instruction below.
         push ulong<64>0         ; OFF
