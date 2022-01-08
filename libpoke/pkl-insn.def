@@ -102,7 +102,7 @@ PKL_DEF_INSN(PKL_INSN_LTOLU,"n","ltolu")
 PKL_DEF_INSN(PKL_INSN_LUTOI,"n","lutoi")
 PKL_DEF_INSN(PKL_INSN_LUTOIU,"n","lutoiu")
 PKL_DEF_INSN(PKL_INSN_LUTOL,"n","lutol")
-PKL_DEF_INSN(PKL_INSN_LUTOLU,"n","lutol")
+PKL_DEF_INSN(PKL_INSN_LUTOLU,"n","lutolu")
 
 /* Integer arithmetic instructions.  */
 

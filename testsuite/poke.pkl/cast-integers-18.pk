@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var x = 1UL;
+
+/* { dg-command {  x as uint<33>  } } */
+/* { dg-output "\\(uint<33>\\) 1" } */

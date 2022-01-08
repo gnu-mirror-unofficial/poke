@@ -834,6 +834,7 @@ EXTRA_DIST = \
   poke.pkl/cast-integers-15.pk \
   poke.pkl/cast-integers-16.pk \
   poke.pkl/cast-integers-17.pk \
+  poke.pkl/cast-integers-18.pk \
   poke.pkl/cast-int-struct-1.pk \
   poke.pkl/cast-int-struct-2.pk \
   poke.pkl/cast-int-struct-3.pk \
