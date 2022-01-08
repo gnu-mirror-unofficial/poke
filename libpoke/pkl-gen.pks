@@ -430,6 +430,36 @@
         raise
         .end
 
+;;; RAS_MACRO_ZERO_EXTEND_64 @from_int_type
+;;; ( IVAL -- IVAL_U64 )
+;;;
+;;; Cast the integer on stack as ulong<64> without preserving the
+;;; sign bit.
+;;;
+;;; Macro arguments:
+;;;
+;;; @from_int_type is the type of integer on stack.
+
+        ;; XXX This must be a PVM instruction instead
+        .macro zero_extend_64 @from_int_type
+        .let @uint64_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0)
+   .c if (PKL_AST_TYPE_I_SIGNED_P (@from_int_type))
+   .c {
+        .let @utype =                                                       \
+          pkl_ast_make_integral_type (PKL_PASS_AST,                         \
+                                      PKL_AST_TYPE_I_SIZE (@from_int_type), \
+                                      0);
+        nton @from_int_type, @utype
+        nton @utype, @uint64_type
+        nip2
+   .c }
+   .c else
+   .c {
+        nton @from_int_type, @uint64_type
+        nip
+   .c }
+        .end
+
 ;;; RAS_MACRO_HANDLE_STRUCT_FIELD_LABEL @field
 ;;; ( BOFF SBOFF - BOFF )
 ;;;

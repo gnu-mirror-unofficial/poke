@@ -1,5 +1,9 @@
 2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-gen.pks (zero_extend_64): Add new macro.
+
+2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm-val.c (pvm_print_val_1): Add `0x` prefix to
 	`{,u}long_fmt`.
 	* testsuite/poke.pkl/bconc-4.pk: Fix the test.
