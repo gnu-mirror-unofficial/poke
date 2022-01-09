@@ -7,4 +7,3 @@ var a = [0xffUB,0xffUB];
 /* { dg-output {0xffffUH\n} } */
 /* { dg-command {[0xffUB,0xffUB] as uint<16>} } */
 /* { dg-output {0xffffUH} } */
-

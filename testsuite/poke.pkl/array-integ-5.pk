@@ -7,4 +7,3 @@ var a = [[0xffUB],[0xf0UB]];
 /* { dg-output {0xfff0H\n} } */
 /* { dg-command {[[0xffUB],[0xf0UB]] as int<16>} } */
 /* { dg-output {0xfff0H} } */
-

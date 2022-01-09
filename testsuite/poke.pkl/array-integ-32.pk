@@ -7,4 +7,3 @@ var a = [[5 as uint<3>], [7 as uint<3>], [5 as uint<3>]];
 /* { dg-output {\(int<9>\) 0x17d\n} } */
 /* { dg-command {[[5 as uint<3>], [7 as uint<3>], [5 as uint<3>]] as int<9>} } */
 /* { dg-output {\(int<9>\) 0x17d} } */
-

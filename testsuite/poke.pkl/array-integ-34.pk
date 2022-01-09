@@ -7,4 +7,3 @@ var a = [[[[[[[[0xdeadUH]]],[[[0xbabeUH]]]]]]]];
 /* { dg-output {\(int<33>\) 0xdeadbabe\n} } */
 /* { dg-command {[[[[[[[[0xdeadUH]]],[[[0xbabeUH]]]]]]]] as int<33>} } */
 /* { dg-output {\(int<33>\) 0xdeadbabe} } */
-

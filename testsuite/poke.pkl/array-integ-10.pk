@@ -7,4 +7,3 @@ var a = [0x12UB,0x34UB,0x56UB];
 /* { dg-output {\(uint<24>\) 0x123456\n} } */
 /* { dg-command {[0x12UB,0x34UB,0x56UB] as uint<24>} } */
 /* { dg-output {\(uint<24>\) 0x123456} } */
-
