@@ -10126,10 +10126,11 @@ an array of @code{length} bytes, which is the payload of the packet.
 
 Each entry in the struct type above defines a @dfn{struct field}.
 
+@cindex fields, anonymous
 Each field has a type, which is mandatory, and a name, which is
 optional.  Fields without names are not accessible (not even within
-the struct itself) but they are handy for expressing padding.
-Example:
+the struct itself) but they are handy for expressing esoteric padding.
+@xref{Padding and Alignment}.  Example:
 
 @example
 type Imm64 =
@@ -10150,7 +10151,7 @@ occurrence.
 
 Once a struct type gets defined, there are two ways to build struct
 values from it.  One is @dfn{mapping}.  @xref{Mapping Structs}.  The
-other is using @dfn{struct constructor}, which is explained in this
+other is using a @dfn{struct constructor}, which is explained in this
 section.
 
 Struct constructors have the following form:
