@@ -1,0 +1,52 @@
+#!@bindir@/poke -L
+!#
+
+/* pk-bin2poke - Translate a binary to a Poke file.  */
+
+/* Copyright (C) 2022 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+var stdin = open ("<stdin>");
+var stdout = open ("<stdout>");
+
+fun write_string = (string s) void:
+{
+  var ca = char[s'length] ();
+
+  stoca (s, ca);
+  char[] @ stdout : iosize (stdout) = ca;
+}
+
+var offset = 0#B;
+
+write_string ("var _data = [\n");
+
+try
+{
+  flush (stdin, offset);
+
+  if (offset > 0#B && offset % 8#B == 0#B)
+    write_string ("\n");
+
+  var b = byte @ stdin : offset++;
+  write_string (format ("0x%u8xUB, " b));
+}
+until E_eof;
+
+write_string ("];\n");
+
+close (stdin);
+close (stdout);

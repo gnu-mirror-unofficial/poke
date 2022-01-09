@@ -1,3 +1,10 @@
+2022-01-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/pk-bin2poke.in: New file.
+	* utils/Makefile.am (pk-bin2poke): New rule.
+	(EXTRA_DIST): Add pk-bin2poke.
+	(bin_SCRIPTS): Likewise.
+
 2022-01-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-ast.h (pkl_ast_type_integrable_p): New function.
