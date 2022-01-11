@@ -131,19 +131,20 @@ pk_compile_file (pk_compiler pkc, const char *filename,
 
 int
 pk_compile_buffer (pk_compiler pkc, const char *buffer,
-                   const char **end)
+                   const char **end, int *exit_status)
 {
-  PK_RETURN (pkl_execute_buffer (pkc->compiler, buffer, end) ? PK_OK
-                                                             : PK_ERROR);
+  PK_RETURN (pkl_execute_buffer (pkc->compiler, buffer,
+                                 end, exit_status) ? PK_OK : PK_ERROR);
 }
 
 int
 pk_compile_statement (pk_compiler pkc, const char *buffer,
-                      const char **end, pk_val *valp)
+                      const char **end, pk_val *valp,
+                      int *exit_status)
 {
   pvm_val val;
 
-  if (!pkl_execute_statement (pkc->compiler, buffer, end, &val))
+  if (!pkl_execute_statement (pkc->compiler, buffer, end, &val, exit_status))
     PK_RETURN (PK_ERROR);
 
   if (valp)
@@ -154,11 +155,11 @@ pk_compile_statement (pk_compiler pkc, const char *buffer,
 
 int
 pk_compile_expression (pk_compiler pkc, const char *buffer,
-                       const char **end, pk_val *valp)
+                       const char **end, pk_val *valp, int *exit_status)
 {
   pvm_val val;
 
-  if (!pkl_execute_expression (pkc->compiler, buffer, end, &val))
+  if (!pkl_execute_expression (pkc->compiler, buffer, end, &val, exit_status))
     PK_RETURN (PK_ERROR);
 
   if (valp)

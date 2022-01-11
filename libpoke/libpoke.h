@@ -132,7 +132,7 @@ void pk_compiler_free (pk_compiler pkc) LIBPOKE_API;
 
 int pk_errno (pk_compiler pkc) LIBPOKE_API;
 
-/* Compile a Poke program from the given file FILENAME.
+/* Compile an execute a Poke program from the given file FILENAME.
 
    If not NULL, *EXIT_STATUS is set to the status resulting from the
    execution of the program.
@@ -143,7 +143,7 @@ int pk_errno (pk_compiler pkc) LIBPOKE_API;
 int pk_compile_file (pk_compiler pkc, const char *filename,
                      int *exit_status) LIBPOKE_API;
 
-/* Compile a Poke program from a memory buffer.
+/* Compile an execute a Poke program from a memory buffer.
 
    BUFFER is a NULL-terminated string.
 
@@ -151,20 +151,27 @@ int pk_compile_file (pk_compiler pkc, const char *filename,
    not part of the compiled entity.
 
    Return PK_ERROR in case of a compilation error.  Otherwise,
-   return PK_OK.  */
+   return PK_OK.
+
+   If not NULL, *EXIT_STATUS is set to the status resulting from the
+   execution of the buffer contents.  */
 
 int pk_compile_buffer (pk_compiler pkc, const char *buffer,
-                       const char **end) LIBPOKE_API;
+                       const char **end, int *exit_status) LIBPOKE_API;
 
 /* Like pk_compile_buffer but compile and execute a single Poke
    statement, which may evaluate to a value if it is an "expression
    statement".
 
    VAL, if given, is a pointer to a pk_val variable that is set to the
-   result value of an expression-statement, or to PK_NULL.  */
+   result value of an expression-statement, or to PK_NULL.
+
+   If not NULL, *EXIT_STATUS is set to the status resulting from the
+   execution of the buffer contents.  */
 
 int pk_compile_statement (pk_compiler pkc, const char *buffer,
-                          const char **end, pk_val *val) LIBPOKE_API;
+                          const char **end, pk_val *val,
+                          int *exit_status) LIBPOKE_API;
 
 /* Like pk_compile_buffer but compile and execute a single Poke
    expression, which evaluates to a value.
@@ -172,10 +179,14 @@ int pk_compile_statement (pk_compiler pkc, const char *buffer,
    VAL, if given, is a pointer to a pk_val variable that is set to the
    result value of executing the expression.
 
-   Return PK_ERROR in case of a compilation error, PK_OK otherwise.  */
+   Return PK_ERROR in case of a compilation error, PK_OK otherwise.
+
+   If not NULL, *EXIT_STATUS is set to the status resulting from the
+   execution of the buffer contents.  */
 
 int pk_compile_expression (pk_compiler pkc, const char *buffer,
-                           const char **end, pk_val *val) LIBPOKE_API;
+                           const char **end, pk_val *val,
+                           int *exit_status) LIBPOKE_API;
 
 /* Load a module using the given compiler.
 

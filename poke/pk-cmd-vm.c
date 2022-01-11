@@ -64,7 +64,7 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
   expr = PK_CMD_ARG_STR (argv[1]);
-  ret = pk_compile_expression (poke_compiler, expr, NULL, &cls);
+  ret = pk_compile_expression (poke_compiler, expr, NULL, &cls, NULL);
 
   if (ret != PK_OK)
     /* The compiler has already printed diagnostics in the

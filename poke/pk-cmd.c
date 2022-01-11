@@ -642,7 +642,7 @@ pk_cmd_exec (const char *str)
       if (what == 0)
         {
           /* Declaration.  */
-          if (pk_compile_buffer (poke_compiler, ecmd, &end) != PK_OK)
+          if (pk_compile_buffer (poke_compiler, ecmd, &end, NULL) != PK_OK)
             {
               retval = 0;
               goto cleanup;
@@ -653,7 +653,7 @@ pk_cmd_exec (const char *str)
           /* Statement.  */
           pk_val val;
 
-          if (pk_compile_statement (poke_compiler, ecmd, &end, &val) != PK_OK)
+          if (pk_compile_statement (poke_compiler, ecmd, &end, &val, NULL) != PK_OK)
             {
               retval = 0;
               goto cleanup;

@@ -480,7 +480,7 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
      poke_compiler.  */
   if (pk_compile_buffer (poke_compiler,
                          PK_MAP_PARSED_MAP_PROLOGUE (map),
-                         NULL) != PK_OK)
+                         NULL, NULL) != PK_OK)
     return 0;
 
   /* Process the map entries and create the mapped global
@@ -501,7 +501,8 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           if (pk_compile_expression (poke_compiler,
                                      condition,
                                      NULL /* end */,
-                                     &val) != PK_OK)
+                                     &val,
+                                     NULL /* exit_status */) != PK_OK)
             goto error;
 
           if (pk_type_code (pk_typeof (val)) != PK_INT
@@ -536,7 +537,8 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           /* XXX what about constraints?  */
           if (pk_compile_buffer (poke_compiler,
                                  defvar_str,
-                                 NULL /* end */) != PK_OK)
+                                 NULL /* end */,
+                                 NULL /* exit_status */) != PK_OK)
             goto error;
         }
     }

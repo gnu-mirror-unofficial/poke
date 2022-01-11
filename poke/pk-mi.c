@@ -323,7 +323,7 @@ pk_mi_dispatch_msg (pk_mi_msg msg)
 
         ok = pk_compile_expression (poke_compiler,
                                     "format (\"%v\", __pkl_mi_value)",
-                                    NULL, &val);
+                                    NULL, &val, NULL);
         assert (ok == PK_OK);
 
         resp = pk_mi_make_resp (PK_MI_RESP_PRINTV, pk_mi_msg_number (msg),

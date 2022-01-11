@@ -1,3 +1,27 @@
+2022-01-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-vm.c (pk_cmd_vm_disas_fun): Likewise.
+	* libpoke/pkl.c (pkl_execute_buffer): Get an argument exit_status.
+	(pkl_execute_statement): Likewise.
+	(pkl_execute_expression): Likewise.
+	* libpoke/libpoke.c (pk_compile_buffer): Likewise.
+	(pk_compile_statement): Likewise.
+	(pk_compile_expression): Likewise.
+	* libpoke/pkl.h: Adjust function prototypes accordingly.
+	* libpoke/libpoke.h: Likewise.
+	* poke/pk-cmd.c (pk_cmd_exec): Pass additional arguments to
+	pk_compile_{buffer,statement}.
+	* testsuite/poke.libpoke/values.c (testcase_pk_val_equal_p): Likewise.
+	* testsuite/poke.libpoke/foreign-iod.c (main): Likewise.
+	(TEST_IO): Likewise.
+	(main): Likewise.
+	* poke/pk-mi.c (pk_mi_dispatch_msg): Likewise.
+	* poke/pk-map.c (pk_map_load_parsed_map): Likewise.
+	(pk_map_load_parsed_map): Likewise.
+	(pk_map_load_parsed_map): Likewise.
+	* testsuite/poke.mi-json/mi-json.c (compile_initial_poke_code): LIkewise.
+	(compile_poke_expression): Likewise.
+
 2022-01-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* utils/pk-bin2poke.in: New file.

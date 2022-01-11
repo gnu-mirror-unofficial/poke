@@ -97,24 +97,27 @@ int pkl_execute_file (pkl_compiler compiler, const char *fname,
 /* Compile and execute Poke program from a NULL-terminated string
    BUFFER.  Return 0 in case of a compilation error, 1 otherwise.  If
    not NULL, END is set to the first character in BUFFER that is not
-   part of the compiled entity.  */
+   part of the compiled entity.
+
+   If EXIT_STATUS is not NULL, set it to the status in which the
+   executed program terminated.  */
 
 int pkl_execute_buffer (pkl_compiler compiler, const char *buffer,
-                        const char **end);
+                        const char **end, int *exit_status);
 
 /* Like pkl_execute_buffer, but compile and execute a single Poke
    expression, that generates a value in VAL. */
 
 int pkl_execute_expression (pkl_compiler compiler,
                             const char *buffer, const char **end,
-                            pvm_val *val);
+                            pvm_val *val, int *exit_status);
 
 /* Like pkl_execute_expression but compile and execute a single Poke statement,
    which may generate a value in VAL if it is an "expression
    statement".  Otherwise VAL is set to PVM_NULL.  */
 
 int pkl_execute_statement (pkl_compiler compiler, const char *buffer, const char **end,
-                           pvm_val *val);
+                           pvm_val *val, int *exit_status);
 
 /* Compile a single Poke expression and return the resulting PVM
    program.  */

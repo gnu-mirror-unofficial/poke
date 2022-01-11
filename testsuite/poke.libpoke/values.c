@@ -232,13 +232,13 @@ testcase_pk_val_equal_p (const char *filename, const char *sec_code,
   if (!pkc)
     goto error;
 
-  if (pk_compile_buffer (pkc, sec_code, NULL) != PK_OK)
+  if (pk_compile_buffer (pkc, sec_code, NULL, NULL) != PK_OK)
     goto error;
 
-  if (pk_compile_expression (pkc, sec_expr1, NULL, &val1) != PK_OK)
+  if (pk_compile_expression (pkc, sec_expr1, NULL, &val1, NULL) != PK_OK)
     goto error;
 
-  if (pk_compile_expression (pkc, sec_expr2, NULL, &val2) != PK_OK)
+  if (pk_compile_expression (pkc, sec_expr2, NULL, &val2, NULL) != PK_OK)
     goto error;
 
   /*  We should have a way to discriminate if we should check
