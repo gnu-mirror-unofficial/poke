@@ -1027,7 +1027,8 @@ void pk_val_set_boffset (pk_val val, pk_val boffset) LIBPOKE_API;
 
 /* Other operations on values.  */
 
-/* Return the type of the given value.  */
+/* Return the type of the given value.  If the value is itself a type,
+   return it.  */
 
 pk_val pk_typeof (pk_val val) LIBPOKE_API;
 

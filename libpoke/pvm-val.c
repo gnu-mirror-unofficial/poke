@@ -1619,6 +1619,8 @@ pvm_typeof (pvm_val val)
     type = PVM_VAL_ARR_TYPE (val);
   else if (PVM_IS_SCT (val))
     type = PVM_VAL_SCT_TYPE (val);
+  else if (PVM_IS_TYP (val))
+    type = val;
   else
     assert (0);
 

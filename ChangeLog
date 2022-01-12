@@ -1,5 +1,14 @@
 2022-01-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm-val.c (pvm_typeof): If given a type value, return
+	the value.
+	* libpoke/pvm.jitter (typof): Change documentation accordingly.
+	* libpoke/libpoke.h (pk_typeof): Likewise.
+	* testsuite/poke.libpoke/values.c (test_pk_typeof): New function.
+	(main): Call test_pk_typeof.
+
+2022-01-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-vm.c (pk_cmd_vm_disas_fun): Likewise.
 	* libpoke/pkl.c (pkl_execute_buffer): Get an argument exit_status.
 	(pkl_execute_statement): Likewise.

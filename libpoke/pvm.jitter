@@ -5472,7 +5472,8 @@ end
 
 # Instruction: typof
 #
-# Given a value, push its type on the stack.
+# Given a value that is not itself a type, push its type on the stack.
+# Given a value that is a type, push the value on the stack.
 #
 # Stack: ( VAL -- VAL TYPE )
 

@@ -277,6 +277,23 @@ error:
 }
 
 void
+test_pk_typeof ()
+{
+  pk_val uint32_type = pk_make_integral_type (pk_make_uint (32, 64),
+                                              pk_make_int (1, 32));
+  pk_val res;
+
+  /* If given a type, pk_typeof should return the type itself.  */
+#define TEST "pk_typeof of uint<32>"
+  res = pk_typeof (uint32_type);
+  if (pk_val_equal_p (uint32_type, res))
+    pass (TEST);
+  else
+    fail (TEST);
+#undef TEST
+}
+
+void
 test_pk_val_equal_p ()
 {
   DIR *directory;
@@ -331,6 +348,7 @@ main (int argc, char *argv[])
   test_simple_values ();
   test_simple_values_mapping ();
   test_pk_val_equal_p ();
+  test_pk_typeof ();
 
   totals ();
   return 0;
