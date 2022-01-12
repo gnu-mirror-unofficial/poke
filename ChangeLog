@@ -1,3 +1,8 @@
+2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-diag.c (pkl_detailed_location): Normalize tabs to
+	spaces in the source location line to avoid displacements.
+
 2022-01-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pvm-val.c (pvm_typeof): If given a type value, return

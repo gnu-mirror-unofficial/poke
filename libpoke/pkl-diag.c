@@ -86,10 +86,14 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
           if (cur_line >= loc.first_line
               && cur_line <= loc.last_line)
             {
-              /* Print until newline or end of string.  */
+              /* Print until newline or end of string.  Note that we
+                 are normalizing tabs to spaces so the error location
+                 wont' appear displaed.  */
               do
                 {
-                  if (c != '\n')
+                  if (c == '\t')
+                    pk_puts (" ");
+                  else if (c != '\n')
                     pk_printf ("%c", c);
                   c = fgetc (fp);
                 }
