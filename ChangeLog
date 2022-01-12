@@ -1,3 +1,10 @@
+2022-01-13  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/libpoke.h (PK_EC_*): Add macros for standard exception
+	codes.
+	* libpoke/pkl-rt-1.pk: Update comment to mention libpoke.h.
+	* libpoke/pvm.h: Likewise.
+
 2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-diag.c (pkl_detailed_location): Normalize tabs to

@@ -103,7 +103,8 @@ type Exception =
   };
 
 /* Standard exception codes.
-   These codes should be in sync with PVM_E_* macros in pvm.h.
+   These codes should be in sync with PVM_E_* macros in pvm.h and
+   PK_EC_* macros libpoke.h.
    Note that user-defined exceptions must have codes starting with
    255 (and should be registered using exception_code function defined
    below).

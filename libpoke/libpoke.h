@@ -41,6 +41,29 @@ typedef uint64_t pk_val;
 #define PK_EEOF 3
 #define PK_EINVAL 4
 
+/* The following macros are standard exception codes defined in
+   pkl-rt-1.pk.  */
+
+#define PK_EC_GENERIC       0
+#define PK_EC_DIV_BY_ZERO   1
+#define PK_EC_NO_IOS        2
+#define PK_EC_NO_RETURN     3
+#define PK_EC_OUT_OF_BOUNDS 4
+#define PK_EC_MAP_BOUNDS    5
+#define PK_EC_EOF           6
+#define PK_EC_MAP           7
+#define PK_EC_CONV          8
+#define PK_EC_ELEM          9
+#define PK_EC_CONSTRAINT   10
+#define PK_EC_IO           11
+#define PK_EC_SIGNAL       12
+#define PK_EC_IOFLAGS      13
+#define PK_EC_INVAL        14
+#define PK_EC_EXIT         15
+#define PK_EC_ASSERT       16
+#define PK_EC_OVERFLOW     17
+#define PK_EC_PERM         18
+
 struct pk_color
 {
   int red;
