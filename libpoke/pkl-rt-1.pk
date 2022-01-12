@@ -187,7 +187,7 @@ var exception_code = lambda _ExceptionCodeGenerator:
    or be ready to underflow the exception handlers stack and face some
    ugly shit.  You have been warned!  */
 
-fun _pkl_exception_handler = (Exception exception) int<32>:
+fun _pkl_exception_handler = (Exception exception) Exception:
   {
    if (exception.code != EC_exit && exception.code != EC_signal)
      {
@@ -203,7 +203,7 @@ fun _pkl_exception_handler = (Exception exception) int<32>:
          }
      }
 
-   return exception.exit_status;
+   return exception;
   }
 
 /* Find the greatest common divisor of two unsigned 64-bit integrals A

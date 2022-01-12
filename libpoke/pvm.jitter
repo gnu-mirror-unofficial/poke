@@ -963,6 +963,7 @@ state-struct-backing-c
   code
       enum pvm_exit_code exit_code;
       pvm_val result_value;
+      pvm_val exit_exception_value;
       jitter_stack_height canary_stack;
       jitter_stack_height canary_returnstack;
       jitter_stack_height canary_exceptionstack;
@@ -6116,6 +6117,20 @@ instruction raise ()
     pvm_val exception = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
     PVM_RAISE_DIRECT (exception);
+  end
+end
+
+# Instruction: popexite
+#
+# Pops the exception on the stack and sets it in the VM.
+#
+# Stack: ( EXCEPTION  -- )
+# Exceptions Stack: ( -- )
+
+instruction popexite ()
+  code
+    PVM_STATE_BACKING_FIELD (exit_exception_value) = JITTER_TOP_STACK ();
+    JITTER_DROP_STACK ();
   end
 end
 

@@ -122,29 +122,30 @@ pk_errno (pk_compiler pkc)
 
 int
 pk_compile_file (pk_compiler pkc, const char *filename,
-                 int *exit_status)
+                 pk_val *exit_exception)
 {
-  PK_RETURN (pkl_execute_file (pkc->compiler, filename, exit_status)
+  PK_RETURN (pkl_execute_file (pkc->compiler, filename, exit_exception)
                  ? PK_OK
                  : PK_ERROR);
 }
 
 int
 pk_compile_buffer (pk_compiler pkc, const char *buffer,
-                   const char **end, int *exit_status)
+                   const char **end, pk_val *exit_exception)
 {
   PK_RETURN (pkl_execute_buffer (pkc->compiler, buffer,
-                                 end, exit_status) ? PK_OK : PK_ERROR);
+                                 end, exit_exception) ? PK_OK : PK_ERROR);
 }
 
 int
 pk_compile_statement (pk_compiler pkc, const char *buffer,
                       const char **end, pk_val *valp,
-                      int *exit_status)
+                      pk_val *exit_exception)
 {
   pvm_val val;
 
-  if (!pkl_execute_statement (pkc->compiler, buffer, end, &val, exit_status))
+  if (!pkl_execute_statement (pkc->compiler, buffer, end, &val,
+                              exit_exception))
     PK_RETURN (PK_ERROR);
 
   if (valp)
@@ -155,11 +156,12 @@ pk_compile_statement (pk_compiler pkc, const char *buffer,
 
 int
 pk_compile_expression (pk_compiler pkc, const char *buffer,
-                       const char **end, pk_val *valp, int *exit_status)
+                       const char **end, pk_val *valp, pk_val *exit_exception)
 {
   pvm_val val;
 
-  if (!pkl_execute_expression (pkc->compiler, buffer, end, &val, exit_status))
+  if (!pkl_execute_expression (pkc->compiler, buffer, end, &val,
+                               exit_exception))
     PK_RETURN (PK_ERROR);
 
   if (valp)
@@ -741,7 +743,7 @@ pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, int narg, ...)
 
   /* Run the program in the poke VM.  */
   pvm_program_make_executable (program);
-  rret = pvm_run (pkc->vm, program, ret);
+  rret = pvm_run (pkc->vm, program, ret, NULL);
 
   pvm_destroy_program (program);
   PK_RETURN (rret == PVM_EXIT_OK ? PK_OK : PK_ERROR);

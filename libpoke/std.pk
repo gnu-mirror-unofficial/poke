@@ -374,5 +374,5 @@ fun alignto = (offset<uint<64>,b> offset,
 
 fun exit = (int<32> exit_code = 0) void:
   {
-    raise Exception { code = EC_exit, exit_status = exit_code };
+    raise Exception { code = EC_exit, name = "exit", exit_status = exit_code };
   }

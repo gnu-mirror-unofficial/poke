@@ -398,7 +398,7 @@ pk_cmd_load_file (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   else
     goto no_file;
 
-  if (pk_compile_file (poke_compiler, filename, NULL /* exit_status */)
+  if (pk_compile_file (poke_compiler, filename, NULL /* exception */)
       != PK_OK)
     /* Note that the compiler emits its own error messages.  */
     goto error;

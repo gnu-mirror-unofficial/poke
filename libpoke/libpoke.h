@@ -157,14 +157,15 @@ int pk_errno (pk_compiler pkc) LIBPOKE_API;
 
 /* Compile an execute a Poke program from the given file FILENAME.
 
-   If not NULL, *EXIT_STATUS is set to the status resulting from the
-   execution of the program.
+   If not NULL, *EXIT_EXCEPTION is set to an exception value if the
+   execution of the program gets interrupted by an unhandled exception.
+   Otherwise *EXIT_EXCEPTION is set to PK_NULL.
 
    Return PK_ERROR in case of a compilation error.  Otherwise,
    return PK_OK.  */
 
 int pk_compile_file (pk_compiler pkc, const char *filename,
-                     int *exit_status) LIBPOKE_API;
+                     pk_val *exit_exception) LIBPOKE_API;
 
 /* Compile an execute a Poke program from a memory buffer.
 
@@ -176,11 +177,12 @@ int pk_compile_file (pk_compiler pkc, const char *filename,
    Return PK_ERROR in case of a compilation error.  Otherwise,
    return PK_OK.
 
-   If not NULL, *EXIT_STATUS is set to the status resulting from the
-   execution of the buffer contents.  */
+   If not NULL, *EXIT_EXCEPTION is set to an exception value if the
+   execution of the program gets interrupted by an unhandled exception.
+   Otherwise *EXIT_EXCEPTION is set to PK_NULL.  */
 
 int pk_compile_buffer (pk_compiler pkc, const char *buffer,
-                       const char **end, int *exit_status) LIBPOKE_API;
+                       const char **end, pk_val *exit_exception) LIBPOKE_API;
 
 /* Like pk_compile_buffer but compile and execute a single Poke
    statement, which may evaluate to a value if it is an "expression
@@ -189,12 +191,13 @@ int pk_compile_buffer (pk_compiler pkc, const char *buffer,
    VAL, if given, is a pointer to a pk_val variable that is set to the
    result value of an expression-statement, or to PK_NULL.
 
-   If not NULL, *EXIT_STATUS is set to the status resulting from the
-   execution of the buffer contents.  */
+   If not NULL, *EXIT_EXCEPTION is set to an exception value if the
+   execution of the program gets interrupted by an unhandled exception.
+   Otherwise *EXIT_EXCEPTION is set to PK_NULL.  */
 
 int pk_compile_statement (pk_compiler pkc, const char *buffer,
                           const char **end, pk_val *val,
-                          int *exit_status) LIBPOKE_API;
+                          pk_val *exit_exception) LIBPOKE_API;
 
 /* Like pk_compile_buffer but compile and execute a single Poke
    expression, which evaluates to a value.
@@ -204,12 +207,13 @@ int pk_compile_statement (pk_compiler pkc, const char *buffer,
 
    Return PK_ERROR in case of a compilation error, PK_OK otherwise.
 
-   If not NULL, *EXIT_STATUS is set to the status resulting from the
-   execution of the buffer contents.  */
+   If not NULL, *EXIT_EXCEPTION is set to an exception value if the
+   execution of the program gets interrupted by an unhandled exception.
+   Otherwise *EXIT_EXCEPTION is set to PK_NULL.  */
 
 int pk_compile_expression (pk_compiler pkc, const char *buffer,
                            const char **end, pk_val *val,
-                           int *exit_status) LIBPOKE_API;
+                           pk_val *exit_exception) LIBPOKE_API;
 
 /* Load a module using the given compiler.
 

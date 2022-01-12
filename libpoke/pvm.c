@@ -35,6 +35,8 @@
 
 #define PVM_STATE_RESULT_VALUE(PVM)                     \
   (PVM_STATE_BACKING_FIELD (& (PVM)->pvm_state, result_value))
+#define PVM_STATE_EXIT_EXCEPTION_VALUE(PVM)             \
+  (PVM_STATE_BACKING_FIELD (& (PVM)->pvm_state, exit_exception_value))
 #define PVM_STATE_EXIT_CODE(PVM)                        \
   (PVM_STATE_BACKING_FIELD (& (PVM)->pvm_state, exit_code))
 #define PVM_STATE_VM(PVM)                               \
@@ -155,12 +157,13 @@ pvm_get_env (pvm apvm)
 }
 
 enum pvm_exit_code
-pvm_run (pvm apvm, pvm_program program, pvm_val *res)
+pvm_run (pvm apvm, pvm_program program, pvm_val *res, pvm_val *exc)
 {
   sighandler_t previous_handler;
   pvm_routine routine = pvm_program_routine (program);
 
   PVM_STATE_RESULT_VALUE (apvm) = PVM_NULL;
+  PVM_STATE_EXIT_EXCEPTION_VALUE (apvm) = PVM_NULL;
   PVM_STATE_EXIT_CODE (apvm) = PVM_EXIT_OK;
 
   previous_handler = signal (SIGINT, pvm_handle_signal);
@@ -169,6 +172,8 @@ pvm_run (pvm apvm, pvm_program program, pvm_val *res)
 
   if (res != NULL)
     *res = PVM_STATE_RESULT_VALUE (apvm);
+  if (exc != NULL)
+    *exc = PVM_STATE_EXIT_EXCEPTION_VALUE (apvm);
 
   return PVM_STATE_EXIT_CODE (apvm);
 }
@@ -197,7 +202,7 @@ pvm_call_closure (pvm vm, pvm_val cls, ...)
   /* Run the program in the poke VM.  */
   program = pkl_asm_finish (pasm, 1 /* epilogue */);
   pvm_program_make_executable (program);
-  (void) pvm_run (vm, program, NULL);
+  (void) pvm_run (vm, program, NULL, NULL);
   pvm_destroy_program (program);
 
 }

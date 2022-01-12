@@ -502,7 +502,7 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
                                      condition,
                                      NULL /* end */,
                                      &val,
-                                     NULL /* exit_status */) != PK_OK)
+                                     NULL /* exception */) != PK_OK)
             goto error;
 
           if (pk_type_code (pk_typeof (val)) != PK_INT
@@ -538,7 +538,7 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           if (pk_compile_buffer (poke_compiler,
                                  defvar_str,
                                  NULL /* end */,
-                                 NULL /* exit_status */) != PK_OK)
+                                 NULL /* exception */) != PK_OK)
             goto error;
         }
     }

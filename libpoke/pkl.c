@@ -305,7 +305,8 @@ rest_of_compilation (pkl_compiler compiler,
 
 int
 pkl_execute_buffer (pkl_compiler compiler,
-                    const char *buffer, const char **end, int *exit_status)
+                    const char *buffer, const char **end,
+                    pvm_val *exit_exception)
 {
   pkl_ast ast = NULL;
   pvm_program program;
@@ -336,12 +337,8 @@ pkl_execute_buffer (pkl_compiler compiler,
   /* Execute the program in the poke vm.  */
   {
     pvm_val val;
-    int status = pvm_run (compiler->vm, program, &val);
 
-    if (exit_status)
-      *exit_status = status;
-
-    if (status != PVM_EXIT_OK)
+    if (pvm_run (compiler->vm, program, &val, exit_exception) != PVM_EXIT_OK)
       goto error;
 
     /* Discard the value.  */
@@ -360,13 +357,12 @@ pkl_execute_buffer (pkl_compiler compiler,
 int
 pkl_execute_statement (pkl_compiler compiler,
                        const char *buffer, const char **end,
-                       pvm_val *val, int *exit_status)
+                       pvm_val *val, pvm_val *exit_exception)
 {
   pkl_ast ast = NULL;
   pvm_program program;
   int ret;
   pkl_env env = NULL;
-  int status;
 
   compiler->compiling = PKL_COMPILING_STATEMENT;
   env = pkl_env_dup_toplevel (compiler->env);
@@ -389,10 +385,7 @@ pkl_execute_statement (pkl_compiler compiler,
   pvm_program_make_executable (program);
 
   /* Execute the routine in the poke vm.  */
-  status = pvm_run (compiler->vm, program, val);
-  if (exit_status)
-    *exit_status = status;
-  if (status != PVM_EXIT_OK)
+  if (pvm_run (compiler->vm, program, val, exit_exception) != PVM_EXIT_OK)
     goto error;
 
   pvm_destroy_program (program);
@@ -413,7 +406,6 @@ pkl_compile_expression (pkl_compiler compiler,
   pvm_program program;
   int ret;
   pkl_env env = NULL;
-  int status;
 
    compiler->compiling = PKL_COMPILING_EXPRESSION;
    env = pkl_env_dup_toplevel (compiler->env);
@@ -447,13 +439,12 @@ pkl_compile_expression (pkl_compiler compiler,
 int
 pkl_execute_expression (pkl_compiler compiler,
                         const char *buffer, const char **end,
-                        pvm_val *val, int *exit_status)
+                        pvm_val *val, pvm_val *exit_exception)
 {
   pkl_ast ast = NULL;
   pvm_program program;
   int ret;
   pkl_env env = NULL;
-  int status;
 
   compiler->compiling = PKL_COMPILING_EXPRESSION;
   env = pkl_env_dup_toplevel (compiler->env);
@@ -476,10 +467,7 @@ pkl_execute_expression (pkl_compiler compiler,
   pvm_program_make_executable (program);
 
   /* Execute the routine in the poke vm.  */
-  status = pvm_run (compiler->vm, program, val);
-  if (exit_status)
-    *exit_status = status;
-  if (status != PVM_EXIT_OK)
+  if (pvm_run (compiler->vm, program, val, exit_exception) != PVM_EXIT_OK)
     goto error;
 
   pvm_destroy_program (program);
@@ -494,7 +482,7 @@ pkl_execute_expression (pkl_compiler compiler,
 
 int
 pkl_execute_file (pkl_compiler compiler, const char *fname,
-                  int *exit_status)
+                  pvm_val *exit_exception)
 {
   int ret;
   pkl_ast ast = NULL;
@@ -532,10 +520,8 @@ pkl_execute_file (pkl_compiler compiler, const char *fname,
   /* Execute the program in the poke vm.  */
   {
     pvm_val val;
-    int status = pvm_run (compiler->vm, program, &val);
 
-    if (exit_status)
-      *exit_status = status;
+    pvm_run (compiler->vm, program, &val, exit_exception);
   }
 
   pvm_destroy_program (program);

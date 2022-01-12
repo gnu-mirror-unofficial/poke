@@ -441,6 +441,7 @@ PKL_DEF_INSN(PKL_INSN_GETENV,"","getenv")
 PKL_DEF_INSN(PKL_INSN_PUSHE,"l","pushe")
 PKL_DEF_INSN(PKL_INSN_POPE,"","pope")
 PKL_DEF_INSN(PKL_INSN_RAISE,"","raise")
+PKL_DEF_INSN(PKL_INSN_POPEXITE,"","popexite")
 
 /* IOS related instructions.  */
 

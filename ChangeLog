@@ -1,5 +1,39 @@
 2022-01-13  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.h (pvm_run): Add new arg for exception.
+	* libpoke/pvm.c (pvm_run): Report exception.
+	(pvm_call_closure): Fix pvm_run invocation.
+	(PVM_STATE_EXCEPTION_VALUE): New macro.
+	* libpoke/pkl.h (pkl_execute_file): Add new arg for exception.
+	(pkl_execute_buffer): Likewise.
+	(pkl_execute_expression): Likewise.
+	(pkl_execute_statement): Likewise.
+	* libpoke/pkl.c (pkl_execute_file): Likewise.
+	(pkl_execute_buffer): Likewise.
+	(pkl_execute_expression): Likewise.
+	(pkl_execute_statement): Likewise.
+	* libpoke/libpoke.h (pk_file_compile): Likewise.
+	(pk_compile_buffer): Likewise.
+	(pk_compile_statement): Likewise.
+	(pk_compile_expression): Likewise.
+	* libpoke/libpoke.c (pk_file_compile): Likewise.
+	(pk_compile_buffer): Likewise.
+	(pk_compile_statement): Likewise.
+	(pk_compile_expression): Likewise.
+	(pk_call): Fix pvm_run invocation.
+	* libpoke/pvm.jitter (state-struct-backing-c): Add new field.
+	(popexite): Add new instruction.
+	* libpoke/pkl-insn.def: Likewise.
+	* libpoke/pkl-rt-1.pk (_pkl_exception_handler): Change return value
+	to `Exception` from `int<32>`.
+	* libpoke/pkl-asm.c (pkl_asm_finish): Update to report exception.
+	* poke/pk-cmd-ios.c (pk_cmd_load_file): Fix comment.
+	* poke/pk-map.c (pk_map_load_parsed_map): Likewise.
+	* poke/poke.c (parse_args_2): Update to use exception value.
+	* libpoke/std.pk (exit): Set `name` field.
+
+2022-01-13  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/libpoke.h (PK_EC_*): Add macros for standard exception
 	codes.
 	* libpoke/pkl-rt-1.pk: Update comment to mention libpoke.h.

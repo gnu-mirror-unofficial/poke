@@ -433,10 +433,40 @@ parse_args_2 (int argc, char *argv[])
           break;
         case 'l':
         case LOAD_ARG:
-          if (pk_compile_file (poke_compiler, optarg,
-                               NULL /* exit_status */) != PK_OK)
+          {
+            pk_val exception;
+            int exc_code;
+            const char *exc_name;
+            const char *exc_loc;
+            const char *exc_msg;
+
+            if (pk_compile_file (poke_compiler, optarg, &exception) != PK_OK)
+              goto exit_success;
+            if (exception == PK_NULL)
+              break; /* Everything is good.  */
+
+            /* There's an unhandled exception.  */
+
+            exc_code = pk_int_value (pk_struct_ref_field_value (exception,
+                                                                "code"));
+            if (exc_code == PK_EC_EXIT || poke_quiet_p)
+              goto exit_success;
+
+            exc_name = pk_string_str (pk_struct_ref_field_value (exception,
+                                                                 "name"));
+            exc_loc = pk_string_str (pk_struct_ref_field_value (exception,
+                                                                "location"));
+            exc_msg = pk_string_str (pk_struct_ref_field_value (exception,
+                                                                "msg"));
+            pk_printf (_("error: unhandled %s exception while "
+                         "loading '%s'%s%s%s%s\n"),
+                       exc_name, optarg,
+                       STREQ (exc_loc, "") ? "" : " at ",
+                       STREQ (exc_loc, "") ? "" : exc_loc,
+                       STREQ (exc_msg, "") ? "" : " ",
+                       STREQ (exc_msg, "") ? "" : exc_msg);
             goto exit_success;
-          break;
+          }
         case 'c':
         case CMD_ARG:
           {
@@ -454,14 +484,19 @@ parse_args_2 (int argc, char *argv[])
           }
         case 'L':
           {
-            int exit_status;
+            pk_val exception;
+            int exit_status = 0;
 
             /* Build argv in the compiler, with the rest of the
                command-line arguments.  Then execute the script and
                return.  */
             set_script_args (argc, argv);
-            if (pk_compile_file (poke_compiler, optarg, &exit_status) != PK_OK)
+            if (pk_compile_file (poke_compiler, optarg, &exception) != PK_OK)
               goto exit_failure;
+            if (exception != PK_NULL)
+              exit_status
+                = pk_int_value (pk_struct_ref_field_value (exception,
+                                                           "exit_status"));
 
             finalize ();
             exit (exit_status);

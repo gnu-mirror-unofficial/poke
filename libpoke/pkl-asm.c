@@ -1236,7 +1236,15 @@ pkl_asm_finish (pkl_asm pasm, int epilogue)
          assembly.  Otherwise, call the _pkl_exception_handler
          function which is part of the compiler run-time.  */
       if (pkl_bootstrapped_p (pasm->compiler))
-        pkl_asm_call (pasm, "_pkl_exception_handler");
+        {
+          pkl_asm_call (pasm, "_pkl_exception_handler");  /* EXC */
+          pkl_asm_insn (pasm, PKL_INSN_PUSH,
+                        pvm_make_string ("exit_status")); /* EXC STR */
+          pkl_asm_insn (pasm, PKL_INSN_SREF);             /* EXC STR VAL */
+          pkl_asm_insn (pasm, PKL_INSN_NIP);              /* EXC VAL */
+          pkl_asm_insn (pasm, PKL_INSN_SWAP);             /* VAL EXC */
+          pkl_asm_insn (pasm, PKL_INSN_POPEXITE);         /* VAL */
+        }
       else
         {
           pkl_asm_insn (pasm, PKL_INSN_DROP); /* Discard the exception.  */
