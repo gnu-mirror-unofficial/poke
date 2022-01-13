@@ -1,5 +1,14 @@
 2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h (pk_array_elem_value): Rename from
+	pk_array_elem_val.
+	* libpoke/pk-val.c (pk_array_elem_value): Likewise.
+	* poke/pk-cmd-set.c (pk_cmd_set_init): Update accordingly.
+	* poke/pk-mi-json.c (pk_val_to_json_array): Likewise.
+	* poke/pk-ios.c (pk_open_file): Likewise.
+
+2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h (PK_VAL_TYPE): Define.
 	* libpoke/pk-val.c (pk_val_kind): Return PK_VAL_TYPE for types.
 

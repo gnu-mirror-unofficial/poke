@@ -472,7 +472,7 @@ pk_array_nelem (pk_val array)
 }
 
 pk_val
-pk_array_elem_val (pk_val array, uint64_t idx)
+pk_array_elem_value (pk_val array, uint64_t idx)
 {
   if (idx < pk_uint_value (pk_array_nelem (array)))
     return PVM_VAL_ARR_ELEM_VALUE (array, idx);

@@ -990,7 +990,7 @@ pk_val_to_json_array (pk_val pk_arr, json_object **j_arr, char **errmsg)
       json_object *j_elem, *j_boffset;
       pk_val e_value, e_fboffset;
 
-      e_value = pk_array_elem_val (pk_arr, i);
+      e_value = pk_array_elem_value (pk_arr, i);
       ret = pk_val_to_json (e_value, &j_elem, errmsg);
       GOTO_IF (ret == J_NOK, error, errmsg,
                "failed to create JSON object from Poke value at index %zu", i);

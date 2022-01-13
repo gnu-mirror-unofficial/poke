@@ -233,7 +233,7 @@ pk_cmd_set_init ()
 
   for (i = 0; i < pk_int_value (nsettings); ++i)
     {
-      pk_val setting = pk_array_elem_val (registry_settings, i);
+      pk_val setting = pk_array_elem_value (registry_settings, i);
       pk_val setting_name = pk_struct_ref_field_value (setting, "name");
       pk_val setting_kind = pk_struct_ref_field_value (setting, "kind");
       pk_val setting_usage = pk_struct_ref_field_value (setting, "usage");

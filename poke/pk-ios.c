@@ -62,16 +62,16 @@ pk_open_file (const char *handler, int set_cur_p, int create_p)
         regex_t regexp;
         regmatch_t matches;
 
-        auto_map_entry = pk_array_elem_val (auto_map, i);
+        auto_map_entry = pk_array_elem_value (auto_map, i);
         if (pk_val_kind (auto_map_entry) != PK_VAL_ARRAY
             || pk_uint_value (pk_array_nelem (auto_map_entry)) != 2)
           pk_fatal ("invalid entry in auto_val");
 
-        regex = pk_array_elem_val (auto_map_entry, 0);
+        regex = pk_array_elem_value (auto_map_entry, 0);
         if (pk_val_kind (regex) != PK_VAL_STRING)
           pk_fatal ("regexp should be a string in an auto_val entry");
 
-        mapname = pk_array_elem_val (auto_map_entry, 1);
+        mapname = pk_array_elem_value (auto_map_entry, 1);
         if (pk_val_kind (mapname) != PK_VAL_STRING)
           pk_fatal ("mapname should be a string in an auto_val entry");
 

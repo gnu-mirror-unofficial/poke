@@ -786,7 +786,7 @@ pk_val pk_array_nelem (pk_val array) LIBPOKE_API;
 
    If IDX is invalid, PK_NULL is returned. */
 
-pk_val pk_array_elem_val (pk_val array, uint64_t idx) LIBPOKE_API;
+pk_val pk_array_elem_value (pk_val array, uint64_t idx) LIBPOKE_API;
 
 /* Insert a new element into an array.
 
