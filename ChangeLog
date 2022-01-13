@@ -1,3 +1,10 @@
+2022-01-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/ios-dev.h (struct ios_dev_if): Move comments to
+	libpoke.h.
+	* libpoke/libpoke.h (struct ios_iod_if): Add comments moved
+	from ios-dev.h
+
 2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h (pk_array_elem_value): Rename from

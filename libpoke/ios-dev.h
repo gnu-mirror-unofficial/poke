@@ -47,62 +47,22 @@ typedef uint64_t ios_dev_off;
 #define IOD_EINVAL -6 /* Invalid argument.  */
 
 /* Each IO backend should implement a device interface, by filling an
-   instance of the struct defined below.  */
+   instance of the struct defined below.
+
+   See the pk_iod_if struct in libpoke.h for an explanation of the
+   interface functions.  */
 
 struct ios_dev_if
 {
-  /* Return the name of this device interface. Cannot return NULL. */
-
   const char *(*get_if_name) ();
-
-  /* Determine whether the provided HANDLER is recognized as a valid
-     device spec by this backend, and if so, return its normalized
-     form (caller will free).  In case of error, return NULL.  This function
-     sets the ERROR to error code or to IOD_OK.  */
-
   char * (*handler_normalize) (const char *handler, uint64_t flags, int* error);
-
-  /* Open a device using the provided HANDLER.  Return the opened
-     device, or NULL in case of errors.  Set the ERROR to error code or to
-     IOD_OK.  Note that this function assumes that HANDLER is recognized as a
-     handler by the backend.  DATA is the `data' pointer below, intended to be
-     used as an IOD-specific payload specified by the author of IOD.  */
-
   void * (*open) (const char *handler, uint64_t flags, int *error, void *data);
-
-  /* Close the given device.  Return the error code if there was an error
-     during the operation, IOD_OK otherwise.  */
-
   int (*close) (void *dev);
-
-  /* Read a small byte buffer from the given device at the given byte offset.
-     Return 0 on success, or IOD_EOF on error, including on short reads.  */
-
   int (*pread) (void *dev, void *buf, size_t count, ios_dev_off offset);
-
-  /* Write a small byte buffer to the given device at the given byte offset.
-     Return 0 on success, or IOD_EOF on error, including short writes.  */
-
   int (*pwrite) (void *dev, const void *buf, size_t count, ios_dev_off offset);
-
-  /* Return the flags of the device, as it was opened.  */
-
   uint64_t (*get_flags) (void *dev);
-
-  /* Return the size of the device, in bytes.  */
-
   ios_dev_off (*size) (void *dev);
-
-  /* If called on a in-stream, free the buffer before OFFSET.  If called on
-     an out-stream, flush the data till OFFSET and free the buffer before
-     OFFSET.  Otherwise, do not do anything.  Return IOS_OK in success and
-     an error code on failure.  */
-
   int (*flush) (void *dev, ios_dev_off offset);
-
-  /* IOD-specific data payload that will be passed to OPEN function.  If not
-     used, it should be NULL.  */
-
   void *data;
 };
 
