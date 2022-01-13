@@ -1031,7 +1031,7 @@ pk_val pk_val_ios (pk_val val) LIBPOKE_API;
 
 void pk_val_set_ios (pk_val val, pk_val ios) LIBPOKE_API;
 
-/* Return the offset in which the given value is mapped.
+/* Return the offset in which the given value is mapped, as an offset value.
    If the value is not mapped, return PK_NULL.  */
 
 pk_val pk_val_offset (pk_val val) LIBPOKE_API;
@@ -1043,7 +1043,9 @@ pk_val pk_val_offset (pk_val val) LIBPOKE_API;
 
 void pk_val_set_offset (pk_val val, pk_val offset) LIBPOKE_API;
 
-/* Return the bit offset in which the given value is mapped.
+/* Return the bit offset in which the given value is mapped, as an
+   uint<64>.
+
    If the value is not mapped, return PK_NULL.  */
 
 pk_val pk_val_boffset (pk_val val) LIBPOKE_API;
