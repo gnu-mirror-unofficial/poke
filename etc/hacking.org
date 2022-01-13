@@ -472,6 +472,18 @@ Indu Bhagat             <indu.bhagat@oracle.com>
    https://gcc.gnu.org/onlinedocs/gccint/Directives.html
    https://gcc.gnu.org/wiki/HowToPrepareATestcase
 
+** Run selected tests
+
+   Tests are categorized in different sub-directories. You can run
+   run tests of a signle category by runing
+     : make check RUNTESTFLAGS=CATEGORY.exp
+   For example, to run tests of =pkl= in =poke.pkl= sub-directory, run:
+     : make check RUNTESTFLAGS=pkl.exp
+   You can also select tests using =TESTS= environment variable.
+   As an example, to run all test files which start with =array=, you
+   can run:
+     : make check TESTS=array*.pk
+
 ** Unit Tests
 
    We are using DejaGnu's support for unit tests.  See

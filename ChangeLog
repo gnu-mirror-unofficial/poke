@@ -1,5 +1,18 @@
 2022-01-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* testsuite/lib/poke.exp (tests_pattern): New variable.
+	(tests_pattern_pk): Likewise.
+	* testsuite/poke.cmd/cmd.exp: Use `tests_pattern`.
+	* testsuite/poke.map/map.exp: Likewise.
+	* testsuite/poke.pickles/pickles.exp: Likewise.
+	* testsuite/poke.pkl/pkl.exp: Likewise.
+	* testsuite/poke.pktest/pktest.exp: Likewise.
+	* testsuite/poke.std/std.exp: Likewise.
+	* testsuite/poke.time/time.exp: Likewise.
+	* etc/hacking.org (Run selected tests): New section.
+
+2022-01-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/ios-dev.h (struct ios_dev_if): Move comments to
 	libpoke.h.
 	* libpoke/libpoke.h (struct ios_iod_if): Add comments moved

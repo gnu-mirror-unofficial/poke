@@ -18,4 +18,4 @@
 
 load_lib "poke-pk.exp"
 
-pk-runtest [lsort [glob -nocomplain $srcdir/poke.pickles/*-test.pk]]
+pk-runtest [lsort [glob -nocomplain $srcdir/poke.pickles/$tests_pattern_pk]]

@@ -18,5 +18,5 @@
 
 load_lib ${tool}-dg.exp
 dg-init
-dg-runtest [lsort [glob -nocomplain $srcdir/poke.time/*.pk]] {} {}
+dg-runtest [lsort [glob -nocomplain $srcdir/poke.time/$tests_pattern]] {} {}
 dg-finish

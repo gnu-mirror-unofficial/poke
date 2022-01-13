@@ -35,6 +35,15 @@ if ![info exists POKE] {
     set POKE ${objdir}/../poke/poke
 }
 
+# Pattern for selection of tests.
+
+set tests_pattern {*.pk}
+set tests_pattern_pk {*-test.pk}
+if [info exists env(TESTS)] {
+    set tests_pattern $env(TESTS)
+    set tests_pattern_pk $env(TESTS)
+}
+
 # prompt is the poke prompt to expect from the program.  As this can
 # change we can put it in a variable that can be easily modified later.
 
