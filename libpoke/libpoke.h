@@ -398,7 +398,11 @@ const char *pk_ios_get_dev_if_name (pk_ios ios) LIBPOKE_API;
 
 uint64_t pk_ios_size (pk_ios ios) LIBPOKE_API;
 
-/* Return the bias of the given IO space, in bits.  */
+/* Return the bias of the given IO space, in bits.
+
+   Each IO space has a bias associated with it, which by default is 0
+   bits.  This bias is applied to the offset given to every read/write
+   operation.  */
 
 uint64_t pk_ios_get_bias (pk_ios ios) LIBPOKE_API;
 
