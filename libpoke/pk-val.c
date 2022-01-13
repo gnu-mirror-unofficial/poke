@@ -210,24 +210,47 @@ pk_type_code (pk_val val)
     {
     case PVM_TYPE_INTEGRAL:
       if ((pk_int_value (pk_integral_type_signed_p (val))))
-        return PK_INT;
+        return PK_TYPE_INT;
       else
-        return PK_UINT;
+        return PK_TYPE_UINT;
     case PVM_TYPE_STRING:
-      return PK_STRING;
+      return PK_TYPE_STRING;
     case PVM_TYPE_ARRAY:
-      return PK_ARRAY;
+      return PK_TYPE_ARRAY;
     case PVM_TYPE_STRUCT:
-      return PK_STRUCT;
+      return PK_TYPE_STRUCT;
     case PVM_TYPE_OFFSET:
-      return PK_OFFSET;
+      return PK_TYPE_OFFSET;
     case PVM_TYPE_CLOSURE:
-      return PK_CLOSURE;
+      return PK_TYPE_CLOSURE;
     case PVM_TYPE_ANY:
-      return PK_ANY;
+      return PK_TYPE_ANY;
     default:
-      return PK_UNKNOWN;
+      return PK_TYPE_UNKNOWN;
     }
+}
+
+int
+pk_val_kind (pk_val val)
+{
+  if (PVM_IS_INT (val) || PVM_IS_LONG (val))
+    return PK_VAL_INT;
+  else if (PVM_IS_UINT (val) || PVM_IS_ULONG (val))
+    return PK_VAL_UINT;
+  else if (PVM_IS_OFF (val))
+    return PK_VAL_OFFSET;
+  else if (PVM_IS_STR (val))
+    return PK_VAL_STRING;
+  else if (PVM_IS_ARR (val))
+    return PK_VAL_ARRAY;
+  else if (PVM_IS_SCT (val))
+    return PK_VAL_STRUCT;
+  else if (PVM_IS_CLS (val))
+    return PK_VAL_CLOSURE;
+  else if (PVM_IS_TYP (val))
+    return PK_VAL_UNKNOWN;
+  else
+    return PK_VAL_UNKNOWN;
 }
 
 int

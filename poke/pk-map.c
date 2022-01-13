@@ -505,15 +505,15 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
                                      NULL /* exception */) != PK_OK)
             goto error;
 
-          if (pk_type_code (pk_typeof (val)) != PK_INT
-              && pk_type_code (pk_typeof (val)) != PK_UINT)
+          if (pk_val_kind (val) != PK_VAL_INT
+              && pk_val_kind (val) != PK_VAL_UINT)
             {
               /* XXX error location.  */
               pk_printf ("error: invalid condition expression\n");
               goto error;
             }
 
-          if (!(pk_type_code (pk_typeof (val)) == PK_INT
+          if (!(pk_val_kind (val) == PK_VAL_INT
                 ? pk_int_value (val) : pk_uint_value (val)))
             process_p = 0;
         }
@@ -676,7 +676,7 @@ pk_map_resolve_map (const char *mapname, int filename_p)
   if (val == PK_NULL)
     pk_fatal ("couldn't get `map_load_path'");
 
-  if (pk_type_code (pk_typeof (val)) != PK_STRING)
+  if (pk_val_kind (val) != PK_VAL_STRING)
     pk_fatal ("map_load_path should be a string");
 
   map_load_path = pk_string_str (val);

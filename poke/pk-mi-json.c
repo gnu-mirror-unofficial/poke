@@ -263,15 +263,15 @@ static int
 pk_type_to_json (pk_val ptype, json_object **j_type, char **errmsg)
 {
   static const pk_type_to_json_func pk_type_to_json_functions[] = {
-    [PK_UNKNOWN] = NULL,
-    [PK_INT] = pk_type_to_json_integral,
-    [PK_UINT] = pk_type_to_json_integral,
-    [PK_STRING] = pk_type_to_json_string,
-    [PK_OFFSET] = pk_type_to_json_offset,
-    [PK_ARRAY] = pk_type_to_json_array,
-    [PK_STRUCT] = pk_type_to_json_struct,
-    [PK_CLOSURE] = NULL,
-    [PK_ANY] = pk_type_to_json_any,
+    [PK_TYPE_UNKNOWN] = NULL,
+    [PK_TYPE_INT] = pk_type_to_json_integral,
+    [PK_TYPE_UINT] = pk_type_to_json_integral,
+    [PK_TYPE_STRING] = pk_type_to_json_string,
+    [PK_TYPE_OFFSET] = pk_type_to_json_offset,
+    [PK_TYPE_ARRAY] = pk_type_to_json_array,
+    [PK_TYPE_STRUCT] = pk_type_to_json_struct,
+    [PK_TYPE_CLOSURE] = NULL,
+    [PK_TYPE_ANY] = pk_type_to_json_any,
   };
   const size_t len = sizeof (pk_type_to_json_functions) /
                      sizeof (pk_type_to_json_functions[0]);
@@ -562,21 +562,21 @@ pk_type_to_json_array (pk_val p_type_arr, json_object **j_type_arr,
 
       switch (pk_type_code (bound_type))
         {
-          case PK_UINT:
+          case PK_TYPE_UINT:
             bound_value = pk_uint_value (p_bound);
             bound_size_p = 0;
             break;
-          case PK_OFFSET:
+          case PK_TYPE_OFFSET:
             {
               pk_val b_off_mag = pk_offset_magnitude (p_bound);
 
               switch (pk_type_code (pk_typeof (b_off_mag)))
                 {
-                  case PK_INT:
+                  case PK_TYPE_INT:
                     bound_value = pk_int_value (b_off_mag);
                     assert (bound_value > 0);
                     break;
-                  case PK_UINT:
+                  case PK_TYPE_UINT:
                     bound_value = pk_uint_value (b_off_mag);
                     break;
                   default:
@@ -714,15 +714,15 @@ static int
 pk_val_to_json (pk_val pval, json_object **obj, char **errmsg)
 {
   static const pk_val_to_json_func pk_val_to_json_functions[] = {
-    [PK_UNKNOWN] = NULL,
-    [PK_INT] = pk_val_to_json_int,
-    [PK_UINT] = pk_val_to_json_uint,
-    [PK_STRING] = pk_val_to_json_string,
-    [PK_OFFSET] = pk_val_to_json_offset,
-    [PK_ARRAY] = pk_val_to_json_array,
-    [PK_STRUCT] = pk_val_to_json_struct,
-    [PK_CLOSURE] = NULL,
-    [PK_ANY] = pk_val_to_json_any,
+    [PK_TYPE_UNKNOWN] = NULL,
+    [PK_TYPE_INT] = pk_val_to_json_int,
+    [PK_TYPE_UINT] = pk_val_to_json_uint,
+    [PK_TYPE_STRING] = pk_val_to_json_string,
+    [PK_TYPE_OFFSET] = pk_val_to_json_offset,
+    [PK_TYPE_ARRAY] = pk_val_to_json_array,
+    [PK_TYPE_STRUCT] = pk_val_to_json_struct,
+    [PK_TYPE_CLOSURE] = NULL,
+    [PK_TYPE_ANY] = pk_val_to_json_any,
   };
   const size_t len = sizeof (pk_val_to_json_functions) /
                      sizeof (pk_val_to_json_functions[0]);
@@ -778,10 +778,10 @@ pk_val_to_json_offset (pk_val pk_off, json_object **j_off, char **errmsg)
 
   switch (pk_type_code (pk_typeof (p_mag)))
     {
-      case PK_INT:
+      case PK_TYPE_INT:
         val = pk_int_value (p_mag);
         break;
-      case PK_UINT:
+      case PK_TYPE_UINT:
         val = (int64_t) pk_uint_value (p_mag);
         break;
       default:
@@ -1436,15 +1436,15 @@ json_to_pk_val (json_object *obj, pk_val p_type, pk_val *p_value,
                 char **errmsg)
 {
   static const json_to_pk_val_func json_to_pk_val_functions[] = {
-    [PK_UNKNOWN] = NULL,
-    [PK_INT] = json_to_pk_val_int,
-    [PK_UINT] = json_to_pk_val_uint,
-    [PK_STRING] = json_to_pk_val_string,
-    [PK_OFFSET] = json_to_pk_val_offset,
-    [PK_ARRAY] = json_to_pk_val_array,
-    [PK_STRUCT] = json_to_pk_val_struct,
-    [PK_CLOSURE] = NULL,
-    [PK_ANY] = json_to_pk_val_any,
+    [PK_TYPE_UNKNOWN] = NULL,
+    [PK_TYPE_INT] = json_to_pk_val_int,
+    [PK_TYPE_UINT] = json_to_pk_val_uint,
+    [PK_TYPE_STRING] = json_to_pk_val_string,
+    [PK_TYPE_OFFSET] = json_to_pk_val_offset,
+    [PK_TYPE_ARRAY] = json_to_pk_val_array,
+    [PK_TYPE_STRUCT] = json_to_pk_val_struct,
+    [PK_TYPE_CLOSURE] = NULL,
+    [PK_TYPE_ANY] = json_to_pk_val_any,
   };
   const size_t len = sizeof (json_to_pk_val_functions) /
                      sizeof (json_to_pk_val_functions[0]);
@@ -1561,10 +1561,10 @@ json_to_pk_val_offset (json_object *j_off, pk_val pk_off_type, pk_val *pk_off,
   size = pk_uint_value (pk_integral_type_size (base_type));
   switch (pk_type_code (base_type))
     {
-      case PK_INT:
+      case PK_TYPE_INT:
         magnitude = pk_make_int (json_object_get_int64 (j_off), size);
         break;
-      case PK_UINT:
+      case PK_TYPE_UINT:
         magnitude = pk_make_uint (json_object_get_int64 (j_off), size);
         break;
       default:

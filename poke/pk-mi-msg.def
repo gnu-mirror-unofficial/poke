@@ -78,8 +78,8 @@
 */
 
 PK_DEF_EVENT (INITIALIZED,
-              PK_DEF_ARGS (PK_DEF_ARG (mi_version, PK_INT),
-                           PK_DEF_ARG (version, PK_STRING)))
+              PK_DEF_ARGS (PK_DEF_ARG (mi_version, PK_TYPE_INT),
+                           PK_DEF_ARG (version, PK_TYPE_STRING)))
 
 /* Request/Response: EXIT
 
@@ -95,8 +95,8 @@ PK_DEF_RESP (EXIT, PK_DEF_NOARG)
    is expected with a string contatining the printed representation of
    the given value, if the request was processed successfully.  */
 
-PK_DEF_REQ (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (value, PK_ANY)))
-PK_DEF_RESP (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (string, PK_STRING)))
+PK_DEF_REQ (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (value, PK_TYPE_ANY)))
+PK_DEF_RESP (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (string, PK_TYPE_STRING)))
 
 /* Event: INVREQ
 
@@ -113,8 +113,8 @@ PK_DEF_RESP (PRINTV, PK_DEF_ARGS (PK_DEF_ARG (string, PK_STRING)))
 */
 
 PK_DEF_EVENT (INVREQ,
-              PK_DEF_ARGS (PK_DEF_ARG (reqnum, PK_UINT),
-                           PK_DEF_ARG (errmsg, PK_STRING)))
+              PK_DEF_ARGS (PK_DEF_ARG (reqnum, PK_TYPE_UINT),
+                           PK_DEF_ARG (errmsg, PK_TYPE_STRING)))
 
 /* Cleanup.  */
 

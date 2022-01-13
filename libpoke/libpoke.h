@@ -1067,17 +1067,30 @@ pk_val pk_typeof (pk_val val) LIBPOKE_API;
 
 /* Given a type value, return its code.  */
 
-#define PK_UNKNOWN 0
-#define PK_INT     1
-#define PK_UINT    2
-#define PK_STRING  3
-#define PK_OFFSET  4
-#define PK_ARRAY   5
-#define PK_STRUCT  6
-#define PK_CLOSURE 7
-#define PK_ANY     8
+#define PK_TYPE_UNKNOWN 0
+#define PK_TYPE_INT     1
+#define PK_TYPE_UINT    2
+#define PK_TYPE_STRING  3
+#define PK_TYPE_OFFSET  4
+#define PK_TYPE_ARRAY   5
+#define PK_TYPE_STRUCT  6
+#define PK_TYPE_CLOSURE 7
+#define PK_TYPE_ANY     8
 
 int pk_type_code (pk_val val) LIBPOKE_API;
+
+/* Given a value, return its kind.  */
+
+#define PK_VAL_UNKNOWN 0
+#define PK_VAL_INT     1
+#define PK_VAL_UINT    2
+#define PK_VAL_STRING  3
+#define PK_VAL_OFFSET  4
+#define PK_VAL_ARRAY   5
+#define PK_VAL_STRUCT  6
+#define PK_VAL_CLOSURE 7
+
+int pk_val_kind (pk_val val) LIBPOKE_API;
 
 /* Compare two Poke values.
 

@@ -1,5 +1,33 @@
 2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h (PK_TYPE_UNKNOWN): Rename from PK_UNKNOWN.
+	(PK_TYPE_INT): Likewise.
+	(PK_TYPE_UINT): Likewise.
+	(PK_TYPE_STRING): Likewise.
+	(PK_TYPE_OFFSET): Likewise.
+	(PK_TYPE_ARRAY): Likewise.
+	(PK_TYPE_STRUCT): Likewise.
+	(PK_TYPE_CLOSURE): Likewise.
+	(PK_TYPE_ANY): Likewise.
+	(PK_VAL_INT): Define.
+	(PK_VAL_UINT): Likewise.
+	(PK_VAL_STRING): Likewise.
+	(PK_VAL_OFFSET): Likewise.
+	(PK_VAL_ARRAY): Likewise.
+	(PK_VAL_STRUCT): Likewise.
+	(PK_VAL_CLOSURE): Likewise.
+	Prototype for pk_val_kind.
+	* libpoke/pk-val.c (pk_val_kind): New function.
+	(pk_type_code): Adapt to use PK_TYPE_* values.
+	* poke/pk-ios.c (pk_open_file): Adapt accordingly.
+	* poke/pk-map.c (pk_map_load_parsed_map): Likewise.
+	(pk_map_resolve_map): Likewise.
+	* poke/pk-mi-msg.c: Likewise.
+	* poke/pk-mi-msg.def: Likewise.
+	* poke/pk-mi-json.c: Likewise.
+
+2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Field Labels): Update section taking into account
 	integral structs.
 

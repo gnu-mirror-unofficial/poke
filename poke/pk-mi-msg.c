@@ -41,7 +41,7 @@ struct pk_mi_msg_arginfo
 static struct pk_mi_msg_arginfo req_arginfo[][PK_MI_MAX_ARGS] =
 {
 #define PK_DEF_ARG(N,T) { #N, T }
-#define PK_DEF_NOARG { NULL, PK_UNKNOWN }
+#define PK_DEF_NOARG { NULL, PK_TYPE_UNKNOWN }
 #define PK_DEF_REQ(ID,ARGS) { ARGS, PK_DEF_NOARG },
 #include "pk-mi-msg.def"
 };
@@ -49,7 +49,7 @@ static struct pk_mi_msg_arginfo req_arginfo[][PK_MI_MAX_ARGS] =
 static struct pk_mi_msg_arginfo resp_arginfo[][PK_MI_MAX_ARGS] =
 {
 #define PK_DEF_ARG(N,T) { #N, T }
-#define PK_DEF_NOARG { NULL, PK_UNKNOWN }
+#define PK_DEF_NOARG { NULL, PK_TYPE_UNKNOWN }
 #define PK_DEF_RESP(ID,ARGS) { ARGS, PK_DEF_NOARG },
 #include "pk-mi-msg.def"
 };
@@ -57,7 +57,7 @@ static struct pk_mi_msg_arginfo resp_arginfo[][PK_MI_MAX_ARGS] =
 static struct pk_mi_msg_arginfo event_arginfo[][PK_MI_MAX_ARGS] =
 {
 #define PK_DEF_ARG(N,T) { #N, T }
-#define PK_DEF_NOARG { NULL, PK_UNKNOWN }
+#define PK_DEF_NOARG { NULL, PK_TYPE_UNKNOWN }
 #define PK_DEF_EVENT(ID,ARGS) { ARGS, PK_DEF_NOARG },
 #include "pk-mi-msg.def"
 };
@@ -312,7 +312,7 @@ pk_mi_set_arg (pk_mi_msg msg, const char *argname, pk_val value)
     assert (0);
 
   /* Check that VALUE is of the right kind for this argument.  */
-  assert (kind == PK_ANY || pk_type_code (type) == kind);
+  assert (kind == PK_TYPE_ANY || pk_type_code (type) == kind);
 
   /* Ok, set the value for this argument.  */
   PK_MI_MSG_ARGS (msg)[argindex] = value;
