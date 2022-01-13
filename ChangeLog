@@ -1,3 +1,8 @@
+2022-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/poke.texi (Field Labels): Update section taking into account
+	integral structs.
+
 2022-01-13  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poke/poke-cmd-misc.c (pk_cmd_jmd): New quote.

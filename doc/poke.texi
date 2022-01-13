@@ -10545,14 +10545,14 @@ Consider for example an entry in an ELF symbol table.  Each entry has
 a @code{st_info} field which is 64-bits long, that in turn can be
 interpreted as two fields @code{st_bind} and @code{st_type}.
 
-The obvious solution is to encode @code{st_info} as a sub-struct, like
-this:
+The obvious solution is to encode @code{st_info} as a sub-struct that
+is integral, like this:
 
 @example
 struct
 @{
   elf32_word st_name;
-  struct
+  struct uint<64>
   @{
     uint<60> st_bind;
     uint<4> st_type;
@@ -10560,10 +10560,8 @@ struct
 @}
 @end example
 
-However, that makes it inconvenient to access the value of
-@code{st_info} as an integral value, using the bit-concatenation
-operator @code{symbol.st_info.st_bind::symbol.st_info.st_type}.  We
-can use labels instead:
+This makes the value of @code{st_info} easily accessible as an
+integral value.  But we may prefer to use labels instead:
 
 @example
 struct
