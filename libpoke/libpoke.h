@@ -1089,6 +1089,7 @@ int pk_type_code (pk_val val) LIBPOKE_API;
 #define PK_VAL_ARRAY   5
 #define PK_VAL_STRUCT  6
 #define PK_VAL_CLOSURE 7
+#define PK_VAL_TYPE    8
 
 int pk_val_kind (pk_val val) LIBPOKE_API;
 

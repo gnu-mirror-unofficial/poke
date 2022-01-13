@@ -248,7 +248,7 @@ pk_val_kind (pk_val val)
   else if (PVM_IS_CLS (val))
     return PK_VAL_CLOSURE;
   else if (PVM_IS_TYP (val))
-    return PK_VAL_UNKNOWN;
+    return PK_VAL_TYPE;
   else
     return PK_VAL_UNKNOWN;
 }
