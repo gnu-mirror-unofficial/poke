@@ -1,5 +1,9 @@
 2022-01-13  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poke/poke-cmd-misc.c (pk_cmd_jmd): New quote.
+
+2022-01-13  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.h (pvm_run): Add new arg for exception.
 	* libpoke/pvm.c (pvm_run): Report exception.
 	(pvm_call_closure): Fix pvm_run invocation.

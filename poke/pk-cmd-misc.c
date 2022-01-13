@@ -154,6 +154,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jmd> Hokus Pokus",
      "<mnabipoor> I wanted making a zero-length array for a long (!) time",
      "<jmd> Please don't talk whilst people are interrupting!",
+     "<jemarch> I'm gonna tattoo \"See HACKING\" on my forehead",
      NULL
     };
   static int num_strings = 0;
