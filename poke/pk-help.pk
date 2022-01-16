@@ -86,7 +86,7 @@ fun pk_help = (string topic) void:
     print "Commands:\n";
     print_summaries_for_category ("commands");
     print "\n";
-    print "To access the poke manual, type \".doc TOPIC\".\n";
+    print "To search for some topic in the poke manual, type \".doc TOPIC\".\n";
     return;
   }
 
