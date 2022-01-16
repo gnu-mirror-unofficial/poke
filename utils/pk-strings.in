@@ -39,3 +39,9 @@ until E_eof;
 
 close (stdin);
 close (stdout);
+
+/*
+ * Local Variables:
+ * mode: poke
+ * End:
+ */

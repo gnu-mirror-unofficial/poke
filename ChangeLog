@@ -1,5 +1,10 @@
 2022-01-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* utils/pk-strings.in: Add emacs local variables.
+	* utils/pk-bin2poke.in: Likewise.
+
+2022-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ios-dev-stream.c (ios_dev_stream_pread): Fix handling of
 	errors and EOF in buffer write-back.
 	* libpoke/ios-buffer.c (ios_buffer_allocate_new_chunk): Use IOD_OK

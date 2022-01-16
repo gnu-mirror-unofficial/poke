@@ -50,3 +50,9 @@ write_string ("];\n");
 
 close (stdin);
 close (stdout);
+
+/*
+ * Local Variables:
+ * mode: poke
+ * End:
+ */
