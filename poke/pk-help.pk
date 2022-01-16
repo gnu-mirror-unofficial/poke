@@ -126,11 +126,14 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
       category = "dot-commands",
       topic = ".set",
-      synopsis = ".set SETTING [,VALUE]",
+      synopsis = ".set [SETTING [,VALUE]]",
       summary = "show or set the value of a global setting",
       description = "\
 Set the global SETTING to VALUE, or print its current value.
-If VALUE is not specified, print the current value of SETTING."
+If VALUE is not specified, print the current value of SETTING.
+
+If no arguments are specified, print out a list of all the
+settings along with their current values."
   };
 
 pk_help_add_topic
