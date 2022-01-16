@@ -1,3 +1,13 @@
+2022-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/ios-dev-stream.c (ios_dev_stream_pread): Fix handling of
+	errors and EOF in buffer write-back.
+	* libpoke/ios-buffer.c (ios_buffer_allocate_new_chunk): Use IOD_OK
+	instead of 0.
+	(ios_buffer_pread): Likewise.
+	(ios_buffer_pwrite): Likewise.
+	(ios_buffer_forget_till): Likewise.
+
 2022-01-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* testsuite/lib/poke.exp (tests_pattern): New variable.

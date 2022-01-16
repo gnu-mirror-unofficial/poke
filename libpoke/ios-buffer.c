@@ -134,7 +134,7 @@ ios_buffer_allocate_new_chunk (struct ios_buffer *buffer, int final_chunk_no,
   /* end_offset is updated as the buffer is written to. Therefore, it is not
      updated here, but in ios_buffer_pwrite.  */
   *final_chunk = chunk;
-  return 0;
+  return IOD_OK;
 }
 
 /* Since ios_dev_stream_pread already needs to check begin_offset and
@@ -177,7 +177,7 @@ ios_buffer_pread (struct ios_buffer *buffer, void *buf, size_t count,
       memcpy (buf + already_read_count, chunk, to_be_read_count);
     };
 
-  return 0;
+  return IOD_OK;
 }
 
 /* Since ios_dev_stream_pwrite already needs to check begin_offset, this
@@ -225,7 +225,7 @@ ios_buffer_pwrite (struct ios_buffer *buffer, const void *buf, size_t count,
   if (buffer->end_offset < offset + count)
     buffer->end_offset = offset + count;
 
-  return 0;
+  return IOD_OK;
 }
 
 int
@@ -255,5 +255,5 @@ ios_buffer_forget_till (struct ios_buffer *buffer, ios_dev_off offset)
   buffer->begin_offset = chunk_no * IOB_CHUNK_SIZE;
   assert (buffer->end_offset >= buffer->begin_offset);
   assert (buffer->begin_offset <= offset);
-  return 0;
+  return IOD_OK;
 }

@@ -197,12 +197,15 @@ ios_dev_stream_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
   while (total_read_count < count && read_count);
 
   /* Write back to the buffer.  */
-  if (ios_buffer_pwrite (buffer,
-                         buf + read_from_buffer_count,
-                         count - read_from_buffer_count,
-                         ios_buffer_get_end_offset (buffer))
-      || total_read_count < count)
-    return IOD_ERROR;
+  potential_error = ios_buffer_pwrite (buffer,
+                                       buf + read_from_buffer_count,
+                                       count - read_from_buffer_count,
+                                       ios_buffer_get_end_offset (buffer));
+  if (potential_error != IOD_OK)
+    return potential_error;
+
+  if (total_read_count < count)
+    return IOD_EOF;
 
   return IOD_OK;
 }
