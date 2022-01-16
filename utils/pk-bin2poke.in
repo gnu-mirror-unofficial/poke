@@ -19,6 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+load argp;
+
+var varname = "_data";
+
+var options = [Argp_Option {
+                name = "v",
+                long_name = "var",
+                arg_required = 1,
+                handler = lambda (string arg) void: { varname = arg; }
+               }];
+
+argp_parse ("pk-bin2poke", "", "Translate a binary to a Poke file.",
+            options, argv);
+
 var stdin = open ("<stdin>");
 var stdout = open ("<stdout>");
 
@@ -32,7 +46,7 @@ fun write_string = (string s) void:
 
 var offset = 0#B;
 
-write_string ("var _data = [\n");
+write_string ("var " + varname + " = [\n");
 
 try
 {

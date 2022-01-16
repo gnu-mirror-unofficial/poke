@@ -1,5 +1,9 @@
 2022-01-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* utils/pk-bin2poke.in: Handle command-line argument --var/-v.
+
+2022-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* utils/pk-strings.in: Add emacs local variables.
 	* utils/pk-bin2poke.in: Likewise.
 
