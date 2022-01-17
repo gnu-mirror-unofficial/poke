@@ -525,16 +525,22 @@ This setting is `no' by default.",
 
 fun pk_settings_dump = void:
   {
+    var table = Pk_Table { num_columns = 2 };
+
     for (setting in pk_settings.entries)
       {
-        if (setting.kind == POKE_SETTING_INT)
-          printf ("%s %i32d\n", setting.name, setting.getter as int);
-        else if (setting.kind == POKE_SETTING_BOOL)
-          printf ("%s %s\n", setting.name,
-                  setting.getter as int ? "yes" : "no");
-        else if (setting.kind == POKE_SETTING_STR)
-          printf ("%s %s\n", setting.name, setting.getter as string);
-        else
-          assert (0, "uknown kind");
+        var setting_value = (setting.kind == POKE_SETTING_INT
+                             ? format ("%v", setting.getter as int)
+                             : setting.kind == POKE_SETTING_BOOL
+                             ? format ("%s", setting.getter as int ? "yes" : "no")
+                             : setting.kind == POKE_SETTING_STR
+                             ? format ("%v", setting.getter as string)
+                             : "<unknown>");
+        table.row;
+        table.column (setting.name, "",
+                      hserver_make_hyperlink ('e', ".help " + setting.name));
+        table.column (setting_value);
       }
+
+    table.print_table;
   }

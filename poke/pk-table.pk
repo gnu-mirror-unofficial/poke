@@ -1,0 +1,113 @@
+/* pk-table.pk - Output tabulated data to the terminal.  */
+
+/* `Because tabs SUCK ass', Poke version.  */
+
+/* Copyright (C) 2022 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+type Pk_Table_Entry =
+  struct
+  {
+    string style;
+    string hyperlink;
+    string str;
+  };
+
+type Pk_Table_Row =
+  struct
+  {
+    string style;
+    Pk_Table_Entry[] entries;
+  };
+
+type Pk_Table =
+ struct
+ {
+   int num_columns;
+   int next_column_index;
+   int[num_columns] column_widths;
+   Pk_Table_Row[] rows;
+
+   method row = (string style = "") void:
+   {
+     /* Make sure the current row is complete.  */
+     assert (rows'length == 0
+             || next_column_index == num_columns);
+
+     rows += [Pk_Table_Row { style = style }];
+     next_column_index = 0;
+   }
+
+   method column = (string str, string style = "",
+                    string hyperlink = "") void:
+   {
+     var row = rows[rows'length - 1];
+
+     row.entries += [Pk_Table_Entry { style = style,
+                                      hyperlink = hyperlink,
+                                      str = str }];
+     next_column_index += 1;
+   }
+
+   method print_table = void:
+   {
+     /* Calculate the column widths.  */
+     for (var i = 0; i < num_columns; ++i)
+     {
+       var cwidth = 0;
+
+       for (row in rows)
+       {
+         var entry_width = row.entries[i].str'length + 2;
+         if (entry_width > cwidth)
+           cwidth = entry_width;
+       }
+
+       column_widths[i] = cwidth;
+     }
+
+     /* Now print out the stuff.  */
+     for (row in rows)
+     {
+       if (row.style != "")
+         term_begin_class (row.style);
+
+       var j = 0;
+       for (entry in row.entries)
+       {
+         if (entry.style != "")
+           term_begin_class (entry.style);
+         if (entry.hyperlink != "")
+           term_begin_hyperlink (entry.hyperlink);
+
+         print entry.str;
+
+         if (entry.hyperlink != "")
+           term_end_hyperlink;
+         if (entry.style != "")
+           term_end_class (entry.style);
+
+         var fill = column_widths[j++] - entry.str'length + 1;
+         print " " * fill;
+       }
+
+       if (row.style != "")
+         term_end_class (row.style);
+
+       print "\n";
+     }
+   }
+ };
