@@ -534,7 +534,7 @@ fun pk_settings_dump = void:
                              : setting.kind == POKE_SETTING_BOOL
                              ? format ("%s", setting.getter as int ? "yes" : "no")
                              : setting.kind == POKE_SETTING_STR
-                             ? format ("%v", setting.getter as string)
+                             ? format ("%s", setting.getter as string)
                              : "<unknown>");
         table.row;
         table.column (setting.name, "",
