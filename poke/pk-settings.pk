@@ -535,9 +535,9 @@ fun pk_settings_dump = void:
         table.column (setting.kind == POKE_SETTING_INT
                       ? format ("%i32d", setting.getter as int)
                       : setting.kind == POKE_SETTING_BOOL
-                      ? format ("%s", setting.getter as int ? "yes" : "no")
+                      ? setting.getter as int ? "yes" : "no"
                       : setting.kind == POKE_SETTING_STR
-                      ? format ("%s", setting.getter as string)
+                      ? setting.getter as string
                       : "<unknown>");
 
         /* Add a toolbar if the hyperserver is running.  */
