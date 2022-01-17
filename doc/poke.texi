@@ -8237,55 +8237,10 @@ Prints the value of the given @var{setting}.
 Sets the value of @var{setting} to @var{value}.
 @end table
 
+@noindent
 The following settings can be handled with @command{.set}:
 
-@table @code
-@item endian
-@cindex endianness
-Byte endianness that will be used when mapping the IO space.  Valid
-values are @code{big}, @code{little} and @code{host}.  The default
-endianness is big endian.
-@item obase
-@cindex base, of displayed values
-Numeric base to be used when displaying values in the REPL and in
-@code{printf} statements using the @code{%v} format tag.  Valid values
-are @code{2}, @code{8}, @code{10} and @code{16}.  Default value is
-@code{10}.
-@item pretty-print
-@cindex pretty printing
-Flag indicating whether pretty-printers shall be used when printing
-values in the REPL and in @code{printf} statements using the @code{%v}
-format tag.  Valid values are @code{yes} and @code{no}.  Default value
-is @code{no}.
-@item error-on-warning
-@cindex errors
-@cindex warnings
-Flag indicating whether handling compilation warnings as errors.
-Default value is @code{no}.
-@item omode
-@cindex mode, of displayed values
-It defines the way the binary struct data is displayed. In @code{flat} mode
-data is not formatted in any special way. In @code{tree} mode the struct data
-is displayed in a hierarchical (tree) mode.
-@item odepth
-@cindex depth, of displayed struct fields
-In @code{tree} and @code{flat} mode the struct fields are recursively displayed
-up to the @code{depth}-th level. The default value @code{0} means no limit.
-@item oindent
-@cindex indent, as number of spaces
-Number defining the number of spaces used for indentation for each level. Only
-values >=1 are valid. Default value is '2'.
-@item oacutoff
-@cindex array cutoff
-When displaying an array as struct field, display only the elements up to the
-@code{cutoff} index and display @code{@dots{}} after that. Value of @code{0}
-means no limit. This cutoff value is not used when directly displaying arrays
-content.
-@item omaps
-@cindex maps, of displayed values
-Flag indicating whether including mapping information when printing
-out mapped values.
-@end table
+@include poke-settings.texi
 
 @node vm command
 @section @code{.vm}
