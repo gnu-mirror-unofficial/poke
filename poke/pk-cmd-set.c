@@ -25,6 +25,7 @@
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-utils.h"
+#include "pk-hserver.h"
 
 static int
 pk_cmd_set_dump (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
@@ -36,8 +37,23 @@ pk_cmd_set_dump (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   if (pk_call (poke_compiler, registry_printer, &retval, 0) == PK_ERROR)
     assert (0); /* This shouldn't happen.  */
-  pk_printf ("error-on-warning %s\n",
-             pk_error_on_warning (poke_compiler) ? "yes" : "no");
+
+#if HAVE_HSERVER
+  {
+    char *hyperlink;
+
+    hyperlink = pk_hserver_make_hyperlink ('e', ".help error-on-warning", PK_NULL);
+    pk_term_hyperlink (hyperlink, NULL);
+  }
+#endif
+
+  pk_puts ("error-on-warning");
+
+#if HAVE_HSERVER
+  pk_term_end_hyperlink ();
+#endif
+  pk_printf (" %s\n", pk_error_on_warning (poke_compiler) ? "yes" : "no");
+
   return 0;
 }
 
