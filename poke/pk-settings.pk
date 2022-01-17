@@ -530,7 +530,7 @@ fun pk_settings_dump = void:
     for (setting in pk_settings.entries)
       {
         var setting_value = (setting.kind == POKE_SETTING_INT
-                             ? format ("%v", setting.getter as int)
+                             ? format ("%i32d", setting.getter as int)
                              : setting.kind == POKE_SETTING_BOOL
                              ? format ("%s", setting.getter as int ? "yes" : "no")
                              : setting.kind == POKE_SETTING_STR
