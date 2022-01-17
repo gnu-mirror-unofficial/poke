@@ -44,11 +44,11 @@ later version.
 @end ifnottex
 
 @menu
+Getting Started
 * Introduction::		Introducing GNU poke.
-* Setting up Hyperlinks::       GNU poke uses terminal hyperlinks.
+* Setting Up::                  Preparing to use GNU poke.
 
 Using poke
-* Getting Started::             Prior customizations for new users.
 * Basic Editing::		Poking bits, bytes and simple data.
 * Structuring Data::		Poking your own abstractions.
 * Maps and Map-files::          Working with views of data.
@@ -102,8 +102,11 @@ Introduction
 * Invoking poke::		command line options.
 * Commanding poke::		Interactive and non-interactive usage.
 
+Setting Up
+* Setting up Hyperlinks::       GNU poke uses terminal hyperlinks.
+* Simple Init File::            A simple initial ~/.pokerc.
+
 Basic Editing
-* Getting Started::             Prior customizations for new users.
 * Binary Files::		Text vs.@: binary.
 * Files as IO Spaces::		Poking files.
 * Dumping File Contents::	A first look at a file's bytes.
@@ -842,8 +845,16 @@ load elf;
 printf ("%v\n", Elf64_Ehdr @@ 0#B);
 @end example
 
+@node Setting Up
+@chapter Setting Up
+
+@menu
+* Setting up Hyperlinks::       GNU poke uses terminal hyperlinks.
+* Simple Init File::            A simple initial ~/.pokerc.
+@end menu
+
 @node Setting up Hyperlinks
-@chapter Setting up Hyperlinks
+@section Setting up Hyperlinks
 
 GNU poke uses @dfn{terminal hyperlinks} in order to improve the
 interactive usage of the tool: clicking on terminal hyperlinks
@@ -855,7 +866,7 @@ using a very simple protocol called @code{app://} that is not
 supported (yet) on GNU/Linux distros.  Fortunately, it is very easy to
 set your system to use this protocol, and this chapter shows you how.
 
-@section Make sure your poke speaks hyperlinks
+@subsection Make sure your poke speaks hyperlinks
 
 The first step in having an hyperlinks-capable poke is to make sure to
 have a recent enough version of libtextstyle when building poke.  If
@@ -866,7 +877,7 @@ running it on the terminal:
 hserver listening in port 43713.
 @end example
 
-@section Use a terminal emulator that supports hyperlinks
+@subsection Use a terminal emulator that supports hyperlinks
 
 Gnome Terminal has support for displaying hyperlinks as do many other
 emulators that rely on VTE. Check the list at
@@ -874,7 +885,7 @@ emulators that rely on VTE. Check the list at
 for a mostly up-to-date, non-exhaustive list of emulators that support
 printing hyperlinks.
 
-@section Get and install the app-client utility
+@subsection Get and install the app-client utility
 
 Since @code{app://} is a new URI protocol that we designed, common
 terminal emulators don't know what to do when they encounter such a
@@ -906,7 +917,7 @@ This is enough for any utility (like terminals) that use
 certain terminals require additional setup.  See below if that is your
 case.
 
-@section GNOME Terminal
+@subsection GNOME Terminal
 
 Gnome Terminal doesn't use @command{xdg-open} to start the
 applications. Instead, it parses the @file{mimeapps.list} file
@@ -923,8 +934,8 @@ x-scheme-handler/app=app-client.desktop
 
 This let's Gnome Terminal know how to open @code{app://} links.
 
-@node Getting Started
-@chapter Getting Started
+@node Simple Init File
+@section Simple Init File
 
 GNU poke is a spartan program that tries to be as simple as possible
 by default, without fancy displays.  Therefore, before exploring poke
