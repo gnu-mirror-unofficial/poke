@@ -7039,8 +7039,8 @@ GNU poke is, first and foremost, intended to be used as an interactive
 editor, either directly on the command line or using a graphical user
 interface built on it.  However, since its conception poke was
 intended to also provide a suitable and useful foundation on which
-other programs, the so-called binary utilities, could be written.
-This chapter shows how to write Poke scripts and programs.
+other programs, the so-called @dfn{binary utilities}, could be
+written.  This chapter shows how to write Poke scripts and programs.
 
 @menu
 * Poke Scripts::                Using poke as an interpreter.
@@ -7454,7 +7454,169 @@ data.
 @node Filters
 @section Filters
 
-XXX
+The classic notion of @dfn{filter} in Unix-like systems and other
+Operating Systems is of a program that reads certain input using its
+standard input, realized some transformations on it, and writes the
+result on its standard output.  The filter doesn't need to operate on
+all the data at once, nor to buffer it: it reads input in chunks once
+it becomes available and is needed, and write output as necessary.
+
+GNU poke provides the so called @dfn{stream IO spaces} in order to
+implement binary utilities that act like filters.
+
+@menu
+* Stream IO Spaces::      Standard input, output and error streams.
+* Reading from Streams::  Reading and flushing input streams.
+* Writing to Streams::    Writing and flushing output streams.
+* pk-strings::            Putting everything together with a simple example.
+@end menu
+
+@node Stream IO Spaces
+@subsection Stream IO Spaces
+
+GNU poke provides support for opening and operating on several kinds
+of IO spaces: files, memory buffers, process memory, @i{etc}.  An IO
+space can be opened for reading, for writing or both, and they all can
+be accessed randomly, @i{i.e.} to read or write some data from/to a
+particular offset in the IO space.
+
+Writing a filter would involve to peek data from the standard input
+and then poke the data (maybe transformed) to the standard output or
+the standard error output.  However, we know that these devices are
+not random oriented devices that can be accessed at any offset, but
+rather stream-like devices whose special characteristics are:
+
+@itemize @minus
+@item
+They are either read-only or write-only.  You cannot write to an input
+stream and you cannot read from an output stream.
+@item
+Once data is read from an input stream, it can't be read again.  It is
+not buffered.
+@item
+Once data is written to an output stream, it can't be altered again.
+@end itemize
+
+@noindent
+Given the above characteristics of streams like the standard input and
+output, it is clear we cannot use the File IO streams on them.  It is
+also not clear how could we perform a map operation on a stream
+device: in poke these operations always require an explicit offset.
+
+GNU poke solves this by providing three special IO spaces that the
+user can open using the following handlers:
+
+@table @code
+@item <stdin>
+Read-only stream IOS that is connected to the standard input of the
+poke process.
+@item <stdout>
+Write-only stream IOS that is connected to the standard output of the
+poke process.
+@item <stderr>
+Write-only stream IOS that is connected to the standard error of the
+poke process.
+@end table
+
+@noindent
+Opening these IO spaces is done exactly like with any other IO space.
+Example:
+
+@example
+var stdin = open ("<stdin>");
+@end example
+
+@node Reading from Streams
+@subsection Reading from Streams
+
+Unlike normal Unix file descriptors, read-only poke streams are
+buffered.  Let's supposed we open the standard input:
+
+@example
+var stdin = open ("<stdin>");
+@end example
+
+@noindent
+Then we map some data (one byte) at some particular offset:
+
+@example
+var b = byte @@ stdin : 28#B;
+@end example
+
+@noindent
+The mapping operation above causes poke to read 28 bytes from the
+standard input and to set the variable @code{b} to the 28-th byte.
+The bytes read from the stream are still available (buffered) and the
+offsets are still relative from the ``beginning'' of the standard
+input:
+
+@example
+var c = byte @@stdin : 0#B;
+@end example
+
+@noindent
+The byte in @code{c} is the byte that appeared in the standard input
+27 bytes before the byte in @code{b}.
+
+This buffering is nice, and it is what allows us to access the
+standard input like if it were a random oriented device.  However, it
+is obvious we would be in trouble if we filter big amounts of data,
+like in a network interface: we would likely use all available memory.
+
+To allow filtering big amount of data, poke allows to @dfn{flush} the
+read-only streams.  Flushing means that the buffered data in the
+read-only stream is ``forgotten'', and trying to access it will result
+in an exception:
+
+@example
+var stdin = open ("<stdin>");
+
+var b = byte @@ stdin : 28#B;
+var c = byte @@ stdin : 29#B;
+flush (stdin, 29#B);
+var d = byte @@ stdin : 30#B;
+var e = byte @@ stdin : 20#B; /* Exception.  */
+@end example
+
+@node Writing to Streams
+@subsection Writing to Streams
+
+Similarly, unlike normal Unix file descriptors, write-only poke
+streams are also buffered and can be accesses randomly:
+
+@example
+var stdout = open ("<stdout>");
+@end example
+
+@noindent
+We can write to the output stream by mapping as usual:
+
+@example
+byte @@ stdout : 28#B = 0xff;
+@end example
+
+@noindent
+The mapping operation above writes 27 null bytes, @i{i.e.} it fills
+until reaching the requested offset in the output stream.  Then it
+writes the byte @code{0xff} at offset 28 bytes.  If we then write to
+one of the buffered bytes:
+
+@example
+byte @@ stdout : 27#B = 0xab;
+@end example
+
+@noindent
+This results in updating the byte that will be written right before
+the @code{0xff} once the output stream is flushed.
+
+Again, we cannot buffer ad-infinitum: we would exhaust all available
+output.  Therefore,  XXX
+
+@node pk-strings
+@subsection pk-strings
+
+Below you can find a very simple Poke program that works like the
+standard Unix utility @command{strings}.
 
 @example
 #!/usr/local/bin/poke -L
