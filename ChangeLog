@@ -1,5 +1,15 @@
 2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans1_pr_loop_stmt): New handler.
+	(pkl_phase_trans1): Register handler.
+	(pkl_trans1_ps_loop_stmt): for-loops with decl heads also
+	introduce a lexical scope.
+	* testsuite/poke.pkl/struct-method-18.pk: New test.
+	* testsuite/poke.pkl/struct-method-19.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-help.pk: Support a synopsis entry for "settings" help
 	entries.
 	* poke/pk-settings.pk: Set the synopsis of help entries to

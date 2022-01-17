@@ -1,0 +1,22 @@
+/* { dg-do run } */
+
+type Foo =
+  struct
+  {
+    int i;
+    byte[i] b;
+
+    method lala = int:
+    {
+      var res = 0;
+
+      for (var a = 0; a < i; ++a)
+        for (e in b)
+          res++;
+
+      return res;
+    }
+  };
+
+/* { dg-command { (Foo { i = 3 }).lala } } */
+/* { dg-output "9" } */
