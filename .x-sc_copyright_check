@@ -1,2 +1,3 @@
 maint.mk
 libpoke/*
+doc/poke.texi
