@@ -29,6 +29,9 @@ var pk_host_endian = ENDIAN_BIG;
    connected.  */
 var pk_network_endian = ENDIAN_BIG;
 
+/* Whether the terminal hyperlinks server is running or not.  */
+var pk_hserver_p = 0;
+
 /* Whether auto-maps shall be acknowleged when loading files or
    not. */
 var pk_auto_map_p = 0;

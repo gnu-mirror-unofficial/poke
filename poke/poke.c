@@ -678,6 +678,10 @@ initialize (int argc, char *argv[])
       pk_hserver_init ();
       pk_hserver_start ();
     }
+
+  /* Set the value of the Poke variable pk_hserver_p.  */
+  pk_decl_set_val (poke_compiler, "pk_hserver_p",
+                   pk_make_int (poke_hserver_p, 32));
 #endif
 }
 
