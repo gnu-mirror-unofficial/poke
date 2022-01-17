@@ -1789,6 +1789,7 @@ EXTRA_DIST = \
   poke.pkl/scons-int-struct-4.pk \
   poke.pkl/scons-int-struct-5.pk \
   poke.pkl/scons-label-1.pk \
+  poke.pkl/scons-label-diag-1.pk \
   poke.pkl/scons-offset-1.pk \
   poke.pkl/scons-offset-2.pk \
   poke.pkl/scons-offset-3.pk \

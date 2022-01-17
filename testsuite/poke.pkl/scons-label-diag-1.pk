@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+type T = pinned struct
+  {
+    uint32 x;
+    uint16 y @ 2#B; /* { dg-error "pinned" } */
+  };

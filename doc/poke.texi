@@ -10809,6 +10809,7 @@ type Ctf_Stype_V1 =
 @end example
 
 Note that integral structs cannot be pinned.  @xref{Integral Structs}.
+And field labels are not allowed in pinned structs.
 
 @node The OFFSET variable
 @subsection The OFFSET variable

@@ -1786,7 +1786,7 @@ PKL_PHASE_END_HANDLER
 
    Pinned unions are not allowed.
 
-   Labels are not allowed in integral structs.
+   Labels are not allowed in integral structs and pinned structs.
    Optional fields are not allowed in integral structs.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
@@ -1875,6 +1875,25 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
                  "unions are not allowed to be pinned");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
+    }
+
+  if (PKL_AST_TYPE_S_PINNED_P (struct_type))
+    {
+      for (field = PKL_AST_TYPE_S_ELEMS (struct_type);
+           field;
+           field = PKL_AST_CHAIN (field))
+        {
+          if (PKL_AST_CODE (field) != PKL_AST_STRUCT_TYPE_FIELD)
+            continue;
+
+          if (PKL_AST_STRUCT_TYPE_FIELD_LABEL (field))
+            {
+              PKL_ERROR (PKL_AST_LOC (field),
+                         "labels are not allowed in pinned structs");
+              PKL_TYPIFY_PAYLOAD->errors++;
+              PKL_PASS_ERROR;
+            }
+        }
     }
 }
 PKL_PHASE_END_HANDLER
