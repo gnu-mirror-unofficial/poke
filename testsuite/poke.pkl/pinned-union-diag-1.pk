@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+type Foo = pinned union /* { dg-error "pinned" } */
+  {
+    int<16> hi;
+    uint<16> lo;
+  };

@@ -1533,6 +1533,7 @@ EXTRA_DIST = \
   poke.pkl/or-int-struct-2.pk \
   poke.pkl/or-int-struct-3.pk \
   poke.pkl/pinned-int-struct-1.pk \
+  poke.pkl/pinned-union-diag-1.pk \
   poke.pkl/pos-diag-1.pk \
   poke.pkl/pos-integers-1.pk \
   poke.pkl/pos-integers-2.pk \

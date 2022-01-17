@@ -11181,6 +11181,8 @@ means.  Alternatives are considered in turn, in written order, and the
 first alternative that can be used without triggering a constraint
 violation exception is selected.
 
+Note that, unlike structs, unions cannot be pinned.
+
 @node Union Constructors
 @subsection Union Constructors
 

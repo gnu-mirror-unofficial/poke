@@ -1784,6 +1784,8 @@ PKL_PHASE_END_HANDLER
    The total size declared in the integral struct should exactly match
    the size of all the contained fields.
 
+   Pinned unions are not allowed.
+
    Labels are not allowed in integral structs.
    Optional fields are not allowed in integral structs.  */
 
@@ -1864,6 +1866,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
+    }
+
+  if (PKL_AST_TYPE_S_PINNED_P (struct_type)
+      && PKL_AST_TYPE_S_UNION_P (struct_type))
+    {
+      PKL_ERROR (PKL_AST_LOC (struct_type),
+                 "unions are not allowed to be pinned");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
     }
 }
 PKL_PHASE_END_HANDLER

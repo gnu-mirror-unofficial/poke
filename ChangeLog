@@ -1,3 +1,11 @@
+2022-01-18  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Disallow
+	pinned unions.
+	* doc/poke.texi (Unions): Update.
+	* testsuite/poke.pkl/pinned-union-diag-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2022-01-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/lib/poke-dg.exp (dg-require): Refer to etc/hacking.org
