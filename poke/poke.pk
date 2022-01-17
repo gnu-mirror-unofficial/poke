@@ -43,7 +43,7 @@ var pk_doc_viewer = "info";
 /* Whether poke was built with support for libNBD.  */
 var pk_have_libnbd_p = 0;
 
-/**** Utilitty to print tabulated data.  ****/
+/**** Utility to print tabulated data.  ****/
 
 load "pk-table.pk";
 
