@@ -1,5 +1,10 @@
 2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-table.pk (Pk_Table.print_table): Do not emit fill
+	characters for the last columns in the table.
+
+2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-set.c (pk_cmd_set_dump): Make an hyperlink for
 	error-on-warning.
 

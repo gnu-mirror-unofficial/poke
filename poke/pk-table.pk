@@ -100,8 +100,11 @@ type Pk_Table =
          if (entry.style != "")
            term_end_class (entry.style);
 
-         var fill = column_widths[j++] - entry.str'length + 1;
-         print " " * fill;
+         if (j < row.entries'length - 1)
+         {
+           var fill = column_widths[j++] - entry.str'length + 1;
+           print " " * fill;
+         }
        }
 
        if (row.style != "")
