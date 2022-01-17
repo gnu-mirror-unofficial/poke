@@ -244,7 +244,6 @@ pk_settings.add_setting
     summary = "whether include offset information when printing values",
     usage = ".set omaps {yes,no}",
     description = "\
-
 This sort of misnamed setting determines whether to show the mapped
 offsets and element/field offsets of composite values like arrays and
 structs.
