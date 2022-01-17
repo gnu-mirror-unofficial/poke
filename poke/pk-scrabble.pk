@@ -82,6 +82,7 @@ fun scrabble = (off64 from = pk_scrabble_from,
 {
   type Entity = struct { char code; bit[ent_size] value; };
 
+  var ent = Entity {};
   var to = from + size;
   var end = from;
 
@@ -105,7 +106,7 @@ fun scrabble = (off64 from = pk_scrabble_from,
 
       for (var i = 0; i < to_pattern'length; i++)
         {
-          var ent = lookup_entity (to_pattern[i]);
+          ent = lookup_entity (to_pattern[i]);
           if (ent.code != '\0')
              {
                bit[ent_size] @ to_ios : end = ent.value;
