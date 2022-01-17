@@ -262,8 +262,8 @@ Example:
   auto_map = [[\"\\.o\", \"elf\"], [\"\\.o\", \"dwarf\"]];
 
 The entry above makes poke to automatically load the maps `elf.map'
-and `dwarf.map' when opening any file whose name ends in `.o', provide
-`auto-map' is set to `yes'.",
+and `dwarf.map' when opening any file whose name ends in `.o',
+provided `auto-map' is set to `yes'.",
       getter = lambda any: { return pk_auto_map_p; },
       setter = lambda (any val) int:
         {
