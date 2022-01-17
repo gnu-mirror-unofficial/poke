@@ -36,6 +36,7 @@ for (setting in pk_settings.entries)
       normalized += c as string;
 
   print normalized;
+  print "\n";
 }
 
 print "\n";
