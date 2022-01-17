@@ -98,9 +98,6 @@ pk_cmd_set (int int_p,
       retmsg = pk_string_str (retval);
       if (*retmsg != '\0')
         {
-          pk_term_class ("error");
-          pk_puts (_("error: "));
-          pk_term_end_class ("error");
           pk_printf ("%s\n", retmsg);
           return 0;
         }

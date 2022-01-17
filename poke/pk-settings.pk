@@ -40,13 +40,10 @@
    setting.
 
    SETTER is a function that, given a value, tries to set it as the
-   new value for the global setting.  If the operation succeeds, this
-   function must return the empty string, otherwise an error message
-   indicating what went wrong.  For example, for a setting accepting
-   values "yes", "no" and "perhaps", SETTER ("foobar") may return a
-   string like "the value must one of `yes', `no' or `perhaps'".  The
-   setters can assume that the given value is of the right type
-   according to the kind.
+   new value for the global setting.  If the operation success, the
+   function returns a value different than zero.  Otherwise it must
+   return zero.  The setters can assume that the given value is of the
+   right type according to the kind.
 
    Note how Poke_Setting doesn't provide a recipient to store the
    value of the global setting itself: it is up to the getter and
@@ -72,7 +69,7 @@ type Poke_Setting =
       string usage : is_line_p (usage);
       string description;
       ()any getter;
-      (any)string setter;
+      (any)int setter;
     };
 
 /* The global settings registry.  */
@@ -147,12 +144,13 @@ type Poke_Setting_Registry =
               raise E_inval;
 
             if (!(val as string in ["yes", "no"]))
-              return s.name + " should be one of `yes' or `no'";
+              return "Usage: .set " + s.name + " {yes,no}";
 
             val = (val as string == "yes");
           }
 
-        try return s.setter (val);
+        try
+          return s.setter (val) ? "" : "Usage: " + s.usage;
         catch if E_conv { raise E_inval; }
       }
     };
@@ -166,14 +164,20 @@ pk_settings.add_setting
            name = "pretty-print",
            kind = POKE_SETTING_BOOL,
            summary = "whether poke should use struct pretty-printers",
+           usage = ".set pretty-print {yes,no}",
+           description = "\
+This setting determines whether poke should use pretty-printers while
+printing out the written representation of struct values.
+
+Pretty-printers are defined as methods named `_print'.",
            getter = lambda any:
              {
                return vm_opprint;
              },
-           setter = lambda (any val) string:
+           setter = lambda (any val) int:
              {
                vm_set_opprint (val as int<32>);
-               return "";
+               return 1;
              }
          };
 
@@ -183,19 +187,24 @@ pk_settings.add_setting
            kind = POKE_SETTING_INT,
            summary = "numerical base to use when printing integral values",
            usage = ".set obase {2,8,10,16}",
+           description = "\
+This setting determines the output numerical base to use when printing
+integral values like integers, offset magnitudes, and the like.  The
+supported bases are 2 for binary, 8 for octal, 10 for decimal and 16
+for hexadecimal.",
            getter = lambda any:
              {
                return vm_obase;
              },
-           setter = lambda (any v) string:
+           setter = lambda (any v) int:
              {
                var obase = v as int<32>;
 
                try vm_set_obase (obase);
                catch if E_inval {
-                 return "obase should be one of 2, 8, 10 or 16";
+                 return 0;
                }
-               return "";
+               return 1;
              }
          };
 
@@ -212,7 +221,7 @@ pk_settings.add_setting
                else
                   return "little";
              },
-           setter = lambda (any v) string:
+           setter = lambda (any v) int:
              {
                var s = v as string;
                var endian = ENDIAN_LITTLE;
@@ -226,11 +235,10 @@ pk_settings.add_setting
                else if (s == "network")
                  endian = pk_network_endian;
                else
-                 return
-                   "endian should be one of `little', `big', `host' or `network'";
+                 return 0;
 
                set_endian (endian);
-               return "";
+               return 1;
              }
          };
 
@@ -240,11 +248,27 @@ pk_settings.add_setting
       kind = POKE_SETTING_BOOL,
       summary = "whether poke auto-loads maps when opening IO spaces",
       usage = ".set auto-map {yes,no}",
+      description = "\
+This setting determines whether to automatically load map files when
+opening IO spaces.
+
+The decision of what maps to load is driven by the contents of the
+array `auto_map'.  Each entry in the array is an array whose first
+element is a regular expression, and the second element is the name of
+a map.
+
+Example:
+
+  auto_map = [[\"\\.o\", \"elf\"], [\"\\.o\", \"dwarf\"]];
+
+The entry above makes poke to automatically load the maps `elf.map'
+and `dwarf.map' when opening any file whose name ends in `.o', provide
+`auto-map' is set to `yes'.",
       getter = lambda any: { return pk_auto_map_p; },
-      setter = lambda (any val) string:
+      setter = lambda (any val) int:
         {
           pk_auto_map_p = val as int<32>;
-          return "";
+          return 1;
         }
     };
 
@@ -254,11 +278,23 @@ pk_settings.add_setting
     kind = POKE_SETTING_BOOL,
     summary = "whether map information should be included in the prompt",
     usage = ".set prompt-maps {yes,no}",
+    description = "\
+This setting determines whether a list of open maps is displayed
+before the poke prompt.
+
+Example of a prompt with map information and `prompt-maps' set to
+`yes':
+
+  (poke) .file foo.o
+  [dwarf,elf](poke)
+
+Which indicates that the opening of the IO space `foo.o' resulted in
+the `elf.map' and `dwarf.map' maps to be automatically loaded.",
     getter = lambda any: { return pk_prompt_maps_p; },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         pk_prompt_maps_p = val as int<32>;
-        return "";
+        return 1;
       }
     };
 
@@ -268,11 +304,25 @@ pk_settings.add_setting
     kind = POKE_SETTING_INT,
     summary = "cutoff value used when printing array elements",
     usage = ".set oacutoff INTEGER",
+    description = "\
+This setting determines the maximum number of elements to output when
+printing out array values.  Once the maximum number of elements is
+reached, an ellipsis `...' is printed to represent the rest of the
+elements.
+
+Example:
+
+  (poke) [1,2,3,4,5]
+  [1,2,3,4,5]
+  (poke) .set oacutoff 3
+  [1,2,3,...]
+
+The default value is 0, which means no limit.",
     getter = lambda any: { return vm_oacutoff; },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         vm_set_oacutoff (val as int<32>);
-        return "";
+        return 1;
       }
     };
 
@@ -282,11 +332,25 @@ pk_settings.add_setting
     kind = POKE_SETTING_INT,
     summary = "maximum depth to include when printing nested structures",
     usage = ".set odepth INTEGER",
+    description = "\
+This setting determines the maximum number of nested structs to output
+when printing struct and union values.  Once the maximum number of
+nested values is reached, a collapsed form `Type {...}' is printed.
+
+Example:
+
+  (poke) type Foo = struct { struct { int i; } bar; }
+  (poke) Foo {}
+  Foo {
+    bar=struct {...}
+  }
+
+The default value for `odepth' is 0, which means infinite depth.",
     getter = lambda any: { return vm_odepth; },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         vm_set_odepth (val as int<32>);
-        return "";
+        return 1;
       }
     };
 
@@ -296,11 +360,26 @@ pk_settings.add_setting
     kind = POKE_SETTING_INT,
     summary = "witdh of each indentation leveel when printing structures",
     usage = ".set oindent INTEGER",
+    description = "\
+This setting determines the width (in blank characters) of each
+indentation level when printing out struct values in `tree' mode.
+
+Example:
+
+  (poke) .set oindent 4
+  (poke) Foo {}
+  Foo {
+      i=0x0,
+      l=0x0L
+  }
+
+This setting defaults to 2.
+See also \".help omode\".",
     getter = lambda any: { return vm_oindent; },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         vm_set_oindent (val as int<32>);
-        return "";
+        return 1;
       }
     };
 
@@ -310,11 +389,24 @@ pk_settings.add_setting
     kind = POKE_SETTING_BOOL,
     summary = "whether include offset information when printing values",
     usage = ".set omaps {yes,no}",
+    description = "\
+
+This sort of misnamed setting determines whether to show the mapped
+offsets and element/field offsets of composite values like arrays and
+structs.
+
+Example:
+
+  (poke) .set omaps yes
+  (poke) [1,2,3]
+  [0x1 @ 0x0UL#b,0x2 @ 0x20UL#b,0x3 @ 0x40UL#b] @ 0x0UL#b
+
+This setting defaults to `no'.",
     getter = lambda any: { return vm_omaps; },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         vm_set_omaps (val as int<32>);
-        return "";
+        return 1;
       }
     };
 
@@ -324,6 +416,27 @@ pk_settings.add_setting
     kind = POKE_SETTING_STR,
     summary = "output mode for printing values",
     usage = ".set omode {flat,tree}",
+    description = "\
+This setting determines the way binary struct data is displayed.
+
+In `flat' mode data is not formatted in any special way.  Each value,
+be it simple or composite, is printed on one line:
+
+  (poke) .set omode flat
+  (poke) Foo {}
+  Foo {i=0x0,l=0x0L}
+
+In `tree' mode composite values like structs and arrays are displayed
+in an hierarchical way, using newlines and indentation:
+
+  (poke) .set omode tree
+  (poke) Foo {}
+  Foo {
+    i=0x0,
+    l=0x0L
+  }
+
+The default value of `omode' is `flat'.",
     getter = lambda any:
       {
         var omode = vm_omode;
@@ -335,7 +448,7 @@ pk_settings.add_setting
 
         assert (0, "this point shouln't be reached");
       },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         var s = val as string;
 
@@ -344,9 +457,9 @@ pk_settings.add_setting
         else if (s == "tree")
           vm_set_omode (VM_OMODE_TREE);
         else
-          return "omode should be one of `flat' or `tree'";
+          return 0;
 
-        return "";
+        return 1;
       }
     };
 
@@ -356,16 +469,27 @@ pk_settings.add_setting
     kind = POKE_SETTING_STR,
     summary = "program to show document from the manual",
     usage = ".set doc-viewer {info,less}",
+    description = "\
+This setting determines what mechanism to use to open the online user
+manual.
+
+If `info' is selected, the GNU info standalone program is launched to
+show the info version of the user manual.
+
+If `less' is selected, the less utility is launched ot show a plain
+text version of the user manual.
+
+See also \".help .doc\".",
     getter = lambda any: { return pk_doc_viewer; },
-    setter = lambda (any val) string:
+    setter = lambda (any val) int:
       {
         var s = val as string;
 
         if (s != "info" && s != "less")
-          return "doc-viewer should be one of `info' or `less'";
+          return 0;
 
         pk_doc_viewer = s;
-        return "";
+        return 1;
       }
     };
 
@@ -377,6 +501,7 @@ for (setting in pk_settings.entries)
              category = "settings",
              topic = setting.name,
              summary = setting.summary,
+             synopsis = setting.usage,
              description = setting.description
            };
 
@@ -388,9 +513,13 @@ pk_help_add_topic
            category = "settings",
            topic = "error-on-warning",
            summary = "emit errors instead of warnings",
-           description = "",
-    };
+           synopsis = ".set error-on-warning {yes,no}",
+           description = "\
+This setting determines whether the poke incremental compiler should
+turn warnings into errors.
 
+This setting is `no' by default.",
+    };
 
 /* Dump current settings.  */
 

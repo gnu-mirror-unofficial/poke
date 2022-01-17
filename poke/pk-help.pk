@@ -36,7 +36,7 @@ type Poke_HelpEntry =
     string description;
     ()int<32> active_p = lambda int<32>: { return 1; };
     string synopsis : is_line_p (synopsis)
-      if category in ["commands", "dot-commands"];
+      if category in ["commands", "dot-commands", "settings"];
   };
 
 var pk_help_topics = Poke_HelpEntry[] ();
@@ -93,6 +93,8 @@ fun pk_help = (string topic) void:
   for (entry in pk_help_topics)
     if (entry.topic == topic)
     {
+      if (entry.category == "settings")
+        print ".set ";
       printf ("%s - %s\n", entry.topic, entry.summary);
       if (entry.description != "")
        {
