@@ -435,6 +435,19 @@ pk_settings.add_setting
            kind = POKE_SETTING_STR,
            summary = "endianness used while accessing the IO spaces",
            usage = ".set endian {little,big,host,network}",
+           description = "\
+This setting determines the byte endianness used when accessing IO
+spaces.  Valid values are `big', `little', `host' and `network'.
+
+The meaning of `big' and `little' is the obvious one: the endianness
+is set to big-endian and little-endian respectively.
+
+The `host' endianness is the endianness used by the computer and
+operating system that is running poke in order to handle it's own
+memory and files.
+
+The `network' endianness is the endianness used by the host machine in
+order to communicate with the network.",
            getter = lambda any:
              {
                if (get_endian == ENDIAN_BIG)
