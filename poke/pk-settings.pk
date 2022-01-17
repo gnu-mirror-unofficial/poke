@@ -544,7 +544,7 @@ fun pk_settings_dump = void:
     table.column ("Setting");
     table.column ("Value");
     if (pk_hserver_p) table.column ("");
-    
+
     /* Add a table row for each setting.  */
     for (setting in pk_settings.entries)
       {

@@ -45,6 +45,7 @@ later version.
 
 @menu
 * Introduction::		Introducing GNU poke.
+* Setting up Hyperlinks::       GNU poke uses terminal hyperlinks.
 
 Using poke
 * Getting Started::             Prior customizations for new users.
@@ -840,6 +841,87 @@ exec poke -L "$0" "$@@"
 load elf;
 printf ("%v\n", Elf64_Ehdr @@ 0#B);
 @end example
+
+@node Setting up Hyperlinks
+@chapter Setting up Hyperlinks
+
+GNU poke uses @dfn{terminal hyperlinks} in order to improve the
+interactive usage of the tool: clicking on terminal hyperlinks
+requests poke to execute certain actions.  This is used to implement
+buttons and other interactive goodies.
+
+Many terminal emulators support terminal hyperlinks.  However, we are
+using a very simple protocol called @code{app://} that is not
+supported (yet) on GNU/Linux distros.  Fortunately, it is very easy to
+set your system to use this protocol, and this chapter shows you how.
+
+@section Make sure your poke speaks hyperlinks
+
+The first step in having an hyperlinks-capable poke is to make sure to
+have a recent enough version of libtextstyle when building poke.  If
+your poke can emit hyperlinks you will see a message like this when
+running it on the terminal:
+
+@example
+hserver listening in port 43713.
+@end example
+
+@section Use a terminal emulator that supports hyperlinks
+
+Gnome Terminal has support for displaying hyperlinks as do many other
+emulators that rely on VTE. Check the list at
+@url{https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#supporting-apps}
+for a mostly up-to-date, non-exhaustive list of emulators that support
+printing hyperlinks.
+
+@section Get and install the app-client utility
+
+Since @code{app://} is a new URI protocol that we designed, common
+terminal emulators don't know what to do when they encounter such a
+URI. To work around this problem we use the XDG Desktop Specification
+and a little C utility called @command{app-client}, which can be found
+at @url{https://gitlab.com/darnir/hyperlink-app-client}.
+
+By setting @command{app-client} as the default handler for @code{app://}
+URIs, the terminal emulator does not need to understand the syntax or
+semantics of the @code{app://} protocol. It offloads the handling of
+the URI entirely to @command{app-client}. In order to use this, first download
+and install @command{app-client}:
+
+@example
+$ git clone https://gitlab.com/darnir/hyperlink-app-client
+$ cd hyperlink-app-client
+$ make
+$ cp app-client /location/in/$PATH/variable
+@end example
+
+Next step is to copy the @file{app-client.desktop} file in the git
+repository to @file{$HOME/.local/share/applications}. This is a XDG
+Desktop Entry for the app-client. And let's most applications on your
+system know that this should be used to handle @code{app://}
+URIs. (See the @code{MimeType} field)
+
+This is enough for any utility (like terminals) that use
+@command{xdg-open} to do the right thing with hyperlinks.  However,
+certain terminals require additional setup.  See below if that is your
+case.
+
+@section GNOME Terminal
+
+Gnome Terminal doesn't use @command{xdg-open} to start the
+applications. Instead, it parses the @file{mimeapps.list} file
+manually to find the right application.
+
+Edit your @file{mimeapps.list}, it is usually located at
+@file{$HOME/.local/share/applications/mimeapps.list}, but it might
+also be at @file{$XDG_CONFIG_DIR/mimeapps.list}, and add the following
+line to it:
+
+@example
+x-scheme-handler/app=app-client.desktop
+@end example
+
+This let's Gnome Terminal know how to open @code{app://} links.
 
 @node Getting Started
 @chapter Getting Started
