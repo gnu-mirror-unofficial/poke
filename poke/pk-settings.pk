@@ -556,11 +556,22 @@ fun pk_settings_dump = void:
         if (pk_hserver_p)
         {
           if (setting.kind == POKE_SETTING_BOOL)
+          {
+            var setting_name = setting.name;
+            var setting_getter = (setting.getter);
+            var setting_setter = (setting.setter);
+            fun toggle_setting = void:
+              {
+                var newval = !(setting_getter as int);
+
+                print ("Toggling setting " + setting_name
+                       + " to " + (newval ? "`yes'" : "`no'") + "\n");
+                setting_setter (!(setting_getter as int));
+              }
+
             table.column ("[toggle]", "",
-                          hserver_make_hyperlink ('c', "",
-                                                  lambda void: {
-                                                   setting.setter (!(setting.getter as int));
-                                                  }));
+                          hserver_make_hyperlink ('c', "", (toggle_setting)));
+          }
           else
             table.column ("");
         }
