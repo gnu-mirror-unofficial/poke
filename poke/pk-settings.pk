@@ -525,7 +525,7 @@ This setting is `no' by default.",
 
 fun pk_settings_dump = void:
   {
-    var table = Pk_Table { num_columns = 2 };
+    var table = Pk_Table { num_columns = pk_hserver_p ? 3 : 2 };
 
     for (setting in pk_settings.entries)
       {
@@ -540,6 +540,19 @@ fun pk_settings_dump = void:
         table.column (setting.name, "",
                       hserver_make_hyperlink ('e', ".help " + setting.name));
         table.column (setting_value);
+
+        /* Add a toolbar if the hyperserver is running.  */
+        if (pk_hserver_p)
+        {
+          if (setting.kind == POKE_SETTING_BOOL)
+            table.column ("[toggle]", "",
+                          hserver_make_hyperlink ('c', "",
+                                                  lambda void: {
+                                                   setting.setter (!(setting.getter as int));
+                                                  }));
+          else
+            table.column ("");
+        }
       }
 
     table.print_table;
