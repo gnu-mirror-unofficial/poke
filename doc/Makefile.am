@@ -17,7 +17,7 @@ info_TEXINFOS = poke.texi
 poke_TEXINFOS = fdl.texi pvm-insns.texi poke-settings.texi
 
 EXTRA_DIST = gen-pvm-insns.sh learn-poke-language-in-y-minutes.pk \
-             settings-to-texi.pk
+             poke2texi.pk
 
 # The description of PVM instructions is generated from the
 # libpoke/pvm.jitter file.
@@ -30,8 +30,8 @@ pvm-insns.texi: $(top_srcdir)/libpoke/pvm.jitter $(srcdir)/gen-pvm-insns.sh
 # This is to avoid replication.  The documentation of the settings
 # lives in poke/pk-settings.pk.
 
-poke-settings.texi: $(srcdir)/settings-to-texi.pk $(top_srcdir)/poke/pk-settings.pk
-	$(top_builddir)/run poke -L $(srcdir)/settings-to-texi.pk \
+poke-settings.texi: $(srcdir)/poke2texi.pk $(top_srcdir)/poke/pk-settings.pk
+	$(top_builddir)/run poke -L $(srcdir)/poke2texi.pk --settings \
           > poke-settings.texi
 
 # This rule generates a list of the node names from the manual.

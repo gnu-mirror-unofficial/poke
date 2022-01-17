@@ -1,0 +1,69 @@
+/* poke2texi.pk - Emit texinfo documentation from poke's online
+                  help system.  */
+
+/* Copyright (C) 2022 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+load argp;
+
+/* Escape special characters that are interpreted by Texinfo by their
+   escaped sequences, in the given string.  Return the so normalized
+   string.  */
+
+fun normalize_string = (string s) string:
+{
+  var normalized = "";
+
+  for (c in s)
+    if (c == '{')
+      normalized += "@{";
+    else if (c == '}')
+      normalized += "@}";
+    else if (c == '@')
+      normalized += "@@";
+    else
+      normalized += c as string;
+
+  return normalized;
+}
+
+/* Traverse the poke settings registry and emit a Texinfo table
+   documenting all the available global settings.  */
+
+fun emit_settings = void:
+{
+  print "@table @code";
+
+  for (setting in pk_settings.entries)
+  {
+    print "\n";
+    print "@item " + setting.name + "\n";
+    print (normalize_string (setting.description));
+    print "\n";
+  }
+
+  print "\n";
+  print "@end table\n";
+}
+
+/* Parse arguments and emit whatever requested information.  */
+
+argp_parse ("poke2texi.pk", "", "Generate texinfo documentation from poke.",
+            [Argp_Option {
+              long_name = "settings",
+              handler = lambda (string arg) void: { emit_settings; }
+             }],
+             argv);
