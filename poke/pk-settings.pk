@@ -183,67 +183,6 @@ Pretty-printers are defined as methods named `_print'.",
 
 pk_settings.add_setting
   :entry Poke_Setting {
-           name = "obase",
-           kind = POKE_SETTING_INT,
-           summary = "numerical base to use when printing integral values",
-           usage = ".set obase {2,8,10,16}",
-           description = "\
-This setting determines the output numerical base to use when printing
-integral values like integers, offset magnitudes, and the like.  The
-supported bases are 2 for binary, 8 for octal, 10 for decimal and 16
-for hexadecimal.",
-           getter = lambda any:
-             {
-               return vm_obase;
-             },
-           setter = lambda (any v) int:
-             {
-               var obase = v as int<32>;
-
-               try vm_set_obase (obase);
-               catch if E_inval {
-                 return 0;
-               }
-               return 1;
-             }
-         };
-
-pk_settings.add_setting
-  :entry Poke_Setting {
-           name = "endian",
-           kind = POKE_SETTING_STR,
-           summary = "endianness used while accessing the IO spaces",
-           usage = ".set endian {little,big,host,network}",
-           getter = lambda any:
-             {
-               if (get_endian == ENDIAN_BIG)
-                  return "big";
-               else
-                  return "little";
-             },
-           setter = lambda (any v) int:
-             {
-               var s = v as string;
-               var endian = ENDIAN_LITTLE;
-
-               if (s == "big")
-                 endian = ENDIAN_BIG;
-               else if (s == "little")
-                 endian = ENDIAN_LITTLE;
-               else if (s == "host")
-                 endian = pk_host_endian;
-               else if (s == "network")
-                 endian = pk_network_endian;
-               else
-                 return 0;
-
-               set_endian (endian);
-               return 1;
-             }
-         };
-
-pk_settings.add_setting
-  :entry Poke_Setting {
       name = "auto-map",
       kind = POKE_SETTING_BOOL,
       summary = "whether poke auto-loads maps when opening IO spaces",
@@ -297,6 +236,60 @@ the `elf.map' and `dwarf.map' maps to be automatically loaded.",
         return 1;
       }
     };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+    name = "omaps",
+    kind = POKE_SETTING_BOOL,
+    summary = "whether include offset information when printing values",
+    usage = ".set omaps {yes,no}",
+    description = "\
+
+This sort of misnamed setting determines whether to show the mapped
+offsets and element/field offsets of composite values like arrays and
+structs.
+
+Example:
+
+  (poke) .set omaps yes
+  (poke) [1,2,3]
+  [0x1 @ 0x0UL#b,0x2 @ 0x20UL#b,0x3 @ 0x40UL#b] @ 0x0UL#b
+
+This setting defaults to `no'.",
+    getter = lambda any: { return vm_omaps; },
+    setter = lambda (any val) int:
+      {
+        vm_set_omaps (val as int<32>);
+        return 1;
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+           name = "obase",
+           kind = POKE_SETTING_INT,
+           summary = "numerical base to use when printing integral values",
+           usage = ".set obase {2,8,10,16}",
+           description = "\
+This setting determines the output numerical base to use when printing
+integral values like integers, offset magnitudes, and the like.  The
+supported bases are 2 for binary, 8 for octal, 10 for decimal and 16
+for hexadecimal.",
+           getter = lambda any:
+             {
+               return vm_obase;
+             },
+           setter = lambda (any v) int:
+             {
+               var obase = v as int<32>;
+
+               try vm_set_obase (obase);
+               catch if E_inval {
+                 return 0;
+               }
+               return 1;
+             }
+         };
 
 pk_settings.add_setting
   :entry Poke_Setting {
@@ -385,33 +378,6 @@ See also \".help omode\".",
 
 pk_settings.add_setting
   :entry Poke_Setting {
-    name = "omaps",
-    kind = POKE_SETTING_BOOL,
-    summary = "whether include offset information when printing values",
-    usage = ".set omaps {yes,no}",
-    description = "\
-
-This sort of misnamed setting determines whether to show the mapped
-offsets and element/field offsets of composite values like arrays and
-structs.
-
-Example:
-
-  (poke) .set omaps yes
-  (poke) [1,2,3]
-  [0x1 @ 0x0UL#b,0x2 @ 0x20UL#b,0x3 @ 0x40UL#b] @ 0x0UL#b
-
-This setting defaults to `no'.",
-    getter = lambda any: { return vm_omaps; },
-    setter = lambda (any val) int:
-      {
-        vm_set_omaps (val as int<32>);
-        return 1;
-      }
-    };
-
-pk_settings.add_setting
-  :entry Poke_Setting {
     name = "omode",
     kind = POKE_SETTING_STR,
     summary = "output mode for printing values",
@@ -462,6 +428,40 @@ The default value of `omode' is `flat'.",
         return 1;
       }
     };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
+           name = "endian",
+           kind = POKE_SETTING_STR,
+           summary = "endianness used while accessing the IO spaces",
+           usage = ".set endian {little,big,host,network}",
+           getter = lambda any:
+             {
+               if (get_endian == ENDIAN_BIG)
+                  return "big";
+               else
+                  return "little";
+             },
+           setter = lambda (any v) int:
+             {
+               var s = v as string;
+               var endian = ENDIAN_LITTLE;
+
+               if (s == "big")
+                 endian = ENDIAN_BIG;
+               else if (s == "little")
+                 endian = ENDIAN_LITTLE;
+               else if (s == "host")
+                 endian = pk_host_endian;
+               else if (s == "network")
+                 endian = pk_network_endian;
+               else
+                 return 0;
+
+               set_endian (endian);
+               return 1;
+             }
+         };
 
 pk_settings.add_setting
   :entry Poke_Setting {
@@ -529,17 +529,16 @@ fun pk_settings_dump = void:
 
     for (setting in pk_settings.entries)
       {
-        var setting_value = (setting.kind == POKE_SETTING_INT
-                             ? format ("%i32d", setting.getter as int)
-                             : setting.kind == POKE_SETTING_BOOL
-                             ? format ("%s", setting.getter as int ? "yes" : "no")
-                             : setting.kind == POKE_SETTING_STR
-                             ? format ("%s", setting.getter as string)
-                             : "<unknown>");
         table.row;
         table.column (setting.name, "",
                       hserver_make_hyperlink ('e', ".help " + setting.name));
-        table.column (setting_value);
+        table.column (setting.kind == POKE_SETTING_INT
+                      ? format ("%i32d", setting.getter as int)
+                      : setting.kind == POKE_SETTING_BOOL
+                      ? format ("%s", setting.getter as int ? "yes" : "no")
+                      : setting.kind == POKE_SETTING_STR
+                      ? format ("%s", setting.getter as string)
+                      : "<unknown>");
 
         /* Add a toolbar if the hyperserver is running.  */
         if (pk_hserver_p)
