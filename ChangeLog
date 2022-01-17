@@ -1,5 +1,14 @@
 2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke-default.css (.setting-integer): New class.
+	(.setting-string): Likewise.
+	(.setting-boolean): Likewise.
+	* poke/pk-settings.pk (pk_settings_dump): Add styling to the
+	setting values.
+	Add a table header.
+
+2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-settings.pk (pk_settings_dump): Emit a
 	Toggling... message in hyperlink actions.
 

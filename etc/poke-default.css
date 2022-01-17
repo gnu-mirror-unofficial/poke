@@ -18,6 +18,10 @@
 
 .table-header { text-decoration: underline; }
 
+.setting-integer { color : green; }
+.setting-string { color : red; }
+.setting-boolean { color : yellow; }
+
 .dump-ruler { text-decoration: underline; }
 .dump-address { color : green; }
 .dump-ascii { color : brown; }

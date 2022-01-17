@@ -539,6 +539,13 @@ fun pk_settings_dump = void:
   {
     var table = Pk_Table { num_columns = pk_hserver_p ? 3 : 2 };
 
+    /* Table header.  */
+    table.row ("table-header");
+    table.column ("Setting");
+    table.column ("Value");
+    if (pk_hserver_p) table.column ("");
+    
+    /* Add a table row for each setting.  */
     for (setting in pk_settings.entries)
       {
         table.row;
@@ -550,7 +557,14 @@ fun pk_settings_dump = void:
                       ? setting.getter as int ? "yes" : "no"
                       : setting.kind == POKE_SETTING_STR
                       ? setting.getter as string
-                      : "<unknown>");
+                      : "<unknown>",
+                      setting.kind == POKE_SETTING_INT
+                      ? "setting-integer"
+                      : setting.kind == POKE_SETTING_BOOL
+                      ? "setting-boolean"
+                      : setting.kind == POKE_SETTING_STR
+                      ? "setting-string"
+                      : "");
 
         /* Add a toolbar if the hyperserver is running.  */
         if (pk_hserver_p)
