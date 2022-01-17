@@ -164,7 +164,6 @@ pk_map_alien_token_handler (const char *id, char **errmsg)
      holds for ID, and extract the fields.  */
 
   entry_name = strstr (id, "::");
-  printf ("ID: '%s' ENTRY NAME: '%s'\n", id, entry_name);
   if (!entry_name || strstr (entry_name + 2, "::"))
     goto error;
 
