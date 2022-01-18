@@ -9221,9 +9221,12 @@ Unlike in many other programming languages, arithmetic right-shifting
 operators are not provided.  This means that right shifting always
 inserts zeroes at the most-significant side of the value operand,
 whereas left shifting always inserts zeroes at the least-significant
-side of the value operand.  Left shifting by a number of bits equal or
-bigger than the value operand is an error, and will trigger either a
-compile-time error or a run-time @code{E_out_of_bounds} exception.
+side of the value operand.
+
+Left shifting by a number of bits equal or bigger than the size of the
+value operand is an error, and will trigger either a compile-time
+error or a run-time @code{E_out_of_bounds} exception.  This does not
+apply to right shifting.
 
 Bitwise concatenation works with any integral type, of any bit length.
 
