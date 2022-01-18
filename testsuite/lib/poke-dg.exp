@@ -63,8 +63,8 @@ proc dg-require { args } {
 
     upvar dg-do-what do-what
 
-    # Please update HACKING if you add support for more capabilities
-    # here.
+    # Please update etc/hacking.org if you add support for more
+    # capabilities here.
 
     if {[lindex $args 1] == "libtextstyle" \
             && $::env(HAVE_LIBTEXTSTYLE) != "yes"} {

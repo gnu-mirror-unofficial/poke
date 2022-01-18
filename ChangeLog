@@ -1,5 +1,10 @@
 2022-01-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke-dg.exp (dg-require): Refer to etc/hacking.org
+	instead of HACKING.
+
+2022-01-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-diag.c (pkl_warning): Honor pkl_quiet_p for warning location.
 	(pkl_warning): Do not handle
 	pkl_error_on_warning here.
