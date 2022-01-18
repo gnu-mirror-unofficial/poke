@@ -10074,8 +10074,7 @@ The syntax is:
 Where @var{array_type} is an array type, or the name of an array type,
 and @var{value} is an optional argument that specify the value to
 which the elements of the new array are initialized.  If no value is
-provided in the constructor then default values are calculated (XXX:
-xref to default values.)
+provided in the constructor then default values are calculated.
 
 Examples:
 
@@ -11395,12 +11394,32 @@ Foo @{
 @node Declarations in Structs
 @subsection Declarations in Structs
 
-XXX
+Type declarations, variable declarations and function declarations are
+all allowed inside struct and union types.  The scope of the entity
+being declared spans from the declaration until the end of the struct
+or union type being defined.
+
+Functions can't set fields defined in the struct type.
 
 @node Methods
 @subsection Methods
 
-XXX
+Methods in structs can be defined using the @code{method} keyword in
+definitions like this:
+
+@example
+method @var{identifier} = @var{function_body}
+@end example
+
+@noindent
+where @var{function_body} is the body of a function. @xref{Function
+Declarations}.
+
+When invoked, a method gets an implicit @emph{last} argument which is
+the struct value whose method is being used.
+
+Methods can refer to the fields of the containing struct type that
+have been defined before the method itself, by name.
 
 @node Struct Attributes
 @subsection Struct Attributes
@@ -11774,7 +11793,6 @@ The value computed by the expression will be discarded.
 @node Functions
 @section Functions
 @cindex functions
-@c XXX closures
 
 @menu
 * Function Declarations::	Writing functions.
@@ -12621,7 +12639,25 @@ resulting value will be a regular non-mapped value.  Examples:
 @node Mapping Structs
 @subsection Mapping Structs
 
-XXX
+Struct and union types can be referred by name in a mapping
+(@code{@@}) operation.  For example, given a struct type @code{Foo}
+defined as:
+
+@example
+type Foo =
+  struct
+  @{
+    int i;
+    long l;
+  @}
+@end example
+
+@noindent
+we could get a mapped struct value of that type like this:
+
+@example
+var f = Foo @@ 128#B;
+@end example
 
 @node Mapping Arrays
 @subsection Mapping Arrays
