@@ -5,7 +5,3 @@
 
 /* { dg-command { type Foo = union { int i; long l; } } } */
 /* { dg-output ".*warning.*" } */
-
-/* { dg-command { .set error-on-warning yes } } */
-/* { dg-command { type Foo2 = union { int i; long l; } } } */
-/* { dg-output "\n.*error.*" } */

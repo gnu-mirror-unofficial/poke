@@ -1,3 +1,15 @@
+2022-01-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-diag.c (pkl_warning): Honor pkl_quiet_p for warning location.
+	(pkl_warning): Do not handle
+	pkl_error_on_warning here.
+	* libpoke/pkl-anal.c (pkl_anal2_ps_struct_type_field): Do it here.
+	(pkl_anal2_ps_type_struct): And here.
+	* testsuite/poke.cmd/set-error-on-warning.pk: Do not test error
+	case here.
+	* testsuite/poke.cmd/set-error-on-warning-diag.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2022-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-scrabble.pk (scrabble): Move variable declaration up to

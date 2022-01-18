@@ -98,6 +98,7 @@ EXTRA_DIST = \
   poke.cmd/scrabble-4.pk \
   poke.cmd/set-endian.pk \
   poke.cmd/set-error-on-warning.pk \
+  poke.cmd/set-error-on-warning-diag.pk \
   poke.cmd/set-oacutoff-1.pk \
   poke.cmd/set-oacutoff-2.pk \
   poke.cmd/set-obase-1.pk \

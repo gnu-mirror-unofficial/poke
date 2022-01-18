@@ -1,0 +1,9 @@
+/* { dg-do compile } */
+/* { dg-options {-c ".set error-on-warning yes"} } */
+
+type Foo =
+  union
+  {
+    int i;
+    long l; /* { dg-error "unreachable" } */
+  };

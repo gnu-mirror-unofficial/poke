@@ -840,8 +840,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_struct_type_field)
       && (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
           || PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY)
       && PKL_AST_TYPE_NAME (type))
-    PKL_WARNING (PKL_AST_LOC (field),
-                 "useless endianness annotation in field");
+    {
+      const char *msg = "useless endianness annotation in field";
+
+      if (pkl_error_on_warning (PKL_PASS_COMPILER))
+        {
+          PKL_ERROR (PKL_AST_LOC (field), msg);
+          PKL_ANAL_PAYLOAD->errors ++;
+          PKL_PASS_ERROR;
+        }
+      else
+        PKL_WARNING (PKL_AST_LOC (field), msg);
+    }
 }
 PKL_PHASE_END_HANDLER
 
@@ -883,8 +893,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
 
           if (last_unconditional_alternative)
             {
-              PKL_WARNING (PKL_AST_LOC (t),
-                           "unreachable alternative in union");
+              const char *msg = "unreachable alternative in union";
+
+              if (pkl_error_on_warning (PKL_PASS_COMPILER))
+                {
+                  PKL_ERROR (PKL_AST_LOC (t), msg);
+                  PKL_ANAL_PAYLOAD->errors ++;
+                  PKL_PASS_ERROR;
+                }
+              else
+                PKL_WARNING (PKL_AST_LOC (t), msg);
               break;
             }
 
@@ -901,8 +919,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_type_struct)
               && PKL_AST_CODE (constraint) == PKL_AST_INTEGER
               && PKL_AST_INTEGER_VALUE (constraint) == 0)
             {
-              PKL_WARNING (PKL_AST_LOC (t),
-                           "unreachable alternative in union");
+              const char *msg = "unreachable alternative in union";
+
+              if (pkl_error_on_warning (PKL_PASS_COMPILER))
+                {
+                  PKL_ERROR (PKL_AST_LOC (t), msg);
+                  PKL_ANAL_PAYLOAD->errors ++;
+                  PKL_PASS_ERROR;
+                }
+              else
+                PKL_WARNING (PKL_AST_LOC (t), msg);
               break;
             }
         }

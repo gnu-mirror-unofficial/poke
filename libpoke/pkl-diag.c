@@ -224,14 +224,6 @@ pkl_warning (pkl_compiler compiler,
   va_list valist;
   char *msg;
 
-  if (pkl_error_on_warning (compiler))
-    {
-      va_start (valist, fmt);
-      pkl_error_internal (compiler, ast, loc, fmt, valist);
-      va_end (valist);
-      return;
-    }
-
   va_start (valist, fmt);
   vasprintf (&msg, fmt, valist);
   va_end (valist);
@@ -246,7 +238,11 @@ pkl_warning (pkl_compiler compiler,
   if (PKL_AST_LOC_VALID (loc))
     {
       pk_term_class ("error-location");
-      pk_printf ("%d:%d: ", loc.first_line, loc.first_column);
+      if (pkl_quiet_p (compiler))
+        pk_printf ("%d: ", loc.first_line);
+      else
+        pk_printf ("%d:%d: ",
+                   loc.first_line, loc.first_column);
       pk_term_end_class ("error-location");
     }
   pk_term_class ("warning");
