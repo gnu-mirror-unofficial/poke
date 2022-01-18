@@ -299,7 +299,7 @@ Indu Bhagat             <indu.bhagat@oracle.com>
    registered as submodule reference commits, the way to invoke
    bootstrap such that it doesn't delete your changes is:
 
-   : $ ./bootstrap --skip-po --no-git --jitter-srcdir=jitter
+   : $ ./bootstrap --skip-po --no-git --gnulib-srcdir=gnulib --jitter-srcdir=jitter
 
 ** Gettext
 

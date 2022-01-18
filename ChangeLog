@@ -1,3 +1,15 @@
+2022-01-18  Luca Saiu  <positron@gnu.org>
+
+	* bootstrap.conf (bootstrap_post_import_hook): Use the specified
+	--gnulib-srcdir for boostrapping Jitter as well: redefine
+	GNULIB_SRCDIR to be an absolute path, then cd to the Jitter source
+	directory and pass Gnulib's absolute path to Jitter's bootstrap
+	script; do not rely on a hardwired --gnulib-srcdir=../gnulib .
+	(bootstrap_post_import_hook): Add missing quotations when
+	expanding GNULIB_SRCDIR and JITTER_SRCDIR.
+	* etc/hacking.org: Documentation: describe --jitter-srcdir=... in
+	a correct context, also passing --gnulib-srcdir=... as required.
+
 2022-01-18  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Disallow
