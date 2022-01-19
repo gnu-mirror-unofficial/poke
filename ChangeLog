@@ -1,5 +1,13 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_first_operand): Fix
+	diagnostics.
+	* testsuite/poke.pkl/bnot-diag-1.pk: Adapt expected error.
+	* testsuite/poke.pkl/neg-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/pos-diag-1.pk: Likewise.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_op_boolean): Fix
 	diagnostics.
 	* testsuite/poke.pkl/and-diag-1.pk: Adapt test.

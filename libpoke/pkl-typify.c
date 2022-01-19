@@ -314,29 +314,27 @@ PKL_PHASE_END_HANDLER
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_first_operand)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
-  pkl_ast_node type = PKL_AST_TYPE (PKL_AST_EXP_OPERAND (exp, 0));
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
 
   if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_UNMAP)
     {
       /* Handle an integral struct operand.  */
-      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
-          && PKL_AST_TYPE_S_ITYPE (type))
-        type = PKL_AST_TYPE_S_ITYPE (type);
+      if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+          && PKL_AST_TYPE_S_ITYPE (op1_type))
+        op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
 
-      switch (PKL_AST_TYPE_CODE (type))
+      switch (PKL_AST_TYPE_CODE (op1_type))
         {
         case PKL_TYPE_INTEGRAL:
         case PKL_TYPE_OFFSET:
           break;
         default:
-          PKL_ERROR (PKL_AST_LOC (exp),
-                     "invalid operand.  Expected integral or offset.");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
+          INVALID_OPERAND (op1, "expected integral or offset");
         }
     }
 
-  PKL_AST_TYPE (exp) = ASTREF (type);
+  PKL_AST_TYPE (exp) = ASTREF (op1_type);
 }
 PKL_PHASE_END_HANDLER
 
