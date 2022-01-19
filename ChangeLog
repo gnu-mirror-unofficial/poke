@@ -1,5 +1,12 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Fix diagnostics.
+	* testsuite/poke.pkl/cast-struct-diag-1.pk: Adapt expected error.
+	* testsuite/poke.pkl/cast-struct-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-3.pk: Likewise.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_neg_pos_bnot): Rename from
 	pkl_typify1_ps_first_operand.
 	(pkl_phase_typify1): Adapt accordingly.
