@@ -953,29 +953,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_in)
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
-  pkl_ast_node t1 = PKL_AST_TYPE (op1);
-  pkl_ast_node t2 = PKL_AST_TYPE (op2);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
 
   pkl_ast_node exp_type;
 
-  if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_ARRAY)
-    {
-      PKL_ERROR (PKL_AST_LOC (op2),
-                 "operator has the wrong type\n\
-expected array");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+  if (PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_ARRAY)
+    INVALID_OPERAND (op2, "expected array");
 
-  if (!pkl_ast_type_promoteable_p (t1,
-                                   PKL_AST_TYPE_A_ETYPE (t2),
+  if (!pkl_ast_type_promoteable_p (op1_type,
+                                   PKL_AST_TYPE_A_ETYPE (op2_type),
                                    0 /* promote_array_of_any */))
     {
-      char *t1_str = pkl_type_str (t1, 1);
-      char *t2_str = pkl_type_str (t2, 1);
+      char *t1_str = pkl_type_str (op1_type, 1);
+      char *t2_str = pkl_type_str (PKL_AST_TYPE_A_ETYPE (op2_type), 1);
 
-      PKL_ERROR (PKL_AST_LOC (op1), "operator has the wrong type\n\
-expected %s, got %s",
+      PKL_ERROR (PKL_AST_LOC (op1), "invalid operand in expression\n"
+                 "expected %s, got %s",
                  t2_str, t1_str);
       free (t1_str);
       free (t2_str);

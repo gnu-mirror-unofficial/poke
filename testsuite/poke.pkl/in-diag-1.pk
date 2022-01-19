@@ -1,3 +1,4 @@
 /* { dg-do compile } */
 
-var foo = 10 in 20; /* { dg-error "wrong type.*expected array" } */
+var foo = 10
+            in 20; /* { dg-error "invalid operand.*\n.*expected array" } */

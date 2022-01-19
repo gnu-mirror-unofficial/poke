@@ -1,3 +1,4 @@
 /* { dg-do compile } */
 
-var foo = [1,2,3] in "foo"; /* { dg-error "wrong type.*expected array" } */
+var foo = [1,2,3] in
+                  "foo"; /* { dg-error "invalid operand.*\n.*expected array" } */

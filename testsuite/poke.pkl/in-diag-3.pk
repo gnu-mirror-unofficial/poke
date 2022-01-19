@@ -1,3 +1,4 @@
 /* { dg-do compile } */
 
-var foo = 10 in ["a","b","c"]; /* { dg-error "wrong type.*expected string" } */
+var foo = 10 in  /* { dg-error "invalid operand.*\n.*expected string" } */
+             ["a","b","c"];
