@@ -1,5 +1,11 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_neg_pos_bnot): Rename from
+	pkl_typify1_ps_first_operand.
+	(pkl_phase_typify1): Adapt accordingly.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_first_operand): Do not
 	handle UNMAP.
 	(pkl_tipify1_ps_op_unmap): Fix diagnostics.
