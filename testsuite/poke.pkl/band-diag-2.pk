@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = 23#B &
+        2;  /* { dg-error "invalid operand.*\n.*expected offset" } */

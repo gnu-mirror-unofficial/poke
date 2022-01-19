@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = [[1,2],[3,4]]
+        + 32; /* { dg-error "invalid operand.*\n.*expected int<32>\\\[2\\\]\\\[2\\\]" } */

@@ -591,265 +591,205 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
 }
 PKL_PHASE_END_HANDLER
 
-/* When applied to integral arguments, the type of a binary operation
-   SL and SR is an integral type with the same characteristics than
-   the type of the value being shifted, i.e. the first operand.
+/* IOR, XOR, BAND and SUB accept the following configurations of
+   operands:
 
-   When applied to integral arguments, the type of a binary operation
-   ADD, SUB, MUL, DIV, MOD, IOR, XOR and BAND is an integral type with
-   the following characteristics: if any of the operands is unsigned,
-   the operation is unsigned.  The width of the operation is the width
-   of the widest operand.
+   INTEGRAL x INTEGRAL -> INTEGRAL
+   OFFSET   x OFFSET   -> OFFSET
 
-   When applied to strings, the type of ADD is a string.
+   DIV and CEILDIV accept the following configurations of operands:
 
-   When applied to offsets, the type of ADD, SUB is an offset, whose
-   magnitude's type is calculated following the same rules than for
-   integrals.  The unit of the resulting offset is the common
-   denominator of the units of the operands.
+   INTEGRAL x INTEGRAL -> INTEGRAL
+   OFFSET   x OFFSET   -> INTEGRAL
+   OFFSET   x INTEGRAL -> OFFSET
 
-   When applied to offsets, the type of DIV is an integer, whose type
-   is calculated following the same rules than for integrals.  When
-   applied to an offset and an integer, the type of DIV is an offset
-   with the same base type and unit than the offset operand.
+   MOD accepts the following configurations of operands:
 
-   When applied to an offset and an integer, the type of MUL is an
-   offset, whose magnitude's type is calculated following the same
-   rules than for integrals.  The unit of the resulting offset is the
-   same than the unit of the operand.  */
+   INTEGRAL x INTEGRAL -> INTEGRAL
+   OFFSET   x OFFSET   -> OFFSET
 
-#define TYPIFY_BIN(OP)                                                  \
-  PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_##OP)                         \
-  {                                                                     \
-    pkl_ast_node exp = PKL_PASS_NODE;                                   \
-    pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);                    \
-    pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);                    \
-    pkl_ast_node t1 = PKL_AST_TYPE (op1);                               \
-    pkl_ast_node t2 = PKL_AST_TYPE (op2);                               \
-                                                                        \
-    pkl_ast_node type;                                                  \
-                                                                        \
-    /* Integral structs are integers for binary operators.  */          \
-    if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT                       \
-        && PKL_AST_TYPE_S_ITYPE (t1))                                   \
-      t1 = PKL_AST_TYPE_S_ITYPE (t1);                                   \
-                                                                        \
-    if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT                       \
-        && PKL_AST_TYPE_S_ITYPE (t2))                                   \
-      t2 = PKL_AST_TYPE_S_ITYPE (t2);                                   \
-                                                                        \
-    if (PKL_AST_TYPE_CODE (t1) != PKL_AST_TYPE_CODE (t2)                \
-        && PKL_AST_EXP_CODE (exp) != PKL_AST_OP_DIV                     \
-        && PKL_AST_EXP_CODE (exp) != PKL_AST_OP_CEILDIV)                \
-      goto error;                                                       \
-                                                                        \
-    switch (PKL_AST_TYPE_CODE (t1))                                     \
-      {                                                                 \
-      CASE_STR                                                          \
-      CASE_OFFSET                                                       \
-      CASE_INTEGRAL                                                     \
-      CASE_ARRAY                                                        \
-      default:                                                          \
-        goto error;                                                     \
-        break;                                                          \
-      }                                                                 \
-                                                                        \
-    PKL_AST_TYPE (exp) = ASTREF (type);                                 \
-    PKL_PASS_DONE;                                                      \
-                                                                        \
-  error:                                                                \
-    PKL_ERROR (PKL_AST_LOC (exp),                                       \
-               "invalid operands in expression");                       \
-    PKL_TYPIFY_PAYLOAD->errors++;                                       \
-    PKL_PASS_ERROR;                                                     \
-  }                                                                     \
-  PKL_PHASE_END_HANDLER
+   ADD accepts the following configurations of operands:
 
-/* DIV, MOD and SUB accept integral and offset operands.  */
+   INTEGRAL x INTEGRAL -> INTEGRAL
+   OFFSET   x OFFSET   -> OFFSET
+   STRING   x STRING   -> STRING
+   ARRAY    x ARRAY    -> ARRAY
+*/
 
-#define CASE_STR
-#define CASE_OFFSET
-#define CASE_ARRAY
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bin)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
 
-#undef CASE_INTEGRAL
-#define CASE_INTEGRAL                                                   \
-  case PKL_TYPE_INTEGRAL:                                               \
-  {                                                                     \
-    if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)                    \
-      goto error;                                                       \
-    else                                                                \
-      {                                                                 \
-        int signed_p = (PKL_AST_TYPE_I_SIGNED_P (t1)                    \
-                        && PKL_AST_TYPE_I_SIGNED_P (t2));               \
-        int size = MAX (PKL_AST_TYPE_I_SIZE (t1),                       \
-                        PKL_AST_TYPE_I_SIZE (t2));                      \
-                                                                        \
-        type = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p); \
-        break;                                                          \
-      }                                                                 \
+  int op1_type_code;
+  int op2_type_code;
+
+  pkl_ast_node type;
+
+  /* Integral structs are integers for binary operators.  */
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
+
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op2_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
+
+  op1_type_code = PKL_AST_TYPE_CODE (op1_type);
+  op2_type_code = PKL_AST_TYPE_CODE (op2_type);
+
+  switch (op1_type_code)
+    {
+    case PKL_TYPE_INTEGRAL:
+      if (op2_type_code != PKL_TYPE_INTEGRAL)
+        INVALID_OPERAND (op2, "expected integral");
+
+      type = pkl_type_integral_promote (PKL_PASS_AST,
+                                        op1_type, op2_type);
+      break;
+    case PKL_TYPE_OFFSET:
+      {
+        switch (PKL_AST_EXP_CODE (exp))
+          {
+          case PKL_AST_OP_DIV:
+          case PKL_AST_OP_CEILDIV:
+            if (op2_type_code != PKL_TYPE_OFFSET
+                && op2_type_code != PKL_TYPE_INTEGRAL)
+              INVALID_OPERAND (op2, "expected integral or offset");
+
+            /* For OFFSET / INTEGRAL the type of the result is the
+               type of the first operand.  */
+            if (op2_type_code == PKL_TYPE_INTEGRAL)
+              {
+                type = op1_type;
+                break;
+              }
+
+            /* For OFFSET / OFFSET the type of the result is an
+               integral as promoted by the base types of the offset
+               operands.  */
+
+            type = pkl_type_integral_promote (PKL_PASS_AST,
+                                              PKL_AST_TYPE_O_BASE_TYPE (op1_type),
+                                              PKL_AST_TYPE_O_BASE_TYPE (op2_type));
+            break;
+          case PKL_AST_OP_MOD:
+            {
+              if (op2_type_code != PKL_TYPE_OFFSET)
+                INVALID_OPERAND (op2, "expected offset");
+
+              pkl_ast_node base_type_1 = PKL_AST_TYPE_O_BASE_TYPE (op1_type);
+              pkl_ast_node unit_type_1 = PKL_AST_TYPE_O_UNIT (op1_type);
+              pkl_ast_node unit_type_2 = PKL_AST_TYPE_O_UNIT (op2_type);
+              pkl_ast_node unit_type
+                = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+
+              pkl_ast_node unit;
+
+              if (PKL_AST_CODE (unit_type_1) == PKL_AST_INTEGER
+                  && PKL_AST_CODE (unit_type_2) == PKL_AST_INTEGER)
+                {
+                  uint64_t result_unit =
+                    typify_gcd (PKL_AST_INTEGER_VALUE (unit_type_1),
+                                PKL_AST_INTEGER_VALUE (unit_type_2));
+
+                  unit = pkl_ast_make_integer (PKL_PASS_AST, result_unit);
+                }
+              else
+                unit = pkl_ast_make_binary_exp (PKL_PASS_AST,
+                                                PKL_AST_OP_GCD,
+                                                unit_type_1, unit_type_2);
+
+              PKL_AST_TYPE (unit) = ASTREF (unit_type);
+
+              type = pkl_ast_make_offset_type (PKL_PASS_AST,
+                                               base_type_1, unit);
+              break;
+            }
+          default:
+            {
+              /* The other operations all use OFFSET x OFFSET ->
+                 OFFSET */
+              if (op2_type_code != PKL_TYPE_OFFSET)
+                INVALID_OPERAND (op2, "expected offset");
+
+              pkl_ast_node unit_type_1 = PKL_AST_TYPE_O_UNIT (op1_type);
+              pkl_ast_node unit_type_2 = PKL_AST_TYPE_O_UNIT (op2_type);
+              pkl_ast_node unit_type
+                = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+              pkl_ast_node unit;
+
+              /* Promotion rules work like in integral operations.  */
+              pkl_ast_node base_type
+                = pkl_type_integral_promote (PKL_PASS_AST,
+                                             PKL_AST_TYPE_O_BASE_TYPE (op1_type),
+                                             PKL_AST_TYPE_O_BASE_TYPE (op2_type));
+
+              /* The unit of the result is the GCD of the units
+                 involved.  */
+              if (PKL_AST_CODE (unit_type_1) == PKL_AST_INTEGER
+                  && PKL_AST_CODE (unit_type_2) == PKL_AST_INTEGER)
+                {
+                  uint64_t result_unit =
+                    typify_gcd (PKL_AST_INTEGER_VALUE (unit_type_1),
+                                PKL_AST_INTEGER_VALUE (unit_type_2));
+
+                  unit = pkl_ast_make_integer (PKL_PASS_AST, result_unit);
+                }
+              else
+                unit = pkl_ast_make_binary_exp (PKL_PASS_AST,
+                                                PKL_AST_OP_GCD,
+                                                unit_type_1, unit_type_2);
+
+              PKL_AST_TYPE (unit) = ASTREF (unit_type);
+              type = pkl_ast_make_offset_type (PKL_PASS_AST,
+                                               base_type,
+                                               unit);
+              break;
+            }
+          }
+        break;
+      }
+    case PKL_TYPE_STRING:
+      /* This is only supported in ADD.  */
+      if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_ADD)
+        INVALID_OPERAND (op1, "expected integral or offset");
+      if (op2_type_code != PKL_TYPE_STRING)
+        INVALID_OPERAND (op2, "expected string");
+
+      type = pkl_ast_make_string_type (PKL_PASS_AST);
+      break;
+    case PKL_TYPE_ARRAY:
+      /* This is only supported in ADD.  */
+      if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_ADD)
+        INVALID_OPERAND (op1, "expected integral or offset");
+      /* The type of the elements of the operand arrays should be the
+         same.  */
+      if (op2_type_code != PKL_TYPE_ARRAY
+          || !pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (op1_type),
+                                    PKL_AST_TYPE_A_ETYPE (op2_type)))
+        INVALID_SECOND_OPERAND;
+
+      type = pkl_ast_make_array_type (PKL_PASS_AST,
+                                      PKL_AST_TYPE_A_ETYPE (op1_type),
+                                      NULL /* bound*/);
+      /* We need to restart so the new type gets processed.  */
+      PKL_PASS_RESTART = 1;
+      break;
+    default:
+      if (PKL_AST_EXP_CODE (exp) == PKL_AST_OP_ADD)
+        INVALID_OPERAND (op1, "expected integral, offset, string or array");
+      else
+        INVALID_OPERAND (op1, "expected integral or offset");
     }
 
-#undef CASE_OFFSET
-#define CASE_OFFSET                                                     \
-  case PKL_TYPE_OFFSET:                                                 \
-  {                                                                     \
-    pkl_ast_node base_type_1 = PKL_AST_TYPE_O_BASE_TYPE (t1);           \
-    pkl_ast_node base_type_2 = PKL_AST_TYPE_O_BASE_TYPE (t2);           \
-                                                                        \
-    if (PKL_AST_EXP_CODE (exp) == PKL_AST_OP_DIV                        \
-        || PKL_AST_EXP_CODE (exp) == PKL_AST_OP_CEILDIV)                \
-      {                                                                 \
-        if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_INTEGRAL)                \
-          /* For OFFSET / INT, the type of the result is */             \
-          /* The type of OFFSET.  */                                    \
-          type = t1;                                                    \
-        else                                                            \
-          {                                                             \
-            size_t base_type_1_size = PKL_AST_TYPE_I_SIZE (base_type_1); \
-            size_t base_type_2_size = PKL_AST_TYPE_I_SIZE (base_type_2); \
-            int base_type_1_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_1); \
-            int base_type_2_signed_p = PKL_AST_TYPE_I_SIGNED_P (base_type_2); \
-                                                                        \
-            int signed_p = (base_type_1_signed_p && base_type_2_signed_p); \
-            int size = MAX (base_type_1_size, base_type_2_size);        \
-                                                                        \
-            type = pkl_ast_make_integral_type (PKL_PASS_AST,            \
-                                               size, signed_p);         \
-          }                                                             \
-      }                                                                 \
-    else if (PKL_AST_EXP_CODE (exp) == PKL_AST_OP_MOD)                  \
-      {                                                                 \
-        pkl_ast_node unit_type_1 = PKL_AST_TYPE_O_UNIT (t1);            \
-        pkl_ast_node unit_type_2 = PKL_AST_TYPE_O_UNIT (t2);            \
-        pkl_ast_node unit_type                                          \
-          = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);           \
-                                                                        \
-        pkl_ast_node unit;                                              \
-                                                                        \
-        if (PKL_AST_CODE (unit_type_1) == PKL_AST_INTEGER               \
-            && PKL_AST_CODE (unit_type_2) == PKL_AST_INTEGER)           \
-          {                                                             \
-            uint64_t result_unit =                                      \
-              typify_gcd (PKL_AST_INTEGER_VALUE (unit_type_1),          \
-                   PKL_AST_INTEGER_VALUE (unit_type_2));                \
-                                                                        \
-            unit = pkl_ast_make_integer (PKL_PASS_AST, result_unit);    \
-          }                                                             \
-        else                                                            \
-          unit = pkl_ast_make_binary_exp (PKL_PASS_AST,                 \
-                                          PKL_AST_OP_GCD,               \
-                                          unit_type_1, unit_type_2);    \
-                                                                        \
-        PKL_AST_TYPE (unit) = ASTREF (unit_type);                       \
-                                                                        \
-        type = pkl_ast_make_offset_type (PKL_PASS_AST,                  \
-                                         base_type_1, unit);            \
-      }                                                                 \
-    else                                                                \
-      assert (0);                                                       \
-    break;                                                              \
-  }
-
-TYPIFY_BIN (div);
-TYPIFY_BIN (ceildiv);
-TYPIFY_BIN (mod);
-
-/* IOR, XOR, BAND and SUB accept integrals and offsets.  */
-
-#undef CASE_OFFSET
-#define CASE_OFFSET                                                     \
-  case PKL_TYPE_OFFSET:                                                 \
-  {                                                                     \
-    pkl_ast_node base_type_1 = PKL_AST_TYPE_O_BASE_TYPE (t1);           \
-    pkl_ast_node base_type_2 = PKL_AST_TYPE_O_BASE_TYPE (t2);           \
-    pkl_ast_node unit_type_1 = PKL_AST_TYPE_O_UNIT (t1);                \
-    pkl_ast_node unit_type_2 = PKL_AST_TYPE_O_UNIT (t2);                \
-    pkl_ast_node unit_type;                                             \
-    pkl_ast_node unit;                                                  \
-                                                                        \
-    /* Promotion rules work like in integral operations.  */            \
-    int signed_p = (PKL_AST_TYPE_I_SIGNED_P (base_type_1)               \
-                    && PKL_AST_TYPE_I_SIGNED_P (base_type_2));          \
-    int size                                                            \
-      = MAX (PKL_AST_TYPE_I_SIZE (base_type_1),                         \
-             PKL_AST_TYPE_I_SIZE (base_type_2));                        \
-                                                                        \
-    pkl_ast_node base_type                                              \
-      = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);      \
-                                                                        \
-    /* The unit of the result is the GCD of the units involved.  */     \
-    unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);       \
-                                                                        \
-    if (PKL_AST_CODE (unit_type_1) == PKL_AST_INTEGER                   \
-        && PKL_AST_CODE (unit_type_2) == PKL_AST_INTEGER)               \
-      {                                                                 \
-        uint64_t result_unit =                                          \
-          typify_gcd (PKL_AST_INTEGER_VALUE (unit_type_1),              \
-                      PKL_AST_INTEGER_VALUE (unit_type_2));             \
-                                                                        \
-        unit = pkl_ast_make_integer (PKL_PASS_AST, result_unit);        \
-      }                                                                 \
-    else                                                                \
-      unit = pkl_ast_make_binary_exp (PKL_PASS_AST,                     \
-                                      PKL_AST_OP_GCD,                   \
-                                      unit_type_1, unit_type_2);        \
-                                                                        \
-    PKL_AST_TYPE (unit) = ASTREF (unit_type);                           \
-                                                                        \
-    type = pkl_ast_make_offset_type (PKL_PASS_AST,                      \
-                                     base_type,                         \
-                                     unit);                             \
-    break;                                                              \
-  }
-
-TYPIFY_BIN (ior);
-TYPIFY_BIN (xor);
-TYPIFY_BIN (band);
-TYPIFY_BIN (sub);
-
-/* ADD accepts integral, string, offset and array operands.  */
-
-#undef CASE_STR
-#define CASE_STR                                                        \
-    case PKL_TYPE_STRING:                                               \
-      type = pkl_ast_make_string_type (PKL_PASS_AST);                   \
-      break;
-
-#undef CASE_ARRAY
-#define CASE_ARRAY                              \
-  case PKL_TYPE_ARRAY:                                          \
-  {                                                             \
-  /* The type of the elements of the operand arrays */          \
-    /* should be the same.  */                                  \
-    if (!pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (t1),       \
-                               PKL_AST_TYPE_A_ETYPE (t2)))      \
-      {                                                         \
-        char *t1_str = pkl_type_str (t1, 1);                    \
-        char *t2_str = pkl_type_str (t2, 1);                    \
-                                                                \
-        PKL_ERROR (PKL_AST_LOC (op2),                           \
-                   "invalid operand\nexpected %s, got %s",      \
-                   t1_str, t2_str);                             \
-        free (t1_str);                                          \
-        free (t2_str);                                          \
-                                                                \
-        PKL_TYPIFY_PAYLOAD->errors++;                           \
-        PKL_PASS_ERROR;                                         \
-      }                                                         \
-                                                                \
-    type = pkl_ast_make_array_type (PKL_PASS_AST,               \
-                                    PKL_AST_TYPE_A_ETYPE (t1),  \
-                                    NULL /* bound*/);           \
-                                                                \
-    /* We need to restart so the new type gets processed.  */   \
-    PKL_PASS_RESTART = 1;                                       \
-    break;                                                      \
-  }                                                             \
-
-TYPIFY_BIN (add);
-
-#undef CASE_ARRAY
-#define CASE_ARRAY
+  PKL_AST_TYPE (exp) = ASTREF (type);
+  PKL_PASS_DONE;
+}
+PKL_PHASE_END_HANDLER
 
 /* The bit-shift operators and the pow operator accept the following
    configurations of operands:
@@ -1002,11 +942,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
   PKL_PASS_DONE;
 }
 PKL_PHASE_END_HANDLER
-
-#undef CASE_INTEGRAL
-#undef CASE_STR
-#undef CAST_OFFSET
-#undef TYPIFY_BIN
 
 /* The type of an included operation IN is a boolean.  The right
    operator shall be an array, and the type of the left operator shall
@@ -2991,18 +2926,18 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_AND, pkl_typify1_ps_op_boolean),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_OR, pkl_typify1_ps_op_boolean),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IMPL, pkl_typify1_ps_op_boolean),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_typify1_ps_add),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_typify1_ps_sub),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MUL, pkl_typify1_ps_mul),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_typify1_ps_div),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_typify1_ps_ceildiv),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POW, pkl_typify1_ps_bshift_pow),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_typify1_ps_mod),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_typify1_ps_bshift_pow),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SR, pkl_typify1_ps_bshift_pow),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_typify1_ps_ior),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_typify1_ps_xor),
-   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_typify1_ps_band),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IOR, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_XOR, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BAND, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ADD, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SUB, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_typify1_ps_bin),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_MOD, pkl_typify1_ps_bin),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_typify1_ps_attr),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NEG, pkl_typify1_ps_neg_pos_bnot),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_POS, pkl_typify1_ps_neg_pos_bnot),

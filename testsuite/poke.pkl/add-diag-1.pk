@@ -3,5 +3,6 @@
 fun add_wrong = int:
   {
    var a = 10;
-   return a + "foo"; /* { dg-error "invalid operands" } */
+   return a +
+          "foo"; /* { dg-error "invalid operand.*\n.*expected integral" } */
   }

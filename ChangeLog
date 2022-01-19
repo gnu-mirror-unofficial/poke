@@ -1,5 +1,31 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_bin): New handler.
+	(pkl_phase_typify1): Use new handler for IOS, XOR, BAND, SUB, DIV,
+	CEILDIV, MOD and ADD.
+	(TYPIFY_BIN): Remove.
+	* testsuite/poke.pkl/add-arrays-diag-1.pk: Adapt expected error.
+	* testsuite/poke.pkl/cdiv-integers-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/add-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/div-offsets-diag-3.pk: New test.
+	* testsuite/poke.pkl/mod-offsets-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sub-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sub-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/band-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/band-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/xor-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/ior-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/add-arrays-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/add-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/div-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/add-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/add-offsets-diag-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.h: Prototype for pkl_type_integral_promote.
 	* libpoke/pkl-ast.c (pkl_type_integral_promote): New function.
 	* libpoke/pkl-typify.c (pkl_typify1_ps_mul): Fix diagnostics.
@@ -9,7 +35,7 @@
 	* testsuite/poke.pkl/mul-diag-3.pk: Likewise.
 	* testsuite/poke.pkl/mul-diag-4.pk: Likewise.
 	* testsuite/poke.pkl/mul-diag-5.pk: Likewise.
-	
+
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_bshift_pow): Fix

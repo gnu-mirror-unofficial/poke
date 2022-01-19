@@ -593,7 +593,10 @@ EXTRA_DIST = \
   poke.pkl/add-arrays-diag-1.pk \
   poke.pkl/add-arrays-diag-2.pk \
   poke.pkl/add-arrays-diag-3.pk \
+  poke.pkl/add-arrays-diag-4.pk \
   poke.pkl/add-diag-1.pk \
+  poke.pkl/add-diag-2.pk \
+  poke.pkl/add-diag-3.pk \
   poke.pkl/add-integers-1.pk \
   poke.pkl/add-integers-2.pk \
   poke.pkl/add-integers-3.pk \
@@ -619,6 +622,7 @@ EXTRA_DIST = \
   poke.pkl/add-offsets-7.pk \
   poke.pkl/add-offsets-8.pk \
   poke.pkl/add-offsets-9.pk \
+  poke.pkl/add-offsets-diag-1.pk \
   poke.pkl/add-offsets-10.pk \
   poke.pkl/add-strings-1.pk \
   poke.pkl/adda-int-1.pk \
@@ -789,6 +793,8 @@ EXTRA_DIST = \
   poke.pkl/attr-size-13.pk \
   poke.pkl/attr-size-14.pk \
   poke.pkl/attr-unit-1.pk \
+  poke.pkl/band-diag-1.pk \
+  poke.pkl/band-diag-2.pk \
   poke.pkl/band-integers-1.pk \
   poke.pkl/band-integers-2.pk \
   poke.pkl/band-int-struct-1.pk \
@@ -901,6 +907,8 @@ EXTRA_DIST = \
   poke.pkl/ioflags-1.pk \
   poke.pkl/ioflags-2.pk \
   poke.pkl/ioflags-3.pk \
+  poke.pkl/ior-diag-1.pk \
+  poke.pkl/ior-diag-2.pk \
   poke.pkl/cdiv-integers-overflow-1.pk \
   poke.pkl/cdiv-integers-overflow-2.pk \
   poke.pkl/cdiv-integers-overflow-3.pk \
@@ -981,6 +989,7 @@ EXTRA_DIST = \
   poke.pkl/deint-struct-10.pk \
   poke.pkl/deint-struct-11.pk \
   poke.pkl/deint-struct-12.pk \
+  poke.pkl/div-diag-1.pk \
   poke.pkl/div-integers-1.pk \
   poke.pkl/div-integers-2.pk \
   poke.pkl/div-integers-3.pk \
@@ -1006,6 +1015,7 @@ EXTRA_DIST = \
   poke.pkl/div-offsets-4.pk \
   poke.pkl/div-offsets-diag-1.pk \
   poke.pkl/div-offsets-diag-2.pk \
+  poke.pkl/div-offsets-diag-3.pk \
   poke.pkl/diva-int-1.pk \
   poke.pkl/diva-offset-diag-1.pk \
   poke.pkl/eq-any-diag-1.pk \
@@ -1379,8 +1389,14 @@ EXTRA_DIST = \
   poke.pkl/mod-offsets-4.pk \
   poke.pkl/mod-offsets-5.pk \
   poke.pkl/mod-offsets-diag-1.pk \
+  poke.pkl/mod-offsets-diag-2.pk \
   poke.pkl/moda-int-1.pk \
   poke.pkl/moda-offset-1.pk \
+  poke.pkl/mul-diag-1.pk \
+  poke.pkl/mul-diag-2.pk \
+  poke.pkl/mul-diag-3.pk \
+  poke.pkl/mul-diag-4.pk \
+  poke.pkl/mul-diag-5.pk \
   poke.pkl/mul-integers-1.pk \
   poke.pkl/mul-integers-2.pk \
   poke.pkl/mul-integers-3.pk \
@@ -1408,7 +1424,6 @@ EXTRA_DIST = \
   poke.pkl/mul-strings-3.pk \
   poke.pkl/mul-strings-4.pk \
   poke.pkl/mul-strings-5.pk \
-  poke.pkl/mul-strings-diag-1.pk \
   poke.pkl/mula-int-1.pk \
   poke.pkl/mula-offset-1.pk \
   poke.pkl/mula-string-1.pk \
@@ -1960,6 +1975,8 @@ EXTRA_DIST = \
   poke.pkl/struct-types-diag-14.pk \
   poke.pkl/struct-types-diag-15.pk \
   poke.pkl/struct-types-endian-1.pk \
+  poke.pkl/sub-diag-1.pk \
+  poke.pkl/sub-diag-2.pk \
   poke.pkl/sub-integers-1.pk \
   poke.pkl/sub-integers-2.pk \
   poke.pkl/sub-integers-3.pk \
@@ -2102,6 +2119,7 @@ EXTRA_DIST = \
   poke.pkl/while-3.pk \
   poke.pkl/while-int-struct-1.pk \
   poke.pkl/xor-diag-1.pk \
+  poke.pkl/xor-diag-2.pk \
   poke.pkl/xor-integers-1.pk \
   poke.pkl/xor-integers-2.pk \
   poke.pkl/xor-int-struct-1.pk \

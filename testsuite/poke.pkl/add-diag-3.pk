@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = [1,2,3] /* { dg-error "invalid operand.*\n.*expected integral or offset" } */
+        - 32;
