@@ -12310,6 +12310,7 @@ memory of some process.
 @menu
 * open::			Creating IO spaces.
 * opensub::                     IO sub spaces.
+* openproc::                    IO proc spaces.
 * close::			Destroying IO spaces.
 * flush::			Flushing IO spaces.
 * get_ios::			Getting the current IO space.
@@ -12412,6 +12413,22 @@ provided and they contradict the flags of the underlying IOS then
 
 Trying to access a sub space whose base IOS has been closed results in
 a @code{E_io} exception.
+
+@node openproc
+@subsubsection @code{openproc}
+@cindex @code{openproc}
+
+The @code{openproc} standard function allows you to create IO spaces
+to access the memory of some running program, given its process ID.
+The prototype is:
+
+@example
+fun openproc = (uint<64> @var{pid}, uint<64> @var{flags} = 0) int<32>
+@end example
+
+@noindent
+where @var{pid} is the process ID whose memory we want to poke and
+@var{flags} is a set of open flags.
 
 @node close
 @subsubsection @code{close}

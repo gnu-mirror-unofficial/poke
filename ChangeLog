@@ -1,3 +1,8 @@
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/std.pk (openproc): New function.
+	* doc/poke.texi (openproc): New section.
+
 2022-01-18  Luca Saiu  <positron@gnu.org>
 
 	* bootstrap.conf (bootstrap_post_import_hook): Use the specified

@@ -356,6 +356,11 @@ fun opensub = (int<32> ios,
   return open (handler, flags);
 }
 
+fun openproc = (uint<64> pid, uint<64> flags = 0) int<32>:
+{
+  return open (format ("pid://%u64d", pid), flags);
+}
+
 /*** Miscellanea.  */
 
 var NULL = 0#B;
