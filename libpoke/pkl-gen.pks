@@ -1490,7 +1490,7 @@
         drop                    ; ENAME EVAL
         drop                    ; ENAME
         drop                    ; _
-        pushvar $boff            ; BOFF
+        pushvar $boff           ; BOFF
         push null               ; BOFF null null
         push null               ; BOFF null null
         dup                     ; BOFF null null null
