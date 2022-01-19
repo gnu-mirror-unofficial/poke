@@ -1,5 +1,11 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_op_bconc): Fix diagnostics.
+	* testsuite/poke.pkl/bconc-diag-1.pk: Adapt expected error.
+	* testsuite/poke.pkl/bconc-diag-2.pk: Likewise.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps-op_in): Fix diagnostics.
 	* testsuite/poke.pkl/in-diag-3.pk: Adapt expected error.
 	* testsuite/poke.pkl/in-diag-1.pk: Likewise.

@@ -1,4 +1,4 @@
 /* { dg-do compile } */
 
 var a = 100
-          ::: 3#B; /* { dg-error "expected integer" } */
+          ::: 3#B; /* { dg-error "invalid operand.*\n.*expected integral" } */

@@ -994,42 +994,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_bconc)
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
-  pkl_ast_node t1 = PKL_AST_TYPE (op1);
-  pkl_ast_node t2 = PKL_AST_TYPE (op2);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
 
   pkl_ast_node exp_type;
 
   /* Integral structs shall be considered as integers in this
      context.  */
-  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_S_ITYPE (t1))
-    t1 = PKL_AST_TYPE_S_ITYPE (t1);
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
 
-  if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_S_ITYPE (t2))
-    t2 = PKL_AST_TYPE_S_ITYPE (t2);
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op2_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
   /* This operation is only defined for integral arguments, of any
      width.  */
-  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_INTEGRAL)
-    {
-      if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)
-        {
-          PKL_ERROR (PKL_AST_LOC (op2), "expected integer");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-    }
-  else
-    {
-      PKL_ERROR (PKL_AST_LOC (op1), "expected integer");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+  if (PKL_AST_TYPE_CODE (op1_type) != PKL_TYPE_INTEGRAL)
+    INVALID_OPERAND (op1, "expected integral");
+  if (PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_INTEGRAL)
+    INVALID_OPERAND (op2, "expected integral");
 
   /* The sum of the width of the operators should never exceed
      64-bit.  */
-  if (PKL_AST_TYPE_I_SIZE (t1) + PKL_AST_TYPE_I_SIZE (t2)
+  if (PKL_AST_TYPE_I_SIZE (op1_type) + PKL_AST_TYPE_I_SIZE (op2_type)
       > 64)
     {
       PKL_ERROR (PKL_AST_LOC (exp),
@@ -1040,9 +1029,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_bconc)
 
   /* Allright, make the new type.  */
   exp_type = pkl_ast_make_integral_type (PKL_PASS_AST,
-                                         PKL_AST_TYPE_I_SIZE (t1)
-                                         + PKL_AST_TYPE_I_SIZE (t2),
-                                         PKL_AST_TYPE_I_SIGNED_P (t1));
+                                         PKL_AST_TYPE_I_SIZE (op1_type)
+                                         + PKL_AST_TYPE_I_SIZE (op2_type),
+                                         PKL_AST_TYPE_I_SIGNED_P (op1_type));
   PKL_AST_TYPE (exp) = ASTREF (exp_type);
 }
 PKL_PHASE_END_HANDLER
