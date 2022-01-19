@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var s = 3UL
+        * [1,2,3]; /* { dg-error "invalid operand.*\n.*expected integral, offset or string" } */

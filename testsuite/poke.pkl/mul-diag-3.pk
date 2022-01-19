@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var s = 3#B
+        * [1,2,3]; /* { dg-error "invalid operand.*\n.*expected integral" } */

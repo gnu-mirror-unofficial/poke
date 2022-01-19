@@ -851,11 +851,11 @@ TYPIFY_BIN (add);
 #undef CASE_ARRAY
 #define CASE_ARRAY
 
-/* The bit-shift operators and the pow operator admit the following
+/* The bit-shift operators and the pow operator accept the following
    configurations of operands:
 
-        INTEGRAL x INTEGRAL -> INTEGRAL
-        OFFSET   x INTEGRAL -> OFFSET
+   INTEGRAL x INTEGRAL -> INTEGRAL
+   OFFSET   x INTEGRAL -> OFFSET
 */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
@@ -913,100 +913,93 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
 }
 PKL_PHASE_END_HANDLER
 
-/* MUL accepts integral, offset and string operands.  We can't use
-   TYPIFY_BIN here because it relies on a different logic to determine
-   the result type.  */
+/* MUL accepts the following configurations of operands:
+
+   INTEGRAL x INTEGRAL -> INTEGRAL
+   STRING   x INTEGRAL -> STRING
+   INTEGRAL x STRING   -> STRING
+   OFFSET   x INTEGRAL -> OFFSET
+   INTEGRAL x OFFSET   -> OFFSET
+*/
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_mul)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
-  pkl_ast_node t1 = PKL_AST_TYPE (op1);
-  pkl_ast_node t2 = PKL_AST_TYPE (op2);
-  int t1_code = PKL_AST_TYPE_CODE (t1);
-  int t2_code = PKL_AST_TYPE_CODE (t2);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
+  int op1_type_code;
+  int op2_type_code;
 
   pkl_ast_node type;
 
   /* Integral structs shall be considered as integers in this
      context.  */
-  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_S_ITYPE (t1))
-    t1 = PKL_AST_TYPE_S_ITYPE (t1);
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
 
-  if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_S_ITYPE (t2))
-    t2 = PKL_AST_TYPE_S_ITYPE (t2);
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op2_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
-  if (t1_code == PKL_TYPE_STRING || t2_code == PKL_TYPE_STRING)
+  op1_type_code = PKL_AST_TYPE_CODE (op1_type);
+  op2_type_code = PKL_AST_TYPE_CODE (op2_type);
+
+  switch (op1_type_code)
     {
-      /* One operand must be a string, the other an integral.  */
-      if (t1_code != PKL_TYPE_INTEGRAL && t2_code != PKL_TYPE_INTEGRAL)
-        goto error;
-
+    case PKL_TYPE_STRING:
+      if (op2_type_code != PKL_TYPE_INTEGRAL)
+        INVALID_OPERAND (op2, "expected integral");
       type = pkl_ast_make_string_type (PKL_PASS_AST);
-    }
-  else if (t1_code == PKL_TYPE_OFFSET || t2_code == PKL_TYPE_OFFSET)
-    {
-      pkl_ast_node offset_type;
-      pkl_ast_node int_type;
-      pkl_ast_node offset_base_type;
-      int signed_p;
-      size_t size;
+      break;
+    case PKL_TYPE_OFFSET:
+      {
+        pkl_ast_node res_base_type;
 
-      /* One operand must be an offset, the other an integral */
-      if (t1_code == PKL_TYPE_INTEGRAL && t2_code == PKL_TYPE_OFFSET)
+        if (op2_type_code != PKL_TYPE_INTEGRAL)
+          INVALID_OPERAND (op2, "expected integral");
+
+        res_base_type = pkl_type_integral_promote (PKL_PASS_AST,
+                                                   PKL_AST_TYPE_O_BASE_TYPE (op1_type),
+                                                   op2_type);
+        type = pkl_ast_make_offset_type (PKL_PASS_AST,
+                                         res_base_type,
+                                         PKL_AST_TYPE_O_UNIT (op1_type));
+        break;
+      }
+    case PKL_TYPE_INTEGRAL:
+      switch (op2_type_code)
         {
-          offset_type = t2;
-          int_type = t1;
-        }
-      else if (t1_code == PKL_TYPE_OFFSET && t2_code == PKL_TYPE_INTEGRAL)
-        {
-          offset_type = t1;
-          int_type = t2;
-        }
-      else
-        goto error;
-
-      offset_base_type = PKL_AST_TYPE_O_BASE_TYPE (offset_type);
-
-      /* Promotion rules work like in integral operations.  */
-      signed_p = (PKL_AST_TYPE_I_SIGNED_P (offset_base_type)
-                  && PKL_AST_TYPE_I_SIGNED_P (int_type));
-      size = MAX (PKL_AST_TYPE_I_SIZE (offset_base_type),
-                  PKL_AST_TYPE_I_SIZE (int_type));
-
-      pkl_ast_node res_base_type
-        = pkl_ast_make_integral_type (PKL_PASS_AST, size, signed_p);
-
-      /* The unit of the result is the unit of the offset operand */
-      type = pkl_ast_make_offset_type (PKL_PASS_AST,
-                                       res_base_type,
-                                       PKL_AST_TYPE_O_UNIT (offset_type));
-    }
-  else
-    {
-      if (PKL_AST_TYPE_CODE (t1) != PKL_AST_TYPE_CODE (t2))
-        goto error;
-
-      switch (PKL_AST_TYPE_CODE (t1))
-        {
-            CASE_INTEGRAL
-        default:
-          goto error;
+        case PKL_TYPE_STRING:
+          type = pkl_ast_make_string_type (PKL_PASS_AST);
           break;
+        case PKL_TYPE_INTEGRAL:
+          type = pkl_type_integral_promote (PKL_PASS_AST,
+                                            op1_type, op2_type);
+          break;
+        case PKL_TYPE_OFFSET:
+          {
+            pkl_ast_node res_base_type
+              = pkl_type_integral_promote (PKL_PASS_AST,
+                                           PKL_AST_TYPE_O_BASE_TYPE (op2_type),
+                                           op1_type);
+            type = pkl_ast_make_offset_type (PKL_PASS_AST,
+                                             res_base_type,
+                                             PKL_AST_TYPE_O_UNIT (op2_type));
+            break;
+          }
+        default:
+          INVALID_OPERAND (op2, "expected integral, offset or string");
         }
+      break;
+    default:
+      INVALID_OPERAND (op1, "expected integral, offset or string");
     }
 
   PKL_AST_TYPE (exp) = ASTREF (type);
   PKL_PASS_DONE;
-
- error:
-  PKL_ERROR (PKL_AST_LOC (exp),
-             "invalid operands in expression");
-  PKL_TYPIFY_PAYLOAD->errors++;
-  PKL_PASS_ERROR;
 }
 PKL_PHASE_END_HANDLER
 

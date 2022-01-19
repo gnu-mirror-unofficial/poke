@@ -1,3 +1,0 @@
-/* { dg-do compile } */
-
-var s = "foo" * "bar"; /* { dg-error "" } */

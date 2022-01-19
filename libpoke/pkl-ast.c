@@ -31,6 +31,9 @@
 #include "pk-utils.h"
 #include "pkl-ast.h"
 
+/* Note the following macro evaluates the arguments twice!  */
+#define MAX(A,B) ((A) > (B) ? (A) : (B))
+
 /* Allocate and return a new AST node, with the given CODE.  The rest
    of the node is initialized to zero.  */
 
@@ -731,6 +734,35 @@ pkl_struct_type_traverse (pkl_ast_node type, const char *path)
 out:
   free (trunk);
   return NULL;
+}
+
+/* Given two integral types, build an return a "promoted" integral
+   type derived from the arguments.  The promotion follows these
+   rules:
+
+   - If TYPE1 or TYPE2 are negative, the promoted type is also
+     negative.  Otherwise it is positive.
+
+   - The size of the promoted type is the max of the size of TYPE1 and
+     TYPE2.
+*/
+
+pkl_ast_node
+pkl_type_integral_promote (pkl_ast ast, pkl_ast_node type1,
+                           pkl_ast_node type2)
+{
+  int signed_p;
+  int size;
+
+  assert (PKL_AST_TYPE_CODE (type1) == PKL_TYPE_INTEGRAL
+          && PKL_AST_TYPE_CODE (type2) == PKL_TYPE_INTEGRAL);
+
+  signed_p = (PKL_AST_TYPE_I_SIGNED_P (type1)
+              && PKL_AST_TYPE_I_SIGNED_P (type2));
+  size = MAX (PKL_AST_TYPE_I_SIZE (type1),
+              PKL_AST_TYPE_I_SIZE (type2));
+
+  return pkl_ast_make_integral_type (ast, size, signed_p);
 }
 
 /* Return whether the given type AST node corresponds to an exception

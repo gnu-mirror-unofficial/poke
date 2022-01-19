@@ -1038,6 +1038,10 @@ char *pkl_type_str (pkl_ast_node type, int use_given_name);
 
 pkl_ast_node pkl_struct_type_traverse (pkl_ast_node type, const char *path);
 
+pkl_ast_node pkl_type_integral_promote (pkl_ast ast,
+                                        pkl_ast_node type1,
+                                        pkl_ast_node type2);
+
 /* Return an expression that evaluates to an increment step for the
    given TYPE.  If the provided type doesn't support the notion of
    increment step this function returns NULL.  */
