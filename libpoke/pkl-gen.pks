@@ -1207,11 +1207,6 @@
 ;;; @type_struct is a pkl_ast_node with the struct type being
 ;;; processed.
 
-        ;; NOTE: this function should have the same lexical structure
-        ;; than struct_mapper above.  If you add more local variables,
-        ;; please adjust struct_comparator accordingly, and also follow
-        ;; the instructions on the NOTE there.
-
         .function struct_comparator @type_struct
         prolog
  .c { uint64_t i;
