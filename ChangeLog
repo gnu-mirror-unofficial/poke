@@ -1,5 +1,13 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_op_boolean): Fix
+	diagnostics.
+	* testsuite/poke.pkl/and-diag-1.pk: Adapt test.
+	* testsuite/poke.pkl/and-diag-2.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y (primary): Add location information for
 	lambdas.
 

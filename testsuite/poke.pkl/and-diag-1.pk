@@ -1,3 +1,4 @@
 /* { dg-do compile } */
 
-var a = 929991111111 && "foo"; /* { dg-error "" } */
+var a = 929991111111
+        && "foo"; /* { dg-error "invalid operand.*\n.*expected integral.*" } */

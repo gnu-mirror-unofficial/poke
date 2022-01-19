@@ -128,15 +128,15 @@ PKL_PHASE_END_HANDLER
      AST node witht he type of the second operand.
 */
 
-#define INVALID_FIRST_OPERAND(EXPECTED_STR)                     \
+#define INVALID_OPERAND(OP,EXPECTED_STR)                        \
   do                                                            \
     {                                                           \
-      char *op1_type_str = pkl_type_str (op1_type, 1);          \
+      char *OP##_type_str = pkl_type_str (OP##_type, 1);        \
                                                                 \
-      PKL_ERROR (PKL_AST_LOC (op1),                             \
+      PKL_ERROR (PKL_AST_LOC ((OP)),                            \
                  "invalid operand in expression\n%s, got %s",   \
-                 (EXPECTED_STR), op1_type_str);                 \
-      free (op1_type_str);                                      \
+                 (EXPECTED_STR), OP##_type_str);                \
+      free (OP##_type_str);                                     \
                                                                 \
       PKL_TYPIFY_PAYLOAD->errors++;                             \
       PKL_PASS_ERROR;                                           \
@@ -260,9 +260,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
   PKL_PASS_DONE;
 
  invalid_first_operand:
-  INVALID_FIRST_OPERAND (exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE
-                         ? "expected integral, string, offset, array or struct"
-                         : "expected integral, string or offset");
+  INVALID_OPERAND (op1,
+                   exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE
+                   ? "expected integral, string, offset, array or struct"
+                   : "expected integral, string or offset");
 
  invalid_second_operand:
   INVALID_SECOND_OPERAND;
@@ -295,14 +296,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_boolean)
       && PKL_AST_TYPE_S_ITYPE (op2_type))
     op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
-  if (PKL_AST_TYPE_CODE (op1_type) != PKL_TYPE_INTEGRAL
-      || PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_INTEGRAL)
-    {
-      PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE),
-                 "logical operator requires integral arguments");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+  if (PKL_AST_TYPE_CODE (op1_type) != PKL_TYPE_INTEGRAL)
+    INVALID_OPERAND (op1, "expected integral");
+  if (PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_INTEGRAL)
+    INVALID_OPERAND (op2, "expected integral");
 
   type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (type);

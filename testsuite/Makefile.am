@@ -640,6 +640,7 @@ EXTRA_DIST = \
   poke.pkl/and-14.pk \
   poke.pkl/and-15.pk \
   poke.pkl/and-diag-1.pk \
+  poke.pkl/and-diag-2.pk \
   poke.pkl/and-int-struct-1.pk \
   poke.pkl/and-int-struct-2.pk \
   poke.pkl/and-int-struct-3.pk \
