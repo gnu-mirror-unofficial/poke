@@ -95,9 +95,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_not)
 
   if (PKL_AST_TYPE_CODE (op_type) != PKL_TYPE_INTEGRAL)
     {
+      char *op_type_str = pkl_type_str (op_type, 1);
+
       PKL_ERROR (PKL_AST_LOC (op),
                  "invalid operand in expression\n"
-                 "expected integral");
+                 "expected integral, got %s", op_type_str);
+      free (op_type_str);
+
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -110,6 +114,52 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_not)
     }
 }
 PKL_PHASE_END_HANDLER
+
+/* The following two macros are used in the handlers of the binary
+   expressions, below.  They expect the following C context:
+
+   op1
+     AST node with the first operand.
+   op2
+     AST node with the second operand.
+   op1_type
+     AST node with the type of the first operand.
+   op2_type
+     AST node witht he type of the second operand.
+*/
+
+#define INVALID_FIRST_OPERAND(EXPECTED_STR)                     \
+  do                                                            \
+    {                                                           \
+      char *op1_type_str = pkl_type_str (op1_type, 1);          \
+                                                                \
+      PKL_ERROR (PKL_AST_LOC (op1),                             \
+                 "invalid operand in expression\n%s, got %s",   \
+                 (EXPECTED_STR), op1_type_str);                 \
+      free (op1_type_str);                                      \
+                                                                \
+      PKL_TYPIFY_PAYLOAD->errors++;                             \
+      PKL_PASS_ERROR;                                           \
+    }                                                           \
+  while (0)
+
+#define INVALID_SECOND_OPERAND                                          \
+  do                                                                    \
+    {                                                                   \
+      char *op1_type_str = pkl_type_str (op1_type, 1);                  \
+      char *op2_type_str = pkl_type_str (op2_type, 1);                  \
+                                                                        \
+      PKL_ERROR (PKL_AST_LOC (op2),                                     \
+                 "invalid operand in expression\nexpected %s, got %s",  \
+                 op1_type_str, op2_type_str);                           \
+                                                                        \
+      free (op1_type_str);                                              \
+      free (op2_type_str);                                              \
+                                                                        \
+      PKL_TYPIFY_PAYLOAD->errors++;                                     \
+      PKL_PASS_ERROR;                                                   \
+    }                                                                   \
+  while (0)
 
 /* The type of the relational operations EQ, NE, LT, GT, LE and GE is
    a boolean encoded as a 32-bit signed integer type.  Their operands
@@ -130,27 +180,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
 
   pkl_ast_node exp_type;
 
-  if (op1_type_code != op2_type_code)
-    goto invalid_operands;
-
   switch (op1_type_code)
     {
     case PKL_TYPE_INTEGRAL:
-      /* Fallthrough.  */
     case PKL_TYPE_STRING:
-      /* Fallthrough.  */
     case PKL_TYPE_OFFSET:
+      if (op2_type_code != op1_type_code)
+        goto invalid_second_operand;
       break;
     case PKL_TYPE_ARRAY:
       {
+        if (op2_type_code != op1_type_code)
+          goto invalid_second_operand;
+
         /* Only EQ and NE are supported for arrays.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
-          goto invalid_operands;
+          goto invalid_first_operand;
 
         /* The arrays must contain the same kind of elements.  */
         if (!pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (op1_type),
                                    PKL_AST_TYPE_A_ETYPE (op2_type)))
-          goto invalid_array_operands;
+          goto invalid_second_operand;
 
         /* If the bounds of both array types are known at
            compile-time, then we can check and emit an error if they
@@ -165,7 +215,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
               && PKL_AST_CODE (op2_type_bound) == PKL_AST_INTEGER
               && (PKL_AST_INTEGER_VALUE (op1_type_bound)
                   != PKL_AST_INTEGER_VALUE (op2_type_bound)))
-            goto invalid_array_operands;
+            goto invalid_second_operand;
         }
         break;
       }
@@ -173,14 +223,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
       {
         /* Only EQ and NE are supported for functions.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
-          goto invalid_operands;
+          goto invalid_first_operand;
         break;
       }
     case PKL_TYPE_STRUCT:
       {
         /* Only EQ and NE are supported for structs.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
-          goto invalid_operands;
+          goto invalid_first_operand;
 
         /* The two struct types should be named, and refer to the same
            type for equality to be tested.  */
@@ -194,16 +244,14 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
                         PKL_AST_IDENTIFIER_POINTER (op2_type_name)))
             ;
           else
-            goto invalid_array_operands;
+            goto invalid_second_operand;
         }
 
         break;
       }
     case PKL_TYPE_ANY:
-      goto invalid_operands;
-      break;
     default:
-      assert (0);
+      goto invalid_first_operand;
     }
 
   /* Set the type of the expression node.  */
@@ -211,27 +259,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (exp_type);
   PKL_PASS_DONE;
 
- invalid_operands:
-  PKL_ERROR (PKL_AST_LOC (PKL_PASS_NODE),
-             "invalid operands to relational operator");
-  PKL_TYPIFY_PAYLOAD->errors++;
-  PKL_PASS_ERROR;
+ invalid_first_operand:
+  INVALID_FIRST_OPERAND (exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE
+                         ? "expected integral, string, offset, array or struct"
+                         : "expected integral, string or offset");
 
- invalid_array_operands:
-  {
-    char *op1_type_str = pkl_type_str (op1_type, 1);
-    char *op2_type_str = pkl_type_str (op2_type, 1);
-
-    PKL_ERROR (PKL_AST_LOC (op2),
-               "invalid operand\nexpected %s, got %s",
-               op1_type_str, op2_type_str);
-
-    free (op1_type_str);
-    free (op2_type_str);
-
-    PKL_TYPIFY_PAYLOAD->errors++;
-    PKL_PASS_ERROR;
-  }
+ invalid_second_operand:
+  INVALID_SECOND_OPERAND;
 }
 PKL_PHASE_END_HANDLER
 

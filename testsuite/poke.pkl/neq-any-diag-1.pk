@@ -2,5 +2,5 @@
 
 fun equalstructs = (any a, any b) int:
   {
-    return a != b; /* { dg-error "invalid operands" } */
+    return a != b; /* { dg-error "invalid operand.*\n.*" } */
   }

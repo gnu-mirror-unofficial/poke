@@ -1,5 +1,21 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (INVALID_FIRST_OPERAND): Define.
+	(INVALID_SECOND_OPERAND): Likewise.
+	(pkl_typify1_ps_op_rela): Fix diagnostics.
+	* testsuite/poke.pkl/eq-any-diag-1.pk: Adapt expected error.
+	* testsuite/poke.pkl/neq-any-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/lt-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/lt-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/le-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/le-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/gt-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/gt-arrays-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/ge-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/ge-arrays-diag-1.pk: Likewise.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_op_not): Fix diagnostics.
 	* testsuite/poke.pkl/not-diag-1.pk: New test.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
