@@ -1,3 +1,11 @@
+2022-01-19  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Disallow
+	labels in unions.
+	* doc/poke.texi (Unions): Update.
+	* testsuite/poke.pkl/union-diag-9.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/std.pk (openproc): New function.

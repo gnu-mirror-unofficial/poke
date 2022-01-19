@@ -1,0 +1,9 @@
+/* { dg-do compile } */
+
+/* Labels are now allowed in unions.  */
+
+type Foo = union
+  {
+    int a : a != 10;
+    int b @ 1#B; /* { dg-error "" } */
+  };

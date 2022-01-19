@@ -11185,7 +11185,12 @@ means.  Alternatives are considered in turn, in written order, and the
 first alternative that can be used without triggering a constraint
 violation exception is selected.
 
-Note that, unlike structs, unions cannot be pinned.
+It makes little sense to mark union types as pinned, since whatever
+alternative is chosen will always be located at the beginning of the
+union.  To avoid unneccesary confusion, the Poke compiler will emit an
+error if you try to tag an union as pinned.
+
+Similarly, labels are not allowed in union alternatives.
 
 @node Union Constructors
 @subsection Union Constructors
