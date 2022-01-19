@@ -1,5 +1,10 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y (primary): Add location information for
+	lambdas.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (INVALID_FIRST_OPERAND): Define.
 	(INVALID_SECOND_OPERAND): Likewise.
 	(pkl_typify1_ps_op_rela): Fix diagnostics.

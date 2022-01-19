@@ -1207,6 +1207,7 @@ primary:
                      within the function.  */
                   pkl_ast_finish_returns ($3);
                   $$ = pkl_ast_make_lambda (pkl_parser->ast, $3);
+                  PKL_AST_LOC ($$) = @$;
                 }
         | FORMAT '(' STR format_arg_list ')'
                 {
