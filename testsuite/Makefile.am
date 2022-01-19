@@ -2072,6 +2072,7 @@ EXTRA_DIST = \
   poke.pkl/units-diag-1.pk \
   poke.pkl/units-diag-2.pk \
   poke.pkl/units-diag-3.pk \
+  poke.pkl/unmap-diag-1.pk \
   poke.pkl/unsafe-string-set-1.pk \
   poke.pkl/unsafe-string-set-2.pk \
   poke.pkl/unsafe-string-set-3.pk \

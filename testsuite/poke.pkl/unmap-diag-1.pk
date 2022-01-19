@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+fun lala = (any a) any: {
+  return unmap a; /* { dg-error "invalid operand.*\n.*expected a mappable value" } */
+}

@@ -1,5 +1,13 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_first_operand): Do not
+	handle UNMAP.
+	(pkl_tipify1_ps_op_unmap): Fix diagnostics.
+	* testsuite/poke.pkl/unmap-diag-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_first_operand): Fix
 	diagnostics.
 	* testsuite/poke.pkl/bnot-diag-1.pk: Adapt expected error.

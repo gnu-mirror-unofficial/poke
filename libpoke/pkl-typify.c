@@ -306,10 +306,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_boolean)
 }
 PKL_PHASE_END_HANDLER
 
-/* The type of an unary operation NEG, POS, BNOT, UNMAP is the type of
-   its single operand.
-
-   NEG, POS and BNOT are only valid on certain types.  */
+/* The type of an unary operation NEG, POS, BNOT is the type of its
+   single operand.  They are only valid on certain types.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_first_operand)
 {
@@ -317,44 +315,37 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_first_operand)
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
   pkl_ast_node op1_type = PKL_AST_TYPE (op1);
 
-  if (PKL_AST_EXP_CODE (exp) != PKL_AST_OP_UNMAP)
-    {
-      /* Handle an integral struct operand.  */
-      if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
-          && PKL_AST_TYPE_S_ITYPE (op1_type))
-        op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
+  /* Handle an integral struct operand.  */
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
 
-      switch (PKL_AST_TYPE_CODE (op1_type))
-        {
-        case PKL_TYPE_INTEGRAL:
-        case PKL_TYPE_OFFSET:
-          break;
-        default:
-          INVALID_OPERAND (op1, "expected integral or offset");
-        }
+  switch (PKL_AST_TYPE_CODE (op1_type))
+    {
+    case PKL_TYPE_INTEGRAL:
+    case PKL_TYPE_OFFSET:
+      break;
+    default:
+      INVALID_OPERAND (op1, "expected integral or offset");
     }
 
   PKL_AST_TYPE (exp) = ASTREF (op1_type);
 }
 PKL_PHASE_END_HANDLER
 
-/* The unmap operator shall be applied to a type that is suitable to
-   be mapped.  */
+/* The type of the unary UNMAP operator is the type of its single
+   operand.  It is only valid for values that are suitable to be
+   mapped.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_unmap)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
-  pkl_ast_node type = PKL_AST_TYPE (PKL_AST_EXP_OPERAND (exp, 0));
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
 
-  if (!pkl_ast_type_mappable_p (type))
-    {
-      PKL_ERROR (PKL_AST_LOC (PKL_AST_EXP_OPERAND (exp, 0)),
-                 "specified value cannot be mapped");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  PKL_AST_TYPE (exp) = ASTREF (type);
+  if (!pkl_ast_type_mappable_p (op1_type))
+    INVALID_OPERAND (op1, "expected a mappable value");
+  PKL_AST_TYPE (exp) = ASTREF (op1_type);
 }
 PKL_PHASE_END_HANDLER
 
