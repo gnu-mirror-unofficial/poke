@@ -96,7 +96,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_not)
   if (PKL_AST_TYPE_CODE (op_type) != PKL_TYPE_INTEGRAL)
     {
       PKL_ERROR (PKL_AST_LOC (op),
-                 "invalid operand to NOT");
+                 "invalid operand in expression\n"
+                 "expected integral");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

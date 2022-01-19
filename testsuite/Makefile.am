@@ -1451,6 +1451,7 @@ EXTRA_DIST = \
   poke.pkl/not-3.pk \
   poke.pkl/not-4.pk \
   poke.pkl/not-5.pk \
+  poke.pkl/not-diag-1.pk \
   poke.pkl/not-int-struct-1.pk \
   poke.pkl/offset-arg-1.pk \
   poke.pkl/offset-arg-2.pk \
