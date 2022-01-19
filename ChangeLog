@@ -1,5 +1,16 @@
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_bshift_pow): Fix
+	diagnostics.
+	* testsuite/poke.pkl/pow-diag-1.pk: Adapt expected error.
+	* testsuite/poke.pkl/pow-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sr-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/sr-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/sl-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/sl-diag-5.pk: Likewise.
+
+2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Fix diagnostics.
 	* testsuite/poke.pkl/cast-struct-diag-1.pk: Adapt expected error.
 	* testsuite/poke.pkl/cast-struct-diag-2.pk: Likewise.

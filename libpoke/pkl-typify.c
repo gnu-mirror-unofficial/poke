@@ -851,45 +851,40 @@ TYPIFY_BIN (add);
 #undef CASE_ARRAY
 #define CASE_ARRAY
 
-/* The bit-shift operators and the pow operator can't be handled with
-   TYPIFY_BIN.  */
+/* The bit-shift operators and the pow operator admit the following
+   configurations of operands:
+
+        INTEGRAL x INTEGRAL -> INTEGRAL
+        OFFSET   x INTEGRAL -> OFFSET
+*/
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
 {
   pkl_ast_node exp = PKL_PASS_NODE;
   pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
   pkl_ast_node op2 = PKL_AST_EXP_OPERAND (exp, 1);
-  pkl_ast_node t1 = PKL_AST_TYPE (op1);
-  pkl_ast_node t2 = PKL_AST_TYPE (op2);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
 
   pkl_ast_node type;
 
   /* Integral structs shall be considered as integers in this
      context.  */
-  if (PKL_AST_TYPE_CODE (t1) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_S_ITYPE (t1))
-    t1 = PKL_AST_TYPE_S_ITYPE (t1);
+  if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op1_type))
+    op1_type = PKL_AST_TYPE_S_ITYPE (op1_type);
 
-  if (PKL_AST_TYPE_CODE (t2) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_S_ITYPE (t2))
-    t2 = PKL_AST_TYPE_S_ITYPE (t2);
-
-  /* The second argument should be an integral.  */
-  if (PKL_AST_TYPE_CODE (t2) != PKL_TYPE_INTEGRAL)
-    {
-      PKL_ERROR (PKL_AST_LOC (op2), "expected an integer");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+  if (PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_STRUCT
+      && PKL_AST_TYPE_S_ITYPE (op2_type))
+    op2_type = PKL_AST_TYPE_S_ITYPE (op2_type);
 
   /* The first argument can be either an integral or an offset.  */
-
-  switch (PKL_AST_TYPE_CODE (t1))
+  switch (PKL_AST_TYPE_CODE (op1_type))
     {
     case PKL_TYPE_INTEGRAL:
       {
-        int signed_p = PKL_AST_TYPE_I_SIGNED_P (t1);
-        int size = PKL_AST_TYPE_I_SIZE (t1);
+        int signed_p = PKL_AST_TYPE_I_SIGNED_P (op1_type);
+        int size = PKL_AST_TYPE_I_SIZE (op1_type);
 
         type = pkl_ast_make_integral_type (PKL_PASS_AST,
                                            size, signed_p);
@@ -897,19 +892,21 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_bshift_pow)
       }
     case PKL_TYPE_OFFSET:
       {
-        pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (t1);
-        pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (t1);
+        pkl_ast_node base_type = PKL_AST_TYPE_O_BASE_TYPE (op1_type);
+        pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (op1_type);
 
         type = pkl_ast_make_offset_type (PKL_PASS_AST,
                                          base_type, unit);
         break;
       }
     default:
-      PKL_ERROR (PKL_AST_LOC (op1), "expected integral or offset");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+      INVALID_OPERAND (op1, "expected integral or offset");
       break;
     }
+
+  /* The second argument should be an integral.  */
+  if (PKL_AST_TYPE_CODE (op2_type) != PKL_TYPE_INTEGRAL)
+    INVALID_OPERAND (op2, "expected integral");
 
   PKL_AST_TYPE (exp) = ASTREF (type);
   PKL_PASS_DONE;
