@@ -2929,21 +2929,27 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cond_exp)
   if (!pkl_ast_type_equal_p (then_type, else_type))
     {
       char *then_type_str = pkl_type_str (then_type, 1);
+      char *else_type_str = pkl_type_str (else_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (else_exp),
-                 "alternative is of the wrong type\nexpected %s.",
-                 then_type_str);
-
+                 "alternative is of the wrong type\n"
+                 "expected %s, got %s",
+                 then_type_str, else_type_str);
       free (then_type_str);
-
+      free (else_type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
 
   if (PKL_AST_TYPE_CODE (cond_type) != PKL_TYPE_INTEGRAL)
     {
+      char *type_str = pkl_type_str (cond_type, 1);
+
       PKL_ERROR (PKL_AST_LOC (cond),
-                 "expected boolean expression");
+                 "invalid expression\n"
+                 "expected boolean, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -2971,13 +2977,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_ass_stmt)
       char *found_type = pkl_type_str (exp_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (ass_stmt),
-                 "r-value in assignment has the wrong type\n\
-expected %s got %s",
+                 "r-value in assignment has the wrong type\n"
+                 "expected %s got %s",
                  expected_type, found_type);
-
       free (found_type);
       free (expected_type);
-
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -3002,10 +3006,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_excond)
     {
       char *t2_str = pkl_type_str (t2, 1);
 
-      PKL_ERROR (PKL_AST_LOC (op2), "operator has the wrong type\n\
-expected Exception, got %s", t2_str);
+      PKL_ERROR (PKL_AST_LOC (op2),
+                 "operator has the wrong type\n"
+                 "expected Exception, got %s",
+                 t2_str);
       free (t2_str);
-
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

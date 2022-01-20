@@ -1,5 +1,10 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cond_exp): Fix diagnostics.
+	* testsuite/poke.pkl/cond-exp-diag-1.pk: Update expected error.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/if-diag-3.pk: Likewise.
 
 	* testsuite/poke.pkl/if-diag-2.pk: Likewise.
