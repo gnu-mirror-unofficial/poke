@@ -2086,8 +2086,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cons)
                             char *found_type = pkl_type_str (elem_type, 1);
 
                             PKL_ERROR (PKL_AST_LOC (elem_exp),
-                                       "invalid initializer for `%s' in constructor\n\
-expected %s, got %s",
+                                       "invalid initializer for `%s' in constructor\n"
+                                       "expected %s, got %s",
                                        PKL_AST_IDENTIFIER_POINTER (elem_name),
                                        expected_type, found_type);
 
@@ -2134,7 +2134,7 @@ expected %s, got %s",
               char *found_type = pkl_type_str (initval_type, 1);
 
               PKL_ERROR (PKL_AST_LOC (cons_value),
-                         "wrong initial value for array\n"
+                         "invalid initial value for array\n"
                          "expected %s, got %s",
                          expected_type, found_type);
               free (expected_type);
@@ -2193,12 +2193,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_incrdecr)
     case PKL_TYPE_OFFSET:
       break;
     default:
-      PKL_ERROR (PKL_AST_LOC (incrdecr),
-                 "invalid operand to %s%s",
-                 incrdecr_order == PKL_AST_ORDER_PRE ? "pre" : "post",
-                 incrdecr_sign == PKL_AST_SIGN_INCR ? "increment" : "decrement");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+      {
+        char *type_str = pkl_type_str (incrdecr_exp_type, 1);
+
+        PKL_ERROR (PKL_AST_LOC (incrdecr_exp),
+                   "invalid operand to %s%s\n"
+                   "expected integral or offset, got %s",
+                   incrdecr_order == PKL_AST_ORDER_PRE ? "pre" : "post",
+                   incrdecr_sign == PKL_AST_SIGN_INCR ? "increment" : "decrement",
+                   type_str);
+        free (type_str);
+        PKL_TYPIFY_PAYLOAD->errors++;
+        PKL_PASS_ERROR;
+      }
     }
 
   /* The type of the construction is the type of the expression.  */

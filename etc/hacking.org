@@ -1293,6 +1293,8 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    - When referring to integer types in diagnostic messages, please
      refer to them as "integrals".
 
+   - Always pass 1 for =use_given_name= when invoking =pkl_type_str=.
+
 * The Poke Virtual Machine
 
 ** Exception Handling

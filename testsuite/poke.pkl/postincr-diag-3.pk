@@ -1,3 +1,4 @@
 /* { dg-do compile } */
 
-E_generic++; /* { dg-error "invalid operand" } */
+E_generic  /* { dg-error "invalid operand.*\n.*expected integral or offset, got Exception" } */
+++;
