@@ -2424,7 +2424,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_until_stmt)
 
   if (!pkl_ast_type_is_exception (exp_type))
     {
-      PKL_ERROR (PKL_AST_LOC (exp_type), "invalid exception");
+      char *type_str = pkl_type_str (exp_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (exp_type),
+                 "invalid expression in try-until\n"
+                 "expected Exception, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

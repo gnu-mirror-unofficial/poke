@@ -3,4 +3,4 @@
 var x = 10;
 
 try x = 20;
-until "foo";  /* { dg-error "invalid exception" } */
+until "foo";  /* { dg-error "invalid expression.*\n.*" } */
