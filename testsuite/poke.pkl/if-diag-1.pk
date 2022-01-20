@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
-if ("foo")  /* { dg-error "expected boolean" } */
+if ("foo")  /* { dg-error "invalid expression.*\n.*expected boolean" } */
   {
   }

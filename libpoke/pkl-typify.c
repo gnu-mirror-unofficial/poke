@@ -2891,8 +2891,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_if_stmt)
 
   if (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL)
     {
+      char *type_str = pkl_type_str (exp_type, 1);
+
       PKL_ERROR (PKL_AST_LOC (exp),
-                 "expected boolean expression");
+                 "invalid expression\n"
+                 "expected boolean, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

@@ -1,5 +1,15 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/poke.pkl/if-diag-3.pk: Likewise.
+
+	* testsuite/poke.pkl/if-diag-2.pk: Likewise.
+
+	* testsuite/poke.pkl/if-diag-1.pk: Update expected error.
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_if_stmt): Fix diagnostics.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Fix
 	diagnostics.
 	* testsuite/poke.pkl/label-diag-1.pk: Update expected error.
