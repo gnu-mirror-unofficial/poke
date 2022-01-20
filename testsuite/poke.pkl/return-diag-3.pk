@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+fun lala = void:
+{
+  return 10; /* { dg-error "returning a value" } */
+}

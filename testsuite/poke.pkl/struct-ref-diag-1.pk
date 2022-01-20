@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+23 /* { dg-error "expected struct" } */
+.la;

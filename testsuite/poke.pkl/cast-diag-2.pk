@@ -1,3 +1,5 @@
 /* { dg-do compile } */
 
-var v = 10 as fun()void:; /* { dg-error "" } */
+type Fun = ()void;
+
+var v = 10 as Fun; /* { dg-error "" } */

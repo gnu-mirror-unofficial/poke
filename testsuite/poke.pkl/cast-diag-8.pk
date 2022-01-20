@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+fun foo = void: {}
+
+var v = (foo) as int; /* { dg-error "" } */

@@ -1,5 +1,37 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-anal.c (pkl_anal1_ps_type_struct): Make diagnostic
+	error self-explicative without location.
+	(pkl_anal1_ps_funcall): Turn error into ICE.
+	(pkl_anal1_ps_cons): Likewise.
+	* testsuite/poke.pkl/cast-diag-2.pk: Fix test.
+	* testsuite/poke.pkl/trim-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/trim-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/trim-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/offset-diag-1.pk: New test.
+	* testsuite/poke.pkl/return-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/return-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/gt-integers-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/gt-offsets-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/gt-strings-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-structs-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/gt-structs-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/gt-functions-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/eq-functions-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-arrays-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/cast-diag-8.pk: Likewise.
+	* testsuite/poke.pkl/add-strings-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/div-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/bconc-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/array-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/index-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/index-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/funcall-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/struct-ref-diag-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/hacking.org (Maintenance): Note that jitter's no-threading
 	doesnt work with gcov.
 

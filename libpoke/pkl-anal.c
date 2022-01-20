@@ -222,7 +222,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_struct)
                         PKL_AST_IDENTIFIER_POINTER (tname)))
             {
               PKL_ERROR (PKL_AST_LOC (u),
-                         "duplicated element name in struct type spec");
+                         "duplicated struct element '%s'",
+                         PKL_AST_IDENTIFIER_POINTER (uname));
               PKL_ANAL_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
@@ -293,7 +294,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_funcall)
   if (some_named && some_unnamed)
     {
       PKL_ERROR (PKL_AST_LOC (funcall),
-                 "mixed named and not-named arguments not allowed in funcall");
+                 "found named and not-named arguments mixed in funcall");
       PKL_ANAL_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -655,11 +656,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_cons)
   switch (PKL_AST_TYPE_CODE (cons_type))
     {
     case PKL_TYPE_STRUCT:
-      /* Struct constructors accept exactly one argument.  */
+      /* Struct constructors accept exactly one argument.  This is
+         enforced by the syntax.  */
       if (pkl_ast_chain_length (cons_value) != 1)
         {
-          PKL_ERROR (PKL_AST_LOC (cons),
-                     "struct constructor requires exactly one argument");
+          PKL_ICE (PKL_AST_LOC (cons),
+                   "struct constructor requires exactly one argument");
           PKL_ANAL_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -820,6 +822,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal2_ps_funcall)
       && PKL_PASS_PARENT
       && PKL_AST_CODE (PKL_PASS_PARENT) != PKL_AST_EXP_STMT)
     {
+      /* Note that this error is catched earlier in
+         pkl_typify1_ps_funcall */
       PKL_ERROR (PKL_AST_LOC (funcall_function),
                  "call to void function in expression");
       PKL_ANAL_PAYLOAD->errors++;
@@ -988,9 +992,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_ass_stmt)
 PKL_PHASE_END_HANDLER
 
 /* Make sure that the argument to an incrdecr operator is of the right
-   kind, i.e. it is a valid lvalue.
-
-   XXX this shouldn't be necessary due to the check in ass_stmt!  */
+   kind, i.e. it is a valid lvalue.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_incrdecr)
 {
@@ -1004,6 +1006,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_analf_ps_incrdecr)
 
       if (!pkl_ast_lvalue_p (incrdecr_exp))
         {
+          /* Note that this is already checked in ass_stmt.  */
           PKL_ERROR (PKL_AST_LOC (incrdecr_exp),
                      "invalid operand to %s%s",
                      incrdecr_order == PKL_AST_ORDER_PRE ? "pre" : "post",

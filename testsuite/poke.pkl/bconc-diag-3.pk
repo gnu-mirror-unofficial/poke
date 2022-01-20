@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+var a = 2L:::1L; /* { dg-error "exceed" } */

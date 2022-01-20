@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a =
+  "foo" > [1,2,3]; /* { dg-error "invalid operand.*\n.*expected string" } */

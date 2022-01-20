@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+var a =
+  openproc > /* { dg-error "invalid operand.*\n.*expected integral, string or offset" } */
+  openproc;

@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+"foo"
+["foo"]; /* { dg-error "should be an integer" } */

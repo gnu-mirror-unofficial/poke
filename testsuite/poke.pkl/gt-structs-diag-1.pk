@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = Exception {} /* { dg-error "invalid operand.*\n.*expected integral, string or offset" } */
+        > Exception {};

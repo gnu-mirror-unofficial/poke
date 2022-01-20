@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+32 /* { dg-error "expected function" } */
+();

@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var i = Exception {}
+        == "jorl"; /* { dg-error "invalid operand.*\n.*expected struct" } */

@@ -183,19 +183,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
   switch (op1_type_code)
     {
     case PKL_TYPE_INTEGRAL:
+      if (op2_type_code != PKL_TYPE_INTEGRAL)
+        INVALID_OPERAND (op2, "expected integral");
+      break;
     case PKL_TYPE_STRING:
+      if (op2_type_code != PKL_TYPE_STRING)
+        INVALID_OPERAND (op2, "expected string");
+      break;
     case PKL_TYPE_OFFSET:
-      if (op2_type_code != op1_type_code)
-        goto invalid_second_operand;
+      if (op2_type_code != PKL_TYPE_OFFSET)
+        INVALID_OPERAND (op2, "expected offset");
       break;
     case PKL_TYPE_ARRAY:
       {
-        if (op2_type_code != op1_type_code)
-          goto invalid_second_operand;
-
         /* Only EQ and NE are supported for arrays.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
           goto invalid_first_operand;
+
+        /* The second operand must be an array.  */
+        if (op2_type_code != PKL_TYPE_ARRAY)
+          goto invalid_second_operand;
 
         /* The arrays must contain the same kind of elements.  */
         if (!pkl_ast_type_equal_p (PKL_AST_TYPE_A_ETYPE (op1_type),
@@ -224,6 +231,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
         /* Only EQ and NE are supported for functions.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
           goto invalid_first_operand;
+
+        /* The second operand must be a function.  */
+        if (op2_type_code != PKL_TYPE_FUNCTION)
+          INVALID_OPERAND (op2, "expected function");
+
         break;
       }
     case PKL_TYPE_STRUCT:
@@ -231,6 +243,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
         /* Only EQ and NE are supported for structs.  */
         if (!(exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE))
           goto invalid_first_operand;
+
+        /* The second operand must be a struct.  */
+        if (op2_type_code != PKL_TYPE_STRUCT)
+          INVALID_OPERAND (op2, "expected struct");
 
         /* The two struct types should be named, and refer to the same
            type for equality to be tested.  */
@@ -262,7 +278,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_rela)
  invalid_first_operand:
   INVALID_OPERAND (op1,
                    exp_code == PKL_AST_OP_EQ || exp_code == PKL_AST_OP_NE
-                   ? "expected integral, string, offset, array or struct"
+                   ? "expected integral, string, offset, array, struct or function"
                    : "expected integral, string or offset");
 
  invalid_second_operand:
@@ -412,8 +428,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
 
   if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_VOID)
     {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting `void' is not allowed");
+      /* Note that this is syntactically not possible.  So ICE instead
+         of error.  */
+      PKL_ICE (PKL_AST_LOC (cast),
+               "casting `void' is not allowed");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -442,15 +460,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       goto done;
     }
 
-  /* Casting from offset to offset is allowed, but not any other cast
-     involving offsets.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
-      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_OFFSET)
+  /* An offset can only be casted to another offset.  */
+  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_OFFSET
+      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_OFFSET)
     {
       PKL_ERROR (PKL_AST_LOC (cast),
                  "casting an offset value to a non-offset type is not allowed");
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
+    }
+
+  /* Only an offset can be casted to an offset type.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
+      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_OFFSET)
+    {
+      PKL_ERROR (PKL_AST_LOC (cast),
+                 "invalid cast to an offset");
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  /* Casting from offset to offset is allowed, but not any other cast
+     involving offsets.  */
+  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
+      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_OFFSET)
+    {
     }
 
   if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_OFFSET
@@ -1343,8 +1377,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
   if (PKL_AST_TYPE_CODE (funcall_function_type)
       != PKL_TYPE_FUNCTION)
     {
+      char *type_str = pkl_type_str (funcall_function_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (funcall_function),
-                 "variable is not a function");
+                 "expected function, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -1640,8 +1678,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_ref)
 
   if (PKL_AST_TYPE_CODE (struct_type) != PKL_TYPE_STRUCT)
     {
+      char *type_str = pkl_type_str (struct_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (astruct),
-                 "expected struct");
+                 "expected struct, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

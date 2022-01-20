@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+var a =
+  openproc ==
+  "foo"; /* { dg-error "invalid operand.*\n.*expected function" } */

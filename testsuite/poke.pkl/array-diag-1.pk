@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+["foo", 2]; /* { dg-error "same type" } */
