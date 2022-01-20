@@ -1,4 +1,4 @@
 /* { dg-do compile } */
 
-32 /* { dg-error "expected function" } */
+32 /* { dg-error "invalid operand.*\n.*expected function" } */
 ();

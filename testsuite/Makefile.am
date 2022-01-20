@@ -1198,6 +1198,9 @@ EXTRA_DIST = \
   poke.pkl/funcall-diag-3.pk \
   poke.pkl/funcall-diag-4.pk \
   poke.pkl/funcall-diag-5.pk \
+  poke.pkl/funcall-diag-6.pk \
+  poke.pkl/funcall-diag-7.pk \
+  poke.pkl/funcall-diag-8.pk \
   poke.pkl/funcall-vararg-1.pk \
   poke.pkl/funcall-vararg-2.pk \
   poke.pkl/funcall-vararg-3.pk \

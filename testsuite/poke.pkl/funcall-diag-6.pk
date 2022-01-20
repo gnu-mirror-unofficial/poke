@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+fun foo = (int uno, int dos, int tres) void: {}
+
+foo (1, 2); /* { dg-error "too few arguments passed to function\n.*of type" } */

@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+fun foo = (int uno = 1, int dos = 2) void: {}
+
+foo :uno 10 :tres 30; /* { dg-error "function doesn't take" } */

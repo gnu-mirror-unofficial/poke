@@ -1380,6 +1380,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
       char *type_str = pkl_type_str (funcall_function_type, 0);
 
       PKL_ERROR (PKL_AST_LOC (funcall_function),
+                 "invalid operand in funcall\n"
                  "expected function, got %s",
                  type_str);
       free (type_str);
@@ -1406,8 +1407,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
                                               0 /* use_given_name */);
 
       PKL_ERROR (PKL_AST_LOC (funcall_function),
-                 "too few arguments passed to function\n\
-of type %s",
+                 "too few arguments passed to function\n"
+                 "of type %s",
                  function_type_str);
       free (function_type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
@@ -1443,8 +1444,8 @@ of type %s",
                                               0 /* use_given_name */);
 
       PKL_ERROR (PKL_AST_LOC (funcall_function),
-                 "too many arguments passed to function\n\
-of type %s",
+                 "too many arguments passed to function\n"
+                 "of type %s",
                  function_type_str);
       free (function_type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
@@ -1485,8 +1486,8 @@ of type %s",
 
             if (!fa_name)
               {
-                PKL_ERROR (PKL_AST_LOC (aa_name),
-                           "function doesn't take named arguments");
+                PKL_ICE (PKL_AST_LOC (aa_name),
+                        "anonymous function argument");
                 PKL_TYPIFY_PAYLOAD->errors++;
                 PKL_PASS_ERROR;
               }
@@ -1528,8 +1529,8 @@ of type %s",
             aa_name = PKL_AST_FUNCALL_ARG_NAME (aa);
             if (!fa_name)
               {
-                PKL_ERROR (PKL_AST_LOC (aa_name),
-                           "function doesn't take named arguments");
+                PKL_ICE (PKL_AST_LOC (aa_name),
+                         "function doesn't take named arguments");
                 PKL_TYPIFY_PAYLOAD->errors++;
                 PKL_PASS_ERROR;
               }
@@ -1579,8 +1580,7 @@ of type %s",
   /* Ok, check that the types of the actual arguments match the
      types of the corresponding formal arguments.  */
   for (fa = PKL_AST_TYPE_F_ARGS  (funcall_function_type),
-         aa = PKL_AST_FUNCALL_ARGS (funcall),
-         narg = 0;
+         aa = PKL_AST_FUNCALL_ARGS (funcall);
        fa && aa;
        fa = PKL_AST_CHAIN (fa), aa = PKL_AST_CHAIN (aa))
     {
@@ -1600,21 +1600,21 @@ of type %s",
               && !pkl_ast_type_promoteable_p (aa_type, fa_type,
                                               1 /* promote_array_of_any */))
             {
+              pkl_ast_node arg_name = PKL_AST_FUNC_TYPE_ARG_NAME (fa);
               char *passed_type = pkl_type_str (aa_type, 1);
               char *expected_type = pkl_type_str (fa_type, 1);
 
               PKL_ERROR (PKL_AST_LOC (aa),
-                         "function argument %d has the wrong type\n\
-expected %s, got %s",
-                         narg + 1, expected_type, passed_type);
+                         "invalid value for function argument `%s'\n"
+                         "expected %s, got %s",
+                         PKL_AST_IDENTIFIER_POINTER (arg_name),
+                         expected_type, passed_type);
               free (expected_type);
               free (passed_type);
 
               PKL_TYPIFY_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
-
-          narg++;
         }
     }
 
