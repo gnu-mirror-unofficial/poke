@@ -47,17 +47,18 @@ _________________
 ..... 2. Calling compiled Poke from RAS
 5. Writing Tests
 .. 1. Test framework
-.. 2. Unit Tests
-.. 3. Naming Tests
-.. 4. Always set obase
-.. 5. Put each test in its own file
-.. 6. List the test files in testsuite/Makefile.am
-.. 7. dg-output may require a newline
-.. 8. Using data files in tests
-.. 9. Using NBD connections in tests
-.. 10. Writing tests that depend on a certain capability
-.. 11. Writing REPL tests
-.. 12. Testing Pickles
+.. 2. Run selected tests
+.. 3. Unit Tests
+.. 4. Naming Tests
+.. 5. Always set obase
+.. 6. Put each test in its own file
+.. 7. List the test files in testsuite/Makefile.am
+.. 8. dg-output may require a newline
+.. 9. Using data files in tests
+.. 10. Using NBD connections in tests
+.. 11. Writing tests that depend on a certain capability
+.. 12. Writing REPL tests
+.. 13. Testing Pickles
 ..... 1. Command REPL tests
 ..... 2. General REPL tests
 6. Writing Documentation
@@ -107,7 +108,7 @@ _________________
 Welcome, adventurous poker! This file contains useful information for
 you.
 
-Copyright (C) 2019-2021 The poke authors.
+Copyright (C) 2019-2022 The poke authors.
 
 This file is part of GNU poke.
 
@@ -451,7 +452,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   such that it doesn't delete your changes is:
 
   ,----
-  | $ ./bootstrap --skip-po --no-git --jitter-srcdir=jitter
+  | $ ./bootstrap --skip-po --no-git --gnulib-srcdir=gnulib --jitter-srcdir=jitter
   `----
 
 
@@ -665,14 +666,35 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   <https://gcc.gnu.org/wiki/HowToPrepareATestcase>
 
 
-5.2 Unit Tests
+5.2 Run selected tests
+~~~~~~~~~~~~~~~~~~~~~~
+
+  Tests are categorized in different sub-directories. You can run run
+  tests of a signle category by runing
+  ,----
+  | make check RUNTESTFLAGS=CATEGORY.exp
+  `----
+
+  For example, to run tests of `pkl' in `poke.pkl' sub-directory, run:
+  ,----
+  | make check RUNTESTFLAGS=pkl.exp
+  `----
+
+  You can also select tests using `TESTS' environment variable.  As an
+  example, to run all test files which start with `array', you can run:
+  ,----
+  | make check TESTS=array*.pk
+  `----
+
+
+5.3 Unit Tests
 ~~~~~~~~~~~~~~
 
   We are using DejaGnu's support for unit tests.  See
   `testsuite/poke.libpoke' for an example on how to write C unit tests.
 
 
-5.3 Naming Tests
+5.4 Naming Tests
 ~~~~~~~~~~~~~~~~
 
   For testing a functionality `foo', name your test `foo.pk' or
@@ -683,7 +705,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   diagnostic.
 
 
-5.4 Always set obase
+5.5 Always set obase
 ~~~~~~~~~~~~~~~~~~~~
 
   If your test relies on printing integer values in the REPL (or using
@@ -699,7 +721,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   the default obase.
 
 
-5.5 Put each test in its own file
+5.6 Put each test in its own file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   If you are writing tests for a specific functionality, like for
@@ -727,7 +749,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   and so on.
 
 
-5.6 List the test files in testsuite/Makefile.am
+5.7 List the test files in testsuite/Makefile.am
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   So that the tests get distributed, you need to list each newly added
@@ -738,7 +760,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   EXTRA_DIST that doesn't exist in the file system.
 
 
-5.7 dg-output may require a newline
+5.8 dg-output may require a newline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   If despite the advise above you really need to put more than dg-output
@@ -752,7 +774,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-5.8 Using data files in tests
+5.9 Using data files in tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   If your test requires mapping data, the dg-data directive is what you
@@ -787,8 +809,8 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   current IO space.
 
 
-5.9 Using NBD connections in tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+5.10 Using NBD connections in tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   If your test requires an NBD server (only useful when poke is compiled
   with libnbd), the dg-nbd directive is what you need.  It has one form:
@@ -815,7 +837,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-5.10 Writing tests that depend on a certain capability
+5.11 Writing tests that depend on a certain capability
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Sometimes the presence of the functionality tested may be optional.
@@ -847,7 +869,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
         poke is built with NBD io space support, and dg-nbd works.
 
 
-5.11 Writing REPL tests
+5.12 Writing REPL tests
 ~~~~~~~~~~~~~~~~~~~~~~~
 
   Th the `poke.repl' testsuite is intended to test features in the
@@ -873,7 +895,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   and adding some content there.  The following subsections detail how.
 
 
-5.12 Testing Pickles
+5.13 Testing Pickles
 ~~~~~~~~~~~~~~~~~~~~
 
   Each pickle in `pickles/FOO.pk' shall have a test file
@@ -885,7 +907,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `testsuite/poke.FOO/FOO.exp'.
 
 
-5.12.1 Command REPL tests
+5.13.1 Command REPL tests
 -------------------------
 
   Some REPL tests need to check whether poke replies properly to some
@@ -914,7 +936,7 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   `----
 
 
-5.12.2 General REPL tests
+5.13.2 General REPL tests
 -------------------------
 
   Other REPL tests are not about executing commands.  Suppose for
@@ -1070,7 +1092,9 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
         This target builds *poke* with code coverage support, runs the
         testsuite, and generates a nice html report under
         `$(top_builddir)/doc/coverage/'.  It is necessary to have the
-        `lcov' program for this to work.
+        `lcov' program for this to work.  Note also that you need to
+        have jitter configured to use a dispatch model other than
+        no-threading.
   cyclo-poke.html
         This target runs the pmccabe utility to calculate the modified
         cyclomatic complexity of the functions composing the poke
@@ -1989,9 +2013,10 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   dispatch method, one has to disable the more efficient ones.  For
   example, this is the best options for debugging:
 
-  - `--disable-dispatch-no-threading
-    --disable-dispatch-minimal-threading'
-  - `--disable-dispatch-direct-threading'
+  ,----
+  | --disable-dispatch-no-threading --disable-dispatch-minimal-threading
+  | --disable-dispatch-direct-threading
+  `----
 
 
 15.2 Invoking GDB to debug an uninstalled poke

@@ -817,7 +817,8 @@ have a testsuite in =testsuite/poke.FOO= with a driver
     This target builds *poke* with code coverage support, runs the
     testsuite, and generates a nice html report under
     =$(top_builddir)/doc/coverage/=.  It is necessary to have the
-    =lcov= program for this to work.
+    =lcov= program for this to work.  Note also that you need to have jitter
+    configured to use a dispatch model other than no-threading.
   - cyclo-poke.html ::
     This target runs the pmccabe utility to calculate the modified
     cyclomatic complexity of the functions composing the poke sources,
@@ -1608,8 +1609,8 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    sub-optimal dispatch method, one has to disable the more efficient
    ones.  For example, this is the best options for debugging:
 
-   - =--disable-dispatch-no-threading --disable-dispatch-minimal-threading=
-   - =--disable-dispatch-direct-threading=
+   : --disable-dispatch-no-threading --disable-dispatch-minimal-threading
+   : --disable-dispatch-direct-threading
 
 ** Invoking GDB to debug an uninstalled poke
 

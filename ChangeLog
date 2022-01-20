@@ -1,3 +1,8 @@
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/hacking.org (Maintenance): Note that jitter's no-threading
+	doesnt work with gcov.
+
 2022-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_op_bconc): Fix diagnostics.
