@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+type Foo = struct { int foo; int bar; };
+
+var f = Foo {};
+f.
+  jaja = 2; /* { dg-error "doesn't exist" } */

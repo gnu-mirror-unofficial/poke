@@ -1708,6 +1708,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_ref)
       char *type_str = pkl_type_str (struct_type, 0);
 
       PKL_ERROR (PKL_AST_LOC (astruct),
+                 "invalid operand to field reference\n"
                  "expected struct, got %s",
                  type_str);
       free (type_str);
@@ -1746,7 +1747,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_ref)
   if (type == NULL)
     {
       PKL_ERROR (PKL_AST_LOC (field_name),
-                 "referred field doesn't exist in struct");
+                 "field `%s' doesn't exist in struct",
+                 PKL_AST_IDENTIFIER_POINTER (field_name));
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

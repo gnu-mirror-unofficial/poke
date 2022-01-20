@@ -1975,6 +1975,7 @@ EXTRA_DIST = \
   poke.pkl/struct-pretty-print-diag-1.pk \
   poke.pkl/struct-pretty-print-diag-2.pk \
   poke.pkl/struct-ref-diag-1.pk \
+  poke.pkl/struct-ref-diag-2.pk \
   poke.pkl/struct-types-1.pk \
   poke.pkl/struct-types-2.pk \
   poke.pkl/struct-types-3.pk \
