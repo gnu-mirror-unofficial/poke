@@ -1396,6 +1396,7 @@ EXTRA_DIST = \
   poke.pkl/map-diag-3.pk \
   poke.pkl/map-diag-4.pk \
   poke.pkl/map-diag-5.pk \
+  poke.pkl/map-diag-6.pk \
   poke.pkl/map-ios-diag-1.pk \
   poke.pkl/map-ios-diag-2.pk \
   poke.pkl/map-offset-expr-1.pk \

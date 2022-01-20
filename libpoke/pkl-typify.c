@@ -1970,8 +1970,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 
   if (PKL_AST_TYPE_CODE (map_offset_type) != PKL_TYPE_OFFSET)
     {
+      char *type_str = pkl_type_str (map_offset_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (map_offset),
-                 "expected offset");
+                 "invalid argument to map operator\n"
+                 "expected offset, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -1982,7 +1987,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 
       if (PKL_AST_TYPE_CODE (map_ios_type) != PKL_TYPE_INTEGRAL)
         {
-          PKL_ERROR (PKL_AST_LOC (map_ios), "expected integer expression");
+          char *type_str = pkl_type_str (map_ios_type, 0);
+
+          PKL_ERROR (PKL_AST_LOC (map_ios),
+                     "invalid IO space in map operator\n"
+                     "expected integral, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }

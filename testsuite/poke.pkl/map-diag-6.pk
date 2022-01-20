@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var a = int @
+           1234; /* { dg-error "invalid argument.*\n.*expected offset" } */
