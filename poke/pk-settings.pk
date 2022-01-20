@@ -385,14 +385,16 @@ pk_settings.add_setting
 This setting determines the way binary struct data is displayed.
 
 In `flat' mode data is not formatted in any special way.  Each value,
-be it simple or composite, is printed on one line:
+be it simple or composite, is printed on one line.
+
+In `tree' mode composite values like structs and arrays are displayed
+in an hierarchical way, using newlines and indentation.
+
+Examples:
 
   (poke) .set omode flat
   (poke) Foo {}
   Foo {i=0x0,l=0x0L}
-
-In `tree' mode composite values like structs and arrays are displayed
-in an hierarchical way, using newlines and indentation:
 
   (poke) .set omode tree
   (poke) Foo {}
