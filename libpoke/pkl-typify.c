@@ -1191,7 +1191,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
 
   if (PKL_AST_TYPE_CODE (from_idx_type) != PKL_TYPE_INTEGRAL)
     {
-      char *type_str = pkl_type_str (from_idx_type, 0);
+      char *type_str = pkl_type_str (from_idx_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (from_idx),
                  "invalid index in trimmer\n"
@@ -1204,7 +1204,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
 
   if (PKL_AST_TYPE_CODE (to_idx_type) != PKL_TYPE_INTEGRAL)
     {
-      char *type_str = pkl_type_str (to_idx_type, 0);
+      char *type_str = pkl_type_str (to_idx_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (to_idx),
                  "invalid index in trimmer\n"
@@ -1218,7 +1218,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
   if (PKL_AST_TYPE_CODE (entity_type) != PKL_TYPE_ARRAY
       && PKL_AST_TYPE_CODE (entity_type) != PKL_TYPE_STRING)
     {
-      char *type_str = pkl_type_str (entity_type, 0);
+      char *type_str = pkl_type_str (entity_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (entity),
                  "invalid operator to []\n"
@@ -1273,7 +1273,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_indexer)
       }
     default:
       {
-        char *type_str = pkl_type_str (container_type, 0);
+        char *type_str = pkl_type_str (container_type, 1);
 
         PKL_ERROR (PKL_AST_LOC (container),
                    "invalid operator to []\n"
@@ -1287,7 +1287,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_indexer)
 
   if (PKL_AST_TYPE_CODE (index_type) != PKL_TYPE_INTEGRAL)
     {
-      char *type_str = pkl_type_str (index_type, 0);
+      char *type_str = pkl_type_str (index_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (index),
                  "invalid index in array indexer\n"
@@ -1404,7 +1404,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
   if (PKL_AST_TYPE_CODE (funcall_function_type)
       != PKL_TYPE_FUNCTION)
     {
-      char *type_str = pkl_type_str (funcall_function_type, 0);
+      char *type_str = pkl_type_str (funcall_function_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (funcall_function),
                  "invalid operand in funcall\n"
@@ -1705,7 +1705,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_ref)
 
   if (PKL_AST_TYPE_CODE (struct_type) != PKL_TYPE_STRUCT)
     {
-      char *type_str = pkl_type_str (struct_type, 0);
+      char *type_str = pkl_type_str (struct_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (astruct),
                  "invalid operand to field reference\n"
@@ -1805,7 +1805,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
       if (PKL_AST_TYPE_CODE (struct_type_itype)
           != PKL_TYPE_INTEGRAL)
         {
-          char *type_str = pkl_type_str (struct_type_itype, 0);
+          char *type_str = pkl_type_str (struct_type_itype, 1);
 
           PKL_ERROR (PKL_AST_LOC (struct_type_itype),
                      "invalid type specifier in integral struct\n"
@@ -1838,7 +1838,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
                   && !(PKL_AST_TYPE_CODE (ftype) == PKL_TYPE_STRUCT
                        && PKL_AST_TYPE_S_ITYPE (ftype) != NULL))
                 {
-                  char *type_str = pkl_type_str (ftype, 0);
+                  char *type_str = pkl_type_str (ftype, 1);
 
                   PKL_ERROR (PKL_AST_LOC (field),
                              "invalid field in integral struct\n"
@@ -1931,7 +1931,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_array)
   if (PKL_AST_TYPE_CODE (bound_type) != PKL_TYPE_INTEGRAL
       && PKL_AST_TYPE_CODE (bound_type) != PKL_TYPE_OFFSET)
     {
-      char *type_str = pkl_type_str (bound_type, 0);
+      char *type_str = pkl_type_str (bound_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (bound),
                  "invalid array bound\n"
@@ -1970,7 +1970,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 
   if (PKL_AST_TYPE_CODE (map_offset_type) != PKL_TYPE_OFFSET)
     {
-      char *type_str = pkl_type_str (map_offset_type, 0);
+      char *type_str = pkl_type_str (map_offset_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (map_offset),
                  "invalid argument to map operator\n"
@@ -1987,7 +1987,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_map)
 
       if (PKL_AST_TYPE_CODE (map_ios_type) != PKL_TYPE_INTEGRAL)
         {
-          char *type_str = pkl_type_str (map_ios_type, 0);
+          char *type_str = pkl_type_str (map_ios_type, 1);
 
           PKL_ERROR (PKL_AST_LOC (map_ios),
                      "invalid IO space in map operator\n"
@@ -2732,7 +2732,7 @@ expected %s, got %s",
       if (!pkl_ast_type_promoteable_p (label_type, offset_type,
                                        1 /* promote_array_of_any */))
         {
-          char *type_str = pkl_type_str (label_type, 0);
+          char *type_str = pkl_type_str (label_type, 1);
 
           PKL_ERROR (PKL_AST_LOC (elem_label),
                      "invalid struct field label\n"

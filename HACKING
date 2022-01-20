@@ -81,6 +81,7 @@ _________________
 ..... 5. Type System Phases
 ..... 6. Front and Middle End Handlers should be Re-entrant
 .. 5. Adding Compiler Built-Ins
+.. 6. Writing Compiler Diagnostics
 12. The Poke Virtual Machine
 .. 1. Exception Handling
 .. 2. Signal Handling
@@ -1621,6 +1622,50 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   ,----
   | fun rand = int<32>: __PKL_BUILTIN_RAND__;
   `----
+
+
+11.6 Writing Compiler Diagnostics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Please follow the following guidelines when adding new errors or
+  warnings to the poke compiler:
+
+  - Make the diagnostic messages self-contained, i.e. do not rely on the
+    extra location information to make the error intelligible.  This is
+    mainly for the sake of accessibility, and also for when poke is run
+    in quiet mode.
+
+    This is an example of a bad diagnostic:
+
+    ,----
+    | error: field doesn't exist in struct
+    `----
+
+
+    Write something like this instead:
+
+    ,----
+    | error: field `foo' doesn't exist in struct
+    `----
+
+  - When checking for the type of some ENTITY, please use a two-lines
+    error message like:
+
+    ,----
+    | error: invalid ENTITY
+    | error: expected EXPECTED_TYPE, got ACTUAL_TYPE
+    `----
+
+
+    this is to keep some uniformity.  You can get the written
+    representation of a type using the `pkl_type_str' utility function.
+
+  - When referring to integer types in diagnostic messages, please refer
+    to them as "integrals".
+
+  - Always pass 1 for `use_given_name' when invoking `pkl_type_str'
+    unless you need the expanded definition of the type for whatever
+    reason (like to show the arguments taken by a function type.)
 
 
 12 The Poke Virtual Machine
