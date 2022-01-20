@@ -2345,8 +2345,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_format)
           char *expected_type = pkl_type_str (type, 1);
 
           PKL_ERROR (PKL_AST_LOC (arg),
-                     "format argument is of an invalid type\n\
-expected %s, got %s",
+                     "invalid argument in format\n"
+                     "expected %s, got %s",
                      expected_type, found_type);
           free (found_type);
           free (expected_type);

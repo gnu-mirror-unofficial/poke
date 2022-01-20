@@ -2,4 +2,4 @@
 
 fun f = void: {}
 printf "%v\n",
-       f; /* { dg-error "invalid type.*\n.*void" } */
+       f; /* { dg-error "invalid argument.*\n.*void" } */
