@@ -2,4 +2,4 @@
 
 type Packet = struct { };
 
-var x = 10 as Packet; /* { dg-error "invalid cast\n.*expected struct" } */
+var x = 10 as Packet; /* { dg-error "invalid cast" } */

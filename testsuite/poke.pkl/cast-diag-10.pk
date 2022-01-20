@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+var a = 10 as offset<int<32>,B>; /* { dg-error "invalid cast" } */

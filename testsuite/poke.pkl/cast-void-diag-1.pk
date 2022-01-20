@@ -2,4 +2,4 @@
 
 type Pac0et = struct { };
 
-var x=0 as  void ;  /* { dg-error "not allowed" } */
+var x=0 as  void ;  /* { dg-error "invalid cast" } */

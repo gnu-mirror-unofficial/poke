@@ -3,5 +3,5 @@
 type Func = ()void;
 fun foo = (any a) void:
 {
-  a as Func; /* { dg-error "casting" } */
+  a as Func; /* { dg-error "invalid cast" } */
 };

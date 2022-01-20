@@ -2,4 +2,4 @@
 
 type Struct = struct {};
 
-var x = Struct {} as int<32>; /* { dg-error "invalid cast\n.*expected struct" } */
+var x = Struct {} as int<32>; /* { dg-error "invalid cast" } */

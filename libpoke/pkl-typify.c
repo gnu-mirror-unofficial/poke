@@ -410,23 +410,27 @@ PKL_PHASE_END_HANDLER
 /* The type of a CAST is the type of its target type.  However, not
    all types are allowed in casts.  */
 
+#define INVALID_CAST(STR)                       \
+  do                                            \
+    {                                           \
+      PKL_ERROR (PKL_AST_LOC (cast), (STR));    \
+      PKL_TYPIFY_PAYLOAD->errors++;             \
+      PKL_PASS_ERROR;                           \
+    }                                           \
+  while (0)
+
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
 {
   pkl_ast_node cast = PKL_PASS_NODE;
   pkl_ast_node type = PKL_AST_CAST_TYPE (cast);
   pkl_ast_node exp = PKL_AST_CAST_EXP (cast);
-  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
 
-  /* Casts to/from void are always forbidden.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_VOID)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a value to `void' is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
+  pkl_ast_node from_type = PKL_AST_TYPE (exp);
+  pkl_ast_node to_type = PKL_AST_CAST_TYPE (cast);
+  int from_type_code = PKL_AST_TYPE_CODE (from_type);
+  int to_type_code = PKL_AST_TYPE_CODE (to_type);
 
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_VOID)
+  if (PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_VOID)
     {
       /* Note that this is syntactically not possible.  So ICE instead
          of error.  */
@@ -436,188 +440,64 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
       PKL_PASS_ERROR;
     }
 
-  /* Casting to ANY is always forbidden.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ANY)
+  /* Some casts can be decided just by looking at the from_type.  */
+  switch (from_type_code)
     {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a value to `any' is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+    case PKL_TYPE_STRING:
+      /* String values can't be the casted to anything :( */
+      INVALID_CAST ("invalid cast from string");
+      break;
+    case PKL_TYPE_ANY:
+      /* ANY can be casted to anything but not functions (yet).  */
+      if (to_type_code != PKL_TYPE_FUNCTION)
+        goto done;
+      break;
+    default:
+      break;
     }
 
-  /* But casting from ANY is always allowed, with the exception of
-     function types.  This is because for this to work we need to tag
-     the PVM closure values with their type, which is XXX.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ANY)
+  /* For the rest we need to look at the to_type.  */
+  switch (to_type_code)
     {
-      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
-        {
-          PKL_ERROR (PKL_AST_LOC (cast),
-                     "casting `any' to a function type is not allowed");
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-      goto done;
-    }
-
-  /* An offset can only be casted to another offset.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_OFFSET
-      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_OFFSET)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting an offset value to a non-offset type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Only an offset can be casted to an offset type.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
-      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_OFFSET)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "invalid cast to an offset");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Casting from offset to offset is allowed, but not any other cast
-     involving offsets.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_OFFSET
-      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_OFFSET)
-    {
-    }
-
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_OFFSET
-      && PKL_AST_TYPE_CODE (type) != PKL_TYPE_OFFSET)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a non-offset value to an offset type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Casting from or to a function type is forbidden.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_FUNCTION)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a value to a function type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_FUNCTION)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a function to any other type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Only characters (uint<8>) can be casted to string.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRING
-      && (PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_INTEGRAL
-          || PKL_AST_TYPE_I_SIGNED_P (exp_type) != 0
-          || PKL_AST_TYPE_I_SIZE (exp_type) != 8))
-    {
-      char *found_type = pkl_type_str (exp_type, 1);
-
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "invalid cast to string\nexpected uint<8>, got %s",
-                 found_type);
-      free (found_type);
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* String values can't be casted to anything.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRING)
-    {
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "casting a string value to any other type is not allowed");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Only structs can be casted to structs.  Integers can also be
-     casted to integral structs.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
-      && PKL_AST_TYPE_CODE (exp_type) != PKL_TYPE_STRUCT)
-    {
-      pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (type);
-
-      if (!itype
-          || !pkl_ast_type_promoteable_p (itype, exp_type,
-                                          0 /* promote_array_of_any */))
-        {
-          char *found_type = pkl_type_str (exp_type, 1);
-
-          PKL_ERROR (PKL_AST_LOC (exp),
-                     "invalid cast\nexpected struct, got %s", found_type);
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-    }
-
-  /* Structs can be casted to other structs.  Additionally, integral
-     structs can also be casted to integral types.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_STRUCT)
-    {
-      if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_STRUCT
-          || (PKL_AST_TYPE_S_ITYPE (exp_type)
-              && PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL))
-        ;
-      else
-        {
-          char *type_str = pkl_type_str (type, 1);
-
-          PKL_ERROR (
-              PKL_AST_LOC (type), "invalid cast\nexpected struct%s, got %s",
-              PKL_AST_TYPE_S_ITYPE (exp_type) ? " or integral type" : "",
-              type_str);
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
-    }
-
-  /* Only arrays can be casted to arrays.  Also, only array boundaries
-     may differ.  */
-  if (PKL_AST_TYPE_CODE (type) == PKL_TYPE_ARRAY
-      && !pkl_ast_type_equal_p (type, exp_type))
-    {
-      char *type_str = pkl_type_str (type, 1);
-      char *found_type_str = pkl_type_str (exp_type, 1);
-
-      PKL_ERROR (PKL_AST_LOC (cast),
-                 "invalid cast to array\nexpected %s, got %s",
-                 type_str, found_type_str);
-      free (type_str);
-      free (found_type_str);
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
-    }
-
-  /* Arrays can only be casted to other arrays of the right type,
-     i.e. only array boundaries may differ, or if integrable to
-     integral types.  */
-  if (PKL_AST_TYPE_CODE (exp_type) == PKL_TYPE_ARRAY)
-    {
-      if (pkl_ast_type_equal_p (type, exp_type)
-          || ((PKL_AST_TYPE_CODE (type) == PKL_TYPE_INTEGRAL
-               && pkl_ast_type_integrable_p (exp_type))))
-        ;
-      else
-        {
-          char *type_str = pkl_type_str (type, 1);
-          char *found_type_str = pkl_type_str (exp_type, 1);
-
-          PKL_ERROR (PKL_AST_LOC (cast),
-                     "invalid cast\nexpected %s, got %s",
-                     type_str, found_type_str);
-          free (type_str);
-          free (found_type_str);
-          PKL_TYPIFY_PAYLOAD->errors++;
-          PKL_PASS_ERROR;
-        }
+    case PKL_TYPE_VOID:
+      INVALID_CAST ("invalid cast to `void'");
+      break;
+    case PKL_TYPE_ANY:
+      INVALID_CAST ("invalid cast to `any'");
+      break;
+    case PKL_TYPE_FUNCTION:
+      INVALID_CAST ("invalid cast to function");
+      break;
+    case PKL_TYPE_OFFSET:
+      if (from_type_code != PKL_TYPE_OFFSET)
+        INVALID_CAST ("invalid cast to offset");
+      break;
+    case PKL_TYPE_STRING:
+      if (from_type_code != PKL_TYPE_INTEGRAL
+          || PKL_AST_TYPE_I_SIGNED_P (from_type) != 0
+          || PKL_AST_TYPE_I_SIZE (from_type) != 8)
+        INVALID_CAST ("invalid cast to string");
+      break;
+    case PKL_TYPE_STRUCT:
+      /* Only structs can be casted to regular structs.  Integral
+         values can also be casted to integral structs.  */
+      if (from_type_code != PKL_TYPE_STRUCT
+          && !(PKL_AST_TYPE_S_ITYPE (to_type)
+               && from_type_code == PKL_TYPE_INTEGRAL))
+        INVALID_CAST ("invalid cast to struct\n");
+      break;
+    case PKL_TYPE_INTEGRAL:
+      if (!pkl_ast_type_integrable_p (from_type))
+        INVALID_CAST ("invalid cast to integral");
+      break;
+    case PKL_TYPE_ARRAY:
+      /* Only arrays of the same type, i.e. only array boundaries may
+         differ, can be casted to arrays.  */
+      if (!pkl_ast_type_equal_p (from_type, to_type))
+        INVALID_CAST ("invalid cast to array");
+      break;
+    default:
+      break;
     }
 
  done:

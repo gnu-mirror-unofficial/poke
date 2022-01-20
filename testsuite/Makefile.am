@@ -866,6 +866,8 @@ EXTRA_DIST = \
   poke.pkl/cast-diag-6.pk \
   poke.pkl/cast-diag-7.pk \
   poke.pkl/cast-diag-8.pk \
+  poke.pkl/cast-diag-9.pk \
+  poke.pkl/cast-diag-10.pk \
   poke.pkl/cast-integers-1.pk \
   poke.pkl/cast-integers-2.pk \
   poke.pkl/cast-integers-3.pk \

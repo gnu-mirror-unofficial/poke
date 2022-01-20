@@ -1,3 +1,16 @@
+2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.pkl/cast-any-to-function-diag-1.pk: Update
+	expected error.
+	* testsuite/poke.pkl/cast-void-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/cast-struct-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-str-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/cast-diag-9.pk: New test.
+	* testsuite/poke.pkl/cast-diag-10.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_cond_exp): Fix diagnostics.
