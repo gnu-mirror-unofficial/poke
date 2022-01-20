@@ -1,5 +1,12 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_array): Improve
+	diagnostics.
+	* testsuite/poke.pkl/array-bound-diag-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: Fix location of struct type labels.
 	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Improve
 	diagnostic.

@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+type La = int[
+          "foo" /* { dg-error "invalid array bound\n.*expected integral or offset, got string" } */
+          ];

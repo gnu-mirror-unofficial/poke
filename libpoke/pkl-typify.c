@@ -1889,8 +1889,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_array)
   if (PKL_AST_TYPE_CODE (bound_type) != PKL_TYPE_INTEGRAL
       && PKL_AST_TYPE_CODE (bound_type) != PKL_TYPE_OFFSET)
     {
+      char *type_str = pkl_type_str (bound_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (bound),
-                 "expected integral or offset value");
+                 "invalid array bound\n"
+                 "expected integral or offset, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
