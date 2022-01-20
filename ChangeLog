@@ -1,5 +1,13 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_indexer): Improve
+	diagnostics.
+	* testsuite/poke.pkl/arrays-index-diag-4.pk: New test.
+	* testsuite/poke.pkl/arrays-index-diag-5.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_trimmer): Improve
 	diagnostics.
 	* testsuite/poke.pkl/trim-diag-1.pk: Adapt expected test.

@@ -1272,16 +1272,28 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_indexer)
         break;
       }
     default:
-      PKL_ERROR (PKL_AST_LOC (container),
-                 "operator to [] must be an array or a string");
-      PKL_TYPIFY_PAYLOAD->errors++;
-      PKL_PASS_ERROR;
+      {
+        char *type_str = pkl_type_str (container_type, 0);
+
+        PKL_ERROR (PKL_AST_LOC (container),
+                   "invalid operator to []\n"
+                   "expected array or string, got %s",
+                   type_str);
+        free (type_str);
+        PKL_TYPIFY_PAYLOAD->errors++;
+        PKL_PASS_ERROR;
+      }
     }
 
   if (PKL_AST_TYPE_CODE (index_type) != PKL_TYPE_INTEGRAL)
     {
+      char *type_str = pkl_type_str (index_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (index),
-                 "index should be an integer");
+                 "invalid index in array indexer\n"
+                 "expected integral, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

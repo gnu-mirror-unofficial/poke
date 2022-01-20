@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+(Exception{})[2]; /* { dg-error "invalid operator to.*\n.*expected array or string" } */

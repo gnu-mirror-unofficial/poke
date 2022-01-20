@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+[1,2,3][
+    "foo"  /* { dg-error "invalid index.*\n.*expected integral" } */
+     ];
