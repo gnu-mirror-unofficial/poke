@@ -1,5 +1,12 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Fix
+	diagnostics.
+	* testsuite/poke.pkl/label-diag-1.pk: Update expected error.
+	* testsuite/poke.pkl/optcond-1-diag.pk: Likewise.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_try_catch_stmt): Fix
 	diagnostics.
 	* testsuite/poke.pkl/try-catch-diag-4.pk: Update expected error.

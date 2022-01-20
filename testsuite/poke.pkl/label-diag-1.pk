@@ -4,5 +4,5 @@ type Foo =
   struct
   {
     int i @
-          3; /* { dg-error "invalid struct field label\n.*expected offset" } */
+          3; /* { dg-error "invalid field label\n.*expected offset" } */
   };

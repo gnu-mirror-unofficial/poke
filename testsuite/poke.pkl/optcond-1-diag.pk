@@ -1,3 +1,5 @@
 /* { dg-do compile } */
 
-type Foo = struct { int i if "bar"; }; /* { dg-error "expected boolean" } */
+type Foo = struct { int i if
+           "bar" /* { dg-error "invalid optional field expression.*\n.*" } */
+; };

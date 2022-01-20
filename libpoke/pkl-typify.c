@@ -2691,8 +2691,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
       if (!pkl_ast_type_promoteable_p (constraint_type, bool_type,
                                        1 /* promote_array_of_any */))
         {
+          char *type_str = pkl_type_str (constraint_type, 1);
+
           PKL_ERROR (PKL_AST_LOC (elem_constraint),
-                     "struct field constraint should evaluate to a boolean");
+                     "invalid struct field constraint\n"
+                     "expected boolean, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -2711,8 +2716,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
       if (!pkl_ast_type_promoteable_p (optcond_type, bool_type,
                                        1 /* promote_array_of_any */))
         {
+          char *type_str = pkl_type_str (optcond_type, 1);
+
           PKL_ERROR (PKL_AST_LOC (elem_optcond),
-                     "expected boolean expression");
+                     "invalid optional field expression\n"
+                     "expected boolean, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -2736,8 +2746,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_struct_type_field)
           char *initializer_type_str = pkl_type_str (initializer_type, 1);
 
           PKL_ERROR (PKL_AST_LOC (elem_initializer),
-                     "invalid initializer\n\
-expected %s, got %s",
+                     "invalid field initializer\n"
+                     "expected %s, got %s",
                      field_type_str, initializer_type_str);
           free (field_type_str);
           free (initializer_type_str);
@@ -2764,7 +2774,7 @@ expected %s, got %s",
           char *type_str = pkl_type_str (label_type, 1);
 
           PKL_ERROR (PKL_AST_LOC (elem_label),
-                     "invalid struct field label\n"
+                     "invalid field label\n"
                      "expected offset, got %s",
                      type_str);
           free (type_str);
@@ -2803,8 +2813,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_return_stmt)
       char *expected_type_str = pkl_type_str (expected_type, 1);
 
       PKL_ERROR (PKL_AST_LOC (exp),
-                 "returning an expression of the wrong type\n\
-expected %s, got %s",
+                 "returning an expression of the wrong type\n"
+                 "expected %s, got %s",
                  expected_type_str, returned_type_str);
       free (expected_type_str);
       free (returned_type_str);
@@ -2835,8 +2845,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_func_arg)
           char *initial_type_str = pkl_type_str (initial_type, 1);
 
           PKL_ERROR (PKL_AST_LOC (initial),
-                     "argument initializer is of the wrong type\n\
-expected %s, got %s",
+                     "argument initializer is of the wrong type\n"
+                     "expected %s, got %s",
                      arg_type_str, initial_type_str);
           free (arg_type_str);
           free (initial_type_str);
