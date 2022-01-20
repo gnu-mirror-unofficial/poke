@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+for (a in
+    23#B /* { dg-error "invalid container.*\n.*expected array or string" } */
+    )
+{
+}

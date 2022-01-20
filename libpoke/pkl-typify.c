@@ -2243,8 +2243,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt)
 
       if (PKL_AST_TYPE_CODE (condition_type) != PKL_TYPE_INTEGRAL)
         {
+          char *type_str = pkl_type_str (condition_type, 1);
+
           PKL_ERROR (PKL_AST_LOC (condition),
-                     "expected boolean expression");
+                     "invalid condition in loop\n"
+                     "expected boolean, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -2271,8 +2276,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_loop_stmt_iterator)
   if (PKL_AST_TYPE_CODE (container_type) != PKL_TYPE_ARRAY
       && PKL_AST_TYPE_CODE (container_type) != PKL_TYPE_STRING)
     {
+      char *type_str = pkl_type_str (container_type, 1);
+
       PKL_ERROR (PKL_AST_LOC (container),
-                 "expected array or string");
+                 "invalid container in for loop\n"
+                 "expected array or string, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

@@ -1,5 +1,5 @@
 /* { dg-do compile } */
 
 for (var s = "foo";
-     s + "bar"; /* { dg-error "expected boolean" } */
+     s + "bar"; /* { dg-error "invalid condition.*\n.*expected boolean" } */
     ) {}
