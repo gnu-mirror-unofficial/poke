@@ -2667,8 +2667,13 @@ expected %s, got %s",
       if (!pkl_ast_type_promoteable_p (label_type, offset_type,
                                        1 /* promote_array_of_any */))
         {
+          char *type_str = pkl_type_str (label_type, 0);
+
           PKL_ERROR (PKL_AST_LOC (elem_label),
-                     "struct field label should evaluate to an offset");
+                     "invalid struct field label\n"
+                     "expected offset, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }

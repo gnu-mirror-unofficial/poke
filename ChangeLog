@@ -1,5 +1,13 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-tab.y: Fix location of struct type labels.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct_type_field): Improve
+	diagnostic.
+	* testsuite/poke.pkl/label-diag-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-anal.c (pkl_anal1_ps_type_struct): Make diagnostic
 	error self-explicative without location.
 	(pkl_anal1_ps_funcall): Turn error into ICE.

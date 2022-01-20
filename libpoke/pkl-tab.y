@@ -1861,7 +1861,7 @@ struct_type_field_label:
                 | '@' expression
                 {
                   $$ = $2;
-                  PKL_AST_LOC ($$) = @$;
+                  PKL_AST_LOC ($$) = @2;
                 }
         ;
 

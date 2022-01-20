@@ -1337,6 +1337,7 @@ EXTRA_DIST = \
   poke.pkl/isa-7.pk \
   poke.pkl/isa-8.pk \
   poke.pkl/isa-9.pk \
+  poke.pkl/label-diag-1.pk \
   poke.pkl/lambda-1.pk \
   poke.pkl/lambda-2.pk \
   poke.pkl/lambda-3.pk \
