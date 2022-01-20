@@ -1191,16 +1191,26 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
 
   if (PKL_AST_TYPE_CODE (from_idx_type) != PKL_TYPE_INTEGRAL)
     {
+      char *type_str = pkl_type_str (from_idx_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (from_idx),
-                 "index in trimmer should be an integer");
+                 "invalid index in trimmer\n"
+                 "expected integral, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
 
   if (PKL_AST_TYPE_CODE (to_idx_type) != PKL_TYPE_INTEGRAL)
     {
+      char *type_str = pkl_type_str (to_idx_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (to_idx),
-                 "index in trimmer should be an integer");
+                 "invalid index in trimmer\n"
+                 "expected integral, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }
@@ -1208,8 +1218,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
   if (PKL_AST_TYPE_CODE (entity_type) != PKL_TYPE_ARRAY
       && PKL_AST_TYPE_CODE (entity_type) != PKL_TYPE_STRING)
     {
+      char *type_str = pkl_type_str (entity_type, 0);
+
       PKL_ERROR (PKL_AST_LOC (entity),
-                 "operator to [] must be an array or a string");
+                 "invalid operator to []\n"
+                 "expected array or string, got %s",
+                 type_str);
+      free (type_str);
       PKL_TYPIFY_PAYLOAD->errors++;
       PKL_PASS_ERROR;
     }

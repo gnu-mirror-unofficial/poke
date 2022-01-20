@@ -1,3 +1,5 @@
 /* { dg-do compile } */
 
-var a = [1,2]["foo":]; /* { dg-error "integer" } */
+var a = [1,2][
+        "foo" /* { dg-error "invalid index.*\n.*expected integral" } */
+         :];

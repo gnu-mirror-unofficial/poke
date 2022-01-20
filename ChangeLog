@@ -1,5 +1,15 @@
 2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_trimmer): Improve
+	diagnostics.
+	* testsuite/poke.pkl/trim-diag-1.pk: Adapt expected test.
+	* testsuite/poke.pkl/trim-diag-5.pk: Likewise.
+	* testsuite/poke.pkl/trim-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/trim-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/trim-diag-2.pk: Likewise.
+
+2022-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_funcall): Improve
 	diagnostics.
 	* testsuite/poke.pkl/funcall-diag-5.pk: Update expected error.
