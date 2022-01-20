@@ -2449,12 +2449,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
   pkl_ast_node try_catch_stmt_arg = PKL_AST_TRY_CATCH_STMT_ARG (try_catch_stmt);
   pkl_ast_node try_catch_stmt_exp = PKL_AST_TRY_CATCH_STMT_EXP (try_catch_stmt);
   pkl_ast_loc error_loc = PKL_AST_NOLOC;
+  pkl_ast_node type;
 
   if (try_catch_stmt_arg)
     {
-      pkl_ast_node arg_type = PKL_AST_FUNC_ARG_TYPE (try_catch_stmt_arg);
+      type = PKL_AST_FUNC_ARG_TYPE (try_catch_stmt_arg);
 
-      if (!pkl_ast_type_is_exception (arg_type))
+      if (!pkl_ast_type_is_exception (type))
         {
           error_loc = PKL_AST_LOC (try_catch_stmt_arg);
           goto error;
@@ -2463,9 +2464,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
 
   if (try_catch_stmt_exp)
     {
-      pkl_ast_node exp_type = PKL_AST_TYPE (try_catch_stmt_exp);
+      type = PKL_AST_TYPE (try_catch_stmt_exp);
 
-      if (!pkl_ast_type_is_exception (exp_type))
+      if (!pkl_ast_type_is_exception (type))
         {
           error_loc = PKL_AST_LOC (try_catch_stmt_exp);
           goto error;
@@ -2475,9 +2476,16 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
   PKL_PASS_DONE;
 
  error:
-  PKL_ERROR (error_loc, "expected an Exception");
-  PKL_TYPIFY_PAYLOAD->errors++;
-  PKL_PASS_ERROR;
+  {
+    char *type_str = pkl_type_str (type, 1);
+
+    PKL_ERROR (error_loc, "invalid expression in try-catch\n"
+               "expected Exception, got %s",
+               type_str);
+    free (type_str);
+    PKL_TYPIFY_PAYLOAD->errors++;
+    PKL_PASS_ERROR;
+  }
 }
 PKL_PHASE_END_HANDLER
 

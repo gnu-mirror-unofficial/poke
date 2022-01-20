@@ -6,7 +6,7 @@ fun foo = int:
   {
    try
      raise Exception {code = 1};
-   catch if 10  /* { dg-error "expected" } */
+   catch if 10  /* { dg-error "invalid expression.*\n.*expected Exception" } */
    {
      raise Exception {code = 0};
    }
