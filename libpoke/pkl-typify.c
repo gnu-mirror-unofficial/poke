@@ -2373,8 +2373,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_print_stmt)
 
       if (PKL_AST_TYPE_CODE (sexp_type) != PKL_TYPE_STRING)
         {
+          char *type_str = pkl_type_str (sexp_type, 1);
+
           PKL_ERROR (PKL_AST_LOC (print_stmt_sexp),
-                     "expected a string");
+                     "invalid format string\n"
+                     "expected a string, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
