@@ -3,7 +3,7 @@
 type Foo =
   struct int<32>
   {
-    struct int<10>  /* { dg-error "invalid total size" } */
+    struct int<10>  /* { dg-error "invalid total size.*\n.*expected 10" } */
     {
       byte a;
       byte b;

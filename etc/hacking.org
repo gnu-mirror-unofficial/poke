@@ -1262,6 +1262,37 @@ have a testsuite in =testsuite/poke.FOO= with a driver
 
    : fun rand = int<32>: __PKL_BUILTIN_RAND__;
 
+** Writing Compiler Diagnostics
+
+   Please follow the following guidelines when adding new errors or
+   warnings to the poke compiler:
+
+   - Make the diagnostic messages self-contained, i.e. do not rely on
+     the extra location information to make the error intelligible.
+     This is mainly for the sake of accessibility, and also for when
+     poke is run in quiet mode.
+
+     This is an example of a bad diagnostic:
+
+     : error: field doesn't exist in struct
+
+     Write something like this instead:
+
+     : error: field `foo' doesn't exist in struct
+
+   - When checking for the type of some ENTITY, please use a two-lines
+     error message like:
+
+     : error: invalid ENTITY
+     : error: expected EXPECTED_TYPE, got ACTUAL_TYPE
+
+     this is to keep some uniformity.  You can get the written
+     representation of a type using the =pkl_type_str= utility
+     function.
+
+   - When referring to integer types in diagnostic messages, please
+     refer to them as "integrals".
+
 * The Poke Virtual Machine
 
 ** Exception Handling

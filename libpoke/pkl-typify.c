@@ -1805,8 +1805,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
       if (PKL_AST_TYPE_CODE (struct_type_itype)
           != PKL_TYPE_INTEGRAL)
         {
+          char *type_str = pkl_type_str (struct_type_itype, 0);
+
           PKL_ERROR (PKL_AST_LOC (struct_type_itype),
-                     "expected an integral type");
+                     "invalid type specifier in integral struct\n"
+                     "expected integral, got %s",
+                     type_str);
+          free (type_str);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }
@@ -1833,8 +1838,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
                   && !(PKL_AST_TYPE_CODE (ftype) == PKL_TYPE_STRUCT
                        && PKL_AST_TYPE_S_ITYPE (ftype) != NULL))
                 {
+                  char *type_str = pkl_type_str (ftype, 0);
+
                   PKL_ERROR (PKL_AST_LOC (field),
-                             "invalid field in integral struct");
+                             "invalid field in integral struct\n"
+                             "expected integral, offset or integral struct, got %s",
+                             type_str);
+                  free (type_str);
                   PKL_TYPIFY_PAYLOAD->errors++;
                   PKL_PASS_ERROR;
                 }
@@ -1862,7 +1872,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
       if (fields_int_size != PKL_AST_TYPE_I_SIZE (struct_type_itype))
         {
           PKL_ERROR (PKL_AST_LOC (struct_type_itype),
-                     "invalid total size in integral struct type");
+                     "invalid total size in integral struct type\n"
+                     "expected %lu bits, got %lu bits",
+                     PKL_AST_TYPE_I_SIZE (struct_type_itype),
+                     fields_int_size);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
         }

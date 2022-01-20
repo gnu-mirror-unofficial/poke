@@ -1,7 +1,7 @@
 /* { dg-do compile } */
 
 type Foo =
-  struct int<33> /* { dg-error "invalid total size" } */
+  struct int<33> /* { dg-error "invalid total size.*\n.*expected 33" } */
   {
     struct int<16>
     {

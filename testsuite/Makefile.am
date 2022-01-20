@@ -1295,6 +1295,8 @@ EXTRA_DIST = \
   poke.pkl/int-struct-type-diag-13.pk \
   poke.pkl/int-struct-type-diag-14.pk \
   poke.pkl/int-struct-type-diag-15.pk \
+  poke.pkl/int-struct-type-diag-16.pk \
+  poke.pkl/int-struct-type-diag-17.pk \
   poke.pkl/int-type-diag-1.pk \
   poke.pkl/int-type-diag-2.pk \
   poke.pkl/int-type.pk \

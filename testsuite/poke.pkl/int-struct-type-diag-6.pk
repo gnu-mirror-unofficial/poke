@@ -1,6 +1,6 @@
 /* { dg-do compile } */
 
 type Foo =
-  struct uint<32> /* { dg-error "total size" } */
+  struct uint<32> /* { dg-error "invalid total size.*\n.*expected 32" } */
   {
   };

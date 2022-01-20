@@ -3,5 +3,5 @@
 type Foo =
   struct int<32>
   {
-    string je; /* { dg-error "invalid field" } */
+    string je; /* { dg-error "invalid field.*\n.*expected integral, offset or integral struct" } */
   };

@@ -1,0 +1,7 @@
+/* { dg-do compile } */
+
+type Foo =  /* { dg-error "unions can't be integral" } */
+  union int<32>
+  {
+    int a;
+  };
