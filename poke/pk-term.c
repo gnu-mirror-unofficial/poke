@@ -184,9 +184,9 @@ pk_term_init (int argc, char *argv[])
           if (handle_color_option (arg + 8))
             pk_fatal ("handle_color_option failed");
         }
-      else if (strcmp (arg, "--style-dark") == 0)
+      else if (strncmp (arg, "--style-dark", 12) == 0)
         /* This is the default.  See above.  */;
-      else if (strcmp (arg, "--style-bright") == 0)
+      else if (strncmp (arg, "--style-bright", 14) == 0)
         poke_default_style = "poke-bright.css";
       else if (strncmp (arg, "--style=", 8) == 0)
         handle_style_option (arg + 8);
