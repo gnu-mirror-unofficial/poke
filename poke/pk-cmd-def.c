@@ -153,10 +153,10 @@ print_type_decl (int kind,
                        REG_EXTENDED | REG_NOSUB) != 0)                  \
             {                                                           \
               pk_term_class ("error");                                  \
-              pk_puts ("error: ");                                      \
+              pk_puts ("error:");                                       \
               pk_term_end_class ("error");                              \
                                                                         \
-              pk_printf ("invalid regexp");                             \
+              pk_printf (" invalid regexp\n");                          \
               return 0;                                                 \
             }                                                           \
           payload.regexp_p = 1;                                         \
@@ -242,6 +242,52 @@ pk_cmd_info_types (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   return 1;
 }
 
+static int
+pk_cmd_info_type (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  char *name;
+
+  assert (argc == 2);
+  assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
+  name = PK_CMD_ARG_STR (argv[1]);
+
+  /* Get the type referred by name.  */
+  if (*name == '\0'
+      || !pk_decl_p (poke_compiler, name, PK_DECL_KIND_TYPE))
+    goto invalid_type;
+
+  /* Mount an execute a command to call `typedef' on the type and to
+     pass the resulting Pk_Type to pk_info_type.  */
+  {
+    char *stmt = NULL;
+
+    asprintf (&stmt, "pk_info_type (typeof (%s));", name);
+    if (pk_compile_statement (poke_compiler, stmt, NULL, NULL,
+                              NULL) != PK_OK)
+      {
+        pk_puts ("internal error: executing pk_info_type in pk_cmd_info_type."
+                 "  Please report this.\n");
+        free (stmt);
+        return 0;
+      }
+    free (stmt);
+  }
+
+  return 1;
+
+ invalid_type:
+  pk_term_class ("error");
+  pk_puts ("error:");
+  pk_term_end_class ("error");
+  if (*name == '\0')
+    pk_printf (" this command requires a type name\n");
+  else
+    pk_printf (" can't find type `%s'\n", name);
+
+  return 0;
+}
+
+
 const struct pk_cmd info_var_cmd =
   {"variables", "s?", "", 0, NULL, pk_cmd_info_var,
    "info variables [REGEXP]", NULL};
@@ -253,3 +299,7 @@ const struct pk_cmd info_fun_cmd =
 const struct pk_cmd info_types_cmd =
   {"types", "s?", "", 0, NULL, pk_cmd_info_types,
    "info types [REGEXP]", NULL};
+
+const struct pk_cmd info_type_cmd =
+  {"type", "s", "", 0, NULL, pk_cmd_info_type,
+   "info type NAME", NULL};

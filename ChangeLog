@@ -1,5 +1,16 @@
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-def.c (info_type_cmd): Define.
+	(pk_cmd_info_type): New function.
+	* poke/pk-cmd-info.c: (info_cmds): Add info_type_cmd.
+	* poke/pk-info.pk: New file.
+	* poke/poke.pk: Load pk-info.pk.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-info.pk.
+	* doc/poke.texi (info command): Document .info type NAME.
+	* poke/pk-help.pk: Likewise.
+
+2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-def.c (info_types_cmd): Accept an optional regexp as
 	an argument for .info types.
 	(info_var_cmd): Likewise.

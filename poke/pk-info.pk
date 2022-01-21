@@ -1,0 +1,117 @@
+/* pk-info.pk - Tool introspection-related commands.  */
+
+/* Copyright (C) 2022 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* Print information about the given Pk_Type.  This function is used
+   to implement the `.info type NAME' command.  */
+
+fun pk_info_type = (Pk_Type typ) void:
+{
+  fun add_common = (Pk_Table table, string class) void:
+  {
+    table.row;
+    table.column ("Class:");
+    table.column (class);
+    if (typ.name != "")
+    {
+      table.row;
+      table.column ("Name:");
+      table.column ("\"" + typ.name + "\"", "string");
+    }
+    table.row;
+    table.column ("Complete:");
+    table.column (typ.complete_p ? "yes" : "no", "setting-boolean");
+  }
+
+  var table = Pk_Table { num_columns = 2 };
+
+  if (typ.code == PK_TYPE_INTEGRAL)
+  {
+    add_common (table, "integral");
+    table.row;
+    table.column ("Signed:");
+    table.column (typ.attrs.integral.signed_p ? "yes" : "no", "setting-boolean");
+    table.row;
+    table.column ("Size:");
+    table.column (format ("%u64d#b", typ.attrs.integral.size), "offset");
+  }
+  else if (typ.code == PK_TYPE_OFFSET)
+  {          
+    add_common (table, "offset");
+    table.row;
+    table.column ("Base type signed:");
+    table.column (typ.attrs.offset.signed_p ? "yes" : "no", "setting-boolean");
+    table.row;
+    table.column ("Base type size:");
+    table.column (format ("%u64d#b", typ.attrs.offset.size), "offset");
+    table.row;
+    table.column ("Unit:");
+    table.column (format ("%u64d#b", typ.attrs.offset._unit), "offset");
+  }
+  else if (typ.code == PK_TYPE_ARRAY)
+  {
+    add_common (table, "array");
+    table.row;
+    table.column ("Bounded:");
+    table.column (typ.attrs.array.bounded_p ? "yes" : "no", "setting-boolean");
+  }
+  else if (typ.code == PK_TYPE_STRUCT)
+  {
+    add_common (table,
+                (typ.attrs.sct.pinned_p ? "pinned " : "")
+                + (typ.attrs.sct.integral_p ? "integral " : "")
+                + (typ.attrs.sct.union_p ? "union" : "struct"));
+
+    if (typ.attrs.sct.integral_p)
+    {
+      table.row;
+      table.column ("Signed:");
+      table.column (typ.attrs.sct.isigned_p ? "yes" : "no", "setting-boolean");
+      table.row;
+      table.column ("Integral size:");
+      table.column (format ("%u64d#b", typ.attrs.sct.isize), "offset");
+    }
+  }
+  else if (typ.code == PK_TYPE_STRING)
+    add_common (table, "string");
+  else if (typ.code == PK_TYPE_FUNCTION)
+    add_common (table, "function");
+  else if (typ.code == PK_TYPE_ANY)
+    add_common (table, "any");
+  else
+    add_common (table, "unknown");
+
+  table.print_table;
+
+  /* Some kind of types need to print additional info.  */
+  if (typ.code == PK_TYPE_STRUCT)
+  {
+    if (typ.attrs.sct.fields'length > 0)
+    {
+      print "\nFields:\n";
+      for (name in typ.attrs.sct.fields)
+        print "  " + name + "\n";
+    }
+
+    if (typ.attrs.sct.methods'length > 0)
+    {
+      print "\nMethods:\n";
+      for (name in typ.attrs.sct.methods)
+        print "  " + name + "\n";
+    }
+  }
+}

@@ -50,6 +50,10 @@ var pk_have_libnbd_p = 0;
 
 load "pk-table.pk";
 
+/**** Introspection commands.  ****/
+
+load "pk-info.pk";
+
 /**** Online help system.  ****/
 
 load "pk-help.pk";

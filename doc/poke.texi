@@ -8485,6 +8485,8 @@ listed.
 Shows a list of defined types along with the locations where the types
 were defined.  If a regular expression is provided then only the types
 whose name match the expression are listed.
+@item .info type @var{name}
+Prints a description of the type with name @var{name}.
 @end table
 
 @node set command

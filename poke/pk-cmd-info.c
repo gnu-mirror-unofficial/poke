@@ -26,7 +26,8 @@ extern struct pk_cmd info_ios_cmd;   /* pk-cmd-ios.c  */
 extern struct pk_cmd info_var_cmd;   /* pk-cmd-def.c  */
 extern struct pk_cmd info_fun_cmd;   /* pk-cmd-def.c  */
 extern struct pk_cmd info_maps_cmd;  /* pk-cmd-map.c */
-extern struct pk_cmd info_types_cmd; /* pk-cmd-map.c */
+extern struct pk_cmd info_types_cmd; /* pk-cmd-def.c */
+extern struct pk_cmd info_type_cmd;  /* pk-cmd-def.c */
 
 const struct pk_cmd * info_cmds[] =
   {
@@ -35,6 +36,7 @@ const struct pk_cmd * info_cmds[] =
     &info_fun_cmd,
     &info_maps_cmd,
     &info_types_cmd,
+    &info_type_cmd,
     &null_cmd
   };
 
@@ -68,5 +70,5 @@ info_completion_function (const char *x, int state)
 
 
 const struct pk_cmd info_cmd =
-  {"info", "", "", 0, &info_trie, NULL, "info (ios|maps|variable|function)",
+  {"info", "", "", 0, &info_trie, NULL, "info (ios|maps|variables|functions|types|type)",
    info_completion_function};
