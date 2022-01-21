@@ -179,7 +179,7 @@ pvm_run (pvm apvm, pvm_program program, pvm_val *res, pvm_val *exc)
 }
 
 void
-pvm_call_closure (pvm vm, pvm_val cls, ...)
+pvm_call_closure (pvm vm, pvm_val cls, pvm_val *exit_exception, ...)
 {
   pvm_program program;
   pkl_asm pasm;
@@ -190,7 +190,7 @@ pvm_call_closure (pvm vm, pvm_val cls, ...)
                       pvm_compiler (vm), 1 /* prologue */);
 
   /* Push the arguments to the call.  */
-  va_start (valist, cls);
+  va_start (valist, exit_exception);
   while ((arg = va_arg (valist, pvm_val)) != PVM_NULL)
     pkl_asm_insn (pasm, PKL_INSN_PUSH, arg);
   va_end (valist);
@@ -202,7 +202,7 @@ pvm_call_closure (pvm vm, pvm_val cls, ...)
   /* Run the program in the poke VM.  */
   program = pkl_asm_finish (pasm, 1 /* epilogue */);
   pvm_program_make_executable (program);
-  (void) pvm_run (vm, program, NULL, NULL);
+  (void) pvm_run (vm, program, NULL, exit_exception);
   pvm_destroy_program (program);
 
 }

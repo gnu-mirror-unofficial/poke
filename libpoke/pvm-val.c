@@ -1032,11 +1032,12 @@ print_unit_name (uint64_t unit)
 }
 
 #define PVM_PRINT_VAL_1(...)                    \
-  pvm_print_val_1 (vm, depth, mode, base, indent, acutoff, flags, __VA_ARGS__)
+  pvm_print_val_1 (vm, depth, mode, base, indent, acutoff, flags, \
+                   exit_exception, __VA_ARGS__)
 
 static void
 pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
-                 int acutoff, uint32_t flags,
+                 int acutoff, uint32_t flags, pvm_val *exit_exception,
                  pvm_val val, int ndepth)
 {
   const char *long64_fmt, *long_fmt;
@@ -1366,7 +1367,7 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
          then use it, unless the PVM is configured to not do so.  */
       if (pprint)
         {
-          if (pvm_call_pretty_printer (vm, val))
+          if (pvm_call_pretty_printer (vm, val, exit_exception))
             return;
         }
 
@@ -1568,14 +1569,17 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
 #undef PVM_PRINT_VAL_1
 
 void
-pvm_print_val (pvm vm, pvm_val val)
+pvm_print_val (pvm vm, pvm_val val, pvm_val *exit_exception)
 {
+  if (exit_exception)
+    *exit_exception = PVM_NULL;
   pvm_print_val_1 (vm,
                    pvm_odepth (vm), pvm_omode (vm),
                    pvm_obase (vm), pvm_oindent (vm),
                    pvm_oacutoff (vm),
                    (pvm_omaps (vm) << (PVM_PRINT_F_MAPS - 1)
                     | (pvm_pretty_print (vm) << (PVM_PRINT_F_PPRINT - 1))),
+                   exit_exception,
                    val,
                    0 /* ndepth */);
 }
@@ -1584,11 +1588,15 @@ void
 pvm_print_val_with_params (pvm vm, pvm_val val,
                            int depth,int mode, int base,
                            int indent, int acutoff,
-                           uint32_t flags)
+                           uint32_t flags, pvm_val *exit_exception)
 {
+  if (exit_exception)
+    *exit_exception = PVM_NULL;
+
   pvm_print_val_1 (vm,
                    depth, mode, base, indent, acutoff,
                    flags,
+                   exit_exception,
                    val,
                    0 /* ndepth */);
 }
@@ -1699,14 +1707,14 @@ pvm_print_string (pvm_val string)
    corresponding to the struct VAL.  */
 
 int
-pvm_call_pretty_printer (pvm vm, pvm_val val)
+pvm_call_pretty_printer (pvm vm, pvm_val val, pvm_val *exit_exception)
 {
   pvm_val cls = pvm_get_struct_method (val, "_print");
 
   if (cls == PVM_NULL)
     return 0;
 
-  pvm_call_closure (vm, cls, val, PVM_NULL);
+  pvm_call_closure (vm, cls, exit_exception, val, PVM_NULL);
   return 1;
 }
 

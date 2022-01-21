@@ -877,7 +877,8 @@ printer-c
                                  16 /* base */,
                                  0 /* indent */,
                                  2 /* acutoff */,
-                                 0 /* flags */);
+                                 0 /* flags */,
+                                 NULL /* exit_exception */);
       pk_term_flush ();
     }
 
@@ -902,7 +903,8 @@ printer-c
                                  16 /* base */,
                                  0 /* indent */,
                                  2 /* acutoff */,
-                                 0 /* flags */);
+                                 0 /* flags */,
+                                 NULL /* exit_exception */);
       pk_puts (")");
       pk_term_flush ();
       printer_hi = 0;
@@ -6168,7 +6170,8 @@ instruction strace (?n)
                                    16 /* base */,
                                    2 /* indent */,
                                    0 /* acutoff */,
-                                   PVM_PRINT_F_MAPS);
+                                   PVM_PRINT_F_MAPS,
+                                   NULL /* exit_exception */);
         pk_puts ("\n");
         i++;
       }

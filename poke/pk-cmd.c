@@ -619,6 +619,7 @@ pk_cmd_exec (const char *str)
       char *cmd_alloc = NULL;
       int what; /* 0 -> declaration, 1 -> statement */
       int retval = 1;
+      pk_val exit_exception;
 
       if (IS_COMMAND(ecmd, "fun"))
         what = 0;
@@ -642,7 +643,8 @@ pk_cmd_exec (const char *str)
       if (what == 0)
         {
           /* Declaration.  */
-          if (pk_compile_buffer (poke_compiler, ecmd, &end, NULL) != PK_OK)
+          if (pk_compile_buffer (poke_compiler, ecmd, &end,
+                                 &exit_exception) != PK_OK)
             {
               retval = 0;
               goto cleanup;
@@ -653,7 +655,8 @@ pk_cmd_exec (const char *str)
           /* Statement.  */
           pk_val val;
 
-          if (pk_compile_statement (poke_compiler, ecmd, &end, &val, NULL) != PK_OK)
+          if (pk_compile_statement (poke_compiler, ecmd, &end, &val,
+                                    &exit_exception) != PK_OK)
             {
               retval = 0;
               goto cleanup;
@@ -661,11 +664,28 @@ pk_cmd_exec (const char *str)
 
           if (val != PK_NULL)
             {
-              pk_print_val (poke_compiler, val);
-              pk_puts ("\n");
+              /* Note that printing the value may result in an
+                 exception, in case a pretty-printer is involved.  */
+              pk_print_val (poke_compiler, val, &exit_exception);
+              if (exit_exception == PK_NULL)
+                pk_puts ("\n");
             }
         }
       pk_set_lexical_cuckolding_p (poke_compiler, 0);
+
+      /* If the execution (or the printing of the value) ended due to
+         an unhandled exception (this may include E_exit) then call
+         the poke default handler.  */
+      if (exit_exception != PK_NULL)
+        {
+          pk_val default_handler
+            = pk_decl_val (poke_compiler, "pk_exception_handler");
+
+          assert (default_handler != PK_NULL);
+          if (pk_call (poke_compiler, default_handler, NULL,
+                       1, exit_exception) == PK_ERROR)
+            assert (0);
+        }
 
     cleanup:
       free (cmd_alloc);

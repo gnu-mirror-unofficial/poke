@@ -943,9 +943,9 @@ pk_set_pretty_print (pk_compiler pkc, int pretty_print_p)
 }
 
 void
-pk_print_val (pk_compiler pkc, pk_val val)
+pk_print_val (pk_compiler pkc, pk_val val, pk_val *exit_exception)
 {
-  pvm_print_val (pkc->vm, val);
+  pvm_print_val (pkc->vm, val, exit_exception);
   pkc->status = PK_OK;
 }
 
@@ -953,11 +953,13 @@ void
 pk_print_val_with_params (pk_compiler pkc, pk_val val,
                           int depth, int mode, int base,
                           int indent, int acutoff,
-                          uint32_t flags)
+                          uint32_t flags,
+                          pk_val *exit_exception)
 {
   pvm_print_val_with_params (pkc->vm, val,
                              depth, mode, base,
-                             indent, acutoff, flags);
+                             indent, acutoff, flags,
+                             exit_exception);
 }
 
 static struct ios_dev_if foreign_iod_if;

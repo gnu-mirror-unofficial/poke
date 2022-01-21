@@ -260,10 +260,10 @@ testcase_pk_val_equal_p (const char *filename, const char *sec_code,
   else
     {
       printf ("val1:\n");
-      pk_print_val_with_params (pkc, val1, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      pk_print_val_with_params (pkc, val1, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS, NULL);
       printf ("\n");
       printf ("val2:\n");
-      pk_print_val_with_params (pkc, val2, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      pk_print_val_with_params (pkc, val2, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS, NULL);
       printf ("\n");
       fail (filename);
     }

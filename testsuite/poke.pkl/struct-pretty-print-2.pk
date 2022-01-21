@@ -17,6 +17,6 @@ type Foo =
 /* { dg-command {.set obase 16} } */
 /* { dg-command {.set pretty-print yes}  } */
 /* { dg-command {Foo @ 0#B} } */
-/* { dg-output "unhandled generic exception\n" } */
+/* { dg-output "unhandled generic exception" } */
 /* { dg-command {Foo @ 1#B} } */
 /* { dg-output "\n<0x20>" } */

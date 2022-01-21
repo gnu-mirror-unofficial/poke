@@ -28,7 +28,7 @@ EXTRA_DIST =
 
 dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk \
                     pk-extract.pk pk-scrabble.pk poke.pk pk-settings.pk \
-                    pk-help.pk pk-map.pk pk-table.pk pk-info.pk
+                    pk-help.pk pk-map.pk pk-table.pk pk-info.pk pk-repl.pk
 
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \

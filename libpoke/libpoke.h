@@ -1099,11 +1099,19 @@ int pk_val_kind (pk_val val) LIBPOKE_API;
 
 int pk_val_equal_p (pk_val val1, pk_val val2) LIBPOKE_API;
 
-/* Print the given value using the current PKC settings.  */
+/* Print the given value using the current PKC settings.
 
-void pk_print_val (pk_compiler pkc, pk_val val) LIBPOKE_API;
+   If printing the value implies to run a struct pretty-printer or to
+   execute some other code in the PVM, *EXIT_EXCEPTION is set to an
+   exception value if the operation gets interrupted by an unhandled
+   exception.  Otherwise *EXIT_EXCEPTION is set to PK_NULL.  NULL can
+   be passed for this argument as well.  */
 
-/* Print the given value using the given settings.  */
+void pk_print_val (pk_compiler pkc, pk_val val,
+                   pk_val *exit_exception) LIBPOKE_API;
+
+/* Print the given value using the given settings.
+   See above for an explanation for EXIT_EXCEPTION.  */
 
 #define PK_PRINT_F_MAPS   1  /* Output value and element offsets.  */
 #define PK_PRINT_F_PPRINT 2  /* Use pretty-printers.  */
@@ -1111,7 +1119,7 @@ void pk_print_val (pk_compiler pkc, pk_val val) LIBPOKE_API;
 void pk_print_val_with_params (pk_compiler pkc, pk_val val,
                                int depth, int mode, int base,
                                int indent, int acutoff,
-                               uint32_t flags) LIBPOKE_API;
+                               uint32_t flags, pk_val *exit_exception) LIBPOKE_API;
 
 /* Foreign IO devices interface.  */
 

@@ -1,3 +1,29 @@
+2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl.c (pkl_execute_statement): Do not return an error if
+	an exception is raised.
+	(pkl_execute_expression): Likewise.
+	(pkl_execute_buffer): Likewise.
+	* poke/pk-repl.pk: New file.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-repl.pk.
+	* poke/poke.pk: Load pk-repl.pk.
+	* libpoke/pkl-asm.c (pkl_asm_finish): Do not call the default
+	exception handler.
+	* poke/pk-cmd.c (pk_cmd_exec): Call pk_exception_handler whenever
+	necessary.
+	(pk_cmd_exec): Pass an exit_status to pk_print_val.
+	* libpoke/pvm.jitter (pvm_literal_printer): Adapt accordingly.
+	(pvm_literal_printer_lo): Likewise.
+	(strace): Likewise.
+	* libpoke/libpoke.c (pk_print_val): Add argument exit_exception.
+	* libpoke/pvm-val.c (pvm_print_val): Likewise.
+	(pvm_print_val_1): Likewise.
+	(PVM_PRINT_VAL_1): Likewise.
+	(pvm_call_pretty_printer): Likewise.
+	* libpoke/pvm-val.c (pvm_print_val_with_params): Likewise.
+	* libpoke/pvm.c (pvm_call_closure): Likewise.
+	* poke/pk-table.c (pk_table_print): Likewise.
+
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-def.c (info_type_cmd): Define.

@@ -1199,7 +1199,7 @@ pkl_asm_new (pkl_ast ast, pkl_compiler compiler,
                                      pvm_make_ulong (1, 64)));
       pkl_asm_insn (pasm, PKL_INSN_POPR, 0);
 
-      /* Install the default signal handler.  */
+      /* Install the default exception handler.  */
       pkl_asm_insn (pasm, PKL_INSN_PUSH,
                     pvm_make_exception (PVM_E_GENERIC, PVM_E_GENERIC_NAME,
                                         PVM_E_GENERIC_ESTATUS, NULL, NULL));
@@ -1231,13 +1231,9 @@ pkl_asm_finish (pkl_asm pasm, int epilogue)
 
       pvm_program_append_label (pasm->program, pasm->error_label);
 
-      /* Default exception handler.  If we are bootstrapping the
-         compiler, then use a very simple one inlined here in
-         assembly.  Otherwise, call the _pkl_exception_handler
-         function which is part of the compiler run-time.  */
+      /* Default exception handler.  */
       if (pkl_bootstrapped_p (pasm->compiler))
         {
-          pkl_asm_call (pasm, "_pkl_exception_handler");  /* EXC */
           pkl_asm_insn (pasm, PKL_INSN_PUSH,
                         pvm_make_string ("exit_status")); /* EXC STR */
           pkl_asm_insn (pasm, PKL_INSN_SREF);             /* EXC STR VAL */

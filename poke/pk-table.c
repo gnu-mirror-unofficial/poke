@@ -237,7 +237,7 @@ pk_table_print (pk_table table)
           if (str)
             pk_puts (str);
           else
-            pk_print_val (poke_compiler, val);
+            pk_print_val (poke_compiler, val, NULL /* exit_exception */);
 
           if (hyperlink)
             pk_term_end_hyperlink ();

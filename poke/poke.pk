@@ -65,3 +65,7 @@ load "pk-map.pk";
 /**** Global settings registry.  ****/
 
 load "pk-settings.pk";
+
+/**** Repl stuff.  ****/
+
+load "pk-repl.pk";

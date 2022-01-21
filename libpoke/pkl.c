@@ -337,10 +337,7 @@ pkl_execute_buffer (pkl_compiler compiler,
   /* Execute the program in the poke vm.  */
   {
     pvm_val val;
-
-    if (pvm_run (compiler->vm, program, &val, exit_exception) != PVM_EXIT_OK)
-      goto error;
-
+    pvm_run (compiler->vm, program, &val, exit_exception);
     /* Discard the value.  */
   }
 
@@ -385,8 +382,7 @@ pkl_execute_statement (pkl_compiler compiler,
   pvm_program_make_executable (program);
 
   /* Execute the routine in the poke vm.  */
-  if (pvm_run (compiler->vm, program, val, exit_exception) != PVM_EXIT_OK)
-    goto error;
+  pvm_run (compiler->vm, program, val, exit_exception);
 
   pvm_destroy_program (program);
   pkl_env_free (compiler->env);
@@ -467,8 +463,7 @@ pkl_execute_expression (pkl_compiler compiler,
   pvm_program_make_executable (program);
 
   /* Execute the routine in the poke vm.  */
-  if (pvm_run (compiler->vm, program, val, exit_exception) != PVM_EXIT_OK)
-    goto error;
+  pvm_run (compiler->vm, program, val, exit_exception);
 
   pvm_destroy_program (program);
   pkl_env_free (compiler->env);

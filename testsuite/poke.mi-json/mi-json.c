@@ -189,7 +189,7 @@ test_json_to_val (pk_compiler pkc, const char *j_obj_str, pk_val val)
   }
 
   printf ("\nParsed value:\n  ");
-  pk_print_val_with_params (pkc, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+  pk_print_val_with_params (pkc, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS, NULL);
   puts ("");
 
   /* Check if the pk_val returned from pk_mi_json_to_val
@@ -198,9 +198,9 @@ test_json_to_val (pk_compiler pkc, const char *j_obj_str, pk_val val)
   if (!pk_val_equal_p (pk_test_val, val))
     {
       printf ("Equality failure:\n  Expected value:\n    ");
-      pk_print_val_with_params (pkc, val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      pk_print_val_with_params (pkc, val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS, NULL);
       printf ("\n  Parsed value:\n    ");
-      pk_print_val_with_params (pkc, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS);
+      pk_print_val_with_params (pkc, pk_test_val, 0, 0, 16, 2, 0, PK_PRINT_F_MAPS, NULL);
       printf ("\n");
       return J_NOK;
     }

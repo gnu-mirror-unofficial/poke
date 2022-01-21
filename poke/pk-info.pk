@@ -50,7 +50,7 @@ fun pk_info_type = (Pk_Type typ) void:
     table.column (format ("%u64d#b", typ.attrs.integral.size), "offset");
   }
   else if (typ.code == PK_TYPE_OFFSET)
-  {          
+  {
     add_common (table, "offset");
     table.row;
     table.column ("Base type signed:");

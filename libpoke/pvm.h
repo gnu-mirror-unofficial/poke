@@ -613,7 +613,8 @@ enum pvm_exit_code pvm_run (pvm vm,
    arguments to the closure.  Note that this function doesn't allow
    pass nulls as arguments.  */
 
-void pvm_call_closure (pvm vm, pvm_val cls, ...);
+void pvm_call_closure (pvm vm, pvm_val cls, pvm_val *exit_exception,
+                       ...);
 
 /* Get/set the current byte endianness of a virtual machine.
 
@@ -715,7 +716,8 @@ void pvm_handle_signal (int signal_number);
 
 /* Call the pretty printer of the given value VAL.  */
 
-int pvm_call_pretty_printer (pvm vm, pvm_val val);
+int pvm_call_pretty_printer (pvm vm, pvm_val val,
+                             pvm_val *exit_exception);
 
 /* Print a PVM value.
 
@@ -749,11 +751,12 @@ int pvm_call_pretty_printer (pvm vm, pvm_val val);
 #define PVM_PRINT_F_MAPS   1
 #define PVM_PRINT_F_PPRINT 2
 
-void pvm_print_val (pvm vm, pvm_val val);
+void pvm_print_val (pvm vm, pvm_val val, pvm_val *exit_exception);
 
 void pvm_print_val_with_params (pvm vm, pvm_val val,
                                 int depth,int mode, int base,
                                 int indent, int acutoff,
-                                uint32_t flags);
+                                uint32_t flags,
+                                pvm_val *exit_exception);
 
 #endif /* ! PVM_H */

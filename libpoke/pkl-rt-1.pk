@@ -181,31 +181,6 @@ var exception_code = lambda _ExceptionCodeGenerator:
     return lambda int<32>: { return n++; };
   }();
 
-/* Default exception handler.
-
-   Note that the code in this function should NOT raise any exception,
-   or be ready to underflow the exception handlers stack and face some
-   ugly shit.  You have been warned!  */
-
-fun _pkl_exception_handler = (Exception exception) Exception:
-  {
-   if (exception.code != EC_exit && exception.code != EC_signal)
-     {
-       print ("unhandled "
-              + (exception.name == "" ? "unknown" : exception.name)
-              + " exception\n");
-
-       if (exception.location != "" || exception.msg != "")
-         {
-           if (exception.location != "")
-             print (exception.location + " ");
-           print (exception.msg + "\n");
-         }
-     }
-
-   return exception;
-  }
-
 /* Find the greatest common divisor of two unsigned 64-bit integrals A
    and B using the Euclidean algorithm.  */
 
