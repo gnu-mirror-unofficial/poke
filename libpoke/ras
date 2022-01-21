@@ -102,6 +102,9 @@
 # the function into a pvm_program, and install it into a PVM closure
 # value that is assigned to CLOSURE.
 #
+# As a courtesy to the user, RAS will emit an error if it finds a
+# function that lacks a `prolog' or at least one `return' instruction.
+#
 # Splitting Long Lines
 # --------------------
 #
@@ -499,6 +502,8 @@ BEGIN {
     srcdir = ENVIRON["srcdir"]
     num_errors=0
     current_entity = ""
+    saw_prolog = 0
+    saw_return = 0
 
     # This is to pacify make syntax-check.
     EXIT_FAILURE = 1
@@ -721,6 +726,20 @@ BEGIN {
     if (cur_frame != -1)
         error(FNR ": unbalanced PUSHF and POPF in closing entity")
 
+    # If the entity is a function, we should have seen exactly one
+    # `prolog' instruction and at least one `return'.
+    if (current_entity == "function")
+    {
+        if (saw_prolog == 0)
+           error(FNR ": .function without `prolog' instruction")
+        else if (saw_prolog > 1)
+           error(FNR ": .function with more than one `prolog' instruction")
+        if (saw_return == 0)
+            error(FNR ": .function requires one or more `return' instructions")
+    }
+    saw_prolog = 0
+    saw_return = 0
+
     if (current_entity == "function")
     {
         out("\t{                                                       \\")
@@ -936,6 +955,13 @@ BEGIN {
             $0 = gensub ("\\$" vname, vback "," vover, "g", $0);
         }
     }
+
+    # Functions require certain instructions in them.  Note we have seen
+    # these instructions, and how many.
+    if (i_id == "PKL_INSN_PROLOG")
+        saw_prolog++
+    else if (i_id == "PKL_INSN_RETURN")
+        saw_return++
 
     # Some instructions have side-effects in the lexical environment.
     # Proces them.

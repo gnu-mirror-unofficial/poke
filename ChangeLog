@@ -1,5 +1,10 @@
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Check that every .function has a prolog
+	instruction.
+
+2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* etc/poke-dark.css: Renamed from poke-default.css.
 	* etc/poke-bright.css: New file.
 	* etc/Makefile.am (dist_pkgdata_DATA): Rename poke-dar.css and add
