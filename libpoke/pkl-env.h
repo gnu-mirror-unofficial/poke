@@ -118,6 +118,18 @@ pkl_ast_node pkl_env_lookup (pkl_env env, int namespace,
                              const char *name,
                              int *back, int *over);
 
+/* Search in the environment ENV for a type declared with the given
+   NAME.  Return the AST node for the type, or NULL if such a type is
+   not found.  */
+
+pkl_ast_node pkl_env_lookup_type (pkl_env env, const char *name);
+
+/* Search in the environment ENV for a variable declared with the
+   given NAME.  Return the AST node for the value of the variable, or
+   NULL if such a variable is not found.  */
+
+pkl_ast_node pkl_env_lookup_var (pkl_env env, const char *name);
+
 /* The following iterators work on the main namespace.  */
 
 struct pkl_ast_node_iter

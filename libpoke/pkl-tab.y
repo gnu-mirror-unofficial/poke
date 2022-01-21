@@ -408,6 +408,7 @@ token <integer> UNION    _("keyword `union'")
 %token IN                _("keyword `in'")
 %token WHERE             _("keyword `where'")
 %token SIZEOF            _("keyword `sizeof'")
+%token TYPEOF            _("keyword `typeof'")
 %token ASSERT            _("keyword `assert'")
 %token ERR               _("token")
 %token ALIEN
@@ -788,6 +789,16 @@ expression:
         | SIZEOF '(' simple_type_specifier ')' %prec HYPERUNARY
                 {
                   $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_SIZEOF, $3);
+                  PKL_AST_LOC ($$) = @1;
+                }
+        | TYPEOF '(' expression ')' %prec HYPERUNARY
+                {
+                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_TYPEOF, $3);
+                  PKL_AST_LOC ($$) = @1;
+                }
+        | TYPEOF '(' simple_type_specifier ')' %prec HYPERUNARY
+                {
+                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_TYPEOF, $3);
                   PKL_AST_LOC ($$) = @1;
                 }
         | expression ATTR

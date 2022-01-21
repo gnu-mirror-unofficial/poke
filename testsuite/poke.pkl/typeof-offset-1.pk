@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (offset<int<3>,4>);
+
+/* { dg-command { t.attrs.offset.signed_p } } */
+/* { dg-output "1" } */

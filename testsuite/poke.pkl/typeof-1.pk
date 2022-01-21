@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (int);
+
+/* { dg-command { t.name == "int" } } */
+/* { dg-output "1" } */

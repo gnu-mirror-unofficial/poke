@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (int<32>);
+
+/* { dg-command { t.code == PK_TYPE_INTEGRAL } } */
+/* { dg-output "1" } */

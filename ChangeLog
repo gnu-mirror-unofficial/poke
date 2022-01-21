@@ -1,5 +1,61 @@
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt-2.pk: Define PK_TYPE_* values.
+	(Pk_Type): New struct type.
+	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_TYPIFIER): Define.
+	* libpoke/pkl-ast.c (pkl_ast_make_struct_type): Initialize the
+	struct typifier to NULL.
+	* libpoke/pkl-env.h: Prototype for pkl_env_lookup_type and
+	pkl_env_lookup_var.
+	* libpoke/pkl-env.c (pkl_env_lookup_type): New function.
+	(pkl_env_lookup_var): Likewise.
+	* libpoke/pkl-ops.def: New unary operator SIZEOF.
+	* libpoke/pkl-tab.y: New token TYPEOF.
+	(expression): Rule for typeof.
+	* libpoke/pkl-lex.l: Handle token TYPEOF.
+	* libpoke/pkl-typify.c (pkl_typify1_pr_op_typeof): New handler.
+	(pkl_phase_typify1): Register handler.
+	* libpoke/pkl-gen.h (PKL_GEN_CTX_IN_TYPIFIER): Define.
+	* libpoke/pkl-gen.c (pkl_phase_gen_or_typeof): New handler.
+	(pkl_phase_gen): Register handler.
+	(pkl_gen_ps_type_integral): Handle IN_TYPIFIER.
+	(pkl_gen_pr_type_offset): Likewise.
+	(pkl_gen_ps_type_string): Likewise.
+	(pkl_gen_pr_type_struct): Likewise.
+	(pkl_gen_ps_type_any): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	(pkl_gen_pr_decl): Compile typifier closures for declared struct
+	types.
+	* libpoke/pkl-gen.pks (integral_typifier): New macro.
+	(offset_typifier): Likewise.
+	(string_typifier): Likewise.
+	(array_typifier): Likewise.
+	(common_typifier): Likewise.
+	(struct_typifier): New function.
+	* testsuite/poke.pkl/typeof-1.pk: New test.
+	* testsuite/poke.pkl/typeof-9.pk: Likewise.
+	* testsuite/poke.pkl/typeof-8.pk: Likewise.
+	* testsuite/poke.pkl/typeof-7.pk: Likewise.
+	* testsuite/poke.pkl/typeof-6.pk: Likewise.
+	* testsuite/poke.pkl/typeof-5.pk: Likewise.
+	* testsuite/poke.pkl/typeof-4.pk: Likewise.
+	* testsuite/poke.pkl/typeof-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-offset-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-offset-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/typeof-int-1.pk: Likewise.
+	* testsuite/poke.pkl/typeof-int-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-array-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-array-1.pk: Likewise.
+	* testsuite/poke.pkl/typeof-structs-4.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ras: Check that every .function has a prolog
 	instruction.
 

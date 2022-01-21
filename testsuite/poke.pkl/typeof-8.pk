@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+fun foo = (any a) int:
+{
+  var t = typeof (a);
+  return t.code;
+}
+
+/* { dg-command { foo (666) == PK_TYPE_ANY } } */
+/* { dg-output "1" } */

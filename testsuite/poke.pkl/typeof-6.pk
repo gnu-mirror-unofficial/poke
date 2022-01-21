@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (Exception);
+
+/* { dg-command { t.code == PK_TYPE_STRUCT } } */
+/* { dg-output "1" } */

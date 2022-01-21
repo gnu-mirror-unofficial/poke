@@ -3221,3 +3221,216 @@
         popf 1
         return
         .end
+
+;;; RAS_MACRO_COMMON_TYPIFIER @type
+;;; ( SCT -- SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its common attributes for the
+;;; given generic type @TYPE.
+
+        .macro common_typifier @type
+        .let @type_name = PKL_AST_TYPE_NAME (@type)
+     .c if (@type_name)
+     .c {
+        .let #name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@type_name))
+        push "name"
+        push #name
+        sset
+     .c }
+        .let #complete_p = pvm_make_int (PKL_AST_TYPE_COMPLETE (@type) \
+                                         == PKL_AST_TYPE_COMPLETE_YES, 32)
+        push "complete_p"
+        push #complete_p
+        sset
+        .end
+
+;;; RAS_MACRO_INTEGRAL_TYPIFIER @type
+;;; ( SCT -- SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its attributes for the given
+;;; integral type @TYPE.
+
+        .macro integral_typifier @type
+        .let #signed_p = pvm_make_int (PKL_AST_TYPE_I_SIGNED_P (@type), 32)
+        .let #size = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@type), 64)
+        .e common_typifier @type
+        push "attrs"
+        sref
+        nip                     ; SCT(Type) SCT(attrs)
+        push "integral"
+        sref
+        nip2                    ; SCT(Type) SCT(integral)
+        push "signed_p"
+        push #signed_p
+        sset
+        push "size"
+        push #size
+        sset                    ; SCT(Type) SCT(integral)
+        drop                    ; SCT(type)
+        .end
+
+;;; RAS_MACRO_OFFSET_TYPIFIER @type
+;;; ( SCT -- SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its attributes for the given
+;;; offset type @TYPE.
+
+        .macro offset_typifier @type
+        .let @base_type = PKL_AST_TYPE_O_BASE_TYPE (@type)
+        .let #signed_p = pvm_make_int (PKL_AST_TYPE_I_SIGNED_P (@base_type), 32)
+        .let #size = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@base_type), 64)
+        .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (PKL_AST_TYPE_O_UNIT (@type)), 64)
+        .e common_typifier @type
+        push "attrs"
+        sref
+        nip                     ; SCT(Type) SCT(attrs)
+        push "offset"
+        sref
+        nip2                    ; SCT(Type) SCT(offset)
+        push "signed_p"
+        push #signed_p
+        sset
+        push "size"
+        push #size
+        sset
+        push "_unit"
+        push #unit
+        sset
+        drop                    ; SCT(type)
+        .end
+
+;;; RAS_MACRO_STRING_TYPIFIER @type
+;;; ( SCT -- SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its attributes for the given
+;;; string type @TYPE.
+
+        .macro string_typifier @type
+        .e common_typifier @type
+        .end
+
+;;; RAS_MACRO_FUNCTION_TYPIFIER @type
+;;; ( SCT -- SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its attributes for the given
+;;; function type @TYPE.
+
+        .macro function_typifier @type
+        .e common_typifier @type
+        .end
+
+;;; RAS_MACRO_ARRAY_TYPIFIER @type
+;;; ( SCT - SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its attributes for the given
+;;; string type @TYPE.
+
+        .macro array_typifier @type
+        .e common_typifier @type
+        ;; Get the attr.array
+        push "attrs"
+        sref
+        nip                     ; SCT(Type) SCT(attrs)
+        push "array"
+        sref
+        nip2                    ; SCT(Type) SCT(array)
+        ;; Fill in the array type attributes.
+        .let #bounded_p = pvm_make_int (PKL_AST_TYPE_A_BOUND (@type) != NULL, 32)
+        push "bounded_p"
+        push #bounded_p
+        sset
+        drop                    ; SCT(Type)
+        .end
+
+;;; RAS_FUNCTION_STRUCT_TYPIFIER @type
+;;; ( SCT -- SCT )
+;;;
+;;; Given a Pk_Type struct, fill in its attributes for the given
+;;; struct type @TYPE.
+
+        .function struct_typifier @type
+        prolog
+        .e common_typifier @type
+        ;; Get the attrs.sct
+        push "attrs"
+        sref
+        nip                     ; SCT(Type) SCT(attrs)
+        push "sct"
+        sref
+        nip2                    ; SCT(Type) SCT(sct)
+        ;; Fill in the attributes of the struct itself.
+        .let #union_p = pvm_make_int (PKL_AST_TYPE_S_UNION_P (@type), 32)
+        .let #pinned_p = pvm_make_int (PKL_AST_TYPE_S_PINNED_P (@type), 32)
+        push "union_p"
+        push #union_p
+        sset
+        push "pinned_p"
+        push #pinned_p
+        sset
+        ;; Some attributes are only set if the struct is integral.
+        .let @itype = PKL_AST_TYPE_S_ITYPE (@type)
+ .c if (@itype)
+ .c {
+        .let #isigned_p = pvm_make_int (PKL_AST_TYPE_I_SIGNED_P (@itype), 32)
+        .let #isize = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@itype), 64)
+        push "integral_p"
+        push int<32>1
+        sset
+        push "isigned_p"
+        push #isigned_p
+        sset
+        push "isize"
+        push #isize
+        sset
+ .c }
+        ;; Now add field entries.  At the moment these are just the
+        ;; names of the fields.
+        push "fields"
+        sref
+        nip                     ; SCT(Type) SCT(sct) ARR
+        .let @field
+ .c for (@field = PKL_AST_TYPE_S_ELEMS (@type);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
+ .c     if (@field_name)
+ .c     {
+        .let #field_name_str \
+          = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        sel                     ; ... ARR SEL
+        push #field_name_str    ; ... ARR SEL STR
+        ains                    ; ... ARR
+ .c     }
+ .c }
+        drop                    ; SCT(Type) SCT(sct)
+        ;; Now add method entries.  At the moment these are just the
+        ;; names of the methods.
+        push "methods"
+        sref
+        nip                     ; SCT(Type) SCT(sct) ARR
+        .let @method
+ .c for (@method = PKL_AST_TYPE_S_ELEMS (@type);
+ .c      @method;
+ .c      @method = PKL_AST_CHAIN (@method))
+ .c {
+ .c   if (PKL_AST_CODE (@method) != PKL_AST_DECL
+ .c       || PKL_AST_DECL_KIND (@method) != PKL_AST_DECL_KIND_FUNC
+ .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@method)))
+ .c   {
+ .c     if (PKL_AST_CODE (@method) != PKL_AST_DECL
+ .c         || PKL_AST_DECL_KIND (@method) != PKL_AST_DECL_KIND_TYPE)
+ .c     continue;
+ .c   }
+        .let @decl_name = PKL_AST_DECL_NAME (@method)
+        .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
+        sel                     ; ... ARR SEL
+        push #name_str          ; ... ARR SEL STR
+        ains                    ; ... ARR
+ .c }
+        drop                    ; SCT(Type) SCT(sct)
+        drop                    ; SCT(Type)
+        return
+        .end

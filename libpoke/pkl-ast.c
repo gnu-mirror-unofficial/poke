@@ -448,8 +448,9 @@ pkl_ast_make_struct_type (pkl_ast ast,
                           int pinned_p, int union_p)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
-  const int nclosures = 8; /* writer, mapper, constructor, comparator,
-                              integrator, deintegrator, printer, formater.  */
+  const int nclosures = 9; /* writer, mapper, constructor, comparator,
+                              integrator, deintegrator, printer,
+                              formater, typifier.  */
 
   PKL_AST_TYPE_CODE (type) = PKL_TYPE_STRUCT;
   PKL_AST_TYPE_S_NELEM (type) = nelem;
@@ -473,6 +474,7 @@ pkl_ast_make_struct_type (pkl_ast ast,
   PKL_AST_TYPE_S_FORMATER (type) = PVM_NULL;
   PKL_AST_TYPE_S_PRINTER (type) = PVM_NULL;
   PKL_AST_TYPE_S_DEINTEGRATOR (type) = PVM_NULL;
+  PKL_AST_TYPE_S_TYPIFIER (type) = PVM_NULL;
 
   return type;
 }

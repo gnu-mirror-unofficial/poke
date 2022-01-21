@@ -203,6 +203,7 @@ S ::
 "where"         { return WHERE; }
 "if"            { return IF; }
 "sizeof"        { return SIZEOF; }
+"typeof"        { return TYPEOF; }
 "fun"           { return DEFUN; }
 "method"        { return METHOD; }
 "type"          { return DEFTYPE; }

@@ -2101,6 +2101,26 @@ EXTRA_DIST = \
   poke.pkl/try-until-6.pk \
   poke.pkl/try-until-diag-1.pk \
   poke.pkl/typename-diag.pk \
+  poke.pkl/typeof-1.pk \
+  poke.pkl/typeof-2.pk \
+  poke.pkl/typeof-3.pk \
+  poke.pkl/typeof-4.pk \
+  poke.pkl/typeof-5.pk \
+  poke.pkl/typeof-6.pk \
+  poke.pkl/typeof-7.pk \
+  poke.pkl/typeof-8.pk \
+  poke.pkl/typeof-9.pk \
+  poke.pkl/typeof-array-1.pk \
+  poke.pkl/typeof-array-2.pk \
+  poke.pkl/typeof-int-1.pk \
+  poke.pkl/typeof-int-2.pk \
+  poke.pkl/typeof-offset-1.pk \
+  poke.pkl/typeof-offset-2.pk \
+  poke.pkl/typeof-offset-3.pk \
+  poke.pkl/typeof-struct-1.pk \
+  poke.pkl/typeof-struct-2.pk \
+  poke.pkl/typeof-struct-3.pk \
+  poke.pkl/typeof-structs-4.pk \
   poke.pkl/union-1.pk \
   poke.pkl/union-diag-1.pk \
   poke.pkl/union-diag-2.pk \

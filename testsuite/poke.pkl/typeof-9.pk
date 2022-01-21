@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (lambda void: {});
+
+/* { dg-command { t.code == PK_TYPE_FUNCTION } } */
+/* { dg-output "1" } */

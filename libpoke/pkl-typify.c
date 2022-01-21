@@ -44,6 +44,7 @@
 #include "pkl.h"
 #include "pkl-diag.h"
 #include "pkl-ast.h"
+#include "pkl-env.h"
 #include "pkl-pass.h"
 #include "pkl-typify.h"
 
@@ -965,6 +966,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_sizeof)
     = pkl_ast_make_offset_type (PKL_PASS_AST, itype, unit);
 
   PKL_AST_TYPE (unit) = ASTREF (itype);
+  PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (type);
+}
+PKL_PHASE_END_HANDLER
+
+/* The type of a TYPEOF operation is a struct Type.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_typeof)
+{
+
+  /* Get the top-level compilation environment and look for the
+     declaration of the type Pk_Type.  It must be there in a
+     bootstrapped compiler.  If `typeof' is used in a non-bootstrapped
+     compiler, the assert below will fire.  */
+
+  pkl_ast_node type
+    = pkl_env_lookup_type (pkl_get_env (PKL_PASS_COMPILER), "Pk_Type");
+
+  assert (type);
   PKL_AST_TYPE (PKL_PASS_NODE) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
@@ -2940,6 +2959,7 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_HANDLER (PKL_AST_ASS_STMT, pkl_typify1_ps_ass_stmt),
 
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SIZEOF, pkl_typify1_ps_op_sizeof),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_TYPEOF, pkl_typify1_ps_op_typeof),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NOT, pkl_typify1_ps_op_not),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EQ, pkl_typify1_ps_op_rela),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_NE, pkl_typify1_ps_op_rela),

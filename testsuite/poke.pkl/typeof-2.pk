@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof ([1,2,3]);
+
+/* { dg-command { t.complete_p } } */
+/* { dg-output "1" } */

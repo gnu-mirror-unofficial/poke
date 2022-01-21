@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (2#B);
+
+/* { dg-command { t.code == PK_TYPE_OFFSET } } */
+/* { dg-output "1" } */

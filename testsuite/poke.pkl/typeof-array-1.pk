@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var t = typeof (int[3]);
+
+/* { dg-command { t.attrs.array.bounded_p } } */
+/* { dg-output "1" } */

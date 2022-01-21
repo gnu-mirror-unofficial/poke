@@ -114,6 +114,7 @@ typedef struct pkl_gen_payload *pkl_gen_payload;
 #define PKL_GEN_CTX_IN_FORMATER     0x800
 #define PKL_GEN_CTX_IN_INTEGRATOR   0x1000
 #define PKL_GEN_CTX_IN_DEINTEGRATOR 0x2000
+#define PKL_GEN_CTX_IN_TYPIFIER     0x4000
 
 extern struct pkl_phase pkl_phase_gen;
 
