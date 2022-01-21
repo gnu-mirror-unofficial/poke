@@ -1,5 +1,11 @@
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Allow casts from
+	string to string.
+	* testsuite/poke.pkl/typeof-10.pk: New test.
+
+2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt-2.pk: Define PK_TYPE_* values.
 	(Pk_Type): New struct type.
 	* libpoke/pkl-ast.h (PKL_AST_TYPE_S_TYPIFIER): Define.
@@ -52,6 +58,7 @@
 	* testsuite/poke.pkl/typeof-struct-3.pk: Likewise.
 	* testsuite/poke.pkl/typeof-struct-2.pk: Likewise.
 	* testsuite/poke.pkl/typeof-struct-1.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
 	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
 
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>

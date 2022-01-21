@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+type NamedString = string;
+
+var t = typeof ("foo" as NamedString);
+
+/* { dg-command { t.name == "NamedString" } } */
+/* { dg-output "1" } */

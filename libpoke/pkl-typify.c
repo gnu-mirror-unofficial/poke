@@ -444,10 +444,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
   /* Some casts can be decided just by looking at the from_type.  */
   switch (from_type_code)
     {
-    case PKL_TYPE_STRING:
-      /* String values can't be the casted to anything :( */
-      INVALID_CAST ("invalid cast from string");
-      break;
     case PKL_TYPE_ANY:
       /* ANY can be casted to anything but not functions (yet).  */
       if (to_type_code != PKL_TYPE_FUNCTION)
@@ -474,9 +470,10 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_cast)
         INVALID_CAST ("invalid cast to offset");
       break;
     case PKL_TYPE_STRING:
-      if (from_type_code != PKL_TYPE_INTEGRAL
-          || PKL_AST_TYPE_I_SIGNED_P (from_type) != 0
-          || PKL_AST_TYPE_I_SIZE (from_type) != 8)
+      if (from_type_code != PKL_TYPE_STRING
+          && (from_type_code != PKL_TYPE_INTEGRAL
+              || PKL_AST_TYPE_I_SIGNED_P (from_type) != 0
+              || PKL_AST_TYPE_I_SIZE (from_type) != 8))
         INVALID_CAST ("invalid cast to string");
       break;
     case PKL_TYPE_STRUCT:
