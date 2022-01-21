@@ -8473,13 +8473,18 @@ The current file is now `foo.o'.
 @item .info variables
 @cindex variables
 Shows a list of defined variables along with their current values and
-the location where the variables were defined.
+the location where the variables were defined. If a regular expression
+is provided then only the types whose name match the expression are
+listed.
 @item .info functions
 Shows a list of defined functions along with their prototypes and the
-location where the functions were defined.
-@item .info types
+location where the functions were defined.  If a regular expression is
+provided then only the types whose name match the expression are
+listed.
+@item .info types [@var{regexp}]
 Shows a list of defined types along with the locations where the types
-were defined.
+were defined.  If a regular expression is provided then only the types
+whose name match the expression are listed.
 @end table
 
 @node set command

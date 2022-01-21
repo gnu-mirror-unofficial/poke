@@ -2110,6 +2110,7 @@ EXTRA_DIST = \
   poke.pkl/typeof-7.pk \
   poke.pkl/typeof-8.pk \
   poke.pkl/typeof-9.pk \
+  poke.pkl/typeof-10.pk \
   poke.pkl/typeof-array-1.pk \
   poke.pkl/typeof-array-2.pk \
   poke.pkl/typeof-int-1.pk \

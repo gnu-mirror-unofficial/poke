@@ -1,5 +1,17 @@
 2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-def.c (info_types_cmd): Accept an optional regexp as
+	an argument for .info types.
+	(info_var_cmd): Likewise.
+	(info_fun_cmd): Likewise.
+	(struct pk_info_payload): New type.
+	* poke/pk-help.pk: Update help for .info
+	{types,variables,functions}.
+	* doc/poke.texi (info command): Update doc.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_cast): Allow casts from
 	string to string.
 	* testsuite/poke.pkl/typeof-10.pk: New test.

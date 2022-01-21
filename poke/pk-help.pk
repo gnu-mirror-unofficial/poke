@@ -151,12 +151,12 @@ Show information about some given entities.
   List the currently opened IO spaces.
 .info maps
   List the active maps.
-.info variables
-  List the variables which are currently defined.
-.info functions
-  List the functions which are currently defined.
-.info types
-  List the types which are currently defined."
+.info variables [REGEXP]
+  List information about defined variables.
+.info functions [REGEXP]
+  List information about defined functions.
+.info types [REGEXP]
+  List information about defined types."
   };
 
 pk_help_add_topic
