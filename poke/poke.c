@@ -142,6 +142,8 @@ enum
   SOURCE_ARG,
   COLOR_ARG,
   STYLE_ARG,
+  STYLE_DARK_ARG,
+  STYLE_BRIGHT_ARG,
   MI_ARG,
   NO_AUTO_MAP_ARG,
   NO_HSERVER_ARG
@@ -158,6 +160,8 @@ static const struct option long_options[] =
   {"no-init-file", no_argument, NULL, NO_INIT_FILE_ARG},
   {"color", required_argument, NULL, COLOR_ARG},
   {"style", required_argument, NULL, STYLE_ARG},
+  {"style-dark", no_argument, NULL, STYLE_DARK_ARG},
+  {"style-bright", no_argument, NULL, STYLE_BRIGHT_ARG},
   {"mi", no_argument, NULL, MI_ARG},
   {"no-auto-map", no_argument, NULL, NO_AUTO_MAP_ARG},
   {"no-hserver", no_argument, NULL, NO_HSERVER_ARG},
@@ -193,6 +197,8 @@ print_help (void)
   pk_puts (_("Styling text output:\n"));
   pk_puts (_("      --color=(yes|no|auto|html|test) emit styled output\n"));
   pk_puts (_("      --style=STYLE_FILE              style file to use when styling\n"));
+  pk_puts (_("      --style-dark                    use default style for dark backgrounds\n"));
+  pk_puts (_("      --style-bright                  use default style for bright backgrounds\n"));
 
   pk_puts ("\n");
   pk_puts (_("Machine interface:\n"));
@@ -513,6 +519,8 @@ parse_args_2 (int argc, char *argv[])
              here.   */
         case COLOR_ARG:
         case STYLE_ARG:
+        case STYLE_DARK_ARG:
+        case STYLE_BRIGHT_ARG:
           break;
         default:
           goto exit_failure;

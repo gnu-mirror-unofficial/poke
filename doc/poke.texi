@@ -519,6 +519,13 @@ Styling text output:
 Whether to use styled output, and how.  Valid options for @var{how}
 are @samp{yes}, @samp{no}, @samp{auto}, @samp{html} and @samp{test}.
 
+@item --style-dark
+Use the default style that works better for dark backgrounds.  This is
+the default.
+
+@item --style-bright
+Use the default style that works better for bright backgrounds.
+
 @item --style=@var{file}
 Use @var{file} as the CSS to use for styling poke, instead of the
 default style.

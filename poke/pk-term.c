@@ -29,6 +29,12 @@
 #include "poke.h"
 #include "pk-utils.h"
 
+/* Default style to use when the user doesn't specify a style file.
+   We provide two defaults: one for dark backgrounds (the default) and
+   another for bright backgrounds.  */
+
+static const char *poke_default_style = "poke-dark.css";
+
 /* The following global is the libtextstyle output stream to use to
    emit contents to the terminal.  */
 static styled_ostream_t pk_ostream;
@@ -178,6 +184,10 @@ pk_term_init (int argc, char *argv[])
           if (handle_color_option (arg + 8))
             pk_fatal ("handle_color_option failed");
         }
+      else if (strcmp (arg, "--style-dark") == 0)
+        /* This is the default.  See above.  */;
+      else if (strcmp (arg, "--style-bright") == 0)
+        poke_default_style = "poke-bright.css";
       else if (strncmp (arg, "--style=", 8) == 0)
         handle_style_option (arg + 8);
     }
@@ -203,7 +213,7 @@ pk_term_init (int argc, char *argv[])
     {
       /* Find the style file.  */
       style_file_prepare ("POKE_STYLE", "POKESTYLESDIR", PKGDATADIR,
-                          "poke-default.css");
+                          poke_default_style);
     }
   else
     /* No styling.  */
