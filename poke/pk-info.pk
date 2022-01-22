@@ -102,14 +102,14 @@ fun pk_info_type = (Pk_Type typ) void:
   {
     if (typ.fields'length > 0)
     {
-      print "\nFields:\n";
+      print "Fields:\n";
       for (name in typ.fields)
         print "  " + name + "\n";
     }
 
     if (typ.methods'length > 0)
     {
-      print "\nMethods:\n";
+      print "Methods:\n";
       for (name in typ.methods)
         print "  " + name + "\n";
     }
