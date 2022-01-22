@@ -46,6 +46,26 @@ var pk_doc_viewer = "info";
 /* Whether poke was built with support for libNBD.  */
 var pk_have_libnbd_p = 0;
 
+/* Default exception handler.  Do not do anything here that could
+   raise an exception, because it will be silently ignored :P */
+
+fun pk_exception_handler = (Exception exception) void:
+  {
+   if (exception.code != EC_exit && exception.code != EC_signal)
+     {
+       print ("unhandled "
+              + (exception.name == "" ? "unknown" : exception.name)
+              + " exception\n");
+
+       if (exception.location != "" || exception.msg != "")
+         {
+           if (exception.location != "")
+             print (exception.location + " ");
+           print (exception.msg + "\n");
+         }
+     }
+  }
+
 /**** Utility to print tabulated data.  ****/
 
 load "pk-table.pk";
@@ -65,7 +85,3 @@ load "pk-map.pk";
 /**** Global settings registry.  ****/
 
 load "pk-settings.pk";
-
-/**** Repl stuff.  ****/
-
-load "pk-repl.pk";

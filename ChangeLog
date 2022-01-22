@@ -1,5 +1,10 @@
 2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.pk: Move pk_exception_handler from pk-repl.pk.
+	* poke/Makefile.am (dist_pkgdata_DATA): Remove pk-repl.pk.
+
+2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl.c (pkl_execute_statement): Do not return an error if
 	an exception is raised.
 	(pkl_execute_expression): Likewise.
