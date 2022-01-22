@@ -3532,13 +3532,8 @@
  .c      @method = PKL_AST_CHAIN (@method))
  .c {
  .c   if (PKL_AST_CODE (@method) != PKL_AST_DECL
- .c       || PKL_AST_DECL_KIND (@method) != PKL_AST_DECL_KIND_FUNC
  .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@method)))
- .c   {
- .c     if (PKL_AST_CODE (@method) != PKL_AST_DECL
- .c         || PKL_AST_DECL_KIND (@method) != PKL_AST_DECL_KIND_TYPE)
  .c     continue;
- .c   }
         .let @decl_name = PKL_AST_DECL_NAME (@method)
         .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@decl_name))
         sel                     ; ... ARR SEL
