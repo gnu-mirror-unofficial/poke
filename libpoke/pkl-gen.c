@@ -2772,6 +2772,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_type_any)
 {
   if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPIFIER))
     ; /* Do nothing here.  */
+  else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_CONSTRUCTOR))
+    {
+      /* This value is arbitrary... literally `any' value.. :D */
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (0, 32));
+    }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPE))
     pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKTYANY);
 }
