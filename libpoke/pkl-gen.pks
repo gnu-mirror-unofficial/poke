@@ -3391,6 +3391,13 @@
         push #mapper
         sset
   .c }
+        .let #writer = PKL_AST_TYPE_A_WRITER (@type)
+ .c if (#writer != PVM_NULL)
+ .c {
+        push "writer"
+        push #writer
+        sset
+  .c }
         .let #formater = PKL_AST_TYPE_A_FORMATER (@type)
  .c if (#formater != PVM_NULL)
  .c {
@@ -3449,35 +3456,42 @@
         push #mapper
         sset
   .c }
-        .let #comparator = PKL_AST_TYPE_S_MAPPER (@type)
+        .let #writer = PKL_AST_TYPE_S_WRITER (@type)
+ .c if (#writer != PVM_NULL)
+ .c {
+        push "writer"
+        push #writer
+        sset
+  .c }
+        .let #comparator = PKL_AST_TYPE_S_COMPARATOR (@type)
  .c if (#comparator != PVM_NULL)
  .c {
         push "comparator"
         push #comparator
         sset
   .c }
-        .let #formater = PKL_AST_TYPE_S_MAPPER (@type)
+        .let #formater = PKL_AST_TYPE_S_FORMATER (@type)
  .c if (#formater != PVM_NULL)
  .c {
         push "formater"
         push #formater
         sset
   .c }
-        .let #printer = PKL_AST_TYPE_S_MAPPER (@type)
+        .let #printer = PKL_AST_TYPE_S_PRINTER (@type)
  .c if (#printer != PVM_NULL)
  .c {
         push "printer"
         push #printer
         sset
   .c }
-        .let #integrator = PKL_AST_TYPE_S_MAPPER (@type)
+        .let #integrator = PKL_AST_TYPE_S_INTEGRATOR (@type)
  .c if (#integrator != PVM_NULL)
  .c {
         push "integrator"
         push #integrator
         sset
   .c }
-        .let #deintegrator = PKL_AST_TYPE_S_MAPPER (@type)
+        .let #deintegrator = PKL_AST_TYPE_S_DEINTEGRATOR (@type)
  .c if (#deintegrator != PVM_NULL)
  .c {
         push "deintegrator"

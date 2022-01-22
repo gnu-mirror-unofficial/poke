@@ -432,6 +432,7 @@ type Pk_Type =
     type Mapper_Fn = (int<32>,int<32>,uint<64>,uint<64>,uint<64>)any;
 
     Mapper_Fn mapper             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
+    (any)void writer             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
     (any,any)int<32> comparator  if code == PK_TYPE_STRUCT;
     (any,int<32>)string formater if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
     (any)any printer             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
