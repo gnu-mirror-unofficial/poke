@@ -399,9 +399,11 @@ fun _pkl_unit_name = (uint<64> bits) string:
 
    Fun facts:
    1) If you do changes to the struct Pk_Type defined below it is most
-      likely you will have to adapt the code generator accordingly.
+      likely you will have to adapt the typifier RAS functions/macros
+      accordingly.
    2) The PK_TYPE_* values _must_ resolve to a constant integral value
-      at compile-time.  Constant folding is ok.
+      at compile-time.  Constant folding is ok.  Changing their values
+      is ok.
 */
 
 var PK_TYPE_UNKNOWN =  0;
