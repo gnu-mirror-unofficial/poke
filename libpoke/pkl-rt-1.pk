@@ -419,42 +419,15 @@ type Pk_Type =
     uint<32> code;
     string name;
     uint<32> complete_p;
-    union
-    {
-      struct
-      {
-        int<32> signed_p;
-        uint<64> size;
-      } integral : code == PK_TYPE_INTEGRAL;
-
-      struct
-      {
-        int<32> signed_p;
-        uint<64> size;
-        uint<64> _unit;
-      } offset : code == PK_TYPE_OFFSET;
-
-      struct
-      {
-        int<32> bounded_p;
-        /* size bound closure */
-        /* nelem bound closure */
-        /* etype */
-      } array : code == PK_TYPE_ARRAY;
-
-      struct
-      {
-        int<32> union_p;
-        int<32> pinned_p;
-        int<32> integral_p : integral_p => !pinned_p;
-        int<32> isigned_p;
-        uint<64> isize;
-        string[] fields;
-        string[] methods;
-      } sct : code == PK_TYPE_STRUCT;
-
-      struct {} empty;
-    } attrs;
+    int<32> signed_p    if code in [PK_TYPE_INTEGRAL, PK_TYPE_OFFSET, PK_TYPE_STRUCT];
+    uint<64> size       if code in [PK_TYPE_INTEGRAL, PK_TYPE_OFFSET, PK_TYPE_STRUCT];
+    uint<64> _unit      if code == PK_TYPE_OFFSET;
+    int<32> bounded_p   if code == PK_TYPE_ARRAY;
+    int<32> union_p     if code == PK_TYPE_STRUCT;
+    int<32> pinned_p    if code == PK_TYPE_STRUCT;
+    int<32> integral_p  if code == PK_TYPE_STRUCT;
+    string[] fields     if code == PK_TYPE_STRUCT;
+    string[] methods    if code == PK_TYPE_STRUCT;
   };
 
 /**** Set the default load path ****/

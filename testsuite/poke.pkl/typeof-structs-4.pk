@@ -4,23 +4,23 @@ type Foo = struct int<23> { int<20> a; uint<3> b; method jorl = void: {} };
 
 var t = typeof (Foo);
 
-/* { dg-command { t.attrs.sct.union_p } } */
+/* { dg-command { t.union_p } } */
 /* { dg-output "0" } */
-/* { dg-command { t.attrs.sct.pinned_p } } */
+/* { dg-command { t.pinned_p } } */
 /* { dg-output "\n0" } */
-/* { dg-command { t.attrs.sct.integral_p } } */
+/* { dg-command { t.integral_p } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.attrs.sct.isigned_p } } */
+/* { dg-command { t.signed_p } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.attrs.sct.isize } } */
+/* { dg-command { t.size } } */
 /* { dg-output "\n23UL" } */
-/* { dg-command { t.attrs.sct.fields'length } } */
+/* { dg-command { t.fields'length } } */
 /* { dg-output "\n2UL" } */
-/* { dg-command { t.attrs.sct.fields[0] == "a" } } */
+/* { dg-command { t.fields[0] == "a" } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.attrs.sct.fields[1] == "b" } } */
+/* { dg-command { t.fields[1] == "b" } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.attrs.sct.methods'length } } */
+/* { dg-command { t.methods'length } } */
 /* { dg-output "\n1UL" } */
-/* { dg-command { t.attrs.sct.methods[0] == "jorl" } } */
+/* { dg-command { t.methods[0] == "jorl" } } */
 /* { dg-output "\n1" } */

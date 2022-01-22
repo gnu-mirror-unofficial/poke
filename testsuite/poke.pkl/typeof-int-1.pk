@@ -2,5 +2,5 @@
 
 var t = typeof (int<3>);
 
-/* { dg-command { t.attrs.integral.signed_p } } */
+/* { dg-command { t.signed_p } } */
 /* { dg-output "1" } */

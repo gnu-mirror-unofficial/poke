@@ -2,5 +2,5 @@
 
 var t = typeof (int<3>);
 
-/* { dg-command { t.attrs.integral.size } } */
+/* { dg-command { t.size } } */
 /* { dg-output "3UL" } */

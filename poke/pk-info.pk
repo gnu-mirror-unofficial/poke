@@ -44,46 +44,46 @@ fun pk_info_type = (Pk_Type typ) void:
     add_common (table, "integral");
     table.row;
     table.column ("Signed:");
-    table.column (typ.attrs.integral.signed_p ? "yes" : "no", "setting-boolean");
+    table.column (typ.signed_p ? "yes" : "no", "setting-boolean");
     table.row;
     table.column ("Size:");
-    table.column (format ("%u64d#b", typ.attrs.integral.size), "offset");
+    table.column (format ("%u64d#b", typ.size), "offset");
   }
   else if (typ.code == PK_TYPE_OFFSET)
   {
     add_common (table, "offset");
     table.row;
     table.column ("Base type signed:");
-    table.column (typ.attrs.offset.signed_p ? "yes" : "no", "setting-boolean");
+    table.column (typ.signed_p ? "yes" : "no", "setting-boolean");
     table.row;
     table.column ("Base type size:");
-    table.column (format ("%u64d#b", typ.attrs.offset.size), "offset");
+    table.column (format ("%u64d#b", typ.size), "offset");
     table.row;
     table.column ("Unit:");
-    table.column (format ("%u64d#b", typ.attrs.offset._unit), "offset");
+    table.column (format ("%u64d#b", typ._unit), "offset");
   }
   else if (typ.code == PK_TYPE_ARRAY)
   {
     add_common (table, "array");
     table.row;
     table.column ("Bounded:");
-    table.column (typ.attrs.array.bounded_p ? "yes" : "no", "setting-boolean");
+    table.column (typ.bounded_p ? "yes" : "no", "setting-boolean");
   }
   else if (typ.code == PK_TYPE_STRUCT)
   {
     add_common (table,
-                (typ.attrs.sct.pinned_p ? "pinned " : "")
-                + (typ.attrs.sct.integral_p ? "integral " : "")
-                + (typ.attrs.sct.union_p ? "union" : "struct"));
+                (typ.pinned_p ? "pinned " : "")
+                + (typ.integral_p ? "integral " : "")
+                + (typ.union_p ? "union" : "struct"));
 
-    if (typ.attrs.sct.integral_p)
+    if (typ.integral_p)
     {
       table.row;
       table.column ("Signed:");
-      table.column (typ.attrs.sct.isigned_p ? "yes" : "no", "setting-boolean");
+      table.column (typ.signed_p ? "yes" : "no", "setting-boolean");
       table.row;
       table.column ("Integral size:");
-      table.column (format ("%u64d#b", typ.attrs.sct.isize), "offset");
+      table.column (format ("%u64d#b", typ.size), "offset");
     }
   }
   else if (typ.code == PK_TYPE_STRING)
@@ -100,17 +100,17 @@ fun pk_info_type = (Pk_Type typ) void:
   /* Some kind of types need to print additional info.  */
   if (typ.code == PK_TYPE_STRUCT)
   {
-    if (typ.attrs.sct.fields'length > 0)
+    if (typ.fields'length > 0)
     {
       print "\nFields:\n";
-      for (name in typ.attrs.sct.fields)
+      for (name in typ.fields)
         print "  " + name + "\n";
     }
 
-    if (typ.attrs.sct.methods'length > 0)
+    if (typ.methods'length > 0)
     {
       print "\nMethods:\n";
-      for (name in typ.attrs.sct.methods)
+      for (name in typ.methods)
         print "  " + name + "\n";
     }
   }

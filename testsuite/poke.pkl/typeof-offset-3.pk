@@ -2,5 +2,5 @@
 
 var t = typeof (offset<int<3>,4>);
 
-/* { dg-command { t.attrs.offset._unit } } */
+/* { dg-command { t._unit } } */
 /* { dg-output "4UL" } */

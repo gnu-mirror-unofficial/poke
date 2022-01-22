@@ -4,17 +4,17 @@ type Foo = pinned struct {};
 
 var t = typeof (Foo);
 
-/* { dg-command { t.attrs.sct.union_p } } */
+/* { dg-command { t.union_p } } */
 /* { dg-output "0" } */
-/* { dg-command { t.attrs.sct.pinned_p } } */
+/* { dg-command { t.pinned_p } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.attrs.sct.integral_p } } */
+/* { dg-command { t.integral_p } } */
 /* { dg-output "\n0" } */
-/* { dg-command { t.attrs.sct.isigned_p } } */
+/* { dg-command { t.signed_p } } */
 /* { dg-output "\n0" } */
-/* { dg-command { t.attrs.sct.isize } } */
+/* { dg-command { t.size } } */
 /* { dg-output "\n0UL" } */
-/* { dg-command { t.attrs.sct.fields'length } } */
+/* { dg-command { t.fields'length } } */
 /* { dg-output "\n0UL" } */
-/* { dg-command { t.attrs.sct.methods'length } } */
+/* { dg-command { t.methods'length } } */
 /* { dg-output "\n0UL" } */

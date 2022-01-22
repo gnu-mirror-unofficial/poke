@@ -3320,19 +3320,12 @@
         .let #signed_p = pvm_make_int (PKL_AST_TYPE_I_SIGNED_P (@type), 32)
         .let #size = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@type), 64)
         .e common_typifier @type
-        push "attrs"
-        sref
-        nip                     ; SCT(Type) SCT(attrs)
-        push "integral"
-        sref
-        nip2                    ; SCT(Type) SCT(integral)
         push "signed_p"
         push #signed_p
         sset
         push "size"
         push #size
         sset                    ; SCT(Type) SCT(integral)
-        drop                    ; SCT(type)
         .end
 
 ;;; RAS_MACRO_OFFSET_TYPIFIER @type
@@ -3347,12 +3340,6 @@
         .let #size = pvm_make_ulong (PKL_AST_TYPE_I_SIZE (@base_type), 64)
         .let #unit = pvm_make_ulong (PKL_AST_INTEGER_VALUE (PKL_AST_TYPE_O_UNIT (@type)), 64)
         .e common_typifier @type
-        push "attrs"
-        sref
-        nip                     ; SCT(Type) SCT(attrs)
-        push "offset"
-        sref
-        nip2                    ; SCT(Type) SCT(offset)
         push "signed_p"
         push #signed_p
         sset
@@ -3362,7 +3349,6 @@
         push "_unit"
         push #unit
         sset
-        drop                    ; SCT(type)
         .end
 
 ;;; RAS_MACRO_STRING_TYPIFIER @type
@@ -3393,19 +3379,11 @@
 
         .macro array_typifier @type
         .e common_typifier @type
-        ;; Get the attr.array
-        push "attrs"
-        sref
-        nip                     ; SCT(Type) SCT(attrs)
-        push "array"
-        sref
-        nip2                    ; SCT(Type) SCT(array)
         ;; Fill in the array type attributes.
         .let #bounded_p = pvm_make_int (PKL_AST_TYPE_A_BOUND (@type) != NULL, 32)
         push "bounded_p"
         push #bounded_p
         sset
-        drop                    ; SCT(Type)
         .end
 
 ;;; RAS_FUNCTION_STRUCT_TYPIFIER @type
@@ -3417,13 +3395,6 @@
         .function struct_typifier @type
         prolog
         .e common_typifier @type
-        ;; Get the attrs.sct
-        push "attrs"
-        sref
-        nip                     ; SCT(Type) SCT(attrs)
-        push "sct"
-        sref
-        nip2                    ; SCT(Type) SCT(sct)
         ;; Fill in the attributes of the struct itself.
         .let #union_p = pvm_make_int (PKL_AST_TYPE_S_UNION_P (@type), 32)
         .let #pinned_p = pvm_make_int (PKL_AST_TYPE_S_PINNED_P (@type), 32)
@@ -3442,10 +3413,10 @@
         push "integral_p"
         push int<32>1
         sset
-        push "isigned_p"
+        push "signed_p"
         push #isigned_p
         sset
-        push "isize"
+        push "size"
         push #isize
         sset
  .c }
@@ -3496,7 +3467,6 @@
         push #name_str          ; ... ARR SEL STR
         ains                    ; ... ARR
  .c }
-        drop                    ; SCT(Type) SCT(sct)
         drop                    ; SCT(Type)
         return
         .end

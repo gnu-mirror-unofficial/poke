@@ -1,5 +1,26 @@
 2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt-1.pk (Pk_Type): Use optional fields to have a
+	flat structure.
+	* poke/pk-info.pk (pk_info_type): Adjust accordingly.
+	* libpoke/pkl-gen.pks (integral_typifier): Likewise.
+	(offset_typifier): Likewise.
+	(array_typifier): Likewise.
+	(struct_typifier): Likewise.
+	* testsuite/poke.pkl/typeof-structs-4.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/typeof-offset-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-offset-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-offset-1.pk: Likewise.
+	* testsuite/poke.pkl/typeof-int-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-int-1.pk: Likewise.
+	* testsuite/poke.pkl/typeof-array-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-array-1.pk: Likewise.
+
+2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (union_comparator): New function.
 	* libpoke/pkl-gen.c: Install union comparators instead of struct
 	comparators whenever appropriate.
