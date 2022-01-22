@@ -1,5 +1,12 @@
 2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt-1.pk (Pk_Type): Add closures for array and struct
+	types.
+	* libpoke/pkl-gen.pks (struct_typifier): Install struct closures.
+	(array_typifier): Likewise.
+
+2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt-1.pk (Pk_Type): Use optional fields to have a
 	flat structure.
 	* poke/pk-info.pk (pk_info_type): Adjust accordingly.

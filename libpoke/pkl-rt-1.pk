@@ -428,6 +428,15 @@ type Pk_Type =
     int<32> integral_p  if code == PK_TYPE_STRUCT;
     string[] fields     if code == PK_TYPE_STRUCT;
     string[] methods    if code == PK_TYPE_STRUCT;
+
+    type Mapper_Fn = (int<32>,int<32>,uint<64>,uint<64>,uint<64>)any;
+
+    Mapper_Fn mapper             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
+    (any,any)int<32> comparator  if code == PK_TYPE_STRUCT;
+    (any,int<32>)string formater if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
+    (any)any printer             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
+    (any)any integrator          if code == PK_TYPE_STRUCT;
+    (any)any deintegrator        if code == PK_TYPE_STRUCT;
   };
 
 /**** Set the default load path ****/

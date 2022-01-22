@@ -3384,6 +3384,27 @@
         push "bounded_p"
         push #bounded_p
         sset
+        .let #mapper = PKL_AST_TYPE_A_MAPPER (@type)
+ .c if (#mapper != PVM_NULL)
+ .c {
+        push "mapper"
+        push #mapper
+        sset
+  .c }
+        .let #formater = PKL_AST_TYPE_A_FORMATER (@type)
+ .c if (#formater != PVM_NULL)
+ .c {
+        push "formater"
+        push #formater
+        sset
+  .c }
+        .let #printer = PKL_AST_TYPE_A_PRINTER (@type)
+ .c if (#printer != PVM_NULL)
+ .c {
+        push "printer"
+        push #printer
+        sset
+  .c }
         .end
 
 ;;; RAS_FUNCTION_STRUCT_TYPIFIER @type
@@ -3420,6 +3441,49 @@
         push #isize
         sset
  .c }
+        ;; Closures!
+        .let #mapper = PKL_AST_TYPE_S_MAPPER (@type)
+ .c if (#mapper != PVM_NULL)
+ .c {
+        push "mapper"
+        push #mapper
+        sset
+  .c }
+        .let #comparator = PKL_AST_TYPE_S_MAPPER (@type)
+ .c if (#comparator != PVM_NULL)
+ .c {
+        push "comparator"
+        push #comparator
+        sset
+  .c }
+        .let #formater = PKL_AST_TYPE_S_MAPPER (@type)
+ .c if (#formater != PVM_NULL)
+ .c {
+        push "formater"
+        push #formater
+        sset
+  .c }
+        .let #printer = PKL_AST_TYPE_S_MAPPER (@type)
+ .c if (#printer != PVM_NULL)
+ .c {
+        push "printer"
+        push #printer
+        sset
+  .c }
+        .let #integrator = PKL_AST_TYPE_S_MAPPER (@type)
+ .c if (#integrator != PVM_NULL)
+ .c {
+        push "integrator"
+        push #integrator
+        sset
+  .c }
+        .let #deintegrator = PKL_AST_TYPE_S_MAPPER (@type)
+ .c if (#deintegrator != PVM_NULL)
+ .c {
+        push "deintegrator"
+        push #deintegrator
+        sset
+  .c }
         ;; Now add field entries.  At the moment these are just the
         ;; names of the fields.
         push "fields"
