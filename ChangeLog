@@ -1,5 +1,19 @@
 2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (union_comparator): New function.
+	* libpoke/pkl-gen.c: Install union comparators instead of struct
+	comparators whenever appropriate.
+	* testsuite/poke.pkl/eq-unions-1.pk: New test.
+	* testsuite/poke.pkl/eq-unions-7.pk: Likewise.
+	* testsuite/poke.pkl/eq-unions-6.pk: Likewise.
+	* testsuite/poke.pkl/eq-unions-5.pk: Likewise.
+	* testsuite/poke.pkl/eq-unions-4.pk: Likewise.
+	* testsuite/poke.pkl/neq-unions-1.pk: Likewise.
+	* testsuite/poke.pkl/eq-unions-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.pk: Move pk_exception_handler from pk-repl.pk.
 	* poke/Makefile.am (dist_pkgdata_DATA): Remove pk-repl.pk.
 

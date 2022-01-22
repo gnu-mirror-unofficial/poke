@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var a = typeof (int<3>) == typeof ("foo");
+
+/* { dg-command { a } } */
+/* { dg-output "0" } */

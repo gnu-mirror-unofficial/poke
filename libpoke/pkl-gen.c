@@ -255,8 +255,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 pvm_val comparator_closure;
 
                 PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_COMPARATOR);
-                RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure,
-                                                type_struct);
+                if (PKL_AST_TYPE_S_UNION_P (type_struct))
+                  RAS_FUNCTION_UNION_COMPARATOR (comparator_closure,
+                                                 type_struct);
+                else
+                  RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure,
+                                                  type_struct);
                 PKL_GEN_POP_CONTEXT;
                 PKL_AST_TYPE_S_COMPARATOR (type_struct) = comparator_closure;
               }
@@ -3575,7 +3579,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_struct)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OVER);
 
       if (comparator_closure == PVM_NULL)
-        RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure, type_struct);
+        {
+          if (PKL_AST_TYPE_S_UNION_P (type_struct))
+            RAS_FUNCTION_UNION_COMPARATOR (comparator_closure, type_struct);
+          else
+            RAS_FUNCTION_STRUCT_COMPARATOR (comparator_closure, type_struct);
+        }
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, comparator_closure);
       if (!PKL_AST_TYPE_NAME (type_struct))
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);

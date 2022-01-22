@@ -1077,6 +1077,13 @@ EXTRA_DIST = \
   poke.pkl/eq-structs-12.pk \
   poke.pkl/eq-structs-diag-1.pk \
   poke.pkl/eq-structs-diag-2.pk \
+  poke.pkl/eq-unions-1.pk \
+  poke.pkl/eq-unions-2.pk \
+  poke.pkl/eq-unions-3.pk \
+  poke.pkl/eq-unions-4.pk \
+  poke.pkl/eq-unions-5.pk \
+  poke.pkl/eq-unions-6.pk \
+  poke.pkl/eq-unions-7.pk \
   poke.pkl/excond-1.pk \
   poke.pkl/excond-2.pk \
   poke.pkl/excond-3.pk \
@@ -1491,6 +1498,7 @@ EXTRA_DIST = \
   poke.pkl/neq-offsets-5.pk \
   poke.pkl/neq-strings-1.pk \
   poke.pkl/neq-strings-2.pk \
+  poke.pkl/neq-unions-1.pk \
   poke.pkl/not-1.pk \
   poke.pkl/not-2.pk \
   poke.pkl/not-3.pk \

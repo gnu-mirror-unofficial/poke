@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = union { int i : i > 10; long l : l > 0; int z; };
+
+/* { dg-command { Foo { l = 30 } == Foo  { l = 40 } } } */
+/* { dg-output "0" } */

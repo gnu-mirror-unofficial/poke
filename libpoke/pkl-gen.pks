@@ -1196,6 +1196,72 @@
         return
         .end
 
+;;; RAS_FUNCTION_UNION_COMPARATOR @type_struct
+;;; ( SCT SCT -- INT )
+;;;
+;;; Assemble a function that, given two unions of a given type,
+;;; returns 1 if the two unions are equal, 0 otherwise.
+;;;
+;;; Macro-arguments:
+;;;
+;;; @type_struct is a pkl_ast_node with the struct type being
+;;; processed.
+
+        .function union_comparator @type_struct
+        prolog
+        .let @field
+ .c  for (@field = PKL_AST_TYPE_S_ELEMS (@type_struct);
+ .c       @field;
+ .c       @field = PKL_AST_CHAIN (@field))
+ .c  {
+        .label .invalid_alternative
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
+        .let #field_name_str \
+          = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        ;; If:
+        ;; a) this alternative exists in both unions, and
+        ;; b) both values are equal
+        ;; then the unions are equal and we are done.
+        push PVM_E_ELEM
+        pushe .invalid_alternative
+        swap                    ; SCT2 SCT1
+        push #field_name_str    ; SCT2 SCT1 FNAME
+        sref
+        nip                     ; SCT2 SCT1 VAL1
+        rot                     ; SCT1 VAL1 SCT2
+        push #field_name_str    ; SCT1 VAL1 SCT2 FNAME
+        sref
+        nip                     ; SCT1 VAL1 SCT2 VAL2
+        quake                   ; SCT1 SCT2 VAL1 VAL2
+        ;; Note that we cannot use EQ if the field is a struct itself,
+        ;; because EQ uses comparators!  So we subpass instead.  :)
+ .c     pkl_ast_node field_type
+ .c       = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field) ;
+ .c     if (PKL_AST_TYPE_CODE (field_type) == PKL_TYPE_STRUCT)
+ .c       PKL_PASS_SUBPASS (field_type);
+ .c     else
+ .c     {
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        eq @field_type
+ .c     }
+        nip2                    ; SCT1 SCT2 (VAL1==VAL2)
+        pope
+        ba .done
+.invalid_alternative:
+        ;; Otherwise, try the next alternative.
+        drop                    ; The exception
+  .c }
+        ;; The unions are not equal.
+        ;; (Note that union types without alternatives can be compiled
+        ;;  but never constructed nor mapped.)
+        push int<32>0           ; SCT1 SCT2 0
+.done:
+        nip2                    ; INT
+        return
+        .end
+
 ;;; RAS_FUNCTION_STRUCT_COMPARATOR @type_struct
 ;;; ( SCT SCT -- INT )
 ;;;
