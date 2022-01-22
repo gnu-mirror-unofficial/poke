@@ -66,22 +66,10 @@ fun pk_exception_handler = (Exception exception) void:
      }
   }
 
-/**** Utility to print tabulated data.  ****/
+/* Load some poke subsytems.  */
 
 load "pk-table.pk";
-
-/**** Introspection commands.  ****/
-
 load "pk-info.pk";
-
-/**** Online help system.  ****/
-
 load "pk-help.pk";
-
-/**** Maps support.  ****/
-
 load "pk-map.pk";
-
-/**** Global settings registry.  ****/
-
 load "pk-settings.pk";
