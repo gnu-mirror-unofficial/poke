@@ -119,14 +119,7 @@ pkl_new (pvm vm, const char *rt_path, uint32_t flags)
   /* Bootstrap the compiler.  An error bootstraping is an internal
      error and should be reported as such.  */
   {
-    char *poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt-1.pk", NULL);
-    if (!poke_rt_pk)
-      goto out_of_memory;
-
-    if (!pkl_load_rt (compiler, poke_rt_pk))
-      return NULL;
-
-    poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt-2.pk", NULL);
+    char *poke_rt_pk = pk_str_concat (rt_path, "/pkl-rt.pk", NULL);
     if (!poke_rt_pk)
       goto out_of_memory;
 
@@ -188,7 +181,8 @@ pkl_free (pkl_compiler compiler)
 
 static pvm_program
 rest_of_compilation (pkl_compiler compiler,
-                     pkl_ast ast)
+                     pkl_ast ast,
+                     pkl_env env)
 {
   struct pkl_gen_payload gen_payload;
 
@@ -263,7 +257,7 @@ rest_of_compilation (pkl_compiler compiler,
   pkl_trans_init_payload (&trans2_payload);
   pkl_trans_init_payload (&trans3_payload);
   pkl_trans_init_payload (&trans4_payload);
-  pkl_gen_init_payload (&gen_payload, compiler);
+  pkl_gen_init_payload (&gen_payload, compiler, env);
 
   if (!pkl_do_pass (compiler, ast,
                     frontend_phases, frontend_payloads, PKL_PASS_F_TYPES, 1))
@@ -327,7 +321,7 @@ pkl_execute_buffer (pkl_compiler compiler,
     /* Memory exhaustion.  */
     goto error;
 
-  program = rest_of_compilation (compiler, ast);
+  program = rest_of_compilation (compiler, ast, env);
   if (program == NULL)
     goto error;
 
@@ -375,7 +369,7 @@ pkl_execute_statement (pkl_compiler compiler,
     /* Memory exhaustion.  */
     goto error;
 
-  program = rest_of_compilation (compiler, ast);
+  program = rest_of_compilation (compiler, ast, env);
   if (program == NULL)
     goto error;
 
@@ -417,7 +411,7 @@ pkl_compile_expression (pkl_compiler compiler,
      /* Memory exhaustion.  */
      goto error;
 
-   program = rest_of_compilation (compiler, ast);
+   program = rest_of_compilation (compiler, ast, env);
    if (program == NULL)
      goto error;
 
@@ -456,7 +450,7 @@ pkl_execute_expression (pkl_compiler compiler,
     /* Memory exhaustion.  */
     goto error;
 
-  program = rest_of_compilation (compiler, ast);
+  program = rest_of_compilation (compiler, ast, env);
   if (program == NULL)
     goto error;
 
@@ -503,7 +497,7 @@ pkl_execute_file (pkl_compiler compiler, const char *fname,
     /* Memory exhaustion.  */
     goto error;
 
-  program = rest_of_compilation (compiler, ast);
+  program = rest_of_compilation (compiler, ast, env);
   if (program == NULL)
     goto error;
 

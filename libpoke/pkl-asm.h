@@ -24,6 +24,7 @@
 
 #include "pkl.h" /* For pkl_compiler */
 #include "pkl-ast.h"
+#include "pkl-env.h"
 #include "ios.h" /* For IOS_NENC_* and IOS_ENDIAN_* */
 #include "pvm.h"
 
@@ -83,9 +84,10 @@ pvm_program pkl_asm_finish (pkl_asm pasm, int epilogue);
 void pkl_asm_insn (pkl_asm pasm, enum pkl_asm_insn insn, ...);
 
 /* Emit assembly code for calling the function FUNCNAME, which should
-   be defined in the global environment.  */
+   be defined in the environment ENV.  Note that ENV is required to be
+   a top-level environment.  */
 
-void pkl_asm_call (pkl_asm pasm, const char *funcname);
+void pkl_asm_call (pkl_asm pasm, pkl_env env, const char *funcname);
 
 /* Conditionals.
  *

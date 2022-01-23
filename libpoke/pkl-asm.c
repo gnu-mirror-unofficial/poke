@@ -2106,15 +2106,14 @@ pkl_asm_for_in_endloop (pkl_asm pasm)
 }
 
 void
-pkl_asm_call (pkl_asm pasm, const char *funcname)
+pkl_asm_call (pkl_asm pasm, pkl_env env, const char *funcname)
 {
-  pkl_env compiler_env = pkl_get_env (pasm->compiler);
   int back, over;
   pkl_ast_node tmp;
 
-  assert (pkl_env_toplevel_p (compiler_env));
+  assert (pkl_env_toplevel_p (env));
 
-  tmp = pkl_env_lookup (compiler_env, PKL_ENV_NS_MAIN,
+  tmp = pkl_env_lookup (env, PKL_ENV_NS_MAIN,
                         funcname, &back, &over);
   assert (tmp != NULL);
   assert (back == 0);

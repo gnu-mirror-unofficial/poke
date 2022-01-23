@@ -1719,7 +1719,7 @@ pvm_call_pretty_printer (pvm vm, pvm_val val, pvm_val *exit_exception)
 }
 
 /* IMPORTANT: please keep pvm_make_exception in sync with the
-   definition of the struct Exception in pkl-rt-1.pk.  */
+   definition of the struct Exception in pkl-rt.pk.  */
 
 pvm_val
 pvm_make_exception (int code, const char *name, int exit_status,

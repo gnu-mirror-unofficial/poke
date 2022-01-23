@@ -22,7 +22,7 @@ CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
-dist_pkgdata_DATA = pkl-rt-1.pk pkl-rt-2.pk std.pk std-types.pk
+dist_pkgdata_DATA = pkl-rt.pk std.pk std-types.pk
 dist_pkgconfig_lib_DATA = $(pkgconfig_libfile)
 
 lib_LTLIBRARIES = libpoke.la

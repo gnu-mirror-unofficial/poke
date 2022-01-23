@@ -91,6 +91,7 @@ struct pkl_gen_payload
   int constructor_depth;
   int mapper_depth;
   int in_file_p;
+  pkl_env env;
 };
 
 typedef struct pkl_gen_payload *pkl_gen_payload;
@@ -119,10 +120,12 @@ typedef struct pkl_gen_payload *pkl_gen_payload;
 extern struct pkl_phase pkl_phase_gen;
 
 static inline void
-pkl_gen_init_payload (pkl_gen_payload payload, pkl_compiler compiler)
+pkl_gen_init_payload (pkl_gen_payload payload, pkl_compiler compiler,
+                      pkl_env env)
 {
   memset (payload, 0, sizeof (struct pkl_gen_payload));
   payload->compiler = compiler;
+  payload->env = env;
 }
 
 

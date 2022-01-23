@@ -63,6 +63,12 @@
 #    This macro is invoked by RAS when it no longer needs the
 #    current assembler.
 #
+# RAS_COMPILER
+#    The PKL compiler.
+#
+# RAS_COMP_ENV
+#    Compilation environment.
+#
 # Example;
 #
 #  #define RAS_ASM PKL_GEN_ASM
@@ -710,7 +716,7 @@ BEGIN {
     out("\tpvm_program program;                         \\")
     out("\t                                             \\")
     out("\tRAS_PUSH_ASM (pkl_asm_new (PKL_PASS_AST,              \\")
-    out("\t                           PKL_GEN_PAYLOAD->compiler, \\")
+    out("\t                           RAS_COMPILER,              \\")
     out("\t                           0 /* prologue */));        \\")
     out("\t                                                      \\")
     out("---LABELDECLS---")
@@ -860,7 +866,7 @@ BEGIN {
 /^[ \t]*\.call[ \t]+[a-zA-Z_][0-9a-zA-Z_]*[ \t]*(;.*)?$/ {
     fname = gensub (/^[ \t]*\.call[ \t]+([a-zA-Z_][0-9a-zA-Z_]*)[ \t]*(;.*)?$/, \
                     "\\1", 1, $0)
-    out("\tpkl_asm_call (RAS_ASM,\"" fname "\"); \\")
+    out("\tpkl_asm_call (RAS_ASM, RAS_COMP_ENV, \"" fname "\"); \\")
     next
 }
 

@@ -42,7 +42,7 @@ typedef uint64_t pk_val;
 #define PK_EINVAL 4
 
 /* The following macros are standard exception codes defined in
-   pkl-rt-1.pk.  */
+   pkl-rt.pk.  */
 
 #define PK_EC_GENERIC       0
 #define PK_EC_DIV_BY_ZERO   1

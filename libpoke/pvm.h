@@ -489,7 +489,7 @@ enum pvm_exit_code
   };
 
 /* Exceptions.  These should be in sync with the exception code macros
-   in libpoke.h, and variables and exception names, declared in pkl-rt-1.pk */
+   in libpoke.h, and variables and exception names, declared in pkl-rt.pk */
 
 #define PVM_E_GENERIC       0
 #define PVM_E_GENERIC_NAME "generic"

@@ -1,4 +1,4 @@
-/* pkl-rt-1.pk - Run-time library for the poke compiler.  */
+/* pkl-rt.pk - Run-time library for the poke compiler.  */
 
 /* Copyright (C) 2019, 2020, 2021, 2022 Jose E. Marchesi.  */
 
@@ -390,6 +390,29 @@ fun _pkl_unit_name = (uint<64> bits) string:
        return "GiB";
 
     return "";
+  }
+
+/* Assertion function.
+
+   The compiler transforms assert statement to invocation of this
+   function.  COND is first argument of assert statement, and MSG is
+   the optional second argument.  FILENAME is the name of source
+   file.  LINE and COL are, respectively, line and column number
+   of the assert statement in the source file.  */
+
+fun _pkl_assert = (uint<64> cond, string msg, string filename,
+                   uint<64> line, uint<64> col) void:
+  {
+    if (cond)
+      return;
+
+    raise Exception {
+      code = EC_assert,
+      name = "assertion failure",
+      location = format ("%s:%u64d:%u64d:", filename, line, col),
+      msg = msg,
+      exit_status = 1,
+    };
   }
 
 /* The Type struct below describes the values returned by the `typeof'

@@ -112,6 +112,8 @@
 #define RAS_ASM PKL_GEN_ASM
 #define RAS_PUSH_ASM PKL_GEN_PUSH_ASM
 #define RAS_POP_ASM PKL_GEN_POP_ASM
+#define RAS_COMPILER (PKL_GEN_PAYLOAD->compiler)
+#define RAS_COMP_ENV (PKL_GEN_PAYLOAD->env)
 #include "pkl-gen.pkc"
 #include "pkl-gen-builtins.pkc"
 
@@ -1427,7 +1429,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_format)
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, idx); /* ARR ARR IDX */
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                             pvm_make_ulong (n, 64));         /* ARR ARR IDX LEN */
-              pkl_asm_call (PKL_GEN_ASM, "_pkl_reduce_string_array"); /* ARR STR */
+              pkl_asm_call (PKL_GEN_ASM, PKL_GEN_PAYLOAD->env,
+                            "_pkl_reduce_string_array"); /* ARR STR */
               pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP);     /* STR ARR */
 
               for (; n > 1; --n)
@@ -1520,7 +1523,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_format)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DUP);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (0, 64));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (nstr, 64));
-      pkl_asm_call (PKL_GEN_ASM, "_pkl_reduce_string_array");
+      pkl_asm_call (PKL_GEN_ASM, PKL_GEN_PAYLOAD->env, "_pkl_reduce_string_array");
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
     }
 

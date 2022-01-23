@@ -1,5 +1,23 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/ras: Document RAS_COMP_ENV and RAS_COMPILER and use them.
+	* libpoke/pkl-gen.c (RAS_COMP_ENV): define.
+	(RAS_COMPILER): Likewise.
+	* libpoke/pkl-gen.h (struct pkl_gen_payload): New field `env'.
+	(pkl_gen_init_payload): Install `env' in the GEN payload.
+	* libpoke/pkl-asm.c (pkl_asm_call): Get an `env' argument.
+	* libpoke/pkl.c (rest_of_compilation): Get an `env' argument.
+	(pkl_execute_buffer): Pass `env' to rest_of_compilation.
+	(pkl_execute_statement): Likewise.
+	(pkl_compile_expression): Likewise.
+	(pkl_execute_expression): Likewise.
+	(pkl_execute_file): Likewise.
+	* libpoke/pk-rt-2.pk: Remove file.
+	* libpoke/pkl-rt.k: Rename from pkl-rt-1.pk
+	* libpoke/Makefile.am (dist_pkgdata_DATA): Adapt accordingly.
+
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.c (pk_compile_file): Fix indentation.
 	* libpoke/pkl.c (pkl_execute_file): Return an error in case of
 	memory exhaustion.
