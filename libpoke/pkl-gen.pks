@@ -2679,7 +2679,9 @@
         bzi .process_struct_field
         ;; union
         drop
-        .let #name_str = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+        .let #name_str = @field_name == NULL \
+                         ? pvm_make_string ("") \
+                         : pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
         push #name_str          ; SARR SCT STR
         srefnt                  ; SARR SCT STR EVAL
         nip                     ; SARR SCT EVAL

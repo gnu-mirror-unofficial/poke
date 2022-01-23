@@ -1,5 +1,12 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (struct_formater): Avoid a segmentation
+	fault when compiling formaters for anonymous fields.
+	* testsuite/poke.pkl/format-39.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Compile formaters and
 	printers for named array and struct types.
 	* testsuite/poke.pkl/printf-38.pk: New test.
