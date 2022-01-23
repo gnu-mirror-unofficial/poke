@@ -1,3 +1,11 @@
+2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_pr_func): Add the name of the
+	function to its type.
+	* testsuite/poke.pkl/typeof-23.pk: New test.
+	* testsuite/poke.pkl/typeof-24.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-env.c (_decl): Allow re-registering types.

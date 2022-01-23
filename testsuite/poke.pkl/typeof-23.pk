@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+fun lala = void: {}
+
+/* { dg-command {var t = typeof ((lala))} } */
+/* { dg-command {t.name} } */
+/* { dg-output {"lala"} } */

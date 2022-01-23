@@ -1,0 +1,5 @@
+/* { dg-do run } */
+
+/* { dg-command {var t = typeof (lambda void: {})} } */
+/* { dg-command {t.name} } */
+/* { dg-output {""} } */

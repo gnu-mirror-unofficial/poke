@@ -1248,6 +1248,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_pr_func)
   pkl_ast_node node = PKL_PASS_NODE;
   pkl_ast_node type;
   pkl_ast_node t, func_type_args = NULL;
+  char *func_name = PKL_AST_FUNC_NAME (node);
   size_t nargs = 0;
 
   /* Build a chain with the types of the function arguments.  */
@@ -1273,6 +1274,12 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_pr_func)
                                      PKL_AST_FUNC_RET_TYPE (node),
                                      nargs,
                                      func_type_args);
+  if (func_name)
+    {
+      pkl_ast_node func_name_node = pkl_ast_make_string (PKL_PASS_AST,
+                                                         func_name);
+      PKL_AST_TYPE_NAME (type) = ASTREF (func_name_node);
+    }
   PKL_AST_TYPE (node) = ASTREF (type);
 }
 PKL_PHASE_END_HANDLER
