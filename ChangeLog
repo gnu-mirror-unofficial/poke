@@ -1,5 +1,15 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.c (pk_compile_file): Fix indentation.
+	* libpoke/pkl.c (pkl_execute_file): Return an error in case of
+	memory exhaustion.
+	(pkl_execute_expression): Likewise.
+	(pkl_compile_expression): Likewise.
+	(pkl_execute_statement): Likewise.
+	(pkl_execute_buffer): Likewise.
+
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* NEWS: Add entries for 1.90.
 
 2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>

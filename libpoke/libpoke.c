@@ -125,8 +125,8 @@ pk_compile_file (pk_compiler pkc, const char *filename,
                  pk_val *exit_exception)
 {
   PK_RETURN (pkl_execute_file (pkc->compiler, filename, exit_exception)
-                 ? PK_OK
-                 : PK_ERROR);
+             ? PK_OK
+             : PK_ERROR);
 }
 
 int

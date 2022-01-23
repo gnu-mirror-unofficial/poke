@@ -325,7 +325,7 @@ pkl_execute_buffer (pkl_compiler compiler,
     goto error;
   else if (ret == 2)
     /* Memory exhaustion.  */
-    printf (_("out of memory\n"));
+    goto error;
 
   program = rest_of_compilation (compiler, ast);
   if (program == NULL)
@@ -373,7 +373,7 @@ pkl_execute_statement (pkl_compiler compiler,
     goto error;
   else if (ret == 2)
     /* Memory exhaustion.  */
-    printf (_("out of memory\n"));
+    goto error;
 
   program = rest_of_compilation (compiler, ast);
   if (program == NULL)
@@ -415,7 +415,7 @@ pkl_compile_expression (pkl_compiler compiler,
      goto error;
    else if (ret == 2)
      /* Memory exhaustion.  */
-     printf (_("out of memory\n"));
+     goto error;
 
    program = rest_of_compilation (compiler, ast);
    if (program == NULL)
@@ -454,7 +454,7 @@ pkl_execute_expression (pkl_compiler compiler,
     goto error;
   else if (ret == 2)
     /* Memory exhaustion.  */
-    printf (_("out of memory\n"));
+    goto error;
 
   program = rest_of_compilation (compiler, ast);
   if (program == NULL)
@@ -500,10 +500,8 @@ pkl_execute_file (pkl_compiler compiler, const char *fname,
     /* Parse error.  */
     goto error;
   else if (ret == 2)
-    {
-      /* Memory exhaustion.  */
-      printf (_("out of memory\n"));
-    }
+    /* Memory exhaustion.  */
+    goto error;
 
   program = rest_of_compilation (compiler, ast);
   if (program == NULL)
