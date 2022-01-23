@@ -10033,10 +10033,16 @@ Poke part of its feel and magic.
 
 @node Casting Arrays
 @subsection Casting Arrays
-@cindex casting, arrays
+@cindex casting, integration, integrate, arrays
 
-Poke allows to cast array values to array types that may have a
-different bounding.
+There are two kinds of casts for array values:
+
+@itemize @bullet
+@item
+Cast to array types that may have a different bounding.
+@item
+Cast of array of integers or integral structs to an integral type.
+@end itemize
 
 For example, we have seen that the type of an array literal is always
 bounded by a constant number of elements.  Thus the type of
@@ -10070,6 +10076,37 @@ And this will result in a run-time error:
 (poke) [1,2,3] as int[13#B]
 unhandled conversion error exception
 @end example
+
+Now let's see how Poke reinterprets integral arrays as integers:
+
+@example
+(poke) [0xdeUB,0xadUB] as uint16
+0xdeadUH
+(poke) [0xdeUB,0xadUB,0UB] as int
+0xdead00
+@end example
+
+Trying to cast an array with a size larger than 64-bit will result
+in an error:
+
+@example
+(poke) [1,2,3] as int
+unhandled conversion error exception
+arrays bigger than 64-bit cannot be casted to integral types
+@end example
+
+It also works for nested arrays and arrays of integral structs
+(@xref{Integral Structs}):
+
+@example
+(poke) type Foo = struct uint @{ int16 hi; int16 lo; @};
+(poke) [[Foo@{ hi=0xdeadH, lo=0xbeefH@}],[Foo@{@}]] as ulong
+0xdeadbeef00000000UL
+@end example
+
+The way it works is like putting all array elements in an
+@code{uint<64>} number and then casting that number to the
+destination integral type.
 
 @node Array Constructors
 @subsection Array Constructors

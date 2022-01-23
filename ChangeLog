@@ -1,5 +1,10 @@
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* doc/poke.texi (Casting Arrays): Add documentation for
+	array integrators.
+
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-trans.c (pkl_trans2_ps_op_attr): New phase for
 	computing attributes of complete type at compile-time.
 	(struct pkl_phase pkl_phase_trans2): Register new phase.
