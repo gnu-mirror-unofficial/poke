@@ -715,6 +715,66 @@ EMUL_UU (bnoto) { return ~op; }
     }                                                                   \
   while (0)
 
+/* Fold binary ADD for arrays.  */
+
+#define OP_BINARY_AAA_ADD(OP)                                                 \
+  do                                                                          \
+    {                                                                         \
+      pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);              \
+      pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);              \
+      pkl_ast_node op1_type = PKL_AST_TYPE (op1);                             \
+      pkl_ast_node op2_type = PKL_AST_TYPE (op2);                             \
+                                                                              \
+      if (PKL_AST_TYPE_CODE (op1_type) == PKL_TYPE_ARRAY                      \
+          && PKL_AST_TYPE_CODE (op2_type) == PKL_TYPE_ARRAY                   \
+          && PKL_AST_TYPE_COMPLETE (op1_type) == PKL_AST_TYPE_COMPLETE_YES    \
+          && PKL_AST_TYPE_COMPLETE (op2_type) == PKL_AST_TYPE_COMPLETE_YES)   \
+        {                                                                     \
+          pkl_ast_node new, bound1, bound2, btype1, btype2, bound, init;      \
+                                                                              \
+          if (!(PKL_AST_CODE (op1) == PKL_AST_ARRAY                           \
+                && PKL_AST_CODE (op2) == PKL_AST_ARRAY                        \
+                && PKL_AST_LITERAL_P (op1) && PKL_AST_LITERAL_P (op2)))       \
+            /* We cannot fold this expression.  */                            \
+            PKL_PASS_DONE;                                                    \
+                                                                              \
+          /* For simplicity.  */                                              \
+          bound1 = PKL_AST_TYPE_A_BOUND (op1_type);                           \
+          bound2 = PKL_AST_TYPE_A_BOUND (op2_type);                           \
+          btype1 = PKL_AST_TYPE (bound1);                                     \
+          btype2 = PKL_AST_TYPE (bound2);                                     \
+          if (!pkl_ast_type_equal_p (btype1, btype2))                         \
+            /* We cannot fold this expression.  */                            \
+            PKL_PASS_DONE;                                                    \
+                                                                              \
+          init = pkl_ast_array_initializers_concat (                          \
+              PKL_PASS_AST,                                                   \
+              PKL_AST_ARRAY_INITIALIZERS (op1),                               \
+              PKL_AST_ARRAY_INITIALIZERS (op2));                              \
+          new = pkl_ast_make_array (PKL_PASS_AST,                             \
+                                    PKL_AST_ARRAY_NELEM (op1)                 \
+                                        + PKL_AST_ARRAY_NELEM (op2),          \
+                                    PKL_AST_ARRAY_NINITIALIZER (op1)          \
+                                        + PKL_AST_ARRAY_NINITIALIZER (op2),   \
+                                    init);                                    \
+                                                                              \
+          bound = pkl_ast_make_binary_exp (PKL_PASS_AST, PKL_AST_OP_ADD,      \
+                                           bound1, bound2);                   \
+          PKL_AST_TYPE (bound) = btype1;                                      \
+          PKL_AST_TYPE (new) = ASTREF (pkl_ast_make_array_type (              \
+              PKL_PASS_AST, PKL_AST_TYPE_A_ETYPE (op1_type), bound));         \
+          PKL_AST_TYPE_COMPLETE (PKL_AST_TYPE (new))                          \
+              = PKL_AST_TYPE_COMPLETE_YES;                                    \
+          PKL_AST_LITERAL_P (new) = 1;                                        \
+          PKL_AST_LOC (new) = PKL_AST_LOC (PKL_PASS_NODE);                    \
+          pkl_ast_node_free (PKL_PASS_NODE);                                  \
+          PKL_PASS_NODE = new;                                                \
+          PKL_PASS_RESTART = 1;                                               \
+          PKL_PASS_DONE;                                                      \
+        }                                                                     \
+    }                                                                         \
+  while (0)
+
 /* Handlers for the several expression codes.  */
 
 #define PKL_PHASE_HANDLER_UNA_INT(OP)           \
@@ -853,17 +913,27 @@ PKL_PHASE_HANDLER_BIN_RELA (gt);
 PKL_PHASE_HANDLER_BIN_RELA (le);
 PKL_PHASE_HANDLER_BIN_RELA (ge);
 
-#define PKL_PHASE_HANDLER_BIN_ARITH(OP)              \
-  PKL_PHASE_BEGIN_HANDLER (pkl_fold_##OP)            \
+#define PKL_PHASE_HANDLER_BIN_ARITH_ADD()            \
+  PKL_PHASE_BEGIN_HANDLER (pkl_fold_add)             \
   {                                                  \
-    OP_BINARY_III (OP);                              \
-    OP_BINARY_OOO (OP##o);                           \
-    OP_BINARY_SSS (OP);                              \
+    OP_BINARY_III (add);                             \
+    OP_BINARY_OOO (addo);                            \
+    OP_BINARY_SSS (add);                             \
+    OP_BINARY_AAA_ADD ();                            \
   }                                                  \
   PKL_PHASE_END_HANDLER
 
-PKL_PHASE_HANDLER_BIN_ARITH (add);
-PKL_PHASE_HANDLER_BIN_ARITH (sub);
+#define PKL_PHASE_HANDLER_BIN_ARITH_SUB()            \
+  PKL_PHASE_BEGIN_HANDLER (pkl_fold_sub)             \
+  {                                                  \
+    OP_BINARY_III (sub);                             \
+    OP_BINARY_OOO (subo);                            \
+    OP_BINARY_SSS (sub);                             \
+  }                                                  \
+  PKL_PHASE_END_HANDLER
+
+PKL_PHASE_HANDLER_BIN_ARITH_ADD ();
+PKL_PHASE_HANDLER_BIN_ARITH_SUB ();
 
 PKL_PHASE_BEGIN_HANDLER (pkl_fold_gcd)
 {

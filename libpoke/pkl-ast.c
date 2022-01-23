@@ -1560,6 +1560,50 @@ pkl_ast_make_array (pkl_ast ast,
   return array;
 }
 
+/* Concatenates two chain of array initializers and fixes the indices of
+   second initializer accordingly.  */
+
+pkl_ast_node
+pkl_ast_array_initializers_concat (pkl_ast ast,
+                                   pkl_ast_node init1,
+                                   pkl_ast_node init2)
+{
+  pkl_ast_node init, cursor, tmp;
+  pkl_ast_node index, exp;
+  size_t idx;
+
+  assert (init1);
+  assert (init2);
+
+  index = PKL_AST_ARRAY_INITIALIZER_INDEX (init1);
+  exp = PKL_AST_ARRAY_INITIALIZER_EXP (init1);
+  init = pkl_ast_make_array_initializer (ast, index, exp);
+  idx = 1;
+  cursor = init;
+  for (tmp = PKL_AST_CHAIN (init1); tmp; tmp = PKL_AST_CHAIN (tmp), idx++)
+    {
+      index = PKL_AST_ARRAY_INITIALIZER_INDEX (tmp);
+      exp = PKL_AST_ARRAY_INITIALIZER_EXP (tmp);
+      PKL_AST_CHAIN (cursor)
+          = ASTREF (pkl_ast_make_array_initializer (ast, index, exp));
+      cursor = PKL_AST_CHAIN (cursor);
+    }
+  for (tmp = init2; tmp; tmp = PKL_AST_CHAIN (tmp), idx++)
+    {
+      pkl_ast_node index_type
+          = PKL_AST_TYPE (PKL_AST_ARRAY_INITIALIZER_INDEX (tmp));
+
+      index = pkl_ast_make_integer (ast, idx);
+      PKL_AST_TYPE (index) = ASTREF (index_type);
+      exp = PKL_AST_ARRAY_INITIALIZER_EXP (tmp);
+      PKL_AST_CHAIN (cursor)
+          = ASTREF (pkl_ast_make_array_initializer (ast, index, exp));
+      cursor = PKL_AST_CHAIN (cursor);
+    }
+
+  return init;
+}
+
 /* Build and return an AST node for an array element.  */
 
 pkl_ast_node

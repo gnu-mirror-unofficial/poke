@@ -1,5 +1,17 @@
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-fold.c (OP_BINARY_AAA_ADD): New macro for constant
+	folding ADD of array literals.
+	(PKL_PHASE_HANDLER_BIN_ARITH_ADD): New macro for folding ADD.
+	(PKL_PHASE_HANDLER_BIN_ARITH_SUB): New macro for folding SUB.
+	* libpoke/pkl-ast.h (pkl_ast_array_initializers_concat): New
+	function to concat two array literals.
+	* libpoke/pkl-ast.c (pkl_ast_array_initializers_concat): Likewise.
+	* testsuite/poke.pkl/arrays-16.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-ast.h (pkl_ast_struct_type_field): Add `size` field.
 	(PKL_AST_STRUCT_TYPE_FIELD_SIZE): New accessor macro.
 	* libpoke/pkl-ast.c (pkl_ast_dup_type): Add support for `size`

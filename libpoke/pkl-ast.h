@@ -404,6 +404,13 @@ pkl_ast_node pkl_ast_make_array_initializer (pkl_ast ast,
                                              pkl_ast_node index,
                                              pkl_ast_node exp);
 
+/* Concatenates two chain of array initializers and fixes the indices of
+   second initializer accordingly.  */
+
+pkl_ast_node
+pkl_ast_array_initializers_concat (pkl_ast ast,
+                                   pkl_ast_node init1,
+                                   pkl_ast_node init2);
 
 /* PKL_AST_STRUCT nodes represent struct literals.  */
 
