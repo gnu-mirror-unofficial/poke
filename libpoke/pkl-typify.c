@@ -1503,7 +1503,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
   /* Ok, check that the types of the actual arguments match the
      types of the corresponding formal arguments.  */
   for (fa = PKL_AST_TYPE_F_ARGS  (funcall_function_type),
-         aa = PKL_AST_FUNCALL_ARGS (funcall);
+         aa = PKL_AST_FUNCALL_ARGS (funcall),
+         narg = 0;
        fa && aa;
        fa = PKL_AST_CHAIN (fa), aa = PKL_AST_CHAIN (aa))
     {
@@ -1527,17 +1528,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_funcall)
               char *passed_type = pkl_type_str (aa_type, 1);
               char *expected_type = pkl_type_str (fa_type, 1);
 
-              PKL_ERROR (PKL_AST_LOC (aa),
-                         "invalid value for function argument `%s'\n"
-                         "expected %s, got %s",
-                         PKL_AST_IDENTIFIER_POINTER (arg_name),
-                         expected_type, passed_type);
+              if (arg_name)
+                PKL_ERROR (PKL_AST_LOC (aa),
+                           "invalid value for function argument `%s'\n"
+                           "expected %s, got %s",
+                           PKL_AST_IDENTIFIER_POINTER (arg_name),
+                           expected_type, passed_type);
+              else
+                PKL_ERROR (PKL_AST_LOC (aa),
+                           "invalid value for function argument `%d'\n"
+                           "expected %s, got %s",
+                           narg + 1, expected_type, passed_type);
               free (expected_type);
               free (passed_type);
 
               PKL_TYPIFY_PAYLOAD->errors++;
               PKL_PASS_ERROR;
             }
+          narg++;
         }
     }
 

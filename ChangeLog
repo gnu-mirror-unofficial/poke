@@ -1,3 +1,8 @@
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_funcall): When the arg
+	doesn't have a name, uses the arg index in error reporting.
+
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.pks (typifier_deintegrator_wrapper): New
