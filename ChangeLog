@@ -1,5 +1,15 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Compile formaters and
+	printers for named array and struct types.
+	* testsuite/poke.pkl/printf-38.pk: New test.
+	* testsuite/poke.pkl/printf-39.pk: Likewise.
+	* testsuite/poke.pkl/format-37.pk: Likewise.
+	* testsuite/poke.pkl/format-38.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/ras: Document RAS_COMP_ENV and RAS_COMPILER and use them.
 	* libpoke/pkl-gen.c (RAS_COMP_ENV): define.
 	(RAS_COMPILER): Likewise.

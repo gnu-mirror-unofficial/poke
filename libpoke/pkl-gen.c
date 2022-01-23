@@ -288,6 +288,38 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);             /* CLS */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);            /* _ */
 
+            if (PKL_AST_TYPE_S_FORMATER (type_struct) == PVM_NULL)
+              {
+                pvm_val formater_closure;
+
+                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_FORMATER);
+                RAS_FUNCTION_STRUCT_FORMATER (formater_closure,
+                                              type_struct);
+                PKL_GEN_POP_CONTEXT;
+                PKL_AST_TYPE_S_FORMATER (type_struct) = formater_closure;
+              }
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          PKL_AST_TYPE_S_FORMATER (type_struct)); /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);             /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);            /* _ */
+
+            if (PKL_AST_TYPE_S_PRINTER (type_struct) == PVM_NULL)
+              {
+                pvm_val printer_closure;
+
+                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_PRINTER);
+                RAS_FUNCTION_STRUCT_PRINTER (printer_closure,
+                                             type_struct);
+                PKL_GEN_POP_CONTEXT;
+                PKL_AST_TYPE_S_PRINTER (type_struct) = printer_closure;
+              }
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          PKL_AST_TYPE_S_PRINTER (type_struct)); /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);            /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);           /* _ */
+
             if (PKL_AST_TYPE_S_ITYPE (type_struct))
               {
                 if (PKL_AST_TYPE_S_INTEGRATOR (type_struct) == PVM_NULL)
@@ -416,6 +448,37 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);             /* _ */
               }
 
+            if (PKL_AST_TYPE_A_FORMATER (array_type) == PVM_NULL)
+              {
+                pvm_val formater_closure;
+
+                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_FORMATER);
+                RAS_FUNCTION_ARRAY_FORMATER (formater_closure,
+                                             array_type);
+                PKL_GEN_POP_CONTEXT;
+                PKL_AST_TYPE_A_FORMATER (array_type) = formater_closure;
+              }
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          PKL_AST_TYPE_A_FORMATER (array_type)); /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);            /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);           /* _ */
+
+            if (PKL_AST_TYPE_A_PRINTER (array_type) == PVM_NULL)
+              {
+                pvm_val printer_closure;
+
+                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_PRINTER);
+                RAS_FUNCTION_ARRAY_PRINTER (printer_closure,
+                                            array_type);
+                PKL_GEN_POP_CONTEXT;
+                PKL_AST_TYPE_A_PRINTER (array_type) = printer_closure;
+              }
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          PKL_AST_TYPE_A_PRINTER (array_type)); /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);           /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);          /* _ */
             PKL_PASS_BREAK;
             break;
           }

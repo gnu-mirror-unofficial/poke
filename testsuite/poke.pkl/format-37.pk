@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Matrix = int[3];
+
+/* { dg-command { format ("%v", [1,2,3] as Matrix); } } */
+/* { dg-output "\"\\\[1,2,3\\\]\"" } */

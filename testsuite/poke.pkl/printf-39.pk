@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct {};
+
+/* { dg-command { printf "%v\n", Foo {}; } } */
+/* { dg-output "Foo \{\}" } */
