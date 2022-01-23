@@ -1397,7 +1397,6 @@ EXTRA_DIST = \
   poke.pkl/lex-3.pk \
   poke.pkl/load-1.pk \
   poke.pkl/load-2.pk \
-  poke.pkl/load-3.pk \
   poke.pkl/load-4.pk \
   poke.pkl/load-5.pk \
   poke.pkl/load-diag-1.pk \

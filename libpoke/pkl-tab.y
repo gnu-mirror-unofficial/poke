@@ -296,13 +296,6 @@ load_module (struct pkl_parser *parser,
     /* No file found.  */
     return 1;
 
-  if (pkl_module_loaded_p (parser->compiler, module_filename))
-    {
-      /* Module already loaded.  */
-      *node = NULL;
-      return 0;
-    }
-
   fp = fopen (module_filename, "rb");
   if (!fp)
     {

@@ -1,6 +1,12 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-env.c (_decl): Allow re-registering types.
+	* libpoke/pkl-tab.y (load_module): Allow loading the same module
+	more than once.
+	* libpoke/pkl.c (pkl_add_module): Do not add module to the list if
+	it is already loaded.
+	* testsuite/poke.pkl/load-3.pk: Remove test.
+	* testsuite/Makefile.am (EXTRA_DIST): Remove test load-3.pk.
 
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 

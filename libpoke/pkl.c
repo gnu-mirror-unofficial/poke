@@ -634,6 +634,9 @@ pkl_add_module (pkl_compiler compiler, const char *path)
 {
   const char *module = last_component (path);
 
+  if (pkl_module_loaded_p (compiler, path))
+    return;
+
   if (compiler->num_modules % PKL_MODULES_STEP == 0)
     {
       size_t size = ((compiler->num_modules + PKL_MODULES_STEP)

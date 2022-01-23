@@ -139,8 +139,6 @@ register_decl (int top_level_p,
   found_decl = get_registered (hash_table, name);
   if (found_decl != NULL)
     {
-      int decl_kind = PKL_AST_DECL_KIND (decl);
-
       if (top_level_p)
         {
           pkl_ast_node decl_name = PKL_AST_DECL_NAME (found_decl);
