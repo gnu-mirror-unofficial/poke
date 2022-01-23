@@ -1435,6 +1435,82 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_struct_type_field)
 }
 PKL_PHASE_END_HANDLER
 
+/* Compute the attributes of values with complete types.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_op_attr)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node exp_type = PKL_AST_TYPE (exp);
+  pkl_ast_node operand = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node operand_type = PKL_AST_TYPE (operand);
+
+  switch (PKL_AST_EXP_ATTR (exp))
+    {
+    case PKL_AST_ATTR_LENGTH:
+      {
+        size_t length = 0;
+        pkl_ast_node len;
+
+        if (PKL_AST_LITERAL_P (operand))
+          switch (PKL_AST_CODE (operand))
+            {
+            case PKL_AST_STRING:
+              length = PKL_AST_STRING_LENGTH (operand);
+              break;
+            case PKL_AST_ARRAY:
+              length = PKL_AST_ARRAY_NELEM (operand);
+              break;
+            default:
+              assert (0);
+            }
+        else if (PKL_AST_TYPE_CODE (operand_type) == PKL_TYPE_STRUCT
+                 && (PKL_AST_TYPE_COMPLETE (operand_type)
+                     == PKL_AST_TYPE_COMPLETE_YES))
+          length = PKL_AST_TYPE_S_NELEM (operand_type);
+        else
+          PKL_PASS_DONE;
+
+        /* The type of 'length is uint<64>  */
+
+        len = pkl_ast_make_integer (PKL_PASS_AST, length);
+        PKL_AST_TYPE (len) = ASTREF (exp_type);
+        PKL_PASS_NODE = ASTREF (len);
+        pkl_ast_node_free (exp);
+        PKL_PASS_RESTART = 1;
+        PKL_PASS_DONE;
+      }
+    case PKL_AST_ATTR_SIZE:
+      {
+        pkl_ast_node size, off;
+
+        if (PKL_AST_LITERAL_P (operand)
+            && PKL_AST_CODE (operand) == PKL_AST_STRING)
+          {
+            size = pkl_ast_make_integer (PKL_PASS_AST,
+                                         (PKL_AST_STRING_LENGTH (operand) + 1)
+                                           * 8);
+            PKL_AST_TYPE (size) = PKL_AST_TYPE_O_BASE_TYPE (exp_type);
+          }
+        else if (PKL_AST_TYPE_COMPLETE (operand_type)
+                   == PKL_AST_TYPE_COMPLETE_YES)
+          size = pkl_ast_sizeof_type (PKL_PASS_AST, operand_type);
+        else
+          PKL_PASS_DONE;
+
+        off = pkl_ast_make_offset (PKL_PASS_AST, size,
+                                   PKL_AST_TYPE_O_UNIT (exp_type));
+        PKL_AST_TYPE (off) = ASTREF (exp_type);
+        PKL_PASS_NODE = ASTREF (off);
+        pkl_ast_node_free (exp);
+        PKL_PASS_RESTART = 1;
+        PKL_PASS_DONE;
+      }
+    default:
+      break;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_trans2 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
@@ -1450,6 +1526,7 @@ struct pkl_phase pkl_phase_trans2 =
    PKL_PHASE_PS_HANDLER (PKL_AST_INCRDECR, pkl_trans2_ps_incrdecr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_trans2_ps_type_offset),
    PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_trans2_ps_struct_type_field),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_trans2_ps_op_attr),
   };
 
 

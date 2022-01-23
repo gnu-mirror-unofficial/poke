@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var a = [1,2,3];
+var b = a as int[];
+
+/* { dg-command {  b'size } } */
+/* { dg-output "96UL#b" } */

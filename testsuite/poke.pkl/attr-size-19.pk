@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var a = [1UL] as uint<64>[];
+
+/* { dg-command {  a'size } } */
+/* { dg-output "64UL#b" } */

@@ -1,0 +1,10 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x10 0x20 0x30 0x40  0x60 0x50 0x70 0x80   0x90 0xa0 0xb0 0xc0} } */
+
+/* Size of Foo is not known at compile-time.  */
+var n = 1;
+type Foo = pinned struct { int[n] i; long j; };
+
+/* { dg-command { var f = Foo @ 1#B } } */
+/* { dg-command { f'size } } */
+/* { dg-output "64UL#b" } */

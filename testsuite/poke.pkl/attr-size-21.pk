@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+type Struct = struct { int i; long l; string s; };
+var s = Struct {i=1, l=2UL, s="foo"};
+var x = [s] as Struct[];  /* Incomplete type.  */
+
+/* { dg-command { x'size } } */
+/* { dg-output "128UL#b" } */

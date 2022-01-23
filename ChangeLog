@@ -1,5 +1,26 @@
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans2_ps_op_attr): New phase for
+	computing attributes of complete type at compile-time.
+	(struct pkl_phase pkl_phase_trans2): Register new phase.
+	* testsuite/poke.map/map-size-2.pk: New test.
+	* testsuite/poke.map/map-size-3.pk: Likewise.
+	* testsuite/poke.map/maps-structs-pinned-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-10.pk: Likewise.
+	* testsuite/poke.pkl/attr-length-11.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-15.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-16.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-17.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-18.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-19.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-20.pk: Likewise.
+	* testsuite/poke.pkl/attr-size-21.pk: Likewise.
+	* testsuite/poke.pkl/attr-unit-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-unit-3.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-fold.c (OP_BINARY_AAA_ADD): New macro for constant
 	folding ADD of array literals.
 	(PKL_PHASE_HANDLER_BIN_ARITH_ADD): New macro for folding ADD.

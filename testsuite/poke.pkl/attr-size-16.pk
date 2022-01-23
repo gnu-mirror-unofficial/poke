@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var a = 1 as uint<33>;
+var b = [a] as uint<33>[];
+
+/* { dg-command {  b'size } } */
+/* { dg-output "33UL#b" } */

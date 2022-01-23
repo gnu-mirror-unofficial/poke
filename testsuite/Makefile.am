@@ -160,6 +160,8 @@ EXTRA_DIST = \
   poke.map/map-optcond-int-struct-1.pk \
   poke.map/map-optcond-int-struct-2.pk \
   poke.map/map-size-1.pk \
+  poke.map/map-size-2.pk \
+  poke.map/map-size-3.pk \
   poke.map/map-struct-fun-1.pk \
   poke.map/map-struct-fun-2.pk \
   poke.map/map-struct-fun-3.pk \
@@ -356,6 +358,7 @@ EXTRA_DIST = \
   poke.map/maps-structs-methods-11.pk \
   poke.map/maps-structs-pinned-1.pk \
   poke.map/maps-structs-pinned-2.pk \
+  poke.map/maps-structs-pinned-3.pk \
   poke.map/maps-int-struct-constraint-1.pk \
   poke.map/maps-int-struct-constraint-2.pk \
   poke.map/maps-trims-1.pk \
@@ -771,6 +774,8 @@ EXTRA_DIST = \
   poke.pkl/attr-length-7.pk \
   poke.pkl/attr-length-8.pk \
   poke.pkl/attr-length-9.pk \
+  poke.pkl/attr-length-10.pk \
+  poke.pkl/attr-length-11.pk \
   poke.pkl/attr-magnitude-1.pk \
   poke.pkl/attr-mapped-1.pk \
   poke.pkl/attr-mapped-2.pk \
@@ -798,7 +803,16 @@ EXTRA_DIST = \
   poke.pkl/attr-size-12.pk \
   poke.pkl/attr-size-13.pk \
   poke.pkl/attr-size-14.pk \
+  poke.pkl/attr-size-15.pk \
+  poke.pkl/attr-size-16.pk \
+  poke.pkl/attr-size-17.pk \
+  poke.pkl/attr-size-18.pk \
+  poke.pkl/attr-size-19.pk \
+  poke.pkl/attr-size-20.pk \
+  poke.pkl/attr-size-21.pk \
   poke.pkl/attr-unit-1.pk \
+  poke.pkl/attr-unit-2.pk \
+  poke.pkl/attr-unit-3.pk \
   poke.pkl/band-diag-1.pk \
   poke.pkl/band-diag-2.pk \
   poke.pkl/band-integers-1.pk \

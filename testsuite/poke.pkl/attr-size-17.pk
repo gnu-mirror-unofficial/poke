@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var a = [1] as int[];  /* Incomplete type.  */
+
+/* { dg-command {  a'size } } */
+/* { dg-output "32UL#b" } */

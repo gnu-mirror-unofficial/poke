@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var a = 1 as int<3>;
+var b = [a] as int<3>[];  /* Incomplete type.  */
+
+/* { dg-command {  b'size } } */
+/* { dg-output "3UL#b" } */

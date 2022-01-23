@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var a = [10];
+var b = a as int[]; /* Type of `b' is no longer complete.  */
+
+/* { dg-command {  b'size'unit } } */
+/* { dg-output "1UL" } */
