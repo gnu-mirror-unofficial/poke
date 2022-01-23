@@ -7,6 +7,646 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.90 (XX January 2022)
+* User interface updates
+
+  - The poke command now accepts two additional command-line options
+    in order to select which default style to use: =--style-dark= and
+    =--style-bright=.  The first, which is the default, works good
+    with dark backgrounds.  The second works good with bright
+    backgrounds.
+
+  - Invoking the .set command with no arguments now lists all the
+    global settings along with their values.  It also emits buttons
+    (terminal hyperlinks) to easily toggle boolean settings.
+
+  - The .file dot-command now supports a =/c= flag, that tells poke it
+    must create an empty file with the specified name if it doesn't
+    already exist.
+
+  - The :size argument of the =dump= command is now rounded up to the
+    next byte, not truncated down to the previous byte.
+
+  - A new "sub" IO space has been implemented in poke.  It allows to
+    create IO spaces that are like narrowed versions of some other IO
+    space.  These "sub" IO spaces are created using the new
+    dot-command =.sub=:
+
+    : (poke) .mem scratch
+    : (poke) .info ios
+    :   Id   Type     Mode   Bias           Size           Name
+    : * #0   MEMORY   rw     0x00000000#B   0x00001000#B   *scratch*
+    : (poke) .sub #0, 2, 16, lala
+    : (poke) .info ios
+    :   Id   Type     Mode   Bias           Size           Name
+    : * #1   SUB      rw     0x00000002#B   0x00000010#B   sub://0/0x0/0x10/lala
+    :   #0   MEMORY   rw     0x00000000#B   0x00001000#B   *scratch*
+
+    At this point accessing the IO space #1 at offset 0#B will modify
+    the data in the *scratch* IO space at offset 2#B.
+
+  - GNU poke can now poke at the memory of a running process using the
+    new process IOS.  This can be done using the new dot-command
+    =.proc=:
+
+    : (poke) .proc 30244
+    : (poke) .info ios
+    :   Id   Type   Mode   Bias           Size                   Name
+    : * #0   PROC   rw     0x00000000#B   0xffffffffffffffff#B   pid://30244
+
+    The command above has opened a new IO space (with id #0) to poke
+    at the memory of the running process with PID 30244.
+
+    A flag =/m= can be passed to =.proc= to indicate we want poke to
+    create additional sub-spaces providing access to the mapped VM
+    ranges of the process:
+
+    : (poke) .proc/m 30244
+    : (poke) .info ios
+    :   Id   Type   Mode   Bias           Size          Name
+    :   #9   SUB    r      0x00000000#B   0x00001000#B  sub://0/0xffffffffff600000/0x1000/[vsyscall]
+    :   #8   SUB    r      0x00000000#B   0x00002000#B  sub://0/0x7ffe82db2000/0x2000/[vdso]
+    :   #7   SUB    r      0x00000000#B   0x00002000#B  sub://0/0x7ffe82db0000/0x2000/[vvar]
+    :   #6   SUB    rw     0x00000000#B   0x00021000#B  sub://0/0x7ffe82c2f000/0x21000/[stack]
+    :   [...]
+    : * #0   PROC   rw     0x00000000#B   0xffffffffffffffff#B pid://30244
+
+    See below for the new handler syntax in =open= to open process IO
+    spaces from Poke programs.  Note that the support for process IO
+    space is only implemented in GNU/Linux systems.
+
+  - The =dump= command now shows ?? marks to denote bytes that are not
+    readable, for whatever reason.  This happens for example when we
+    try to access some non-mapped area of the VM space of a process:
+
+    : (poke) .proc/m 30244
+    : (poke) dump :from 0#B :size 16#B
+    : 76543210  0011 2233 4455 6677 8899 aabb ccdd eeff  0123456789ABCDEF
+    : 00000000: ???? ???? ???? ???? ???? ???? ???? ????  ................
+
+  - The =dump= command now emits hyperlinks for the shown bytes, if
+    requested.  Clicking on them will insert the offset where the byte
+    resides in the poke prompt.
+
+  - The =dump= command now remembers the last used offset per IO
+    space.  In poke 1.x it just remembered the last globally used
+    offset, which was very confusing.
+
+  - The =.info ios= dot-command now emits [close] buttons if
+    hyperlinks are enabled.  Clicking on them closes the referred IO
+    space.
+
+  - The =.info ios= dot-command now shows the value of the "bias" for
+    each open IO space.  See below for more information on this bias.
+
+  - E_constraint exceptions raised when mapping now include some
+    useful location information:
+
+    : (poke) Elf64_Ehdr @ 1#B
+    : unhandled constraint violation exception
+    : constraint expression failed for field Elf_Ident.ei_mag
+
+  - The =.info types=, =.info variables= and =.info functions=
+    dot-commands now accept an optional regular expression.  Example:
+
+    : (poke) load elf
+    : (poke) .info types Elf64_
+    : Name                 Declared at
+    : Elf64_Ehdr           elf-64.pk:184
+    : Elf64_Off            elf-64.pk:26
+    : Elf64_SectionFlags   elf-64.pk:130
+    : Elf64_Shdr           elf-64.pk:152
+    : Elf64_RelInfo        elf-64.pk:36
+    : [...]
+
+    When listing types, the names in the first column are emitted with
+    a nice terminal hyperlink.  Clicking on them will result in
+    executing =.info type NAME=.
+
+  - New dot-command =.info type NAME=, that prints out a nice and
+    informative description of the type with the given name.  Example:
+
+    : (poke) .info type Elf64_File
+    : Class:      struct
+    : Name:       "Elf64_File"
+    : Complete:   no
+    : Fields:
+    :   ehdr
+    :   shdr
+    :   phdr
+    : Methods:
+    :  get_section_name
+    :  get_symbol_name
+    :  get_sections_by_name
+    :  get_sections_by_type
+    :  section_name_p
+    :  get_string
+    :  get_group_signature
+    :  get_group_signatures
+    :  get_section_group
+
+* Poke Language updates
+
+  - Integral structs are struct values that are stored like integers.
+    This is a simple real-life example:
+
+    : type Elf_Sym_Info =
+    :   struct uint<8>
+    :   {
+    :     uint<4> st_bind;
+    :     uint<4> st_type;
+    :   };
+
+    These structs can be used pretty much like regular structs,
+    accessing their fields normally.  In poke 1.x it was already
+    possible to "integrate" them, i.e. operating with their "integer"
+    value by using either an explicit cast:
+
+    : (poke) Elf_Sym_Info { st_bind = 1 } as uint<8>
+    : 0x10UB
+
+    or automatically, using them in a context where an integral value
+    is expected:
+
+    : (poke) Elf_Sym_Info { st_bind = 1} + 1
+    : 0x11UB
+
+    We are now introducing support for the inverse operation: to
+    "deintegrate" an integer into an integral struct value.  This is
+    performed by a cast:
+
+    : (poke) 0x10 as Elf_Sym_Info
+    : Elf_Sym_Info { st_bind=0x1UB, st_type=0x0UB }
+
+  - Arrays whose elements are integral (integers, other integral
+    arrays, or integral structs) can now be also "integrated" and
+    "deintegrated" using casts:
+
+    : (poke) [1UB, 0UB] as int
+    : 0x10
+    : (poke) 0x10 as uint<8>[2]
+    : [1UB,0UB]
+    : (poke) [[1UB,2UB],[3UB,4UB]] as int
+    : 0x1234
+    : (poke) 0x1234 as uint<8>[2][2]
+    : [[1UB,2UB],[3UB,4UB]]
+
+    This nice feature has been contributed by Mohammad Reza-Nabipoor.
+
+  - Poke programs can now sleep for a number of seconds and
+    nanoseconds using the new built-in function =sleep=.  It has the
+    following signature:
+
+    : fun sleep = (int<64> sec, int<64> nsec = 0) void:
+
+    The sleep is not active, i.e. poke will not consume CPU while it
+    is sleeping.
+
+  - The only way in poke 1.x to print styled text to the terminal was
+    to use the very ugly and clumsy %<..> tags in =printf= statements.
+    This was annoying to use, especially because you were required to
+    end every styling class you open in the same statement.  So we
+    added a couple of new built-in functions =term_begin_class= and
+    =term_end_class=.  They are used like this:
+
+    : term_begin_class ("error");
+    : print "error: the quux is foobared";
+    : term_end_class ("error");
+
+    The functions will raise an exception in case you nest your
+    classes the wrong way.
+
+  - It is now possible to emit terminal hyperlinks from Poke programs.
+    See "Terminal hyperlinks updates" below for more information on
+    this.
+
+  - The equality `==' and inequality `!=' operators now work on
+    function values.  Two given function values are equal if they are
+    the same function value. i.e. given these definitions:
+
+    : fun foo = void: {}
+    : fun bar = void: {}
+
+    In this example =foo= is equal to =foo=, but =foo= is not equal to
+    =bar= even if both functions happen to have identical type
+    signature and bodies.
+
+  - Now it is a compile-time error to cast =any= values to function
+    types.  We plan to support this at some point, since it is needed
+    for things like having =any= fields in structs, but at the moment
+    closure values are not tagged with their type at run-time and it
+    is better for the user to get compile-time errors.
+
+  - In this release we have changed both the semantics and syntax of
+    struct type field initializers.  This change has been motivated by
+    our own practical usage of poke.  In poke 1.x a struct field
+    initializer had the form:
+
+    : type Foo =
+    :   struct
+    :   {
+    :     int i = 10;
+    :     long l;
+    :   };
+
+    The initialization of =i= had two effects: newly constructed =Foo=
+    struct values would have =i= initialized to 10, and a constraint
+    that =i= must equal =10= was also implied when mapping structs of
+    type =Foo=.  This worked well, but we realized it is good to
+    decouple the implicit constraint from the initialization value:
+    sometimes you need one of these, but not both.  It was also not
+    possible to add additional constraints.  So we changed the
+    semantics of the construction above to denote "initialize to 10,
+    but no implicit constraint", with maybe an additional constraint
+    like in:
+
+    : type Foo =
+    :   struct
+    :   {
+    :     int i = 10 : i < 100;
+    :     long l;
+    :   };
+
+    And then we added the new syntax:
+
+    : type Foo =
+    :   struct
+    :   {
+    :     int i == 10;
+    :     long l;
+    :   };
+
+    to denote "initialize to 10, plus implicit constraint i == 10."
+
+  - The Poke language is quite exception-oriented.  A good example of
+    this is the way to detect whether a given alternative in an union
+    is the currently selected one: refer to it and see if an =E_elem=
+    exception gets raised.  This in practice leads to code like this:
+
+    : try { length.indefinite; return 1; }
+    : catch if E_elem { return 0; }
+
+    This is so common that we have introduced a new "exception
+    conditional" operator =?!=.  The above code can now be rewritten
+    as:
+
+    : return length.indefinite ?! E_elem;
+
+    The new operator also has a ={ ... } ?! EXCEPTION= form where the
+    code to execute is a compound statement.
+
+  - Constraints in struct type fields are very often related to the
+    values of other fields in the same struct.  The relationship is
+    often in the form "if field X has value N, then I should have a
+    value M".  We have added a new "logical implication" operator ==>=
+    (inspired from the recutils operator with the same name) that
+    implements this logic:
+
+    : A => B :=: !A || (A && B)
+
+    For example:
+
+    : uint<1> encoding;
+    : uint<5> tag_number : tag_number == BER_TAG_REAL => encoding == 1;
+
+    Meaning that if =tag_number= denotes a "real" then =encoding= must
+    be 1.  If =tag_number= does not denote a "real" then the value of
+    =encoding= is irrelevant.
+
+  - Mohammad-Reza Nabipoor has contributed support for a new built-in
+    function =format=, that is able to format a string out of a format
+    string and a list of values.  For example:
+
+    : var s = format ("%s - %s (%i32d)", name, sex, age);
+
+    Will format a string in =s= like:
+
+    : "Francisco Maganto - male (63)"
+
+    The format string is identical to the one used by =printf=, and
+    therefore it also accepts =%v= tags to format nested complex
+    values like arrays and structs.
+
+  - Exception structs have been expanded to include two additional
+    fields: =location= and =msg=.  Both new fields are strings, and
+    are used to convey location information (like the field whose
+    constraint expression failed resulting in an E_constraint) and an
+    explanation of why the exception was raised, respectively.  There
+    is no more need to abuse the field =name= for these purposes.
+
+  - Much like in C, the Poke printf format strings use =%= to
+    introduce formatting tags, like =%i32d=.  In poke 1.x it was
+    embarrassingly not possible to denote the character =%= itself.
+    Now =%%= can be used in printf format strings in order to denote a
+    single =%= character.
+
+  - If a struct type has labels and all of them are constant, it is
+    now considered a complete type. i.e. a type whose size is known at
+    compile-time.  This makes it possible to use it in =sizeof= or as
+    the unit of an offset.
+
+  - The Poke Virtual Machine settings that configure output are now
+    accessible programmatically from Poke using a set of new
+    built-ins:
+
+    : vm_{obase,opprint,oacutoff,odepth,oindent,omaps,omode}
+    : vm_set_{obase,opprint,oacutoff,odepth,oindent,omaps,omode}
+
+  - We added introspection capabilities: typeof. XXX.
+
+* Standard Poke Library updates
+
+  - The =atoi= standard function has been improved in order to parse
+    integers with signs.
+
+  - The =ltos= standard function now works for any numeration base
+    from 1 to 16, included.
+
+  - New standard functions =opensub= and =openproc= have been
+    introduced to help with the creation of "sub" and process IO
+    spaces, respectively.  See below under "IO subsystem updates" for
+    more information.
+
+  - A new standard function =exit= has been added to the standard
+    library, that provides a familiar way to exit a Poke program with
+    an optional exit code:
+
+    : fun exit = (int<32> exit_code 0)
+
+    This is just a wrapper to the more "pokeish" and less conventional
+    way of exiting, which is to raise an exception of type =EC_exit=:
+
+    : raise Exception { code = EC_exit, exit_status = exit_code };
+
+  - In poke 1.x we forgot to emit an error at compile-time when the
+    user defined an union type as pinned.  This obviously doesn't make
+    any sense (all the alternatives of an union are "pinned") so now a
+    compile-time error is raised.
+
+  - We have realized that it doesn't make much sense for pinned struct
+    types (whose fields all have an implicit offset of zero bytes) to
+    have field labels.  To avoid confusing the user, the compiler now
+    emits a compile-time error if such a type is defined.
+
+  - Unions can no longer have alternatives with labels.  This worked
+    in poke 1.x, but had complicated semantics with little real
+    practical benefit.  So now a compile-time error is raised if such
+    a type is defined.
+
+* IO subsystem updates
+
+  - Each open IO space now maintains a "bias", which is a bit-offset.
+    This bias is added to the offset specified in every read or write
+    access to the IO space.  This bias is programmable, and can be
+    read and set by Poke programs using two new built-in calls:
+
+    : fun iobias = (int<32> ios = get_ios)
+    : fun iosetbias = (offset<uint<64,b> bias = 0#b, int<32> ios = get_ios)
+
+    Note how the positioning and default values of these functions
+    makes it comfortable to use them at the (poke) prompt.
+
+  - Poke programs can now poke at the standard input, standard output
+    and standard error output of the running poke process using the
+    new stream IO spaces.
+
+    The new available handlers (to be used with =open=) are =<stdin>=,
+    =<stdout>= and =<stderr>=.  A good application of these IO spaces
+    is to write filter utilities in Poke.
+
+    This support has been contributed by Egeyar Bagcioglu.
+
+  - The =IOS_F_*= flags used in the =open= builtin has been
+    rationalized.  As a consequence the IOS_F_TRUNCATE flag has been
+    removed.
+
+  - There is a new built-in =ioflags= that returns the flags used to
+    open some particular IO space.
+
+  - =open= now raises an E_perm exception if the user doesn't have
+    enough credentials when opening an IO space.  This can happen for
+    example with insufficient permissions when opening a file in some
+    specified mode.
+
+  - Opening an IO space using a handler =<zero>= now provides an IO
+    space of size 2^64 bytes whose contents are all zero bytes, and
+    that ignores any writes to it.  Example:
+
+    : var zeroes = open ("<zero>");
+
+  - New IO device =sub= for sub-spaces.  Sub IO spaces that act like a
+    (maybe) narrower version of some other given IO space can be
+    opened using a =sub://= handler.  Example:
+
+    : var sub = open ("sub://2/0x10/0x1000/somename", IOS_M_RDONLY);
+
+    This will create a sub-space that provides read-only access to the
+    =[0x10#B,0x1010#B]= range of bytes of some other IO space with id
+    #2.
+
+    Since it can be annoying to format the handler string, a
+    convenient utility function called =opensub= has been added to the
+    standard library:
+
+    : var sub = opensub (ios, 0x10#B, 0x1000#B, "somename", IOS_M_RDONLY);
+
+  - New IO device =proc= for poking at the memory of live processes.
+    The handler to pass to =open= in order to poke at the memory of a
+    process with a given PID has the form =pid://PID=.  Example:
+
+    : var fd = open ("pid://1234");
+
+    Since it can be annoying to format the handler string, a
+    convenient utility function called =openproc= has been added to
+    the standard library:
+
+    : var fd = openproc (1234);
+
+* Terminal hyperlinks updates
+
+  - The payload used in the terminal hyperlinks URL is now reduced to
+    a token number.  This makes it more opaque and compact than the
+    previous version where we would encode full Poke expressions in
+    the URL.
+
+  - The "hyperserver", poke utility subsystem that provides and
+    handles the support for "terminal hyperlinks", has been partially
+    rewritten.  The new implementation is mostly written in Poke.
+    This makes it possible for Poke programs (like pickles) to emit
+    and handle terminal hyperlinks.  For example:
+
+    : var url = hserver_make_hyperlink ('e', "2 + 2");
+    :
+    : term_begin_hyperlink (url, "");
+    : print ("[clickme]");
+    : term_end_hyperlink;
+
+    Will print a clickable button "[clickme]" in the terminal, which
+    once clicked on will execute the Poke code "2 + 2".
+
+  - poke 1.x supported two variants of terminal hyperlinks: "execute"
+    and "insert".  Clicking on an "execute" hyperlink triggers the
+    execution of some given textual Poke expression or statement.
+    Clicking on an "insert" hyperlink triggers the inclusion of some
+    given string at the current input position at the prompt.  We now
+    introduced a third kind of hyperlinks: the "closure" hyperlinks.
+    Once clicked, some given Poke closure/function gets executed.
+    This is particularly useful when generating hyperlinks from a Poke
+    program.  For example:
+
+    : fun toggle_setting = void: { ... };
+    :
+    : term_begin_hyperlink (hserver_make_hyperlink ('c', "", (toggle_setting)), "");
+    : print "[toggle]";
+    : term_end_hyperlinks;
+
+    will print a clickable button "[toggle]" in the terminal, which
+    once clicked on will execute the =toggle_setting= function.
+
+* libpoke updates
+
+  - poke now installs a pkg-config file poke.pc to ease using libpoke.
+
+  - libpoke now provides an interface to register foreign IO spaces.
+    This allows adding pokeish capabilities to third-party programs.
+    As an example, poke integration in GDB has been written (not
+    upstreamed yet) that makes it possible to poke the memory of an
+    inferior process being debugged.  This is achieved by registering
+    callbacks in the foreign IO interface.
+
+  - libpoke now provides an inteface to register "alien tokens".  This
+    is also useful when integrating libpoke in third-party
+    applications.  For example, in the GDB integration this interface
+    has been used to allow users to refer to the value of GDB symbols
+    in Poke programs using this syntax:
+
+    : $main
+
+    and to the address of a given symbol using this syntax:
+
+    : $addr::main
+
+  - It is now possible to create an incremental compiler without
+    standard types.  This is useful in cases where the program
+    integrating with libpoke provides its own concept of types like
+    =int= or =long=.  This is the case of GDB.
+
+  - We added more services in libpoke to operate on PK values.  Many
+    more still need to be added.
+
+  - libpoke.h is now C++ compatible.
+
+* Pickles updates
+
+  - New pickle =asn1-ber.pk= provides definitions to poke ASN-1 data
+    encoded in BER (Basic Encoding Rules.)
+
+  - New pickles =ustar.pk= provides definitions to poke USTAR file
+    systems, standardized by POSIX.1-1988 and POSIX.1-2001.
+
+  - New pickles =ctf-dump.pk= provides functions that dump the data of
+    CTF sections in a human-readable form.  Contributed by Indu Bhagat
+    on behalf of Oracle Inc.
+
+  - New pickles =jffs2.pk= provides definitions to poke JFFS2 file
+    systems.
+
+  - The =elf.pk= pickle has been splitted in 32-bit and 64-bit
+    variants, and ELF-32 definitions have been added.
+
+  - The output messages emitted by =argp.pk= have been improved.
+
+  - New tests for the =btf.pk= pickle.  Contributed by David Faust on
+    behalf of Oracle Inc.
+
+* Utilities updates
+
+  - New filter =pk-strings.pk=.
+  - New filter =pk-bin2poke.pk=.
+
+* Development tools updates
+
+  - RAS (the retarded poke assembler) now allows to split long logical
+    lines into several physical lines by finishing them with the
+    backslash character.  This is an example:
+
+    : .macro struct_field_extractor @struct_type @field @struct_itype \
+    :                               @field_type #ivalw #fieldw
+
+  - RAS now understands the endianness specifiers =IOS_ENDIAN_LSB= and
+    =IOS_ENDIAN_MSB=.  Better than hardcoded magic numbers.
+
+  - RAS now emits an error if it finds a .function in which there is
+    not exactly one =prolog= instruction and at least one =return=
+    instruction.  This problem has bitten me very often, resulting in
+    very puzzling and subtle bugs, glglgl.
+
+* Notable bug fixes
+
+  - The infamous, annoying, hated and despised "PVM_VAL_CLS_ENV
+    (closure) != NULL" bug has (most probably... crossing fingers,
+    toes and whatnot) been finally fixed in this release.  I have
+    tried no less than eight times to fix this bug, but not until very
+    recently I finally understood what was going on; I thought I did
+    and the test case would work, but no I didn't and the bug would
+    soon return with renovated hatred.  On my defense, the involved
+    area is the hairiest part of the code generator and every time I
+    look at it I basically have to re-learn how it works.  Good news
+    is: if the same problem manifests again, now we know how to fix
+    it.  But hopefully it is fixed now and I will stop receiving hate
+    email about this.
+
+  - =--disable-hserver= now actually disables the hyperserver.  Yes,
+    really.
+
+* Documentation updates
+
+  - We have added a new online help system to the poke utility, which
+    is accessible using the =.help= dot-command.  There are help
+    entries for all the commands, dot-commands and global settings.
+    This new online help system is written in Poke, making it possible
+    to other Poke programs (like pickles) to add their own help topics
+    to the system.
+
+  - We have expanded the user manual to cover the new functionality
+    and clarify obscure concepts that weren't explained with enough
+    clarity.  Despite of this work, the user manual is not yet
+    complete, unfortunately, but getting there.
+
+  - The user manual now contains a section that explains how to set up
+    your system and terminal emulators to support poke terminal
+    hyperlinks.
+
+  - There is a new website called Pokology, https://pokology.net,
+    which is maintained by the poke developers and users.  It is a
+    live repository of knowledge relative to GNU poke, including
+    practical articles, multimedia stuff, hints and tricks, a
+    frequently asked question, etc.
+
+* Editor support updates
+
+  - The Emacs modes =poke-mode=, =poke-ras-mode= and =poke-map-mode=
+    have been update with more features and bug fixes.
+
+  - We now distribute a module for Poke syntax highlighting for vim.
+    Contributed by Matthew T. Ihlenfield.
+
+* Other updates
+
+  - We have rewritten the way global settings (like endianness,
+    numeration base used for output, etc) are handled in both libpoke
+    and the poke application.  The new implementation introduces a
+    "settings registry" which is written itself in Poke.  As such,
+    other Poke code (like pickles and the like) have full access to
+    the settings registry, and even add their own settings to the
+    application.
+
+  - Many improvements in compiler error messages.  This includes
+    emitting more meaningful messages, for example "got int<32>
+    expected string" instead of "invalid operands in expression".  And
+    also better locations, like pointing at the particular operand
+    whose type is wrong instead of the entire expression.
+
  Version 1.4 (3 December 2021)
 * User visible changes
   - Operating with arrays must be now much faster.

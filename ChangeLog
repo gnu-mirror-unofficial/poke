@@ -1,3 +1,7 @@
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* NEWS: Add entries for 1.90.
+
 2022-01-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-rt-1.pk (Pk_Type): Add closures for array and struct
