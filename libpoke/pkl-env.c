@@ -131,8 +131,7 @@ register_decl (int top_level_p,
 
   /* Check if DECL is already registered in the given hash table.
 
-     If we are in the global environment and the declaration is for a
-     variable, funcion, or an unit, then we allow "redefining" by
+     If we are in the global environment then we allow "redefining" by
      changing the name of the previous declaration to "".
 
      Otherwise we don't register DECL, as it is already defined.  */
@@ -142,10 +141,7 @@ register_decl (int top_level_p,
     {
       int decl_kind = PKL_AST_DECL_KIND (decl);
 
-      if (top_level_p
-          && (decl_kind == PKL_AST_DECL_KIND_VAR
-              || decl_kind == PKL_AST_DECL_KIND_FUNC
-              || decl_kind == PKL_AST_DECL_KIND_UNIT))
+      if (top_level_p)
         {
           pkl_ast_node decl_name = PKL_AST_DECL_NAME (found_decl);
 

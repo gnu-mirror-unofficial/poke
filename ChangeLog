@@ -1,3 +1,7 @@
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-env.c (_decl): Allow re-registering types.
+
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* doc/poke.texi (Casting Arrays): Add documentation for
