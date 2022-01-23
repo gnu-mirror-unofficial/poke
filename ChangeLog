@@ -1,5 +1,10 @@
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-typify.c (pkl_typify1_ps_struct): Postpone type
+	completion decision to `pkl_typify2_ps_type` phase.
+
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_funcall): When the arg
 	doesn't have a name, uses the arg index in error reporting.
 
