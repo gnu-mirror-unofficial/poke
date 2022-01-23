@@ -1,5 +1,12 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (typifier_deintegrator_wrapper): New
+	function.
+	(struct_typifier): Use it.
+	* testsuite/poke.pkl/typeof-20.pk: Update test.
+
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (typifier_writer_wrapper): New function.
 	(typifier_any_any_wrapper): Likewise.
 	(typifier_any_any_int_wrapper): Likewise.

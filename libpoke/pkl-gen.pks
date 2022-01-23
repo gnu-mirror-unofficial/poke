@@ -3441,6 +3441,38 @@
         return
         .end
 
+;;; RAS_FUNCTION_TYPIFIER_DEINTEGRATOR_WRAPPER @type
+;;; ( INTEGRAL -- VAL )
+;;;
+;;; Assemble a function that type-checks VAL to be of some given
+;;; type and then calls a function of type (integral)any.
+;;;
+;;; Macro arguments:
+;;; @type is an AST node with the type of the entity being written,
+;;; which can be either an array or a struct.
+
+        .function typifier_deintegrator_wrapper @type #function
+        prolog
+        ;; If the first argument is not of the right type, raise an
+        ;; exception.
+        .let @itype = PKL_AST_TYPE_S_ITYPE (@type)
+     .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+     .c PKL_PASS_SUBPASS (@itype);
+     .c PKL_GEN_POP_CONTEXT;
+        isa
+        nip
+        bnzi .type_ok
+        drop
+        push PVM_E_CONV
+        raise
+.type_ok:
+        drop
+        ;; Call the function and return what it returns.
+        push #function
+        call
+        return
+        .end
+
 ;;; RAS_FUNCTION_TYPIFIER_ANY_ANY_INT_WRAPPER @type
 ;;; ( VAL VAL -- INT )
 ;;;
@@ -3658,8 +3690,8 @@
   .c {
   .c    pvm_val deintegrator_closure;
         .let #function = PKL_AST_TYPE_S_DEINTEGRATOR (@type)
-  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (deintegrator_closure,
-  .c                                           @type, #function);
+  .c    RAS_FUNCTION_TYPIFIER_DEINTEGRATOR_WRAPPER (deintegrator_closure,
+  .c                                                @type, #function);
         .let #deintegrator = deintegrator_closure
         push "deintegrator"
         push #deintegrator
