@@ -458,11 +458,11 @@ type Pk_Type =
 
     Mapper_Fn mapper             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
     (any)void writer             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
-    (any,any)int<32> comparator  if code == PK_TYPE_STRUCT;
     (any,int<32>)string formater if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
     (any)any printer             if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
-    (any)any integrator          if code == PK_TYPE_STRUCT;
+    (any)any integrator          if code in [PK_TYPE_ARRAY, PK_TYPE_STRUCT];
     (any)any deintegrator        if code == PK_TYPE_STRUCT;
+    (any,any)int<32> comparator  if code == PK_TYPE_STRUCT;
   };
 
 /**** Set the default load path ****/

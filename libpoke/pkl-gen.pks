@@ -3373,6 +3373,119 @@
         .e common_typifier @type
         .end
 
+;;; RAS_FUNCTION_TYPIFIER_FORMATER_WRAPPER @type
+;;; ( VAL INT -- STR )
+;;;
+;;; Assemble a function that type-checks VAL to be of some given
+;;; type and then calls its formater.
+;;;
+;;; Macro arguments:
+;;; @type is an AST node with the type of the entity being written,
+;;; which can be either an array or a struct.
+
+        .function typifier_formater_wrapper @type
+        prolog
+        ;; If the first argument is not of the right type, raise an
+        ;; exception.
+        swap
+     .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+     .c PKL_PASS_SUBPASS (@type);
+     .c PKL_GEN_POP_CONTEXT;
+        isa
+        nip
+        bnzi .type_ok
+        drop
+        push PVM_E_CONV
+        raise
+.type_ok:
+        drop
+        swap
+        strace 0
+        ;; Call the formater.
+        .let #formater = PKL_AST_TYPE_CODE (@type) == PKL_TYPE_ARRAY \
+                       ? PKL_AST_TYPE_A_FORMATER (@type) \
+	               : PKL_AST_TYPE_S_FORMATER (@type)
+        push #formater
+        call
+        return
+        .end
+
+;;; RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER @type
+;;; ( VAL INT -- STR )
+;;;
+;;; Assemble a function that type-checks VAL to be of some given
+;;; type and then calls a function of type (any)any.
+;;;
+;;; Macro arguments:
+;;; @type is an AST node with the type of the entity being written,
+;;; which can be either an array or a struct.
+
+        .function typifier_any_any_wrapper @type #function
+        prolog
+        ;; If the first argument is not of the right type, raise an
+        ;; exception.
+     .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+     .c PKL_PASS_SUBPASS (@type);
+     .c PKL_GEN_POP_CONTEXT;
+        isa
+        nip
+        bnzi .type_ok
+        drop
+        push PVM_E_CONV
+        raise
+.type_ok:
+        drop
+        ;; Call the function and return what it returns.
+        push #function
+        call
+        return
+        .end
+
+;;; RAS_FUNCTION_TYPIFIER_ANY_ANY_INT_WRAPPER @type
+;;; ( VAL VAL -- INT )
+;;;
+;;; Assemble a function that type-checks VAL to be of some given
+;;; type and then calls a function of type (any,any)int<32>.
+;;;
+;;; Macro arguments:
+;;; @type is an AST node with the type of the entity being written,
+;;; which can be either an array or a struct.
+
+        .function typifier_any_any_int_wrapper @type #function
+        prolog
+        ;; If the second argument is not of the right type, raise an
+        ;; exception.
+     .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+     .c PKL_PASS_SUBPASS (@type);
+     .c PKL_GEN_POP_CONTEXT;
+        isa
+        nip
+        bnzi .second_type_ok
+        drop
+        push PVM_E_CONV
+        raise
+.second_type_ok:
+        drop
+        ;; Ditto for the first
+        swap
+     .c PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPE);
+     .c PKL_PASS_SUBPASS (@type);
+     .c PKL_GEN_POP_CONTEXT;
+        isa
+        nip
+        bnzi .first_type_ok
+        drop
+        push PVM_E_CONV
+        raise
+.first_type_ok:
+        drop
+        swap
+        ;; Call the function and return what it returns.
+        push #function
+        call
+        return
+        .end
+
 ;;; RAS_MACRO_ARRAY_TYPIFIER @type
 ;;; ( SCT - SCT )
 ;;;
@@ -3393,25 +3506,50 @@
         push #mapper
         sset
   .c }
-        .let #writer = PKL_AST_TYPE_A_WRITER (@type)
- .c if (#writer != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_A_WRITER (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val writer_closure;
+        .let #function = PKL_AST_TYPE_A_WRITER (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (writer_closure,
+  .c                                           @type, #function);
+        .let #writer = writer_closure
         push "writer"
         push #writer
+        pec
         sset
   .c }
-        .let #formater = PKL_AST_TYPE_A_FORMATER (@type)
- .c if (#formater != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_A_FORMATER (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val formater_closure;
+  .c    RAS_FUNCTION_TYPIFIER_FORMATER_WRAPPER (formater_closure, @type);
+        .let #formater = formater_closure
         push "formater"
         push #formater
+        pec
         sset
   .c }
-        .let #printer = PKL_AST_TYPE_A_PRINTER (@type)
- .c if (#printer != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_A_PRINTER (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val printer_closure;
+        .let #function = PKL_AST_TYPE_A_PRINTER (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (printer_closure,
+  .c                                           @type, #function);
+        .let #printer = printer_closure
         push "printer"
         push #printer
+        pec
+        sset
+  .c }
+  .c if (PKL_AST_TYPE_A_INTEGRATOR (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val integrator_closure;
+        .let #function = PKL_AST_TYPE_A_INTEGRATOR (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (integrator_closure,
+  .c                                           @type, #function);
+        .let #integrator = integrator_closure
+        push "integrator"
+        push #integrator
+        pec
         sset
   .c }
         .end
@@ -3458,46 +3596,74 @@
         push #mapper
         sset
   .c }
-        .let #writer = PKL_AST_TYPE_S_WRITER (@type)
- .c if (#writer != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_S_WRITER (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val writer_closure;
+        .let #function = PKL_AST_TYPE_S_WRITER (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (writer_closure,
+  .c                                           @type, #function);
+        .let #writer = writer_closure
         push "writer"
         push #writer
+        pec
         sset
   .c }
-        .let #comparator = PKL_AST_TYPE_S_COMPARATOR (@type)
- .c if (#comparator != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_S_COMPARATOR (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val comparator_closure;
+        .let #function = PKL_AST_TYPE_S_COMPARATOR (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_INT_WRAPPER (comparator_closure,
+  .c                                               @type, #function);
+        .let #comparator = comparator_closure
         push "comparator"
         push #comparator
+        pec
         sset
   .c }
-        .let #formater = PKL_AST_TYPE_S_FORMATER (@type)
- .c if (#formater != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_S_FORMATER (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val formater_closure;
+  .c    RAS_FUNCTION_TYPIFIER_FORMATER_WRAPPER (formater_closure, @type);
+        .let #formater = formater_closure
         push "formater"
         push #formater
+        pec
         sset
   .c }
-        .let #printer = PKL_AST_TYPE_S_PRINTER (@type)
- .c if (#printer != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_S_PRINTER (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val printer_closure;
+        .let #function = PKL_AST_TYPE_S_PRINTER (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (printer_closure,
+  .c                                           @type, #function);
+        .let #printer = printer_closure
         push "printer"
         push #printer
+        pec
         sset
   .c }
-        .let #integrator = PKL_AST_TYPE_S_INTEGRATOR (@type)
- .c if (#integrator != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_S_INTEGRATOR (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val integrator_closure;
+        .let #function = PKL_AST_TYPE_S_INTEGRATOR (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (integrator_closure,
+  .c                                           @type, #function);
+        .let #integrator = integrator_closure
         push "integrator"
         push #integrator
+        pec
         sset
   .c }
-        .let #deintegrator = PKL_AST_TYPE_S_DEINTEGRATOR (@type)
- .c if (#deintegrator != PVM_NULL)
- .c {
+  .c if (PKL_AST_TYPE_S_DEINTEGRATOR (@type) != PVM_NULL)
+  .c {
+  .c    pvm_val deintegrator_closure;
+        .let #function = PKL_AST_TYPE_S_DEINTEGRATOR (@type)
+  .c    RAS_FUNCTION_TYPIFIER_ANY_ANY_WRAPPER (deintegrator_closure,
+  .c                                           @type, #function);
+        .let #deintegrator = deintegrator_closure
         push "deintegrator"
         push #deintegrator
+        pec
         sset
   .c }
         ;; Now add field entries.  At the moment these are just the

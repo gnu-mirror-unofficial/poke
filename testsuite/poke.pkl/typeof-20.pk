@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct int { int i; };
+
+/* { dg-command { try (typeof (Foo)).deintegrator (32); catch if E_conv { print "caught\n"; } } } */
+/* { dg-output "caught" } */

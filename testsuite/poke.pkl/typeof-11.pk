@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Matrix = int[3];
+
+/* { dg-command { try (typeof (Matrix)).writer ("foo"); catch if E_conv { print "caught\n"; } } } */
+/* { dg-output "caught" } */

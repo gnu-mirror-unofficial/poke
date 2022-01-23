@@ -2124,6 +2124,18 @@ EXTRA_DIST = \
   poke.pkl/typeof-8.pk \
   poke.pkl/typeof-9.pk \
   poke.pkl/typeof-10.pk \
+  poke.pkl/typeof-11.pk \
+  poke.pkl/typeof-12.pk \
+  poke.pkl/typeof-13.pk \
+  poke.pkl/typeof-14.pk \
+  poke.pkl/typeof-15.pk \
+  poke.pkl/typeof-16.pk \
+  poke.pkl/typeof-17.pk \
+  poke.pkl/typeof-18.pk \
+  poke.pkl/typeof-19.pk \
+  poke.pkl/typeof-20.pk \
+  poke.pkl/typeof-21.pk \
+  poke.pkl/typeof-22.pk \
   poke.pkl/typeof-array-1.pk \
   poke.pkl/typeof-array-2.pk \
   poke.pkl/typeof-int-1.pk \

@@ -1,5 +1,28 @@
 2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (typifier_writer_wrapper): New function.
+	(typifier_any_any_wrapper): Likewise.
+	(typifier_any_any_int_wrapper): Likewise.
+	(array_typifier): Use the wrappers.
+	(struct_typifier): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Generate struct typifier
+	after the other closures have been compiled.
+	* testsuite/poke.pkl/typeof-11.pk: New test.
+	* testsuite/poke.pkl/typeof-12.pk: Likewise.
+	* testsuite/poke.pkl/typeof-13.pk: Likewise.
+	* testsuite/poke.pkl/typeof-14.pk: Likewise.
+	* testsuite/poke.pkl/typeof-15.pk: Likewise.
+	* testsuite/poke.pkl/typeof-16.pk: Likewise.
+	* testsuite/poke.pkl/typeof-17.pk: Likewise.
+	* testsuite/poke.pkl/typeof-18.pk: Likewise.
+	* testsuite/poke.pkl/typeof-19.pk: Likewise.
+	* testsuite/poke.pkl/typeof-20.pk: Likewise.
+	* testsuite/poke.pkl/typeof-21.pk: Likewise.
+	* testsuite/poke.pkl/typeof-22.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_formater): Avoid a segmentation
 	fault when compiling formaters for anonymous fields.
 	* testsuite/poke.pkl/format-39.pk: New test.

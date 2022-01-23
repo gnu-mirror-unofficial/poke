@@ -272,22 +272,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);               /* CLS */
             pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);              /* _ */
 
-            if (PKL_AST_TYPE_S_TYPIFIER (type_struct) == PVM_NULL)
-              {
-                pvm_val typifier_closure;
-
-                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPIFIER);
-                RAS_FUNCTION_STRUCT_TYPIFIER (typifier_closure,
-                                              type_struct);
-                PKL_GEN_POP_CONTEXT;
-                PKL_AST_TYPE_S_TYPIFIER (type_struct) = typifier_closure;
-              }
-
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          PKL_AST_TYPE_S_TYPIFIER (type_struct)); /* CLS */
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);             /* CLS */
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);            /* _ */
-
             if (PKL_AST_TYPE_S_FORMATER (type_struct) == PVM_NULL)
               {
                 pvm_val formater_closure;
@@ -354,6 +338,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_decl)
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                 /* CLS */
                 pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);                /* _ */
               }
+
+            /* Note that the typifier must be processed last, as it
+               uses the closures installed above.  */
+            if (PKL_AST_TYPE_S_TYPIFIER (type_struct) == PVM_NULL)
+              {
+                pvm_val typifier_closure;
+
+                PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_TYPIFIER);
+                RAS_FUNCTION_STRUCT_TYPIFIER (typifier_closure,
+                                              type_struct);
+                PKL_GEN_POP_CONTEXT;
+                PKL_AST_TYPE_S_TYPIFIER (type_struct) = typifier_closure;
+              }
+
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
+                          PKL_AST_TYPE_S_TYPIFIER (type_struct)); /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);             /* CLS */
+            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);            /* _ */
 
             PKL_PASS_BREAK;
             break;
