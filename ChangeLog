@@ -1,5 +1,23 @@
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-ast.h (pkl_ast_struct_type_field): Add `size` field.
+	(PKL_AST_STRUCT_TYPE_FIELD_SIZE): New accessor macro.
+	* libpoke/pkl-ast.c (pkl_ast_dup_type): Add support for `size`
+	field.
+	(pkl_ast_node_free): Likewise.
+	(pkl_ast_print_1): Likewise.
+	(pkl_ast_sizeof_type): Fix to the right thing for pinned structs,
+	arrays with offset bounds, structs with labels.
+	(pkl_ast_type_is_complete): Fix the logic for structs. Add support
+	for unions. Fix the logic for arrays to support offsets as bounds
+	as well as check for completeness of element type.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Add support for `size` field.
+	* libpoke/pkl-trans.c (pkl_trans2_ps_struct_type_field): New
+	phase to calculate the size of fields of struct if they are complete.
+	(struct pkl_phase_trans2): Register new phase.
+
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-ast.c (pkl_ast_make_offset): An offset value
 	is literal if the magnitude and unit are also literals.
 

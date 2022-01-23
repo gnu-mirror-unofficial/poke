@@ -591,6 +591,7 @@ pkl_ast_dup_type (pkl_ast_node type)
         {
           pkl_ast_node struct_type_elem_name;
           pkl_ast_node struct_type_elem_type;
+          pkl_ast_node struct_type_elem_size;
           pkl_ast_node struct_type_elem_constraint;
           pkl_ast_node struct_type_elem_initializer;
           pkl_ast_node struct_type_elem_label;
@@ -606,6 +607,7 @@ pkl_ast_dup_type (pkl_ast_node type)
 
           struct_type_elem_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
           struct_type_elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
+          struct_type_elem_size = PKL_AST_STRUCT_TYPE_FIELD_SIZE (t);
           struct_type_elem_constraint = PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (t);
           struct_type_elem_initializer = PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (t);
           struct_type_elem_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (t);
@@ -627,6 +629,8 @@ pkl_ast_dup_type (pkl_ast_node type)
                                               struct_type_elem_endian,
                                               struct_type_elem_optcond);
 
+          PKL_AST_STRUCT_TYPE_FIELD_SIZE (struct_type_elem)
+            = ASTREF (struct_type_elem_size);
           PKL_AST_TYPE_S_ELEMS (new)
             = pkl_ast_chainon (PKL_AST_TYPE_S_ELEMS (new),
                                struct_type_elem);
@@ -1024,12 +1028,27 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
       }
     case PKL_TYPE_ARRAY:
       {
+        pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (type);
+        pkl_ast_node bound_type = PKL_AST_TYPE (bound);
         pkl_ast_node sizeof_etype
           = pkl_ast_sizeof_type (ast,
                                  PKL_AST_TYPE_A_ETYPE (type));
-        res= pkl_ast_make_binary_exp (ast, PKL_AST_OP_MUL,
-                                      PKL_AST_TYPE_A_BOUND (type),
-                                      sizeof_etype);
+
+        if (PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_INTEGRAL)
+          res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_MUL,
+                                         bound, sizeof_etype);
+        else if (PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_OFFSET)
+          {
+            pkl_ast_node mag, unit;
+
+            mag = PKL_AST_OFFSET_MAGNITUDE (bound);
+            unit = PKL_AST_OFFSET_UNIT (bound);
+            res = pkl_ast_make_integer (ast,
+                                        PKL_AST_INTEGER_VALUE (mag)
+                                          * PKL_AST_INTEGER_VALUE (unit));
+          }
+        else
+          assert (0);
         PKL_AST_TYPE (res) = ASTREF (res_type);
         break;
       }
@@ -1042,51 +1061,73 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
 
         for (t = PKL_AST_TYPE_S_ELEMS (type); t; t = PKL_AST_CHAIN (t))
           {
-            if (PKL_AST_CODE (t) == PKL_AST_STRUCT_TYPE_FIELD)
+            pkl_ast_node field_label;
+            pkl_ast_node elem_type_size;
+
+            if (PKL_AST_CODE (t) != PKL_AST_STRUCT_TYPE_FIELD)
+              continue;
+
+            field_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (t);
+            elem_type_size = PKL_AST_STRUCT_TYPE_FIELD_SIZE (t);
+
+            assert (elem_type_size != NULL);
+
+            /* Struct fields with non-constant labels are not
+               expected, as these cannot appear in complete struct
+               types.  Ditto for optional fields.  */
+            assert (field_label == NULL
+                    || PKL_AST_CODE (field_label) == PKL_AST_OFFSET);
+            assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
+
+            /* If struct is pinned, the new size is
+               `max (size, elem_type_size)`.
+               Otherwise if the field has a constant label, the new size
+               is `max (size, label_in_bits + elem_type_size)'.
+               Otherwise, it is `size + elem_type_size'.  */
+            if (PKL_AST_TYPE_S_PINNED_P (type))
               {
-                pkl_ast_node elem_type;
-                pkl_ast_node field_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (t);
+                pkl_ast_node cond;
 
-                /* Struct fields with non-constant labels are not
-                   expected, as these cannot appear in complete struct
-                   types.  Ditto for optional fields.  */
-                assert (field_label == NULL
-                        || PKL_AST_CODE (field_label) == PKL_AST_OFFSET);
-                assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
+                cond = pkl_ast_make_binary_exp (ast, PKL_AST_OP_GT,
+                                                elem_type_size, res);
+                PKL_AST_TYPE (cond) = ASTREF (res_type);
 
-                /* If the field has a constant label and the label is
-                   bigger than the current accumulated size, replace
-                   the accumulated size with the label.  */
-                if (field_label)
-                  {
-                    pkl_ast_node label_magnitude, label_in_bits, cond;
+                res = pkl_ast_make_cond_exp (ast, cond, elem_type_size, res);
+                PKL_AST_TYPE (res) = ASTREF (res_type);
+              }
+            else if (field_label)
+              {
+                pkl_ast_node label_magnitude, label_in_bits, cond;
+                pkl_ast_node off_in_bits;
 
-                    label_magnitude
-                      = pkl_ast_make_cast (ast, res_type,
-                                           PKL_AST_OFFSET_MAGNITUDE (field_label));
-                    PKL_AST_TYPE (label_magnitude) = ASTREF (res_type);
+                label_magnitude
+                  = pkl_ast_make_cast (ast, res_type,
+                                       PKL_AST_OFFSET_MAGNITUDE (field_label));
+                PKL_AST_TYPE (label_magnitude) = ASTREF (res_type);
 
-                    label_in_bits = pkl_ast_make_binary_exp (ast,
-                                                             PKL_AST_OP_MUL,
-                                                             label_magnitude,
-                                                             PKL_AST_OFFSET_UNIT (field_label));
-                    PKL_AST_TYPE (label_in_bits) = ASTREF (res_type);
+                label_in_bits
+                  = pkl_ast_make_binary_exp (ast, PKL_AST_OP_MUL,
+                                             label_magnitude,
+                                             PKL_AST_OFFSET_UNIT (field_label));
+                PKL_AST_TYPE (label_in_bits) = ASTREF (res_type);
 
-                    cond = pkl_ast_make_binary_exp (ast, PKL_AST_OP_GT,
-                                                    label_in_bits, res);
-                    PKL_AST_TYPE (cond) = ASTREF (res_type);
+                off_in_bits = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
+                                                       label_in_bits,
+                                                       elem_type_size);
+                PKL_AST_TYPE (off_in_bits) = ASTREF (res_type);
 
-                    res = pkl_ast_make_cond_exp (ast, cond, label_in_bits, res);
-                    PKL_AST_TYPE (res) = ASTREF (res_type);
-                  }
+                cond = pkl_ast_make_binary_exp (ast, PKL_AST_OP_GT,
+                                                res, off_in_bits);
+                PKL_AST_TYPE (cond) = ASTREF (res_type);
 
-                /* Add the size of the field to the accumulated
-                   size.  */
-                elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
+                res = pkl_ast_make_cond_exp (ast, cond, res, off_in_bits);
+                PKL_AST_TYPE (res) = ASTREF (res_type);
+              }
+            else
+              {
+                /* Add the size of the field to the accumulated size.  */
                 res = pkl_ast_make_binary_exp (ast, PKL_AST_OP_ADD,
-                                               res,
-                                               pkl_ast_sizeof_type (ast,
-                                                                    elem_type));
+                                               res, elem_type_size);
                 PKL_AST_TYPE (res) = ASTREF (res_type);
               }
           }
@@ -1210,23 +1251,54 @@ pkl_ast_type_is_complete (pkl_ast_node type)
              elem;
              elem = PKL_AST_CHAIN (elem))
           {
-            pkl_ast_node elem_label
-              = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
+            pkl_ast_node elem_label;
+            pkl_ast_node elem_type;
 
-            if (PKL_AST_CODE (elem) == PKL_AST_STRUCT_TYPE_FIELD
-                && ((elem_label && PKL_AST_CODE (elem_label) != PKL_AST_OFFSET)
-                    || PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem)
-                    || (pkl_ast_type_is_complete (PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem))
-                        == PKL_AST_TYPE_COMPLETE_NO)))
+            if (PKL_AST_CODE (elem) != PKL_AST_STRUCT_TYPE_FIELD)
+              continue;
+
+            elem_label = PKL_AST_STRUCT_TYPE_FIELD_LABEL (elem);
+            elem_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (elem);
+            if ((elem_label && PKL_AST_CODE (elem_label) != PKL_AST_OFFSET)
+                 || PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (elem)
+                 || (pkl_ast_type_is_complete (elem_type)
+                       == PKL_AST_TYPE_COMPLETE_NO))
               {
                 complete = PKL_AST_TYPE_COMPLETE_NO;
                 break;
               }
           }
+        /* This is a union type with complete fields. This type is
+           complete if all fields have the same size.  */
+        if (complete == PKL_AST_TYPE_COMPLETE_YES && PKL_AST_TYPE_S_UNION_P (type))
+          {
+            pkl_ast_node size_node;
+            size_t size = -1;
+
+            for (elem = PKL_AST_TYPE_S_ELEMS (type);
+                 elem;
+                 elem = PKL_AST_CHAIN (elem))
+              {
+                if (PKL_AST_CODE (elem) != PKL_AST_STRUCT_TYPE_FIELD)
+                  continue;
+
+                size_node = PKL_AST_STRUCT_TYPE_FIELD_SIZE (elem);
+                assert (size_node);
+                assert (PKL_AST_TYPE_CODE (size_node) == PKL_TYPE_INTEGRAL);
+                if (size == -1)
+                  size = PKL_AST_INTEGER_VALUE (size_node);
+                else if (PKL_AST_INTEGER_VALUE (size_node) != size)
+                  {
+                    complete = PKL_AST_TYPE_COMPLETE_NO;
+                    break;
+                  }
+              }
+          }
         break;
       }
       /* Array types are complete if the number of elements in the
-         array are specified and it is a literal expression.  */
+         array are specified and it is a literal expression; and type
+         of elements is also complete.  */
     case PKL_TYPE_ARRAY:
       {
         pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (type);
@@ -1239,9 +1311,10 @@ pkl_ast_type_is_complete (pkl_ast_node type)
                calculated at this point.  */
             assert (bound_type);
 
-            if (PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_INTEGRAL
+            if ((PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_INTEGRAL
+                 || PKL_AST_TYPE_CODE (bound_type) == PKL_TYPE_OFFSET)
                 && PKL_AST_LITERAL_P (bound))
-              complete = PKL_AST_TYPE_COMPLETE_YES;
+              complete = pkl_ast_type_is_complete (PKL_AST_TYPE_A_ETYPE (type));
             else
               complete = PKL_AST_TYPE_COMPLETE_NO;
           }
@@ -2144,6 +2217,7 @@ pkl_ast_node_free (pkl_ast_node ast)
 
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_NAME (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_TYPE (ast));
+      pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_SIZE (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_INITIALIZER (ast));
       pkl_ast_node_free (PKL_AST_STRUCT_TYPE_FIELD_LABEL (ast));
@@ -3004,6 +3078,7 @@ pkl_ast_print_1 (FILE *fp, pkl_ast_node ast, int indent)
       PRINT_COMMON_FIELDS;
       PRINT_AST_SUBAST (name, STRUCT_TYPE_FIELD_NAME);
       PRINT_AST_SUBAST (type, STRUCT_TYPE_FIELD_TYPE);
+      PRINT_AST_SUBAST (type, STRUCT_TYPE_FIELD_SIZE);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_CONSTRAINT);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_INITIALIZER);
       PRINT_AST_SUBAST (exp, STRUCT_TYPE_FIELD_LABEL);

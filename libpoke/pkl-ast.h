@@ -753,6 +753,8 @@ pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
 
    TYPE is a PKL_AST_TYPE node.
 
+   SIZE is the size of TYPE if it is a complete type, or NULL.
+
    CONSTRAINT is a constraint associated with the struct field.  It is
    an expression that should evaluate to a boolean.
 
@@ -773,6 +775,7 @@ pkl_ast_node pkl_ast_make_struct_ref (pkl_ast ast,
 
 #define PKL_AST_STRUCT_TYPE_FIELD_NAME(AST) ((AST)->sct_type_elem.name)
 #define PKL_AST_STRUCT_TYPE_FIELD_TYPE(AST) ((AST)->sct_type_elem.type)
+#define PKL_AST_STRUCT_TYPE_FIELD_SIZE(AST) ((AST)->sct_type_elem.size)
 #define PKL_AST_STRUCT_TYPE_FIELD_CONSTRAINT(AST) ((AST)->sct_type_elem.constraint)
 #define PKL_AST_STRUCT_TYPE_FIELD_LABEL(AST) ((AST)->sct_type_elem.label)
 #define PKL_AST_STRUCT_TYPE_FIELD_ENDIAN(AST) ((AST)->sct_type_elem.endian)
@@ -785,6 +788,7 @@ struct pkl_ast_struct_type_field
 
   union pkl_ast_node *name;
   union pkl_ast_node *type;
+  union pkl_ast_node *size;
   union pkl_ast_node *constraint;
   union pkl_ast_node *initializer;
   union pkl_ast_node *label;

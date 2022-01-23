@@ -1419,6 +1419,22 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_incrdecr)
 }
 PKL_PHASE_END_HANDLER
 
+/* Calculate the size of struct type fields that are complete.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_struct_type_field)
+{
+  pkl_ast_node field = PKL_PASS_NODE;
+  pkl_ast_node field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (field);
+
+  if (pkl_ast_type_is_complete (field_type) == PKL_AST_TYPE_COMPLETE_YES)
+    {
+      PKL_AST_STRUCT_TYPE_FIELD_SIZE (field)
+        = ASTREF (pkl_ast_sizeof_type (PKL_PASS_AST, field_type));
+      PKL_PASS_RESTART = 1;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_trans2 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_trans_ps_src),
@@ -1433,6 +1449,7 @@ struct pkl_phase pkl_phase_trans2 =
    PKL_PHASE_PS_HANDLER (PKL_AST_CAST, pkl_trans2_ps_cast),
    PKL_PHASE_PS_HANDLER (PKL_AST_INCRDECR, pkl_trans2_ps_incrdecr),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_trans2_ps_type_offset),
+   PKL_PHASE_PS_HANDLER (PKL_AST_STRUCT_TYPE_FIELD, pkl_trans2_ps_struct_type_field),
   };
 
 
