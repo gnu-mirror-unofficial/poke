@@ -1,5 +1,9 @@
 2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (pk_print_version): Update copyright year.
+
+2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_pr_func): Add the name of the
 	function to its type.
 	* testsuite/poke.pkl/typeof-23.pk: New test.
