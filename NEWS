@@ -189,7 +189,7 @@ See the manual for detailed information.
     : (poke) [[1UB,2UB],[3UB,4UB]] as int
     : 0x1234
 
-    This nice feature has been contributed by Mohammad Reza-Nabipoor.
+    This nice feature has been contributed by Mohammad-Reza Nabipoor.
 
   - Poke programs can now sleep for a number of seconds and
     nanoseconds using the new built-in function =sleep=.  It has the
