@@ -1,5 +1,10 @@
 2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-ast.c (pkl_ast_make_offset): An offset value
+	is literal if the magnitude and unit are also literals.
+
+2022-01-23  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_struct): Postpone type
 	completion decision to `pkl_typify2_ps_type` phase.
 

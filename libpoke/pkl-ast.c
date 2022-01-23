@@ -1565,6 +1565,10 @@ pkl_ast_make_offset (pkl_ast ast,
   if (magnitude != NULL)
     PKL_AST_OFFSET_MAGNITUDE (offset) = ASTREF (magnitude);
   PKL_AST_OFFSET_UNIT (offset) = ASTREF (unit);
+  PKL_AST_LITERAL_P (offset)
+    = magnitude ? PKL_AST_LITERAL_P (PKL_AST_OFFSET_MAGNITUDE (offset))
+                    && PKL_AST_LITERAL_P (PKL_AST_OFFSET_UNIT (offset))
+                : 0;
 
   return offset;
 }
