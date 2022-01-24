@@ -146,7 +146,7 @@ print_type_decl (int kind,
 #define PREP_REGEXP_PAYLOAD                                             \
   do                                                                    \
     {                                                                   \
-      if (PK_CMD_ARG_STR (argv[1]) != '\0')                             \
+      if (PK_CMD_ARG_STR (argv[1]) != NULL)                             \
         {                                                               \
           if (regcomp (&regexp,                                         \
                        PK_CMD_ARG_STR (argv[1]),                        \

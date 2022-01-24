@@ -1,5 +1,10 @@
 2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poke/pk-cmd-def.c (PREP_REGEXP_PAYLOAD): Compare the string pointer
+	with NULL, not '\0'.
+
+2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* common/pk-utils.h (pk_print_binary): Add new param `use_suffix_p`.
 	(pk_format_binary): Likewise.
 	* common/pk-utils.c (pk_print_binary): Likewise.
