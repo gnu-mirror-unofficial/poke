@@ -1681,6 +1681,9 @@ EXTRA_DIST = \
   poke.pkl/printf-binary-2.pk \
   poke.pkl/printf-binary-3.pk \
   poke.pkl/printf-binary-4.pk \
+  poke.pkl/printf-binary-5.pk \
+  poke.pkl/printf-binary-6.pk \
+  poke.pkl/printf-binary-7.pk \
   poke.pkl/printf-class-1.pk \
   poke.pkl/printf-class-2.pk \
   poke.pkl/printf-class-3.pk \

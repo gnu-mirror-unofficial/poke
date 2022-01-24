@@ -3,19 +3,19 @@
 var eq = [
   format("") == "",
   format("%i1b", 0) == "0",
-  format("%i8b", 1) == "00000001B",
-  format("%i8b", -1) == "11111111B",
-  format("%u8b", 1) == "00000001UB",
-  format("%u8b", -1) == "11111111UB",
+  format("%i8b", 1) == "00000001",
+  format("%i8b", -1) == "11111111",
+  format("%u8b", 1) == "00000001",
+  format("%u8b", -1) == "11111111",
   format("%i13b", -1 as uint<64>) == "1" * 13,
-  format("%i16b", -1) == "1" * 16 + "H",
-  format("%i16b", 0xa5) == "0" * 8 + "10100101H",
-  format("%i16b", 0xa5) == "0" * 8 + "10100101H",
-  format("%u16b", 0xa5) == "0" * 8 + "10100101UH",
+  format("%i16b", -1) == "1" * 16,
+  format("%i16b", 0xa5) == "0" * 8 + "10100101",
+  format("%i16b", 0xa5) == "0" * 8 + "10100101",
+  format("%u16b", 0xa5) == "0" * 8 + "10100101",
   format("%i32b", 0xdeadbeaf) == "11011110101011011011111010101111",
   format("%u32b", 0xdeadbeaf) == "11011110101011011011111010101111",
   format("%u63b", -1 as uint<64>) == "1" * 63,
-  format("%u64b", -1 as uint<64>) == "1" * 64 + "UL",
+  format("%u64b", -1 as uint<64>) == "1" * 64,
 ];
 
 for (i in eq) printf ("%i32d", i); /* { dg-output "111111111111111" } */

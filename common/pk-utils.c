@@ -86,46 +86,50 @@ PK_POW (pk_upow, uint64_t)
 
 void
 pk_print_binary (void (*puts_fn) (const char *str),
-                 uint64_t val, int size, int sign)
+                 uint64_t val, int size, int sign_p, int use_suffix_p)
 {
   char b[65];
 
-  for (int z = 0; z < size; z++) {
+  for (int z = 0; z < size; z++)
     b[size-1-z] = ((val >> z) & 0x1) + '0';
-  }
   b[size] = '\0';
 
   puts_fn (b);
 
-  if (size == 64)
-    puts_fn (sign ? "L" : "UL");
-  else if (size == 16)
-    puts_fn (sign ? "H" : "UH");
-  else if (size == 8)
-    puts_fn (sign ? "B" : "UB");
-  else if (size == 4)
-    puts_fn (sign ? "N" : "UN");
+  if  (use_suffix_p)
+    {
+      if (size == 64)
+        puts_fn (sign_p ? "L" : "UL");
+      else if (size == 16)
+        puts_fn (sign_p ? "H" : "UH");
+      else if (size == 8)
+        puts_fn (sign_p ? "B" : "UB");
+      else if (size == 4)
+        puts_fn (sign_p ? "N" : "UN");
+    }
 }
 
 int
 pk_format_binary (char* out, size_t outlen,
-                  uint64_t val, int size, int sign)
+                  uint64_t val, int size, int sign_p, int use_suffix_p)
 {
   char b[64 /* digits */ + 2 /* suffix */ + 1 /* nul */];
 
-  for (int z = 0; z < size; z++) {
+  for (int z = 0; z < size; z++)
     b[size-1-z] = ((val >> z) & 0x1) + '0';
-  }
   b[size] = '\0';
 
-  if (size == 64)
-    strcat (b, sign ? "L" : "UL");
-  else if (size == 16)
-    strcat (b, sign ? "H" : "UH");
-  else if (size == 8)
-    strcat (b, sign ? "B" : "UB");
-  else if (size == 4)
-    strcat (b, sign ? "N" : "UN");
+  if (use_suffix_p)
+    {
+      if (size == 64)
+        strcat (b, sign_p ? "L" : "UL");
+      else if (size == 16)
+        strcat (b, sign_p ? "H" : "UH");
+      else if (size == 8)
+        strcat (b, sign_p ? "B" : "UB");
+      else if (size == 4)
+        strcat (b, sign_p ? "N" : "UN");
+    }
 
   if (strlen (b) < outlen)
     {

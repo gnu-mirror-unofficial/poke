@@ -48,11 +48,12 @@ int64_t pk_ipow (int64_t base, uint32_t exp);
 uint64_t pk_upow (uint64_t base, uint32_t exp);
 
 /* Print the given unsigned 64-bit integer in binary. */
-void pk_print_binary (void (*puts_fn) (const char *str), uint64_t val, int size, int sign);
+void pk_print_binary (void (*puts_fn) (const char *str), uint64_t val,
+                      int size, int sign_p, int use_suffix_p);
 
 /* Format the given unsigned 64-bit integer in binary. */
 int pk_format_binary (char* out, size_t outlen, uint64_t val, int size,
-                      int sign);
+                      int sign_p, int use_suffix_p);
 
 /* Concatenate string arguments into an malloc'ed string. */
 char *pk_str_concat (const char *s0, ...) __attribute__ ((sentinel));

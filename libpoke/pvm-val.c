@@ -1143,7 +1143,8 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       if (base == 2)
         {
           pk_puts ("0b");
-          pk_print_binary (pk_puts, ulongval, size, 1);
+          pk_print_binary (pk_puts, ulongval, size, /*signed_p*/ 1,
+                           /*use_suffix_p*/ 1);
         }
       else
         {
@@ -1172,7 +1173,8 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       if (base == 2)
         {
           pk_puts ("0b");
-          pk_print_binary (pk_puts, (uint64_t) uintval, size, 1);
+          pk_print_binary (pk_puts, (uint64_t) uintval, size, /*signed*/ 1,
+                           /*use_suffix_p*/ 1);
         }
       else
         {
@@ -1201,7 +1203,8 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       if (base == 2)
         {
           pk_puts ("0b");
-          pk_print_binary (pk_puts, ulongval, size, 0);
+          pk_print_binary (pk_puts, ulongval, size, /*signed_p*/ 0,
+                           /*use_suffix_p*/ 1);
         }
       else
         {
@@ -1223,7 +1226,8 @@ pvm_print_val_1 (pvm vm, int depth, int mode, int base, int indent,
       if (base == 2)
         {
           pk_puts ("0b");
-          pk_print_binary (pk_puts, uintval, size, 0);
+          pk_print_binary (pk_puts, uintval, size, /*signed_p*/ 0,
+                           /*use_suffix_p*/ 1);
         }
       else
         {

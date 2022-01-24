@@ -1,3 +1,20 @@
+2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* common/pk-utils.h (pk_print_binary): Add new param `use_suffix_p`.
+	(pk_format_binary): Likewise.
+	* common/pk-utils.c (pk_print_binary): Likewise.
+	(pk_format_binary): Likewise.
+	* libpoke/pvm-val.c (pvm_print_val_1): Update `pk_print_binary` usage.
+	* libpoke/pvm.jitter (PVM_PRINTI): Likewise.
+	(PVM_PRINTL): Likewise.
+	(PVM_FORMATI): Likewise.
+	(PVM_FORMATL): Likewise.
+	* testsuite/poke.pkl/format-1.pk: Update test to reflect new behavior.
+	* testsuite/poke.pkl/printf-binary-5.pk: New test.
+	* testsuite/poke.pkl/printf-binary-6.pk: Likewise.
+	* testsuite/poke.pkl/printf-binary-7.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-tab.y: Make `sizeof' and `typeof' calls primaries.
