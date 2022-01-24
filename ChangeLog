@@ -1,5 +1,9 @@
 2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poke/pk-cmd-set.c (pk_cmd_set): Use `PRId64` instead of `ld`.
+
+2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poke/pk-cmd-def.c (PREP_REGEXP_PAYLOAD): Compare the string pointer
 	with NULL, not '\0'.
 

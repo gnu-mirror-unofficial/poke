@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include "xalloc.h"
 
 #include "poke.h"
@@ -83,7 +84,7 @@ pk_cmd_set (int int_p,
         assert (0);
 
       if (int_p)
-        pk_printf ("%ld\n", pk_int_value (retval));
+        pk_printf ("%" PRId64 "\n", pk_int_value (retval));
       else
         pk_printf ("%s\n", pk_string_str (retval));
     }
