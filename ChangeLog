@@ -1,5 +1,10 @@
 2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-table.pk: New field `indent'.
+	(Pk_Table.print_table): Use `indent'.
+
+2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (pk_print_version): Update copyright year.
 
 2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
