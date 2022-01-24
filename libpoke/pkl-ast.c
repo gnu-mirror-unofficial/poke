@@ -1372,7 +1372,7 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
       {
         pkl_ast_node bound = PKL_AST_TYPE_A_BOUND (type);
 
-        pkl_type_append_to (PKL_AST_TYPE_A_ETYPE (type), use_given_name,
+        pkl_type_append_to (PKL_AST_TYPE_A_ETYPE (type), 1,
                             buffer);
         sb_append (buffer, "[");
         if (bound != NULL)
@@ -1403,7 +1403,7 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
                 pkl_ast_node ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
                 pkl_ast_node etype = PKL_AST_STRUCT_TYPE_FIELD_TYPE (t);
 
-                pkl_type_append_to (etype, use_given_name, buffer);
+                pkl_type_append_to (etype, 1, buffer);
                 if (ename)
                   {
                     sb_append (buffer, " ");
@@ -1435,14 +1435,14 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
               {
                 if (t != PKL_AST_TYPE_F_ARGS (type))
                   sb_append (buffer, ",");
-                pkl_type_append_to (atype, use_given_name, buffer);
+                pkl_type_append_to (atype, 1, buffer);
                 if (PKL_AST_FUNC_TYPE_ARG_OPTIONAL (t))
                   sb_append (buffer, "?");
               }
           }
         sb_append (buffer, ")");
 
-        pkl_type_append_to (PKL_AST_TYPE_F_RTYPE (type), use_given_name,
+        pkl_type_append_to (PKL_AST_TYPE_F_RTYPE (type), 1,
                             buffer);
         break;
       }
@@ -1451,12 +1451,12 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
         pkl_ast_node unit = PKL_AST_TYPE_O_UNIT (type);
 
         sb_append (buffer, "offset<");
-        pkl_type_append_to (PKL_AST_TYPE_O_BASE_TYPE (type), use_given_name,
+        pkl_type_append_to (PKL_AST_TYPE_O_BASE_TYPE (type), 1,
                             buffer);
         sb_append (buffer, ",");
 
         if (PKL_AST_CODE (unit) == PKL_AST_TYPE)
-          pkl_type_append_to (unit, use_given_name, buffer);
+          pkl_type_append_to (unit, 1, buffer);
         else if (PKL_AST_CODE (unit) == PKL_AST_IDENTIFIER)
           sb_append (buffer, PKL_AST_IDENTIFIER_POINTER (unit));
         else if (PKL_AST_CODE (unit) == PKL_AST_INTEGER)
