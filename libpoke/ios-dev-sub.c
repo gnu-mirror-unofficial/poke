@@ -59,7 +59,10 @@ ios_dev_sub_handler_normalize (const char *handler, uint64_t flags, int* error)
     {
       new_handler = strdup (handler);
       if (new_handler == NULL && error)
-        *error = IOD_ENOMEM;
+        {
+          *error = IOD_ENOMEM;
+          return NULL;
+        }
     }
 
   if (error)
