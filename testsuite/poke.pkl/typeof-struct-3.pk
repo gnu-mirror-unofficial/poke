@@ -14,9 +14,13 @@ var t = typeof (Foo);
 /* { dg-output "\n1" } */
 /* { dg-command { t.size } } */
 /* { dg-output "\n23UL" } */
-/* { dg-command { t.fields'length } } */
-/* { dg-output "\n1UL" } */
-/* { dg-command { t.fields[0] == "i" } } */
+/* { dg-command { t.nfields } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.methods'length } } */
-/* { dg-output "\n0UL" } */
+/* { dg-command { t.nmethods } } */
+/* { dg-output "\n0" } */
+/* { dg-command { t.fnames'length } } */
+/* { dg-output "\n1UL" } */
+/* { dg-command { t.fnames[0] == "i" } } */
+/* { dg-output "\n1" } */
+/* { dg-command { t.ftypes[0] == "int<23>" } } */
+/* { dg-output "\n1" } */

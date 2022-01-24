@@ -39,6 +39,7 @@ type Pk_Table =
    int num_columns;
    int next_column_index;
    int indent;
+   int max_column_size;
    int[num_columns] column_widths;
    Pk_Table_Row[] rows;
 
@@ -95,7 +96,11 @@ type Pk_Table =
            term_begin_hyperlink (entry.hyperlink);
 
          print " " * indent;
-         print entry.str;
+         if (max_column_size == 0 || entry.str'length < max_column_size)
+           print entry.str;
+         else
+           for (var i = 0; i < max_column_size; ++i)
+             print entry.str[i] as string;
 
          if (entry.hyperlink != "")
            term_end_hyperlink;

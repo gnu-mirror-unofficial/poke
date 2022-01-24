@@ -2165,7 +2165,7 @@ EXTRA_DIST = \
   poke.pkl/typeof-struct-1.pk \
   poke.pkl/typeof-struct-2.pk \
   poke.pkl/typeof-struct-3.pk \
-  poke.pkl/typeof-structs-4.pk \
+  poke.pkl/typeof-struct-4.pk \
   poke.pkl/union-1.pk \
   poke.pkl/union-diag-1.pk \
   poke.pkl/union-diag-2.pk \

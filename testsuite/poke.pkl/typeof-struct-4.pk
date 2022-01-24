@@ -14,13 +14,17 @@ var t = typeof (Foo);
 /* { dg-output "\n1" } */
 /* { dg-command { t.size } } */
 /* { dg-output "\n23UL" } */
-/* { dg-command { t.fields'length } } */
+/* { dg-command { t.fnames'length } } */
 /* { dg-output "\n2UL" } */
-/* { dg-command { t.fields[0] == "a" } } */
+/* { dg-command { t.fnames[0] == "a" } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.fields[1] == "b" } } */
+/* { dg-command { t.fnames[1] == "b" } } */
 /* { dg-output "\n1" } */
-/* { dg-command { t.methods'length } } */
+/* { dg-command { t.nmethods } } */
+/* { dg-output "\n1" } */
+/* { dg-command { t.mnames'length } } */
 /* { dg-output "\n1UL" } */
-/* { dg-command { t.methods[0] == "jorl" } } */
+/* { dg-command { t.mnames[0] == "jorl" } } */
+/* { dg-output "\n1" } */
+/* { dg-command { t.mtypes[0] == "()void" } } */
 /* { dg-output "\n1" } */

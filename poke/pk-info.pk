@@ -30,14 +30,14 @@ fun pk_info_type = (Pk_Type typ) void:
     {
       table.row;
       table.column ("Name:");
-      table.column ("\"" + typ.name + "\"", "string");
+      table.column (typ.name, "string");
     }
     table.row;
     table.column ("Complete:");
     table.column (typ.complete_p ? "yes" : "no", "setting-boolean");
   }
 
-  var table = Pk_Table { num_columns = 2 };
+  var table = Pk_Table { num_columns = 2, max_column_size = 80 };
 
   if (typ.code == PK_TYPE_INTEGRAL)
   {
@@ -100,18 +100,38 @@ fun pk_info_type = (Pk_Type typ) void:
   /* Some kind of types need to print additional info.  */
   if (typ.code == PK_TYPE_STRUCT)
   {
-    if (typ.fields'length > 0)
+    if (typ.nfields > 0)
     {
       print "Fields:\n";
-      for (name in typ.fields)
-        print "  " + name + "\n";
+      var table = Pk_Table { num_columns = 2, indent = 2, max_column_size = 80 };
+
+      table.row ("table-header");
+      table.column ("Name");
+      table.column ("Type");
+      for (var i = 0; i < typ.nfields; ++i)
+      {
+        table.row;
+        table.column (typ.fnames[i]);
+        table.column (typ.ftypes[i]);
+      }
+      table.print_table;
     }
 
-    if (typ.methods'length > 0)
+    if (typ.nmethods > 0)
     {
       print "Methods:\n";
-      for (name in typ.methods)
-        print "  " + name + "\n";
+      var table = Pk_Table { num_columns = 2, indent = 2, max_column_size = 80 };
+
+      table.row ("table-header");
+      table.column ("Name");
+      table.column ("Type");
+      for (var i = 0; i < typ.nmethods; ++i)
+      {
+        table.row;
+        table.column (typ.mnames[i]);
+        table.column (typ.mtypes[i]);
+      }
+      table.print_table;
     }
   }
 }

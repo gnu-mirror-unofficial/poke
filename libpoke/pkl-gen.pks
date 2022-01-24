@@ -3697,9 +3697,13 @@
         pec
         sset
   .c }
-        ;; Now add field entries.  At the moment these are just the
-        ;; names of the fields.
-        push "fields"
+        ;; Number of fields.
+        .let #nfields = pvm_make_int (PKL_AST_TYPE_S_NFIELD (@type), 32)
+        push "nfields"
+        push #nfields
+        sset
+        ;; Field names.
+        push "fnames"
         sref
         nip                     ; SCT(Type) SCT(sct) ARR
         .let @field
@@ -3709,28 +3713,44 @@
  .c {
  .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
  .c       continue;
-        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
- .c     if (@field_name)
- .c     {
+        .let @field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field)
         .let #field_name_str \
-          = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (@field_name))
+          = pvm_make_string (@field_name ? PKL_AST_IDENTIFIER_POINTER (@field_name) : "")
         sel                     ; ... ARR SEL
         push #field_name_str    ; ... ARR SEL STR
         ains                    ; ... ARR
- .c     }
  .c }
         drop                    ; SCT(Type) SCT(sct)
-        ;; Now add method entries.  At the moment these are just the
-        ;; names of the methods.
-        push "methods"
+        ;; Field types.
+        push "ftypes"
+        sref
+        nip                     ; SCT(Type) SCT(sct) ARR
+ .c for (@field = PKL_AST_TYPE_S_ELEMS (@type);
+ .c      @field;
+ .c      @field = PKL_AST_CHAIN (@field))
+ .c {
+ .c     if (PKL_AST_CODE (@field) != PKL_AST_STRUCT_TYPE_FIELD)
+ .c       continue;
+        .let @field_type = PKL_AST_STRUCT_TYPE_FIELD_TYPE (@field)
+        .let #field_type_str \
+          = pvm_make_string (pkl_type_str (@field_type, 1 /* use given name */))
+        sel                     ; ... ARR SEL
+        push #field_type_str    ; ... ARR SEL STR
+        ains                    ; ... ARR
+ .c }
+        drop                    ; SCT(Type) SCT(sct)
+        ;; Methods names.
+        push "mnames"
         sref
         nip                     ; SCT(Type) SCT(sct) ARR
         .let @method
- .c for (@method = PKL_AST_TYPE_S_ELEMS (@type);
+ .c     int nmethods;
+ .c for (nmethods = 0, @method = PKL_AST_TYPE_S_ELEMS (@type);
  .c      @method;
  .c      @method = PKL_AST_CHAIN (@method))
  .c {
  .c   if (PKL_AST_CODE (@method) != PKL_AST_DECL
+ .c       || PKL_AST_DECL_KIND (@method) != PKL_AST_DECL_KIND_FUNC
  .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@method)))
  .c     continue;
         .let @decl_name = PKL_AST_DECL_NAME (@method)
@@ -3738,7 +3758,32 @@
         sel                     ; ... ARR SEL
         push #name_str          ; ... ARR SEL STR
         ains                    ; ... ARR
+ .c     nmethods++;
  .c }
-        drop                    ; SCT(Type)
+        drop                    ; SCT(Type) SCT(sct)
+        ;; Method types.
+        push "mtypes"
+        sref
+        nip                     ; SCT(Type) SCT(sct) ARR
+ .c for (@method = PKL_AST_TYPE_S_ELEMS (@type);
+ .c      @method;
+ .c      @method = PKL_AST_CHAIN (@method))
+ .c {
+ .c   if (PKL_AST_CODE (@method) != PKL_AST_DECL
+ .c       || !PKL_AST_FUNC_METHOD_P (PKL_AST_DECL_INITIAL (@method)))
+ .c     continue;
+        .let @closure = PKL_AST_DECL_INITIAL (@method)
+        .let @closure_type = PKL_AST_TYPE (@closure)
+        .let #type_str = pvm_make_string (@closure_type ? pkl_type_str (@closure_type, 0) : "")
+        sel                     ; ... ARR SEL
+        push #type_str          ; ... ARR SEL STR
+        ains                    ; ... ARR
+ .c }
+        drop
+        ;; Number of methods.
+        .let #nmethods = pvm_make_int (nmethods, 32)
+        push "nmethods"
+        push #nmethods
+        sset
         return
         .end

@@ -451,8 +451,12 @@ type Pk_Type =
     int<32> union_p     if code == PK_TYPE_STRUCT;
     int<32> pinned_p    if code == PK_TYPE_STRUCT;
     int<32> integral_p  if code == PK_TYPE_STRUCT;
-    string[] fields     if code == PK_TYPE_STRUCT;
-    string[] methods    if code == PK_TYPE_STRUCT;
+    int<32> nfields     if code == PK_TYPE_STRUCT;
+    int<32> nmethods    if code == PK_TYPE_STRUCT;
+    string[] fnames     if code == PK_TYPE_STRUCT;
+    string[] ftypes     if code == PK_TYPE_STRUCT;
+    string[] mnames     if code == PK_TYPE_STRUCT;
+    string[] mtypes     if code == PK_TYPE_STRUCT;
 
     type Mapper_Fn = (int<32>,int<32>,uint<64>,uint<64>,uint<64>)any;
 

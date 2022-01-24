@@ -1,5 +1,22 @@
 2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-table.pk (Pk_Table): New field max_column_size;
+	* poke/pk-cmd-def.c (pk_cmd_info_type): Call exception handler for
+	pk_compile_statement.
+	* libpoke/pkl-rt.pk: New fields `nfields' and `ftypes'.
+	Rename `fields' to `fnames'.
+	* libpoke/pkl-gen.pks (struct_typifier): Adapt accordingly.
+	* testsuite/poke.pkl/typeof-struct-1.pk: Update test.
+	* testsuite/poke.pkl/typeof-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-structs-4.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-1.pk: Update test.
+	* testsuite/poke.pkl/typeof-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/typeof-struct-3.pk: Likewise.
+	* testsuite/poke.pkl/typeof-structs-4.pk: Likewise.
+
+2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-ast.c (pkl_type_append_to): Print `union' for
 	unions, and not `struct'.
 

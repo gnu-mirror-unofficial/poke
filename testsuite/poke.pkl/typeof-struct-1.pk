@@ -14,7 +14,9 @@ var t = typeof (Foo);
 /* { dg-output "\n0" } */
 /* { dg-command { t.size } } */
 /* { dg-output "\n0UL" } */
-/* { dg-command { t.fields'length } } */
-/* { dg-output "\n0UL" } */
-/* { dg-command { t.methods'length } } */
+/* { dg-command { t.nfields } } */
+/* { dg-output "\n0" } */
+/* { dg-command { t.nmethods } } */
+/* { dg-output "\n0" } */
+/* { dg-command { t.mnames'length } } */
 /* { dg-output "\n0UL" } */
