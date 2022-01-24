@@ -3400,7 +3400,6 @@
 .type_ok:
         drop
         swap
-        strace 0
         ;; Call the formater.
         .let #formater = PKL_AST_TYPE_CODE (@type) == PKL_TYPE_ARRAY \
                        ? PKL_AST_TYPE_A_FORMATER (@type) \
