@@ -1,3 +1,7 @@
+2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: Make `sizeof' and `typeof' calls primaries.
+
 2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/ios-dev-sub.c (ios_dev_sub_handler_normalize): Fix error

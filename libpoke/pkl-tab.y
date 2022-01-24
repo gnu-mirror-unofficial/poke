@@ -779,21 +779,6 @@ expression:
                                                $1, $2);
                   PKL_AST_LOC ($$) = @1;
                 }
-        | SIZEOF '(' simple_type_specifier ')' %prec HYPERUNARY
-                {
-                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_SIZEOF, $3);
-                  PKL_AST_LOC ($$) = @1;
-                }
-        | TYPEOF '(' expression ')' %prec HYPERUNARY
-                {
-                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_TYPEOF, $3);
-                  PKL_AST_LOC ($$) = @1;
-                }
-        | TYPEOF '(' simple_type_specifier ')' %prec HYPERUNARY
-                {
-                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_TYPEOF, $3);
-                  PKL_AST_LOC ($$) = @1;
-                }
         | expression ATTR
                 {
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_ATTR,
@@ -1236,6 +1221,21 @@ primary:
                   $$ = pkl_ast_make_incrdecr (pkl_parser->ast, $1,
                                               PKL_AST_ORDER_POST, PKL_AST_SIGN_DECR);
                   PKL_AST_LOC ($$) = @$;
+                }
+        | TYPEOF '(' expression ')' %prec HYPERUNARY
+                {
+                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_TYPEOF, $3);
+                  PKL_AST_LOC ($$) = @1;
+                }
+        | TYPEOF '(' simple_type_specifier ')' %prec HYPERUNARY
+                {
+                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_TYPEOF, $3);
+                  PKL_AST_LOC ($$) = @1;
+                }
+        | SIZEOF '(' simple_type_specifier ')' %prec HYPERUNARY
+                {
+                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_SIZEOF, $3);
+                  PKL_AST_LOC ($$) = @1;
                 }
         ;
 
