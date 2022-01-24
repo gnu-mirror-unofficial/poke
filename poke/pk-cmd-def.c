@@ -120,6 +120,7 @@ print_type_decl (int kind,
 
   pk_table_row (table);
 
+#if HAVE_HSERVER
   /* Emit an hyperlink to execute `.info type NAME'.  */
   {
     char *cmd;
@@ -132,6 +133,9 @@ print_type_decl (int kind,
     pk_table_column_hl (table, name, hyperlink);
     free (hyperlink);
   }
+#else
+  pk_table_column (table, name);
+#endif
 
   if (source)
     asprintf (&source_str, "%s:%d",

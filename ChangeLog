@@ -1,3 +1,7 @@
+2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-def.c (print_type_decl): Honour HAVE_HSERVER.
+
 2022-01-24  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poke/pk-cmd-set.c (pk_cmd_set): Use `PRId64` instead of `ld`.
