@@ -59,17 +59,21 @@ pk_cmd_vm_disas_fun (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   int ret;
   const char *expr;
   pk_val cls;
+  pk_val exit_exception;
 
   assert (argc == 2);
   assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
 
   expr = PK_CMD_ARG_STR (argv[1]);
-  ret = pk_compile_expression (poke_compiler, expr, NULL, &cls, NULL);
-
+  ret = pk_compile_expression (poke_compiler, expr, NULL, &cls,
+                               &exit_exception);
   if (ret != PK_OK)
     /* The compiler has already printed diagnostics in the
        terminal.  */
     return 0;
+
+  if (exit_exception != PK_NULL)
+    poke_handle_exception (exit_exception);
 
   ret = pk_disassemble_function_val (poke_compiler, cls,
                                      uflags & PK_VM_DIS_F_NAT);

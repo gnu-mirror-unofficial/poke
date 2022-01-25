@@ -1,3 +1,14 @@
+2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd.c (pk_cmd_exec): Likewise.
+	* poke/pk-cmd-def.c (pk_cmd_info_type): Likewise.
+	* poke/pk-cmd-ios.c (pk_cmd_load_file): Likewise.
+	* poke/pk-cmd-vm.c (pk_cmd_vm_disas_fun): Likewise.
+
+	* poke/poke.h: Prototype for poke_handle_exception.
+	* poke/poke.c (poke_handle_exception): New function.
+	(parse_args_2): Use poke_handle_exception.
+
 2022-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-def.c (print_type_decl): Honour HAVE_HSERVER.

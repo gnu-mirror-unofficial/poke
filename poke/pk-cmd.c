@@ -677,15 +677,7 @@ pk_cmd_exec (const char *str)
          an unhandled exception (this may include E_exit) then call
          the poke default handler.  */
       if (exit_exception != PK_NULL)
-        {
-          pk_val default_handler
-            = pk_decl_val (poke_compiler, "pk_exception_handler");
-
-          assert (default_handler != PK_NULL);
-          if (pk_call (poke_compiler, default_handler, NULL,
-                       1, exit_exception) == PK_ERROR)
-            assert (0);
-        }
+        poke_handle_exception (exit_exception);
 
     cleanup:
       free (cmd_alloc);

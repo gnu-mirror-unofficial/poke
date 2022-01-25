@@ -50,6 +50,8 @@ const char *pk_var_string (const char *name);
 void pk_print_version (int hand_p);
 void pk_fatal (const char *errmsg) __attribute__ ((noreturn));
 
+void poke_handle_exception (pk_val exception);
+
 static inline void
 pk_assert_alloc (const void *m)
 {

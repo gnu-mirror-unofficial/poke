@@ -445,16 +445,7 @@ parse_args_2 (int argc, char *argv[])
             if (pk_compile_file (poke_compiler, optarg, &exception) != PK_OK)
               goto exit_success;
             if (exception != PK_NULL)
-              {
-                pk_val default_handler
-                  = pk_decl_val (poke_compiler, "pk_exception_handler");
-
-                assert (default_handler != PK_NULL);
-                if (pk_call (poke_compiler, default_handler, NULL,
-                             1, exception) == PK_ERROR)
-                  assert (0);
-                goto exit_success;
-              }
+              poke_handle_exception (exception);
             break;
           }
         case 'c':
@@ -484,9 +475,12 @@ parse_args_2 (int argc, char *argv[])
             if (pk_compile_file (poke_compiler, optarg, &exception) != PK_OK)
               goto exit_failure;
             if (exception != PK_NULL)
-              exit_status
-                = pk_int_value (pk_struct_ref_field_value (exception,
-                                                           "exit_status"));
+              {
+                poke_handle_exception (exception);
+                exit_status
+                  = pk_int_value (pk_struct_ref_field_value (exception,
+                                                             "exit_status"));
+              }
 
             finalize ();
             exit (exit_status);
@@ -750,6 +744,16 @@ initialize_user (void)
 
     free (config_path);
   }
+}
+
+void
+poke_handle_exception (pk_val exception)
+{
+  pk_val handler = pk_decl_val (poke_compiler, "pk_exception_handler");
+
+  assert (handler != PK_NULL);
+  if (pk_call (poke_compiler, handler, NULL, 1, exception) == PK_ERROR)
+    assert (0);
 }
 
 void

@@ -264,10 +264,11 @@ pk_cmd_info_type (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      pass the resulting Pk_Type to pk_info_type.  */
   {
     char *stmt = NULL;
+    pk_val exit_exception = PK_NULL;
 
     asprintf (&stmt, "pk_info_type (typeof (%s));", name);
     if (pk_compile_statement (poke_compiler, stmt, NULL, NULL,
-                              NULL) != PK_OK)
+                              &exit_exception) != PK_OK)
       {
         pk_puts ("internal error: executing pk_info_type in pk_cmd_info_type."
                  "  Please report this.\n");
@@ -275,6 +276,9 @@ pk_cmd_info_type (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
         return 0;
       }
     free (stmt);
+
+    if (exit_exception != PK_NULL)
+      poke_handle_exception (exit_exception);
   }
 
   return 1;
