@@ -1,3 +1,8 @@
+2022-01-25  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* libpoke/ios-dev-file.c (ios_dev_file_open): Do not create files
+	if no flags are specified.
+
 2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/hacking.org (What not to use in Jitter instructions): New

@@ -128,18 +128,28 @@ ios_dev_file_open (const char *handler, uint64_t flags, int *error,
       /* Try read-write initially.
          If that fails, then try read-only.
          If that fails, then try write-only.  */
-      f = fopen (handler, "r+b");
+      const char *mode_for_fdopen;
+
+      fd = open (handler, O_RDWR, 0);
       flags |= (IOS_F_READ | IOS_F_WRITE);
-      if (!f)
+      mode_for_fdopen = "r+b";
+      if (fd == -1)
         {
-          f = fopen (handler, "rb");
-          flags &= ~IOS_F_WRITE;
+          fd = open (handler, O_RDONLY, 0);
+          if (fd != -1)
+            flags &= ~IOS_F_WRITE;
+          mode_for_fdopen = "rb";
         }
-      if (!f)
+      if (fd == -1)
         {
-          f = fopen (handler, "w");
-          flags = IOS_F_WRITE;
+          fd = open (handler, O_WRONLY, 0);
+          if (fd != -1)
+            flags &= ~IOS_F_READ;
+          mode_for_fdopen = "wb";
         }
+      if (fd == -1)
+        goto err;
+      f = fdopen (fd, mode_for_fdopen);
     }
 
   if (!f)
