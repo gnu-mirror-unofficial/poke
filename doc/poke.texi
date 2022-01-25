@@ -4513,6 +4513,124 @@ manipulate ELF files, for example, all you have to do is to:
 (poke) load elf
 @end example
 
+@subsection Exploring Pickles
+
+As we have seen, a pickle provides Poke variables, types and functions
+related to some definite domain.  Let's say we are interested in
+editing an ELF file.  We know that GNU poke comes with a pre-installed
+pickle named @file{elf.pk}.  We can load it like this:
+
+@example
+(poke) load elf
+@end example
+
+By convention, the entities provided by a pickle @file{foo.pk} are
+usually prefixed like:
+
+@itemize @minus
+@item
+Variables, units and functions are prefixed with @code{foo_}.
+@item
+Types are prefixed with @code{Foo_}.
+@end itemize
+
+@noindent
+Therefore, once the pickle is loaded we can use the @command{.info}
+dot-command in order to get a glimpse of the functionality provided by
+the pickle. @xref{info command}.  Example:
+
+@example
+(poke) .info variables elf
+Name            Declared at
+elf_stb_names   elf-common.pk:53
+elf_stt_names   elf-common.pk:72
+elf_stv_names   elf-common.pk:84
+@end example
+
+@noindent
+The above tells us that the @file{elf.pk} pickle provides these three
+variables.  Types are way more interesting:
+
+@example
+(poke) .info types Elf64
+Name                 Declared at
+Elf64_Ehdr           elf-64.pk:184
+Elf64_Off            elf-64.pk:26
+Elf64_SectionFlags   elf-64.pk:130
+Elf64_Shdr           elf-64.pk:152
+Elf64_RelInfo        elf-64.pk:36
+Elf64_Chdr           elf-64.pk:85
+Elf64_Rela           elf-64.pk:61
+Elf64_Phdr           elf-64.pk:169
+Elf64_Sxword         elf-64.pk:24
+Elf64_Sym            elf-64.pk:71
+Elf64_Rel            elf-64.pk:45
+Elf64_File           elf-64.pk:207
+Elf64_Addr           elf-64.pk:25
+Elf64_Group          elf-64.pk:121
+Elf64_Dyn            elf-64.pk:98
+Elf64_Xword          elf-64.pk:23
+@end example
+
+@noindent
+We immediately notice the @code{Elf64_File}.  Looks like what we would
+need to map in order to access the entire ELF data in some given IO
+space (like a file.)  We can ask for more details about it:
+
+@example
+(poke) .info type Elf64_File
+Class:      struct
+Name:       Elf64_File
+Complete:   no
+Fields:
+  Name     Type
+  ehdr     Elf64_Ehdr
+  shdr     Elf64_Shdr[]
+  phdr     Elf64_Phdr[]
+Methods:
+  Name                     Type
+  get_section_name         (offset<Elf_Word,8>)string
+  get_symbol_name          (Elf64_Shdr,,offset<Elf_Word,8>)string
+  get_sections_by_name     (string)Elf64_Shdr[]
+  get_sections_by_type     (Elf_Word)Elf64_Shdr[]
+  section_name_p           (string)int
+  get_string               (offset<Elf_Word,8>)string
+  get_group_signature      (Elf64_Shdr)string
+  get_group_signatures     ()string[]
+  get_section_group        (string)Elf64_Shdr[]
+@end example
+
+@noindent
+We see that an @code{Elf64_File} has three fields, and the nature of
+these files: a header @code{ehdr}, an array of section headers
+@code{shdr} and an array of program headers @code{phdr}.
+
+The type description above also lists the methods defined in the type.
+Looking at the method name and its type is very usually revealing
+enough to use it.  For example, we see that
+@code{get_sections_by_name} returns an array of section headers,
+characterized by some given section name:
+
+@example
+(poke) var elf = Elf64_File @@ 0#B
+(poke) elf.get_sections_by_name (".text")
+[Elf64_Shdr @{
+  sh_name=0x1bU#B,
+  sh_type=0x1U,
+  sh_flags=#<ALLOC,EXECINSTR>,
+  sh_addr=0x0UL#B,
+  sh_offset=0x40UL#B,
+  sh_size=0xbUL#B,
+  sh_link=0x0U,
+  sh_info=0x0U,
+  sh_addralign=0x1UL,
+  sh_entsize=0x0UL#b
+@}]
+@end example
+
+Ultimately, of course the best way to see what a pickle provides is to
+go read its source code.
+
 @subsection Startup
 
 When poke starts it loads the file @file{.pokerc} located in our home
@@ -8470,17 +8588,19 @@ The current file is now `foo.o'.
   #0	FILE	rw	0x00000000#B	0x00000022#B	foo.bson
 @end example
 
-@item .info variables
+@item .info variables [@var{regexp}]
 @cindex variables
 Shows a list of defined variables along with their current values and
 the location where the variables were defined. If a regular expression
 is provided then only the types whose name match the expression are
-listed.
-@item .info functions
+listed.  If a regular expression is provided then only the types whose
+name match the expression are listed.
+@item .info functions [@var{regexp}]
 Shows a list of defined functions along with their prototypes and the
 location where the functions were defined.  If a regular expression is
 provided then only the types whose name match the expression are
-listed.
+listed.  If a regular expression is provided then only the types whose
+name match the expression are listed.
 @item .info types [@var{regexp}]
 Shows a list of defined types along with the locations where the types
 were defined.  If a regular expression is provided then only the types
