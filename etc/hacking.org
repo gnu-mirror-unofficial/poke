@@ -1380,6 +1380,35 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    Whenever an offset is needed in some internal PVM structure, use
    bit-offsets instead encoded as =ulong<64>= values.
 
+** Writing relocatable instructions
+
+   When operating in non-threaded mode, Jitter likes to move the code
+   compiled for instruction bodies around.  This imposes several
+   restrictions on what can you have in the instruction bodies:
+
+   - If you call a global function from your instruction, please add
+     it to the =wrapped-functions= section in the file.
+
+   - Likewise, if you use a global variable, please add the variable
+     to the =wrapped-globals= section.
+
+   - Do not use any constant C string like ="foo"=; these are global
+     variables in disguise and you cannot wrap them unless you give
+     them a name.
+
+   If you cannot follow the guidelines above for whatever reason,
+   please mark the instruction as =non-relocatable= like this:
+
+   : instruction foo ()
+   :   non-relocatable
+   :   code
+   :     ...
+   :   end
+   : end
+
+   This will prevent Jitter to relocate the instruction body and crash
+   in many platforms and non-threading modes.
+
 * Memory Management
 
   Different parts of poke use different strategies for memory

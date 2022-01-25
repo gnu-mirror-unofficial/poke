@@ -1,5 +1,10 @@
 2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/hacking.org (What not to use in Jitter instructions): New
+	section.
+
+2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-table.pk (Pk_Table): New field max_column_size;
 	* poke/pk-cmd-def.c (pk_cmd_info_type): Call exception handler for
 	pk_compile_statement.
