@@ -1393,7 +1393,10 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
       {
         pkl_ast_node t;
 
-        sb_append (buffer, "struct {");
+        if (PKL_AST_TYPE_S_UNION_P (type))
+          sb_append (buffer, "union {");
+        else
+          sb_append (buffer, "struct {");
 
         for (t = PKL_AST_TYPE_S_ELEMS (type); t;
              t = PKL_AST_CHAIN (t))

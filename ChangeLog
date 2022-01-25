@@ -1,5 +1,10 @@
 2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-ast.c (pkl_type_append_to): Print `union' for
+	unions, and not `struct'.
+
+2022-01-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd.c (pk_cmd_exec): Likewise.
 	* poke/pk-cmd-def.c (pk_cmd_info_type): Likewise.
 	* poke/pk-cmd-ios.c (pk_cmd_load_file): Likewise.
