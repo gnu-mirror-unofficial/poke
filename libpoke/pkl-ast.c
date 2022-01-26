@@ -1436,8 +1436,6 @@ pkl_type_append_to (pkl_ast_node type, int use_given_name,
               sb_append (buffer, "...");
             else
               {
-                if (t != PKL_AST_TYPE_F_ARGS (type))
-                  sb_append (buffer, ",");
                 pkl_type_append_to (atype, 1, buffer);
                 if (PKL_AST_FUNC_TYPE_ARG_OPTIONAL (t))
                   sb_append (buffer, "?");
