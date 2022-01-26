@@ -1,3 +1,8 @@
+2022-01-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/hacking.org (Wrapping globals): Clarify the role of
+	etc/pvm-wraps-whitelist and etc/pvm-wraps-static-whitelist.
+
 2022-01-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pvm-wraps-static-whitelist: New file.

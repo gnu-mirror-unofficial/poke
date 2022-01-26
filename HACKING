@@ -1802,8 +1802,19 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
   hundred of instructions, we are providing a syntax-check that looks
   for this automatically.
 
-  There is a whitelist for symbols that this syntax-check rule uses, in
-  the file `etc/pvm-wraps-whitelist'.
+  In order to avoid false positives, there are two files that we
+  maintain by hand:
+
+  - `etc/pvm-wraps-whitelist' contains a list of _global_ symbols that
+    are used in pvm.jitter but are not required to be listed in neither
+    `wrapped-function' nor `wrapped-globals'.  These are variables and
+    functions that, despite being global and undefined, are not used
+    _within_ PVM instructions.
+  - `etc/pvm-wraps-static-whitelist' contains a list of _static_ symbols
+    that are defined in pvm.jitter and also listed in either
+    `wrapped-functions' or `wrapped-globals'.  This includes for example
+    the `pvm_*' wrappers we define in the file, to be used in PVM
+    instructions.
 
 
 13 Memory Management
