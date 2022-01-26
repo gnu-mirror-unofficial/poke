@@ -1,5 +1,9 @@
 2022-01-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (String Formatting): New section.
+
+2022-01-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* cfg.mk (sc_pvm_wrappers): Use symbol whitelist.
 	* etc/pvm-wraps-whitelist: New file.
 	* etc/hacking.org (Wrapping globals): New section.

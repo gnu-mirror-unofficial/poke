@@ -9790,6 +9790,7 @@ The standard library provides functions which process strings.
 * String Indexing::		Accessing the characters of a string.
 * String Concatenation::        Building new strings.
 * String Attributes::           Accessing properties of string values.
+* String Formatting::           Composing strings from values.
 @end menu
 
 @node String Literals
@@ -9940,6 +9941,32 @@ includes the terminating null.  Examples:
 @item mapped
 Always 0 for strings.  (@pxref{Mapping}).
 @end table
+
+@node String Formatting
+@subsection String Formatting
+@cindex strings, formatting
+
+Poke provides a built-in function @code{format} that can be used in
+order to format, or build, a string value that is derived from a set
+of zero or more Poke values:
+
+@example
+format (@var{fmt}[, @var{value}@dots{}])
+@end example
+
+@noindent
+Where @var{fmt} is a format string that interpreted verbatim but for
+predefined @dfn{format tags} which start with @code{%}.  These format
+tags are interpreted especially.  @xref{printf}.
+
+Example:
+
+@example
+var s = format ("Age is %i32d.", 66);
+@end example
+
+@noindent
+The value of the variable @code{s} is @code{"Age is 66."}.
 
 @node Arrays
 @section Arrays
