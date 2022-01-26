@@ -1,3 +1,8 @@
+2022-01-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pvm-wraps-static-whitelist: New file.
+	* cfg.mk (sc_pvm_wrappers): Use etc/pvm-wraps-static-whitelist.
+
 2022-01-26  Jan Seeger  <jan.seeger@thenybble.de>
 
 	* pickles/elf-common.pk (elf_hash): New function.

@@ -61,7 +61,7 @@ sc_pvm_wrappers:
            | sort | uniq | grep -Fvxf $(top_srcdir)/etc/pvm-wraps-whitelist > globals-list
 	@awk '/^wrapped-functions/,/^end/ { print $$1; } /^wrapped-globals/,/^end/ { print $$1; }' $(top_srcdir)/libpoke/pvm.jitter \
            | sort | uniq | grep -v wrapped-functions | grep -v wrapped-globals \
-           | grep -v end > wrapped-list
+           | grep -v end | grep -Fvxf $(top_srcdir)/etc/pvm-wraps-static-whitelist > wrapped-list
 	@cmp -s globals-list wrapped-list || \
           { diff -u globals-list wrapped-list; \
             msg='found non-wrapped globals in pvm.jitter' $(_sc_say_and_exit) }
