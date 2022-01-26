@@ -1,3 +1,7 @@
+2022-01-26  Jan Seeger  <jan.seeger@thenybble.de>
+
+	* pickles/elf-common.pk (elf_hash): New function.
+
 2022-01-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (String Formatting): New section.

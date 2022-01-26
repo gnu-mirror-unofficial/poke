@@ -127,6 +127,25 @@ fun elf_compress_algorithm_p = (uint<64> ch_type) int:
           || (ch_type >= ELFCOMPRESS_LOPROC && ch_type <= ELFCOMPRESS_HIPROC));
 }
 
+/* ELF hashing function.  */
+
+fun elf_hash = (string input) Elf_Word:
+{
+  var h = 0 as uint<32>;
+  var high = 0 as uint<32>;
+
+  for (c in input)
+  {
+    h = (h <<. 4) + c;
+    high = h & 0xf0000000;
+    if (high)
+      h = h ^ (high .>> 24);
+    h = h & ~high;
+  };
+
+ return h;
+}
+
 /* Dynamic tags.  */
 
 var DT_NULL = 0,  /* Tags the end of the dynamic array.  */
