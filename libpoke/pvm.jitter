@@ -123,6 +123,19 @@ end
 #wrapped-globals
 #  pvm_printf_format_string
 #end
+wrapped-globals
+  pvm_literal_empty
+  pvm_literal_c
+  pvm_literal_code
+  pvm_literal_enomem
+  pvm_literal_inval_obase
+  pvm_literal_no_toplevel_var
+  pvm_literal_nohyperlink
+  pvm_literal_invalid_class
+  pvm_literal_eindex
+  pvm_literal_notmappable
+  pvm_literal_newline
+end
 
 
 ## Embedded C code.
@@ -210,7 +223,7 @@ late-header-c
   do                                                                  \
   {                                                                   \
    int exception_code                                                 \
-     = PVM_VAL_INT (pvm_ref_struct_cstr ((EXCEPTION), "code"));       \
+     = PVM_VAL_INT (pvm_ref_struct_cstr ((EXCEPTION), pvm_literal_code));\
                                                                       \
    while (1)                                                          \
    {                                                                  \
@@ -524,7 +537,7 @@ late-header-c
          if (ret == IOS_EOF)                                                 \
             PVM_RAISE_DFL (PVM_E_EOF);                                       \
          else if (ret == IOS_ENOMEM)                                         \
-            PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);         \
+            PVM_RAISE (PVM_E_IO, pvm_literal_enomem, PVM_E_IO_ESTATUS);      \
          else if (ret == IOS_EPERM)                                          \
             PVM_RAISE_DFL (PVM_E_PERM);                                      \
          else                                                                \
@@ -600,7 +613,7 @@ late-header-c
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[16];  /* %0NNd */                                              \
-    char *iformat = "";                                                     \
+    char *iformat = pvm_literal_empty;                                      \
     uint32_t mask                                                           \
         = JITTER_ARGN0 == 32 ? (uint32_t)-1                                 \
                              : (((uint32_t)1 << JITTER_ARGN0) - 1);         \
@@ -615,12 +628,12 @@ late-header-c
     }                                                                       \
     else                                                                    \
     {                                                                       \
-      char *basefmt = "";                                                   \
+      char *basefmt = pvm_literal_empty;                                    \
       int prec = 0;                                                         \
                                                                             \
       if ((BASE) == 256)                                                    \
       {                                                                     \
-        iformat = "c";                                                      \
+        iformat = pvm_literal_c;                                            \
         prec = 1;                                                           \
       }                                                                     \
       else if ((BASE) == 16)                                                \
@@ -659,7 +672,7 @@ late-header-c
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[16];  /* %0NNfff */                                            \
-    char *iformat = "";                                                     \
+    char *iformat = pvm_literal_empty;                                      \
     uint64_t mask                                                           \
         = JITTER_ARGN0 == 64 ? (uint64_t)-1                                 \
                              : (((uint64_t)1 << JITTER_ARGN0) - 1);         \
@@ -674,7 +687,7 @@ late-header-c
     }                                                                       \
     else                                                                    \
     {                                                                       \
-      char *basefmt = "";                                                   \
+      char *basefmt = pvm_literal_empty;                                    \
       int prec = 0;                                                         \
                                                                             \
       if ((BASE) == 16)                                                     \
@@ -714,7 +727,7 @@ late-header-c
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[16];  /* %0NNd */                                              \
-    char *iformat = "";                                                     \
+    char *iformat = pvm_literal_empty;                                      \
     int n;                                                                  \
     uint32_t mask                                                           \
         = JITTER_ARGN0 == 32 ? (uint32_t)-1                                 \
@@ -730,12 +743,12 @@ late-header-c
     }                                                                       \
     else                                                                    \
     {                                                                       \
-      char *basefmt = "";                                                   \
+      char *basefmt = pvm_literal_empty;                                    \
       int prec = 0;                                                         \
                                                                             \
       if ((BASE) == 256)                                                    \
       {                                                                     \
-        iformat = "c";                                                      \
+        iformat = pvm_literal_c;                                            \
         prec = 1;                                                           \
       }                                                                     \
       else if ((BASE) == 16)                                                \
@@ -778,7 +791,7 @@ late-header-c
   {                                                                         \
     TYPEC val = PVM_VAL_##TYPE (JITTER_UNDER_TOP_STACK ());                 \
     char fmt[16];  /* %0NNfff */                                            \
-    char *iformat = "";                                                     \
+    char *iformat = pvm_literal_empty;                                      \
     int n;                                                                  \
     uint64_t mask                                                           \
         = JITTER_ARGN0 == 64 ? (uint64_t)-1                                 \
@@ -794,7 +807,7 @@ late-header-c
     }                                                                       \
     else                                                                    \
     {                                                                       \
-      char *basefmt = "";                                                   \
+      char *basefmt = pvm_literal_empty;                                    \
       int prec = 0;                                                         \
                                                                             \
       if ((BASE) == 16)                                                     \
@@ -852,6 +865,20 @@ late-c
         VMPREFIX_STATE_TO_PENDING_NOTIFICATIONS (s) = true;
       }
     }
+
+    /* These are not `const' to suppress compiler warnings.  */
+    static char *pvm_literal_empty = "";
+    static char *pvm_literal_c = "c";
+
+    static const char *pvm_literal_code = "code";
+    static const char *pvm_literal_enomem = "out of memory";
+    static const char *pvm_literal_inval_obase = "invalid output base";
+    static const char *pvm_literal_no_toplevel_var = "no top-level variable found";
+    static const char *pvm_literal_nohyperlink = "no current hyperlink";
+    static const char *pvm_literal_invalid_class = "invalid class";
+    static const char *pvm_literal_eindex = "invalid index in ains";
+    static const char *pvm_literal_notmappable = "not mappable value";
+    static const char *pvm_literal_newline = "\n";
   end
 end
 
@@ -1156,7 +1183,7 @@ instruction popob ()
     int obase = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     if (obase != 2 && obase != 8 && obase != 10 && obase != 16)
-      PVM_RAISE (PVM_E_INVAL, "invalid output base", PVM_E_INVAL_ESTATUS);
+      PVM_RAISE (PVM_E_INVAL, pvm_literal_inval_obase, PVM_E_INVAL_ESTATUS);
 
     PVM_STATE_RUNTIME_FIELD (obase) = obase;
     JITTER_DROP_STACK ();
@@ -1200,7 +1227,7 @@ instruction popom ()
     int omode = PVM_VAL_INT (JITTER_TOP_STACK ());
 
     if (omode != PVM_PRINT_FLAT && omode != PVM_PRINT_TREE)
-      PVM_RAISE (PVM_E_INVAL, "invalid output mode", PVM_E_INVAL_ESTATUS);
+      PVM_RAISE (PVM_E_INVAL, pvm_literal_inval_obase, PVM_E_INVAL_ESTATUS);
 
     PVM_STATE_RUNTIME_FIELD (omode) = omode;
     JITTER_DROP_STACK ();
@@ -1867,7 +1894,7 @@ instruction pushtopvar (?n)
                                   (int) JITTER_ARGN0 /* over */);
 
     if (val == PVM_NULL)
-      PVM_RAISE (PVM_E_INVAL, "no top-level variable found",
+      PVM_RAISE (PVM_E_INVAL, pvm_literal_no_toplevel_var,
                  PVM_E_INVAL_ESTATUS);
 
     JITTER_PUSH_STACK (val);
@@ -2077,7 +2104,7 @@ instruction endhl ()
   code
     if (!pk_term_end_hyperlink ())
       PVM_RAISE (PVM_E_GENERIC,
-                 "no current hyperlink",
+                 pvm_literal_nohyperlink,
                  PVM_E_GENERIC_ESTATUS);
   end
 end
@@ -2111,7 +2138,7 @@ instruction endsc ()
   code
     if (!pk_term_end_class (PVM_VAL_STR (JITTER_TOP_STACK ())))
       PVM_RAISE (PVM_E_INVAL,
-                 "invalid class",
+                 pvm_literal_invalid_class,
                  PVM_E_INVAL_ESTATUS);
     JITTER_DROP_STACK ();
   end
@@ -4593,7 +4620,7 @@ instruction ains ()
     else
     {
       if (!pvm_array_insert (arr, idx, val))
-        PVM_RAISE (PVM_E_INVAL, "invalid index in ains",
+        PVM_RAISE (PVM_E_INVAL, pvm_literal_eindex,
                    PVM_E_INVAL_ESTATUS);
     }
   end
@@ -5170,7 +5197,7 @@ instruction map ()
     pvm_val val = JITTER_TOP_STACK ();
 
     if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
-      PVM_RAISE (PVM_E_INVAL, "not mappable value", PVM_E_INVAL_ESTATUS);
+      PVM_RAISE (PVM_E_INVAL, pvm_literal_notmappable, PVM_E_INVAL_ESTATUS);
 
     PVM_VAL_SET_MAPPED_P (JITTER_TOP_STACK (), 1);
   end
@@ -5212,7 +5239,7 @@ instruction reloc ()
     JITTER_PUSH_STACK (boffset);
 
     if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
-      PVM_RAISE (PVM_E_INVAL, "not mappable value", PVM_E_INVAL_ESTATUS);
+      PVM_RAISE (PVM_E_INVAL, pvm_literal_notmappable, PVM_E_INVAL_ESTATUS);
 
     pvm_val_reloc (val, ios, boffset);
   end
@@ -5233,7 +5260,7 @@ instruction ureloc ()
       pvm_val val = JITTER_TOP_STACK ();
 
       if (!(PVM_IS_ARR (val) || PVM_IS_SCT (val)))
-        PVM_RAISE (PVM_E_INVAL, "not mappable value", PVM_E_INVAL_ESTATUS);
+        PVM_RAISE (PVM_E_INVAL, pvm_literal_notmappable, PVM_E_INVAL_ESTATUS);
 
       pvm_val_ureloc (val);
   end
@@ -6010,7 +6037,7 @@ instruction peeks ()
       if (ret == IOS_EOF)
          PVM_RAISE_DFL (PVM_E_EOF);
       else if (ret == IOS_ENOMEM)
-         PVM_RAISE (PVM_E_IO, "out of memory", PVM_E_IO_ESTATUS);
+         PVM_RAISE (PVM_E_IO, pvm_literal_enomem, PVM_E_IO_ESTATUS);
       else if (ret == IOS_EPERM)
          PVM_RAISE_DFL (PVM_E_PERM);
       else
@@ -6074,7 +6101,7 @@ instruction pushe (?l)
   code
    struct pvm_exception_handler ehandler;
    pvm_val exception = JITTER_TOP_STACK ();
-   pvm_val exception_code = pvm_ref_struct_cstr (exception, "code");
+   pvm_val exception_code = pvm_ref_struct_cstr (exception, pvm_literal_code);
 
    ehandler.exception = PVM_VAL_INT (exception_code);
    JITTER_DROP_STACK ();
@@ -6172,7 +6199,7 @@ instruction strace (?n)
                                    0 /* acutoff */,
                                    PVM_PRINT_F_MAPS,
                                    NULL /* exit_exception */);
-        pk_puts ("\n");
+        pk_puts (pvm_literal_newline);
         i++;
       }
   end

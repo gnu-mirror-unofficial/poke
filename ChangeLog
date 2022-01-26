@@ -1,3 +1,27 @@
+2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pvm.jitter (wrapped-globals): Add pvm_literal_*.
+	(PVM_RAISE_DIRECT): Use `pvm_literal_code`.
+	(PVM_PEEK): Use `pvm_literal_enomem`.
+	(PVM_PRINTI): Use `pvm_literal_empty` and `pvm_literal_c`.
+	(PVM_PRINTL): Likewise.
+	(PVM_FORMATI): Likewise.
+	(PVM_FORMATL): Likewise.
+	(late-c): Define pvm_literal_* variables/constants.
+	(popob): Use `pvm_literal_inval_obase`.
+	(popom): Likewise.
+	(pushtopvar): Use `pvm_literal_no_toplevel_var`.
+	(endhl): Use `pvm_literal_nohyperlink`.
+	(endsc): Use `pvm_literal_invalid_class`.
+	(ains): Use `pvm_literal_eindex`.
+	(map): Use `pvm_literal_notmappable`.
+	(reloc): Likewise.
+	(ureloc): Likewise.
+	(peeks): Use `pvm_literal_enomem`.
+	(pushe): Use `pvm_literal_code`.
+	(strace): Use `pvm_literal_newline`.
+	* etc/pvm-wraps-static-whitelist: Add pvm_literal_*.
+
 2022-01-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/hacking.org (Wrapping globals): Clarify the role of

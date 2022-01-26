@@ -1,1 +1,12 @@
 pvm_nanosleep
+pvm_literal_c
+pvm_literal_empty
+pvm_literal_code
+pvm_literal_enomem
+pvm_literal_inval_obase
+pvm_literal_no_toplevel_var
+pvm_literal_nohyperlink
+pvm_literal_invalid_class
+pvm_literal_eindex
+pvm_literal_notmappable
+pvm_literal_newline
