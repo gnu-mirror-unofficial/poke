@@ -55,6 +55,17 @@ sc_tests_listed_in_makefile_am:
           { diff -u in-files in-makefile; \
             msg='missing or extra tests in EXTRA_DIST' $(_sc_say_and_exit) }
 
+sc_pvm_wrappers:
+	@nm $(top_builddir)/libpoke/libpvmjitter_la-pvm-vm2.o \
+           | grep 'U ' | awk '{ print $$2; }' \
+           | sort | uniq | grep -v _GLOBAL_OFFSET_TABLE_ > globals-list
+	@awk '/^wrapped-functions/,/^end/ { print $$1; } /^wrapped-globals/,/^end/ { print $$1; }' $(top_srcdir)/libpoke/pvm.jitter \
+           | sort | uniq | grep -v wrapped-functions | grep -v wrapped-globals \
+           | grep -v end > wrapped-list
+	@cmp -s globals-list wrapped-list || \
+          { diff -u globals-list wrapped-list; \
+            msg='found non-wrapped globals in pvm.jitter' $(_sc_say_and_exit) }
+
 sc_recfix_poke_rec:
 	@$(RECFIX) $(top_srcdir)/etc/poke.rec || \
             { msg='integrity problems found in etc/poke.rec' $(_sc_say_and_exit) }
