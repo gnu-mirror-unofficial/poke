@@ -58,7 +58,7 @@ sc_tests_listed_in_makefile_am:
 sc_pvm_wrappers:
 	@nm $(top_builddir)/libpoke/libpvmjitter_la-pvm-vm2.o \
            | grep 'U ' | awk '{ print $$2; }' \
-           | sort | uniq | grep -v _GLOBAL_OFFSET_TABLE_ > globals-list
+           | sort | uniq | grep -Fvxf $(top_srcdir)/etc/pvm-wraps-whitelist > globals-list
 	@awk '/^wrapped-functions/,/^end/ { print $$1; } /^wrapped-globals/,/^end/ { print $$1; }' $(top_srcdir)/libpoke/pvm.jitter \
            | sort | uniq | grep -v wrapped-functions | grep -v wrapped-globals \
            | grep -v end > wrapped-list

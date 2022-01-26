@@ -1409,6 +1409,19 @@ have a testsuite in =testsuite/poke.FOO= with a driver
    This will prevent Jitter to relocate the instruction body and crash
    in many platforms and non-threading modes.
 
+** Wrapping globals
+
+   The non-threaded Jitter operation modes require every global
+   (variable or function) to be wrapped, i.e. specified in sections
+   =wrapped-functions= or =wrapped-globals= in =pvm.jitter=.
+
+   Since it is not trivial to keep track of every used global, having
+   hundred of instructions, we are providing a syntax-check that looks
+   for this automatically.
+
+   There is a whitelist for symbols that this syntax-check rule uses,
+   in the file =etc/pvm-wraps-whitelist=.
+
 * Memory Management
 
   Different parts of poke use different strategies for memory

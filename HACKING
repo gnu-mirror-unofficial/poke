@@ -87,6 +87,7 @@ _________________
 .. 2. Signal Handling
 .. 3. Offsets and bit-offsets in the PVM
 .. 4. Writing relocatable instructions
+.. 5. Wrapping globals
 13. Memory Management
 .. 1. Using ASTREF
 .. 2. Using ASTDEREF
@@ -1788,6 +1789,21 @@ with GNU poke.  If not, see <https://www.gnu.org/licenses/>.
 
   This will prevent Jitter to relocate the instruction body and crash in
   many platforms and non-threading modes.
+
+
+12.5 Wrapping globals
+~~~~~~~~~~~~~~~~~~~~~
+
+  The non-threaded Jitter operation modes require every global (variable
+  or function) to be wrapped, i.e. specified in sections
+  `wrapped-functions' or `wrapped-globals' in `pvm.jitter'.
+
+  Since it is not trivial to keep track of every used global, having
+  hundred of instructions, we are providing a syntax-check that looks
+  for this automatically.
+
+  There is a whitelist for symbols that this syntax-check rule uses, in
+  the file `etc/pvm-wraps-whitelist'.
 
 
 13 Memory Management
