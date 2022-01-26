@@ -198,20 +198,68 @@ pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb)
 }
 
 static char *
-complete_struct (pk_compiler pkc,
-                 int *idx, const char *x, size_t len, int state)
+complete_attribute (pk_compiler pkc, const char *x, int state)
 {
+  static int idx = 0;
+  size_t trunk_len;
+  char *ret = NULL;
+  size_t len = strlen (x);
+  static char *attr_names[] =
+    {
+#define PKL_DEF_ATTR(CODE,NAME) NAME,
+#include "pkl-attrs.def"
+#undef PKL_DEF_ATTR
+      NULL
+    };
+
+  if (state == 0)
+    idx = 0;
+
+  trunk_len = len - strlen (strrchr (x, '\'')) + 1;
+
+  int i;
+  for (i = idx; attr_names[i] != NULL; ++i)
+    {
+      char *attr_name = attr_names[i];
+
+      if (strncmp (x + trunk_len, attr_name, len - trunk_len) == 0)
+        {
+          char *attr;
+
+          if (asprintf (&attr, "%.*s%s", (int) trunk_len, x, attr_name) == -1)
+            {
+              ret = NULL;
+              goto exit;
+            }
+
+          idx++;
+          ret = attr;
+          goto exit;
+        }
+    }
+
+ exit:
+  return ret;
+}
+
+static char *
+complete_struct (pk_compiler pkc, const char *x, int state)
+{
+  static int idx = 0;
   char *ret = NULL;
   pkl_ast_node type = pkc->complete_type;
   pkl_ast_node t;
   size_t trunk_len;
   int j;
+  size_t len = strlen (x);
 
   if (state == 0)
     {
       pkl_env compiler_env;
       int back, over;
       char *base;
+
+      idx = 0;
 
       compiler_env = pkl_get_env (pkc->compiler);
       base = strndup (x, len - strlen (strchr (x, '.')));
@@ -236,10 +284,10 @@ complete_struct (pk_compiler pkc,
 
   t = PKL_AST_TYPE_S_ELEMS (type);
 
-  for (j = 0; j < (*idx); j++)
+  for (j = 0; j < idx; j++)
     t = PKL_AST_CHAIN (t);
 
-  for (; t; t = PKL_AST_CHAIN (t), (*idx)++)
+  for (; t; t = PKL_AST_CHAIN (t), idx++)
     {
       pkl_ast_node ename;
       char *elem;
@@ -253,6 +301,7 @@ complete_struct (pk_compiler pkc,
             ename = PKL_AST_STRUCT_TYPE_FIELD_NAME (t);
           else
             ename = PKL_AST_DECL_NAME (t);
+
 
           if (ename)
             elem = PKL_AST_IDENTIFIER_POINTER (ename);
@@ -269,7 +318,7 @@ complete_struct (pk_compiler pkc,
                   goto exit;
                 }
 
-              (*idx)++;
+              idx++;
               ret = name;
               goto exit;
             }
@@ -281,20 +330,9 @@ complete_struct (pk_compiler pkc,
   return ret;
 }
 
-/* This function is called repeatedly by the readline library, when
-   generating potential command line completions.  It returns
-   command line completion based upon the current state of PKC.
-
-   TEXT is the partial word to be completed.  STATE is zero the first
-   time the function is called and non-zero for each subsequent call.
-
-   On each call, the function returns a potential completion.  It
-   returns NULL to indicate that there are no more possibilities left. */
-char *
-pk_completion_function (pk_compiler pkc,
-                        const char *text, int state)
+static char *
+complete_decl (pk_compiler pkc, const char *x, int state)
 {
-  char *function_name;
   static int idx = 0;
   static struct pkl_ast_node_iter iter;
   pkl_env env = pkl_get_env (pkc->compiler);
@@ -311,13 +349,30 @@ pk_completion_function (pk_compiler pkc,
         pkl_env_iter_next (env, &iter);
     }
 
-  size_t len = strlen (text);
+  size_t len = strlen (x);
+  return pkl_env_get_next_matching_decl (env, &iter, x, len);
+}
 
+/* This function is called repeatedly by the readline library, when
+   generating potential command line completions.  It returns
+   command line completion based upon the current state of PKC.
+
+   TEXT is the partial word to be completed.  STATE is zero the first
+   time the function is called and non-zero for each subsequent call.
+
+   On each call, the function returns a potential completion.  It
+   returns NULL to indicate that there are no more possibilities left. */
+char *
+pk_completion_function (pk_compiler pkc,
+                        const char *text, int state)
+{
   if ((text[0] != '.') && (strchr (text, '.') != NULL))
-    return complete_struct (pkc, &idx, text, len, state);
+    return complete_struct (pkc, text, state);
 
-  function_name = pkl_env_get_next_matching_decl (env, &iter, text, len);
-  return function_name;
+  if ((text[0] != '\'') && (strchr (text, '\'') != NULL))
+    return complete_attribute (pkc, text, state);
+
+  return complete_decl (pkc, text, state);
 }
 
 /* This function provides command line completion when the tag of an

@@ -140,3 +140,13 @@ poke_test_cmd {type Baz = struct { Bar bar; }} {}
 poke_test_cmd {var f = Baz {}} {}
 poke_send "f.bar.foo.a\t\t" "\r\nf.bar.foo.aa +f.bar.foo.ab *\r\n$poke_prompt f.bar.foo.a"
 poke_exit
+
+set test "tab-completion-attribute-1"
+poke_start
+poke_send "f'a\t" "f'alignment"
+poke_exit
+
+set test "tab-completion-attribute-2"
+poke_start
+poke_send "f's\t\t" "f'signed +f'size +f'strict"
+poke_exit

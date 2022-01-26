@@ -312,6 +312,10 @@ pk_repl (void)
 {
   banner ();
 
+  /* Configure the readline's completer routine.  */
+  rl_completer_quote_characters = "\"";
+  rl_completer_word_break_characters = " \t\n\"\\`@$><=;|&{("; /* }) */
+
   /* Arrange for the current line to be cancelled on SIGINT.
      Since some library code is also interested in SIGINT
      (GNU libtextstyle, via gnulib module fatal-signal), it is better

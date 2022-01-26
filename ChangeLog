@@ -1,5 +1,17 @@
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-repl.c (pk_repl): Customize the readline completer
+	routine.
+	* libpoke/libpoke.c (pk_completion_function): Call
+	complete_attribute whenever appropriate.
+	(complete_attribute): New function.
+	(complete_decl): Likewise.
+	* testsuite/poke.repl/repl.exp (tab-completion-attribute-1): New
+	test.
+	(tab-completion-attribute-2): Likewise.
+
+2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-dump.pk: Document the :ios argument.
 	* doc/poke.texi (dump): Mention :ios in the synopsis.
 
