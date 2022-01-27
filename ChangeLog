@@ -1,5 +1,28 @@
 2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.jitter (wrapped-functions): Add missing functions.
+	(wrapped-globals): Add `libpoke_term_if`.
+	(PVM_FORMATI): s/assert/pvm_assert/.
+	(PVM_FORMATL): Likewise.
+	(late-c): Define new function wrappers.
+	(exit): s/assert/pvm_assert/.
+	(call): Likewise.
+	(eqs): s/STREQ/pvm_strcmp/.
+	(nes): s/STRNEQ/pvm_strcmp/.
+	(lts): s/strcmp/pvm_strcmp/.
+	(gts): Likewise.
+	(ges): Likewise.
+	(les): Likewise.
+	(sconc): s/${F}/pvm_${F}/.
+	(strset): Likewise.
+	(muls): Likewise.
+	(asettb): Likewise.
+	(strace): s/assert/pvm_assert/.
+	(sleep): s/nanosleep/pvm_nanosleep/.
+	* etc/pvm-wraps-static-whitelist: Update.
+
+2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (PVM_RAISE_DIRECT): Use
 	`PVM_STATE_RUNTIME_FIELD` accessor.
 	(PVM_CALL): Likewise.

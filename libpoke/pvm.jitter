@@ -66,7 +66,6 @@ end
 ## Functions and globals to wrap.
 
 wrapped-functions
-  printf
   snprintf
   pvm_array_insert
   pvm_array_set
@@ -81,10 +80,18 @@ wrapped-functions
   pvm_make_array
   pvm_make_struct
   pvm_make_offset
+  pvm_make_int
+  pvm_make_uint
+  pvm_make_long
+  pvm_make_ulong
+  pvm_make_exception
   pvm_make_integral_type
   pvm_make_string_type
   pvm_make_offset_type
   pvm_make_array_type
+  pk_upow
+  pk_print_binary
+  pk_format_binary
   pvm_alloc
   pvm_allocate_struct_attrs
   pvm_make_struct_type
@@ -96,28 +103,48 @@ wrapped-functions
   pvm_val_reloc
   pvm_val_unmap
   pvm_val_ureloc
+  pvm_allocate_closure_attrs
+  pvm_elemsof
+  pvm_array_rem
+  pvm_env_set_var
+  pvm_get_struct_method
+  pvm_make_any_type
+  pvm_make_closure_type
+  pvm_make_void_type
+  pvm_make_cls
+  pvm_val_writer
+  pvm_print_string
+  pvm_print_val_with_params
+  pvm_refo_struct
+  pvm_sizeof
   ios_close
   ios_cur
   ios_flags
   ios_flush
   ios_get_id
+  ios_size
   ios_open
   ios_read_int
   ios_read_uint
   ios_read_string
+  ios_write_int
+  ios_write_uint
+  ios_write_string
   ios_search_by_id
   ios_set_bias
+  ios_get_bias
   ios_set_cur
-  ios_write_string
   random
   srandom
   secure_getenv
   gettime
-  memcpy
-  strlen
-  strcmp
-  strcpy
-  strncpy
+  pvm_memcpy
+  pvm_strlen
+  pvm_strcmp
+  pvm_strcpy
+  pvm_strncpy
+  pvm_strcat
+  pvm_nanosleep
 end
 
 #wrapped-globals
@@ -135,6 +162,7 @@ wrapped-globals
   pvm_literal_eindex
   pvm_literal_notmappable
   pvm_literal_newline
+  libpoke_term_if
 end
 
 
@@ -655,7 +683,7 @@ late-header-c
         break;                                                              \
       }                                                                     \
                                                                             \
-      assert (prec != 0);                                                   \
+      pvm_assert (prec != 0);                                               \
       fmt[2] = '0' + (prec / 10);                                           \
       fmt[3] = '0' + prec - (prec / 10 * 10);                               \
       fmt[4] = '\0';                                                        \
@@ -765,14 +793,14 @@ late-header-c
       else if ((BASE) == 2)                                                 \
       {                                                                     \
         n = pk_format_binary ((OUT), (OUTLEN), val, JITTER_ARGN0, SIGNED_P, 0);\
-        assert (n == 0);                                                    \
+        pvm_assert (n == 0);                                                \
         JITTER_DROP_STACK ();                                               \
         JITTER_DROP_STACK ();                                               \
         JITTER_PUSH_STACK (pvm_make_string ((OUT)));                        \
         break;                                                              \
       }                                                                     \
                                                                             \
-      assert (prec != 0);                                                   \
+      pvm_assert (prec != 0);                                               \
       fmt[2] = '0' + (prec / 10);                                           \
       fmt[3] = '0' + prec - (prec / 10 * 10);                               \
       fmt[4] = '\0';                                                        \
@@ -781,7 +809,7 @@ late-header-c
     }                                                                       \
                                                                             \
     n = snprintf ((OUT), (OUTLEN), fmt,  (BASE) == 10 ? val : val & mask);  \
-    assert (n < (OUTLEN));                                                  \
+    pvm_assert (n < (OUTLEN));                                              \
     JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
     JITTER_PUSH_STACK (pvm_make_string ((OUT)));                            \
@@ -824,7 +852,7 @@ late-header-c
       else if ((BASE) == 2)                                                 \
       {                                                                     \
         n = pk_format_binary ((OUT), (OUTLEN), val, JITTER_ARGN0, SIGNED_P, 0);\
-        assert (n == 0);                                                    \
+        pvm_assert (n == 0);                                                \
         JITTER_DROP_STACK ();                                               \
         JITTER_DROP_STACK ();                                               \
         JITTER_PUSH_STACK (pvm_make_string ((OUT)));                        \
@@ -839,7 +867,7 @@ late-header-c
     }                                                                       \
                                                                             \
     n = snprintf ((OUT), (OUTLEN), fmt,  (BASE) == 10 ? val : val & mask);  \
-    assert (n < (OUTLEN));                                                  \
+    pvm_assert (n < (OUTLEN));                                              \
     JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
     JITTER_PUSH_STACK (pvm_make_string ((OUT)));                            \
@@ -880,6 +908,42 @@ late-c
     static const char *pvm_literal_eindex = "invalid index in ains";
     static const char *pvm_literal_notmappable = "not mappable value";
     static const char *pvm_literal_newline = "\n";
+
+    static int
+    pvm_nanosleep (const struct timespec *rqtp, struct timespec *rmtp)
+    {
+      return nanosleep (rqtp, rmtp);
+    }
+    static void *
+    pvm_memcpy (void *restrict dest, const void *restrict src, size_t n)
+    {
+      return memcpy (dest, src, n);
+    }
+    int
+    pvm_strcmp (const char *s1, const char *s2)
+    {
+      return strcmp (s1, s2);
+    }
+    static size_t
+    pvm_strlen (const char *s)
+    {
+      return strlen (s);
+    }
+    static char *
+    pvm_strcpy (char *restrict dest, const char *src)
+    {
+      return strcpy (dest, src);
+    }
+    static char *
+    pvm_strncpy (char *restrict dest, const char *restrict src, size_t n)
+    {
+      return strncpy (dest, src, n);
+    }
+    static char *
+    pvm_strcat (char *restrict dest, const char *restrict src)
+    {
+      return strcat (dest, src);
+    }
   end
 end
 
@@ -1095,14 +1159,14 @@ instruction exit ()
     /* Check for the stack sentinel, but only if it was
        installed.  */
     if (PVM_STATE_BACKING_FIELD (canary_stack) != NULL)
-      assert (PVM_STATE_BACKING_FIELD (canary_stack)
-              == JITTER_HEIGHT_STACK ());
+      pvm_assert (PVM_STATE_BACKING_FIELD (canary_stack)
+                  == JITTER_HEIGHT_STACK ());
     if (PVM_STATE_BACKING_FIELD (canary_returnstack) != NULL)
-      assert (PVM_STATE_BACKING_FIELD (canary_returnstack)
-              == JITTER_HEIGHT_RETURNSTACK ());
+      pvm_assert (PVM_STATE_BACKING_FIELD (canary_returnstack)
+                  == JITTER_HEIGHT_RETURNSTACK ());
     if (PVM_STATE_BACKING_FIELD (canary_exceptionstack) != NULL)
-      assert (PVM_STATE_BACKING_FIELD (canary_exceptionstack)
-              == JITTER_HEIGHT_EXCEPTIONSTACK ());
+      pvm_assert (PVM_STATE_BACKING_FIELD (canary_exceptionstack)
+                  == JITTER_HEIGHT_EXCEPTIONSTACK ());
 
     /* Clear pending signals.  */
     {
@@ -1777,7 +1841,7 @@ instruction call ()
   code
     pvm_val closure = JITTER_TOP_STACK ();
 
-    assert (PVM_VAL_CLS_ENV (closure) != NULL);
+    pvm_assert (PVM_VAL_CLS_ENV (closure) != NULL);
     JITTER_DROP_STACK ();
     PVM_CALL (closure);
   end
@@ -3075,9 +3139,10 @@ end
 
 instruction eqs ()
   code
-    pvm_val res = PVM_MAKE_INT (STREQ (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
-                                       PVM_VAL_STR (JITTER_TOP_STACK ())),
-                                32);
+    pvm_val res
+      = PVM_MAKE_INT (pvm_strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+                                  PVM_VAL_STR (JITTER_TOP_STACK ())) == 0,
+                      32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3143,9 +3208,10 @@ end
 
 instruction nes ()
   code
-    pvm_val res = PVM_MAKE_INT (STRNEQ (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
-                                        PVM_VAL_STR (JITTER_TOP_STACK ())),
-                                32);
+    pvm_val res
+      = PVM_MAKE_INT (pvm_strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+                                  PVM_VAL_STR (JITTER_TOP_STACK ())) != 0,
+                      32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3396,8 +3462,9 @@ end
 
 instruction lts ()
   code
-    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
-                                        PVM_VAL_STR (JITTER_TOP_STACK ())) < 0, 32);
+    pvm_val res
+      = PVM_MAKE_INT (pvm_strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+                                  PVM_VAL_STR (JITTER_TOP_STACK ())) < 0, 32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3411,8 +3478,9 @@ end
 
 instruction gts ()
   code
-    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
-                                        PVM_VAL_STR (JITTER_TOP_STACK ())) > 0, 32);
+    pvm_val res
+      = PVM_MAKE_INT (pvm_strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+                                  PVM_VAL_STR (JITTER_TOP_STACK ())) > 0, 32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3427,8 +3495,9 @@ end
 
 instruction ges ()
   code
-    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
-                                        PVM_VAL_STR (JITTER_TOP_STACK ())) >= 0, 32);
+    pvm_val res
+      = PVM_MAKE_INT (pvm_strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+                                  PVM_VAL_STR (JITTER_TOP_STACK ())) >= 0, 32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3443,8 +3512,9 @@ end
 
 instruction les ()
   code
-    pvm_val res = PVM_MAKE_INT (strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
-                                        PVM_VAL_STR (JITTER_TOP_STACK ())) <= 0, 32);
+    pvm_val res
+      = PVM_MAKE_INT (pvm_strcmp (PVM_VAL_STR (JITTER_UNDER_TOP_STACK ()),
+                                  PVM_VAL_STR (JITTER_TOP_STACK ())) <= 0, 32);
     JITTER_PUSH_STACK (res);
   end
 end
@@ -3495,9 +3565,9 @@ instruction sconc ()
      pvm_val res;
      char *sa = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
      char *sb = PVM_VAL_STR (JITTER_TOP_STACK ());
-     char *s = pvm_alloc (strlen (sa) + strlen (sb) + 1);
-     strcpy (s, sa);
-     strcat (s, sb);
+     char *s = pvm_alloc (pvm_strlen (sa) + pvm_strlen (sb) + 1);
+     pvm_strcpy (s, sa);
+     pvm_strcat (s, sb);
      res = pvm_make_string_nodup (s);
 
      JITTER_PUSH_STACK (res);
@@ -4401,7 +4471,7 @@ instruction strref () # ( STR ULONG -- STR ULONG VAL )
 
     if (PVM_VAL_ULONG (index) < 0
         || (PVM_VAL_ULONG (index) >=
-            strlen (PVM_VAL_STR (string))))
+            pvm_strlen (PVM_VAL_STR (string))))
       PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     JITTER_PUSH_STACK (PVM_MAKE_UINT (PVM_VAL_STR (string)[PVM_VAL_ULONG (index)],
@@ -4428,19 +4498,19 @@ instruction strset ()
     pvm_val newstr = JITTER_TOP_STACK ();
     uint64_t from = PVM_VAL_ULONG (JITTER_UNDER_TOP_STACK ());
     pvm_val str;
-    size_t slen, nslen = strlen (PVM_VAL_STR (newstr));
+    size_t slen, nslen = pvm_strlen (PVM_VAL_STR (newstr));
 
     JITTER_DROP_STACK ();
     JITTER_DROP_STACK ();
     str = JITTER_TOP_STACK ();
-    slen = strlen (PVM_VAL_STR (str));
+    slen = pvm_strlen (PVM_VAL_STR (str));
 
     if (from > slen || from + nslen > slen)
       PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
-    /* Using `strncpy` will emit a false compiler warning
+    /* Using `pvm_strncpy` will emit a false compiler warning
        (-Wstringop-overflow=).  */
-    memcpy (PVM_VAL_STR (str) + from, PVM_VAL_STR (newstr), nslen);
+    pvm_memcpy (PVM_VAL_STR (str) + from, PVM_VAL_STR (newstr), nslen);
   end
 end
 
@@ -4470,15 +4540,15 @@ instruction substr () # ( STR ULONG ULONG -- STR ULONG ULONG STR )
     str = JITTER_UNDER_TOP_STACK ();
     JITTER_PUSH_STACK (to);
 
-    if (PVM_VAL_ULONG (from) >= strlen (PVM_VAL_STR (str))
-        || PVM_VAL_ULONG (to) > strlen (PVM_VAL_STR (str))
+    if (PVM_VAL_ULONG (from) >= pvm_strlen (PVM_VAL_STR (str))
+        || PVM_VAL_ULONG (to) > pvm_strlen (PVM_VAL_STR (str))
         || PVM_VAL_ULONG (from) > PVM_VAL_ULONG (to))
         PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
 
     s = pvm_alloc (slen + 1);
-    strncpy (s,
-             PVM_VAL_STR (str) + PVM_VAL_ULONG (from),
-             slen);
+    pvm_strncpy (s,
+                 PVM_VAL_STR (str) + PVM_VAL_ULONG (from),
+                 slen);
     s[slen] = '\0';
 
     JITTER_PUSH_STACK (pvm_make_string_nodup (s));
@@ -4499,11 +4569,11 @@ instruction muls ()
   code
     pvm_val str = JITTER_UNDER_TOP_STACK ();
     size_t i, num = PVM_VAL_ULONG (JITTER_TOP_STACK ());
-    char *res = pvm_alloc (strlen (PVM_VAL_STR (str)) * num + 1);
+    char *res = pvm_alloc (pvm_strlen (PVM_VAL_STR (str)) * num + 1);
 
     *res = '\0';
     for (i = 0; i < num; ++i)
-      strcat (res, PVM_VAL_STR (str));
+      pvm_strcat (res, PVM_VAL_STR (str));
 
     JITTER_PUSH_STACK (pvm_make_string_nodup (res));
   end
@@ -4785,7 +4855,7 @@ instruction asettb () # ( ARR BOUND -- ARR )
   code
     pvm_val type = PVM_VAL_ARR_TYPE (JITTER_UNDER_TOP_STACK ());
 
-    assert (PVM_VAL_TYP_CODE (type) == PVM_TYPE_ARRAY);
+    pvm_assert (PVM_VAL_TYP_CODE (type) == PVM_TYPE_ARRAY);
     PVM_VAL_TYP_A_BOUND (type) = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
   end
@@ -6191,7 +6261,7 @@ instruction strace (?n)
     int num_elems = (int) JITTER_ARGN0;
     int num_elems_in_stack;
 
-    assert (PVM_STATE_BACKING_FIELD (canary_stack) != NULL);
+    pvm_assert (PVM_STATE_BACKING_FIELD (canary_stack) != NULL);
 
     num_elems_in_stack = (pvm_val *)JITTER_HEIGHT_STACK ()
                          - (pvm_val *)PVM_STATE_BACKING_FIELD (canary_stack);
@@ -6350,7 +6420,7 @@ instruction sleep ()
     ts.tv_sec = PVM_VAL_LONG (JITTER_UNDER_TOP_STACK ());
     ts.tv_nsec = PVM_VAL_LONG (JITTER_TOP_STACK ());
 
-    if (nanosleep (&ts, NULL) == -1)
+    if (pvm_nanosleep (&ts, NULL) == -1)
     {
       if (errno == EINTR)
         /* This is most likely Ctrl-C.  Do nothing */;

@@ -1,1 +1,28 @@
+# First some symbols used by the C runtime.
 _GLOBAL_OFFSET_TABLE_
+__errno_location
+__stack_chk_fail
+# Now stuff that is used by the Jittery runtime, out of
+# instructions.
+pvm_states
+pvm_vm_configuration
+pvm_make_place_for_slow_registers
+pvm_disassemble_program
+pvm_defect_descriptors_correct_displacement
+printf
+putchar
+exit
+# Finally, symbols that are used from within the wrapping
+# pvm_* functions in pvm.jitter.  Note how we include
+# rpl_* versions of some of them that gnulib may replace
+# in some targets.
+rpl_nanosleep
+nanosleep
+memcpy
+strcmp
+stpcpy
+strcat
+strcpy
+strlen
+strncat
+strncpy
