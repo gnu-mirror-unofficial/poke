@@ -1776,6 +1776,7 @@ end
 # Exceptions: PVM_E_NO_IOS
 
 instruction iogetb ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   # XXX make non-relocatable: see raise
   code
@@ -2229,6 +2230,7 @@ end
 # Stack: ( INT INT -- STR )
 
 instruction formati (?n)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     char res[32 + 2 /* suffix */ + 1 /* nul */];
@@ -2245,6 +2247,7 @@ end
 # Stack: ( UINT INT -- STR )
 
 instruction formatiu (?n)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     char res[32 + 2 /* suffix */ + 1 /* nul */];
@@ -2261,6 +2264,7 @@ end
 # Stack: ( LONG INT -- STR )
 
 instruction formatl (?n)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     char res[64 + 2 /* suffix */ + 1 /* nul */];
@@ -2277,6 +2281,7 @@ end
 # Stack: ( ULONG INT -- STR )
 
 instruction formatlu (?n)
+  non-relocatable
   code
     int base = PVM_VAL_INT (JITTER_TOP_STACK ());
     char res[64 + 2 /* suffix */ + 1 /* nul */];
@@ -2845,6 +2850,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction divi ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_DIV_SIGNED (INT, int);
@@ -2861,6 +2867,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction diviu ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (UINT, UINT, UINT, /);
@@ -2876,6 +2883,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction divl ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_DIV_SIGNED (LONG, int64_t);
@@ -2892,6 +2900,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction divlu ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, /);
@@ -2907,6 +2916,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modi ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_MOD_SIGNED (INT, int);
@@ -2923,6 +2933,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modiu ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (UINT, UINT, UINT, %);
@@ -2938,6 +2949,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modl ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_MOD_SIGNED (LONG, int64_t);
@@ -2953,6 +2965,7 @@ end
 # Exceptions: PVM_E_DIV_BY_ZERO
 
 instruction modlu ()
+  non-relocatable
   branching # because of PVM_RAISE_DIRECT
   code
     PVM_CHECKED_BINOP (ULONG, ULONG, ULONG, %);

@@ -1,5 +1,23 @@
 2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.jitter (iogetb): Mark as `non-relocatable` because
+	of / and %.
+	(formati): Likewise.
+	(formatiu): Likewise.
+	(formatl): Likewise.
+	(formatlu): Likewise.
+	(divi): Likewise.
+	(diviu): Likewise.
+	(divl): Likewise.
+	(divlu): Likewise.
+	(modi): Likewise.
+	(modiu): Likewise.
+	(modl): Likewise.
+	(modlu): Likewise.
+	* etc/pvm-wraps-static-whitelist: Update.
+
+2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (wrapped-functions): Add missing functions.
 	(wrapped-globals): Add `libpoke_term_if`.
 	(PVM_FORMATI): s/assert/pvm_assert/.
