@@ -7,14 +7,16 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 1.90 (XX January 2022)
+ Version 2.0 (28 January 2022)
 * User interface updates
 
+  - Types can now be redefined at the prompt.  This allowed us to
+    change `load' to always load the requested file/module.
+
   - The poke command now accepts two additional command-line options
-    in order to select which default style to use: =--style-dark= and
-    =--style-bright=.  The first, which is the default, works good
-    with dark backgrounds.  The second works good with bright
-    backgrounds.
+    in order to select which default style to use: --style-dark and
+    --style-bright.  The first, which is the default, works good with
+    dark backgrounds.  The second works good with bright backgrounds.
 
   - Invoking the .set command with no arguments now lists all the
     global settings along with their values.  It also emits buttons

@@ -1,3 +1,9 @@
+2022-01-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* NEWS: Set date and version for 2.0 news.
+	* configure.ac: Change version number to 2.0.
+	* doc/gendocs_template: Adapt to 2.0.
+
 2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pvm.jitter (iogetb): Mark as `non-relocatable` because
