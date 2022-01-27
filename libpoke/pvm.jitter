@@ -163,6 +163,7 @@ wrapped-globals
   pvm_literal_notmappable
   pvm_literal_newline
   libpoke_term_if
+  pvm_exception_names
 end
 
 
@@ -288,7 +289,7 @@ late-header-c
 #define PVM_RAISE_DFL(BASE)                                           \
  do                                                                   \
  {                                                                    \
-   PVM_RAISE (BASE,BASE##_NAME,BASE##_ESTATUS);                        \
+   PVM_RAISE (BASE,pvm_exception_names[BASE],BASE##_ESTATUS);         \
  } while (0)
 
     /* Macros to implement different kind of instructions.  These are to
@@ -908,6 +909,12 @@ late-c
     static const char *pvm_literal_eindex = "invalid index in ains";
     static const char *pvm_literal_notmappable = "not mappable value";
     static const char *pvm_literal_newline = "\n";
+
+#define E(key) [PVM_E_##key] = PVM_E_##key##_NAME,
+    static const char *pvm_exception_names[] = {
+      PVM_EXCEPTIONS(E)
+    };
+#undef E
 
     static int
     pvm_nanosleep (const struct timespec *rqtp, struct timespec *rmtp)

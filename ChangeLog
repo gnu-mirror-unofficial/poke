@@ -1,3 +1,11 @@
+2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pvm.h (PVM_EXCEPTIONS): New macro.
+	* libpoke/pvm.jitter (wrapped-globals): Add `pvm_exception_names`.
+	(PVM_RAISE_DFL): Use `pvm_exception_names` instead of string
+	literals.
+	(late-c): Define `pvm_exception_names`.
+
 2022-01-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* NEWS: Set date and version for 2.0 news.
