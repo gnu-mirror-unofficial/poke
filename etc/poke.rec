@@ -789,25 +789,6 @@ Description:
 + non-strict values.
 RFC: yes
 
-Summary: Unions can be completed
-Component: Compiler
-Kind: OPT
-Priority: 3
-Description:
-+ If all the alternatives in the union are complete and they have the
-+ same size, then the union is complete too with that size.
-+
-+ Example:
-+
-+   union
-+   {
-+      uint<32> foo : n == 10;
-+      byte[32] bar;
-+   }
-+
-+ The type above is complete, with size 32#b known at compile time.
-Target: 2.0
-
 Summary: Save a nton instruction in pkl_asm_while
 Component: Compiler
 Kind: OPT
@@ -1346,26 +1327,6 @@ Description: uniquify.el
 +
 + For this we need auto-completion to work well.
 RFC: yes
-
-Summary: .info type TYPENAME
-Component: CLI
-Kind: ENH
-Priority: 3
-Description:
-+ This command, given the name of a type, should print an informative
-+ description on the fields and methods that the type defines:
-+
-+   Fields:
-+     f1, f2, f3, f4...
-+   Methods:
-+     m1, m2, m3, ...
-+
-+ The implementation should use the libpoke services in order to get the
-+ declaration of TYPE, and then to inspect the returned ``pk_type``.
-+
-+ Once we support docstrings in both fields and methods, the output of
-+ ``.info type`` can be expanded to use them.
-Target: 2.0
 
 Summary: .vm time
 Component: CLI
