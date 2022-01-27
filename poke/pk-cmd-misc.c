@@ -155,6 +155,8 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<mnabipoor> I wanted making a zero-length array for a long (!) time",
      "<jmd> Please don't talk whilst people are interrupting!",
      "<jemarch> I'm gonna tattoo \"See HACKING\" on my forehead",
+     "<jemarch> 1000 bitcoins could be in fucking HACKING and you people "
+     "would not fucking notice",
      NULL
     };
   static int num_strings = 0;

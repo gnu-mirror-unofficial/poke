@@ -1,3 +1,7 @@
+2022-01-28  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poke/pk-cmd-misc.c (pk_cmd_jmd): Add new quote.
+
 2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pvm.h (PVM_EXCEPTIONS): New macro.
