@@ -1,5 +1,31 @@
 2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pvm.jitter (PVM_RAISE_DIRECT): Use
+	`PVM_STATE_RUNTIME_FIELD` accessor.
+	(PVM_CALL): Likewise.
+	(return): Likewise.
+	(pushf): Likewise.
+	(popf): Likewise.
+	(pushvar): Likewise.
+	(pushtopvar): Likewise.
+	(popvar): Likewise.
+	(regvar): Likewise.
+	(pec): Likewise.
+	(pushhi): Likewise.
+	(pushlo): Likewise.
+	(write): Likewise.
+	(peekdi): Likewise.
+	(peekdiu): Likewise.
+	(peekdl): Likewise.
+	(peekdlu): Likewise.
+	(pokedi): Likewise.
+	(pokediu): Likewise.
+	(pokedl): Likewise.
+	(pokedlu): Likewise.
+	(pushe): Likewise.
+
+2022-01-27  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/pvm.jitter (wrapped-globals): Add pvm_literal_*.
 	(PVM_RAISE_DIRECT): Use `pvm_literal_code`.
 	(PVM_PEEK): Use `pvm_literal_enomem`.
