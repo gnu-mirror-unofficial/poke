@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+var a = [[1][:]];
+
+/* { dg-command { .set obase 10 } } */
+/* { dg-command {  [[1][:]] } } */
+/* { dg-output "\\\[\\\[1\\\]\\\]\n" } */
+/* { dg-command {  typeof (a).complete_p  } } */
+/* { dg-output "0" } */

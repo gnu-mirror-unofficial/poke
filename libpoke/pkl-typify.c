@@ -1133,6 +1133,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_trimmer)
                                         PKL_AST_TYPE_A_ETYPE (entity_type),
                                         NULL /* bound */);
     PKL_AST_TYPE (trimmer) = ASTREF (new_type);
+    PKL_PASS_RESTART = 1;
   }
   else
     PKL_AST_TYPE (trimmer) = ASTREF (entity_type);
