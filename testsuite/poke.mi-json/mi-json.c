@@ -289,7 +289,7 @@ test_json_file (const char *filename, FILE *ifp)
   if (ret == J_NOK)
     goto error;
   else if (ret == J_UND)
-    goto unresolved;
+    goto untested;
 
   pass (filename);
   return;
@@ -301,8 +301,8 @@ error:
     fail (filename);
   return;
 
- unresolved:
-  unresolved (filename);
+ untested:
+  untested (filename);
 }
 
 void

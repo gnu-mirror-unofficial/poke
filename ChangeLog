@@ -1,3 +1,9 @@
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* testsuite/poke.mi-json/mi-json.c (test_json_file): When libjson
+	is not modern enough, report the test as `untested' and not as
+	`unresolved'.
+
 2022-01-28  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-typify.c (pkl_typify1_ps_trimmer): Restart the pass
