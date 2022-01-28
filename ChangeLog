@@ -1,5 +1,12 @@
 2022-01-28  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* libpoke/pkl-trans.c (pkl_trans2_ps_op_attr):
+	s/assert/PKL_PASS_DONE/.
+	* testsuite/poke.pkl/typeof-25.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
+2022-01-28  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* etc/poke.rec (Unions can be completed): Remove (done).
 	(.info type TYPENAME): Remove (done).
 

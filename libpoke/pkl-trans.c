@@ -1461,7 +1461,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans2_ps_op_attr)
               length = PKL_AST_ARRAY_NELEM (operand);
               break;
             default:
-              assert (0);
+              PKL_PASS_DONE;
             }
         else if (PKL_AST_TYPE_CODE (operand_type) == PKL_TYPE_STRUCT
                  && (PKL_AST_TYPE_COMPLETE (operand_type)
