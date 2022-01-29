@@ -1,5 +1,14 @@
 2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-term.c (pager_inhibited_p): New variable.
+	(pk_term_start_pager): Reset pager_inhibited_p.
+	(pk_puts_paged): Handle `q' in pager.
+	(pk_puts_paged): Style --More--.
+	* etc/poke-dark.css (.pager-more): New class.
+	* etc/poke-bright.css (.pager-more): Likewise.
+
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-settings.pk: Add setting for `pager'.
 	* poke/poke.h: Remove poke_pager_p.
 	* poke/poke.c: Likewise.

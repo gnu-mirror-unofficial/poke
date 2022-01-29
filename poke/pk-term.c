@@ -39,6 +39,7 @@ static int screen_lines;
 static int screen_cols;
 
 static int pager_active_p;
+static int pager_inhibited_p;
 static int nlines = 1;
 
 /* Default style to use when the user doesn't specify a style file.
@@ -300,6 +301,7 @@ void
 pk_term_start_pager (void)
 {
   pager_active_p = 1;
+  pager_inhibited_p = 0;
   nlines = 1;
 }
 
@@ -314,6 +316,8 @@ pk_puts_paged (const char *lines)
 {
   char *start, *end;
 
+  if (pager_inhibited_p)
+    return;
 
   start = (char *) lines;
 
@@ -335,7 +339,9 @@ pk_puts_paged (const char *lines)
         struct termios old_termios;
         struct termios new_termios;
 
+        styled_ostream_begin_use_class (pk_ostream, "pager-more");
         ostream_write_str (pk_ostream, "--More--");
+        styled_ostream_end_use_class (pk_ostream, "pager-more");
         ostream_flush (pk_ostream, FLUSH_THIS_STREAM);
 
         /* Set stdin in non-buffered mode.  */
@@ -361,6 +367,11 @@ pk_puts_paged (const char *lines)
                 nlines = 1;
                 break;
               }
+            if (c == 'q')
+              {
+                pager_inhibited_p = 1;
+                break;
+              }
 
             /* Ding! 8-) */
             fprintf (stderr, "\007");
@@ -368,7 +379,10 @@ pk_puts_paged (const char *lines)
 
         /* Restore stdin to buffered-mode.  */
         tcsetattr (0, TCSANOW, &old_termios);
+
         ostream_write_str (pk_ostream, "\n");
+        if (pager_inhibited_p)
+          return;
      }
   } while (*end != '\0');
 }

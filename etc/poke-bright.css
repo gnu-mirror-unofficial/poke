@@ -44,6 +44,8 @@
 .pvm-register { color: green; }
 .pvm-number { color: lightgreen; }
 
+.pager-more { color: white; background-color: black; }
+
 html {
     font-family: Menlo, Monaco, "Courier New", monospace;
 }
