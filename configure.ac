@@ -227,6 +227,12 @@ if test "x$hserver_enabled" = "xyes"; then
             [Defined if the hyperlinks server is available])
 fi
 
+dnl The poke terminal (pk-term) requires accessing the terminal
+dnl capabilities and other goodities.  We first try with termcap, and
+dnl if that doesn't work, ncurses.
+
+AC_SEARCH_LIBS([tgetnum],[termcap ncurses])
+
 dnl The GUI is optional, and depends on the availability of Tcl and
 dnl Tk.
 
@@ -320,6 +326,10 @@ fi
 
 if test "x$gl_cv_lib_readline" = "xno"; then
    AC_MSG_ERROR([can't find an usable libreadline.  Please install one.])
+fi
+
+if test "x$ac_cv_search_tgetnum" = "xno"; then
+   AC_MSG_ERROR([can't find an usable termcap or ncurses])
 fi
 
 dnl End of configure.ac
