@@ -1,5 +1,9 @@
 2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (gnulib_modules): Add `termios'.
+
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-set.c (pk_cmd_set_pager): New function.
 	(set_pager_cmd): New variable.
 	(pk_cmd_set_init): Add set_pager command.
