@@ -447,11 +447,6 @@ parse_args_2 (int argc, char *argv[])
               goto exit_success;
             if (exception != PK_NULL)
               {
-                ecode = pk_int_value (pk_struct_ref_field_value (exception,
-                                                                 "code"));
-                if (ecode == PK_EC_EXIT || poke_quiet_p)
-                  goto exit_success;
-
                 poke_handle_exception (exception);
                 goto exit_success;
               }
