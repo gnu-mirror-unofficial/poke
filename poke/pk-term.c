@@ -18,16 +18,28 @@
 
 #include <config.h>
 
-#include <stdlib.h> /* For exit.  */
+#include <stdlib.h> /* For exit and getenv.  */
 #include <assert.h> /* For assert. */
 #include <string.h>
 #include <unistd.h> /* For isatty */
 #include <textstyle.h>
 #include <assert.h>
 #include <xalloc.h>
+#include <xstrndup.h>
+#include <stdio.h>
+#include <termios.h>
+#include <termcap.h>
 
 #include "poke.h"
 #include "pk-utils.h"
+
+/* Several variables related to the pager.  */
+
+static int screen_lines;
+static int screen_cols;
+
+static int pager_active_p;
+static int nlines = 1;
 
 /* Default style to use when the user doesn't specify a style file.
    We provide two defaults: one for dark backgrounds (the default) and
@@ -244,6 +256,28 @@ pk_term_init (int argc, char *argv[])
       register_color (default_bgcolor, -1, -1, -1);
     }
 #endif
+
+  /* Get the terminal dimensions using termcap.  */
+  {
+    char *termtype = getenv ("TERM");
+    static char term_buffer[2048];
+
+    if (termtype == NULL)
+      {
+        /* Stupid defaults.  */
+        screen_cols = 80;
+        screen_lines = 25;
+      }
+
+    if (tgetent (term_buffer, termtype) < 0)
+      fputs ("error: could not access the termcap database; ignoring TERM.\n",
+             stderr);
+    else
+      {
+        screen_cols = tgetnum ("co");
+        screen_lines = tgetnum ("li");
+      }
+  }
 }
 
 void
@@ -261,10 +295,91 @@ pk_term_flush ()
   ostream_flush (pk_ostream, FLUSH_THIS_STREAM);
 }
 
+
+void
+pk_term_start_pager (void)
+{
+  pager_active_p = 1;
+  nlines = 1;
+}
+
+void
+pk_term_stop_pager (void)
+{
+  pager_active_p = 0;
+}
+
+static void
+pk_puts_paged (const char *lines)
+{
+  char *start, *end;
+
+
+  start = (char *) lines;
+
+  do
+  {
+    char *line;
+
+    end = strchrnul (start, '\n');
+    line = xstrndup (start, end - start + 1);
+
+    ostream_write_str (pk_ostream, line);
+    free (line);
+    start = end + 1;
+    if (*end != '\0')
+      nlines++;
+
+    if (nlines >= screen_lines)
+      {
+        struct termios old_termios;
+        struct termios new_termios;
+
+        ostream_write_str (pk_ostream, "--More--");
+        ostream_flush (pk_ostream, FLUSH_THIS_STREAM);
+
+        /* Set stdin in non-buffered mode.  */
+        tcgetattr (0, &old_termios);
+        memcpy (&new_termios, &old_termios, sizeof (struct termios));
+        new_termios.c_lflag &= ~(ICANON | ECHO);
+        new_termios.c_cc[VTIME] = 0;
+        new_termios.c_cc[VMIN] = 1;
+        tcsetattr (0, TCSANOW, &new_termios);
+
+        /* Wait for a key and process it.  */
+        while (1)
+          {
+            int c = fgetc (stdin);
+
+            if (c == '\n')
+              {
+                nlines--;
+                break;
+              }
+            if (c == ' ')
+              {
+                nlines = 1;
+                break;
+              }
+
+            /* Ding! 8-) */
+            fprintf (stderr, "\007");
+          }
+
+        /* Restore stdin to buffered-mode.  */
+        tcsetattr (0, TCSANOW, &old_termios);
+        ostream_write_str (pk_ostream, "\n");
+     }
+  } while (*end != '\0');
+}
+
 void
 pk_puts (const char *str)
 {
-  ostream_write_str (pk_ostream, str);
+  if (pager_active_p)
+    pk_puts_paged (str);
+  else
+    ostream_write_str (pk_ostream, str);
 }
 
 __attribute__ ((__format__ (__printf__, 1, 2)))
@@ -280,7 +395,7 @@ pk_printf (const char *format, ...)
   assert (r != -1);
   va_end (ap);
 
-  ostream_write_str (pk_ostream, str);
+  pk_puts (str);
   free (str);
 }
 

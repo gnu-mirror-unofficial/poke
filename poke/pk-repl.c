@@ -383,7 +383,10 @@ pk_repl (void)
           add_history (line);
 #endif
 
+          if (poke_pager_p)
+            pk_term_start_pager ();
           pk_cmd_exec (line);
+          pk_term_stop_pager ();
         }
       free (line);
     }

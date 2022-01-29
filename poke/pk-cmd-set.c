@@ -182,7 +182,55 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
 
   return 1;
 }
+
+static int
+pk_cmd_set_pager (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
+{
+  /* set error-on-warning {yes,no} */
+
+  const char *arg;
+
+  /* Note that it is not possible to distinguish between no argument
+     and an empty unique string argument.  Therefore, argc should be
+     always 1 here, and we determine when no value was specified by
+     checking whether the passed string is empty or not.  */
+
+  if (argc != 2)
+    assert (0);
+
+  arg = PK_CMD_ARG_STR (argv[1]);
+
+  if (*arg == '\0')
+    {
+      if (poke_pager_p)
+        pk_puts ("yes\n");
+      else
+        pk_puts ("no\n");
+    }
+  else
+    {
+      if (STREQ (arg, "yes"))
+        poke_pager_p = 1;
+      else if (STREQ (arg, "no"))
+        poke_pager_p = 0;
+      else
+        {
+          pk_term_class ("error");
+          pk_puts (_("error: "));
+          pk_term_end_class ("error");
+          pk_puts (_("pager should be one of `yes' or `no'\n"));
+          return 0;
+        }
+    }
+
+  return 1;
+}
+
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
+
+const struct pk_cmd set_pager_cmd =
+  {"pager", "s?", "", 0, NULL, NULL, pk_cmd_set_pager,
+   "set pager (yes|no)", NULL};
 
 const struct pk_cmd set_error_on_warning_cmd =
   {"error-on-warning", "s?", "", 0, NULL, NULL, pk_cmd_set_error_on_warning,
@@ -224,7 +272,7 @@ pk_cmd_set_init ()
   nsettings = pk_array_nelem (registry_settings);
 
   set_cmds = xmalloc (sizeof (struct pk_cmd *)
-                      * (pk_int_value (nsettings) + 2));
+                      * (pk_int_value (nsettings) + 3));
 
   for (i = 0; i < pk_int_value (nsettings); ++i)
     {
@@ -264,6 +312,13 @@ pk_cmd_set_init ()
 
   /* Add error-on-warning. */
   set_cmds[i++] = &set_error_on_warning_cmd;
+
+  /* Add set-pager.  */
+  set_cmds[i++] = &set_pager_cmd;
+
+  /* NOTE: if you add more C-handled commands here like
+     `error-on-warning' and `set-pager', please do not forget to
+     update the xmalloc count above.  */
 
   /* Finish set_cmds with the null command.  */
   set_cmds[i] = &null_cmd;

@@ -60,4 +60,8 @@ extern struct pk_color pk_term_get_bgcolor (void);
 extern void pk_term_set_color (struct pk_color color);
 extern void pk_term_set_bgcolor (struct pk_color color);
 
+/* Paging.  */
+extern void pk_term_start_pager (void);
+extern void pk_term_stop_pager (void);
+
 #endif /* PK_TERM_H */

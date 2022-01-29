@@ -1,5 +1,25 @@
 2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-set.c (pk_cmd_set_pager): New function.
+	(set_pager_cmd): New variable.
+	(pk_cmd_set_init): Add set_pager command.
+	* poke/pk-repl.c (pk_repl): Use pager (conditionally) when
+	executing commands in the repl.
+	* poke/pk-settings.pk: Setting for `pager'.
+	* poke/pk-term.c (screen_lines): New variable.
+	(screen_cols): Likewise.
+	(pager_active_p): Likewise.
+	(nlines): Likewise.
+	(pk_term_init): Initialize terminal dimensions.
+	(pk_term_start_pager): New function.
+	(pk_term_stop_pager): Likewise.
+	(pk_puts_paged): Likewise.
+	(pk_puts): Call pk_puts_paged when necessary.
+	(pk_printf): Output via pk_puts.
+	* poke/poke.c: New global poke_pager_p.
+
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (parse_args_2): Really restore proper behavior with
 	-l and unhandled exceptions.
 

@@ -128,6 +128,11 @@ pk_compiler poke_compiler;
 
 int poke_load_init_file = 1;
 
+/* The following global indicates whether to use the terminal
+   pager.  It defaults to 0.  */
+
+int poke_pager_p;
+
 /* Command line options management.  */
 
 enum

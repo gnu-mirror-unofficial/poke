@@ -535,6 +535,21 @@ turn warnings into errors.
 This setting is `no' by default.",
     };
 
+/* Likewise for `pager'.  */
+
+pk_help_add_topic
+  :entry Poke_HelpEntry {
+           category = "settings",
+           topic = "pager",
+           summary = "whether to use the terminal pager",
+           synopsis = ".set pager {yes,no}",
+           description = "\
+This setting determines whether the output of poke commands will
+be paged or not.  Each page will have the height of the terminal.
+
+This setting is `no' by default.",
+   };
+
 /* Dump current settings.  */
 
 fun pk_settings_dump = void:
