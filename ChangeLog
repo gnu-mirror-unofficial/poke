@@ -1,5 +1,10 @@
 2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/poke.c (parse_args_2): Restore proper behavior with -l and
+	unhandled exceptions.
+
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd.h: Prototype for pk_cmd_completion_function.
 	* poke/pk-cmd.c: Fix pk_cmd_find and export
 	pk_cmd_completion_function.
