@@ -383,7 +383,7 @@ pk_repl (void)
           add_history (line);
 #endif
 
-          if (poke_pager_p)
+          if (pk_var_int ("pk_pager_p"))
             pk_term_start_pager ();
           pk_cmd_exec (line);
           pk_term_stop_pager ();

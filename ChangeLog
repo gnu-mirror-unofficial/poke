@@ -1,5 +1,13 @@
 2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-settings.pk: Add setting for `pager'.
+	* poke/poke.h: Remove poke_pager_p.
+	* poke/poke.c: Likewise.
+	* poke/pk-cmd-set.c (pk_cmd_set_pager): Delete.
+	(pk_cmd_set_init): Remove pager setting.
+
+2022-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac (HAVE_HSERVER): Search for `tgetnum' first in
 	libtermcap and then in libncurses.
 

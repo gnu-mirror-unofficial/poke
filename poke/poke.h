@@ -31,7 +31,6 @@
 extern int poke_interactive_p;
 extern int poke_quiet_p;
 extern int poke_exit_p;
-extern int poke_pager_p;
 #if HAVE_HSERVER
 extern int poke_hserver_p;
 #endif

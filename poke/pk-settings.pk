@@ -507,6 +507,26 @@ See also \".help .doc\".",
       }
     };
 
+pk_settings.add_setting
+  :entry Poke_Setting {
+      name = "pager",
+      kind = POKE_SETTING_BOOL,
+      summary = "whether to use the terminal pager",
+      usage = ".set pager {yes,no}",
+      description = "\
+This setting determines whether the output of poke commands will
+be paged or not.  Each page will have the height of the terminal.
+
+This setting is `no' by default.",
+    getter = lambda any: { return pk_pager_p; },
+    setter = lambda (any val) int:
+      {
+        pk_pager_p = val as int<32>;
+        return 1;
+      }
+   };
+
+
 /* Create help topics for the global settings defined above.  */
 
 for (setting in pk_settings.entries)
@@ -534,21 +554,6 @@ turn warnings into errors.
 
 This setting is `no' by default.",
     };
-
-/* Likewise for `pager'.  */
-
-pk_help_add_topic
-  :entry Poke_HelpEntry {
-           category = "settings",
-           topic = "pager",
-           summary = "whether to use the terminal pager",
-           synopsis = ".set pager {yes,no}",
-           description = "\
-This setting determines whether the output of poke commands will
-be paged or not.  Each page will have the height of the terminal.
-
-This setting is `no' by default.",
-   };
 
 /* Dump current settings.  */
 
