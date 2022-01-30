@@ -32,7 +32,8 @@ pvm-insns.texi: $(top_srcdir)/libpoke/pvm.jitter $(srcdir)/gen-pvm-insns.sh
 
 poke-settings.texi: $(srcdir)/poke2texi.pk $(top_srcdir)/poke/pk-settings.pk
 	$(top_builddir)/run poke -L $(srcdir)/poke2texi.pk --settings \
-          > poke-settings.texi
+	  > poke-settings.texi-tmp
+	mv poke-settings.texi-tmp poke-settings.texi
 
 # This rule generates a list of the node names from the manual.
 # It then substitutes spaces with '/' which is a kludge used to
@@ -81,5 +82,6 @@ poke.text: $(srcdir)/poke.texi
 
 MOSTLYCLEANFILES = \
   nodelist \
+  poke-settings.texi-tmp \
   poke.txmp
 MAINTAINERCLEANFILES = pvm-insns.texi poke-settings.texi poke.text
