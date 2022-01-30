@@ -157,8 +157,9 @@ endif
 if HSERVER
   poke_SOURCES += pk-hserver.h pk-hserver.c
   poke_LDADD += -lpthread
-  dist_pkgdata_DATA += pk-hserver.pk
 endif
+# We install pk-hserver.pk even if HSERVER is not enabled.
+dist_pkgdata_DATA += pk-hserver.pk
 
 # nodelist is now treated by doc/Makefile.am.
 MOSTLYCLEANFILES += nodelist
