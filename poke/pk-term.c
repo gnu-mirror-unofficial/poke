@@ -270,10 +270,7 @@ pk_term_init (int argc, char *argv[])
         screen_lines = 25;
       }
 
-    if (tgetent (term_buffer, termtype) < 0)
-      fputs ("error: could not access the termcap database; ignoring TERM.\n",
-             stderr);
-    else
+    if (tgetent (term_buffer, termtype) == 1)
       {
         screen_cols = tgetnum ("co");
         screen_lines = tgetnum ("li");
