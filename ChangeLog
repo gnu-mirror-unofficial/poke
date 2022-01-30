@@ -1,5 +1,14 @@
 2022-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (gnulib_modules): Import the termcap and
+	termcap-h gnulib modules.
+	* configure.ac: Remove checks for termcap, since the gnulib module
+	provides a better one.
+	* poke/Makefile.am (poke_LDADD): Add LTLIBTERMCAP.
+	* poke/pk-term.c (pk_term_init): Use termcap only if HAVE_TERMCAP.
+
+2022-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-term.c (pk_term_init): Do not error when TERM is not
 	set.
 

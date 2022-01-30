@@ -28,15 +28,17 @@
 #include <xstrndup.h>
 #include <stdio.h>
 #include <termios.h>
-#include <termcap.h>
+#if defined HAVE_TERMCAP
+#  include <termcap.h>
+#endif
 
 #include "poke.h"
 #include "pk-utils.h"
 
 /* Several variables related to the pager.  */
 
-static int screen_lines;
-static int screen_cols;
+static int screen_lines = 25;
+static int screen_cols = 80;
 
 static int pager_active_p;
 static int pager_inhibited_p;
@@ -258,24 +260,20 @@ pk_term_init (int argc, char *argv[])
     }
 #endif
 
+#if defined HAVE_TERMCAP
   /* Get the terminal dimensions using termcap.  */
   {
     char *termtype = getenv ("TERM");
     static char term_buffer[2048];
 
-    if (termtype == NULL)
-      {
-        /* Stupid defaults.  */
-        screen_cols = 80;
-        screen_lines = 25;
-      }
-
-    if (tgetent (term_buffer, termtype) == 1)
+    if (termtype != NULL
+        && tgetent (term_buffer, termtype) == 1)
       {
         screen_cols = tgetnum ("co");
         screen_lines = tgetnum ("li");
       }
   }
+#endif
 }
 
 void
