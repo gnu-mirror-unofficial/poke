@@ -37,6 +37,8 @@
 
 /* Several variables related to the pager.  */
 
+static const char *erase_line_str;
+
 static int screen_lines = 25;
 static int screen_cols = 80;
 
@@ -273,6 +275,9 @@ pk_term_init (int argc, char *argv[])
         screen_lines = tgetnum ("li");
       }
   }
+
+  /* Get the terminal command to erase the line.  */
+  erase_line_str = tigetstr ("ed");
 #endif
 }
 
@@ -375,7 +380,19 @@ pk_puts_paged (const char *lines)
         /* Restore stdin to buffered-mode.  */
         tcsetattr (0, TCSANOW, &old_termios);
 
+#if HAVE_TERMCAP
+        if (erase_line_str)
+          {
+            /* Erase --More--  */
+            ostream_write_str (pk_ostream, "\r");
+            ostream_write_str (pk_ostream, erase_line_str);
+            ostream_flush (pk_ostream, FLUSH_THIS_STREAM);
+          }
+        else
+#else
         ostream_write_str (pk_ostream, "\n");
+#endif
+
         if (pager_inhibited_p)
           return;
      }

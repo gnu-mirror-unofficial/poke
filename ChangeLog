@@ -1,5 +1,11 @@
 2022-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-term.c (erase_line_str): New variable.
+	(pk_term_init): Set erase_line_str to the terminal capability
+	"ed".
+
+2022-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Import the termcap and
 	termcap-h gnulib modules.
 	* configure.ac: Remove checks for termcap, since the gnulib module
