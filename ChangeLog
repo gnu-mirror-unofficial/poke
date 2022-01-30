@@ -1,5 +1,19 @@
 2022-01-30  Bruno Haible  <bruno@clisp.org>
 
+	Prefer terminfo over termcap when both are available.
+	<https://lists.gnu.org/archive/html/bug-gnulib/2022-01/msg00183.html>
+	* gnulib: Update to newest.
+	* bootstrap.conf (gnulib_modules): Use terminfo, terminfo-h instead of
+	termcap, termcap-h.
+	* poke/pk-term.c: Include terminfo.h instead of termcap.h.
+	(pk_term_init): Use the terminfo API if possible. Use the termcap API
+	only as second choice.
+	(pk_puts_paged): Don't test HAVE_TERMCAP.
+	* poke/Makefile.am (poke_LDADD): Use LTLIBTERMINFO instead of
+	LTLIBTERMCAP.
+
+2022-01-30  Bruno Haible  <bruno@clisp.org>
+
 	doc: Don't leave a broken .texi file around.
 	* doc/Makefile.am (poke-settings.texi): Don't create poke-settings.texi
 	if the command to create it failed.

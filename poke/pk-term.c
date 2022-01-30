@@ -21,24 +21,25 @@
 #include <stdlib.h> /* For exit and getenv.  */
 #include <assert.h> /* For assert. */
 #include <string.h>
-#include <unistd.h> /* For isatty */
+#include <unistd.h> /* For isatty, STDOUT_FILENO */
 #include <textstyle.h>
 #include <assert.h>
 #include <xalloc.h>
 #include <xstrndup.h>
 #include <stdio.h>
 #include <termios.h>
-#if defined HAVE_TERMCAP
-#  include <termcap.h>
-#endif
+#include "terminfo.h"
 
 #include "poke.h"
 #include "pk-utils.h"
 
 /* Several variables related to the pager.  */
 
+/* Terminal control sequence that erases to the end of the current line or of
+   the entire screen.  */
 static const char *erase_line_str;
 
+/* Current screen dimensions.  */
 static int screen_lines = 25;
 static int screen_cols = 80;
 
@@ -262,23 +263,34 @@ pk_term_init (int argc, char *argv[])
     }
 #endif
 
-#if defined HAVE_TERMCAP
-  /* Get the terminal dimensions using termcap.  */
+  /* Get the terminal dimensions and some terminal control sequences.  */
   {
-    char *termtype = getenv ("TERM");
-    static char term_buffer[2048];
-
-    if (termtype != NULL
-        && tgetent (term_buffer, termtype) == 1)
+    const char *termtype = getenv ("TERM");
+    if (termtype != NULL && *termtype != '\0')
       {
-        screen_cols = tgetnum ("co");
-        screen_lines = tgetnum ("li");
+#if defined HAVE_TERMINFO
+        int err = 1;
+        if (setupterm (termtype, STDOUT_FILENO, &err) == 0 || err == 1)
+          {
+            erase_line_str = tigetstr ("el");
+            if (erase_line_str == NULL)
+              erase_line_str = tigetstr ("ed");
+            screen_lines = tigetnum ("lines");
+            screen_cols = tigetnum ("cols");
+          }
+#elif defined HAVE_TERMCAP
+        static char termcap_buffer[2048];
+        if (tgetent (termcap_buffer, termtype) > 0)
+          {
+            erase_line_str = tgetstr ("ce");
+            if (erase_line_str == NULL)
+              erase_line_str = tgetstr ("cd");
+            screen_lines = tgetnum ("li");
+            screen_cols = tgetnum ("co");
+          }
+#endif
       }
   }
-
-  /* Get the terminal command to erase the line.  */
-  erase_line_str = tigetstr ("ed");
-#endif
 }
 
 void
@@ -380,7 +392,6 @@ pk_puts_paged (const char *lines)
         /* Restore stdin to buffered-mode.  */
         tcsetattr (0, TCSANOW, &old_termios);
 
-#if HAVE_TERMCAP
         if (erase_line_str)
           {
             /* Erase --More--  */
@@ -389,9 +400,7 @@ pk_puts_paged (const char *lines)
             ostream_flush (pk_ostream, FLUSH_THIS_STREAM);
           }
         else
-#else
-        ostream_write_str (pk_ostream, "\n");
-#endif
+          ostream_write_str (pk_ostream, "\n");
 
         if (pager_inhibited_p)
           return;
