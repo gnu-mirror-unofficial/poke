@@ -1603,7 +1603,6 @@ end
 
 instruction open ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
      char *filename = PVM_VAL_STR (JITTER_UNDER_TOP_STACK ());
      uint64_t flags = PVM_VAL_ULONG (JITTER_TOP_STACK ());
@@ -1633,7 +1632,6 @@ end
 
 instruction close ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     int io_id = PVM_VAL_INT (JITTER_TOP_STACK ());
     ios io = ios_search_by_id (io_id);
@@ -1662,7 +1660,6 @@ end
 
 instruction flush ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     ios_off offset = PVM_VAL_ULONG (JITTER_TOP_STACK ());
     int io_id = PVM_VAL_INT (JITTER_UNDER_TOP_STACK ());
@@ -1690,7 +1687,6 @@ end
 
 instruction pushios ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     ios cur_io = ios_cur ();
 
@@ -1711,7 +1707,6 @@ end
 
 instruction popios ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1734,7 +1729,6 @@ end
 
 instruction ioflags ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1756,7 +1750,6 @@ end
 
 instruction iosize ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1785,7 +1778,6 @@ end
 instruction iogetb ()
   non-relocatable
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
 
@@ -1817,7 +1809,6 @@ end
 
 instruction iosetb ()
   branching # because of PVM_RAISE_DIRECT
-  # XXX make non-relocatable: see raise
   code
     pvm_val bias = JITTER_UNDER_TOP_STACK();
     ios io = ios_search_by_id (PVM_VAL_INT (JITTER_TOP_STACK ()));
@@ -6241,7 +6232,6 @@ instruction raise ()
   # than using PVM_RAISE_* from instruction bodies.  That will dramatically
   # improve code locality and code size, and reduce the number of taken branches.
 
-  # XXX possibly make non-relocatable, for the same reasons.
   code
     pvm_val exception = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
