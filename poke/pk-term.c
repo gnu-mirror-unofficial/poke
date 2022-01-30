@@ -28,6 +28,8 @@
 #include <xstrndup.h>
 #include <stdio.h>
 #include <termios.h>
+#include <signal.h>
+#include <sys/ioctl.h>
 #include "terminfo.h"
 
 #include "poke.h"
@@ -40,8 +42,8 @@
 static const char *erase_line_str;
 
 /* Current screen dimensions.  */
-static int screen_lines = 25;
-static int screen_cols = 80;
+static int volatile screen_lines = 25;
+static int volatile screen_cols = 80;
 
 static int pager_active_p;
 static int pager_inhibited_p;
@@ -56,6 +58,54 @@ static const char *poke_default_style = "poke-dark.css";
 /* The following global is the libtextstyle output stream to use to
    emit contents to the terminal.  */
 static styled_ostream_t pk_ostream;
+
+/* Use a signal handler to keep the screen dimensions variables up-to-date.  */
+#if defined SIGWINCH && defined TIOCGWINSZ
+
+static /*_GL_ASYNC_SAFE*/ void
+update_screen_dimensions (void)
+{
+  struct winsize stdout_window_size;
+  if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &stdout_window_size) >= 0
+      && stdout_window_size.ws_row > 0
+      && stdout_window_size.ws_col > 0)
+    {
+      screen_lines = stdout_window_size.ws_row;
+      screen_cols = stdout_window_size.ws_col;
+    }
+}
+
+static void
+sigwinch_handler (int sig)
+{
+  update_screen_dimensions ();
+}
+
+static struct sigaction orig_sigwinch_action;
+
+static void
+install_sigwinch_handler (void)
+{
+  struct sigaction action;
+  action.sa_handler = sigwinch_handler;
+  action.sa_flags = SA_RESTART;
+  sigemptyset (&action.sa_mask);
+  (void) sigaction (SIGWINCH, &action, &orig_sigwinch_action);
+}
+
+static void
+uninstall_sigwinch_handler (void)
+{
+  (void) sigaction (SIGWINCH, &orig_sigwinch_action, NULL);
+}
+
+#else
+
+# define install_sigwinch_handler()
+# define uninstall_sigwinch_handler()
+
+#endif
+
 
 /* Stack of active classes.  */
 
@@ -265,6 +315,7 @@ pk_term_init (int argc, char *argv[])
 
   /* Get the terminal dimensions and some terminal control sequences.  */
   {
+    int done = 0;
     const char *termtype = getenv ("TERM");
     if (termtype != NULL && *termtype != '\0')
       {
@@ -277,6 +328,7 @@ pk_term_init (int argc, char *argv[])
               erase_line_str = tigetstr ("ed");
             screen_lines = tigetnum ("lines");
             screen_cols = tigetnum ("cols");
+            done = 1;
           }
 #elif defined HAVE_TERMCAP
         static char termcap_buffer[2048];
@@ -287,15 +339,21 @@ pk_term_init (int argc, char *argv[])
               erase_line_str = tgetstr ("cd");
             screen_lines = tgetnum ("li");
             screen_cols = tgetnum ("co");
+            done = 1;
           }
 #endif
       }
+    if (!done)
+      update_screen_dimensions ();
   }
+  install_sigwinch_handler ();
 }
 
 void
 pk_term_shutdown ()
 {
+  uninstall_sigwinch_handler ();
+
   while (active_classes)
     pop_active_class (active_classes->class);
   dispose_color_registry ();

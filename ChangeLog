@@ -1,5 +1,18 @@
 2022-01-30  Bruno Haible  <bruno@clisp.org>
 
+	Update the pager automatically when the window height changes.
+	* bootstrap.conf (gnulib_modules): Add sys_ioctl.
+	* poke/pk-term.c: Include <signal.h>, <sys/ioctl.h>.
+	(screen_lines, screen_cols): Mark as volatile.
+	(update_screen_dimensions, sigwinch_handler): New functions.
+	(orig_sigwinch_action): New variable.
+	(install_sigwinch_handler, uninstall_sigwinch_handler): New functions.
+	(pk_term_init): Make sure to get the screen dimensions. Invoke
+	install_sigwinch_handler.
+	(pk_term_shutdown): Invoke uninstall_sigwinch_handler.
+
+2022-01-30  Bruno Haible  <bruno@clisp.org>
+
 	Prefer terminfo over termcap when both are available.
 	<https://lists.gnu.org/archive/html/bug-gnulib/2022-01/msg00183.html>
 	* gnulib: Update to newest.
