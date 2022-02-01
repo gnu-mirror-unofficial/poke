@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+if NATIVE_BUILD
+
 man_MANS = poke.1
 
 EXTRA_DIST = $(man_MANS)
@@ -32,3 +34,5 @@ poke.1: $(top_srcdir)/poke/poke.c $(common_mandeps)
 	$(top_builddir)/run \
 	  $(HELP2MAN) -p poke --name="The GNU extensible binary editor" \
 	      $(builddir)/../poke/poke$(EXEEXT) -o $(srcdir)/poke.1
+
+endif

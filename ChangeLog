@@ -1,5 +1,9 @@
 2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* man/Makefile.am: Do not build manpage if cross-compiling.
+
+2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Make --disable-gui the default.
 
 2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
