@@ -1,5 +1,9 @@
 2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* man/Makefile.am (poke.1): Revert last change.
+
+2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* man/Makefile.am (poke.1): Add -q to poke invocation.
 	* doc/Makefile.am (poke-settings.texi): Likewise.
 
