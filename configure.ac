@@ -121,8 +121,14 @@ AC_SUBST([RAS_AWK])
 
 dnl The Boehm-Weiser garbage collector
 
-PKG_PROG_PKG_CONFIG
-PKG_CHECK_MODULES(BDW_GC,[bdw-gc],[have_gc=yes],[have_gc=no])
+AC_CHECK_LIB([gc], [GC_malloc],[have_libgc=yes])
+AC_CHECK_HEADERS([gc/gc.h],[have_gc_h=yes])
+
+have_gc=no
+if test "x$have_libgc" = "xyes" \
+   && test "x$have_gc_h" = "xyes"; then
+  have_gc=yes
+fi
 
 dnl The JSON-C library for the machine-interface
 
@@ -132,7 +138,13 @@ AC_ARG_ENABLE([mi],
               [mi_enabled=$enableval], [mi_enabled=yes])
 
 if test "x$mi_enabled" = "xyes"; then
-  PKG_CHECK_MODULES(JSON_C,[json-c],[],[mi_enabled=no])
+  AC_CHECK_LIB([json-c],[json_object_put],[have_libjson_c=yes])
+  AC_CHECK_HEADERS([json-c/json.h],[have_json_h=yes])
+
+  mi_enabled=no
+  if test "x$have_libjson_c" = "xyes" && test "x$have_json_h" = "xyes"; then
+    mi_enabled=yes
+  fi
 fi
 
 AM_CONDITIONAL([POKE_MI], [test "x$mi_enabled" = "xyes"])
@@ -165,16 +177,21 @@ AC_ARG_ENABLE([libnbd],
                              [Enable building with NBD support (default is YES)]),
               [libnbd_enabled=$enableval], [libnbd_enabled=yes])
 if test "x$libnbd_enabled" = "xyes"; then
-  PKG_CHECK_MODULES([LIBNBD], [libnbd], [
-    AC_SUBST([LIBNBD_CFLAGS])
-    AC_SUBST([LIBNBD_LIBS])
+  AC_CHECK_LIB([nbd], [nbd_create], [have_libnbd=yes])
+  AC_CHECK_HEADERS([libnbd.h], [have_libnbd_h=yes])
+
+  libnbd_enabled=no
+  NBDKIT=no
+  if test "x$have_libnbd" = "xyes" && test "x$have_libnbd_h" = "xyes"; then
     AC_DEFINE([HAVE_LIBNBD], [1], [libnbd found at compile time])
     AC_PATH_PROGS([NBDKIT], [nbdkit], [no], [$PATH:/usr/local/sbin:/usr/sbin])
-  ], [libnbd_enabled=no NBDKIT=no])
+    libnbd_enabled=yes
+  fi
 else
   NBDKIT=no
 fi
 AM_CONDITIONAL([NBD], [test "x$libnbd_enabled" = "xyes"])
+AC_SUBST([NBDKIT])
 
 dnl Used in Makefile.am.  See the note there.
 WITH_JITTER=$with_jitter

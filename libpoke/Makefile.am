@@ -191,10 +191,12 @@ libpoke_la_CPPFLAGS = -I$(top_builddir)/gl-libpoke -I$(top_srcdir)/gl-libpoke \
                       -DLOCALEDIR=\"$(localedir)\" \
                       $(CFLAG_VISIBILITY) \
                       -DBUILDING_LIBPOKE
-libpoke_la_CFLAGS = -Wall $(BDW_GC_CFLAGS) $(LIBNBD_CFLAGS)
+libpoke_la_CFLAGS = -Wall
 libpoke_la_LIBADD = ../gl-libpoke/libgnu.la libpvmjitter.la \
-                    $(BDW_GC_LIBS) \
-                    $(LIBNBD_LIBS)
+                    -lgc
+if NBD
+  libpoke_la_LIBADD += -lnbd
+endif NBD
 libpoke_la_LDFLAGS = -version-info $(LTV_CURRENT):$(LTV_REVISION):$(LTV_AGE) \
                      -lc -no-undefined
 

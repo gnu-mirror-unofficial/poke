@@ -23,7 +23,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <err.h>
-#include <json.h>
+#include <json-c/json.h>
 
 /* DejaGnu should not use gnulib's vsnprintf replacement here.  */
 #undef vsnprintf
