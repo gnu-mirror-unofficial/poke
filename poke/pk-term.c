@@ -501,7 +501,7 @@ pk_vprintf (const char *format, va_list ap)
   r = vasprintf (&str, format, ap);
   assert (r != -1);
 
-  ostream_write_str (pk_ostream, str);
+  pk_puts (str);
   free (str);
 }
 
