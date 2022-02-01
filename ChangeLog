@@ -1,5 +1,10 @@
 2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* man/Makefile.am (poke.1): Add -q to poke invocation.
+	* doc/Makefile.am (poke-settings.texi): Likewise.
+
+2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-pass.c (pkl_call_node_handlers): Do not continue
 	applying handlers to rewritten nodes, unless the rewritten node is
 	explicitly restarted by the phase handler that created it.
