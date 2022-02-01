@@ -30,6 +30,7 @@
           if (phases[i]->CLASS##_##ORDER##_handlers[(DISCR)])           \
             {                                                           \
               int restart;                                              \
+              pkl_ast_node orig_node = node;                            \
                                                                         \
               node                                                      \
                 = phases[i]->CLASS##_##ORDER##_handlers[(DISCR)] (compiler, \
@@ -59,9 +60,10 @@
                                         phases + i + 1,                 \
                                         flags,                          \
                                         level);                         \
-                  /* goto restart */                                    \
                   goto restart;                                         \
                 }                                                       \
+              else if (node != orig_node)                               \
+                goto newnode;                                           \
             }                                                           \
           i++;                                                          \
         }                                                               \
@@ -78,6 +80,7 @@
           if (phases[i]->what##_handler)                                \
             {                                                           \
               int restart;                                              \
+              pkl_ast_node orig_node = node;                            \
               node                                                      \
                 = phases[i]->what##_handler (compiler,                  \
                                              toplevel,                  \
@@ -105,9 +108,10 @@
                                         phases + i + 1,                 \
                                         flags,                          \
                                         level);                         \
-                  /* goto restart */                                    \
                   goto restart;                                         \
                 }                                                       \
+              else if (node != orig_node)                               \
+                goto newnode;                                           \
             }                                                           \
           i++;                                                          \
         }                                                               \
@@ -169,10 +173,6 @@ pkl_call_node_handlers (pkl_compiler compiler,
               /* Unknown operation code.  */
               assert (0);
             }
-
-          /* The node may have been replaced by the handler above.
-             Refresh the code.  */
-          node_code = PKL_AST_CODE (node);
         }
 
       /* Call the phase handlers defined for specific types, in the given
@@ -182,9 +182,6 @@ pkl_call_node_handlers (pkl_compiler compiler,
           int typecode = PKL_AST_TYPE_CODE (node);
 
           PKL_CALL_PHASES (type, ps, typecode);
-          /* The node may have been replaced by the handler above.
-             Refresh the code.  */
-          node_code = PKL_AST_CODE (node);
         }
 
       /* Call the phase handlers defined for node codes, in the given
@@ -224,10 +221,6 @@ pkl_call_node_handlers (pkl_compiler compiler,
               /* Unknown operation code.  */
               assert (0);
             }
-
-          /* The node may have been replaced by the handler above.
-             Refresh the code.  */
-          node_code = PKL_AST_CODE (node);
         }
 
       /* Call the phase handlers defined for specific types, in the given
@@ -237,14 +230,12 @@ pkl_call_node_handlers (pkl_compiler compiler,
           int typecode = PKL_AST_TYPE_CODE (node);
 
           PKL_CALL_PHASES (type, pr, typecode);
-          /* The node may have been replaced by the handler above.
-             Refresh the code.  */
-          node_code = PKL_AST_CODE (node);
         }
     }
   else
     assert (0);
 
+ newnode:
  restart:
  _exit:
   *_dobreak = dobreak;
@@ -617,6 +608,7 @@ pkl_do_pass_1 (pkl_compiler compiler,
      registered phases in case they are defined.  */
   if (handlers_used == 0)
     PKL_CALL_PHASES_SINGLE(else);
+ newnode:
  restart:
 
   /* If a new node was created to replace the incoming node, increase
