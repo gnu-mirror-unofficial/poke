@@ -254,8 +254,8 @@ dnl Tk.
 
 AC_ARG_ENABLE([gui],
               AS_HELP_STRING([--enable-gui],
-                             [Enable the GUI (default is YES)]),
-              [gui_enabled=$enableval], [gui_enabled=yes])
+                             [Enable the GUI (default is NO)]),
+              [gui_enabled=$enableval], [gui_enabled=no])
 
 if test "x$gui_enabled" = "xyes"; then
  POKE_TCLTK
