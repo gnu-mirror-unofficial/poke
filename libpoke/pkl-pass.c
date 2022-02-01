@@ -307,7 +307,6 @@ pkl_do_pass_1 (pkl_compiler compiler,
                int flags, int level)
 {
   pkl_ast_node node_orig = node;
-  int node_code = PKL_AST_CODE (node);
   int handlers_used = 0;
   int dobreak = 0;
 
@@ -325,6 +324,8 @@ pkl_do_pass_1 (pkl_compiler compiler,
   node = pkl_call_node_handlers (compiler, toplevel, ast, node, payloads, phases,
                                  &handlers_used, child_pos, parent, &dobreak,
                                  PKL_PASS_PRE_ORDER, flags, level);
+  /* Check that no pre-order handler replaced PKL_PASS_NODE.  */
+  assert (node == node_orig);
   if (dobreak)
     goto _exit;
 
@@ -339,7 +340,7 @@ pkl_do_pass_1 (pkl_compiler compiler,
                            payloads, phases, flags, level);
     }
 
-  switch (node_code)
+  switch (PKL_AST_CODE (node))
     {
     case PKL_AST_EXP:
       PKL_PASS (PKL_AST_EXP_OPERAND (node, 0));

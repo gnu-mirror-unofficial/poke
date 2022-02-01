@@ -166,7 +166,9 @@ typedef struct pkl_phase *pkl_phase;
    corresponding to the AST being processed.
 
    PKL_PASS_NODE expands to an l-value holding the pkl_ast_node for
-   the node being processed.
+   the node being processed.  You can change this value if you are
+   implementing a handler that replaces the current node with another
+   one; but note this is only allowed in post-order handlers.
 
    PKL_PASS_PARENT expands to an l-value holding the pkl_ast_node for
    the parent of the node being processed.  This is NULL for the

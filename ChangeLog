@@ -1,3 +1,10 @@
+2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-pass.h: NOte that changing PKL_PASS_NODE is
+	possible, but only in post-order handlers.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Add assertion to make sure
+	pre-order handlers do not replace the node being processed.
+
 2022-01-31  Alfred M. Szmidt  <ams@gnu.org>
 
 	* doc/gen-pvm-insns.sh: Try not to use hard coded location for
