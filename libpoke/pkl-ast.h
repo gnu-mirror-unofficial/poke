@@ -1043,8 +1043,6 @@ size_t pkl_ast_sizeof_integral_type (pkl_ast_node type);
 
 int pkl_ast_type_is_complete (pkl_ast_node type);
 
-void pkl_ast_array_type_remove_bounders (pkl_ast_node type);
-
 void pkl_print_type (FILE *out, pkl_ast_node type, int use_given_name);
 
 char *pkl_type_str (pkl_ast_node type, int use_given_name);

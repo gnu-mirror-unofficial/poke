@@ -1,3 +1,30 @@
+2022-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_constructor): Generate array
+	bounders in advance for array struct fields; these may be required
+	for casts if the user provided array literals as initialization in
+	the constructor.
+	* libpoke/pkl-ast.c (pkl_ast_array_type_remove_bounders): Delete
+	function.
+	* libpoke/pkl-ast.h: ... and its prototype.
+	* libpoke/pkl-gen.c (pkl_gen_pr_decl): Adapt subpassing into array
+	bounder.  Set mapper_depth and constructor_depth before invoking
+	RAS_FUNCTION_ARRAY_MAPPER and RAS_FUNCTION_ARRAY_CONSTRUCTOR
+	respectively.
+	(pkl_gen_pr_func): Add assert.
+	(pkl_gen_pr_func_arg): Do not remove installed array bounders.
+	(pkl_gen_pr_cast): Likewise.
+	(pkl_gen_pr_type_array): Likewise.
+	* testsuite/poke.pkl/ass-12.pk: New test.
+	* testsuite/poke.pkl/ass-13.pk: Likewise.
+	* testsuite/poke.pkl/ass-14.pk: Likewise.
+	* testsuite/poke.pkl/ass-15.pk: Likewise.
+	* testsuite/poke.pkl/ass-16.pk: Likewise.
+	* testsuite/poke.pkl/ass-17.pk: Likewise.
+	* testsuite/poke.pkl/scons-68.pk: Likewise.
+	* testsuite/poke.pkl/scons-69.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-02-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* man/Makefile.am: Do not build manpage if cross-compiling.

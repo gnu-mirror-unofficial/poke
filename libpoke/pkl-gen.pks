@@ -1453,6 +1453,18 @@
  .c
  .c     continue;
  .c   }
+        ;; If the field is of type array then the field initializer,
+        ;; the constraint expression and/or given values for the
+        ;; array will need to do array casts.  So field is
+        ;; of an anonymous type, make sure it has a
+        ;; bounder closure.
+ .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_ARRAY
+ .c     && !PKL_AST_TYPE_NAME (@field_type))
+ .c {
+ .c   PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
+ .c   PKL_PASS_SUBPASS (@field_type);
+ .c   PKL_GEN_POP_CONTEXT;
+ .c }
         pushvar $sct           ; ... [EBOFF ENAME EVAL] SCT
  .c   pkl_ast_node field_name = PKL_AST_STRUCT_TYPE_FIELD_NAME (@field);
  .c   if (field_name)
@@ -1494,6 +1506,7 @@
         drop                    ; SCT ENAME
         push null               ; SCT ENAME null
  .c  }
+ .c
  .c if (@field_initializer)
  .c {
         drop
@@ -1513,30 +1526,16 @@
 .alternative_ok:
  .c   }
         drop                                    ; SCT ENAME EVAL
-  .c }
+ .c }
 .got_value:
         ;; If the field type is an array, emit a cast here so array
         ;; bounds are checked.  This is not done in promo because the
         ;; array bounders shall be evaluated in this lexical
-        ;; environment.
+        ;; environment.  See above.
    .c if (PKL_AST_TYPE_CODE (@field_type) == PKL_TYPE_ARRAY)
    .c {
-   .c   /* Make sure the cast type has a bounder.  If it doesn't */
-   .c   /*   compile and install one.  */
-   .c   int bounder_created_p = 0;
-   .c   if (PKL_AST_TYPE_A_BOUNDER (@field_type) == PVM_NULL)
-   .c   {
-   .c      bounder_created_p = 1;
-   .c      PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_ARRAY_BOUNDER);
-   .c      PKL_PASS_SUBPASS (@field_type);
-   .c      PKL_GEN_POP_CONTEXT;
-   .c    }
-   .c
    .c   pkl_asm_insn (RAS_ASM, PKL_INSN_ATOA,
    .c                 NULL /* from_type */, @field_type);
-   .c
-   .c   if (bounder_created_p)
-   .c     pkl_ast_array_type_remove_bounders (@field_type);
    .c }
         rot                    ; ... ENAME EVAL SCT
         drop                   ; ... ENAME EVAL

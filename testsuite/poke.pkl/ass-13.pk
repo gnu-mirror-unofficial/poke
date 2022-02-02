@@ -1,0 +1,13 @@
+/* { dg-do run } */
+
+var r = 2;
+type x =
+  struct
+  {
+    byte[r] b;
+  };
+
+/* { dg-command {var a = x {}} } */
+/* { dg-command {a.b = [1UB, 2UB]} } */
+/* { dg-command {a.b} } */
+/* { dg-output "\\\[1UB,2UB\\\]" } */

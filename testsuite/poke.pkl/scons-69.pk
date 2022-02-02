@@ -1,0 +1,16 @@
+/* { dg-do run } */
+
+var n = 1;
+type Foo = struct { byte[n+1][n] a; byte[n+1][n] b; };
+
+/* { dg-command {var f = Foo { } } } */
+/* { dg-command {f.a} }*/
+/* { dg-output "\\\[\\\[0UB,0UB\\\]\\\]" } */
+/* { dg-command {f.b} }*/
+/* { dg-output "\n\\\[\\\[0UB,0UB\\\]\\\]" } */
+/* { dg-command {n = 2} }*/
+/* { dg-command {var f = Foo { } } } */
+/* { dg-command {f.a} }*/
+/* { dg-output "\n\\\[\\\[0UB,0UB,0UB\\\],\\\[0UB,0UB,0UB\\\]\\\]" } */
+/* { dg-command {f.b} }*/
+/* { dg-output "\n\\\[\\\[0UB,0UB,0UB\\\],\\\[0UB,0UB,0UB\\\]\\\]" } */

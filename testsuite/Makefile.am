@@ -734,6 +734,10 @@ EXTRA_DIST = \
   poke.pkl/ass-9.pk \
   poke.pkl/ass-10.pk \
   poke.pkl/ass-11.pk \
+  poke.pkl/ass-12.pk \
+  poke.pkl/ass-13.pk \
+  poke.pkl/ass-14.pk \
+  poke.pkl/ass-15.pk \
   poke.pkl/ass-diag-1.pk \
   poke.pkl/ass-diag-2.pk \
   poke.pkl/ass-diag-3.pk \
@@ -1851,6 +1855,8 @@ EXTRA_DIST = \
   poke.pkl/scons-65.pk \
   poke.pkl/scons-66.pk \
   poke.pkl/scons-67.pk \
+  poke.pkl/scons-68.pk \
+  poke.pkl/scons-69.pk \
   poke.pkl/scons-anon-field-1.pk \
   poke.pkl/scons-anon-field-2.pk \
   poke.pkl/scons-anon-field-3.pk \

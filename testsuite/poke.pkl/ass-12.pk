@@ -1,0 +1,12 @@
+/* { dg-do run } */
+
+var r = 2;
+type x =
+  struct
+  {
+    byte[r] b;
+  };
+
+/* { dg-command {var a = x {}} } */
+/* { dg-command {try a.b = [1UB]; catch if E_conv { print "caught\n"; } } } */
+/* { dg-output "caught" } */
