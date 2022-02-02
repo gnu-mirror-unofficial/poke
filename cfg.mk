@@ -19,13 +19,6 @@ sc_jemarchism_file_fd:
 	halt='do not use FILE *fd, use FILE *fp instead' \
 	  $(_sc_search_regexp)
 
-sc_rockdabootism_missing_space:
-	@prohibit='[a-z]+\('                    \
-	in_vc_files='\.[chl]$$'                 \
-	exclude="([a-z]+\(3\)\.|poke\(wo\)men)" \
-	halt='missing space before ('           \
-	$(_sc_search_regexp)
-
 sc_unitalicised_ie:
 	@prohibit='i\.e\.'				  \
 	in_vc_files='$(texinfo_suffix_re_)'		  \

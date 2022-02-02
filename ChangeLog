@@ -1,5 +1,10 @@
 2022-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* cfg.mk (sc_rockdabootism_missing_space): Remove syntax-check
+	rule.
+
+2022-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (struct_constructor): Generate array
 	bounders in advance for array struct fields; these may be required
 	for casts if the user provided array literals as initialization in
