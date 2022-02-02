@@ -5,4 +5,3 @@ type Foo = struct { byte[lala] b; };
 
 /* { dg-command { (Foo { b = [1UB,2UB] }).b } } */
 /* { dg-output "\\\[1UB,2UB\\\]" } */
-

@@ -1840,8 +1840,6 @@ instruction call ()
   code
     pvm_val closure = JITTER_TOP_STACK ();
 
-    if (PVM_VAL_CLS_ENV (closure) == NULL)
-      printf ("FUCK\n");
     pvm_assert (PVM_VAL_CLS_ENV (closure) != NULL);
     JITTER_DROP_STACK ();
     PVM_CALL (closure);
