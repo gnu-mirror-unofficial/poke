@@ -1,3 +1,29 @@
+2022-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pvm.c (pvm_run): exit_exception is mandatory.
+	* libpoke/pvm.h: Reflect this in docstring.
+	* poke/pk-map.c (pk_map_load_parsed_map): Pass exit_exception to
+	pk_compile_buffer and pk_compile_expression.
+	* poke/pk-mi.c (pk_mi_dispatch_msg): Likewise.
+	* libpoke/pkl.c (pkl_execute_statement): Do not replace the
+	compiler's environment if executing the code resulted in an
+	unhandled exception.
+	(pkl_execute_buffer): Likewise.
+	(pkl_execute_file): Likewise.
+	(pkl_execute_expression): Likewise.
+	(pkl_load_rt): Pass exit_exception to pkl_execute_file.
+	(LOAD_STD): Likewise.
+	(pkl_load): Likewise.
+	* libpoke/libpoke.c (pk_call): Likewise.
+	* testsuite/poke.libpoke/foreign-iod.c (main): Likewise.
+	(TEST_IO): Likewise.
+	(main): Likewise.
+	* testsuite/poke.libpoke/values.c (testcase_pk_val_equal_p):
+	Likewise.
+	* testsuite/poke.mi-json/mi-json.c (compile_initial_poke_code):
+	Likewise.
+	(compile_poke_expression): Likewise.
+
 2022-02-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-ast.c (pkl_ast_sizeof_type): Add case for complete

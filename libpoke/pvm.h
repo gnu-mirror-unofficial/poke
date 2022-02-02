@@ -616,9 +616,9 @@ void pvm_reset_profile (pvm pvm);
    If the execution of PROGRAM generates a result value, it is put in
    RES.
 
-   If not NULL, *EXIT_EXCEPTION is set to an exception value if the
-   execution of the program gets interrupted by an unhandled exception.
-   Otherwise *EXIT_EXCEPTION is set to PK_NULL.
+   *EXIT_EXCEPTION is set to an exception value if the execution of
+   the program gets interrupted by an unhandled exception.  Otherwise
+   *EXIT_EXCEPTION is set to PK_NULL.
 
    This function returns an exit code, indicating whether the
    execution was successful or not.  */

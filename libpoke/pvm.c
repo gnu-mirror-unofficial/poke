@@ -172,8 +172,7 @@ pvm_run (pvm apvm, pvm_program program, pvm_val *res, pvm_val *exc)
 
   if (res != NULL)
     *res = PVM_STATE_RESULT_VALUE (apvm);
-  if (exc != NULL)
-    *exc = PVM_STATE_EXIT_EXCEPTION_VALUE (apvm);
+  *exc = PVM_STATE_EXIT_EXCEPTION_VALUE (apvm);
 
   return PVM_STATE_EXIT_CODE (apvm);
 }

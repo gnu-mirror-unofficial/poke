@@ -473,13 +473,15 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
                         pk_map_parsed_map map)
 {
   pk_map_parsed_entry entry;
+  pk_val exit_exception;
 
   /* First, compile the prologue.  */
   /* XXX set error location and disable verbose error messages in
      poke_compiler.  */
   if (pk_compile_buffer (poke_compiler,
                          PK_MAP_PARSED_MAP_PROLOGUE (map),
-                         NULL, NULL) != PK_OK)
+                         NULL, &exit_exception) != PK_OK
+      || exit_exception != PK_NULL)
     return 0;
 
   /* Process the map entries and create the mapped global
@@ -496,12 +498,15 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
       /* Evaluate the condition.  */
       if (condition)
         {
+          pk_val exit_exception;
+
           /* XXX set error location... */
           if (pk_compile_expression (poke_compiler,
                                      condition,
                                      NULL /* end */,
                                      &val,
-                                     NULL /* exception */) != PK_OK)
+                                     &exit_exception) != PK_OK
+              || exit_exception != PK_NULL)
             goto error;
 
           if (pk_val_kind (val) != PK_VAL_INT
@@ -523,6 +528,7 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           const char *name = PK_MAP_PARSED_ENTRY_NAME (entry);
           const char *type = PK_MAP_PARSED_ENTRY_TYPE (entry);
           const char *offset = PK_MAP_PARSED_ENTRY_OFFSET (entry);
+          pk_val exit_exception;
 
           PK_MAP_PARSED_ENTRY_VARNAME (entry)
             = entry_name_to_varname (name);
@@ -537,7 +543,8 @@ pk_map_load_parsed_map (int ios_id, const char *mapname,
           if (pk_compile_buffer (poke_compiler,
                                  defvar_str,
                                  NULL /* end */,
-                                 NULL /* exception */) != PK_OK)
+                                 &exit_exception) != PK_OK
+              || exit_exception != PK_NULL)
             goto error;
         }
     }

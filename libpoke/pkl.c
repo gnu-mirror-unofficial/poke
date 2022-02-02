@@ -76,7 +76,10 @@ struct pkl_compiler
 static int
 pkl_load_rt (pkl_compiler compiler, char *poke_rt_pk)
 {
-  if (!pkl_execute_file (compiler, poke_rt_pk, NULL))
+  pvm_val exit_exception;
+
+  if (!pkl_execute_file (compiler, poke_rt_pk, &exit_exception)
+      || exit_exception != PVM_NULL)
     {
       free (poke_rt_pk);
 
@@ -132,11 +135,13 @@ pkl_new (pvm vm, const char *rt_path, uint32_t flags)
 #define LOAD_STD(NAME)                                          \
   do                                                            \
     {                                                           \
+      pvm_val exit_exception;                                   \
       char *path = pk_str_concat (rt_path, "/" NAME, NULL);     \
       if (!path)                                                \
         goto out_of_memory;                                     \
                                                                 \
-      if (!pkl_execute_file (compiler, path, NULL))             \
+      if (!pkl_execute_file (compiler, path, &exit_exception)   \
+          || exit_exception != PVM_NULL)                        \
         {                                                       \
           free (path);                                          \
           pkl_free (compiler);                                  \
@@ -306,6 +311,7 @@ pkl_execute_buffer (pkl_compiler compiler,
   pvm_program program;
   int ret;
   pkl_env env = NULL;
+  pvm_val val;
 
   compiler->compiling = PKL_COMPILING_PROGRAM;
   env = pkl_env_dup_toplevel (compiler->env);
@@ -328,16 +334,16 @@ pkl_execute_buffer (pkl_compiler compiler,
   //  pvm_disassemble_program (program);
   pvm_program_make_executable (program);
 
-  /* Execute the program in the poke vm.  */
-  {
-    pvm_val val;
-    pvm_run (compiler->vm, program, &val, exit_exception);
-    /* Discard the value.  */
-  }
-
+  /* Execute the program in the poke vm.  Note the return value is
+     discarded.  */
+  pvm_run (compiler->vm, program, &val, exit_exception);
   pvm_destroy_program (program);
-  pkl_env_free (compiler->env);
-  compiler->env = env;
+
+  if (*exit_exception == PVM_NULL)
+    {
+      pkl_env_free (compiler->env);
+      compiler->env = env;
+    }
   return 1;
 
  error:
@@ -377,10 +383,13 @@ pkl_execute_statement (pkl_compiler compiler,
 
   /* Execute the routine in the poke vm.  */
   pvm_run (compiler->vm, program, val, exit_exception);
-
   pvm_destroy_program (program);
-  pkl_env_free (compiler->env);
-  compiler->env = env;
+
+  if (*exit_exception == PVM_NULL)
+    {
+      pkl_env_free (compiler->env);
+      compiler->env = env;
+    }
   return 1;
 
  error:
@@ -458,10 +467,13 @@ pkl_execute_expression (pkl_compiler compiler,
 
   /* Execute the routine in the poke vm.  */
   pvm_run (compiler->vm, program, val, exit_exception);
-
   pvm_destroy_program (program);
-  pkl_env_free (compiler->env);
-  compiler->env = env;
+
+  if (*exit_exception == PVM_NULL)
+    {
+      pkl_env_free (compiler->env);
+      compiler->env = env;
+    }
   return 1;
 
  error:
@@ -478,6 +490,7 @@ pkl_execute_file (pkl_compiler compiler, const char *fname,
   pvm_program program;
   FILE *fp;
   pkl_env env = NULL;
+  pvm_val val;
 
   compiler->compiling = PKL_COMPILING_PROGRAM;
 
@@ -505,15 +518,14 @@ pkl_execute_file (pkl_compiler compiler, const char *fname,
   fclose (fp);
 
   /* Execute the program in the poke vm.  */
-  {
-    pvm_val val;
-
-    pvm_run (compiler->vm, program, &val, exit_exception);
-  }
-
+  pvm_run (compiler->vm, program, &val, exit_exception);
   pvm_destroy_program (program);
-  pkl_env_free (compiler->env);
-  compiler->env = env;
+
+  if (*exit_exception == PVM_NULL)
+    {
+      pkl_env_free (compiler->env);
+      compiler->env = env;
+    }
   return 1;
 
  error:
@@ -725,6 +737,7 @@ pkl_resolve_module (pkl_compiler compiler,
 int
 pkl_load (pkl_compiler compiler, const char *module)
 {
+  pvm_val exit_exception;
   char *module_filename = pkl_resolve_module (compiler,
                                               module,
                                               0 /* filename_p */);
@@ -734,12 +747,12 @@ pkl_load (pkl_compiler compiler, const char *module)
   if (pkl_module_loaded_p (compiler, module_filename))
     return 1;
 
-  if (!pkl_execute_file (compiler, module_filename, NULL))
-    {
-      pkl_add_module (compiler, module_filename);
-      return 0;
-    }
+  if (!pkl_execute_file (compiler, module_filename,
+                         &exit_exception)
+      || exit_exception != PVM_NULL)
+    return 0;
 
+  pkl_add_module (compiler, module_filename);
   return 1;
 }
 

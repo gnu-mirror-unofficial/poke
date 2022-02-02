@@ -289,6 +289,7 @@ static void
 pk_mi_dispatch_msg (pk_mi_msg msg)
 {
   const char* errmsg = "";
+  pk_val exit_exception;
 
   if (pk_mi_msg_kind (msg) != PK_MI_MSG_REQUEST)
     {
@@ -323,8 +324,8 @@ pk_mi_dispatch_msg (pk_mi_msg msg)
 
         ok = pk_compile_expression (poke_compiler,
                                     "format (\"%v\", __pkl_mi_value)",
-                                    NULL, &val, NULL);
-        assert (ok == PK_OK);
+                                    NULL, &val, &exit_exception);
+        assert (ok == PK_OK && exit_exception == PK_NULL);
 
         resp = pk_mi_make_resp (PK_MI_RESP_PRINTV, pk_mi_msg_number (msg),
                                 1 /* success_p */, NULL /* errmsg */);

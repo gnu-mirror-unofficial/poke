@@ -223,7 +223,7 @@ void
 testcase_pk_val_equal_p (const char *filename, const char *sec_code,
                          const char *sec_expr1, const char *sec_expr2)
 {
-  pk_val val1, val2;
+  pk_val val1, val2, exit_exception;
   pk_compiler pkc;
   int equal;
 
@@ -232,13 +232,13 @@ testcase_pk_val_equal_p (const char *filename, const char *sec_code,
   if (!pkc)
     goto error;
 
-  if (pk_compile_buffer (pkc, sec_code, NULL, NULL) != PK_OK)
+  if (pk_compile_buffer (pkc, sec_code, NULL, &exit_exception) != PK_OK)
     goto error;
 
-  if (pk_compile_expression (pkc, sec_expr1, NULL, &val1, NULL) != PK_OK)
+  if (pk_compile_expression (pkc, sec_expr1, NULL, &val1, &exit_exception) != PK_OK)
     goto error;
 
-  if (pk_compile_expression (pkc, sec_expr2, NULL, &val2, NULL) != PK_OK)
+  if (pk_compile_expression (pkc, sec_expr2, NULL, &val2, &exit_exception) != PK_OK)
     goto error;
 
   /*  We should have a way to discriminate if we should check

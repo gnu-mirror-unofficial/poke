@@ -249,8 +249,8 @@ char *pkl_resolve_module (pkl_compiler compiler, const char *module,
                           int filename_p);
 
 /* Load a module using the given compiler.
-   If the module cannot be loaded, return 1.
-   Otherwise, return 0.  */
+   If the module cannot be loaded, return 0.
+   Otherwise, return 1.  */
 
 int pkl_load (pkl_compiler compiler, const char *module);
 

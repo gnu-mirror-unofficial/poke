@@ -179,7 +179,10 @@ main (int argc, char *argv[])
   /* Open the foreign IOD.  */
   {
     pk_val val;
-    if (pk_compile_statement (poke_compiler, "open (\"<foreign>\");", NULL, &val, NULL)
+    pk_val exit_exception;
+
+    if (pk_compile_statement (poke_compiler, "open (\"<foreign>\");", NULL, &val,
+                              &exit_exception)
         != PK_OK)
       {
         fail ("opening <foreign>");
@@ -203,8 +206,10 @@ main (int argc, char *argv[])
   do                                                                    \
     {                                                                   \
       pk_val val;                                                       \
+      pk_val exit_exception;                                            \
+                                                                        \
       iod_op.used_p = 0;                                                \
-      if (pk_compile_statement (poke_compiler, CMD ";", NULL, &val, NULL) \
+      if (pk_compile_statement (poke_compiler, CMD ";", NULL, &val, &exit_exception) \
           != PK_OK)                                                     \
         {                                                               \
           fail ((CMD));                                                 \
@@ -234,7 +239,10 @@ main (int argc, char *argv[])
   /* Close the foreign IOD.  */
   {
     pk_val val;
-    if (pk_compile_statement (poke_compiler, "close (0);", NULL, &val, NULL)
+    pk_val exit_exception;
+
+    if (pk_compile_statement (poke_compiler, "close (0);", NULL, &val,
+                              &exit_exception)
         != PK_OK)
       {
         fail ("closing <foreign>");

@@ -107,7 +107,9 @@ compile_initial_poke_code (FILE *ifp, pk_compiler pkc)
 
   if (poke_code)
     {
-      error = pk_compile_buffer (pkc, poke_code, NULL, NULL);
+      pk_val exit_exception;
+
+      error = pk_compile_buffer (pkc, poke_code, NULL, &exit_exception);
       free (poke_code);
     }
 
@@ -123,6 +125,7 @@ compile_poke_expression (FILE *ifp, pk_compiler pkc, pk_val *val)
   ssize_t nread;
   char *line = NULL;
   size_t len = 0;
+  pk_val exit_exception;
 
   while (1)
     {
@@ -135,7 +138,8 @@ compile_poke_expression (FILE *ifp, pk_compiler pkc, pk_val *val)
 
       line[nread - 1] = '\0';
 
-      if (pk_compile_expression (pkc, (const char *)line, NULL, val, NULL) != PK_OK)
+      if (pk_compile_expression (pkc, (const char *)line, NULL, val,
+                                 &exit_exception) != PK_OK)
         goto error;
     }
 
