@@ -1079,12 +1079,19 @@ pkl_ast_sizeof_type (pkl_ast ast, pkl_ast_node type)
                     || PKL_AST_CODE (field_label) == PKL_AST_OFFSET);
             assert (PKL_AST_STRUCT_TYPE_FIELD_OPTCOND (t) == NULL);
 
-            /* If struct is pinned, the new size is
+            /* All fields of a complete union have the same size.
+               If struct is pinned, the new size is
                `max (size, elem_type_size)`.
                Otherwise if the field has a constant label, the new size
                is `max (size, label_in_bits + elem_type_size)'.
                Otherwise, it is `size + elem_type_size'.  */
-            if (PKL_AST_TYPE_S_PINNED_P (type))
+            if (PKL_AST_TYPE_S_UNION_P (type))
+              {
+                res = ASTREF (elem_type_size);
+                PKL_AST_TYPE (res) = ASTREF (res_type);
+                break;
+              }
+            else if (PKL_AST_TYPE_S_PINNED_P (type))
               {
                 pkl_ast_node cond;
 

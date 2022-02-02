@@ -1,0 +1,8 @@
+/* { dg-do compile } */
+
+fun foo = offset<uint<64>,b>:
+  {
+    type T = union { long a == 10; int b; };
+
+    return sizeof (T); /* { dg-error "" } */
+  }

@@ -1914,7 +1914,11 @@ EXTRA_DIST = \
   poke.pkl/sizeof-11.pk \
   poke.pkl/sizeof-12.pk \
   poke.pkl/sizeof-13.pk \
+  poke.pkl/sizeof-14.pk \
+  poke.pkl/sizeof-15.pk \
+  poke.pkl/sizeof-16.pk \
   poke.pkl/sizeof-diag-1.pk \
+  poke.pkl/sizeof-diag-2.pk \
   poke.pkl/sl-diag-1.pk \
   poke.pkl/sl-diag-2.pk \
   poke.pkl/sl-diag-3.pk \

@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type union_for_sizeof = union { int[1+1] a == [-1, 1]; long b; };
+
+/* { dg-command {  .set obase 10  } } */
+/* { dg-command {  sizeof (union_for_sizeof) } } */
+/* { dg-output "64UL#b" } */
