@@ -7,6 +7,22 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 2.0,90 (4 February 2022)
+* Bug fixes
+
+   - A needed file (pk-hserver.pk) was not distributed if poke was
+     built without hserver support.  Now it is.
+   - poke can now be cross-built.
+   - Auto-completion now works in subcommands.
+   - Don't panic whan an attribute is not known at compile-time.
+   - Fix ICE related to completeness of trimmed arrays.
+   - Restore proper behavior with -l and unhandled exceptions.
+   - Make --disable-gui the default.
+   - Fix size calculation of complete union types.
+   - Do not change the compiler environment when unhandled exceptions.
+   - Jitter has been updated to not use minimum-threading, since
+     there is a bug in that dispatch mode.
+
  Version 2.0 (28 January 2022)
 * User interface updates
 

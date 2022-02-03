@@ -1,5 +1,10 @@
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Change version to 2.0.90.
+	* NEWS: Add entries for 2.0.90.
+
+2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (parse_args_2): Remove unused variable.
 
 2022-02-03  Jose E. Marchesi  <jemarch@gnu.org>
