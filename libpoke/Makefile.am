@@ -47,8 +47,8 @@ libpoke_la_SOURCES = libpoke.h libpoke.c \
                      pkl-asm.h pkl-asm.c \
                      pkl-diag.h pkl-diag.c \
                      pkl-parser.h pkl-parser.c \
-                     pkl-gen.pks pkl-asm.pks pkl-gen-builtins.pks \
-                     pkl-gen.pkc pkl-asm.pkc pkl-gen-builtins.pkc \
+                     pkl-gen.pks pkl-asm.pks pkl-gen-builtins.pks pkl-gen-attrs.pks \
+                     pkl-gen.pkc pkl-asm.pkc pkl-gen-builtins.pkc pkl-gen-attrs.pkc \
                      pkl-insn.def pkl-ops.def pkl-attrs.def \
                      pvm.h pvm.c \
                      pvm-val.c pvm-val.h \
@@ -85,12 +85,12 @@ endif HAVE_PROC
 	srcdir=$(srcdir) $(RAS_AWK) -f $(srcdir)/ras $< > $$outfile.tmp \
 	&& mv $$outfile.tmp $(srcdir)/$$outfile
 
-pkl-gen.pkc pkl-gen-builtins.pkc pkl-asm.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
-MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-gen-builtins.pkc.tmp pkl-asm.pkc.tmp
+pkl-gen.pkc pkl-gen-builtins.pkc pkl-asm.pkc pkl-gen-attrs.pkc: $(srcdir)/ras $(srcdir)/pkl-insn.def
+MOSTLYCLEANFILES += pkl-gen.pkc.tmp pkl-gen-builtins.pkc.tmp pkl-gen-attrs.pkc.tmp pkl-asm.pkc.tmp
 
 EXTRA_DIST = ras
 
-BUILT_SOURCES = pkl-gen.pkc pkl-gen-builtins.pkc pkl-asm.pkc
+BUILT_SOURCES = pkl-gen.pkc pkl-gen-builtins.pkc pkl-gen-attrs.pkc pkl-asm.pkc
 
 AM_LFLAGS = -d
 # The Automake generated .l.c rule is broken: When executed in a VPATH build,

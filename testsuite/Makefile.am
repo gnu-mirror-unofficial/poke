@@ -818,6 +818,7 @@ EXTRA_DIST = \
   poke.pkl/attr-size-19.pk \
   poke.pkl/attr-size-20.pk \
   poke.pkl/attr-size-21.pk \
+  poke.pkl/attr-size-22.pk \
   poke.pkl/attr-unit-1.pk \
   poke.pkl/attr-unit-2.pk \
   poke.pkl/attr-unit-3.pk \

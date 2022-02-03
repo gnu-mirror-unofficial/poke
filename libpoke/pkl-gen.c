@@ -116,6 +116,7 @@
 #define RAS_COMP_ENV (PKL_GEN_PAYLOAD->env)
 #include "pkl-gen.pkc"
 #include "pkl-gen-builtins.pkc"
+#include "pkl-gen-attrs.pkc"
 
 /*
  * SRC
@@ -4368,29 +4369,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
   switch (attr)
     {
     case PKL_AST_ATTR_SIZE:
-      /* If the value is an ANY, check the type is NOT a function
-         value.  */
-      if (PKL_AST_TYPE_CODE (operand_type) == PKL_TYPE_ANY)
-        {
-          pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_TYISC);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BZI, label);
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_exception (PVM_E_CONV, PVM_E_CONV_NAME,
-                                            PVM_E_CONV_ESTATUS, NULL, NULL));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
-
-          pkl_asm_label (PKL_GEN_ASM, label);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-        }
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SIZ);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                    pvm_make_ulong (1, 64));
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
-      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-      /* XXX up-unit to the highest possible power of 2.  */
+      RAS_MACRO_ATTR_SIZE (operand_type);
       break;
     case PKL_AST_ATTR_MAGNITUDE:
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_OGETM);
@@ -4408,101 +4387,24 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
         pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_int (0, 32));
       break;
     case PKL_AST_ATTR_LENGTH:
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_STRING:
-        case PKL_TYPE_ARRAY:
-        case PKL_TYPE_STRUCT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          break;
-        default:
-          /* This should not happen.  */
-          assert (0);
-        }
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL);
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
+      break;
+    case PKL_AST_ATTR_OFFSET:
+      RAS_MACRO_ATTR_OFFSET (operand_type);
+      break;
+    case PKL_AST_ATTR_IOS:
+      RAS_MACRO_ATTR_IOS (operand_type);
+      break;
+    case PKL_AST_ATTR_MAPPED:
+      RAS_MACRO_ATTR_MAPPED (operand_type);
+      break;
+    case PKL_AST_ATTR_STRICT:
+      RAS_MACRO_ATTR_STRICT (operand_type);
       break;
     case PKL_AST_ATTR_ALIGNMENT:
       /* XXX writeme */
       assert (0);
-      break;
-    case PKL_AST_ATTR_OFFSET:
-      /* Fallthrough.  */
-    case PKL_AST_ATTR_IOS:
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_ANY:
-          /* Fallthrough.  */
-        case PKL_TYPE_ARRAY:
-          /* Fallthrough.  */
-        case PKL_TYPE_STRUCT:
-          {
-            pvm_program_label label = pkl_asm_fresh_label (PKL_GEN_ASM);
-
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM); /* VAL MAPPED_P */
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_BNZI, label);
-
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                          pvm_make_exception (PVM_E_MAP, PVM_E_MAP_NAME,
-                                              PVM_E_MAP_ESTATUS, NULL, NULL));
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
-            pkl_asm_label (PKL_GEN_ASM, label);
-
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* VAL */
-            if (attr == PKL_AST_ATTR_OFFSET)
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETO);
-            else
-              pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETIOS);
-            pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP); /* (BOFF|IOS) */
-
-            if (attr == PKL_AST_ATTR_OFFSET)
-              {
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                              pvm_make_ulong (1, 64));
-                pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MKO);
-              }
-            break;
-          }
-        default:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_exception (PVM_E_MAP, PVM_E_MAP_NAME,
-                                            PVM_E_MAP_ESTATUS, NULL, NULL));
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
-          break;
-        }
-      break;
-    case PKL_AST_ATTR_MAPPED:
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_ANY:
-        case PKL_TYPE_ARRAY:
-        case PKL_TYPE_STRUCT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MM);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          break;
-        default:
-          /* Other types are never mapped.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_int (0, 32));
-          break;
-        }
-      break;
-    case PKL_AST_ATTR_STRICT:
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_ANY:
-        case PKL_TYPE_ARRAY:
-        case PKL_TYPE_STRUCT:
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MGETS);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP);
-          break;
-        default:
-          /* Other types are considered strict.  */
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP);
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                        pvm_make_int (1, 32));
-          break;
-        }
       break;
     default:
       PKL_ICE (PKL_AST_LOC (exp),

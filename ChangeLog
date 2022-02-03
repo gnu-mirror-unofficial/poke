@@ -1,3 +1,15 @@
+2022-02-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/Makefile.am (libpoke_la_SOURCES): Add
+	pkl-gen-attrs.{pks,pkc}.
+	(MOSTLYCLEANFILES): Add pkl-gen-attrs.pkc.tmp.
+	(BUILT_SOURCES): Add pkl-gen-attrs.pkc.
+	* libpoke/pkl-gen-attrs.pks: New file.
+	* libpoke/pkl-gen.c: Include pkl-gen-attrs.pkc.
+	(pkl_gen_ps_op_attr): Use RAS macros.
+	* testsuite/poke.pkl/attr-size-22.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2022-02-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-trans.c (pkl_trans1_ps_op_attr): Dereference node
