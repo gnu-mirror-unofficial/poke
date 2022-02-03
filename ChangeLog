@@ -1,3 +1,8 @@
+2022-02-03  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-trans.c (pkl_trans1_ps_op_attr): Dereference node
+	property after making sure it's valid.
+
 2022-02-02  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-trans.c (pkl_trans1_ps_op_attr): Dereference node
