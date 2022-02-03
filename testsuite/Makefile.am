@@ -632,6 +632,7 @@ EXTRA_DIST = \
   poke.pkl/adda-int-1.pk \
   poke.pkl/adda-offset-1.pk \
   poke.pkl/adda-string-1.pk \
+  poke.pkl/adda-diag-1.pk \
   poke.pkl/and-1.pk \
   poke.pkl/and-2.pk \
   poke.pkl/and-3.pk \

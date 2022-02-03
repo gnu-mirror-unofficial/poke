@@ -488,11 +488,13 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_op_attr)
   pkl_ast_node exp = PKL_PASS_NODE;
 
   pkl_ast_node identifier = PKL_AST_EXP_OPERAND (exp, 1);
-  const char *identifier_name = PKL_AST_IDENTIFIER_POINTER (identifier);
+  const char *identifier_name;
   enum pkl_ast_attr attr = PKL_AST_ATTR_NONE;
 
   if (PKL_AST_EXP_ATTR (exp) != PKL_AST_ATTR_NONE)
     PKL_PASS_DONE;
+
+  identifier_name = PKL_AST_IDENTIFIER_POINTER (identifier);
 
   for (attr = 0; pkl_attr_name (attr); ++attr)
     {
