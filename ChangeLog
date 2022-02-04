@@ -1,5 +1,11 @@
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.c (pk_completion_function): Handle ' before .
+	* testsuite/poke.repl/repl.exp (tab-completion-attr-and-field-1):
+	New test.
+
+2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-repl.c (pk_repl): Customize the readline completer
 	routine.
 	* libpoke/libpoke.c (pk_completion_function): Call

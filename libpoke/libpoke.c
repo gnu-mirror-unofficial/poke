@@ -366,11 +366,13 @@ char *
 pk_completion_function (pk_compiler pkc,
                         const char *text, int state)
 {
-  if ((text[0] != '.') && (strchr (text, '.') != NULL))
-    return complete_struct (pkc, text, state);
-
+  /* Note that it is important to handle ' before . here, in order to
+     support completion of attributes in struct fields.  */
   if ((text[0] != '\'') && (strchr (text, '\'') != NULL))
     return complete_attribute (pkc, text, state);
+
+  if ((text[0] != '.') && (strchr (text, '.') != NULL))
+    return complete_struct (pkc, text, state);
 
   return complete_decl (pkc, text, state);
 }

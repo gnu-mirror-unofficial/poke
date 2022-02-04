@@ -150,3 +150,10 @@ set test "tab-completion-attribute-2"
 poke_start
 poke_send "f's\t\t" "f'signed +f'size +f'strict"
 poke_exit
+
+set test "tab-completion-attr-and-field-1"
+poke_start
+poke_test_cmd {type Foo = struct { int foo; int bar; }} {}
+poke_test_cmd {var f = Foo {}} {}
+poke_send "f.foo'a\t" "f.foo'alignment"
+poke_exit
