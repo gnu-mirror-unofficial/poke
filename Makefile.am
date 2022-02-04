@@ -6,12 +6,6 @@ EXTRA_DIST = INSTALL.generic DEPENDENCIES
 
 noinst_SCRIPTS = run
 
-# This (and the accompanying AC_SUBST of WITH_JITTER) is to be removed
-# as soon as we bump to a Jitter version not requiring --with-jitter
-# if it is installed in a standard location.
-AM_DISTCHECK_CONFIGURE_FLAGS = --with-jitter=$(WITH_JITTER) \
-                               --enable-debug=$(ENABLE_DEBUG)
-
 # Support for generating a cyclomatic complexity report using the
 # pmccabe tool.
 
