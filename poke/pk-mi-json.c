@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <json-c/json.h>
+#include <json.h>
 
 #include "pk-mi.h"
 #include "pk-mi-json.h"
