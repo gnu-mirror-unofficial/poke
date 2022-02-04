@@ -36,8 +36,8 @@ pk_help_add_topic
           description= format ("
 Synopsis:
 
-  dump [:from OFFSET] [:size OFFSET] [:ruler BOOL] [:ascii BOOL] \\
-       [:group_by INT] [:cluster_by INT]
+  dump [:from OFFSET] [:size OFFSET] [:ios INT] [:ruler BOOL] \\
+        [:ascii BOOL] [:group_by INT] [:cluster_by INT]
 
 Arguments:
 
@@ -49,6 +49,10 @@ Arguments:
   :size (offset)
          How much data to dump.  Defaults to `pk_dump_size', initially
          %v.
+
+  :ios (int)
+         IO space from which dump bytes.  This defaults to the currently
+         selected IO space.
 
   :ruler (int)
          Boolean indicating whether to display a ruler.  Defaults to

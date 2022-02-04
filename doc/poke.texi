@@ -8730,8 +8730,8 @@ To do this, use the @command{dump} command.
 This command has the following synopsis.
 
 @example
-dump [:from @var{offset}] [:size @var{offset}] [:ruler @var{bool}] [:ascii @var{bool}]
-     [:group_by @var{int}] [:cluster_by @var{int}]
+dump [:from @var{offset}] [:size @var{offset}] [:ios @var{int}] [:ruler @var{bool}]
+     [:ascii @var{bool}] [:group_by @var{int}] [:cluster_by @var{int}]
 @end example
 
 @noindent

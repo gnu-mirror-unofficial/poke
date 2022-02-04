@@ -1,5 +1,10 @@
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk: Document the :ios argument.
+	* doc/poke.texi (dump): Mention :ios in the synopsis.
+
+2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* Makefile.am (AM_DISTCHECK_CONFIGURE_FLAGS): Remove.
 
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
