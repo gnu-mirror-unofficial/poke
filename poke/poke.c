@@ -441,7 +441,6 @@ parse_args_2 (int argc, char *argv[])
         case LOAD_ARG:
           {
             pk_val exception;
-            int ecode;
 
             if (pk_compile_file (poke_compiler, optarg, &exception) != PK_OK)
               goto exit_success;
