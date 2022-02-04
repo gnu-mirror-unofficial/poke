@@ -157,3 +157,13 @@ poke_test_cmd {type Foo = struct { int foo; int bar; }} {}
 poke_test_cmd {var f = Foo {}} {}
 poke_send "f.foo'a\t" "f.foo'alignment"
 poke_exit
+
+set test "tab-completion-bool-setting-1"
+poke_start
+poke_send ".set omaps \t\t" "no +yes"
+poke_exit
+
+set test "tab-completion-bool-setting-2"
+poke_start
+poke_send ".set omaps y\t" ".set omaps yes"
+poke_exit

@@ -183,11 +183,37 @@ pk_cmd_set_error_on_warning (int argc, struct pk_cmd_arg argv[],
   return 1;
 }
 
+static char *
+yesno_completion_function (const char *x, int state)
+{
+  static int idx = 0;
+  char *ret = NULL;
+  size_t len = strlen (x);
+  static char *yesno[] = { "yes", "no" };
+
+  if (state == 0)
+    idx = 0;
+
+  int i;
+  for (i = idx; i < 2; ++i)
+    {
+      if (strncmp (x, yesno[i], len) == 0)
+        {
+          idx++;
+          ret = strdup (yesno[i]);
+          goto exit;
+        }
+    }
+
+ exit:
+  return ret;
+}
+
 extern struct pk_cmd null_cmd; /* pk-cmd.c  */
 
 const struct pk_cmd set_error_on_warning_cmd =
   {"error-on-warning", "s?", "", 0, NULL, NULL, pk_cmd_set_error_on_warning,
-   "set error-on-warning (yes|no)", NULL};
+   "set error-on-warning (yes|no)", yesno_completion_function};
 
 const struct pk_cmd **set_cmds;
 
@@ -257,6 +283,10 @@ pk_cmd_set_init ()
           cmd->arg_fmt = "?s";
           cmd->completer = NULL;
           cmd->handler = &pk_cmd_set_bool_str;
+
+          /* Add a completer for booleans.  */
+          if (pk_int_value (setting_kind) == pk_int_value (setting_bool))
+            cmd->completer = yesno_completion_function;
         }
 
       /* Add this command to set_cmds.  */

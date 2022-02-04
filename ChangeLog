@@ -1,5 +1,14 @@
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-set.c (yesno_completion_function): New function.
+	(set_error_on_warning_cmd): Use yesno_completion_function.
+	(pk_cmd_set_init): Likewise for boolean settings in the registry.
+	* testsuite/poke.repl/repl.exp (tab-completion-bool-setting-1):
+	New test.
+	(tab-completion-bool-setting-2): Likewise.
+
+2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.c (pk_completion_function): Handle ' before .
 	* testsuite/poke.repl/repl.exp (tab-completion-attr-and-field-1):
 	New test.
