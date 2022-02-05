@@ -683,6 +683,10 @@ pk_val pk_struct_nfields (pk_val sct) LIBPOKE_API;
 
 /* Get the value of a struct field given the name of the field.
 
+   SCT is the field value.
+
+   FNAME is a C string with the name of the field in the struct.
+
    If FNAME doesn't identify a field in the struct, PK_NULL is
    returned.  */
 
@@ -693,7 +697,7 @@ pk_val pk_struct_ref_field_value (pk_val sct, const char *fname)
 
    SCT is the struct value.
 
-   NAME is a C string with the name of the field in the struct.
+   FNAME is a C string with the name of the field in the struct.
 
    VALUE is the new value for this field.
 
