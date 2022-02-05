@@ -1291,7 +1291,8 @@ pkl_ast_type_is_complete (pkl_ast_node type)
 
                 size_node = PKL_AST_STRUCT_TYPE_FIELD_SIZE (elem);
                 assert (size_node);
-                assert (PKL_AST_TYPE_CODE (size_node) == PKL_TYPE_INTEGRAL);
+                assert (PKL_AST_TYPE_CODE (PKL_AST_TYPE (size_node))
+                        == PKL_TYPE_INTEGRAL);
                 if (size == -1)
                   size = PKL_AST_INTEGER_VALUE (size_node);
                 else if (PKL_AST_INTEGER_VALUE (size_node) != size)
