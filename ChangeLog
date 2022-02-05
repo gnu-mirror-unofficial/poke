@@ -1,5 +1,10 @@
 2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* testsuite/lib/poke.exp (verify_exit_status): Avoid using
+	lassign.
+
+2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-def.c (print_var_decl): Pass a `match' argument to
 	regexec.
 	(print_fun_decl): Likewise.

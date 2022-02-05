@@ -152,7 +152,10 @@ proc poke_test_cmd {cmd pattern} {
 # unexpected exits.
 
 proc verify_exit_status { executable wres } {
-    lassign $wres pid spawnid os_error_flag value
+    set pid [lindex $wres 0]
+    set spawnid [lindex $wres 1]
+    set os_error_flag [lindex $wres 2]
+    set value [lindex $wres 3]
     verbose "pid: $pid" 3
     verbose "spawnid: $spawnid" 3
     verbose "os_error_flag: $os_error_flag" 3
