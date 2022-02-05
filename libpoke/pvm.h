@@ -279,6 +279,7 @@ void pvm_print_string (pvm_val string);
 
 pvm_val pvm_ref_struct (pvm_val sct, pvm_val name);
 pvm_val pvm_ref_struct_cstr (pvm_val sct, const char *name);
+void pvm_ref_set_struct_cstr (pvm_val sct, const char *name, pvm_val val);
 
 /* Given a struct value SCT and the name of a field in NAME, return
    the bit-offset of the referred field in BOFF.

@@ -689,6 +689,20 @@ pk_val pk_struct_nfields (pk_val sct) LIBPOKE_API;
 pk_val pk_struct_ref_field_value (pk_val sct, const char *fname)
   LIBPOKE_API;
 
+/* Set the value of a struct field given the name of the field.
+
+   SCT is the struct value.
+
+   NAME is a C string with the name of the field in the struct.
+
+   VALUE is the new value for this field.
+
+   If FNAME doesn't identify a field in the struct, struct remains
+   unchanged.  */
+
+void pk_struct_ref_set_field_value (pk_val sct, const char *fname,
+                                    pk_val value) LIBPOKE_API;
+
 /* Get the bit-offset of the field of a struct, relative to the
    beginning of the struct.
 

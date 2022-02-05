@@ -372,6 +372,28 @@ pvm_ref_struct_cstr (pvm_val sct, const char *name)
   return PVM_NULL;
 }
 
+void
+pvm_ref_set_struct_cstr (pvm_val sct, const char *fname,
+                         pvm_val value)
+{
+  size_t nfields, i;
+  struct pvm_struct_field *fields;
+
+  assert (PVM_IS_SCT (sct));
+
+  nfields = PVM_VAL_ULONG (PVM_VAL_SCT_NFIELDS (sct));
+  fields = PVM_VAL_SCT (sct)->fields;
+
+  for (i = 0; i < nfields; ++i)
+    {
+      if (!PVM_VAL_SCT_FIELD_ABSENT_P (sct, i)
+          && fields[i].name != PVM_NULL
+          && STREQ (PVM_VAL_STR (fields[i].name),
+                    fname))
+        fields[i].value = value;
+    }
+}
+
 pvm_val
 pvm_ref_struct (pvm_val sct, pvm_val name)
 {

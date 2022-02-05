@@ -294,6 +294,56 @@ test_pk_typeof ()
 }
 
 void
+test_pk_struct_ref_set_field_value ()
+{
+  pk_compiler pkc;
+  pk_val exit_exception;
+  pk_val sct, val;
+
+  pkc = pk_compiler_new (&poke_term_if);
+  if (!pkc)
+    {
+      fail ("pk-struct-ref-set-field-value: creating compiler");
+      goto done;
+    }
+
+  if (pk_compile_buffer (pkc,
+                         "type Foo = struct { int foo; int bar; };"
+                         "var f = Foo {};",
+                         NULL, &exit_exception) != PK_OK
+      || exit_exception != PK_NULL)
+    {
+      fail ("pk-struct-ref-set-field-value: compiling buffer");
+      goto done;
+    }
+
+  sct = pk_decl_val (pkc, "f");
+  if (sct == PK_NULL)
+    {
+      fail ("pk-struct-ref-set-field-value: getting value of `f'");
+      goto done;
+    }
+
+  pk_struct_ref_set_field_value (sct, "bar", pk_make_int (666, 32));
+  val = pk_struct_ref_field_value (sct, "bar");
+  if (val == PK_NULL)
+    {
+      fail ("pk-struct-ref-set-field-value: fetching value of field `bar'");
+      goto done;
+    }
+
+  if (pk_val_kind (val) != PK_VAL_INT
+      || pk_int_value (val) != 666)
+    {
+      fail ("pk-struct-ref-set-field-value: invalid value for field `bar'");
+      goto done;
+    }
+
+ done:
+  pk_compiler_free (pkc);
+}
+
+void
 test_pk_val_equal_p ()
 {
   DIR *directory;
@@ -349,6 +399,7 @@ main (int argc, char *argv[])
   test_simple_values_mapping ();
   test_pk_val_equal_p ();
   test_pk_typeof ();
+  test_pk_struct_ref_set_field_value ();
 
   totals ();
   return 0;

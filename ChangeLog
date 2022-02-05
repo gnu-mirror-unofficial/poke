@@ -1,5 +1,15 @@
 2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pvm.h: Prototype for pvm_ref_set_struct_cstr.
+	* libpoke/libpoke.h: Prototype for pk_struct_ref_set_field_value.
+	* libpoke/pk-val.c (pk_struct_ref_set_field_value): New function.
+	* libpoke/pvm-val.c (pvm_ref_set_struct_cstr): Likewise.
+	* testsuite/poke.libpoke/values.c
+	(test_pk_struct_ref_set_field_value): New function.
+	(main): Call it.
+
+2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-def.c (PREP_REGEXP_PAYLOAD): Avoid using `regexp'
 	uninitialized.
 	* poke/pk-cmd-ios.c (pk_cmd_sub): Use PRIx64 instead of %lx.

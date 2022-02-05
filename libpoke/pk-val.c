@@ -277,6 +277,13 @@ pk_struct_ref_field_value (pk_val sct, const char *fname)
   return pvm_ref_struct_cstr (sct, fname);
 }
 
+void
+pk_struct_ref_set_field_value (pk_val sct, const char *fname,
+                               pk_val value)
+{
+  pvm_ref_set_struct_cstr (sct, fname, value);
+}
+
 pk_val
 pk_struct_field_boffset (pk_val sct, uint64_t idx)
 {
