@@ -1,5 +1,14 @@
 2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bootstrap.conf (gnulib_modules): Add the `getsockname' gnulib
+	module.
+	* poke/pk-hserver.c (pk_hserver_start): Cast the pointer to
+	`struct sockaddr_in' to a pointer to a `strut sockaddr_in' before
+	passing it to getsockname.  This avoids compiler warnings in some
+	platforms.
+
+2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/lib/poke.exp (verify_exit_status): Avoid using
 	lassign.
 

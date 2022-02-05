@@ -381,7 +381,9 @@ pk_hserver_start (void)
      hserver_port_str.  These will be used until the server shuts
      down.  */
   size = sizeof (clientname);
-  if (getsockname (hserver_socket, &clientname, &size) != 0)
+  if (getsockname (hserver_socket,
+                   (struct sockaddr *) &clientname,
+                   &size) != 0)
     {
       perror ("getsockname");
       pk_fatal (NULL);
