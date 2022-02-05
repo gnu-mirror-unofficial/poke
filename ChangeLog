@@ -1,5 +1,13 @@
 2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-def.c (PREP_REGEXP_PAYLOAD): Avoid using `regexp'
+	uninitialized.
+	* poke/pk-cmd-ios.c (pk_cmd_sub): Use PRIx64 instead of %lx.
+	(print_info_ios): Likewise.
+	(print_info_ios): Likewise.
+
+2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Add the `getsockname' gnulib
 	module.
 	* poke/pk-hserver.c (pk_hserver_start): Cast the pointer to

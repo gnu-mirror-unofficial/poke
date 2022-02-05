@@ -168,10 +168,10 @@ print_type_decl (int kind,
               return 0;                                                 \
             }                                                           \
           payload.regexp_p = 1;                                         \
+          payload.regexp = regexp;                                      \
         }                                                               \
       else                                                              \
         payload.regexp_p = 0;                                           \
-      payload.regexp = regexp;                                          \
     }                                                                   \
   while (0)
 

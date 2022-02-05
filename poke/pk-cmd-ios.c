@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <readline.h>
 #include "xalloc.h"
 
@@ -87,7 +88,7 @@ pk_cmd_sub (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   name = PK_CMD_ARG_STR (argv[4]);
 
   /* Build the handler.  */
-  if (asprintf (&handler, "sub://%d/0x%lx/0x%lx/%s",
+  if (asprintf (&handler, "sub://%d/0x%" PRIx64 "/0x%lx/%s",
                 ios, base, size, name) == -1)
     return 0;
 
@@ -286,9 +287,9 @@ print_info_ios (pk_ios io, void *data)
     char *string;
     uint64_t bias = pk_ios_get_bias (io);
     if (bias % 8 == 0)
-      asprintf (&string, "0x%08jx#B", bias / 8);
+      asprintf (&string, "0x%08" PRIx64 "#B", bias / 8);
     else
-      asprintf (&string, "0x%08jx#b", bias);
+      asprintf (&string, "0x%08" PRIx64 "#b", bias);
     pk_table_column_cl (table, string, "offset");
     free (string);
   }
@@ -296,7 +297,7 @@ print_info_ios (pk_ios io, void *data)
   /* Size.  */
   {
     char *size;
-    asprintf (&size, "0x%08jx#B", pk_ios_size (io));
+    asprintf (&size, "0x%08" PRIx64 "#B", pk_ios_size (io));
     pk_table_column_cl (table, size, "offset");
     free (size);
   }
