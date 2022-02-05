@@ -51,9 +51,10 @@ print_var_decl (int kind,
   struct pk_info_payload *payload = (struct pk_info_payload *) data;
   pk_table table = payload->table;
   regex_t regexp = payload->regexp;
+  regmatch_t match;
 
   if (payload->regexp_p
-      && regexec (&regexp, name, 1, NULL, 0) != 0)
+      && regexec (&regexp, name, 1, &match, 0) != 0)
     return;
 
   pk_table_row (table);
@@ -83,9 +84,10 @@ print_fun_decl (int kind,
   struct pk_info_payload *payload = (struct pk_info_payload *) data;
   pk_table table = payload->table;
   regex_t regexp = payload->regexp;
+  regmatch_t match;
 
   if (payload->regexp_p
-      && regexec (&regexp, name, 1, NULL, 0) != 0)
+      && regexec (&regexp, name, 1, &match, 0) != 0)
     return;
 
   pk_table_row (table);
@@ -114,9 +116,10 @@ print_type_decl (int kind,
   struct pk_info_payload *payload = (struct pk_info_payload *) data;
   pk_table table = payload->table;
   regex_t regexp = payload->regexp;
+  regmatch_t match;
 
   if (payload->regexp_p
-      && regexec (&regexp, name, 1, NULL, 0) != 0)
+      && regexec (&regexp, name, 1, &match, 0) != 0)
     return;
 
   pk_table_row (table);

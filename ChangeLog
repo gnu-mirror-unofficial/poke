@@ -1,3 +1,10 @@
+2022-02-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-def.c (print_var_decl): Pass a `match' argument to
+	regexec.
+	(print_fun_decl): Likewise.
+	(print_type_decl): Likewise.
+
 2022-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-cmd-set.c (yesno_completion_function): New function.
