@@ -1,3 +1,8 @@
+2022-02-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Bump version to 2.0.92.
+	* NEWS: Update.
+
 2022-02-05  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-ast.c (pkl_ast_type_is_complete): Fix assertion.
