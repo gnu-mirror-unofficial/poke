@@ -227,8 +227,8 @@ EMUL_UU (bnoto) { return ~op; }
               /* Check for overflow in several signed */                \
               /* arithmetic operations.  */                             \
               size_t size = PKL_AST_TYPE_I_SIZE (type);                 \
-              int64_t op_val = ((int64_t) PKL_AST_INTEGER_VALUE (op)    \
-                                << (64 - size));                        \
+              int64_t op_val = ((uint64_t) (int64_t) PKL_AST_INTEGER_VALUE (op)) \
+                                << (64 - size);                         \
                                                                         \
               switch (PKL_AST_EXP_CODE (PKL_PASS_NODE))                 \
                 {                                                       \
@@ -583,10 +583,10 @@ EMUL_UU (bnoto) { return ~op; }
               /* Check for overflow in several signed */                \
               /* arithmetic operations.  */                             \
               size_t size = PKL_AST_TYPE_I_SIZE (type);                 \
-              int64_t op1_val = ((int64_t) PKL_AST_INTEGER_VALUE (op1)  \
-                                 << (64 - size));                       \
-              int64_t op2_val = ((int64_t) PKL_AST_INTEGER_VALUE (op2)  \
-                                 << (64 - size));                       \
+              int64_t op1_val = ((uint64_t)(int64_t) PKL_AST_INTEGER_VALUE (op1)) \
+                                 << (64 - size);                       \
+              int64_t op2_val = ((uint64_t)(int64_t) PKL_AST_INTEGER_VALUE (op2)) \
+                                 << (64 - size);                       \
                                                                         \
               switch (PKL_AST_EXP_CODE (PKL_PASS_NODE))                 \
                 {                                                       \

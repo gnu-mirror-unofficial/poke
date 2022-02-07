@@ -1,3 +1,15 @@
+2022-02-06  Bruno Haible  <bruno@clisp.org>
+	    Jose E. Marchesi  <jemarch@gnu.org>
+
+	Avoid undefined behaviour on signed integer.
+	* libpoke/pvm-val.h (PVM_MAKE_INT): Cast to unsigned integer before
+	shifting.
+	* libpoke/pvm.jitter (PVM_NEG_SIGNED): Likewise.
+	(PVM_DIV_SIGNED): Likewise.
+	(PVM_MOD_SIGNED): Likewise.
+	* libpoke/pkl-fold.c (OP_UNARY_II): Likewise.
+	(OP_BINARY_III): Likewise.
+	
 2022-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Bump version to 2.0.92.
