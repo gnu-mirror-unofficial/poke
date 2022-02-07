@@ -157,6 +157,7 @@ pk_cmd_jmd (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
      "<jemarch> I'm gonna tattoo \"See HACKING\" on my forehead",
      "<jemarch> 1000 bitcoins could be in fucking HACKING and you people "
      "would not fucking notice",
+     "<mnabipoor> Yes, acid is awesome!",
      NULL
     };
   static int num_strings = 0;
