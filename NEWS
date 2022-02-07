@@ -7,7 +7,7 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 2.0,92 (6 February 2022)
+ Version 2.1 (8 February 2022)
 * Bug fixes
 
    - A needed file (pk-hserver.pk) was not distributed if poke was

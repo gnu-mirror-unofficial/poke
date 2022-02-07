@@ -1,5 +1,11 @@
 2022-02-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Bump version to 2.1.
+	* NEWS: Likewise.
+	* doc/gendocs_template: Likewise.
+
+2022-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-ios.c (pk_cmd_sub): Use PRI* macros instead of
 	explicit %-tags.
 	(pk_cmd_proc): Likewise.
