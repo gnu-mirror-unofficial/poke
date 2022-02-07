@@ -1,3 +1,9 @@
+2022-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-cmd-ios.c (pk_cmd_sub): Use PRI* macros instead of
+	explicit %-tags.
+	(pk_cmd_proc): Likewise.
+
 2022-02-06  Bruno Haible  <bruno@clisp.org>
 	    Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -9,7 +15,7 @@
 	(PVM_MOD_SIGNED): Likewise.
 	* libpoke/pkl-fold.c (OP_UNARY_II): Likewise.
 	(OP_BINARY_III): Likewise.
-	
+
 2022-02-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* configure.ac: Bump version to 2.0.92.

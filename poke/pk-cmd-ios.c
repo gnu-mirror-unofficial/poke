@@ -88,7 +88,7 @@ pk_cmd_sub (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   name = PK_CMD_ARG_STR (argv[4]);
 
   /* Build the handler.  */
-  if (asprintf (&handler, "sub://%d/0x%" PRIx64 "/0x%lx/%s",
+  if (asprintf (&handler, "sub://%d/0x%" PRIx64 "/0x%" PRIx64 "/%s",
                 ios, base, size, name) == -1)
     return 0;
 
@@ -122,7 +122,7 @@ pk_cmd_proc (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pid = PK_CMD_ARG_INT (argv[1]);
 
   /* Build the handler for the proc IOS.  */
-  if (asprintf (&handler, "pid://%ld", pid) == -1)
+  if (asprintf (&handler, "pid://%" PRIi64, pid) == -1)
     return 0;
 
   /* Open the IOS.  */
