@@ -56,6 +56,7 @@ pk_term_class (const char *class)
 int
 pk_term_end_class (const char *class)
 {
+  return 1;
 }
 
 void
