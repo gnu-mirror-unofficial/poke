@@ -206,7 +206,7 @@ pk_open_proc_maps (int ios_id, uint64_t pid, int all_p)
         if (all_p || map_name[0] != '/')
           {
             /* Ok create the sub IOS.  */
-            if (asprintf (&handler, "sub://%d/0x%lx/0x%lx/%s",
+            if (asprintf (&handler, "sub://%d/0x%" PRIx64 "/0x%" PRIx64 "/%s",
                           ios_id,
                           range_begin, range_end - range_begin,
                           map_name) == -1)

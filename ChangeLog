@@ -1,3 +1,9 @@
+2022-02-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-ios.c (pk_open_proc_maps): Use PRIx64 instead of %lx.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Use PRIu64
+	isntead of %lu.
+
 2022-02-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* testsuite/poke.libpoke/term-if.h (pk_term_end_class): Return 1.
