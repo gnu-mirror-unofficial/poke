@@ -10485,6 +10485,33 @@ Examples:
 (poke) a'strict
 0
 @end example
+@item eoffset (@var{idx})
+Offset of the element identified by the index @var{idx} in the array.
+Examples:
+
+@example
+(poke) [1,2,3]'eoffset (1)
+32#b
+@end example
+
+If the provided index is out of bounds then @code{E_out_of_bounds} is
+raised.
+@item esize (@var{idx})
+Size of the element identified by the index @var{idx} in the array.
+Examples:
+
+@example
+(poke) ["foo","x",""]'esize (1)
+16#b
+@end example
+
+If the provided index is out of bounds then @code{E_out_of_bounds} is
+raised.
+@item ename (@var{idx})
+The string @code{".[@var{idx}]"}.
+
+If the provided index is out of bounds then @code{E_out_of_bounds} is
+raised.
 @end table
 
 @node Structs
@@ -11675,6 +11702,44 @@ We get the following results:
 Boolean indicating whether the struct is mapped.
 @item strict
 Boolean indicating whether the struct is mapped in strict mode.
+@item eoffset (@var{idx})
+Offset of the field identified by the index @var{idx} in the struct.
+Examples:
+
+@example
+(poke) type Foo = struct @{ int i; long l; @}
+(poke) Foo@{@}'eoffset (1)
+32#b
+@end example
+
+If the provided index is out of bounds then @code{E_out_of_bounds} is
+raised.
+@item esize (@var{idx})
+Size of the field identified by the index @var{idx} in the struct.
+Examples:
+
+@example
+(poke) type Foo = struct @{ int i; long l; @}
+(poke) Foo@{@}'esize (1)
+64#b
+@end example
+
+If the provided index is out of bounds then @code{E_out_of_bounds} is
+raised.
+@item ename (@var{idx})
+Name of the field identified by the index @var{idx} in the struct.  If
+the field is anonymous then the empty string.
+
+Examples:
+
+@example
+(poke) type Foo = struct @{ int foo; long bar; @}
+(poke) Foo@{@}'ename (0)
+"foo"
+@end example
+
+If the provided index is out of bounds then @code{E_out_of_bounds} is
+raised.
 @end table
 
 @node Types

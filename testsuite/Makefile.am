@@ -768,6 +768,29 @@ EXTRA_DIST = \
   poke.pkl/assert-diag-3.pk \
   poke.pkl/assert-diag-4.pk \
   poke.pkl/attr-diag-1.pk \
+  poke.pkl/attr-diag-2.pk \
+  poke.pkl/attr-diag-3.pk \
+  poke.pkl/attr-diag-4.pk \
+  poke.pkl/attr-ename-arr-1.pk \
+  poke.pkl/attr-ename-arr-2.pk \
+  poke.pkl/attr-ename-arr-3.pk \
+  poke.pkl/attr-ename-arr-4.pk \
+  poke.pkl/attr-ename-arr-5.pk \
+  poke.pkl/attr-ename-arr-6.pk \
+  poke.pkl/attr-ename-struct-1.pk \
+  poke.pkl/attr-ename-struct-2.pk \
+  poke.pkl/attr-ename-union-1.pk \
+  poke.pkl/attr-ename-union-2.pk \
+  poke.pkl/attr-eoffset-1.pk \
+  poke.pkl/attr-eoffset-2.pk \
+  poke.pkl/attr-eoffset-3.pk \
+  poke.pkl/attr-eoffset-4.pk \
+  poke.pkl/attr-eoffset-5.pk \
+  poke.pkl/attr-esize-1.pk \
+  poke.pkl/attr-esize-2.pk \
+  poke.pkl/attr-esize-3.pk \
+  poke.pkl/attr-esize-4.pk \
+  poke.pkl/attr-esize-5.pk \
   poke.pkl/attr-ios-1.pk \
   poke.pkl/attr-ios-2.pk \
   poke.pkl/attr-ios-diag-1.pk \

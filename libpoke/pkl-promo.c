@@ -1488,6 +1488,41 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_in)
 }
 PKL_PHASE_END_HANDLER
 
+/* Promote the arguments of some attributes.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_attr)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  enum pkl_ast_attr attr = PKL_AST_EXP_ATTR (exp);
+  int restart = 0;
+
+  switch (attr)
+    {
+    case PKL_AST_ATTR_EOFFSET:
+    case PKL_AST_ATTR_ESIZE:
+    case PKL_AST_ATTR_ENAME:
+
+      /* The argument of the attribute must be promoted to an unsigned
+         64-bit integer.  */
+      if (!promote_integral (PKL_PASS_AST,
+                             64, 0,
+                             &PKL_AST_EXP_OPERAND (exp, 1),
+                             &restart))
+        {
+          PKL_ICE (PKL_AST_LOC (exp),
+                   "couldn't pormote argument of attribute expression #%" PRIu64,
+                   PKL_AST_UID (exp));
+          PKL_PASS_ERROR;
+        }
+
+      PKL_PASS_RESTART = restart;
+      break;
+    default:
+      break;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cons)
 {
   pkl_ast_node cons = PKL_PASS_NODE;
@@ -1646,6 +1681,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_DIV, pkl_promo_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_promo_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_promo_ps_op_in),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_promo_ps_op_attr),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC_ARG, pkl_promo_ps_func_arg),
    PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_promo_ps_map),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_promo_ps_indexer),

@@ -2398,8 +2398,9 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_try_catch_stmt)
 }
 PKL_PHASE_END_HANDLER
 
-/* Check that attribute expressions are applied to the proper types,
-   and then determine the type of the attribute expression itself.  */
+/* Check that attribute expressions are applied to the proper types
+   and that they get the right kind of arguments, and then determine
+   the type of the attribute expression itself.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
 {
@@ -2502,6 +2503,54 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;
+    case PKL_AST_ATTR_EOFFSET:
+    case PKL_AST_ATTR_ESIZE:
+    case PKL_AST_ATTR_ENAME:
+      {
+        /* All these attributes are binary and require an integral
+           argument.  */
+
+        pkl_ast_node argument = PKL_AST_EXP_OPERAND (exp, 1);
+        pkl_ast_node argument_type = PKL_AST_TYPE (argument);
+
+        /* Integral structs shall be considered as integers in this
+           context.  */
+        if (PKL_AST_TYPE_CODE (argument_type) == PKL_TYPE_STRUCT
+            && PKL_AST_TYPE_S_ITYPE (argument_type))
+          argument_type = PKL_AST_TYPE_S_ITYPE (argument_type);
+
+        if (PKL_AST_TYPE_CODE (argument_type) != PKL_TYPE_INTEGRAL)
+          {
+            char *argument_type_str = pkl_type_str (argument_type, 1);
+
+            PKL_ERROR (PKL_AST_LOC (argument),
+                       "invalid argument to attribute\n"
+                       "expected integral, got %s",
+                       argument_type_str);
+            free (argument_type_str);
+            PKL_TYPIFY_PAYLOAD->errors++;
+            PKL_PASS_ERROR;
+          }
+
+        /* Now set the type of the resulting value depending on the
+           attribute.  */
+        if (attr == PKL_AST_ATTR_ENAME)
+          exp_type = pkl_ast_make_string_type (PKL_PASS_AST);
+        else
+          {
+            /* For both EOFFSET and ESIZE the result type is an offset
+               in bits.  */
+            offset_unit_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+            offset_unit = pkl_ast_make_integer (PKL_PASS_AST, 1);
+            PKL_AST_TYPE (offset_unit) = ASTREF (offset_unit_type);
+
+            exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
+            exp_type = pkl_ast_make_offset_type (PKL_PASS_AST, exp_type, offset_unit);
+          }
+
+        PKL_AST_TYPE (exp) = ASTREF (exp_type);
+        break;
+      }
     default:
       PKL_ICE (PKL_AST_LOC (exp),
                "unhandled attribute expression code #%d in typify1",

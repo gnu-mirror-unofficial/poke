@@ -784,7 +784,14 @@ expression:
                   $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_ATTR,
                                                 $1, $2);
                   PKL_AST_LOC ($2) = @2;
-                  PKL_AST_LOC ($$) = @$;
+                  PKL_AST_LOC ($$) = @2;
+                }
+        | expression ATTR '(' expression ')'
+                {
+                  $$ = pkl_ast_make_ternary_exp (pkl_parser->ast, PKL_AST_OP_ATTR,
+                                                 $1, $2, $4);
+                  PKL_AST_LOC ($2) = @2;
+                  PKL_AST_LOC ($$) = @2;
                 }
         | expression '+' expression
                 {

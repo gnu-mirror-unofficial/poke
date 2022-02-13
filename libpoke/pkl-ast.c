@@ -197,6 +197,32 @@ pkl_ast_make_binary_exp (pkl_ast ast,
   return exp;
 }
 
+/* Build and return an AST node for a ternary expression.  */
+
+pkl_ast_node
+pkl_ast_make_ternary_exp (pkl_ast ast,
+                          enum pkl_ast_op code,
+                          pkl_ast_node op1,
+                          pkl_ast_node op2,
+                          pkl_ast_node op3)
+{
+  pkl_ast_node exp = pkl_ast_make_node (ast, PKL_AST_EXP);
+
+  PKL_AST_EXP_CODE (exp) = code;
+  PKL_AST_EXP_ATTR (exp) = PKL_AST_ATTR_NONE;
+  PKL_AST_EXP_NUMOPS (exp) = 3;
+  PKL_AST_EXP_OPERAND (exp, 0) = ASTREF (op1);
+  PKL_AST_EXP_OPERAND (exp, 1) = ASTREF (op2);
+  PKL_AST_EXP_OPERAND (exp, 2) = ASTREF (op3);
+
+  PKL_AST_LITERAL_P (exp)
+    = (PKL_AST_LITERAL_P (op1)
+       && PKL_AST_LITERAL_P (op2)
+       && PKL_AST_LITERAL_P (op3));
+
+  return exp;
+}
+
 /* Return the written form of the given attribute code.  This returns
    NULL for PKL_AST_ATTR_NONE */
 

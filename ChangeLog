@@ -1,3 +1,56 @@
+2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-attrs.def: New attributes EOFFSET, ESIZE and ENAME.
+	* libpoke/pkl-ast.c (pkl_ast_make_binary_exp): New function.
+	* libpoke/pkl-tab.y: Rule for attributes with one argument.
+	* libpoke/pkl-ast.h (struct pkl_ast_exp): Allow three operands.
+	* libpoke/pkl-pass.c (pkl_do_pass_1): Traverse all expression
+	operands.
+	* libpoke/pkl-trans.c (pkl_trans1_ps_op_attr): Handle binary
+	attributes.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_op_attr): New handler.
+	(pkl_phase_anal1): Register handler.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_attr): Handle new
+	attributes.
+	* libpoke/pkl-promo.c (pkl_promo_ps_op_attr): New handler.
+	(pkl_phase_promo): Register handler.
+	* libpoke/pkl-gen.c (pkl_gen_ps_op_attr): Handle EOFFSET, ESIZE
+	and ENAME.
+	* libpoke/pvm.jitter (tyisa): New instruction.
+	(srefin): Likewise.
+	* libpoke/pkl-insn.def: Define PKL_INSN_TYISA.
+	Define PKL_INSN_SREFIN.
+	* libpoke/pkl-gen-attrs.pks (attr_eoffset): New macro.
+	(attr_eoffset): Likewise.
+	(attr_ename): Likewise.
+	* testsuite/poke.pkl/attr-diag-2.pk: New test.
+	* testsuite/poke.pkl/attr-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-diag-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-5.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-esize-5.pk: Likewise.
+	* testsuite/poke.pkl/attr-esize-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-esize-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-esize-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-esize-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-6.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-5.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-4.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-union-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-struct-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-struct-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-union-2.pk: Likewise.
+	* doc/poke.texi (Array Attributes): Document new attributes for
+	arrays.
+	(Struct Attributes): Ditto for structs.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-02-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-ios.c (pk_open_proc_maps): Use PRIx64 instead of %lx.

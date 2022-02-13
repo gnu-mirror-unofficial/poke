@@ -1,0 +1,6 @@
+/* { dg-do compile } */
+
+var a =
+  [1,2,3]'eoffset (
+    "foo" + "bar" /* { dg-error "invalid argument.*\n.*expected integral" } */
+    );

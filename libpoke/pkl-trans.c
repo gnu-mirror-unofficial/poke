@@ -481,7 +481,8 @@ PKL_PHASE_END_HANDLER
 
 /* Determine the attribute code of attribute expressions, emitting an
    error if the given attribute name is not defined.  Finally, turn
-   the binary expression into an unary expression.  */
+   the ternary expression into an either unary or binary expression,
+   depending whether the attribute gets an argument or it doesn't.  */
 
 PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_op_attr)
 {
@@ -512,9 +513,19 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_op_attr)
 
   PKL_AST_EXP_ATTR (exp) = attr;
 
-  /* Turn the binary expression into an unary expression.  */
-  PKL_AST_EXP_NUMOPS (exp) = 1;
-  pkl_ast_node_free (PKL_AST_EXP_OPERAND (exp, 1));
+  /* Turn the binary expression into an unary or binary
+     expression.  */
+  if (PKL_AST_EXP_NUMOPS (exp) == 2)
+    {
+      PKL_AST_EXP_NUMOPS (exp) = 1;
+      pkl_ast_node_free (PKL_AST_EXP_OPERAND (exp, 1));
+    }
+  else
+    {
+      PKL_AST_EXP_NUMOPS (exp) = 2;
+      pkl_ast_node_free (PKL_AST_EXP_OPERAND (exp, 1));
+      PKL_AST_EXP_OPERAND (exp, 1) = PKL_AST_EXP_OPERAND (exp, 2);
+    }
 }
 PKL_PHASE_END_HANDLER
 

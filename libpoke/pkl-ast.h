@@ -479,7 +479,7 @@ struct pkl_ast_exp
   enum pkl_ast_op code;
   enum pkl_ast_attr attr;
   uint8_t numops : 8;
-  union pkl_ast_node *operands[2];
+  union pkl_ast_node *operands[3];
   int flag;
 };
 
@@ -491,6 +491,12 @@ pkl_ast_node pkl_ast_make_binary_exp (pkl_ast ast,
                                       enum pkl_ast_op code,
                                       pkl_ast_node op1,
                                       pkl_ast_node op2);
+
+pkl_ast_node pkl_ast_make_ternary_exp (pkl_ast ast,
+                                       enum pkl_ast_op code,
+                                       pkl_ast_node op1,
+                                       pkl_ast_node op2,
+                                       pkl_ast_node op3);
 
 const char *pkl_attr_name (enum pkl_ast_attr attr);
 

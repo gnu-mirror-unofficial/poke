@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+var x = 10;
+type Foo = union { int i : x > 10; long bar; };
+
+/* { dg-command {try Foo{}'ename(1); catch if E_out_of_bounds { print "caught\n"; } } } */
+/* { dg-output "caught" } */

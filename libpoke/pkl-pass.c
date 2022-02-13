@@ -334,11 +334,12 @@ pkl_do_pass_1 (pkl_compiler compiler,
   switch (PKL_AST_CODE (node))
     {
     case PKL_AST_EXP:
-      PKL_PASS (PKL_AST_EXP_OPERAND (node, 0));
-      if (PKL_AST_EXP_NUMOPS (node) == 2)
-        PKL_PASS (PKL_AST_EXP_OPERAND (node, 1));
-
-      break;
+      {
+        int i;
+        for (i = 0; i < PKL_AST_EXP_NUMOPS (node); ++i)
+          PKL_PASS (PKL_AST_EXP_OPERAND (node, i));
+        break;
+      }
     case PKL_AST_PROGRAM:
       if (PKL_AST_PROGRAM_ELEMS (node))
         PKL_PASS_CHAIN (PKL_AST_PROGRAM_ELEMS (node));

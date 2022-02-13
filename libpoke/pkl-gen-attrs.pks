@@ -20,7 +20,7 @@
 ;;; attributes supported in Poke.
 
 ;;; RAS_MACRO_ATTR_SIZE @type
-;;; ( VAL -- VAL OFF )
+;;; ( VAL -- OFF )
 ;;;
 ;;; Given a value on the stack, push an offset  denoting the size
 ;;; of the value.
@@ -50,7 +50,7 @@
         .end
 
 ;;; RAS_MACRO_ATTR_OFFSET @type
-;;; ( VAL -- VAL OFF )
+;;; ( VAL -- OFF )
 ;;;
 ;;; Given a value on the stack, push an offset denoting the `offset'
 ;;; of the value.
@@ -84,7 +84,7 @@
         .end
 
 ;;; RAS_MACRO_ATTR_IOS @type
-;;; ( VAL -- VAL INT )
+;;; ( VAL -- INT )
 ;;;
 ;;; Given a value on the stack, push an offset denoting the IOS
 ;;; of the value.
@@ -116,7 +116,7 @@
         .end
 
 ;;; RAS_MACRO_ATTR_STRICT @type
-;;; ( VAL -- VAL INT )
+;;; ( VAL -- INT )
 ;;;
 ;;; Given a value on the stack, push a boolean to the stack
 ;;; denoting whether the value's mapping is strict.
@@ -135,7 +135,7 @@
         .end
 
 ;;; RAS_MACRO_ATTR_MAPPED @type
-;;; ( VAL -- VAL INT )
+;;; ( VAL -- INT )
 ;;;
 ;;; Given a value on the stack, push a boolean to the stack
 ;;; denoting whether the value is mapped.
@@ -151,4 +151,131 @@
    .c else
         push int<32>0
         nip
+        .end
+
+;;; RAS_MACRO_ATTR_EOFFSET
+;;; ( VAL ULONG -- OFF )
+;;;
+;;; Given a composite value and the index of one of its elements
+;;; on the stack, push the offset of the element.
+
+        .macro attr_eoffset
+        ;; If the value is not composite, raise E_inval.
+        swap                    ; IDX VAL
+        tyissct                 ; IDX VAL ISSCT
+        bnzi .struct
+        drop                    ; IDX VAL
+        tyisa                   ; IDX VAL ISARR
+        bnzi .array
+        push PVM_E_INVAL
+        raise
+.struct:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        srefio
+        nip                     ; VAL BOFF
+        ba .done
+.array:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        arefo
+        nip                     ; VAL BOFF
+.done:
+        nip                     ; BOFF
+        ;; Build an offset value from the bit-offset.
+        push ulong<64>1         ; VAL BOFF UNIT
+        mko                     ; VAL OFF
+        .end
+
+;;; RAS_MACRO_ATTR_ESIZE
+;;; ( VAL ULONG -- OFF )
+;;;
+;;; Given a composite value and the index of one of its elements
+;;; on the stack, push the size of the element.
+
+        .macro attr_esize
+        ;; If the value is not composite, raise E_inval.
+        swap                    ; IDX VAL
+        tyissct                 ; IDX VAL ISSCT
+        bnzi .struct
+        drop                    ; IDX VAL
+        tyisa                   ; IDX VAL ISARR
+        bnzi .array
+        push PVM_E_INVAL
+        raise
+.struct:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        srefi
+        nip                     ; VAL ELEM
+        siz
+        nip                     ; VAL SIZ
+        ba .done
+.array:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        aref
+        nip                     ; VAL ELEM
+        siz
+        nip                     ; VAL SIZ
+.done:
+        nip                     ; SIZ
+        ;; Build an offset value from the bit-offset.
+        push ulong<64>1         ; VAL SIZ UNIT
+        mko                     ; VAL OFF
+        .end
+
+;;; RAS_MACRO_ATTR_ENAME
+;;; ( VAL ULONG -- STR )
+;;;
+;;; Given a composite value and the index of one of its elements
+;;; on the stack, push the name of the element.
+;;;
+;;; For struct values, use the names of the fields.  Anonymous
+;;; fields return the empty string.
+;;;
+;;; For array values, return ".[N]" for the Nth element.
+
+        .macro attr_ename
+        ;; If the value is not composite, raise E_inval.
+        swap                    ; IDX VAL
+        tyissct                 ; IDX VAL ISSCT
+        bnzi .struct
+        drop                    ; IDX VAL
+        tyisa                   ; IDX VAL ISARR
+        bnzi .array
+        push PVM_E_INVAL
+        raise
+.struct:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        srefin
+        nip                     ; VAL STR
+        bnn .done
+        drop
+        push ""
+        ba .done
+.array:
+        drop                    ; IDX VAL
+        ;; See if the index is in the range of the array.
+        sel                     ; IDX VAL SEL
+        rot                     ; VAL SEL IDX
+        lelu                    ; VAL SEL IDX (SIZ<=IDX)
+        bzi .bound_ok
+        push PVM_E_OUT_OF_BOUNDS
+        raise
+.bound_ok:
+        drop                    ; VAL SEL IDX
+        nip                     ; VAL IDX
+        push ".["               ; VAL IDX ".["
+        swap                    ; VAL ".[" IDX
+        push int<32>10          ; VAL ".[" IDX 10
+        formatlu 64             ; VAL ".[" "IDX"
+        sconc
+        nip2                    ; VAL ".[IDX"
+        push "]"
+        sconc
+        nip2                    ; VAL ".[IDX]"
+.done:
+        nip                     ; STR
         .end

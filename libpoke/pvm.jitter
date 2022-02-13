@@ -5152,6 +5152,32 @@ instruction srefio ()
   end
 end
 
+# Instruction: srefin
+#
+# Given a struct and an index, push the name of the field occupying
+# the position specified by the index in the given struct.  If the
+# field is anonymous, push PVM_NULL.  If the struct doesn't have that
+# many fields, raise PVM_E_OUT_OF_BOUNDS.
+#
+# Stack: ( SCT ULONG -- SCT ULONG STR )
+# Exceptions: PVM_E_OUT_OF_BOUNDS
+
+instruction srefin ()
+  branching # because of PVM_RAISE_DIRECT
+  code
+    pvm_val sct = JITTER_UNDER_TOP_STACK ();
+    pvm_val index = JITTER_TOP_STACK ();
+
+    if (PVM_VAL_ULONG (index) < 0
+        || (PVM_VAL_ULONG (index) >=
+            PVM_VAL_INTEGRAL (PVM_VAL_SCT_NFIELDS (sct))))
+      PVM_RAISE_DFL (PVM_E_OUT_OF_BOUNDS);
+
+    JITTER_PUSH_STACK (PVM_VAL_SCT_FIELD_NAME (sct,
+                                               PVM_VAL_ULONG (index)));
+  end
+end
+
 # Instruction: smodi
 #
 # Given a struct and an index, push the modified flags of the field
@@ -5593,6 +5619,19 @@ end
 instruction typof ()
   code
     JITTER_PUSH_STACK (pvm_typeof (JITTER_TOP_STACK ()));
+  end
+end
+
+# Instruction: tyisa
+#
+# Given a value, push 1 on the stack if it is an array.  Push 0
+# otherwise.
+#
+# Stack: ( VAL -- VAL INT )
+
+instruction tyisa ()
+  code
+    JITTER_PUSH_STACK (PVM_MAKE_INT (PVM_IS_ARR (JITTER_TOP_STACK ()), 32));
   end
 end
 

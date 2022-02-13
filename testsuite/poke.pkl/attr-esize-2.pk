@@ -1,0 +1,4 @@
+/* { dg-do run } */
+
+/* { dg-command {["foo","xxxx",""]'esize (1)} } */
+/* { dg-output "40UL#b" } */

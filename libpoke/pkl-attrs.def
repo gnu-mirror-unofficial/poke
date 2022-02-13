@@ -20,6 +20,7 @@
    The second column is the attribute identifier, that the user writes
    in the program code to invoke the attribute.  */
 
+/* Unary attributes.  */
 PKL_DEF_ATTR (PKL_AST_ATTR_SIZE, "size")
 PKL_DEF_ATTR (PKL_AST_ATTR_SIGNED, "signed")
 PKL_DEF_ATTR (PKL_AST_ATTR_MAGNITUDE, "magnitude")
@@ -30,6 +31,11 @@ PKL_DEF_ATTR (PKL_AST_ATTR_OFFSET, "offset")
 PKL_DEF_ATTR (PKL_AST_ATTR_MAPPED, "mapped")
 PKL_DEF_ATTR (PKL_AST_ATTR_IOS, "ios")
 PKL_DEF_ATTR (PKL_AST_ATTR_STRICT, "strict")
+
+/* Binary attributes.  */
+PKL_DEF_ATTR (PKL_AST_ATTR_EOFFSET, "eoffset")
+PKL_DEF_ATTR (PKL_AST_ATTR_ESIZE, "esize")
+PKL_DEF_ATTR (PKL_AST_ATTR_ENAME, "ename")
 
 /*
 Local variables:

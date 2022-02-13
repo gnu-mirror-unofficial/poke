@@ -682,6 +682,42 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_cons)
 }
 PKL_PHASE_END_HANDLER
 
+/* Some attributes are binary and thus require a second argument.
+   Make sure they have it.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_op_attr)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  enum pkl_ast_attr attr = PKL_AST_EXP_ATTR (exp);
+
+  assert (attr != PKL_AST_ATTR_NONE);
+
+  switch (attr)
+    {
+    case PKL_AST_ATTR_EOFFSET:
+    case PKL_AST_ATTR_ESIZE:
+    case PKL_AST_ATTR_ENAME:
+      if (PKL_AST_EXP_NUMOPS (exp) != 2)
+        {
+          PKL_ERROR (PKL_AST_LOC (exp),
+                     "attribute requires an argument");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      break;
+    default:
+      if (PKL_AST_EXP_NUMOPS (exp) != 1)
+        {
+          PKL_ERROR (PKL_AST_LOC (exp),
+                     "attribute doesn't take any argument");
+          PKL_ANAL_PAYLOAD->errors++;
+          PKL_PASS_ERROR;
+        }
+      break;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_anal1 =
   {
    PKL_PHASE_PS_HANDLER (PKL_AST_SRC, pkl_anal_ps_src),
@@ -706,6 +742,7 @@ struct pkl_phase pkl_phase_anal1 =
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_anal1_ps_type_offset),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_anal1_ps_op_sl),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_anal1_ps_op_attr),
    PKL_PHASE_PS_DEFAULT_HANDLER (pkl_anal_ps_default),
   };
 

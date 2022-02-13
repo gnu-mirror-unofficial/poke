@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { int i; long; };
+
+/* { dg-command {Foo{}'ename(0)} } */
+/* { dg-output {"i"} } */
