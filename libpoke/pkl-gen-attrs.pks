@@ -312,6 +312,13 @@
 .struct:
         drop                    ; IDX VAL
         swap                    ; VAL IDX
+        ;; If the field is absent, raise E_elem.
+        srefia                  ; VAL IDX ABSENT_P
+        bzi .noabsent
+        push PVM_E_ELEM
+        raise
+.noabsent:
+        drop                    ; VAL IDX
         srefi
         nip                     ; VAL ELEM
         ba .done

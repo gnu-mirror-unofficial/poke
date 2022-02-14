@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { int i; long l if 2 > 3; int<3> x; };
+
+/* { dg-command {try Foo{}'elem (1); catch if E_elem { print "caught\n"; } } } */
+/* { dg-output "caught" } */

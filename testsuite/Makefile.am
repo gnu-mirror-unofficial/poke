@@ -777,6 +777,7 @@ EXTRA_DIST = \
   poke.pkl/attr-elem-2.pk \
   poke.pkl/attr-elem-3.pk \
   poke.pkl/attr-elem-4.pk \
+  poke.pkl/attr-elem-5.pk \
   poke.pkl/attr-ename-arr-1.pk \
   poke.pkl/attr-ename-arr-2.pk \
   poke.pkl/attr-ename-arr-3.pk \

@@ -1,5 +1,12 @@
 2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen-attrs.pks (attr_elem): Raise E_elem if the
+	referred element is an absent field.
+	* testsuite/poke.pkl/attr-elem-5.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen-attrs.pks (attr_ename): Do not print . before [
 	in array element names.
 	(attr_esize): Support absent fields in structs.
