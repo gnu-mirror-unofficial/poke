@@ -192,6 +192,8 @@
 ;;;
 ;;; Given a composite value and the index of one of its elements
 ;;; on the stack, push the size of the element.
+;;;
+;;; The size of an absent field in a struct is 0#b.
 
         .macro attr_esize
         ;; If the value is not composite, raise E_inval.
@@ -206,6 +208,10 @@
 .struct:
         drop                    ; IDX VAL
         swap                    ; VAL IDX
+        ;; If the field is absent, the result is 0#b.
+        srefia                  ; VAL IDX ABSENT_P
+        bnzi .isabsent
+        drop                    ; VAL IDX
         srefi
         nip                     ; VAL ELEM
         siz
@@ -223,6 +229,13 @@
         ;; Build an offset value from the bit-offset.
         push ulong<64>1         ; VAL SIZ UNIT
         mko                     ; VAL OFF
+        ba .reallydone
+.isabsent:
+        drop3                   ; _
+        push ulong<64>0
+        push ulong<64>1
+        mko                     ; 0#b
+.reallydone:
         .end
 
 ;;; RAS_MACRO_ATTR_ENAME
@@ -267,15 +280,15 @@
 .bound_ok:
         drop                    ; VAL SEL IDX
         nip                     ; VAL IDX
-        push ".["               ; VAL IDX ".["
-        swap                    ; VAL ".[" IDX
-        push int<32>10          ; VAL ".[" IDX 10
-        formatlu 64             ; VAL ".[" "IDX"
+        push "["                ; VAL IDX "["
+        swap                    ; VAL "[" IDX
+        push int<32>10          ; VAL "[" IDX 10
+        formatlu 64             ; VAL "[" "IDX"
         sconc
-        nip2                    ; VAL ".[IDX"
+        nip2                    ; VAL "[IDX"
         push "]"
         sconc
-        nip2                    ; VAL ".[IDX]"
+        nip2                    ; VAL "[IDX]"
 .done:
         nip                     ; STR
         .end

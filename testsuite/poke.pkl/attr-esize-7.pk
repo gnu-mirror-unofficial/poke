@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { int i; long l if 2 > 3; int<3> x; };
+
+/* { dg-command {Foo{}'esize (2)} } */
+/* { dg-output "3UL#b" } */

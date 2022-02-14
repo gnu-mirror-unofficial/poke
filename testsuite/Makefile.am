@@ -797,6 +797,8 @@ EXTRA_DIST = \
   poke.pkl/attr-esize-3.pk \
   poke.pkl/attr-esize-4.pk \
   poke.pkl/attr-esize-5.pk \
+  poke.pkl/attr-esize-6.pk \
+  poke.pkl/attr-esize-7.pk \
   poke.pkl/attr-ios-1.pk \
   poke.pkl/attr-ios-2.pk \
   poke.pkl/attr-ios-diag-1.pk \

@@ -1,5 +1,17 @@
 2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen-attrs.pks (attr_ename): Do not print . before [
+	in array element names.
+	(attr_esize): Support absent fields in structs.
+	* testsuite/poke.pkl/attr-esize-6.pk: New test.
+	* testsuite/poke.pkl/attr-esize-7.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-1.pk: Update test.
+	* testsuite/poke.pkl/attr-ename-arr-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-attrs.def: New attribute PKL_AST_ATTR_ELEM.
 	* libpoke/pkl-anal.c (pkl_anal1_ps_op_attr): Handle ELEM
 	attribute.
