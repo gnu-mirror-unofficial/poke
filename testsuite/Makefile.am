@@ -816,6 +816,8 @@ EXTRA_DIST = \
   poke.pkl/attr-length-9.pk \
   poke.pkl/attr-length-10.pk \
   poke.pkl/attr-length-11.pk \
+  poke.pkl/attr-length-12.pk \
+  poke.pkl/attr-length-13.pk \
   poke.pkl/attr-magnitude-1.pk \
   poke.pkl/attr-mapped-1.pk \
   poke.pkl/attr-mapped-2.pk \

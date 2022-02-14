@@ -2456,18 +2456,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;
     case PKL_AST_ATTR_LENGTH:
-      /* 'length is defined for array, struct and string values.  */
-      switch (PKL_AST_TYPE_CODE (operand_type))
-        {
-        case PKL_TYPE_ARRAY:
-        case PKL_TYPE_STRUCT:
-        case PKL_TYPE_STRING:
-          break;
-        default:
-          goto invalid_attribute;
-          break;
-        }
-
       /* The type of 'length is uint<64>  */
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
       PKL_AST_TYPE (exp) = ASTREF (exp_type);

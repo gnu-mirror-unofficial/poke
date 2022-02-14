@@ -9422,6 +9422,8 @@ Gives 1 if the value is a signed integer, 0 otherwise.  Examples:
 @end example
 @item mapped
 Always 0 for integers.  (@pxref{Mapping}).
+@item length
+Always @code{1UL} for integers.
 @end table
 
 
@@ -9770,6 +9772,8 @@ Examples:
 @end example
 @item mapped
 Always 0 for offsets.  (@pxref{Mapping}).
+@item length
+Always @code{1UL} for integers.
 @end table
 
 

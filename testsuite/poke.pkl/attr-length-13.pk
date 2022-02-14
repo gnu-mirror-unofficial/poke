@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+var a = 10#B;
+
+/* { dg-command { a'length } } */
+/* { dg-output "1UL" } */
