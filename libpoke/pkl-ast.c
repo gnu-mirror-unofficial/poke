@@ -562,6 +562,8 @@ pkl_ast_make_any_type (pkl_ast ast)
 {
   pkl_ast_node type = pkl_ast_make_type (ast);
   PKL_AST_TYPE_CODE (type) = PKL_TYPE_ANY;
+  PKL_AST_TYPE_COMPLETE (type)
+    = PKL_AST_TYPE_COMPLETE_NO;
   return type;
 }
 
