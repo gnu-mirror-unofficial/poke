@@ -97,6 +97,14 @@ EXTRA_DIST = \
   poke.cmd/scrabble-2.pk \
   poke.cmd/scrabble-3.pk \
   poke.cmd/scrabble-4.pk \
+  poke.cmd/sdiff-1.pk \
+  poke.cmd/sdiff-2.pk \
+  poke.cmd/sdiff-3.pk \
+  poke.cmd/sdiff-4.pk \
+  poke.cmd/sdiff-5.pk \
+  poke.cmd/sdiff-6.pk \
+  poke.cmd/sdiff-7.pk \
+  poke.cmd/sdiff-8.pk \
   poke.cmd/set-endian.pk \
   poke.cmd/set-error-on-warning.pk \
   poke.cmd/set-error-on-warning-diag.pk \

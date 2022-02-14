@@ -27,6 +27,10 @@
 .dump-ascii { color : brown; }
 .dump-unknown { color : yellow; }
 
+.diff-thunk-header { font-weight: bold; }
+.diff-minus { color : red; }
+.diff-plus { color : green; }
+
 /* Classes for pickles in pickles/  */
 
 .leb128 { color : grey; }

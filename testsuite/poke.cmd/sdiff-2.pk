@@ -1,0 +1,13 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x02 0x12 0x34  0x56 0x78 0x9a 0xbc  0xde 0xf0} } */
+
+type Foo = struct { byte sz; int[sz] data; };
+
+/* { dg-command {.set endian little} } */
+/* { dg-command {.set obase 16} } */
+/* { dg-command { sdiff :a (Foo @ 0#B) :b (Foo @ 1#B) :group_by 2#B} } */
+/* { dg-output "@@ 0x00\\+1,0x01\\+9 @@\n" } */
+/* { dg-output "-00 +a.sz *\n" } */
+/* { dg-output "\\+02 +b.sz *\n" } */
+/* { dg-output "\\+1234 5678 +b.data\\\[0\\\] +0x78563412\n" } */
+/* { dg-output "\\+9abc def0 +b.data\\\[1\\\] +0xf0debc9a\n" } */

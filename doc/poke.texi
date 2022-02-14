@@ -208,6 +208,7 @@ Commands
 * dump::			Binary dumps.
 * copy::			Copying data around.
 * save::			Save data into a file.
+* sdiff::                       Comparing mapped values byte by byte.
 * extract::			Extract contents of values to buffers.
 * scrabble::			Scrabble memory chunks based on patterns.
 
@@ -8716,6 +8717,7 @@ The @code{.quit} command behaves exactly like @code{.exit}.
 * dump::			Binary dumps.
 * copy::			Copying data around.
 * save::			Save data into a file.
+* sdiff::                       Comparing mapped values byte by byte.
 * extract::			Extract contents of values to memory IOS.
 * scrabble::			Scrabble memory chunks based on patterns.
 @end menu
@@ -8938,6 +8940,34 @@ before starting writing.  If the argument @command{append} is
 set as true, however, it will append to the existing contents of the
 file.  In this case, the file should exist.
 
+@node sdiff
+@section @command{sdiff}
+@cindex @command{sdiff}
+
+The @command{sdiff} command provides structured byte differences
+between two mapped values.
+
+This command has the following synopsis:
+
+@example
+sdiff :a @var{any} :b @var{any} [:group_by @var{offset}] \
+      [:values @var{bool}]
+@end example
+
+@noindent
+Where @var{:a} and @var{:b} are two mapped values of the same type.
+
+By default, the bytes are shown in the diff separated by white
+characters.  You can alter this behaviour using the @code{group_by}
+parameter.
+
+If @var{values} is true, then include field interpreted values in the
+diff output.
+
+If the two values are not mapped, this command raises @code{E_no_map}.
+If the two values are not of the same type, the output will probably
+not be meaningful.
+
 @node extract
 @section @command{extract}
 @cindex @command{extract}
@@ -8945,7 +8975,7 @@ file.  In this case, the file should exist.
 Use the @command{extract} command in order to create a temporary
 memory IO space with the contents of a mapped value.
 
-This command the has the following synopsis.
+This command has the following synopsis.
 
 @example
 extract :val @var{val} :to @var{ios_name}
@@ -10515,7 +10545,7 @@ Examples:
 If the provided index is out of bounds then @code{E_out_of_bounds} is
 raised.
 @item ename (@var{idx})
-The string @code{".[@var{idx}]"}.
+The string @code{"[@var{idx}]"}.
 
 If the provided index is out of bounds then @code{E_out_of_bounds} is
 raised.

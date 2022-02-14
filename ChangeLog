@@ -1,5 +1,28 @@
 2022-02-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (sdiff): Sketch of section.
+	* poke/Makefile.am (dist_pkgdata_DATA): Add pk-diff.pk.
+	* poke/pk-diff.pk: New file.
+	* poke/pk-cmd.pk: Load pk-diff.pk.
+	* etc/poke-dark.css (.diff-plus): New class.
+	(.diff-minus): Likewise.
+	(.diff-thunk-header): Likewise.
+	* etc/poke-bright.css (.diff-minus): Likewise.
+	(.diff-minus): Likewise.
+	(.diff-thunk-header): Likewise.
+	* testsuite/poke.cmd/sdiff-1.pk: New test.
+	* testsuite/poke.cmd/sdiff-2.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-3.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-4.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-5.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-6.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-7.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-8.pk: Likewise.
+	* testsuite/poke.repl/repl.exp: Update test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-02-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: Fix precedence of EXCOND.
 
 2022-02-18  Jose E. Marchesi  <jemarch@gnu.org>

@@ -80,7 +80,7 @@ poke_exit
 
 set test "tab-completion-info-1"
 poke_start
-poke_send ".info type Pk_D\t" ".info type Pk_Dump_Offset"
+poke_send ".info type Pk_Du\t" ".info type Pk_Dump_Offset"
 poke_exit
 
 set test "sigint-returns-to-prompt-1"

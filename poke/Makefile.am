@@ -26,7 +26,7 @@ BUILT_SOURCES =
 
 EXTRA_DIST =
 
-dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk \
+dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk pk-diff.pk \
                     pk-extract.pk pk-scrabble.pk poke.pk pk-settings.pk \
                     pk-help.pk pk-map.pk pk-table.pk pk-info.pk
 

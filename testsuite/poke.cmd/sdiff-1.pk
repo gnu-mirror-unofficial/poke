@@ -1,0 +1,13 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x04 0x12 0x34 0x56 0x78 0x9a 0xbc} } */
+
+type Foo = struct { byte sz; byte[sz] data; };
+
+/* { dg-command { sdiff :a (Foo @ 0#B) :b (Foo @ 1#B) } } */
+/* { dg-output "@@ 0x00\\+1,0x01\\+5 @@\n" } */
+/* { dg-output "-00 +a.sz *\n" } */
+/* { dg-output "\\+04 +b.sz *\n" } */
+/* { dg-output "\\+12 +b.data\\\[0\\\] *\n" } */
+/* { dg-output "\\+34 +b.data\\\[1\\\] *\n" } */
+/* { dg-output "\\+56 +b.data\\\[2\\\] *\n" } */
+/* { dg-output "\\+78 +b.data\\\[3\\\] *\n" } */
