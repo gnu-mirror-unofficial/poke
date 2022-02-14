@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { int foo; long bar; };
+
+/* { dg-command {Foo { bar = 10 }'elem (1)} } */
+/* { dg-output "10L" } */

@@ -694,6 +694,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_op_attr)
 
   switch (attr)
     {
+    case PKL_AST_ATTR_ELEM:
     case PKL_AST_ATTR_EOFFSET:
     case PKL_AST_ATTR_ESIZE:
     case PKL_AST_ATTR_ENAME:

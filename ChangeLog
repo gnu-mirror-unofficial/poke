@@ -1,5 +1,24 @@
 2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-attrs.def: New attribute PKL_AST_ATTR_ELEM.
+	* libpoke/pkl-anal.c (pkl_anal1_ps_op_attr): Handle ELEM
+	attribute.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_attr): Likewise.
+	* libpoke/pkl-promo.c (pkl_promo_ps_op_attr): Likewise.
+	* libpoke/pkl-gen.c (pkl_gen_ps_op_attr): Likewise.
+	* libpoke/pkl-gen-attrs.pks (attr_elem): New macro.
+	* testsuite/poke.pkl/attr-diag-5.pk: New test.
+	* testsuite/poke.pkl/attr-diag-6.pk: Likewise.
+	* testsuite/poke.pkl/attr-elem-3.pk: Likewise.
+	* testsuite/poke.pkl/attr-elem-2.pk: Likewise.
+	* testsuite/poke.pkl/attr-elem-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-elem-4.pk: Likewise.
+	* doc/poke.texi (Array Attributes): Document 'elem.
+	(Struct Attributes): Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-attrs.def: New attributes EOFFSET, ESIZE and ENAME.
 	* libpoke/pkl-ast.c (pkl_ast_make_binary_exp): New function.
 	* libpoke/pkl-tab.y: Rule for attributes with one argument.

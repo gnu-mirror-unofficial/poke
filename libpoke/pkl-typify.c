@@ -2503,6 +2503,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 32, 1);
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;
+    case PKL_AST_ATTR_ELEM:
     case PKL_AST_ATTR_EOFFSET:
     case PKL_AST_ATTR_ESIZE:
     case PKL_AST_ATTR_ENAME:
@@ -2536,6 +2537,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
            attribute.  */
         if (attr == PKL_AST_ATTR_ENAME)
           exp_type = pkl_ast_make_string_type (PKL_PASS_AST);
+        else if (attr == PKL_AST_ATTR_ELEM)
+          exp_type = pkl_ast_make_any_type (PKL_PASS_AST);
         else
           {
             /* For both EOFFSET and ESIZE the result type is an offset

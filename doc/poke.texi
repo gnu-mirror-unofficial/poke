@@ -10485,6 +10485,9 @@ Examples:
 (poke) a'strict
 0
 @end example
+@item elem (@var{idx})
+Element occupying the position @var{idx} in the array.  Note that this
+attribute evaluates to a value of type @code{any}.
 @item eoffset (@var{idx})
 Offset of the element identified by the index @var{idx} in the array.
 Examples:
@@ -11702,6 +11705,9 @@ We get the following results:
 Boolean indicating whether the struct is mapped.
 @item strict
 Boolean indicating whether the struct is mapped in strict mode.
+@item elem (@var{idx})
+Element occupying the position @var{idx} in the array.  Note that this
+attribute evaluates to a value of type @code{any}.
 @item eoffset (@var{idx})
 Offset of the field identified by the index @var{idx} in the struct.
 Examples:

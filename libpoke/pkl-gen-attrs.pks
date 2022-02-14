@@ -279,3 +279,34 @@
 .done:
         nip                     ; STR
         .end
+
+;;; RAS_MACRO_ATTR_ELEM
+;;; ( VAL ULONG -- EVAL )
+;;;
+;;; Given a composite value and the index of one of its elements
+;;; on the stack, push the element.
+
+        .macro attr_elem
+        ;; If the value is not composite, raise E_inval.
+        swap                    ; IDX VAL
+        tyissct                 ; IDX VAL ISSCT
+        bnzi .struct
+        drop                    ; IDX VAL
+        tyisa                   ; IDX VAL ISARR
+        bnzi .array
+        push PVM_E_INVAL
+        raise
+.struct:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        srefi
+        nip                     ; VAL ELEM
+        ba .done
+.array:
+        drop                    ; IDX VAL
+        swap                    ; VAL IDX
+        aref
+        nip                     ; VAL ELEM
+.done:
+        nip                     ; ELEM
+        .end
