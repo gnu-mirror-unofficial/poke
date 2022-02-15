@@ -1,5 +1,20 @@
 2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gui/: Remove.
+	* bootstrap.conf (gui_modules): Remove.
+	(bootstrap_post_import_hook): Do not create gl-guil.
+	(ACLOCAL_FLAGS): Do not include m4/gui.
+	* configure.ac: Do not call gui_EARLY.
+	Do not call gui_INIT.
+	Remove Tcl/Tk checks.
+	* run.in: Do not set gui-related paths.
+	* DEPENDENCIES: Remove section on Tcl and Tk.
+	* .gitignore: Remove gui-related entries.
+	* Makefile.am (ACLOCAL_AMFLAGS): Do not include m4/gui.
+	(SUBDIRS): Remove gui and gl-gui directories.
+
+2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h: Prototype for pk_type_name.
 	* libpoke/pk-val.c (pk_type_name): New function.
 

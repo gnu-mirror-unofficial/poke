@@ -29,17 +29,16 @@ s=`cd @abs_srcdir@ && pwd`
 b=`cd @abs_builddir@ && pwd`
 
 # setup to run uninstalled poke
-PATH=$b/poke:$b/gui:$PATH
+PATH=$b/poke:$PATH
 POKEDATADIR=$s/libpoke
 POKEINFODIR=$s/doc
 POKEPICKLESDIR=$s/pickles
 POKEMAPSDIR=$s/maps
 POKEDOCDIR=$s/doc
 POKESTYLESDIR=$s/etc
-POKEGUIDIR=$s/gui
 POKE_LOAD_PATH=$s/poke
 export PATH POKEDATADIR POKEPICKLESDIR POKECMDSDIR POKESTYLESDIR POKEINFODIR
-export POKE_LOAD_PATH POKEDOCDIR POKEGUIDIR POKEMAPSDIR
+export POKE_LOAD_PATH POKEDOCDIR POKEMAPSDIR
 
 # Cheap way to find some use-after-free and uninit read problems with glibc
 MALLOC_CHECK_=1

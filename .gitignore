@@ -24,7 +24,6 @@ config.h.in
 /gl
 /gl-libpoke
 /gl-libutils
-/gl-gui
 /po/.gitignore
 /po/.reference
 /po/LINGUAS

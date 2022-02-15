@@ -39,7 +39,6 @@ AC_DEFINE([PACKAGE_BUGZILLA],["https://sourceware.org/bugzilla/describecomponent
 AC_PROG_CC
 gl_EARLY
 libpoke_EARLY
-gui_EARLY
 
 LT_INIT
 AC_PROG_CC_C99
@@ -77,7 +76,6 @@ AM_CONDITIONAL([HAVE_PROC], [test "x$have_proc" = "xyes"])
 
 gl_INIT
 libpoke_INIT
-gui_INIT
 
 # Try to find a libtextstyle with hyperlinks support.
 gl_LIBTEXTSTYLE_OPTIONAL([0.20.5])
@@ -232,21 +230,6 @@ if test "x$hserver_enabled" = "xyes"; then
             [Defined if the hyperlinks server is available])
 fi
 
-dnl The GUI is optional, and depends on the availability of Tcl and
-dnl Tk.
-
-AC_ARG_ENABLE([gui],
-              AS_HELP_STRING([--enable-gui],
-                             [Enable the GUI (default is NO)]),
-              [gui_enabled=$enableval], [gui_enabled=no])
-
-if test "x$gui_enabled" = "xyes"; then
- POKE_TCLTK
- gui_enabled=$has_tcltk
-fi
-
-AM_CONDITIONAL([GUI], [test "x$gui_enabled" = "xyes"])
-
 dnl The test framework is optional.
 AC_CHECK_HEADERS([dejagnu.h])
 AM_CONDITIONAL([HAVE_DEJAGNU], [test "$ac_cv_header_dejagnu_h" = yes])
@@ -268,10 +251,8 @@ dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
                 gl-libpoke/Makefile
-                gl-gui/Makefile
                 libpoke/Makefile
                 poke/Makefile
-                gui/Makefile
                 utils/Makefile
                 pickles/Makefile
                 maps/Makefile
@@ -310,11 +291,6 @@ fi
 if test "x$mi_enabled" = "xno"; then
    AC_MSG_WARN([building poke without the machine interface support.
      Install libjson-c and use --enable-mi to activate it.])
-fi
-
-if test "x$gui_enabled" = "xno"; then
-   AC_MSG_WARN([building poke without GUI support.
-     Install tcl-dev and tk-dev and use --enable-gui to activate it.])
 fi
 
 dnl Report errors

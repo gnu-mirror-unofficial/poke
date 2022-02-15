@@ -1,5 +1,5 @@
-ACLOCAL_AMFLAGS = -I m4 -I m4/libpoke -I m4/gui
-SUBDIRS = jitter gl maps pickles gl-libpoke gl-gui libpoke poke gui utils \
+ACLOCAL_AMFLAGS = -I m4 -I m4/libpoke
+SUBDIRS = jitter gl maps pickles gl-libpoke libpoke poke utils \
           doc man testsuite etc po
 
 EXTRA_DIST = INSTALL.generic DEPENDENCIES

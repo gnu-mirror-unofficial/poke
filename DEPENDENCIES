@@ -76,20 +76,6 @@ The following packages should be installed before GNU poke is installed
 
     or set the variables JSON_C_CFLAGS, JSON_C_LIBS when invoking 'configure'.
 
-* Tcl and Tk
-  + Optional.
-    The poke GUI uses Tcl and Tk, so you need to have the respective
-    development packages installed in your system.  Any recent version
-    will suffice.
-  + Homepage:
-    https://www.tcl.tk/
-  + Download:
-    https://www.tcl.tk/software/tcltk/download.html
-  + Pre-built package name:
-    - On Debian and Debian-based systems: tcl-dev, tk-dev,
-    - On Red Hat distributions: tcl-devel, tk-devel.
-    - Other: https://repology.org/project/tk/versions
-
 * GNU libtextstyle
   + Optional.
     GNU poke uses libtextstyle in order to provide styled output.  If the
@@ -128,23 +114,6 @@ The following packages should be installed before GNU poke is installed
     $ export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_LIBNBD}/lib/pkgconfig:${PKG_CONFIG_PATH}
 
     or set the variables LIBNBD_CFLAGS, LIBNBD_LIBS when invoking 'configure'.
-
-
-The following packages should be installed when GNU poke is installed
-(runtime dependencies, but not build dependencies):
-
-* Tcl library.
-  + Optional.
-    Required by the poke GUI.
-  + Homepage:
-    https://core.tcl-lang.org/index.html
-  + Download:
-    https://core.tcl-lang.org/tcllib/wiki?name=Downloads
-  + Pre-built package name:
-    - On Debian and Debian-based systems: tcllib,
-    - On Red Hat distributions: --.
-    - Other: https://repology.org/project/tcllib/versions
-
 
 The following should be installed when GNU poke is built, but are not
 needed later, once it is installed (build dependencies, but not runtime
