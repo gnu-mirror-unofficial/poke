@@ -782,8 +782,8 @@ EXTRA_DIST = \
   poke.pkl/attr-ename-arr-2.pk \
   poke.pkl/attr-ename-arr-3.pk \
   poke.pkl/attr-ename-arr-4.pk \
-  poke.pkl/attr-ename-arr-5.pk \
   poke.pkl/attr-ename-arr-6.pk \
+  poke.pkl/attr-ename-diag-1.pk \
   poke.pkl/attr-ename-struct-1.pk \
   poke.pkl/attr-ename-struct-2.pk \
   poke.pkl/attr-ename-union-1.pk \
@@ -792,14 +792,14 @@ EXTRA_DIST = \
   poke.pkl/attr-eoffset-2.pk \
   poke.pkl/attr-eoffset-3.pk \
   poke.pkl/attr-eoffset-4.pk \
-  poke.pkl/attr-eoffset-5.pk \
+  poke.pkl/attr-eoffset-diag-1.pk \
   poke.pkl/attr-esize-1.pk \
   poke.pkl/attr-esize-2.pk \
   poke.pkl/attr-esize-3.pk \
   poke.pkl/attr-esize-4.pk \
-  poke.pkl/attr-esize-5.pk \
   poke.pkl/attr-esize-6.pk \
   poke.pkl/attr-esize-7.pk \
+  poke.pkl/attr-esize-diag-1.pk \
   poke.pkl/attr-ios-1.pk \
   poke.pkl/attr-ios-2.pk \
   poke.pkl/attr-ios-diag-1.pk \
@@ -829,6 +829,7 @@ EXTRA_DIST = \
   poke.pkl/attr-offset-diag-1.pk \
   poke.pkl/attr-offset-diag-2.pk \
   poke.pkl/attr-offset-diag-3.pk \
+  poke.pkl/attr-offset-diag-4.pk \
   poke.pkl/attr-signed-1.pk \
   poke.pkl/attr-signed-2.pk \
   poke.pkl/attr-size-1.pk \

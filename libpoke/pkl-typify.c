@@ -2460,15 +2460,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_attr)
       exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
       PKL_AST_TYPE (exp) = ASTREF (exp_type);
       break;
-    case PKL_AST_ATTR_ALIGNMENT:
-      /* 'alignment is defined for struct values.  */
-      if (PKL_AST_TYPE_CODE (operand_type) != PKL_TYPE_STRUCT)
-        goto invalid_attribute;
-
-      /* The type of 'alignment is uint<64>  */
-      exp_type = pkl_ast_make_integral_type (PKL_PASS_AST, 64, 0);
-      PKL_AST_TYPE (exp) = ASTREF (exp_type);
-      break;
     case PKL_AST_ATTR_OFFSET:
       /* This attribute is only supported in certain values.  It must
          be possible to apply to `any' values though.  */

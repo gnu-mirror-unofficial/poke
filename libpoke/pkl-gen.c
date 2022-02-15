@@ -4403,10 +4403,6 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_attr)
     case PKL_AST_ATTR_STRICT:
       RAS_MACRO_ATTR_STRICT (operand_type);
       break;
-    case PKL_AST_ATTR_ALIGNMENT:
-      /* XXX writeme */
-      assert (0);
-      break;
     case PKL_AST_ATTR_ELEM:
       RAS_MACRO_ATTR_ELEM;
       break;
