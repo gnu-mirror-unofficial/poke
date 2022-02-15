@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var s =
+   "foo"'ename (2); /* { dg-error "not defined" } */

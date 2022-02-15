@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+type t=struct{int8[
+   8'esize (2) /* { dg-error "not defined" } */
+];};

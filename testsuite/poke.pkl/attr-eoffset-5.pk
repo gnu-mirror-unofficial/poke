@@ -1,4 +1,0 @@
-/* { dg-do run } */
-
-/* { dg-command {try "foo"'eoffset (3); catch if E_inval { print "caught\n"; } } } */
-/* { dg-output "caught" } */

@@ -1,3 +1,15 @@
+2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-typify.c (pkl_typify1_ps_attr): Emit
+	compilation-time errors for some attributes.
+	* testsuite/poke.pkl/attr-offset-diag-4.pk: New test.
+	* testsuite/poke.pkl/attr-ename-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-esize-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/attr-ename-arr-5.pk: Remove test.
+	* testsuite/poke.pkl/attr-esize-5.pk: Likewise.
+	* testsuite/poke.pkl/attr-eoffset-5.pk: Likewise.
+
 2022-02-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/poke.texi (Integer Attributes): Update accordingly.
