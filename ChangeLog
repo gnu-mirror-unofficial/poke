@@ -1,5 +1,10 @@
 2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: Prototype for pk_type_name.
+	* libpoke/pk-val.c (pk_type_name): New function.
+
+2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-save.pk: Do not capitalize summary in help entry.
 	* poke/pk-extract.pk: Likewise.
 	* poke/pk-copy.pk: Likewise.

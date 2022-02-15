@@ -230,6 +230,21 @@ pk_type_code (pk_val val)
     }
 }
 
+pk_val
+pk_type_name (pk_val type)
+{
+  switch (PVM_VAL_TYP_CODE (type))
+    {
+    case PVM_TYPE_STRUCT:
+      return PVM_VAL_TYP_S_NAME (type);
+      break;
+    default:
+      break;
+    }
+
+  return PK_NULL;
+}
+
 int
 pk_val_kind (pk_val val)
 {

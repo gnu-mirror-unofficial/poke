@@ -915,7 +915,8 @@ pk_val pk_offset_type_unit (pk_val type) LIBPOKE_API;
 pk_val pk_make_struct_type (pk_val nfields, pk_val name, pk_val *fnames,
                             pk_val *ftypes) LIBPOKE_API;
 
-/* Get the type of a struct.  */
+/* Get the type of a struct.
+   This function is DEPRECATED; please use pk_typeof instead.  */
 
 pk_val pk_struct_type (pk_val sct) LIBPOKE_API;
 
@@ -925,8 +926,8 @@ void pk_allocate_struct_attrs (pk_val nfields,
 pk_val **fnames, pk_val **ftypes) LIBPOKE_API;
 
 /* Get the name of a struct type.
-
-   If the struct type is anonymous, PK_NULL is returned.  */
+   If the struct type is anonymous, PK_NULL is returned.
+   This function is DEPRECATED; please use pk_type_name instead.  */
 
 pk_val pk_struct_type_name (pk_val type) LIBPOKE_API;
 
@@ -1096,6 +1097,12 @@ pk_val pk_typeof (pk_val val) LIBPOKE_API;
 #define PK_TYPE_ANY     8
 
 int pk_type_code (pk_val val) LIBPOKE_API;
+
+/* Given a type value, return its name.
+
+   If the provided type is anonymous, PK_NULL is returned.  */
+
+pk_val pk_type_name (pk_val type) LIBPOKE_API;
 
 /* Given a value, return its kind.  */
 
