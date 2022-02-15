@@ -25,7 +25,7 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
            category = "commands",
            topic = "scrabble",
-           summary = "Scrabble part of an IO space based on patterns",
+           summary = "scrabble part of an IO space based on patterns",
            description = format ("
 Rearrange portions of an IO space based on a transformation defined
 by a pair of patterns.

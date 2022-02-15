@@ -26,7 +26,7 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
           category = "commands",
           topic = "copy",
-          summary = "Copy a range of memory",
+          summary = "copy a range of memory",
           description = format ("
 Copy a range of bytes from a given offset at the given IO space to
 another given offset in the same or another IO space.

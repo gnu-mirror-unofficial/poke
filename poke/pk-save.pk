@@ -25,7 +25,7 @@ pk_help_add_topic
   :entry Poke_HelpEntry {
           category = "commands",
           topic = "save",
-          summary = "Save a range of an IO space to a file",
+          summary = "save a range of an IO space to a file",
           description = format ("
 Get the bytes corresponding to a given mapped value and create a
 memory IO space that contains them.

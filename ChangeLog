@@ -1,5 +1,12 @@
 2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-save.pk: Do not capitalize summary in help entry.
+	* poke/pk-extract.pk: Likewise.
+	* poke/pk-copy.pk: Likewise.
+	* poke/pk-scrabble.pk: Likewise.
+
+2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-attrs.def: Remove PKL_AST_ATTR_ALIGNMENT.
 	* libpoke/pkl-gen.c (pkl_gen_ps_op_attr): Do not handle the
 	'alignment attribute.
