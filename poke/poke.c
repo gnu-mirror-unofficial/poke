@@ -173,56 +173,56 @@ print_help (void)
 {
   /* TRANSLATORS: --help output, GNU poke synopsis.
      no-wrap */
-  pk_puts (_("Usage: poke [OPTION]... [FILE]\n"));
+  puts (_("Usage: poke [OPTION]... [FILE]"));
 
   /* TRANSLATORS: --help output, GNU poke summary.
      no-wrap */
-  pk_puts (_("Interactive editor for binary files.\n"));
+  puts (_("Interactive editor for binary files."));
 
-  pk_puts ("\n");
+  puts ("");
   /* TRANSLATORS: --help output, GNU poke arguments.
      no-wrap */
-  pk_puts (_("  -l, --load=FILE                     load the given pickle at startup\n"));
-  pk_puts (_("  -L FILE                             load the given pickle and exit\n"));
+  puts (_("  -l, --load=FILE                     load the given pickle at startup"));
+  puts (_("  -L FILE                             load the given pickle and exit"));
 
-  pk_puts ("\n");
+  puts ("");
 
   /* TRANSLATORS: --help output, GNU poke arguments.
      no-wrap */
-  pk_puts (_("Commanding poke from the command line:\n"));
-  pk_puts (_("  -c, --command=CMD                   execute the given command\n"));
-  pk_puts (_("  -s, --source=FILE                   execute commands from FILE\n"));
+  puts (_("Commanding poke from the command line:"));
+  puts (_("  -c, --command=CMD                   execute the given command"));
+  puts (_("  -s, --source=FILE                   execute commands from FILE"));
 
-  pk_puts ("\n");
-  pk_puts (_("Styling text output:\n"));
-  pk_puts (_("      --color=(yes|no|auto|html|test) emit styled output\n"));
-  pk_puts (_("      --style=STYLE_FILE              style file to use when styling\n"));
-  pk_puts (_("      --style-dark                    use default style for dark backgrounds\n"));
-  pk_puts (_("      --style-bright                  use default style for bright backgrounds\n"));
+  puts ("");
+  puts (_("Styling text output:"));
+  puts (_("      --color=(yes|no|auto|html|test) emit styled output"));
+  puts (_("      --style=STYLE_FILE              style file to use when styling"));
+  puts (_("      --style-dark                    use default style for dark backgrounds"));
+  puts (_("      --style-bright                  use default style for bright backgrounds"));
 
-  pk_puts ("\n");
-  pk_puts (_("Machine interface:\n"));
-  pk_puts (_("      --mi                            use the MI in stdin/stdout\n"));
+  puts ("");
+  puts (_("Machine interface:"));
+  puts (_("      --mi                            use the MI in stdin/stdout"));
 
-  pk_puts ("\n");
+  puts ("");
   /* TRANSLATORS: --help output, less used GNU poke arguments.
      no-wrap */
-  pk_puts (_("  -q, --no-init-file                  do not load an init file\n"));
-  pk_puts (_("      --no-auto-map                   disable auto-map\n"));
+  puts (_("  -q, --no-init-file                  do not load an init file"));
+  puts (_("      --no-auto-map                   disable auto-map"));
 #if HAVE_HSERVER
-  pk_puts (_("      --no-hserver                    do not run the hyperlinks server\n"));
+  puts (_("      --no-hserver                    do not run the hyperlinks server"));
 #endif
-  pk_puts (_("      --quiet                         be as terse as possible\n"));
-  pk_puts (_("      --help                          print a help message and exit\n"));
-  pk_puts (_("      --version                       show version and exit\n"));
+  puts (_("      --quiet                         be as terse as possible"));
+  puts (_("      --help                          print a help message and exit"));
+  puts (_("      --version                       show version and exit"));
 
-  pk_puts ("\n");
+  puts ("");
   /* TRANSLATORS: --help output 5+ (reports)
      TRANSLATORS: the placeholder indicates the bug-reporting address
      for this application.  Please add _another line_ with the
      address for translation bugs.
      no-wrap */
-  pk_printf (_("\
+  printf (_("\
 Report bugs in the bug tracker at\n\
   <%s>\n\
   or by email to <%s>.\n"), PACKAGE_BUGZILLA, PACKAGE_BUGREPORT);
@@ -230,8 +230,8 @@ Report bugs in the bug tracker at\n\
   printf (_("Report %s bugs to: %s\n"), PACKAGE_PACKAGER,
           PACKAGE_PACKAGER_BUG_REPORTS);
 #endif
-  pk_printf (_("%s home page: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
-  pk_printf (_("General help using GNU software: %s\n"), "<http://www.gnu.org/gethelp/>");
+  printf (_("%s home page: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
+  printf (_("General help using GNU software: %s\n"), "<http://www.gnu.org/gethelp/>");
 }
 
 void
@@ -239,45 +239,38 @@ pk_print_version (int hand_p)
 {
   if (hand_p)
     {
-      pk_term_class ("logo");
-      pk_puts ("     _____\n");
-      pk_puts (" ---'   __\\_______\n");
-      pk_printf ("            ______)  GNU poke %s\n", VERSION);
-      pk_puts ("            __)\n");
-      pk_puts ("           __)\n");
-      pk_puts (" ---._______)\n");
-      pk_term_end_class ("logo");
+      puts ("     _____");
+      puts (" ---'   __\\_______");
+      printf ("            ______)  GNU poke %s\n", VERSION);
+      puts ("            __)");
+      puts ("           __)");
+      puts (" ---._______)");
       /* xgettext: no-wrap */
-      pk_puts ("\n");
+      puts ("");
     }
   else
-    pk_printf ("GNU poke %s\n\n", VERSION);
+    printf ("GNU poke %s\n\n", VERSION);
 
   /* It is important to separate the year from the rest of the message,
      as done here, to avoid having to retranslate the message when a new
      year comes around.  */
-  pk_term_class ("copyright");
   /* TRANSLATORS:
      If your target locale supports it, you can translate (C) to the
      copyright symbol (U+00A9 in Unicode), but there is no obligation
      to do this.  In other cases it's probably best to leave it untranslated.  */
-  pk_printf (_("\
+  printf (_("\
 %s (C) %s The poke authors.\n\
 License GPLv3+: GNU GPL version 3 or later"), "Copyright", "2019-2022");
-  pk_term_hyperlink ("http://gnu.org/licenses/gpl.html", NULL);
-  pk_puts (" <http://gnu.org/licenses/gpl.html>");
-  pk_term_end_hyperlink ();
-  pk_puts (".\n\
+  puts (".\n\
 This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n");
-  pk_term_end_class ("copyright");
+There is NO WARRANTY, to the extent permitted by law.");
 
-    pk_printf (_("\
+  printf (_("\
 \nPowered by Jitter %s."), JITTER_VERSION);
 
-    pk_puts (_("\
+  puts (_("\
 \n\
-Perpetrated by Jose E. Marchesi.\n"));
+Perpetrated by Jose E. Marchesi."));
 
 }
 
@@ -378,6 +371,14 @@ parse_args_1 (int argc, char *argv[])
       c = ret;
       switch (c)
         {
+        case HELP_ARG:
+          print_help ();
+          exit (EXIT_SUCCESS);
+          break;
+        case VERSION_ARG:
+          pk_print_version (0 /* hand_p */);
+          exit (EXIT_SUCCESS);
+          break;
         case MI_ARG:
           if (!mi_supported_p)
             {
@@ -425,14 +426,6 @@ parse_args_2 (int argc, char *argv[])
       c = ret;
       switch (c)
         {
-        case HELP_ARG:
-          print_help ();
-          goto exit_success;
-          break;
-        case VERSION_ARG:
-          pk_print_version (0 /* hand_p */);
-          goto exit_success;
-          break;
         case QUIET_ARG:
           poke_quiet_p = 1;
           pk_set_quiet_p (poke_compiler, 1);
@@ -517,7 +510,7 @@ parse_args_2 (int argc, char *argv[])
                        filename, 0, 1 /* set_cur_p */) == PK_IOS_NOID)
         {
           if (!poke_quiet_p)
-            pk_printf (_("cannot open file %s\n"), filename);
+            printf (_("cannot open file %s\n"), filename);
           goto exit_failure;
         }
 
@@ -764,9 +757,9 @@ void
 pk_fatal (const char *errmsg)
 {
   if (errmsg)
-    pk_printf ("fatal error: %s\n", errmsg);
-  pk_printf ("This is a bug. Please report it to %s\n",
-             PACKAGE_BUGREPORT);
+    fprintf (stderr, "fatal error: %s\n", errmsg);
+  fprintf (stderr, "This is a bug. Please report it to %s\n",
+           PACKAGE_BUGREPORT);
   abort ();
 }
 

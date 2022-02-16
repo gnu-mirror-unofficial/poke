@@ -1,3 +1,12 @@
+2022-02-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/poke.c (print_help): Do not use pk-term.
+	(pk_print_version): Likewise.
+	(parse_args_2): Likewise.
+	(pk_fatal): Likewise.
+	(parse_args_1): Handle HELP_ARG and VERSION_ARG here.
+	(parse_args_2): ... instead of here.
+
 2022-02-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* gui/: Remove.
