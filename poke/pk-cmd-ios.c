@@ -452,10 +452,29 @@ pk_cmd_mem (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   /* Create a new memory IO space.  */
   const char *arg_str = PK_CMD_ARG_STR (argv[1]);
-  char *mem_name;
+  char *mem_name = NULL;
 
-  if (asprintf (&mem_name, "*%s*", arg_str) == -1)
-    pk_fatal (_("out of memory"));
+  /* If the user didnt' specify a name for the memory IOS, search for
+     the first available *N*.  */
+  if (*arg_str == '\0')
+    {
+      int i;
+
+      for (i = 0; i < 99; ++i)
+        {
+          free (mem_name);
+          if (asprintf (&mem_name, "*%d*", i) == -1)
+            pk_fatal (_("out of memory"));
+
+          if (pk_ios_search (poke_compiler, mem_name) == NULL)
+            break;
+        }
+    }
+  else
+    {
+      if (asprintf (&mem_name, "*%s*", arg_str) == -1)
+        pk_fatal (_("out of memory"));
+    }
 
   if (pk_ios_search (poke_compiler, mem_name) != NULL)
     {

@@ -1,5 +1,10 @@
 2022-02-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-cmd-ios.c (pk_cmd_mem): Create uniquely named memory IOS
+	if no name is specified in .mem.
+
+2022-02-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/poke.c (print_help): Do not use pk-term.
 	(pk_print_version): Likewise.
 	(parse_args_2): Likewise.
