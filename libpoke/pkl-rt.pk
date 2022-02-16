@@ -287,7 +287,8 @@ fun _pkl_escape_string = (string str) string:
     /* Calculate the length of escaped string.  */
     for (var i = 0UL; i < len; ++i)
       len_esc +=
-        str[i] == '\t' || str[i] == '\n' || str[i] == '"' || str[i] == '\\' ? 2
+        str[i] == '\t' || str[i] == '\n' || str[i] == '"'  /* " */
+                  || str[i] == '\\' ? 2
           : str[i] - 0x20UB < 0x5fUB /* is printable */ ? 1
           : 4 /* \xXX */;
 
@@ -305,7 +306,7 @@ fun _pkl_escape_string = (string str) string:
             __pkl_unsafe_string_set (esc, j, "\\n");
             j += 2;
           }
-        else if (str[i] == '"')
+        else if (str[i] == '"') /* " */
           {
             __pkl_unsafe_string_set (esc, j, "\\\"");
             j += 2;
