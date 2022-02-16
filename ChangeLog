@@ -1,5 +1,12 @@
 2022-02-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-dump.pk (dump): Fix start of ASCII dump when :from is
+	used.
+	* testsuite/poke.cmd/dump-13.pk (pk_dump_ascii): New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
+2022-02-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-cmd-ios.c (pk_cmd_mem): Create uniquely named memory IOS
 	if no name is specified in .mem.
 

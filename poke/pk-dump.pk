@@ -234,7 +234,7 @@ fun dump = (int<32> ios = get_ios,
 	catch if E_eof {}
 	if (ascii)
 	  {
-	    while (o < step && ((offset + o) % 16#B) != 0#B)
+	    while (o < step)
 	      {
 		if (o % group_by == 0#B)
 		  print " ";
