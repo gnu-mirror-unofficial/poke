@@ -221,7 +221,7 @@ type Elf64_File =
     method get_section_name = (offset<Elf_Word,B> offset) string:
       {
         var strtab = ehdr.e_shstrndx;
-        return string @ (shdr[strtab].sh_offset + offset);
+        return string @ shdr'ios : shdr[strtab].sh_offset + offset;
       }
 
     /* Given a symtab and an offset into its associated symbol string
@@ -230,7 +230,7 @@ type Elf64_File =
     method get_symbol_name = (Elf64_Shdr symtab, offset<Elf_Word,B> offset) string:
       {
         var strtab = symtab.sh_link;
-        return string @ (shdr[strtab].sh_offset + offset);
+        return string @ shdr'ios : shdr[strtab].sh_offset + offset;
       }
 
     /* Given a section name, return an array of section headers in the
@@ -282,7 +282,7 @@ type Elf64_File =
           raise E_inval;
 
        var strtab = get_sections_by_name (".strtab")[0];
-       return string @ strtab.sh_offset + offset;
+       return string @ strtab'ios : strtab.sh_offset + offset;
      }
 
     /* Return the signature corresponding to a given group section.
@@ -296,7 +296,7 @@ type Elf64_File =
 
         var symtab = shdr[section.sh_link];
         var symtab_data
-          = Elf64_Sym [symtab.sh_size] @ symtab.sh_offset;
+          = Elf64_Sym [symtab.sh_size] @ shdr'ios : symtab.sh_offset;
         var symbol = symtab_data[section.sh_info];
         var symbol_name = get_symbol_name (symtab, symbol.st_name);
 
@@ -331,7 +331,7 @@ type Elf64_File =
           {
             var group_entries
               = (Elf_Word[sec.sh_size - sizeof (Elf_Word)]
-                 @ sec.sh_offset + sizeof (Elf_Word));
+                 @ sec'ios : sec.sh_offset + sizeof (Elf_Word));
 
             for (entry in group_entries)
               section_group += [shdr[entry]];

@@ -1,3 +1,7 @@
+2022-02-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/elf-64.pk: Fix IOS in in-method mappings.
+
 2022-02-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-dump.pk (dump): Fix start of ASCII dump when :from is
