@@ -1,3 +1,7 @@
+2022-02-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: Fix precedence of EXCOND.
+
 2022-02-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/elf-64.pk: Fix IOS in in-method mappings.

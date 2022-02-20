@@ -510,7 +510,6 @@ token <integer> UNION    _("keyword `union'")
 /* Operator tokens and their precedences, in ascending order.  */
 
 %right IMPL
-%left EXCOND
 %right '?' ':'
 %left OR
 %left AND
@@ -518,7 +517,7 @@ token <integer> UNION    _("keyword `union'")
 %left '|'
 %left '^'
 %left '&'
-%left EQ NE
+%left EQ NE EXCOND
 %left LE GE '<' '>'
 %left SL SR
 %left '+' '-'
