@@ -36,12 +36,18 @@ type Pk_Table_Row =
 type Pk_Table =
  struct
  {
+   fun pk_table_default_printer = (string s) void:
+   {
+     print (s);
+   }
+
    int num_columns;
    int next_column_index;
    int indent;
    int max_column_size;
    int[num_columns] column_widths;
    Pk_Table_Row[] rows;
+   (string)void printer = pk_table_default_printer;
 
    method row = (string style = "") void:
    {
@@ -90,34 +96,34 @@ type Pk_Table =
        var j = 0;
        for (entry in row.entries)
        {
-         if (entry.style != "")
+         if (entry.style != "" && printer == pk_table_default_printer)
            term_begin_class (entry.style);
-         if (entry.hyperlink != "")
+         if (entry.hyperlink != "" && printer == pk_table_default_printer)
            term_begin_hyperlink (entry.hyperlink);
 
-         print " " * indent;
+         printer (" " * indent);
          if (max_column_size == 0 || entry.str'length < max_column_size)
-           print entry.str;
+           printer (entry.str);
          else
            for (var i = 0; i < max_column_size; ++i)
-             print entry.str[i] as string;
+             printer (entry.str[i] as string);
 
-         if (entry.hyperlink != "")
+         if (entry.hyperlink != "" && printer == pk_table_default_printer)
            term_end_hyperlink;
-         if (entry.style != "")
+         if (entry.style != "" && printer == pk_table_default_printer)
            term_end_class (entry.style);
 
          if (j < row.entries'length - 1)
          {
            var fill = column_widths[j++] - entry.str'length + 1;
-           print " " * fill;
+           printer (" " * fill);
          }
        }
 
-       if (row.style != "")
+       if (row.style != "" && printer == pk_table_default_printer)
          term_end_class (row.style);
 
-       print "\n";
+       printer ("\n");
      }
    }
  };
