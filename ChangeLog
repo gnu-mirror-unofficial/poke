@@ -1,5 +1,9 @@
 2022-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-diff.pk: Factor a bit.
+
+2022-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-diff.pk (sdiff): Try to emit thunk lines for composite
 	values in which non-byte elements were found.
 	(sdiff_addrem): Likewise.

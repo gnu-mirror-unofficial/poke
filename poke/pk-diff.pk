@@ -259,8 +259,8 @@ fun sdiff = (any a, any b,
     return 1;
   }
 
-  fun sdiff_addrem = (int what, Pk_Diff_Thunk thunk,
-                      any val, string prefix, uint<64> idx) void:
+  fun sdiff_addrem = (int what, any val,
+                      string prefix, uint<64> idx) void:
   {
     for (; idx < val'length; ++idx)
     {
@@ -270,7 +270,7 @@ fun sdiff = (any a, any b,
            in case a non-byte element is found.  In that case, try to
            emit the thunk anyway.  */
         if (elem_simple_p (val, idx)
-            || ! { sdiff_addrem (what, thunk, val'elem (idx),
+            || ! { sdiff_addrem (what, val'elem (idx),
                                  prefix + format_ename (val'ename (idx)),
                                  0); } ?! E_inval)
           thunk.addrem :what what :off val'eoffset (idx) :siz val'esize (idx)
@@ -281,62 +281,67 @@ fun sdiff = (any a, any b,
     }
   }
 
+  fun sdiff_change = (any a, any b,
+                      string prefix_a, string prefix_b) void:
+  {
+    /* Proceed element by element.  */
+    var idx = 0UL;
+    for (; idx < a'length; ++idx)
+    {
+      var a_is_present = a'elem (idx) ?! E_inval;
+
+      if (idx >= b'length)
+      {
+        sdiff_addrem (PK_THUNK_REM, a, prefix_a, idx);
+        break;
+      }
+      else
+      {
+        var b_is_present = b'elem (idx) ?! E_inval;
+
+        if (a_is_present && b_is_present)
+        {
+          var a_full_name = prefix_a + format_ename (a'ename (idx));
+          var b_full_name = prefix_b + format_ename (b'ename (idx));
+
+          /* If the element is simple, add a change to the current
+             thunk; otherwise recurse to handle its elements.  Note that
+             recursing into the element may result in E_inval in case a
+             non-byte element is found.  In that case, try to emit the
+             thunk anyway.  */
+          if (elem_simple_p (a, idx)
+              || ! { sdiff_change (a'elem (idx), b'elem (idx),
+                                   a_full_name, b_full_name); } ?! E_inval)
+          {
+            var a_bytes = get_elem_bytes (a, idx);
+            var b_bytes = get_elem_bytes (b, idx);
+
+            if (a_bytes != b_bytes)
+              thunk.change :aoff a'eoffset (idx) :asiz a'esize (idx)
+                           :boff b'eoffset (idx) :bsiz b'esize (idx)
+                           :abytes a_bytes :bbytes b_bytes
+                           :aname a_full_name :bname b_full_name
+                           :avalue format_value (a'elem (idx))
+                           :bvalue format_value (b'elem (idx));
+          }
+        }
+        else if (b_is_present)
+          sdiff_addrem (PK_THUNK_ADD, b'elem (idx), prefix_b, 0);
+        else if (a_is_present)
+          sdiff_addrem (PK_THUNK_REM, a'elem (idx), prefix_a, 0);
+      }
+    }
+
+    /* Now generate ADD thunks for extra elements in `b'.  */
+    if (idx < b'length)
+      sdiff_addrem (PK_THUNK_ADD, b, prefix_b, idx);
+  }
+
   /* First of all, make sure both values are mapped.  */
   if (!a'mapped || !b'mapped)
     raise E_map;
 
-  /* Proceed element by element.  */
-  var idx = 0UL;
-  for (; idx < a'length; ++idx)
-  {
-    var a_is_present = a'elem (idx) ?! E_inval;
-
-    if (idx >= b'length)
-    {
-      sdiff_addrem (PK_THUNK_REM, thunk, a, prefix_a, idx);
-      break;
-    }
-    else
-    {
-      var b_is_present = b'elem (idx) ?! E_inval;
-
-      if (a_is_present && b_is_present)
-      {
-        var a_full_name = prefix_a + format_ename (a'ename (idx));
-        var b_full_name = prefix_b + format_ename (b'ename (idx));
-
-        /* If the element is simple, add a change to the current
-           thunk; otherwise recurse to handle its elements.  Note that
-           recursing into the element may result in E_inval in case a
-           non-byte element is found.  In that case, try to emit the
-           thunk anyway.  */
-        if (elem_simple_p (a, idx)
-            || ! { sdiff (a'elem (idx), b'elem (idx),
-                          a_full_name, b_full_name,
-                          values, group_by, thunk); } ?! E_inval)
-        {
-          var a_bytes = get_elem_bytes (a, idx);
-          var b_bytes = get_elem_bytes (b, idx);
-
-          if (a_bytes != b_bytes)
-            thunk.change :aoff a'eoffset (idx) :asiz a'esize (idx)
-                         :boff b'eoffset (idx) :bsiz b'esize (idx)
-                         :abytes a_bytes :bbytes b_bytes
-                         :aname a_full_name :bname b_full_name
-                         :avalue format_value (a'elem (idx))
-                         :bvalue format_value (b'elem (idx));
-        }
-      }
-      else if (b_is_present)
-        sdiff_addrem (PK_THUNK_ADD, thunk, b'elem (idx), prefix_b, 0);
-      else if (a_is_present)
-        sdiff_addrem (PK_THUNK_REM, thunk, a'elem (idx), prefix_a, 0);
-    }
-  }
-
-  /* Now generate ADD thunks for extra elements in `b'.  */
-  if (idx < b'length)
-    sdiff_addrem (PK_THUNK_ADD, thunk, b, prefix_b, idx);
+  sdiff_change (a, b, prefix_a, prefix_b);
 
   /* There may be a thunk still to be emitted.  */
   thunk.print_thunk;
