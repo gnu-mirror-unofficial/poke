@@ -236,7 +236,14 @@ fun sdiff = (any a, any b,
 
   fun get_elem_bytes = (any v, uint<64> idx) byte[]:
   {
-    return byte[v'esize (idx)] @ v'ios : v'eoffset (idx);
+    try return byte[v'esize (idx)] @ v'ios : v'eoffset (idx);
+    catch if E_map_bounds
+    {
+      raise Exception { code = EC_inval,
+                        name = "invalid argument",
+                        msg = "size of field " + v'ename (idx)
+                              + " is not a multiple of bytes" };
+    }
   }
 
   fun elem_simple_p = (any elem, uint<64> idx) int:

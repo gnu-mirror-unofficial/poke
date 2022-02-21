@@ -1,5 +1,10 @@
 2022-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke/pk-diff.pk (sdiff): Raise an exception if the size of a
+	field is not a multiple of byte.
+
+2022-02-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/pk-table.pk (Pk_Table_Printer): New type.
 	(Pk_Table): New field `printer'.
 	(pk_table_default_printer): New function.
