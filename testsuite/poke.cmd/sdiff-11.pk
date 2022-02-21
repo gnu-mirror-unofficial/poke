@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x27 0x28 0x00 0x22 0x33 0x44 0xbc} foo } */
+/* { dg-data {c*} {0x01 0x29 0x30 0x31 0x00 0x33 0x9a 0xbc} bar } */
+
+type Foo = struct { int<2> a; int<2> b; int<3> c; int<2> d; };
+type Bar = struct { byte x; Foo y; };
+
+/* { dg-command {.file foo} } */
+/* { dg-command {.file bar} } */
+/* { dg-command { try sdiff :a (Bar @ 0 : 0#B) :b (Bar @ 1 : 0#B); catch if E_inval { print "caught\n"; } } } */
+/* { dg-output "caught" } */

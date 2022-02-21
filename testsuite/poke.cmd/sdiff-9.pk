@@ -1,0 +1,7 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x27 0x28 0x00 0x22 0x33 0x44 0xbc} } */
+
+type Foo = struct { int a; int<3> b; };
+
+/* { dg-command {try sdiff :a (Foo @ 0#B) :b (Foo @ 1#B); catch if E_inval { print "caught\n"; } } } */
+/* { dg-output "caught" } */

@@ -266,10 +266,13 @@ fun sdiff = (any a, any b,
     {
       if (val'elem (idx) ?! E_inval)
       {
-        if (!elem_simple_p (val, idx))
-          sdiff_addrem (what, thunk, val'elem (idx),
-                        prefix + format_ename (val'ename (idx)), 0);
-        else
+        /* Note that recursing into the element may result in E_inval
+           in case a non-byte element is found.  In that case, try to
+           emit the thunk anyway.  */
+        if (elem_simple_p (val, idx)
+            || ! { sdiff_addrem (what, thunk, val'elem (idx),
+                                 prefix + format_ename (val'ename (idx)),
+                                 0); } ?! E_inval)
           thunk.addrem :what what :off val'eoffset (idx) :siz val'esize (idx)
                        :bytes get_elem_bytes (val, idx)
                        :name prefix + format_ename (val'ename (idx))
@@ -302,14 +305,15 @@ fun sdiff = (any a, any b,
         var a_full_name = prefix_a + format_ename (a'ename (idx));
         var b_full_name = prefix_b + format_ename (b'ename (idx));
 
-        /* If the element is non-simple, recurse.  */
-        if (!elem_simple_p (a, idx))
-        {
-          sdiff (a'elem (idx), b'elem (idx),
-                 a_full_name, b_full_name,
-                 values, group_by, thunk);
-        }
-        else
+        /* If the element is simple, add a change to the current
+           thunk; otherwise recurse to handle its elements.  Note that
+           recursing into the element may result in E_inval in case a
+           non-byte element is found.  In that case, try to emit the
+           thunk anyway.  */
+        if (elem_simple_p (a, idx)
+            || ! { sdiff (a'elem (idx), b'elem (idx),
+                          a_full_name, b_full_name,
+                          values, group_by, thunk); } ?! E_inval)
         {
           var a_bytes = get_elem_bytes (a, idx);
           var b_bytes = get_elem_bytes (b, idx);

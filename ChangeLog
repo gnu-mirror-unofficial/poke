@@ -1,7 +1,12 @@
 2022-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
-	* poke/pk-diff.pk (sdiff): Raise an exception if the size of a
-	field is not a multiple of byte.
+	* poke/pk-diff.pk (sdiff): Try to emit thunk lines for composite
+	values in which non-byte elements were found.
+	(sdiff_addrem): Likewise.
+	* testsuite/poke.cmd/sdiff-9.pk: New test.
+	* testsuite/poke.cmd/sdiff-10.pk: Likewise.
+	* testsuite/poke.cmd/sdiff-11.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
 
 2022-02-21  Jose E. Marchesi  <jemarch@gnu.org>
 
