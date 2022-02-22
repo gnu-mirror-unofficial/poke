@@ -3361,6 +3361,18 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_type_array)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_CALL);          /* ARR */
       PKL_GEN_PAYLOAD->constructor_depth--;
 
+      /* Install a writer in the array.  */
+      {
+        pvm_val array_type_writer = PVM_NULL;
+
+        PKL_GEN_PUSH_SET_CONTEXT (PKL_GEN_CTX_IN_WRITER);
+        RAS_FUNCTION_ARRAY_WRITER (array_type_writer, array_type);
+        PKL_GEN_POP_CONTEXT;
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, array_type_writer); /* CLS */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PEC);                     /* CLS */
+        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_MSETW);                   /* ARR */
+      }
+
       PKL_PASS_BREAK;
     }
   else if (PKL_GEN_IN_CTX_P (PKL_GEN_CTX_IN_TYPIFIER))
