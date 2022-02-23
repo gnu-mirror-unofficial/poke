@@ -1,3 +1,9 @@
+2022-02-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-diff.pk (sdiff): Improve support for non-byte values.
+	* testsuite/poke.cmd/sdiff-12.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2022-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen.c (pkl_gen_pr_type_array): Make sure the

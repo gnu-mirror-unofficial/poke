@@ -39,17 +39,20 @@ Arguments:
 
   :values (bool)
          Whether to include interpreted values in the output.
-         Defaults to %v.
+         Defaults to `pk_sdiff_print_values', currently %v.
 
   :group_by (int)
          How are bytes grouped together in the output.  Defaults to
-         `pk_diff_group_by', initially %v.
+         `pk_diff_group_by', currently %v.
 
 Note that for the differences to make sense, both values A and B
 should be of the same type.
 
 If any of the specified values are not mapped then `sdiff' raises an
 E_map exception.
+
+If the size of the values to be compared do not amount for a whole
+number of bytes then `sdiff' raises an E_inval exception.
 
 See `.doc sdiff' for more information.",
            pk_sdiff_print_values,
@@ -236,14 +239,7 @@ fun sdiff = (any a, any b,
 
   fun get_elem_bytes = (any v, uint<64> idx) byte[]:
   {
-    try return byte[v'esize (idx)] @ v'ios : v'eoffset (idx);
-    catch if E_map_bounds
-    {
-      raise Exception { code = EC_inval,
-                        name = "invalid argument",
-                        msg = "size of field " + v'ename (idx)
-                              + " is not a multiple of bytes" };
-    }
+    return byte[v'esize (idx)] @ v'ios : v'eoffset (idx);
   }
 
   fun elem_simple_p = (any elem, uint<64> idx) int:
@@ -266,13 +262,13 @@ fun sdiff = (any a, any b,
     {
       if (val'elem (idx) ?! E_inval)
       {
-        /* Note that recursing into the element may result in E_inval
+        /* Note that recursing into the element may result in E_map_bounds
            in case a non-byte element is found.  In that case, try to
            emit the thunk anyway.  */
         if (elem_simple_p (val, idx)
             || ! { sdiff_addrem (what, val'elem (idx),
                                  prefix + format_ename (val'ename (idx)),
-                                 0); } ?! E_inval)
+                                 0); } ?! E_map_bounds)
           thunk.addrem :what what :off val'eoffset (idx) :siz val'esize (idx)
                        :bytes get_elem_bytes (val, idx)
                        :name prefix + format_ename (val'ename (idx))
@@ -306,12 +302,12 @@ fun sdiff = (any a, any b,
 
           /* If the element is simple, add a change to the current
              thunk; otherwise recurse to handle its elements.  Note that
-             recursing into the element may result in E_inval in case a
+             recursing into the element may result in E_map_bounds in case a
              non-byte element is found.  In that case, try to emit the
              thunk anyway.  */
           if (elem_simple_p (a, idx)
               || ! { sdiff_change (a'elem (idx), b'elem (idx),
-                                   a_full_name, b_full_name); } ?! E_inval)
+                                   a_full_name, b_full_name); } ?! E_map_bounds)
           {
             var a_bytes = get_elem_bytes (a, idx);
             var b_bytes = get_elem_bytes (b, idx);
@@ -341,9 +337,29 @@ fun sdiff = (any a, any b,
   if (!a'mapped || !b'mapped)
     raise E_map;
 
-  sdiff_change (a, b, prefix_a, prefix_b);
+  try
+  {
+    if (! { sdiff_change (a, b, prefix_a, prefix_b); } ?! E_map_bounds)
+    {
+      var a_bytes = byte[a'size] @ a'ios : a'offset;
+      var b_bytes = byte[b'size] @ b'ios : b'offset;
+
+      if (a_bytes != b_bytes)
+        thunk.change :aoff a'offset :asiz a'size
+                     :boff b'offset :bsiz b'size
+                     :abytes a_bytes :bbytes b_bytes
+                     :aname prefix_a :bname prefix_b
+                     :avalue format_value (a)
+                     :bvalue format_value (b);
+    }
+  }
+  catch if E_map_bounds
+  {
+    raise Exception { code = EC_inval,
+                      name = "invalid argument",
+                      msg = "size of compared values is not a multiple of bytes" };
+  }
 
   /* There may be a thunk still to be emitted.  */
   thunk.print_thunk;
-  thunk.reset;
 }
