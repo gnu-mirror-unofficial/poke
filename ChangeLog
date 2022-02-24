@@ -1,3 +1,18 @@
+2022-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/Makefile.am (appdir): Define.
+	(dist_app_DATA): Rename from dist_pkgdata_DATA.
+	* doc/Makefile.am: Install poke's docfiles in appdir.
+	* etc/Makefile.am: Likewise.
+	* maps/Makefile.am (mapsdir): Likewise.
+	* libpoke/pkl-rt.pk: Do not set picklesdir.
+	* poke/poke.h: Extern for poke_appdir.
+	* poke/poke.c (poke_appdir): New variable.
+	(initialize): Honor POKEAPPDIR and set poke_appdir, then
+	set load_path.
+	* run.in (POKEAPPDIR): Define.
+	* testsuite/Makefile.am: Likewise.
+
 2022-02-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-diff.pk (sdiff): Improve support for non-byte values.

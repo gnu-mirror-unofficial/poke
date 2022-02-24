@@ -37,6 +37,7 @@ extern int poke_hserver_p;
 extern int poke_exit_code;
 extern pk_compiler poke_compiler;
 extern char *poke_datadir;
+extern char *poke_appdir;
 extern char *poke_infodir;
 extern char *poke_picklesdir;
 extern char *poke_mapsdir;

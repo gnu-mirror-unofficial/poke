@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+appdir = $(pkgdatadir)/poke
+
 info_TEXINFOS = poke.texi
 poke_TEXINFOS = fdl.texi pvm-insns.texi poke-settings.texi
 
@@ -62,7 +64,7 @@ nodelist: $(srcdir)/poke.texi
 
 INFO_DEPS = $(srcdir)/poke.info
 
-pkgdata_DATA = nodelist
+app_DATA = nodelist
 
 # Generation of the HTML manual.
 #
@@ -86,7 +88,7 @@ html-local:
 # Generation of the plain text manual.
 # We distribute it in the tarballs, since it requires makeinfo to make.
 
-pkgdata_DATA += poke.text
+app_DATA += poke.text
 EXTRA_DIST += poke.text
 
 poke.text: $(srcdir)/poke.texi

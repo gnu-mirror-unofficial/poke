@@ -1,3 +1,4 @@
-mapsdir = $(pkgdatadir)/maps
+appdir = $(pkgdatadir)/poke
+mapsdir = $(appdir)/maps
 
 dist_maps_DATA = elf.map mp3.map dwarf.map

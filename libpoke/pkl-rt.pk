@@ -479,9 +479,6 @@ var load_path = "";
 try load_path = getenv ("POKEDATADIR");
 catch if E_inval { load_path = "%DATADIR%"; }
 
-try load_path = getenv ("POKEPICKLESDIR") + ":" + load_path;
-catch if E_inval { load_path = "%DATADIR%/pickles" + ":" + load_path; }
-
 /* Add the directories prescribed by the XDG Base Directory
    Specification as described in
    https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html */

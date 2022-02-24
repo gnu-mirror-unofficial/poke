@@ -26,9 +26,11 @@ BUILT_SOURCES =
 
 EXTRA_DIST =
 
-dist_pkgdata_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk pk-diff.pk \
-                    pk-extract.pk pk-scrabble.pk poke.pk pk-settings.pk \
-                    pk-help.pk pk-map.pk pk-table.pk pk-info.pk
+appdir = $(pkgdatadir)/poke
+
+dist_app_DATA = pk-cmd.pk pk-dump.pk pk-save.pk pk-copy.pk pk-diff.pk \
+                pk-extract.pk pk-scrabble.pk poke.pk pk-settings.pk \
+                pk-help.pk pk-map.pk pk-table.pk pk-info.pk
 
 bin_PROGRAMS = poke
 poke_SOURCES = poke.c poke.h \
@@ -159,7 +161,7 @@ if HSERVER
   poke_LDADD += -lpthread
 endif
 # We install pk-hserver.pk even if HSERVER is not enabled.
-dist_pkgdata_DATA += pk-hserver.pk
+dist_app_DATA += pk-hserver.pk
 
 # nodelist is now treated by doc/Makefile.am.
 MOSTLYCLEANFILES += nodelist

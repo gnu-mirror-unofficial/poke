@@ -30,6 +30,7 @@ if HAVE_DEJAGNU
           INPUTRC="$(top_builddir)/inputrc" \
           POKESTYLESDIR="$(top_srcdir)/etc" \
           POKEPICKLESDIR="$(top_srcdir)/pickles" \
+          POKEAPPDIR="$(top_srcdir)/poke" \
           POKEDATADIR="$(top_srcdir)/libpoke" \
           POKECMDSDIR="$(top_srcdir)/poke" \
           POKEDOCDIR="$(top_builddir)/doc" \

@@ -280,7 +280,8 @@ pk_term_init (int argc, char *argv[])
       || color_mode == color_html)
     {
       /* Find the style file.  */
-      style_file_prepare ("POKE_STYLE", "POKESTYLESDIR", PKGDATADIR,
+      style_file_prepare ("POKE_STYLE", "POKESTYLESDIR",
+                          PKGDATADIR "/poke",
                           poke_default_style);
     }
   else

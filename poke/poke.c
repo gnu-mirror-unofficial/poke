@@ -69,10 +69,15 @@ int pk_mi (void) {assert (0); return 0;}
 
 int poke_quiet_p;
 
-/* The following global contains the directory holding the program's
+/* The following global contains the directory holding libpoke's
    architecture independent files, such as scripts.  */
 
 char *poke_datadir;
+
+/* The following global contains the directory holding the program's
+   architecture independent files, such as scripts.  */
+
+char *poke_appdir;
 
 /* The following global contains the directory holding the program's
    info files.  */
@@ -551,23 +556,27 @@ initialize (int argc, char *argv[])
   if (poke_datadir == NULL)
     poke_datadir = PKGDATADIR;
 
+  poke_appdir = getenv ("POKEAPPDIR");
+  if (poke_appdir == NULL)
+    {
+      poke_appdir = pk_str_concat (poke_datadir, "/poke", NULL);
+      pk_assert_alloc (poke_appdir);
+    }
+
   poke_picklesdir = getenv ("POKEPICKLESDIR");
   if (poke_picklesdir == NULL)
-    {
-      poke_picklesdir = pk_str_concat (poke_datadir, "/pickles", NULL);
-      pk_assert_alloc (poke_picklesdir);
-    }
+    poke_picklesdir = "%DATADIR%/pickles";
 
   poke_mapsdir = getenv ("POKEMAPSDIR");
   if (poke_mapsdir == NULL)
     {
-      poke_mapsdir = pk_str_concat (poke_datadir, "/maps", NULL);
+      poke_mapsdir = pk_str_concat (poke_appdir, "/maps", NULL);
       pk_assert_alloc (poke_mapsdir);
     }
 
   poke_docdir = getenv ("POKEDOCDIR");
   if (poke_docdir == NULL)
-    poke_docdir = poke_datadir;
+    poke_docdir = poke_appdir;
 
   poke_infodir = getenv ("POKEINFODIR");
   if (poke_infodir == NULL)
@@ -585,6 +594,26 @@ initialize (int argc, char *argv[])
   if (pk_defvar (poke_compiler, "poke_interactive_p",
                  pk_make_int (poke_interactive_p, 32)) == PK_ERROR)
     pk_fatal ("defining poke_interactive_p");
+
+  /* Add the directories where poke installs .pk files to the
+     compiler's load path.  */
+  {
+    pk_val load_path = pk_decl_val (poke_compiler, "load_path");
+    char *newpaths;
+
+    assert (load_path != PK_NULL);
+    newpaths = pk_str_concat (pk_string_str (load_path),
+                              ":",
+                              poke_appdir,
+                              ":",
+                              poke_picklesdir,
+                              NULL);
+    pk_assert_alloc (newpaths);
+
+    pk_decl_set_val (poke_compiler,
+                     "load_path", pk_make_string (newpaths));
+    free (newpaths);
+  }
 
   /* The Poke hyperlinks facilities must be loaded before poke.pk and
      the cmd subsystem.  This is done even if the hserver is

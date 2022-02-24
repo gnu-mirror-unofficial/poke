@@ -29,7 +29,7 @@
 var map_load_path = "";
 
 try map_load_path = getenv ("POKEMAPSDIR");
-catch if E_inval { map_load_path = "%DATADIR%/maps"; }
+catch if E_inval { map_load_path = "%DATADIR%/poke/maps"; }
 
 try map_load_path = getenv ("XDG_DATA_HOME") + ":" + map_load_path;
 catch if E_inval {
