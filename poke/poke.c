@@ -570,7 +570,7 @@ initialize (int argc, char *argv[])
   poke_mapsdir = getenv ("POKEMAPSDIR");
   if (poke_mapsdir == NULL)
     {
-      poke_mapsdir = pk_str_concat (poke_appdir, "/maps", NULL);
+      poke_mapsdir = pk_str_concat (poke_datadir, "/maps", NULL);
       pk_assert_alloc (poke_mapsdir);
     }
 

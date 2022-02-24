@@ -1,5 +1,11 @@
 2022-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* maps/Makefile.am: Revert last change.
+	* poke/poke.c (initialize): Put maps back in pkgdatadir.
+	* poke/pk-map.pk: Likewise.
+
+2022-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* poke/Makefile.am (appdir): Define.
 	(dist_app_DATA): Rename from dist_pkgdata_DATA.
 	* doc/Makefile.am: Install poke's docfiles in appdir.
