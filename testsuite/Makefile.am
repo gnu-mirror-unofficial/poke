@@ -677,6 +677,7 @@ EXTRA_DIST = \
   poke.pkl/array-siz-diag-1.pk \
   poke.pkl/array-type-1.pk \
   poke.pkl/array-type-diag-1.pk \
+  poke.pkl/array-type-diag-2.pk \
   poke.pkl/arrays-1.pk \
   poke.pkl/arrays-3.pk \
   poke.pkl/arrays-4.pk \

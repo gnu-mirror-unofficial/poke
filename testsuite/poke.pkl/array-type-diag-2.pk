@@ -1,0 +1,3 @@
+/* { dg-do compile } */
+
+void[][](); /* { dg-error "not allowed" } */

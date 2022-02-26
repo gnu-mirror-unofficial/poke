@@ -454,6 +454,23 @@ PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_return_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* Arrays of `void' are not allowed.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_anal1_ps_type_array)
+{
+  pkl_ast_node type = PKL_PASS_NODE;
+  pkl_ast_node etype = PKL_AST_TYPE_A_ETYPE (type);
+
+  if (PKL_AST_TYPE_CODE (etype) == PKL_TYPE_VOID)
+    {
+      PKL_ERROR (PKL_AST_LOC (etype),
+                 "arrays of type `void' are not allowed");
+      PKL_ANAL_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+}
+PKL_PHASE_END_HANDLER
+
 /* If the unit in an offset type specifier is specified using an
    integral constant, this constant should be bigger than zero.  */
 
@@ -742,6 +759,7 @@ struct pkl_phase pkl_phase_anal1 =
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_STRUCT, pkl_anal1_ps_type_struct),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_FUNCTION, pkl_anal1_ps_type_function),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_OFFSET, pkl_anal1_ps_type_offset),
+   PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_anal1_ps_type_array),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_SL, pkl_anal1_ps_op_sl),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_anal1_ps_op_attr),
    PKL_PHASE_PS_DEFAULT_HANDLER (pkl_anal_ps_default),
