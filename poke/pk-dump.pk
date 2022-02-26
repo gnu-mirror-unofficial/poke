@@ -47,7 +47,7 @@ Arguments:
          IO space, which is initially 0#B.
 
   :size (offset)
-         How much data to dump.  Defaults to `pk_dump_size', initially
+         How much data to dump.  Defaults to `pk_dump_size', currently
          %v.
 
   :ios (int)
@@ -56,21 +56,21 @@ Arguments:
 
   :ruler (int)
          Boolean indicating whether to display a ruler.  Defaults to
-         `pk_dump_ruler', initially %i32d.
+         `pk_dump_ruler', currently %i32d.
 
   :ascii (int)
          Boolean indicating whether to display an ASCII dump at the
          right of the bytes dump.  Defaults to `pk_dump_ascii',
-         initially %i32d.
+         currently %i32d.
 
   :group_by (int)
          How are bytes grouped together in the output.  Defaults to
-         `pk_dump_group_by', initially %v.
+         `pk_dump_group_by', currently %v.
 
   :cluster_by (int)
          Display additional space after the specified number of groups
          have been displayed.  Defaults to `pk_dump_cluster_by',
-         initially %i32d.
+         currently %i32d.
 
 If there is not a current IO space available `dump' raises an E_no_ios
 exception.
