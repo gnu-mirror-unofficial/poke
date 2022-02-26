@@ -1,5 +1,16 @@
 2022-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen-attrs.pks (attr_ios): Add explicative message in
+	raised exception.
+	(attr_size): Likewise.
+	(attr_offset): Likewise.
+	(attr_eoffset): Likewise.
+	(attr_esize): Likewise.
+	(attr_ename): Likewise.
+	(attr_elem): Likewise.
+
+2022-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.pkl/array-type-diag-2.pk: New test.
 
 	* libpoke/pkl-anal.c (pkl_anal1_ps_type_array): New handler.

@@ -39,6 +39,9 @@
         tyisc
         bzi .not_a_function
         push PVM_E_CONV
+        push "msg"
+        push "evaluating a 'size attribute"
+        sset
         raise
 .not_a_function:
         drop
@@ -67,7 +70,11 @@
   .c {
         mm                      ; VAL MAPPED
         bnzi .mapped
+  .c }
         push PVM_E_MAP
+        push "msg"
+        push "evaluating an 'offset attribute"
+        sset
         raise
 .mapped:
         drop                    ; VAL
@@ -75,12 +82,6 @@
         nip                     ; BOFF
         push ulong<64>1
         mko                     ; OFF
-  .c }
-  .c else
-  .c {
-        push PVM_E_MAP
-        raise
-  .c }
         .end
 
 ;;; RAS_MACRO_ATTR_IOS @type
@@ -101,18 +102,16 @@
   .c {
         mm                      ; VAL MAPPED
         bnzi .mapped
+  .c }
         push PVM_E_MAP
+        push "msg"
+        push "evaluating an 'ios attribute"
+        sset
         raise
 .mapped:
         drop                    ; VAL
         mgetios                 ; VAL INT
         nip                     ; INT
-  .c }
-  .c else
-  .c {
-        push PVM_E_MAP
-        raise
-  .c }
         .end
 
 ;;; RAS_MACRO_ATTR_STRICT @type
@@ -168,6 +167,9 @@
         tyisa                   ; IDX VAL ISARR
         bnzi .array
         push PVM_E_INVAL
+        push "msg"
+        push "evaluating an 'eoffset attribute"
+        sset
         raise
 .struct:
         drop                    ; IDX VAL
@@ -204,6 +206,9 @@
         tyisa                   ; IDX VAL ISARR
         bnzi .array
         push PVM_E_INVAL
+        push "msg"
+        push "evaluating an 'esize attribute"
+        sset
         raise
 .struct:
         drop                    ; IDX VAL
@@ -258,6 +263,9 @@
         tyisa                   ; IDX VAL ISARR
         bnzi .array
         push PVM_E_INVAL
+        push "msg"
+        push "evaluating an 'ename attribute"
+        sset
         raise
 .struct:
         drop                    ; IDX VAL
@@ -276,6 +284,9 @@
         lelu                    ; VAL SEL IDX (SIZ<=IDX)
         bzi .bound_ok
         push PVM_E_OUT_OF_BOUNDS
+        push "msg"
+        push "evaluating an 'ename attribute"
+        sset
         raise
 .bound_ok:
         drop                    ; VAL SEL IDX
@@ -308,6 +319,9 @@
         tyisa                   ; IDX VAL ISARR
         bnzi .array
         push PVM_E_INVAL
+        push "msg"
+        push "evaluating an 'elem attribute"
+        sset
         raise
 .struct:
         drop                    ; IDX VAL
@@ -316,6 +330,9 @@
         srefia                  ; VAL IDX ABSENT_P
         bzi .noabsent
         push PVM_E_ELEM
+        push "msg"
+        push "evaluating an 'elem attribute"
+        sset
         raise
 .noabsent:
         drop                    ; VAL IDX
