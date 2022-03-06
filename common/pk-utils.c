@@ -24,8 +24,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <gettext.h>
-#define _(str) dgettext (PACKAGE, str)
 #include <stdarg.h> /* va_... */
 #include <stddef.h> /* size_t */
 #include <string.h> /* strcpy */
@@ -41,20 +39,20 @@ pk_file_readable (const char *filename)
   if (0 != stat (filename, &statbuf))
     {
       char *why = strerror (errno);
-      snprintf (errmsg, 4096, _("Cannot stat %s: %s\n"), filename, why);
+      snprintf (errmsg, 4096, "Cannot stat %s: %s\n", filename, why);
       return errmsg;
     }
 
   if (S_ISDIR (statbuf.st_mode))
     {
-      snprintf (errmsg, 4096, _("%s is a directory\n"), filename);
+      snprintf (errmsg, 4096, "%s is a directory\n", filename);
       return errmsg;
     }
 
   if (access (filename, R_OK) != 0)
     {
       char *why = strerror (errno);
-      snprintf (errmsg, 4096, _("%s: file cannot be read: %s\n"),
+      snprintf (errmsg, 4096, "%s: file cannot be read: %s\n",
                 filename, why);
       return errmsg;
     }

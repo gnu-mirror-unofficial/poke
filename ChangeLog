@@ -1,3 +1,7 @@
+2022-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* common/pk-utils.c: Do not depend on gettext.
+
 2022-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-gen-attrs.pks (attr_ios): Add explicative message in
