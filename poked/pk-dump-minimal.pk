@@ -1,0 +1,207 @@
+/* pk-dump.pk - `dump' command.  */
+
+/* Copyright (C) 2019, 2020, 2021, 2022 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* The operation of `dump' can be configured by the user by
+   customizing the following variables.  */
+
+var pk_dump_size = 128#B;
+var pk_dump_group_by = 2#B;
+var pk_dump_cluster_by = 8;
+var pk_dump_ruler = 1;
+var pk_dump_ascii = 1;
+var pk_dump_nonprintable_char = '.';
+var pk_dump_unknown_byte = "??";
+
+/* `pk_dump_offsets' keeps the last base offset used by `dump', per IO
+   space.  These are the offsets to be used in case the command is
+   invoked with no :from argument.  */
+
+type Pk_Dump_Offset =
+  struct
+  {
+    int<32> ios;
+    off64 offset;
+  };
+
+var pk_dump_offsets = Pk_Dump_Offset[]();
+
+fun pk_dump_get_offset = (int<32> ios) off64:
+{
+  for (e in pk_dump_offsets where e.ios == ios)
+    return e.offset;
+  return 0#B;
+}
+
+fun pk_dump_set_offset = (int<32> ios, off64 offset) void:
+{
+  for (e in pk_dump_offsets where e.ios == ios)
+    {
+      e.offset = offset;
+      return;
+    }
+
+  pk_dump_offsets += [Pk_Dump_Offset { ios = ios, offset = offset }];
+}
+
+/* And the command itself.  */
+
+fun dump = (int<32> ios = get_ios,
+            off64 from = pk_dump_get_offset (ios),
+            off64 size = pk_dump_size,
+            off64 group_by = pk_dump_group_by,
+            int cluster_by = pk_dump_cluster_by,
+            int ruler = pk_dump_ruler,
+            int ascii = pk_dump_ascii) void:
+{
+  fun print_ruler = (off64 offset) void:
+  {
+    var o = 0#B;
+
+    fun itoa = (uint<8> x) char:
+    {
+      if (x >= 0 && x <= 9) return x + '0';
+      if (x >= 10 && x <= 15) return x + 'A' - 10;
+    }
+
+   if (offset > 0xffff_ffff#B)
+     printf "%<dump-ruler:FEDCBA9876543210 %>";
+   else
+     printf "%<dump-ruler:76543210 %>";
+
+    for (s in ["00", "11", "22", "33", "44", "55", "66",
+	       "77", "88", "99", "aa", "bb", "cc", "dd",
+	       "ee", "ff"])
+      {
+	if (o % group_by == 0#B)
+	  printf "%<dump-ruler: %>";
+	printf "%<dump-ruler:%s%>", s;
+        o++;
+	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
+	   printf (" ");
+      }
+    if (ascii)
+      {
+	var x = 0 as uint<8>;
+	var s = "";
+	while (x < 16)
+	  {
+	    s = s + itoa(x) as string;
+            x++;
+	    if (x < 16 && (x % ((cluster_by * group_by)/1#B)) == 0)
+	      s = s + " ";
+	  }
+	printf "%<dump-ruler:  %s%>", s;
+      }
+    print "\n";
+  }
+
+  fun print_ascii = (off64 offset, off64 top, off64 step,
+                     off64 group_by, int cluster_by) void:
+  {
+    print("  ");
+    var o = 0#B;
+    while (o < step && offset + o < top)
+      {
+        try
+        {
+          var v = byte @ ios : (offset + o);
+
+          if (v < ' ' || v > '~')
+            printf "%<dump-ascii:%c%>", pk_dump_nonprintable_char;
+          else
+            printf "%<dump-ascii:%c%>", v;
+        }
+        catch if E_io
+        {
+            printf "%<dump-unknown:%c%>", pk_dump_nonprintable_char;
+        }
+        o++;
+	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
+	   printf (" ");
+      }
+  }
+
+  fun print_data = (off64 offset, off64 top, off64 step,
+                    off64 group_by , int cluster_by) void:
+  {
+    for (; offset < top; offset += step)
+      {
+        if (offset > 0xffff_ffff#B)
+          printf ("%<dump-address:%u64x:%>", offset / #B);
+        else
+          printf ("%<dump-address:%u32x:%>", offset / #B);
+
+	var o = 0#B;
+	try
+	{
+	  while (o < step && offset + o < top)
+	    {
+              try
+              {
+                var b = byte @ ios : (offset + o);
+                if (o % group_by == 0#B)
+                     print " ";
+                printf ("%u8x", b);
+             }
+              catch if E_io
+              {
+                if (o % group_by == 0#B)
+                     print " ";
+                printf ("%<dump-unknown:%s%>", pk_dump_unknown_byte);
+              }
+
+              o++;
+	      if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
+		printf (" ");
+	    }
+	}
+	catch if E_eof {}
+	if (ascii)
+	  {
+	    while (o < step)
+	      {
+		if (o % group_by == 0#B)
+		  print " ";
+		print ("  ");
+                o++;
+	      }
+	    print_ascii (offset, top, step, group_by, cluster_by);
+	  }
+	print "\n";
+      }
+  }
+
+  /* First of all, we require a readable IO space.  */
+  if (! (ioflags (ios) & IOS_F_READ))
+    raise E_perm;
+
+  /* The `dump' command is byte-oriented.
+     The base offset is truncated to bytes.
+     The offset is rounded up to the next byte.  */
+  var offset = from as offset<uint<64>,B>;
+  var top = from + size + (size % 1#B);
+
+  if (ruler)
+    print_ruler (offset);
+
+  try print_data :offset offset :top top :step 16#B
+                 :group_by group_by :cluster_by cluster_by;
+  catch if E_eof { print "\n"; }
+
+  pk_dump_set_offset (ios, from);
+}

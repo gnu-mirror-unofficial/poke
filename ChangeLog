@@ -1,5 +1,20 @@
 2022-03-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poked/Makefile.am: New file.
+	* poked/poked.c: Import file and integrate.
+	* poked/poked.pk: Likewise.
+	* poked/usock.c: Likewise.
+	* poked/usock.h: Likewise.
+	* poked/usock-buf.c: Likewise.
+	* poked/usock-buf.h: Likewise.
+	* poked/usock-buf-priv.h: Likewise.
+	* bootstrap.conf (poked_modules): Define.
+	(buildreq): Create gl-poked.
+	* Makefile.am (SUBDIRS): Add poked.
+	* configure.ac: Add poked/Makefile.
+
+2022-03-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* common/pk-utils.c: Do not depend on gettext.
 
 2022-02-26  Jose E. Marchesi  <jemarch@gnu.org>

@@ -251,8 +251,10 @@ dnl Generate output files
 AC_CONFIG_FILES(Makefile
                 gl/Makefile
                 gl-libpoke/Makefile
+                gl-poked/Makefile
                 libpoke/Makefile
                 poke/Makefile
+                poked/Makefile
                 utils/Makefile
                 pickles/Makefile
                 maps/Makefile
