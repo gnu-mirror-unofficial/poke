@@ -84,7 +84,7 @@ var ber_tag_class_name = [
 var BER_ENCODING_PRIMITIVE = 0b0,
     BER_ENCODING_CONSTRUCTED = 0b1;
 
-/* The "identifier octects", as they are called in the spec, act as a
+/* The "identifier octets", as they are called in the spec, act as a
    sort of a header for BER data value.  It specifies the class,
    encoding and number of a tag.  */
 
@@ -107,16 +107,16 @@ type BER_Identifier =
         uint<7> rest;
       };
 
-    Additional_Octet[] octects if tag_number == 0b11111;
+    Additional_Octet[] octets if tag_number == 0b11111;
 
     method get_tag_number = uint<64>:
     {
-      if (tag_number < 0b1111)
+      if (tag_number < 0b11111)
        return tag_number;
       else
       {
         var number = 0;
-        for (o in octects)
+        for (o in octets)
           number += o.rest;
         return number;
       }
@@ -145,7 +145,7 @@ type BER_Length =
     {
       uint<1> first : first == 1;
       uint<7> len;
-      byte[len] octects;
+      byte[len] octets;
     } long_form : long_form.first:::long_form.len != 0b1111_1111;
 
     method get = offset<uint<64>,B>:
@@ -153,14 +153,15 @@ type BER_Length =
       try return short_form;
       catch if E_elem
       {
-        var shift = 0;
-        var l = 0UL;
+        var l = 0;
+        var i = 0;
 
-        for (o in long_form.octects)
+        for (; i < long_form.octets'length - 1; i++)
           {
-            l += l | (o & 0x7f) <<. shift;
-            shift += 7;
+            l += long_form.octets[i] & 0xff;
+            l <<.= 8;
           }
+        l += long_form.octets[i] & 0xff;
 
         return l#B;
       }
@@ -211,8 +212,7 @@ type BER_Data_Value =
     BER_Identifier identifier;
     union
     {
-      BER_Length definite
-        : identifier.encoding == BER_ENCODING_PRIMITIVE;
+      BER_Length definite;
       byte indefinite : indefinite == 0b1000_0000;
 
       method is_indefinite = int:

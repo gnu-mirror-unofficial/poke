@@ -1,3 +1,9 @@
+2022-03-07  Daiki Ueno  <ueno@gnu.org>
+
+	* pickles/asn1-ber.pk (BER_Identifier): Fix long-form tag number
+	handling.
+	(BER_Length): Fix long-form definite length calculation.
+
 2022-03-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* .x-sc_bindtextdomain: Add poked/*.
