@@ -249,10 +249,12 @@ usock_client_step (struct usock_client *c)
             uint16_t len = (uint16_t)c->buf[1] << 8 | c->buf[0];
 
             assert (c->inbuf == NULL);
-            c->state = USOCK_CLIENT_IN_READ_PAYLOAD;
-            c->inbuf = usock_buf_new_size (len);
-            // c->inbuf->tag = ((uint64_t)c->fd << 32) | c->chan; // For debug
-            c->inbuf->tag = c->chan;
+            if (len)
+              {
+                c->state = USOCK_CLIENT_IN_READ_PAYLOAD;
+                c->inbuf = usock_buf_new_size (len);
+                c->inbuf->tag = c->chan;
+              }
             c->bufidx = 0;
             c->buf[0] = c->buf[1] = 0;
           }
