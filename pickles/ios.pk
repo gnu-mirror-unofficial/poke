@@ -1,0 +1,207 @@
+/* ios.pk - IO spaces related utilities.  */
+
+/* Copyright (C) 2021, 2022 Jose E. Marchesi.  */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This pickle contains utilities related to poke IO spaces.  */
+
+/* Print a byte dump of an area in a given IO space.
+
+   IOS is the IO space from which dump bytes.
+
+   FROM is the offset from which start dumping bytes.  This location
+   is truncated to bytes.
+
+   SIZE is an offset specifying the amount of bytes to dump.  The
+   offset is rounded up to the next byte.
+
+   GROUP_BY determines how the bytes are grouped together in the
+   output.  Defaults to two bytes.
+
+   CLUSTER_BY specifies to display additioanl space after the
+   specified number of groups have been displayed.  Defaults to 8.
+
+   RULER is a boolean determining whether to include a ruler line in
+   the output.  Defaults to 0.
+
+   ASCII is a boolean determining whether to include an ASCII dump.
+   Defaults to 0.
+
+   ADDR_HYPERLINKS is a boolean determining whether to emit hyperlinks
+   with the addresses of the displayed bytes.  Defaults to 0.
+
+   UNKNOWN_BYTE is the string to use to denote bytes that can't be
+   read from the IO space.  Defaults to "??".  Note this string is
+   expected to be of length two characters.
+
+   NONPRINTABLE_CHAR is the character code to use to denote
+   non-printable characters.  Defaults to '.'.
+
+   This function may raise E_io, E_perm, and E_eof on several error
+   conditions.  */
+
+fun ios_dump_bytes = (int<32> ios, off64 from, off64 size,
+                      off64 group_by = 2#B,
+                      int cluster_by = 8,
+                      int ruler = 0,
+                      int ascii = 0,
+                      int addr_hyperlinks = 0,
+                      string unknown_byte = "??",
+                      uint<8> nonprintable_char = '.') void:
+{
+  fun print_ruler = (off64 offset) void:
+  {
+    var o = 0#B;
+
+    fun itoa = (uint<8> x) char:
+    {
+      if (x >= 0 && x <= 9) return x + '0';
+      if (x >= 10 && x <= 15) return x + 'A' - 10;
+    }
+
+   if (offset > 0xffff_ffff#B)
+     printf "%<dump-ruler:FEDCBA9876543210 %>";
+   else
+     printf "%<dump-ruler:76543210 %>";
+
+    for (s in ["00", "11", "22", "33", "44", "55", "66",
+	       "77", "88", "99", "aa", "bb", "cc", "dd",
+	       "ee", "ff"])
+      {
+	if (o % group_by == 0#B)
+	  printf "%<dump-ruler: %>";
+	printf "%<dump-ruler:%s%>", s;
+        o++;
+	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
+	   printf (" ");
+      }
+    if (ascii)
+      {
+	var x = 0 as uint<8>;
+	var s = "";
+	while (x < 16)
+	  {
+	    s = s + itoa(x) as string;
+            x++;
+	    if (x < 16 && (x % ((cluster_by * group_by)/1#B)) == 0)
+	      s = s + " ";
+	  }
+	printf "%<dump-ruler:  %s%>", s;
+      }
+    print "\n";
+  }
+
+  fun print_ascii = (off64 offset, off64 top, off64 step,
+                     off64 group_by, int cluster_by) void:
+  {
+    print("  ");
+    var o = 0#B;
+    while (o < step && offset + o < top)
+      {
+        try
+        {
+          var v = byte @ ios : (offset + o);
+
+          if (v < ' ' || v > '~')
+            printf "%<dump-ascii:%c%>", nonprintable_char;
+          else
+            printf "%<dump-ascii:%c%>", v;
+        }
+        catch if E_io
+        {
+            printf "%<dump-unknown:%c%>", nonprintable_char;
+        }
+        o++;
+	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
+	   printf (" ");
+      }
+  }
+
+  fun print_data = (off64 offset, off64 top, off64 step,
+                    off64 group_by , int cluster_by) void:
+  {
+    for (; offset < top; offset += step)
+      {
+        if (offset > 0xffff_ffff#B)
+          printf ("%<dump-address:%u64x:%>", offset / #B);
+        else
+          printf ("%<dump-address:%u32x:%>", offset / #B);
+
+	var o = 0#B;
+	try
+	{
+	  while (o < step && offset + o < top)
+	    {
+              try
+              {
+                var b = byte @ ios : (offset + o);
+                if (o % group_by == 0#B)
+                     print " ";
+                if (addr_hyperlinks)
+                {
+                  var hl = hserver_make_hyperlink ('i',
+                                                   "0x" + ltos ((offset + o)/#B, 16) + "#B");
+                  term_begin_hyperlink (hl);
+                }
+                printf ("%u8x", b);
+                if (addr_hyperlinks)
+                  term_end_hyperlink;
+             }
+              catch if E_io
+              {
+                if (o % group_by == 0#B)
+                     print " ";
+                printf ("%<dump-unknown:%s%>", unknown_byte);
+              }
+
+              o++;
+	      if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
+		printf (" ");
+	    }
+	}
+	catch if E_eof {}
+	if (ascii)
+	  {
+	    while (o < step)
+	      {
+		if (o % group_by == 0#B)
+		  print " ";
+		print ("  ");
+                o++;
+	      }
+	    print_ascii (offset, top, step, group_by, cluster_by);
+	  }
+	print "\n";
+      }
+  }
+
+  /* First of all, we require a readable IO space.  */
+  if (! (ioflags (ios) & IOS_F_READ))
+    raise E_perm;
+
+  /* The `dump' command is byte-oriented.
+     The base offset is truncated to bytes.
+     The offset is rounded up to the next byte.  */
+  var offset = from as offset<uint<64>,B>;
+  var top = from + size + (size % 1#B);
+
+  if (ruler)
+    print_ruler (offset);
+
+  try print_data :offset offset :top top :step 16#B
+                 :group_by group_by :cluster_by cluster_by;
+  catch if E_eof { print "\n"; }
+}
