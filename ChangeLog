@@ -1,5 +1,17 @@
 2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/poke.rec (Support nested integral structs): Removed as done.
+	(`load' doesn't load after an error): Likewise.
+	(Add an elisp MI interface to poke.el): Removed as wont happen.
+	(Auto-complete value attributes): Removed as done.
+	(Use json-c instead of tcllib json modules in the GUI): Removed as
+	wont happen.
+	(Auto-complete yes|no in commands): Removed as done.
+	(support references to values in the MI protocol): Removed as wont
+	happen.
+
+2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Remove gl-poked/Makefile.
 	* Makefile.am (ACLOCAL_AMFLAGS): Do not include m4/poked.
 	(SUBDIRS): Remove gl-poked.

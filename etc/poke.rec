@@ -168,7 +168,7 @@ Description:
 + How to express regular expressions?  Using strings for them is
 + cumbersome because of the escaping of special characters.
 
-Summary: with_temp_ios FILENAME { ... }
+Summary: with_temp_ios HANDLER { ... }
 Component: Language
 Kind: ENH
 Priority: 2
@@ -509,15 +509,6 @@ Description:
 +
 + Is `SELF' the right keyword to use?  Using uppercase reduces the odds
 + of collision with user defined identifiers.
-
-Summary: Support nested integral structs
-Component: Language
-Kind: ENH
-Priority: 4
-Description:
-+ This will require to subpass on fields.  i.e. a gen context:
-+ in_integrator.
-Target: 2.0
 
 Summary: Make endianness a type quality
 Component: Language
@@ -892,22 +883,6 @@ Description:
 + For example: type Foo = union { int i; int j : i != 10; }
 Target: 2.0
 
-Summary: `load' doesn't load after an error
-Component: Compiler
-Kind: BUG
-BZ: 26887
-Priority: 3
-Description:
-+ If an error prevents the loading of a module, the module still gets
-+ registered as loaded and therefore subsequent loads are not effective:
-+
-+ (poke) load foo
-+ error: fjdi
-+ (poke) load foo
-+ /* Does nothing.  */
-Target: 2.0
-Note: What about reverting to _not_ keep a list of loaded modules - jemarch
-
 Summary: Fix %destructors in parser
 Component: Compiler
 Kind: BUG
@@ -1112,17 +1087,6 @@ Description:
 RFC: yes
 Target: 2.0
 
-Summary: Add an elisp MI interface to poke.el
-Component: Emacs
-Kind: ENH
-Priority: 3
-Description:
-+ The foundation of an Emacs interface to poke is the handling of the MI
-+ interface.  Code should be added to poke.el in order to launch a poke
-+ process, get the version, exit the process, and call the different
-+ supported MI messages.
-RFC: yes
-
 Summary: Support IO transactions
 Component: IO
 Kind: ENH
@@ -1188,21 +1152,6 @@ Description:
 +
 + This of course depends on support for setting methods in struct
 + constructors.
-
-Summary: Auto-complete value attributes
-Component: CLI
-Kind: ENH
-Priority: 2
-Target: 2.0
-
-Summary: Use json-c instead of tcllib json modules in the GUI
-Component: GUI
-Kind: ENH
-Priority: 3
-Description:
-+ The JSON support in Tcllib is very bad, and relying on it introduces a
-+ run-time dependency that is not easy to check for.  Better to use the
-+ json-c that we also require for libpoke.
 
 Summary: Modeline and toolbar
 Component: CLI
@@ -1301,12 +1250,6 @@ Summary: Auto-complete map names in .map
 Component: CLI
 Kind: ENH
 Priority: 2
-
-Summary: Auto-complete yes|no in commands
-Component: CLI
-Kind: ENH
-Priority: 3
-Target: 2.0
 
 Summary: Routine to get an unique memory IO space name
 Component: IO
@@ -1482,25 +1425,6 @@ Description:
 + Right now we are not allowing casting from `any' to a function type.
 + Supporting this requires to tag the PVM closure values with their
 + corresponding type.
-Target: 2.0
-
-Summary: support references to values in the MI protocol
-Kind: ENH
-Component: MI
-Priority: 3
-Description:
-+ Some values are big.  Think about complex nested data structures and
-+ arrays containing many arguments.  In order to avoid transferring
-+ these values through the MI communication channel every time, we shall
-+ support a new kind of value in the MI: a reference.
-+
-+ References refer to PVM values using a numerical identifier, which is
-+ a pointer in the machine where poke is running.
-+
-+ We also need new API functions to notify the GC that there are external
-+ references to these PVM values: `pk_gc_pin' and `pk_gc_unpin'.
-+
-+ This also will allow us to support closures in the MI.
 Target: 2.0
 
 %rec: Release
