@@ -1,5 +1,14 @@
 2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Remove gl-poked/Makefile.
+	* Makefile.am (ACLOCAL_AMFLAGS): Do not include m4/poked.
+	(SUBDIRS): Remove gl-poked.
+	* bootstrap.conf (ACLOCAL_FLAGS): Likewise.
+	Remove poked_modules.
+	* poked/Makefile.am (poked_LDADD): Use the gnulib in gl/.
+
+2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.c (pk_call): Expose exit_exception in the
 	interface.
 	* libpoke/libpoke.h: Change prototype accordingly.

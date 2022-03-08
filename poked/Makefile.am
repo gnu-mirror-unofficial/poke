@@ -36,7 +36,7 @@ poked_CPPFLAGS = -I$(top_srcdir)/common \
                  -I$(top_srcdir)/libpoke -I$(top_builddir)/libpoke \
                  -DPKGDATADIR=\"$(pkgdatadir)\"
 poked_CFLAGS = -Wall
-poked_LDADD = $(top_builddir)/gl-poked/libgnu.la \
+poked_LDADD = $(top_builddir)/gl/libgnu.la \
               $(top_builddir)/libpoke/libpoke.la \
               -lpthread
 poked_LDFLAGS =
