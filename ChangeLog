@@ -1,3 +1,10 @@
+2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/leb128.pk (LEB128.value): Really allow up to 64-bit
+	integers and fix calculation of the return value.
+	(ULEB128.value): Likewise.
+	Reported and fixed by bjorn3 in the IRC channel.
+
 2022-02-07  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poked/usock.c (usock_client_step): Handle zero-length payloads.

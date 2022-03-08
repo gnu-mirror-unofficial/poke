@@ -39,7 +39,7 @@ type ULEB128 =
        fun extract = (uint<64> b) uint<64>: { return (b & 0x7f) <<. shift; }
 
        /* poke supports up to 64-bit integers.  */
-       if (variable'length > 8)
+       if (variable'length > 9)
          raise E_generic;
 
        for (v in variable)
@@ -47,7 +47,7 @@ type ULEB128 =
            result = result | extract (v);
            shift = shift + 7;
          }
-       result = extract (last);
+       result |= extract (last);
 
        return result;
       }
@@ -85,7 +85,7 @@ type LEB128 =
        fun extract = (int<64> b) int<64>: { return (b & 0x7f) <<. shift; }
 
        /* poke supports up to 64-bit integers.  */
-       if (variable'length > 8)
+       if (variable'length > 9)
          raise E_generic;
 
        for (v in variable)
@@ -93,7 +93,7 @@ type LEB128 =
            result = result | extract (v);
            shift = shift + 7;
          }
-       result = extract (last);
+       result |= extract (last);
 
        if (shift < (variable'size/#B) && last & 0b1000_0000)
          result = result | (!0 <<. shift);
