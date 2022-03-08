@@ -1244,6 +1244,9 @@ EXTRA_DIST = \
   poke.pkl/format-37.pk \
   poke.pkl/format-38.pk \
   poke.pkl/format-39.pk \
+  poke.pkl/format-40.pk \
+  poke.pkl/format-41.pk \
+  poke.pkl/format-42.pk \
   poke.pkl/format-diag-1.pk \
   poke.pkl/formfeedchar.pk \
   poke.pkl/fun-types-1.pk \

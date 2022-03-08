@@ -977,7 +977,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_trans1_ps_format)
       if (*p != '\0' && *p != '%')
         {
           char *end = strchrnul (p, '%');
-          PKL_AST_FORMAT_ARG_SUFFIX (arg) = strndup (p, end - p);
+          if (PKL_AST_FORMAT_ARG_SUFFIX (arg))
+            {
+              char* s = NULL;
+
+              if (asprintf(&s, "%s%.*s", PKL_AST_FORMAT_ARG_SUFFIX (arg),
+                           (int)(end - p), p) == -1)
+                PKL_ICE (PKL_AST_LOC (format), _("out of memory"));
+              PKL_AST_FORMAT_ARG_SUFFIX (arg) = s;
+            }
+          else
+            PKL_AST_FORMAT_ARG_SUFFIX (arg) = strndup (p, end - p);
           if (!PKL_AST_FORMAT_ARG_SUFFIX (arg))
             PKL_ICE (PKL_AST_LOC (format), _("out of memory"));
           p = end;

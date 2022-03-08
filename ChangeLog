@@ -1,3 +1,12 @@
+2022-03-08  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pkl-trans.c (pkl_trans1_ps_format): Fix format string
+	arg suffix when there's a %%.
+	* testsuite/poke.pkl/format-40.pk: New test.
+	* testsuite/poke.pkl/format-41.pk: Likewise.
+	* testsuite/poke.pkl/format-42.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Update.
+
 2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/poke.rec (Support nested integral structs): Removed as done.
