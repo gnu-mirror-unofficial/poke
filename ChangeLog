@@ -1,5 +1,9 @@
 2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/diff.pk: Document diff_structured.
+
+2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/Makefile.am (dist_pickles_DATA): Add diff.pk.
 	(dist_pickles_DATA): Add pk-table.pk.
 	* pickles/diff.pk: New file.

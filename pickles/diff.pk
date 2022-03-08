@@ -152,7 +152,24 @@ type Diff_Thunk =
 
 /* Print a structured binary diff expressing the differences of two
    given mapped values.  Note that for the output to make sense both
-   values must be of the same type.  */
+   values must be of the same type.
+
+   A is the first mapped value whose bytes are compared.
+
+   B is the second mapped value whose bytes are compared.
+
+   VALUES is a boolean that determines whether to include interpreted
+   values in the output.  Defaults to 1.
+
+   GROUP_BY is an offset that determines how many bytes are grouped
+   together in the output.  Defaults to one byte.
+
+   This function raises E_map if any of the values to compare are not
+   mapped.
+
+   This function raises E_map_bounds if the size of either A or B is
+   not a multiple of bytes.  Note however that the constituent data
+   structures are not required to be a whole number of bytes.  */
 
 fun diff_structured = (any a, any b,
                        string prefix_a = "a", string prefix_b = "b",
