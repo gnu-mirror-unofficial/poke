@@ -81,7 +81,7 @@ poked_buf_send (void)
   usock_out (srv, /*no kind*/ 0, chan, mem, memlen);
   free (mem);
 
-  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, 0);
+  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, NULL, 0);
 }
 
 int
@@ -151,7 +151,7 @@ main ()
                   {
                     if (exc != PK_NULL)
                       (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"),
-                                     NULL, 1, exc);
+                                     NULL, NULL, 1, exc);
                     else
                       ok = 1;
                   }
@@ -165,7 +165,7 @@ main ()
                   {
                     if (exc != PK_NULL)
                       (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"),
-                                     NULL, 1, exc);
+                                     NULL, NULL, 1, exc);
                     else if (val != PK_NULL)
                       {
                         ok = 1;
@@ -195,7 +195,7 @@ main ()
               usock_out (srv, VUKIND_CLEAR, USOCK_CHAN_OUT_VU, "", 1);
               out_chan = USOCK_CHAN_OUT_VU;
               out_kind = VUKIND_APPEND;
-              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, 0);
+              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, NULL, 0);
               out_chan = USOCK_CHAN_OUT_OUT;
               out_kind = OUTKIND_TXT;
             }
@@ -528,7 +528,7 @@ static void
 poked_free (void)
 {
   if (pkc)
-    (void)pk_call (pkc, pk_decl_val (pkc, "poked_defer"), NULL, 0);
+    (void)pk_call (pkc, pk_decl_val (pkc, "poked_defer"), NULL, NULL, 0);
   pk_compiler_free (pkc);
   pkc = NULL;
 }

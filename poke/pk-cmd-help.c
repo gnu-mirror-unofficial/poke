@@ -29,6 +29,7 @@ pk_cmd_help (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
   pk_val ret;
   pk_val topic;
   pk_val pk_help;
+  pk_val exit_exception;
   assert (argc == 2);
 
   assert (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_STR);
@@ -36,8 +37,9 @@ pk_cmd_help (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
   pk_help = pk_decl_val (poke_compiler, "pk_help");
   assert (pk_help != PK_NULL);
-  if (pk_call (poke_compiler, pk_help, &ret, 1 /* narg */, topic)
-      == PK_ERROR)
+  if (pk_call (poke_compiler, pk_help, &ret, &exit_exception,
+               1 /* narg */, topic) == PK_ERROR
+      || exit_exception != PK_NULL)
     assert (0);
 
   return 1;

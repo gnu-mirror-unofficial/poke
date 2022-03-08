@@ -31,12 +31,14 @@
 static int
 pk_cmd_set_dump (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 {
-  pk_val registry_printer, retval;
+  pk_val registry_printer, retval, exit_exception;
 
   registry_printer = pk_decl_val (poke_compiler, "pk_settings_dump");
   assert (registry_printer != PK_NULL);
 
-  if (pk_call (poke_compiler, registry_printer, &retval, 0) == PK_ERROR)
+  if (pk_call (poke_compiler, registry_printer, &retval, &exit_exception,
+               0) == PK_ERROR
+      || exit_exception != PK_NULL)
     assert (0); /* This shouldn't happen.  */
 
 #if HAVE_HSERVER
@@ -72,14 +74,15 @@ pk_cmd_set (int int_p,
 
   if (PK_CMD_ARG_TYPE (argv[1]) == PK_CMD_ARG_NULL)
     {
-      pk_val registry_get;
+      pk_val registry_get, exit_exception;
 
       registry_get = pk_struct_ref_field_value (registry, "get");
       assert (registry_get != PK_NULL);
 
-      if (pk_call (poke_compiler, registry_get, &retval,
+      if (pk_call (poke_compiler, registry_get, &retval, &exit_exception,
                    2, pk_make_string (setting_name), registry)
-          == PK_ERROR)
+          == PK_ERROR
+          || exit_exception != PK_NULL)
         /* This shouldn't happen.  */
         assert (0);
 
@@ -90,7 +93,7 @@ pk_cmd_set (int int_p,
     }
   else
     {
-      pk_val registry_set;
+      pk_val registry_set, exit_exception;
       pk_val val;
       const char *retmsg;
 
@@ -102,9 +105,10 @@ pk_cmd_set (int int_p,
       registry_set = pk_struct_ref_field_value (registry, "set");
       assert (registry_set != PK_NULL);
 
-      if (pk_call (poke_compiler, registry_set, &retval,
+      if (pk_call (poke_compiler, registry_set, &retval, &exit_exception,
                    3, pk_make_string (setting_name), val, registry)
-          == PK_ERROR)
+          == PK_ERROR
+          || exit_exception != PK_NULL)
         /* This shouldn't happen, since we know `newval' is of the
            right type.  */
         assert (0);

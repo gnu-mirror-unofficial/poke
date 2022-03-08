@@ -785,12 +785,12 @@ pk_defvar (pk_compiler pkc, const char *varname, pk_val val)
 }
 
 int
-pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, int narg, ...)
+pk_call (pk_compiler pkc, pk_val cls, pk_val *ret,
+         pk_val *exit_exception, int narg, ...)
 {
   pvm_program program;
   va_list ap;
   enum pvm_exit_code rret;
-  pvm_val exit_exception;
 
   /* Compile a program that calls the function.  */
   va_start (ap, narg);
@@ -801,11 +801,10 @@ pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, int narg, ...)
 
   /* Run the program in the poke VM.  */
   pvm_program_make_executable (program);
-  rret = pvm_run (pkc->vm, program, ret, &exit_exception);
+  rret = pvm_run (pkc->vm, program, ret, exit_exception);
 
   pvm_destroy_program (program);
-  PK_RETURN (rret == PVM_EXIT_OK && exit_exception == PVM_NULL
-             ? PK_OK : PK_ERROR);
+  PK_RETURN (rret == PVM_EXIT_OK ? PK_OK : PK_ERROR);
 }
 
 int

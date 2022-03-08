@@ -76,12 +76,12 @@ unsigned int
 pk_hserver_get_token (void)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_get_token");
-  pk_val token;
+  pk_val token, exit_exception;
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &token, 0 /* narg */);
-  assert (ret == PK_OK);
+  ret = pk_call (poke_compiler, cls, &token, &exit_exception, 0 /* narg */);
+  assert (ret == PK_OK && exit_exception == PK_NULL);
 
   return pk_uint_value (token);
 }
@@ -91,12 +91,13 @@ pk_hserver_token_p (int token)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_token_p");
   pk_val token_val = pk_make_int (token, 32);
-  pk_val token_p;
+  pk_val token_p, exit_exception;
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &token_p, 1 /* narg */, token_val);
-  assert (ret == PK_OK);
+  ret = pk_call (poke_compiler, cls, &token_p, &exit_exception,
+                 1 /* narg */, token_val);
+  assert (ret == PK_OK && exit_exception == PK_NULL);
 
   return pk_int_value (token_p);
 }
@@ -106,12 +107,13 @@ pk_hserver_token_kind (int token)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_token_kind");
   pk_val token_val = pk_make_int (token, 32);
-  pk_val token_kind;
+  pk_val token_kind, exit_exception;
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &token_kind, 1 /* narg */, token_val);
-  assert (ret == PK_OK);
+  ret = pk_call (poke_compiler, cls, &token_kind, &exit_exception,
+                 1 /* narg */, token_val);
+  assert (ret == PK_OK && exit_exception == PK_NULL);
 
   return pk_uint_value (token_kind);
 }
@@ -121,12 +123,13 @@ pk_hserver_cmd (int token)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_token_cmd");
   pk_val token_val = pk_make_int (token, 32);
-  pk_val cmd;
+  pk_val cmd, exit_exception;
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &cmd, 1 /* narg */, token_val);
-  assert (ret == PK_OK);
+  ret = pk_call (poke_compiler, cls, &cmd, &exit_exception,
+                 1 /* narg */, token_val);
+  assert (ret == PK_OK && exit_exception == PK_NULL);
 
   return pk_string_str (cmd);
 }
@@ -136,12 +139,13 @@ pk_hserver_function (int token)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_token_function");
   pk_val token_val = pk_make_int (token, 32);
-  pk_val function;
+  pk_val function, exit_exception;
   int ret;
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &function, 1 /* narg */, token_val);
-  assert (ret == PK_OK);
+  ret = pk_call (poke_compiler, cls, &function, &exit_exception,
+                 1 /* narg */, token_val);
+  assert (ret == PK_OK && exit_exception == PK_NULL);
 
   return function;
 }
@@ -260,7 +264,7 @@ read_from_client (int filedes)
           pk_puts (cmd);
           pk_puts ("\n");
           /* Note we just ignore raised exceptions.  */
-          pk_call (poke_compiler, cls, NULL, 0);
+          pk_call (poke_compiler, cls, NULL, NULL, 0);
           pk_repl_display_end ();
           pthread_mutex_unlock (&hserver_mutex);
           break;
@@ -431,16 +435,16 @@ pk_hserver_make_hyperlink (char type,
                            pk_val function)
 {
   pk_val cls = pk_decl_val (poke_compiler, "hserver_make_hyperlink");
-  pk_val hyperlink, kind_val, cmd_val;
+  pk_val hyperlink, kind_val, cmd_val, exit_exception;
   int ret;
 
   kind_val = pk_make_uint (type, 8);
   cmd_val = pk_make_string (cmd);
 
   assert (cls != PK_NULL);
-  ret = pk_call (poke_compiler, cls, &hyperlink,
+  ret = pk_call (poke_compiler, cls, &hyperlink, &exit_exception,
                  3 /* narg */, kind_val, cmd_val, PK_NULL);
-  assert (ret == PK_OK);
+  assert (ret == PK_OK && exit_exception == PK_NULL);
 
   return xstrdup (pk_string_str (hyperlink));
 }

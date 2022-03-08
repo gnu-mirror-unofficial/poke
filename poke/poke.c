@@ -778,7 +778,8 @@ poke_handle_exception (pk_val exception)
   pk_val handler = pk_decl_val (poke_compiler, "pk_exception_handler");
 
   assert (handler != PK_NULL);
-  if (pk_call (poke_compiler, handler, NULL, 1, exception) == PK_ERROR)
+  if (pk_call (poke_compiler, handler, NULL, NULL, 1, exception)
+      == PK_ERROR)
     assert (0);
 }
 

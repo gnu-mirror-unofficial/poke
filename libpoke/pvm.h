@@ -615,11 +615,11 @@ void pvm_reset_profile (pvm pvm);
 /* Run a PVM program in a virtual machine.
 
    If the execution of PROGRAM generates a result value, it is put in
-   RES.
+   RES if the argument is not NULL.
 
-   *EXIT_EXCEPTION is set to an exception value if the execution of
-   the program gets interrupted by an unhandled exception.  Otherwise
-   *EXIT_EXCEPTION is set to PK_NULL.
+   If not NULL, *EXIT_EXCEPTION is set to an exception value if the
+   execution of the program gets interrupted by an unhandled
+   exception.  Otherwise *EXIT_EXCEPTION is set to PK_NULL.
 
    This function returns an exit code, indicating whether the
    execution was successful or not.  */

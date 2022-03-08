@@ -505,6 +505,10 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
    RET is set to the value returned by the function, or to NULL if
    it is a void function.
 
+   EXIT_EXCEPTION, if not NULL, is a pointer to a pk_val variable that
+   is set to an Exception value if the function call results in an
+   unhandled exception, PK_NULL otherwise.
+
    NARG is the number of arguments that follow and that are passed in
    the function call.  Note that PK_NULL values should be added for
    "not specified" actuals for formals that have default values.
@@ -519,7 +523,7 @@ int pk_defvar (pk_compiler pkc, const char *varname, pk_val val) LIBPOKE_API;
    holding the method to be passed as the _last_ argument in the
    pk_call.  */
 
-int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret,
+int pk_call (pk_compiler pkc, pk_val cls, pk_val *ret, pk_val *exit_exception,
              int narg, ...) LIBPOKE_API;
 
 /* Get and set properties of the incremental compiler.  */
