@@ -1,5 +1,15 @@
 2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/Makefile.am (dist_pickles_DATA): Add diff.pk.
+	(dist_pickles_DATA): Add pk-table.pk.
+	* pickles/diff.pk: New file.
+	* pickles/pk-table.pk: Moved from poke/.
+	* poke/pk-diff.pk: Factor functionality out to diff_structured and
+	call it.
+	* poke/Makefile.am (dist_app_DATA): Remove pk-table.pk.
+
+2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/Makefile.am (dist_pickles_DATA): Add ios.pk.
 	* pickles/ios.pk: New file.
 	* poke/pk-dump.pk (dump): Factor functionality out to
