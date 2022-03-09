@@ -668,6 +668,14 @@ EXTRA_DIST = \
   poke.pkl/and-int-struct-1.pk \
   poke.pkl/and-int-struct-2.pk \
   poke.pkl/and-int-struct-3.pk \
+  poke.pkl/apop-1.pk \
+  poke.pkl/apop-2.pk \
+  poke.pkl/apop-diag-1.pk \
+  poke.pkl/apush-1.pk \
+  poke.pkl/apush-2.pk \
+  poke.pkl/apush-diag-1.pk \
+  poke.pkl/apush-diag-2.pk \
+  poke.pkl/apush-diag-3.pk \
   poke.pkl/array-1.pk \
   poke.pkl/array-2.pk \
   poke.pkl/array-bound-diag-1.pk \

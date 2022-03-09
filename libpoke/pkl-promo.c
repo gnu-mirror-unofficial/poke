@@ -1653,6 +1653,31 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cast)
 }
 PKL_PHASE_END_HANDLER
 
+/* The second operand of an APUSH operation must be promoted to the
+   type of the elements of the first operator.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_op_apush)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (exp, 0);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op1_elem_type = PKL_AST_TYPE_A_ETYPE (op1_type);
+  int restart = 0;
+
+  if (!promote_node (PKL_PASS_AST,
+                     &PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1),
+                     op1_elem_type,
+                     &restart))
+    {
+      PKL_ICE (PKL_AST_LOC (PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1)),
+               "couldn't promote argument to apush");
+      PKL_PASS_ERROR;
+    }
+
+  PKL_PASS_RESTART = restart;
+}
+PKL_PHASE_END_HANDLER
+
 struct pkl_phase pkl_phase_promo =
   {
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EQ, pkl_promo_ps_op_rela),
@@ -1683,6 +1708,7 @@ struct pkl_phase pkl_phase_promo =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_CEILDIV, pkl_promo_ps_op_div),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_promo_ps_op_in),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_ATTR, pkl_promo_ps_op_attr),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_APUSH, pkl_promo_ps_op_apush),
    PKL_PHASE_PS_HANDLER (PKL_AST_FUNC_ARG, pkl_promo_ps_func_arg),
    PKL_PHASE_PS_HANDLER (PKL_AST_MAP, pkl_promo_ps_map),
    PKL_PHASE_PS_HANDLER (PKL_AST_INDEXER, pkl_promo_ps_indexer),

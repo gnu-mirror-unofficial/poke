@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+var a =
+  apop (Exception {} /* { dg-error "invalid operand.*\n.*expected array" } */
+  );

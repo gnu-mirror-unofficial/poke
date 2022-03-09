@@ -2942,6 +2942,84 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_ass_stmt)
 }
 PKL_PHASE_END_HANDLER
 
+/* The type of an APUSH operation is the type of the array argument.
+
+   The type of the second argument must be the promoteable to the type
+   of the array's elements.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_apush)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op1 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
+  pkl_ast_node op2 = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 1);
+  pkl_ast_node op1_type = PKL_AST_TYPE (op1);
+  pkl_ast_node op2_type = PKL_AST_TYPE (op2);
+  pkl_ast_node op1_elem_type;
+
+  if (PKL_AST_TYPE_CODE (op1_type) != PKL_TYPE_ARRAY)
+    {
+      char *op1_type_str = pkl_type_str (op1_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (op1),
+                 "invalid operand in expression\n"
+                 "expected array, got %s",
+                 op1_type_str);
+      free (op1_type_str);
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  op1_elem_type = PKL_AST_TYPE_A_ETYPE (op1_type);
+  if (!pkl_ast_type_promoteable_p (op2_type, op1_elem_type,
+                                   0 /* promote_array_of_any */))
+    {
+      char *op1_elem_type_str = pkl_type_str (op1_elem_type, 1);
+      char *op2_type_str = pkl_type_str (op2_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (op2), "invalid operand in expression\n"
+                 "expected %s, got %s",
+                 op1_elem_type_str, op2_type_str);
+      free (op1_elem_type_str);
+      free (op2_type_str);
+
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  PKL_AST_TYPE (exp) = ASTREF (op1_type);
+}
+PKL_PHASE_END_HANDLER
+
+/* The type of an APOP operation is the type of the elements of the
+   array argument.
+
+   The argument of an APOP must be an array.  */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_op_apop)
+{
+  pkl_ast_node exp = PKL_PASS_NODE;
+  pkl_ast_node op = PKL_AST_EXP_OPERAND (PKL_PASS_NODE, 0);
+  pkl_ast_node op_type = PKL_AST_TYPE (op);
+  pkl_ast_node op_elem_type;
+
+  if (PKL_AST_TYPE_CODE (op_type) != PKL_TYPE_ARRAY)
+    {
+      char *op_type_str = pkl_type_str (op_type, 1);
+
+      PKL_ERROR (PKL_AST_LOC (op),
+                 "invalid operand in expression\n"
+                 "expected array, got %s",
+                 op_type_str);
+      free (op_type_str);
+      PKL_TYPIFY_PAYLOAD->errors++;
+      PKL_PASS_ERROR;
+    }
+
+  op_elem_type = PKL_AST_TYPE_A_ETYPE (op_type);
+  PKL_AST_TYPE (exp) = ASTREF (op_elem_type);
+}
+PKL_PHASE_END_HANDLER
+
 /* The type of an EXCOND ?! operation is a boolean encoded in an
    int<32>.
 
@@ -3045,6 +3123,8 @@ struct pkl_phase pkl_phase_typify1 =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_typify1_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_typify1_ps_op_in),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_EXCOND, pkl_typify1_ps_op_excond),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_APUSH, pkl_typify1_ps_op_apush),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_APOP, pkl_typify1_ps_op_apop),
 
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_INTEGRAL, pkl_typify1_ps_type_integral),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_ARRAY, pkl_typify1_ps_type_array),

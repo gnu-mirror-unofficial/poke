@@ -1,3 +1,29 @@
+2022-03-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: Define tokens APUSH and APOP, and add rules
+	for the operators.
+	* libpoke/pkl-lex.l: Rules for APUSH and APOP tokens.
+	* libpoke/pkl-ops.def: Define operators PKL_AST_OP_APUSH and
+	PKL_AST_OP_APOP.
+	* libpoke/pkl-typify.c (pkl_typify1_ps_op_apush): New handler.
+	(pkl_typify1_ps_op_apop): Likewise.
+	(pkl_phase_typify1): Register new handlers.
+	* libpoke/pkl-promo.c (pkl_promo_ps_op_apush): New handler.
+	(pkl_phase_promo): Register new handler.
+	* libpoke/pkl-gen.c (pkl_gen_ps_op_apush): New handler.
+	(pkl_gen_ps_op_apop): Likewise.
+	(pkl_phase_gen): Register new handlers.
+	* testsuite/poke.pkl/apush-diag-1.pk: New test.
+	* testsuite/poke.pkl/apop-diag-1.pk: Likewise.
+	* testsuite/poke.pkl/apush-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/apush-diag-3.pk: Likewise.
+	* testsuite/poke.pkl/apush-1.pk: Likewise.
+	* testsuite/poke.pkl/apush-2.pk: Likewise.
+	* testsuite/poke.pkl/apop-1.pk: Likewise.
+	* testsuite/poke.pkl/apop-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (Arrays as Stacks): New section.
+
 2022-03-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/diff.pk: Document diff_structured.

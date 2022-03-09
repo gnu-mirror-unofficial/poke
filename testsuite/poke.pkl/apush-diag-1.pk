@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+var a =
+  apush ("foo", /* { dg-error "invalid operand.*\n.*expected array" } */
+         10);

@@ -204,6 +204,8 @@ S ::
 "if"            { return IF; }
 "sizeof"        { return SIZEOF; }
 "typeof"        { return TYPEOF; }
+"apush"         { return APUSH; }
+"apop"          { return APOP; }
 "fun"           { return DEFUN; }
 "method"        { return METHOD; }
 "type"          { return DEFTYPE; }

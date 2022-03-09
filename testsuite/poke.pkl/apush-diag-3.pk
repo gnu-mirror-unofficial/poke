@@ -1,0 +1,5 @@
+/* { dg-do compile } */
+
+var a =
+  apush ([[""],[""],[""]],
+         [1]); /* { dg-error "invalid operand.*\n.*expected string" } */

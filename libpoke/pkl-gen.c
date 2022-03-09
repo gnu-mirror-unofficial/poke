@@ -4178,6 +4178,38 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_pr_op_impl)
 PKL_PHASE_END_HANDLER
 
 /*
+ * | ARR
+ * | VAL
+ * APUSH
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_apush)
+{
+  /* Stack: ARR VAL */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SWAP); /* VAL ARR */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL); /* VAL ARR SEL */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_ROT); /* ARR SEL VAL */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AINS); /* ARR */
+}
+PKL_PHASE_END_HANDLER
+
+/*
+ * | ARR
+ * APOP
+ */
+
+PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_apop)
+{
+  /* Stack: ARR */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL); /* ARR SEL */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (1, 64));
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SUBLU);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREM); /* ARR */
+}
+PKL_PHASE_END_HANDLER
+
+/*
  * EXCOND
  * | EXP|STMT
  * | EXCEPTION_ID
@@ -4630,6 +4662,8 @@ struct pkl_phase pkl_phase_gen =
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_BCONC, pkl_gen_ps_op_bconc),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_UNMAP, pkl_gen_ps_op_unmap),
    PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_IN, pkl_gen_ps_op_in),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_APUSH, pkl_gen_ps_op_apush),
+   PKL_PHASE_PS_OP_HANDLER (PKL_AST_OP_APOP, pkl_gen_ps_op_apop),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_EXCOND, pkl_gen_pr_op_excond),
    PKL_PHASE_PR_OP_HANDLER (PKL_AST_OP_TYPEOF, pkl_gen_pr_op_typeof),
    PKL_PHASE_PS_TYPE_HANDLER (PKL_TYPE_VOID, pkl_gen_ps_type_void),

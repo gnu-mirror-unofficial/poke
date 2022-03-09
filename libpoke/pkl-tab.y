@@ -403,6 +403,8 @@ token <integer> UNION    _("keyword `union'")
 %token SIZEOF            _("keyword `sizeof'")
 %token TYPEOF            _("keyword `typeof'")
 %token ASSERT            _("keyword `assert'")
+%token APUSH             _("keyword `apush'")
+%token APOP              _("keyword `apop'")
 %token ERR               _("token")
 %token ALIEN
 %token INTCONSTR         _("int type constructor")
@@ -1241,6 +1243,18 @@ primary:
         | SIZEOF '(' simple_type_specifier ')' %prec HYPERUNARY
                 {
                   $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_SIZEOF, $3);
+                  PKL_AST_LOC ($$) = @1;
+                }
+        | APUSH '(' expression ',' expression ')'
+                {
+                  $$ = pkl_ast_make_binary_exp (pkl_parser->ast, PKL_AST_OP_APUSH,
+                                                $3, $5);
+                  PKL_AST_LOC ($$) = @1;
+                }
+        | APOP '(' expression ')'
+                {
+                  $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_APOP,
+                                               $3);
                   PKL_AST_LOC ($$) = @1;
                 }
         ;

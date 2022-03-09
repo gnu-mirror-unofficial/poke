@@ -10019,6 +10019,7 @@ Arrays are homogeneous collections of values.
 * Array Elements::		Checking for array elements.
 * Array Concatenation::		Concatenating the elements of arrays.
 * Array Attributes::		Accessing properties of array values.
+* Arrays as Stacks::            Using arrays as stacks.
 @end menu
 
 @node Array Literals
@@ -10550,6 +10551,41 @@ The string @code{"[@var{idx}]"}.
 If the provided index is out of bounds then @code{E_out_of_bounds} is
 raised.
 @end table
+
+@node Arrays as Stacks
+@subsection Arrays as Stacks
+
+Array values can be manipulated as stacks using two operators:
+@code{apush} and @code{apop}.
+
+The @code{apush} operator gets an array and a value and appends the
+value into the array.  Note it has a destructive side-effect in the
+array value, and also it returns the modified value:
+
+@example
+(poke) var a = [1,2,3]
+(poke) apush (a, 4)
+[1,2,3,4]
+(poke) a
+[1,2,3,4]
+@end example
+
+the @code{apop} operators gets an array and removes the last value of
+the array.  If the given array is empty then @code{E_out_of_bounds} is
+raised.  As with @code{apush}, the operation has the side effect of
+modifying the given array and also it returns the array value:
+
+@example
+(poke) var a = [1,2,3]
+(poke) apop (a)
+[0x1,0x2]
+(poke) apop (a)
+[0x1]
+(poke) apop (a)
+[]
+(poke) apop (a)
+unhandled out of bounds exception
+@end example
 
 @node Structs
 @section Structs
