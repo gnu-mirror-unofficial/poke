@@ -381,3 +381,17 @@ fun exit = (int<32> exit_code = 0) void:
   {
     raise Exception { code = EC_exit, name = "exit", exit_status = exit_code };
   }
+
+/* Return the offset of the element having the given name in the given
+   composite value.
+
+   If the value doesn't contain an element with the given name then
+   raise E_inval.  */
+
+fun eoffset = (any v, string n) offset<uint<64>,b>:
+  {
+    for (var i = 0UL; i < v'length; ++i)
+      if (n == v'ename (i))
+        return v'eoffset (i);
+    raise E_inval;
+  }

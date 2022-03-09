@@ -243,6 +243,7 @@ The Standard Library
 * Conversion Functions::	catos, atoi, @i{etc}.
 * Array Functions::             Functions which deal with arrays.
 * String Functions::		Functions which deal with strings.
+* Values Functions::            Functions which deal with values in general.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
 * Dates and Times::             Processing and displaying dates and times.
@@ -14266,6 +14267,7 @@ facilities provided by the library.
 * Conversion Functions::	catos, atoi, @i{etc}.
 * Array Functions::             Functions which deal with arrays.
 * String Functions::		Functions which deal with strings.
+* Values Functions::            Functions which deal with values in general.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
 * Dates and Times::             Processing and displaying dates and times.
@@ -14568,6 +14570,29 @@ fun strchr = (string s, uint<8> c) int<32>: @{ @dots{} @}
 It returns the index of the first occurrence of the character @var{c}
 in the string @var{s}.  If the character is not found in the string,
 this function returns the length of the string.
+
+@node Values Functions
+@section Values Functions
+The Poke standard library provides the following functions to handle
+values in general:
+
+@menu
+* eoffset::		Offset of a value's element by name.
+@end menu
+
+@node eoffset
+@subsection @code{eoffset}
+
+The standard function @code{eoffset} provides the following interface:
+
+@example
+fun eoffset = (any val, string name) offset<uint<64>,b>
+@end example
+
+@noindent
+It returns the offset of the element having the given name in the
+given composite value.  If the value doesn't contain an element with
+the given name then the exception @code{E_inval} is raised.
 
 @node Sorting Functions
 @section Sorting Functions

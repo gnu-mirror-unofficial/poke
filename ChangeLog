@@ -1,5 +1,11 @@
 2022-03-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/std.pk (eoffset): New function.
+	* doc/poke.texi (eoffset): New section.
+	(Values Functions): Likewise.
+
+2022-03-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-tab.y: Define tokens APUSH and APOP, and add rules
 	for the operators.
 	* libpoke/pkl-lex.l: Rules for APUSH and APOP tokens.
