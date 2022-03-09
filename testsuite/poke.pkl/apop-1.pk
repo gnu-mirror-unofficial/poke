@@ -1,4 +1,7 @@
 /* { dg-do run } */
 
-/* { dg-command {apop ([1,2,3])} } */
-/* { dg-output "\\\[1,2\\\]" } */
+/* { dg-command {var a = [1,2,3] } } */
+/* { dg-command {apop (a)} } */
+/* { dg-output "3" } */
+/* { dg-command {a} } */
+/* { dg-output "\n\\\[1,2\\\]" } */

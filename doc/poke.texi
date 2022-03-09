@@ -10574,16 +10574,16 @@ array value, and also it returns the modified value:
 the @code{apop} operators gets an array and removes the last value of
 the array.  If the given array is empty then @code{E_out_of_bounds} is
 raised.  As with @code{apush}, the operation has the side effect of
-modifying the given array and also it returns the array value:
+modifying the given array and also it returns the popped element:
 
 @example
 (poke) var a = [1,2,3]
 (poke) apop (a)
-[0x1,0x2]
+3
 (poke) apop (a)
-[0x1]
+2
 (poke) apop (a)
-[]
+1
 (poke) apop (a)
 unhandled out of bounds exception
 @end example

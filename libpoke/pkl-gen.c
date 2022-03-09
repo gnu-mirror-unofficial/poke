@@ -4204,8 +4204,11 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_op_apop)
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SEL); /* ARR SEL */
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_ulong (1, 64));
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SUBLU);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2);
-  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREM); /* ARR */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NIP2); /* ARR (SEL-1) */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREF); /* ARR (SEL-1) ELEM */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_NROT); /* ELEM ARR (SEL-1) */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_AREM); /* ELEM ARR */
+  pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_DROP); /* ELEM */
 }
 PKL_PHASE_END_HANDLER
 
