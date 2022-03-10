@@ -466,14 +466,35 @@ poked_init (void)
   };
   static const size_t FUNCS_LEN = sizeof (FUNCS) / sizeof (FUNCS[0]);
   const char *pk = getenv ("POKED_PK");
+  const char *poke_datadir = getenv ("POKEDATADIR");
+  const char *poke_picklesdir = getenv ("POKEPICKLESDIR");
+  const char *poked_appdir = getenv ("POKEDAPPDIR");
   int ret;
   pk_val exc;
   pk_val pval;
 
+  poke_datadir = getenv ("POKEDATADIR");
+  if (poke_datadir == NULL)
+    poke_datadir = PKGDATADIR;
+
+  if (poke_picklesdir == NULL)
+    poke_picklesdir = "%DATADIR%/pickles";
+
+  if (poked_appdir == NULL)
+    {
+      poked_appdir = pk_str_concat (poke_datadir, "/poked", NULL);
+      if (poked_appdir == NULL)
+        err (1, "pk_str_concat() failed");
+    }
+
+  // For debug
+  fprintf (stderr, "poke_datadir %s\n", poke_datadir);
+  fprintf (stderr, "poke_pickledir %s\n", poke_picklesdir);
+  fprintf (stderr, "poked_appdir %s\n", poked_appdir);
+
   if (pkc)
     poked_free ();
 
-  // tifbuf_init(); // FIXME FIXME FIXME
   pkc = pk_compiler_new (&tif);
   if (pkc == NULL)
     errx (1, "pk_compiler_new() failed");
@@ -486,8 +507,9 @@ poked_init (void)
     pk_val load_path = pk_decl_val (pkc, "load_path");
     char *newpath = pk_str_concat (pk_string_str (load_path),
                                    ":",
-                                   PKGDATADIR,
-                                   "/poked",
+                                   poked_appdir,
+                                   ":",
+                                   poke_picklesdir,
                                    NULL);
 
     pk_decl_set_val (pkc, "load_path", pk_make_string (newpath));
@@ -499,9 +521,7 @@ poked_init (void)
     ret = pk_compile_file (pkc, pk, &exc);
   else
     {
-      char *fullpk = pk_str_concat (PKGDATADIR,
-                                    "/poked/poked.pk",
-                                    NULL);
+      char *fullpk = pk_str_concat (poked_appdir, "/poked.pk", NULL);
 
       ret = pk_compile_file (pkc, fullpk, &exc);
       free (fullpk);
