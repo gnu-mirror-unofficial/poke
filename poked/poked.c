@@ -37,7 +37,6 @@ struct usock *srv;
 #define NOK 1
 
 static int poked_init (void);
-
 static void poked_free (void);
 
 #define OUTKIND_ITER_BEGIN 1
@@ -47,6 +46,30 @@ static void poked_free (void);
 #define VUKIND_CLEAR 1
 #define VUKIND_APPEND 2
 
+static uint8_t termout_chan = USOCK_CHAN_OUT_OUT;
+static uint32_t termout_kind = OUTKIND_TXT;
+
+static void
+termout_restore(void)
+{
+  termout_chan = USOCK_CHAN_OUT_OUT;
+  termout_kind = OUTKIND_TXT;
+}
+
+static void
+termout_vu_append(void)
+{
+  termout_chan = USOCK_CHAN_OUT_VU;
+  termout_kind = VUKIND_APPEND;
+}
+
+static void
+termout_cmd(void)
+{
+  termout_chan = USOCK_CHAN_OUT_CMD;
+  /* termout_kind = OUTKIND_TXT; // redundant */
+}
+
 static void *
 srvthread (void *data)
 {
@@ -55,9 +78,6 @@ srvthread (void *data)
   usock_serve (srv);
   return NULL;
 }
-
-static uint8_t out_chan = USOCK_CHAN_OUT_OUT;
-static uint32_t out_kind = OUTKIND_TXT;
 
 static void
 poked_buf_send (void)
@@ -84,6 +104,35 @@ poked_buf_send (void)
 
   (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, NULL, 0);
 }
+
+static void
+iteration_send (struct usock* srv, uint64_t n_iteration, int begin_p)
+{
+  uint8_t buf[8] = {
+#define b(i) (uint8_t) (n_iteration >> (i))
+    b (0), b (8), b (16), b (24), b (32), b (40), b (48), b (56),
+#undef b
+  };
+
+  usock_out (srv, begin_p ? OUTKIND_ITER_BEGIN : OUTKIND_ITER_END,
+             USOCK_CHAN_OUT_OUT, buf, sizeof (buf));
+  usock_out (srv, begin_p ? OUTKIND_ITER_BEGIN : OUTKIND_ITER_END,
+             USOCK_CHAN_OUT_CMD, buf, sizeof (buf));
+}
+
+static void
+iteration_begin (struct usock* srv, uint64_t n_iteration)
+{
+  return iteration_send (srv, n_iteration, 1);
+}
+
+static void
+iteration_end (struct usock* srv, uint64_t n_iteration)
+{
+  return iteration_send (srv, n_iteration, 0);
+}
+
+#define iteration_send private_
 
 int
 main ()
@@ -135,16 +184,7 @@ poked_restart:
           printf ("< '%.*s'\n", (int)srclen, src);
 
           n_iteration++;
-          {
-            uint8_t buf[8] = {
-#define b(i) (uint8_t) (n_iteration >> (i))
-              b (0), b (8), b (16), b (24), b (32), b (40), b (48), b (56),
-#undef b
-            };
-
-            usock_out (srv, OUTKIND_ITER_BEGIN, USOCK_CHAN_OUT_OUT, buf,
-                       sizeof (buf));
-          }
+          iteration_begin (srv, n_iteration);
 
           ok = 0;
           switch (usock_buf_tag (inbuf) & 0x7f)
@@ -173,7 +213,9 @@ poked_restart:
                     else if (val != PK_NULL)
                       {
                         ok = 1;
+                        termout_cmd();
                         pk_print_val (pkc, val, &exc);
+                        termout_restore();
                       }
                   }
               }
@@ -202,26 +244,16 @@ poked_restart:
           if (pk_int_value (pk_decl_val (pkc, "__vu_do_p")))
             {
               usock_out (srv, VUKIND_CLEAR, USOCK_CHAN_OUT_VU, "", 1);
-              out_chan = USOCK_CHAN_OUT_VU;
-              out_kind = VUKIND_APPEND;
-              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, NULL, 0);
-              out_chan = USOCK_CHAN_OUT_OUT;
-              out_kind = OUTKIND_TXT;
+              termout_vu_append ();
+              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, NULL,
+                             0);
+              termout_restore ();
             }
           if (pk_int_value (pk_decl_val (pkc, "__chan_send_p")))
             poked_buf_send ();
 
         eol:
-          {
-            uint8_t buf[8] = {
-#define b(i) (uint8_t) (n_iteration >> (i))
-              b (0), b (8), b (16), b (24), b (32), b (40), b (48), b (56),
-#undef b
-            };
-
-            usock_out (srv, OUTKIND_ITER_END, USOCK_CHAN_OUT_OUT, buf,
-                       sizeof (buf));
-          }
+          iteration_end (srv, n_iteration);
         }
     }
   poked_free ();
@@ -268,7 +300,7 @@ static void
 tif_puts (const char *s)
 {
   printf (">(p) '%s'\n", s);
-  usock_out (srv, out_kind, out_chan, s, strlen (s) + 1);
+  usock_out (srv, termout_kind, termout_chan, s, strlen (s) + 1);
 }
 static void
 tif_printf (const char *fmt, ...)
@@ -284,7 +316,7 @@ tif_printf (const char *fmt, ...)
   assert (n >= 0);
 
   printf (">(P) '%.*s'\n", n, data);
-  usock_out (srv, out_kind, out_chan, data, n + 1);
+  usock_out (srv, termout_kind, termout_chan, data, n + 1);
   free (data);
 }
 static void
@@ -297,7 +329,7 @@ tif_indent (unsigned int level, unsigned int step)
   assert (data);
   data[0] = '\n';
   memset (data + 1, ' ', len - 1);
-  usock_out (srv, out_kind, out_chan, data, len);
+  usock_out (srv, termout_kind, termout_chan, data, len);
   free (data);
 }
 static void

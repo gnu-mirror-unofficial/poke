@@ -1,5 +1,22 @@
 2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (termout_chan): Renamed from `out_chan`.
+	(termout_kind): Renamed from `out_kind`.
+	(termout_restore): New function to restore to terminal output to
+	OUT_OUT channel (normal text mode).
+	(termout_vu_append): New function to change the terminal output to
+	OUT_VU channel (append mode).
+	(termout_cmd): New function to change the terminal output to OUT_CMD
+	channel (normal text mode).
+	(iteration_send): New function to send iteration number to both
+	OUT_OUT and OUT_CMD channels.
+	(iteration_begin): New function to send iteration-begin command.
+	(iteration_end): New function to end iteration-end command.
+	(main): Send output of `pk_print_val` to OUT_CMD channel.
+	* poked/usock.h (USOCK_CHAN_OUT_CMD): New macro.
+
+2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (OUTKIND_ID): Remove macro.
 	(OUTKIND_ITER_BEGIN): New macro.
 	(OUTKIND_ITER_END): Likewise.
