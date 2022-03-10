@@ -1,5 +1,19 @@
 2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.c (my_decl_map_fn): Always return PK_NULL as
+	`value' for type declarations.
+	* libpoke/libpoke.h: Add decription of the arguments got by the
+	pk_map_decl_fn callback.
+	* testsuite/poke.libpoke/decls.c: New file.
+	* testsuite/poke.libpoke/Makefile.am (decls_SOURCES): Define.
+	(decls_CPPFLAGS): Likewise.
+	(decls_CFLAGS): Likewise.
+	(decls_LDADD): Likewise.
+	(check_PROGRAMS): Add decls.
+	* testsuite/poke.libpoke/libpoke.exp: Run the decls tests.
+
+2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/elf-64.pk (Elf64_Shdr): sh_entsize is an offset in
 	bytes, not bits.
 	* pickles/elf-32.pk (Elf32_Shdr): Likewise.

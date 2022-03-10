@@ -452,7 +452,32 @@ void pk_ios_map (pk_compiler pkc, pk_ios_map_fn cb, void *data) LIBPOKE_API;
    determines what subset of declarations will be processed by the
    handler.
 
-   HANDLER is a function of type pk_map_decl_fn.  */
+   HANDLER is a function of type pk_map_decl_fn.  This callback gets
+   the following arguments when invoked by pk_decl_map:
+
+     KIND is one of the PK_DECL_KIND_* values defined below.
+
+     SOURCE is a NULL-terminated string somehow denoting the source of
+     the declaration.  This may be a file name, or a descriptive
+     string like "<stdin>".
+
+     NAME is a NULL-terminated string with the name of the entity
+     that is declared.
+
+     TYPE is a NULL-terminated string with the printed representation
+     of the type of the entity that is declared.  This is NULL for
+     PKL_DECL_KIND_TYPE.
+
+     FIRST_LINE, LAST_LINE, FIRST_COLUMN and LAST_COLUMN contain the
+     location of the declaration of the entity that is declared.
+
+     VALUE is either the value of the declared entity, or PK_NULL for
+     PK_DECL_KIND_TYPE.
+
+     DATA is a user-provided pointer at pk_decl_map invocation.
+
+   DATA is a pointer that is passed to the provided callback.  This
+   can be NULL.  */
 
 #define PK_DECL_KIND_VAR 0
 #define PK_DECL_KIND_FUNC 1

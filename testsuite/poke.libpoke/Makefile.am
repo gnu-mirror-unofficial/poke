@@ -19,7 +19,7 @@ EXTRA_DIST = \
 COMMON = term-if.h
 
 if HAVE_DEJAGNU
-check_PROGRAMS = values api foreign-iod
+check_PROGRAMS = values api foreign-iod decls
 endif
 
 # Common variables used for all/most test programs.
@@ -41,6 +41,11 @@ values_SOURCES = $(COMMON) values.c
 values_CPPFLAGS = $(COMMON_CPPFLAGS)
 values_CFLAGS = $(COMMON_CFLAGS)
 values_LDADD = $(COMMON_LDADD)
+
+decls_SOURCES = $(COMMON) decls.c
+decls_CPPFLAGS = $(COMMON_CPPFLAGS)
+decls_CFLAGS = $(COMMON_CFLAGS)
+decls_LDADD = $(COMMON_LDADD)
 
 api_SOURCES = $(COMMON) api.c
 api_CPPFLAGS = $(COMMON_CPPFLAGS)

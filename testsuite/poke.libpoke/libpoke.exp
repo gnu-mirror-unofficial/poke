@@ -10,3 +10,6 @@ if { [verified_host_execute "poke.libpoke/api"] ne "" } {
 if { [verified_host_execute "poke.libpoke/foreign-iod"] ne "" } {
     fail "foreign-iod had an execution error"
 }
+if { [verified_host_execute "poke.libpoke/decls"] ne "" } {
+    fail "decls had an execution error"
+}
