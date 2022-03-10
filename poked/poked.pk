@@ -338,11 +338,11 @@ printf \"%%v\\n\", %s;
 type __Disasm = struct
   {
     string arch;
-    little uint64 adr;
+    little offset<uint64,B> adr;
     byte[] code;
   };
 
-fun disasm = (string arch, uint64 adr, byte[] code) void:
+fun disasm = (string arch, offset<uint64,B> adr, byte[] code) void:
   {
     var fd = open("*__poked_disasm*");
     var d = __Disasm{ arch = arch , adr = adr, code = code };

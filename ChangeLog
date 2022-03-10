@@ -1,3 +1,8 @@
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poked/poked.pk (__Disasm): Change type of `adr` to offset.
+	(disasm): Likewise.
+
 2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poked/poked.c (poked_buf_send): Check exception after `pk_call`.
