@@ -88,6 +88,7 @@ poked_buf_send (void)
   uint8_t lbuf[2];
   size_t memlen;
   uint8_t *mem;
+  pk_val exc;
 
   assert (nelem > 2);
 
@@ -102,7 +103,8 @@ poked_buf_send (void)
   usock_out (srv, /*no kind*/ 0, chan, mem, memlen);
   free (mem);
 
-  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, NULL, 0);
+  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, &exc, 0);
+  assert (exc == PK_NULL);
 }
 
 static void
@@ -245,8 +247,9 @@ poked_restart:
             {
               usock_out (srv, VUKIND_CLEAR, USOCK_CHAN_OUT_VU, "", 1);
               termout_vu_append ();
-              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, NULL,
+              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, &exc,
                              0);
+              assert (exc == PK_NULL);
               termout_restore ();
             }
           if (pk_int_value (pk_decl_val (pkc, "__chan_send_p")))

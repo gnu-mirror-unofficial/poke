@@ -1,5 +1,10 @@
 2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (poked_buf_send): Check exception after `pk_call`.
+	(main): Likewise.
+
+2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (termout_chan): Renamed from `out_chan`.
 	(termout_kind): Renamed from `out_kind`.
 	(termout_restore): New function to restore to terminal output to
