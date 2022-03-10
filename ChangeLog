@@ -1,5 +1,12 @@
 2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (OUTKIND_ID): Remove macro.
+	(OUTKIND_ITER_BEGIN): New macro.
+	(OUTKIND_ITER_END): Likewise.
+	(main): Also signal the end of iteration to the pokelets.
+
+2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (poked_init): Handle `POKEDATADIR`, `POKEPICKLESDIR`,
 	`POKEDAPPDIR` env vars.
 	* run.in (POKEDAPPDIR): Define.

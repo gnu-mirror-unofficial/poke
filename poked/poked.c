@@ -40,8 +40,9 @@ static int poked_init (void);
 
 static void poked_free (void);
 
-#define OUTKIND_ID 1
+#define OUTKIND_ITER_BEGIN 1
 #define OUTKIND_TXT 2
+#define OUTKIND_ITER_END 3
 
 #define VUKIND_CLEAR 1
 #define VUKIND_APPEND 2
@@ -100,7 +101,7 @@ main ()
   struct usock_buf *inbuf;
   void *ret;
   int done_p = 0;
-  uint64_t idx;
+  uint64_t n_iteration;
 
   srv = usock_new ("/tmp/poked.ipc");
   if (srv == NULL)
@@ -112,7 +113,7 @@ main ()
     err (1, "pthread_create() failed");
 
 poked_restart:
-  idx = 0;
+  n_iteration = 0;
   poked_init ();
   while (!done_p)
     {
@@ -133,15 +134,16 @@ poked_restart:
 
           printf ("< '%.*s'\n", (int)srclen, src);
 
+          n_iteration++;
           {
             uint8_t buf[8] = {
-#define b(i) (uint8_t) (idx >> (i))
+#define b(i) (uint8_t) (n_iteration >> (i))
               b (0), b (8), b (16), b (24), b (32), b (40), b (48), b (56),
 #undef b
             };
 
-            usock_out (srv, OUTKIND_ID, USOCK_CHAN_OUT_OUT, buf, sizeof (buf));
-            idx++;
+            usock_out (srv, OUTKIND_ITER_BEGIN, USOCK_CHAN_OUT_OUT, buf,
+                       sizeof (buf));
           }
 
           ok = 0;
@@ -209,7 +211,17 @@ poked_restart:
           if (pk_int_value (pk_decl_val (pkc, "__chan_send_p")))
             poked_buf_send ();
 
-        eol:;
+        eol:
+          {
+            uint8_t buf[8] = {
+#define b(i) (uint8_t) (n_iteration >> (i))
+              b (0), b (8), b (16), b (24), b (32), b (40), b (48), b (56),
+#undef b
+            };
+
+            usock_out (srv, OUTKIND_ITER_END, USOCK_CHAN_OUT_OUT, buf,
+                       sizeof (buf));
+          }
         }
     }
   poked_free ();
