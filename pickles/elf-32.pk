@@ -116,7 +116,7 @@ type Elf32_Shdr =
     Elf_Word sh_link;
     Elf_Word sh_info;
     Elf_Word sh_addralign;
-    offset<Elf_Word,b> sh_entsize;
+    offset<Elf_Word,B> sh_entsize;
   };
 
 /* ELF32 program header table entry.  */

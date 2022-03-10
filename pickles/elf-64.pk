@@ -161,7 +161,7 @@ type Elf64_Shdr =
     Elf_Word sh_link;
     Elf_Word sh_info;
     Elf64_Xword sh_addralign;
-    offset<Elf64_Xword,b> sh_entsize;
+    offset<Elf64_Xword,B> sh_entsize;
   };
 
 /* ELF64 program header table entry.  */

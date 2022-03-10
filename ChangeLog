@@ -1,5 +1,11 @@
 2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/elf-64.pk (Elf64_Shdr): sh_entsize is an offset in
+	bytes, not bits.
+	* pickles/elf-32.pk (Elf32_Shdr): Likewise.
+
+2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.h: Clarify that pk_array_type_bound always
 	returns PK_NULL at the time being.
 
