@@ -1,5 +1,12 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (OUTKIND_CLS_BEGIN): New macro.
+	(OUTKIND_CLS_END): Likewise.
+	(tif_class): Send class data to pokelets (OUT_OUT and OUT_CMD chans).
+	(tif_class_end): Likewise.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.pk (chan_send): Remove length prefix. Adding length
 	prefix is the responsibility of usock library.
 	* poked/poked.c (poked_buf_send): Fix to not expect length prefix

@@ -42,6 +42,8 @@ static void poked_free (void);
 #define OUTKIND_ITER_BEGIN 1
 #define OUTKIND_TXT 2
 #define OUTKIND_ITER_END 3
+#define OUTKIND_CLS_BEGIN 4
+#define OUTKIND_CLS_END 5
 
 #define VUKIND_CLEAR 1
 #define VUKIND_APPEND 2
@@ -330,12 +332,24 @@ tif_indent (unsigned int level, unsigned int step)
 static void
 tif_class (const char *name)
 {
-  (void)name;
+  switch (termout_chan) {
+    case USOCK_CHAN_OUT_OUT:
+    case USOCK_CHAN_OUT_CMD:
+      usock_out (srv, OUTKIND_CLS_BEGIN, termout_chan,
+                 name, strlen (name) + 1);
+      break;
+  }
 }
 static int
 tif_class_end (const char *name)
 {
-  (void)name;
+  switch (termout_chan) {
+    case USOCK_CHAN_OUT_OUT:
+    case USOCK_CHAN_OUT_CMD:
+      usock_out (srv, OUTKIND_CLS_END, termout_chan,
+                 name, strlen (name) + 1);
+      break;
+  }
   return 1;
 }
 static void
