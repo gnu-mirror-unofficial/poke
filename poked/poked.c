@@ -100,7 +100,7 @@ main ()
   struct usock_buf *inbuf;
   void *ret;
   int done_p = 0;
-  uint64_t idx = 0;
+  uint64_t idx;
 
   srv = usock_new ("/tmp/poked.ipc");
   if (srv == NULL)
@@ -111,6 +111,8 @@ main ()
   if (pthread_create (&th, &thattr, srvthread, srv) != 0)
     err (1, "pthread_create() failed");
 
+poked_restart:
+  idx = 0;
   poked_init ();
   while (!done_p)
     {
@@ -185,6 +187,11 @@ main ()
         continue;
 #endif
 
+          if (pk_int_value (pk_decl_val (pkc, "__poked_restart_p")))
+            {
+              poked_free ();
+              goto poked_restart;
+            }
           if (pk_int_value (pk_decl_val (pkc, "__poked_exit_p")))
             {
               done_p = 1;

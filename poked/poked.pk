@@ -21,8 +21,10 @@ load "pk-dump-minimal.pk";
 // FIXME be endian-correct
 // FIXME offset<long,N> -> offset<ulong,N>
 
+var __poked_restart_p = 0;
 var __poked_exit_p = 0;
 
+fun poked_restart = void: { __poked_restart_p = 1; exit; }
 fun poked_exit = void: { __poked_exit_p = 1; exit; }
 fun poked_defer = void: {}
 fun poked_ehandler = (Exception exception) void:

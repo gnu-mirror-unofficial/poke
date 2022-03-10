@@ -1,3 +1,9 @@
+2022-03-10  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poked/poked.c (main): Add `poked_restart` support.
+	* poked/poked.pk (poked_restart): New function.
+	(__poked_restart_p): New variable.
+
 2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/libpoke.h: Indentation and other visual improvements.
