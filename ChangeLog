@@ -1,5 +1,9 @@
 2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/libpoke.h: Indentation and other visual improvements.
+
+2022-03-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/libpoke.c (my_decl_map_fn): Always return PK_NULL as
 	`value' for type declarations.
 	* libpoke/libpoke.h: Add decription of the arguments got by the
