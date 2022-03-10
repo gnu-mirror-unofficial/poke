@@ -995,9 +995,7 @@ void pk_struct_type_set_ftype (pk_val type, uint64_t idx,
 
    ETYPE is the type of the elements of the array.
 
-   BOUND is an uint<64> with the number of elements of the
-   array... XXX or a closure?? cant remember. At the moment the PKL
-   compiler generates PVM_NULL for this... */
+   At this point BOUND is always PK_NULL.  */
 
 pk_val pk_make_array_type (pk_val etype, pk_val bound) LIBPOKE_API;
 
@@ -1005,7 +1003,8 @@ pk_val pk_make_array_type (pk_val etype, pk_val bound) LIBPOKE_API;
 
 pk_val pk_array_type_etype (pk_val type) LIBPOKE_API;
 
-/* Get the bound of the given array type.  */
+/* Get the bound of the given array type.
+   This is always PK_NULL at this point.  */
 
 pk_val pk_array_type_bound (pk_val type) LIBPOKE_API;
 
