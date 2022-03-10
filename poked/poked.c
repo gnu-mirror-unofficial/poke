@@ -83,24 +83,21 @@ static void
 poked_buf_send (void)
 {
   pk_val arr = pk_decl_val (pkc, "__chan_send_buf");
-  pk_val nelem = pk_uint_value (pk_array_nelem (arr));
+  uint16_t nelem = (uint16_t)pk_uint_value (pk_array_nelem (arr));
   uint8_t chan = pk_uint_value (pk_decl_val (pkc, "__chan_send_chan")) & 0x7f;
   uint8_t lbuf[2];
-  size_t memlen;
   uint8_t *mem;
   pk_val exc;
 
-  assert (nelem > 2);
+  lbuf[0] = nelem;
+  lbuf[1] = nelem >> 8;
 
-  lbuf[0] = pk_uint_value (pk_array_elem_value (arr, 0));
-  lbuf[1] = pk_uint_value (pk_array_elem_value (arr, 1));
-
-  memlen = (size_t)lbuf[1] << 8 | lbuf[0];
-  mem = malloc (memlen);
-  assert (mem);
-  for (size_t i = 2; i < nelem; ++i)
-    mem[i - 2] = pk_uint_value (pk_array_elem_value (arr, i));
-  usock_out (srv, /*no kind*/ 0, chan, mem, memlen);
+  mem = malloc (nelem);
+  if (mem == NULL)
+    err (1, "malloc() failed");
+  for (uint16_t i = 0; i < nelem; ++i)
+    mem[i] = pk_uint_value (pk_array_elem_value (arr, i));
+  usock_out (srv, /*no kind*/ 0, chan, mem, nelem);
   free (mem);
 
   (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, &exc, 0);
@@ -227,11 +224,6 @@ poked_restart:
               goto eol;
             }
 
-#if 0
-      // ?!
-      if (!ok)
-        continue;
-#endif
 
           if (pk_int_value (pk_decl_val (pkc, "__poked_restart_p")))
             {

@@ -1,5 +1,13 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.pk (chan_send): Remove length prefix. Adding length
+	prefix is the responsibility of usock library.
+	* poked/poked.c (poked_buf_send): Fix to not expect length prefix
+	in Poke array.
+	* poked/usock.c (usock_out): Fix the prefix and data length.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.pk (__Disasm): Change type of `adr` to offset.
 	(disasm): Likewise.
 

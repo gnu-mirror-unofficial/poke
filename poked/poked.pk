@@ -61,13 +61,10 @@ fun __chan_send_reset = void:
 
 fun chan_send = (uint<7> chan, byte[] data) void:
   {
-    if (data'length > 0xffff)
-      return;
-
-    var len = data'length as uint16;
+    assert (0 < data'length && data'length <= 0xffff);
 
     __chan_send_chan = chan;
-    __chan_send_buf = [len as byte, (len .>> 8) as byte] + data;
+    __chan_send_buf = data;
     __chan_send_p = 1;
   }
 
