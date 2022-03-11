@@ -27,24 +27,6 @@ var __poked_exit_p = 0;
 fun poked_restart = void: { __poked_restart_p = 1; exit; }
 fun poked_exit = void: { __poked_exit_p = 1; exit; }
 fun poked_defer = void: {}
-fun poked_ehandler = (Exception exception) void:
-  {
-    if (exception.code != EC_exit && exception.code != EC_signal)
-      {
-        print ("unhandled "
-               + (exception.name == "" ? "unknown" : exception.name)
-               + " exception\n");
-
-        if (exception.location != "" || exception.msg != "")
-          {
-            if (exception.location != "")
-              print (exception.location + " ");
-            print (exception.msg + "\n");
-          }
-      }
-    if (exception.code == EC_exit)
-      __poked_exit_p = 1;
-  }
 
 //--- send over channels
 
@@ -66,6 +48,39 @@ fun chan_send = (uint<7> chan, byte[] data) void:
     __chan_send_chan = chan;
     __chan_send_buf = data;
     __chan_send_p = 1;
+  }
+
+//--- default exception handler
+
+/* NOTE Due to current implementation limitation, you can call this
+   function only once in each iteration.  */
+fun __err_send = (string s) void:
+  {
+    var c = byte[s'length] ();
+
+    stoca (s, c);
+    chan_send (/*USOCK_CHAN_OUT_OUT*/ 1, [/*OUTCMD_ERR*/ 7UB] + c);
+  }
+
+fun poked_ehandler = (Exception exception) void:
+  {
+    var msg = "unhandled ";
+
+    if (exception.code != EC_exit && exception.code != EC_signal)
+      {
+        msg += (exception.name == "" ? "unknown" : exception.name)
+               + " exception\n";
+
+        if (exception.location != "" || exception.msg != "")
+          {
+            if (exception.location != "")
+              msg += exception.location + " ";
+            msg += exception.msg;
+          }
+      }
+    __err_send (msg);
+    if (exception.code == EC_exit)
+      __poked_exit_p = 1;
   }
 
 //--- vu

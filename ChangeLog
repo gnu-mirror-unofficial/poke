@@ -1,5 +1,12 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (OUTCMD_ERR): New macro.
+	* poked/poked.pk (__err_send): New function to report errors.
+	(poked_ehandler): Change default error handler to use `__err_send`
+	instead of `print`.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/usock.h (usock_out): Change the function prototype: re-order
 	`kind` and `chan`; change type of `data` to `const void *`.
 	* poked/usock.c (usock_out): Likewise.

@@ -45,6 +45,7 @@ static void poked_free (void);
 #define OUTCMD_CLS_BEGIN 4
 #define OUTCMD_CLS_END 5
 #define OUTCMD_EVAL 6
+#define OUTCMD_ERR 7
 
 #define VUKIND_CLEAR 1
 #define VUKIND_APPEND 2
