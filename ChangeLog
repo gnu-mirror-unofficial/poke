@@ -1,3 +1,15 @@
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poked/usock.h (USOCK_CHAN_OUT_CMD): Removed.
+	* poked/poked.c (OUTKIND_EVAL_BEGIN): New macro.
+	(OUTKIND_EVAL_END): Likewise.
+	(termout_cmd): Removed.
+	(iteration_send): Removed OUT_CMD chan.
+	(tif_class): Likewise.
+	(tif_class_end): Likewise.
+	(main): Mark begin/end of statement output using EVAL_BEGIN
+	and EVAL_END.
+
 2022-03-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/ios.pk: Remove references to the hyperlinks

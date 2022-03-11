@@ -30,7 +30,6 @@
 #define USOCK_CHAN_OUT_VU 0x02
 #define USOCK_CHAN_OUT_DISASM 0x03
 #define USOCK_CHAN_OUT_TREEVU 0x04
-#define USOCK_CHAN_OUT_CMD 0x05
 
 struct usock;
 

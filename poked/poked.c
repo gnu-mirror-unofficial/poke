@@ -44,6 +44,8 @@ static void poked_free (void);
 #define OUTKIND_ITER_END 3
 #define OUTKIND_CLS_BEGIN 4
 #define OUTKIND_CLS_END 5
+#define OUTKIND_EVAL_BEGIN 6
+#define OUTKIND_EVAL_END 7
 
 #define VUKIND_CLEAR 1
 #define VUKIND_APPEND 2
@@ -52,24 +54,17 @@ static uint8_t termout_chan = USOCK_CHAN_OUT_OUT;
 static uint32_t termout_kind = OUTKIND_TXT;
 
 static void
-termout_restore(void)
+termout_restore (void)
 {
   termout_chan = USOCK_CHAN_OUT_OUT;
   termout_kind = OUTKIND_TXT;
 }
 
 static void
-termout_vu_append(void)
+termout_vu_append (void)
 {
   termout_chan = USOCK_CHAN_OUT_VU;
   termout_kind = VUKIND_APPEND;
-}
-
-static void
-termout_cmd(void)
-{
-  termout_chan = USOCK_CHAN_OUT_CMD;
-  /* termout_kind = OUTKIND_TXT; // redundant */
 }
 
 static void *
@@ -107,7 +102,7 @@ poked_buf_send (void)
 }
 
 static void
-iteration_send (struct usock* srv, uint64_t n_iteration, int begin_p)
+iteration_send (struct usock *srv, uint64_t n_iteration, int begin_p)
 {
   uint8_t buf[8] = {
 #define b(i) (uint8_t) (n_iteration >> (i))
@@ -117,18 +112,16 @@ iteration_send (struct usock* srv, uint64_t n_iteration, int begin_p)
 
   usock_out (srv, begin_p ? OUTKIND_ITER_BEGIN : OUTKIND_ITER_END,
              USOCK_CHAN_OUT_OUT, buf, sizeof (buf));
-  usock_out (srv, begin_p ? OUTKIND_ITER_BEGIN : OUTKIND_ITER_END,
-             USOCK_CHAN_OUT_CMD, buf, sizeof (buf));
 }
 
 static void
-iteration_begin (struct usock* srv, uint64_t n_iteration)
+iteration_begin (struct usock *srv, uint64_t n_iteration)
 {
   return iteration_send (srv, n_iteration, 1);
 }
 
 static void
-iteration_end (struct usock* srv, uint64_t n_iteration)
+iteration_end (struct usock *srv, uint64_t n_iteration)
 {
   return iteration_send (srv, n_iteration, 0);
 }
@@ -214,9 +207,10 @@ poked_restart:
                     else if (val != PK_NULL)
                       {
                         ok = 1;
-                        termout_cmd();
+                        usock_out (srv, OUTKIND_EVAL_BEGIN, termout_chan, "",
+                                   1);
                         pk_print_val (pkc, val, &exc);
-                        termout_restore();
+                        usock_out (srv, OUTKIND_EVAL_END, termout_chan, "", 1);
                       }
                   }
               }
@@ -225,7 +219,6 @@ poked_restart:
               fprintf (stderr, "unsupported input channel\n");
               goto eol;
             }
-
 
           if (pk_int_value (pk_decl_val (pkc, "__poked_restart_p")))
             {
@@ -332,24 +325,14 @@ tif_indent (unsigned int level, unsigned int step)
 static void
 tif_class (const char *name)
 {
-  switch (termout_chan) {
-    case USOCK_CHAN_OUT_OUT:
-    case USOCK_CHAN_OUT_CMD:
-      usock_out (srv, OUTKIND_CLS_BEGIN, termout_chan,
-                 name, strlen (name) + 1);
-      break;
-  }
+  if (termout_chan == USOCK_CHAN_OUT_OUT)
+    usock_out (srv, OUTKIND_CLS_BEGIN, termout_chan, name, strlen (name) + 1);
 }
 static int
 tif_class_end (const char *name)
 {
-  switch (termout_chan) {
-    case USOCK_CHAN_OUT_OUT:
-    case USOCK_CHAN_OUT_CMD:
-      usock_out (srv, OUTKIND_CLS_END, termout_chan,
-                 name, strlen (name) + 1);
-      break;
-  }
+  if (termout_chan == USOCK_CHAN_OUT_OUT)
+    usock_out (srv, OUTKIND_CLS_END, termout_chan, name, strlen (name) + 1);
   return 1;
 }
 static void
