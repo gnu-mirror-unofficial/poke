@@ -78,18 +78,16 @@ fun dump = (int<32> ios = get_ios,
       if (x >= 10 && x <= 15) return x + 'A' - 10;
     }
 
-   if (offset > 0xffff_ffff#B)
-     printf "%<dump-ruler:FEDCBA9876543210 %>";
-   else
-     printf "%<dump-ruler:76543210 %>";
+    if (offset > 0xffff_ffff#B)
+      print "FEDCBA9876543210 ";
+    else
+      print "76543210 ";
 
     for (s in ["00", "11", "22", "33", "44", "55", "66",
 	       "77", "88", "99", "aa", "bb", "cc", "dd",
 	       "ee", "ff"])
       {
-	if (o % group_by == 0#B)
-	  printf "%<dump-ruler: %>";
-	printf "%<dump-ruler:%s%>", s;
+	print (o % group_by == 0#B ? " " : "") + s;
         o++;
 	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
 	   printf (" ");
@@ -105,7 +103,7 @@ fun dump = (int<32> ios = get_ios,
 	    if (x < 16 && (x % ((cluster_by * group_by)/1#B)) == 0)
 	      s = s + " ";
 	  }
-	printf "%<dump-ruler:  %s%>", s;
+	printf "  %s", s;
       }
     print "\n";
   }
@@ -122,13 +120,13 @@ fun dump = (int<32> ios = get_ios,
           var v = byte @ ios : (offset + o);
 
           if (v < ' ' || v > '~')
-            printf "%<dump-ascii:%c%>", pk_dump_nonprintable_char;
+            printf "%c", pk_dump_nonprintable_char;
           else
-            printf "%<dump-ascii:%c%>", v;
+            printf "%c", v;
         }
         catch if E_io
         {
-            printf "%<dump-unknown:%c%>", pk_dump_nonprintable_char;
+            printf "%c", pk_dump_nonprintable_char;
         }
         o++;
 	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
@@ -142,9 +140,9 @@ fun dump = (int<32> ios = get_ios,
     for (; offset < top; offset += step)
       {
         if (offset > 0xffff_ffff#B)
-          printf ("%<dump-address:%u64x:%>", offset / #B);
+          printf ("%u64x:", offset / #B);
         else
-          printf ("%<dump-address:%u32x:%>", offset / #B);
+          printf ("%u32x:", offset / #B);
 
 	var o = 0#B;
 	try
@@ -162,7 +160,7 @@ fun dump = (int<32> ios = get_ios,
               {
                 if (o % group_by == 0#B)
                      print " ";
-                printf ("%<dump-unknown:%s%>", pk_dump_unknown_byte);
+                print (pk_dump_unknown_byte);
               }
 
               o++;

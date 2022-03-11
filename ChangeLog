@@ -1,5 +1,9 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/pk-dump-minimal.pk (dump): Remove classes.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (VUCMD_FINISH): New macro.
 	(main): Send VUCMD_FINISH to signal the end-of-vu.
 
