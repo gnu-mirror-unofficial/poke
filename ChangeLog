@@ -1,3 +1,9 @@
+2022-03-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/ios.pk: Remove references to the hyperlinks
+	infrastructure, which is part of poke.
+	* poke/pk-dump.pk: Adapt accordingly.
+
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poked/poked.c (OUTKIND_CLS_BEGIN): New macro.

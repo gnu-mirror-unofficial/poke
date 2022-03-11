@@ -28,7 +28,6 @@ var pk_dump_ruler = 1;
 var pk_dump_ascii = 1;
 var pk_dump_nonprintable_char = '.';
 var pk_dump_unknown_byte = "??";
-var pk_dump_addr_hyperlinks = 0;
 
 pk_help_add_topic
   :entry Poke_HelpEntry {

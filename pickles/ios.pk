@@ -40,9 +40,6 @@
    ASCII is a boolean determining whether to include an ASCII dump.
    Defaults to 0.
 
-   ADDR_HYPERLINKS is a boolean determining whether to emit hyperlinks
-   with the addresses of the displayed bytes.  Defaults to 0.
-
    UNKNOWN_BYTE is the string to use to denote bytes that can't be
    read from the IO space.  Defaults to "??".  Note this string is
    expected to be of length two characters.
@@ -58,7 +55,6 @@ fun ios_dump_bytes = (int<32> ios, off64 from, off64 size,
                       int cluster_by = 8,
                       int ruler = 0,
                       int ascii = 0,
-                      int addr_hyperlinks = 0,
                       string unknown_byte = "??",
                       uint<8> nonprintable_char = '.') void:
 {
@@ -150,15 +146,7 @@ fun ios_dump_bytes = (int<32> ios, off64 from, off64 size,
                 var b = byte @ ios : (offset + o);
                 if (o % group_by == 0#B)
                      print " ";
-                if (addr_hyperlinks)
-                {
-                  var hl = hserver_make_hyperlink ('i',
-                                                   "0x" + ltos ((offset + o)/#B, 16) + "#B");
-                  term_begin_hyperlink (hl);
-                }
                 printf ("%u8x", b);
-                if (addr_hyperlinks)
-                  term_end_hyperlink;
              }
               catch if E_io
               {
