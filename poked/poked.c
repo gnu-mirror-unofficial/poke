@@ -214,9 +214,6 @@ poked_restart:
                       {
                         ok = 1;
                         termout_eval ();
-                        /* We need to signal the pokelet that we're switching
-                           to EVAL data (before emitting the class data).  */
-                        usock_out (srv, OUTCMD_EVAL, termout_chan, "", 1);
                         pk_print_val (pkc, val, &exc);
                         termout_restore ();
                       }

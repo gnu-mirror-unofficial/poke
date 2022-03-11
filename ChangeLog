@@ -1,5 +1,10 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (main): Don't send empty EVAL msgs in the
+	beginning.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (OUTCMD_EVAL_BEGIN): Removed.
 	(OUTCMD_EVAL_END): Removed.
 	(OUTCMD_EVAL): New macro.
