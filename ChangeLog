@@ -1,5 +1,25 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (OUTKIND_ITER_BEGIN): s/OUTKIND_/OUTCMD_/.
+	(OUTKIND_TXT): Likewise.
+	(OUTKIND_ITER_END): Likewise.
+	(OUTKIND_CLS_BEGIN): Likewise.
+	(OUTKIND_CLS_END): Likewise.
+	(OUTKIND_EVAL_BEGIN): Likewise.
+	(OUTKIND_EVAL_END): Likewise.
+	(termout_kind): Renamed to `termout_cmdkind`.
+	(termout_restore): Adapt names.
+	(termout_vu_append): Likewise.
+	(iteration_send): Likewise.
+	(main): Likewise.
+	(tif_puts): Likewise.
+	(tif_printf): Likewise.
+	(tif_indent): Likewise.
+	(tif_class): Likewise.
+	(tif_class_end): Likewise.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/usock.h (USOCK_CHAN_OUT_CMD): Removed.
 	* poked/poked.c (OUTKIND_EVAL_BEGIN): New macro.
 	(OUTKIND_EVAL_END): Likewise.
