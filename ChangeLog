@@ -1,5 +1,10 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (VUCMD_FINISH): New macro.
+	(main): Send VUCMD_FINISH to signal the end-of-vu.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (VUKIND_CLEAR): s/VUKIND_/VUCMD_/.
 	(VUKIND_APPEND): Likewise.
 	(VUCMD_HIGHLIGHT): New macro.

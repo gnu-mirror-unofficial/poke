@@ -51,6 +51,7 @@ static void poked_free (void);
 #define VUCMD_APPEND 2
 #define VUCMD_HIGHLIGHT 3
 #define VUCMD_FILTER 4
+#define VUCMD_FINISH 5
 
 static uint8_t termout_chan = USOCK_CHAN_OUT_OUT;
 static uint32_t termout_cmdkind = OUTCMD_TXT;
@@ -247,6 +248,7 @@ poked_restart:
                              0);
               assert (exc == PK_NULL);
               termout_restore ();
+              usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FINISH, "", 1);
             }
           if (pk_int_value (pk_decl_val (pkc, "__chan_send_p")))
             poked_buf_send ();
