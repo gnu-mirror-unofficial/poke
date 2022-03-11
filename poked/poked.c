@@ -44,8 +44,7 @@ static void poked_free (void);
 #define OUTCMD_ITER_END 3
 #define OUTCMD_CLS_BEGIN 4
 #define OUTCMD_CLS_END 5
-#define OUTCMD_EVAL_BEGIN 6
-#define OUTCMD_EVAL_END 7
+#define OUTCMD_EVAL 6
 
 #define VUKIND_CLEAR 1
 #define VUKIND_APPEND 2
@@ -65,6 +64,13 @@ termout_vu_append (void)
 {
   termout_chan = USOCK_CHAN_OUT_VU;
   termout_cmdkind = VUKIND_APPEND;
+}
+
+static void
+termout_eval (void)
+{
+  termout_chan = USOCK_CHAN_OUT_OUT;
+  termout_cmdkind = OUTCMD_EVAL;
 }
 
 static void *
@@ -207,10 +213,12 @@ poked_restart:
                     else if (val != PK_NULL)
                       {
                         ok = 1;
-                        usock_out (srv, OUTCMD_EVAL_BEGIN, termout_chan, "",
-                                   1);
+                        termout_eval ();
+                        /* We need to signal the pokelet that we're switching
+                           to EVAL data (before emitting the class data).  */
+                        usock_out (srv, OUTCMD_EVAL, termout_chan, "", 1);
                         pk_print_val (pkc, val, &exc);
-                        usock_out (srv, OUTCMD_EVAL_END, termout_chan, "", 1);
+                        termout_restore ();
                       }
                   }
               }

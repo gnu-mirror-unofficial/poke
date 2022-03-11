@@ -1,5 +1,13 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (OUTCMD_EVAL_BEGIN): Removed.
+	(OUTCMD_EVAL_END): Removed.
+	(OUTCMD_EVAL): New macro.
+	(termout_eval): New function.
+	(main): Print the value of Poke statement using OUTCMD_EVAL.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (OUTKIND_ITER_BEGIN): s/OUTKIND_/OUTCMD_/.
 	(OUTKIND_TXT): Likewise.
 	(OUTKIND_ITER_END): Likewise.
