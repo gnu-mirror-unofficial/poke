@@ -715,7 +715,7 @@ usock_done (struct usock *u)
 
 // API
 void
-usock_out (struct usock *u, uint32_t kind, uint8_t chan, const char *data,
+usock_out (struct usock *u, uint8_t chan, uint32_t kind, const void *data,
            size_t len)
 {
   assert (u);
@@ -725,10 +725,11 @@ usock_out (struct usock *u, uint32_t kind, uint8_t chan, const char *data,
 
   assert (kind <= 0x7f); // TODO implement ULEB128
 
-  uint16_t len16 = (len & 0xffff) + (data[len - 1] != '\0') + (kind != 0);
+  uint16_t len16
+      = (kind != 0) + (len & 0xffff) + (((char *)data)[len - 1] != '\0');
   uint8_t prefix[/*len*/ 2 + /*kind*/ 5] = { len16, len16 >> 8, kind & 0x7f };
-  struct usock_buf *buf = usock_buf_new_prefix (prefix, 2 + (kind != 0), data,
-                                                len & 0xffff);
+  struct usock_buf *buf
+      = usock_buf_new_prefix (prefix, 2 + (kind != 0), data, len & 0xffff);
 
   buf->len = 0; // cursor for how much data has been written
   buf->tag = chan;

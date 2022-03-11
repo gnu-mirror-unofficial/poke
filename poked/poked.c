@@ -88,19 +88,15 @@ poked_buf_send (void)
   pk_val arr = pk_decl_val (pkc, "__chan_send_buf");
   uint16_t nelem = (uint16_t)pk_uint_value (pk_array_nelem (arr));
   uint8_t chan = pk_uint_value (pk_decl_val (pkc, "__chan_send_chan")) & 0x7f;
-  uint8_t lbuf[2];
   uint8_t *mem;
   pk_val exc;
-
-  lbuf[0] = nelem;
-  lbuf[1] = nelem >> 8;
 
   mem = malloc (nelem);
   if (mem == NULL)
     err (1, "malloc() failed");
   for (uint16_t i = 0; i < nelem; ++i)
     mem[i] = pk_uint_value (pk_array_elem_value (arr, i));
-  usock_out (srv, /*no kind*/ 0, chan, mem, nelem);
+  usock_out (srv, chan, /*no kind*/ 0, mem, nelem);
   free (mem);
 
   (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, &exc, 0);
@@ -116,8 +112,8 @@ iteration_send (struct usock *srv, uint64_t n_iteration, int begin_p)
 #undef b
   };
 
-  usock_out (srv, begin_p ? OUTCMD_ITER_BEGIN : OUTCMD_ITER_END,
-             USOCK_CHAN_OUT_OUT, buf, sizeof (buf));
+  usock_out (srv, USOCK_CHAN_OUT_OUT,
+             begin_p ? OUTCMD_ITER_BEGIN : OUTCMD_ITER_END, buf, sizeof (buf));
 }
 
 static void
@@ -237,7 +233,7 @@ poked_restart:
             }
           if (pk_int_value (pk_decl_val (pkc, "__vu_do_p")))
             {
-              usock_out (srv, VUKIND_CLEAR, USOCK_CHAN_OUT_VU, "", 1);
+              usock_out (srv, USOCK_CHAN_OUT_VU, VUKIND_CLEAR, "", 1);
               termout_vu_append ();
               (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, &exc,
                              0);
@@ -295,7 +291,7 @@ static void
 tif_puts (const char *s)
 {
   printf (">(p) '%s'\n", s);
-  usock_out (srv, termout_cmdkind, termout_chan, s, strlen (s) + 1);
+  usock_out (srv, termout_chan, termout_cmdkind, s, strlen (s) + 1);
 }
 static void
 tif_printf (const char *fmt, ...)
@@ -311,7 +307,7 @@ tif_printf (const char *fmt, ...)
   assert (n >= 0);
 
   printf (">(P) '%.*s'\n", n, data);
-  usock_out (srv, termout_cmdkind, termout_chan, data, n + 1);
+  usock_out (srv, termout_chan, termout_cmdkind, data, n + 1);
   free (data);
 }
 static void
@@ -324,20 +320,20 @@ tif_indent (unsigned int level, unsigned int step)
   assert (data);
   data[0] = '\n';
   memset (data + 1, ' ', len - 1);
-  usock_out (srv, termout_cmdkind, termout_chan, data, len);
+  usock_out (srv, termout_chan, termout_cmdkind, data, len);
   free (data);
 }
 static void
 tif_class (const char *name)
 {
   if (termout_chan == USOCK_CHAN_OUT_OUT)
-    usock_out (srv, OUTCMD_CLS_BEGIN, termout_chan, name, strlen (name) + 1);
+    usock_out (srv, termout_chan, OUTCMD_CLS_BEGIN, name, strlen (name) + 1);
 }
 static int
 tif_class_end (const char *name)
 {
   if (termout_chan == USOCK_CHAN_OUT_OUT)
-    usock_out (srv, OUTCMD_CLS_END, termout_chan, name, strlen (name) + 1);
+    usock_out (srv, termout_chan, OUTCMD_CLS_END, name, strlen (name) + 1);
   return 1;
 }
 static void

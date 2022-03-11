@@ -56,7 +56,7 @@ struct usock_buf *usock_in (struct usock *u);
 // channel CHAN.
 // Non-zero KIND will be encoded as ULEB128 number before DATA.
 // This call is non-blocking.
-void usock_out (struct usock *u, uint32_t kind, uint8_t chan, const char *data,
+void usock_out (struct usock *u, uint8_t chan, uint32_t kind, const void *data,
                 size_t len);
 
 #endif

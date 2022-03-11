@@ -1,5 +1,20 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/usock.h (usock_out): Change the function prototype: re-order
+	`kind` and `chan`; change type of `data` to `const void *`.
+	* poked/usock.c (usock_out): Likewise.
+	* poked/poked.c (poked_buf_send): Adapt to new function prototype.
+	And remove unused variable.
+	(iteration_send): Adapt to new function prototype.
+	(main): Likewise.
+	(tif_puts): Likewise.
+	(tif_printf): Likewise.
+	(tif_indent): Likewise.
+	(tif_class): Likewise.
+	(tif_class_end): Likewise.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (main): Don't send empty EVAL msgs in the
 	beginning.
 
