@@ -47,8 +47,10 @@ static void poked_free (void);
 #define OUTCMD_EVAL 6
 #define OUTCMD_ERR 7
 
-#define VUKIND_CLEAR 1
-#define VUKIND_APPEND 2
+#define VUCMD_CLEAR 1
+#define VUCMD_APPEND 2
+#define VUCMD_HIGHLIGHT 3
+#define VUCMD_FILTER 4
 
 static uint8_t termout_chan = USOCK_CHAN_OUT_OUT;
 static uint32_t termout_cmdkind = OUTCMD_TXT;
@@ -64,7 +66,7 @@ static void
 termout_vu_append (void)
 {
   termout_chan = USOCK_CHAN_OUT_VU;
-  termout_cmdkind = VUKIND_APPEND;
+  termout_cmdkind = VUCMD_APPEND;
 }
 
 static void
@@ -234,7 +236,12 @@ poked_restart:
             }
           if (pk_int_value (pk_decl_val (pkc, "__vu_do_p")))
             {
-              usock_out (srv, USOCK_CHAN_OUT_VU, VUKIND_CLEAR, "", 1);
+              const char *filt
+                  = pk_string_str (pk_decl_val (pkc, "__vu_filter"));
+
+              usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FILTER, filt,
+                         strlen (filt) + 1);
+              usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_CLEAR, "", 1);
               termout_vu_append ();
               (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, &exc,
                              0);

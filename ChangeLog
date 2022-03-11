@@ -1,5 +1,18 @@
 2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (VUKIND_CLEAR): s/VUKIND_/VUCMD_/.
+	(VUKIND_APPEND): Likewise.
+	(VUCMD_HIGHLIGHT): New macro.
+	(VUCMD_FILTER): Likewise.
+	(termout_vu_append): Update.
+	(main): Send VUCMD_FILTER before other vu stuff.
+	* poked/poked.pk (vu_ios): Remove.
+	(__vu_rng): Likewise.
+	(__vu_filter): New variable.
+	(vu): Add two new args: `filt` and `filts`.
+
+2022-03-11  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (OUTCMD_ERR): New macro.
 	* poked/poked.pk (__err_send): New function to report errors.
 	(poked_ehandler): Change default error handler to use `__err_send`

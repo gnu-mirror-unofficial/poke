@@ -86,8 +86,6 @@ fun poked_ehandler = (Exception exception) void:
 //--- vu
 
 var __dots = [[0L#N,0L#N]];
-var __vu_ios = -1;
-var __vu_rng = [[0#N,0#N]]; // ?
 
 type __DotUpdateFunc = () void;
 type __DotUpdateFuncEntry = struct
@@ -166,7 +164,8 @@ type __vu_Args = struct
     int ascii;
   };
 var __vu_do_p = 0,
-    __vu_args = __vu_Args {};
+    __vu_args = __vu_Args {},
+    __vu_filter = "";
 
 fun __vu_dump = void:
   {
@@ -181,7 +180,9 @@ fun __vu_dump = void:
          :ruler 0
          ;
   }
-fun vu = (int<32> ios = get_ios,
+fun vu = (string filt = __vu_filter,
+          string[] filts = string[] (),
+          int<32> ios = get_ios,
           offset<long,B> from = pk_dump_get_offset (ios),
           offset<long,B> size = pk_dump_size,
           offset<long,B> group_by = pk_dump_group_by,
@@ -192,6 +193,23 @@ fun vu = (int<32> ios = get_ios,
         ios = ios, from = from, size = size, group_by = group_by,
         cluster_by = cluster_by, ascii = ascii,
       };
+    if (filts'length != 0)
+      {
+        var fs = filts[0];
+
+        for (f in filts)
+          assert (strchr (f, ';') == f'length,
+                  "Invalid filter name (unexpected semi-colon): " + f);
+        for (var i = 1; i < filts'length; ++i)
+          fs += ";" + filts[i];
+        __vu_filter = fs;
+      }
+    else if (filt != __vu_filter)
+      {
+        assert (strchr (filt, ';') == filt'length,
+                "Invalid filter name (unexpected semi-colon)");
+        __vu_filter = filt;
+      }
     __vu_do_p = 1;
   }
 fun vu_highlight = (offset<long,N> from = dot,
