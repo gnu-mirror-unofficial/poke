@@ -18,6 +18,8 @@
 
 /* This pickle contains utilities related to diffing and patching.  */
 
+load "pk-table.pk";
+
 /* The Diff_Thunk type is used to implement utilities related to the
    Structured Binary Diff format (sdiff) as documented in
    https://binary-tools.net/bindiff.pdf.  */
