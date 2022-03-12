@@ -1,5 +1,13 @@
 2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-iter-string-face): Define.
+	(poke-out-iter-string): Likewise.
+	(poke-out-filter): Insert iterator separator string and update
+	cursor in all windows showing *poke-out* after iterations.
+	(poke-out-got-output): Define.
+
+2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-set-omode): New function.
 	(poke-set-pretty-print): Likewise.
 	(poke-vu-next-line): Improve.
