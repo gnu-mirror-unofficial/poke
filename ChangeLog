@@ -1,5 +1,15 @@
 2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-elval-process): Define.
+	(poke-exit): Handle poke-elval.
+	(poke): Likewise.
+	(poke-vu-filter): Define.
+	(poke-elval-state-waiting-for-length): Define.
+	(poke-elval-state-waiting-for-msg): Likewise.
+	(poke-elval-state): Likewise.
+
+2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-vu-output): Define.
 	(poke-vu-filter): Accumulate output.
 	(poke-vu): Initialize poke-vu-output.
