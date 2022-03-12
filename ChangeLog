@@ -1,5 +1,10 @@
 2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-pk): Define.
+	(poke): Evaluate poke-pk at startup.
+
+2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-elval-process): Define.
 	(poke-exit): Handle poke-elval.
 	(poke): Likewise.
