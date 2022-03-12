@@ -1,5 +1,11 @@
 2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-vu-output): Define.
+	(poke-vu-filter): Accumulate output.
+	(poke-vu): Initialize poke-vu-output.
+
+2022-03-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke): Better window layout.
 	(poke-out-iter-string): Quote face symbol.
 
