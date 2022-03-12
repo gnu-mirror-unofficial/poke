@@ -69,10 +69,11 @@ fun poked_ehandler = (Exception exception) void:
     if (exception.code != EC_exit && exception.code != EC_signal)
       {
         msg += (exception.name == "" ? "unknown" : exception.name)
-               + " exception\n";
+               + " exception";
 
         if (exception.location != "" || exception.msg != "")
           {
+            msg += "\n";
             if (exception.location != "")
               msg += exception.location + " ";
             msg += exception.msg;
