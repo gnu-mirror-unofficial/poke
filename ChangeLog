@@ -1,3 +1,16 @@
+2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poked/poked.c (struct poked_options): New struct to keep options.
+	(poked_options): Global variable to keep options.
+	(poked_options_init): Parse program arguments and fill
+	`poked_options`.
+	(poked_help): Show help.
+	(main): Print socket path in the beginning; be verbose only in
+	debug mode.
+	(tif_puts): Print on stdout only in debug mode.
+	(tif_printf): Likewise.
+	(poked_init): Print debugging-related info only in debug mode.
+
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* emacs/poke.el (poke-pk): Convey the IO space size through

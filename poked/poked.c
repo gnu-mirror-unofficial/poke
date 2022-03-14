@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <err.h>
+#include <getopt.h>
 #include <pthread.h>
 
 #include "pk-utils.h"
@@ -134,8 +135,83 @@ iteration_end (struct usock *srv, uint64_t n_iteration)
 
 #define iteration_send private_
 
+//--- command line options
+
+static void
+poked_help (void);
+
+static struct poked_options
+{
+  int debug_p;
+  const char *socket_path;
+} poked_options;
+
+static void
+poked_options_init (int argc, char *argv[])
+{
+  enum
+  {
+    OPT_HELP,
+    OPT_VERSION,
+    OPT_DEBUG,
+    OPT_SOCK_PATH,
+  };
+  static const struct option options[] = {
+    { "help", no_argument, NULL, OPT_HELP },
+    { "version", no_argument, NULL, OPT_VERSION },
+    { "debug", no_argument, NULL, OPT_DEBUG },
+    { "socket-path", required_argument, NULL, OPT_SOCK_PATH },
+    { NULL, 0, NULL, 0 },
+  };
+  char c;
+  int ret;
+
+  while ((ret = getopt_long (argc, argv, "hvd", options, NULL)) != -1)
+    {
+      c = ret;
+      switch (c)
+        {
+        case OPT_HELP:
+        case 'h':
+          poked_help ();
+          exit (EXIT_SUCCESS);
+          break;
+        case OPT_VERSION:
+        case 'v':
+          puts (VERSION);
+          exit (EXIT_SUCCESS);
+          break;
+        case OPT_DEBUG:
+        case 'd':
+          poked_options.debug_p = 1;
+          break;
+        case OPT_SOCK_PATH:
+        case 'S':
+          poked_options.socket_path = optarg;
+          break;
+        default:
+          poked_help ();
+          exit (EXIT_FAILURE);
+        }
+    }
+  if (poked_options.socket_path == NULL)
+    poked_options.socket_path = "/tmp/poked.ipc";
+}
+
+static void
+poked_help (void)
+{
+  puts ("Usage: poked [OPTION]...");
+  puts ("Daemonized poke interactive editor for binary files.");
+  puts ("");
+  puts ("  -h, --help                print a help message and exit");
+  puts ("  -v, --version             show version and exit");
+  puts ("  -d, --debug               be more verbose during the execution");
+  puts ("  -S, --socket-path=PATH    path of unix domain socket to listen on");
+}
+
 int
-main ()
+main (int argc, char *argv[])
 {
   {
     sigset_t s;
@@ -152,7 +228,9 @@ main ()
   int done_p = 0;
   uint64_t n_iteration;
 
-  srv = usock_new ("/tmp/poked.ipc");
+  poked_options_init (argc, argv);
+
+  srv = usock_new (poked_options.socket_path);
   if (srv == NULL)
     err (1, "usock_new() failed");
 
@@ -160,6 +238,8 @@ main ()
     err (1, "pthread_attr_init() failed");
   if (pthread_create (&th, &thattr, srvthread, srv) != 0)
     err (1, "pthread_create() failed");
+
+  printf ("socket_path %s\n\n", poked_options.socket_path);
 
 poked_restart:
   n_iteration = 0;
@@ -181,7 +261,8 @@ poked_restart:
               continue;
             }
 
-          printf ("< '%.*s'\n", (int)srclen, src);
+          if (poked_options.debug_p)
+            printf ("< '%.*s'\n", (int)srclen, src);
 
           n_iteration++;
           iteration_begin (srv, n_iteration);
@@ -300,7 +381,8 @@ tif_flush (void)
 static void
 tif_puts (const char *s)
 {
-  printf (">(p) '%s'\n", s);
+  if (poked_options.debug_p)
+    printf (">(p) '%s'\n", s);
   usock_out (srv, termout_chan, termout_cmdkind, s, strlen (s) + 1);
 }
 static void
@@ -316,7 +398,8 @@ tif_printf (const char *fmt, ...)
 
   assert (n >= 0);
 
-  printf (">(P) '%.*s'\n", n, data);
+  if (poked_options.debug_p)
+    printf (">(P) '%.*s'\n", n, data);
   usock_out (srv, termout_chan, termout_cmdkind, data, n + 1);
   free (data);
 }
@@ -534,10 +617,12 @@ poked_init (void)
         err (1, "pk_str_concat() failed");
     }
 
-  // For debug
-  fprintf (stderr, "poke_datadir %s\n", poke_datadir);
-  fprintf (stderr, "poke_pickledir %s\n", poke_picklesdir);
-  fprintf (stderr, "poked_appdir %s\n", poked_appdir);
+  if (poked_options.debug_p)
+    {
+      fprintf (stderr, "poke_datadir %s\n", poke_datadir);
+      fprintf (stderr, "poke_pickledir %s\n", poke_picklesdir);
+      fprintf (stderr, "poked_appdir %s\n", poked_appdir);
+    }
 
   if (pkc)
     poked_free ();
