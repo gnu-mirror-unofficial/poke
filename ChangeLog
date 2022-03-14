@@ -1,5 +1,15 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-ios-list): New variable.
+	(poke-pk): Define poke_el_ios_open and poke_el_ios_close.
+	(poke-ios-alist): Define.
+	(poke-ios-open): Likewise.
+	(poke-ios-close): Likewise.
+	(poke): Iniitalize poke-ios-alist.
+	(poke-exit): Ask before exitting if there are open IO spaces.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-styling-faces): Handle styling classes
 	"error" and "warning".
 	(poke-warning-face): Define.
