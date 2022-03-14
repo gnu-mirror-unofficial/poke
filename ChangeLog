@@ -1,5 +1,14 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-styling-faces): Handle styling classes
+	"error" and "warning".
+	(poke-warning-face): Define.
+	(poke-error-face): Likewise.
+	(poke_el_banner): Define and invoke at startup.
+	* .x-sc_unmarked_diagnostics: Add emacs/poke.el.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt.pk (IOS_Hook_Open_Fn): New type.
 	(IOS_Hook_Close_Fn): Likewise.
 	(ios_open_hook): New variable.
