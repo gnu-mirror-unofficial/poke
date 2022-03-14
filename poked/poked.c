@@ -672,6 +672,10 @@ poked_init (void)
         errx (1, "missing function(s) in init file: %s", FUNCS[i]);
     }
 
+  if (pk_defvar (pkc, "poked_libpoke_version", pk_make_string (VERSION))
+      == PK_NULL)
+    errx (1, "unable to declare poked_libpoke_version variable");
+
   return OK;
 
 error:

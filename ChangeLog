@@ -1,5 +1,10 @@
 2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (poked_init): Define `poked_libpoke_version`
+	Poke variable.
+
+2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (struct poked_options): New struct to keep options.
 	(poked_options): Global variable to keep options.
 	(poked_options_init): Parse program arguments and fill
