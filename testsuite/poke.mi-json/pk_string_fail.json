@@ -1,9 +1,0 @@
-##
-"foo"
-##
-{
-    "type": {
-        "code": "String"
-    },
-    "value": "foobar"
-}

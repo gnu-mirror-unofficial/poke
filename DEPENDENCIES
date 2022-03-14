@@ -52,30 +52,6 @@ The following packages should be installed before GNU poke is installed
   + If it is installed in a nonstandard directory, pass the option
     --with-libreadline-prefix=DIR to 'configure'.
 
-* JSON-C
-  + Optional.
-    The poke machine-interface uses a protocol to communicate with
-    clients, which is based on JSON.  poke uses the json-c library to
-    parse and build JSON strings.
-    If this library is not found, poke will build without machine-interface
-    support.
-  + Homepage:
-    https://github.com/json-c/json-c/wiki
-  + Download:
-    https://s3.amazonaws.com/json-c_releases/releases/index.html
-  + Pre-built package name:
-    - On Debian and Debian-based systems: libjson-c-dev,
-    - On Red Hat distributions: json-c-devel.
-    - Other: https://repology.org/project/json-c/versions
-  + If it is installed in a nonstandard directory, you need to set
-    PKG_CONFIG_PATH so that pkg-config finds it:
-
-    $ test -z "$PKG_CONFIG_PATH" \
-        || PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_PKGCONFIG}/lib/pkgconfig
-    $ export PKG_CONFIG_PATH=${INSTALL_PREFIX_OF_JSON_C}/lib/pkgconfig:${PKG_CONFIG_PATH}
-
-    or set the variables JSON_C_CFLAGS, JSON_C_LIBS when invoking 'configure'.
-
 * GNU libtextstyle
   + Optional.
     GNU poke uses libtextstyle in order to provide styled output.  If the

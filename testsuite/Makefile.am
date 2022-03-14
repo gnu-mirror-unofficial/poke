@@ -47,7 +47,7 @@ else
 	>&2 echo "WARNING: DejaGnu not installed"
 endif
 
-SUBDIRS = poke.libpoke poke.mi-json
+SUBDIRS = poke.libpoke
 
 EXTRA_DIST = \
   config/default.exp \
@@ -2348,22 +2348,4 @@ EXTRA_DIST = \
   poke.libpoke/pk_nequal_str.test \
   poke.libpoke/pk_nequal_off.test \
   poke.libpoke/pk_nequal_sct.test \
-  poke.libpoke/pk_nequal_arr.test \
-  poke.mi-json/pk_int.json \
-  poke.mi-json/pk_int_fail.json \
-  poke.mi-json/pk_uint.json \
-  poke.mi-json/pk_uint_fail.json \
-  poke.mi-json/pk_string.json \
-  poke.mi-json/pk_string_fail.json \
-  poke.mi-json/pk_offset.json \
-  poke.mi-json/pk_offset_fail.json \
-  poke.mi-json/pk_offset_uint.json \
-  poke.mi-json/pk_offset_uint_fail.json \
-  poke.mi-json/pk_sct_empty.json \
-  poke.mi-json/pk_sct_empty_mapped.json \
-  poke.mi-json/pk_sct.json \
-  poke.mi-json/pk_sct_fail.json \
-  poke.mi-json/pk_array_bounded.json \
-  poke.mi-json/pk_array_bounded_fail.json \
-  poke.mi-json/pk_array_bounded_offset.json \
-  poke.mi-json/pk_array_bounded_offset_fail.json
+  poke.libpoke/pk_nequal_arr.test

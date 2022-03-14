@@ -1,5 +1,23 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Remove checks for json-c and
+	machine-interface stuff.
+	* DEPENDENCIES: Remove dependency on json-c.
+	* poke/pk-mi.h: Likewise.
+	* poke/pk-mi.c (pk_mi): Likewise.
+	* poke/pk-mi*.[ch]: Remove.
+	* poke/poke.c (print_help): Remove --help output for the machine
+	interface.
+	(parse_args_1): Do not handle --mi.
+	(main): Do not enter the MI.
+
+	* poke/Makefile.am: Remove MI-related stuff.
+	* testsuite/Makefile.am: Likewise.
+	* testsuite/poke.mi-json: Remove directory and tests.
+	* doc/poke.texi (The Machine-Interface): Remove node.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-env.c (_decl): Do not allow re-defining immutable
 	declarations.
 	* libpoke/pkl-rt.pk: Mark declarations as immutable.

@@ -36,7 +36,6 @@
 #include "pk-cmd.h"
 #include "pk-repl.h"
 #include "pk-utils.h"
-#include "pk-mi.h"
 #include "pk-map.h"
 #include "pk-ios.h"
 
@@ -49,18 +48,6 @@ int poke_interactive_p;
 /* The following global indicates whether the hyperserver is activated
    or not.  */
 int poke_hserver_p;
-#endif
-
-/* The following global indicates whether the MI shall be used.  */
-int poke_mi_p;
-
-#ifdef POKE_MI
-/* This build of poke supports mi if the user wants it.  */
-static const int mi_supported_p = 1;
-#else
-/* This build of poke does not support mi.  */
-static const int mi_supported_p = 0;
-int pk_mi (void) {assert (0); return 0;}
 #endif
 
 /* The following global indicates whether poke should be as terse as
@@ -149,7 +136,6 @@ enum
   STYLE_ARG,
   STYLE_DARK_ARG,
   STYLE_BRIGHT_ARG,
-  MI_ARG,
   NO_AUTO_MAP_ARG,
   NO_HSERVER_ARG
 };
@@ -167,7 +153,6 @@ static const struct option long_options[] =
   {"style", required_argument, NULL, STYLE_ARG},
   {"style-dark", no_argument, NULL, STYLE_DARK_ARG},
   {"style-bright", no_argument, NULL, STYLE_BRIGHT_ARG},
-  {"mi", no_argument, NULL, MI_ARG},
   {"no-auto-map", no_argument, NULL, NO_AUTO_MAP_ARG},
   {"no-hserver", no_argument, NULL, NO_HSERVER_ARG},
   {NULL, 0, NULL, 0},
@@ -204,10 +189,6 @@ print_help (void)
   puts (_("      --style=STYLE_FILE              style file to use when styling"));
   puts (_("      --style-dark                    use default style for dark backgrounds"));
   puts (_("      --style-bright                  use default style for bright backgrounds"));
-
-  puts ("");
-  puts (_("Machine interface:"));
-  puts (_("      --mi                            use the MI in stdin/stdout"));
 
   puts ("");
   /* TRANSLATORS: --help output, less used GNU poke arguments.
@@ -384,18 +365,6 @@ parse_args_1 (int argc, char *argv[])
           pk_print_version (0 /* hand_p */);
           exit (EXIT_SUCCESS);
           break;
-        case MI_ARG:
-          if (!mi_supported_p)
-            {
-              fputs (_("MI is not built into this instance of poke\n"),
-                     stderr);
-              exit (EXIT_FAILURE);
-            }
-          else
-            {
-              poke_mi_p = 1;
-            }
-          break;
         case 'L':
           poke_interactive_p = 0;
           return;
@@ -488,7 +457,6 @@ parse_args_2 (int argc, char *argv[])
             exit (exit_status);
             break;
           }
-        case MI_ARG:
         case NO_AUTO_MAP_ARG:
         case NO_HSERVER_ARG:
         case 'q':
@@ -681,7 +649,6 @@ initialize (int argc, char *argv[])
 #ifdef HAVE_HSERVER
   poke_hserver_p = (poke_interactive_p
                     && pk_term_color_p ()
-                    && !poke_mi_p
                     && !poke_no_hserver_arg);
 
   /* Initialize and start the terminal hyperlinks server.  */
@@ -814,13 +781,8 @@ main (int argc, char *argv[])
      for IO, etc etc */
   parse_args_2 (argc, argv);
 
-  /* Enter the REPL or MI.  */
-  if (poke_mi_p)
-    {
-      if (!pk_mi ())
-        poke_exit_code = EXIT_FAILURE;
-    }
-  else if (poke_interactive_p)
+  /* Enter the REPL.  */
+  if (poke_interactive_p)
     pk_repl ();
 
   /* Cleanup.  */

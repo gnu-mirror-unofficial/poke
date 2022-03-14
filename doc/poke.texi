@@ -75,8 +75,6 @@ Reference Material
 * The Poke Language::		Poke reference manual.
 * The Standard Library::	Standard goodies for Poke programs.
 
-* The Machine-Interface::	Communicating your program with poke.
-
 Internals
 @c * Hacking Poke::		Extending poke.
 * The Poke Virtual Machine::	The PVM and its mysteries.
@@ -251,12 +249,6 @@ The Standard Library
 
 @c Hacking poke
 @c * Writing Commands::		Extending poke with new commands.
-
-The Machine-Interface
-* MI overview::			Description of the MI.
-* Running poke in MI mode::	Running poke with --mi
-* MI transport::		Frame messages.
-* MI protocol::			Messages, requests, responses, events.
 
 The Poke Virtual Machine
 * PVM Instructions::		Virtual Machine instructions.
@@ -531,15 +523,6 @@ Use the default style that works better for bright backgrounds.
 @item --style=@var{file}
 Use @var{file} as the CSS to use for styling poke, instead of the
 default style.
-@end table
-
-@noindent
-Machine interface:
-
-@table @code
-@item --mi
-Run poke in MI mode.  In this mode, poke communicates with a client
-using JSON messages in the standard input and output.
 @end table
 
 @noindent
@@ -14806,230 +14789,6 @@ fun alignto = (uoff64 offset, uoff64 to) uoff64:
 @noindent
 It returns an offset that is the result of aligning the given
 @var{offset} to the given alignment @var{to}.
-
-@node The Machine-Interface
-@chapter The Machine-Interface
-
-GNU poke can be executed in a special mode in which it communicates
-with a client using a machine-friendly interface.  This makes it
-possible to write programs like graphical user interfaces, testing
-programs and the like.  This section describes this operation mode and
-provides a full description of the interface, for client application
-writers.
-
-@menu
-* MI overview::			Description of the MI.
-* Running poke in MI mode::	Running poke with --mi
-* MI transport::		Frame messages.
-* MI protocol::			Messages, requests, responses, events.
-@end menu
-
-@node MI overview
-@section MI overview
-
-A @dfn{client application} can communicate with poke through the
-machine-interface:
-
-@example
-+--------+       MI     +--------+
-| client |------ O------|  poke  |
-+--------+              +--------+
-@end example
-
-There are two ways in which the communication can be performed:
-through pipes and through TCP network connections.
-
-When using the pipe operation mode, the client application runs poke
-as a sub process.  Data is obtained from poke reading from its
-standard output, and data is fed to poke writing to its standard
-input:
-
-@example
-+--------+        stdin +--------+
-| client |------------->|  poke  |
-+--------+              +--------+
-    ^                       | stdout
-    |                       |
-    +-----------------------+
-@end example
-
-When using the TCP network operation mode the client uses a
-bidirectional socket to communicate with a running poke process.  This
-has the advantage of allowing having poke and the client application
-running on different machines:
-
-@example
-+--------+ socket    (----)__     socket +--------+
-| client |<-------->( network )<-------->|  poke  |
-+--------+           (-------)           +--------+
-@end example
-
-@node Running poke in MI mode
-@section Running poke in MI mode
-
-The following poke command-line options are relevant to the
-machine-interface.
-
-@table @samp
-@item --mi
-Run poke in Machine-Interface mode.
-@item --mi-socket=@var{port}
-Use a network TCP socket to communicate with the client.  @var{port}
-is the port to use, or zero.  If zero, then poke chooses a port on its
-own.  In both cases, poke prints the port used when it starts.
-@end table
-
-If not using network sockets, poke starts talking MI immediately using
-the standard input and standard output:
-
-@example
-$ poke --mi
-^@@^@@^@@G@{"poke_mi":0,"type":2,"data":@{"type":0,"args":@{"version":"0.1-beta"@}@}@}
-@end example
-
-When using sockets, poke prints the number of the socket where it is
-listening for requests in the standard output:
-
-@example
-$ poke --mi --mi-socket=0
-1234
-@end example
-
-@node MI transport
-@section MI transport
-
-At the lowest level the communication is performed in terms of
-@dfn{frame messages}.
-
-The layout of each message is:
-
-@example
-type PMI_FrameMessage =
- struct
- @{
-    big uint<4> size : size <= 2048;
-    byte[size] payload;
- @}
-@end example
-
-@noindent
-Where @var{size} is the length of the payload, measured in bytes.  The
-maximum length of a frame message payload is two kilobytes.
-
-@node MI protocol
-@section MI protocol
-
-@c XXX Document requests, responses and events.
-
-@dfn{Requests} are initiated by the client.  Once a request is sent,
-it will trigger a response.  The response is paired with the
-triggering request by the request's sequence number.
-
-@dfn{Responses} are initiated by poke, in response to a request
-received from the client.
-
-@dfn{Events} are initiated by poke.
-
-@menu
-* MI Requests::
-* MI Responses::
-* MI Events::
-@end menu
-
-@node MI Requests
-@subsection MI Requests
-
-@menu
-* Request EXIT::	ask poke to exit.
-* Request PRINTV:: ask poke to return the printed representation of the
-given Poke value.
-@end menu
-
-@node Request EXIT
-@subsubsection Request EXIT
-
-This request asks poke to exit in an orderly way.  It has no
-arguments.
-
-@node Request PRINTV
-@subsubsection Request PRINTV
-
-This request is used to get the printed representation of a given Poke value.
-
-Arguments:
-
-@table @var
-@item value
-The Poke value to get the printed representation of.
-@end table
-
-@node MI Responses
-@subsection MI Responses
-
-@menu
-* Response EXIT::	poke confirms it will exit.
-* Response PRINTV:: poke returns the printed representation of the value.
-@end menu
-
-@node Response EXIT
-@subsubsection Response EXIT
-
-This is the response to the EXIT request.
-
-Attributes:
-
-@table @var
-@item success_p
-If @code{true}, poke will exit.  If @code{false}, something prevents
-poke to exit.
-@item errmsg
-If @var{success_p} is @code{false}, this attribute contains a string
-indicating the reason why poke refuses to exit.
-@end table
-
-@node Response PRINTV
-@subsubsection Response PRINTV
-
-This is the response to the PRINTV request.
-
-Attributes:
-
-@table @var
-@item success_p
-If @code{true}, poke was able to get the printed representation of the value.
-If @code{false}, an error occurred that prevented poke to handle the request.
-@item string
-If @var{success_p} is @code{true}, this attribute contains the printed
-representation of the Poke value that was passed to the request.
-@item errmsg
-If @var{success_p} is @code{false}, this attribute contains a string indicating
-the reason why poke could not get the printed representation of the value.
-@end table
-
-@node MI Events
-@subsection MI Events
-
-@menu
-* Event INITIALIZE::	poke has been initialized.
-@end menu
-
-@node Event INITIALIZE
-@subsubsection Event INITIALIZE
-
-This event is sent by poke when it finishes initializing and is ready
-to receive requests.
-
-Arguments:
-
-@table @var
-@item mi_version
-An integer with the version of the MI protocol that this poke instance
-speaks.
-@item version
-A string with the printable representation of the version of the poke
-instance.  This is intended to be used for the client to show to the
-users.
-@end table
 
 @c @node Hacking Poke
 @c @chapter Hacking Poke

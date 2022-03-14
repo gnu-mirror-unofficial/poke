@@ -122,23 +122,6 @@ dnl The Boehm-Weiser garbage collector
 PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES(BDW_GC,[bdw-gc],[have_gc=yes],[have_gc=no])
 
-dnl The JSON-C library for the machine-interface
-
-AC_ARG_ENABLE([mi],
-              AS_HELP_STRING([--enable-mi],
-                             [Enable the poke Machine-Interface (default is YES)]),
-              [mi_enabled=$enableval], [mi_enabled=yes])
-
-if test "x$mi_enabled" = "xyes"; then
-  PKG_CHECK_MODULES(JSON_C,[json-c],[],[mi_enabled=no])
-fi
-
-AM_CONDITIONAL([POKE_MI], [test "x$mi_enabled" = "xyes"])
-if test "x$mi_enabled" = "xyes"; then
-  AC_DEFINE([POKE_MI], 1,
-            [Defined if building poke with the machine-interface enabled])
-fi
-
 dnl Jitter
 
 JITTER_JITTER_SUBPACKAGE([jitter])
@@ -263,8 +246,7 @@ AC_CONFIG_FILES(Makefile
                 etc/Makefile
                 etc/vim/Makefile
                 testsuite/Makefile
-                testsuite/poke.libpoke/Makefile
-                testsuite/poke.mi-json/Makefile)
+                testsuite/poke.libpoke/Makefile)
 AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
 
@@ -287,11 +269,6 @@ fi
 if test "x$libnbd_enabled" != "xyes"; then
    AC_MSG_WARN([building poke without NBD io space support.
      Install libnbd to use it.])
-fi
-
-if test "x$mi_enabled" = "xno"; then
-   AC_MSG_WARN([building poke without the machine interface support.
-     Install libjson-c and use --enable-mi to activate it.])
 fi
 
 dnl Report errors
