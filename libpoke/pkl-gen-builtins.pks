@@ -72,7 +72,11 @@
 
         .macro builtin_set_ios
         pushvar 0, 0
+        dup
         popios
+        ;; Call the set_ios hook.
+        .call _pkl_run_ios_set_hook
+        drop
         ;; Always return `true' to facilitate using this function
         ;; in struct constraint expressions.
         push int<32>1
@@ -85,12 +89,33 @@
 ;;; (string handler, uint<64> flags = 0) int<32>
 
         .macro builtin_open
-        pushvar 0, 0
-        pushvar 0, 1
-        open
+        push PVM_E_NO_IOS
+        pushe .nopios
+        pushios                 ; PIOS
+        pope
+        ba .gotpios
+.nopios:
+        drop
+        push null               ; null
+.gotpios:
+        pushvar 0, 0            ; PIOS HANDLER
+        pushvar 0, 1            ; PIOS HANDLER FLAGS
+        open                    ; PIOS IOS
+        ;; First, call the ios_open hook.
         dup
         .call _pkl_run_ios_open_hook
-        drop
+        drop                    ; PIOS IOS
+        ;; We also have to call the ios_set hook if opening
+        ;; this IO space will result in it being selected
+        ;; as the current space.  That will happend if there
+        ;; is no currently an IO space open.
+        swap                    ; IOS PIOS
+        bnn .done
+        drop                    ; IOS
+        dup                     ; IOS IOS
+        .call _pkl_run_ios_set_hook
+.done:
+        drop                    ; IOS
         return
         .end
 

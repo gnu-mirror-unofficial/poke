@@ -12916,6 +12916,9 @@ the closing operation to be performed by raising an exception.
 The functions in @code{ios_close_hook} are invoked when an IO space
 has been closed.
 
+The functions in @code{ios_set_hook} are invoked when an IO space
+becomes the current IO space.
+
 All the hooks above get the id of an IO space as arguments:
 
 @example

@@ -1433,6 +1433,8 @@ EXTRA_DIST = \
   poke.pkl/ios-hook-close-pre-2.pk \
   poke.pkl/ios-hook-open-1.pk \
   poke.pkl/ios-hook-open-2.pk \
+  poke.pkl/ios-hook-set-1.pk \
+  poke.pkl/ios-hook-set-2.pk \
   poke.pkl/ios-mem-1.pk \
   poke.pkl/ios-mem-2.pk \
   poke.pkl/ios-mem-3.pk \

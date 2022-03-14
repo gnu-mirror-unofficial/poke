@@ -1,5 +1,22 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt.pk (ios_set_hook): New hook.
+	(_pkl_run_ios_set_hook): New function.
+	* libpoke/pkl-gen-builtins.pks (builtin_open): Call the ios_set
+	hook whenever appropriate.
+	(builtin_set_ios): Likewise.
+	* testsuite/poke.pkl/ios-hook-set-1.pk: New test.
+	* testsuite/poke.pkl/ios-hook-set-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (IO Space Hooks): Document ios_set_hook.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-ios-set-ios): Define.
+	(poke-ios-mode-map): Likewise.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (tabulated-list): Require tabulated-list.
 	(poke-ios-mode): Define.
 	(poke-ios-populate): Likewise.

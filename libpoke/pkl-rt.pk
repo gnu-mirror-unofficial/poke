@@ -483,6 +483,9 @@ type Pk_Type =
    The functions in `ios_close_hook' are invoked when an IO space has
    been closed.
 
+   The functions in `ios_set_hook' are invoked when an IO space
+   becomes the current IO space.
+
    All the hooks above get the id of an IO space as arguments.  The
    different io* built-ins can be then used by the handlers in order
    to fetch additional properties of the IO space.  */
@@ -492,6 +495,7 @@ type IOS_Hook_Fn = (int<32>)void;
 var ios_open_hook = IOS_Hook_Fn[]();
 var ios_close_pre_hook = IOS_Hook_Fn[]();
 var ios_close_hook = IOS_Hook_Fn[]();
+var ios_set_hook = IOS_Hook_Fn[]();
 
 fun _pkl_run_ios_open_hook = (int<32> ios) void:
 {
@@ -508,6 +512,12 @@ fun _pkl_run_ios_close_pre_hook = (int<32> ios) void:
 fun _pkl_run_ios_close_hook = (int<32> ios) void:
 {
   for (f in ios_close_hook)
+    f (ios);
+}
+
+fun _pkl_run_ios_set_hook = (int<32> ios) void:
+{
+  for (f in ios_set_hook)
     f (ios);
 }
 
