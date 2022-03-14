@@ -31,29 +31,28 @@ fun poked_defer = void: {}
 //--- send over channels
 
 var __chan_send_p = 0;
-var __chan_send_chan = 0x7f as uint<7>;
-var __chan_send_buf = byte[] ();
+var __chan_send_chan = uint<7>[] ();
+var __chan_send_buf = byte[][] ();
 
 fun __chan_send_reset = void:
   {
     __chan_send_p = 0;
-    __chan_send_chan = 0x7f as uint<7>;
-    __chan_send_buf = byte[] ();
+    __chan_send_chan = uint<7>[] ();
+    __chan_send_buf = byte[][] ();
   }
 
 fun chan_send = (uint<7> chan, byte[] data) void:
   {
     assert (0 < data'length && data'length <= 0xffff);
+    assert (0 < chan && chan <= 120);
 
-    __chan_send_chan = chan;
-    __chan_send_buf = data;
+    apush (__chan_send_chan, chan);
+    apush (__chan_send_buf, data);
     __chan_send_p = 1;
   }
 
 //--- default exception handler
 
-/* NOTE Due to current implementation limitation, you can call this
-   function only once in each iteration.  */
 fun __err_send = (string s) void:
   {
     var c = byte[s'length] ();

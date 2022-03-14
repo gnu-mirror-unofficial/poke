@@ -1,5 +1,16 @@
 2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.pk (__chan_send_chan): Changed to array.
+	(__chan_send_buf): Likewise.
+	(__chan_send_reset): Update.
+	(chan_send): Push data and channel to buffer array.
+	(__err_send): Remove comment.
+	* poked/poked.c (poked_buf_send_one): New function to send a single
+	buffer to a channel.
+	(poked_buf_send): Changed to support array of buffers.
+
+2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.c (poked_init): Define `poked_libpoke_version`
 	Poke variable.
 

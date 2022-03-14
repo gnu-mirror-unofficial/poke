@@ -88,13 +88,14 @@ srvthread (void *data)
 }
 
 static void
-poked_buf_send (void)
+poked_buf_send_one (pk_val arr, pk_val pchan)
 {
-  pk_val arr = pk_decl_val (pkc, "__chan_send_buf");
+  assert (arr != PK_NULL);
+  assert (pchan != PK_NULL);
+
   uint16_t nelem = (uint16_t)pk_uint_value (pk_array_nelem (arr));
-  uint8_t chan = pk_uint_value (pk_decl_val (pkc, "__chan_send_chan")) & 0x7f;
+  uint8_t chan = pk_uint_value (pchan) & 0x7f;
   uint8_t *mem;
-  pk_val exc;
 
   mem = malloc (nelem);
   if (mem == NULL)
@@ -103,10 +104,25 @@ poked_buf_send (void)
     mem[i] = pk_uint_value (pk_array_elem_value (arr, i));
   usock_out (srv, chan, /*no kind*/ 0, mem, nelem);
   free (mem);
-
-  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, &exc, 0);
-  assert (exc == PK_NULL);
 }
+
+static void
+poked_buf_send (void)
+{
+  pk_val buffers = pk_decl_val (pkc, "__chan_send_buf");
+  pk_val chans = pk_decl_val (pkc, "__chan_send_chan");
+  uint64_t buffers_nelem = pk_uint_value (pk_array_nelem (buffers));
+  uint64_t chans_nelem = pk_uint_value (pk_array_nelem (chans));
+  pk_val exc;
+
+  assert (buffers_nelem == chans_nelem);
+  for (uint64_t i = 0; i < buffers_nelem; ++i)
+    poked_buf_send_one (pk_array_elem_value (buffers, i),
+                        pk_array_elem_value (chans, i));
+  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, &exc, 0);
+}
+
+#define poked_buf_send_one private_
 
 static void
 iteration_send (struct usock *srv, uint64_t n_iteration, int begin_p)
