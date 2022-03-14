@@ -88,6 +88,9 @@
         pushvar 0, 0
         pushvar 0, 1
         open
+        dup
+        .call _pkl_run_ios_open_hook
+        drop
         return
         .end
 
@@ -98,7 +101,13 @@
 
         .macro builtin_close
         pushvar 0, 0
+        dup
+        dup
+        .call _pkl_run_ios_close_pre_hook
+        drop
         close
+        .call _pkl_run_ios_close_hook
+        drop
         .end
 
 ;;; RAS_MACRO_BUILTIN_IOSIZE

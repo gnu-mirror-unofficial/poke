@@ -12663,6 +12663,7 @@ memory of some process.
 * iosize::			Getting the size of an IO space.
 * iohandler::                   Getting the handler string of an IO space.
 * ioflags::                     Getting the flags of an IO space.
+* IO Space Hooks::              Hooking in common operations on IO spaces.
 @end menu
 
 @node open
@@ -12896,6 +12897,45 @@ fun ioflags = (int<32> ios = get_ios) uint<64>
 
 If the IO space specified to @code{ioflags} doesn't exist,
 @code{E_no_ios} will be raised.
+
+@node IO Space Hooks
+@subsubsection IO Space Hooks
+@cindex @code{IOS hooks}
+
+The user can hook in the IO subsystem by installing functions that
+will be invoked when certain operations on IO spaces are being
+performed.
+
+The functions in @code{ios_open_hook} are invoked once a new IO space
+has been opened.
+
+The functions in @code{ios_close_pre_hook} are invoked when an IO
+space is about to be closed.  Note that a close_pre hook can prevent
+the closing operation to be performed by raising an exception.
+
+The functions in @code{ios_close_hook} are invoked when an IO space
+has been closed.
+
+All the hooks above get the id of an IO space as arguments:
+
+@example
+type IOS_Hook_Fn = (int<32>)void
+@end example
+
+The different @code{io*} built-ins can be then used by the handlers in
+order to fetch additional properties of the IO space.  For example:
+
+@example
+fun my_open_handler = (int<32> ios) void:
+@{
+  printf ("*** The IO space '%s' (%i32d) has been opened.\n",
+          iohandler (ios), ios);
+@}
+@end example
+
+@example
+type IOS_Hook_Close_Fn = (int<32>)void;
+@end example
 
 @node The Map Operator
 @subsection The Map Operator

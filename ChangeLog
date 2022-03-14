@@ -1,5 +1,26 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-rt.pk (IOS_Hook_Open_Fn): New type.
+	(IOS_Hook_Close_Fn): Likewise.
+	(ios_open_hook): New variable.
+	(ios_close_hook): Likewise.
+	(ios_close_pre_hook): Likewise.
+	(_pkl_run_ios_open_hook): New function.
+	(_pkl_run_ios_close_pre_hook): Likewise.
+	(_pkl_run_ios_close_hook): Likewise.
+	* libpoke/pkl-gen-builtins.pks (builtin_open): Call functions in
+	the IOS open hook.
+	(builtin_close): Call functions in the IOS close and close_pre
+	hooks.
+	* testsuite/poke.pkl/ios-hook-open-1.pk: New test.
+	* testsuite/poke.pkl/ios-hook-open-2.pk: Likewise.
+	* testsuite/poke.pkl/ios-hook-close-1.pk: Likewise.
+	* testsuite/poke.pkl/ios-hook-close-pre-2.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+	* doc/poke.texi (IO Space Hooks): New section.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* testsuite/poke.libpoke/decls.c: Do not include unused header
 	files.
 	* libpoke/pvm.jitter: Wrap ios_handler.

@@ -1,0 +1,13 @@
+/* { dg-do run } */
+
+fun foo = (int<32> ios) void:
+{
+  printf "%i32d\n", ios + 4;
+}
+
+/* { dg-command {ios_close_hook += [foo, foo];} } */
+/* { dg-command {open ("*foo*"); } } */
+/* { dg-output "0" } */
+/* { dg-command {close (0); } } */
+/* { dg-output "\n4" } */
+/* { dg-output "\n4" } */

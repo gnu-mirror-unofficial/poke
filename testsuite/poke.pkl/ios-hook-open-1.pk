@@ -1,0 +1,10 @@
+/* { dg-do run } */
+
+fun foo = (int<32> ios) void:
+{
+  printf "%i32d %s\n", ios, iohandler (ios);
+}
+
+/* { dg-command {ios_open_hook += [foo];} } */
+/* { dg-command {open ("*foo*"); } } */
+/* { dg-output "0 \\*foo\\*\n0" } */

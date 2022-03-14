@@ -1428,6 +1428,11 @@ EXTRA_DIST = \
   poke.pkl/iora-int-1.pk \
   poke.pkl/iora-offset-1.pk \
   poke.pkl/ios-cur-1.pk \
+  poke.pkl/ios-hook-close-1.pk \
+  poke.pkl/ios-hook-close-pre-1.pk \
+  poke.pkl/ios-hook-close-pre-2.pk \
+  poke.pkl/ios-hook-open-1.pk \
+  poke.pkl/ios-hook-open-2.pk \
   poke.pkl/ios-mem-1.pk \
   poke.pkl/ios-mem-2.pk \
   poke.pkl/ios-mem-3.pk \

@@ -1,0 +1,21 @@
+/* { dg-do run } */
+
+fun foo = (int<32> ios) void:
+{
+  if (ios == 1)
+    raise Exception { code = EC_inval, msg = "not closing 1" };
+  printf "pre %i32d\n", ios;
+}
+
+/* { dg-command {ios_close_pre_hook += [foo];} } */
+/* { dg-command {open ("*foo*"); } } */
+/* { dg-output "0" } */
+/* { dg-command {open ("*bar*"); } } */
+/* { dg-output "\n1" } */
+/* { dg-command {close (0); } } */
+/* { dg-output "\npre 0" } */
+/* { dg-command {try close (1); catch if E_inval { print "caught\n"; } } } */
+/* { dg-output "\ncaught" } */
+/* { dg-command {apop (ios_close_pre_hook) } } */
+/* { dg-output "\n#<closure>" } */
+/* { dg-command {close (0); } } */
