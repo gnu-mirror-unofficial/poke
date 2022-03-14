@@ -1355,7 +1355,6 @@ EXTRA_DIST = \
   poke.pkl/if-diag-2.pk \
   poke.pkl/if-diag-3.pk \
   poke.pkl/if-int-struct-1.pk \
-  poke.pkl/immutable-1.pk \
   poke.pkl/immutable-diag-1.pk \
   poke.pkl/immutable-diag-2.pk \
   poke.pkl/immutable-func-1.pk \
@@ -1637,6 +1636,7 @@ EXTRA_DIST = \
   poke.pkl/open-1.pk \
   poke.pkl/open-2.pk \
   poke.pkl/open-3.pk \
+  poke.pkl/open-set-1.pk \
   poke.pkl/open-sub-1.pk \
   poke.pkl/open-sub-10.pk \
   poke.pkl/open-sub-11.pk \

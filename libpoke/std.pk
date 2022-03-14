@@ -342,6 +342,14 @@ fun crc32 = (uint<8>[] buf) uint<32>:
 
 /*** IOS related.  */
 
+fun openset = (string handler, uint<64> flags = 0) int<32>:
+{
+  var ios = open (handler, flags);
+
+  set_ios (ios);
+  return ios;
+}
+
 fun opensub = (int<32> ios,
                offset<uint<64>,B> base, offset<uint<64>,B> size,
                string name = "",

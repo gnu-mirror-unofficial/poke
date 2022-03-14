@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+/* { dg-command {var a = openset ("*a*")} } */
+/* { dg-command {var b = openset ("*b*")} } */
+/* { dg-command {iohandler (get_ios)} } */
+/* { dg-output "\\*b\\*" } *

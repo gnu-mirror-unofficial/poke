@@ -12643,6 +12643,7 @@ memory of some process.
 * flush::			Flushing IO spaces.
 * get_ios::			Getting the current IO space.
 * set_ios::			Setting the current IO space.
+* openset::                     Opening and setting combined.
 * iosize::			Getting the size of an IO space.
 * iohandler::                   Getting the handler string of an IO space.
 * ioflags::                     Getting the flags of an IO space.
@@ -12837,6 +12838,26 @@ space.  If the IO space specified to @code{set_ios} doesn't exist,
 
 Note that @code{set_ios} always returns @code{1}.  This is to ease its
 usage in struct fields constraint expressions.
+
+@node openset
+@subsubsection @code{openset}
+@cindex @code{openset}
+
+Generally when an IO space is opened with @code{open} it won't
+automatically become the current IO space; it will only happens if
+there wasn't an IO space previously open.
+
+The standard function @code{openset} is like @code{open} that always
+sets the opened IO space as the new current space.  It has the
+following prototype:
+
+@example
+fun openset = (string @var{handler}, uint<64> @var{flags} = 0) int<32>
+@end example
+
+@noindent
+Where the meaning of @var{handler}, @var{flags} and the returned value
+are exactly like in @code{open}.
 
 @node iosize
 @subsubsection @code{iosize}
