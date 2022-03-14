@@ -1,3 +1,10 @@
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-exit): Handle *poke-ios*.
+	(poke): Create *poke-ios*.
+	(poke-repl-set-prompt): Fixed to not leave a spurious prompt.
+	(poke-elval-init-pk): Remove trace.
+
 2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poked/poked.pk (__chan_send_chan): Changed to array.
