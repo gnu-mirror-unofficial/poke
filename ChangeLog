@@ -1,5 +1,17 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-repl-default-prompt): Define.
+	(poke-repl-prompt): Make var.
+	(poke-pk): Define poke_el_ios_set and install it in the ios_set
+	hook.
+	(poke-ios-close): Restore default prompt when there are no more
+	open IO spaces.
+	(poke-ios-set): Define.
+	(poke-repl-set-prompt): Define.
+	(poke-vu-erase): Define.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-rt.pk (ios_set_hook): New hook.
 	(_pkl_run_ios_set_hook): New function.
 	* libpoke/pkl-gen-builtins.pks (builtin_open): Call the ios_set
