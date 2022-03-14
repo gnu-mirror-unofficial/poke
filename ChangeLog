@@ -1,3 +1,12 @@
+2022-03-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-ios-overlay): Define.
+	(poke-ios-update-overlay): Likewise.
+	(poke-ios-mode-map): Register keys for poke-ios-cmd-next and
+	poke-ios-cmd-prev.
+	(poke-ios-cmd-next): Define.
+	(poke-ios-cmd-prev): Likewise.
+
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/std.pk (openset): Define.
