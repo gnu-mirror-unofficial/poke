@@ -88,7 +88,7 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
             {
               /* Print until newline or end of string.  Note that we
                  are normalizing tabs to spaces so the error location
-                 wont' appear displaed.  */
+                 wont' appear displaced.  */
               do
                 {
                   if (c == '\t')
@@ -123,9 +123,13 @@ pkl_detailed_location (pkl_ast ast, pkl_ast_loc loc,
           if (cur_line >= loc.first_line
               && cur_line <= loc.last_line)
             {
-              /* Print until newline or end of string.  */
+              /* Print until newline or end of string.  Note that we
+                 are normalizing tabs to spaces so the error location
+                 wont' appear displaced.  */
+              if (*p == '\n')
+                ++p;
               for (;*p != '\0' && *p != '\n'; ++p)
-                pk_printf ("%c", *p);
+                pk_printf ("%c", *p == '\t' ? ' ' : *p);
               break;
             }
         }
