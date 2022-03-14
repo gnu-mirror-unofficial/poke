@@ -1,5 +1,10 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-pk): Convey the IO space size through
+	poke-ios-open.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-repl-default-prompt): Define.
 	(poke-repl-prompt): Make var.
 	(poke-pk): Define poke_el_ios_set and install it in the ios_set
