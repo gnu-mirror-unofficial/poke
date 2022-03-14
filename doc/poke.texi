@@ -12661,6 +12661,7 @@ memory of some process.
 * get_ios::			Getting the current IO space.
 * set_ios::			Setting the current IO space.
 * iosize::			Getting the size of an IO space.
+* iohandler::                   Getting the handler string of an IO space.
 * ioflags::                     Getting the flags of an IO space.
 @end menu
 
@@ -12865,6 +12866,20 @@ fun iosize = (int<32> ios = get_ios) offset<uint<64>,1>
 @end example
 
 If the IO space specified to @code{iosize} doesn't exist,
+@code{E_no_ios} will be raised.
+
+@node iohandler
+@subsubsection @code{iohandler}
+@cindex @code{iohandler}
+
+The @code{iohandler} builtin returns the handler string of some given
+IO space.  It has the following prototype:
+
+@example
+fun iohandler = (int<32> ios = get_ios) string
+@end example
+
+If the IO space specified to @code{iohandler} doesn't exist,
 @code{E_no_ios} will be raised.
 
 @node ioflags

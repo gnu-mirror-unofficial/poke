@@ -1,3 +1,18 @@
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-ast.h (PKL_AST_BUILTIN_IOHANDLER): Define.
+	* libpoke/pkl-rt.pk (iohandler): New function.
+	* libpoke/pkl-tab.y: New token BUILTIN_IOHANDLER.
+	* libpoke/pkl-lex.l: Handle __PKL_BUILTIN_IOHANDLER__.
+	* libpoke/pkl-gen.c (pkl_gen_ps_comp_stmt): Handle
+	PKL_AST_BUILTIN_IOHANDLER.
+	* libpoke/pkl-insn.def: New instruction PKL_INSN_IOHANDLER.
+	* libpoke/pvm.jitter (iohandler): New instruction.
+	* libpoke/pkl-gen-builtins.pks (builtin_iohandler): New macro.
+	* testsuite/poke.pkl/iohandler-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+	* doc/poke.texi (iohandler): New section.
+
 2022-03-14  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pkl-diag.c (pkl_detailed_location): Fix printing

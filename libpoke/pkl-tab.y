@@ -445,7 +445,7 @@ token <integer> UNION    _("keyword `union'")
 %token BUILTIN_VM_OMAPS BUILTIN_VM_SET_OMAPS
 %token BUILTIN_VM_OMODE BUILTIN_VM_SET_OMODE
 %token BUILTIN_VM_OPPRINT BUILTIN_VM_SET_OPPRINT
-%token BUILTIN_UNSAFE_STRING_SET
+%token BUILTIN_UNSAFE_STRING_SET BUILTIN_IOHANDLER
 
 /* Compiler builtins.  */
 
@@ -2168,6 +2168,7 @@ builtin:
         | BUILTIN_OPEN          { $$ = PKL_AST_BUILTIN_OPEN; }
         | BUILTIN_CLOSE         { $$ = PKL_AST_BUILTIN_CLOSE; }
         | BUILTIN_IOSIZE        { $$ = PKL_AST_BUILTIN_IOSIZE; }
+        | BUILTIN_IOHANDLER     { $$ = PKL_AST_BUILTIN_IOHANDLER; }
         | BUILTIN_IOFLAGS       { $$ = PKL_AST_BUILTIN_IOFLAGS; }
         | BUILTIN_IOGETB        { $$ = PKL_AST_BUILTIN_IOGETB; }
         | BUILTIN_IOSETB        { $$ = PKL_AST_BUILTIN_IOSETB; }

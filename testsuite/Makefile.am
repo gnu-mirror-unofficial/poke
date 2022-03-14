@@ -1410,6 +1410,7 @@ EXTRA_DIST = \
   poke.pkl/integers-diag-2.pk \
   poke.pkl/iobias-1.pk \
   poke.pkl/iobias-2.pk \
+  poke.pkl/iohandler-1.pk \
   poke.pkl/iosetbias-1.pk \
   poke.pkl/iosetbias-2.pk \
   poke.pkl/iosetbias-3.pk \

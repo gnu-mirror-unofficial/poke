@@ -113,6 +113,18 @@
         return
         .end
 
+;;; RAS_MACRO_BUILTIN_IOHANDLER
+;;;
+;;; Body of the `iohandler' compiler built-in with prototype
+;;; (int<32> ios = get_ios) string
+
+        .macro builtin_iohandler
+        pushvar 0, 0
+        iohandler
+        nip
+        return
+        .end
+
 ;;; RAS_MACRO_BUILTIN_IOFLAGS
 ;;;
 ;;; Body of the `iosize' compiler built-in with prototype

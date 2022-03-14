@@ -248,6 +248,8 @@ S ::
    if (yyextra->bootstrapped) REJECT; return BUILTIN_CLOSE; }
 "__PKL_BUILTIN_IOSIZE__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_IOSIZE; }
+"__PKL_BUILTIN_IOHANDLER__" {
+   if (yyextra->bootstrapped) REJECT; return BUILTIN_IOHANDLER; }
 "__PKL_BUILTIN_IOFLAGS__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_IOFLAGS; }
 "__PKL_BUILTIN_IOGETB__" {
