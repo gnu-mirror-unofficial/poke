@@ -122,6 +122,7 @@ wrapped-functions
   ios_flags
   ios_flush
   ios_get_id
+  ios_handler
   ios_size
   ios_open
   ios_read_int
