@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+type Exception /* { dg-error "already defined" } */
+     = int;

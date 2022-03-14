@@ -132,14 +132,15 @@ register_decl (int top_level_p,
   /* Check if DECL is already registered in the given hash table.
 
      If we are in the global environment then we allow "redefining" by
-     changing the name of the previous declaration to "".
+     changing the name of the previous declaration to "", provided
+     that previous declaration is _not_ declared as immutable.
 
      Otherwise we don't register DECL, as it is already defined.  */
 
   found_decl = get_registered (hash_table, name);
   if (found_decl != NULL)
     {
-      if (top_level_p)
+      if (top_level_p && !PKL_AST_DECL_IMMUTABLE_P (found_decl))
         {
           pkl_ast_node decl_name = PKL_AST_DECL_NAME (found_decl);
 

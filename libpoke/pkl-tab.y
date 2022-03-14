@@ -429,6 +429,7 @@ token <integer> UNION    _("keyword `union'")
 %token LOAD              _("keyword `load'")
 %token LAMBDA            _("keyword `lambda'")
 %token FORMAT            _("keyword `format'")
+%token IMMUTABLE
 %token BUILTIN_RAND BUILTIN_GET_ENDIAN BUILTIN_SET_ENDIAN
 %token BUILTIN_GET_IOS BUILTIN_SET_IOS BUILTIN_OPEN BUILTIN_CLOSE
 %token BUILTIN_IOSIZE BUILTIN_IOFLAGS BUILTIN_IOGETB BUILTIN_IOSETB
@@ -670,6 +671,11 @@ program_elem_list:
 
 program_elem:
           declaration
+        | IMMUTABLE declaration
+          {
+            PKL_AST_DECL_IMMUTABLE_P ($2) = 1;
+            $$ = $2;
+          }
         | stmt
         | load
         ;

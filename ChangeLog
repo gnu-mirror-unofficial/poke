@@ -1,5 +1,24 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-env.c (_decl): Do not allow re-defining immutable
+	declarations.
+	* libpoke/pkl-rt.pk: Mark declarations as immutable.
+	* libpoke/pkl-tab.y: Allow IMMUTABLE declarations at the
+	top-level.
+	* libpoke/pkl-ast.c (pkl_ast_make_decl): Initialize immutable_p to
+	0.
+	(pkl_ast_print_1): Print immutable_p.
+	* libpoke/pkl-ast.h (PKL_AST_DECL_IMMUTABLE_P): Define.
+	(struct pkl_ast_decl): New field `immutable_p'.
+	* libpoke/pkl-tab.y: New token IMMUTABLE.
+	* libpoke/pkl-lex.l: Handle __IMMUTABLE__.
+	* testsuite/poke.pkl/immutable-func-1.pk: Likewise.
+	* testsuite/poke.pkl/immutable-diag-2.pk: Likewise.
+	* testsuite/poke.pkl/immutable-diag-1.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-exit): Handle *poke-ios*.
 	(poke): Create *poke-ios*.
 	(poke-repl-set-prompt): Fixed to not leave a spurious prompt.

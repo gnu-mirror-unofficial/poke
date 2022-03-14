@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+fun __pkl_unsafe_string_set /* { dg-error "already defined" } */
+  = void: {};

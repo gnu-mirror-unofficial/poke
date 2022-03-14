@@ -232,6 +232,8 @@ S ::
 "assert"        { return ASSERT; }
 "format"        { return FORMAT; }
 "enum"          { return ENUM; }
+"immutable" {
+   if (yyextra->bootstrapped) REJECT; return IMMUTABLE; }
 "__PKL_BUILTIN_RAND__" {
    if (yyextra->bootstrapped) REJECT; return BUILTIN_RAND; }
 "__PKL_BUILTIN_GET_ENDIAN__" {

@@ -1,0 +1,4 @@
+/* { dg-do compile } */
+
+var IOS_F_WRITE /* { dg-error "already defined" } */
+    = 666;

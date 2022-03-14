@@ -1091,7 +1091,10 @@ pkl_ast_node pkl_ast_type_incr_step (pkl_ast ast, pkl_ast_node type);
    whatever.
 
    STRUCT_FIELD_P indicates whether this declaration is for a variable
-   corresponding to a struct field.  */
+   corresponding to a struct field.
+
+   IMMUTABLE_P indicates whether this declaration can be redefined.
+   Used when bootstrapping the compiler.  */
 
 #define PKL_AST_DECL_KIND(AST) ((AST)->decl.kind)
 #define PKL_AST_DECL_NAME(AST) ((AST)->decl.name)
@@ -1101,6 +1104,7 @@ pkl_ast_node pkl_ast_type_incr_step (pkl_ast ast, pkl_ast_node type);
 #define PKL_AST_DECL_SOURCE(AST) ((AST)->decl.source)
 #define PKL_AST_DECL_STRUCT_FIELD_P(AST) ((AST)->decl.struct_field_p)
 #define PKL_AST_DECL_IN_STRUCT_P(AST) ((AST)->decl.in_struct_p)
+#define PKL_AST_DECL_IMMUTABLE_P(AST) ((AST)->decl.immutable_p)
 
 #define PKL_AST_DECL_KIND_ANY 0
 #define PKL_AST_DECL_KIND_VAR 1
@@ -1115,6 +1119,7 @@ struct pkl_ast_decl
   int kind;
   int struct_field_p;
   int in_struct_p;
+  int immutable_p;
   char *source;
   union pkl_ast_node *name;
   union pkl_ast_node *initial;

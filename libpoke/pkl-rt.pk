@@ -18,57 +18,97 @@
 
 /* Compiler built-ins. */
 
-fun rand = (uint<32> seed = 0) int<32>: __PKL_BUILTIN_RAND__;
-fun get_endian = int<32>: __PKL_BUILTIN_GET_ENDIAN__;
-fun set_endian = (int<32> endian) int<32>: __PKL_BUILTIN_SET_ENDIAN__;
-fun get_ios = int<32>: __PKL_BUILTIN_GET_IOS__;
-fun set_ios = (int<32> ios) int<32>: __PKL_BUILTIN_SET_IOS__;
-fun open = (string handler, uint<64> flags = 0) int<32>: __PKL_BUILTIN_OPEN__;
-fun close = (int<32> ios) void: __PKL_BUILTIN_CLOSE__;
-fun iosize = (int<32> ios = get_ios) offset<uint<64>,8>: __PKL_BUILTIN_IOSIZE__;
-fun iohandler = (int<32> ios = get_ios) string: __PKL_BUILTIN_IOHANDLER__;
-fun ioflags = (int<32> ios = get_ios) uint<64>: __PKL_BUILTIN_IOFLAGS__;
-fun iobias = (int<32> ios = get_ios) offset<uint<64>,1>: __PKL_BUILTIN_IOGETB__;
-fun iosetbias = (offset<uint<64>,1> bias = 0#1, int<32> ios = get_ios) void: __PKL_BUILTIN_IOSETB__;
-fun getenv = (string name) string: __PKL_BUILTIN_GETENV__;
-fun flush = (int<32> ios, offset<uint<64>,1> offset) void: __PKL_BUILTIN_FORGET__;
-fun get_time = int<64>[2]: __PKL_BUILTIN_GET_TIME__;
-fun sleep = (int<64> sec, int<64> nsec = 0) void: __PKL_BUILTIN_SLEEP__;
-fun strace = void: __PKL_BUILTIN_STRACE__;
-fun term_get_color = int<32>[3]: __PKL_BUILTIN_TERM_GET_COLOR__;
-fun term_set_color = (int<32>[3] color) void: __PKL_BUILTIN_TERM_SET_COLOR__;
-fun term_get_bgcolor = int<32>[3]: __PKL_BUILTIN_TERM_GET_BGCOLOR__;
-fun term_set_bgcolor = (int<32>[3] color) void: __PKL_BUILTIN_TERM_SET_BGCOLOR__;
-fun term_begin_class = (string class) void: __PKL_BUILTIN_TERM_BEGIN_CLASS__;
-fun term_end_class = (string class) void: __PKL_BUILTIN_TERM_END_CLASS__;
-fun term_begin_hyperlink = (string url, string id = "") void: __PKL_BUILTIN_TERM_BEGIN_HYPERLINK__;
-fun term_end_hyperlink = void: __PKL_BUILTIN_TERM_END_HYPERLINK__;
+immutable fun rand = (uint<32> seed = 0) int<32>:
+  __PKL_BUILTIN_RAND__;
+immutable fun get_endian = int<32>:
+  __PKL_BUILTIN_GET_ENDIAN__;
+immutable fun set_endian = (int<32> endian) int<32>:
+  __PKL_BUILTIN_SET_ENDIAN__;
+immutable fun get_ios = int<32>:
+  __PKL_BUILTIN_GET_IOS__;
+immutable fun set_ios = (int<32> ios) int<32>:
+  __PKL_BUILTIN_SET_IOS__;
+immutable fun open = (string handler, uint<64> flags = 0) int<32>:
+  __PKL_BUILTIN_OPEN__;
+immutable fun close = (int<32> ios) void:
+  __PKL_BUILTIN_CLOSE__;
+immutable fun iosize = (int<32> ios = get_ios) offset<uint<64>,8>:
+  __PKL_BUILTIN_IOSIZE__;
+immutable fun iohandler = (int<32> ios = get_ios) string:
+  __PKL_BUILTIN_IOHANDLER__;
+immutable fun ioflags = (int<32> ios = get_ios) uint<64>:
+  __PKL_BUILTIN_IOFLAGS__;
+immutable fun iobias = (int<32> ios = get_ios) offset<uint<64>,1>:
+  __PKL_BUILTIN_IOGETB__;
+immutable fun iosetbias = (offset<uint<64>,1> bias = 0#1, int<32> ios = get_ios) void:
+  __PKL_BUILTIN_IOSETB__;
+immutable fun getenv = (string name) string:
+  __PKL_BUILTIN_GETENV__;
+immutable fun flush = (int<32> ios, offset<uint<64>,1> offset) void:
+  __PKL_BUILTIN_FORGET__;
+immutable fun get_time = int<64>[2]:
+  __PKL_BUILTIN_GET_TIME__;
+immutable fun sleep = (int<64> sec, int<64> nsec = 0) void:
+  __PKL_BUILTIN_SLEEP__;
+immutable fun strace = void:
+  __PKL_BUILTIN_STRACE__;
+immutable fun term_get_color = int<32>[3]:
+  __PKL_BUILTIN_TERM_GET_COLOR__;
+immutable fun term_set_color = (int<32>[3] color) void:
+  __PKL_BUILTIN_TERM_SET_COLOR__;
+immutable fun term_get_bgcolor = int<32>[3]:
+  __PKL_BUILTIN_TERM_GET_BGCOLOR__;
+immutable fun term_set_bgcolor = (int<32>[3] color) void:
+  __PKL_BUILTIN_TERM_SET_BGCOLOR__;
+immutable fun term_begin_class = (string class) void:
+  __PKL_BUILTIN_TERM_BEGIN_CLASS__;
+immutable fun term_end_class = (string class) void:
+  __PKL_BUILTIN_TERM_END_CLASS__;
+immutable fun term_begin_hyperlink = (string url, string id = "") void:
+  __PKL_BUILTIN_TERM_BEGIN_HYPERLINK__;
+immutable fun term_end_hyperlink = void:
+  __PKL_BUILTIN_TERM_END_HYPERLINK__;
 
-fun vm_obase = int<32>: __PKL_BUILTIN_VM_OBASE__;
-fun vm_set_obase = (int<32> obase) void: __PKL_BUILTIN_VM_SET_OBASE__;
-fun vm_opprint = int<32>: __PKL_BUILTIN_VM_OPPRINT__;
-fun vm_set_opprint = (int<32> pprint_p) void: __PKL_BUILTIN_VM_SET_OPPRINT__;
-fun vm_oacutoff = int<32>: __PKL_BUILTIN_VM_OACUTOFF__;
-fun vm_set_oacutoff = (int<32> oacutoff) void: __PKL_BUILTIN_VM_SET_OACUTOFF__;
-fun vm_odepth = int<32>: __PKL_BUILTIN_VM_ODEPTH__;
-fun vm_set_odepth = (int<32> odepth) void: __PKL_BUILTIN_VM_SET_ODEPTH__;
-fun vm_oindent = int<32>: __PKL_BUILTIN_VM_OINDENT__;
-fun vm_set_oindent = (int<32> oindent) void: __PKL_BUILTIN_VM_SET_OINDENT__;
-fun vm_omaps = int<32>: __PKL_BUILTIN_VM_OMAPS__;
-fun vm_set_omaps = (int<32> omaps) void: __PKL_BUILTIN_VM_SET_OMAPS__;
-fun vm_omode = int<32>: __PKL_BUILTIN_VM_OMODE__;
-fun vm_set_omode = (int<32> omode) void: __PKL_BUILTIN_VM_SET_OMODE__;
+immutable fun vm_obase = int<32>:
+  __PKL_BUILTIN_VM_OBASE__;
+immutable fun vm_set_obase = (int<32> obase) void:
+  __PKL_BUILTIN_VM_SET_OBASE__;
+immutable fun vm_opprint = int<32>:
+  __PKL_BUILTIN_VM_OPPRINT__;
+immutable fun vm_set_opprint = (int<32> pprint_p) void:
+  __PKL_BUILTIN_VM_SET_OPPRINT__;
+immutable fun vm_oacutoff = int<32>:
+  __PKL_BUILTIN_VM_OACUTOFF__;
+immutable fun vm_set_oacutoff = (int<32> oacutoff) void:
+  __PKL_BUILTIN_VM_SET_OACUTOFF__;
+immutable fun vm_odepth = int<32>:
+  __PKL_BUILTIN_VM_ODEPTH__;
+immutable fun vm_set_odepth = (int<32> odepth) void:
+  __PKL_BUILTIN_VM_SET_ODEPTH__;
+immutable fun vm_oindent = int<32>:
+  __PKL_BUILTIN_VM_OINDENT__;
+immutable fun vm_set_oindent = (int<32> oindent) void:
+  __PKL_BUILTIN_VM_SET_OINDENT__;
+immutable fun vm_omaps = int<32>:
+  __PKL_BUILTIN_VM_OMAPS__;
+immutable fun vm_set_omaps = (int<32> omaps) void:
+  __PKL_BUILTIN_VM_SET_OMAPS__;
+immutable fun vm_omode = int<32>:
+  __PKL_BUILTIN_VM_OMODE__;
+immutable fun vm_set_omode = (int<32> omode) void:
+  __PKL_BUILTIN_VM_SET_OMODE__;
 
-fun __pkl_unsafe_string_set = (string dst, uint<64> index, string str) void:
+immutable fun __pkl_unsafe_string_set = (string dst, uint<64> index,
+                                         string str) void:
   __PKL_BUILTIN_UNSAFE_STRING_SET__;
 
-var ENDIAN_LITTLE = 0;
-var ENDIAN_BIG = 1;
+immutable var ENDIAN_LITTLE = 0;
+immutable var ENDIAN_BIG = 1;
 
 /* Please keep the following two variables in sync with enum pvm_omode
    in pvm.h.  */
-var VM_OMODE_PLAIN = 0;
-var VM_OMODE_TREE = 1;
+immutable var VM_OMODE_PLAIN = 0;
+immutable var VM_OMODE_TREE = 1;
 
 /* IOS flags and modes.
 
@@ -79,13 +119,13 @@ var VM_OMODE_TREE = 1;
 
    Please keep these values in sync with the constants in ios.h.  */
 
-var IOS_F_READ   = 1;
-var IOS_F_WRITE  = 2;
-var IOS_F_CREATE = 16;
+immutable var IOS_F_READ   = 1;
+immutable var IOS_F_WRITE  = 2;
+immutable var IOS_F_CREATE = 16;
 
-var IOS_M_RDONLY = IOS_F_READ;
-var IOS_M_WRONLY = IOS_F_WRITE;
-var IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
+immutable var IOS_M_RDONLY = IOS_F_READ;
+immutable var IOS_M_WRONLY = IOS_F_WRITE;
+immutable var IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
 
 /* Exceptions.  */
 
@@ -93,7 +133,7 @@ var IOS_M_RDWR = IOS_F_READ | IOS_F_WRITE;
    update the pvm_make_exception function in pvm-val.c
    accordingly.  */
 
-type Exception =
+immutable type Exception =
   struct
   {
     int<32> code;
@@ -111,71 +151,71 @@ type Exception =
    below).
    Note also that EC_generic _must_ be zero.  */
 
-var EC_generic       = 0;
-var EC_div_by_zero   = 1;
-var EC_no_ios        = 2;
-var EC_no_return     = 3;
-var EC_out_of_bounds = 4;
-var EC_map_bounds    = 5;
-var EC_eof           = 6;
-var EC_map           = 7;
-var EC_conv          = 8;
-var EC_elem          = 9;
-var EC_constraint    = 10;
-var EC_io            = 11;
-var EC_signal        = 12;
-var EC_io_flags      = 13;
-var EC_inval         = 14;
-var EC_exit          = 15;
-var EC_assert        = 16;
-var EC_overflow      = 17;
-var EC_perm          = 18;
+immutable var EC_generic       = 0;
+immutable var EC_div_by_zero   = 1;
+immutable var EC_no_ios        = 2;
+immutable var EC_no_return     = 3;
+immutable var EC_out_of_bounds = 4;
+immutable var EC_map_bounds    = 5;
+immutable var EC_eof           = 6;
+immutable var EC_map           = 7;
+immutable var EC_conv          = 8;
+immutable var EC_elem          = 9;
+immutable var EC_constraint    = 10;
+immutable var EC_io            = 11;
+immutable var EC_signal        = 12;
+immutable var EC_io_flags      = 13;
+immutable var EC_inval         = 14;
+immutable var EC_exit          = 15;
+immutable var EC_assert        = 16;
+immutable var EC_overflow      = 17;
+immutable var EC_perm          = 18;
 
 /* Standard exceptions.  */
 
-var E_generic
+immutable var E_generic
   = Exception {code = EC_generic, name = "generic", exit_status = 1};
-var E_div_by_zero
+immutable var E_div_by_zero
   = Exception {code = EC_div_by_zero, name = "division by zero", exit_status = 1};
-var E_no_ios
+immutable var E_no_ios
   = Exception {code = EC_no_ios, name = "no IOS", exit_status = 1};
-var E_no_return
+immutable var E_no_return
   = Exception {code = EC_no_return, name = "no return", exit_status = 1};
-var E_out_of_bounds
+immutable var E_out_of_bounds
   = Exception {code = EC_out_of_bounds, name = "out of bounds", exit_status = 1};
-var E_map_bounds
+immutable var E_map_bounds
   = Exception {code = EC_map_bounds, name = "out of map bounds", exit_status = 1};
-var E_eof
+immutable var E_eof
   = Exception {code = EC_eof, name = "EOF", exit_status = 0 };
-var E_map
+immutable var E_map
   = Exception {code = EC_map, name = "no map", exit_status = 1};
-var E_conv
+immutable var E_conv
   = Exception {code = EC_conv, name = "conversion error", exit_status = 1};
-var E_elem
+immutable var E_elem
   = Exception {code = EC_elem, name = "invalid element", exit_status = 1};
-var E_constraint
+immutable var E_constraint
   = Exception {code = EC_constraint, name = "constraint violation", exit_status = 1};
-var E_io
+immutable var E_io
   = Exception {code = EC_io, name = "generic IO", exit_status = 1};
-var E_signal
+immutable var E_signal
   = Exception {code = EC_signal, exit_status = 1};
-var E_io_flags
+immutable var E_io_flags
   = Exception {code = EC_io_flags, name = "invalid IO flags", exit_status = 1};
-var E_inval
+immutable var E_inval
   = Exception {code = EC_inval, name = "invalid argument", exit_status = 1};
-var E_exit
+immutable var E_exit
   = Exception {code = EC_exit, name = "exit", exit_status = 0};
-var E_assert
+immutable var E_assert
   = Exception {code = EC_assert, name = "assertion failure", exit_status = 1};
-var E_overflow
+immutable var E_overflow
   = Exception {code = EC_overflow, name = "overflow", exit_status = 1};
-var E_perm
+immutable var E_perm
   = Exception {code = EC_perm, name = "wrong permissions", exit_status = 1};
 
 /* Registration of user-defined exceptions */
 
-type _ExceptionCodeGenerator = () int<32>;
-var exception_code = lambda _ExceptionCodeGenerator:
+immutable type _ExceptionCodeGenerator = () int<32>;
+immutable var exception_code = lambda _ExceptionCodeGenerator:
   {
     var n = 255; /* First available code for user-defined exceptions */
 
@@ -185,7 +225,7 @@ var exception_code = lambda _ExceptionCodeGenerator:
 /* Find the greatest common divisor of two unsigned 64-bit integrals A
    and B using the Euclidean algorithm.  */
 
-fun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
+immutable fun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
   {
    if (b == 0)
      return a;
@@ -196,7 +236,7 @@ fun _pkl_gcd = (uint<64> a, uint<64> b) uint<64>:
 /* Return the prefix to use when printing integral magnitudes of the
    given numerical base.  This may return an empty prefix.  */
 
-fun _pkl_base_prefix = (int<32> base) string:
+immutable fun _pkl_base_prefix = (int<32> base) string:
  {
    if (base == 2)
       return "0b";
@@ -210,7 +250,7 @@ fun _pkl_base_prefix = (int<32> base) string:
 
 /* Concatenate three strings.  */
 
-fun _pkl_strcat3 = (string a, string b, string c) string:
+immutable fun _pkl_strcat3 = (string a, string b, string c) string:
   {
     var la = a'length,
         lab = la + b'length,
@@ -226,7 +266,8 @@ fun _pkl_strcat3 = (string a, string b, string c) string:
 /* Given a DEPTH, indentation step ISTEP and OMODE, returns a string for
    indentation.  */
 
-fun _pkl_indentation = (int<32> depth, int<32> istep, int<32> omode) string:
+immutable fun _pkl_indentation = (int<32> depth, int<32> istep,
+                                  int<32> omode) string:
   {
     if (omode != VM_OMODE_TREE)
       return "";
@@ -240,7 +281,8 @@ fun _pkl_indentation = (int<32> depth, int<32> istep, int<32> omode) string:
 /* Return the suffix corresponding to the integral type with signedness
    SIGNED_P and size SIZE.  */
 
-fun _pkl_format_int_suffix = (int<32> signed_p, uint<64> size) string:
+immutable fun _pkl_format_int_suffix = (int<32> signed_p,
+                                        uint<64> size) string:
   {
     return (signed_p ? "" : "U") +
            (size == 4 ? "N" :
@@ -252,8 +294,8 @@ fun _pkl_format_int_suffix = (int<32> signed_p, uint<64> size) string:
 /* Reduces an array of string to a single string by concatenting the
    NELEM elements of ARR starting from specified INDEX.  */
 
-fun _pkl_reduce_string_array = (string[] arr,
-                                uint<64> index, uint<64> nelem) string:
+immutable fun _pkl_reduce_string_array = (string[] arr,
+                                          uint<64> index, uint<64> nelem) string:
   {
     var slen = 0UL,
         first = index,
@@ -279,7 +321,7 @@ fun _pkl_reduce_string_array = (string[] arr,
 /* Return a new string in which all the non-printable characters are replaced
    with a escape sequence (\xXX).  */
 
-fun _pkl_escape_string = (string str) string:
+immutable fun _pkl_escape_string = (string str) string:
   {
     var chars = "0123456789abcdef",
         len = str'length,
@@ -340,25 +382,25 @@ fun _pkl_escape_string = (string str) string:
    This should go away once we have a run-time mechanism to store and
    access unit types.  */
 
-var _pkl_unit_bit =    1UL;
-var _pkl_unit_nibble = 4UL;
-var _pkl_unit_byte =   8UL;
+immutable var _pkl_unit_bit =    1UL;
+immutable var _pkl_unit_nibble = 4UL;
+immutable var _pkl_unit_byte =   8UL;
 
-var _pkl_unit_kilobit = _pkl_unit_bit * 1000;
-var _pkl_unit_kilobyte = _pkl_unit_byte * 1000;
-var _pkl_unit_megabit = _pkl_unit_kilobit * 1000;
-var _pkl_unit_megabyte = _pkl_unit_kilobyte * 1000;
-var _pkl_unit_gigabit = _pkl_unit_megabit * 1000;
-var _pkl_unit_gigabyte = _pkl_unit_megabyte * 1000;
+immutable var _pkl_unit_kilobit = _pkl_unit_bit * 1000;
+immutable var _pkl_unit_kilobyte = _pkl_unit_byte * 1000;
+immutable var _pkl_unit_megabit = _pkl_unit_kilobit * 1000;
+immutable var _pkl_unit_megabyte = _pkl_unit_kilobyte * 1000;
+immutable var _pkl_unit_gigabit = _pkl_unit_megabit * 1000;
+immutable var _pkl_unit_gigabyte = _pkl_unit_megabyte * 1000;
 
-var _pkl_unit_kibibit = _pkl_unit_bit * 1024;
-var _pkl_unit_kibibyte = _pkl_unit_byte * 1024;
-var _pkl_unit_mebibit = _pkl_unit_kibibit * 1024;
-var _pkl_unit_mebibyte = _pkl_unit_kibibyte * 1024;
-var _pkl_unit_gibibit = _pkl_unit_mebibit * 1024;
-var _pkl_unit_gibibyte = _pkl_unit_mebibyte * 1024;
+immutable var _pkl_unit_kibibit = _pkl_unit_bit * 1024;
+immutable var _pkl_unit_kibibyte = _pkl_unit_byte * 1024;
+immutable var _pkl_unit_mebibit = _pkl_unit_kibibit * 1024;
+immutable var _pkl_unit_mebibyte = _pkl_unit_kibibyte * 1024;
+immutable var _pkl_unit_gibibit = _pkl_unit_mebibit * 1024;
+immutable var _pkl_unit_gibibyte = _pkl_unit_mebibyte * 1024;
 
-fun _pkl_unit_name = (uint<64> bits) string:
+immutable fun _pkl_unit_name = (uint<64> bits) string:
  {
     if (bits == _pkl_unit_bit)
        return "b";
@@ -402,8 +444,8 @@ fun _pkl_unit_name = (uint<64> bits) string:
    file.  LINE and COL are, respectively, line and column number
    of the assert statement in the source file.  */
 
-fun _pkl_assert = (uint<64> cond, string msg, string filename,
-                   uint<64> line, uint<64> col) void:
+immutable fun _pkl_assert = (uint<64> cond, string msg, string filename,
+                             uint<64> line, uint<64> col) void:
   {
     if (cond)
       return;
@@ -431,16 +473,16 @@ fun _pkl_assert = (uint<64> cond, string msg, string filename,
       is ok.
 */
 
-var PK_TYPE_UNKNOWN =  0;
-var PK_TYPE_INTEGRAL = 1;
-var PK_TYPE_OFFSET   = 2;
-var PK_TYPE_STRING   = 3;
-var PK_TYPE_ARRAY    = 4;
-var PK_TYPE_STRUCT   = 5;
-var PK_TYPE_FUNCTION = 6;
-var PK_TYPE_ANY      = 7;
+immutable var PK_TYPE_UNKNOWN =  0;
+immutable var PK_TYPE_INTEGRAL = 1;
+immutable var PK_TYPE_OFFSET   = 2;
+immutable var PK_TYPE_STRING   = 3;
+immutable var PK_TYPE_ARRAY    = 4;
+immutable var PK_TYPE_STRUCT   = 5;
+immutable var PK_TYPE_FUNCTION = 6;
+immutable var PK_TYPE_ANY      = 7;
 
-type Pk_Type =
+immutable type Pk_Type =
   struct
   {
     uint<32> code;
@@ -490,32 +532,32 @@ type Pk_Type =
    different io* built-ins can be then used by the handlers in order
    to fetch additional properties of the IO space.  */
 
-type IOS_Hook_Fn = (int<32>)void;
+immutable type IOS_Hook_Fn = (int<32>)void;
 
-var ios_open_hook = IOS_Hook_Fn[]();
-var ios_close_pre_hook = IOS_Hook_Fn[]();
-var ios_close_hook = IOS_Hook_Fn[]();
-var ios_set_hook = IOS_Hook_Fn[]();
+immutable var ios_open_hook = IOS_Hook_Fn[]();
+immutable var ios_close_pre_hook = IOS_Hook_Fn[]();
+immutable var ios_close_hook = IOS_Hook_Fn[]();
+immutable var ios_set_hook = IOS_Hook_Fn[]();
 
-fun _pkl_run_ios_open_hook = (int<32> ios) void:
+immutable fun _pkl_run_ios_open_hook = (int<32> ios) void:
 {
   for (f in ios_open_hook)
     f (ios);
 }
 
-fun _pkl_run_ios_close_pre_hook = (int<32> ios) void:
+immutable fun _pkl_run_ios_close_pre_hook = (int<32> ios) void:
 {
   for (f in ios_close_pre_hook)
     f (ios);
 }
 
-fun _pkl_run_ios_close_hook = (int<32> ios) void:
+immutable fun _pkl_run_ios_close_hook = (int<32> ios) void:
 {
   for (f in ios_close_hook)
     f (ios);
 }
 
-fun _pkl_run_ios_set_hook = (int<32> ios) void:
+immutable fun _pkl_run_ios_set_hook = (int<32> ios) void:
 {
   for (f in ios_set_hook)
     f (ios);
@@ -523,7 +565,7 @@ fun _pkl_run_ios_set_hook = (int<32> ios) void:
 
 /**** Set the default load path ****/
 
-var load_path = "";
+immutable var load_path = "";
 
 /* First, add the system-wide locations.  */
 
