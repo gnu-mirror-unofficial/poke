@@ -1,5 +1,12 @@
 2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (tabulated-list): Require tabulated-list.
+	(poke-ios-mode): Define.
+	(poke-ios-populate): Likewise.
+	(poke-ios): Likewise.
+
+2022-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-ios-list): New variable.
 	(poke-pk): Define poke_el_ios_open and poke_el_ios_close.
 	(poke-ios-alist): Define.
