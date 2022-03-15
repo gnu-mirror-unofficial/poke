@@ -1,5 +1,9 @@
 2022-03-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poked/pk-dump-minimal.pk: Print in larger chunks.
+
+2022-03-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-make-pokelet-process-new): Get unibyte input
 	in the pokelet processes.
 

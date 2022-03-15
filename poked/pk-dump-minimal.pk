@@ -108,10 +108,11 @@ fun dump = (int<32> ios = get_ios,
     print "\n";
   }
 
-  fun print_ascii = (off64 offset, off64 top, off64 step,
-                     off64 group_by, int cluster_by) void:
+  fun format_ascii = (off64 offset, off64 top, off64 step,
+                      off64 group_by, int cluster_by) string:
   {
-    print("  ");
+    var s = "  ";
+
     var o = 0#B;
     while (o < step && offset + o < top)
       {
@@ -120,29 +121,33 @@ fun dump = (int<32> ios = get_ios,
           var v = byte @ ios : (offset + o);
 
           if (v < ' ' || v > '~')
-            printf "%c", pk_dump_nonprintable_char;
+            s += format ("%c", pk_dump_nonprintable_char);
           else
-            printf "%c", v;
+            s += format ("%c", v);
         }
         catch if E_io
         {
-            printf "%c", pk_dump_nonprintable_char;
+            s += format ("%c", pk_dump_nonprintable_char);
         }
         o++;
 	if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
-	   printf (" ");
+	   s += " ";
       }
+
+    return s;
   }
 
-  fun print_data = (off64 offset, off64 top, off64 step,
-                    off64 group_by , int cluster_by) void:
+  fun format_data = (off64 offset, off64 top, off64 step,
+                     off64 group_by , int cluster_by) string:
   {
+    var s = "";
+
     for (; offset < top; offset += step)
       {
         if (offset > 0xffff_ffff#B)
-          printf ("%u64x:", offset / #B);
+          s += format ("%u64x:", offset / #B);
         else
-          printf ("%u32x:", offset / #B);
+          s += format ("%u32x:", offset / #B);
 
 	var o = 0#B;
 	try
@@ -153,19 +158,19 @@ fun dump = (int<32> ios = get_ios,
               {
                 var b = byte @ ios : (offset + o);
                 if (o % group_by == 0#B)
-                     print " ";
-                printf ("%u8x", b);
+                     s += " ";
+                s += format ("%u8x", b);
              }
               catch if E_io
               {
                 if (o % group_by == 0#B)
-                     print " ";
-                print (pk_dump_unknown_byte);
+                     s += " ";
+                s += pk_dump_unknown_byte;
               }
 
               o++;
 	      if (o < 16#B && (o % (cluster_by * group_by)) == 0#B)
-		printf (" ");
+		s += " ";
 	    }
 	}
 	catch if E_eof {}
@@ -174,14 +179,16 @@ fun dump = (int<32> ios = get_ios,
 	    while (o < step)
 	      {
 		if (o % group_by == 0#B)
-		  print " ";
-		print ("  ");
+		  s += " ";
+		s += "  ";
                 o++;
 	      }
-	    print_ascii (offset, top, step, group_by, cluster_by);
+	    s += format_ascii (offset, top, step, group_by, cluster_by);
 	  }
-	print "\n";
+	s += "\n";
       }
+
+    return s;
   }
 
   /* First of all, we require a readable IO space.  */
@@ -197,8 +204,8 @@ fun dump = (int<32> ios = get_ios,
   if (ruler)
     print_ruler (offset);
 
-  try print_data :offset offset :top top :step 16#B
-                 :group_by group_by :cluster_by cluster_by;
+  try print (format_data :offset offset :top top :step 16#B
+                         :group_by group_by :cluster_by cluster_by);
   catch if E_eof { print "\n"; }
 
   pk_dump_set_offset (ios, from);
