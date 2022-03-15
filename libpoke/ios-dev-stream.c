@@ -189,8 +189,8 @@ ios_dev_stream_pread (void *iod, void *buf, size_t count, ios_dev_off offset)
   do
     {
       read_count = fread (buf + total_read_count,
-                          count - total_read_count,
                           1,
+                          count - total_read_count,
                           sio->file);
       total_read_count += read_count;
     }
