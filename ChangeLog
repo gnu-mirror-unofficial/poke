@@ -1,5 +1,16 @@
 2022-03-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poked/pk-dump-minimal.pk: Minimize pokelet commands when dumping
+	bytes.
+
+2022-03-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el: Update version to 2.1.
+	(poke-repl-cmd-goto-ios): Define.
+	(poke-repl-mode-map): Likewise.
+
+2022-03-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-ios-overlay): Define.
 	(poke-ios-update-overlay): Likewise.
 	(poke-ios-mode-map): Register keys for poke-ios-cmd-next and
