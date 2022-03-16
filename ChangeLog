@@ -1,5 +1,16 @@
 2022-03-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-vu-cmd-prev-line): Renamed to feature cmd in
+	the name.
+	(poke-vu-cmd-page-down): Likewise.
+	(poke-vu-cmd-page-up): Likewise.
+	(poke-vu-cmd-goto-byte): Likewise.
+	(poke-vu-mode): Adjust accordingly.
+	(poke-vu-goto-byte): New function.
+	(poke-vu-cmd-goto-byte): Use poke-vu-goto-byte.
+
+2022-03-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-vu-refresh): Ask for the right number of
 	lines, taking the header and modeline into account.
 	(poke-repl): Do not show banner if repl is already alive.
