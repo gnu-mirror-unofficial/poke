@@ -54,12 +54,6 @@ poke/pk-cmd-set.c
 poke/pk-cmd-vm.c
 poke/pk-hserver.c
 poke/pk-hserver.h
-poke/pk-mi.c
-poke/pk-mi.h
-poke/pk-mi-json.c
-poke/pk-mi-json.h
-poke/pk-mi-msg.c
-poke/pk-mi-msg.h
 poke/pk-repl.c
 poke/pk-repl.h
 poke/pk-term.c
