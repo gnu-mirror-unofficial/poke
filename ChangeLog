@@ -1,5 +1,13 @@
 2022-03-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-maps): Define.
+	(poke-exit): Handle *poke-maps*.
+	(poke-repl-mode-map): Adds keybind for poke-maps.
+	(poke-maps-mode): Define.
+	(poke-maps-mode-map): Likewise.
+
+2022-03-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-setting-pretty-print): New variable.
 	(poke-setting-omode): Likewise.
 	(poke-settings-create-widgets): New function.
