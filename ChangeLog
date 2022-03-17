@@ -1,3 +1,11 @@
+2022-03-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-setting-pretty-print): New variable.
+	(poke-setting-omode): Likewise.
+	(poke-settings-create-widgets): New function.
+	(poke-settings): Likewise.
+	(poke-exit): Kill buffer *poke-settings*.
+
 2022-03-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* emacs/poke.el (poke-vu-cmd-prev-line): Renamed to feature cmd in
