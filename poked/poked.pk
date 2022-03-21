@@ -39,25 +39,25 @@ fun __poked_run_after_eval_hooks = void:
 
 //--- send over channels
 
-var __chan_send_p = 0;
-var __chan_send_chan = uint<7>[] ();
-var __chan_send_buf = byte[][] ();
+var __poked_chan_send_p = 0;
+var __poked_chan_send_chan = uint<7>[] ();
+var __poked_chan_send_buf = byte[][] ();
 
-fun __chan_send_reset = void:
+fun __poked_chan_send_reset = void:
   {
-    __chan_send_p = 0;
-    __chan_send_chan = uint<7>[] ();
-    __chan_send_buf = byte[][] ();
+    __poked_chan_send_p = 0;
+    __poked_chan_send_chan = uint<7>[] ();
+    __poked_chan_send_buf = byte[][] ();
   }
 
-fun chan_send = (uint<7> chan, byte[] data) void:
+fun poked_chan_send = (uint<7> chan, byte[] data) void:
   {
     assert (0 < data'length && data'length <= 0xffff);
     assert (0 < chan && chan <= 120);
 
-    apush (__chan_send_chan, chan);
-    apush (__chan_send_buf, data);
-    __chan_send_p = 1;
+    apush (__poked_chan_send_chan, chan);
+    apush (__poked_chan_send_buf, data);
+    __poked_chan_send_p = 1;
   }
 
 //--- default exception handler
@@ -67,7 +67,7 @@ fun __err_send = (string s) void:
     var c = byte[s'length] ();
 
     stoca (s, c);
-    chan_send (/*USOCK_CHAN_OUT_OUT*/ 1, [/*OUTCMD_ERR*/ 7UB] + c);
+    poked_chan_send (/*USOCK_CHAN_OUT_OUT*/ 1, [/*OUTCMD_ERR*/ 7UB] + c);
   }
 
 fun poked_ehandler = (Exception exception) void:
@@ -260,7 +260,7 @@ fun vu_highlight = (offset<long,N> from = dot,
     var payload = byte[payload_str'length + 1] ();
 
     stoca (payload_str, payload);
-    chan_send (2, [3UB] + payload);
+    poked_chan_send (2, [3UB] + payload);
   }
 
 //--- treevu
@@ -320,7 +320,7 @@ fun treevu_sct = (any v, Pk_Type typeinfo) void:
           fsizes = fsizes,
         };
         T @ fd : 0#B = d;
-        chan_send (4, byte[d'size] @ fd : 0#B);
+        poked_chan_send (4, byte[d'size] @ fd : 0#B);
       }
     catch
       {
@@ -387,7 +387,7 @@ fun disasm = (string arch, offset<uint64,B> adr, byte[] code) void:
     var d = __Disasm{ arch = arch , adr = adr, code = code };
 
     __Disasm @ fd : 0#B = d;
-    chan_send (3, byte[d'size] @ fd : 0#B);
+    poked_chan_send (3, byte[d'size] @ fd : 0#B);
     close (fd);
   }
 

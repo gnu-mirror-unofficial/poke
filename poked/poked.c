@@ -109,8 +109,8 @@ poked_buf_send_one (pk_val arr, pk_val pchan)
 static void
 poked_buf_send (void)
 {
-  pk_val buffers = pk_decl_val (pkc, "__chan_send_buf");
-  pk_val chans = pk_decl_val (pkc, "__chan_send_chan");
+  pk_val buffers = pk_decl_val (pkc, "__poked_chan_send_buf");
+  pk_val chans = pk_decl_val (pkc, "__poked_chan_send_chan");
   uint64_t buffers_nelem = pk_uint_value (pk_array_nelem (buffers));
   uint64_t chans_nelem = pk_uint_value (pk_array_nelem (chans));
   pk_val exc;
@@ -119,7 +119,8 @@ poked_buf_send (void)
   for (uint64_t i = 0; i < buffers_nelem; ++i)
     poked_buf_send_one (pk_array_elem_value (buffers, i),
                         pk_array_elem_value (chans, i));
-  (void)pk_call (pkc, pk_decl_val (pkc, "__chan_send_reset"), NULL, &exc, 0);
+  (void)pk_call (pkc, pk_decl_val (pkc, "__poked_chan_send_reset"),
+                 NULL, &exc, 0);
 }
 
 #define poked_buf_send_one private_
@@ -355,7 +356,7 @@ poked_restart:
               termout_restore ();
               usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FINISH, "", 1);
             }
-          if (pk_int_value (pk_decl_val (pkc, "__chan_send_p")))
+          if (pk_int_value (pk_decl_val (pkc, "__poked_chan_send_p")))
             poked_buf_send ();
 
         eol:
