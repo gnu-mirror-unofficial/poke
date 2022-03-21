@@ -1,3 +1,8 @@
+2022-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-repl-input-sender): Avoid race condition in
+	repl handling.
+
 2022-03-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* emacs/poke.el (poke-edit-1): Use tree-mode when formatting
