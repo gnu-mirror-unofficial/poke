@@ -1,5 +1,11 @@
 2022-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* poke-el/poke-el.texi: New file.
+	* poke-el/COPYING: Likewise.
+	* poke-el/README: Likewise.
+
+2022-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-ios-populate): Reverse list of IOS before
 	printing.
 
