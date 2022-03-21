@@ -1,5 +1,10 @@
 2022-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-ios-populate): Reverse list of IOS before
+	printing.
+
+2022-03-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-repl-input-sender): Avoid race condition in
 	repl handling.
 
