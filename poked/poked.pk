@@ -189,14 +189,14 @@ fun __vu_dump = void:
          :ruler 0
          ;
   }
-fun vu = (string filt = __vu_filter,
-          string[] filts = string[] (),
-          int<32> ios = get_ios,
-          offset<long,B> from = pk_dump_get_offset (ios),
-          offset<long,B> size = pk_dump_size,
-          offset<long,B> group_by = pk_dump_group_by,
-          int cluster_by = pk_dump_cluster_by,
-          int ascii = pk_dump_ascii) void:
+fun plet_vu = (string filt = __vu_filter,
+               string[] filts = string[] (),
+               int<32> ios = get_ios,
+               offset<long,B> from = pk_dump_get_offset (ios),
+               offset<long,B> size = pk_dump_size,
+               offset<long,B> group_by = pk_dump_group_by,
+               int cluster_by = pk_dump_cluster_by,
+               int ascii = pk_dump_ascii) void:
   {
     __vu_args = __vu_Args {
         ios = ios, from = from, size = size, group_by = group_by,
@@ -221,8 +221,8 @@ fun vu = (string filt = __vu_filter,
       }
     __vu_do_p = 1;
   }
-fun vu_highlight = (offset<long,N> from = dot,
-                    offset<long,N> size = dot2 - dot) void:
+fun plet_vu_highlight = (offset<long,N> from = dot,
+                         offset<long,N> size = dot2 - dot) void:
   {
     var f = from'magnitude;
     var l = (from + size)'magnitude;
@@ -266,7 +266,7 @@ fun vu_highlight = (offset<long,N> from = dot,
 //--- treevu
 
 // TODO treevu{,_arr}
-fun treevu_sct = (any v, Pk_Type typeinfo) void:
+fun plet_treevu_sct = (any v, Pk_Type typeinfo) void:
   {
     var ti = typeinfo;
 
@@ -337,7 +337,7 @@ fun __treevu_fname = string:
     return format ("/tmp/.treevu_%i32d", __treevu_i++);
   }
 
-fun treevu = (string varname) void:
+fun plet_treevu = (string varname) void:
   {
     type DeferFunc = () void;
     var defers = DeferFunc[] ();
@@ -381,7 +381,7 @@ type __Disasm = struct
     byte[] code;
   };
 
-fun disasm = (string arch, offset<uint64,B> adr, byte[] code) void:
+fun plet_disasm = (string arch, offset<uint64,B> adr, byte[] code) void:
   {
     var fd = open("*__poked_disasm*");
     var d = __Disasm{ arch = arch , adr = adr, code = code };

@@ -1,5 +1,13 @@
 2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.pk (vu): Add prefix `plet_`.
+	(vu_highlight): Likewise.
+	(treevu_sct): Likewise.
+	(treevu): Likewise.
+	(disasm): Likewise.
+
+2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.pk (__chan_send_p): Add `poked` prefix.
 	(__chan_send_chan): Likewise.
 	(__chan_send_buf): Likewise.
