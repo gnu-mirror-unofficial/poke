@@ -317,7 +317,7 @@ poked_restart:
                       }
                     (void)pk_call (
                         pkc,
-                        pk_decl_val (pkc, "__poked_run_after_eval_hooks"),
+                        pk_decl_val (pkc, "__poked_run_after_cmd_hooks"),
                         NULL, &exc, 0);
                     if (exc != PK_NULL)
                       (void)pk_call (pkc,

@@ -1,5 +1,10 @@
 2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.pk (poked_after_eval_hook): Rename to
+	`poked_after_cmd_hook`.
+
+2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.pk (vu): Add prefix `plet_`.
 	(vu_highlight): Likewise.
 	(treevu_sct): Likewise.

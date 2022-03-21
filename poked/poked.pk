@@ -29,11 +29,11 @@ fun poked_exit = void: { __poked_exit_p = 1; exit; }
 fun poked_defer = void: {}
 
 type Poked_Hook = () void;
-var poked_after_eval_hook = Poked_Hook[] ();
+var poked_after_cmd_hook = Poked_Hook[] ();
 
-fun __poked_run_after_eval_hooks = void:
+fun __poked_run_after_cmd_hooks = void:
   {
-    for (h in poked_after_eval_hook)
+    for (h in poked_after_cmd_hook)
       h;
   }
 
