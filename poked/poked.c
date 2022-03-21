@@ -313,16 +313,15 @@ poked_restart:
                         termout_eval ();
                         pk_print_val (pkc, val, &exc);
                         termout_restore ();
-
-                        (void)pk_call (
-                            pkc,
-                            pk_decl_val (pkc, "__poked_run_after_eval_hooks"),
-                            NULL, &exc, 0);
-                        if (exc != PK_NULL)
-                          (void)pk_call (pkc,
-                                         pk_decl_val (pkc, "poked_ehandler"),
-                                         NULL, NULL, 1, exc);
                       }
+                    (void)pk_call (
+                        pkc,
+                        pk_decl_val (pkc, "__poked_run_after_eval_hooks"),
+                        NULL, &exc, 0);
+                    if (exc != PK_NULL)
+                      (void)pk_call (pkc,
+                                     pk_decl_val (pkc, "poked_ehandler"),
+                                     NULL, NULL, 1, exc);
                   }
               }
               break;
