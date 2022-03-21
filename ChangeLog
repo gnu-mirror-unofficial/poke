@@ -1,3 +1,11 @@
+2022-03-21  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* poked/poked.pk (Poked_Hook): New type.
+	(poked_after_eval_hook): New variable for saving hooks.
+	(__poked_run_after_eval_hooks): New function.
+	* poked/poked.c (main): Call `__poked_run_after_eval_hooks` after
+	compiling statement.
+
 2022-03-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke-el/poke-el.texi: New file.

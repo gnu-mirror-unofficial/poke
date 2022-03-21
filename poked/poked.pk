@@ -28,6 +28,15 @@ fun poked_restart = void: { __poked_restart_p = 1; exit; }
 fun poked_exit = void: { __poked_exit_p = 1; exit; }
 fun poked_defer = void: {}
 
+type Poked_Hook = () void;
+var poked_after_eval_hook = Poked_Hook[] ();
+
+fun __poked_run_after_eval_hooks = void:
+  {
+    for (h in poked_after_eval_hook)
+      h;
+  }
+
 //--- send over channels
 
 var __chan_send_p = 0;
