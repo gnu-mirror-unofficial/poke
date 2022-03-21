@@ -702,14 +702,6 @@ poked_init (void)
     errx (1, "unable to declare poked_libpoke_version variable");
 
   return OK;
-
-error:
-  if (pkc)
-    {
-      pk_compiler_free (pkc);
-      pkc = NULL;
-    }
-  return NOK;
 }
 
 static void

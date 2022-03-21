@@ -1,5 +1,9 @@
 2022-03-21  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.c (poked_init): Remove dead code.
+
+2022-03-21  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/poked.pk (Poked_Hook): New type.
 	(poked_after_eval_hook): New variable for saving hooks.
 	(__poked_run_after_eval_hooks): New function.
