@@ -1,3 +1,11 @@
+2022-03-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-complete-process): Define.
+	(poke-complete): Likewise.
+	(poke-complete-handle-cmd): Likewise.
+	(poke-repl): Depends on poke-complete.
+	(poke-exit): Take care of *poke-complete*.
+
 2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poked/poked.pk (plet_autocomplete): New function.
