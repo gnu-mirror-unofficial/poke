@@ -26,10 +26,12 @@
 // (Channel is a 7-bit unsigned number)
 #define USOCK_CHAN_IN_CODE 0x01
 #define USOCK_CHAN_IN_CMD 0x02
+#define USOCK_CHAN_IN_AUTOCMPL 0x03
 #define USOCK_CHAN_OUT_OUT 0x01
 #define USOCK_CHAN_OUT_VU 0x02
 #define USOCK_CHAN_OUT_DISASM 0x03
 #define USOCK_CHAN_OUT_TREEVU 0x04
+#define USOCK_CHAN_OUT_AUTOCMPL 0x05
 
 struct usock;
 

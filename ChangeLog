@@ -1,5 +1,20 @@
 2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/usock.h (USOCK_CHAN_IN_AUTOCMPL): New macro.
+	(USOCK_CHAN_OUT_AUTOCMPL): Likewise.
+	* poked/poked.c (AUTOCMPL_IDENT): New macro.
+	(AUTOCMPL_IOS): Likewise.
+	(struct bufb): New struct for byte buffer.
+	(bufb_init): New function.
+	(bufb_realloc): Likewise.
+	(bufb_append): Likewise.
+	(bufb_free): Likewise.
+	(poked_compile): New function. Move all compilation logic to this
+	function.
+	(main): Add auto-completion channel.
+
+2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* libpoke/libpoke.c (struct _pk_compiler): Add auto completion
 	machinery data.
 	(pk_compiler_new_with_flags): s/malloc/calloc/.

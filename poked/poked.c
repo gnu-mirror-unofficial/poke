@@ -54,6 +54,9 @@ static void poked_free (void);
 #define VUCMD_FILTER 4
 #define VUCMD_FINISH 5
 
+#define AUTOCMPL_IDENT 1
+#define AUTOCMPL_IOS 2
+
 static uint8_t termout_chan = USOCK_CHAN_OUT_OUT;
 static uint32_t termout_cmdkind = OUTCMD_TXT;
 
@@ -152,6 +155,148 @@ iteration_end (struct usock *srv, uint64_t n_iteration)
 
 #define iteration_send private_
 
+//--- byte buffer
+
+struct bufb
+{
+  unsigned char *mem;
+  unsigned char *end;
+  unsigned char *cur;
+};
+
+static int
+bufb_init (struct bufb *b, unsigned char *mem, size_t nelem)
+{
+  if (mem == NULL)
+    return NOK;
+  b->mem = mem;
+  b->end = mem + nelem;
+  b->cur = mem;
+  return OK;
+}
+
+static int
+bufb_realloc (struct bufb *b, size_t nelem)
+{
+  unsigned char *p
+      = (unsigned char *)realloc (b->mem, nelem * sizeof (unsigned char));
+
+  if (p == NULL)
+    return NOK;
+  b->cur = p + (b->cur - b->mem);
+  b->mem = p;
+  b->end = p + nelem;
+  return OK;
+}
+
+static int
+bufb_append (struct bufb *b, void *data, size_t len)
+{
+  size_t brem = b->end - b->cur;
+
+  if (brem < len)
+    {
+      size_t blen = b->cur - b->mem;
+      size_t cap = blen + len + 64;
+
+      if (bufb_realloc (b, cap) != OK)
+        return NOK;
+    }
+  memcpy (b->cur, data, len);
+  b->cur += len;
+  return OK;
+}
+
+static void
+bufb_free (struct bufb *b)
+{
+  if (b && b->mem)
+    {
+      free (b->mem);
+      memset (b, 0, sizeof (*b));
+    }
+}
+
+//---
+
+static int
+poked_compile (const char *src, uint8_t chan, int *poked_restart_p,
+               int *done_p)
+{
+  int ok = 0;
+  pk_val exc;
+
+  switch (chan)
+    {
+    case USOCK_CHAN_IN_CODE:
+      {
+        if (pk_compile_buffer (pkc, src, NULL, &exc) == PK_OK)
+          {
+            if (exc != PK_NULL)
+              (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"), NULL,
+                             NULL, 1, exc);
+            else
+              ok = 1;
+          }
+      }
+      break;
+    case USOCK_CHAN_IN_CMD:
+      {
+        pk_val val;
+
+        if (pk_compile_statement (pkc, src, NULL, &val, &exc) == PK_OK)
+          {
+            if (exc != PK_NULL)
+              (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"), NULL,
+                             NULL, 1, exc);
+            else if (val != PK_NULL)
+              {
+                ok = 1;
+                termout_eval ();
+                pk_print_val (pkc, val, &exc);
+                termout_restore ();
+              }
+            (void)pk_call (pkc,
+                           pk_decl_val (pkc, "__poked_run_after_cmd_hooks"),
+                           NULL, &exc, 0);
+            if (exc != PK_NULL)
+              (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"), NULL,
+                             NULL, 1, exc);
+          }
+      }
+      break;
+    default:
+      assert (0 && "impossible");
+    }
+  if (pk_int_value (pk_decl_val (pkc, "__poked_restart_p")))
+    {
+      *poked_restart_p = 1;
+      return ok;
+    }
+  if (pk_int_value (pk_decl_val (pkc, "__poked_exit_p")))
+    {
+      *done_p = 1;
+      return ok;
+    }
+  if (pk_int_value (pk_decl_val (pkc, "__vu_do_p")))
+    {
+      const char *filt = pk_string_str (pk_decl_val (pkc, "__vu_filter"));
+
+      usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FILTER, filt,
+                 strlen (filt) + 1);
+      usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_CLEAR, "", 1);
+      termout_vu_append ();
+      (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, &exc, 0);
+      assert (exc == PK_NULL);
+      termout_restore ();
+      usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FINISH, "", 1);
+    }
+  if (pk_int_value (pk_decl_val (pkc, "__poked_chan_send_p")))
+    poked_buf_send ();
+
+  return ok;
+}
+
 //--- command line options
 
 static void
@@ -240,9 +385,8 @@ main (int argc, char *argv[])
 
   pthread_t th;
   pthread_attr_t thattr;
-  struct usock_buf *inbuf;
   void *ret;
-  int done_p = 0;
+  int poked_restart_p;
   uint64_t n_iteration;
 
   poked_options_init (argc, argv);
@@ -259,112 +403,123 @@ main (int argc, char *argv[])
   printf ("socket_path %s\n\n", poked_options.socket_path);
 
 poked_restart:
+  poked_restart_p = 0;
   n_iteration = 0;
   poked_init ();
-  while (!done_p)
+  while (1)
     {
-      char *src;
-      size_t srclen;
-      int ok;
-      pk_val exc;
+      struct usock_buf *inbuf;
 
       inbuf = usock_in (srv);
       for (; inbuf; inbuf = usock_buf_free (inbuf))
         {
-          src = (char *)usock_buf_data (inbuf, &srclen);
-          if (srclen == 0)
-            {
-              printf ("srclen == 0\n");
-              continue;
-            }
+          int done_p = 0;
+          uint8_t chan = usock_buf_tag (inbuf) & 0x7f;
 
-          if (poked_options.debug_p)
-            printf ("< '%.*s'\n", (int)srclen, src);
-
-          n_iteration++;
-          iteration_begin (srv, n_iteration);
-
-          ok = 0;
-          switch (usock_buf_tag (inbuf) & 0x7f)
+          switch (chan)
             {
             case USOCK_CHAN_IN_CODE:
+            case USOCK_CHAN_IN_CMD:
               {
-                if (pk_compile_buffer (pkc, src, NULL, &exc) == PK_OK)
+                char *src;
+                size_t srclen;
+
+                src = (char *)usock_buf_data (inbuf, &srclen);
+                if (srclen == 0)
                   {
-                    if (exc != PK_NULL)
-                      (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"),
-                                     NULL, NULL, 1, exc);
-                    else
-                      ok = 1;
+                    if (poked_options.debug_p)
+                      printf ("srclen == 0\n");
+                    goto eol;
+                  }
+                if (poked_options.debug_p)
+                  printf ("< '%.*s'\n", (int)srclen, src);
+                n_iteration++;
+                iteration_begin (srv, n_iteration);
+                poked_compile (src, chan, &poked_restart_p, &done_p);
+                iteration_end (srv, n_iteration);
+                if (poked_restart_p)
+                  {
+                    usock_buf_free_chain (inbuf);
+                    poked_free ();
+                    goto poked_restart;
+                  }
+                if (done_p)
+                  {
+                    usock_buf_free_chain (inbuf);
+                    goto done;
                   }
               }
               break;
-            case USOCK_CHAN_IN_CMD:
+            case USOCK_CHAN_IN_AUTOCMPL:
               {
-                pk_val val;
+                struct bufb b;
+                char *candidate;
+                unsigned char *data;
+                size_t data_len;
+                unsigned char cmd;
 
-                if (pk_compile_statement (pkc, src, NULL, &val, &exc) == PK_OK)
+                data = usock_buf_data (inbuf, &data_len);
+                if (data_len == 0)
                   {
-                    if (exc != PK_NULL)
-                      (void)pk_call (pkc, pk_decl_val (pkc, "poked_ehandler"),
-                                     NULL, NULL, 1, exc);
-                    else if (val != PK_NULL)
-                      {
-                        ok = 1;
-                        termout_eval ();
-                        pk_print_val (pkc, val, &exc);
-                        termout_restore ();
-                      }
-                    (void)pk_call (
-                        pkc,
-                        pk_decl_val (pkc, "__poked_run_after_cmd_hooks"),
-                        NULL, &exc, 0);
-                    if (exc != PK_NULL)
-                      (void)pk_call (pkc,
-                                     pk_decl_val (pkc, "poked_ehandler"),
-                                     NULL, NULL, 1, exc);
+                    if (poked_options.debug_p)
+                      printf ("data_len == 0 in auto-completion channel\n");
+                    goto eol;
                   }
+                if (bufb_init (&b, malloc (1024), 1024) != OK)
+                  err (1, "bufb_init() failed");
+
+#define BAPPEND(str)                                                          \
+  do                                                                          \
+    {                                                                         \
+      if (bufb_append (&b, (str), strlen (str) + 1) != OK)                    \
+        err (1, "bufb_append() failed");                                      \
+    }                                                                         \
+  while (0)
+
+                cmd = data[0];
+                if (cmd == AUTOCMPL_IDENT || cmd == AUTOCMPL_IOS)
+                  {
+                    const char *ident = (const char *)data + 1;
+                    size_t blen;
+
+#define FUNC                                                                  \
+  (cmd == AUTOCMPL_IDENT ? pk_completion_function : pk_ios_completion_function)
+
+                    if ((candidate = FUNC (pkc, ident, 0)) != NULL)
+                      {
+                        BAPPEND (candidate);
+                        while ((candidate = FUNC (pkc, ident, 1)) != NULL)
+                          BAPPEND (candidate);
+                      }
+                    blen = b.cur - b.mem;
+                    if (blen)
+                      usock_out (srv, USOCK_CHAN_OUT_AUTOCMPL, cmd, b.mem,
+                                 blen);
+                    else
+                      /* empty payload.  */
+                      usock_out (srv, USOCK_CHAN_OUT_AUTOCMPL, cmd, "", 1);
+#undef FUNC
+                  }
+                else
+                  {
+                    if (poked_options.debug_p)
+                      printf ("unknown completion command\n");
+                  }
+#undef BAPPEND
+                bufb_free (&b);
               }
               break;
             default:
-              fprintf (stderr, "unsupported input channel\n");
-              goto eol;
+              if (poked_options.debug_p)
+                printf ("unsupported input channel\n");
             }
-
-          if (pk_int_value (pk_decl_val (pkc, "__poked_restart_p")))
-            {
-              poked_free ();
-              goto poked_restart;
-            }
-          if (pk_int_value (pk_decl_val (pkc, "__poked_exit_p")))
-            {
-              done_p = 1;
-              break;
-            }
-          if (pk_int_value (pk_decl_val (pkc, "__vu_do_p")))
-            {
-              const char *filt
-                  = pk_string_str (pk_decl_val (pkc, "__vu_filter"));
-
-              usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FILTER, filt,
-                         strlen (filt) + 1);
-              usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_CLEAR, "", 1);
-              termout_vu_append ();
-              (void)pk_call (pkc, pk_decl_val (pkc, "__vu_dump"), NULL, &exc,
-                             0);
-              assert (exc == PK_NULL);
-              termout_restore ();
-              usock_out (srv, USOCK_CHAN_OUT_VU, VUCMD_FINISH, "", 1);
-            }
-          if (pk_int_value (pk_decl_val (pkc, "__poked_chan_send_p")))
-            poked_buf_send ();
-
-        eol:
-          iteration_end (srv, n_iteration);
+        /* end-of-loop */
+        eol:;
         }
     }
-  poked_free ();
 
+done:
+  poked_free ();
   usock_done (srv);
   pthread_join (th, &ret);
   pthread_attr_destroy (&thattr);
