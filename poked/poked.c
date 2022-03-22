@@ -81,6 +81,8 @@ termout_eval (void)
   termout_cmdkind = OUTCMD_EVAL;
 }
 
+//---
+
 static void *
 srvthread (void *data)
 {
@@ -89,6 +91,8 @@ srvthread (void *data)
   usock_serve (srv);
   return NULL;
 }
+
+//---
 
 static void
 poked_buf_send_one (pk_val arr, pk_val pchan)
@@ -127,6 +131,8 @@ poked_buf_send (void)
 }
 
 #define poked_buf_send_one private_
+
+//---
 
 static void
 iteration_send (struct usock *srv, uint64_t n_iteration, int begin_p)
@@ -190,7 +196,7 @@ bufb_realloc (struct bufb *b, size_t nelem)
 }
 
 static int
-bufb_append (struct bufb *b, void *data, size_t len)
+bufb_append (struct bufb *b, const void *data, size_t len)
 {
   size_t brem = b->end - b->cur;
 
@@ -216,6 +222,69 @@ bufb_free (struct bufb *b)
       memset (b, 0, sizeof (*b));
     }
 }
+
+//---
+
+static void
+poked_autocmpl_send_one (pk_val pkind, pk_val pstring)
+{
+  assert (pkind != PK_NULL);
+  assert (pstring != PK_NULL);
+
+  uint32_t kind = (uint32_t)pk_uint_value (pkind);
+  const char *string = pk_string_str (pstring);
+  struct bufb b;
+  char *candidate;
+
+  assert (kind == AUTOCMPL_IDENT || kind == AUTOCMPL_IOS);
+
+  if (bufb_init (&b, malloc (1024), 1024) != OK)
+    err (1, "bufb_init() failed");
+
+#define APPEND(str)                                                           \
+  do                                                                          \
+    {                                                                         \
+      if (bufb_append (&b, (str), strlen (str) + 1) != OK)                    \
+        err (1, "bufb_append() failed");                                      \
+    }                                                                         \
+  while (0)
+#define FUNC                                                                  \
+  (kind == AUTOCMPL_IDENT ? pk_completion_function                            \
+                          : pk_ios_completion_function)
+
+  APPEND (string);
+  if ((candidate = FUNC (pkc, string, 0)) != NULL)
+    {
+      APPEND (candidate);
+      while ((candidate = FUNC (pkc, string, 1)) != NULL)
+        APPEND (candidate);
+    }
+  usock_out (srv, USOCK_CHAN_OUT_AUTOCMPL, kind, b.mem, b.cur - b.mem);
+
+#undef FUNC
+#undef APPEND
+
+  bufb_free (&b);
+}
+
+static void
+poked_autocmpl_send (void)
+{
+  pk_val kind_arr = pk_decl_val (pkc, "__poked_autocmpl_kind");
+  pk_val string_arr = pk_decl_val (pkc, "__poked_autocmpl_string");
+  uint64_t nelem = pk_uint_value (pk_array_nelem (kind_arr));
+  pk_val exc;
+
+  assert (pk_uint_value (pk_array_nelem (string_arr)) == nelem);
+
+  for (uint64_t i = 0; i < nelem; ++i)
+    poked_autocmpl_send_one (pk_array_elem_value (kind_arr, i),
+                             pk_array_elem_value (string_arr, i));
+  (void)pk_call (pkc, pk_decl_val (pkc, "__poked_autocmpl_reset"), NULL, &exc,
+                 0);
+}
+
+#define poked_autocmpl_send_one private_
 
 //---
 
@@ -278,6 +347,8 @@ poked_compile (const char *src, uint8_t chan, int *poked_restart_p,
       *done_p = 1;
       return ok;
     }
+  if (pk_int_value (pk_decl_val (pkc, "__poked_autocmpl_p")))
+    poked_autocmpl_send ();
   if (pk_int_value (pk_decl_val (pkc, "__vu_do_p")))
     {
       const char *filt = pk_string_str (pk_decl_val (pkc, "__vu_filter"));
@@ -435,7 +506,7 @@ poked_restart:
                   printf ("< '%.*s'\n", (int)srclen, src);
                 n_iteration++;
                 iteration_begin (srv, n_iteration);
-                poked_compile (src, chan, &poked_restart_p, &done_p);
+                (void)poked_compile (src, chan, &poked_restart_p, &done_p);
                 iteration_end (srv, n_iteration);
                 if (poked_restart_p)
                   {
@@ -448,65 +519,6 @@ poked_restart:
                     usock_buf_free_chain (inbuf);
                     goto done;
                   }
-              }
-              break;
-            case USOCK_CHAN_IN_AUTOCMPL:
-              {
-                struct bufb b;
-                char *candidate;
-                unsigned char *data;
-                size_t data_len;
-                unsigned char cmd;
-
-                data = usock_buf_data (inbuf, &data_len);
-                if (data_len == 0)
-                  {
-                    if (poked_options.debug_p)
-                      printf ("data_len == 0 in auto-completion channel\n");
-                    goto eol;
-                  }
-                if (bufb_init (&b, malloc (1024), 1024) != OK)
-                  err (1, "bufb_init() failed");
-
-#define BAPPEND(str)                                                          \
-  do                                                                          \
-    {                                                                         \
-      if (bufb_append (&b, (str), strlen (str) + 1) != OK)                    \
-        err (1, "bufb_append() failed");                                      \
-    }                                                                         \
-  while (0)
-
-                cmd = data[0];
-                if (cmd == AUTOCMPL_IDENT || cmd == AUTOCMPL_IOS)
-                  {
-                    const char *ident = (const char *)data + 1;
-                    size_t blen;
-
-#define FUNC                                                                  \
-  (cmd == AUTOCMPL_IDENT ? pk_completion_function : pk_ios_completion_function)
-
-                    if ((candidate = FUNC (pkc, ident, 0)) != NULL)
-                      {
-                        BAPPEND (candidate);
-                        while ((candidate = FUNC (pkc, ident, 1)) != NULL)
-                          BAPPEND (candidate);
-                      }
-                    blen = b.cur - b.mem;
-                    if (blen)
-                      usock_out (srv, USOCK_CHAN_OUT_AUTOCMPL, cmd, b.mem,
-                                 blen);
-                    else
-                      /* empty payload.  */
-                      usock_out (srv, USOCK_CHAN_OUT_AUTOCMPL, cmd, "", 1);
-#undef FUNC
-                  }
-                else
-                  {
-                    if (poked_options.debug_p)
-                      printf ("unknown completion command\n");
-                  }
-#undef BAPPEND
-                bufb_free (&b);
               }
               break;
             default:

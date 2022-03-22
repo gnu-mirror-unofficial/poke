@@ -391,6 +391,30 @@ fun plet_disasm = (string arch, offset<uint64,B> adr, byte[] code) void:
     close (fd);
   }
 
+//--- auto completion
+
+var __poked_autocmpl_kind = uint[] (),
+    __poked_autocmpl_string = string[] (),
+    __poked_autocmpl_p = 0;
+fun __poked_autocmpl_reset = void:
+  {
+    __poked_autocmpl_kind = uint[] ();
+    __poked_autocmpl_string = string[] ();
+    __poked_autocmpl_p = 0;
+  }
+
+var PLET_AUTOCMPL_IDENT = 1U, /* Identifier: variable, function, type.  */
+    PLET_AUTOCMPL_IOS   = 2U; /* IO Space.  */
+
+fun plet_autocomplete = (uint kind, string str) void:
+  {
+    assert (kind in [PLET_AUTOCMPL_IDENT, PLET_AUTOCMPL_IOS]);
+
+    apush (__poked_autocmpl_kind, kind);
+    apush (__poked_autocmpl_string, str);
+    __poked_autocmpl_p = 1;
+  }
+
 //---
 
 print "//---\nGNU poke in daemon mode!\n";

@@ -1,5 +1,22 @@
 2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
+	* poked/poked.pk (plet_autocomplete): New function.
+	(PLET_AUTOCMPL_IDENT): New constant.
+	(PLET_AUTOCMPL_IOS): Likewise.
+	(__poked_autocmpl_kind): New variable.
+	(__poked_autocmpl_string): Likewise.
+	(__poked_autocmpl_p): Likewise.
+	(__poked_autocmpl_reset): New function.
+	* poked/poked.c (bufb_append): Add missing const type qualifier.
+	(poked_autocmpl_send_one): New function to send auto-completion
+	for a string.
+	(poked_autocmpl_send): New function to send all requested
+	auto-completions.
+	(poked_compile): Process auto-completions requested from Poke.
+	Remove input channel for auto-completion.
+
+2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
 	* poked/usock.h (USOCK_CHAN_IN_AUTOCMPL): New macro.
 	(USOCK_CHAN_OUT_AUTOCMPL): Likewise.
 	* poked/poked.c (AUTOCMPL_IDENT): New macro.
