@@ -1,3 +1,8 @@
+2022-03-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-repl-end-of-iteration): Echo output in the
+	minibuffer instead of the repl buffer if no repl mark is found.
+
 2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* poked/poked.pk (poked_after_eval_hook): Rename to
