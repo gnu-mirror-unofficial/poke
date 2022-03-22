@@ -36,8 +36,12 @@ struct _pk_compiler
   pkl_compiler compiler;
   pvm vm;
 
-  pkl_ast_node complete_type;
   int status;  /* Status of last API function call. Initialized with PK_OK */
+  /* Data for completion machinery.  */
+  pkl_ast_node complete_type;
+  ios completion_ios;
+  int completion_idx;
+  struct pkl_ast_node_iter completion_iter;
 };
 
 struct pk_term_if libpoke_term_if;
@@ -57,7 +61,7 @@ pk_compiler_new_with_flags (struct pk_term_if *term_if, uint32_t flags)
       || !term_if->hyperlink_fn || !term_if->end_hyperlink_fn)
     return NULL;
 
-  pkc = malloc (sizeof (struct _pk_compiler));
+  pkc = calloc (1, sizeof (struct _pk_compiler));
   if (pkc)
     {
       uint32_t pkl_flags = 0;
@@ -200,11 +204,12 @@ pk_set_alien_token_fn (pk_compiler pkc, pk_alien_token_handler_fn cb)
 static char *
 complete_attribute (pk_compiler pkc, const char *x, int state)
 {
-  static int idx = 0;
+#define IDX pkc->completion_idx
+
   size_t trunk_len;
   char *ret = NULL;
   size_t len = strlen (x);
-  static char *attr_names[] =
+  static const char *attr_names[] =
     {
 #define PKL_DEF_ATTR(CODE,NAME) NAME,
 #include "pkl-attrs.def"
@@ -213,14 +218,14 @@ complete_attribute (pk_compiler pkc, const char *x, int state)
     };
 
   if (state == 0)
-    idx = 0;
+    IDX = 0;
 
   trunk_len = len - strlen (strrchr (x, '\'')) + 1;
 
   int i;
-  for (i = idx; attr_names[i] != NULL; ++i)
+  for (i = IDX; attr_names[i] != NULL; ++i)
     {
-      char *attr_name = attr_names[i];
+      const char *attr_name = attr_names[i];
 
       if (strncmp (x + trunk_len, attr_name, len - trunk_len) == 0)
         {
@@ -232,7 +237,7 @@ complete_attribute (pk_compiler pkc, const char *x, int state)
               goto exit;
             }
 
-          idx++;
+          IDX++;
           ret = attr;
           goto exit;
         }
@@ -240,12 +245,15 @@ complete_attribute (pk_compiler pkc, const char *x, int state)
 
  exit:
   return ret;
+
+#undef IDX
 }
 
 static char *
 complete_struct (pk_compiler pkc, const char *x, int state)
 {
-  static int idx = 0;
+#define IDX pkc->completion_idx
+
   char *ret = NULL;
   pkl_ast_node type = pkc->complete_type;
   pkl_ast_node t;
@@ -259,7 +267,7 @@ complete_struct (pk_compiler pkc, const char *x, int state)
       int back, over;
       char *base;
 
-      idx = 0;
+      IDX = 0;
 
       compiler_env = pkl_get_env (pkc->compiler);
       base = strndup (x, len - strlen (strchr (x, '.')));
@@ -284,10 +292,10 @@ complete_struct (pk_compiler pkc, const char *x, int state)
 
   t = PKL_AST_TYPE_S_ELEMS (type);
 
-  for (j = 0; j < idx; j++)
+  for (j = 0; j < IDX; j++)
     t = PKL_AST_CHAIN (t);
 
-  for (; t; t = PKL_AST_CHAIN (t), idx++)
+  for (; t; t = PKL_AST_CHAIN (t), IDX++)
     {
       pkl_ast_node ename;
       char *elem;
@@ -318,7 +326,7 @@ complete_struct (pk_compiler pkc, const char *x, int state)
                   goto exit;
                 }
 
-              idx++;
+              IDX++;
               ret = name;
               goto exit;
             }
@@ -328,29 +336,35 @@ complete_struct (pk_compiler pkc, const char *x, int state)
  exit:
   pkc->complete_type = type;
   return ret;
+
+#undef IDX
 }
 
 static char *
 complete_decl (pk_compiler pkc, const char *x, int state)
 {
-  static int idx = 0;
-  static struct pkl_ast_node_iter iter;
+#define IDX pkc->completion_idx
+#define ITER pkc->completion_iter
+
   pkl_env env = pkl_get_env (pkc->compiler);
   if (state == 0)
     {
-      pkl_env_iter_begin (env, &iter);
-      idx = 0;
+      pkl_env_iter_begin (env, &ITER);
+      IDX = 0;
     }
   else
     {
-      if (pkl_env_iter_end (env, &iter))
-        idx++;
+      if (pkl_env_iter_end (env, &ITER))
+        IDX++;
       else
-        pkl_env_iter_next (env, &iter);
+        pkl_env_iter_next (env, &ITER);
     }
 
   size_t len = strlen (x);
-  return pkl_env_get_next_matching_decl (env, &iter, x, len);
+  return pkl_env_get_next_matching_decl (env, &ITER, x, len);
+
+#undef ITER
+#undef IDX
 }
 
 /* This function is called repeatedly by the readline library, when
@@ -388,35 +402,30 @@ pk_completion_function (pk_compiler pkc,
    indicate that there are no more such tags.
  */
 char *
-pk_ios_completion_function (pk_compiler pkc __attribute__ ((unused)),
-                            const char *text, int state)
+pk_ios_completion_function (pk_compiler pkc, const char *text, int state)
 {
-  static ios io;
-  if (state == 0)
-    {
-      io = ios_begin ();
-    }
-  else
-    {
-      io = ios_next (io);
-    }
+#define IO pkc->completion_ios
 
   int len  = strlen (text);
+
+  IO = state == 0 ?  ios_begin () : ios_next (IO);
   while (1)
     {
-      if (ios_end (io))
+      if (ios_end (IO))
         break;
 
       char buf[16];
-      snprintf (buf, 16, "#%d", ios_get_id (io));
+      snprintf (buf, 16, "#%d", ios_get_id (IO));
 
       if (strncmp (buf, text, len) == 0)
         return strdup (buf);
 
-      io = ios_next (io);
+      IO = ios_next (IO);
     }
 
   return NULL;
+
+#undef IO
 }
 
 int

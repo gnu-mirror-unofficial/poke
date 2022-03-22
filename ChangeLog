@@ -1,3 +1,13 @@
+2022-03-22  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/libpoke.c (struct _pk_compiler): Add auto completion
+	machinery data.
+	(pk_compiler_new_with_flags): s/malloc/calloc/.
+	(complete_attribute): Remove global state, use `pkc`.
+	(complete_struct): Likewise.
+	(complete_decl): Likewise.
+	(pk_ios_completion_function): Likewise.
+
 2022-03-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* emacs/poke.el (poke-repl-end-of-iteration): Echo output in the
