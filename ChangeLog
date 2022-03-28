@@ -1,3 +1,8 @@
+2022-03-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* emacs/poke.el (poke-maps-cmd-copy-name-as-kill): Define.
+	(poke-maps-mode-map): Map command above to (kbd "w").
+
 2022-03-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* emacs/poke.el (poke-complete-process): Define.
