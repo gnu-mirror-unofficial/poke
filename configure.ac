@@ -18,7 +18,7 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([GNU poke], [2.1], [poke-devel@gnu.org], [poke],
+AC_INIT([GNU poke], [2.2], [poke-devel@gnu.org], [poke],
         [http://www.jemarch.net/poke.html])
 
 AC_CONFIG_AUX_DIR([build-aux])

@@ -7,6 +7,28 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 2.2 (29 March 2022)
+* Bug fixes
+
+   - Fix the ASCII part of `dump' when the offset is not zero.
+   - printf format fixes.
+   - The 'length attribute is valid in `any' values.
+   - Handle --version and --help before loading subsystems.
+   - Create uniquely named memory IO subsystems when no name
+     is specified in the .mem dot-command.
+   - Some methods in the ELF64 pickle were doing mappings using
+     the wrong IO space.  This is now fixed.
+   - The precedence of the EXCOND operator has been lowered.
+   - A bug was causing arrays of `void' elements to be created.
+   - Exceptions raised from the application of value attributes are
+     now accompanied by informative messages.
+   - The LEB128 and ULEB128 pickles now calculate the right value for
+     leb128 values.
+   - The tag %% is now properly handled in format strings.
+   - The pk_map_decl callback in libpoke now gets PK_NULL as the
+     declaration value.
+   - A bug in the stream IOS has been fixed.
+
  Version 2.1 (8 February 2022)
 * Bug fixes
 
