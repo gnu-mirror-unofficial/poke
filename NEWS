@@ -7,6 +7,11 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 2.3 (31 March 2022)
+* Bug fixes
+
+   - Fix diagnostics in 32-bit.
+
  Version 2.2 (29 March 2022)
 * Bug fixes
 

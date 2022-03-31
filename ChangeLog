@@ -1,5 +1,11 @@
 2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Update version to 2.3.
+	* doc/gendocs_template: Likewise.
+	* NEWS: Entries for 2.3.
+
+2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-typify.c (pkl_typify1_ps_type_struct): Fix
 	diagnostics in 32-bit.
 
