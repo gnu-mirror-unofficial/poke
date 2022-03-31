@@ -1,5 +1,11 @@
 2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke.el (poke-vu-goto-byte): Do not handle current-pos.
+	(poke-vu-mode): Likewise.
+	(poke-vu-handle-cmd): Get current-pos from the buffer.
+
+2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Update version to 2.3.
 	* doc/gendocs_template: Likewise.
 	* NEWS: Entries for 2.3.
