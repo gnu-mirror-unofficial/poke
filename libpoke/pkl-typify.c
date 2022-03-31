@@ -1782,8 +1782,8 @@ PKL_PHASE_BEGIN_HANDLER (pkl_typify1_ps_type_struct)
         {
           PKL_ERROR (PKL_AST_LOC (struct_type_itype),
                      "invalid total size in integral struct type\n"
-                     "expected %" PRIu64 " bits, got %" PRIu64 " bits",
-                     PKL_AST_TYPE_I_SIZE (struct_type_itype),
+                     "expected %" PRIu64 " bits, got %" PRId32 " bits",
+                     (uint64_t) PKL_AST_TYPE_I_SIZE (struct_type_itype),
                      fields_int_size);
           PKL_TYPIFY_PAYLOAD->errors++;
           PKL_PASS_ERROR;
