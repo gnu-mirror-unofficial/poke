@@ -1,5 +1,9 @@
 2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* emacs/poke-el.texi: Capitalize etc.
+
+2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* emacs/poke.el (poke-settings-map): Define.
 	(poke-settings-create-widgets): Use poke-settings-map.
 
