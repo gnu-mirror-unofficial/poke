@@ -1,3 +1,9 @@
+2022-04-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/Makefile.am (dist_lisp_DATA): Do not install poke-mode.
+	* emacs: Remove.
+	* etc/poke-mode.el: Remove.
+
 2022-03-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* emacs/poke-el.texi: Capitalize etc.
