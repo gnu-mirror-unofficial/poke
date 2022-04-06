@@ -972,6 +972,7 @@ EXTRA_DIST = \
   poke.pkl/cast-int-struct-1.pk \
   poke.pkl/cast-int-struct-2.pk \
   poke.pkl/cast-int-struct-3.pk \
+  poke.pkl/cast-int-struct-4.pk \
   poke.pkl/cast-offsets-1.pk \
   poke.pkl/cast-offsets-2.pk \
   poke.pkl/cast-offsets-3.pk \

@@ -1,3 +1,10 @@
+2022-04-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-promo.c (pkl_promo_ps_cast): Do not try to promote
+	regular structs to integral structs.
+	* testsuite/poke.pkl/cast-int-struct-4.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2022-04-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/Makefile.am (dist_lisp_DATA): Do not install poke-mode.

@@ -1626,13 +1626,15 @@ PKL_PHASE_BEGIN_HANDLER (pkl_promo_ps_cast)
 {
   pkl_ast_node cast = PKL_PASS_NODE;
   pkl_ast_node exp = PKL_AST_CAST_EXP (cast);
+  pkl_ast_node from_type = PKL_AST_TYPE (exp);
   pkl_ast_node to_type = PKL_AST_CAST_TYPE (cast);
 
   if (PKL_AST_TYPE_CODE (to_type) == PKL_TYPE_STRUCT)
     {
       pkl_ast_node itype = PKL_AST_TYPE_S_ITYPE (to_type);
 
-      if (itype)
+      if (itype
+          && PKL_AST_TYPE_CODE (from_type) == PKL_TYPE_INTEGRAL)
         {
           int restart = 0;
 
