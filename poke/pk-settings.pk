@@ -213,6 +213,39 @@ provided `auto-map' is set to `yes'.",
 
 pk_settings.add_setting
   :entry Poke_Setting {
+    name = "prompt-commented",
+    kind = POKE_SETTING_BOOL,
+    summary = "whether the interactive prompt should be shebang-commented",
+    usage = ".set prompt-commented {yes,no}",
+    description = "\
+This setting determines whether the prompt is a shebang-comment, allowing
+for easy copy-paste of full terminal lines because the prompt will be
+a syntactic no-op.
+
+Example of a prompt with prompt-commented enabled:
+
+  #!!# 1+2;
+  3
+
+Example of a prompt with prompt-commented, map information, and `prompt-maps' set to
+`yes':
+
+  #!!# .file foo.o
+  #![dwarf,elf]!# 1+2;
+  3
+  #![dwarf,elf]!#
+
+",
+    getter = lambda any: { return pk_prompt_commented_p; },
+    setter = lambda (any val) int:
+      {
+        pk_prompt_commented_p = val as int<32>;
+        return 1;
+      }
+    };
+
+pk_settings.add_setting
+  :entry Poke_Setting {
     name = "prompt-maps",
     kind = POKE_SETTING_BOOL,
     summary = "whether map information should be included in the prompt",

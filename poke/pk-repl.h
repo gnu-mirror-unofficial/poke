@@ -43,4 +43,9 @@ void pk_repl_insert (const char *str);
 
 char *poke_completion_function (const char *text, int state);
 
+/* Allocate and return an interactive prompt string, e.g.
+   "(poke) " or "#!!# ".
+   The caller is responsible for deallocation with free().  */
+char *pk_prompt(void);
+
 #endif /* ! PK_REPL_H */

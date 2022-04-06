@@ -279,6 +279,11 @@ pk_prompt (void)
 {
   char *prompt = "";
 
+  if (pk_var_int ("pk_prompt_commented_p"))
+    {
+      prompt = pk_str_concat(prompt, "#!", NULL);
+    }
+
   if (pk_var_int ("pk_prompt_maps_p"))
     {
       pk_ios cur_ios;
@@ -303,7 +308,14 @@ pk_prompt (void)
         }
     }
 
-  prompt = pk_str_concat (prompt, "(poke) ", NULL);
+  if (pk_var_int ("pk_prompt_commented_p"))
+    {
+      prompt = pk_str_concat(prompt, "!# ", NULL);
+    }
+  else
+    {
+      prompt = pk_str_concat (prompt, "(poke) ", NULL);
+    }
   return prompt;
 }
 
