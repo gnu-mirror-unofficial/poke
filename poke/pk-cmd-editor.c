@@ -29,6 +29,7 @@
 #include "poke.h"
 #include "pk-cmd.h"
 #include "pk-utils.h"
+#include "pk-repl.h"
 
 #ifndef PATH_MAX /* GNU/Hurd */
 # define PATH_MAX (64 * 1024)
@@ -122,7 +123,9 @@ pk_cmd_editor (int argc, struct pk_cmd_arg argv[], uint64_t uflags)
 
       if (*newline != '\0')
         {
-          pk_puts ("(poke) ");
+          char *prompt = pk_prompt();
+          pk_puts (prompt);
+          free(prompt);
           pk_puts (newline);
           pk_puts ("\n");
           pk_cmd_exec (newline);

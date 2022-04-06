@@ -274,7 +274,7 @@ escape_metacharacters (char *text, int match_type, char *qp)
   return s;
 }
 
-static char *
+char *
 pk_prompt (void)
 {
   char *prompt = "";
