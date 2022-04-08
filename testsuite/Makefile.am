@@ -1936,6 +1936,7 @@ EXTRA_DIST = \
   poke.pkl/scons-67.pk \
   poke.pkl/scons-68.pk \
   poke.pkl/scons-69.pk \
+  poke.pkl/scons-70.pk \
   poke.pkl/scons-anon-field-1.pk \
   poke.pkl/scons-anon-field-2.pk \
   poke.pkl/scons-anon-field-3.pk \

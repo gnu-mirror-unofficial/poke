@@ -1,3 +1,10 @@
+2022-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-tab.y: Make struct and array constructors primary
+	syntax entities.
+	* testsuite/poke.pkl/scons-70.pk: New test.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new test.
+
 2022-04-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/pkl-promo.c (pkl_promo_ps_cast): Do not try to promote

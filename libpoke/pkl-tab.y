@@ -958,40 +958,6 @@ expression:
                                                 $1, $3);
                   PKL_AST_LOC ($$) = @$;
                 }
-        | cons_type_specifier '(' expression_list opt_comma ')'
-                {
-                  /* This syntax is only used for array
-                     constructors.  */
-                  if (PKL_AST_TYPE_CODE ($1) != PKL_TYPE_ARRAY)
-                    {
-                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
-                                 "expected array type in constructor");
-                      YYERROR;
-                    }
-
-                  $$ = pkl_ast_make_cons (pkl_parser->ast, $1, $3);
-                  PKL_AST_LOC ($$) = @$;
-                }
-        | typename '{' struct_field_list opt_comma '}'
-                {
-                  pkl_ast_node astruct;
-
-                  /* This syntax is only used for struct
-                     constructors.  */
-                  if (PKL_AST_TYPE_CODE ($1) != PKL_TYPE_STRUCT)
-                    {
-                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
-                                 "expected struct type in constructor");
-                      YYERROR;
-                    }
-
-                  astruct = pkl_ast_make_struct (pkl_parser->ast,
-                                           0 /* nelem */, $3);
-                  PKL_AST_LOC (astruct) = @$;
-
-                  $$ = pkl_ast_make_cons (pkl_parser->ast, $1, astruct);
-                  PKL_AST_LOC ($$) = @$;
-                }
         | UNIT
                 {
                   if ($1 == NULL)
@@ -1262,6 +1228,40 @@ primary:
                   $$ = pkl_ast_make_unary_exp (pkl_parser->ast, PKL_AST_OP_APOP,
                                                $3);
                   PKL_AST_LOC ($$) = @1;
+                }
+        | cons_type_specifier '(' expression_list opt_comma ')'
+                {
+                  /* This syntax is only used for array
+                     constructors.  */
+                  if (PKL_AST_TYPE_CODE ($1) != PKL_TYPE_ARRAY)
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                                 "expected array type in constructor");
+                      YYERROR;
+                    }
+
+                  $$ = pkl_ast_make_cons (pkl_parser->ast, $1, $3);
+                  PKL_AST_LOC ($$) = @$;
+                }
+        | typename '{' struct_field_list opt_comma '}'
+                {
+                  pkl_ast_node astruct;
+
+                  /* This syntax is only used for struct
+                     constructors.  */
+                  if (PKL_AST_TYPE_CODE ($1) != PKL_TYPE_STRUCT)
+                    {
+                      pkl_error (pkl_parser->compiler, pkl_parser->ast, @1,
+                                 "expected struct type in constructor");
+                      YYERROR;
+                    }
+
+                  astruct = pkl_ast_make_struct (pkl_parser->ast,
+                                           0 /* nelem */, $3);
+                  PKL_AST_LOC (astruct) = @$;
+
+                  $$ = pkl_ast_make_cons (pkl_parser->ast, $1, astruct);
+                  PKL_AST_LOC ($$) = @$;
                 }
         ;
 

@@ -1,0 +1,14 @@
+/* { dg-do run } */
+
+/* This test makes sure struct constructors are primary syntax
+   entities.  */
+
+type Foo =
+  struct
+  {
+    int foo;
+    int bar;
+  };
+
+/* { dg-command {Foo{}.foo} } */
+/* { dg-output "0" } */
