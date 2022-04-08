@@ -1,3 +1,7 @@
+2022-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* poke/pk-repl.c: Include ctype.h.
+
 2022-04-08  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* libpoke/pkl-gen.c (pkl_gen_ps_func): Fix E_no_return location in

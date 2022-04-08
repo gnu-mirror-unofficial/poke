@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <setjmp.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "readline.h"
 #if defined HAVE_READLINE_HISTORY_H
 # include <readline/history.h>
