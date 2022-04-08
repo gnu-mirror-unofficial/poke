@@ -2066,7 +2066,7 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
     {
       char *function_name = PKL_AST_FUNC_NAME (function);
       pkl_ast_loc function_location = PKL_AST_LOC (function);
-      char *locstr = NULL;
+      char *msg = NULL, *locstr = NULL;
 
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
                     pvm_make_exception (PVM_E_NO_RETURN, PVM_E_NO_RETURN_NAME,
@@ -2075,23 +2075,17 @@ PKL_PHASE_BEGIN_HANDLER (pkl_gen_ps_func)
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string ("msg"));
       if (PKL_AST_LOC_VALID (function_location))
         locstr = pkl_ast_format_loc (PKL_PASS_AST, function_location);
-      if (function_name)
-        {
-          char *msg = pk_str_concat (locstr == NULL ? "" : locstr,
-                                     "in function ", function_name, NULL);
-
-          if (msg == NULL)
-            PKL_ICE (PKL_AST_LOC (function), "out of memory");
-
-          pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (msg));
-          free (msg);
-        }
-      else
-        pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH,
-                      pvm_make_string ("in lambda function"));
+      msg = pk_str_concat (locstr == NULL ? "" : locstr,
+                           "in function ",
+                           function_name == NULL ? "lambda" : function_name,
+                           NULL);
+      if (msg == NULL)
+        PKL_ICE (PKL_AST_LOC (function), "out of memory");
+      pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_PUSH, pvm_make_string (msg));
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_SSET);
       pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RAISE);
       free (locstr);
+      free (msg);
     }
 
   pkl_asm_insn (PKL_GEN_ASM, PKL_INSN_RETURN);
