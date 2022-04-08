@@ -1258,6 +1258,8 @@ EXTRA_DIST = \
   poke.pkl/format-42.pk \
   poke.pkl/format-diag-1.pk \
   poke.pkl/formfeedchar.pk \
+  poke.pkl/fun-no-return-1.pk \
+  poke.pkl/fun-no-return-2.pk \
   poke.pkl/fun-types-1.pk \
   poke.pkl/fun-types-2.pk \
   poke.pkl/fun-types-3.pk \

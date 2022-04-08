@@ -1,0 +1,8 @@
+/* { dg-do run } */
+
+fun foo = int:
+{
+}
+
+/* { dg-command {try foo; catch if E_no_return { print "caught\n"; } } } */
+/* { dg-output "caught" } */

@@ -2878,6 +2878,20 @@ pkl_ast_lvalue_p (pkl_ast_node node)
   return 0;
 }
 
+char *
+pkl_ast_format_loc (pkl_ast ast, pkl_ast_loc loc)
+{
+  char *s = NULL;
+
+  assert (PKL_AST_LOC_VALID (loc));
+  if (asprintf (&s, "%s:%d:%d: ",
+                ast->filename ? ast->filename : "<stdin>",
+                loc.first_line, loc.first_column) == -1)
+    return NULL;
+
+  return s;
+}
+
 #ifdef PKL_DEBUG
 
 /* The following macros are commodities to be used to keep the
