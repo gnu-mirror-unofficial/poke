@@ -1,0 +1,7 @@
+/* { dg-do run } */
+
+type a = struct uint<32> { uint<16> field1; uint<16> field2; };
+type b = struct { little uint<32> my_a; };
+
+/* { dg-command { b{} as a } } */
+/* { dg-output "a \{field1=0UH,field2=0UH\}" } */
