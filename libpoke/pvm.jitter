@@ -685,7 +685,7 @@ late-header-c
         break;                                                              \
       }                                                                     \
                                                                             \
-      pvm_assert (prec != 0);                                               \
+      PVM_ASSERT (prec != 0);                                               \
       fmt[2] = '0' + (prec / 10);                                           \
       fmt[3] = '0' + prec - (prec / 10 * 10);                               \
       fmt[4] = '\0';                                                        \
@@ -795,14 +795,14 @@ late-header-c
       else if ((BASE) == 2)                                                 \
       {                                                                     \
         n = pk_format_binary ((OUT), (OUTLEN), val, JITTER_ARGN0, SIGNED_P, 0);\
-        pvm_assert (n == 0);                                                \
+        PVM_ASSERT (n == 0);                                                \
         JITTER_DROP_STACK ();                                               \
         JITTER_DROP_STACK ();                                               \
         JITTER_PUSH_STACK (pvm_make_string ((OUT)));                        \
         break;                                                              \
       }                                                                     \
                                                                             \
-      pvm_assert (prec != 0);                                               \
+      PVM_ASSERT (prec != 0);                                               \
       fmt[2] = '0' + (prec / 10);                                           \
       fmt[3] = '0' + prec - (prec / 10 * 10);                               \
       fmt[4] = '\0';                                                        \
@@ -811,7 +811,7 @@ late-header-c
     }                                                                       \
                                                                             \
     n = snprintf ((OUT), (OUTLEN), fmt,  (BASE) == 10 ? val : val & mask);  \
-    pvm_assert (n < (OUTLEN));                                              \
+    PVM_ASSERT (n < (OUTLEN));                                              \
     JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
     JITTER_PUSH_STACK (pvm_make_string ((OUT)));                            \
@@ -854,7 +854,7 @@ late-header-c
       else if ((BASE) == 2)                                                 \
       {                                                                     \
         n = pk_format_binary ((OUT), (OUTLEN), val, JITTER_ARGN0, SIGNED_P, 0);\
-        pvm_assert (n == 0);                                                \
+        PVM_ASSERT (n == 0);                                                \
         JITTER_DROP_STACK ();                                               \
         JITTER_DROP_STACK ();                                               \
         JITTER_PUSH_STACK (pvm_make_string ((OUT)));                        \
@@ -869,7 +869,7 @@ late-header-c
     }                                                                       \
                                                                             \
     n = snprintf ((OUT), (OUTLEN), fmt,  (BASE) == 10 ? val : val & mask);  \
-    pvm_assert (n < (OUTLEN));                                              \
+    PVM_ASSERT (n < (OUTLEN));                                              \
     JITTER_DROP_STACK ();                                                   \
     JITTER_DROP_STACK ();                                                   \
     JITTER_PUSH_STACK (pvm_make_string ((OUT)));                            \
@@ -1167,13 +1167,13 @@ instruction exit ()
     /* Check for the stack sentinel, but only if it was
        installed.  */
     if (PVM_STATE_BACKING_FIELD (canary_stack) != NULL)
-      pvm_assert (PVM_STATE_BACKING_FIELD (canary_stack)
+      PVM_ASSERT (PVM_STATE_BACKING_FIELD (canary_stack)
                   == JITTER_HEIGHT_STACK ());
     if (PVM_STATE_BACKING_FIELD (canary_returnstack) != NULL)
-      pvm_assert (PVM_STATE_BACKING_FIELD (canary_returnstack)
+      PVM_ASSERT (PVM_STATE_BACKING_FIELD (canary_returnstack)
                   == JITTER_HEIGHT_RETURNSTACK ());
     if (PVM_STATE_BACKING_FIELD (canary_exceptionstack) != NULL)
-      pvm_assert (PVM_STATE_BACKING_FIELD (canary_exceptionstack)
+      PVM_ASSERT (PVM_STATE_BACKING_FIELD (canary_exceptionstack)
                   == JITTER_HEIGHT_EXCEPTIONSTACK ());
 
     /* Clear pending signals.  */
@@ -1861,7 +1861,7 @@ instruction call ()
   code
     pvm_val closure = JITTER_TOP_STACK ();
 
-    pvm_assert (PVM_VAL_CLS_ENV (closure) != NULL);
+    PVM_ASSERT (PVM_VAL_CLS_ENV (closure) != NULL);
     JITTER_DROP_STACK ();
     PVM_CALL (closure);
   end
@@ -4887,7 +4887,7 @@ instruction asettb () # ( ARR BOUND -- ARR )
   code
     pvm_val type = PVM_VAL_ARR_TYPE (JITTER_UNDER_TOP_STACK ());
 
-    pvm_assert (PVM_VAL_TYP_CODE (type) == PVM_TYPE_ARRAY);
+    PVM_ASSERT (PVM_VAL_TYP_CODE (type) == PVM_TYPE_ARRAY);
     PVM_VAL_TYP_A_BOUND (type) = JITTER_TOP_STACK ();
     JITTER_DROP_STACK ();
   end
@@ -6331,7 +6331,7 @@ instruction strace (?n)
     int num_elems = (int) JITTER_ARGN0;
     int num_elems_in_stack;
 
-    pvm_assert (PVM_STATE_BACKING_FIELD (canary_stack) != NULL);
+    PVM_ASSERT (PVM_STATE_BACKING_FIELD (canary_stack) != NULL);
 
     num_elems_in_stack = (pvm_val *)JITTER_HEIGHT_STACK ()
                          - (pvm_val *)PVM_STATE_BACKING_FIELD (canary_stack);

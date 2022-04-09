@@ -728,9 +728,17 @@ void pvm_set_compiler (pvm vm, pkl_compiler compiler);
 
 /* The following function is to be used in pvm.jitter, because the
    system `assert' may expand to a macro and is therefore
-   non-wrappeable.  */
+   non-wrappeable.
 
-void pvm_assert (int expression);
+   EXPRESSION is the predicate that is expected to be non-zero.
+   EXPRESSION_STR is the string representation of the EXPRESSION.
+   FILENAME and LINE are the location information of invocation
+   of this function.  */
+
+void pvm_assert (int expression, const char *expression_str,
+                 const char *filename, int line);
+
+#define PVM_ASSERT(expr) pvm_assert ((expr), #expr, __FILE__, __LINE__)
 
 /* This is defined in the late-c block in pvm.jitter.  */
 

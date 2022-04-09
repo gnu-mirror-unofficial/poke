@@ -19,7 +19,6 @@
 #include <config.h>
 
 #include <string.h>
-#include <assert.h>
 #include <signal.h>
 #include <stdarg.h>
 
@@ -373,7 +372,18 @@ pvm_set_compiler (pvm apvm, pkl_compiler compiler)
 }
 
 void
-pvm_assert (int expression)
+pvm_assert (int expression, const char *expression_str,
+            const char *filename, int line)
 {
-  assert (expression);
+#ifndef NDEBUG
+
+  if (!expression)
+    {
+      fprintf (stderr, "PVM assertion failed: %s (%s:%d)\n", expression_str,
+               filename, line);
+      fflush (NULL);
+      abort ();
+    }
+
+#endif
 }

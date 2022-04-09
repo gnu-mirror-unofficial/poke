@@ -1,3 +1,17 @@
+2022-04-09  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
+
+	* libpoke/pvm.h (pvm_assert): Add more parameters.
+	(PVM_ASSERT): New macro.
+	* libpoke/pvm.c (pvm_assert): Replace `assert` with an implementation.
+	(assert.h): Remove #include.
+	* libpoke/pvm.jitter (PVM_PRINTI): s/pvm_assert/PVM_ASSERT/.
+	(PVM_FORMATI): Likewise.
+	(PVM_FORMATU): Likewise.
+	(exit): Likewise.
+	(call): Likewise.
+	(asettb): Likewise.
+	(strace): Likewise.
+
 2022-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/openpgp.pk: New file.
