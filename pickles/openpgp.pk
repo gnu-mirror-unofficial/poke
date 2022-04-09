@@ -150,7 +150,7 @@ type PGP_Packet_Header =
     method _print = void:
     {
       printf("#<pgp_header:packet=%s(%u8d),format:%s,length=%v>\n",
-             pgp_packet_tag_name (packet_tag), get_tag,
+             pgp_packet_tag_name (get_tag), get_tag,
              v4_format ? "v4" : "v3", get_length);
     }
   };
@@ -165,7 +165,7 @@ type PGP_MPI =
 
     method _print = void:
     {
-      printf("#<gpg_mpi:len=%v,num=", bitlen);
+      printf("#<pgp_mpi:len=%v,num=", len);
       if (len > 16#B)
         print "...";
       else if (len <= 8#B)
@@ -234,7 +234,7 @@ type PGP_Key_Flags =
     uint<1> encrypt_storage;
     uint<1> encrypt_communications;
     uint<1> sign_data;
-    uint<1> certify_keys
+    uint<1> certify_keys;
   };
 
 type PGP_Signature_Subpacket =
@@ -359,7 +359,7 @@ type PGP_Packet =
 type PGP_File =
   struct
   {
-    pgp_packet[] packets;
+    PGP_Packet[] packets;
   };
 
 /* Given a PGP signature, map and return an array of its hashed
