@@ -1,3 +1,7 @@
+2022-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/openpgp.pk: New file.
+
 2022-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* poke/pk-repl.c: Include ctype.h.

@@ -1,0 +1,382 @@
+/* pgp.pk -- OpenPGP RFC 4880 pickle.  */
+
+/* Copyright (C) 2022 apache2 */
+/* Copyright (C) 2022 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// This is incomplete, but may be of use, at least to people looking to
+// *read* binary OpenPGP files.
+//
+// // Example:
+// var r=open("real.pgp");
+// var parse = pgp_file @ r : 0#B;
+// printf("%v", parse);
+// // ensure we only consumed the intended length:
+// for (var p = 0; p < parse.packets'length; p++) {
+//   assert(parse.packets[p].header.length() == parse.packets[p].payload'size'magnitude/8);
+// }
+//
+
+var pgp_packet_tag_names =
+  [.[0] = "UNKNOWN",
+   .[1] = "public-key-encrypted-session",
+   .[2] = "signature",
+   .[3] = "symmetric-key-encrypted-session-key",
+   .[4] = "one-pass-signature",
+   .[5] = "secret-key",
+   .[6] = "public-key",
+   .[7] = "secret-subkey",
+   .[8] = "compressed-data-packet",
+   .[9] = "symmetrically-encrypted-data",
+   .[10] = "marker",
+   .[11] = "literal-data",
+   .[12] = "trust",
+   .[13] = "uid",
+   .[14] = "public-subkey",
+   .[16] = "UNKNOWN",
+   .[17] = "user-attribute",
+   .[18] = "encrypted",
+   .[19] = "modification-detection-code",
+   .[20] = "encrypted-aead"];
+
+fun pgp_packet_tag_name = (uint<8> tag) string:
+{
+  try return pgp_packet_tag_names[tag];
+  catch if E_out_of_bounds { return "UNKNOWN"; }
+}
+
+type PGP_Version =
+  union
+  {
+    char v3 == 3;
+    char v4 == 4;
+  };
+
+type PGP_V3_Packet_Length =
+  struct
+  {
+    uint<2> typ;
+    union
+    {
+      offset<uint<8>,B>  l8  : typ == 0;
+      offset<uint<16>,B> l16 : typ == 1;
+      offset<uint<32>,B> l32 : typ == 2;
+    } l;
+
+    method get = offset<uint<32>,B>:
+    {
+      { return l.l8; } ?! E_elem;
+      { return l.l16; } ?! E_elem;
+      return l.l32;
+    }
+  };
+
+type PGP_V4_Packet_Length =
+  union
+  {
+    uint<8> partial : 224 <= partial && partial <= 254;
+
+    struct uint<8>
+    {
+      offset<uint<8>,B> packed : packed <= 191;
+    } uint8;
+
+    struct uint<40>
+    {
+      uint<8> all == 0xff;
+      big offset<uint<32>,B> length;
+    } uint32;
+
+    struct uint<16>
+    {
+      offset<uint<8>,B> packed : 192 <= packed && packed <= 223;
+      uint<8> shifted;
+
+      method get = offset<uint<32>,B>:
+      {
+        return ((packed - 192) <<. 8) + shifted + 192;
+      }
+    } uint16;
+
+    method get = offset<uint<32>,B>:
+    {
+      try { return uint8.packed; } catch {};
+      try { return uint16.get; } catch {};
+      try { return uint32.length; } catch {};
+      printf("WTF: %v\n", partial);
+    }
+  };
+
+type PGP_Packet_Header =
+  struct
+  {
+    /* XXX should the following fields be in an integral struct? */
+    uint<1> bit_7 == 1;
+    uint<1> v4_format; /* 1 if "new" */
+    uint<4> old_packet_tag;
+    uint<2> old_length_bits if v4_format;
+
+    union
+    {
+      PGP_V3_Packet_Length v4_length : v4_format;
+      PGP_V3_Packet_Length v3_length;
+    } length;
+
+    method get_length = offset<uint<32>,B>:
+    {
+      return v4_format ? length.v4_length.get : length.v3_length.get;
+    }
+
+    method get_tag = uint:
+    {
+      return (v4_format
+              ? old_packet_tag:::old_length_bits
+              : old_packet_tag);
+    }
+
+    method _print = void:
+    {
+      printf("#<pgp_header:packet=%s(%u8d),format:%s,length=%v>\n",
+             pgp_packet_tag_name (packet_tag), get_tag,
+             v4_format ? "v4" : "v3", get_length);
+    }
+  };
+
+/* PGP multi-precision integers.  */
+
+type PGP_MPI =
+  struct
+  {
+    offset<uint<16>,b> len;
+    byte[len] num; /* Bytes are stored in big-endian.  */
+
+    method _print = void:
+    {
+      printf("#<gpg_mpi:len=%v,num=", bitlen);
+      if (len > 16#B)
+        print "...";
+      else if (len <= 8#B)
+        printf("0x%u32x", num as uint<64> );
+      else
+        print "###";
+      print ">\n";
+    }
+  };
+
+var PGP_ALGO_RSA_EOS = 1UB;
+var PGP_ALGO_RSA_ENCRYPT = 2UB;
+var PGP_ALGO_RSA_SIGN = 3UB;
+var PGP_ALGO_ELGAMAL = 16UB;
+var PGP_ALGO_DSA = 17UB;
+
+type PGP_Public_Key =
+  struct
+  {
+    PGP_Version version;
+    big uint<32> timestamp;
+    uint<8> algo;
+    /* Algorithm-specific data.  */
+    union
+    {
+      struct
+      {
+        PGP_MPI n;
+        PGP_MPI e;
+      } rsa : algo in [PGP_ALGO_RSA_EOS,
+                       PGP_ALGO_RSA_ENCRYPT,
+                       PGP_ALGO_RSA_SIGN];
+      struct
+      {
+        PGP_MPI p;
+        PGP_MPI g;
+        PGP_MPI y;
+      } elgamal : algo == PGP_ALGO_ELGAMAL;
+
+      struct
+      {
+        PGP_MPI p;
+        PGP_MPI q;
+        PGP_MPI gg;
+        PGP_MPI y;
+      } dsa : algo == PGP_ALGO_DSA;
+
+      /* The remainder is picked up in PGP_Packet.extra below.  */
+      byte[0] unknown;
+  } asf;
+};
+
+type PGP_Subpacket_Header =
+  struct uint<8>
+  {
+    uint<1> critical;
+    uint<7> tag;
+  };
+
+type PGP_Key_Flags =
+  struct uint<8>
+  {
+    uint<2>; // bit 6..7: unsure
+    uint<1> authentication;
+    uint<1>; // bit 4, unsure
+    uint<1> encrypt_storage;
+    uint<1> encrypt_communications;
+    uint<1> sign_data;
+    uint<1> certify_keys
+  };
+
+type PGP_Signature_Subpacket =
+  struct
+  {
+    PGP_V4_Packet_Length len;
+    PGP_Subpacket_Header hdr;
+
+    type Data_Bytes = byte[len.get - hdr'size];
+
+    union
+    {
+      big uint<32> signature_creation_time   : hdr.tag == 2;
+      big uint<32> key_expiration_time       : hdr.tag == 9;
+      Data_Bytes preferred_symmetric_algos   : hdr.tag == 11;
+      Data_Bytes preferred_hash_algos        : hdr.tag == 21;
+      Data_Bytes preferred_compression_algos : hdr.tag == 22;
+      Data_Bytes key_server_preferences      : hdr.tag == 23;
+      PGP_Key_Flags key_usage_flags          : hdr.tag == 27;
+      /* 0x01 is "modification detection", ie supports MDC */
+      Data_Bytes features                    : hdr.tag == 30;
+
+      struct
+      {
+        PGP_Version version;
+        byte[20] hash;
+
+        method _print = void:
+        {
+          printf ("#<%v:", version);
+          for (var i = 0; i < hash'length; i++)
+	      printf ("%u8x", hash[i]);
+          print ">";
+        }
+      } issuer_fingerprint: hdr.tag == 0x21; // and len.length() == 21
+
+      Data_Bytes unknown;
+    } data;
+  };
+
+type PGP_Signature =
+  struct
+  {
+    PGP_Version version;
+    uint<8> signature_type;
+    uint<8> pk_algo;
+    uint<8> hash_algo;
+    offset<uint<16>,B> hashed_subpacket_len;
+    byte[hashed_subpacket_len] hashed_subpackets;
+    byte[hashed_subpacket_len - hashed_subpackets'size] what_the_fuck;
+    // assert (hashed_subpacket_len == hashed_subpackets'size); // TODO
+    uint<16> unhashed_subpacket_len;
+    byte[unhashed_subpacket_len] unhashed_subpackets;
+
+    /* "begin of digest" in gpg --list-packets
+
+       This is the leftmost two bytes of the ${hash_algo}-digest of
+       the hash which gets signed in the algorithm-specific fields
+       ("asf") below. */
+    uint<16> two_octet_checksum;
+
+    /* Algorithm-specific fields containing the actual signature.  */
+    union
+    {
+      struct
+      {
+        PGP_MPI m_pow_d_mod_n;
+      } rsa : pk_algo in [PGP_ALGO_RSA_EOS,
+                          PGP_ALGO_RSA_SIGN];
+
+      struct
+      {
+        PGP_MPI r;
+        PGP_MPI s;
+      } dsa : pk_algo == PGP_ALGO_DSA;
+
+      byte[0] unknown : pk_algo;
+    } asf;
+};
+
+type PGP_Packet =
+  struct
+  {
+    PGP_Packet_Header header;
+    union
+    {
+      PGP_Signature signature : header.get_tag == 2;
+      PGP_Public_Key public : header.get_tag == 6;
+      struct
+      {
+        byte[header.get_length] uid;
+        method _print = void:
+        {
+          for (var i = 0; i < uid'length; i++)
+            printf("%c", uid[i]);
+        }
+      } uid : header.get_tag == 13;
+      byte[header.get_length] unknown;
+    } payload;
+
+    var extraneous = header.get_length - payload'size;
+    byte[extraneous] extra if payload'size'magnitude;
+
+    method _print = void:
+    {
+      print "#<\n";
+      printf ("%v", header);
+      if (header.get_tag == 6)
+        ;//printf("%v", payload.public);
+      else
+        if (header.get_tag() in [13])
+        {
+          try
+          {
+            payload.uid;
+            printf("\n%v", payload.uid);
+          } catch { printf("unable to print payload.uid"); }
+        }
+    }
+  };
+
+type PGP_File =
+  struct
+  {
+    pgp_packet[] packets;
+  };
+
+/* Given a PGP signature, map and return an array of its hashed
+   signature subpackets.  */
+
+fun pgp_map_hashed_subpackets = (PGP_Signature sig) PGP_Signature_Subpacket[]:
+{
+  var consumed = 0#B;
+  var ret = PGP_Signature_Subpacket[]();
+
+  while (consumed < sig.hashed_subpacket_len)
+  {
+    var sub = PGP_Signature_Subpacket @ sig'ios // TODO pick right ios
+              : (sig.hashed_subpackets'offset + consumed);
+
+    consumed += sub'size;
+    ret += [sub];
+  }
+  return ret;
+}
