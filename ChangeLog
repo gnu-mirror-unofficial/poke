@@ -1,5 +1,11 @@
 2022-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/openpgp.pk (PGP_Packet_Header): Do not print a newline
+	in the pretty-printer.
+	(PGP_MPI): Likewise.
+
+2022-04-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/openpgp.pk (PGP_V3_Packet_Length): Use tag logic to get
 	the union value.
 	(PGP_V4_Packet_Length): fix units.

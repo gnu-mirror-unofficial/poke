@@ -152,7 +152,7 @@ type PGP_Packet_Header =
 
     method _print = void:
     {
-      printf("#<pgp_header:packet=%s(%u8d),format:%s,length=%v>\n",
+      printf("#<pgp_header:packet=%s(%u8d),format:%s,length=%v>",
              pgp_packet_tag_name (get_tag), get_tag,
              v4_format ? "v4" : "v3", get_length);
     }
@@ -175,7 +175,7 @@ type PGP_MPI =
         printf("0x%u32x", num as uint<64> );
       else
         print "###";
-      print ">\n";
+      print ">";
     }
   };
 
