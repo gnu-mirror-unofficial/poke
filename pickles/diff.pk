@@ -221,9 +221,16 @@ fun diff_structured = (any a, any b,
       return "";
   }
 
+  fun get_bytes = (any v) byte[]:
+  {
+    try return byte[v'size] @ v'ios : v'offset;
+    catch if E_constraint { raise E_inval; }
+  }
+
   fun get_elem_bytes = (any v, uint<64> idx) byte[]:
   {
-    return byte[v'esize (idx)] @ v'ios : v'eoffset (idx);
+    try return byte[v'esize (idx)] @ v'ios : v'eoffset (idx);
+    catch if E_constraint { raise E_inval; }
   }
 
   fun elem_simple_p = (any elem, uint<64> idx) int:
@@ -246,13 +253,13 @@ fun diff_structured = (any a, any b,
     {
       if (val'elem (idx) ?! E_inval)
       {
-        /* Note that recursing into the element may result in E_constraint
+        /* Note that recursing into the element may result in E_inval
            in case a non-byte element is found.  In that case, try to
            emit the thunk anyway.  */
         if (elem_simple_p (val, idx)
             || ! { sdiff_addrem (what, val'elem (idx),
                                  prefix + format_ename (val'ename (idx)),
-                                 0); } ?! E_constraint)
+                                 0); } ?! E_inval)
           thunk.addrem :what what :off val'eoffset (idx) :siz val'esize (idx)
                        :bytes get_elem_bytes (val, idx)
                        :name prefix + format_ename (val'ename (idx))
@@ -286,12 +293,12 @@ fun diff_structured = (any a, any b,
 
           /* If the element is simple, add a change to the current
              thunk; otherwise recurse to handle its elements.  Note that
-             recursing into the element may result in E_constraint in case a
+             recursing into the element may result in E_inval in case a
              non-byte element is found.  In that case, try to emit the
              thunk anyway.  */
           if (elem_simple_p (a, idx)
               || ! { sdiff_change (a'elem (idx), b'elem (idx),
-                                   a_full_name, b_full_name); } ?! E_constraint)
+                                   a_full_name, b_full_name); } ?! E_inval)
           {
             var a_bytes = get_elem_bytes (a, idx);
             var b_bytes = get_elem_bytes (b, idx);
@@ -323,10 +330,10 @@ fun diff_structured = (any a, any b,
 
   try
   {
-    if (! { sdiff_change (a, b, prefix_a, prefix_b); } ?! E_constraint)
+    if (! { sdiff_change (a, b, prefix_a, prefix_b); } ?! E_inval)
     {
-      var a_bytes = byte[a'size] @ a'ios : a'offset;
-      var b_bytes = byte[b'size] @ b'ios : b'offset;
+      var a_bytes = get_bytes (a);
+      var b_bytes = get_bytes (b);
 
       if (a_bytes != b_bytes)
         thunk.change :aoff a'offset :asiz a'size
@@ -337,11 +344,11 @@ fun diff_structured = (any a, any b,
                      :bvalue format_value (b);
     }
   }
-  catch if E_constraint
+  catch (Exception e)
   {
-    raise Exception { code = EC_inval,
-                      name = "invalid argument",
-                      msg = "size of compared values is not a multiple of bytes" };
+    if (e.code == EC_inval)
+      e.msg = "size of compared values is not a multiple of bytes";
+    raise e;
   }
 
   /* There may be a thunk still to be emitted.  */

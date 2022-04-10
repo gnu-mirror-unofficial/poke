@@ -1,5 +1,10 @@
 2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/diff.pk: Correct handling of boundaries constraint
+	error.
+
+2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (array_constructor): Add explicative message
 	to E_constraint raised from unsatisfied array boundaries.
 	(array_mapper): Likewise.
