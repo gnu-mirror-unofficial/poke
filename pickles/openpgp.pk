@@ -163,7 +163,7 @@ type PGP_Packet_Header =
 type PGP_MPI =
   struct
   {
-    offset<uint<16>,b> len;
+    big offset<uint<16>,b> len;
     byte[len] num; /* Bytes are stored in big-endian.  */
 
     method _print = void:
