@@ -1,3 +1,22 @@
+2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (array_mapper): Raise PVM_E_CONSTRAINT
+	instead of PVM_E_MAP_BOUNDS in case of array bound failure.
+	(array_constructor): Likewise.
+	* libpoke/libpoke.h (PK_EC_MAP_BOUNDS): Remove.
+	* libpoke/pkl-rt.pk (E_map_bounds): Likewise.
+	* libpoke/pvm.h (PVM_E_MAP_BOUNDS): Likewise.
+	(PVM_E_MAP_BOUNDS_NAME): Likewise.
+	(PVM_E_MAP_BOUNDS_ESTATUS): Likewise.
+	* pickles/diff.pk: Adapt accordingly.
+	* testsuite/poke.pkl/scons-union-12.pk: New test.
+	* testsuite/poke.pkl/scons-union-13.pk: Likewise.
+	* testsuite/poke.pkl/scons-union-14.pk: Likewise.
+	* testsuite/poke.map/maps-unions-14.pk: Likewise.
+	* testsuite/poke.map/maps-unions-15.pk: Likewise.
+	* testsuite/poke.map/maps-unions-16.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-04-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/openpgp.pk (PGP_MPI): The `len' field is big endian.

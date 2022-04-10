@@ -169,7 +169,7 @@ type Diff_Thunk =
    This function raises E_map if any of the values to compare are not
    mapped.
 
-   This function raises E_map_bounds if the size of either A or B is
+   This function raises E_constraint if the size of either A or B is
    not a multiple of bytes.  Note however that the constituent data
    structures are not required to be a whole number of bytes.  */
 
@@ -246,13 +246,13 @@ fun diff_structured = (any a, any b,
     {
       if (val'elem (idx) ?! E_inval)
       {
-        /* Note that recursing into the element may result in E_map_bounds
+        /* Note that recursing into the element may result in E_constraint
            in case a non-byte element is found.  In that case, try to
            emit the thunk anyway.  */
         if (elem_simple_p (val, idx)
             || ! { sdiff_addrem (what, val'elem (idx),
                                  prefix + format_ename (val'ename (idx)),
-                                 0); } ?! E_map_bounds)
+                                 0); } ?! E_constraint)
           thunk.addrem :what what :off val'eoffset (idx) :siz val'esize (idx)
                        :bytes get_elem_bytes (val, idx)
                        :name prefix + format_ename (val'ename (idx))
@@ -286,12 +286,12 @@ fun diff_structured = (any a, any b,
 
           /* If the element is simple, add a change to the current
              thunk; otherwise recurse to handle its elements.  Note that
-             recursing into the element may result in E_map_bounds in case a
+             recursing into the element may result in E_constraint in case a
              non-byte element is found.  In that case, try to emit the
              thunk anyway.  */
           if (elem_simple_p (a, idx)
               || ! { sdiff_change (a'elem (idx), b'elem (idx),
-                                   a_full_name, b_full_name); } ?! E_map_bounds)
+                                   a_full_name, b_full_name); } ?! E_constraint)
           {
             var a_bytes = get_elem_bytes (a, idx);
             var b_bytes = get_elem_bytes (b, idx);
@@ -323,7 +323,7 @@ fun diff_structured = (any a, any b,
 
   try
   {
-    if (! { sdiff_change (a, b, prefix_a, prefix_b); } ?! E_map_bounds)
+    if (! { sdiff_change (a, b, prefix_a, prefix_b); } ?! E_constraint)
     {
       var a_bytes = byte[a'size] @ a'ios : a'offset;
       var b_bytes = byte[b'size] @ b'ios : b'offset;
@@ -337,7 +337,7 @@ fun diff_structured = (any a, any b,
                      :bvalue format_value (b);
     }
   }
-  catch if E_map_bounds
+  catch if E_constraint
   {
     raise Exception { code = EC_inval,
                       name = "invalid argument",

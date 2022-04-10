@@ -49,7 +49,6 @@ typedef uint64_t pk_val;
 #define PK_EC_NO_IOS        2
 #define PK_EC_NO_RETURN     3
 #define PK_EC_OUT_OF_BOUNDS 4
-#define PK_EC_MAP_BOUNDS    5
 #define PK_EC_EOF           6
 #define PK_EC_MAP           7
 #define PK_EC_CONV          8

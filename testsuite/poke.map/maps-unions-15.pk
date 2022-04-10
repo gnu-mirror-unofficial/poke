@@ -1,0 +1,11 @@
+/* { dg-do run } */
+/* { dg-data {c*} {0x00 0x00 0x00 0x01} } */
+
+type Foo = struct { byte[3#b] bad; };
+
+var tag = 3;
+type Bar = union { Foo foo : tag == 0; int bar : tag == 2; };
+
+/* { dg-command {.set endian big} } */
+/* { dg-command { try Bar @ 0#B; catch if E_constraint { print "caught\n"; } } } */
+/* { dg-output "caught" } */

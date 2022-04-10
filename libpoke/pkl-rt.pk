@@ -156,7 +156,6 @@ immutable var EC_div_by_zero   = 1;
 immutable var EC_no_ios        = 2;
 immutable var EC_no_return     = 3;
 immutable var EC_out_of_bounds = 4;
-immutable var EC_map_bounds    = 5;
 immutable var EC_eof           = 6;
 immutable var EC_map           = 7;
 immutable var EC_conv          = 8;
@@ -183,8 +182,6 @@ immutable var E_no_return
   = Exception {code = EC_no_return, name = "no return", exit_status = 1};
 immutable var E_out_of_bounds
   = Exception {code = EC_out_of_bounds, name = "out of bounds", exit_status = 1};
-immutable var E_map_bounds
-  = Exception {code = EC_map_bounds, name = "out of map bounds", exit_status = 1};
 immutable var E_eof
   = Exception {code = EC_eof, name = "EOF", exit_status = 0 };
 immutable var E_map

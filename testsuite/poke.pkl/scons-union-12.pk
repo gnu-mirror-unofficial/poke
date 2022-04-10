@@ -1,0 +1,9 @@
+/* { dg-do run } */
+
+type Foo = struct { byte[3#b] bad; };
+
+var tag = 2;
+type Bar = union { Foo foo : tag == 0; int bar : tag == 2; };
+
+/* { dg-command { Bar {} } } */
+/* { dg-output "Bar \{bar=0\}" } */

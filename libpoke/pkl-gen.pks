@@ -42,12 +42,12 @@
 ;;;
 ;;; Otherwise, if EBOUND is not null, then perform a map bounded by the
 ;;; given number of elements.  If EOF is encountered before the given
-;;; amount of elements are read, then raise PVM_E_MAP_BOUNDS.
+;;; amount of elements are read, then raise PVM_E_CONSTRAINT.
 ;;;
 ;;; Otherwise, if SBOUND is not null, then perform a map bounded by the
 ;;; given size (a bit-offset), i.e. read array elements from IO until
 ;;; the total size of the array is exactly SBOUND.  If SBOUND is exceeded,
-;;; then raise PVM_E_MAP_BOUNDS.
+;;; then raise PVM_E_CONSTRAINT.
 ;;;
 ;;; Only one of EBOUND or SBOUND simultanously are supported.
 ;;; Note that OFF should be of type offset<uint<64>,*>.
@@ -235,7 +235,7 @@
         popf 1
         return
 .bounds_fail:
-        push PVM_E_MAP_BOUNDS
+        push PVM_E_CONSTRAINT
         raise
         .end
 
@@ -426,7 +426,7 @@
         popf 1
         return
 .bounds_fail:
-        push PVM_E_MAP_BOUNDS
+        push PVM_E_CONSTRAINT
         raise
         .end
 

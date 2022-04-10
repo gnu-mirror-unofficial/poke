@@ -498,7 +498,6 @@ enum pvm_exit_code
   E(NO_IOS)                  \
   E(NO_RETURN)               \
   E(OUT_OF_BOUNDS)           \
-  E(MAP_BOUNDS)              \
   E(EOF)                     \
   E(MAP)                     \
   E(CONV)                    \
@@ -532,10 +531,6 @@ enum pvm_exit_code
 #define PVM_E_OUT_OF_BOUNDS 4
 #define PVM_E_OUT_OF_BOUNDS_NAME "out of bounds"
 #define PVM_E_OUT_OF_BOUNDS_ESTATUS 1
-
-#define PVM_E_MAP_BOUNDS    5
-#define PVM_E_MAP_BOUNDS_NAME "out of map bounds"
-#define PVM_E_MAP_BOUNDS_ESTATUS 1
 
 #define PVM_E_EOF           6
 #define PVM_E_EOF_NAME "EOF"
