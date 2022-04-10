@@ -1,4 +1,4 @@
-/* pgp.pk -- OpenPGP RFC 4880 pickle.  */
+/* openpgp.pk -- OpenPGP RFC 4880 pickle.  */
 
 /* Copyright (C) 2022 apache2 */
 /* Copyright (C) 2022 Jose E. Marchesi */
