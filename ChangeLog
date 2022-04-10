@@ -1,3 +1,12 @@
+2022-04-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* pickles/openpgp.pk (PGP_V3_Packet_Length): Use tag logic to get
+	the union value.
+	(PGP_V4_Packet_Length): fix units.
+	(PGP_Packet_Header): Use the right method name.
+	(PGP_Key_Flags): Add missing semicolon.
+	(PGP_File): Fix type name for PGP_Packet.
+
 2022-04-09  Mohammad-Reza Nabipoor  <mnabipoor@gnu.org>
 
 	* libpoke/pvm.h (pvm_assert): Add more parameters.

@@ -78,9 +78,12 @@ type PGP_V3_Packet_Length =
 
     method get = offset<uint<32>,B>:
     {
-      { return l.l8; } ?! E_elem;
-      { return l.l16; } ?! E_elem;
-      return l.l32;
+      if (typ == 0)
+        return l.l8;
+      else if (typ == 1)
+        return l.l16;
+      else
+        return l.l32;
     }
   };
 
@@ -91,7 +94,7 @@ type PGP_V4_Packet_Length =
 
     struct uint<8>
     {
-      offset<uint<8>,B> packed : packed <= 191;
+      offset<uint<8>,B> packed : packed <= 191#B;
     } uint8;
 
     struct uint<40>
@@ -102,12 +105,12 @@ type PGP_V4_Packet_Length =
 
     struct uint<16>
     {
-      offset<uint<8>,B> packed : 192 <= packed && packed <= 223;
-      uint<8> shifted;
+      offset<uint<8>,B> packed : 192#B <= packed && packed <= 223#B;
+      offset<uint<8>,B> shifted;
 
       method get = offset<uint<32>,B>:
       {
-        return ((packed - 192) <<. 8) + shifted + 192;
+        return ((packed - 192#B) <<. 8) + shifted + 192#B;
       }
     } uint16;
 
@@ -140,11 +143,11 @@ type PGP_Packet_Header =
       return v4_format ? length.v4_length.get : length.v3_length.get;
     }
 
-    method get_tag = uint:
+    method get_tag = uint<32>:
     {
       return (v4_format
               ? old_packet_tag:::old_length_bits
-              : old_packet_tag);
+              : old_packet_tag as uint<6>);
     }
 
     method _print = void:
