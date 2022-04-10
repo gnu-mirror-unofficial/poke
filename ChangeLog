@@ -1,5 +1,11 @@
 2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* libpoke/pkl-gen.pks (array_constructor): Add explicative message
+	to E_constraint raised from unsatisfied array boundaries.
+	(array_mapper): Likewise.
+
+2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* libpoke/pkl-gen.pks (array_mapper): Raise PVM_E_CONSTRAINT
 	instead of PVM_E_MAP_BOUNDS in case of array bound failure.
 	(array_constructor): Likewise.

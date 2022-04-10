@@ -236,6 +236,9 @@
         return
 .bounds_fail:
         push PVM_E_CONSTRAINT
+        push "msg"
+        push "array type boundaries couldn't be satisfied"
+        sset
         raise
         .end
 
@@ -427,6 +430,9 @@
         return
 .bounds_fail:
         push PVM_E_CONSTRAINT
+        push "msg"
+        push "array type boundaries couldn't be satisfied"
+        sset
         raise
         .end
 
