@@ -1,5 +1,10 @@
 2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* pickles/openpgp.pk (PGP_Packet): Add constraint to check that
+	the payload size matches with the declared length in the header.
+
+2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/poke.texi (Exceptions): Remove mention to E_map_bounds.
 	(Array Constructors): Update.
 	(Array maps bounded by number of elements): Likewise.

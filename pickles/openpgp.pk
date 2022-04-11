@@ -17,19 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// This is incomplete, but may be of use, at least to people looking to
-// *read* binary OpenPGP files.
-//
-// // Example:
-// var r=open("real.pgp");
-// var parse = pgp_file @ r : 0#B;
-// printf("%v", parse);
-// // ensure we only consumed the intended length:
-// for (var p = 0; p < parse.packets'length; p++) {
-//   assert(parse.packets[p].header.length() == parse.packets[p].payload'size'magnitude/8);
-// }
-//
-
 var pgp_packet_tag_names =
   [.[0] = "UNKNOWN",
    .[1] = "public-key-encrypted-session",
@@ -126,7 +113,6 @@ type PGP_V4_Packet_Length =
 type PGP_Packet_Header =
   struct
   {
-    /* XXX should the following fields be in an integral struct? */
     uint<1> bit_7 == 1;
     uint<1> v4_format; /* 1 if "new" */
     uint<4> old_packet_tag;
@@ -231,9 +217,9 @@ type PGP_Subpacket_Header =
 type PGP_Key_Flags =
   struct uint<8>
   {
-    uint<2>; // bit 6..7: unsure
+    uint<2>; /* bit 6..7: unsure.  */
     uint<1> authentication;
-    uint<1>; // bit 4, unsure
+    uint<1>; /* bit 4, unsure.  */
     uint<1> encrypt_storage;
     uint<1> encrypt_communications;
     uint<1> sign_data;
@@ -288,7 +274,6 @@ type PGP_Signature =
     offset<uint<16>,B> hashed_subpacket_len;
     byte[hashed_subpacket_len] hashed_subpackets;
     byte[hashed_subpacket_len - hashed_subpackets'size] what_the_fuck;
-    // assert (hashed_subpacket_len == hashed_subpackets'size); // TODO
     uint<16> unhashed_subpacket_len;
     byte[unhashed_subpacket_len] unhashed_subpackets;
 
@@ -336,7 +321,7 @@ type PGP_Packet =
         }
       } uid : header.get_tag == 13;
       byte[header.get_length] unknown;
-    } payload;
+    } payload : payload'size == header.get_length;
 
     var extraneous = header.get_length - payload'size;
     byte[extraneous] extra if payload'size'magnitude;
