@@ -1,5 +1,12 @@
 2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/poke.texi (Exceptions): Remove mention to E_map_bounds.
+	(Array Constructors): Update.
+	(Array maps bounded by number of elements): Likewise.
+	(Array maps bounded by size): Likewise.
+
+2022-04-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* pickles/diff.pk: Correct handling of boundaries constraint
 	error.
 

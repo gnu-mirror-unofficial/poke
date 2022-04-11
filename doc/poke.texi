@@ -10296,6 +10296,9 @@ and @var{value} is an optional argument that specify the value to
 which the elements of the new array are initialized.  If no value is
 provided in the constructor then default values are calculated.
 
+If the boundaries of the array can't be satisfied while constructing,
+@code{E_constraint} is raised.
+
 Examples:
 
 @example
@@ -10314,6 +10317,24 @@ Examples:
 (poke) Packet[3]()
 [Packet @{...@}, Packet @{...@}, Packet @{...@}]
 @end example
+
+Note that array constructors are implicitly involved when you
+construct a struct or union value that contains a field whose type is
+an array.  For example, consider the following type:
+
+@example
+type Packet =
+  struct
+  @{
+    byte sz;
+    byte[sz] data;
+  @};
+@end example
+
+@noindent
+When a packet is constructed using @code{Packet @{@}} the @code{data}
+field of the struct is also constructed, implicitly using a
+constructor for the array type @code{byte[sz]}.
 
 @node Array Comparison
 @subsection Array Comparison
@@ -13127,6 +13148,9 @@ given the variable @code{nelems} has a value of @code{2}:
 [100,222,333]
 @end example
 
+If for whatever reason the exact requested number of elements can't be
+mapped, then @code{E_constraint} is raised.
+
 @cindex end of file
 If an end-of-file condition happens while mapping the array, because
 the number of elements specified in the array type, at the given
@@ -13232,6 +13256,9 @@ unhandled out of map bounds exception
 Like in mappings bounded by number of elements, if a constraint fails
 while performing the mapping, an exception is raised and the map is
 aborted.
+
+Likewise, if the exact size specified as the array boundaries can't be
+achieved, then @code{E_constraint} is raised.
 
 @node Unbounded array maps
 @subsubsection Unbounded array maps
@@ -13469,10 +13496,6 @@ Constraint violation exception.  This is raised when a constraint
 exception fails while mapping or constructing a struct.
 @item E_conv
 Conversion exception.  This can be raised while casting values.
-@item E_map_bounds
-Out of map bounds exception.  This can be raised while modifying a
-mapped value in a way it would violate its declared boundary (like the
-size of a mapped array.)
 @item E_map
 No map exception.  This is raised when trying to map a not mapped
 value.
