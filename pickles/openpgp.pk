@@ -375,7 +375,7 @@ fun pgp_map_hashed_subpackets = (PGP_Signature sig) PGP_Signature_Subpacket[]:
 
   while (consumed < sig.hashed_subpacket_len)
   {
-    var sub = PGP_Signature_Subpacket @ sig'ios // TODO pick right ios
+    var sub = PGP_Signature_Subpacket @ sig'ios
               : (sig.hashed_subpackets'offset + consumed);
 
     consumed += sub'size;
