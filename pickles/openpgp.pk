@@ -307,42 +307,30 @@ type PGP_Packet =
   struct
   {
     PGP_Packet_Header header;
+
+   type UID =
+     struct
+     {
+       byte[header.get_length] uid;
+       method _print = void:
+       {
+         print "#<uid:";
+         for (var i = 0; i < uid'length; i++)
+           printf("%c", uid[i]);
+         print ">";
+       }
+     };
+
     union
     {
       PGP_Signature signature : header.get_tag == 2;
-      PGP_Public_Key public : header.get_tag == 6;
-      struct
-      {
-        byte[header.get_length] uid;
-        method _print = void:
-        {
-          for (var i = 0; i < uid'length; i++)
-            printf("%c", uid[i]);
-        }
-      } uid : header.get_tag == 13;
+      PGP_Public_Key public   : header.get_tag == 6;
+      UID uid                 : header.get_tag == 13;
       byte[header.get_length] unknown;
     } payload : payload'size == header.get_length;
 
     var extraneous = header.get_length - payload'size;
     byte[extraneous] extra if payload'size'magnitude;
-
-    method _print = void:
-    {
-      print "#<\n";
-      printf ("%v", header);
-      if (header.get_tag == 6)
-        ;//printf("%v", payload.public);
-      else
-        if (header.get_tag() in [13])
-        {
-          try
-          {
-            payload.uid;
-            printf("\n%v", payload.uid);
-          } catch { printf("unable to print payload.uid"); }
-        }
-      print "\n>";
-    }
   };
 
 type PGP_File =
