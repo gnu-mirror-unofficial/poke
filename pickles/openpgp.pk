@@ -341,6 +341,7 @@ type PGP_Packet =
             printf("\n%v", payload.uid);
           } catch { printf("unable to print payload.uid"); }
         }
+      print "\n>";
     }
   };
 
