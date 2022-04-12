@@ -308,18 +308,18 @@ type PGP_Packet =
   {
     PGP_Packet_Header header;
 
-   type UID =
-     struct
-     {
-       byte[header.get_length] uid;
-       method _print = void:
-       {
-         print "#<uid:";
-         for (var i = 0; i < uid'length; i++)
-           printf("%c", uid[i]);
-         print ">";
-       }
-     };
+    type UID =
+      struct
+      {
+        byte[header.get_length] uid;
+        method _print = void:
+        {
+          print "#<uid:";
+          for (var i = 0; i < uid'length; i++)
+            printf("%c", uid[i]);
+          print ">";
+        }
+      };
 
     union
     {
