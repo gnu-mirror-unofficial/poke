@@ -181,6 +181,69 @@ var tests = [
       },
   },
   PkTest {
+    name = "with_cur_ios",
+    func = lambda (string name) void:
+    {
+      var end = get_endian;
+      var ios1 = open ("*foo*"),
+          ios2 = open ("*bar*");
+
+      set_ios (ios2);
+      with_cur_ios :ios ios1
+                   :endian !end
+                   :do lambda void: { int<32> @ 11#B = 0xdeadbeef; };
+      assert (get_ios == ios2);
+      assert ((byte @ ios1 : 11#B) == (!end == ENDIAN_BIG ? 0xde : 0xef));
+      assert ((byte @ ios1 : 12#B) == (!end == ENDIAN_BIG ? 0xad : 0xbe));
+      close (ios2);
+      close (ios1);
+    }
+  },
+  PkTest {
+    name = "with_temp_ios",
+    func = lambda (string name) void:
+      {
+        var a = 10;
+        var end = get_endian;
+
+        /* First, simple test with no opened IO space.  */
+        with_temp_ios :handler "*bar*"
+                      :endian !end
+                      :do lambda void: { a = int<32> @ 0#B; };
+        assert (!(get_ios ?! E_no_ios));
+        assert (a == 0);
+
+        /* No arguments.  */
+        with_temp_ios;
+        assert (!(get_ios ?! E_no_ios));
+
+        /* Now with an already opened IO space.  */
+        var ios = open ("*foo*");
+        with_temp_ios :handler "*bar*"
+                      :endian !end
+                      :do lambda void: { byte @ 0#B = 0xab;
+                                         byte @ 1#B = 0xcd;
+                                         a = int<32> @ 0#B; };
+        assert (get_ios == ios);
+        assert (get_endian == end);
+        assert (!end == ENDIAN_BIG ? a == 0xabcd : a == 0xcdab);
+
+        /* Now with an exception return.  */
+        try with_temp_ios :handler "*bar*"
+                          :endian !end
+                          :do lambda void: { byte @ 0#B = 0xbe;
+                                             byte @ 1#B = 0xef;
+                                             a = int<32> @ 0#B;
+                                             raise E_inval; };
+        catch if E_inval {};
+
+        assert (get_ios == ios);
+        assert (get_endian == end);
+        assert (!end == ENDIAN_BIG ? a == 0xbeef : a == 0xefbe);
+        close (ios);
+      },
+  },
+  PkTest {
     name = "qsort",
     func = lambda (string name) void:
       {

@@ -403,3 +403,94 @@ fun eoffset = (any v, string n) offset<uint<64>,b>:
         return v'eoffset (i);
     raise E_inval;
   }
+
+/* Generator of uniquely-named memory IO handlers.  */
+
+type Pk_Temp_Ios_Generator = ()string;
+
+var pk_get_unique_mem_ios_handler = lambda Pk_Temp_Ios_Generator:
+{
+  var n = 0;
+  return lambda string: { return format ("*tmp%u32d*", n++); };
+} ();
+
+/* Open a temporary IO space, set it as current, and execute a given
+   function.
+
+   HANDLER is the handler to use for the IO space.
+
+   FLAGS are the flags passed to `open' when opening the temporary IO
+   space.  Defaults to 0, which means to use whatever opening mode
+   makes more sense depending on the kind of the IO space and it's
+   permissions.
+
+   DO is a function of type ()void.  Defaults to a function that does
+   nothing.
+
+   ENDIAN is the endianness to use by default when accessing the
+   temporary IO space.  Defaults to the current endianness.
+
+   Note that once `with_temp_ios' finishes executing, either by
+   returning or by the raise of an exception, the temporary IO space
+   is closed and the original current endianness is restored.  */
+
+type Pk_With_Ios_Fn = ()void;
+
+fun with_temp_ios = (string handler = pk_get_unique_mem_ios_handler,
+                     uint<32> flags = 0,
+                     Pk_With_Ios_Fn do = lambda void:{},
+                     int<32> endian = get_endian) void:
+{
+  var old_ios = get_ios ?! E_no_ios ? get_ios : -1;
+  var old_endian = get_endian;
+  var new_ios = open (handler, flags);
+
+  set_ios (new_ios);
+  set_endian (endian);
+  try
+  {
+    do ();
+    close (new_ios);
+    set_endian (old_endian);
+    if (-1 != old_ios)
+      set_ios (old_ios);
+  }
+  catch (Exception exc)
+  {
+    close (new_ios);
+    set_endian (old_endian);
+    if (-1 != old_ios)
+      set_ios (old_ios);
+    raise exc;
+  }
+}
+
+/* Set a given IO space as current and execute a given function.  Once
+   the function finishes executing, either by returning or by the
+   raise of an exception, the current IO space and endianness are
+   restored to their previous values.  */
+
+fun with_cur_ios = (int<32> ios,
+                    Pk_With_Ios_Fn do = lambda void:{},
+                    int<32> endian = get_endian) void:
+{
+  var old_ios = get_ios ?! E_no_ios ? get_ios : -1;
+  var old_endian = get_endian;
+
+  set_ios (ios);
+  set_endian (endian);
+  try
+  {
+    do ();
+    set_endian (old_endian);
+    if (-1 != old_ios)
+      set_ios (old_ios);
+  }
+  catch (Exception exc)
+  {
+    set_endian (old_endian);
+    if (-1 != old_ios)
+      set_ios (old_ios);
+    raise exc;
+  }
+}

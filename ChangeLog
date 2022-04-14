@@ -1,3 +1,14 @@
+2022-04-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/std.pk (Pk_With_Ios_Fn): New type.
+	(Pk_Temp_Ios_Generator): Likewise.
+	(with_temp_ios): New function.
+	(with_cur_ios): Likewise.
+	* testsuite/poke.std/std-test.pk: Tests for with_temp_ios and
+	with_cur_ios.
+	* doc/poke.texi (with_temp_ios): New section.
+	(with_cur_ios): Likewise.
+
 2022-04-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* pickles/openpgp.pk (PGP_Packet): Remove pretty-printer.  Use an

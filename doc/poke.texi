@@ -14353,6 +14353,7 @@ facilities provided by the library.
 * Array Functions::             Functions which deal with arrays.
 * String Functions::		Functions which deal with strings.
 * Values Functions::            Functions which deal with values in general.
+* IO Space Functions::          Functions that operate on IO spaces.
 * Sorting Functions::		qsort.
 * CRC Functions::               Cyclic Redundancy Checksums.
 * Dates and Times::             Processing and displaying dates and times.
@@ -14678,6 +14679,82 @@ fun eoffset = (any val, string name) offset<uint<64>,b>
 It returns the offset of the element having the given name in the
 given composite value.  If the value doesn't contain an element with
 the given name then the exception @code{E_inval} is raised.
+
+@node IO Space Functions
+@section IO Space Functions
+
+@menu
+* with_cur_ios::        Executing code on a given IO space.
+* with_temp_ios::       Executing code on a temporary IO space.
+@end menu
+
+@node with_cur_ios
+@subsection @code{with_cur_ios}
+@cindex @code{with_cur_ios}
+
+The standard function @code{with_cur_ios} provides the following
+interface:
+
+@example
+fun with_cur_ios = (int<32> @var{ios},
+                    Pk_With_Ios_Fn @var{do} = lambda void:@{@},
+                    int<32> @var{endian} = get_endian) void:
+@end example
+
+Where @var{ios} is an IO space identifier, @var{do} is a function of
+type @code{()void} that defaults to a function that does nothing, and
+@var{endian} is the endianness to use by default when accessing
+@var{ios}.
+
+When invoked it switches to the given IO space and executes the given
+function.  Once the function finishes executing, either by returning
+or by the raise of an exception, the current IO space and endianness
+are restored to their previous values.
+
+@node with_temp_ios
+@subsection @code{with_temp_ios}
+@cindex @code{with_temp_ios}
+
+The standard function @code{with_temp_ios} provides the following
+interface:
+
+@example
+fun with_temp_ios = (string @var{handler} = pk_get_unique_mem_ios_handler,
+                     uint<32> @var{flags} = 0,
+                     Pk_With_Ios_Fn @var{do} = lambda void:@{@},
+                     int<32> @var{endian} = get_endian) void:
+@end example
+
+Where @var{handler} is the handler to use for the IO space.
+
+@var{flags} are the flags passed to @code{open} when opening the
+temporary IO space.  Defaults to 0, which means to use whatever
+opening mode makes more sense depending on the kind of the IO space
+and it's permissions.
+
+@var{do} is a function of type @code{()void}.  Defaults to a function
+that does nothing.
+
+@var{endian} is the endianness to use by default when accessing the
+temporary IO space.  Defaults to the current endianness.
+
+When invoked it opens a IO space, like @code{openset}, but takes care
+of calling @code{close} and restoring the original current IO space
+and endianness after the lambda returns or raises an exception.
+
+It can be used to deal with files without risk of leaking file
+descriptors.
+
+@example
+with_cur_ios
+  :handler "*buf*"
+  :do lambda void:
+  @{
+    var arr = uint<32>[1] @ 0#B;
+    arr[0] = 0x1234;
+    printf("%v", byte[4] @ 0#b);
+  @}
+@end example
 
 @node Sorting Functions
 @section Sorting Functions
