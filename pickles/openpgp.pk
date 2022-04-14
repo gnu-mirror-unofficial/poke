@@ -120,7 +120,7 @@ type PGP_Packet_Header =
 
     union
     {
-      PGP_V3_Packet_Length v4_length : v4_format;
+      PGP_V4_Packet_Length v4_length : v4_format;
       PGP_V3_Packet_Length v3_length;
     } length;
 
@@ -150,7 +150,7 @@ type PGP_MPI =
   struct
   {
     big offset<uint<16>,b> len;
-    byte[len] num; /* Bytes are stored in big-endian.  */
+    byte[len + alignto(len,1#B) ] num; /* Bytes are stored in big-endian.  */
 
     method _print = void:
     {
@@ -273,7 +273,6 @@ type PGP_Signature =
     uint<8> hash_algo;
     offset<uint<16>,B> hashed_subpacket_len;
     byte[hashed_subpacket_len] hashed_subpackets;
-    byte[hashed_subpacket_len - hashed_subpackets'size] what_the_fuck;
     uint<16> unhashed_subpacket_len;
     byte[unhashed_subpacket_len] unhashed_subpackets;
 
@@ -327,7 +326,7 @@ type PGP_Packet =
       PGP_Public_Key public   : header.get_tag == 6;
       UID uid                 : header.get_tag == 13;
       byte[header.get_length] unknown;
-    } payload : payload'size == header.get_length;
+    } payload ; //: payload'size == header.get_length; // TODO commented out because "extraneous" catches it below.
 
     var extraneous = header.get_length - payload'size;
     byte[extraneous] extra if payload'size'magnitude;
