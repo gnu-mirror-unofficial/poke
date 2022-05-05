@@ -1,3 +1,14 @@
+2022-05-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* libpoke/pkl-gen.pks (struct_mapper): Add an explicative message
+	for union alternative constraint exceptions.
+	(struct_constructor): Likewise.
+	* testsuite/poke.pkl/union-constraint-1.pk: New test.
+	* testsuite/poke.pkl/union-constraint-2.pk: Likewise.
+	* testsuite/poke.pkl/union-constraint-3.pk: Likewise.
+	* testsuite/poke.pkl/union-constraint-4.pk: Likewise.
+	* testsuite/Makefile.am (EXTRA_DIST): Add new tests.
+
 2022-04-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* libpoke/std.pk (Pk_With_Ios_Fn): New type.

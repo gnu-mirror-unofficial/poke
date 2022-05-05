@@ -2267,6 +2267,10 @@ EXTRA_DIST = \
   poke.pkl/typeof-struct-3.pk \
   poke.pkl/typeof-struct-4.pk \
   poke.pkl/union-1.pk \
+  poke.pkl/union-constraint-1.pk \
+  poke.pkl/union-constraint-2.pk \
+  poke.pkl/union-constraint-3.pk \
+  poke.pkl/union-constraint-4.pk \
   poke.pkl/union-diag-1.pk \
   poke.pkl/union-diag-2.pk \
   poke.pkl/union-diag-3.pk \

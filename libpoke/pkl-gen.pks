@@ -1149,6 +1149,21 @@
  .c {
         ;; No valid alternative found in union.
         push PVM_E_CONSTRAINT
+        push "msg"
+ .c pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@type_struct);
+ .c if (struct_type_name)
+ .c {
+        .let #type_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (struct_type_name))
+        push "no valid alternative found for union "
+        push #type_name
+        sconc
+        nip2
+ .c }
+ .c else
+ .c {
+        push "no valid alternative in union"
+ .c }
+        sset
         raise
  .c }
 .union_fields_done:
@@ -1656,6 +1671,21 @@
  .c {
         ;; No valid alternative found in union.
         push PVM_E_CONSTRAINT
+        push "msg"
+ .c pkl_ast_node struct_type_name = PKL_AST_TYPE_NAME (@type_struct);
+ .c if (struct_type_name)
+ .c {
+        .let #type_name = pvm_make_string (PKL_AST_IDENTIFIER_POINTER (struct_type_name))
+        push "no valid alternative found for union "
+        push #type_name
+        sconc
+        nip2
+ .c }
+ .c else
+ .c {
+        push "no valid alternative in union"
+ .c }
+        sset
         raise
  .c }
 .union_fields_done:

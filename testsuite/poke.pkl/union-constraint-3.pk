@@ -1,0 +1,6 @@
+/* { dg-do run } */
+
+type Foo = struct { union { int a : a == 10; } u;  int b : b == 20; };
+
+/* { dg-command { try Foo {}; catch (Exception e) { if (e.code == EC_constraint) print e.msg + "\n"; } } } */
+/* { dg-output "no valid alternative in union" } */
